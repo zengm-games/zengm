@@ -1,12 +1,10 @@
 OVERALL ROADMAP:
-add variability to the similuation.  every year shouldn't be the same, even with identical input
-assess database structure
+multiple seasons
 - at the end of every season, archive the player stats (player_career_stats?) and delete box scores
-save as
+add variability to the similuation.  every year shouldn't be the same, even with identical input
 add more players/teams to the database
 add all (or placeholder) players/teams to the database
 scheduling
-multiple seasons
 salaries, free agents, trades
 aging
 draft

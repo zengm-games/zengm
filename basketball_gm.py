@@ -36,7 +36,7 @@ class main_window:
             if result == gtk.RESPONSE_OK and team_id >= 0:
                 self.new_game(team_id)
 
-    def on_menuitem_open_activate(self, widget, data=None):
+    def on_menuitem_open_activate(self, widget=None, data=None):
         proceed = False
         if self.unsaved_changes:
             if self.save_nosave_cancel():
@@ -62,36 +62,32 @@ class main_window:
             open_dialog.destroy()
 
             if result:
-                common.DB_CON.close();
-                common.DB_FILENAME = result
-                common.DB_CON = sqlite3.connect(common.DB_FILENAME)
-                common.DB_CON.isolation_level = 'IMMEDIATE'
-                self.update_all_pages()
+                self.open_game(result)
 
     def on_menuitem_save_activate(self, widget, data=None):
         self.save_game()
 
     def on_menuitem_save_as_activate(self, widget=None, data=None):
-#        buttons = (gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_SAVE,gtk.RESPONSE_OK)
-#        chooser = gtk.FileChooserDialog(_("Choose a location to save the project"), self.window, gtk.FILE_CHOOSER_ACTION_SAVE, buttons)
-#        chooser.set_do_overwrite_confirmation(True)
-#        chooser.set_current_name(self.project.name)
-#        chooser.set_default_response(gtk.RESPONSE_OK)
-#        chooser.set_current_folder(Globals.settings.general["projectfolder"])
-
-#        response = chooser.run()
-#        if response == gtk.RESPONSE_OK:
-# commit, close, copy to new location, open
-#        common.DB_CON.commit()
-#            filename = chooser.get_filename()
-#            Globals.settings.general["projectfolder"] = os.path.dirname(filename)
-#            Globals.settings.write()
-#            self.project.SelectInstrument()
-#            self.project.ClearEventSelections()
-#            self.project.SaveProjectFile(filename)
-#        chooser.destroy()
-        print 'SAVE AS'
-        return True
+        '''
+        Return True if the game is saved, False otherwise
+        '''
+        buttons = (gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_SAVE,gtk.RESPONSE_OK)
+        chooser = gtk.FileChooserDialog("Choose a location to save the game", self.main_window, gtk.FILE_CHOOSER_ACTION_SAVE, buttons)
+        chooser.set_do_overwrite_confirmation(True)
+        chooser.set_default_response(gtk.RESPONSE_OK)
+        chooser.set_current_folder('saves')
+        response = chooser.run()
+        if response == gtk.RESPONSE_OK:
+            # commit, close, copy to new location, open
+            filename = chooser.get_filename()
+            print filename
+            self.save_game_as(filename)
+            self.open_game(filename)
+            returnval = True
+        else:
+            returnval = False
+        chooser.destroy()
+        return returnval
 
     def on_menuitem_quit_activate(self, widget, data=None):
         gtk.main_quit()
@@ -280,7 +276,7 @@ class main_window:
     def update_roster(self):
         column_types = [int, str, str, int, int]
         query = 'SELECT player_attributes.player_id, player_attributes.name, player_attributes.position, (player_ratings.height + player_ratings.strength + player_ratings.speed + player_ratings.jumping + player_ratings.endurance + player_ratings.shooting_inside + player_ratings.shooting_layups + player_ratings.shooting_free_throws + player_ratings.shooting_two_pointers + player_ratings.shooting_three_pointers + player_ratings.blocks + player_ratings.steals + player_ratings.dribbling + player_ratings.passing + player_ratings.rebounding)/15, player_ratings.average_playing_time FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = ? ORDER BY player_ratings.roster_position ASC'
-        query_bindings = (PLAYER_TEAM_ID,)
+        query_bindings = (common.PLAYER_TEAM_ID,)
         common.treeview_update(self.treeview_roster, column_types, query, query_bindings)
         model = self.treeview_roster.get_model()
         model.connect('row-deleted', self.on_treeview_roster_row_deleted);
@@ -328,19 +324,32 @@ class main_window:
         '''
         shutil.copyfile('database.sqlite', common.DB_TEMP_FILENAME)
         common.DB_FILENAME = common.DB_TEMP_FILENAME
-        common.DB_CON = sqlite3.connect(common.DB_FILENAME)
+        common.DB_CON = sqlite3.connect(common.DB_TEMP_FILENAME)
         common.DB_CON.isolation_level = 'IMMEDIATE'
         self.update_all_pages()
-        self.unsaved_changes = False # Should be set False here and in save_game()
+        self.unsaved_changes = False
+
+    def open_game(self, filename):
+        common.DB_CON.close();
+        common.DB_FILENAME = filename
+        shutil.copyfile(common.DB_FILENAME, common.DB_TEMP_FILENAME)
+        common.DB_CON = sqlite3.connect(common.DB_TEMP_FILENAME)
+        common.DB_CON.isolation_level = 'IMMEDIATE'
+        self.update_all_pages()
+        self.unsaved_changes = False
 
     def save_game(self):
         if common.DB_FILENAME == common.DB_TEMP_FILENAME:
             return self.on_menuitem_save_as_activate()
         else:
-            print 'SAVE'
             common.DB_CON.commit()
-            self.unsaved_changes = False # Should be set False here and in new_game()
+            shutil.copyfile(common.DB_TEMP_FILENAME, common.DB_FILENAME)
+            self.unsaved_changes = False
             return True
+
+    def save_game_as(self, filename):
+        common.DB_CON.commit()
+        shutil.copyfile(common.DB_TEMP_FILENAME, filename)
 
     def save_nosave_cancel(self):
         '''
@@ -414,5 +423,4 @@ class main_window:
 if __name__ == '__main__':
     mw = main_window()
     gtk.main()
-    common.DB_CON.close();
 

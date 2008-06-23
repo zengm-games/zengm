@@ -8,6 +8,7 @@ GTKBUILDER_PATH = 'basketball_gm.xml'
 
 shutil.copyfile('database.sqlite', 'temp.sqlite')
 DB_TEMP_FILENAME = 'temp.sqlite'
+DB_FILENAME = 'temp.sqlite'
 
 def treeview_build(treeview, column_info):
     """

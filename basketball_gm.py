@@ -18,57 +18,80 @@ class main_window:
 
     # Menu Items
     def on_menuitem_new_activate(self, widget, data=None):
-        # SHOULD CHECK IF SAVE IS NECESSARY
-        new_game_dialog = self.builder.get_object('new_game_dialog')
-        combobox_new_game_teams = self.builder.get_object('combobox_new_game_teams')
-        combobox_new_game_teams.set_active(3)
-        result = new_game_dialog.run()
-        new_game_dialog.hide()
-        team_id = combobox_new_game_teams.get_active()
-        if result == gtk.RESPONSE_OK and team_id >= 0:
-            common.DB_FILENAME = 'temp.sqlite'
-            common.DB_CON = sqlite3.connect(common.DB_FILENAME)
-            common.DB_CON.isolation_level = 'IMMEDIATE'
-            self.update_all_pages()
+        '''
+        First check if there are unsaved changes before starting a new game
+        '''
+        proceed = False
+        if self.unsaved_changes:
+            if self.save_nosave_cancel():
+                proceed = True
+        if not self.unsaved_changes or proceed:
+            new_game_dialog = self.builder.get_object('new_game_dialog')
+            new_game_dialog.set_transient_for(self.main_window)
+            combobox_new_game_teams = self.builder.get_object('combobox_new_game_teams')
+            combobox_new_game_teams.set_active(3)
+            result = new_game_dialog.run()
+            new_game_dialog.hide()
+            team_id = combobox_new_game_teams.get_active()
+            if result == gtk.RESPONSE_OK and team_id >= 0:
+                self.new_game(team_id)
 
     def on_menuitem_open_activate(self, widget, data=None):
-        # SHOULD CHECK IF SAVE IS NECESSARY
-        open_dialog = gtk.FileChooserDialog(title='Open Game', action=gtk.FILE_CHOOSER_ACTION_OPEN, buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
-        open_dialog.set_current_folder('saves')
+        proceed = False
+        if self.unsaved_changes:
+            if self.save_nosave_cancel():
+                proceed = True
+        if not self.unsaved_changes or proceed:
+            open_dialog = gtk.FileChooserDialog(title='Open Game', action=gtk.FILE_CHOOSER_ACTION_OPEN, buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+            open_dialog.set_current_folder('saves')
+            open_dialog.set_transient_for(self.main_window)
 
-        # Filters
-        filter = gtk.FileFilter()
-        filter.set_name('Basketball GM saves')
-        filter.add_pattern('*.sqlite')
-        open_dialog.add_filter(filter)
-        filter = gtk.FileFilter()
-        filter.set_name('All files')
-        filter.add_pattern('*')
-        open_dialog.add_filter(filter)
+            # Filters
+            filter = gtk.FileFilter()
+            filter.set_name('Basketball GM saves')
+            filter.add_pattern('*.sqlite')
+            open_dialog.add_filter(filter)
+            filter = gtk.FileFilter()
+            filter.set_name('All files')
+            filter.add_pattern('*')
+            open_dialog.add_filter(filter)
 
-        result = ''
-        if open_dialog.run() == gtk.RESPONSE_OK:
-            result = open_dialog.get_filename()
-        open_dialog.destroy()
+            result = ''
+            if open_dialog.run() == gtk.RESPONSE_OK:
+                result = open_dialog.get_filename()
+            open_dialog.destroy()
 
-        if result:
-            common.DB_CON.close();
-            common.DB_FILENAME = result
-            common.DB_CON = sqlite3.connect(common.DB_FILENAME)
-            common.DB_CON.isolation_level = 'IMMEDIATE'
-            self.update_all_pages()
+            if result:
+                common.DB_CON.close();
+                common.DB_FILENAME = result
+                common.DB_CON = sqlite3.connect(common.DB_FILENAME)
+                common.DB_CON.isolation_level = 'IMMEDIATE'
+                self.update_all_pages()
 
     def on_menuitem_save_activate(self, widget, data=None):
-        if common.DB_FILENAME == 'temp.sqlite':
-            self.on_menuitem_save_as_activate(widget)
-        else:
-            print 'SAVE'
-            common.DB_CON.commit()
+        self.save_game()
 
-    def on_menuitem_save_as_activate(self, widget, data=None):
-        # commit, close, copy to new location, open
-        print 'SAVE AS'
+    def on_menuitem_save_as_activate(self, widget=None, data=None):
+#        buttons = (gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_SAVE,gtk.RESPONSE_OK)
+#        chooser = gtk.FileChooserDialog(_("Choose a location to save the project"), self.window, gtk.FILE_CHOOSER_ACTION_SAVE, buttons)
+#        chooser.set_do_overwrite_confirmation(True)
+#        chooser.set_current_name(self.project.name)
+#        chooser.set_default_response(gtk.RESPONSE_OK)
+#        chooser.set_current_folder(Globals.settings.general["projectfolder"])
+
+#        response = chooser.run()
+#        if response == gtk.RESPONSE_OK:
+# commit, close, copy to new location, open
 #        common.DB_CON.commit()
+#            filename = chooser.get_filename()
+#            Globals.settings.general["projectfolder"] = os.path.dirname(filename)
+#            Globals.settings.write()
+#            self.project.SelectInstrument()
+#            self.project.ClearEventSelections()
+#            self.project.SaveProjectFile(filename)
+#        chooser.destroy()
+        print 'SAVE AS'
+        return True
 
     def on_menuitem_quit_activate(self, widget, data=None):
         gtk.main_quit()
@@ -98,6 +121,7 @@ class main_window:
         #self.updated['player_window_stats'] = False
         #self.updated['player_window_game_log'] = False
         self.update_current_page()
+        self.unsaved_changes = True
         return True
 
     def on_menuitem_about_activate(self, widget, data=None):
@@ -161,6 +185,7 @@ class main_window:
         for row in treemodel:
             common.DB_CON.execute('UPDATE player_ratings SET roster_position = ? WHERE player_id = ?', (i, row[0]))
             i += 1
+        self.unsaved_changes = True
         return True
 
     def on_treeview_player_row_activated(self, treeview, path, view_column, data=None):
@@ -278,7 +303,7 @@ class main_window:
     def update_games_list(self):
         column_types = [int, str, str, str]
         query = 'SELECT game_id, (SELECT abbreviation FROM team_attributes WHERE team_id = team_stats.opponent_team_id), (SELECT val FROM enum_w_l WHERE key = team_stats.won), points || "-" || opponent_points FROM team_stats WHERE team_id = ?'
-        query_bindings = (PLAYER_TEAM_ID,)
+        query_bindings = (common.PLAYER_TEAM_ID,)
         common.treeview_update(self.treeview_games_list, column_types, query, query_bindings)
         self.updated['games_list'] = True
 
@@ -296,6 +321,60 @@ class main_window:
         self.update_current_page()
         for key in self.updated.iterkeys():
             self.updated[key] = False
+
+    def new_game(self, team_id):
+        '''
+        Starts a new game.  Call this only after checking for saves, etc.
+        '''
+        shutil.copyfile('database.sqlite', common.DB_TEMP_FILENAME)
+        common.DB_FILENAME = common.DB_TEMP_FILENAME
+        common.DB_CON = sqlite3.connect(common.DB_FILENAME)
+        common.DB_CON.isolation_level = 'IMMEDIATE'
+        self.update_all_pages()
+        self.unsaved_changes = False # Should be set False here and in save_game()
+
+    def save_game(self):
+        if common.DB_FILENAME == common.DB_TEMP_FILENAME:
+            return self.on_menuitem_save_as_activate()
+        else:
+            print 'SAVE'
+            common.DB_CON.commit()
+            self.unsaved_changes = False # Should be set False here and in new_game()
+            return True
+
+    def save_nosave_cancel(self):
+        '''
+        Call this when there is unsaved stuff and the user wants to start a new
+        game or open a saved game.  Returns 1 to proceed or 0 to abort.
+        '''
+        message = "<span size='large' weight='bold'>Save changes to your current game before closing?</span>\n\nYour changes will be lost if you don't save them."
+
+        dlg = gtk.MessageDialog(self.main_window,
+            gtk.DIALOG_MODAL |
+            gtk.DIALOG_DESTROY_WITH_PARENT,
+            gtk.MESSAGE_WARNING,
+            gtk.BUTTONS_NONE)
+        dlg.set_markup(message)
+        
+        dlg.add_button("Close _Without Saving", gtk.RESPONSE_NO)
+        dlg.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
+        defaultAction = dlg.add_button(gtk.STOCK_SAVE, gtk.RESPONSE_YES)
+        #make save the default action when enter is pressed
+        dlg.set_default(defaultAction)
+        
+        dlg.set_transient_for(self.main_window)
+        
+        response = dlg.run()
+        dlg.destroy()
+        if response == gtk.RESPONSE_YES:
+            if self.save_game():
+                return 1
+            else:
+                return 0
+        elif response == gtk.RESPONSE_NO:
+            return 1
+        elif response == gtk.RESPONSE_CANCEL or response == gtk.RESPONSE_DELETE_EVENT:
+            return 0
 
     def __init__(self):
         self.builder = gtk.Builder()
@@ -320,6 +399,10 @@ class main_window:
         self.built = dict(standings=False, finances=False, player_ratings=False, player_stats=False, team_stats=False, roster=False, games_list=False, playoffs=False, player_window_stats=False, player_window_game_log=False)
         # Set to True if data on this pane is current
         self.updated = dict(standings=False, finances=False, player_ratings=False, player_stats=False, team_stats=False, roster=False, games_list=False, playoffs=False, player_window_stats=False, player_window_game_log=False)
+        # Set to true when a change is mad
+        self.unsaved_changes = False
+
+        self.new_game(common.PLAYER_TEAM_ID)
 
         self.build_standings()
         self.update_standings()

@@ -7,9 +7,7 @@ PLAYER_TEAM_ID = 3
 GTKBUILDER_PATH = 'basketball_gm.xml'
 
 shutil.copyfile('database.sqlite', 'temp.sqlite')
-DB_FILENAME = 'temp.sqlite'
-DB_CON = sqlite3.connect(DB_FILENAME) # This gets changed on file open or close
-DB_CON.isolation_level = 'IMMEDIATE'
+DB_TEMP_FILENAME = 'temp.sqlite'
 
 def treeview_build(treeview, column_info):
     """

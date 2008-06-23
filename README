@@ -1,0 +1,8 @@
+To run:
+libsqlite3-0
+python >= 2.5
+python-egenix-mxdatetime
+python-gtk2
+
+To build:
+sqlite3

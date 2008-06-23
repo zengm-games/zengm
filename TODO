@@ -1,0 +1,22 @@
+OVERALL ROADMAP:
+add variability to the similuation.  every year shouldn't be the same, even with identical input
+assess database structure
+- at the end of every season, archive the player stats (player_career_stats?) and delete box scores
+new, save and load
+- new: copy database.sqlite to temp.sqlite and run off temp.sqlite
+- load/save:SQLite has been used with great success as the on-disk file format for desktop applications such as financial analysis tools, CAD packages, record keeping programs, and so forth. The traditional File/Open operation does an sqlite3_open() and executes a BEGIN TRANSACTION to get exclusive access to the content. File/Save does a COMMIT followed by another BEGIN TRANSACTION. The use of transactions guarantees that updates to the application file are atomic, durable, isolated, and consistent. 
+add more players/teams to the database
+add all (or placeholder) players/teams to the database
+scheduling
+multiple seasons
+salaries, free agents, trades
+aging
+draft
+playoffs
+
+SOME TIME:
+improve game simulation code
+use a new thread for game simulation: http://aruiz.typepad.com/siliconisland/2006/04/threads_on_pygt.html
+    look at conduit code for inspiration, particularly the DB stuff - Database.py and http://svn.gnome.org/viewvc/conduit/trunk/tools/test-db-wrapper/main.py?view=markup
+psyco?
+mvp: PER*win%

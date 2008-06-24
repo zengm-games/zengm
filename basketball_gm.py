@@ -98,7 +98,7 @@ class main_window:
         return True
 
     def on_menuitem_season_activate(self, widget, data=None):
-        row = common.DB_CON.execute('SELECT COUNT(*)/2 FROM team_stats WHERE season = 2007').fetchone()
+        row = common.DB_CON.execute('SELECT COUNT(*)/2 FROM team_stats WHERE season = (SELECT season FROM game_attributes)').fetchone()
         num_games = 82*len(common.TEAMS)/2 - row[0] # Number of games in a whole season - number of games already played this season
         self.play_games(num_games)
         return True

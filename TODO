@@ -1,6 +1,11 @@
 OVERALL ROADMAP:
 multiple seasons
-- at the end of every season, archive the player stats (player_career_stats?) and delete box scores
+- DONE at the end of every simulated day, check if the number of games played = 82*num_teams/2
+- if it is, display a dialog with end-of-season awards, etc.
+- increment season in game_attributes
+- delete box scores
+- archive player stats for faster loading?
+multiple season stats in player window
 add variability to the similuation.  every year shouldn't be the same, even with identical input
 add more players/teams to the database
 add all (or placeholder) players/teams to the database
@@ -11,7 +16,9 @@ draft
 playoffs
 
 SOME TIME:
+combine box scores and database into a compressed save file
 improve game simulation code
+game simulation should open in another window and block input
 use a new thread for game simulation: http://aruiz.typepad.com/siliconisland/2006/04/threads_on_pygt.html
     look at conduit code for inspiration, particularly the DB stuff - Database.py and http://svn.gnome.org/viewvc/conduit/trunk/tools/test-db-wrapper/main.py?view=markup
 psyco?

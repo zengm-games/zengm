@@ -1,4 +1,8 @@
 BEGIN TRANSACTION;
+CREATE TABLE game_attributes (
+team_id INTEGER,
+season INTEGER);
+INSERT INTO "game_attributes" VALUES(3, 2007);
 CREATE TABLE player_attributes (
 player_id INTEGER PRIMARY KEY,
 name TEXT,
@@ -108,6 +112,7 @@ INSERT INTO "player_ratings" VALUES(35,8,25,70,80,50,50,50,70,80,50,60,0,70,60,2
 CREATE TABLE player_stats (
 player_id INTEGER,
 game_id INTEGER,
+season INTEGER,
 starter INTEGER,
 minutes INTEGER,
 field_goals_made INTEGER,
@@ -165,6 +170,7 @@ CREATE TABLE team_stats (
 team_id INTEGER,
 opponent_team_id INTEGER,
 game_id INTEGER,
+season INTEGER,
 won INTEGER,
 minutes INTEGER,
 field_goals_made INTEGER,

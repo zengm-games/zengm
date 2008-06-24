@@ -10,6 +10,11 @@ class Game:
         self.team.append(Team(t2))
         self.id = random.randint(0, 100000)
         self.num_possessions = self.get_num_possessions()
+        query = 'SELECT season FROM game_attributes'
+        row = common.DB_CON.execute(query).fetchone()
+        self.season = row[0]
+
+        # Simulate the game
         for self.o in range(2):
             self.d = 0 if self.o==1 else 1
             for i in range(self.num_possessions):
@@ -215,17 +220,17 @@ class Game:
 
     def write_player_stats(self, t, p):
         query = 'INSERT INTO player_stats \
-                 (player_id, game_id, starter, minutes, field_goals_made, field_goals_attempted, three_pointers_made, three_pointers_attempted, free_throws_made, free_throws_attempted, offensive_rebounds, defensive_rebounds, assists, turnovers, steals, blocks, personal_fouls, points) \
-                 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-        common.DB_CON.execute(query, (self.team[t].player[p].id, self.id, self.team[t].player[p].stat['starter'], int(round(self.team[t].player[p].stat['minutes'])), self.team[t].player[p].stat['field_goals_made'], self.team[t].player[p].stat['field_goals_attempted'], self.team[t].player[p].stat['three_pointers_made'], self.team[t].player[p].stat['three_pointers_attempted'], self.team[t].player[p].stat['free_throws_made'], self.team[t].player[p].stat['free_throws_attempted'], self.team[t].player[p].stat['offensive_rebounds'], self.team[t].player[p].stat['defensive_rebounds'], self.team[t].player[p].stat['assists'], self.team[t].player[p].stat['turnovers'], self.team[t].player[p].stat['steals'], self.team[t].player[p].stat['blocks'], self.team[t].player[p].stat['personal_fouls'], self.team[t].player[p].stat['points']))
+                 (player_id, game_id, season, starter, minutes, field_goals_made, field_goals_attempted, three_pointers_made, three_pointers_attempted, free_throws_made, free_throws_attempted, offensive_rebounds, defensive_rebounds, assists, turnovers, steals, blocks, personal_fouls, points) \
+                 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        common.DB_CON.execute(query, (self.team[t].player[p].id, self.id, self.season, self.team[t].player[p].stat['starter'], int(round(self.team[t].player[p].stat['minutes'])), self.team[t].player[p].stat['field_goals_made'], self.team[t].player[p].stat['field_goals_attempted'], self.team[t].player[p].stat['three_pointers_made'], self.team[t].player[p].stat['three_pointers_attempted'], self.team[t].player[p].stat['free_throws_made'], self.team[t].player[p].stat['free_throws_attempted'], self.team[t].player[p].stat['offensive_rebounds'], self.team[t].player[p].stat['defensive_rebounds'], self.team[t].player[p].stat['assists'], self.team[t].player[p].stat['turnovers'], self.team[t].player[p].stat['steals'], self.team[t].player[p].stat['blocks'], self.team[t].player[p].stat['personal_fouls'], self.team[t].player[p].stat['points']))
 
     def write_team_stats(self, t):
         t2 = 1 if t==0 else 0
         won = True if self.team[t].stat['points'] > self.team[t2].stat['points'] else False
         query = 'INSERT INTO team_stats \
-                 (team_id, opponent_team_id, game_id, won, minutes, field_goals_made, field_goals_attempted, three_pointers_made, three_pointers_attempted, free_throws_made, free_throws_attempted, offensive_rebounds, defensive_rebounds, assists, turnovers, steals, blocks, personal_fouls, points, opponent_points) \
-                 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-        common.DB_CON.execute(query, (self.team[t].id, self.team[t2].id, self.id, won, int(round(self.team[t].stat['minutes'])), self.team[t].stat['field_goals_made'], self.team[t].stat['field_goals_attempted'], self.team[t].stat['three_pointers_made'], self.team[t].stat['three_pointers_attempted'], self.team[t].stat['free_throws_made'], self.team[t].stat['free_throws_attempted'], self.team[t].stat['offensive_rebounds'], self.team[t].stat['defensive_rebounds'], self.team[t].stat['assists'], self.team[t].stat['turnovers'], self.team[t].stat['steals'], self.team[t].stat['blocks'], self.team[t].stat['personal_fouls'], self.team[t].stat['points'], self.team[t2].stat['points']))
+                 (team_id, opponent_team_id, game_id, season, won, minutes, field_goals_made, field_goals_attempted, three_pointers_made, three_pointers_attempted, free_throws_made, free_throws_attempted, offensive_rebounds, defensive_rebounds, assists, turnovers, steals, blocks, personal_fouls, points, opponent_points) \
+                 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        common.DB_CON.execute(query, (self.team[t].id, self.team[t2].id, self.id, self.season, won, int(round(self.team[t].stat['minutes'])), self.team[t].stat['field_goals_made'], self.team[t].stat['field_goals_attempted'], self.team[t].stat['three_pointers_made'], self.team[t].stat['three_pointers_attempted'], self.team[t].stat['free_throws_made'], self.team[t].stat['free_throws_attempted'], self.team[t].stat['offensive_rebounds'], self.team[t].stat['defensive_rebounds'], self.team[t].stat['assists'], self.team[t].stat['turnovers'], self.team[t].stat['steals'], self.team[t].stat['blocks'], self.team[t].stat['personal_fouls'], self.team[t].stat['points'], self.team[t2].stat['points']))
         if won:
             common.DB_CON.execute('UPDATE team_attributes SET won = won + 1 WHERE team_id = ?', (self.team[t].id,))
         else:

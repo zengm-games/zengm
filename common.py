@@ -4,6 +4,8 @@ import shutil
 
 PLAYER_TEAM_ID = 3
 
+TEAMS = [0, 1, 3, 21]
+
 GTKBUILDER_PATH = 'basketball_gm.xml'
 
 shutil.copyfile('database.sqlite', 'temp.sqlite')

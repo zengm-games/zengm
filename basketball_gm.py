@@ -92,32 +92,15 @@ class main_window:
     def on_menuitem_quit_activate(self, widget, data=None):
         gtk.main_quit()
 
-    def on_menuitem_one_game_activate(self, menuitem, data=None):
-        game = game_sim.Game()
-        teams = [0, 1, 3, 21]
-        num_games = 41*len(teams)
-        for i in range(0, num_games):
-            self.statusbar.push(self.statusbar_context_id, 'Playing game %d of %d...' % (i, num_games))
-            while gtk.events_pending():
-                gtk.main_iteration(False) # This stops everything from freezing
-            t1 = random.randint(0, len(teams)-1)
-            while True:
-                t2 = random.randint(0, len(teams)-1)
-                if t1 != t2:
-                    break
-            game.play(teams[t1], teams[t2])
-            game.box_score()
-            self.statusbar.pop(self.statusbar_context_id)
-        # It would be better to set self.updated['games_list'] (and stats, etc) to false, but that doesn't work if the game log tab is currently active
-        # Solution: set them to false and run on_notebook_select_page
-        self.updated['standings'] = False
-        self.updated['player_stats'] = False
-        self.updated['team_stats'] = False
-        self.updated['games_list'] = False
-        #self.updated['player_window_stats'] = False
-        #self.updated['player_window_game_log'] = False
-        self.update_current_page()
-        self.unsaved_changes = True
+    def on_menuitem_one_day_activate(self, widget, data=None):
+        num_games = len(common.TEAMS)/2
+        self.play_games(num_games)
+        return True
+
+    def on_menuitem_season_activate(self, widget, data=None):
+        row = common.DB_CON.execute('SELECT COUNT(*)/2 FROM team_stats WHERE season = 2007').fetchone()
+        num_games = 82*len(common.TEAMS)/2 - row[0] # Number of games in a whole season - number of games already played this season
+        self.play_games(num_games)
         return True
 
     def on_menuitem_about_activate(self, widget, data=None):
@@ -384,6 +367,34 @@ class main_window:
             return 1
         elif response == gtk.RESPONSE_CANCEL or response == gtk.RESPONSE_DELETE_EVENT:
             return 0
+
+    def play_games(self, num_games):
+        '''
+        Plays the number of games set in num_games and updates pages
+        After that, checks to see if the season is over (so make sure num_games makes sense!)
+        '''
+        game = game_sim.Game()
+        for i in range(num_games):
+            self.statusbar.push(self.statusbar_context_id, 'Playing game %d of %d...' % (i, num_games))
+            while gtk.events_pending():
+                gtk.main_iteration(False) # This stops everything from freezing
+            t1 = random.randint(0, len(common.TEAMS)-1)
+            while True:
+                t2 = random.randint(0, len(common.TEAMS)-1)
+                if t1 != t2:
+                    break
+            game.play(common.TEAMS[t1], common.TEAMS[t2])
+            game.box_score()
+            self.statusbar.pop(self.statusbar_context_id)
+        self.update_all_pages()
+        self.unsaved_changes = True
+
+        # Check to see if the season is over
+        row = common.DB_CON.execute('SELECT COUNT(*)/2 FROM team_stats WHERE season = (SELECT season FROM game_attributes)').fetchone()
+        games_played = row[0]
+        games_in_season = 82*len(common.TEAMS)/2
+        if games_played == games_in_season:
+            print "SEASON OVER!"
 
     def __init__(self):
         self.builder = gtk.Builder()

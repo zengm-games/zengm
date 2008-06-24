@@ -10,9 +10,7 @@ class Game:
         self.team.append(Team(t2))
         self.id = random.randint(0, 100000)
         self.num_possessions = self.get_num_possessions()
-        query = 'SELECT season FROM game_attributes'
-        row = common.DB_CON.execute(query).fetchone()
-        self.season = row[0]
+        self.season = common.SEASON
 
         # Simulate the game
         for self.o in range(2):

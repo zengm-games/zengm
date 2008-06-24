@@ -2,8 +2,6 @@ import gtk
 import sqlite3
 import shutil
 
-PLAYER_TEAM_ID = 3
-
 TEAMS = [0, 1, 3, 21]
 
 GTKBUILDER_PATH = 'basketball_gm.xml'
@@ -11,6 +9,10 @@ GTKBUILDER_PATH = 'basketball_gm.xml'
 shutil.copyfile('database.sqlite', 'temp.sqlite')
 DB_TEMP_FILENAME = 'temp.sqlite'
 DB_FILENAME = 'temp.sqlite'
+
+# These are set to real values in basketball_gm.py
+PLAYER_TEAM_ID = 0;
+SEASON = 0;
 
 def treeview_build(treeview, column_info):
     """

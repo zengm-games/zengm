@@ -1,4 +1,5 @@
 OVERALL ROADMAP:
+generate box scores dynamically
 multiple seasons
 - DONE at the end of every simulated day, check if the number of games played = 82*num_teams/2
 - if it is, display a dialog with end-of-season awards, etc.

@@ -98,7 +98,7 @@ class main_window:
         return True
 
     def on_menuitem_season_activate(self, widget, data=None):
-        row = common.DB_CON.execute('SELECT COUNT(*)/2 FROM team_stats WHERE season = (SELECT season FROM game_attributes)').fetchone()
+        row = common.DB_CON.execute('SELECT COUNT(*)/2 FROM team_stats WHERE season = ?', (common.SEASON,)).fetchone()
         num_games = 82*len(common.TEAMS)/2 - row[0] # Number of games in a whole season - number of games already played this season
         self.play_games(num_games)
         return True
@@ -293,6 +293,8 @@ class main_window:
             self.update_player_stats()
         elif self.notebook.get_current_page() == self.pages['team_stats']:
             self.update_team_stats()
+        elif self.notebook.get_current_page() == self.pages['roster']:
+            self.update_roster()
         elif self.notebook.get_current_page() == self.pages['game_log']:
             self.update_games_list()
 
@@ -305,19 +307,29 @@ class main_window:
         '''
         Starts a new game.  Call this only after checking for saves, etc.
         '''
+        print team_id
         shutil.copyfile('database.sqlite', common.DB_TEMP_FILENAME)
         common.DB_FILENAME = common.DB_TEMP_FILENAME
-        common.DB_CON = sqlite3.connect(common.DB_TEMP_FILENAME)
-        common.DB_CON.isolation_level = 'IMMEDIATE'
-        self.update_all_pages()
-        self.unsaved_changes = False
+        self.connect(team_id)
 
     def open_game(self, filename):
         common.DB_CON.close();
         common.DB_FILENAME = filename
         shutil.copyfile(common.DB_FILENAME, common.DB_TEMP_FILENAME)
+        self.connect()
+
+    def connect(self, team_id = -1):
+        '''
+        Connect to the database and get the team ID and season #
+        If team_id is passed as a parameter, then this is being called from new_game and the team_id should be set in game_attributes
+        '''
         common.DB_CON = sqlite3.connect(common.DB_TEMP_FILENAME)
         common.DB_CON.isolation_level = 'IMMEDIATE'
+        if team_id >= 0:
+            print 'NEW GAME'
+            common.DB_CON.execute('UPDATE game_attributes SET team_id = ?', (team_id,))
+        common.PLAYER_TEAM_ID, common.SEASON = common.DB_CON.execute('SELECT team_id, season FROM game_attributes').fetchone()
+        print common.PLAYER_TEAM_ID, common.SEASON
         self.update_all_pages()
         self.unsaved_changes = False
 
@@ -390,11 +402,36 @@ class main_window:
         self.unsaved_changes = True
 
         # Check to see if the season is over
-        row = common.DB_CON.execute('SELECT COUNT(*)/2 FROM team_stats WHERE season = (SELECT season FROM game_attributes)').fetchone()
+        row = common.DB_CON.execute('SELECT COUNT(*)/2 FROM team_stats WHERE season = ?', (common.SEASON,)).fetchone()
         games_played = row[0]
         games_in_season = 82*len(common.TEAMS)/2
         if games_played == games_in_season:
             print "SEASON OVER!"
+
+    def box_score(self):
+        # Record who the starters are
+        format = '%-23s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s\n'
+        box = ''
+        for t in range(2):
+            team_name_long = self.team[t].region + ' ' + self.team[t].name
+            dashes = ''
+            for i in range(len(team_name_long)):
+                dashes += '-'
+            box += team_name_long + '\n' + dashes + '\n'
+            box += format % ('Name', 'Pos', 'Min', 'FG', '3Pt', 'FT', 'Off', 'Reb', 'Ast', 'TO', 'Stl', 'Blk', 'PF', 'Pts')
+            for p in range(self.team[t].num_players):
+                rebounds = self.team[t].player[p].stat['offensive_rebounds'] + self.team[t].player[p].stat['defensive_rebounds']
+                box += format % (self.team[t].player[p].attribute['name'], self.team[t].player[p].attribute['position'], int(round(self.team[t].player[p].stat['minutes'])), '%s-%s' % (self.team[t].player[p].stat['field_goals_made'], self.team[t].player[p].stat['field_goals_attempted']), '%s-%s' % (self.team[t].player[p].stat['three_pointers_made'], self.team[t].player[p].stat['three_pointers_attempted']), '%s-%s' % (self.team[t].player[p].stat['free_throws_made'], self.team[t].player[p].stat['free_throws_attempted']), self.team[t].player[p].stat['offensive_rebounds'], rebounds, self.team[t].player[p].stat['assists'], self.team[t].player[p].stat['turnovers'], self.team[t].player[p].stat['steals'], self.team[t].player[p].stat['blocks'], self.team[t].player[p].stat['personal_fouls'], self.team[t].player[p].stat['points'])
+                self.write_player_stats(t, p)
+            rebounds = self.team[t].stat['offensive_rebounds'] + self.team[t].stat['defensive_rebounds']
+            box += format % ('Total', '', int(round(self.team[t].stat['minutes'])), '%s-%s' % (self.team[t].stat['field_goals_made'], self.team[t].stat['field_goals_attempted']), '%s-%s' % (self.team[t].stat['three_pointers_made'], self.team[t].stat['three_pointers_attempted']), '%s-%s' % (self.team[t].stat['free_throws_made'], self.team[t].stat['free_throws_attempted']), self.team[t].stat['offensive_rebounds'], rebounds, self.team[t].stat['assists'], self.team[t].stat['turnovers'], self.team[t].stat['steals'], self.team[t].stat['blocks'], self.team[t].stat['personal_fouls'], self.team[t].stat['points'])
+            if (t==0):
+                box += '\n'
+            self.write_team_stats(t)
+        # Save box score to a text file
+        f = open('box_scores/%d.txt' % self.id, 'w')
+        f.write(box)
+        f.close()
 
     def __init__(self):
         self.builder = gtk.Builder()
@@ -422,7 +459,7 @@ class main_window:
         # Set to true when a change is mad
         self.unsaved_changes = False
 
-        self.new_game(common.PLAYER_TEAM_ID)
+        self.new_game(3)
 
         self.build_standings()
         self.update_standings()

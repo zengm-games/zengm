@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Tue Jun 24 02:42:51 2008 -->
+<!--Generated with glade3 3.4.5 on Tue Jun 24 20:23:20 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="main_window">
     <property name="width_request">800</property>
     <property name="height_request">600</property>
     <property name="title" translatable="yes">Basketball General Manager</property>
     <property name="icon">icon.svg</property>
-    <signal name="destroy" handler="on_window_destroy"/>
+    <signal name="destroy" handler="on_main_window_destroy"/>
+    <signal name="delete_event" handler="on_main_window_delete_event"/>
     <child>
       <widget class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
@@ -145,15 +146,34 @@
                         <property name="label" translatable="yes">_One Day</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="on_menuitem_one_day_activate"/>
-                        <accelerator key="F3" modifiers="" signal="activate"/>
+                        <accelerator key="F12" modifiers="" signal="activate"/>
                       </widget>
                     </child>
                     <child>
-                      <widget class="GtkMenuItem" id="menuitem_season">
+                      <widget class="GtkMenuItem" id="menuitem_one_week">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">_Season</property>
+                        <property name="label" translatable="yes">TEST PERFORMANCE</property>
                         <property name="use_underline">True</property>
-                        <signal name="activate" handler="on_menuitem_season_activate"/>
+                        <signal name="activate" handler="on_menuitem_one_week_activate"/>
+                        <accelerator key="F12" modifiers="GDK_SHIFT_MASK" signal="activate"/>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkMenuItem" id="menuitem_one_month">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">One _Month</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="on_menuitem_one_month_activate"/>
+                        <accelerator key="F12" modifiers="GDK_MOD1_MASK" signal="activate"/>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkMenuItem" id="menuitem_until_playoffs">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">Until _Playoffs</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="on_menuitem_until_playoffs_activate"/>
+                        <accelerator key="F12" modifiers="GDK_SHIFT_MASK | GDK_MOD1_MASK" signal="activate"/>
                       </widget>
                     </child>
                   </widget>
@@ -197,17 +217,52 @@
             <property name="can_focus">True</property>
             <signal name="switch_page" handler="on_notebook_select_page"/>
             <child>
-              <widget class="GtkScrolledWindow" id="scrolledwindow3">
+              <widget class="GtkVBox" id="vbox4">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
-                <property name="vscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
                 <child>
-                  <widget class="GtkTreeView" id="treeview_standings">
+                  <widget class="GtkHBox" id="hbox3">
+                    <property name="visible">True</property>
+                    <child>
+                      <widget class="GtkLabel" id="label28">
+                        <property name="visible">True</property>
+                        <property name="xalign">1</property>
+                        <property name="label" translatable="yes">Season:</property>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkComboBox" id="combobox_standings">
+                        <property name="visible">True</property>
+                        <property name="focus_on_click">False</property>
+                        <property name="items" translatable="yes">2008</property>
+                        <signal name="changed" handler="on_combobox_standings_changed"/>
+                      </widget>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="expand">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="GtkScrolledWindow" id="scrolledwindow3">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="headers_clickable">True</property>
+                    <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
+                    <property name="vscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
+                    <child>
+                      <widget class="GtkTreeView" id="treeview_standings">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="headers_clickable">True</property>
+                      </widget>
+                    </child>
                   </widget>
+                  <packing>
+                    <property name="position">1</property>
+                  </packing>
                 </child>
               </widget>
               <packing>

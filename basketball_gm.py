@@ -7,14 +7,16 @@ import mx.DateTime
 import random
 import sqlite3
 import shutil
+import time
 
 import common
 import game_sim
 import player_window
 
 class main_window:
-    def on_window_destroy(self, widget, data=None):
-        gtk.main_quit()
+    def on_main_window_delete_event(self, widget, data=None):
+        self.quit();
+        return True
 
     # Menu Items
     def on_menuitem_new_activate(self, widget, data=None):
@@ -80,7 +82,6 @@ class main_window:
         if response == gtk.RESPONSE_OK:
             # commit, close, copy to new location, open
             filename = chooser.get_filename()
-            print filename
             self.save_game_as(filename)
             self.open_game(filename)
             returnval = True
@@ -90,14 +91,22 @@ class main_window:
         return returnval
 
     def on_menuitem_quit_activate(self, widget, data=None):
-        gtk.main_quit()
+        self.quit()
+        return True
 
     def on_menuitem_one_day_activate(self, widget, data=None):
         num_games = len(common.TEAMS)/2
         self.play_games(num_games)
         return True
 
-    def on_menuitem_season_activate(self, widget, data=None):
+    def on_menuitem_one_week_activate(self, widget, data=None):
+        for i in range(100):
+            t1 = time.time()
+            self.play_games(82*len(common.TEAMS)/2)
+            t2 = time.time()
+            print t2-t1
+
+    def on_menuitem_until_playoffs_activate(self, widget, data=None):
         row = common.DB_CON.execute('SELECT COUNT(*)/2 FROM team_stats WHERE season = ?', (common.SEASON,)).fetchone()
         num_games = 82*len(common.TEAMS)/2 - row[0] # Number of games in a whole season - number of games already played this season
         self.play_games(num_games)
@@ -154,6 +163,12 @@ class main_window:
                 self.update_games_list()
 
     # Events in the main notebook
+    def on_combobox_standings_changed(self, combobox, data=None):
+        old = self.combobox_standings_active
+        self.combobox_standings_active = combobox.get_active()
+        if self.combobox_standings_active != old:
+            self.update_standings()
+
     def on_treeview_roster_row_deleted(self, treemodel, path, data=None):
         '''
         When players are dragged and dropped in the roster screen, row-inserted
@@ -179,11 +194,8 @@ class main_window:
     def on_treeview_games_list_cursor_changed(self, treeview, data=None):
         (treemodel, treeiter) = treeview.get_selection().get_selected()
         game_id = treemodel.get_value(treeiter, 0)
-        f = open('box_scores/%d.txt' % game_id, 'r')
-        box_score = f.read()
-        f.close()
         buffer = self.textview_box_score.get_buffer()
-        buffer.set_text(box_score)
+        buffer.set_text(self.box_score(game_id))
         return True
 
     # Pages
@@ -196,9 +208,25 @@ class main_window:
         self.built['standings'] = True
 
     def update_standings(self):
+        # Season combobox
+        populated = False
+        model = self.combobox_standings.get_model()
+        self.combobox_standings.set_model(None)
+        model.clear()
+        for row in common.DB_CON.execute('SELECT season FROM team_stats GROUP BY season ORDER BY season DESC'):
+            model.append(['%s' % row[0]])
+            populated = True
+        if not populated:
+            row = common.DB_CON.execute('SELECT season FROM game_attributes').fetchone()
+            model.append(['%s' % row[0]])
+            populated = True
+        self.combobox_standings.set_model(model)
+        self.combobox_standings.set_active(self.combobox_standings_active)
+        season = self.combobox_standings.get_active_text()
+
         column_types = [str, int, int, float]
-        query = 'SELECT region || " "  || name, won, lost, 100*won/(won + lost) FROM team_attributes ORDER BY won/(won + lost) DESC'
-        common.treeview_update(self.treeview_standings, column_types, query)
+        query = 'SELECT region || " "  || name, won, lost, 100*won/(won + lost) FROM team_attributes WHERE season = ? ORDER BY won/(won + lost) DESC'
+        common.treeview_update(self.treeview_standings, column_types, query, (season,))
         self.updated['standings'] = True
 
     def build_player_ratings(self):
@@ -225,8 +253,8 @@ class main_window:
 
     def update_player_stats(self):
         column_types = [int, int, str, str, int, int, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float]
-        query = 'SELECT player_attributes.player_id, player_attributes.team_id, player_attributes.name, (SELECT abbreviation FROM team_attributes WHERE team_id = player_attributes.team_id), COUNT(*), SUM(player_stats.starter), AVG(player_stats.minutes), AVG(player_stats.field_goals_made), AVG(player_stats.field_goals_attempted), AVG(100*player_stats.field_goals_made/player_stats.field_goals_attempted), AVG(player_stats.three_pointers_made), AVG(player_stats.three_pointers_attempted), AVG(100*player_stats.three_pointers_made/player_stats.three_pointers_attempted), AVG(player_stats.free_throws_made), AVG(player_stats.free_throws_attempted), AVG(100*player_stats.free_throws_made/player_stats.free_throws_attempted), AVG(player_stats.offensive_rebounds), AVG(player_stats.defensive_rebounds), AVG(player_stats.offensive_rebounds + player_stats.defensive_rebounds), AVG(player_stats.assists), AVG(player_stats.turnovers), AVG(player_stats.steals), AVG(player_stats.blocks), AVG(player_stats.personal_fouls), AVG(player_stats.points) FROM player_attributes, player_stats WHERE player_attributes.player_id = player_stats.player_id GROUP BY player_attributes.player_id'
-        common.treeview_update(self.treeview_player_stats, column_types, query)
+        query = 'SELECT player_attributes.player_id, player_attributes.team_id, player_attributes.name, (SELECT abbreviation FROM team_attributes WHERE team_id = player_attributes.team_id), COUNT(*), SUM(player_stats.starter), AVG(player_stats.minutes), AVG(player_stats.field_goals_made), AVG(player_stats.field_goals_attempted), AVG(100*player_stats.field_goals_made/player_stats.field_goals_attempted), AVG(player_stats.three_pointers_made), AVG(player_stats.three_pointers_attempted), AVG(100*player_stats.three_pointers_made/player_stats.three_pointers_attempted), AVG(player_stats.free_throws_made), AVG(player_stats.free_throws_attempted), AVG(100*player_stats.free_throws_made/player_stats.free_throws_attempted), AVG(player_stats.offensive_rebounds), AVG(player_stats.defensive_rebounds), AVG(player_stats.offensive_rebounds + player_stats.defensive_rebounds), AVG(player_stats.assists), AVG(player_stats.turnovers), AVG(player_stats.steals), AVG(player_stats.blocks), AVG(player_stats.personal_fouls), AVG(player_stats.points) FROM player_attributes, player_stats WHERE player_attributes.player_id = player_stats.player_id AND player_stats.season = ? GROUP BY player_attributes.player_id'
+        common.treeview_update(self.treeview_player_stats, column_types, query, (common.SEASON,))
         self.updated['player_stats'] = True
 
     def build_team_stats(self):
@@ -239,8 +267,8 @@ class main_window:
 
     def update_team_stats(self):
         column_types = [str, int, int, int, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float]
-        query = 'SELECT abbreviation, COUNT(*), SUM(team_stats.won), COUNT(*)-SUM(team_stats.won), AVG(team_stats.field_goals_made), AVG(team_stats.field_goals_attempted), AVG(100*team_stats.field_goals_made/team_stats.field_goals_attempted), AVG(team_stats.three_pointers_made), AVG(team_stats.three_pointers_attempted), AVG(100*team_stats.three_pointers_made/team_stats.three_pointers_attempted), AVG(team_stats.free_throws_made), AVG(team_stats.free_throws_attempted), AVG(100*team_stats.free_throws_made/team_stats.free_throws_attempted), AVG(team_stats.offensive_rebounds), AVG(team_stats.defensive_rebounds), AVG(team_stats.offensive_rebounds + team_stats.defensive_rebounds), AVG(team_stats.assists), AVG(team_stats.turnovers), AVG(team_stats.steals), AVG(team_stats.blocks), AVG(team_stats.personal_fouls), AVG(team_stats.points), AVG(team_stats.opponent_points) FROM team_attributes, team_stats WHERE team_attributes.team_id = team_stats.team_id GROUP BY team_stats.team_id'
-        common.treeview_update(self.treeview_team_stats, column_types, query)
+        query = 'SELECT abbreviation, COUNT(*), SUM(team_stats.won), COUNT(*)-SUM(team_stats.won), AVG(team_stats.field_goals_made), AVG(team_stats.field_goals_attempted), AVG(100*team_stats.field_goals_made/team_stats.field_goals_attempted), AVG(team_stats.three_pointers_made), AVG(team_stats.three_pointers_attempted), AVG(100*team_stats.three_pointers_made/team_stats.three_pointers_attempted), AVG(team_stats.free_throws_made), AVG(team_stats.free_throws_attempted), AVG(100*team_stats.free_throws_made/team_stats.free_throws_attempted), AVG(team_stats.offensive_rebounds), AVG(team_stats.defensive_rebounds), AVG(team_stats.offensive_rebounds + team_stats.defensive_rebounds), AVG(team_stats.assists), AVG(team_stats.turnovers), AVG(team_stats.steals), AVG(team_stats.blocks), AVG(team_stats.personal_fouls), AVG(team_stats.points), AVG(team_stats.opponent_points) FROM team_attributes, team_stats WHERE team_attributes.team_id = team_stats.team_id AND team_stats.season = ? GROUP BY team_stats.team_id'
+        common.treeview_update(self.treeview_team_stats, column_types, query, (common.SEASON,))
         self.updated['team_stats'] = True
 
     def build_roster(self):
@@ -307,7 +335,6 @@ class main_window:
         '''
         Starts a new game.  Call this only after checking for saves, etc.
         '''
-        print team_id
         shutil.copyfile('database.sqlite', common.DB_TEMP_FILENAME)
         common.DB_FILENAME = common.DB_TEMP_FILENAME
         self.connect(team_id)
@@ -326,10 +353,8 @@ class main_window:
         common.DB_CON = sqlite3.connect(common.DB_TEMP_FILENAME)
         common.DB_CON.isolation_level = 'IMMEDIATE'
         if team_id >= 0:
-            print 'NEW GAME'
             common.DB_CON.execute('UPDATE game_attributes SET team_id = ?', (team_id,))
         common.PLAYER_TEAM_ID, common.SEASON = common.DB_CON.execute('SELECT team_id, season FROM game_attributes').fetchone()
-        print common.PLAYER_TEAM_ID, common.SEASON
         self.update_all_pages()
         self.unsaved_changes = False
 
@@ -396,42 +421,55 @@ class main_window:
                 if t1 != t2:
                     break
             game.play(common.TEAMS[t1], common.TEAMS[t2])
-            game.box_score()
+            game.write_stats()
             self.statusbar.pop(self.statusbar_context_id)
-        self.update_all_pages()
-        self.unsaved_changes = True
+
+        # Make sure we are looking at this year's standings after playing some games
+        self.combobox_standings_active = 0
 
         # Check to see if the season is over
         row = common.DB_CON.execute('SELECT COUNT(*)/2 FROM team_stats WHERE season = ?', (common.SEASON,)).fetchone()
         games_played = row[0]
         games_in_season = 82*len(common.TEAMS)/2
         if games_played == games_in_season:
-            print "SEASON OVER!"
+            # DISPLAY SEASON AWARDS DIALOG HERE
+            common.DB_CON.execute('UPDATE game_attributes SET season = season + 1')
+            common.SEASON += 1
+            #common.DB_CON.execute('UPDATE team_attributes SET won = 0, lost = 0') # Reset won/lost cache
+            # Create new rows in team_attributes
+            for row in common.DB_CON.execute('SELECT team_id, region, name, abbreviation FROM team_attributes WHERE season = ?', (common.SEASON-1,)):
+                common.DB_CON.execute('INSERT INTO team_attributes (team_id, region, name, abbreviation, season) VALUES (?, ?, ?, ?, ?)', (row[0], row[1], row[2], row[3], common.SEASON))
 
-    def box_score(self):
-        # Record who the starters are
-        format = '%-23s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s\n'
-        box = ''
-        for t in range(2):
-            team_name_long = self.team[t].region + ' ' + self.team[t].name
-            dashes = ''
-            for i in range(len(team_name_long)):
-                dashes += '-'
-            box += team_name_long + '\n' + dashes + '\n'
-            box += format % ('Name', 'Pos', 'Min', 'FG', '3Pt', 'FT', 'Off', 'Reb', 'Ast', 'TO', 'Stl', 'Blk', 'PF', 'Pts')
-            for p in range(self.team[t].num_players):
-                rebounds = self.team[t].player[p].stat['offensive_rebounds'] + self.team[t].player[p].stat['defensive_rebounds']
-                box += format % (self.team[t].player[p].attribute['name'], self.team[t].player[p].attribute['position'], int(round(self.team[t].player[p].stat['minutes'])), '%s-%s' % (self.team[t].player[p].stat['field_goals_made'], self.team[t].player[p].stat['field_goals_attempted']), '%s-%s' % (self.team[t].player[p].stat['three_pointers_made'], self.team[t].player[p].stat['three_pointers_attempted']), '%s-%s' % (self.team[t].player[p].stat['free_throws_made'], self.team[t].player[p].stat['free_throws_attempted']), self.team[t].player[p].stat['offensive_rebounds'], rebounds, self.team[t].player[p].stat['assists'], self.team[t].player[p].stat['turnovers'], self.team[t].player[p].stat['steals'], self.team[t].player[p].stat['blocks'], self.team[t].player[p].stat['personal_fouls'], self.team[t].player[p].stat['points'])
-                self.write_player_stats(t, p)
-            rebounds = self.team[t].stat['offensive_rebounds'] + self.team[t].stat['defensive_rebounds']
-            box += format % ('Total', '', int(round(self.team[t].stat['minutes'])), '%s-%s' % (self.team[t].stat['field_goals_made'], self.team[t].stat['field_goals_attempted']), '%s-%s' % (self.team[t].stat['three_pointers_made'], self.team[t].stat['three_pointers_attempted']), '%s-%s' % (self.team[t].stat['free_throws_made'], self.team[t].stat['free_throws_attempted']), self.team[t].stat['offensive_rebounds'], rebounds, self.team[t].stat['assists'], self.team[t].stat['turnovers'], self.team[t].stat['steals'], self.team[t].stat['blocks'], self.team[t].stat['personal_fouls'], self.team[t].stat['points'])
-            if (t==0):
-                box += '\n'
-            self.write_team_stats(t)
-        # Save box score to a text file
-        f = open('box_scores/%d.txt' % self.id, 'w')
-        f.write(box)
-        f.close()
+        self.update_all_pages()
+        self.unsaved_changes = True
+
+    def quit(self):
+        proceed = False
+        if self.unsaved_changes:
+            if self.save_nosave_cancel():
+                proceed = True
+        if not self.unsaved_changes or proceed:
+            gtk.main_quit()
+
+    def box_score(self, game_id):
+        return 'BOX SCORE GOES HERE'
+#        # Record who the starters are
+#        format = '%-23s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s\n'
+#        box = ''
+#        for t in range(2):
+#            team_name_long = self.team[t].region + ' ' + self.team[t].name
+#            dashes = ''
+#            for i in range(len(team_name_long)):
+#                dashes += '-'
+#            box += team_name_long + '\n' + dashes + '\n'
+#            box += format % ('Name', 'Pos', 'Min', 'FG', '3Pt', 'FT', 'Off', 'Reb', 'Ast', 'TO', 'Stl', 'Blk', 'PF', 'Pts')
+#            for p in range(self.team[t].num_players):
+#                rebounds = self.team[t].player[p].stat['offensive_rebounds'] + self.team[t].player[p].stat['defensive_rebounds']
+#                box += format % (self.team[t].player[p].attribute['name'], self.team[t].player[p].attribute['position'], int(round(self.team[t].player[p].stat['minutes'])), '%s-%s' % (self.team[t].player[p].stat['field_goals_made'], self.team[t].player[p].stat['field_goals_attempted']), '%s-%s' % (self.team[t].player[p].stat['three_pointers_made'], self.team[t].player[p].stat['three_pointers_attempted']), '%s-%s' % (self.team[t].player[p].stat['free_throws_made'], self.team[t].player[p].stat['free_throws_attempted']), self.team[t].player[p].stat['offensive_rebounds'], rebounds, self.team[t].player[p].stat['assists'], self.team[t].player[p].stat['turnovers'], self.team[t].player[p].stat['steals'], self.team[t].player[p].stat['blocks'], self.team[t].player[p].stat['personal_fouls'], self.team[t].player[p].stat['points'])
+#            rebounds = self.team[t].stat['offensive_rebounds'] + self.team[t].stat['defensive_rebounds']
+#            box += format % ('Total', '', int(round(self.team[t].stat['minutes'])), '%s-%s' % (self.team[t].stat['field_goals_made'], self.team[t].stat['field_goals_attempted']), '%s-%s' % (self.team[t].stat['three_pointers_made'], self.team[t].stat['three_pointers_attempted']), '%s-%s' % (self.team[t].stat['free_throws_made'], self.team[t].stat['free_throws_attempted']), self.team[t].stat['offensive_rebounds'], rebounds, self.team[t].stat['assists'], self.team[t].stat['turnovers'], self.team[t].stat['steals'], self.team[t].stat['blocks'], self.team[t].stat['personal_fouls'], self.team[t].stat['points'])
+#            if (t==0):
+#                box += '\n'
 
     def __init__(self):
         self.builder = gtk.Builder()
@@ -442,6 +480,7 @@ class main_window:
         self.statusbar = self.builder.get_object('statusbar')
         self.statusbar_context_id = self.statusbar.get_context_id('Main Window Statusbar')
         self.treeview_standings = self.builder.get_object('treeview_standings')
+        self.combobox_standings = self.builder.get_object('combobox_standings')
         self.treeview_player_ratings = self.builder.get_object('treeview_player_ratings')
         self.treeview_player_stats = self.builder.get_object('treeview_player_stats')
         self.treeview_team_stats = self.builder.get_object('treeview_team_stats')
@@ -459,10 +498,11 @@ class main_window:
         # Set to true when a change is mad
         self.unsaved_changes = False
 
-        self.new_game(3)
+        self.combobox_standings_active = 0
 
-        self.build_standings()
-        self.update_standings()
+        self.build_standings() # Updated in new_game
+
+        self.new_game(3)
 
         self.builder.connect_signals(self)
 

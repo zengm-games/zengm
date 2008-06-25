@@ -2,7 +2,7 @@ import gtk
 import sqlite3
 import shutil
 
-TEAMS = [0, 1, 3, 21]
+TEAMS = [0, 1, 2, 3, 21]
 
 GTKBUILDER_PATH = 'basketball_gm.xml'
 

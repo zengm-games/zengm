@@ -2,7 +2,7 @@ BEGIN TRANSACTION;
 CREATE TABLE game_attributes (
 team_id INTEGER,
 season INTEGER);
-INSERT INTO "game_attributes" VALUES(3, 2007);
+INSERT INTO "game_attributes" VALUES(3, 2008);
 CREATE TABLE player_attributes (
 player_id INTEGER PRIMARY KEY,
 name TEXT,
@@ -44,7 +44,6 @@ INSERT INTO "player_attributes" VALUES(24,'Marvin Williams',0,'GF',81,230,'1986-
 INSERT INTO "player_attributes" VALUES(25,'Josh Childress',0,'GF',80,210,'1983-06-20','Harbor City, California','Stanford',2004,1,6,0);
 INSERT INTO "player_attributes" VALUES(26,'Acie Law',0,'G',75,195,'1985-01-25','Dallas, Texas','Texas A&M',2007,1,11,0);
 INSERT INTO "player_attributes" VALUES(27,'Zaza Pachulia',0,'FC',83,280,'1984-02-10','Tbilisi, USSR','None',2003,2,13,20);
---INSERT INTO "player_attributes" VALUES(,'',,'',,,'','','',,,,);
 INSERT INTO "player_attributes" VALUES(28,'Ray Allen',1,'SG',77,205,'1975-07-20','Castle AFB, Merced, California','Connecticut',1996,1,5,16);
 INSERT INTO "player_attributes" VALUES(29,'Kevin Garnett',1,'F',83,253,'1976-05-19','Mauldin, South Carolina','None',1995,1,5,16);
 INSERT INTO "player_attributes" VALUES(30,'Kendrick Perkins',1,'C',82,280,'1984-10-10','Nederland, Texas','None',2003,1,27,13);
@@ -53,6 +52,14 @@ INSERT INTO "player_attributes" VALUES(32,'Rajon Rondo',1,'G',73,171,'1986-02-22
 INSERT INTO "player_attributes" VALUES(33,'Eddie House',1,'SG',73,175,'1978-05-14','Berkeley, California','Arizona State',2000,2,8,14);
 INSERT INTO "player_attributes" VALUES(34,'James Posey',1,'GF',80,217,'1977-01-13','Cleveland, Ohio','Xavier',1999,1,18,6);
 INSERT INTO "player_attributes" VALUES(35,'Leon Powe',1,'F',80,240,'1984-01-22','Oakland, California','California',2006,2,19,6);
+INSERT INTO "player_attributes" VALUES(36,'Jason Richardson',2,'GF',78,225,'1981-01-20','Saginaw, Michigan','Michigan State',2001,1,5,8);
+INSERT INTO "player_attributes" VALUES(37,'Gerald Wallace',2,'F',79,215,'1982-07-23','Sylacauga, Alabama','Alabama',2001,1,25,24);
+INSERT INTO "player_attributes" VALUES(38,'Raymond Felton',2,'G',73,198,'1984-06-26','Marion, South Carolina','North Carolina',2005,1,5,2);
+INSERT INTO "player_attributes" VALUES(39,'Emeka Okafor',2,'FC',82,252,'1982-09-28','Houston, Texas','Connecticut',2004,1,2,2);
+INSERT INTO "player_attributes" VALUES(40,'Nazr Mohammed',2,'C',82,250,'1977-09-05','Chicago, Illinois','Kentucky',1998,1,29,28);
+INSERT INTO "player_attributes" VALUES(41,'Matt Carroll',2,'GF',78,212,'1980-08-28','Pittsburgh, Pennsylvania','Notre Dame',0,0,0,0);
+INSERT INTO "player_attributes" VALUES(42,'Jared Dudley',2,'F',79,225,'1985-07-10','San Diego, California','Boston College',2007,1,22,2);
+--INSERT INTO "player_attributes" VALUES(,'',,'',,,'','','',,,,);
 
 CREATE TABLE player_ratings (
 player_id INTEGER PRIMARY KEY,
@@ -108,6 +115,13 @@ INSERT INTO "player_ratings" VALUES(32,5,30,10,30,100,80,50,30,70,40,40,20,40,10
 INSERT INTO "player_ratings" VALUES(33,6,25,10,20,80,50,50,20,30,90,80,90,20,30,50,40,30);
 INSERT INTO "player_ratings" VALUES(34,7,25,70,80,40,50,50,50,50,60,60,70,30,70,40,30,40);
 INSERT INTO "player_ratings" VALUES(35,8,25,70,80,50,50,50,70,80,50,60,0,70,60,20,10,100);
+INSERT INTO "player_ratings" VALUES(36,1,40,60,60,70,90,50,70,90,50,80,70,60,40,60,40,40);
+INSERT INTO "player_ratings" VALUES(37,2,40,70,60,60,90,50,80,90,40,40,40,90,100,50,40,60);
+INSERT INTO "player_ratings" VALUES(38,3,40,20,30,100,70,50,10,60,60,50,30,20,70,80,80,50);
+INSERT INTO "player_ratings" VALUES(39,4,35,90,90,10,20,50,80,80,30,40,0,90,60,30,10,100);
+INSERT INTO "player_ratings" VALUES(40,5,25,90,70,0,10,50,70,80,30,30,0,40,30,20,10,80);
+INSERT INTO "player_ratings" VALUES(41,6,30,50,30,40,20,50,20,30,80,80,100,10,30,60,10,20);
+INSERT INTO "player_ratings" VALUES(42,7,30,60,70,40,40,50,80,60,50,80,10,0,40,50,30,40);
 
 CREATE TABLE player_stats (
 player_id INTEGER,
@@ -130,42 +144,44 @@ blocks INTEGER,
 personal_fouls INTEGER,
 points INTEGER);
 CREATE TABLE team_attributes (
-team_id INTEGER PRIMARY KEY,
+ind INTEGER PRIMARY KEY,
+team_id INTEGER,
 region TEXT,
 name TEXT,
 abbreviation TEXT,
+season INTEGER,
 won REAL DEFAULT 0,
 lost REAL DEFAULT 0);
-INSERT INTO "team_attributes" VALUES(0,'Atlanta','Hawks','ATL',0.0,0.0);
-INSERT INTO "team_attributes" VALUES(1,'Boston','Celtics','BOS',0.0,0.0);
-INSERT INTO "team_attributes" VALUES(2,'Charlotte','Bobcats','CHA',0.0,0.0);
-INSERT INTO "team_attributes" VALUES(3,'Chicago','Bulls','CHI',0.0,0.0);
-INSERT INTO "team_attributes" VALUES(4,'Cleveland','Cavaliers','CLE',0.0,0.0);
-INSERT INTO "team_attributes" VALUES(5,'Dallas','Mavericks','DAL',0.0,0.0);
-INSERT INTO "team_attributes" VALUES(6,'Denver','Nuggets','DEN',0.0,0.0);
-INSERT INTO "team_attributes" VALUES(7,'Detroit','Pisonts','DET',0.0,0.0);
-INSERT INTO "team_attributes" VALUES(8,'Golden State','Warriors','GSW',0.0,0.0);
-INSERT INTO "team_attributes" VALUES(9,'Houston','Rockets','HOU',0.0,0.0);
-INSERT INTO "team_attributes" VALUES(10,'Indiana','Pacers','IND',0.0,0.0);
-INSERT INTO "team_attributes" VALUES(11,'Los Angeles','Clippers','LAC',0.0,0.0);
-INSERT INTO "team_attributes" VALUES(12,'Los Angeles','Lakers','LAL',0.0,0.0);
-INSERT INTO "team_attributes" VALUES(13,'Memphis','Grizzlies','MEM',0.0,0.0);
-INSERT INTO "team_attributes" VALUES(14,'Miami','Heat','MIA',0.0,0.0);
-INSERT INTO "team_attributes" VALUES(15,'Milwaukee','Bucks','MIL',0.0,0.0);
-INSERT INTO "team_attributes" VALUES(16,'Minnesota','Timberwolves','MIN',0.0,0.0);
-INSERT INTO "team_attributes" VALUES(17,'New Jersey','Nets','NJN',0.0,0.0);
-INSERT INTO "team_attributes" VALUES(18,'New Orleans','Hornets','NOR',0.0,0.0);
-INSERT INTO "team_attributes" VALUES(19,'New York','Knicks','NYK',0.0,0.0);
-INSERT INTO "team_attributes" VALUES(20,'Orlando','Magic','ORL',0.0,0.0);
-INSERT INTO "team_attributes" VALUES(21,'Philadelphia','76ers','PHI',0.0,0.0);
-INSERT INTO "team_attributes" VALUES(22,'Phoenix','Suns','PHO',0.0,0.0);
-INSERT INTO "team_attributes" VALUES(23,'Portland','Trail Blazers','POR',0.0,0.0);
-INSERT INTO "team_attributes" VALUES(24,'Sacramento','Kings','SAC',0.0,0.0);
-INSERT INTO "team_attributes" VALUES(25,'San Antonio','Spurs','SAS',0.0,0.0);
-INSERT INTO "team_attributes" VALUES(26,'Seattle','SuperSonics','SEA',0.0,0.0);
-INSERT INTO "team_attributes" VALUES(27,'Toronto','Raptors','TOR',0.0,0.0);
-INSERT INTO "team_attributes" VALUES(28,'Utah','Jazz','UTA',0.0,0.0);
-INSERT INTO "team_attributes" VALUES(29,'Washington','Wizards','WAS',0.0,0.0);
+INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(0,'Atlanta','Hawks','ATL',2008,0.0,0.0);
+INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(1,'Boston','Celtics','BOS',2008,0.0,0.0);
+INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(2,'Charlotte','Bobcats','CHA',2008,0.0,0.0);
+INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(3,'Chicago','Bulls','CHI',2008,0.0,0.0);
+INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(4,'Cleveland','Cavaliers','CLE',2008,0.0,0.0);
+INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(5,'Dallas','Mavericks','DAL',2008,0.0,0.0);
+INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(6,'Denver','Nuggets','DEN',2008,0.0,0.0);
+INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(7,'Detroit','Pisonts','DET',2008,0.0,0.0);
+INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(8,'Golden State','Warriors','GSW',2008,0.0,0.0);
+INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(9,'Houston','Rockets','HOU',2008,0.0,0.0);
+INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(10,'Indiana','Pacers','IND',2008,0.0,0.0);
+INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(11,'Los Angeles','Clippers','LAC',2008,0.0,0.0);
+INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(12,'Los Angeles','Lakers','LAL',2008,0.0,0.0);
+INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(13,'Memphis','Grizzlies','MEM',2008,0.0,0.0);
+INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(14,'Miami','Heat','MIA',2008,0.0,0.0);
+INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(15,'Milwaukee','Bucks','MIL',2008,0.0,0.0);
+INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(16,'Minnesota','Timberwolves','MIN',2008,0.0,0.0);
+INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(17,'New Jersey','Nets','NJN',2008,0.0,0.0);
+INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(18,'New Orleans','Hornets','NOR',2008,0.0,0.0);
+INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(19,'New York','Knicks','NYK',2008,0.0,0.0);
+INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(20,'Orlando','Magic','ORL',2008,0.0,0.0);
+INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(21,'Philadelphia','76ers','PHI',2008,0.0,0.0);
+INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(22,'Phoenix','Suns','PHO',2008,0.0,0.0);
+INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(23,'Portland','Trail Blazers','POR',2008,0.0,0.0);
+INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(24,'Sacramento','Kings','SAC',2008,0.0,0.0);
+INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(25,'San Antonio','Spurs','SAS',2008,0.0,0.0);
+INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(26,'Seattle','SuperSonics','SEA',2008,0.0,0.0);
+INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(27,'Toronto','Raptors','TOR',2008,0.0,0.0);
+INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(28,'Utah','Jazz','UTA',2008,0.0,0.0);
+INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(29,'Washington','Wizards','WAS',2008,0.0,0.0);
 CREATE TABLE team_stats (
 team_id INTEGER,
 opponent_team_id INTEGER,

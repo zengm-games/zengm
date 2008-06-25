@@ -184,7 +184,7 @@ class Game:
             pick = 4
         return pick
 
-    def box_score(self):
+    def write_stats(self):
         # Record who the starters are
         for t in range(2):
             query = 'SELECT player_attributes.player_id FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = ? AND player_ratings.roster_position <= 5'
@@ -193,28 +193,11 @@ class Game:
                     if self.team[t].player[p].id == row[0]:
                         self.team[t].player[p].record_stat('starter')
 
-        format = '%-23s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s\n'
-        box = ''
+        # Player stats and team stats
         for t in range(2):
-            team_name_long = self.team[t].region + ' ' + self.team[t].name
-            dashes = ''
-            for i in range(len(team_name_long)):
-                dashes += '-'
-            box += team_name_long + '\n' + dashes + '\n'
-            box += format % ('Name', 'Pos', 'Min', 'FG', '3Pt', 'FT', 'Off', 'Reb', 'Ast', 'TO', 'Stl', 'Blk', 'PF', 'Pts')
-            for p in range(self.team[t].num_players):
-                rebounds = self.team[t].player[p].stat['offensive_rebounds'] + self.team[t].player[p].stat['defensive_rebounds']
-                box += format % (self.team[t].player[p].attribute['name'], self.team[t].player[p].attribute['position'], int(round(self.team[t].player[p].stat['minutes'])), '%s-%s' % (self.team[t].player[p].stat['field_goals_made'], self.team[t].player[p].stat['field_goals_attempted']), '%s-%s' % (self.team[t].player[p].stat['three_pointers_made'], self.team[t].player[p].stat['three_pointers_attempted']), '%s-%s' % (self.team[t].player[p].stat['free_throws_made'], self.team[t].player[p].stat['free_throws_attempted']), self.team[t].player[p].stat['offensive_rebounds'], rebounds, self.team[t].player[p].stat['assists'], self.team[t].player[p].stat['turnovers'], self.team[t].player[p].stat['steals'], self.team[t].player[p].stat['blocks'], self.team[t].player[p].stat['personal_fouls'], self.team[t].player[p].stat['points'])
-                self.write_player_stats(t, p)
-            rebounds = self.team[t].stat['offensive_rebounds'] + self.team[t].stat['defensive_rebounds']
-            box += format % ('Total', '', int(round(self.team[t].stat['minutes'])), '%s-%s' % (self.team[t].stat['field_goals_made'], self.team[t].stat['field_goals_attempted']), '%s-%s' % (self.team[t].stat['three_pointers_made'], self.team[t].stat['three_pointers_attempted']), '%s-%s' % (self.team[t].stat['free_throws_made'], self.team[t].stat['free_throws_attempted']), self.team[t].stat['offensive_rebounds'], rebounds, self.team[t].stat['assists'], self.team[t].stat['turnovers'], self.team[t].stat['steals'], self.team[t].stat['blocks'], self.team[t].stat['personal_fouls'], self.team[t].stat['points'])
-            if (t==0):
-                box += '\n'
             self.write_team_stats(t)
-        # Save box score to a text file
-        f = open('box_scores/%d.txt' % self.id, 'w')
-        f.write(box)
-        f.close()
+            for p in range(self.team[t].num_players):
+                self.write_player_stats(t, p)
 
     def write_player_stats(self, t, p):
         query = 'INSERT INTO player_stats \
@@ -230,9 +213,9 @@ class Game:
                  VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
         common.DB_CON.execute(query, (self.team[t].id, self.team[t2].id, self.id, self.season, won, int(round(self.team[t].stat['minutes'])), self.team[t].stat['field_goals_made'], self.team[t].stat['field_goals_attempted'], self.team[t].stat['three_pointers_made'], self.team[t].stat['three_pointers_attempted'], self.team[t].stat['free_throws_made'], self.team[t].stat['free_throws_attempted'], self.team[t].stat['offensive_rebounds'], self.team[t].stat['defensive_rebounds'], self.team[t].stat['assists'], self.team[t].stat['turnovers'], self.team[t].stat['steals'], self.team[t].stat['blocks'], self.team[t].stat['personal_fouls'], self.team[t].stat['points'], self.team[t2].stat['points']))
         if won:
-            common.DB_CON.execute('UPDATE team_attributes SET won = won + 1 WHERE team_id = ?', (self.team[t].id,))
+            common.DB_CON.execute('UPDATE team_attributes SET won = won + 1 WHERE team_id = ? AND season = ?', (self.team[t].id,self.season))
         else:
-            common.DB_CON.execute('UPDATE team_attributes SET lost = lost + 1 WHERE team_id = ?', (self.team[t].id,))
+            common.DB_CON.execute('UPDATE team_attributes SET lost = lost + 1 WHERE team_id = ? AND season = ?', (self.team[t].id,self.season))
 
 
 class Team:

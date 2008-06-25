@@ -4,6 +4,7 @@ import sys
 import gtk
 import pango
 import mx.DateTime
+import os
 import random
 import sqlite3
 import shutil
@@ -449,6 +450,8 @@ class main_window:
             if self.save_nosave_cancel():
                 proceed = True
         if not self.unsaved_changes or proceed:
+            common.DB_CON.close()
+            os.remove('temp.sqlite')
             gtk.main_quit()
 
     def box_score(self, game_id):

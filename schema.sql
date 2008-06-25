@@ -59,7 +59,17 @@ INSERT INTO "player_attributes" VALUES(39,'Emeka Okafor',2,'FC',82,252,'1982-09-
 INSERT INTO "player_attributes" VALUES(40,'Nazr Mohammed',2,'C',82,250,'1977-09-05','Chicago, Illinois','Kentucky',1998,1,29,28);
 INSERT INTO "player_attributes" VALUES(41,'Matt Carroll',2,'GF',78,212,'1980-08-28','Pittsburgh, Pennsylvania','Notre Dame',0,0,0,0);
 INSERT INTO "player_attributes" VALUES(42,'Jared Dudley',2,'F',79,225,'1985-07-10','San Diego, California','Boston College',2007,1,22,2);
+INSERT INTO "player_attributes" VALUES(43,'LeBron James',4,'SF',80,240,'1984-12-30','Akron, Ohio','None',2003,1,1,4);
+INSERT INTO "player_attributes" VALUES(44,'Zydrunas Ilgauskas',4,'C',87,260,'1975-06-05','Kaunas, USSR','None',1996,1,20,4);
+INSERT INTO "player_attributes" VALUES(45,'Daniel Gibson',4,'G',74,190,'1986-02-27','Houston, Texas','Texas',2006,2,12,4);
+INSERT INTO "player_attributes" VALUES(46,'Delonte West',4,'G',76,180,'1983-07-26','Washtington, District of Columbia','St. Joseph''s',2004,1,24,1);
+INSERT INTO "player_attributes" VALUES(47,'Ben Wallace',4,'FC',81,240,'1974-09-10','White Hall, Alabama','Virginia Union',0,0,0,0);
+INSERT INTO "player_attributes" VALUES(48,'Wally Szczerbiak',4,'GF',79,244,'1977-03-05','Madrid, Spain','Miami (OH)',1999,1,6,16);
+INSERT INTO "player_attributes" VALUES(49,'Joe Smith',4,'PF',82,225,'1975-07-26','Norfolk, Virginia','Maryland',1995,1,1,8);
+INSERT INTO "player_attributes" VALUES(50,'Sasha Pavlovic',4,'GF',79,210,'1983-11-15','Bar, Yugoslavia','None',2003,1,19,28);
+INSERT INTO "player_attributes" VALUES(51,'Anderson Varejao',4,'FC',82,240,'1982-09-28','Santa Teresa, Brazil','None',2004,2,1,20);
 --INSERT INTO "player_attributes" VALUES(,'',,'',,,'','','',,,,);
+
 
 CREATE TABLE player_ratings (
 player_id INTEGER PRIMARY KEY,
@@ -122,7 +132,15 @@ INSERT INTO "player_ratings" VALUES(39,4,35,90,90,10,20,50,80,80,30,40,0,90,60,3
 INSERT INTO "player_ratings" VALUES(40,5,25,90,70,0,10,50,70,80,30,30,0,40,30,20,10,80);
 INSERT INTO "player_ratings" VALUES(41,6,30,50,30,40,20,50,20,30,80,80,100,10,30,60,10,20);
 INSERT INTO "player_ratings" VALUES(42,7,30,60,70,40,40,50,80,60,50,80,10,0,40,50,30,40);
-
+INSERT INTO "player_ratings" VALUES(43,1,40,70,90,90,100,50,70,100,45,80,50,70,70,90,100,100);
+INSERT INTO "player_ratings" VALUES(44,2,30,100,90,10,0,50,100,90,75,80,0,90,50,60,30,100);
+INSERT INTO "player_ratings" VALUES(45,3,30,20,10,90,80,50,20,50,75,90,100,0,70,80,60,60);
+INSERT INTO "player_ratings" VALUES(46,4,30,30,20,80,70,50,20,60,60,70,70,70,50,80,50,40);
+INSERT INTO "player_ratings" VALUES(47,5,25,70,90,30,30,50,10,20,0,10,0,100,80,30,60,100);
+INSERT INTO "player_ratings" VALUES(48,6,20,60,40,30,30,50,30,40,90,90,90,20,20,60,30,30);
+INSERT INTO "player_ratings" VALUES(49,7,20,85,60,30,20,50,70,70,70,80,25,30,30,30,20,50);
+INSERT INTO "player_ratings" VALUES(50,8,20,60,50,50,60,50,30,70,50,60,70,10,30,60,30,30);
+INSERT INTO "player_ratings" VALUES(51,9,25,90,80,40,40,50,60,60,30,50,20,70,70,60,30,100);
 CREATE TABLE player_stats (
 player_id INTEGER,
 game_id INTEGER,

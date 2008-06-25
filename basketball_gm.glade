@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Tue Jun 24 20:23:20 2008 -->
+<!--Generated with glade3 3.4.5 on Tue Jun 24 21:51:39 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="main_window">
     <property name="width_request">800</property>
@@ -233,7 +233,7 @@
                       <widget class="GtkComboBox" id="combobox_standings">
                         <property name="visible">True</property>
                         <property name="focus_on_click">False</property>
-                        <property name="items" translatable="yes">2008</property>
+                        <property name="items" translatable="yes"></property>
                         <signal name="changed" handler="on_combobox_standings_changed"/>
                       </widget>
                       <packing>

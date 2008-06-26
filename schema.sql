@@ -83,9 +83,15 @@ INSERT INTO "player_attributes" VALUES(63,'Marcus Camby',6,'C',83,235,'1974-03-2
 INSERT INTO "player_attributes" VALUES(64,'Linas Kleiza',6,'GF',80,245,'1985-01-03','Kaunas, USSR','Missouri',2005,1,27,23);
 INSERT INTO "player_attributes" VALUES(65,'Eduardo Najera',6,'F',80,235,'1976-07-11','Meoqui, Chihuahu, Mexico','Oklahoma',2000,2,9,9);
 INSERT INTO "player_attributes" VALUES(66,'Nene Hilario',6,'FC',83,268,'1982-09-13','Sao Carlos, Brazil','None',2002,1,7,19);
+INSERT INTO "player_attributes" VALUES(67,'Richard Hamilton',7,'SG',79,193,'1978-02-14','Coatesville, Pennsylvania','Connecticut',1999,1,7,29);
+INSERT INTO "player_attributes" VALUES(68,'Chauncey Billups',7,'PG',75,202,'1976-09-25','Denver, Colorado','Colorado',1997,1,3,1);
+INSERT INTO "player_attributes" VALUES(69,'Tayshaun Prince',7,'SG',81,215,'1980-02-28','Compton, California','Kentucky',2002,1,23,7);
+    INSERT INTO "player_attributes" VALUES(70,'Rasheed Wallace',7,'FC',83,230,'1974-09-17','Philadelphia, Pennsylvania','North Carolina',1995,1,4,29);
+INSERT INTO "player_attributes" VALUES(71,'Antonio McDyess',7,'PF',81,245,'1974-09-07','Quitman, Mississippi','Alabama',1995,1,2,11);
+INSERT INTO "player_attributes" VALUES(72,'Jason Maxiell',7,'FC',79,260,'1983-02-18','Chicago, Illinois','Cincinnati',2005,1,26,7);
+INSERT INTO "player_attributes" VALUES(73,'Rodney Stuckey',7,'G',77,205,'1986-03-21','Seattle, Washington','Eastern Washington',2007,1,15,7);
+INSERT INTO "player_attributes" VALUES(74,'Jarvis Hayes',7,'SF',80,220,'1981-08-09','Atlanta, Georgia','Georgia',2003,1,10,29);
 --INSERT INTO "player_attributes" VALUES(,'',,'',,,'','','',,,,);
-
-
 CREATE TABLE player_ratings (
 player_id INTEGER PRIMARY KEY,
 roster_position INTEGER,
@@ -163,14 +169,22 @@ INSERT INTO "player_ratings" VALUES(55,4,40,40,40,60,30,50,40,50,70,50,60,80,90,
 INSERT INTO "player_ratings" VALUES(56,5,30,90,90,20,20,50,80,80,35,30,0,80,30,30,20,100);
 INSERT INTO "player_ratings" VALUES(57,6,30,50,30,50,40,50,40,60,90,80,50,20,40,70,50,50);
 INSERT INTO "player_ratings" VALUES(58,7,25,70,80,60,70,50,70,90,60,60,0,40,30,40,20,90);
-INSERT INTO "player_ratings" VALUES(59,1,40,0,30,90,70,50,70,90,70,80,50,20,100,100,80,50)
-INSERT INTO "player_ratings" VALUES(60,2,40,70,70,60,70,50,80,90,70,80,50,30,30,50,50,60)
-INSERT INTO "player_ratings" VALUES(61,3,30,70,90,40,70,50,90,90,40,50,20,60,50,30,30,70)
-INSERT INTO "player_ratings" VALUES(62,4,30,60,60,80,100,50,40,90,60,80,90,0,30,60,10,20)
-INSERT INTO "player_ratings" VALUES(63,5,35,90,70,40,30,50,80,60,50,60,30,100,90,50,50,100)
-INSERT INTO "player_ratings" VALUES(64,6,25,70,70,40,30,50,60,60,60,60,60,10,20,40,30,50)
-INSERT INTO "player_ratings" VALUES(65,7,20,70,80,30,30,50,60,50,50,50,40,60,60,40,20,70)
-INSERT INTO "player_ratings" VALUES(66,8,20,90,90,40,50,50,80,80,40,20,0,80,50,40,20,90)
+INSERT INTO "player_ratings" VALUES(59,1,40,0,30,90,70,50,70,90,70,80,50,20,100,100,80,50);
+INSERT INTO "player_ratings" VALUES(60,2,40,70,70,60,70,50,80,90,70,80,50,30,30,50,50,60);
+INSERT INTO "player_ratings" VALUES(61,3,30,70,90,40,70,50,90,90,40,50,20,60,50,30,30,70);
+INSERT INTO "player_ratings" VALUES(62,4,30,60,60,80,100,50,40,90,60,80,90,0,30,60,10,20);
+INSERT INTO "player_ratings" VALUES(63,5,35,90,70,40,30,50,80,60,50,60,30,100,90,50,50,100);
+INSERT INTO "player_ratings" VALUES(64,6,25,70,70,40,30,50,60,60,60,60,60,10,20,40,30,50);
+INSERT INTO "player_ratings" VALUES(65,7,20,70,80,30,30,50,60,50,50,50,40,60,60,40,20,70);
+INSERT INTO "player_ratings" VALUES(66,8,20,90,90,40,50,50,80,80,40,20,0,80,50,40,20,90);
+INSERT INTO "player_ratings" VALUES(67,1,35,60,40,70,40,50,60,60,80,100,90,10,80,70,40,20);
+INSERT INTO "player_ratings" VALUES(68,2,35,40,60,80,60,50,70,50,100,90,90,30,90,100,90,20);
+INSERT INTO "player_ratings" VALUES(69,3,35,80,50,60,60,50,80,80,60,50,70,80,70,60,40,40);
+INSERT INTO "player_ratings" VALUES(70,4,30,90,70,30,30,50,90,70,60,60,60,90,90,40,30,90);
+INSERT INTO "player_ratings" VALUES(71,5,30,80,90,40,40,50,60,70,40,60,20,50,60,30,10,70);
+INSERT INTO "player_ratings" VALUES(72,6,30,70,90,50,80,50,60,70,30,40,10,90,60,40,10,90);
+INSERT INTO "player_ratings" VALUES(73,7,25,50,40,70,60,50,30,40,70,50,10,20,60,80,70,70);
+INSERT INTO "player_ratings" VALUES(74,8,20,60,60,40,40,50,30,40,70,60,60,10,40,60,10,20);
 CREATE TABLE player_stats (
 player_id INTEGER,
 game_id INTEGER,

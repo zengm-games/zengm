@@ -68,6 +68,13 @@ INSERT INTO "player_attributes" VALUES(48,'Wally Szczerbiak',4,'GF',79,244,'1977
 INSERT INTO "player_attributes" VALUES(49,'Joe Smith',4,'PF',82,225,'1975-07-26','Norfolk, Virginia','Maryland',1995,1,1,8);
 INSERT INTO "player_attributes" VALUES(50,'Sasha Pavlovic',4,'GF',79,210,'1983-11-15','Bar, Yugoslavia','None',2003,1,19,28);
 INSERT INTO "player_attributes" VALUES(51,'Anderson Varejao',4,'FC',82,240,'1982-09-28','Santa Teresa, Brazil','None',2004,2,1,20);
+INSERT INTO "player_attributes" VALUES(52,'Dirk Nowitzki',5,'PF',84,245,'1978-06-19','Wurzburg, West Germany','None',1998,1,9,15);
+INSERT INTO "player_attributes" VALUES(53,'Josh Howard',5,'GF',79,210,'1980-04-28','Winson-Salem, North Carolina','Wake Forest',2003,1,29,5);
+INSERT INTO "player_attributes" VALUES(54,'Jason Terry',5,'G',74,180,'1977-09-15','Seattle, Washington','Arizona',1999,1,10,0);
+INSERT INTO "player_attributes" VALUES(55,'Jason Kidd',5,'PG',76,210,'1973-03-23','San Francisco, California','California',1994,1,2,5);
+INSERT INTO "player_attributes" VALUES(56,'Erick Dampier',5,'C',83,265,'1975-07-14','Jackson, Mississippi','Mississippi State',1996,1,10,10);
+INSERT INTO "player_attributes" VALUES(57,'Jerry Stackhouse',5,'GF',78,218,'1974-11-05','Kinston, North Carolina','North Carolina',1995,1,3,21);
+INSERT INTO "player_attributes" VALUES(58,'Brandon Bass',5,'F',80,240,'1985-04-30','Baton Rouge, Louisiana','LSU',2005,2,3,18);
 --INSERT INTO "player_attributes" VALUES(,'',,'',,,'','','',,,,);
 
 
@@ -141,6 +148,28 @@ INSERT INTO "player_ratings" VALUES(48,6,20,60,40,30,30,50,30,40,90,90,90,20,20,
 INSERT INTO "player_ratings" VALUES(49,7,20,85,60,30,20,50,70,70,70,80,25,30,30,30,20,50);
 INSERT INTO "player_ratings" VALUES(50,8,20,60,50,50,60,50,30,70,50,60,70,10,30,60,30,30);
 INSERT INTO "player_ratings" VALUES(51,9,25,90,80,40,40,50,60,60,30,50,20,70,70,60,30,100);
+height INTEGER,
+strength INTEGER,
+speed INTEGER,
+jumping INTEGER,
+endurance INTEGER,
+shooting_inside INTEGER,
+shooting_layups INTEGER,
+shooting_free_throws INTEGER,
+shooting_two_pointers INTEGER,
+shooting_three_pointers INTEGER,
+blocks INTEGER,
+steals INTEGER,
+dribbling INTEGER,
+passing INTEGER,
+rebounding INTEGER
+INSERT INTO "player_ratings" VALUES(52,1,40,90,70,60,60,50,70,80,90,90,90,50,40,60,50,70);
+INSERT INTO "player_ratings" VALUES(53,2,40,60,60,60,70,50,60,90,70,70,50,30,60,70,30,70);
+INSERT INTO "player_ratings" VALUES(54,3,35,20,20,90,90,50,30,80,80,80,80,30,70,80,60,30);
+INSERT INTO "player_ratings" VALUES(55,4,40,40,40,60,30,50,40,50,70,50,60,80,90,100,100,100);
+INSERT INTO "player_ratings" VALUES(56,5,30,90,90,20,20,50,80,80,35,30,0,80,30,30,20,100);
+INSERT INTO "player_ratings" VALUES(57,6,30,50,30,50,40,50,40,60,90,80,50,20,40,70,50,50);
+INSERT INTO "player_ratings" VALUES(58,7,25,70,80,60,70,50,70,90,60,60,0,40,30,40,20,90);
 CREATE TABLE player_stats (
 player_id INTEGER,
 game_id INTEGER,

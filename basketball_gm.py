@@ -170,6 +170,30 @@ class main_window:
         if self.combobox_standings_active != old:
             self.update_standings()
 
+    def on_combobox_player_stats_season_changed(self, combobox, data=None):
+        old = self.combobox_player_stats_season_active
+        self.combobox_player_stats_season_active = combobox.get_active()
+        if self.combobox_player_stats_season_active != old:
+            self.update_player_stats()
+
+    def on_combobox_team_stats_season_changed(self, combobox, data=None):
+        old = self.combobox_team_stats_season_active
+        self.combobox_team_stats_season_active = combobox.get_active()
+        if self.combobox_team_stats_season_active != old:
+            self.update_team_stats()
+
+    def on_combobox_game_log_season_changed(self, combobox, data=None):
+        old = self.combobox_game_log_season_active
+        self.combobox_game_log_season_active = combobox.get_active()
+        if self.combobox_game_log_season_active != old:
+            self.update_games_list()
+
+    def on_combobox_game_log_team_changed(self, combobox, data=None):
+        old = self.combobox_game_log_team_active
+        self.combobox_game_log_team_active = combobox.get_active()
+        if self.combobox_game_log_team_active != old:
+            self.update_games_list()
+
     def on_treeview_roster_row_deleted(self, treemodel, path, data=None):
         '''
         When players are dragged and dropped in the roster screen, row-inserted
@@ -209,21 +233,7 @@ class main_window:
         self.built['standings'] = True
 
     def update_standings(self):
-        # Season combobox
-        populated = False
-        model = self.combobox_standings.get_model()
-        self.combobox_standings.set_model(None)
-        model.clear()
-        for row in common.DB_CON.execute('SELECT season FROM team_stats GROUP BY season ORDER BY season DESC'):
-            model.append(['%s' % row[0]])
-            populated = True
-        if not populated:
-            row = common.DB_CON.execute('SELECT season FROM game_attributes').fetchone()
-            model.append(['%s' % row[0]])
-            populated = True
-        self.combobox_standings.set_model(model)
-        self.combobox_standings.set_active(self.combobox_standings_active)
-        season = self.combobox_standings.get_active_text()
+        season = self.make_season_combobox(self.combobox_standings, self.combobox_standings_active)
 
         column_types = [str, int, int, float]
         query = 'SELECT region || " "  || name, won, lost, 100*won/(won + lost) FROM team_attributes WHERE season = ? ORDER BY won/(won + lost) DESC'
@@ -253,9 +263,11 @@ class main_window:
         self.built['player_stats'] = True
 
     def update_player_stats(self):
+        season = self.make_season_combobox(self.combobox_player_stats_season, self.combobox_player_stats_season_active)
+
         column_types = [int, int, str, str, int, int, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float]
         query = 'SELECT player_attributes.player_id, player_attributes.team_id, player_attributes.name, (SELECT abbreviation FROM team_attributes WHERE team_id = player_attributes.team_id), COUNT(*), SUM(player_stats.starter), AVG(player_stats.minutes), AVG(player_stats.field_goals_made), AVG(player_stats.field_goals_attempted), AVG(100*player_stats.field_goals_made/player_stats.field_goals_attempted), AVG(player_stats.three_pointers_made), AVG(player_stats.three_pointers_attempted), AVG(100*player_stats.three_pointers_made/player_stats.three_pointers_attempted), AVG(player_stats.free_throws_made), AVG(player_stats.free_throws_attempted), AVG(100*player_stats.free_throws_made/player_stats.free_throws_attempted), AVG(player_stats.offensive_rebounds), AVG(player_stats.defensive_rebounds), AVG(player_stats.offensive_rebounds + player_stats.defensive_rebounds), AVG(player_stats.assists), AVG(player_stats.turnovers), AVG(player_stats.steals), AVG(player_stats.blocks), AVG(player_stats.personal_fouls), AVG(player_stats.points) FROM player_attributes, player_stats WHERE player_attributes.player_id = player_stats.player_id AND player_stats.season = ? GROUP BY player_attributes.player_id'
-        common.treeview_update(self.treeview_player_stats, column_types, query, (common.SEASON,))
+        common.treeview_update(self.treeview_player_stats, column_types, query, (season,))
         self.updated['player_stats'] = True
 
     def build_team_stats(self):
@@ -267,9 +279,11 @@ class main_window:
         self.built['team_stats'] = True
 
     def update_team_stats(self):
+        season = self.make_season_combobox(self.combobox_team_stats_season, self.combobox_team_stats_season_active)
+
         column_types = [str, int, int, int, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float]
-        query = 'SELECT abbreviation, COUNT(*), SUM(team_stats.won), COUNT(*)-SUM(team_stats.won), AVG(team_stats.field_goals_made), AVG(team_stats.field_goals_attempted), AVG(100*team_stats.field_goals_made/team_stats.field_goals_attempted), AVG(team_stats.three_pointers_made), AVG(team_stats.three_pointers_attempted), AVG(100*team_stats.three_pointers_made/team_stats.three_pointers_attempted), AVG(team_stats.free_throws_made), AVG(team_stats.free_throws_attempted), AVG(100*team_stats.free_throws_made/team_stats.free_throws_attempted), AVG(team_stats.offensive_rebounds), AVG(team_stats.defensive_rebounds), AVG(team_stats.offensive_rebounds + team_stats.defensive_rebounds), AVG(team_stats.assists), AVG(team_stats.turnovers), AVG(team_stats.steals), AVG(team_stats.blocks), AVG(team_stats.personal_fouls), AVG(team_stats.points), AVG(team_stats.opponent_points) FROM team_attributes, team_stats WHERE team_attributes.team_id = team_stats.team_id AND team_stats.season = ? GROUP BY team_stats.team_id'
-        common.treeview_update(self.treeview_team_stats, column_types, query, (common.SEASON,))
+        query = 'SELECT abbreviation, COUNT(*), SUM(team_stats.won), COUNT(*)-SUM(team_stats.won), AVG(team_stats.field_goals_made), AVG(team_stats.field_goals_attempted), AVG(100*team_stats.field_goals_made/team_stats.field_goals_attempted), AVG(team_stats.three_pointers_made), AVG(team_stats.three_pointers_attempted), AVG(100*team_stats.three_pointers_made/team_stats.three_pointers_attempted), AVG(team_stats.free_throws_made), AVG(team_stats.free_throws_attempted), AVG(100*team_stats.free_throws_made/team_stats.free_throws_attempted), AVG(team_stats.offensive_rebounds), AVG(team_stats.defensive_rebounds), AVG(team_stats.offensive_rebounds + team_stats.defensive_rebounds), AVG(team_stats.assists), AVG(team_stats.turnovers), AVG(team_stats.steals), AVG(team_stats.blocks), AVG(team_stats.personal_fouls), AVG(team_stats.points), AVG(team_stats.opponent_points) FROM team_attributes, team_stats WHERE team_attributes.team_id = team_stats.team_id AND team_attributes.season = team_stats.season AND team_stats.season = ? GROUP BY team_stats.team_id'
+        common.treeview_update(self.treeview_team_stats, column_types, query, (season,))
         self.updated['team_stats'] = True
 
     def build_roster(self):
@@ -309,9 +323,12 @@ class main_window:
         self.built['games_list'] = True
 
     def update_games_list(self):
+        season = self.make_season_combobox(self.combobox_game_log_season, self.combobox_game_log_season_active)
+        team_id = self.make_team_combobox(self.combobox_game_log_team, self.combobox_game_log_team_active, season)
+
         column_types = [int, str, str, str]
-        query = 'SELECT game_id, (SELECT abbreviation FROM team_attributes WHERE team_id = team_stats.opponent_team_id), (SELECT val FROM enum_w_l WHERE key = team_stats.won), points || "-" || opponent_points FROM team_stats WHERE team_id = ?'
-        query_bindings = (common.PLAYER_TEAM_ID,)
+        query = 'SELECT game_id, (SELECT abbreviation FROM team_attributes WHERE team_id = team_stats.opponent_team_id), (SELECT val FROM enum_w_l WHERE key = team_stats.won), points || "-" || opponent_points FROM team_stats WHERE team_id = ? AND season = ?'
+        query_bindings = (team_id, season)
         common.treeview_update(self.treeview_games_list, column_types, query, query_bindings)
         self.updated['games_list'] = True
 
@@ -425,8 +442,12 @@ class main_window:
             game.write_stats()
             self.statusbar.pop(self.statusbar_context_id)
 
-        # Make sure we are looking at this year's standings after playing some games
+        # Make sure we are looking at this year's standings, stats, and games after playing some games
         self.combobox_standings_active = 0
+        self.combobox_player_stats_season_active = 0
+        self.combobox_team_stats_season_active = 0
+        self.combobox_game_log_season_active = 0
+        self.combobox_game_log_team_active = common.PLAYER_TEAM_ID
 
         # Check to see if the season is over
         row = common.DB_CON.execute('SELECT COUNT(*)/2 FROM team_stats WHERE season = ?', (common.SEASON,)).fetchone()
@@ -443,6 +464,37 @@ class main_window:
 
         self.update_all_pages()
         self.unsaved_changes = True
+
+    def make_season_combobox(self, combobox, active):
+        # Season combobox
+        populated = False
+        model = combobox.get_model()
+        combobox.set_model(None)
+        model.clear()
+        for row in common.DB_CON.execute('SELECT season FROM team_stats GROUP BY season ORDER BY season DESC'):
+            model.append(['%s' % row[0]])
+            populated = True
+        if not populated:
+            row = common.DB_CON.execute('SELECT season FROM game_attributes').fetchone()
+            model.append(['%s' % row[0]])
+            populated = True
+        combobox.set_model(model)
+        combobox.set_active(active)
+        season = combobox.get_active_text()
+        return season
+
+    def make_team_combobox(self, combobox, active, season):
+        # Team combobox
+        model = gtk.ListStore(str, int)
+        renderer = gtk.CellRendererText()
+        combobox.pack_start(renderer, True)
+        for row in common.DB_CON.execute('SELECT abbreviation, team_id FROM team_attributes WHERE season = ? ORDER BY abbreviation ASC', (season,)):
+            model.append(['%s' % row[0], row[1]])
+        combobox.set_model(model)
+        combobox.set_active(active)
+        iter = combobox.get_active_iter()
+        team_id = model.get_value(iter, 1)
+        return team_id
 
     def quit(self):
         proceed = False
@@ -486,10 +538,14 @@ class main_window:
         self.combobox_standings = self.builder.get_object('combobox_standings')
         self.treeview_player_ratings = self.builder.get_object('treeview_player_ratings')
         self.treeview_player_stats = self.builder.get_object('treeview_player_stats')
+        self.combobox_player_stats_season = self.builder.get_object('combobox_player_stats_season')
         self.treeview_team_stats = self.builder.get_object('treeview_team_stats')
+        self.combobox_team_stats_season = self.builder.get_object('combobox_team_stats_season')
         self.treeview_roster = self.builder.get_object('treeview_roster')
         self.treeview_roster_info = self.builder.get_object('treeview_roster_info')
         self.treeview_games_list = self.builder.get_object('treeview_games_list')
+        self.combobox_game_log_season = self.builder.get_object('combobox_game_log_season')
+        self.combobox_game_log_team = self.builder.get_object('combobox_game_log_team')
         self.textview_box_score = self.builder.get_object('textview_box_score')
         self.textview_box_score.modify_font(pango.FontDescription("Monospace 8"))
 
@@ -501,7 +557,12 @@ class main_window:
         # Set to true when a change is mad
         self.unsaved_changes = False
 
+        # Initialize combobox positions
         self.combobox_standings_active = 0
+        self.combobox_player_stats_season_active = 0
+        self.combobox_team_stats_season_active = 0
+        self.combobox_game_log_season_active = 0
+        self.combobox_game_log_team_active = common.PLAYER_TEAM_ID
 
         self.build_standings() # Updated in new_game
 

@@ -148,21 +148,6 @@ INSERT INTO "player_ratings" VALUES(48,6,20,60,40,30,30,50,30,40,90,90,90,20,20,
 INSERT INTO "player_ratings" VALUES(49,7,20,85,60,30,20,50,70,70,70,80,25,30,30,30,20,50);
 INSERT INTO "player_ratings" VALUES(50,8,20,60,50,50,60,50,30,70,50,60,70,10,30,60,30,30);
 INSERT INTO "player_ratings" VALUES(51,9,25,90,80,40,40,50,60,60,30,50,20,70,70,60,30,100);
-height INTEGER,
-strength INTEGER,
-speed INTEGER,
-jumping INTEGER,
-endurance INTEGER,
-shooting_inside INTEGER,
-shooting_layups INTEGER,
-shooting_free_throws INTEGER,
-shooting_two_pointers INTEGER,
-shooting_three_pointers INTEGER,
-blocks INTEGER,
-steals INTEGER,
-dribbling INTEGER,
-passing INTEGER,
-rebounding INTEGER
 INSERT INTO "player_ratings" VALUES(52,1,40,90,70,60,60,50,70,80,90,90,90,50,40,60,50,70);
 INSERT INTO "player_ratings" VALUES(53,2,40,60,60,60,70,50,60,90,70,70,50,30,60,70,30,70);
 INSERT INTO "player_ratings" VALUES(54,3,35,20,20,90,90,50,30,80,80,80,80,30,70,80,60,30);

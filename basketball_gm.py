@@ -3,6 +3,7 @@
 import sys
 import gtk
 import pango
+import bz2
 import mx.DateTime
 import os
 import random
@@ -52,7 +53,7 @@ class main_window:
             # Filters
             filter = gtk.FileFilter()
             filter.set_name('Basketball GM saves')
-            filter.add_pattern('*.sqlite')
+            filter.add_pattern('*.bbgm')
             open_dialog.add_filter(filter)
             filter = gtk.FileFilter()
             filter.set_name('All files')
@@ -83,6 +84,13 @@ class main_window:
         if response == gtk.RESPONSE_OK:
             # commit, close, copy to new location, open
             filename = chooser.get_filename()
+
+            # check file extension
+            x = filename.split('.')
+            ext = x.pop()
+            if ext != 'bbgm':
+                filename += '.bbgm'
+
             self.save_game_as(filename)
             self.open_game(filename)
             returnval = True
@@ -360,7 +368,17 @@ class main_window:
     def open_game(self, filename):
         common.DB_CON.close();
         common.DB_FILENAME = filename
-        shutil.copyfile(common.DB_FILENAME, common.DB_TEMP_FILENAME)
+
+        f = open(common.DB_FILENAME)
+        data_bz2 = f.read()
+        f.close()
+
+        data = bz2.decompress(data_bz2)
+
+        f = open(common.DB_TEMP_FILENAME, 'w')
+        f.write(data)
+        f.close()
+
         self.connect()
 
     def connect(self, team_id = -1):
@@ -380,14 +398,23 @@ class main_window:
         if common.DB_FILENAME == common.DB_TEMP_FILENAME:
             return self.on_menuitem_save_as_activate()
         else:
-            common.DB_CON.commit()
-            shutil.copyfile(common.DB_TEMP_FILENAME, common.DB_FILENAME)
-            self.unsaved_changes = False
+            self.save_game_as(common.DB_FILENAME)
             return True
 
     def save_game_as(self, filename):
         common.DB_CON.commit()
-        shutil.copyfile(common.DB_TEMP_FILENAME, filename)
+
+        f = open(common.DB_TEMP_FILENAME)
+        data = f.read()
+        f.close()
+
+        data_bz2 = bz2.compress(data)
+
+        f = open(filename, 'w')
+        f.write(data_bz2)
+        f.close()
+
+        self.unsaved_changes = False
 
     def save_nosave_cancel(self):
         '''
@@ -554,7 +581,7 @@ class main_window:
         self.built = dict(standings=False, finances=False, player_ratings=False, player_stats=False, team_stats=False, roster=False, games_list=False, playoffs=False, player_window_stats=False, player_window_game_log=False)
         # Set to True if data on this pane is current
         self.updated = dict(standings=False, finances=False, player_ratings=False, player_stats=False, team_stats=False, roster=False, games_list=False, playoffs=False, player_window_stats=False, player_window_game_log=False)
-        # Set to true when a change is mad
+        # Set to true when a change is made
         self.unsaved_changes = False
 
         # Initialize combobox positions

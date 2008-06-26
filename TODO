@@ -10,7 +10,6 @@ playoffs
 
 SOME TIME:
 parallelpython to parallelize game simulation
-save file should be compressed
 improve game simulation code
 can't save game, trade players, reorder roster, etc... while simulation is running!
 use a new thread for game simulation: http://aruiz.typepad.com/siliconisland/2006/04/threads_on_pygt.html

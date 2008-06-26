@@ -75,6 +75,14 @@ INSERT INTO "player_attributes" VALUES(55,'Jason Kidd',5,'PG',76,210,'1973-03-23
 INSERT INTO "player_attributes" VALUES(56,'Erick Dampier',5,'C',83,265,'1975-07-14','Jackson, Mississippi','Mississippi State',1996,1,10,10);
 INSERT INTO "player_attributes" VALUES(57,'Jerry Stackhouse',5,'GF',78,218,'1974-11-05','Kinston, North Carolina','North Carolina',1995,1,3,21);
 INSERT INTO "player_attributes" VALUES(58,'Brandon Bass',5,'F',80,240,'1985-04-30','Baton Rouge, Louisiana','LSU',2005,2,3,18);
+INSERT INTO "player_attributes" VALUES(59,'Allen Iverson',6,'G',72,165,'1975-06-07','Hampton, Virginia','Georgetown',1996,1,1,21);
+INSERT INTO "player_attributes" VALUES(60,'Carmelo Anthony',6,'SF',80,230,'1984-05-29','New York City, New York','Syracuse',2003,1,3,6);
+INSERT INTO "player_attributes" VALUES(61,'Kenyon Martin',6,'PF',81,240,'1977-12-30','Saginaw, Michigan','Cincinnati',2000,1,1,17);
+INSERT INTO "player_attributes" VALUES(62,'J.R. Smith',6,'SG',78,220,'1985-11-09','Freehold, New Jersey','None',2004,1,18,18);
+INSERT INTO "player_attributes" VALUES(63,'Marcus Camby',6,'C',83,235,'1974-03-22','Hartford, Connecticut','Massachusetts',1996,1,2,27);
+INSERT INTO "player_attributes" VALUES(64,'Linas Kleiza',6,'GF',80,245,'1985-01-03','Kaunas, USSR','Missouri',2005,1,27,23);
+INSERT INTO "player_attributes" VALUES(65,'Eduardo Najera',6,'F',80,235,'1976-07-11','Meoqui, Chihuahu, Mexico','Oklahoma',2000,2,9,9);
+INSERT INTO "player_attributes" VALUES(66,'Nene Hilario',6,'FC',83,268,'1982-09-13','Sao Carlos, Brazil','None',2002,1,7,19);
 --INSERT INTO "player_attributes" VALUES(,'',,'',,,'','','',,,,);
 
 
@@ -155,6 +163,14 @@ INSERT INTO "player_ratings" VALUES(55,4,40,40,40,60,30,50,40,50,70,50,60,80,90,
 INSERT INTO "player_ratings" VALUES(56,5,30,90,90,20,20,50,80,80,35,30,0,80,30,30,20,100);
 INSERT INTO "player_ratings" VALUES(57,6,30,50,30,50,40,50,40,60,90,80,50,20,40,70,50,50);
 INSERT INTO "player_ratings" VALUES(58,7,25,70,80,60,70,50,70,90,60,60,0,40,30,40,20,90);
+INSERT INTO "player_ratings" VALUES(59,1,40,0,30,90,70,50,70,90,70,80,50,20,100,100,80,50)
+INSERT INTO "player_ratings" VALUES(60,2,40,70,70,60,70,50,80,90,70,80,50,30,30,50,50,60)
+INSERT INTO "player_ratings" VALUES(61,3,30,70,90,40,70,50,90,90,40,50,20,60,50,30,30,70)
+INSERT INTO "player_ratings" VALUES(62,4,30,60,60,80,100,50,40,90,60,80,90,0,30,60,10,20)
+INSERT INTO "player_ratings" VALUES(63,5,35,90,70,40,30,50,80,60,50,60,30,100,90,50,50,100)
+INSERT INTO "player_ratings" VALUES(64,6,25,70,70,40,30,50,60,60,60,60,60,10,20,40,30,50)
+INSERT INTO "player_ratings" VALUES(65,7,20,70,80,30,30,50,60,50,50,50,40,60,60,40,20,70)
+INSERT INTO "player_ratings" VALUES(66,8,20,90,90,40,50,50,80,80,40,20,0,80,50,40,20,90)
 CREATE TABLE player_stats (
 player_id INTEGER,
 game_id INTEGER,

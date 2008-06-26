@@ -9,6 +9,7 @@ draft
 playoffs
 
 SOME TIME:
+on start, window with New, Open, or Quit buttons rather than just starting a new game automatically
 parallelpython to parallelize game simulation
 improve game simulation code
 can't save game, trade players, reorder roster, etc... while simulation is running!

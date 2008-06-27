@@ -1,12 +1,3 @@
-CREATE TABLE team_attributes (
-ind INTEGER PRIMARY KEY,
-team_id INTEGER,
-region TEXT,
-name TEXT,
-abbreviation TEXT,
-season INTEGER,
-won REAL DEFAULT 0,
-lost REAL DEFAULT 0);
 INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(0,'Atlanta','Hawks','ATL',2008,0.0,0.0);
 INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(1,'Boston','Celtics','BOS',2008,0.0,0.0);
 INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(2,'Charlotte','Bobcats','CHA',2008,0.0,0.0);
@@ -37,25 +28,3 @@ INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost)
 INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(27,'Toronto','Raptors','TOR',2008,0.0,0.0);
 INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(28,'Utah','Jazz','UTA',2008,0.0,0.0);
 INSERT INTO "team_attributes" (team_id,region,name,abbreviation,season,won,lost) VALUES(29,'Washington','Wizards','WAS',2008,0.0,0.0);
-CREATE TABLE team_stats (
-team_id INTEGER,
-opponent_team_id INTEGER,
-game_id INTEGER,
-season INTEGER,
-won INTEGER,
-minutes INTEGER,
-field_goals_made INTEGER,
-field_goals_attempted INTEGER,
-three_pointers_made INTEGER,
-three_pointers_attempted INTEGER,
-free_throws_made INTEGER,
-free_throws_attempted INTEGER,
-offensive_rebounds INTEGER,
-defensive_rebounds INTEGER,
-assists INTEGER,
-turnovers INTEGER,
-steals INTEGER,
-blocks INTEGER,
-personal_fouls INTEGER,
-points INTEGER,
-opponent_points INTEGER);

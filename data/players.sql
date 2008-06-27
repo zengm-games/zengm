@@ -1,17 +1,3 @@
-CREATE TABLE player_attributes (
-player_id INTEGER PRIMARY KEY,
-name TEXT,
-team_id INTEGER,
-position TEXT,
-height INTEGER, -- inches
-weight INTEGER, -- pounds
-born_date TEXT, -- YYYY-MM-DD for birthday
-born_location TEXT, -- City, State/Country
-college TEXT, -- or HS or country, if applicable
-draft_year INTEGER,
-draft_round INTEGER,
-draft_pick INTEGER,
-draft_team_id INTEGER);
 INSERT INTO "player_attributes" VALUES(1,'Kirk Hinrich',3,'G',75,190,'1981-01-02','Sioux City, Iowa','Kansas',2003,1,7,3);
 INSERT INTO "player_attributes" VALUES(2,'Ben Gordon',3,'SG',75,200,'1983-04-04','London, England','Connecticut',2004,1,3,3);
 INSERT INTO "player_attributes" VALUES(3,'Luol Deng',3,'GF',81,220,'1985-04-16','Wow, Sudan','Duke',2004,1,7,22);
@@ -81,31 +67,13 @@ INSERT INTO "player_attributes" VALUES(66,'Nene Hilario',6,'FC',83,268,'1982-09-
 INSERT INTO "player_attributes" VALUES(67,'Richard Hamilton',7,'SG',79,193,'1978-02-14','Coatesville, Pennsylvania','Connecticut',1999,1,7,29);
 INSERT INTO "player_attributes" VALUES(68,'Chauncey Billups',7,'PG',75,202,'1976-09-25','Denver, Colorado','Colorado',1997,1,3,1);
 INSERT INTO "player_attributes" VALUES(69,'Tayshaun Prince',7,'SG',81,215,'1980-02-28','Compton, California','Kentucky',2002,1,23,7);
-    INSERT INTO "player_attributes" VALUES(70,'Rasheed Wallace',7,'FC',83,230,'1974-09-17','Philadelphia, Pennsylvania','North Carolina',1995,1,4,29);
+INSERT INTO "player_attributes" VALUES(70,'Rasheed Wallace',7,'FC',83,230,'1974-09-17','Philadelphia, Pennsylvania','North Carolina',1995,1,4,29);
 INSERT INTO "player_attributes" VALUES(71,'Antonio McDyess',7,'PF',81,245,'1974-09-07','Quitman, Mississippi','Alabama',1995,1,2,11);
 INSERT INTO "player_attributes" VALUES(72,'Jason Maxiell',7,'FC',79,260,'1983-02-18','Chicago, Illinois','Cincinnati',2005,1,26,7);
 INSERT INTO "player_attributes" VALUES(73,'Rodney Stuckey',7,'G',77,205,'1986-03-21','Seattle, Washington','Eastern Washington',2007,1,15,7);
 INSERT INTO "player_attributes" VALUES(74,'Jarvis Hayes',7,'SF',80,220,'1981-08-09','Atlanta, Georgia','Georgia',2003,1,10,29);
 --INSERT INTO "player_attributes" VALUES(,'',,'',,,'','','',,,,);
-CREATE TABLE player_ratings (
-player_id INTEGER PRIMARY KEY,
-roster_position INTEGER,
-average_playing_time INTEGER,
-height INTEGER,
-strength INTEGER,
-speed INTEGER,
-jumping INTEGER,
-endurance INTEGER,
-shooting_inside INTEGER,
-shooting_layups INTEGER,
-shooting_free_throws INTEGER,
-shooting_two_pointers INTEGER,
-shooting_three_pointers INTEGER,
-blocks INTEGER,
-steals INTEGER,
-dribbling INTEGER,
-passing INTEGER,
-rebounding INTEGER);
+
 INSERT INTO "player_ratings" VALUES(1,1,35,30,20,80,30,70,10,30,90,80,80,10,90,90,85,50);
 INSERT INTO "player_ratings" VALUES(2,2,35,10,80,90,75,80,20,70,90,90,90,50,30,65,30,40);
 INSERT INTO "player_ratings" VALUES(3,3,35,60,60,60,50,90,60,90,70,80,40,50,50,50,30,60);
@@ -180,23 +148,3 @@ INSERT INTO "player_ratings" VALUES(71,5,30,80,90,40,40,50,60,70,40,60,20,50,60,
 INSERT INTO "player_ratings" VALUES(72,6,30,70,90,50,80,50,60,70,30,40,10,90,60,40,10,90);
 INSERT INTO "player_ratings" VALUES(73,7,25,50,40,70,60,50,30,40,70,50,10,20,60,80,70,70);
 INSERT INTO "player_ratings" VALUES(74,8,20,60,60,40,40,50,30,40,70,60,60,10,40,60,10,20);
-CREATE TABLE player_stats (
-player_id INTEGER,
-game_id INTEGER,
-season INTEGER,
-starter INTEGER,
-minutes INTEGER,
-field_goals_made INTEGER,
-field_goals_attempted INTEGER,
-three_pointers_made INTEGER,
-three_pointers_attempted INTEGER,
-free_throws_made INTEGER,
-free_throws_attempted INTEGER,
-offensive_rebounds INTEGER,
-defensive_rebounds INTEGER,
-assists INTEGER,
-turnovers INTEGER,
-steals INTEGER,
-blocks INTEGER,
-personal_fouls INTEGER,
-points INTEGER);

@@ -1,11 +1,12 @@
 OVERALL ROADMAP:
 dynamic new player generation
-set minutes in roster window
+- profiles: pg, wing, big
 generate box scores dynamically
 add more players/teams to the database
 scheduling
 salaries, free agents, trades
 player development/aging
+- random number of points based on age.  the younger, the better the odds are of improving
 draft
 playoffs
 

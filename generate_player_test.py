@@ -1,14 +1,35 @@
 import generate_player
 import operator
+import random
 import sqlite3
+
+profiles = ['Point', 'Wing', 'Big', '']
 
 player = generate_player.player()
 
-ratings = player.generate_ratings(1, 48, 1, 'Big', 40)
-attributes = player.generate_attributes(2008, 22)
+ratings_sql = ''
+attributes_sql = ''
 
-print attributes
-print ratings
+player_id = 1
+for t in range(30):
+    roster_position = 1
+    for p in range(7):
+        i = random.randrange(len(profiles))
+        profile = profiles[i]
+
+        ratings = player.generate_ratings(player_id, roster_position, 48, profile, 40)
+        attributes = player.generate_attributes(player_id, t, 2008, 22)
+
+        ratings_sql += 'INSERT INTO "player_ratings" VALUES(%s);\n' % ', '.join(map(str, ratings))
+        attributes_sql += 'INSERT INTO "player_attributes" VALUES(%s);\n' % ', '.join(map(str, attributes))
+
+        roster_position += 1
+        player_id += 1
+        
+
+f = open('data/players.sql', 'w')
+f.write(ratings_sql + attributes_sql)
+f.close()
 
 def search_for_lebron():
     found = 0

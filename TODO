@@ -1,9 +1,8 @@
 OVERALL ROADMAP:
 dynamic new player generation
-- add N(40,?) to each stat
-- automatically determine position
+- move code from generate_player_test.py into the main game, so game -> new creates new lineup
+for roster: autosort, autoplayingtime
 generate box scores dynamically
-add more players/teams to the database
 scheduling
 salaries, free agents, trades
 player development/aging
@@ -12,6 +11,7 @@ draft
 playoffs
 
 SOME TIME:
+add more players/teams to the database
 on start, window with New, Open, or Quit buttons rather than just starting a new game automatically
 parallelpython to parallelize game simulation
 improve game simulation code

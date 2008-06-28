@@ -19,7 +19,7 @@ class player:
         self.fn_max = 90.040
 
         # Last name data
-        ln_reader = csv.reader(open("data/last_names.txt", "rb"))   
+        ln_reader = csv.reader(open("data/last_names.txt", "rb"))
         self.ln_data = []
         for row in ln_reader:
             self.ln_data.append(row)  
@@ -60,20 +60,20 @@ class player:
         return self.ratings
 
     # Call generate_ratings before this method!
-    def generate_attributes(self, current_year, age):
+    def generate_attributes(self, player_id, team_id, current_year, age):
         min_height = 69 # 5'9"
         max_height = 86 # 7'2"
         min_weight = 150
         max_weight = 290
 
         attributes = []
-        attributes.append(1) # Player ID
-        attributes.append(self._name()) # Name
-        attributes.append(1) # Team ID
-        attributes.append(self._position()) # Position (PG, SG, SF, PF, C, G, GF, FC)
+        attributes.append(player_id) # Player ID
+        attributes.append("'%s'" % self._name()) # Name
+        attributes.append(team_id) # Team ID
+        attributes.append("'%s'" % self._position()) # Position (PG, SG, SF, PF, C, G, GF, FC)
         attributes.append(int(random.gauss(1, 0.02)*(self.ratings[3]*(max_height-min_height)/100+min_height))) # Height in inches (from min_height to max_height)
         attributes.append(int(random.gauss(1, 0.02)*((self.ratings[3]+0.5*self.ratings[4])*(max_weight-min_weight)/150+min_weight))) # Weight in points (from min_weight to max_weight)
-        attributes.append(self._born_date(current_year, age)) #born_date TEXT, -- YYYY-MM-DD for birthday
+        attributes.append("'%s'" % self._born_date(current_year, age)) # Born date
         attributes.append(0) #born_location TEXT, -- City, State/Country
         attributes.append(0) #college TEXT, -- or HS or country, if applicable
         attributes.append(0) #draft_year INTEGER,
@@ -158,7 +158,15 @@ class player:
 
     def _born_date(self, current_year, age):
         year = current_year - age
-        return '%d-%02d-%02d' % (year, random.randint(1,12), random.randint(1,28))
+        month = random.randint(1, 12)
+        if month == 2:
+            max_day = 28
+        elif month == 9 or month == 4 or month == 6 or month == 11:
+            max_day = 30
+        else:
+            max_day = 31
+        day = random.randint(1, max_day)
+        return '%d-%02d-%02d' % (year, month, day)
 
     def _limit_rating(self, rating):
         if rating > 100:
@@ -167,3 +175,4 @@ class player:
             return 0
         else:
             return int(rating)
+

@@ -215,15 +215,6 @@ class main_window:
         self.unsaved_changes = True
         return True
 
-    def on_treeview_player_row_activated(self, treeview, path, view_column, data=None):
-        '''
-        Called from any player row in a treeview to open the player info window
-        '''
-        (treemodel, treeiter) = treeview.get_selection().get_selected()
-        player_id = treemodel.get_value(treeiter, 0)
-        pw = player_window.player_window(player_id)
-        return True
-
     def on_edited_average_playing_time(self, cell, path, new_text, model=None):
         '''
         Updates the average playing time in the roster page
@@ -237,6 +228,16 @@ class main_window:
         #model[path][4] = int(new_text)
         #self.update_roster_info()
         self.update_roster()
+        return True
+
+    def on_treeview_player_row_activated(self, treeview, path, view_column, data=None):
+        '''
+        Called from any player row in a treeview to open the player info window
+        '''
+        (treemodel, treeiter) = treeview.get_selection().get_selected()
+        player_id = treemodel.get_value(treeiter, 0)
+        pw = player_window.player_window(player_id)
+        return True
 
     def on_treeview_games_list_cursor_changed(self, treeview, data=None):
         (treemodel, treeiter) = treeview.get_selection().get_selected()

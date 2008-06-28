@@ -297,7 +297,7 @@ class Player:
         r = r / (100.0 * len(components))  # 0-1
         r = r * (maxval - minval) + minval  # Min-Max
         # Randomize: Mulitply by a random number from N(1,0.1)
-        r = random.gauss(1,0.1) * r
+        r = random.gauss(1, 0.1) * r
         return r
 
     def _initialize_stats(self):

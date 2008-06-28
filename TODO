@@ -1,6 +1,7 @@
 OVERALL ROADMAP:
 dynamic new player generation
-- profiles: pg, wing, big
+- add N(40,?) to each stat
+- automatically determine position
 generate box scores dynamically
 add more players/teams to the database
 scheduling

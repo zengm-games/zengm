@@ -13,6 +13,7 @@ import time
 
 import common
 import game_sim
+import generate_player
 import player_window
 
 class main_window:
@@ -218,7 +219,6 @@ class main_window:
     def on_edited_average_playing_time(self, cell, path, new_text, model=None):
         '''
         Updates the average playing time in the roster page
-        WHY IS THIS CALLED TWICE IF ROWS HAVE BEEN SWITCHED????
         '''
         average_playing_time = int(new_text)
         player_id = model[path][0]
@@ -332,6 +332,7 @@ class main_window:
                        [False],
                        [False]]
         common.treeview_build(self.treeview_roster_info, column_info)
+        self.renderer_roster_editable_handle_id = 0 # This variable is used in update_roster
         self.built['roster'] = True
 
     def update_roster(self):
@@ -345,7 +346,12 @@ class main_window:
         common.treeview_update(self.treeview_roster, column_types, query, query_bindings)
         model = self.treeview_roster.get_model()
         model.connect('row-deleted', self.on_treeview_roster_row_deleted);
-        self.renderer_roster_editable.connect('edited', self.on_edited_average_playing_time, model)
+
+        # Delete the old handler (if it exists) to prevent multiple and erroneous playing time updates
+        if self.renderer_roster_editable_handle_id != 0:
+            self.renderer_roster_editable.disconnect(self.renderer_roster_editable_handle_id)
+
+        self.renderer_roster_editable_handle_id = self.renderer_roster_editable.connect('edited', self.on_edited_average_playing_time, model)
 
         # Positions
         liststore = gtk.ListStore(str)
@@ -406,7 +412,35 @@ class main_window:
         '''
         Starts a new game.  Call this only after checking for saves, etc.
         '''
-        shutil.copyfile('database.sqlite', common.DB_TEMP_FILENAME)
+        # Delete old database
+        if os.path.exists(common.DB_TEMP_FILENAME):
+            os.remove(common.DB_TEMP_FILENAME)
+
+        # Generate new players
+        profiles = ['Point', 'Wing', 'Big', '']
+        player = generate_player.player()
+        ratings_sql = ''
+        attributes_sql = ''
+        player_id = 1
+        for t in range(30):
+            roster_position = 1
+            for p in range(12):
+                i = random.randrange(len(profiles))
+                profile = profiles[i]
+
+                ratings = player.generate_ratings(player_id, roster_position, 48, profile, 40)
+                attributes = player.generate_attributes(player_id, t, 2008, 22)
+
+                ratings_sql += 'INSERT INTO "player_ratings" VALUES(%s);\n' % ', '.join(map(str, ratings))
+                attributes_sql += 'INSERT INTO "player_attributes" VALUES(%s);\n' % ', '.join(map(str, attributes))
+
+                roster_position += 1
+                player_id += 1
+        f = open('data/players.sql', 'w')
+        f.write(ratings_sql + attributes_sql)
+        f.close()
+
+        # Create new database
         common.DB_FILENAME = common.DB_TEMP_FILENAME
         self.connect(team_id)
 
@@ -428,12 +462,20 @@ class main_window:
 
     def connect(self, team_id = -1):
         '''
-        Connect to the database and get the team ID and season #
-        If team_id is passed as a parameter, then this is being called from new_game and the team_id should be set in game_attributes
+        Connect to the database
+        Get the team ID and season #
+        If team_id is passed as a parameter, then this is being called from new_game and the schema should be loaded and the team_id should be set in game_attributes
         '''
         common.DB_CON = sqlite3.connect(common.DB_TEMP_FILENAME)
         common.DB_CON.isolation_level = 'IMMEDIATE'
         if team_id >= 0:
+            # Starting a new game, so load data into the database
+            for fn in ['data/tables.sql', 'data/teams.sql', 'data/players.sql']:
+                f = open(fn)
+                data = f.read()
+                f.close()
+                for query in data.split(';'):
+                    common.DB_CON.execute(query)
             common.DB_CON.execute('UPDATE game_attributes SET team_id = ?', (team_id,))
         common.PLAYER_TEAM_ID, common.SEASON = common.DB_CON.execute('SELECT team_id, season FROM game_attributes').fetchone()
         self.update_all_pages()

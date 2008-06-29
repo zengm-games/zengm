@@ -7,7 +7,7 @@ TEAMS = range(30)
 
 GTKBUILDER_PATH = 'basketball_gm.xml'
 
-shutil.copyfile('database.sqlite', 'temp.sqlite')
+#shutil.copyfile('database.sqlite', 'temp.sqlite')
 DB_TEMP_FILENAME = 'temp.sqlite'
 DB_FILENAME = 'temp.sqlite'
 

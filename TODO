@@ -1,6 +1,4 @@
 OVERALL ROADMAP:
-dynamic new player generation
-- move code from generate_player_test.py into the main game, so game -> new creates new lineup
 for roster: autosort, autoplayingtime
 generate box scores dynamically
 scheduling

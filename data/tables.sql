@@ -1,3 +1,12 @@
+CREATE TABLE league_conferences (
+conference_id INTEGER PRIMARY KEY,
+name TEXT);
+
+CREATE TABLE league_divisions (
+division_id INTEGER PRIMARY KEY,
+conference_id INTEGER,
+name TEXT);
+
 CREATE TABLE game_attributes (
 team_id INTEGER,
 season INTEGER);
@@ -62,6 +71,7 @@ points INTEGER);
 CREATE TABLE team_attributes (
 ind INTEGER PRIMARY KEY,
 team_id INTEGER,
+division_id INTEGER,
 region TEXT,
 name TEXT,
 abbreviation TEXT,

@@ -267,6 +267,7 @@ class Player:
         self.rating = common.DB_CON.execute(query, (self.id,)).fetchone()
         query = 'SELECT name, position FROM player_attributes WHERE player_id = ?'
         self.attribute = common.DB_CON.execute(query, (self.id,)).fetchone()
+        common.DB_CON.row_factory = None
 
     def make_composite_ratings(self):
         self.composite_rating = {}

@@ -1,5 +1,4 @@
 OVERALL ROADMAP:
-for roster: autosort, autoplayingtime
 generate box scores dynamically
 scheduling
 salaries, free agents, trades
@@ -11,6 +10,7 @@ playoffs
 SOME TIME:
 add more players/teams to the database
 on start, window with New, Open, or Quit buttons rather than just starting a new game automatically
+    vbuttonbox
 parallelpython to parallelize game simulation
 improve game simulation code
 can't save game, trade players, reorder roster, etc... while simulation is running!
@@ -18,3 +18,4 @@ use a new thread for game simulation: http://aruiz.typepad.com/siliconisland/200
     look at conduit code for inspiration, particularly the DB stuff - Database.py and http://svn.gnome.org/viewvc/conduit/trunk/tools/test-db-wrapper/main.py?view=markup
 psyco?
 mvp: PER*win%
+cython - rewrite parts as modules to make it faster?

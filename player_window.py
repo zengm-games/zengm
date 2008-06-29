@@ -8,16 +8,8 @@ import sqlite3
 import common
 
 class player_window:
-    def __init__(self, player_id):
+    def show(self, player_id):
         self.player_id = player_id;
-
-        self.builder = gtk.Builder()
-        self.builder.add_from_file(common.GTKBUILDER_PATH) 
-        self.player_window = self.builder.get_object('player_window')
-        self.label_player_window_info = self.builder.get_object('label_player_window_info')
-        self.label_player_window_ratings = self.builder.get_object('label_player_window_ratings')
-        self.treeview_player_window_stats = self.builder.get_object('treeview_player_window_stats')
-        self.treeview_player_window_game_log = self.builder.get_object('treeview_player_window_game_log')
 
         # Info
         row = common.DB_CON.execute('SELECT name, position, (SELECT region || " " || name FROM team_attributes WHERE team_id = player_attributes.team_id), height, weight, born_date, born_location, college, draft_year, draft_round, draft_pick, (SELECT region || " " || name FROM team_attributes WHERE team_id = player_attributes.draft_team_id) FROM player_attributes WHERE player_id = ?', (player_id,)).fetchone()
@@ -135,4 +127,20 @@ class player_window:
     def on_player_window_delete_event(self, widget, data=None):
         self.player_window.hide()
         return True
+
+    def on_aboutdialog_response(self, widget, response, data=None):
+        # system-defined GtkDialog responses are always negative, in which    
+        # case we want to hide it
+        if response < 0:
+            self.aboutdialog.hide()
+            self.aboutdialog.emit_stop_by_name('response')
+
+    def __init__(self):
+        self.builder = gtk.Builder()
+        self.builder.add_from_file(common.GTKBUILDER_PATH) 
+        self.player_window = self.builder.get_object('player_window')
+        self.label_player_window_info = self.builder.get_object('label_player_window_info')
+        self.label_player_window_ratings = self.builder.get_object('label_player_window_ratings')
+        self.treeview_player_window_stats = self.builder.get_object('treeview_player_window_stats')
+        self.treeview_player_window_game_log = self.builder.get_object('treeview_player_window_game_log')
 

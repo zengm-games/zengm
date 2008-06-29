@@ -203,6 +203,9 @@ class main_window:
         if self.combobox_game_log_team_active != old:
             self.update_games_list()
 
+    def on_button_roster_auto_sort_clicked(self, button, data=None):
+        self.roster_auto_sort(common.PLAYER_TEAM_ID, True)
+
     def on_treeview_roster_row_deleted(self, treemodel, path, data=None):
         '''
         When players are dragged and dropped in the roster screen, row-inserted
@@ -224,10 +227,8 @@ class main_window:
         player_id = model[path][0]
         common.DB_CON.execute('UPDATE player_ratings SET average_playing_time = ? WHERE player_id = ?', (average_playing_time, player_id))
         self.unsaved_changes = True
-        #print 'UPDATE', player_id, 'to', new_text
-        #model[path][4] = int(new_text)
-        #self.update_roster_info()
-        self.update_roster()
+        model[path][4] = int(new_text)
+        self.update_roster_info()
         return True
 
     def on_treeview_player_row_activated(self, treeview, path, view_column, data=None):
@@ -236,7 +237,12 @@ class main_window:
         '''
         (treemodel, treeiter) = treeview.get_selection().get_selected()
         player_id = treemodel.get_value(treeiter, 0)
-        pw = player_window.player_window(player_id)
+        if not hasattr(self, 'pw'):
+            print 'aaaaaaa'
+            self.pw = player_window.player_window()
+        else:
+            self.pw.player_window.hide()
+        self.pw.show(player_id)
         return True
 
     def on_treeview_games_list_cursor_changed(self, treeview, data=None):
@@ -371,7 +377,7 @@ class main_window:
             playing_time_text = '%d minutes of unallocated playing time' % extra_playing_time
         else:
             playing_time_text = '%d too many minutes of allocated playing time' % -extra_playing_time
-        self.label_roster_info.set_markup('To edit your roster order, drag and drop players.\nTo edit a player\'s playing time, click the player\'s row, then click the player\'s current minutes and enter a new value.\n\nYou currently have <b>%d empty roster spots</b> and <b>%s</b>' % (empty_roster_spots, playing_time_text))
+        self.label_roster_info.set_markup('To edit your roster order, drag and drop players.\nTo edit a player\'s playing time, click the player\'s row, then click the player\'s current minutes and enter a new value.\n\nYou currently have <b>%d empty roster spots</b> and <b>%s</b>.\n' % (empty_roster_spots, playing_time_text))
 
     def build_games_list(self):
         column_info = [['Opponent', 'W/L', 'Score'],
@@ -444,6 +450,10 @@ class main_window:
         common.DB_FILENAME = common.DB_TEMP_FILENAME
         self.connect(team_id)
 
+        # Auto sort rosters
+        for t in range(30):
+            self.roster_auto_sort(t)
+
     def open_game(self, filename):
         common.DB_CON.close();
         common.DB_FILENAME = filename
@@ -470,7 +480,7 @@ class main_window:
         common.DB_CON.isolation_level = 'IMMEDIATE'
         if team_id >= 0:
             # Starting a new game, so load data into the database
-            for fn in ['data/tables.sql', 'data/teams.sql', 'data/players.sql']:
+            for fn in ['data/tables.sql', 'data/league.sql', 'data/teams.sql', 'data/players.sql']:
                 f = open(fn)
                 data = f.read()
                 f.close()
@@ -609,6 +619,57 @@ class main_window:
         iter = combobox.get_active_iter()
         team_id = model.get_value(iter, 1)
         return team_id
+
+    def roster_auto_sort(self, team_id, from_button = False):
+        players = []
+        query = 'SELECT player_attributes.player_id, (player_ratings.height + player_ratings.strength + player_ratings.speed + player_ratings.jumping + player_ratings.endurance + player_ratings.shooting_inside + player_ratings.shooting_layups + player_ratings.shooting_free_throws + player_ratings.shooting_two_pointers + player_ratings.shooting_three_pointers + player_ratings.blocks + player_ratings.steals + player_ratings.dribbling + player_ratings.passing + player_ratings.rebounding)/15, player_ratings.endurance FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = ? ORDER BY player_ratings.roster_position ASC'
+
+        for row in common.DB_CON.execute(query, (team_id,)):
+            players.append(list(row))
+
+        # Order
+        players.sort(cmp=lambda x,y: y[1]-x[1]) # Sort by rating
+        overall_ratings = []
+        for player in players:
+            overall_ratings.append(player[1])
+
+        # Minutes
+        total_minutes = 0
+        cdf = []
+        for player in players:
+            player[2] = player[2]*(45-20)/100 + 20 # Scale endurance from 20 to 45
+            total_minutes += player[2]
+            val = (max(overall_ratings) - player[1]) ** 5
+            if len(cdf) == 0:
+                cdf.append(val)
+            else:
+                cdf.append(cdf[-1] + val)
+        while total_minutes > 240:
+            r = random.uniform(0, max(cdf))
+            i = 0
+            for v in cdf:
+                if r < v:
+                    players[i][2] -= 1
+                    total_minutes -= 1
+
+                    if players[i][2] <= 0:
+                        del cdf[i]
+                    if players[i][2] < 0:
+                        players[0][2] += 1
+                        players[i][2] += 1
+                        total_minutes += 2
+
+                    break
+                i += 1
+
+        # Update
+        roster_position = 1
+        for player in players:
+            common.DB_CON.execute('UPDATE player_ratings SET average_playing_time = ?, roster_position = ? WHERE player_id = ?', (player[2], roster_position, player[0]))
+            roster_position += 1
+        if from_button:
+            self.unsaved_changes = True
+            self.update_roster()
 
     def quit(self):
         proceed = False

@@ -258,19 +258,43 @@ class main_window:
 
     # Pages
     def build_standings(self):
-        column_info = [['Team', 'Won', 'Lost', 'Pct'],
-                       [0,      1,     2,      3],
-                       [False,  False, False, False],
-                       [False,  False, False, True]]
-        common.treeview_build(self.treeview_standings, column_info)
+        max_divisions_in_conference, num_conferences = common.DB_CON.execute('SELECT (SELECT COUNT(*) FROM league_divisions GROUP BY conference_id ORDER BY COUNT(*) LIMIT 1), COUNT(*) FROM league_conferences').fetchone()
+        try:
+            self.table_standings.destroy() # Destroy table if it already exists... this will be called after starting a new game from the menu
+        except:
+            pass
+        self.table_standings = gtk.Table(max_divisions_in_conference, num_conferences)
+        self.scrolledwindow_standings = self.builder.get_object('scrolledwindow_standings')
+        self.scrolledwindow_standings.add_with_viewport(self.table_standings)
+
+        self.treeview_standings = {} # This will contain treeviews for each conference
+        conference_id = -1
+        for row in common.DB_CON.execute('SELECT division_id, conference_id, name FROM league_divisions'):
+            if conference_id != row[1]:
+                row_top = 0
+                conference_id = row[1]
+
+            self.treeview_standings[row[0]] = gtk.TreeView()
+            self.table_standings.attach(self.treeview_standings[row[0]], conference_id, conference_id + 1, row_top, row_top + 1)
+            column_info = [[row[2], 'Won', 'Lost', 'Pct'],
+                           [0,      1,     2,      3],
+                           [False,  False, False, False],
+                           [False,  False, False, True]]
+            common.treeview_build(self.treeview_standings[row[0]], column_info)
+            self.treeview_standings[row[0]].show()
+
+            row_top += 1
+
+        self.table_standings.show()
         self.built['standings'] = True
 
     def update_standings(self):
         season = self.make_season_combobox(self.combobox_standings, self.combobox_standings_active)
 
-        column_types = [str, int, int, float]
-        query = 'SELECT region || " "  || name, won, lost, 100*won/(won + lost) FROM team_attributes WHERE season = ? ORDER BY won/(won + lost) DESC'
-        common.treeview_update(self.treeview_standings, column_types, query, (season,))
+        for row in common.DB_CON.execute('SELECT division_id FROM league_divisions'):
+            column_types = [str, int, int, float]
+            query = 'SELECT region || " "  || name, won, lost, 100*won/(won + lost) FROM team_attributes WHERE season = ? AND division_id = ? ORDER BY won/(won + lost) DESC'
+            common.treeview_update(self.treeview_standings[row[0]], column_types, query, (season, row[0]))
         self.updated['standings'] = True
 
     def build_player_ratings(self):
@@ -458,6 +482,9 @@ class main_window:
         # Auto sort rosters
         for t in range(30):
             self.roster_auto_sort(t)
+
+        # Make standings treeviews based on league_* tables
+        self.build_standings()
 
         self.update_all_pages()
 
@@ -718,11 +745,6 @@ class main_window:
         self.textview_box_score = self.builder.get_object('textview_box_score')
         self.textview_box_score.modify_font(pango.FontDescription("Monospace 8"))
 
-        self.treeview_standings = gtk.TreeView()
-        print self.treeview_standings
-        self.scrolledwindow_standings.add(self.treeview_standings)
-        print self.scrolledwindow_standings
-
         self.pages = dict(standings=0, finances=1, player_ratings=2, player_stats=3, team_stats=4, roster=5, game_log=6, playoffs=7)
         # Set to True when treeview columns (or whatever) are set up
         self.built = dict(standings=False, finances=False, player_ratings=False, player_stats=False, team_stats=False, roster=False, games_list=False, playoffs=False, player_window_stats=False, player_window_game_log=False)
@@ -737,8 +759,6 @@ class main_window:
         self.combobox_team_stats_season_active = 0
         self.combobox_game_log_season_active = 0
         self.combobox_game_log_team_active = common.PLAYER_TEAM_ID
-
-        self.build_standings() # Updated in new_game
 
         self.new_game(3)
 

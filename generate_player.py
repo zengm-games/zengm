@@ -42,7 +42,7 @@ class player:
 
         # Each row should sum to ~150
         profiles = [[10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10], # Base 
-                    [-20, -10, 30,  20,  0,   0,   0,   10,  15,  0,   0,   20,  40,  35,  0], # Point Guard
+                    [-30, -10, 40,  15,  0,   0,   0,   10,  15,  0,   0,   20,  40,  40,  0], # Point Guard
                     [10,  10,  15,  15,  0,   0,   25,  15,  15,  5,   0,   10,  15,  0,   15], # Wing
                     [30,  30,  -10, -10, 10,  30,  30,  0,   -10, -20, 30,  0,   -10, -10, 30]] # Big
         sigmas = [20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20]
@@ -122,7 +122,7 @@ class player:
         else:
             position = 'F'
 
-        if height <= 30 or (height <= 70 and speed >= 80):
+        if height <= 30 or speed >= 85:
             g = True
             if (passing + dribbling) >= 140:
                 pg = True

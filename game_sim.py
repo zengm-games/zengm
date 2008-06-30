@@ -277,7 +277,7 @@ class Player:
         self.composite_rating['turnover_ratio'] = self._composite(0, 0.5, ['dribbling', 'passing', 'speed'], True)
         self.composite_rating['field_goal_percentage'] = self._composite(0.3, 0.6, ['height', 'jumping', 'shooting_inside', 'shooting_layups', 'shooting_two_pointers', 'shooting_three_pointers'])
         self.composite_rating['free_throw_percentage'] = self._composite(0.4, 1, ['shooting_free_throws'])
-        self.composite_rating['three_pointer_percentage'] = self._composite(0, 0.55, ['shooting_three_pointers'])
+        self.composite_rating['three_pointer_percentage'] = self._composite(0, 0.45, ['shooting_three_pointers'])
         self.composite_rating['rebound_ratio'] = self._composite(0, 0.5, ['height', 'strength', 'jumping', 'rebounding'])
         self.composite_rating['steal_ratio'] = self._composite(0, 0.5, ['speed', 'steals'])
         self.composite_rating['block_ratio'] = self._composite(0, 0.5, ['height', 'jumping', 'blocks'])

@@ -124,16 +124,9 @@ class player_window:
             self.liststore_player_window_game_log.append(stats)
         #self.updated['player_window_game_log'] = True
 
-    def on_player_window_delete_event(self, widget, data=None):
+    def on_player_window_close(self, widget, data=None):
         self.player_window.hide()
         return True
-
-    def on_aboutdialog_response(self, widget, response, data=None):
-        # system-defined GtkDialog responses are always negative, in which    
-        # case we want to hide it
-        if response < 0:
-            self.aboutdialog.hide()
-            self.aboutdialog.emit_stop_by_name('response')
 
     def __init__(self):
         self.builder = gtk.Builder()
@@ -143,4 +136,6 @@ class player_window:
         self.label_player_window_ratings = self.builder.get_object('label_player_window_ratings')
         self.treeview_player_window_stats = self.builder.get_object('treeview_player_window_stats')
         self.treeview_player_window_game_log = self.builder.get_object('treeview_player_window_game_log')
+
+        self.builder.connect_signals(self)
 

@@ -227,7 +227,12 @@ class main_window:
         player_id = model[path][0]
         common.DB_CON.execute('UPDATE player_ratings SET average_playing_time = ? WHERE player_id = ?', (average_playing_time, player_id))
         self.unsaved_changes = True
-        model[path][4] = int(new_text)
+        if average_playing_time > 48:
+            model[path][4] = 48
+        elif average_playing_time < 0:
+            model[path][4] = 0
+        else:
+            model[path][4] = average_playing_time
         self.update_roster_info()
         return True
 
@@ -238,7 +243,6 @@ class main_window:
         (treemodel, treeiter) = treeview.get_selection().get_selected()
         player_id = treemodel.get_value(treeiter, 0)
         if not hasattr(self, 'pw'):
-            print 'aaaaaaa'
             self.pw = player_window.player_window()
         else:
             self.pw.player_window.hide()
@@ -362,7 +366,7 @@ class main_window:
         # Positions
         liststore = gtk.ListStore(str)
         self.treeview_roster_info.set_model(liststore)
-        spots = ('PG', 'SG', 'SF', 'PF', 'C', 'Bench', 'Bench', 'Bench', 'Bench', 'Bench', 'Bench', 'Bench', 'Inactive', 'Inactive', 'Inactive')
+        spots = ('Starter', 'Starter', 'Starter', 'Starter', 'Starter', 'Bench', 'Bench', 'Bench', 'Bench', 'Bench', 'Bench', 'Bench', 'Inactive', 'Inactive', 'Inactive')
         for spot in spots:
             liststore.append([spot])
         self.updated['roster'] = True
@@ -418,6 +422,7 @@ class main_window:
         '''
         Starts a new game.  Call this only after checking for saves, etc.
         '''
+
         # Delete old database
         if os.path.exists(common.DB_TEMP_FILENAME):
             os.remove(common.DB_TEMP_FILENAME)
@@ -454,6 +459,8 @@ class main_window:
         for t in range(30):
             self.roster_auto_sort(t)
 
+        self.update_all_pages()
+
     def open_game(self, filename):
         common.DB_CON.close();
         common.DB_FILENAME = filename
@@ -488,7 +495,9 @@ class main_window:
                     common.DB_CON.execute(query)
             common.DB_CON.execute('UPDATE game_attributes SET team_id = ?', (team_id,))
         common.PLAYER_TEAM_ID, common.SEASON = common.DB_CON.execute('SELECT team_id, season FROM game_attributes').fetchone()
-        self.update_all_pages()
+        if team_id == -1:
+            # If this is a new game, update_all_pages() is called in new_game()
+            self.update_all_pages()
         self.unsaved_changes = False
 
     def save_game(self):
@@ -629,37 +638,20 @@ class main_window:
 
         # Order
         players.sort(cmp=lambda x,y: y[1]-x[1]) # Sort by rating
-        overall_ratings = []
-        for player in players:
-            overall_ratings.append(player[1])
 
         # Minutes
+        overall_ratings = []
         total_minutes = 0
-        cdf = []
         for player in players:
+            overall_ratings.append(player[1])
             player[2] = player[2]*(45-20)/100 + 20 # Scale endurance from 20 to 45
             total_minutes += player[2]
-            val = (max(overall_ratings) - player[1]) ** 5
-            if len(cdf) == 0:
-                cdf.append(val)
-            else:
-                cdf.append(cdf[-1] + val)
+        i = 1
         while total_minutes > 240:
-            r = random.uniform(0, max(cdf))
-            i = 0
-            for v in cdf:
-                if r < v:
-                    players[i][2] -= 1
-                    total_minutes -= 1
-
-                    if players[i][2] <= 0:
-                        del cdf[i]
-                    if players[i][2] < 0:
-                        players[0][2] += 1
-                        players[i][2] += 1
-                        total_minutes += 2
-
-                    break
+            if players[-i][2] > 0:
+                players[-i][2] -= 1
+                total_minutes -= 1
+            else:
                 i += 1
 
         # Update
@@ -667,6 +659,7 @@ class main_window:
         for player in players:
             common.DB_CON.execute('UPDATE player_ratings SET average_playing_time = ?, roster_position = ? WHERE player_id = ?', (player[2], roster_position, player[0]))
             roster_position += 1
+        self.updated['roster'] = False
         if from_button:
             self.unsaved_changes = True
             self.update_roster()

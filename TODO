@@ -4,7 +4,8 @@ game simulation should be in one-day-long chunks, and update everything after ea
 generate box scores dynamically
 salaries, free agents, trades
 player development/aging
-- random number of points based on age.  the younger, the better the odds are of improving
+- test.py for aging test code
+- change generate_player.py so that it generates rookies and ages them
 draft
 playoffs
 

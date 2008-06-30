@@ -258,8 +258,6 @@ class main_window:
 
     # Pages
     def build_standings(self):
-        self.treeview_standings = gtk.TreeView()
-        scrolledwindow.add(self.treeview_standings)
         column_info = [['Team', 'Won', 'Lost', 'Pct'],
                        [0,      1,     2,      3],
                        [False,  False, False, False],
@@ -719,6 +717,11 @@ class main_window:
         self.combobox_game_log_team = self.builder.get_object('combobox_game_log_team')
         self.textview_box_score = self.builder.get_object('textview_box_score')
         self.textview_box_score.modify_font(pango.FontDescription("Monospace 8"))
+
+        self.treeview_standings = gtk.TreeView()
+        print self.treeview_standings
+        self.scrolledwindow_standings.add(self.treeview_standings)
+        print self.scrolledwindow_standings
 
         self.pages = dict(standings=0, finances=1, player_ratings=2, player_stats=3, team_stats=4, roster=5, game_log=6, playoffs=7)
         # Set to True when treeview columns (or whatever) are set up

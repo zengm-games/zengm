@@ -258,6 +258,8 @@ class main_window:
 
     # Pages
     def build_standings(self):
+        self.treeview_standings = gtk.TreeView()
+        scrolledwindow.add(self.treeview_standings)
         column_info = [['Team', 'Won', 'Lost', 'Pct'],
                        [0,      1,     2,      3],
                        [False,  False, False, False],
@@ -702,7 +704,7 @@ class main_window:
         self.notebook = self.builder.get_object('notebook')
         self.statusbar = self.builder.get_object('statusbar')
         self.statusbar_context_id = self.statusbar.get_context_id('Main Window Statusbar')
-        self.treeview_standings = self.builder.get_object('treeview_standings')
+        self.scrolledwindow_standings = self.builder.get_object('scrolledwindow_standings')
         self.combobox_standings = self.builder.get_object('combobox_standings')
         self.treeview_player_ratings = self.builder.get_object('treeview_player_ratings')
         self.treeview_player_stats = self.builder.get_object('treeview_player_stats')

@@ -45,7 +45,8 @@ blocks INTEGER,
 steals INTEGER,
 dribbling INTEGER,
 passing INTEGER,
-rebounding INTEGER);
+rebounding INTEGER,
+potential INTEGER);
 
 CREATE TABLE player_stats (
 player_id INTEGER,

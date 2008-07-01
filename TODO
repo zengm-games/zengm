@@ -1,16 +1,16 @@
-OVERALL ROADMAP:
+MINOR:
+player window treeview: only build once!
 scheduling
-game simulation should be in one-day-long chunks, and update everything after each day
+    game simulation should be in one-day-long chunks, and update everything after each day
 generate box scores dynamically
+
+MAJOR:
 salaries, free agents, trades
-player development/aging
-- test.py for aging test code
-- change generate_player.py so that it generates rookies and ages them
 draft
 playoffs
 
 SOME TIME:
-add more players/teams to the database
+combine ratings and stats views
 on start, window with New, Open, or Quit buttons rather than just starting a new game automatically
     vbuttonbox
 parallelpython to parallelize game simulation

@@ -12,8 +12,8 @@ DB_TEMP_FILENAME = 'temp.sqlite'
 DB_FILENAME = 'temp.sqlite'
 
 # These are set to real values in basketball_gm.py
-PLAYER_TEAM_ID = 0;
-SEASON = 0;
+PLAYER_TEAM_ID = 3;
+SEASON = 2008;
 
 def treeview_build(treeview, column_info):
     """

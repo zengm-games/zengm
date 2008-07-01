@@ -7,7 +7,7 @@ import sqlite3
 
 import common
 
-class player_window:
+class PlayerWindow:
     def show(self, player_id):
         self.player_id = player_id;
 
@@ -17,13 +17,13 @@ class player_window:
         [y, m, d] = row[5].split('-', 2)
         height = '%d\'%d"' % (row[3] // 12, row[3] % 12);
         born = mx.DateTime.Date(int(y), int(m), int(d))
-        age = mx.DateTime.Age(mx.DateTime.today(), born).years
+        age = mx.DateTime.Age(mx.DateTime.Date(common.SEASON, 1, 1), born).years
         experience = 77 # This should be calculated by how many seasons are recorded, because a player could be injured all year or be out of the leauge
         self.label_player_window_info.set_markup('<span size="x-large" weight="bold">%s</span>\n<span weight="bold">%s - %s</span>\nHeight: %s\nWeight: %s lbs\nAge: %s\nExperience: %s\nBorn: %s - %s\nCollege: %s\nDraft: %s - Round %s (Pick %s) by the %s\nCONTRACT INFO GOES HERE' % (row[0], row[1], row[2], height, row[4], age, experience, born.strftime("%B %e, %Y"), row[6], row[7], row[8], row[9], row[10], row[11]))
 
         # Ratings
         common.DB_CON.row_factory = sqlite3.Row
-        query = 'SELECT height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, passing, rebounding FROM player_ratings WHERE player_id = ?'
+        query = 'SELECT height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, passing, rebounding, potential FROM player_ratings WHERE player_id = ?'
         row = common.DB_CON.execute(query, (player_id,)).fetchone()
         self.label_rating = {}
         overall = 0;
@@ -31,8 +31,8 @@ class player_window:
             overall = overall + row[rating]
             self.label_rating[rating] = self.builder.get_object('label_rating_%s' % rating)
             self.label_rating[rating].set_text('%d' % row[rating])
-        overall = overall/len(row);
-        self.label_player_window_ratings.set_markup('<span size="x-large" weight="bold">Overall Rating: %s</span>' % overall);
+        overall = overall/15;
+        self.label_player_window_ratings.set_markup('<span size="x-large" weight="bold">Overall Rating: %s</span>\nPotential: %s' % (overall, row['potential']));
 
         # Stats
         self.build_player_window_stats()

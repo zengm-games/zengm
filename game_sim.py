@@ -252,7 +252,6 @@ class Team:
 
 
 class Player:
-    # def __init__(self, playerID, teamStatRef):
     def __init__(self, player_id, team_stat_ref):
         self.id = player_id
         self.team_stat = team_stat_ref

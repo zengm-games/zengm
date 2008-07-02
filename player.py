@@ -49,9 +49,9 @@ class Player:
                 plus_minus = 28 - age
                 if plus_minus > 0:
                     if potential > overall:
-                        plus_minus *= (potential - overall) / 20.0 + 3/20
+                        plus_minus *= (potential - overall) / 20.0 + 1/2
                     else:
-                        plus_minus *= 3/20
+                        plus_minus *= 1/2
                 else:
                     plus_minus *= 30.0 / potential
                 increase = random.gauss(1, 2) * plus_minus

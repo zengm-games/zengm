@@ -8,11 +8,20 @@ import sqlite3
 import common
 
 class PlayerWindow:
-    def show(self, player_id):
+    def update_player(self, player_id):
         self.player_id = player_id;
 
+        # Roster position
+        query = 'SELECT roster_position FROM player_ratings WHERE player_id = ?'
+        row = common.DB_CON.execute(query, (self.player_id,)).fetchone()
+        self.roster_position = row[0]
+        query = 'SELECT COUNT(*), team_id FROM player_attributes WHERE team_id = (SELECT team_id FROM player_attributes WHERE player_id = ?)'
+        row = common.DB_CON.execute(query, (self.player_id,)).fetchone()
+        self.max_roster_position = row[0]
+        self.team_id = row[1]
+
         # Info
-        row = common.DB_CON.execute('SELECT name, position, (SELECT region || " " || name FROM team_attributes WHERE team_id = player_attributes.team_id), height, weight, born_date, born_location, college, draft_year, draft_round, draft_pick, (SELECT region || " " || name FROM team_attributes WHERE team_id = player_attributes.draft_team_id) FROM player_attributes WHERE player_id = ?', (player_id,)).fetchone()
+        row = common.DB_CON.execute('SELECT name, position, (SELECT region || " " || name FROM team_attributes WHERE team_id = player_attributes.team_id), height, weight, born_date, born_location, college, draft_year, draft_round, draft_pick, (SELECT region || " " || name FROM team_attributes WHERE team_id = player_attributes.draft_team_id) FROM player_attributes WHERE player_id = ?', (self.player_id,)).fetchone()
         self.player_window.set_title('%s - Player Info' % row[0]);
         [y, m, d] = row[5].split('-', 2)
         height = '%d\'%d"' % (row[3] // 12, row[3] % 12);
@@ -24,7 +33,7 @@ class PlayerWindow:
         # Ratings
         common.DB_CON.row_factory = sqlite3.Row
         query = 'SELECT height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, passing, rebounding, potential FROM player_ratings WHERE player_id = ?'
-        row = common.DB_CON.execute(query, (player_id,)).fetchone()
+        row = common.DB_CON.execute(query, (self.player_id,)).fetchone()
         self.label_rating = {}
         overall = 0;
         for rating in ('height', 'strength', 'speed', 'jumping', 'endurance', 'shooting_inside', 'shooting_layups', 'shooting_free_throws', 'shooting_two_pointers', 'shooting_three_pointers', 'blocks', 'steals', 'dribbling', 'passing', 'rebounding'):
@@ -35,10 +44,12 @@ class PlayerWindow:
         self.label_player_window_ratings.set_markup('<span size="x-large" weight="bold">Overall Rating: %s</span>\nPotential: %s' % (overall, row['potential']));
 
         # Stats
-        self.build_player_window_stats()
+        if not self.built['stats']:
+            self.build_player_window_stats()
         self.update_player_window_stats()
         # Game Log
-        self.build_player_window_game_log()
+        if not self.built['game_log']:
+            self.build_player_window_game_log()
         self.update_player_window_game_log()
 
         self.player_window.show()
@@ -67,7 +78,7 @@ class PlayerWindow:
         common.add_column(self.treeview_player_window_stats, 'Blk', 20, True, True)
         common.add_column(self.treeview_player_window_stats, 'PF', 21, True, True)
         common.add_column(self.treeview_player_window_stats, 'PPG', 22, True, True)
-        #self.built['player_window_stats'] = True
+        self.built['stats'] = True
 
     def update_player_window_stats(self):
         self.liststore_player_window_stats = gtk.ListStore(int, str, int, int, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float)
@@ -82,7 +93,7 @@ class PlayerWindow:
                 else:
                     stats.append(row[i])
             self.liststore_player_window_stats.append(stats)
-        #self.updated['player_window_stats'] = True
+        self.updated['stats'] = True
 
     def build_player_window_game_log(self):
         common.add_column(self.treeview_player_window_game_log, 'Game #', 0, True)
@@ -107,7 +118,7 @@ class PlayerWindow:
         common.add_column(self.treeview_player_window_game_log, 'Blk', 19, True, True)
         common.add_column(self.treeview_player_window_game_log, 'PF', 20, True, True)
         common.add_column(self.treeview_player_window_game_log, 'Pts', 21, True, True)
-        #self.built['player_window_game_log'] = True
+        self.built['game_log'] = True
 
     def update_player_window_game_log(self):
         self.liststore_player_window_game_log = gtk.ListStore(int, str, int, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float)
@@ -122,11 +133,34 @@ class PlayerWindow:
                 else:
                     stats.append(row[i])
             self.liststore_player_window_game_log.append(stats)
-        #self.updated['player_window_game_log'] = True
+        self.updated['game_log'] = True
 
     def on_player_window_close(self, widget, data=None):
         self.player_window.hide()
         return True
+
+    def on_button_previous_clicked(self, button, data=None):
+        new_position = self.roster_position - 1
+        if new_position < 1:
+            new_position = self.max_roster_position
+        query = 'SELECT player_ratings.player_id FROM player_attributes, player_ratings WHERE player_attributes.team_id = ? AND player_ratings.roster_position = ? AND player_attributes.player_id = player_ratings.player_id'
+        row = common.DB_CON.execute(query, (self.team_id, new_position)).fetchone()
+        self.update_player(row[0])
+
+    def on_button_next_clicked(self, button, data=None):
+        new_position = self.roster_position + 1
+        if new_position > self.max_roster_position:
+            new_position = 1
+        query = 'SELECT player_ratings.player_id FROM player_attributes, player_ratings WHERE player_attributes.team_id = ? AND player_ratings.roster_position = ? AND player_attributes.player_id = player_ratings.player_id'
+        row = common.DB_CON.execute(query, (self.team_id, new_position)).fetchone()
+        self.update_player(row[0])
+
+    def on_button_trade_clicked(self, button, data=None):
+        print 'trade'
+
+    def on_button_close_clicked(self, button, data=None):
+        self.player_window.hide()
+
 
     def __init__(self):
         self.builder = gtk.Builder()
@@ -136,6 +170,9 @@ class PlayerWindow:
         self.label_player_window_ratings = self.builder.get_object('label_player_window_ratings')
         self.treeview_player_window_stats = self.builder.get_object('treeview_player_window_stats')
         self.treeview_player_window_game_log = self.builder.get_object('treeview_player_window_game_log')
+
+        self.built = dict(stats=False, game_log=False)
+        self.updated = dict(stats=False, game_log=False)
 
         self.builder.connect_signals(self)
 

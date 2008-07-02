@@ -9,8 +9,9 @@ name TEXT);
 
 CREATE TABLE game_attributes (
 team_id INTEGER,
-season INTEGER);
-INSERT INTO "game_attributes" VALUES(3, 2008);
+season INTEGER,
+schedule TEXT);
+INSERT INTO "game_attributes" (team_id, season) VALUES(3, 2008);
 
 CREATE TABLE player_attributes (
 player_id INTEGER PRIMARY KEY,
@@ -25,7 +26,9 @@ college TEXT, -- or HS or country, if applicable
 draft_year INTEGER,
 draft_round INTEGER,
 draft_pick INTEGER,
-draft_team_id INTEGER);
+draft_team_id INTEGER,
+contract_years INTEGER,
+contract_amount INTEGER);
 
 CREATE TABLE player_ratings (
 player_id INTEGER PRIMARY KEY,

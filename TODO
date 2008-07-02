@@ -1,18 +1,32 @@
 MINOR:
-player window treeview: only build once!
-scheduling
-    game simulation should be in one-day-long chunks, and update everything after each day
-generate box scores dynamically
+make a ~/.basketball-gm folder for data files
+schedule
+    see comments in MainWindow.new_schedule() for non-NBAness
+    sometimes it gets stuck, for some reason..
 
 MAJOR:
-salaries, free agents, trades
+overtime
+season phases
+    have a field in game_attributes for season phase
+    0: preseason
+    1: season - pre trading deadline
+    2: season - post trading deadline
+    3: playoffs
+    4: draft
+    5: free agency
 draft
+    team_id = -2
+salaries
+free agents
+    team_id = -1
+trades
 playoffs
 
 SOME TIME:
+google: python warnings
+progress bars
+filtering should be done with treemodelfilter - see pygtk tutorial
 combine ratings and stats views
-on start, window with New, Open, or Quit buttons rather than just starting a new game automatically
-    vbuttonbox
 parallelpython to parallelize game simulation
 improve game simulation code
 can't save game, trade players, reorder roster, etc... while simulation is running!

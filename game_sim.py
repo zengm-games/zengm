@@ -8,7 +8,7 @@ class Game:
         self.team = []
         self.team.append(Team(t1))
         self.team.append(Team(t2))
-        self.id = random.randint(0, 100000)
+        self.id = random.randint(0, 100000000)
         self.num_possessions = self.get_num_possessions()
         self.season = common.SEASON
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Wed Jul  2 22:53:07 2008 -->
+<!--Generated with glade3 3.4.5 on Wed Jul  2 23:06:44 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="main_window">
     <property name="width_request">800</property>
@@ -173,7 +173,7 @@
                     <child>
                       <widget class="GtkMenuItem" id="menuitem_one_week">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">TEST PERFORMANCE</property>
+                        <property name="label" translatable="yes">One _Week</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="on_menuitem_one_week_activate"/>
                         <accelerator key="F12" modifiers="GDK_SHIFT_MASK" signal="activate"/>
@@ -782,7 +782,7 @@
     <property name="type_hint">GDK_WINDOW_TYPE_HINT_DIALOG</property>
     <property name="has_separator">False</property>
     <property name="program_name">Basketball General Manager</property>
-    <property name="version">0.0.1+</property>
+    <property name="version">0.0.2</property>
     <property name="copyright" translatable="yes">Copyright © 2008 Jeremy Scheff</property>
     <property name="comments" translatable="yes">A basketball simulation game</property>
     <property name="license" translatable="yes">                    GNU AFFERO GENERAL PUBLIC LICENSE

@@ -62,14 +62,6 @@ class MainWindow:
             self.play_games(1)
         return True
 
-    def on_menuitem_one_week_activate(self, widget, data=None):
-        if self.phase >= 1 and self.phase <= 3:
-            for i in range(100):
-                t1 = time.time()
-                self.play_games(82)
-                t2 = time.time()
-                print t2-t1
-
     def on_menuitem_until_playoffs_activate(self, widget, data=None):
         row = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?', (common.SEASON,)).fetchone()
         num_days = 82 - row[0] # Number of games in a whole season - number of games already played this season

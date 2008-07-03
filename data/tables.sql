@@ -10,8 +10,9 @@ name TEXT);
 CREATE TABLE game_attributes (
 team_id INTEGER,
 season INTEGER,
+phase INTEGER,
 schedule TEXT);
-INSERT INTO "game_attributes" (team_id, season) VALUES(3, 2008);
+INSERT INTO "game_attributes" (team_id, season, phase) VALUES(3, 2008, 0);
 
 CREATE TABLE player_attributes (
 player_id INTEGER PRIMARY KEY,
@@ -33,7 +34,7 @@ contract_amount INTEGER);
 CREATE TABLE player_ratings (
 player_id INTEGER PRIMARY KEY,
 roster_position INTEGER,
-average_playing_time INTEGER,
+average_playing_time INTEGER DEFAULT 0,
 height INTEGER,
 strength INTEGER,
 speed INTEGER,
@@ -81,7 +82,11 @@ name TEXT,
 abbreviation TEXT,
 season INTEGER,
 won REAL DEFAULT 0,
-lost REAL DEFAULT 0);
+lost REAL DEFAULT 0,
+won_div INTEGER DEFAULT 0,
+lost_div INTEGER DEFAULT 0,
+won_conf INTEGER DEFAULT 0,
+lost_conf INTEGER DEFAULT 0);
 
 CREATE TABLE team_stats (
 team_id INTEGER,

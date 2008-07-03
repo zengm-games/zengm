@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Tue Jul  1 19:00:15 2008 -->
+<!--Generated with glade3 3.4.5 on Wed Jul  2 22:53:07 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="main_window">
     <property name="width_request">800</property>
@@ -154,7 +154,7 @@
               </widget>
             </child>
             <child>
-              <widget class="GtkMenuItem" id="menuitem4">
+              <widget class="GtkMenuItem" id="menuitem9">
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">Pla_y</property>
                 <property name="use_underline">True</property>
@@ -194,7 +194,46 @@
                         <property name="label" translatable="yes">Until _Playoffs</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="on_menuitem_until_playoffs_activate"/>
-                        <accelerator key="F12" modifiers="GDK_SHIFT_MASK | GDK_MOD1_MASK" signal="activate"/>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkMenuItem" id="menuitem_through_playoffs">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">Through _Playoffs</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="on_menuitem_through_playoffs_activate"/>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkMenuItem" id="menuitem_until_draft">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">Until _Draft</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="on_menuitem_until_draft_activate"/>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkMenuItem" id="menuitem_until_free_agency">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">Until _Free Agency</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="on_menuitem_until_free_agency_activate"/>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkMenuItem" id="menuitem_until_preseason">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">Until _Preseason</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="on_menuitem_until_preseason_activate"/>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkMenuItem" id="menuitem_until_regular_season">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">Until _Regular Season</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="on_menuitem_until_regular_season_activate"/>
                       </widget>
                     </child>
                   </widget>
@@ -2280,5 +2319,8 @@ Washington Wizards</property>
         </child>
       </widget>
     </child>
+  </widget>
+  <widget class="GtkMenu" id="menu6">
+    <property name="visible">True</property>
   </widget>
 </glade-interface>

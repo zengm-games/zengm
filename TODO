@@ -1,8 +1,8 @@
 MINOR:
 make a ~/.basketball-gm folder for data files
-schedule
-    see comments in MainWindow.new_schedule() for non-NBAness
-    sometimes it gets stuck, for some reason..
+play menu
+    on open game, update the play menu
+    even after hiding, accelerators still work, so on menuitem activation, check to make sure it's a valid choice!!!
 
 MAJOR:
 overtime
@@ -12,8 +12,10 @@ season phases
     1: season - pre trading deadline
     2: season - post trading deadline
     3: playoffs
-    4: draft
-    5: free agency
+    4: pre draft
+    5: draft
+    6: post draft
+    7: free agency
 draft
     team_id = -2
 salaries

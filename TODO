@@ -1,30 +1,22 @@
 MINOR:
-make a ~/.basketball-gm folder for data files
 play menu
     on open game, update the play menu
     even after hiding, accelerators still work, so on menuitem activation, check to make sure it's a valid choice!!!
+player develop should alter potential too
 
 MAJOR:
-overtime
-season phases
-    have a field in game_attributes for season phase
-    0: preseason
-    1: season - pre trading deadline
-    2: season - post trading deadline
-    3: playoffs
-    4: pre draft
-    5: draft
-    6: post draft
-    7: free agency
-draft
-    team_id = -2
+draft - see draft_dialog.py comments
 salaries
 free agents
     team_id = -1
 trades
 playoffs
+game_sim improvements
+    overtime
+    take all ratings into account
 
 SOME TIME:
+make a ~/.basketball-gm folder for data files
 google: python warnings
 progress bars
 filtering should be done with treemodelfilter - see pygtk tutorial

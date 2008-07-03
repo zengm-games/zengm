@@ -12,6 +12,7 @@ import sys
 import time
 
 import common
+import draft_dialog
 import game_sim
 import player
 import player_window
@@ -863,6 +864,8 @@ class MainWindow:
         random.shuffle(self.schedule)
 
     def new_phase(self, phase):
+        self.unsaved_changes = True
+
         self.phase = phase
         common.DB_CON.execute('UPDATE game_attributes SET phase = ?', (self.phase,))
 
@@ -936,6 +939,8 @@ class MainWindow:
                 self.menuitem_play[i].set_visible(show_menus[i])
 
             self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Off-season'))
+
+            self.dd = draft_dialog.DraftDialog()
 
         # Offseason - post draft
         elif self.phase == 6:

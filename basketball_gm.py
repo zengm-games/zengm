@@ -1,14 +1,6 @@
 # This file implements the main window GUI
 
-import sys
 import gtk
-import pango
-import bz2
-import os
-import random
-import sqlite3
-import shutil
-import time
 
 import common
 import main_window

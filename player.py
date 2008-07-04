@@ -26,12 +26,11 @@ class Player:
 
 
     def save(self):
-        query = 'UPDATE "player_ratings" SET height = ?, strength = ?, speed = ?, jumping = ?, endurance = ?, shooting_inside = ?, shooting_layups = ?, shooting_free_throws = ?, shooting_two_pointers = ?, shooting_three_pointers = ?, blocks = ?, steals = ?, dribbling = ?, passing = ?, rebounding = ?, potential = ? WHERE player_id = ?'
-        common.DB_CON.execute(query, (self.rating['height'], self.rating['strength'], self.rating['speed'], self.rating['jumping'], self.rating['endurance'], self.rating['shooting_inside'], self.rating['shooting_layups'], self.rating['shooting_free_throws'], self.rating['shooting_two_pointers'], self.rating['shooting_three_pointers'], self.rating['blocks'], self.rating['steals'], self.rating['dribbling'], self.rating['passing'], self.rating['rebounding'], self.rating['potential'], self.id))
+        self.rating['overall'] = self.overall_rating()
+        query = 'UPDATE "player_ratings" SET overall = ?, height = ?, strength = ?, speed = ?, jumping = ?, endurance = ?, shooting_inside = ?, shooting_layups = ?, shooting_free_throws = ?, shooting_two_pointers = ?, shooting_three_pointers = ?, blocks = ?, steals = ?, dribbling = ?, passing = ?, rebounding = ?, potential = ? WHERE player_id = ?'
+        common.DB_CON.execute(query, (self.rating['overall'], self.rating['height'], self.rating['strength'], self.rating['speed'], self.rating['jumping'], self.rating['endurance'], self.rating['shooting_inside'], self.rating['shooting_layups'], self.rating['shooting_free_throws'], self.rating['shooting_two_pointers'], self.rating['shooting_three_pointers'], self.rating['blocks'], self.rating['steals'], self.rating['dribbling'], self.rating['passing'], self.rating['rebounding'], self.rating['potential'], self.id))
 
     def develop(self, years=1):
-        ratings = [self.overall_rating()]
-
         # Make sure age is always defined
         [y, m, d] = self.attribute['born_date'].split('-', 2)
         born = mx.DateTime.Date(int(y), int(m), int(d))
@@ -61,10 +60,9 @@ class Player:
 
             # Update potential
             overall = self.overall_rating()
-            self.rating['potential'] += int(random.gauss(0, 2))
-            if overall > self.rating['potential']:
+            self.rating['potential'] += -2 + int(random.gauss(0, 2))
+            if overall > self.rating['potential'] or age > 28:
                 self.rating['potential'] = overall
-            ratings.append(overall)
 
         # Account for new players being developed in "new game"
         if years > 1:
@@ -252,6 +250,7 @@ class GeneratePlayer(Player):
         return '%d-%02d-%02d' % (year, month, day)
 
     def sql_insert(self):
+        self.rating['overall'] = self.overall_rating()
         sql = 'INSERT INTO player_ratings (%s) VALUES (%s);\nINSERT INTO player_attributes (%s) VALUES (%s);\n'
         return sql % (', '.join(map(str, self.rating.keys())), ', '.join(map(self._sql_prep, self.rating.values())), ', '.join(map(str, self.attribute.keys())), ', '.join(map(self._sql_prep, self.attribute.values())))
 

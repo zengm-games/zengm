@@ -32,16 +32,14 @@ class PlayerWindow:
 
         # Ratings
         common.DB_CON.row_factory = sqlite3.Row
-        query = 'SELECT height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, passing, rebounding, potential FROM player_ratings WHERE player_id = ?'
+        query = 'SELECT overall, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, passing, rebounding, potential FROM player_ratings WHERE player_id = ?'
         row = common.DB_CON.execute(query, (self.player_id,)).fetchone()
+        common.DB_CON.row_factory = None
         self.label_rating = {}
-        overall = 0;
         for rating in ('height', 'strength', 'speed', 'jumping', 'endurance', 'shooting_inside', 'shooting_layups', 'shooting_free_throws', 'shooting_two_pointers', 'shooting_three_pointers', 'blocks', 'steals', 'dribbling', 'passing', 'rebounding'):
-            overall = overall + row[rating]
             self.label_rating[rating] = self.builder.get_object('label_rating_%s' % rating)
             self.label_rating[rating].set_text('%d' % row[rating])
-        overall = overall/15;
-        self.label_player_window_ratings.set_markup('<span size="x-large" weight="bold">Overall Rating: %s</span>\nPotential: %s' % (overall, row['potential']));
+        self.label_player_window_ratings.set_markup('<span size="x-large" weight="bold">Overall Rating: %s</span>\nPotential: %s' % (row['overall'], row['potential']));
 
         # Stats
         if not self.built['stats']:

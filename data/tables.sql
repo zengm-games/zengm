@@ -35,6 +35,7 @@ CREATE TABLE player_ratings (
 player_id INTEGER PRIMARY KEY,
 roster_position INTEGER,
 average_playing_time INTEGER DEFAULT 0,
+overall INTEGER,
 height INTEGER,
 strength INTEGER,
 speed INTEGER,

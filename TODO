@@ -2,13 +2,9 @@ MINOR:
 play menu
     even after hiding, accelerators still work, so on menuitem activation, check to make sure it's a valid choice!!!
 too many bigs labeled as F, not enough PF and C and FC
+draft - display rank in left treeview
 
 MAJOR:
-draft
-    click "start draft"
-    button switches to "draft player" but inactive
-    becomes active only when it is the user's turn
-    double click on either treeview to open player dialog
 salaries
 free agents
     team_id = -1

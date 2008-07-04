@@ -4,6 +4,7 @@ import pango
 import mx.DateTime
 import random
 import sqlite3
+import time
 
 import common
 import player
@@ -14,17 +15,33 @@ class DraftDialog:
             self.draft_dialog.destroy()
         return True
 
-    def on_button_draft_player_clicked(self, button, data=None):
-        if self.round == 1:
-            self.round = 2
-        elif self.round == 2:
-            # Replace Draft Player button with stock Close button
-            self.button_draft_player.destroy()
-            self.button_close = self.draft_dialog.add_button(gtk.STOCK_CLOSE, gtk.RESPONSE_CLOSE)
-            self.button_close.connect('clicked', self.on_button_close_clicked)
+    def on_button_start_draft_clicked(self, button, data=None):
+        # Replace Start Draft button with Draft Player button
+        self.button_start_draft.destroy()
+        self.button_draft_player = gtk.Button()
+        image = gtk.Image()
+        image.set_from_stock(gtk.STOCK_YES, gtk.ICON_SIZE_BUTTON)
+        label = gtk.Label('_Draft Player')
+        label.set_use_underline(True)
+        hbox = gtk.HBox(False, 2)
+        hbox.pack_start(image)
+        hbox.pack_start(label)
+        alignment = gtk.Alignment(0.5, 0.5, 0, 0)
+        alignment.add(hbox)
+        self.button_draft_player.add(alignment)
+        self.draft_dialog.add_action_widget(self.button_draft_player, 0)
+        self.button_draft_player.connect('clicked', self.on_button_draft_player_clicked)
+        self.button_draft_player.set_sensitive(False) # User can't click it until their turn
+        self.button_draft_player.show_all()
 
-            # Set to True to allow dialog to be closed
-            self.done_draft = True
+        self.do_draft()
+
+    def on_button_draft_player_clicked(self, button, data=None):
+        treemodel, treeiter = self.treeview_draft_available.get_selection().get_selected()
+        if treeiter:
+            path = treemodel.get_path(treeiter)
+            self.pick = path[0]
+            self.picked = True
 
     def on_button_close_clicked(self, button, data=None):
         if self.done_draft:
@@ -32,7 +49,12 @@ class DraftDialog:
         return True
 
     def on_treeview_player_row_activated(self, treeview, path, view_column, data=None):
-        self.main_window.on_treeview_player_row_activated(treeview, path, view_column, data)
+        '''
+        Map to the same function in main_window.py
+        '''
+        treemodel, treeiter = treeview.get_selection().get_selected()
+        if treemodel.get_value(treeiter, 0) >= 0: # Make sure it's not a placeholder row
+            self.main_window.on_treeview_player_row_activated(treeview, path, view_column, data)
 
     def generate_players(self):
         profiles = ['Point', 'Wing', 'Big', 'Big', '']
@@ -70,16 +92,18 @@ class DraftDialog:
                        [False, False,  False, False,     False]]
         common.treeview_build(self.treeview_draft_available, column_info)
 
-        column_types = [int, str, str, int, int, int]
-        query = "SELECT player_attributes.player_id, player_attributes.position, player_attributes.name, ROUND((julianday('%s-06-01') - julianday(born_date))/365.25), (player_ratings.height + player_ratings.strength + player_ratings.speed + player_ratings.jumping + player_ratings.endurance + player_ratings.shooting_inside + player_ratings.shooting_layups + player_ratings.shooting_free_throws + player_ratings.shooting_two_pointers + player_ratings.shooting_three_pointers + player_ratings.blocks + player_ratings.steals + player_ratings.dribbling + player_ratings.passing + player_ratings.rebounding)/15 FROM player_ratings WHERE player_attributes.player_id = player_id), player_ratings.potential FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = -2 ORDER BY (player_ratings.height + player_ratings.strength + player_ratings.speed + player_ratings.jumping + player_ratings.endurance + player_ratings.shooting_inside + player_ratings.shooting_layups + player_ratings.shooting_free_throws + player_ratings.shooting_two_pointers + player_ratings.shooting_three_pointers + player_ratings.blocks + player_ratings.steals + player_ratings.dribbling + player_ratings.passing + player_ratings.rebounding)/15 + 2*player_ratings.potential DESC" % common.SEASON
-        common.treeview_update(self.treeview_draft_available, column_types, query)
+        self.liststore_draft_available = gtk.ListStore(int, str, str, int, int, int)
+        self.treeview_draft_available.set_model(self.liststore_draft_available)
+        query = "SELECT player_attributes.player_id, player_attributes.position, player_attributes.name, ROUND((julianday('%s-06-01') - julianday(born_date))/365.25), player_ratings.overall, player_ratings.potential FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = -2 ORDER BY player_ratings.overall + 2*player_ratings.potential DESC" % common.SEASON
+        for row in common.DB_CON.execute(query):
+            self.liststore_draft_available.append(row)
 
     def set_draft_order(self):
         self.draft_results = []
         for round_ in range(1, 3):
             pick = 1
             for row in common.DB_CON.execute('SELECT team_id, abbreviation FROM team_attributes WHERE season = ? ORDER BY won/(won + lost) ASC', (common.SEASON,)):
-                abbreviation = row[0]
+                team_id, abbreviation = row
                 name = ''
                 self.draft_results.append([-1, team_id, round_, pick, abbreviation, name])
                 pick += 1
@@ -95,6 +119,56 @@ class DraftDialog:
         for row in self.draft_results:
             self.liststore_draft_results.append(row)
 
+    def do_draft(self):
+        # Do the draft
+        for row in self.liststore_draft_results:
+            while gtk.events_pending():
+                gtk.main_iteration(False) # This stops everything from freezing
+
+            team_id = row[1]
+            self.round = row[2]
+
+            if team_id != common.PLAYER_TEAM_ID:
+                self.pick = abs(int(random.gauss(0,3)))
+                time.sleep(0.1)
+            else:
+                # The player has to pick
+                self.button_draft_player.set_sensitive(True)
+                self.picked = False
+                while not self.picked:
+                    while gtk.events_pending():
+                        gtk.main_iteration(False) # This stops everything from freezing
+                self.button_draft_player.set_sensitive(False)
+            self.pick_player(row, self.pick)
+
+        # Replace Draft Player button with stock Close button
+        self.button_draft_player.destroy()
+        self.button_close = self.draft_dialog.add_button(gtk.STOCK_CLOSE, gtk.RESPONSE_CLOSE)
+        self.button_close.connect('clicked', self.on_button_close_clicked)
+
+        # Set to True to allow dialog to be closed
+        self.done_draft = True
+
+        # Update the main window because we have added new players
+        self.main_window.update_all_pages()
+
+    def pick_player(self, row, pick):
+        '''
+        Copy the selected name and player ID to the draft_results
+        Delete the selected row from draft_available
+        int pick is the offset from the top of draft_available
+        row is the current row in draft_results
+        '''
+        row[5] = self.liststore_draft_available[pick][2] # Name
+        row[0] = self.liststore_draft_available[pick][0] # Player ID
+
+        # Update team_id and roster_position
+        row2 = common.DB_CON.execute('SELECT MAX(player_ratings.roster_position) + 1 FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = ?', (row[1],)).fetchone()
+        roster_position = row2[0]
+        common.DB_CON.execute('UPDATE player_attributes SET team_id = ? WHERE player_id = ?', (row[1], row[0]))
+        common.DB_CON.execute('UPDATE player_ratings SET roster_position = ? WHERE player_id = ?', (roster_position, row[0]))
+        del self.liststore_draft_available[pick]
+
     def __init__(self, main_window):
         self.main_window = main_window
 
@@ -106,27 +180,23 @@ class DraftDialog:
 
         self.builder.connect_signals(self)
 
-        #self.button_draft_player = self.draft_dialog.add_button('_Draft Player', 0)
-        #button_draft_player.connect('clicked', self.on_button_draft_player_clicked)
-        # Make the Draft Player button
-        self.button_draft_player = gtk.Button()
+        # Make the Start Draft button
+        self.button_start_draft = gtk.Button()
         image = gtk.Image()
-        image.set_from_stock(gtk.STOCK_YES, gtk.ICON_SIZE_BUTTON)
-        label = gtk.Label('_Draft Player')
+        image.set_from_stock(gtk.STOCK_GO_FORWARD, gtk.ICON_SIZE_BUTTON)
+        label = gtk.Label('_Start Draft')
         label.set_use_underline(True)
         hbox = gtk.HBox(False, 2)
         hbox.pack_start(image)
         hbox.pack_start(label)
         alignment = gtk.Alignment(0.5, 0.5, 0, 0)
         alignment.add(hbox)
-        self.button_draft_player.add(alignment)
-        self.draft_dialog.add_action_widget(self.button_draft_player, 0)
-        self.button_draft_player.connect('clicked', self.on_button_draft_player_clicked)
-        self.button_draft_player.show_all()
+        self.button_start_draft.add(alignment)
+        self.draft_dialog.add_action_widget(self.button_start_draft, 0)
+        self.button_start_draft.connect('clicked', self.on_button_start_draft_clicked)
+        self.button_start_draft.show_all()
 
-        # The first time draft_player is pressed, it increments self.round
-        # The second time, it sets self.done_draft to True
-        self.round = 1
+        # Any time it sets self.picked to True
         self.done_draft = False # Dialog can't be closed until this is True
 
         # Generate 80 players
@@ -141,24 +211,6 @@ class DraftDialog:
         # Add placeholder rows to the results treeview
         self.build_results()
 
-        # Do the draft
-        for i in range(len(self.draft_order)):
-            team_id = self.draft_order[i][1]
-#            player_id, team_id, round_, pick, abbreviation, name
-            
-            # if team_id != common.PLAYER_TEAM_ID:
-                # Select player based on overall + 2*potential with some gaussian randomness
-            # else:
-                # Capture player selection in on_button_draft_player_clicked()
-            # Delete player row from available treeview
-            # Add player to results treeview (row will already be there, just update it)
-            # Update player's team_id and draft_* in player_attributes
-            # Replace Draft Player button with stock Close button
-#            self.button_draft_player.destroy()
-#            self.button_close = self.draft_dialog.add_button(gtk.STOCK_CLOSE, gtk.RESPONSE_CLOSE)
-#            self.button_close.connect('clicked', self.on_button_close_clicked)
-#            # Set to True to allow dialog to be closed
-#            self.done_draft = True
-
+        # Show the dialog
         self.draft_dialog.show()
 

@@ -86,17 +86,20 @@ class DraftDialog:
             roster_position += 1
 
     def build_available(self):
-        column_info = [['Pos', 'Name', 'Age', 'Overall', 'Potential'],
-                       [1,     2,      3,     4,         5],
-                       [True,  True,   True,  True,      True],
-                       [False, False,  False, False,     False]]
+        column_info = [['Rank', 'Pos', 'Name', 'Age',     'Overall', 'Potential'],
+                       [1,      2,      3,     4,         5,         6],
+                       [True,   True,   True,  True,      True,      True],
+                       [False,  False,  False, False,     False,     False]]
         common.treeview_build(self.treeview_draft_available, column_info)
 
-        self.liststore_draft_available = gtk.ListStore(int, str, str, int, int, int)
+        self.liststore_draft_available = gtk.ListStore(int, int, str, str, int, int, int)
         self.treeview_draft_available.set_model(self.liststore_draft_available)
         query = "SELECT player_attributes.player_id, player_attributes.position, player_attributes.name, ROUND((julianday('%s-06-01') - julianday(born_date))/365.25), player_ratings.overall, player_ratings.potential FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = -2 ORDER BY player_ratings.overall + 2*player_ratings.potential DESC" % common.SEASON
+        rank = 1
         for row in common.DB_CON.execute(query):
-            self.liststore_draft_available.append(row)
+            real_row = [row[0], rank] + list(row[1::])
+            self.liststore_draft_available.append(real_row)
+            rank += 1
 
     def set_draft_order(self):
         self.draft_results = []
@@ -160,13 +163,13 @@ class DraftDialog:
         int pick is the offset from the top of draft_available
         row is the current row in draft_results
         '''
-        row[5] = self.liststore_draft_available[pick][2] # Name
+        row[5] = self.liststore_draft_available[pick][3] # Name
         row[0] = self.liststore_draft_available[pick][0] # Player ID
 
         # Update team_id and roster_position
         row2 = common.DB_CON.execute('SELECT MAX(player_ratings.roster_position) + 1 FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = ?', (row[1],)).fetchone()
         roster_position = row2[0]
-        common.DB_CON.execute('UPDATE player_attributes SET team_id = ? WHERE player_id = ?', (row[1], row[0]))
+        common.DB_CON.execute('UPDATE player_attributes SET team_id = ?, draft_year = ?, draft_round = ?, draft_pick = ?, draft_team_id = ? WHERE player_id = ?', (row[1], common.SEASON, row[2], row[3], row[1], row[0]))
         common.DB_CON.execute('UPDATE player_ratings SET roster_position = ? WHERE player_id = ?', (roster_position, row[0]))
         del self.liststore_draft_available[pick]
 

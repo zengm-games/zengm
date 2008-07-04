@@ -2,12 +2,15 @@ MINOR:
 play menu
     even after hiding, accelerators still work, so on menuitem activation, check to make sure it's a valid choice!!!
 too many bigs labeled as F, not enough PF and C and FC
-draft - display rank in left treeview
+dynamically generate teams list in new game dialog
 
 MAJOR:
 salaries
 free agents
     team_id = -1
+retirement
+releasing players
+when games are being simulated, the play menu should have "Stop" in it, and it should work
 trades
 playoffs
 game_sim improvements

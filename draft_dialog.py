@@ -138,6 +138,7 @@ class DraftDialog:
                 while not self.picked:
                     while gtk.events_pending():
                         gtk.main_iteration(False) # This stops everything from freezing
+                    time.sleep(0.01)
                 self.button_draft_player.set_sensitive(False)
             self.pick_player(row, self.pick)
 

@@ -71,26 +71,26 @@ class DraftDialog:
         common.treeview_build(self.treeview_draft_available, column_info)
 
         column_types = [int, str, str, int, int, int]
-        query = "SELECT player_attributes.player_id, player_attributes.position, player_attributes.name, ROUND((julianday('%s-06-01') - julianday(born_date))/365.25), (SELECT (height + strength + speed + jumping + endurance + shooting_inside + shooting_layups + shooting_free_throws + shooting_two_pointers + shooting_three_pointers + blocks + steals + dribbling + passing + rebounding)/15 FROM player_ratings WHERE player_attributes.player_id = player_id), player_ratings.potential FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = -2 ORDER BY player_ratings.potential DESC" % common.SEASON
+        query = "SELECT player_attributes.player_id, player_attributes.position, player_attributes.name, ROUND((julianday('%s-06-01') - julianday(born_date))/365.25), (player_ratings.height + player_ratings.strength + player_ratings.speed + player_ratings.jumping + player_ratings.endurance + player_ratings.shooting_inside + player_ratings.shooting_layups + player_ratings.shooting_free_throws + player_ratings.shooting_two_pointers + player_ratings.shooting_three_pointers + player_ratings.blocks + player_ratings.steals + player_ratings.dribbling + player_ratings.passing + player_ratings.rebounding)/15 FROM player_ratings WHERE player_attributes.player_id = player_id), player_ratings.potential FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = -2 ORDER BY (player_ratings.height + player_ratings.strength + player_ratings.speed + player_ratings.jumping + player_ratings.endurance + player_ratings.shooting_inside + player_ratings.shooting_layups + player_ratings.shooting_free_throws + player_ratings.shooting_two_pointers + player_ratings.shooting_three_pointers + player_ratings.blocks + player_ratings.steals + player_ratings.dribbling + player_ratings.passing + player_ratings.rebounding)/15 + 2*player_ratings.potential DESC" % common.SEASON
         common.treeview_update(self.treeview_draft_available, column_types, query)
 
     def set_draft_order(self):
         self.draft_results = []
         for round_ in range(1, 3):
             pick = 1
-            for row in common.DB_CON.execute('SELECT abbreviation FROM team_attributes WHERE season = ? ORDER BY won/(won + lost) ASC', (common.SEASON,)):
+            for row in common.DB_CON.execute('SELECT team_id, abbreviation FROM team_attributes WHERE season = ? ORDER BY won/(won + lost) ASC', (common.SEASON,)):
                 abbreviation = row[0]
                 name = ''
-                self.draft_results.append([-1, round_, pick, abbreviation, name])
+                self.draft_results.append([-1, team_id, round_, pick, abbreviation, name])
                 pick += 1
 
     def build_results(self):
-        common.add_column(self.treeview_draft_results, 'Round', 1)
-        common.add_column(self.treeview_draft_results, 'Pick', 2)
-        common.add_column(self.treeview_draft_results, 'Team', 3)
-        common.add_column(self.treeview_draft_results, 'Player Name', 4)
+        common.add_column(self.treeview_draft_results, 'Round', 2)
+        common.add_column(self.treeview_draft_results, 'Pick', 3)
+        common.add_column(self.treeview_draft_results, 'Team', 4)
+        common.add_column(self.treeview_draft_results, 'Player Name', 5)
 
-        self.liststore_draft_results = gtk.ListStore(int, int, int, str, str)
+        self.liststore_draft_results = gtk.ListStore(int, int, int, int, str, str)
         self.treeview_draft_results.set_model(self.liststore_draft_results)
         for row in self.draft_results:
             self.liststore_draft_results.append(row)
@@ -140,7 +140,12 @@ class DraftDialog:
 
         # Add placeholder rows to the results treeview
         self.build_results()
-        # For team in teams (ordered by worst record):
+
+        # Do the draft
+        for i in range(len(self.draft_order)):
+            team_id = self.draft_order[i][1]
+#            player_id, team_id, round_, pick, abbreviation, name
+            
             # if team_id != common.PLAYER_TEAM_ID:
                 # Select player based on overall + 2*potential with some gaussian randomness
             # else:

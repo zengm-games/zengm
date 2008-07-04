@@ -1,11 +1,14 @@
 MINOR:
 play menu
-    on open game, update the play menu
     even after hiding, accelerators still work, so on menuitem activation, check to make sure it's a valid choice!!!
-player develop should alter potential too
+too many bigs labeled as F, not enough PF and C and FC
 
 MAJOR:
-draft - see draft_dialog.py comments
+draft
+    click "start draft"
+    button switches to "draft player" but inactive
+    becomes active only when it is the user's turn
+    double click on either treeview to open player dialog
 salaries
 free agents
     team_id = -1
@@ -16,6 +19,7 @@ game_sim improvements
     take all ratings into account
 
 SOME TIME:
+s/in range/in xrange/
 make a ~/.basketball-gm folder for data files
 google: python warnings
 progress bars

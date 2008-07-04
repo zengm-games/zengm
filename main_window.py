@@ -440,7 +440,6 @@ class MainWindow:
         sql = ''
         player_id = 1
         for t in range(30):
-            roster_position = 1
             base_ratings = [40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29]
             potentials = [70, 60, 50, 50, 55, 45, 65, 35, 50, 45, 55, 55]
             random.shuffle(potentials)
@@ -495,6 +494,8 @@ class MainWindow:
         f.close()
 
         self.connect()
+
+        self.update_play_menu(self.phase)
 
     def connect(self, team_id = -1):
         '''
@@ -887,9 +888,7 @@ class MainWindow:
                 up.develop()
                 up.save()
 
-            show_menus = [False, False, False, False, False, False, False, False, True]
-            for i in range(len(self.menuitem_play)):
-                self.menuitem_play[i].set_visible(show_menus[i])
+            self.update_play_menu(self.phase)
 
             self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Preseason'))
 
@@ -902,62 +901,83 @@ class MainWindow:
                 if t != common.PLAYER_TEAM_ID:
                     self.roster_auto_sort(t)
 
-            show_menus = [True, True, True, True, False, False, False, False, False]
-            for i in range(len(self.menuitem_play)):
-                self.menuitem_play[i].set_visible(show_menus[i])
+            self.update_play_menu(self.phase)
 
             self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Regular season'))
 
         # Regular season - post trading deadline
         elif self.phase == 2:
-            show_menus = [True, True, True, True, False, False, False, False, False]
-            for i in range(len(self.menuitem_play)):
-                self.menuitem_play[i].set_visible(show_menus[i])
+            self.update_play_menu(self.phase)
 
             self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Regular Season'))
 
         # Playoffs
         elif self.phase == 3:
-            show_menus = [True, True, True, False, True, False, False, False, False]
-            for i in range(len(self.menuitem_play)):
-                self.menuitem_play[i].set_visible(show_menus[i])
+            self.update_play_menu(self.phase)
 
             self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Playoffs'))
 
         # Offseason - pre draft
         elif self.phase == 4:
-            show_menus = [False, False, False, False, False, True, False, False, False]
-            for i in range(len(self.menuitem_play)):
-                self.menuitem_play[i].set_visible(show_menus[i])
+            self.update_play_menu(self.phase)
 
             self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Playoffs'))
 
         # Draft
         elif self.phase == 5:
-            show_menus = [False, False, False, False, False, True, False, False, False]
-            for i in range(len(self.menuitem_play)):
-                self.menuitem_play[i].set_visible(show_menus[i])
+            self.update_play_menu(self.phase)
 
             self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Off-season'))
 
-            self.dd = draft_dialog.DraftDialog()
+            self.dd = draft_dialog.DraftDialog(self)
 
         # Offseason - post draft
         elif self.phase == 6:
-            show_menus = [False, False, False, False, False, False, True, False, False]
-            for i in range(len(self.menuitem_play)):
-                self.menuitem_play[i].set_visible(show_menus[i])
+            self.update_play_menu(self.phase)
 
             self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Off-season'))
 
         # Offseason - free agency
         elif self.phase == 7:
-            show_menus = [False, False, False, False, False, False, False, True, False]
-            for i in range(len(self.menuitem_play)):
-                self.menuitem_play[i].set_visible(show_menus[i])
+            self.update_play_menu(self.phase)
 
             self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Off-season'))
 
+    def update_play_menu(self, phase):
+        # Preseason
+        if self.phase == 0:
+            show_menus = [False, False, False, False, False, False, False, False, True]
+
+        # Regular season - pre trading deadline
+        elif self.phase == 1:
+            show_menus = [True, True, True, True, False, False, False, False, False]
+
+        # Regular season - post trading deadline
+        elif self.phase == 2:
+            show_menus = [True, True, True, True, False, False, False, False, False]
+
+        # Playoffs
+        elif self.phase == 3:
+            show_menus = [True, True, True, False, True, False, False, False, False]
+
+        # Offseason - pre draft
+        elif self.phase == 4:
+            show_menus = [False, False, False, False, False, True, False, False, False]
+
+        # Draft
+        elif self.phase == 5:
+            show_menus = [False, False, False, False, False, True, False, False, False]
+
+        # Offseason - post draft
+        elif self.phase == 6:
+            show_menus = [False, False, False, False, False, False, True, False, False]
+
+        # Offseason - free agency
+        elif self.phase == 7:
+            show_menus = [False, False, False, False, False, False, False, True, False]
+
+        for i in range(len(self.menuitem_play)):
+            self.menuitem_play[i].set_visible(show_menus[i])
 
     def box_score(self, game_id):
         format = '%-23s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s\n'

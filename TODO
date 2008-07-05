@@ -1,37 +1,37 @@
-MINOR:
-play menu
-    even after hiding, accelerators still work, so on menuitem activation, check to make sure it's a valid choice!!!
-        or: set accelerators in python code, not glade.  then i can reuse F12
-too many bigs labeled as F, not enough PF and C and FC
-
-MAJOR:
+REQUIREMENTS FOR 0.1 RELEASE:
 salaries
 free agents
     team_id = -1
-retirement
+retirement - some function of age and rating and random.gauss
 releasing players
 when games are being simulated, the play menu should have "Stop" in it, and it should work
+    also, the simulation should be stopped before saving
 trades
+pretty dialog at the end of the season with awards, etc.
+    mvp: PER*win%
+    
+
+FUTURE:
+advanced stats (+/-, PER, etc)
 playoffs
 game_sim improvements
     overtime
     take all ratings into account
-
-SOME TIME:
+play menu
+    even after hiding, accelerators still work, so on menuitem activation, check to make sure it's a valid choice!!!
+        or: set accelerators in python code, not glade.  then i can reuse F12
+too many bigs labeled as F, not enough PF and C and FC
 need a good way of updating windows (player, roster, etc.) on changes
     do this after getting a good general treeview system for updates
 customize which columns are displayed in treeviews
-s/in range/in xrange/
 make a ~/.basketball-gm folder for data files
-google: python warnings
 progress bars
 filtering should be done with treemodelfilter - see pygtk tutorial
-combine ratings and stats views
+combine ratings and stats tabs - use one model and just show different columns
 parallelpython to parallelize game simulation
 improve game simulation code
 can't save game, trade players, reorder roster, etc... while simulation is running!
 use a new thread for game simulation: http://aruiz.typepad.com/siliconisland/2006/04/threads_on_pygt.html
     look at conduit code for inspiration, particularly the DB stuff - Database.py and http://svn.gnome.org/viewvc/conduit/trunk/tools/test-db-wrapper/main.py?view=markup
 psyco?
-mvp: PER*win%
 cython - rewrite parts as modules to make it faster?

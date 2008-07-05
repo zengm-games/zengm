@@ -50,7 +50,8 @@ class PlayerWindow:
             self.build_player_window_game_log()
         self.update_player_window_game_log()
 
-        self.player_window.show()
+        self.player_window.show() # Show the dialog
+        self.player_window.window.show() # Raise the dialog if it's in the background
 
     def build_player_window_stats(self):
         common.add_column(self.treeview_player_window_stats, 'Year', 0, True)

@@ -1,8 +1,8 @@
 MINOR:
 play menu
     even after hiding, accelerators still work, so on menuitem activation, check to make sure it's a valid choice!!!
+        or: set accelerators in python code, not glade.  then i can reuse F12
 too many bigs labeled as F, not enough PF and C and FC
-dynamically generate teams list in new game dialog
 
 MAJOR:
 salaries

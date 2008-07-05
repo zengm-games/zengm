@@ -713,6 +713,22 @@ class MainWindow:
         new_game_dialog = self.builder.get_object('new_game_dialog')
         new_game_dialog.set_transient_for(self.main_window)
         combobox_new_game_teams = self.builder.get_object('combobox_new_game_teams')
+
+        # We're not currently connected to the database, so create a temporary one in memory to load the team attributes
+        temp_db_con = sqlite3.connect(':memory:')
+        for fn in ['data/tables.sql', 'data/teams.sql']:
+            f = open(fn)
+            data = f.read()
+            f.close()
+            temp_db_con.executescript(data)
+
+        # Add teams to combobox
+        model = combobox_new_game_teams.get_model()
+        combobox_new_game_teams.set_model(None)
+        model.clear()
+        for row in temp_db_con.execute('SELECT region || " " || name FROM team_attributes ORDER BY team_id ASC'):
+            model.append(['%s' % row[0]])
+        combobox_new_game_teams.set_model(model)
         combobox_new_game_teams.set_active(3)
         result = new_game_dialog.run()
         new_game_dialog.hide()

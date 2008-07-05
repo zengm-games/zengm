@@ -14,6 +14,7 @@ import time
 import common
 import draft_dialog
 import game_sim
+import roster_window
 import player
 import player_window
 import schedule
@@ -58,6 +59,14 @@ class MainWindow:
         self.quit()
         return True
 
+    def on_menuitem_roster_activate(self, widget, data=None):
+        if not hasattr(self, 'rw'):
+            self.rw = roster_window.RosterWindow(self)
+        else:
+            self.rw.roster_window.show() # Show the window
+            self.rw.roster_window.window.show() # Raise the window if it's in the background
+        return True
+
     def on_menuitem_one_day_activate(self, widget, data=None):
         if self.phase >= 1 and self.phase <= 3:
             self.play_games(1)
@@ -75,7 +84,6 @@ class MainWindow:
 
     def on_menuitem_until_draft_activate(self, widget, data=None):
         self.new_phase(5)
-        self.new_phase(6)
         return True
 
     def on_menuitem_until_free_agency_activate(self, widget, data=None):
@@ -129,11 +137,6 @@ class MainWindow:
                 self.build_team_stats()
             if not self.updated['team_stats']:
                 self.update_team_stats()
-        elif (page_num == self.pages['roster']):
-            if not self.built['roster']:
-                self.build_roster()
-            if not self.updated['roster']:
-                self.update_roster()
         elif (page_num == self.pages['game_log']):
             if not self.built['games_list']:
                 self.build_games_list()
@@ -170,39 +173,6 @@ class MainWindow:
         self.combobox_game_log_team_active = combobox.get_active()
         if self.combobox_game_log_team_active != old:
             self.update_games_list()
-
-    def on_button_roster_auto_sort_clicked(self, button, data=None):
-        self.roster_auto_sort(common.PLAYER_TEAM_ID, True)
-
-    def on_treeview_roster_row_deleted(self, treemodel, path, data=None):
-        '''
-        When players are dragged and dropped in the roster screen, row-inserted
-        and row-deleted are signaled, respectively.  This function is called on
-        row-deleted to save the roster changes to the database.
-        '''
-        i = 1
-        for row in treemodel:
-            common.DB_CON.execute('UPDATE player_ratings SET roster_position = ? WHERE player_id = ?', (i, row[0]))
-            i += 1
-        self.unsaved_changes = True
-        return True
-
-    def on_edited_average_playing_time(self, cell, path, new_text, model=None):
-        '''
-        Updates the average playing time in the roster page
-        '''
-        average_playing_time = int(new_text)
-        player_id = model[path][0]
-        common.DB_CON.execute('UPDATE player_ratings SET average_playing_time = ? WHERE player_id = ?', (average_playing_time, player_id))
-        self.unsaved_changes = True
-        if average_playing_time > 48:
-            model[path][4] = 48
-        elif average_playing_time < 0:
-            model[path][4] = 0
-        else:
-            model[path][4] = average_playing_time
-        self.update_roster_info()
-        return True
 
     def on_treeview_player_row_activated(self, treeview, path, view_column, data=None):
         '''
@@ -309,70 +279,6 @@ class MainWindow:
         common.treeview_update(self.treeview_team_stats, column_types, query, (season,))
         self.updated['team_stats'] = True
 
-    def build_roster(self):
-        column_info = [['Name', 'Position', 'Rating', 'Average Playing Time'],
-                       [1,      2,          3,        4],
-                       [False,  False,      False,    False],
-                       [False,  False,      False,    False]]
-        renderer = gtk.CellRendererText()
-        self.renderer_roster_editable = gtk.CellRendererText()
-        self.renderer_roster_editable.set_property('editable', True)
-        column = gtk.TreeViewColumn('Name', renderer, text=1)
-        self.treeview_roster.append_column(column)
-        column = gtk.TreeViewColumn('Position', renderer, text=2)
-        self.treeview_roster.append_column(column)
-        column = gtk.TreeViewColumn('Rating', renderer, text=3)
-        self.treeview_roster.append_column(column)
-        column = gtk.TreeViewColumn('Average Playing Time', self.renderer_roster_editable, text=4)
-        self.treeview_roster.append_column(column)
-
-        # This treeview is used to list the positions to the left of the players
-        column_info = [['',],
-                       [0],
-                       [False],
-                       [False]]
-        common.treeview_build(self.treeview_roster_info, column_info)
-        self.renderer_roster_editable_handle_id = 0 # This variable is used in update_roster
-        self.built['roster'] = True
-
-    def update_roster(self):
-        # Roster info
-        self.update_roster_info()
-
-        # Roster list
-        column_types = [int, str, str, int, int]
-        query = 'SELECT player_attributes.player_id, player_attributes.name, player_attributes.position, player_ratings.overall, player_ratings.average_playing_time FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = ? ORDER BY player_ratings.roster_position ASC'
-        query_bindings = (common.PLAYER_TEAM_ID,)
-        common.treeview_update(self.treeview_roster, column_types, query, query_bindings)
-        model = self.treeview_roster.get_model()
-        model.connect('row-deleted', self.on_treeview_roster_row_deleted);
-
-        # Delete the old handler (if it exists) to prevent multiple and erroneous playing time updates
-        if self.renderer_roster_editable_handle_id != 0:
-            self.renderer_roster_editable.disconnect(self.renderer_roster_editable_handle_id)
-
-        self.renderer_roster_editable_handle_id = self.renderer_roster_editable.connect('edited', self.on_edited_average_playing_time, model)
-
-        # Positions
-        liststore = gtk.ListStore(str)
-        self.treeview_roster_info.set_model(liststore)
-        spots = ('Starter', 'Starter', 'Starter', 'Starter', 'Starter', 'Bench', 'Bench', 'Bench', 'Bench', 'Bench', 'Bench', 'Bench', 'Inactive', 'Inactive', 'Inactive')
-        for spot in spots:
-            liststore.append([spot])
-        self.updated['roster'] = True
-
-    def update_roster_info(self):
-        row = common.DB_CON.execute('SELECT 15 - COUNT(*), 240 - SUM(player_ratings.average_playing_time) FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = ?', (common.PLAYER_TEAM_ID,)).fetchone()
-        empty_roster_spots = row[0]
-        extra_playing_time = row[1]
-        if extra_playing_time == 0:
-            playing_time_text = 'no unallocated playing time'
-        elif extra_playing_time > 0:
-            playing_time_text = '%d minutes of unallocated playing time' % extra_playing_time
-        else:
-            playing_time_text = '%d too many minutes of allocated playing time' % -extra_playing_time
-        self.label_roster_info.set_markup('To edit your roster order, drag and drop players.\nTo edit a player\'s playing time, click the player\'s row, then click the player\'s current minutes and enter a new value.\n\nYou currently have <b>%d empty roster spots</b> and <b>%s</b>.\n' % (empty_roster_spots, playing_time_text))
-
     def build_games_list(self):
         column_info = [['Opponent', 'W/L', 'Score'],
                        [1,          2,     3],
@@ -408,10 +314,6 @@ class MainWindow:
             if not self.built['team_stats']:
                 self.build_team_stats()
             self.update_team_stats()
-        elif self.notebook.get_current_page() == self.pages['roster']:
-            if not self.built['roster']:
-                self.build_roster()
-            self.update_roster()
         elif self.notebook.get_current_page() == self.pages['game_log']:
             if not self.built['games_list']:
                 self.build_games_list()
@@ -694,10 +596,6 @@ class MainWindow:
         for player in players:
             common.DB_CON.execute('UPDATE player_ratings SET average_playing_time = ?, roster_position = ? WHERE player_id = ?', (player[2], roster_position, player[0]))
             roster_position += 1
-        self.updated['roster'] = False
-        if from_button:
-            self.unsaved_changes = True
-            self.update_roster()
 
     def quit(self):
         proceed = False
@@ -947,7 +845,11 @@ class MainWindow:
 
             self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Off-season'))
 
-            self.dd = draft_dialog.DraftDialog(self)
+            if not hasattr(self, 'dd'):
+                self.dd = draft_dialog.DraftDialog(self)
+            else:
+                self.dd.draft_dialog.show() # Show the window
+                self.dd.draft_dialog.window.show() # Raise the window if it's in the background
 
         # Offseason - post draft
         elif self.phase == 6:
@@ -1053,20 +955,17 @@ class MainWindow:
         self.combobox_player_stats_season = self.builder.get_object('combobox_player_stats_season')
         self.treeview_team_stats = self.builder.get_object('treeview_team_stats')
         self.combobox_team_stats_season = self.builder.get_object('combobox_team_stats_season')
-        self.label_roster_info = self.builder.get_object('label_roster_info')
-        self.treeview_roster = self.builder.get_object('treeview_roster')
-        self.treeview_roster_info = self.builder.get_object('treeview_roster_info')
         self.treeview_games_list = self.builder.get_object('treeview_games_list')
         self.combobox_game_log_season = self.builder.get_object('combobox_game_log_season')
         self.combobox_game_log_team = self.builder.get_object('combobox_game_log_team')
         self.textview_box_score = self.builder.get_object('textview_box_score')
         self.textview_box_score.modify_font(pango.FontDescription("Monospace 8"))
 
-        self.pages = dict(standings=0, finances=1, player_ratings=2, player_stats=3, team_stats=4, roster=5, game_log=6, playoffs=7)
+        self.pages = dict(standings=0, finances=1, player_ratings=2, player_stats=3, team_stats=4, game_log=5, playoffs=6)
         # Set to True when treeview columns (or whatever) are set up
-        self.built = dict(standings=False, finances=False, player_ratings=False, player_stats=False, team_stats=False, roster=False, games_list=False, playoffs=False, player_window_stats=False, player_window_game_log=False)
+        self.built = dict(standings=False, finances=False, player_ratings=False, player_stats=False, team_stats=False, games_list=False, playoffs=False, player_window_stats=False, player_window_game_log=False)
         # Set to True if data on this pane is current
-        self.updated = dict(standings=False, finances=False, player_ratings=False, player_stats=False, team_stats=False, roster=False, games_list=False, playoffs=False, player_window_stats=False, player_window_game_log=False)
+        self.updated = dict(standings=False, finances=False, player_ratings=False, player_stats=False, team_stats=False, games_list=False, playoffs=False, player_window_stats=False, player_window_game_log=False)
         # Set to true when a change is made
         self.unsaved_changes = False
 

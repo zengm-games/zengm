@@ -155,6 +155,7 @@ class DraftDialog:
 
         # Update the main window because we have added new players
         self.main_window.update_all_pages()
+        self.main_window.new_phase(6)
 
     def pick_player(self, row, pick):
         '''

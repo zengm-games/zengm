@@ -18,6 +18,8 @@ game_sim improvements
     take all ratings into account
 
 SOME TIME:
+need a good way of updating windows (player, roster, etc.) on changes
+    do this after getting a good general treeview system for updates
 customize which columns are displayed in treeviews
 s/in range/in xrange/
 make a ~/.basketball-gm folder for data files

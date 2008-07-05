@@ -18,6 +18,7 @@ game_sim improvements
     take all ratings into account
 
 SOME TIME:
+customize which columns are displayed in treeviews
 s/in range/in xrange/
 make a ~/.basketball-gm folder for data files
 google: python warnings

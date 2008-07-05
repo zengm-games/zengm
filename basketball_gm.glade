@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Fri Jul  4 22:55:16 2008 -->
+<!--Generated with glade3 3.4.5 on Fri Jul  4 22:56:48 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="main_window">
     <property name="width_request">800</property>
@@ -436,7 +436,6 @@
                         <property name="can_focus">True</property>
                         <property name="headers_clickable">True</property>
                         <property name="search_column">2</property>
-                        <property name="fixed_height_mode">True</property>
                         <signal name="row_activated" handler="on_treeview_player_row_activated"/>
                       </widget>
                     </child>

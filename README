@@ -1,8 +1,6 @@
-To run:
+Required packages on Ubuntu:
 libsqlite3-0
 python >= 2.5
 python-egenix-mxdatetime
 python-gtk2
-
-To build:
 sqlite3

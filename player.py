@@ -148,8 +148,8 @@ class GeneratePlayer(Player):
 
     # Call generate_ratings before this method!
     def generate_attributes(self, age):
-        min_height = 69 # 5'9"
-        max_height = 86 # 7'2"
+        min_height = 71 # 5'11"
+        max_height = 89 # 7'5"
         min_weight = 150
         max_weight = 290
 
@@ -164,6 +164,7 @@ class GeneratePlayer(Player):
         self.attribute['draft_round'] = 0
         self.attribute['draft_pick'] = 0
         self.attribute['draft_team_id'] = 0
+        self.attribute['contract_amount'], self.attribute['contract_expiration'] = self._contract()
 
     def _name(self):
         # First name
@@ -207,13 +208,13 @@ class GeneratePlayer(Player):
             g = True
             if (self.rating['passing'] + self.rating['dribbling']) >= 140:
                 pg = True
-            if self.rating['height'] >= 20:
+            if self.rating['height'] >= 30:
                 sg = True
-        if self.rating['height'] >= 40 and self.rating['height'] <= 80 and self.rating['speed'] >= 40:
+        if self.rating['height'] >= 50 and self.rating['height'] <= 80 and self.rating['speed'] >= 40:
             sf = True
-        if (self.rating['height'] + self.rating['strength']) >= 130 and self.rating['speed'] >= 30:
+        if (self.rating['height'] + self.rating['strength']) >= 120 and self.rating['speed'] >= 30:
             pf = True
-        if (self.rating['height'] + self.rating['strength']) >= 150:
+        if (self.rating['height'] + self.rating['strength']) >= 140:
             c = True
 
         if pg and not sg and not sf and not pf and not c:
@@ -248,6 +249,26 @@ class GeneratePlayer(Player):
             max_day = 31
         day = random.randint(1, max_day)
         return '%d-%02d-%02d' % (year, month, day)
+
+    def _contract(self):
+        # Limits on yearly contract amount, in $1000's
+        min_amount = 500
+        max_amount = 20000
+
+        self.rating['overall'] = self.overall_rating()
+        # Scale amount from 500k to 15mil, proportional to overall*2 + potential 120-210
+        amount = ((2.0 * self.rating['overall'] + self.rating['potential']) - 120)/(210 - 120) # Scale from 0 to 1 (approx)
+        amount = amount * (max_amount - min_amount) + min_amount # Scale from 500k to 15mil
+        amount *= random.gauss(1, 0.1) # Randomize
+        expiration = common.SEASON + random.randrange(0, 6)
+        if amount < min_amount:
+            amount = min_amount
+        elif amount > max_amount:
+            amount = max_amount
+        else:   
+            amount = round(amount)
+
+        return amount, expiration
 
     def sql_insert(self):
         self.rating['overall'] = self.overall_rating()

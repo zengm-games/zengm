@@ -12,7 +12,7 @@ import player
 class DraftDialog:
     def on_draft_dialog_close(self, widget, data=None):
         if self.done_draft:
-            self.draft_dialog.destroy()
+            self.draft_dialog.hide()
         return True
 
     def on_button_start_draft_clicked(self, button, data=None):
@@ -94,7 +94,7 @@ class DraftDialog:
 
         self.liststore_draft_available = gtk.ListStore(int, int, str, str, int, int, int)
         self.treeview_draft_available.set_model(self.liststore_draft_available)
-        query = "SELECT player_attributes.player_id, player_attributes.position, player_attributes.name, ROUND((julianday('%s-06-01') - julianday(born_date))/365.25), player_ratings.overall, player_ratings.potential FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = -2 ORDER BY player_ratings.overall + 2*player_ratings.potential DESC" % common.SEASON
+        query = "SELECT player_attributes.player_id, player_attributes.position, player_attributes.name, ROUND((julianday('%d-06-01') - julianday(born_date))/365.25), player_ratings.overall, player_ratings.potential FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = -2 ORDER BY player_ratings.overall + 2*player_ratings.potential DESC" % common.SEASON
         rank = 1
         for row in common.DB_CON.execute(query):
             real_row = [row[0], rank] + list(row[1::])

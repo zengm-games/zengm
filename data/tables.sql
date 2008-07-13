@@ -28,8 +28,8 @@ draft_year INTEGER,
 draft_round INTEGER,
 draft_pick INTEGER,
 draft_team_id INTEGER,
-contract_years INTEGER,
-contract_amount INTEGER);
+contract_amount INTEGER,
+contract_expiration INTEGER);
 
 CREATE TABLE player_ratings (
 player_id INTEGER PRIMARY KEY,

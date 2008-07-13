@@ -4,6 +4,7 @@ import shutil
 
 #TEAMS = [0, 1, 2, 3, 4, 5, 6, 7, 21]
 TEAMS = range(30)
+SEASON_LENGTH = 82 # If this isn't 82 the scheduling gets fucked up.  Only set it lower for debugging (faster seasons)
 
 GTKBUILDER_PATH = 'basketball_gm.xml'
 

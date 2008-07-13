@@ -1,21 +1,43 @@
+"Season Ticket Basketball"
+
 REQUIREMENTS FOR 0.1 RELEASE:
-salaries
+finance
+    rookie contracts
+    luxury tax: (team_salary - 65mil) penalty if team salary is > 65mil
+    for each game:
+        attendance: f(2*hometeamwinp + awayteamwinp)
+        cost: team_salary/num_games_in_season
+    finances tab - team | avg attendance | team payroll | revenue (YTD) | profit (YTD) | cash
+            revenue = attendance * ticket_price + tv_money / num_games + luxary_tax_amount(+ or -)
+            profit = revenue - SUM(cost)
 free agents
     team_id = -1
-retirement - some function of age and rating and random.gauss
-releasing players
+    salary cap: 50mil
+        if a team is over, they can only sign their own players and min contracts
 when games are being simulated, the play menu should have "Stop" in it, and it should work
-    also, the simulation should be stopped before saving
+    also, the simulation should be stopped automatically before saving, trading, and negotiating contracts
 trades
-finish roster window
-pretty dialog at the end of the season with awards, etc.
-    mvp: PER*win%
-one week and one month in the play menu
-add placeholders for all the unfinished items
-    
+    if a team is over the salary cap, their incoming salary must be <= 125% their outgoing salary
+    basic trade AI
+roster window
+    buttons - releasing players, etc
+    display age and contract info
+some players (rookies mainly) have ratings higher than potentials - fix this (potentail should be set to overall)
+add placeholders for all the unfinished items - i think this is done
 
 FUTURE:
-advanced stats (+/-, PER, etc)
+opponent GM trade AI based on their team's status: contending or rebuilding
+change prices of tickets, concessions, etc
+hire coaches to influence development
+injuries
+different sized cities with differently passionate fanbases - affects attendance
+real contract and salary cap rules
+view any team in the roster window
+    drop down box at the top with team names
+    all actions disabled unless team_id == common.PLAYER_TEAM_ID
+    open this window when a team is double-clicked on in the standings
+archive stats as averages - this will make the end of season awards feasible, and make the stats view faster
+    it will also allow computation of advanced stats (+/-, PER, etc)
 playoffs
 game_sim improvements
     overtime
@@ -26,15 +48,14 @@ play menu
 too many bigs labeled as F, not enough PF and C and FC
 need a good way of updating windows (player, roster, etc.) on changes
     do this after getting a good general treeview system for updates
-customize which columns are displayed in treeviews
-make a ~/.basketball-gm folder for data files
+customize which columns are displayed in treeviews - kiwi
+treeview formatting
+    str, int, float, currency, date, age - do formatting based on column type
 progress bars
 filtering should be done with treemodelfilter - see pygtk tutorial
 combine ratings and stats tabs - use one model and just show different columns
 parallelpython to parallelize game simulation
 improve game simulation code
-can't save game, trade players, reorder roster, etc... while simulation is running!
-use a new thread for game simulation: http://aruiz.typepad.com/siliconisland/2006/04/threads_on_pygt.html
-    look at conduit code for inspiration, particularly the DB stuff - Database.py and http://svn.gnome.org/viewvc/conduit/trunk/tools/test-db-wrapper/main.py?view=markup
+look at conduit code for inspiration, particularly the DB stuff - Database.py and http://svn.gnome.org/viewvc/conduit/trunk/tools/test-db-wrapper/main.py?view=markup
 psyco?
 cython - rewrite parts as modules to make it faster?

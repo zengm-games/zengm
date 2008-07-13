@@ -14,15 +14,22 @@ import time
 import common
 import draft_dialog
 import game_sim
+import retired_players_window
 import roster_window
 import player
 import player_window
 import schedule
+import trade_window
 
 class MainWindow:
     def on_main_window_delete_event(self, widget, data=None):
         self.quit();
         return True
+
+    def on_placeholder(self, widget, data=None):
+        md = gtk.MessageDialog(parent=None, flags=0, type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_CLOSE, message_format='Sorry, this feature isn''t implemented yet.')
+        md.run()
+        md.destroy()
 
     # Menu Items
     def on_menuitem_new_activate(self, widget=None, data=None):
@@ -67,14 +74,38 @@ class MainWindow:
             self.rw.roster_window.window.show() # Raise the window if it's in the background
         return True
 
+    def on_menuitem_trade_activate(self, widget, data=None):
+        if not hasattr(self, 'tw'):
+            self.tw = trade_window.TradeWindow(self)
+        else:
+            self.tw.trade_window.show() # Show the window
+            self.tw.trade_window.window.show() # Raise the window if it's in the background
+        return True
+
     def on_menuitem_one_day_activate(self, widget, data=None):
         if self.phase >= 1 and self.phase <= 3:
             self.play_games(1)
         return True
 
+    def on_menuitem_one_week_activate(self, widget, data=None):
+        row = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?', (common.SEASON,)).fetchone()
+        num_days = common.SEASON_LENGTH - row[0] # Number of days remaining
+        if num_days > 7:
+            num_days = 7
+        self.play_games(num_days)
+        return True
+
+    def on_menuitem_one_month_activate(self, widget, data=None):
+        row = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?', (common.SEASON,)).fetchone()
+        num_days = common.SEASON_LENGTH - row[0] # Number of days remaining
+        if num_days > 30:
+            num_days = 30
+        self.play_games(num_days)
+        return True
+
     def on_menuitem_until_playoffs_activate(self, widget, data=None):
         row = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?', (common.SEASON,)).fetchone()
-        num_days = 82 - row[0] # Number of games in a whole season - number of games already played this season
+        num_days = common.SEASON_LENGTH - row[0] # Number of days remaining
         self.play_games(num_days)
         return True
 
@@ -122,6 +153,11 @@ class MainWindow:
                 self.build_standings()
             if not self.updated['standings']:
                 self.update_standings()
+        elif (page_num == self.pages['finances']):
+            if not self.built['finances']:
+                self.build_finances()
+            if not self.updated['finances']:
+                self.update_finances()
         elif (page_num == self.pages['player_ratings']):
             if not self.built['player_ratings']:
                 self.build_player_ratings()
@@ -233,6 +269,20 @@ class MainWindow:
             common.treeview_update(self.treeview_standings[row[0]], column_types, query, (season, row[0]))
         self.updated['standings'] = True
 
+    def build_finances(self):
+        column_info = [['Team', 'Avg Attendance', 'Revenue (YTD)', 'Profit (YTD)', 'Cash', 'Payroll'],
+                       [1,      2,                3,               4,              5,      6],
+                       [True,   True,             True,            True,           True,   True],
+                       [False,  False,            False,           False,          False,  False]]
+        common.treeview_build(self.treeview_finances, column_info)
+        self.built['finances'] = True
+
+    def update_finances(self):
+        column_types = [int, str, int, int, int, int, int]
+        query = 'SELECT team_id, region || " " || name, 0, 0, 0, 0, (SELECT SUM(contract_amount) FROM player_attributes WHERE player_attributes.team_id = team_attributes.team_id) FROM team_attributes WHERE season = ? ORDER BY region ASC, name ASC'
+        common.treeview_update(self.treeview_finances, column_types, query, (common.SEASON,))
+        self.updated['finances'] = True
+
     def build_player_ratings(self):
         column_info = [['Name', 'Team', 'Age', 'Overall', 'Height', 'Stength', 'Speed', 'Jumping', 'Endurance', 'Inside Scoring', 'Layups', 'Free Throws', 'Two Pointers', 'Three Pointers', 'Blocks', 'Steals', 'Dribbling', 'Passing', 'Rebounding'],
                        [2,      3,      4,     5,         6,        7,         8,       9,         10,          11,               12,       13,            14,             15,               16,       17,       18,          19,        20],
@@ -243,7 +293,7 @@ class MainWindow:
 
     def update_player_ratings(self):
         column_types = [int, int, str, str, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int]
-        query = "SELECT player_attributes.player_id, player_attributes.team_id, player_attributes.name, (SELECT abbreviation FROM team_attributes WHERE team_id = player_attributes.team_id), ROUND((julianday('%s-06-01') - julianday(born_date))/365.25), player_ratings.overall, player_ratings.height, player_ratings.strength, player_ratings.speed, player_ratings.jumping, player_ratings.endurance, player_ratings.shooting_inside, player_ratings.shooting_layups, player_ratings.shooting_free_throws, player_ratings.shooting_two_pointers, player_ratings.shooting_three_pointers, player_ratings.blocks, player_ratings.steals, player_ratings.dribbling, player_ratings.passing, player_ratings.rebounding FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id" % common.SEASON
+        query = "SELECT player_attributes.player_id, player_attributes.team_id, player_attributes.name, (SELECT abbreviation FROM team_attributes WHERE team_id = player_attributes.team_id), ROUND((julianday('%s-06-01') - julianday(born_date))/365.25), player_ratings.overall, player_ratings.height, player_ratings.strength, player_ratings.speed, player_ratings.jumping, player_ratings.endurance, player_ratings.shooting_inside, player_ratings.shooting_layups, player_ratings.shooting_free_throws, player_ratings.shooting_two_pointers, player_ratings.shooting_three_pointers, player_ratings.blocks, player_ratings.steals, player_ratings.dribbling, player_ratings.passing, player_ratings.rebounding FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id >= -1" % common.SEASON # team_id >= -1: Don't select draft or retired players
         common.treeview_update(self.treeview_player_ratings, column_types, query)
         self.updated['player_ratings'] = True
 
@@ -302,6 +352,10 @@ class MainWindow:
             if not self.built['standings']:
                 self.build_standings()
             self.update_standings()
+        elif self.notebook.get_current_page() == self.pages['finances']:
+            if not self.built['finances']:
+                self.build_finances()
+            self.update_finances()
         elif self.notebook.get_current_page() == self.pages['player_ratings']:
             if not self.built['player_ratings']:
                 self.build_player_ratings()
@@ -524,11 +578,10 @@ class MainWindow:
         # Check to see if the season is over
         row = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?', (common.SEASON,)).fetchone()
         days_played = row[0]
-        days_in_season = 82
         season_over = False
-        if days_played == days_in_season:
+        if days_played == common.SEASON_LENGTH:
             season_over = True
-            # DISPLAY SEASON AWARDS DIALOG HERE
+            self.season_end_dialog()
             self.new_phase(3) # Start playoffs
 
         if season_over or self.notebook.get_current_page() != self.pages['player_ratings']:
@@ -695,6 +748,24 @@ class MainWindow:
         save_game_dialog.destroy()
         return returnval
 
+    def season_end_dialog(self):
+        season_end_dialog = self.builder.get_object('season_end_dialog')
+        label_season_end_1 = self.builder.get_object('label_season_end_1')
+
+        best_record_0 = common.DB_CON.execute('SELECT region || " " || name, won, lost FROM team_attributes WHERE season = ? AND (SELECT conference_id FROM league_divisions WHERE league_divisions.division_id = team_attributes.division_id) = 0 ORDER BY won/(won + lost) DESC', (common.SEASON,)).fetchone()
+        best_record_1 = common.DB_CON.execute('SELECT region || " " || name, won, lost FROM team_attributes WHERE season = ? AND (SELECT conference_id FROM league_divisions WHERE league_divisions.division_id = team_attributes.division_id) = 1 ORDER BY won/(won + lost) DESC', (common.SEASON,)).fetchone()
+        #mvp = common.DB_CON.execute('SELECT pa.name, ta.abbreviation, AVG(ps.points), AVG(ps.offensive_rebounds + ps.defensive_rebounds), AVG(ps.assists) FROM player_attributes as pa, player_stats as ps, team_attributes as ta WHERE pa.player_id = ps.player_id AND ta.team_id = pa.team_id AND ta.season = ps.season AND ps.season = ?', (common.SEASON,)).fetchone()
+        #dpoy = common.DB_CON.execute('SELECT pa.name, ta.abbreviation, AVG(ps.offensive_rebounds + ps.defensive_rebounds), AVG(ps.blocks), AVG(ps.steals) FROM player_attributes as pa, player_stats as ps, team_attributes as ta WHERE pa.player_id = ps.player_id AND ta.team_id = pa.team_id AND ta.season = ps.season AND ps.season = ?', (common.SEASON,)).fetchone()
+        #smoy = common.DB_CON.execute('SELECT pa.name, ta.abbreviation, AVG(ps.points), AVG(ps.offensive_rebounds + ps.defensive_rebounds), AVG(ps.assists) FROM player_attributes as pa, player_stats as ps, team_attributes as ta WHERE pa.player_id = ps.player_id AND ta.team_id = pa.team_id AND ta.season = ps.season AND ps.season = ?', (common.SEASON,)).fetchone()
+        #roy = common.DB_CON.execute('SELECT pa.name, ta.abbreviation, AVG(ps.points), AVG(ps.offensive_rebounds + ps.defensive_rebounds), AVG(ps.assists) FROM player_attributes as pa, player_stats as ps, team_attributes as ta WHERE pa.player_id = ps.player_id AND ta.team_id = pa.team_id AND ta.season = ps.season AND ps.season = ?', (common.SEASON,)).fetchone()
+
+        #label_season_end_1.set_markup('<b>Best Record</b>\nEastern Conference:\n%s (%d-%d)\nWestern Conference:\n%s (%d-%d)\n\n<b>Most Valuable Player</b>\n%s (%s)\n%.1f pts, %.1f rebs, %.1f asts\n\n<b>Defensive Player of the Year</b>\n%s (%s)\n%.1f rebs, %.1f blks, %.1f stls\n\n<b>Sixth Man of the Year</b>\n%s (%s)\n%.1f pts, %.1f rebs, %.1f asts\n\n<b>Rookie of the Year</b>\n%s (%s)\n%.1f pts, %.1f rebs, %.1f asts' % tuple(best_record_0 + best_record_1 + mvp + dpoy + smoy + roy))
+
+        label_season_end_1.set_markup('<b>Best Record</b>\nEastern Conference:\n%s (%d-%d)\nWestern Conference:\n%s (%d-%d)\n\n<b>Most Valuable Player</b>\nPlaceholder (???)\n? pts, ? rebs, ? asts\n\n<b>Defensive Player of the Year</b>\nPlaceholder (???)\n? rebs, ? blks, ? stls\n\n<b>Sixth Man of the Year</b>\nPlaceholder (???)\n? pts, ? rebs, ? asts\n\n<b>Rookie of the Year</b>\nPlaceholder (???)\n? pts, ? rebs, ? asts' % tuple(best_record_0 + best_record_1))
+
+        season_end_dialog.run()
+        season_end_dialog.hide()
+
     def new_schedule(self):
         teams = []
         for row in common.DB_CON.execute('SELECT team_id, division_id, (SELECT conference_id FROM league_divisions WHERE league_divisions.division_id = team_attributes.division_id) FROM team_attributes WHERE season = ?', (common.SEASON,)):
@@ -781,6 +852,7 @@ class MainWindow:
     def new_phase(self, phase):
         self.unsaved_changes = True
 
+        old_phase = self.phase
         self.phase = phase
         common.DB_CON.execute('UPDATE game_attributes SET phase = ?', (self.phase,))
 
@@ -845,7 +917,7 @@ class MainWindow:
 
             self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Off-season'))
 
-            if not hasattr(self, 'dd'):
+            if old_phase != 5: # Can't check hasattr because we need a new draft every year
                 self.dd = draft_dialog.DraftDialog(self)
             else:
                 self.dd.draft_dialog.show() # Show the window
@@ -862,6 +934,12 @@ class MainWindow:
             self.update_play_menu(self.phase)
 
             self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Off-season'))
+
+            # Check for retiring players
+            # Call the contructor each season because that's where the code to check for retirement is
+            rpw = retired_players_window.RetiredPlayersWindow(self) # Do the retired player check
+            rpw.retired_players_window.show() # Show the window
+            rpw.retired_players_window.window.show() # Raise the window if it's in the background
 
     def update_play_menu(self, phase):
         # Preseason
@@ -950,6 +1028,7 @@ class MainWindow:
         self.statusbar_context_id = self.statusbar.get_context_id('Main Window Statusbar')
         self.scrolledwindow_standings = self.builder.get_object('scrolledwindow_standings')
         self.combobox_standings = self.builder.get_object('combobox_standings')
+        self.treeview_finances = self.builder.get_object('treeview_finances')
         self.treeview_player_ratings = self.builder.get_object('treeview_player_ratings')
         self.treeview_player_stats = self.builder.get_object('treeview_player_stats')
         self.combobox_player_stats_season = self.builder.get_object('combobox_player_stats_season')

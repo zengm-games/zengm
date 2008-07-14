@@ -2,7 +2,7 @@
 
 REQUIREMENTS FOR 0.1 RELEASE:
 finance
-    rookie contracts
+    rookie contracts rookie_salaries = (5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500)
     luxury tax: (team_salary - 65mil) penalty if team salary is > 65mil
     for each game:
         attendance: f(2*hometeamwinp + awayteamwinp)
@@ -25,37 +25,55 @@ roster window
 some players (rookies mainly) have ratings higher than potentials - fix this (potentail should be set to overall)
 add placeholders for all the unfinished items - i think this is done
 
-FUTURE:
-opponent GM trade AI based on their team's status: contending or rebuilding
-change prices of tickets, concessions, etc
-hire coaches to influence development
-injuries
-different sized cities with differently passionate fanbases - affects attendance
-real contract and salary cap rules
+======
+FUTURE
+======
+
+GAMESIM
+-------
+overtime
+take all ratings into account
+
+UI
+--
 view any team in the roster window
     drop down box at the top with team names
     all actions disabled unless team_id == common.PLAYER_TEAM_ID
     open this window when a team is double-clicked on in the standings
-archive stats as averages - this will make the end of season awards feasible, and make the stats view faster
-    it will also allow computation of advanced stats (+/-, PER, etc)
-playoffs
-game_sim improvements
-    overtime
-    take all ratings into account
-play menu
-    even after hiding, accelerators still work, so on menuitem activation, check to make sure it's a valid choice!!!
-        or: set accelerators in python code, not glade.  then i can reuse F12
-too many bigs labeled as F, not enough PF and C and FC
 need a good way of updating windows (player, roster, etc.) on changes
     do this after getting a good general treeview system for updates
 customize which columns are displayed in treeviews - kiwi
 treeview formatting
     str, int, float, currency, date, age - do formatting based on column type
 progress bars
-filtering should be done with treemodelfilter - see pygtk tutorial
 combine ratings and stats tabs - use one model and just show different columns
-parallelpython to parallelize game simulation
-improve game simulation code
+filtering should be done with treemodelfilter - see pygtk tutorial
+play menu
+    even after hiding, accelerators still work, so on menuitem activation, check to make sure it's a valid choice!!!
+        or: set accelerators in python code, not glade.  then i can reuse F12
+
+NBA
+---
+real contract and salary cap rules
+allow contracts that aren't the same $ every year
+team and player options
+releasing players - what should happen then?
+
+BACKEND
+-------
+archive stats as averages - this will make the end of season awards feasible, and make the stats view faster
+    it will also allow computation of advanced stats (+/-, PER, etc)
 look at conduit code for inspiration, particularly the DB stuff - Database.py and http://svn.gnome.org/viewvc/conduit/trunk/tools/test-db-wrapper/main.py?view=markup
 psyco?
 cython - rewrite parts as modules to make it faster?
+parallelpython to parallelize game simulation
+
+FEATURES
+--------
+injuries
+opponent GM trade AI based on their team's status: contending or rebuilding
+change prices of tickets, concessions, etc
+hire coaches to influence development
+different sized cities with differently passionate fanbases - affects attendance and home court advantage
+playoffs
+

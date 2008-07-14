@@ -174,6 +174,14 @@ class DraftDialog:
         common.DB_CON.execute('UPDATE player_ratings SET roster_position = ? WHERE player_id = ?', (roster_position, row[0]))
         del self.liststore_draft_available[pick]
 
+        # Contract
+        i = row[3]-1 + 30*(row[2]-1)
+        contract_amount = self.rookie_salaries[i]
+        years = 4 - row[2] # 2 years for 2nd round, 3 years for 1st round
+        print pick, contract_amount, years
+        contract_expiration = common.SEASON + years
+        common.DB_CON.execute('UPDATE player_attributes SET contract_amount = ?, contract_expiration = ? WHERE player_id = ?', (contract_amount, contract_expiration, row[0]))
+
     def __init__(self, main_window):
         self.main_window = main_window
 
@@ -184,6 +192,8 @@ class DraftDialog:
         self.treeview_draft_results = self.builder.get_object('treeview_draft_results')
 
         self.builder.connect_signals(self)
+
+        self.rookie_salaries = (5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500)
 
         # Make the Start Draft button
         self.button_start_draft = gtk.Button()

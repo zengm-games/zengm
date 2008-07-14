@@ -2,8 +2,6 @@
 
 REQUIREMENTS FOR 0.1 RELEASE:
 finance
-    rookie contracts rookie_salaries = (5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500)
-    luxury tax: (team_salary - 65mil) penalty if team salary is > 65mil
     for each game:
         attendance: f(2*hometeamwinp + awayteamwinp)
         cost: team_salary/num_games_in_season
@@ -12,16 +10,13 @@ finance
             profit = revenue - SUM(cost)
 free agents
     team_id = -1
-    salary cap: 50mil
-        if a team is over, they can only sign their own players and min contracts
+    if a team is over salary cap, they can only sign their own players and min contracts
 when games are being simulated, the play menu should have "Stop" in it, and it should work
     also, the simulation should be stopped automatically before saving, trading, and negotiating contracts
 trades
     if a team is over the salary cap, their incoming salary must be <= 125% their outgoing salary
     basic trade AI
-roster window
-    buttons - releasing players, etc
-    display age and contract info
+roster window - display age and contract info
 some players (rookies mainly) have ratings higher than potentials - fix this (potentail should be set to overall)
 add placeholders for all the unfinished items - i think this is done
 
@@ -54,10 +49,12 @@ play menu
 
 NBA
 ---
-real contract and salary cap rules
+real salary cap rules: http://en.wikipedia.org/wiki/NBA_Salary_Cap
+real contract rules (max/min, etc.)
 allow contracts that aren't the same $ every year
 team and player options
-releasing players - what should happen then?
+releasing players - see the salary cap wiki page for complicated rule
+luxury tax: (team_salary - 65mil) penalty if team salary is > 65mil
 
 BACKEND
 -------

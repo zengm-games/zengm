@@ -16,6 +16,68 @@ class RosterWindow:
         self.main_window.unsaved_changes = True
         self.update_roster()
 
+    def on_button_roster_up_clicked(self, button, data=None):
+        treemodel, treeiter = self.treeview_roster.get_selection().get_selected()
+        if treeiter:
+            path = treemodel.get_path(treeiter)
+            current_position = path[0]
+            if current_position > 0:
+                position = treemodel.get_iter((current_position-1,))
+                treemodel.move_before(treeiter, position)
+                self.on_treeview_roster_row_deleted(treemodel, None, None)
+
+    def on_button_roster_down_clicked(self, button, data=None):
+        treemodel, treeiter = self.treeview_roster.get_selection().get_selected()
+        if treeiter:
+            path = treemodel.get_path(treeiter)
+            current_position = path[0]
+            max_position = len(treemodel) - 1
+            if current_position < max_position:
+                position = treemodel.get_iter((current_position+1,))
+                treemodel.move_after(treeiter, position)
+                self.on_treeview_roster_row_deleted(treemodel, None, None)
+
+    def on_button_roster_player_info_clicked(self, button, data=None):
+        treemodel, treeiter = self.treeview_roster.get_selection().get_selected()
+        if treeiter:
+            path = treemodel.get_path(treeiter)
+            self.main_window.on_treeview_player_row_activated(self.treeview_roster, path, None, None)
+
+    def on_button_roster_edit_minutes_clicked(self, button, data=None):
+        treemodel, treeiter = self.treeview_roster.get_selection().get_selected()
+        if treeiter:
+            path = treemodel.get_path(treeiter)
+            focus_column = self.treeview_roster.get_column(3) # The index here is the position wrt visible columns, so this might need to be changed some time
+            self.treeview_roster.set_cursor(path, focus_column, start_editing=True)
+
+    def on_button_roster_edit_minutes_clicked(self, button, data=None):
+        treemodel, treeiter = self.treeview_roster.get_selection().get_selected()
+        if treeiter:
+            path = treemodel.get_path(treeiter)
+            focus_column = self.treeview_roster.get_column(3) # The index here is the position wrt visible columns, so this might need to be changed some time
+            self.treeview_roster.set_cursor(path, focus_column, start_editing=True)
+
+    def on_button_roster_release_clicked(self, button, data=None):
+        treemodel, treeiter = self.treeview_roster.get_selection().get_selected()
+        if treeiter:
+            player_id = treemodel.get_value(treeiter, 0)
+            name = treemodel.get_value(treeiter, 1)
+            dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK_CANCEL, 'Are you sure you want to release %s?  He will become a free agent and will be able to sign with any team.' % name)
+            response = dialog.run()
+            dialog.destroy()
+            if response == gtk.RESPONSE_OK:
+                # Set to FA in database
+                common.DB_CON.execute('UPDATE player_attributes SET team_id = -1 WHERE player_id = ?', (player_id,))
+                # Delete from roster treeview
+                treemodel.remove(treeiter)
+                # Update roster info
+                self.update_roster_info()
+                # Update tabs in the main window
+                self.main_window.updated['finances'] = False
+                self.main_window.updated['player_stats'] = False
+                self.main_window.updated['player_ratings'] = False
+                self.main_window.update_current_page()
+
     def on_treeview_roster_row_deleted(self, treemodel, path, data=None):
         '''
         When players are dragged and dropped in the roster screen, row-inserted

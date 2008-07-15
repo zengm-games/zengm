@@ -178,7 +178,6 @@ class DraftDialog:
         i = row[3]-1 + 30*(row[2]-1)
         contract_amount = self.rookie_salaries[i]
         years = 4 - row[2] # 2 years for 2nd round, 3 years for 1st round
-        print pick, contract_amount, years
         contract_expiration = common.SEASON + years
         common.DB_CON.execute('UPDATE player_attributes SET contract_amount = ?, contract_expiration = ? WHERE player_id = ?', (contract_amount, contract_expiration, row[0]))
 

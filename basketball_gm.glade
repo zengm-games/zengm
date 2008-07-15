@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Mon Jul 14 02:33:31 2008 -->
+<!--Generated with glade3 3.4.5 on Mon Jul 14 22:30:32 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="main_window">
     <property name="width_request">800</property>
@@ -118,12 +118,27 @@
                   <widget class="GtkMenu" id="menu4">
                     <property name="visible">True</property>
                     <child>
+                      <widget class="GtkImageMenuItem" id="menuitem_stop">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">_Stop</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="on_menuitem_stop_activate"/>
+                        <accelerator key="Escape" modifiers="" signal="activate"/>
+                        <child internal-child="image">
+                          <widget class="GtkImage" id="menu-item-image7">
+                            <property name="visible">True</property>
+                            <property name="stock">gtk-stop</property>
+                          </widget>
+                        </child>
+                      </widget>
+                    </child>
+                    <child>
                       <widget class="GtkMenuItem" id="menuitem_one_day">
                         <property name="visible">True</property>
                         <property name="label" translatable="yes">_One Day</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="on_menuitem_one_day_activate"/>
-                        <accelerator key="F12" modifiers="" signal="activate"/>
+                        <accelerator key="F9" modifiers="" signal="activate"/>
                       </widget>
                     </child>
                     <child>
@@ -132,7 +147,7 @@
                         <property name="label" translatable="yes">One _Week</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="on_menuitem_one_week_activate"/>
-                        <accelerator key="F12" modifiers="GDK_SHIFT_MASK" signal="activate"/>
+                        <accelerator key="F10" modifiers="" signal="activate"/>
                       </widget>
                     </child>
                     <child>
@@ -141,7 +156,7 @@
                         <property name="label" translatable="yes">One _Month</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="on_menuitem_one_month_activate"/>
-                        <accelerator key="F12" modifiers="GDK_MOD1_MASK" signal="activate"/>
+                        <accelerator key="F11" modifiers="" signal="activate"/>
                       </widget>
                     </child>
                     <child>
@@ -150,6 +165,7 @@
                         <property name="label" translatable="yes">Until _Playoffs</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="on_menuitem_until_playoffs_activate"/>
+                        <accelerator key="F12" modifiers="" signal="activate"/>
                       </widget>
                     </child>
                     <child>
@@ -2378,8 +2394,6 @@ For more information on this, and how to apply and follow the GNU AGPL, see
     </child>
   </widget>
   <widget class="GtkWindow" id="roster_window">
-    <property name="width_request">600</property>
-    <property name="height_request">500</property>
     <property name="title" translatable="yes">Roster</property>
     <property name="icon">icon.svg</property>
     <property name="transient_for">main_window</property>
@@ -2405,8 +2419,8 @@ For more information on this, and how to apply and follow the GNU AGPL, see
               <widget class="GtkScrolledWindow" id="scrolledwindow10">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
-                <property name="vscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
+                <property name="hscrollbar_policy">GTK_POLICY_NEVER</property>
+                <property name="vscrollbar_policy">GTK_POLICY_NEVER</property>
                 <child>
                   <widget class="GtkViewport" id="viewport1">
                     <property name="visible">True</property>
@@ -2668,7 +2682,7 @@ For more information on this, and how to apply and follow the GNU AGPL, see
       </widget>
     </child>
   </widget>
-  <widget class="GtkDialog" id="season_end_dialog">
+  <widget class="GtkDialog" id="season_end_window">
     <property name="border_width">5</property>
     <property name="title" translatable="yes">Season Awards</property>
     <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
@@ -2778,6 +2792,7 @@ Placeholder (???)</property>
                 <property name="label" translatable="yes">gtk-close</property>
                 <property name="use_stock">True</property>
                 <property name="response_id">0</property>
+                <signal name="clicked" handler="on_season_end_window_clos"/>
               </widget>
             </child>
           </widget>
@@ -3199,6 +3214,7 @@ Placeholder (???)</property>
     </child>
   </widget>
   <widget class="GtkDialog" id="retired_players_window">
+    <property name="height_request">300</property>
     <property name="border_width">5</property>
     <property name="title" translatable="yes">Retired Players</property>
     <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
@@ -3227,7 +3243,7 @@ Placeholder (???)</property>
               <widget class="GtkScrolledWindow" id="scrolledwindow12">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
+                <property name="hscrollbar_policy">GTK_POLICY_NEVER</property>
                 <property name="vscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
                 <child>
                   <widget class="GtkTreeView" id="treeview_retired_players">

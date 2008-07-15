@@ -50,15 +50,14 @@ class RetiredPlayersWindow:
                 team = 'FA'
             overall = int(overall)
             age_excess = 0
-            if age > 34:
-                age_excess = (age - 34) / 20.0 # 0.05 for each year beyond 34
-            potential_excess = (40 - potential) / 50.0 # 0.02 for each potential rating below 40 (this can be negative)
-            r = (age_excess + potential_excess) + random.gauss(0, 1)
-            print player_id, name, team, age, overall, potential
-            print age_excess, potential_excess, r
-            if r > 0:
-                common.DB_CON.execute('UPDATE player_attributes SET team_id = -3 WHERE player_id = ?', (player_id,))
-                liststore.append([player_id, name, team, age, overall])
+            if age > 34 or team == 'FA': # Only players older than 34 or without a contract will retire
+                if age > 34:
+                    age_excess = (age - 34) / 20.0 # 0.05 for each year beyond 34
+                potential_excess = (40 - potential) / 50.0 # 0.02 for each potential rating below 40 (this can be negative)
+                r = (age_excess + potential_excess) + random.gauss(0, 1)
+                if r > 0:
+                    common.DB_CON.execute('UPDATE player_attributes SET team_id = -3 WHERE player_id = ?', (player_id,))
+                    liststore.append([player_id, name, team, age, overall])
 
         self.retired_players_window.show()
 

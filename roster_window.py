@@ -47,14 +47,7 @@ class RosterWindow:
         treemodel, treeiter = self.treeview_roster.get_selection().get_selected()
         if treeiter:
             path = treemodel.get_path(treeiter)
-            focus_column = self.treeview_roster.get_column(3) # The index here is the position wrt visible columns, so this might need to be changed some time
-            self.treeview_roster.set_cursor(path, focus_column, start_editing=True)
-
-    def on_button_roster_edit_minutes_clicked(self, button, data=None):
-        treemodel, treeiter = self.treeview_roster.get_selection().get_selected()
-        if treeiter:
-            path = treemodel.get_path(treeiter)
-            focus_column = self.treeview_roster.get_column(3) # The index here is the position wrt visible columns, so this might need to be changed some time
+            focus_column = self.treeview_roster.get_column(7) # The index here is the position wrt visible columns, so this might need to be changed some time
             self.treeview_roster.set_cursor(path, focus_column, start_editing=True)
 
     def on_button_roster_release_clicked(self, button, data=None):
@@ -100,11 +93,11 @@ class RosterWindow:
         common.DB_CON.execute('UPDATE player_ratings SET average_playing_time = ? WHERE player_id = ?', (average_playing_time, player_id))
         self.unsaved_changes = True
         if average_playing_time > 48:
-            model[path][4] = 48
+            model[path][8] = 48
         elif average_playing_time < 0:
-            model[path][4] = 0
+            model[path][8] = 0
         else:
-            model[path][4] = average_playing_time
+            model[path][8] = average_playing_time
         self.update_roster_info()
         return True
 
@@ -115,10 +108,10 @@ class RosterWindow:
         self.main_window.on_treeview_player_row_activated(treeview, path, view_column, data)
 
     def build_roster(self):
-        column_info = [['Name', 'Position', 'Rating', 'Average Playing Time'],
-                       [1,      2,          3,        4],
-                       [False,  False,      False,    False],
-                       [False,  False,      False,    False]]
+        #column_info = [['Name', 'Position', 'Rating', 'Contract', 'PPG', 'Reb', 'Ast', 'Average Playing Time'],
+        #               [1,      2,          3,        4,          5,     6,     7,     8],
+        #               [False,  False,      False,    False,      False, False, False, False],
+        #               [False,  False,      False,    False,      False, False, False, False]]
         renderer = gtk.CellRendererText()
         self.renderer_roster_editable = gtk.CellRendererText()
         self.renderer_roster_editable.set_property('editable', True)
@@ -128,7 +121,21 @@ class RosterWindow:
         self.treeview_roster.append_column(column)
         column = gtk.TreeViewColumn('Rating', renderer, text=3)
         self.treeview_roster.append_column(column)
-        column = gtk.TreeViewColumn('Average Playing Time', self.renderer_roster_editable, text=4)
+        column = gtk.TreeViewColumn('Contract', renderer, text=4)
+        self.treeview_roster.append_column(column)
+        column = gtk.TreeViewColumn('PPG', renderer, text=5)
+        column.set_cell_data_func(renderer,
+            lambda column, cell, model, iter: cell.set_property('text', '%.1f' % model.get_value(iter, 5)))
+        self.treeview_roster.append_column(column)
+        column = gtk.TreeViewColumn('Reb', renderer, text=6)
+        column.set_cell_data_func(renderer,
+            lambda column, cell, model, iter: cell.set_property('text', '%.1f' % model.get_value(iter, 6)))
+        self.treeview_roster.append_column(column)
+        column = gtk.TreeViewColumn('Ast', renderer, text=7)
+        column.set_cell_data_func(renderer,
+            lambda column, cell, model, iter: cell.set_property('text', '%.1f' % model.get_value(iter, 7)))
+        self.treeview_roster.append_column(column)
+        column = gtk.TreeViewColumn('Average Playing Time', self.renderer_roster_editable, text=8)
         self.treeview_roster.append_column(column)
 
         # This treeview is used to list the positions to the left of the players
@@ -144,8 +151,8 @@ class RosterWindow:
         self.update_roster_info()
 
         # Roster list
-        column_types = [int, str, str, int, int]
-        query = 'SELECT player_attributes.player_id, player_attributes.name, player_attributes.position, player_ratings.overall, player_ratings.average_playing_time FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = ? ORDER BY player_ratings.roster_position ASC'
+        column_types = [int, str, str, int, str, float, float, float, int]
+        query = 'SELECT player_attributes.player_id, player_attributes.name, player_attributes.position, player_ratings.overall, "$" || contract_amount || "k thru " || contract_expiration, 0, 0, 0, player_ratings.average_playing_time FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = ? ORDER BY player_ratings.roster_position ASC'
         query_bindings = (common.PLAYER_TEAM_ID,)
         common.treeview_update(self.treeview_roster, column_types, query, query_bindings)
         model = self.treeview_roster.get_model()

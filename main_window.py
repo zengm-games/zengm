@@ -12,13 +12,15 @@ import sys
 import time
 
 import common
-import draft_dialog
 import game_sim
+import player
+import schedule
+
+import draft_dialog
 import retired_players_window
 import roster_window
-import player
 import player_window
-import schedule
+import season_end_window
 import trade_window
 
 class MainWindow:
@@ -80,6 +82,10 @@ class MainWindow:
         else:
             self.tw.trade_window.show() # Show the window
             self.tw.trade_window.window.show() # Raise the window if it's in the background
+        return True
+
+    def on_menuitem_stop_activate(self, widget, data=None):
+        self.stop_games = True
         return True
 
     def on_menuitem_one_day_activate(self, widget, data=None):
@@ -549,8 +555,18 @@ class MainWindow:
         Plays the number of games set in num_games and updates pages
         After that, checks to see if the season is over (so make sure num_games makes sense!)
         '''
+        # Update the Play menu so the simulations can be stopped
+        self.update_play_menu(-1)
+
         game = game_sim.Game()
         for d in range(num_days):
+            # If the user wants to stop the simulation, then stop the simulation
+            if d == 0: # But not on the first day
+                self.stop_games = False
+            if self.stop_games:
+                self.stop_games = False
+                break
+
             self.statusbar.push(self.statusbar_context_id, 'Playing day %d of %d...' % (d, num_days))
             for i in range(len(common.TEAMS)/2):
                 teams = self.schedule.pop()
@@ -568,6 +584,9 @@ class MainWindow:
                 self.update_current_page()
             self.statusbar.pop(self.statusbar_context_id)
 
+        # Restore the Play menu to its previous glory
+        self.update_play_menu(self.phase)
+
         # Make sure we are looking at this year's standings, stats, and games after playing some games
         self.combobox_standings_active = 0
         self.combobox_player_stats_season_active = 0
@@ -581,7 +600,11 @@ class MainWindow:
         season_over = False
         if days_played == common.SEASON_LENGTH:
             season_over = True
-            self.season_end_dialog()
+
+            sew = season_end_window.SeasonEndWindow(self)
+            sew.season_end_window.show() # Show the window
+            sew.season_end_window.window.show() # Raise the window if it's in the background
+
             self.new_phase(3) # Start playoffs
 
         if season_over or self.notebook.get_current_page() != self.pages['player_ratings']:
@@ -748,24 +771,6 @@ class MainWindow:
         save_game_dialog.destroy()
         return returnval
 
-    def season_end_dialog(self):
-        season_end_dialog = self.builder.get_object('season_end_dialog')
-        label_season_end_1 = self.builder.get_object('label_season_end_1')
-
-        best_record_0 = common.DB_CON.execute('SELECT region || " " || name, won, lost FROM team_attributes WHERE season = ? AND (SELECT conference_id FROM league_divisions WHERE league_divisions.division_id = team_attributes.division_id) = 0 ORDER BY won/(won + lost) DESC', (common.SEASON,)).fetchone()
-        best_record_1 = common.DB_CON.execute('SELECT region || " " || name, won, lost FROM team_attributes WHERE season = ? AND (SELECT conference_id FROM league_divisions WHERE league_divisions.division_id = team_attributes.division_id) = 1 ORDER BY won/(won + lost) DESC', (common.SEASON,)).fetchone()
-        #mvp = common.DB_CON.execute('SELECT pa.name, ta.abbreviation, AVG(ps.points), AVG(ps.offensive_rebounds + ps.defensive_rebounds), AVG(ps.assists) FROM player_attributes as pa, player_stats as ps, team_attributes as ta WHERE pa.player_id = ps.player_id AND ta.team_id = pa.team_id AND ta.season = ps.season AND ps.season = ?', (common.SEASON,)).fetchone()
-        #dpoy = common.DB_CON.execute('SELECT pa.name, ta.abbreviation, AVG(ps.offensive_rebounds + ps.defensive_rebounds), AVG(ps.blocks), AVG(ps.steals) FROM player_attributes as pa, player_stats as ps, team_attributes as ta WHERE pa.player_id = ps.player_id AND ta.team_id = pa.team_id AND ta.season = ps.season AND ps.season = ?', (common.SEASON,)).fetchone()
-        #smoy = common.DB_CON.execute('SELECT pa.name, ta.abbreviation, AVG(ps.points), AVG(ps.offensive_rebounds + ps.defensive_rebounds), AVG(ps.assists) FROM player_attributes as pa, player_stats as ps, team_attributes as ta WHERE pa.player_id = ps.player_id AND ta.team_id = pa.team_id AND ta.season = ps.season AND ps.season = ?', (common.SEASON,)).fetchone()
-        #roy = common.DB_CON.execute('SELECT pa.name, ta.abbreviation, AVG(ps.points), AVG(ps.offensive_rebounds + ps.defensive_rebounds), AVG(ps.assists) FROM player_attributes as pa, player_stats as ps, team_attributes as ta WHERE pa.player_id = ps.player_id AND ta.team_id = pa.team_id AND ta.season = ps.season AND ps.season = ?', (common.SEASON,)).fetchone()
-
-        #label_season_end_1.set_markup('<b>Best Record</b>\nEastern Conference:\n%s (%d-%d)\nWestern Conference:\n%s (%d-%d)\n\n<b>Most Valuable Player</b>\n%s (%s)\n%.1f pts, %.1f rebs, %.1f asts\n\n<b>Defensive Player of the Year</b>\n%s (%s)\n%.1f rebs, %.1f blks, %.1f stls\n\n<b>Sixth Man of the Year</b>\n%s (%s)\n%.1f pts, %.1f rebs, %.1f asts\n\n<b>Rookie of the Year</b>\n%s (%s)\n%.1f pts, %.1f rebs, %.1f asts' % tuple(best_record_0 + best_record_1 + mvp + dpoy + smoy + roy))
-
-        label_season_end_1.set_markup('<b>Best Record</b>\nEastern Conference:\n%s (%d-%d)\nWestern Conference:\n%s (%d-%d)\n\n<b>Most Valuable Player</b>\nPlaceholder (???)\n? pts, ? rebs, ? asts\n\n<b>Defensive Player of the Year</b>\nPlaceholder (???)\n? rebs, ? blks, ? stls\n\n<b>Sixth Man of the Year</b>\nPlaceholder (???)\n? pts, ? rebs, ? asts\n\n<b>Rookie of the Year</b>\nPlaceholder (???)\n? pts, ? rebs, ? asts' % tuple(best_record_0 + best_record_1))
-
-        season_end_dialog.run()
-        season_end_dialog.hide()
-
     def new_schedule(self):
         teams = []
         for row in common.DB_CON.execute('SELECT team_id, division_id, (SELECT conference_id FROM league_divisions WHERE league_divisions.division_id = team_attributes.division_id) FROM team_attributes WHERE season = ?', (common.SEASON,)):
@@ -880,7 +885,7 @@ class MainWindow:
 
             self.update_all_pages()
 
-        # Regular season - pre trading deadline
+        # Regular Season - pre trading deadline
         elif self.phase == 1:
             self.new_schedule()
 
@@ -891,9 +896,9 @@ class MainWindow:
 
             self.update_play_menu(self.phase)
 
-            self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Regular season'))
+            self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Regular Season'))
 
-        # Regular season - post trading deadline
+        # Regular Season - post trading deadline
         elif self.phase == 2:
             self.update_play_menu(self.phase)
 
@@ -942,37 +947,41 @@ class MainWindow:
             rpw.retired_players_window.window.show() # Raise the window if it's in the background
 
     def update_play_menu(self, phase):
+        # Games in progress
+        if phase == -1:
+            show_menus = [True, False, False, False, False, False, False, False, False, False]
+
         # Preseason
-        if self.phase == 0:
-            show_menus = [False, False, False, False, False, False, False, False, True]
+        elif phase == 0:
+            show_menus = [False, False, False, False, False, False, False, False, False, True]
 
         # Regular season - pre trading deadline
-        elif self.phase == 1:
-            show_menus = [True, True, True, True, False, False, False, False, False]
+        elif phase == 1:
+            show_menus = [False, True, True, True, True, False, False, False, False, False]
 
         # Regular season - post trading deadline
-        elif self.phase == 2:
-            show_menus = [True, True, True, True, False, False, False, False, False]
+        elif phase == 2:
+            show_menus = [False, True, True, True, True, False, False, False, False, False]
 
         # Playoffs
-        elif self.phase == 3:
-            show_menus = [True, True, True, False, True, False, False, False, False]
+        elif phase == 3:
+            show_menus = [False, True, True, True, False, True, False, False, False, False]
 
         # Offseason - pre draft
-        elif self.phase == 4:
-            show_menus = [False, False, False, False, False, True, False, False, False]
+        elif phase == 4:
+            show_menus = [False, False, False, False, False, False, True, False, False, False]
 
         # Draft
-        elif self.phase == 5:
-            show_menus = [False, False, False, False, False, True, False, False, False]
+        elif phase == 5:
+            show_menus = [False, False, False, False, False, False, True, False, False, False]
 
         # Offseason - post draft
-        elif self.phase == 6:
-            show_menus = [False, False, False, False, False, False, True, False, False]
+        elif phase == 6:
+            show_menus = [False, False, False, False, False, False, False, True, False, False]
 
         # Offseason - free agency
-        elif self.phase == 7:
-            show_menus = [False, False, False, False, False, False, False, True, False]
+        elif phase == 7:
+            show_menus = [False, False, False, False, False, False, False, False, True, False]
 
         for i in range(len(self.menuitem_play)):
             self.menuitem_play[i].set_visible(show_menus[i])
@@ -1014,6 +1023,7 @@ class MainWindow:
         
         self.main_window = self.builder.get_object('main_window')
         self.menuitem_play = []
+        self.menuitem_play.append(self.builder.get_object('menuitem_stop'))
         self.menuitem_play.append(self.builder.get_object('menuitem_one_day'))
         self.menuitem_play.append(self.builder.get_object('menuitem_one_week'))
         self.menuitem_play.append(self.builder.get_object('menuitem_one_month'))
@@ -1047,6 +1057,8 @@ class MainWindow:
         self.updated = dict(standings=False, finances=False, player_ratings=False, player_stats=False, team_stats=False, games_list=False, playoffs=False, player_window_stats=False, player_window_game_log=False)
         # Set to true when a change is made
         self.unsaved_changes = False
+        # Set to true and games will be stopped after the current day's simulation finishes
+        self.stop_games = False
 
         # Initialize combobox positions
         self.combobox_standings_active = 0

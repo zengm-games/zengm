@@ -7,10 +7,6 @@ import sqlite3
 import common
 
 class RetiredPlayersWindow:
-    def on_retired_players_window_close(self, widget, data=None):
-        self.retired_players_window.hide()
-        return True
-
     def on_treeview_player_row_activated(self, treeview, path, view_column, data=None):
         '''
         Map to the same function in main_window.py
@@ -58,6 +54,4 @@ class RetiredPlayersWindow:
                 if r > 0:
                     common.DB_CON.execute('UPDATE player_attributes SET team_id = -3 WHERE player_id = ?', (player_id,))
                     liststore.append([player_id, name, team, age, overall])
-
-        self.retired_players_window.show()
 

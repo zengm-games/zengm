@@ -16,6 +16,7 @@ import game_sim
 import player
 import schedule
 
+import contract_window
 import draft_dialog
 import retired_players_window
 import roster_window
@@ -673,6 +674,17 @@ class MainWindow:
             common.DB_CON.execute('UPDATE player_ratings SET average_playing_time = ?, roster_position = ? WHERE player_id = ?', (player[2], roster_position, player[0]))
             roster_position += 1
 
+    def player_contract_expire(self, player_id):
+        resign = random.choice([True, False])
+        if resign:
+            p = player.Player()
+            p.load(player_id)
+            amount, expiration = p.contract()
+            common.DB_CON.execute('UPDATE player_attributes SET contract_amount = ?, contract_expiration = ? WHERE player_id = ?', (amount, expiration, player_id))
+
+        else:
+            common.DB_CON.execute('UPDATE player_attributes SET team_id = -1 WHERE player_id = ?', (player_id,))
+
     def quit(self):
         proceed = False
         if self.unsaved_changes:
@@ -943,8 +955,21 @@ class MainWindow:
             # Check for retiring players
             # Call the contructor each season because that's where the code to check for retirement is
             rpw = retired_players_window.RetiredPlayersWindow(self) # Do the retired player check
-            rpw.retired_players_window.show() # Show the window
-            rpw.retired_players_window.window.show() # Raise the window if it's in the background
+            rpw.retired_players_window.run()
+            rpw.retired_players_window.destroy()
+
+            # Resign players
+            for player_id, team_id, name in common.DB_CON.execute('SELECT player_id, team_id, name FROM player_attributes WHERE contract_expiration = ?', (common.SEASON,)):
+                if team_id != common.PLAYER_TEAM_ID:
+                    # Automaitcally negotiate with teams
+                    self.player_contract_expire(player_id)
+                else:
+                    # Open a contract_window
+                    cw = contract_window.ContractWindow(self, player_id) # Do the retired player check
+                    cw.contract_window.run()
+                    cw.contract_window.destroy()
+
+                    self.player_contract_expire(player_id)
 
     def update_play_menu(self, phase):
         # Games in progress

@@ -80,6 +80,26 @@ class Player:
     def overall_rating(self):
         return (self.rating['height'] + self.rating['strength'] + self.rating['speed'] + self.rating['jumping'] + self.rating['endurance'] + self.rating['shooting_inside'] + self.rating['shooting_layups'] + self.rating['shooting_free_throws'] + self.rating['shooting_two_pointers'] + self.rating['shooting_three_pointers'] + self.rating['blocks'] + self.rating['steals'] + self.rating['dribbling'] + self.rating['passing'] + self.rating['rebounding'])/15
 
+    def contract(self):
+        # Limits on yearly contract amount, in $1000's
+        min_amount = 500
+        max_amount = 20000
+
+        self.rating['overall'] = self.overall_rating()
+        # Scale amount from 500k to 15mil, proportional to overall*2 + potential 120-210
+        amount = ((2.0 * self.rating['overall'] + self.rating['potential']) - 120)/(210 - 120) # Scale from 0 to 1 (approx)
+        amount = amount * (max_amount - min_amount) + min_amount # Scale from 500k to 15mil
+        amount *= random.gauss(1, 0.1) # Randomize
+        expiration = common.SEASON + random.randrange(0, 6)
+        if amount < min_amount:
+            amount = min_amount
+        elif amount > max_amount:
+            amount = max_amount
+        else:   
+            amount = round(amount)
+
+        return amount, expiration
+
 
 
 class GeneratePlayer(Player):
@@ -164,7 +184,7 @@ class GeneratePlayer(Player):
         self.attribute['draft_round'] = 0
         self.attribute['draft_pick'] = 0
         self.attribute['draft_team_id'] = 0
-        self.attribute['contract_amount'], self.attribute['contract_expiration'] = self._contract()
+        self.attribute['contract_amount'], self.attribute['contract_expiration'] = self.contract()
 
     def _name(self):
         # First name
@@ -249,26 +269,6 @@ class GeneratePlayer(Player):
             max_day = 31
         day = random.randint(1, max_day)
         return '%d-%02d-%02d' % (year, month, day)
-
-    def _contract(self):
-        # Limits on yearly contract amount, in $1000's
-        min_amount = 500
-        max_amount = 20000
-
-        self.rating['overall'] = self.overall_rating()
-        # Scale amount from 500k to 15mil, proportional to overall*2 + potential 120-210
-        amount = ((2.0 * self.rating['overall'] + self.rating['potential']) - 120)/(210 - 120) # Scale from 0 to 1 (approx)
-        amount = amount * (max_amount - min_amount) + min_amount # Scale from 500k to 15mil
-        amount *= random.gauss(1, 0.1) # Randomize
-        expiration = common.SEASON + random.randrange(0, 6)
-        if amount < min_amount:
-            amount = min_amount
-        elif amount > max_amount:
-            amount = max_amount
-        else:   
-            amount = round(amount)
-
-        return amount, expiration
 
     def sql_insert(self):
         self.rating['overall'] = self.overall_rating()

@@ -1,24 +1,26 @@
 "Season Ticket Basketball"
 
 REQUIREMENTS FOR 0.1 RELEASE:
+resigning players at the end of the year
 finance
     for each game:
         attendance: f(2*hometeamwinp + awayteamwinp)
         cost: team_salary/num_games_in_season
     finances tab - team | avg attendance | team payroll | revenue (YTD) | profit (YTD) | cash
-            revenue = attendance * ticket_price + tv_money / num_games + luxary_tax_amount(+ or -)
+            revenue = attendance * ticket_price + tv_money / num_games
             profit = revenue - SUM(cost)
 negotiation window
     for resigning players and signing free agents
 free agents
     team_id = -1
     if a team is over salary cap, they can only sign their own players and min contracts
-the simulation should be stopped automatically before saving, trading, and negotiating contracts
+uncertainty in rating - for each player, calculate a randn(0, 3) with max/min of +/- 5
+    calculate a new one each year and add it to 1/2 of the previous one
 trades
     if a team is over the salary cap, their incoming salary must be <= 125% their outgoing salary
     basic trade AI
+the simulation should be stopped automatically before saving, trading, and negotiating contracts
 some players (rookies mainly) have ratings higher than potentials - fix this (potentail should be set to overall)
-add placeholders for all the unfinished items - i think this is done
 are all imports necessary?
 
 ======

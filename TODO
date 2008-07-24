@@ -1,7 +1,34 @@
 "Season Ticket Basketball"
 
 REQUIREMENTS FOR 0.1 RELEASE:
-resigning players at the end of the year
+negotiation window
+    number of times the player will negotiate their asking price: randrange(0, 5)
+        # Negotiation step
+        if gm_years < player_years:
+            player_years -= 1
+            player_salary *= 1.5
+            if gm_salary >= player_salary:
+                player_salary = 1.1*gm_salary
+        elif gm_years > player_years
+            player_years += 1
+            player_salary *= 1.5
+            if gm_salary >= player_salary:
+                player_salary = 1.1*gm_salary
+        if gm_salary < player_salary and gm_salary > 0.7*player_salary:
+            player_salary = .75*player_salary + .25*gm_salary
+        elif gm_salary < player_salary:
+            player_salary *= 1.1
+    after that, the salary increases by 5% each step
+
+    players with potential want shorter contracts:
+        potential_difference = round((potential - overall) / 4.0)
+        years = 5 - potential_difference
+        amount, expiration = player.contract()
+        salary = amount
+        expiration = common.SEASON + years
+
+    accept if it's within some range around the desired contract value
+    close button should be "Release" for resigning players
 finance
     for each game:
         attendance: f(2*hometeamwinp + awayteamwinp)
@@ -9,8 +36,6 @@ finance
     finances tab - team | avg attendance | team payroll | revenue (YTD) | profit (YTD) | cash
             revenue = attendance * ticket_price + tv_money / num_games
             profit = revenue - SUM(cost)
-negotiation window
-    for resigning players and signing free agents
 free agents
     team_id = -1
     if a team is over salary cap, they can only sign their own players and min contracts
@@ -40,6 +65,7 @@ view any team in the roster window
     open this window when a team is double-clicked on in the standings
 need a good way of updating windows (player, roster, etc.) on changes
     do this after getting a good general treeview system for updates
+    player/roster window should update after game played, player signed/released/drafted
 customize which columns are displayed in treeviews - kiwi
 treeview formatting
     str, int, float, currency, date, age - do formatting based on column type

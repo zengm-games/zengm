@@ -939,6 +939,8 @@ class MainWindow:
             else:
                 self.dd.draft_dialog.show() # Show the window
                 self.dd.draft_dialog.window.show() # Raise the window if it's in the background
+            self.updated['finances'] = False
+            self.update_current_page()
 
         # Offseason - post draft
         elif self.phase == 6:
@@ -966,10 +968,15 @@ class MainWindow:
                 else:
                     # Open a contract_window
                     cw = contract_window.ContractWindow(self, player_id) # Do the retired player check
-                    cw.contract_window.run()
+                    response = cw.contract_window.run()
                     cw.contract_window.destroy()
+                    print response, gtk.RESPONSE_CLOSE
+                    if response == gtk.RESPONSE_CLOSE:
+                        common.DB_CON.execute('UPDATE player_attributes SET team_id = -1 WHERE player_id = ?', (player_id,))
 
                     self.player_contract_expire(player_id)
+            self.updated['finances'] = False
+            self.update_current_page()
 
     def update_play_menu(self, phase):
         # Games in progress

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Thu Jul 24 17:50:50 2008 -->
+<!--Generated with glade3 3.4.5 on Thu Jul 24 18:41:46 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="main_window">
     <property name="width_request">800</property>
@@ -3414,7 +3414,7 @@ Placeholder (???)</property>
               </packing>
             </child>
             <child>
-              <widget class="GtkLabel" id="label55">
+              <widget class="GtkLabel" id="label_contract_player_proposal">
                 <property name="visible">True</property>
                 <property name="xalign">0</property>
                 <property name="yalign">0</property>

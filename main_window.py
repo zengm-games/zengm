@@ -24,6 +24,7 @@ import roster_window
 import player_window
 import season_end_window
 import trade_window
+import welcome_dialog
 
 class MainWindow:
     def on_main_window_delete_event(self, widget, data=None):
@@ -412,7 +413,7 @@ class MainWindow:
         gp = player.GeneratePlayer()
         sql = ''
         player_id = 1
-        for t in range(30):
+        for t in range(-1, 30):
             base_ratings = [40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29]
             potentials = [70, 60, 50, 50, 55, 45, 65, 35, 50, 45, 55, 55]
             random.shuffle(potentials)
@@ -1105,4 +1106,8 @@ class MainWindow:
         self.combobox_game_log_team_active = common.PLAYER_TEAM_ID
 
         self.builder.connect_signals(self)
+
+        self.main_window.show()
+
+        wd = welcome_dialog.WelcomeDialog(self)
 

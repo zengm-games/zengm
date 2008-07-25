@@ -107,3 +107,22 @@ Salary Cap: $%s' % (name, payroll, salary_cap))
         self.update_label_contract_player_proposal()
         self.spinbutton_contract_team_amount.set_value(self.player_amount*1000)
         self.spinbutton_contract_team_years.set_value(self.player_years)
+
+        # If signing free agents, close should be Cancel.  For resigning players it should be Release Player.
+        button = gtk.Button()
+        image = gtk.Image()
+        image.set_from_stock(gtk.STOCK_CANCEL, gtk.ICON_SIZE_BUTTON)
+        if self.team_id == common.PLAYER_TEAM_ID:
+            label = gtk.Label('_Release Player')
+        else:
+            label = gtk.Label('_Cancel')
+        label.set_use_underline(True)
+        hbox = gtk.HBox(False, 2)
+        hbox.pack_start(image)
+        hbox.pack_start(label)
+        alignment = gtk.Alignment(0.5, 0.5, 0, 0)
+        alignment.add(hbox)
+        button.add(alignment)
+        self.contract_window.add_action_widget(button, -7)
+        button.show_all()
+

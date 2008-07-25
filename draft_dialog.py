@@ -63,7 +63,7 @@ class DraftDialog:
         row = common.DB_CON.execute('SELECT MAX(player_id) + 1 FROM player_attributes').fetchone()
         player_id = row[0]
         team_id = -2 # -2 is the team_id for players generated for the draft
-        for p in range(80):
+        for p in range(70):
             base_rating = random.randrange(20, 40)
             potential = int(random.gauss(55,10))
             i = random.randrange(len(profiles))

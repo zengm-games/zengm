@@ -1,6 +1,11 @@
 "Season Ticket Basketball"
 
 REQUIREMENTS FOR 0.1 RELEASE:
+free agents
+    treeview: pos | name | age | overall | potential
+    team_id = -1
+    if a team is over salary cap, they can only sign their own players and min contracts
+    AI for other teams to sign free agents
 finance
     for each game:
         attendance: f(2*hometeamwinp + awayteamwinp)
@@ -8,10 +13,6 @@ finance
     finances tab - team | avg attendance | team payroll | revenue (YTD) | profit (YTD) | cash
             revenue = attendance * ticket_price + tv_money / num_games
             profit = revenue - SUM(cost)
-free agents
-    team_id = -1
-    if a team is over salary cap, they can only sign their own players and min contracts
-    AI for other teams to sign free agents
 uncertainty in rating - for each player, calculate a randn(0, 3) with max/min of +/- 5
     calculate a new one each year and add it to 1/2 of the previous one
 trades

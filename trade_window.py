@@ -17,6 +17,7 @@ class TradeWindow:
         self.builder = gtk.Builder()
         self.builder.add_from_file(common.GTKBUILDER_PATH) 
         self.trade_window = self.builder.get_object('trade_window')
+        self.trade_window.set_transient_for(self.main_window.main_window)
 
         self.builder.connect_signals(self)
 

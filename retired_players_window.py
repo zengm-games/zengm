@@ -20,7 +20,6 @@ class RetiredPlayersWindow:
         self.builder.add_from_file(common.GTKBUILDER_PATH) 
 
         self.retired_players_window = self.builder.get_object('retired_players_window')
-        self.retired_players_window.set_transient_for(self.main_window.main_window)
         self.treeview_retired_players = self.builder.get_object('treeview_retired_players')
 
         self.builder.connect_signals(self)

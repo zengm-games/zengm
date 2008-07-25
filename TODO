@@ -1,10 +1,5 @@
-"Season Ticket Basketball"
-
 REQUIREMENTS FOR 0.1 RELEASE:
 free agents
-    treeview: pos | name | age | overall | potential
-    team_id = -1
-    if a team is over salary cap, they can only sign their own players and min contracts
     AI for other teams to sign free agents
 finance
     for each game:
@@ -19,9 +14,10 @@ trades
     if a team is over the salary cap, their incoming salary must be <= 125% their outgoing salary
     basic trade AI
 the simulation should be stopped automatically before saving, trading, and negotiating contracts
-some players (rookies mainly) have ratings higher than potentials - fix this (potentail should be set to overall)
-negotiation window
-    close button should be "Release" for resigning players and "Cancel" for free agents
+some players (rookies?) have ratings higher than potentials - fix this (potentail should be set to overall)
+contract window
+    check if team_id is common.PLAYER_TEAM_ID
+        close button should be "Release" for resigning players and "Cancel" for free agents
 
 ======
 FUTURE
@@ -62,11 +58,8 @@ luxury tax: (team_salary - 65mil) penalty if team salary is > 65mil
 
 BACKEND
 -------
-archive stats as averages - this will make the end of season awards feasible, and make the stats view faster
-    it will also allow computation of advanced stats (+/-, PER, etc)
-look at conduit code for inspiration, particularly the DB stuff - Database.py and http://svn.gnome.org/viewvc/conduit/trunk/tools/test-db-wrapper/main.py?view=markup
-psyco?
-cython - rewrite parts as modules to make it faster?
+archive stats as averages - this will make the end of season awards feasible, and make the stats view faster/easier
+advanced stats (+/-, PER, etc)
 parallelpython to parallelize game simulation
 
 FEATURES

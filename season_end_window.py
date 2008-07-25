@@ -17,7 +17,6 @@ class SeasonEndWindow:
         self.builder.add_from_file(common.GTKBUILDER_PATH) 
 
         self.season_end_window = self.builder.get_object('season_end_window')
-        self.season_end_window.set_transient_for(self.main_window.main_window)
         label_season_end_1 = self.builder.get_object('label_season_end_1')
 
         self.builder.connect_signals(self)

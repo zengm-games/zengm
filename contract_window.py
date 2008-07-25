@@ -21,12 +21,18 @@ class ContractWindow:
 
     def on_button_contract_player_info_clicked(self, button, data=None):
         if not hasattr(self.main_window, 'pw'):
-            self.main_window.pw = player_window.PlayerWindow(self.main_window)
+            self.main_window.pw = player_window.PlayerWindow()
         self.main_window.pw.update_player(self.player_id)
 
     def on_button_contract_accept_clicked(self, button, data=None):
-        common.DB_CON.execute('UPDATE player_attributes SET contract_amount = ?, contract_expiration = ? WHERE player_id = ?', (self.player_amount, common.SEASON + self.player_years, self.player_id))
-        self.contract_window.destroy()
+        # Check salary cap for free agents
+        if self.team_id == common.PLAYER_TEAM_ID or (common.SALARY_CAP >= self.payroll + self.player_amount or self.player_amount == 500):
+            common.DB_CON.execute('UPDATE player_attributes SET team_id = ?, contract_amount = ?, contract_expiration = ? WHERE player_id = ?', (common.PLAYER_TEAM_ID, self.player_amount, common.SEASON + self.player_years, self.player_id))
+            self.contract_window.destroy()
+        else:
+            md = gtk.MessageDialog(parent=self.contract_window, flags=0, type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_CLOSE, message_format='You can only sign free agents at the league minimum when you are over the salary cap.')
+            md.run()
+            md.destroy()
 
     def on_button_contract_submit_clicked(self, button, data=None):
         team_amount = self.spinbutton_contract_team_amount.get_value_as_int()/1000
@@ -68,7 +74,6 @@ $%s' % (self.player_years, common.SEASON + self.player_years, salary))
         self.builder.add_from_file(common.GTKBUILDER_PATH) 
 
         self.contract_window = self.builder.get_object('contract_window')
-        self.contract_window.set_transient_for(self.main_window.main_window)
         self.label_contract_team_info = self.builder.get_object('label_contract_team_info')
         self.label_contract_player_info = self.builder.get_object('label_contract_player_info')
         self.label_contract_player_proposal = self.builder.get_object('label_contract_player_proposal')
@@ -80,15 +85,15 @@ $%s' % (self.player_years, common.SEASON + self.player_years, salary))
         self.steps = 0 # Number of compromises/negotiations
         self.max_steps = random.randint(1, 5)
 
-        name, team_id, overall, potential = common.DB_CON.execute('SELECT pa.name, pa.team_id, pr.overall, pr.potential FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.player_id = ?', (self.player_id,)).fetchone()
+        name, self.team_id, overall, potential = common.DB_CON.execute('SELECT pa.name, pa.team_id, pr.overall, pr.potential FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.player_id = ?', (self.player_id,)).fetchone()
         self.label_contract_player_info.set_markup('<big><big><b>%s</b></big></big>\n\
 Overall: %d\n\
 Potential: %d' % (name, overall, potential))
 
-        name, payroll = common.DB_CON.execute('SELECT ta.region || " " || ta.name, sum(pa.contract_amount) FROM team_attributes as ta, player_attributes as pa WHERE pa.team_id = ta.team_id AND ta.team_id = ? AND pa.contract_expiration> ?', (team_id, common.SEASON,)).fetchone()
+        name, self.payroll = common.DB_CON.execute('SELECT ta.region || " " || ta.name, sum(pa.contract_amount) FROM team_attributes as ta, player_attributes as pa WHERE pa.team_id = ta.team_id AND ta.team_id = ? AND pa.contract_expiration> ?', (common.PLAYER_TEAM_ID, common.SEASON,)).fetchone()
         locale.setlocale(locale.LC_NUMERIC, '')
         salary_cap = locale.format("%.*f", (0, common.SALARY_CAP*1000), True)
-        payroll = locale.format("%.*f", (0, payroll*1000), True)
+        payroll = locale.format("%.*f", (0, self.payroll*1000), True)
         self.label_contract_team_info.set_markup('<big><big><b>%s</b></big></big>\n\
 Payroll: $%s\n\
 Salary Cap: $%s' % (name, payroll, salary_cap))

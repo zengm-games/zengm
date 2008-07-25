@@ -189,7 +189,6 @@ class RosterWindow:
         self.builder = gtk.Builder()
         self.builder.add_from_file(common.GTKBUILDER_PATH) 
         self.roster_window = self.builder.get_object('roster_window')
-        self.roster_window.set_transient_for(self.main_window.main_window)
         self.label_roster_info = self.builder.get_object('label_roster_info')
         self.treeview_roster = self.builder.get_object('treeview_roster')
         self.treeview_roster_info = self.builder.get_object('treeview_roster_info')

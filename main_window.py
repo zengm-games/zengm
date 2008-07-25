@@ -18,6 +18,7 @@ import schedule
 
 import contract_window
 import draft_dialog
+import free_agents_window
 import retired_players_window
 import roster_window
 import player_window
@@ -83,6 +84,15 @@ class MainWindow:
         else:
             self.tw.trade_window.show() # Show the window
             self.tw.trade_window.window.show() # Raise the window if it's in the background
+        return True
+
+    def on_menuitem_free_agents_activate(self, widget, data=None):
+        if not hasattr(self, 'faw'):
+            self.faw = free_agents_window.FreeAgentsWindow(self)
+        else:
+            self.faw.update_free_agents()
+            self.faw.free_agents_window.show() # Show the window
+            self.faw.free_agents_window.window.show() # Raise the window if it's in the background
         return True
 
     def on_menuitem_stop_activate(self, widget, data=None):
@@ -224,7 +234,7 @@ class MainWindow:
         (treemodel, treeiter) = treeview.get_selection().get_selected()
         player_id = treemodel.get_value(treeiter, 0)
         if not hasattr(self, 'pw'):
-            self.pw = player_window.PlayerWindow(self)
+            self.pw = player_window.PlayerWindow()
         self.pw.update_player(player_id)
         return True
 
@@ -410,7 +420,7 @@ class MainWindow:
                 i = random.randrange(len(profiles))
                 profile = profiles[i]
 
-                aging_years = random.randrange(14)
+                aging_years = random.randint(0,19)
 
                 gp.new(player_id, t, 19, profile, base_ratings[p], potentials[p])
                 gp.develop(aging_years)
@@ -967,7 +977,7 @@ class MainWindow:
                     self.player_contract_expire(player_id)
                 else:
                     # Open a contract_window
-                    cw = contract_window.ContractWindow(self, player_id) # Do the retired player check
+                    cw = contract_window.ContractWindow(self, player_id)
                     cw.contract_window.run()
                     cw.contract_window.destroy()
             self.updated['finances'] = False

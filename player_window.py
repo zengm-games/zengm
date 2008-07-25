@@ -160,11 +160,13 @@ class PlayerWindow:
     def on_button_close_clicked(self, button, data=None):
         self.player_window.hide()
 
+    def __init__(self, main_window):
+        self.main_window = main_window
 
-    def __init__(self):
         self.builder = gtk.Builder()
         self.builder.add_from_file(common.GTKBUILDER_PATH) 
         self.player_window = self.builder.get_object('player_window')
+        self.player_window.set_transient_for(self.main_window.main_window)
         self.label_player_window_info = self.builder.get_object('label_player_window_info')
         self.label_player_window_ratings = self.builder.get_object('label_player_window_ratings')
         self.treeview_player_window_stats = self.builder.get_object('treeview_player_window_stats')

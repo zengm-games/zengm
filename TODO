@@ -1,34 +1,6 @@
 "Season Ticket Basketball"
 
 REQUIREMENTS FOR 0.1 RELEASE:
-negotiation window
-    number of times the player will negotiate their asking price: randrange(0, 5)
-        # Negotiation step
-        if gm_years < player_years:
-            player_years -= 1
-            player_salary *= 1.5
-            if gm_salary >= player_salary:
-                player_salary = 1.1*gm_salary
-        elif gm_years > player_years
-            player_years += 1
-            player_salary *= 1.5
-            if gm_salary >= player_salary:
-                player_salary = 1.1*gm_salary
-        if gm_salary < player_salary and gm_salary > 0.7*player_salary:
-            player_salary = .75*player_salary + .25*gm_salary
-        elif gm_salary < player_salary:
-            player_salary *= 1.1
-    after that, the salary increases by 5% each step
-
-    players with potential want shorter contracts:
-        potential_difference = round((potential - overall) / 4.0)
-        years = 5 - potential_difference
-        amount, expiration = player.contract()
-        salary = amount
-        expiration = common.SEASON + years
-
-    accept if it's within some range around the desired contract value
-    close button should be "Release" for resigning players
 finance
     for each game:
         attendance: f(2*hometeamwinp + awayteamwinp)
@@ -39,6 +11,7 @@ finance
 free agents
     team_id = -1
     if a team is over salary cap, they can only sign their own players and min contracts
+    AI for other teams to sign free agents
 uncertainty in rating - for each player, calculate a randn(0, 3) with max/min of +/- 5
     calculate a new one each year and add it to 1/2 of the previous one
 trades
@@ -46,7 +19,8 @@ trades
     basic trade AI
 the simulation should be stopped automatically before saving, trading, and negotiating contracts
 some players (rookies mainly) have ratings higher than potentials - fix this (potentail should be set to overall)
-are all imports necessary?
+negotiation window
+    close button should be "Release" for resigning players and "Cancel" for free agents
 
 ======
 FUTURE

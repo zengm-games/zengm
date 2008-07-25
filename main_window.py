@@ -224,7 +224,7 @@ class MainWindow:
         (treemodel, treeiter) = treeview.get_selection().get_selected()
         player_id = treemodel.get_value(treeiter, 0)
         if not hasattr(self, 'pw'):
-            self.pw = player_window.PlayerWindow()
+            self.pw = player_window.PlayerWindow(self)
         self.pw.update_player(player_id)
         return True
 
@@ -968,13 +968,8 @@ class MainWindow:
                 else:
                     # Open a contract_window
                     cw = contract_window.ContractWindow(self, player_id) # Do the retired player check
-                    response = cw.contract_window.run()
+                    cw.contract_window.run()
                     cw.contract_window.destroy()
-                    print response, gtk.RESPONSE_CLOSE
-                    if response == gtk.RESPONSE_CLOSE:
-                        common.DB_CON.execute('UPDATE player_attributes SET team_id = -1 WHERE player_id = ?', (player_id,))
-
-                    self.player_contract_expire(player_id)
             self.updated['finances'] = False
             self.update_current_page()
 

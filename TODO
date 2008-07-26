@@ -6,13 +6,12 @@ finance
     finances tab - team | avg attendance | team payroll | revenue (YTD) | profit (YTD) | cash
             revenue = attendance * ticket_price + tv_money / num_games
             profit = revenue - SUM(cost)
+    if cash is negative, can't sign new players
 trades
     if a team is over the salary cap, their incoming salary must be <= 125% their outgoing salary
     basic trade AI
 the simulation should be stopped automatically before saving, trading, and negotiating contracts
 playoffs
-undrafted players -> free agents
-set roster_position for free agents
 
 ======
 FUTURE

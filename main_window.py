@@ -717,7 +717,7 @@ class MainWindow:
             if team_id == common.PLAYER_TEAM_ID:
                 continue # Skip the user's team
             num_players, payroll = common.DB_CON.execute('SELECT count(*), sum(pa.contract_amount) FROM team_attributes as ta, player_attributes as pa WHERE pa.team_id = ta.team_id AND ta.team_id = ? AND pa.contract_expiration >= ? AND ta.season = ?', (team_id, common.SEASON, common.SEASON,)).fetchone()
-            while payroll < common.SALARY_CAP and num_players < 12:
+            while payroll < common.SALARY_CAP and num_players < 13:
                 j = 0
                 new_player = False
                 for player_id, amount, expiration, signed in free_agents:

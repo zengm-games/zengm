@@ -1,6 +1,6 @@
 Required packages on Ubuntu:
 libsqlite3-0
-python >= 2.5
+python
 python-egenix-mxdatetime
 python-gtk2
 sqlite3

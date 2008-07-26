@@ -9,7 +9,6 @@ import random
 import sqlite3
 import shutil
 import sys
-import time
 
 import common
 import game_sim
@@ -32,7 +31,7 @@ class MainWindow:
         return True
 
     def on_placeholder(self, widget, data=None):
-        md = gtk.MessageDialog(parent=None, flags=0, type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_CLOSE, message_format='Sorry, this feature isn''t implemented yet.')
+        md = gtk.MessageDialog(parent=None, flags=0, type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_CLOSE, message_format='Sorry, this feature isn\'t implemented yet.')
         md.run()
         md.destroy()
 
@@ -572,6 +571,9 @@ class MainWindow:
 
         game = game_sim.Game()
         for d in range(num_days):
+            # Sign available free agents
+            self.auto_sign_free_agents()
+
             # If the user wants to stop the simulation, then stop the simulation
             if d == 0: # But not on the first day
                 self.stop_games = False
@@ -684,6 +686,51 @@ class MainWindow:
         for player in players:
             common.DB_CON.execute('UPDATE player_ratings SET average_playing_time = ?, roster_position = ? WHERE player_id = ?', (player[2], roster_position, player[0]))
             roster_position += 1
+
+    def auto_sign_free_agents(self):
+        '''
+        AI teams sign free agents.
+        '''
+        p = player.Player()
+        # Build free_agents containing player ids and desired contracts
+        num_days_played, = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?', (common.SEASON,)).fetchone()
+        free_agents = []
+        for player_id, in common.DB_CON.execute('SELECT pa.player_id FROM player_attributes as pa, player_ratings as pr WHERE pa.team_id = -1 AND pa.player_id = pr.player_id ORDER BY pr.overall + pr.potential DESC'):
+            p.load(player_id)
+            amount, expiration = p.contract()
+            # Decrease amount by 20% (assume negotiations) or 5% for each day into season
+            if num_days_played > 0:
+                amount *= .95**num_days_played
+            else:
+                amount *= 0.8
+            if amount < 500:
+                amount = 500
+            else:
+                amount = 50*round(amount/50.0) # Make it a multiple of 50k
+            free_agents.append([player_id, amount, expiration, False])
+
+        # Randomly order teams and let them sign free agents
+        team_ids = range(30)
+        random.shuffle(team_ids)
+        for i in xrange(30):
+            team_id = team_ids[i]
+            if team_id == common.PLAYER_TEAM_ID:
+                continue # Skip the user's team
+            num_players, payroll = common.DB_CON.execute('SELECT count(*), sum(pa.contract_amount) FROM team_attributes as ta, player_attributes as pa WHERE pa.team_id = ta.team_id AND ta.team_id = ? AND pa.contract_expiration >= ? AND ta.season = ?', (team_id, common.SEASON, common.SEASON,)).fetchone()
+            while payroll < common.SALARY_CAP and num_players < 12:
+                j = 0
+                new_player = False
+                for player_id, amount, expiration, signed in free_agents:
+                    if amount + payroll <= common.SALARY_CAP and not signed:
+                        common.DB_CON.execute('UPDATE player_attributes SET team_id = ?, contract_amount = ?, contract_expiration = ? WHERE player_id = ?', (team_id, amount, expiration, player_id))
+                        free_agents[j][-1] = True # Mark player signed
+                        new_player = True
+                        num_players += 1
+                        payroll += amount
+                        self.roster_auto_sort(team_id)
+                    j += 1
+                if not new_player:
+                    break                
 
     def player_contract_expire(self, player_id):
         resign = random.choice([True, False])
@@ -901,6 +948,9 @@ class MainWindow:
                 up.load(player_id)
                 up.develop()
                 up.save()
+
+            # AI teams sign free agents
+            self.auto_sign_free_agents()
 
             self.update_play_menu(self.phase)
 

@@ -90,7 +90,7 @@ $%s' % (self.player_years, common.SEASON + self.player_years, salary))
 Overall: %d\n\
 Potential: %d' % (name, overall, potential))
 
-        name, self.payroll = common.DB_CON.execute('SELECT ta.region || " " || ta.name, sum(pa.contract_amount) FROM team_attributes as ta, player_attributes as pa WHERE pa.team_id = ta.team_id AND ta.team_id = ? AND pa.contract_expiration> ?', (common.PLAYER_TEAM_ID, common.SEASON,)).fetchone()
+        name, self.payroll = common.DB_CON.execute('SELECT ta.region || " " || ta.name, sum(pa.contract_amount) FROM team_attributes as ta, player_attributes as pa WHERE pa.team_id = ta.team_id AND ta.team_id = ? AND pa.contract_expiration >= ? AND ta.season = ?', (common.PLAYER_TEAM_ID, common.SEASON, common.SEASON,)).fetchone()
         locale.setlocale(locale.LC_NUMERIC, '')
         salary_cap = locale.format("%.*f", (0, common.SALARY_CAP*1000), True)
         payroll = locale.format("%.*f", (0, self.payroll*1000), True)

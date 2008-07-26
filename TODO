@@ -1,6 +1,4 @@
 REQUIREMENTS FOR 0.1 RELEASE:
-free agents
-    AI for other teams to sign free agents
 finance
     for each game:
         attendance: f(2*hometeamwinp + awayteamwinp)
@@ -12,6 +10,9 @@ trades
     if a team is over the salary cap, their incoming salary must be <= 125% their outgoing salary
     basic trade AI
 the simulation should be stopped automatically before saving, trading, and negotiating contracts
+playoffs
+undrafted players -> free agents
+set roster_position for free agents
 
 ======
 FUTURE
@@ -45,6 +46,7 @@ play menu
 NBA
 ---
 real salary cap rules: http://en.wikipedia.org/wiki/NBA_Salary_Cap
+    released players should count against cap
 real contract rules (max/min, etc.)
 allow contracts that aren't the same $ every year
 team and player options
@@ -57,6 +59,7 @@ archive stats as averages - this will make the end of season awards feasible, an
 parallelpython to parallelize game simulation
 uncertainty in rating - for each player, calculate a randn(0, 3) with max/min of +/- 5
     calculate a new one each year and add it to 1/2 of the previous one
+teams should sign minimum-salary players to fill out their roster
 
 FEATURES
 --------

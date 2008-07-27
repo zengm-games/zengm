@@ -10,8 +10,19 @@ finance
 trades
     if a team is over the salary cap, their incoming salary must be <= 125% their outgoing salary
     basic trade AI
-the simulation should be stopped automatically before saving, trading, and negotiating contracts
+salary cap in finances tab is wrong
+the simulation should be stopped automatically before saving, save_nosave_cancel call, trading, and negotiating contracts
+    self.games_in_progress to indicate if games are being played or not
+
+    Put this code wherever the simulation should be automatically stopped:
+    if self.games_in_progress:
+        self.stop_games = True
+        while self.games_in_progress:
+            sleep (like in draft)
 playoffs
+update contents of windows (roster, player info, free agents)
+player stats always show current team, not previous teams
+    group by team also, not just year
 
 ======
 FUTURE
@@ -58,7 +69,7 @@ archive stats as averages - this will make the end of season awards feasible, an
 parallelpython to parallelize game simulation
 uncertainty in rating - for each player, calculate a randn(0, 3) with max/min of +/- 5
     calculate a new one each year and add it to 1/2 of the previous one
-teams should sign minimum-salary players to fill out their roster
+teams should be smart in resigning players (now it's just random)
 
 FEATURES
 --------

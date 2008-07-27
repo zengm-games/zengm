@@ -96,7 +96,7 @@ class Player:
         elif amount > max_amount:
             amount = max_amount
         else:   
-            amount = round(amount)
+            amount = 50*round(amount/50.0) # Make it a multiple of 50k
 
         return amount, expiration
 

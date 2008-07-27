@@ -1013,6 +1013,9 @@ class MainWindow:
         elif self.phase == 7:
             self.update_play_menu(self.phase)
 
+            # Move undrafted players to free agent pool
+            common.DB_CON.execute('UPDATE player_attributes SET team_id = -1, draft_year = -1, draft_round = -1, draft_pick = -1, draft_team_id = -1 WHERE team_id = -2')
+
             self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Off-season'))
 
             # Check for retiring players

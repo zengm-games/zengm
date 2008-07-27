@@ -21,8 +21,6 @@ the simulation should be stopped automatically before saving, save_nosave_cancel
             sleep (like in draft)
 playoffs
 update contents of windows (roster, player info, free agents)
-player stats always show current team, not previous teams
-    group by team also, not just year
 
 ======
 FUTURE

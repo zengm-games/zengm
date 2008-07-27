@@ -55,6 +55,7 @@ potential INTEGER);
 
 CREATE TABLE player_stats (
 player_id INTEGER,
+team_id INTEGER,
 game_id INTEGER,
 season INTEGER,
 starter INTEGER,

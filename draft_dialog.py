@@ -150,9 +150,6 @@ class DraftDialog:
         self.button_close = self.draft_dialog.add_button(gtk.STOCK_CLOSE, gtk.RESPONSE_CLOSE)
         self.button_close.connect('clicked', self.on_button_close_clicked)
 
-        # Move undrafted players to free agent pool
-        common.DB_CON.execute('UPDATE player_attributes SET team_id = -1, draft_year = -1, draft_round = -1, draft_pick = -1, draft_team_id = -1 WHERE team_id = -2')
-
         # Set to True to allow dialog to be closed
         self.done_draft = True
 

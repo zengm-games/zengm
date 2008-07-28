@@ -12,6 +12,17 @@ class Game:
         self.num_possessions = self.get_num_possessions()
         self.season = common.SEASON
 
+        # What is the attendance of the game?
+        games_played, winp, = common.DB_CON.execute('SELECT won+lost, won/(won + lost) FROM team_attributes WHERE season = ? AND (team_id = ? OR team_id = ?)', (common.SEASON, self.team[0].id, self.team[1].id)).fetchone()
+        if games_played < 5:
+            self.attendance = random.gauss(22000 + games_played*1000, 1000)
+        else:
+            self.attendance = random.gauss(winp*36000, 1000)
+        if self.attendance > 25000:
+            self.attendance = 25000
+        elif self.attendance < 10000:
+            self.attendance = 10000
+
         # Are the teams in the same conference/division?
         self.same_conference = False
         self.same_division = False
@@ -222,10 +233,13 @@ class Game:
     def write_team_stats(self, t):
         t2 = 1 if t==0 else 0
         won = True if self.team[t].stat['points'] > self.team[t2].stat['points'] else False
+
+        cost, = common.DB_CON.execute('SELECT SUM(contract_amount)*1000/82 FROM player_attributes WHERE team_id = ?', (self.team[t].id,)).fetchone()
+
         query = 'INSERT INTO team_stats \
-                 (team_id, opponent_team_id, game_id, season, won, minutes, field_goals_made, field_goals_attempted, three_pointers_made, three_pointers_attempted, free_throws_made, free_throws_attempted, offensive_rebounds, defensive_rebounds, assists, turnovers, steals, blocks, personal_fouls, points, opponent_points) \
-                 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-        common.DB_CON.execute(query, (self.team[t].id, self.team[t2].id, self.id, self.season, won, int(round(self.team[t].stat['minutes'])), self.team[t].stat['field_goals_made'], self.team[t].stat['field_goals_attempted'], self.team[t].stat['three_pointers_made'], self.team[t].stat['three_pointers_attempted'], self.team[t].stat['free_throws_made'], self.team[t].stat['free_throws_attempted'], self.team[t].stat['offensive_rebounds'], self.team[t].stat['defensive_rebounds'], self.team[t].stat['assists'], self.team[t].stat['turnovers'], self.team[t].stat['steals'], self.team[t].stat['blocks'], self.team[t].stat['personal_fouls'], self.team[t].stat['points'], self.team[t2].stat['points']))
+                 (team_id, opponent_team_id, game_id, season, won, minutes, field_goals_made, field_goals_attempted, three_pointers_made, three_pointers_attempted, free_throws_made, free_throws_attempted, offensive_rebounds, defensive_rebounds, assists, turnovers, steals, blocks, personal_fouls, points, opponent_points, attendance, cost) \
+                 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        common.DB_CON.execute(query, (self.team[t].id, self.team[t2].id, self.id, self.season, won, int(round(self.team[t].stat['minutes'])), self.team[t].stat['field_goals_made'], self.team[t].stat['field_goals_attempted'], self.team[t].stat['three_pointers_made'], self.team[t].stat['three_pointers_attempted'], self.team[t].stat['free_throws_made'], self.team[t].stat['free_throws_attempted'], self.team[t].stat['offensive_rebounds'], self.team[t].stat['defensive_rebounds'], self.team[t].stat['assists'], self.team[t].stat['turnovers'], self.team[t].stat['steals'], self.team[t].stat['blocks'], self.team[t].stat['personal_fouls'], self.team[t].stat['points'], self.team[t2].stat['points'], self.attendance, cost))
         if won:
             common.DB_CON.execute('UPDATE team_attributes SET won = won + 1 WHERE team_id = ? AND season = ?', (self.team[t].id, self.season))
             if self.same_division:

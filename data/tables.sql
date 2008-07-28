@@ -111,7 +111,9 @@ steals INTEGER,
 blocks INTEGER,
 personal_fouls INTEGER,
 points INTEGER,
-opponent_points INTEGER);
+opponent_points INTEGER,
+attendance INTEGER,
+cost INTEGER);
 
 CREATE TABLE enum_w_l (
 key INTEGER,

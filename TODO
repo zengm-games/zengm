@@ -1,16 +1,9 @@
 REQUIREMENTS FOR 0.1 RELEASE:
 finance
-    for each game:
-        attendance: f(2*hometeamwinp + awayteamwinp)
-        cost: team_salary/num_games_in_season
-    finances tab - team | avg attendance | team payroll | revenue (YTD) | profit (YTD) | cash
-            revenue = attendance * ticket_price + tv_money / num_games
-            profit = revenue - SUM(cost)
     if cash is negative, can't sign new players
 trades
     if a team is over the salary cap, their incoming salary must be <= 125% their outgoing salary
     basic trade AI
-salary cap in finances tab is wrong
 the simulation should be stopped automatically before saving, save_nosave_cancel call, trading, and negotiating contracts
     self.games_in_progress to indicate if games are being played or not
 
@@ -31,6 +24,7 @@ GAMESIM
 overtime
 take all ratings into account
 blocks, assists (maybe other things) should not be so evenly distributed
+home and away games
 
 UI
 --

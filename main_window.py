@@ -296,7 +296,7 @@ class MainWindow:
 
     def update_finances(self):
         column_types = [int, str, int, int, int, int, int]
-        query = 'SELECT team_id, region || " " || name, 0, 0, 0, 0, (SELECT SUM(contract_amount) FROM player_attributes WHERE player_attributes.team_id = team_attributes.team_id) FROM team_attributes WHERE season = ? ORDER BY region ASC, name ASC'
+        query = 'SELECT ta.team_id, ta.region || " " || ta.name, AVG(ts.attendance), SUM(ts.attendance)*45, SUM(ts.attendance)*45 - SUM(ts.cost), 0, (SELECT SUM(contract_amount*1000) FROM player_attributes WHERE player_attributes.team_id = ta.team_id) FROM team_attributes as ta, team_stats as ts WHERE ta.season = ts.season AND ta.season = ? AND ta.team_id = ts.team_id GROUP BY ta.team_id ORDER BY ta.region ASC, ta.name ASC'
         common.treeview_update(self.treeview_finances, column_types, query, (common.SEASON,))
         self.updated['finances'] = True
 

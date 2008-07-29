@@ -88,7 +88,8 @@ lost REAL DEFAULT 0,
 won_div INTEGER DEFAULT 0,
 lost_div INTEGER DEFAULT 0,
 won_conf INTEGER DEFAULT 0,
-lost_conf INTEGER DEFAULT 0);
+lost_conf INTEGER DEFAULT 0,
+cash INTEGER DEFAULT 0);
 
 CREATE TABLE team_stats (
 team_id INTEGER,

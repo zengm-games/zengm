@@ -321,15 +321,15 @@ class MainWindow:
         self.treeview_finances.append_column(column)
 
         column_types = [int, str, int, int, int, int, int]
-        query = 'SELECT team_id, region || " " || name, 1, 2, 3, 4, (SELECT SUM(contract_amount*1000) FROM player_attributes WHERE player_attributes.team_id = team_attributes.team_id) FROM team_attributes WHERE season = ? ORDER BY region ASC, name ASC'
+        query = 'SELECT team_id, region || " " || name, 0, 0, 0, cash, (SELECT SUM(contract_amount*1000) FROM player_attributes WHERE player_attributes.team_id = team_attributes.team_id) FROM team_attributes WHERE season = ? ORDER BY region ASC, name ASC'
         common.treeview_update(self.treeview_finances, column_types, query, (common.SEASON,))
 
         self.built['finances'] = True
 
     def update_finances(self):
         new_values = {}
-        query = 'SELECT ta.team_id, ta.region || " " || ta.name, AVG(ts.attendance), SUM(ts.attendance)*45, SUM(ts.attendance)*45 - SUM(ts.cost), 0, (SELECT SUM(contract_amount*1000) FROM player_attributes WHERE player_attributes.team_id = ta.team_id) FROM team_attributes as ta, team_stats as ts WHERE ta.season = ts.season AND ta.season = ? AND ta.team_id = ts.team_id GROUP BY ta.team_id ORDER BY ta.region ASC, ta.name ASC'
-        for row in common.DB_CON.execute(query, (common.SEASON,)):
+        query = 'SELECT ta.team_id, ta.region || " " || ta.name, AVG(ts.attendance), SUM(ts.attendance)*?, SUM(ts.attendance)*? - SUM(ts.cost), ta.cash, (SELECT SUM(contract_amount*1000) FROM player_attributes WHERE player_attributes.team_id = ta.team_id) FROM team_attributes as ta, team_stats as ts WHERE ta.season = ts.season AND ta.season = ? AND ta.team_id = ts.team_id GROUP BY ta.team_id ORDER BY ta.region ASC, ta.name ASC'
+        for row in common.DB_CON.execute(query, (common.TICKET_PRICE, common.TICKET_PRICE, common.SEASON,)):
             new_values[row[0]] = row[1:]
 
         model = self.treeview_finances.get_model()
@@ -984,8 +984,8 @@ class MainWindow:
             common.DB_CON.execute('UPDATE game_attributes SET season = season + 1')
 
             # Create new rows in team_attributes
-            for row in common.DB_CON.execute('SELECT team_id, division_id, region, name, abbreviation FROM team_attributes WHERE season = ?', (common.SEASON-1,)):
-                common.DB_CON.execute('INSERT INTO team_attributes (team_id, division_id, region, name, abbreviation, season) VALUES (?, ?, ?, ?, ?, ?)', (row[0], row[1], row[2], row[3], row[4], common.SEASON))
+            for row in common.DB_CON.execute('SELECT team_id, division_id, region, name, abbreviation, cash FROM team_attributes WHERE season = ?', (common.SEASON-1,)):
+                common.DB_CON.execute('INSERT INTO team_attributes (team_id, division_id, region, name, abbreviation, cash, season) VALUES (?, ?, ?, ?, ?, ?, ?)', (row[0], row[1], row[2], row[3], row[4], row[5], common.SEASON))
             # Age players
             player_ids = []
             for row in common.DB_CON.execute('SELECT player_id, born_date FROM player_attributes'):

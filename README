@@ -1,6 +1,9 @@
-Required packages on Ubuntu:
+Required packages on Ubuntu (probably similar on other distros):
 libsqlite3-0
-python
+python >= 2.5 (Version requirement is for the new sqlite3 module)
 python-egenix-mxdatetime
 python-gtk2
-sqlite3
+
+Then just run ./basketball-gm
+At this point, everything (data and code) is contained within this folder.
+

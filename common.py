@@ -18,6 +18,7 @@ SEASON = 2008
 
 # This should probably be defined somewhere else
 SALARY_CAP = 60000
+TICKET_PRICE = 45
 
 def treeview_build(treeview, column_info):
     """

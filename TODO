@@ -1,6 +1,4 @@
 REQUIREMENTS FOR 0.1 RELEASE:
-finance: cash
-    if cash is below -10M, can't sign new players
 trades
     if a team is over the salary cap, their incoming salary must be <= 125% their outgoing salary
     basic trade AI
@@ -74,4 +72,4 @@ different sized cities with differently passionate fanbases - affects attendance
 playoffs
 multi-team trades... how can i make a good UI for that?
 advanced stats (+/-, PER, etc)
-
+punishment for going in debt: if cash is less than $10M, can't sign any new contracts

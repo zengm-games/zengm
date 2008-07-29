@@ -235,6 +235,7 @@ class Game:
         won = True if self.team[t].stat['points'] > self.team[t2].stat['points'] else False
 
         cost, = common.DB_CON.execute('SELECT SUM(contract_amount)*1000/82 FROM player_attributes WHERE team_id = ?', (self.team[t].id,)).fetchone()
+        common.DB_CON.execute('UPDATE team_attributes SET cash = cash + ? - ? WHERE season = ? AND team_id = ?', (common.TICKET_PRICE*self.attendance, cost, common.SEASON, self.team[t].id))
 
         query = 'INSERT INTO team_stats \
                  (team_id, opponent_team_id, game_id, season, won, minutes, field_goals_made, field_goals_attempted, three_pointers_made, three_pointers_attempted, free_throws_made, free_throws_attempted, offensive_rebounds, defensive_rebounds, assists, turnovers, steals, blocks, personal_fouls, points, opponent_points, attendance, cost) \

@@ -1,6 +1,6 @@
 REQUIREMENTS FOR 0.1 RELEASE:
-finance
-    if cash is negative, can't sign new players
+finance: cash
+    if cash is below -10M, can't sign new players
 trades
     if a team is over the salary cap, their incoming salary must be <= 125% their outgoing salary
     basic trade AI
@@ -14,6 +14,7 @@ the simulation should be stopped automatically before saving, save_nosave_cancel
             sleep (like in draft)
 playoffs
 update contents of windows (roster, player info, free agents)
+show age in roster window
 
 ======
 FUTURE

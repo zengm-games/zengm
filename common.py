@@ -52,3 +52,4 @@ def add_column(treeview, title, column_id, sort=False, truncate_float=False):
         column.set_cell_data_func(renderer,
             lambda column, cell, model, iter: cell.set_property('text', '%.1f' % model.get_value(iter, column_id)))
     treeview.append_column(column)
+

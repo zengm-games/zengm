@@ -14,10 +14,10 @@ class ContractWindow:
         '''
         This is so the dialog isn't closed on any button except close.
         '''
-        self.contract_window.emit_stop_by_name('response')
         if response < 0:
             common.DB_CON.execute('UPDATE player_attributes SET team_id = -1 WHERE player_id = ?', (self.player_id,))
-            self.contract_window.destroy()
+        else:
+            self.contract_window.emit_stop_by_name('response')
 
     def on_button_contract_player_info_clicked(self, button, data=None):
         if not hasattr(self.main_window, 'pw'):
@@ -123,6 +123,6 @@ Salary Cap: $%s' % (name, payroll, salary_cap))
         alignment = gtk.Alignment(0.5, 0.5, 0, 0)
         alignment.add(hbox)
         button.add(alignment)
-        self.contract_window.add_action_widget(button, -7)
+        self.contract_window.add_action_widget(button, gtk.RESPONSE_CLOSE)
         button.show_all()
 

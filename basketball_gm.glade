@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Sun Jul 27 04:59:39 2008 -->
+<!--Generated with glade3 3.4.5 on Wed Jul 30 03:52:34 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="main_window">
     <property name="width_request">800</property>
@@ -3598,9 +3598,11 @@ Placeholder (???)</property>
                   <widget class="GtkSpinButton" id="spinbutton_contract_team_amount">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="adjustment">500000 500000 20000000 50000 1000000 1000000</property>
+                    <property name="adjustment">0.5 0.5 20 0.050000000000000003 1 1</property>
+                    <property name="digits">2</property>
                     <property name="snap_to_ticks">True</property>
-                    <property name="numeric">True</property>
+                    <signal name="input" handler="on_spinbutton_contract_team_amount_input"/>
+                    <signal name="output" handler="on_spinbutton_contract_team_amount_output"/>
                   </widget>
                   <packing>
                     <property name="left_attach">1</property>

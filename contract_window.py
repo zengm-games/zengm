@@ -2,7 +2,7 @@ import sys
 import gtk
 import pango
 import sqlite3
-import locale
+import ctypes
 
 import common
 import player
@@ -18,6 +18,19 @@ class ContractWindow:
             common.DB_CON.execute('UPDATE player_attributes SET team_id = -1 WHERE player_id = ?', (self.player_id,))
         else:
             self.contract_window.emit_stop_by_name('response')
+
+    def on_spinbutton_contract_team_amount_input(self, spinbutton, gpointer, data=None):
+        text = spinbutton.get_text()
+        if text.startswith('$'):
+            text = text[1:-1] # Get rid of the $ and the M
+        double = ctypes.c_double.from_address(hash(gpointer))
+        double.value = float(text)
+        return True
+
+    def on_spinbutton_contract_team_amount_output(self, spinbutton, data=None):
+        text = '$%.2fM' % spinbutton.get_value()
+        spinbutton.set_text(text)
+        return True
 
     def on_button_contract_player_info_clicked(self, button, data=None):
         if not hasattr(self.main_window, 'pw'):
@@ -37,7 +50,6 @@ class ContractWindow:
     def on_button_contract_submit_clicked(self, button, data=None):
         team_amount = self.spinbutton_contract_team_amount.get_value_as_int()/1000
         team_years = self.spinbutton_contract_team_years.get_value_as_int()
-
         self.steps += 1
 
         # Negotiation step
@@ -52,19 +64,24 @@ class ContractWindow:
                 self.player_amount = .75*self.player_amount + .25*team_amount
             elif team_amount < self.player_amount:
                 self.player_amount *= 1.1
-            if team_amount >= self.player_amount:
-                self.player_amount = 1.1*team_amount
+            if team_amount > self.player_amount:
+                self.player_amount = team_amount
         else:
             self.player_amount = 1.05*self.player_amount
+
+        if self.player_amount > 20000:
+            self.player_amount = 20000
+        if self.player_years > 5:
+            self.player_years = 5
 
         self.update_label_contract_player_proposal()
 
     def update_label_contract_player_proposal(self):
         self.player_amount = 50*round(self.player_amount/50.0) # Make it a multiple of 50k
-        salary = locale.format("%.*f", (0, self.player_amount*1000), True)
+        salary = '$%.2fM' % (self.player_amount/1000.0)
         self.label_contract_player_proposal.set_markup('<big><big><b>Player Proposal</b></big></big>\n\
 %d years (Through %d)\n\
-$%s' % (self.player_years, common.SEASON + self.player_years, salary))
+%s' % (self.player_years, common.SEASON + self.player_years, salary))
 
     def __init__(self, main_window, player_id):
         self.main_window = main_window
@@ -91,12 +108,11 @@ Overall: %d\n\
 Potential: %d' % (name, overall, potential))
 
         name, self.payroll = common.DB_CON.execute('SELECT ta.region || " " || ta.name, sum(pa.contract_amount) FROM team_attributes as ta, player_attributes as pa WHERE pa.team_id = ta.team_id AND ta.team_id = ? AND pa.contract_expiration >= ? AND ta.season = ?', (common.PLAYER_TEAM_ID, common.SEASON, common.SEASON,)).fetchone()
-        locale.setlocale(locale.LC_NUMERIC, '')
-        salary_cap = locale.format("%.*f", (0, common.SALARY_CAP*1000), True)
-        payroll = locale.format("%.*f", (0, self.payroll*1000), True)
+        salary_cap = '$%.2fM' % (common.SALARY_CAP/1000.0)
+        payroll = '$%.2fM' % (self.payroll/1000.0)
         self.label_contract_team_info.set_markup('<big><big><b>%s</b></big></big>\n\
-Payroll: $%s\n\
-Salary Cap: $%s' % (name, payroll, salary_cap))
+Payroll: %s\n\
+Salary Cap: %s' % (name, payroll, salary_cap))
 
         # Initial player proposal
         potential_difference = round((potential - overall) / 4.0)
@@ -105,7 +121,8 @@ Salary Cap: $%s' % (name, payroll, salary_cap))
         p.load(self.player_id)
         self.player_amount, expiration = p.contract()
         self.update_label_contract_player_proposal()
-        self.spinbutton_contract_team_amount.set_value(self.player_amount*1000)
+        self.spinbutton_contract_team_amount.set_value(self.player_amount/1000.0)
+        print self.player_amount/1000.0
         self.spinbutton_contract_team_years.set_value(self.player_years)
 
         # If signing free agents, close should be Cancel.  For resigning players it should be Release Player.

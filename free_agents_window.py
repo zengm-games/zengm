@@ -24,7 +24,6 @@ class FreeAgentsWindow:
             player_id = treemodel.get_value(treeiter, 0)
             cw = contract_window.ContractWindow(self.main_window, player_id)
             response = cw.contract_window.run()
-            print response, int(gtk.RESPONSE_DELETE_EVENT)
             if response != int(gtk.RESPONSE_CLOSE) and response != int(gtk.RESPONSE_DELETE_EVENT): # CLOSE = cancel/release; DELETE_EVENT = escape/X-button
                 self.update_free_agents() # Update free agents list when a player is signed
             cw.contract_window.destroy()

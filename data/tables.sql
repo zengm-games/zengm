@@ -121,3 +121,13 @@ key INTEGER,
 val TEXT);
 INSERT INTO "enum_w_l" VALUES(0,'L');
 INSERT INTO "enum_w_l" VALUES(1,'W');
+
+CREATE TABLE active_playoff_series (
+series_id INTEGER,
+series_round INTEGER,
+team_id_home INTEGER,
+team_id_away INTEGER,
+seed_home INTEGER,
+seed_away INTEGER,
+won_home INTEGER,
+won_away INTEGER);

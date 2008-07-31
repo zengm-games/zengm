@@ -1,4 +1,5 @@
-# This file implements the main window GUI
+# This file implements the main window GUI.  It is rather large and
+# unorganized, and it should probably be refactored.
 
 import bz2
 import cPickle as pickle
@@ -196,6 +197,9 @@ class MainWindow:
                 self.build_games_list()
             if not self.updated['games_list']:
                 self.update_games_list()
+        elif (page_num == self.pages['playoffs']):
+            if not self.updated['playoffs']:
+                self.update_playoffs()
 
     # Events in the main notebook
     def on_combobox_standings_changed(self, combobox, data=None):
@@ -302,22 +306,22 @@ class MainWindow:
         column = gtk.TreeViewColumn('Revenue (YTD)', renderer, text=3)
         column.set_sort_column_id(3)
         column.set_cell_data_func(renderer,
-            lambda column, cell, model, iter: cell.set_property('text', '%sM' % locale.currency(model.get_value(iter, 3)/1000000.0, True, True)[0:-1]))
+            lambda column, cell, model, iter: cell.set_property('text', '%sM' % locale.currency(model.get_value(iter, 3)/1000000.0, True, True)))
         self.treeview_finances.append_column(column)
         column = gtk.TreeViewColumn('Profit (YTD)', renderer, text=4)
         column.set_sort_column_id(4)
         column.set_cell_data_func(renderer,
-            lambda column, cell, model, iter: cell.set_property('text', '%sM' % locale.currency(model.get_value(iter, 4)/1000000.0, True, True)[0:-1]))
+            lambda column, cell, model, iter: cell.set_property('text', '%sM' % locale.currency(model.get_value(iter, 4)/1000000.0, True, True)))
         self.treeview_finances.append_column(column)
         column = gtk.TreeViewColumn('Cash', renderer, text=5)
         column.set_sort_column_id(5)
         column.set_cell_data_func(renderer,
-            lambda column, cell, model, iter: cell.set_property('text', '%sM' % locale.currency(model.get_value(iter, 5)/1000000.0, True, True)[0:-1]))
+            lambda column, cell, model, iter: cell.set_property('text', '%sM' % locale.currency(model.get_value(iter, 5)/1000000.0, True, True)))
         self.treeview_finances.append_column(column)
         column = gtk.TreeViewColumn('Payroll', renderer, text=6)
         column.set_sort_column_id(6)
         column.set_cell_data_func(renderer,
-            lambda column, cell, model, iter: cell.set_property('text', '%sM' % locale.currency(model.get_value(iter, 6)/1000000.0, True, True)[0:-1]))
+            lambda column, cell, model, iter: cell.set_property('text', '%sM' % locale.currency(model.get_value(iter, 6)/1000000.0, True, True)))
         self.treeview_finances.append_column(column)
 
         column_types = [int, str, int, int, int, int, int]
@@ -411,6 +415,11 @@ class MainWindow:
         common.treeview_update(self.treeview_games_list, column_types, query, query_bindings)
         self.updated['games_list'] = True
 
+    def update_playoffs(self):
+        for series_id, series_round, name_home, name_away, seed_home, seed_away, won_home, won_away in common.DB_CON.execute('SELECT series_id, series_round, (SELECT region || " " || name FROM team_attributes WHERE team_id = active_playoff_series.team_id_home), (SELECT region || " " || name FROM team_attributes WHERE team_id = active_playoff_series.team_id_away), seed_home, seed_away, won_home, won_away FROM active_playoff_series'):
+            self.label_playoffs[series_round][series_id].set_text('%d. %s (%d)\n%d. %s (%d)' % (seed_home, name_home, won_home, seed_away, name_away, won_away))
+        self.updated['playoffs'] = True
+
     def update_current_page(self):
         if self.notebook.get_current_page() == self.pages['standings']:
             if not self.built['standings']:
@@ -436,14 +445,17 @@ class MainWindow:
             if not self.built['games_list']:
                 self.build_games_list()
             self.update_games_list()
+        elif self.notebook.get_current_page() == self.pages['playoffs']:
+            if not self.updated['playoffs']:
+                self.update_playoffs()
 
     def update_all_pages(self):
         '''
         Update the current page and mark all other pages to be updated when they are next viewed.
         '''
-        self.update_current_page()
         for key in self.updated.iterkeys():
             self.updated[key] = False
+        self.update_current_page()
 
     def new_game(self, team_id):
         '''
@@ -613,13 +625,34 @@ class MainWindow:
         Plays the number of games set in num_games and updates pages
         After that, checks to see if the season is over (so make sure num_games makes sense!)
         '''
+
         # Update the Play menu so the simulations can be stopped
         self.update_play_menu(-1)
 
         game = game_sim.Game()
         for d in range(num_days):
-            # Sign available free agents
-            self.auto_sign_free_agents()
+
+            # Check if it's the playoffs and do some special stuff if it is
+            if self.phase == 3:
+                # Make today's  playoff schedule
+                active_series = False
+                num_active_teams = 0
+                current_round = common.DB_CON.execute('SELECT MAX(series_round) FROM active_playoff_series').fetchone()
+                for team_id_home, team_id_away in common.DB_CON.execute('SELECT team_id_home, team_id_away FROM active_playoff_series WHERE won_home < 4 AND won_away < 4 AND series_round = ?', current_round):
+                    self.schedule.append([team_id_home, team_id_away])
+                    active_series = True
+                    num_active_teams += 2
+                if not active_series:
+                    print 'DONE'
+                    break
+                    #if more rounds:
+                    #    add new round to database
+                    #else:
+                    #    done playoffs.  go to next phase
+                print self.schedule
+            else:
+                # Sign available free agents
+                self.auto_sign_free_agents()
 
             # If the user wants to stop the simulation, then stop the simulation
             if d == 0: # But not on the first day
@@ -628,8 +661,11 @@ class MainWindow:
                 self.stop_games = False
                 break
 
+            if self.phase != 3:
+                num_active_teams = len(common.TEAMS)
+
             self.statusbar.push(self.statusbar_context_id, 'Playing day %d of %d...' % (d, num_days))
-            for i in range(len(common.TEAMS)/2):
+            for i in range(num_active_teams/2):
                 teams = self.schedule.pop()
 
                 while gtk.events_pending():
@@ -655,18 +691,21 @@ class MainWindow:
         self.combobox_game_log_season_active = 0
         self.combobox_game_log_team_active = common.PLAYER_TEAM_ID
 
-        # Check to see if the season is over
-        row = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?', (common.SEASON,)).fetchone()
-        days_played = row[0]
         season_over = False
-        if days_played == common.SEASON_LENGTH:
-            season_over = True
+        if self.phase == 3:
+            self.update_playoffs()
+        else:
+            # Check to see if the season is over
+            row = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?', (common.SEASON,)).fetchone()
+            days_played = row[0]
+            if days_played == common.SEASON_LENGTH:
+                season_over = True
 
-            sew = season_end_window.SeasonEndWindow(self)
-            sew.season_end_window.show() # Show the window
-            sew.season_end_window.window.show() # Raise the window if it's in the background
+                sew = season_end_window.SeasonEndWindow(self)
+                sew.season_end_window.show() # Show the window
+                sew.season_end_window.window.show() # Raise the window if it's in the background
 
-            self.new_phase(3) # Start playoffs
+                self.new_phase(3) # Start playoffs
 
         if season_over or self.notebook.get_current_page() != self.pages['player_ratings']:
             self.update_all_pages()
@@ -1028,6 +1067,21 @@ class MainWindow:
         elif self.phase == 3:
             self.update_play_menu(self.phase)
 
+            # Set playoff matchups
+            for conference_id in range(2):
+                teams = []
+                seed = 1
+                for team_id, in common.DB_CON.execute('SELECT ta.team_id FROM team_attributes as ta, league_divisions as ld WHERE ld.division_id = ta.division_id AND ld.conference_id = ? ORDER BY ta.won/(ta.won + ta.lost) DESC LIMIT 8', (conference_id,)):
+                    teams.append(team_id)
+                query = 'INSERT INTO active_playoff_series (series_id, series_round, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away) VALUES (?, 1, ?, ?, ?, ?, 0, 0)'
+                common.DB_CON.execute(query, (conference_id*4+1, teams[0], teams[7], 1, 8))
+                common.DB_CON.execute(query, (conference_id*4+4, teams[3], teams[4], 4, 5))
+                common.DB_CON.execute(query, (conference_id*4+3, teams[2], teams[5], 3, 6))
+                common.DB_CON.execute(query, (conference_id*4+2, teams[1], teams[6], 2, 7))
+
+                self.updated['playoffs'] = False
+                self.update_current_page()
+
             self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Playoffs'))
 
         # Offseason - pre draft
@@ -1187,6 +1241,11 @@ class MainWindow:
         self.combobox_game_log_team = self.builder.get_object('combobox_game_log_team')
         self.textview_box_score = self.builder.get_object('textview_box_score')
         self.textview_box_score.modify_font(pango.FontDescription("Monospace 8"))
+        self.label_playoffs = {1: {}, 2: {}, 3: {}, 4: {}}
+        for i in range(4):
+            ii = 3 - i
+            for j in range(2**ii):
+                self.label_playoffs[i+1][j+1] = self.builder.get_object('label_playoffs_%d_%d' % (i+1, j+1))
 
         self.pages = dict(standings=0, finances=1, player_ratings=2, player_stats=3, team_stats=4, game_log=5, playoffs=6)
         # Set to True when treeview columns (or whatever) are set up

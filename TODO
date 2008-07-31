@@ -11,6 +11,10 @@ the simulation should be stopped automatically before saving, save_nosave_cancel
         while self.games_in_progress:
             sleep (like in draft)
 playoffs
+    game_sim is recording stats and won/lost as normal.  need a flag in stats for playoffs and need to update won/lost in active_playoff_series and not team_attributes
+    on preseason start, truncate active_playoff_series and update_playoffs
+    why does only play > one day work in the playoff?
+F10 is taken, use something else for week
 update contents of windows (roster, player info, free agents)
 show age in roster window
 
@@ -43,6 +47,9 @@ filtering should be done with treemodelfilter - see pygtk tutorial
 play menu
     even after hiding, accelerators still work, so on menuitem activation, check to make sure it's a valid choice!!!
         or: set accelerators in python code, not glade.  then i can reuse F12
+on new/open game:
+    close all open dialogs/windows
+    refresh all tabs of the main window
 
 NBA
 ---
@@ -61,6 +68,7 @@ parallelpython to parallelize game simulation
 uncertainty in rating - for each player, calculate a randn(0, 3) with max/min of +/- 5
     calculate a new one each year and add it to 1/2 of the previous one
 teams should be smart in resigning players (now it's just random)
+use constants for phase #'s, other things.  maybe create a dict CONST in common.py?
 
 FEATURES
 --------

@@ -1,6 +1,7 @@
 # This file implements the main window GUI.  It is rather large and
 # unorganized, and it should probably be refactored.
 
+# Python modules
 import bz2
 import cPickle as pickle
 import gtk
@@ -11,12 +12,15 @@ import sqlite3
 import shutil
 import sys
 import locale
+import time
 
+# My modules
 import common
 import game_sim
 import player
 import schedule
 
+# Windows and dialogs
 import contract_window
 import draft_dialog
 import free_agents_window
@@ -107,17 +111,23 @@ class MainWindow:
         return True
 
     def on_menuitem_one_week_activate(self, widget, data=None):
-        row = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?', (common.SEASON,)).fetchone()
-        num_days = common.SEASON_LENGTH - row[0] # Number of days remaining
-        if num_days > 7:
+        if self.phase != 3:
+            row = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?', (common.SEASON,)).fetchone()
+            num_days = common.SEASON_LENGTH - row[0] # Number of days remaining
+            if num_days > 7:
+                num_days = 7
+        else:
             num_days = 7
         self.play_games(num_days)
         return True
 
     def on_menuitem_one_month_activate(self, widget, data=None):
-        row = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?', (common.SEASON,)).fetchone()
-        num_days = common.SEASON_LENGTH - row[0] # Number of days remaining
-        if num_days > 30:
+        if self.phase != 3:
+            row = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?', (common.SEASON,)).fetchone()
+            num_days = common.SEASON_LENGTH - row[0] # Number of days remaining
+            if num_days > 30:
+                num_days = 30
+        else:
             num_days = 30
         self.play_games(num_days)
         return True
@@ -129,7 +139,7 @@ class MainWindow:
         return True
 
     def on_menuitem_through_playoffs_activate(self, widget, data=None):
-        self.new_phase(4)
+        self.play_games(100) # There aren't 100 days in the playoffs, so 100 will suffice
         return True
 
     def on_menuitem_until_draft_activate(self, widget, data=None):
@@ -416,8 +426,19 @@ class MainWindow:
         self.updated['games_list'] = True
 
     def update_playoffs(self):
+        anything = False
         for series_id, series_round, name_home, name_away, seed_home, seed_away, won_home, won_away in common.DB_CON.execute('SELECT series_id, series_round, (SELECT region || " " || name FROM team_attributes WHERE team_id = active_playoff_series.team_id_home), (SELECT region || " " || name FROM team_attributes WHERE team_id = active_playoff_series.team_id_away), seed_home, seed_away, won_home, won_away FROM active_playoff_series'):
+            print series_round, series_id, name_home, name_away, seed_home, seed_away
             self.label_playoffs[series_round][series_id].set_text('%d. %s (%d)\n%d. %s (%d)' % (seed_home, name_home, won_home, seed_away, name_away, won_away))
+            anything = True
+
+        if not anything:
+            # Screen should be blank if the playoffs aren't happening
+            for i in range(4):
+                ii = 3 - i
+                for j in range(2**ii):
+                    self.label_playoffs[i+1][j+1].set_text('')
+
         self.updated['playoffs'] = True
 
     def update_current_page(self):
@@ -637,19 +658,36 @@ class MainWindow:
                 # Make today's  playoff schedule
                 active_series = False
                 num_active_teams = 0
-                current_round = common.DB_CON.execute('SELECT MAX(series_round) FROM active_playoff_series').fetchone()
-                for team_id_home, team_id_away in common.DB_CON.execute('SELECT team_id_home, team_id_away FROM active_playoff_series WHERE won_home < 4 AND won_away < 4 AND series_round = ?', current_round):
+                current_round, = common.DB_CON.execute('SELECT MAX(series_round) FROM active_playoff_series').fetchone()
+                for team_id_home, team_id_away in common.DB_CON.execute('SELECT team_id_home, team_id_away FROM active_playoff_series WHERE won_home < 4 AND won_away < 4 AND series_round = ?', (current_round,)):
                     self.schedule.append([team_id_home, team_id_away])
                     active_series = True
                     num_active_teams += 2
                 if not active_series:
-                    print 'DONE'
-                    break
-                    #if more rounds:
-                    #    add new round to database
-                    #else:
-                    #    done playoffs.  go to next phase
-                print self.schedule
+                    # The previous round is over
+                    # Is the whole playoffs over?
+                    if current_round == 4:
+                        self.new_phase(4)
+                        break
+                    # Add a new round to the database
+                    winners = {}
+                    for series_id, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away in common.DB_CON.execute('SELECT series_id, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away FROM active_playoff_series WHERE series_round = ? ORDER BY series_id ASC', (current_round,)):    
+                        if won_home == 4:
+                            winners[series_id] = [team_id_home, seed_home]
+                        else:
+                            winners[series_id] = [team_id_away, seed_away]
+                    series_id = 1
+                    current_round += 1
+                    query = 'INSERT INTO active_playoff_series (series_id, series_round, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away) VALUES (?, ?, ?, ?, ?, ?, 0, 0)'
+                    for i in range(1, len(winners), 2): # Go through winners by 2
+                        if winners[i][1] < winners[i+1][1]: # Which team is the home team?
+                            new_series = (series_id, current_round, winners[i][0], winners[i+1][0], winners[i][1], winners[i+1][1])
+                        else:
+                            new_series = (series_id, current_round, winners[i+1][0], winners[i][0], winners[i+1][1], winners[i][1])
+                        common.DB_CON.execute(query, new_series)
+                        series_id += 1
+                    self.update_playoffs()
+                    continue
             else:
                 # Sign available free agents
                 self.auto_sign_free_agents()
@@ -675,9 +713,12 @@ class MainWindow:
 #                    t2 = random.randint(0, len(common.TEAMS)-1)
 #                    if t1 != t2:
 #                        break
-                game.play(*teams)
+                game.play(teams[0], teams[1], self.phase == 3)
                 game.write_stats()
             if self.notebook.get_current_page() != self.pages['player_ratings']:
+                if self.phase == 3:
+                    self.updated['playoffs'] = False
+                    time.sleep(0.5) # Or else it updates too fast to see what's going on
                 self.update_current_page()
             self.statusbar.pop(self.statusbar_context_id)
 
@@ -1022,6 +1063,9 @@ class MainWindow:
             common.SEASON += 1
             common.DB_CON.execute('UPDATE game_attributes SET season = season + 1')
 
+            # Get rid of old playoffs
+            common.DB_CON.execute('DELETE FROM active_playoff_series')
+
             # Create new rows in team_attributes
             for row in common.DB_CON.execute('SELECT team_id, division_id, region, name, abbreviation, cash FROM team_attributes WHERE season = ?', (common.SEASON-1,)):
                 common.DB_CON.execute('INSERT INTO team_attributes (team_id, division_id, region, name, abbreviation, cash, season) VALUES (?, ?, ?, ?, ?, ?, ?)', (row[0], row[1], row[2], row[3], row[4], row[5], common.SEASON))
@@ -1071,16 +1115,18 @@ class MainWindow:
             for conference_id in range(2):
                 teams = []
                 seed = 1
-                for team_id, in common.DB_CON.execute('SELECT ta.team_id FROM team_attributes as ta, league_divisions as ld WHERE ld.division_id = ta.division_id AND ld.conference_id = ? ORDER BY ta.won/(ta.won + ta.lost) DESC LIMIT 8', (conference_id,)):
+                for team_id, in common.DB_CON.execute('SELECT ta.team_id FROM team_attributes as ta, league_divisions as ld WHERE ld.division_id = ta.division_id AND ld.conference_id = ? AND ta.season = ? ORDER BY ta.won/(ta.won + ta.lost) DESC LIMIT 8', (conference_id, common.SEASON)):
                     teams.append(team_id)
+                print teams
                 query = 'INSERT INTO active_playoff_series (series_id, series_round, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away) VALUES (?, 1, ?, ?, ?, ?, 0, 0)'
                 common.DB_CON.execute(query, (conference_id*4+1, teams[0], teams[7], 1, 8))
-                common.DB_CON.execute(query, (conference_id*4+4, teams[3], teams[4], 4, 5))
+                common.DB_CON.execute(query, (conference_id*4+2, teams[3], teams[4], 4, 5))
                 common.DB_CON.execute(query, (conference_id*4+3, teams[2], teams[5], 3, 6))
-                common.DB_CON.execute(query, (conference_id*4+2, teams[1], teams[6], 2, 7))
+                common.DB_CON.execute(query, (conference_id*4+4, teams[1], teams[6], 2, 7))
 
-                self.updated['playoffs'] = False
-                self.update_current_page()
+            self.updated['playoffs'] = False
+            self.update_current_page()
+            self.notebook.set_current_page(self.pages['playoffs'])
 
             self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Playoffs'))
 

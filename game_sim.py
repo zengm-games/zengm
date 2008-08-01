@@ -4,10 +4,11 @@ import sqlite3
 import common
 
 class Game:
-    def play(self, t1, t2):
+    def play(self, t1, t2, is_playoffs):
         self.team = []
         self.team.append(Team(t1))
         self.team.append(Team(t2))
+        self.is_playoffs = is_playoffs
         self.id = random.randint(0, 100000000)
         self.num_possessions = self.get_num_possessions()
         self.season = common.SEASON
@@ -231,8 +232,19 @@ class Game:
         common.DB_CON.execute(query, (self.team[t].player[p].id, self.team[t].id, self.id, self.season, self.team[t].player[p].stat['starter'], int(round(self.team[t].player[p].stat['minutes'])), self.team[t].player[p].stat['field_goals_made'], self.team[t].player[p].stat['field_goals_attempted'], self.team[t].player[p].stat['three_pointers_made'], self.team[t].player[p].stat['three_pointers_attempted'], self.team[t].player[p].stat['free_throws_made'], self.team[t].player[p].stat['free_throws_attempted'], self.team[t].player[p].stat['offensive_rebounds'], self.team[t].player[p].stat['defensive_rebounds'], self.team[t].player[p].stat['assists'], self.team[t].player[p].stat['turnovers'], self.team[t].player[p].stat['steals'], self.team[t].player[p].stat['blocks'], self.team[t].player[p].stat['personal_fouls'], self.team[t].player[p].stat['points']))
 
     def write_team_stats(self, t):
-        t2 = 1 if t==0 else 0
-        won = True if self.team[t].stat['points'] > self.team[t2].stat['points'] else False
+        if t == 0:
+            t2 = 1
+        else:
+            t2 = 0
+        if self.team[t].stat['points'] > self.team[t2].stat['points']:
+            won = True
+            if self.is_playoffs and t==0:
+                common.DB_CON.execute('UPDATE active_playoff_series SET won_home = won_home + 1 WHERE team_id_home = ? AND team_id_away = ?', (self.team[t].id, self.team[t2].id))
+            elif self.is_playoffs:
+                common.DB_CON.execute('UPDATE active_playoff_series SET won_away = won_away + 1 WHERE team_id_home = ? AND team_id_away = ?', (self.team[t2].id, self.team[t].id))
+
+        else:
+            won = False
 
         cost, = common.DB_CON.execute('SELECT SUM(contract_amount)*1000/82 FROM player_attributes WHERE team_id = ?', (self.team[t].id,)).fetchone()
         common.DB_CON.execute('UPDATE team_attributes SET cash = cash + ? - ? WHERE season = ? AND team_id = ?', (common.TICKET_PRICE*self.attendance, cost, common.SEASON, self.team[t].id))

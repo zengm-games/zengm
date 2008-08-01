@@ -11,9 +11,8 @@ the simulation should be stopped automatically before saving, save_nosave_cancel
         while self.games_in_progress:
             sleep (like in draft)
 playoffs
-    game_sim is recording stats and won/lost as normal.  need a flag in stats for playoffs and need to update won/lost in active_playoff_series and not team_attributes
-    on preseason start, truncate active_playoff_series and update_playoffs
-    why does only play > one day work in the playoff?
+    use self.is_playoffs in game_sim.py to set a flag for the stats to separate regular season from playoffs
+    playoff games should not show in standings
 F10 is taken, use something else for week
 update contents of windows (roster, player info, free agents)
 show age in roster window

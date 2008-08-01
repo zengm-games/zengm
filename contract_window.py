@@ -48,9 +48,11 @@ class ContractWindow:
             md.destroy()
 
     def on_button_contract_submit_clicked(self, button, data=None):
-        team_amount = self.spinbutton_contract_team_amount.get_value_as_int()/1000
+        team_amount = self.spinbutton_contract_team_amount.get_value()*1000
         team_years = self.spinbutton_contract_team_years.get_value_as_int()
         self.steps += 1
+
+        print self.steps, self.max_steps, self.player_years, self.player_amount, team_years, team_amount
 
         # Negotiation step
         if self.steps <= self.max_steps:

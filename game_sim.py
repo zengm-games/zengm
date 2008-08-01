@@ -253,13 +253,13 @@ class Game:
                  (team_id, opponent_team_id, game_id, season, won, minutes, field_goals_made, field_goals_attempted, three_pointers_made, three_pointers_attempted, free_throws_made, free_throws_attempted, offensive_rebounds, defensive_rebounds, assists, turnovers, steals, blocks, personal_fouls, points, opponent_points, attendance, cost) \
                  VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
         common.DB_CON.execute(query, (self.team[t].id, self.team[t2].id, self.id, self.season, won, int(round(self.team[t].stat['minutes'])), self.team[t].stat['field_goals_made'], self.team[t].stat['field_goals_attempted'], self.team[t].stat['three_pointers_made'], self.team[t].stat['three_pointers_attempted'], self.team[t].stat['free_throws_made'], self.team[t].stat['free_throws_attempted'], self.team[t].stat['offensive_rebounds'], self.team[t].stat['defensive_rebounds'], self.team[t].stat['assists'], self.team[t].stat['turnovers'], self.team[t].stat['steals'], self.team[t].stat['blocks'], self.team[t].stat['personal_fouls'], self.team[t].stat['points'], self.team[t2].stat['points'], self.attendance, cost))
-        if won:
+        if won and not self.is_playoffs:
             common.DB_CON.execute('UPDATE team_attributes SET won = won + 1 WHERE team_id = ? AND season = ?', (self.team[t].id, self.season))
             if self.same_division:
                 common.DB_CON.execute('UPDATE team_attributes SET won_div = won_div + 1, won_conf = won_conf + 1 WHERE team_id = ? AND season = ?', (self.team[t].id, self.season))
             elif self.same_conference:
                 common.DB_CON.execute('UPDATE team_attributes SET won_conf = won_conf + 1 WHERE team_id = ? AND season = ?', (self.team[t].id, self.season))
-        else:
+        elif not self.is_playoffs:
             common.DB_CON.execute('UPDATE team_attributes SET lost = lost + 1 WHERE team_id = ? AND season = ?', (self.team[t].id, self.season))
             if self.same_division:
                 common.DB_CON.execute('UPDATE team_attributes SET lost_div = lost_div + 1, lost_conf = lost_conf + 1 WHERE team_id = ? AND season = ?', (self.team[t].id, self.season))

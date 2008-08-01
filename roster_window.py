@@ -119,23 +119,25 @@ class RosterWindow:
         self.treeview_roster.append_column(column)
         column = gtk.TreeViewColumn('Position', renderer, text=2)
         self.treeview_roster.append_column(column)
-        column = gtk.TreeViewColumn('Rating', renderer, text=3)
+        column = gtk.TreeViewColumn('Age', renderer, text=3)
         self.treeview_roster.append_column(column)
-        column = gtk.TreeViewColumn('Contract', renderer, text=4)
+        column = gtk.TreeViewColumn('Rating', renderer, text=4)
         self.treeview_roster.append_column(column)
-        column = gtk.TreeViewColumn('PPG', renderer, text=5)
-        column.set_cell_data_func(renderer,
-            lambda column, cell, model, iter: cell.set_property('text', '%.1f' % model.get_value(iter, 5)))
+        column = gtk.TreeViewColumn('Contract', renderer, text=5)
         self.treeview_roster.append_column(column)
-        column = gtk.TreeViewColumn('Reb', renderer, text=6)
+        column = gtk.TreeViewColumn('PPG', renderer, text=6)
         column.set_cell_data_func(renderer,
             lambda column, cell, model, iter: cell.set_property('text', '%.1f' % model.get_value(iter, 6)))
         self.treeview_roster.append_column(column)
-        column = gtk.TreeViewColumn('Ast', renderer, text=7)
+        column = gtk.TreeViewColumn('Reb', renderer, text=6)
         column.set_cell_data_func(renderer,
             lambda column, cell, model, iter: cell.set_property('text', '%.1f' % model.get_value(iter, 7)))
         self.treeview_roster.append_column(column)
-        column = gtk.TreeViewColumn('Average Playing Time', self.renderer_roster_editable, text=8)
+        column = gtk.TreeViewColumn('Ast', renderer, text=7)
+        column.set_cell_data_func(renderer,
+            lambda column, cell, model, iter: cell.set_property('text', '%.1f' % model.get_value(iter, 8)))
+        self.treeview_roster.append_column(column)
+        column = gtk.TreeViewColumn('Average Playing Time', self.renderer_roster_editable, text=9)
         self.treeview_roster.append_column(column)
 
         # This treeview is used to list the positions to the left of the players
@@ -151,8 +153,8 @@ class RosterWindow:
         self.update_roster_info()
 
         # Roster list
-        column_types = [int, str, str, int, str, float, float, float, int]
-        query = 'SELECT player_attributes.player_id, player_attributes.name, player_attributes.position, player_ratings.overall, "$" || contract_amount || "k thru " || contract_expiration, 0, 0, 0, player_ratings.average_playing_time FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = ? ORDER BY player_ratings.roster_position ASC'
+        column_types = [int, str, str, int, int, str, float, float, float, int]
+        query = 'SELECT player_attributes.player_id, player_attributes.name, player_attributes.position, ROUND((julianday("%d-06-01") - julianday(player_attributes.born_date))/365.25), player_ratings.overall, "$" || round(contract_amount/1000.0, 2) || "M thru " || contract_expiration, 0, 0, 0, player_ratings.average_playing_time FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = ? ORDER BY player_ratings.roster_position ASC' % common.SEASON
         query_bindings = (common.PLAYER_TEAM_ID,)
         common.treeview_update(self.treeview_roster, column_types, query, query_bindings)
         model = self.treeview_roster.get_model()

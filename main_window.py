@@ -426,18 +426,16 @@ class MainWindow:
         self.updated['games_list'] = True
 
     def update_playoffs(self):
-        anything = False
+        # Initialize to blank page
+        for i in range(4):
+            ii = 3 - i
+            for j in range(2**ii):
+                self.label_playoffs[i+1][j+1].set_text('')
+
+        # Update cells
         for series_id, series_round, name_home, name_away, seed_home, seed_away, won_home, won_away in common.DB_CON.execute('SELECT series_id, series_round, (SELECT region || " " || name FROM team_attributes WHERE team_id = active_playoff_series.team_id_home), (SELECT region || " " || name FROM team_attributes WHERE team_id = active_playoff_series.team_id_away), seed_home, seed_away, won_home, won_away FROM active_playoff_series'):
             print series_round, series_id, name_home, name_away, seed_home, seed_away
             self.label_playoffs[series_round][series_id].set_text('%d. %s (%d)\n%d. %s (%d)' % (seed_home, name_home, won_home, seed_away, name_away, won_away))
-            anything = True
-
-        if not anything:
-            # Screen should be blank if the playoffs aren't happening
-            for i in range(4):
-                ii = 3 - i
-                for j in range(2**ii):
-                    self.label_playoffs[i+1][j+1].set_text('')
 
         self.updated['playoffs'] = True
 

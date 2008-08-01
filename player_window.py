@@ -28,7 +28,8 @@ class PlayerWindow:
         born = mx.DateTime.Date(int(y), int(m), int(d))
         age = mx.DateTime.Age(mx.DateTime.Date(common.SEASON, 1, 1), born).years
         experience = 77 # This should be calculated by how many seasons are recorded, because a player could be injured all year or be out of the leauge
-        self.label_player_window_info.set_markup('<span size="x-large" weight="bold">%s</span>\n<span weight="bold">%s - %s</span>\nHeight: %s\nWeight: %s lbs\nAge: %s\nExperience: %s\nBorn: %s - %s\nCollege: %s\nDraft: %s - Round %s (Pick %s) by the %s\nContract: $%s,000 per year through %d' % (row[0], row[1], row[2], height, row[4], age, experience, born.strftime("%B %e, %Y"), row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13]))
+        contract_amount = '$%.2fM' % (row[12]/1000.0)
+        self.label_player_window_info.set_markup('<span size="x-large" weight="bold">%s</span>\n<span weight="bold">%s - %s</span>\nHeight: %s\nWeight: %s lbs\nAge: %s\nExperience: %s\nBorn: %s - %s\nCollege: %s\nDraft: %s - Round %s (Pick %s) by the %s\nContract: %s per year through %d' % (row[0], row[1], row[2], height, row[4], age, experience, born.strftime("%B %e, %Y"), row[6], row[7], row[8], row[9], row[10], row[11], contract_amount, row[13]))
 
         # Ratings
         common.DB_CON.row_factory = sqlite3.Row

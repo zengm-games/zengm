@@ -1,8 +1,5 @@
 REQUIREMENTS FOR 0.1 RELEASE:
-trade gui
-    If a trade is not valid, the propose trade button should be disabled and the reason should be displayed
-        if a team is over the salary cap, their incoming salary must be <= 125% their outgoing salary
-    trade AI
+trade AI
 the simulation should be stopped automatically before saving, save_nosave_cancel call, (trades?)
     self.games_in_progress to indicate if games are being played or not
 
@@ -64,7 +61,7 @@ luxury tax: (team_salary - 65mil) penalty if team salary is > 65mil
 BACKEND
 -------
 archive stats as averages - this will make the end of season awards feasible, and make the stats view faster/easier
-parallelpython to parallelize game simulation
+pyprocessing to parallelize game simulation - pyprocessing will be in python 2.6 as muiltiprocessing
 uncertainty in rating - for each player, calculate a randn(0, 3) with max/min of +/- 5
     calculate a new one each year and add it to 1/2 of the previous one
 teams should be smart in resigning players (now it's just random)

@@ -85,7 +85,7 @@ class MainWindow:
         return True
 
     def on_menuitem_trade_activate(self, widget, data=None):
-        tw = trade_window.TradeWindow(self.main_window)
+        tw = trade_window.TradeWindow(self)
         response = tw.trade_window.run()
         tw.trade_window.destroy()
         return True

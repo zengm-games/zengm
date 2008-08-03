@@ -1,8 +1,9 @@
 REQUIREMENTS FOR 0.1 RELEASE:
-trades
-    if a team is over the salary cap, their incoming salary must be <= 125% their outgoing salary
-    basic trade AI
-the simulation should be stopped automatically before saving, save_nosave_cancel call, tradings
+trade gui
+    If a trade is not valid, the propose trade button should be disabled and the reason should be displayed
+        if a team is over the salary cap, their incoming salary must be <= 125% their outgoing salary
+    trade AI
+the simulation should be stopped automatically before saving, save_nosave_cancel call, (trades?)
     self.games_in_progress to indicate if games are being played or not
 
     Put this code wherever the simulation should be automatically stopped:
@@ -15,6 +16,7 @@ playoffs
 F10 is taken, use something else for week
 update contents of windows (roster, player info, free agents)
 show age in roster window
+are all imports needed?  sys, pango?
 
 ======
 FUTURE

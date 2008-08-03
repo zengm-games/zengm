@@ -85,11 +85,9 @@ class MainWindow:
         return True
 
     def on_menuitem_trade_activate(self, widget, data=None):
-        if not hasattr(self, 'tw'):
-            self.tw = trade_window.TradeWindow(self)
-        else:
-            self.tw.trade_window.show() # Show the window
-            self.tw.trade_window.window.show() # Raise the window if it's in the background
+        tw = trade_window.TradeWindow(self.main_window)
+        response = tw.trade_window.run()
+        tw.trade_window.destroy()
         return True
 
     def on_menuitem_free_agents_activate(self, widget, data=None):

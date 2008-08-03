@@ -1,6 +1,4 @@
-import sys
 import gtk
-import pango
 import mx.DateTime
 import sqlite3
 

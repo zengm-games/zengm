@@ -12,8 +12,6 @@ playoffs
     use self.is_playoffs in game_sim.py to set a flag for the stats to separate regular season from playoffs
 F10 is taken, use something else for week
 update contents of windows (roster, player info, free agents)
-show age in roster window
-are all imports needed?  sys, pango?
 
 ======
 FUTURE

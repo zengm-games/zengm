@@ -10,7 +10,6 @@ import pango
 import random
 import sqlite3
 import shutil
-import sys
 import locale
 import time
 
@@ -29,7 +28,6 @@ import roster_window
 import player_window
 import season_end_window
 import trade_window
-import welcome_dialog
 
 class MainWindow:
     def on_main_window_delete_event(self, widget, data=None):
@@ -137,7 +135,7 @@ class MainWindow:
         return True
 
     def on_menuitem_through_playoffs_activate(self, widget, data=None):
-        self.play_games(100) # There aren't 100 days in the playoffs, so 100 will suffice
+        self.play_games(100) # There aren't 100 days in the playoffs, so 100 will cover all the games and the sim stops when the playoffs end
         return True
 
     def on_menuitem_until_draft_activate(self, widget, data=None):
@@ -934,7 +932,6 @@ class MainWindow:
         save_game_dialog.set_default_response(gtk.RESPONSE_OK)
         save_game_dialog.set_current_folder('saves')
 
-
         # Filters
         filter = gtk.FileFilter()
         filter.set_name('Basketball GM saves')
@@ -1309,6 +1306,4 @@ class MainWindow:
         self.builder.connect_signals(self)
 
         self.main_window.show()
-
-        wd = welcome_dialog.WelcomeDialog(self)
 

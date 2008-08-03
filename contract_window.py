@@ -1,6 +1,4 @@
-import sys
 import gtk
-import pango
 import sqlite3
 import ctypes
 

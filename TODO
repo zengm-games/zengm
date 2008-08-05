@@ -1,5 +1,4 @@
 REQUIREMENTS FOR 0.1 RELEASE:
-trade AI
 the simulation should be stopped automatically before saving, save_nosave_cancel call, (trades?)
     self.games_in_progress to indicate if games are being played or not
 
@@ -8,9 +7,6 @@ the simulation should be stopped automatically before saving, save_nosave_cancel
         self.stop_games = True
         while self.games_in_progress:
             sleep (like in draft)
-playoffs
-    use self.is_playoffs in game_sim.py to set a flag for the stats to separate regular season from playoffs
-F10 is taken, use something else for week
 update contents of windows (roster, player info, free agents)
 
 ======

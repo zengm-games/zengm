@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Sun Aug  3 04:42:22 2008 -->
+<!--Generated with glade3 3.4.5 on Tue Aug  5 17:23:55 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="main_window">
     <property name="width_request">800</property>
@@ -138,7 +138,7 @@
                         <property name="label" translatable="yes">_One Day</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="on_menuitem_one_day_activate"/>
-                        <accelerator key="F9" modifiers="" signal="activate"/>
+                        <accelerator key="F5" modifiers="" signal="activate"/>
                       </widget>
                     </child>
                     <child>
@@ -147,7 +147,7 @@
                         <property name="label" translatable="yes">One _Week</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="on_menuitem_one_week_activate"/>
-                        <accelerator key="F10" modifiers="" signal="activate"/>
+                        <accelerator key="F6" modifiers="" signal="activate"/>
                       </widget>
                     </child>
                     <child>
@@ -156,7 +156,7 @@
                         <property name="label" translatable="yes">One _Month</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="on_menuitem_one_month_activate"/>
-                        <accelerator key="F11" modifiers="" signal="activate"/>
+                        <accelerator key="F7" modifiers="" signal="activate"/>
                       </widget>
                     </child>
                     <child>
@@ -165,7 +165,7 @@
                         <property name="label" translatable="yes">Until _Playoffs</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="on_menuitem_until_playoffs_activate"/>
-                        <accelerator key="F12" modifiers="" signal="activate"/>
+                        <accelerator key="F8" modifiers="" signal="activate"/>
                       </widget>
                     </child>
                     <child>
@@ -4115,6 +4115,7 @@ Placeholder (???)</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="response_id">0</property>
+                <signal name="clicked" handler="on_button_trade_propose_clicked"/>
                 <child>
                   <widget class="GtkAlignment" id="alignment18">
                     <property name="visible">True</property>

@@ -12,7 +12,6 @@ if __name__ == '__main__':
 
     # If a file is given as an argument, try to open it
     if len(sys.argv) > 1 and os.path.exists(sys.argv[1]):
-        print sys.argv[1]
         mw.open_game(sys.argv[1])        
     else:
         welcome_dialog.WelcomeDialog(mw)

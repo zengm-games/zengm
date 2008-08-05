@@ -50,8 +50,6 @@ class ContractWindow:
         team_years = self.spinbutton_contract_team_years.get_value_as_int()
         self.steps += 1
 
-        print self.steps, self.max_steps, self.player_years, self.player_amount, team_years, team_amount
-
         # Negotiation step
         if self.steps <= self.max_steps:
             if team_years < self.player_years:
@@ -117,12 +115,13 @@ Salary Cap: %s' % (name, payroll, salary_cap))
         # Initial player proposal
         potential_difference = round((potential - overall) / 4.0)
         self.player_years = 5 - potential_difference # Players with high potentials want short contracts
+        if self.player_years < 1:
+            self.player_years = 1
         p = player.Player()
         p.load(self.player_id)
         self.player_amount, expiration = p.contract()
         self.update_label_contract_player_proposal()
         self.spinbutton_contract_team_amount.set_value(self.player_amount/1000.0)
-        print self.player_amount/1000.0
         self.spinbutton_contract_team_years.set_value(self.player_years)
 
         # If signing free agents, close should be Cancel.  For resigning players it should be Release Player.

@@ -1,4 +1,5 @@
 import gtk
+import math
 import sqlite3
 
 import common
@@ -17,6 +18,31 @@ class TradeWindow:
         Map to the same function in main_window.py
         '''
         self.main_window.on_treeview_player_row_activated(treeview, path, view_column, data)
+
+    def on_button_trade_propose_clicked(self, button, data=None):
+        if self.value[0] - 0.5 > self.value[1]:
+            # Trade players
+            for team_id in [common.PLAYER_TEAM_ID, self.other_team_id]:
+                if team_id == common.PLAYER_TEAM_ID:
+                    i = 0
+                    new_team_id = self.other_team_id
+                else:
+                    i = 1
+                    new_team_id = common.PLAYER_TEAM_ID
+                for player_id, team_id, name, age, rating, potential, contract_amount in self.offer[i].values():
+                    common.DB_CON.execute('UPDATE player_attributes SET team_id = ? WHERE player_id = ?', (new_team_id, player_id))
+            # Auto-sort computer team
+            self.main_window.roster_auto_sort(self.other_team_id)
+
+            # Show dialog
+            dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_INFO, gtk.BUTTONS_CLOSE, 'Your trade proposal was accepted.')
+            response = dialog.run()
+            dialog.destroy()
+            self.trade_window.destroy()
+        else:
+            dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_INFO, gtk.BUTTONS_CLOSE, 'Your trade proposal was rejected.')
+            response = dialog.run()
+            dialog.destroy()
 
     def on_button_trade_clear_clicked(self, button, data=None):
         # Reset the offer
@@ -51,9 +77,12 @@ class TradeWindow:
     def on_player_toggled(self, cell, path, model, data=None):
         model[path][2] = not model[path][2] # Update checkbox
 
-        team_id = model[path][1]
         player_id = model[path][0]
+        team_id = model[path][1]
         name = model[path][3]
+        age = model[path][5]
+        rating = model[path][6]
+        potential = model[path][7]
         if team_id == common.PLAYER_TEAM_ID:
             i = 0
         else:
@@ -63,7 +92,7 @@ class TradeWindow:
             # Check: add player to offer
             contract_amount, = common.DB_CON.execute('SELECT contract_amount FROM player_attributes WHERE player_id = ?', (player_id,)).fetchone()
 
-            self.offer[i][player_id] = [player_id, name, contract_amount]
+            self.offer[i][player_id] = [player_id, team_id, name, age, rating, potential, contract_amount]
         else:
             # Uncheck: delete player from offer
             del self.offer[i][player_id]
@@ -93,6 +122,7 @@ class TradeWindow:
 
         payroll_after_trade = [0, 0]
         total = [0, 0]
+        self.value = [0, 0]
         over_cap = [False, False]
         ratios = [0, 0]
         names = []
@@ -108,16 +138,27 @@ class TradeWindow:
             text = '<b>%s</b>\n\nTrade:\n' % name
 
             total[i] = 0
-            for player_id, name, contract_amount in self.offer[i].values():
+            self.value[i] = 0
+            for player_id, team_id, name, age, rating, potential, contract_amount in self.offer[i].values():
                 text += '%s ($%.2fM)\n' % (name, contract_amount/1000.0)
                 total[i] += contract_amount
-            text += '$%.2fM total\n\nRecieve:\n' % (total[i]/1000.0)
+                self.value[i] += 10**(potential/10.0 + rating/20.0 - age/10.0 - contract_amount/10000.0) # Set in 2 places!!
+            if self.value[i] > 0:
+                self.value[i] = math.log(self.value[i])
+            text += '$%.2fM total\n\n' % (total[i]/1000.0)
+            #text += 'Value: %.4f\n\n' % (self.value[i])
+            text += 'Recieve:\n'
 
             total[j] = 0
-            for player_id, name, contract_amount in self.offer[j].values():
+            self.value[j] = 0
+            for player_id, team_id, name, age, rating, potential, contract_amount in self.offer[j].values():
                 text += '%s ($%.2fM)\n' % (name, contract_amount/1000.0)
                 total[j] += contract_amount
+                self.value[j] += 10**(potential/10.0 + rating/20.0 - age/10.0 - contract_amount/10000.0) # Set in 2 places!!
+            if self.value[j] > 0:
+                self.value[j] = math.log(self.value[j])
             text += '$%.2fM total\n\n' % (total[j]/1000.0)
+            #text += 'Value: %.4f\n\n' % (self.value[j])
             payroll_after_trade[i] = total[j]+payroll
             text += 'Payroll After Trade: $%.2fM' % (payroll_after_trade[i]/1000.0)
 
@@ -143,6 +184,10 @@ class TradeWindow:
                 name = names[1]
                 ratio = ratios[1]
             self.label_trade_cap_warning.set_markup('\n<b>The %s are over the salary cap, so the players it receives must have a combined salary less than 125%% of the players it trades.  Currently, that value is %s%%.</b>' % (name, ratio))
+        elif sum(total) == 0:
+            # No trades with no players
+            self.label_trade_cap_warning.set_text('')
+            self.button_trade_propose.set_sensitive(False)
         else:
             self.label_trade_cap_warning.set_text('')
             self.button_trade_propose.set_sensitive(True)

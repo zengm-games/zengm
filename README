@@ -1,9 +1,51 @@
-Required packages on Ubuntu (probably similar on other distros):
-libsqlite3-0
-python >= 2.5 (Version requirement is for the new sqlite3 module)
-python-egenix-mxdatetime
-python-gtk2
+==============================
+BASKETBALL GENERAL MANAGER 0.1
+==============================
 
-Then just run ./basketball-gm
-At this point, everything (data and code) is contained within this folder.
+Website: http://code.google.com/p/basketball-gm/
+Author:  Jeremy Scheff <dumbmatter@gmail.com>
+
+Don't send me any bug reports right now because I know there are plenty of bugs
+and plenty of features that need to be added.  However, if you are a Python
+hacker who wants to work on the game, please email me.  There is a lot of work
+left to be done to make this game more fun, and I can't do it all myself.
+
+
+
+License
+-------
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3 as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+
+Dependencies
+------------
+
+Required packages on Ubuntu 8.04 (probably similar on other distros):
+
+* libsqlite3-0
+* python >= 2.5 (Version requirement is for the new sqlite3 module)
+* python-egenix-mxdatetime
+* python-gtk2
+
+I haven't tried any other platforms, but if you install the packages listed
+above on Windows maybe it would work.
+
+
+Use
+---
+
+To run the game, just type:
+./basketball-gm
 

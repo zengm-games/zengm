@@ -870,7 +870,7 @@ class MainWindow:
                 proceed = True
         if not self.unsaved_changes or proceed:
             common.DB_CON.close()
-            os.remove('temp.sqlite')
+            os.remove(common.DB_TEMP_FILENAME)
             gtk.main_quit()
 
     def new_game_dialog(self):
@@ -901,7 +901,7 @@ class MainWindow:
 
     def open_game_dialog(self):
         open_dialog = gtk.FileChooserDialog(title='Open Game', action=gtk.FILE_CHOOSER_ACTION_OPEN, buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
-        open_dialog.set_current_folder('saves')
+        open_dialog.set_current_folder(common.SAVES_FOLDER)
         open_dialog.set_transient_for(self.main_window)
 
         # Filters
@@ -929,7 +929,7 @@ class MainWindow:
         save_game_dialog = gtk.FileChooserDialog("Choose a location to save the game", self.main_window, gtk.FILE_CHOOSER_ACTION_SAVE, buttons)
         save_game_dialog.set_do_overwrite_confirmation(True)
         save_game_dialog.set_default_response(gtk.RESPONSE_OK)
-        save_game_dialog.set_current_folder('saves')
+        save_game_dialog.set_current_folder(common.SAVES_FOLDER)
 
         # Filters
         filter = gtk.FileFilter()

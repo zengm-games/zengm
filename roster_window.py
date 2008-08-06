@@ -45,7 +45,7 @@ class RosterWindow:
         treemodel, treeiter = self.treeview_roster.get_selection().get_selected()
         if treeiter:
             path = treemodel.get_path(treeiter)
-            focus_column = self.treeview_roster.get_column(7) # The index here is the position wrt visible columns, so this might need to be changed some time
+            focus_column = self.treeview_roster.get_column(8) # The index here is the position wrt visible columns, so this might need to be changed some time
             self.treeview_roster.set_cursor(path, focus_column, start_editing=True)
 
     def on_button_roster_release_clicked(self, button, data=None):
@@ -91,11 +91,11 @@ class RosterWindow:
         common.DB_CON.execute('UPDATE player_ratings SET average_playing_time = ? WHERE player_id = ?', (average_playing_time, player_id))
         self.unsaved_changes = True
         if average_playing_time > 48:
-            model[path][8] = 48
+            model[path][9] = 48
         elif average_playing_time < 0:
-            model[path][8] = 0
+            model[path][9] = 0
         else:
-            model[path][8] = average_playing_time
+            model[path][9] = average_playing_time
         self.update_roster_info()
         return True
 

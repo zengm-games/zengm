@@ -1,25 +1,32 @@
 import gtk
+import os
 import sqlite3
-import shutil
 
-#TEAMS = [0, 1, 2, 3, 4, 5, 6, 7, 21]
-TEAMS = range(30)
+TEAMS = range(30) # If team id's aren't consecutive integers starting with 0, then some things will break
 SEASON_LENGTH = 82 # If this isn't 82 the scheduling gets fucked up.  Only set it lower for debugging (faster seasons)
 
 GTKBUILDER_PATH = 'basketball_gm.xml'
 
-#shutil.copyfile('database.sqlite', 'temp.sqlite')
-DB_TEMP_FILENAME = 'temp.sqlite'
-DB_FILENAME = 'temp.sqlite'
+DATA_FOLDER = os.path.expanduser("~/.basketball-gm")
+SAVES_FOLDER = os.path.join(DATA_FOLDER, 'saves')
+DB_TEMP_FILENAME = os.path.join(DATA_FOLDER, 'temp.sqlite')
+DB_FILENAME = os.path.join(DATA_FOLDER, 'temp.sqlite')
+
+# Make folders if they doesn't exist:
+if not os.path.exists(DATA_FOLDER):
+    os.mkdir(DATA_FOLDER, 0755)
+if not os.path.exists(SAVES_FOLDER):
+    os.mkdir(SAVES_FOLDER, 0755)
 
 # These are set to real values in basketball_gm.py
 PLAYER_TEAM_ID = 3
 SEASON = 2008
 
-# This should probably be defined somewhere else
+# These should probably be defined somewhere else (user settings)
 SALARY_CAP = 60000
 TICKET_PRICE = 45
 
+# These functions are crap and should be replaced eventually
 def treeview_build(treeview, column_info):
     """
     Shortcut function to add columns to a treeview

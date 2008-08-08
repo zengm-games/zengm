@@ -10,6 +10,7 @@ import player
 class DraftDialog:
     def on_draft_dialog_close(self, widget, data=None):
         if self.done_draft:
+            self.main_window.update_all_pages()
             self.draft_dialog.hide()
         return True
 

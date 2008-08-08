@@ -1,5 +1,6 @@
 import csv
 import mx.DateTime
+import os
 import random
 import re
 import sqlite3
@@ -111,18 +112,18 @@ class GeneratePlayer(Player):
 
     def __init__(self):
         # First name data
-        fn_reader = csv.reader(open("data/first_names.txt", "rb"))
+        fn_reader = csv.reader(open(os.path.join(common.DATA_FOLDER, "data/first_names.txt"), "rb"))
         self.fn_data = []
         for row in fn_reader:
             self.fn_data.append(row)
         self.fn_max = 90.040
 
-        # Last name data
-        ln_reader = csv.reader(open("data/last_names.txt", "rb"))
+        # Last name data (This data has been truncated to make the file smaller)
+        ln_reader = csv.reader(open(os.path.join(common.DATA_FOLDER, "data/last_names.txt"), "rb"))
         self.ln_data = []
         for row in ln_reader:
             self.ln_data.append(row)  
-        self.ln_max = 90.483
+        self.ln_max = 77.480
 
     def new(self, player_id, team_id, age, profile, base_rating, potential):
         self.id = player_id

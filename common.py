@@ -1,11 +1,15 @@
 import gtk
 import os
+import shutil
 import sqlite3
 
 TEAMS = range(30) # If team id's aren't consecutive integers starting with 0, then some things will break
 SEASON_LENGTH = 82 # If this isn't 82 the scheduling gets fucked up.  Only set it lower for debugging (faster seasons)
 
-GTKBUILDER_PATH = 'basketball_gm.xml'
+SRC_FOLDER = os.path.dirname(os.path.abspath(__file__))
+
+# basketball_gm.xml should be in the same folder as this file
+GTKBUILDER_PATH = os.path.join(SRC_FOLDER, 'basketball_gm.xml')
 
 DATA_FOLDER = os.path.expanduser("~/.basketball-gm")
 SAVES_FOLDER = os.path.join(DATA_FOLDER, 'saves')
@@ -15,6 +19,14 @@ DB_FILENAME = os.path.join(DATA_FOLDER, 'temp.sqlite')
 # Make folders if they doesn't exist:
 if not os.path.exists(DATA_FOLDER):
     os.mkdir(DATA_FOLDER, 0755)
+    os.mkdir(os.path.join(DATA_FOLDER, 'data'))
+    shutil.copy(os.path.join(SRC_FOLDER, 'data/first_names.txt'), os.path.join(DATA_FOLDER, 'data'))
+    shutil.copy(os.path.join(SRC_FOLDER, 'data/last_names.txt'), os.path.join(DATA_FOLDER, 'data'))
+    shutil.copy(os.path.join(SRC_FOLDER, 'data/league.sql'), os.path.join(DATA_FOLDER, 'data'))
+    shutil.copy(os.path.join(SRC_FOLDER, 'data/players.sql'), os.path.join(DATA_FOLDER, 'data'))
+    shutil.copy(os.path.join(SRC_FOLDER, 'data/tables.sql'), os.path.join(DATA_FOLDER, 'data'))
+    shutil.copy(os.path.join(SRC_FOLDER, 'data/teams.sql'), os.path.join(DATA_FOLDER, 'data'))
+
 if not os.path.exists(SAVES_FOLDER):
     os.mkdir(SAVES_FOLDER, 0755)
 

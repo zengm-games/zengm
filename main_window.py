@@ -549,7 +549,7 @@ class MainWindow:
                 sql += gp.sql_insert()
 
                 player_id += 1
-        f = open('data/players.sql', 'w')
+        f = open(os.path.join(common.DATA_FOLDER, 'data/players.sql'), 'w')
         f.write(sql)
         f.close()
 
@@ -630,7 +630,7 @@ class MainWindow:
         if team_id >= 0:
             # Starting a new game, so load data into the database and update the progressbar
             for fn in ['data/tables.sql', 'data/league.sql', 'data/teams.sql', 'data/players.sql']:
-                f = open(fn)
+                f = open(os.path.join(common.DATA_FOLDER, fn))
                 data = f.read()
                 f.close()
                 common.DB_CON.executescript(data)
@@ -963,7 +963,7 @@ class MainWindow:
         # We're not currently connected to the database, so create a temporary one in memory to load the team attributes
         temp_db_con = sqlite3.connect(':memory:')
         for fn in ['data/tables.sql', 'data/teams.sql']:
-            f = open(fn)
+            f = open(os.path.join(common.DATA_FOLDER, fn))
             data = f.read()
             f.close()
             temp_db_con.executescript(data)

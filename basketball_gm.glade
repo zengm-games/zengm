@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Fri Aug  8 00:42:41 2008 -->
+<!--Generated with glade3 3.4.5 on Fri Aug  8 01:02:12 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="main_window">
     <property name="width_request">800</property>
@@ -1632,7 +1632,7 @@ if any, to sign a "copyright disclaimer" for the program, if necessary.
 For more information on this, and how to apply and follow the GNU AGPL, see
 &lt;http://www.gnu.org/licenses/&gt;.
 </property>
-    <property name="authors">Jeremy Scheff</property>
+    <property name="authors">Jeremy Scheff &lt;dumbmatter@gmail.com&gt;</property>
     <property name="artists">Logo by Gioppino on Open Clip Art</property>
     <property name="logo">icon64.png</property>
     <signal name="close" handler="on_aboutdialog_close"/>

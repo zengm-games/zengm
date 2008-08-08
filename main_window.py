@@ -28,6 +28,7 @@ import roster_window
 import player_window
 import season_end_window
 import trade_window
+import welcome_dialog
 
 class MainWindow:
     def on_main_window_delete_event(self, widget, data=None):
@@ -35,7 +36,7 @@ class MainWindow:
         return True
 
     def on_placeholder(self, widget, data=None):
-        md = gtk.MessageDialog(parent=None, flags=0, type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_CLOSE, message_format='Sorry, this feature isn\'t implemented yet.')
+        md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, 'Sorry, this feature isn\'t implemented yet.')
         md.run()
         md.destroy()
 
@@ -55,20 +56,38 @@ class MainWindow:
                 self.unsaved_changes = True
 
     def on_menuitem_open_activate(self, widget=None, data=None):
-        proceed = False
-        if self.unsaved_changes:
-            if self.save_nosave_cancel():
-                proceed = True
-        if not self.unsaved_changes or proceed:
-            result = self.open_game_dialog()
-            if result:
-                self.open_game(result)
+        if self.games_in_progress:
+            self.stop_games = True
+            md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, 'Can\'t open game while simulation is in progress.  Wait until the current day\'s games are over and try again.')
+            md.run()
+            md.destroy()
+        else:
+            proceed = False
+            if self.unsaved_changes:
+                if self.save_nosave_cancel():
+                    proceed = True
+            if not self.unsaved_changes or proceed:
+                result = self.open_game_dialog()
+                if result:
+                    self.open_game(result)
 
     def on_menuitem_save_activate(self, widget, data=None):
-        self.save_game()
+        if self.games_in_progress:
+            self.stop_games = True
+            md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, 'Can\'t save game while simulation is in progress.  Wait until the current day\'s games are over and try again.')
+            md.run()
+            md.destroy()
+        else:
+            self.save_game()
 
     def on_menuitem_save_as_activate(self, widget, data=None):
-        self.save_game_dialog()
+        if self.games_in_progress:
+            self.stop_games = True
+            md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, 'Can\'t save game while simulation is in progress.  Wait until the current day\'s games are over and try again.')
+            md.run()
+            md.destroy()
+        else:
+            self.save_game_dialog()
 
     def on_menuitem_quit_activate(self, widget, data=None):
         self.quit()
@@ -78,8 +97,11 @@ class MainWindow:
         if not hasattr(self, 'rw'):
             self.rw = roster_window.RosterWindow(self)
         else:
-            self.rw.roster_window.show() # Show the window
-            self.rw.roster_window.window.show() # Raise the window if it's in the background
+            self.rw.update_roster()
+            if self.rw.roster_window.flags() & gtk.VISIBLE:
+                self.rw.roster_window.window.show() # Raise the window if it's in the background
+            else:
+                self.rw.roster_window.show() # Show the window
         return True
 
     def on_menuitem_trade_activate(self, widget, data=None):
@@ -93,8 +115,10 @@ class MainWindow:
             self.faw = free_agents_window.FreeAgentsWindow(self)
         else:
             self.faw.update_free_agents()
-            self.faw.free_agents_window.show() # Show the window
-            self.faw.free_agents_window.window.show() # Raise the window if it's in the background
+            if self.faw.free_agents_window.flags() & gtk.VISIBLE:
+                self.faw.free_agents_window.window.show() # Raise the window if it's in the background
+            else:
+                self.faw.free_agents_window.show() # Show the window
         return True
 
     def on_menuitem_stop_activate(self, widget, data=None):
@@ -471,10 +495,31 @@ class MainWindow:
             self.updated[key] = False
         self.update_current_page()
 
+        if hasattr(self, 'rw') and (self.rw.roster_window.flags() & gtk.VISIBLE):
+            self.rw.update_roster()
+
+        if hasattr(self, 'faw') and (self.faw.free_agents_window.flags() & gtk.VISIBLE):
+            self.faw.update_free_agents()
+
+        if hasattr(self, 'pw') and (self.pw.player_window.flags() & gtk.VISIBLE):
+           self.pw.update_player(-1)
+
     def new_game(self, team_id):
         '''
         Starts a new game.  Call this only after checking for saves, etc.
         '''
+
+        self.new_game_progressbar_window = self.builder.get_object('new_game_progressbar_window')
+        self.progressbar_new_game = self.builder.get_object('progressbar_new_game')
+        self.new_game_progressbar_window.set_transient_for(self.main_window)
+        self.progressbar_new_game.set_fraction(0.0)
+        self.progressbar_new_game.set_text('Generating new players')
+        while gtk.events_pending():
+            gtk.main_iteration(False)
+        self.new_game_progressbar_window.show()
+
+        while gtk.events_pending():
+            gtk.main_iteration(False)
 
         # Delete old database
         if os.path.exists(common.DB_TEMP_FILENAME):
@@ -486,6 +531,9 @@ class MainWindow:
         sql = ''
         player_id = 1
         for t in range(-1, 30):
+            self.progressbar_new_game.set_fraction(0.6*(t+1)/31.0)
+            while gtk.events_pending():
+                gtk.main_iteration(False)
             base_ratings = [40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29]
             potentials = [70, 60, 50, 50, 55, 45, 65, 35, 50, 45, 55, 55]
             random.shuffle(potentials)
@@ -505,9 +553,19 @@ class MainWindow:
         f.write(sql)
         f.close()
 
+        self.progressbar_new_game.set_fraction(0.6)
+        self.progressbar_new_game.set_text('Creating database')
+        while gtk.events_pending():
+            gtk.main_iteration(False)
+
         # Create new database
         common.DB_FILENAME = common.DB_TEMP_FILENAME
         self.connect(team_id)
+
+        self.progressbar_new_game.set_fraction(1)
+        self.progressbar_new_game.set_text('Done') # Not really, but close
+        while gtk.events_pending():
+            gtk.main_iteration(False)
 
         # Make schedule, start season
         self.new_phase(1)
@@ -520,28 +578,46 @@ class MainWindow:
 
         self.update_all_pages()
 
+        self.new_game_progressbar_window.hide()
+
     def open_game(self, filename):
-        # Close the connection if there is one open
+        # See if it's a valid bz2 file
+        try:
+            f = open(filename)
+            data_bz2 = f.read()
+            f.close()
+
+            data = bz2.decompress(data_bz2)
+        except IOError:
+            md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK)
+            md.set_markup("<span size='large' weight='bold'>Cannot load file '%s'.</span>\n\nThe file either not a BBGM save file or it is corrupted." % filename)
+            md.run()
+            md.destroy()
+
+            # Show the welcome dialog if the user doesn't already have a game active
+            if not hasattr(common, 'DB_CON'):
+                welcome_dialog.WelcomeDialog(self)
+
+            return False
+        
+        # Close the connection if there is one open.  If not, do nothing.
         try:
             common.DB_CON.close();
         except:
             pass
 
-        common.DB_FILENAME = filename
-
-        f = open(common.DB_FILENAME)
-        data_bz2 = f.read()
-        f.close()
-
-        data = bz2.decompress(data_bz2)
-
+        # Write decompressed data from the save file to the temp SQLite DB file
         f = open(common.DB_TEMP_FILENAME, 'w')
         f.write(data)
         f.close()
 
+        common.DB_FILENAME = filename
+
         self.connect()
 
         self.update_play_menu(self.phase)
+
+        return True
 
     def connect(self, team_id = -1):
         '''
@@ -552,12 +628,16 @@ class MainWindow:
         common.DB_CON = sqlite3.connect(common.DB_TEMP_FILENAME)
         common.DB_CON.isolation_level = 'IMMEDIATE'
         if team_id >= 0:
-            # Starting a new game, so load data into the database
+            # Starting a new game, so load data into the database and update the progressbar
             for fn in ['data/tables.sql', 'data/league.sql', 'data/teams.sql', 'data/players.sql']:
                 f = open(fn)
                 data = f.read()
                 f.close()
                 common.DB_CON.executescript(data)
+
+                self.progressbar_new_game.set_fraction(self.progressbar_new_game.get_fraction()+0.1)
+                while gtk.events_pending():
+                    gtk.main_iteration(False)
             common.DB_CON.execute('UPDATE game_attributes SET team_id = ?', (team_id,))
         row = common.DB_CON.execute('SELECT team_id, season, phase, schedule FROM game_attributes').fetchone()
         common.PLAYER_TEAM_ID = row[0]
@@ -640,6 +720,8 @@ class MainWindow:
         After that, checks to see if the season is over (so make sure num_games makes sense!)
         '''
 
+        self.games_in_progress = True
+
         # Update the Play menu so the simulations can be stopped
         self.update_play_menu(-1)
 
@@ -700,7 +782,7 @@ class MainWindow:
                 teams = self.schedule.pop()
 
                 while gtk.events_pending():
-                    gtk.main_iteration(False) # This stops everything from freezing
+                    gtk.main_iteration(False)
 #                t1 = random.randint(0, len(common.TEAMS)-1)
 #                while True:
 #                    t2 = random.randint(0, len(common.TEAMS)-1)
@@ -708,11 +790,10 @@ class MainWindow:
 #                        break
                 game.play(teams[0], teams[1], self.phase == 3)
                 game.write_stats()
-            if self.notebook.get_current_page() != self.pages['player_ratings']:
-                if self.phase == 3:
-                    self.updated['playoffs'] = False
-                    time.sleep(0.5) # Or else it updates too fast to see what's going on
-                self.update_current_page()
+            if self.phase == 3:
+                self.updated['playoffs'] = False
+                time.sleep(0.3) # Or else it updates too fast to see what's going on
+            self.update_all_pages()
             self.statusbar.pop(self.statusbar_context_id)
 
         # Restore the Play menu to its previous glory
@@ -744,6 +825,7 @@ class MainWindow:
         if season_over or self.notebook.get_current_page() != self.pages['player_ratings']:
             self.update_all_pages()
         self.unsaved_changes = True
+        self.games_in_progress = False
 
     def make_season_combobox(self, combobox, active):
         # Season combobox
@@ -897,6 +979,10 @@ class MainWindow:
         result = new_game_dialog.run()
         new_game_dialog.hide()
         team_id = combobox_new_game_teams.get_active()
+
+        while gtk.events_pending():
+            gtk.main_iteration(False)
+
         return result, team_id
 
     def open_game_dialog(self):
@@ -1117,7 +1203,6 @@ class MainWindow:
                 common.DB_CON.execute(query, (conference_id*4+4, teams[1], teams[6], 2, 7))
 
             self.updated['playoffs'] = False
-            self.update_current_page()
             self.notebook.set_current_page(self.pages['playoffs'])
 
             self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Playoffs'))
@@ -1140,7 +1225,7 @@ class MainWindow:
                 self.dd.draft_dialog.show() # Show the window
                 self.dd.draft_dialog.window.show() # Raise the window if it's in the background
             self.updated['finances'] = False
-            self.update_current_page()
+            self.update_all_pages()
 
         # Offseason - post draft
         elif self.phase == 6:
@@ -1174,7 +1259,7 @@ class MainWindow:
                     cw.contract_window.run()
                     cw.contract_window.destroy()
             self.updated['finances'] = False
-            self.update_current_page()
+            self.update_all_pages()
 
     def update_play_menu(self, phase):
         # Games in progress
@@ -1294,6 +1379,8 @@ class MainWindow:
         self.unsaved_changes = False
         # Set to true and games will be stopped after the current day's simulation finishes
         self.stop_games = False
+        # True when games are being played
+        self.games_in_progress = False
 
         # Initialize combobox positions
         self.combobox_standings_active = 0

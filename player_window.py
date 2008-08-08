@@ -7,7 +7,10 @@ import common
 
 class PlayerWindow:
     def update_player(self, player_id):
-        self.player_id = player_id;
+        print 'upw'
+        # If player_id is -1, then keep same player
+        if player_id != -1:
+            self.player_id = player_id
 
         # Roster position
         query = 'SELECT roster_position FROM player_ratings WHERE player_id = ?'
@@ -49,8 +52,9 @@ class PlayerWindow:
             self.build_player_window_game_log()
         self.update_player_window_game_log()
 
-        self.player_window.show() # Show the dialog
-        self.player_window.window.show() # Raise the dialog if it's in the background
+        if player_id != -1: # Don't raise the dialog if it's in the background
+            self.player_window.show() # Show the dialog
+            self.player_window.window.show() # Raise the dialog if it's in the background
 
     def build_player_window_stats(self):
         common.add_column(self.treeview_player_window_stats, 'Year', 0, True)

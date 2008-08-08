@@ -1,13 +1,5 @@
 REQUIREMENTS FOR 0.1 RELEASE:
-the simulation should be stopped automatically before saving, save_nosave_cancel call, (trades?)
-    self.games_in_progress to indicate if games are being played or not
 
-    Put this code wherever the simulation should be automatically stopped:
-    if self.games_in_progress:
-        self.stop_games = True
-        while self.games_in_progress:
-            sleep (like in draft)
-update contents of windows (roster, player info, free agents)
 
 ======
 FUTURE
@@ -37,7 +29,7 @@ combine ratings and stats tabs - use one model and just show different columns
 filtering should be done with treemodelfilter - see pygtk tutorial
 play menu
     even after hiding, accelerators still work, so on menuitem activation, check to make sure it's a valid choice!!!
-        or: set accelerators in python code, not glade.  then i can reuse F12
+        or: set accelerators in python code, not glade.  then i can reuse accelerators
 on new/open game:
     close all open dialogs/windows
     refresh all tabs of the main window

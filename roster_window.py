@@ -147,6 +147,7 @@ class RosterWindow:
         self.renderer_roster_editable_handle_id = 0 # This variable is used in update_roster
 
     def update_roster(self):
+        print 'ur'
         # Roster info
         self.update_roster_info()
 

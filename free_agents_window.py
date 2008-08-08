@@ -23,7 +23,7 @@ class FreeAgentsWindow:
             cw = contract_window.ContractWindow(self.main_window, player_id)
             response = cw.contract_window.run()
             if response != int(gtk.RESPONSE_CLOSE) and response != int(gtk.RESPONSE_DELETE_EVENT): # CLOSE = cancel/release; DELETE_EVENT = escape/X-button
-                self.update_free_agents() # Update free agents list when a player is signed
+                self.main_window.update_all_pages()
             cw.contract_window.destroy()
 
     def on_treeview_player_row_activated(self, treeview, path, view_column, data=None):
@@ -40,6 +40,7 @@ class FreeAgentsWindow:
         common.treeview_build(self.treeview_free_agents, column_info)
 
     def update_free_agents(self):
+        print 'ufa'
         # free_agents list
         column_types = [int, str, str, int, int, int]
         query = "SELECT player_attributes.player_id, player_attributes.name, player_attributes.position, ROUND((julianday('%s-06-01') - julianday(player_attributes.born_date))/365.25), player_ratings.overall, player_ratings.potential FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = -1 ORDER BY player_ratings.overall DESC" % common.SEASON

@@ -1299,7 +1299,8 @@ class MainWindow:
             show_menus = [False, False, False, False, False, False, False, False, True, False]
 
         for i in range(len(self.menuitem_play)):
-            self.menuitem_play[i].set_visible(show_menus[i])
+            print self.menuitem_play[i]
+            self.menuitem_play[i].set_sensitive(show_menus[i])
 
     def box_score(self, game_id):
         format = '%-23s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s\n'

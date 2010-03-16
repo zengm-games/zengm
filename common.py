@@ -9,7 +9,8 @@ SEASON_LENGTH = 82 # If this isn't 82 the scheduling gets fucked up.  Only set i
 SRC_FOLDER = os.path.dirname(os.path.abspath(__file__))
 
 # basketball_gm.xml should be in the same folder as this file
-GTKBUILDER_PATH = os.path.join(SRC_FOLDER, 'basketball_gm.xml')
+# GTKBUILDER_PATH = os.path.join(SRC_FOLDER, 'basketball_gm.xml');
+GTKBUILDER_PATH = os.path.join(SRC_FOLDER, 'basketball_gm_new.glade');
 
 DATA_FOLDER = os.path.expanduser("~/.basketball-gm")
 SAVES_FOLDER = os.path.join(DATA_FOLDER, 'saves')

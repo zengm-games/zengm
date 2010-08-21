@@ -275,7 +275,7 @@ class MainWindow:
         (treemodel, treeiter) = treeview.get_selection().get_selected()
         player_id = treemodel.get_value(treeiter, 0)
         if not hasattr(self, 'pw'):
-            self.pw = player_window.PlayerWindow()
+            self.pw = player_window.PlayerWindow(self)
         self.pw.update_player(player_id)
         return True
 

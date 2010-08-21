@@ -4,10 +4,11 @@ import random
 import sqlite3
 
 import common
+import trade_window
 
 class PlayerWindow:
     def update_player(self, player_id):
-        print 'upw'
+        print 'update_player'
         # If player_id is -1, then keep same player
         if player_id != -1:
             self.player_id = player_id
@@ -20,6 +21,12 @@ class PlayerWindow:
         row = common.DB_CON.execute(query, (self.player_id,)).fetchone()
         self.max_roster_position = row[0]
         self.team_id = row[1]
+
+        # Negotiate/Trade button
+        if self.team_id == common.PLAYER_TEAM_ID:
+            self.button_trade.set_sensitive(False)
+        else:
+            self.button_trade.set_sensitive(True)
 
         # Info
         row = common.DB_CON.execute('SELECT name, position, (SELECT region || " " || name FROM team_attributes WHERE team_id = player_attributes.team_id), height, weight, born_date, born_location, college, draft_year, draft_round, draft_pick, (SELECT region || " " || name FROM team_attributes WHERE team_id = player_attributes.draft_team_id), contract_amount, contract_expiration FROM player_attributes WHERE player_id = ?', (self.player_id,)).fetchone()
@@ -158,12 +165,20 @@ class PlayerWindow:
         self.update_player(row[0])
 
     def on_button_trade_clicked(self, button, data=None):
-        print 'trade'
+        '''
+        Open a window set to trade for this player, unless he is already on your team
+        '''
+        if self.team_id != common.PLAYER_TEAM_ID:
+            tw = trade_window.TradeWindow(self.main_window, self.team_id, self.player_id)
+            response = tw.trade_window.run()
+            tw.trade_window.destroy()
 
     def on_button_close_clicked(self, button, data=None):
         self.player_window.hide()
 
-    def __init__(self):
+    def __init__(self, main_window):
+        self.main_window = main_window
+
         self.builder = gtk.Builder()
         self.builder.add_from_file(common.GTKBUILDER_PATH) 
         self.player_window = self.builder.get_object('player_window')
@@ -171,6 +186,7 @@ class PlayerWindow:
         self.label_player_window_ratings = self.builder.get_object('label_player_window_ratings')
         self.treeview_player_window_stats = self.builder.get_object('treeview_player_window_stats')
         self.treeview_player_window_game_log = self.builder.get_object('treeview_player_window_game_log')
+        self.button_trade = self.builder.get_object('button_trade')
 
         self.built = dict(stats=False, game_log=False)
         self.updated = dict(stats=False, game_log=False)

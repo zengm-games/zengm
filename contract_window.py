@@ -32,7 +32,7 @@ class ContractWindow:
 
     def on_button_contract_player_info_clicked(self, button, data=None):
         if not hasattr(self.main_window, 'pw'):
-            self.main_window.pw = player_window.PlayerWindow()
+            self.main_window.pw = player_window.PlayerWindow(self.main_window)
         self.main_window.pw.update_player(self.player_id)
 
     def on_button_contract_accept_clicked(self, button, data=None):

@@ -192,8 +192,10 @@ class TradeWindow:
             self.label_trade_cap_warning.set_text('')
             self.button_trade_propose.set_sensitive(True)
 
-    def __init__(self, main_window):
+    def __init__(self, main_window, other_team_id=-1, player_id=-1):
         self.main_window = main_window
+
+        print other_team_id, player_id
 
         self.builder = gtk.Builder()
         self.builder.add_from_file(common.GTKBUILDER_PATH) 
@@ -214,7 +216,10 @@ class TradeWindow:
         self.builder.connect_signals(self)
 
         # Fill the combobox with teams
-        self.other_team_id = 0
+        if other_team_id != -1:
+            self.other_team_id = other_team_id
+        else:
+            self.other_team_id = 0
         model = self.combobox_trade_teams.get_model()
         self.combobox_trade_teams.set_model(None)
         model.clear()
@@ -240,7 +245,20 @@ class TradeWindow:
         # Initialize offer variable
         self.offer = [{}, {}]
 
-        self.update_trade_summary()
+        # Select a player if a player ID has been passed to this function
+        # There's probably a more elegant way of doing this
+        self.update_trade_summary_done = False
+        if player_id != -1:
+            model = self.treeview_trade[1].get_model()
+            path = 0
+            for row in model:
+                if player_id == row[0]:
+                    self.on_player_toggled([], path, model, data=None)
+                    self.update_trade_summary_done = True
+                path += 1
+
+        if not self.update_trade_summary_done:
+            self.update_trade_summary()
 
         #self.trade_window.set_transient_for(self.main_window.main_window)
 

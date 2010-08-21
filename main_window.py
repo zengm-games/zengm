@@ -244,6 +244,12 @@ class MainWindow:
         if self.combobox_player_stats_season_active != old:
             self.update_player_stats()
 
+    def on_combobox_player_stats_team_changed(self, combobox, data=None):
+        old = self.combobox_player_stats_team_active
+        self.combobox_player_stats_team_active = combobox.get_active()
+        if self.combobox_player_stats_team_active != old:
+            self.update_player_stats()
+
     def on_combobox_team_stats_season_changed(self, combobox, data=None):
         old = self.combobox_team_stats_season_active
         self.combobox_team_stats_season_active = combobox.get_active()
@@ -405,10 +411,16 @@ class MainWindow:
 
     def update_player_stats(self):
         season = self.make_season_combobox(self.combobox_player_stats_season, self.combobox_player_stats_season_active)
+        team_id = self.make_team_combobox(self.combobox_player_stats_team, self.combobox_player_stats_team_active, season, True)
+
+        if team_id == 666:
+            all_teams = 1
+        else:
+            all_teams = 0
 
         column_types = [int, int, str, str, int, int, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float]
-        query = 'SELECT player_attributes.player_id, player_attributes.team_id, player_attributes.name, (SELECT abbreviation FROM team_attributes WHERE team_id = player_attributes.team_id), COUNT(*), SUM(player_stats.starter), AVG(player_stats.minutes), AVG(player_stats.field_goals_made), AVG(player_stats.field_goals_attempted), AVG(100*player_stats.field_goals_made/player_stats.field_goals_attempted), AVG(player_stats.three_pointers_made), AVG(player_stats.three_pointers_attempted), AVG(100*player_stats.three_pointers_made/player_stats.three_pointers_attempted), AVG(player_stats.free_throws_made), AVG(player_stats.free_throws_attempted), AVG(100*player_stats.free_throws_made/player_stats.free_throws_attempted), AVG(player_stats.offensive_rebounds), AVG(player_stats.defensive_rebounds), AVG(player_stats.offensive_rebounds + player_stats.defensive_rebounds), AVG(player_stats.assists), AVG(player_stats.turnovers), AVG(player_stats.steals), AVG(player_stats.blocks), AVG(player_stats.personal_fouls), AVG(player_stats.points) FROM player_attributes, player_stats WHERE player_attributes.player_id = player_stats.player_id AND player_stats.season = ? AND player_stats.is_playoffs = 0 GROUP BY player_attributes.player_id'
-        common.treeview_update(self.treeview_player_stats, column_types, query, (season,))
+        query = 'SELECT player_attributes.player_id, player_attributes.team_id, player_attributes.name, (SELECT abbreviation FROM team_attributes WHERE team_id = player_attributes.team_id), COUNT(*), SUM(player_stats.starter), AVG(player_stats.minutes), AVG(player_stats.field_goals_made), AVG(player_stats.field_goals_attempted), AVG(100*player_stats.field_goals_made/player_stats.field_goals_attempted), AVG(player_stats.three_pointers_made), AVG(player_stats.three_pointers_attempted), AVG(100*player_stats.three_pointers_made/player_stats.three_pointers_attempted), AVG(player_stats.free_throws_made), AVG(player_stats.free_throws_attempted), AVG(100*player_stats.free_throws_made/player_stats.free_throws_attempted), AVG(player_stats.offensive_rebounds), AVG(player_stats.defensive_rebounds), AVG(player_stats.offensive_rebounds + player_stats.defensive_rebounds), AVG(player_stats.assists), AVG(player_stats.turnovers), AVG(player_stats.steals), AVG(player_stats.blocks), AVG(player_stats.personal_fouls), AVG(player_stats.points) FROM player_attributes, player_stats WHERE player_attributes.player_id = player_stats.player_id AND player_stats.season = ? AND player_stats.is_playoffs = 0 AND (player_attributes.team_id = ? OR ?) GROUP BY player_attributes.player_id'
+        common.treeview_update(self.treeview_player_stats, column_types, query, (season, team_id, all_teams))
         self.updated['player_stats'] = True
 
     def build_team_stats(self):
@@ -437,7 +449,7 @@ class MainWindow:
 
     def update_games_list(self):
         season = self.make_season_combobox(self.combobox_game_log_season, self.combobox_game_log_season_active)
-        team_id = self.make_team_combobox(self.combobox_game_log_team, self.combobox_game_log_team_active, season)
+        team_id = self.make_team_combobox(self.combobox_game_log_team, self.combobox_game_log_team_active, season, False)
 
         column_types = [int, str, str, str]
         query = 'SELECT game_id, (SELECT abbreviation FROM team_attributes WHERE team_id = team_stats.opponent_team_id), (SELECT val FROM enum_w_l WHERE key = team_stats.won), points || "-" || opponent_points FROM team_stats WHERE team_id = ? AND season = ?'
@@ -802,6 +814,7 @@ class MainWindow:
         # Make sure we are looking at this year's standings, stats, and games after playing some games
         self.combobox_standings_active = 0
         self.combobox_player_stats_season_active = 0
+        self.combobox_player_stats_team_active = common.PLAYER_TEAM_ID
         self.combobox_team_stats_season_active = 0
         self.combobox_game_log_season_active = 0
         self.combobox_game_log_team_active = common.PLAYER_TEAM_ID
@@ -845,11 +858,13 @@ class MainWindow:
         season = combobox.get_active_text()
         return season
 
-    def make_team_combobox(self, combobox, active, season):
+    def make_team_combobox(self, combobox, active, season, all_teams_option):
         # Team combobox
         model = gtk.ListStore(str, int)
         renderer = gtk.CellRendererText()
         combobox.pack_start(renderer, True)
+        if all_teams_option:
+            model.append(['All Teams', 666]) # 666 is the magin number to find all teams
         for row in common.DB_CON.execute('SELECT abbreviation, team_id FROM team_attributes WHERE season = ? ORDER BY abbreviation ASC', (season,)):
             model.append(['%s' % row[0], row[1]])
         combobox.set_model(model)
@@ -1299,7 +1314,6 @@ class MainWindow:
             show_menus = [False, False, False, False, False, False, False, False, True, False]
 
         for i in range(len(self.menuitem_play)):
-            print self.menuitem_play[i]
             self.menuitem_play[i].set_sensitive(show_menus[i])
 
     def box_score(self, game_id):
@@ -1358,6 +1372,7 @@ class MainWindow:
         self.treeview_player_ratings = self.builder.get_object('treeview_player_ratings')
         self.treeview_player_stats = self.builder.get_object('treeview_player_stats')
         self.combobox_player_stats_season = self.builder.get_object('combobox_player_stats_season')
+        self.combobox_player_stats_team = self.builder.get_object('combobox_player_stats_team')
         self.treeview_team_stats = self.builder.get_object('treeview_team_stats')
         self.combobox_team_stats_season = self.builder.get_object('combobox_team_stats_season')
         self.treeview_games_list = self.builder.get_object('treeview_games_list')
@@ -1386,6 +1401,7 @@ class MainWindow:
         # Initialize combobox positions
         self.combobox_standings_active = 0
         self.combobox_player_stats_season_active = 0
+        self.combobox_player_stats_team_active = common.PLAYER_TEAM_ID
         self.combobox_team_stats_season_active = 0
         self.combobox_game_log_season_active = 0
         self.combobox_game_log_team_active = common.PLAYER_TEAM_ID

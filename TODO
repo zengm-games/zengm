@@ -54,6 +54,11 @@ uncertainty in rating - for each player, calculate a randn(0, 3) with max/min of
 teams should be smart in resigning players (now it's just random)
 use constants for phase #'s, other things.  maybe create a dict CONST in common.py?
 
+AI (NON-GAMESIM)
+----------------
+free agents should have a memory. you shouldn't be able to just open the window a bunch of times and see different demands
+opponent GM trade AI based on their team's status: contending or rebuilding
+
 FEATURES
 --------
 injuries

@@ -1,3 +1,4 @@
+import math
 import random
 import sqlite3
 
@@ -38,6 +39,9 @@ class Game:
         if division_id[0] == division_id[1]:
             self.same_division = True
 
+        # Starting lineups - FIX THIS
+        self.players_on_court = [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]]
+
         # Simulate the game
         for self.o in range(2):
             self.d = 0 if self.o==1 else 1
@@ -56,20 +60,37 @@ class Game:
         return 100
 
     def update_players_on_court(self, possession_num):
-        # Update the 2d array playersOnCourt, and record the number of minutes each player plays
-        self.players_on_court = [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]]
+        # Update the 2d array players_on_court, and record the number of minutes each player plays
+        # Energy factor: 1-1/(1+exp(-t+E))
+        # TODO:
+        # - recovery on bench, end of quarters/half
+        # - ordering by rating for loops.
+        # - energy
+        # - add 10 points to starter overalls, so that setting the starting lineup means something. otherwise, substitutions would have to check for synergy
+
         for t in range(2):
-            p = 0
-            selected = 0
-            needed = 5
-            for player_id in self.team[t].player_ids:
-                # Put a player on the court if no more players are left or if they are randomly selected based on average_playing_time
-                if selected < 5 and (needed == (self.team[t].num_players - p) or self.team[t].player[p].rating['average_playing_time']/48.0 > random.random()):
+            energy = [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+            overalls = [self.team[t].player[i].rating['overall'] * energy[i] for i in xrange(len(self.team[t].player_ids))]
+            print overalls
+            # Loop through players on court (in inverse order of current overall rating)
+            i = 0
+            for p in self.players_on_court[t]:
+                self.players_on_court[t][i] = p
+                # Loop through bench players (in order of current overall rating) to see if any should be subbed in)
+                for b in xrange(len(self.team[t].player_ids)):
+                    if b not in self.players_on_court[t] and self.team[t].player[p].stat['court_time'] > 3 and self.team[t].player[b].stat['bench_time'] > 3 and overalls[b] > overalls[p]:
+                        # Substitute player
+                        self.players_on_court[t][i] = b
+                i += 1
+
+            # Update minutes (overall, court, and bench)
+            for p in xrange(len(self.team[t].player_ids)):
+                if p in self.players_on_court[t]:
                     self.team[t].player[p].record_stat('minutes', 48.0/(2*self.num_possessions))
-                    self.players_on_court[t][selected] = p
-                    needed -= 1
-                    selected += 1
-                p += 1
+                    self.team[t].player[p].record_stat('court_time', 48.0/(2*self.num_possessions))
+                else:
+                    self.team[t].player[p].record_stat('bench_time', 48.0/(2*self.num_possessions))
 
     def is_turnover(self):
         if random.random() < 0.1:
@@ -279,7 +300,7 @@ class Team:
                          free_throws_made=0, free_throws_attempted=0,
                          offensive_rebounds=0, defensive_rebounds=0, assists=0,
                          turnovers=0, steals=0, blocks=0, personal_fouls=0,
-                         points=0)
+                         points=0, court_time=0, bench_time=0) # court_time is dummy variable here
 
     def load_players(self):
         self.player = []
@@ -310,7 +331,7 @@ class Player:
     # Load the raw rating values from the database
     def load_ratings(self):
         common.DB_CON.row_factory = sqlite3.Row
-        query = 'SELECT average_playing_time, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, passing, rebounding FROM player_ratings WHERE player_id = ?'
+        query = 'SELECT overall, average_playing_time, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, passing, rebounding FROM player_ratings WHERE player_id = ?'
         self.rating = common.DB_CON.execute(query, (self.id,)).fetchone()
         query = 'SELECT name, position FROM player_attributes WHERE player_id = ?'
         self.attribute = common.DB_CON.execute(query, (self.id,)).fetchone()
@@ -354,7 +375,7 @@ class Player:
                          free_throws_made=0, free_throws_attempted=0,
                          offensive_rebounds=0, defensive_rebounds=0, assists=0,
                          turnovers=0, steals=0, blocks=0, personal_fouls=0,
-                         points=0)
+                         points=0, court_time=0, bench_time=0)
 
     def record_stat(self, s, amount=1):
         self.stat[s] = self.stat[s] + amount

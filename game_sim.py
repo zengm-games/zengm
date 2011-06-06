@@ -60,37 +60,43 @@ class Game:
         return 100
 
     def update_players_on_court(self, possession_num):
-        # Update the 2d array players_on_court, and record the number of minutes each player plays
-        # Energy factor: 1-1/(1+exp(-t+E))
-        # TODO:
-        # - recovery on bench, end of quarters/half
-        # - ordering by rating for loops.
-        # - energy
-        # - add 10 points to starter overalls, so that setting the starting lineup means something. otherwise, substitutions would have to check for synergy
+        # Update players_on_court, track energy levels, and record the number of minutes each player plays
+
+        dt = 48.0/(2*self.num_possessions) # Time elapsed in this possession
 
         for t in range(2):
-            energy = [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            # Overall ratings scaled by fatigue
+            overalls = [self.team[t].player[i].rating['overall'] * self.team[t].player[i].stat['energy'] * random.gauss(1, .04) for i in xrange(len(self.team[t].player_ids))]
+            print t, overalls
 
-            overalls = [self.team[t].player[i].rating['overall'] * energy[i] for i in xrange(len(self.team[t].player_ids))]
-            print overalls
-            # Loop through players on court (in inverse order of current overall rating)
+            # Loop through players on court (in inverse order of current roster position)
             i = 0
             for p in self.players_on_court[t]:
                 self.players_on_court[t][i] = p
-                # Loop through bench players (in order of current overall rating) to see if any should be subbed in)
+                # Loop through bench players (in order of current roster position) to see if any should be subbed in)
                 for b in xrange(len(self.team[t].player_ids)):
                     if b not in self.players_on_court[t] and self.team[t].player[p].stat['court_time'] > 3 and self.team[t].player[b].stat['bench_time'] > 3 and overalls[b] > overalls[p]:
                         # Substitute player
                         self.players_on_court[t][i] = b
+                        self.team[t].player[b].stat['court_time'] = random.gauss(0, 2)
+                        self.team[t].player[b].stat['bench_time'] = random.gauss(0, 2)
+                        self.team[t].player[p].stat['court_time'] = random.gauss(0, 2)
+                        self.team[t].player[p].stat['bench_time'] = random.gauss(0, 2)
                 i += 1
 
             # Update minutes (overall, court, and bench)
             for p in xrange(len(self.team[t].player_ids)):
                 if p in self.players_on_court[t]:
-                    self.team[t].player[p].record_stat('minutes', 48.0/(2*self.num_possessions))
-                    self.team[t].player[p].record_stat('court_time', 48.0/(2*self.num_possessions))
+                    self.team[t].player[p].record_stat('minutes', dt)
+                    self.team[t].player[p].record_stat('court_time', dt)
+                    self.team[t].player[p].record_stat('energy', -dt*0.01 )
+                    if self.team[t].player[p].stat['energy'] < 0:
+                        self.team[t].player[p].stat['energy'] = 0
                 else:
-                    self.team[t].player[p].record_stat('bench_time', 48.0/(2*self.num_possessions))
+                    self.team[t].player[p].record_stat('bench_time', dt)
+                    self.team[t].player[p].record_stat('energy', dt*0.2)
+                    if self.team[t].player[p].stat['energy'] > 1:
+                        self.team[t].player[p].stat['energy'] = 1
 
     def is_turnover(self):
         if random.random() < 0.1:
@@ -300,13 +306,14 @@ class Team:
                          free_throws_made=0, free_throws_attempted=0,
                          offensive_rebounds=0, defensive_rebounds=0, assists=0,
                          turnovers=0, steals=0, blocks=0, personal_fouls=0,
-                         points=0, court_time=0, bench_time=0) # court_time is dummy variable here
+                         points=0, court_time=0, bench_time=0, energy=1) # court_time, bench_time and energy are dummy variables here. they only have meaning for individual players
 
     def load_players(self):
         self.player = []
         self.player_ids = []
         p = 0
         query = 'SELECT player_id FROM player_attributes WHERE team_id = ? ORDER BY Random()'
+        query = 'SELECT player_attributes.player_id FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = ? ORDER BY player_ratings.roster_position ASC'
         for row in common.DB_CON.execute(query, (self.id,)):
             self.player.append(Player(row[0], self.stat))
             self.player_ids.append(row[0])
@@ -375,7 +382,7 @@ class Player:
                          free_throws_made=0, free_throws_attempted=0,
                          offensive_rebounds=0, defensive_rebounds=0, assists=0,
                          turnovers=0, steals=0, blocks=0, personal_fouls=0,
-                         points=0, court_time=0, bench_time=0)
+                         points=0, court_time=0, bench_time=0, energy=1)
 
     def record_stat(self, s, amount=1):
         self.stat[s] = self.stat[s] + amount

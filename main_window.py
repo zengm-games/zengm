@@ -641,6 +641,7 @@ class MainWindow:
         If team_id is passed as a parameter, then this is being called from new_game and the schema should be loaded and the team_id should be set in game_attributes
         '''
         common.DB_CON = sqlite3.connect(common.DB_TEMP_FILENAME)
+        common.DB_CON.execute('PRAGMA synchronous=OFF')
         common.DB_CON.isolation_level = 'IMMEDIATE'
         if team_id >= 0:
             # Starting a new game, so load data into the database and update the progressbar

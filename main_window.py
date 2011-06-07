@@ -645,10 +645,21 @@ class MainWindow:
         if team_id >= 0:
             # Starting a new game, so load data into the database and update the progressbar
             for fn in ['data/tables.sql', 'data/league.sql', 'data/teams.sql', 'data/players.sql']:
-                f = open(os.path.join(common.DATA_FOLDER, fn))
-                data = f.read()
-                f.close()
-                common.DB_CON.executescript(data)
+                c = common.DB_CON.cursor()
+                if fn == 'data/tables.sql':
+                    # tables.sql contains multiline queries, so this is easier
+                    f = open(os.path.join(common.DATA_FOLDER, fn))
+                    data = f.read()
+                    f.close()
+                    common.DB_CON.executescript(data)
+                else:
+                    # This method is faster for bulk queries though
+                    f = open(os.path.join(common.DATA_FOLDER, fn))
+                    for line in f.readlines():
+                        c.execute(line)
+                    f.close()
+                common.DB_CON.commit()
+                c.close()
 
                 self.progressbar_new_game.set_fraction(self.progressbar_new_game.get_fraction()+0.1)
                 while gtk.events_pending():

@@ -188,7 +188,8 @@ class RosterWindow:
         self.main_window = main_window
 
         self.builder = gtk.Builder()
-        self.builder.add_from_file(common.GTKBUILDER_PATH) 
+        self.builder.add_objects_from_file(common.GTKBUILDER_PATH, ['roster_window'])
+
         self.roster_window = self.builder.get_object('roster_window')
         self.label_roster_info = self.builder.get_object('label_roster_info')
         self.treeview_roster = self.builder.get_object('treeview_roster')

@@ -32,8 +32,10 @@ import welcome_dialog
 
 class MainWindow:
     def on_main_window_delete_event(self, widget, data=None):
-        self.quit();
-        return True
+        return self.quit() # If false, proceed to on_main_window_destroy. Otherwise, it was cancelled.
+
+    def on_main_window_destroy(self, widget, data=None):
+        gtk.main_quit()
 
     def on_placeholder(self, widget, data=None):
         md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, 'Sorry, this feature isn\'t implemented yet.')
@@ -90,7 +92,8 @@ class MainWindow:
             self.save_game_dialog()
 
     def on_menuitem_quit_activate(self, widget, data=None):
-        self.quit()
+        if not self.quit():
+            gtk.main_quit()
         return True
 
     def on_menuitem_roster_activate(self, widget, data=None):
@@ -961,14 +964,20 @@ class MainWindow:
             common.DB_CON.execute('UPDATE player_attributes SET team_id = -1 WHERE player_id = ?', (player_id,))
 
     def quit(self):
-        proceed = False
+        '''
+        Return False to close window, True otherwise
+        '''
+
+        keep_open = True
         if self.unsaved_changes:
             if self.save_nosave_cancel():
-                proceed = True
-        if not self.unsaved_changes or proceed:
+                keep_open = False
+        if not self.unsaved_changes or not keep_open:
             common.DB_CON.close()
             os.remove(common.DB_TEMP_FILENAME)
-            gtk.main_quit()
+            keep_open = False
+
+        return keep_open
 
     def new_game_dialog(self):
         new_game_dialog = self.builder.get_object('new_game_dialog')
@@ -1349,8 +1358,8 @@ class MainWindow:
 
     def __init__(self):
         self.builder = gtk.Builder()
-        self.builder.add_from_file(common.GTKBUILDER_PATH) 
-        
+        self.builder.add_objects_from_file(common.GTKBUILDER_PATH, ['aboutdialog', 'accelgroup1', 'liststore3', 'liststore4', 'liststore5', 'liststore6', 'liststore7', 'liststore8', 'main_window', 'new_game_dialog', 'new_game_progressbar_window'])
+
         self.main_window = self.builder.get_object('main_window')
         self.menuitem_play = []
         self.menuitem_play.append(self.builder.get_object('menuitem_stop'))

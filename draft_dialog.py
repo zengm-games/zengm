@@ -184,7 +184,8 @@ class DraftDialog:
         self.main_window = main_window
 
         self.builder = gtk.Builder()
-        self.builder.add_from_file(common.GTKBUILDER_PATH) 
+        self.builder.add_objects_from_file(common.GTKBUILDER_PATH, ['draft_dialog'])
+
         self.draft_dialog = self.builder.get_object('draft_dialog')
         self.treeview_draft_available = self.builder.get_object('treeview_draft_available')
         self.treeview_draft_results = self.builder.get_object('treeview_draft_results')

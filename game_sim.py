@@ -67,7 +67,6 @@ class Game:
         for t in range(2):
             # Overall ratings scaled by fatigue
             overalls = [self.team[t].player[i].rating['overall'] * self.team[t].player[i].stat['energy'] * random.gauss(1, .04) for i in xrange(len(self.team[t].player_ids))]
-            print t, overalls
 
             # Loop through players on court (in inverse order of current roster position)
             i = 0

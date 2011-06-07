@@ -15,12 +15,14 @@ class RetiredPlayersWindow:
         self.main_window = main_window
 
         self.builder = gtk.Builder()
-        self.builder.add_from_file(common.GTKBUILDER_PATH) 
+        self.builder.add_objects_from_file(common.GTKBUILDER_PATH, ['retired_players_window'])
 
         self.retired_players_window = self.builder.get_object('retired_players_window')
         self.treeview_retired_players = self.builder.get_object('treeview_retired_players')
 
         self.builder.connect_signals(self)
+
+        self.retired_players_window.set_transient_for(self.main_window.main_window)
 
         # Players meeting one of these cutoffs might retire:
         min_potential = 40

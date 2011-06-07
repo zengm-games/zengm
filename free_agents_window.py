@@ -50,7 +50,8 @@ class FreeAgentsWindow:
         self.main_window = main_window
 
         self.builder = gtk.Builder()
-        self.builder.add_from_file(common.GTKBUILDER_PATH) 
+        self.builder.add_objects_from_file(common.GTKBUILDER_PATH, ['free_agents_window'])
+
         self.free_agents_window = self.builder.get_object('free_agents_window')
         self.treeview_free_agents = self.builder.get_object('treeview_free_agents')
 

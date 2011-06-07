@@ -12,12 +12,14 @@ class SeasonEndWindow:
         self.main_window = main_window
 
         self.builder = gtk.Builder()
-        self.builder.add_from_file(common.GTKBUILDER_PATH) 
+        self.builder.add_objects_from_file(common.GTKBUILDER_PATH, ['season_end_window'])
 
         self.season_end_window = self.builder.get_object('season_end_window')
         label_season_end_1 = self.builder.get_object('label_season_end_1')
 
         self.builder.connect_signals(self)
+
+        self.season_end_window.set_transient_for(self.main_window.main_window)
 
         self.season_end_window.set_title('%d Season Awards' % common.SEASON)
 

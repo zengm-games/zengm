@@ -198,7 +198,7 @@ class TradeWindow:
         print other_team_id, player_id
 
         self.builder = gtk.Builder()
-        self.builder.add_from_file(common.GTKBUILDER_PATH) 
+        self.builder.add_objects_from_file(common.GTKBUILDER_PATH, ['liststore1', 'trade_window'])
 
         self.trade_window = self.builder.get_object('trade_window')
         self.combobox_trade_teams = self.builder.get_object('combobox_trade_teams')

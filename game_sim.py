@@ -60,7 +60,10 @@ class Game:
         return 100
 
     def update_players_on_court(self, possession_num):
-        # Update players_on_court, track energy levels, and record the number of minutes each player plays
+        '''
+        Update players_on_court, track energy levels, and record the number of
+        minutes each player plays. This function is currently VERY SLOW.
+        '''
 
         dt = 48.0/(2*self.num_possessions) # Time elapsed in this possession
 
@@ -305,7 +308,7 @@ class Team:
                          free_throws_made=0, free_throws_attempted=0,
                          offensive_rebounds=0, defensive_rebounds=0, assists=0,
                          turnovers=0, steals=0, blocks=0, personal_fouls=0,
-                         points=0, court_time=0, bench_time=0, energy=1) # court_time, bench_time and energy are dummy variables here. they only have meaning for individual players
+                         points=0)
 
     def load_players(self):
         self.player = []
@@ -385,6 +388,6 @@ class Player:
 
     def record_stat(self, s, amount=1):
         self.stat[s] = self.stat[s] + amount
-        if s != 'starter':
+        if s != 'starter' and s != 'court_time' and s != 'bench_time' and s != 'energy':
             self.team_stat[s] = self.team_stat[s] + amount
 

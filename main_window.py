@@ -5,6 +5,7 @@
 import bz2
 import cPickle as pickle
 import gtk
+from multiprocessing import Pool
 import os
 import pango
 import random
@@ -752,7 +753,6 @@ class MainWindow:
         # Update the Play menu so the simulations can be stopped
         self.update_play_menu(-1)
 
-        game = game_sim.Game()
         for d in range(num_days):
 
             # Check if it's the playoffs and do some special stuff if it is
@@ -805,18 +805,27 @@ class MainWindow:
                 num_active_teams = len(common.TEAMS)
 
             self.statusbar.push(self.statusbar_context_id, 'Playing day %d of %d...' % (d, num_days))
+
+            # Build a list of games to be played today
+
+            games_today = []
             for i in range(num_active_teams/2):
                 teams = self.schedule.pop()
+                games_today.append(tuple(teams))
+            
 
-                while gtk.events_pending():
-                    gtk.main_iteration(False)
-#                t1 = random.randint(0, len(common.TEAMS)-1)
-#                while True:
-#                    t2 = random.randint(0, len(common.TEAMS)-1)
-#                    if t1 != t2:
-#                        break
+            def play_game(i):
+                teams = games_today[i]
+                game = game_sim.Game()
                 game.play(teams[0], teams[1], self.phase == 3)
                 game.write_stats()
+                while gtk.events_pending():
+                    gtk.main_iteration(False)
+
+            pool = Pool(processes=4)
+            pool.map(play_game, range(len(games_today)))
+            print games_today
+
             if self.phase == 3:
                 self.updated['playoffs'] = False
                 time.sleep(0.3) # Or else it updates too fast to see what's going on

@@ -69,8 +69,9 @@ class DraftDialog:
             profile = profiles[i]
 
             aging_years = random.randrange(4)
+	    draft_year = common.SEASON
 
-            gp.new(player_id, team_id, 19, profile, base_rating, potential)
+            gp.new(player_id, team_id, 19, profile, base_rating, potential, draft_year)
             gp.develop(aging_years)
 
             sql += gp.sql_insert()

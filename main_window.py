@@ -558,7 +558,9 @@ class MainWindow:
 
                 aging_years = random.randint(0,19)
 
-                gp.new(player_id, t, 19, profile, base_ratings[p], potentials[p])
+		draft_year = common.SEASON - 1 - aging_years
+
+                gp.new(player_id, t, 19, profile, base_ratings[p], potentials[p], draft_year)
                 gp.develop(aging_years)
 
                 sql += gp.sql_insert()

@@ -12,6 +12,7 @@ import random
 import sqlite3
 import shutil
 import locale
+import threading
 import time
 
 # My modules
@@ -641,9 +642,9 @@ class MainWindow:
         Get the team ID, season #, and schedule
         If team_id is passed as a parameter, then this is being called from new_game and the schema should be loaded and the team_id should be set in game_attributes
         '''
-        common.DB_CON = sqlite3.connect(common.DB_TEMP_FILENAME)
-        common.DB_CON.execute('PRAGMA synchronous=OFF')
-        common.DB_CON.isolation_level = 'IMMEDIATE'
+        common.DB_CON = sqlite3.connect(common.DB_TEMP_FILENAME, check_same_thread = False)
+#        common.DB_CON.execute('PRAGMA synchronous=OFF')
+#        common.DB_CON.isolation_level = 'IMMEDIATE'
         if team_id >= 0:
             # Starting a new game, so load data into the database and update the progressbar
             for fn in ['data/tables.sql', 'data/league.sql', 'data/teams.sql', 'data/players.sql']:
@@ -743,6 +744,11 @@ class MainWindow:
             return 0
 
     def play_games(self, num_days):
+#        self.play_games_real(num_days)
+        print "starting new thread"
+        threading.Thread(target=self.play_games_real, args=(num_days,)).start()
+
+    def play_games_real(self, num_days):
         '''
         Plays the number of games set in num_games and updates pages
         After that, checks to see if the season is over (so make sure num_games makes sense!)
@@ -819,8 +825,6 @@ class MainWindow:
                 game = game_sim.Game()
                 game.play(teams[0], teams[1], self.phase == 3)
                 game.write_stats()
-                while gtk.events_pending():
-                    gtk.main_iteration(False)
 
             pool = Pool(processes=4)
             pool.map(play_game, range(len(games_today)))

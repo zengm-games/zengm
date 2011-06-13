@@ -32,10 +32,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 Dependencies
 ------------
 
-Required packages on Ubuntu 8.04 (probably similar on other distros):
+Required packages on Ubuntu 11.04 (probably similar on other distros):
 
-* python >= 2.5
-* python-egenix-mxdatetime
+* python (i.e. Python 2, not Python 3)
 * python-gtk2
 
 I haven't tried any other platforms, but if you install the packages listed
@@ -43,8 +42,8 @@ above on Windows maybe it would work.
 
 
 
-Style
------
+Style guidelines
+----------------
 
 http://google-styleguide.googlecode.com/svn/trunk/pyguide.html
 

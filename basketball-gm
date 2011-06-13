@@ -4,11 +4,13 @@ import gtk
 import os.path
 import sys
 
+import config
 import main_window
 import welcome_dialog
 
 if __name__ == '__main__':
-    mw = main_window.MainWindow()
+    conf = config.Config()
+    mw = main_window.MainWindow(conf)
 
     # If a file is given as an argument, try to open it
     if len(sys.argv) > 1 and os.path.exists(sys.argv[1]):

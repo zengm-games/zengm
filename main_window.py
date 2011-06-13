@@ -4,6 +4,7 @@
 # Python modules
 import bz2
 import cPickle as pickle
+import csv
 import gtk
 import os
 import pango
@@ -44,17 +45,15 @@ class MainWindow:
 
     # Menu Items
     def on_menuitem_new_activate(self, widget=None, data=None):
-        '''
-        First check if there are unsaved changes before starting a new game
-        '''
+        """Start a new game, after checking for unsaved changes."""
         proceed = False
         if self.unsaved_changes:
             if self.save_nosave_cancel():
                 proceed = True
         if not self.unsaved_changes or proceed:
-            result, team_id = self.new_game_dialog()
-            if result == gtk.RESPONSE_OK and team_id >= 0:
-                self.new_game(team_id)
+            result, t_id = self.new_game_dialog()
+            if result == gtk.RESPONSE_OK and t_id >= 0:
+                self.new_game(t_id)
                 self.unsaved_changes = True
 
     def on_menuitem_open_activate(self, widget=None, data=None):
@@ -135,8 +134,8 @@ class MainWindow:
 
     def on_menuitem_one_week_activate(self, widget, data=None):
         if self.phase != 3:
-            row = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?', (common.SEASON,)).fetchone()
-            num_days = common.SEASON_LENGTH - row[0] # Number of days remaining
+            row = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?', (self.conf.year,)).fetchone()
+            num_days = self.conf.year_LENGTH - row[0] # Number of days remaining
             if num_days > 7:
                 num_days = 7
         else:
@@ -146,8 +145,8 @@ class MainWindow:
 
     def on_menuitem_one_month_activate(self, widget, data=None):
         if self.phase != 3:
-            row = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?', (common.SEASON,)).fetchone()
-            num_days = common.SEASON_LENGTH - row[0] # Number of days remaining
+            row = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?', (self.conf.year,)).fetchone()
+            num_days = self.conf.year_LENGTH - row[0] # Number of days remaining
             if num_days > 30:
                 num_days = 30
         else:
@@ -156,8 +155,8 @@ class MainWindow:
         return True
 
     def on_menuitem_until_playoffs_activate(self, widget, data=None):
-        row = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?', (common.SEASON,)).fetchone()
-        num_days = common.SEASON_LENGTH - row[0] # Number of days remaining
+        row = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?', (self.conf.year,)).fetchone()
+        num_days = self.conf.year_LENGTH - row[0] # Number of days remaining
         self.play_games(num_days)
         return True
 
@@ -272,9 +271,7 @@ class MainWindow:
             self.update_games_list()
 
     def on_treeview_player_row_activated(self, treeview, path, view_column, data=None):
-        '''
-        Called from any player row in a treeview to open the player info window
-        '''
+        """Open the player info window when treeview row is double clicked."""
         (treemodel, treeiter) = treeview.get_selection().get_selected()
         player_id = treemodel.get_value(treeiter, 0)
         if not hasattr(self, 'pw'):
@@ -291,32 +288,38 @@ class MainWindow:
 
     # Pages
     def build_standings(self):
-        max_divisions_in_conference, num_conferences = common.DB_CON.execute('SELECT (SELECT COUNT(*) FROM league_divisions GROUP BY conference_id ORDER BY COUNT(*) LIMIT 1), COUNT(*) FROM league_conferences').fetchone()
+        self.max_divisions_in_conference = max([len(ldc) for ldc in self.ld])
+        self.num_conferences = len(self.lc)
         try:
             self.table_standings.destroy() # Destroy table if it already exists... this will be called after starting a new game from the menu
         except:
             pass
-        self.table_standings = gtk.Table(max_divisions_in_conference, num_conferences)
+        self.table_standings = gtk.Table(self.max_divisions_in_conference, self.num_conferences)
         self.scrolledwindow_standings = self.builder.get_object('scrolledwindow_standings')
         self.scrolledwindow_standings.add_with_viewport(self.table_standings)
 
         self.treeview_standings = {} # This will contain treeviews for each conference
-        conference_id = -1
-        for row in common.DB_CON.execute('SELECT division_id, conference_id, name FROM league_divisions'):
-            if conference_id != row[1]:
-                row_top = 0
-                conference_id = row[1]
+        conf_id_prev = -1
+#        for row in common.DB_CON.execute('SELECT div_id, conf_id, name FROM league_divisions'):
+        for conf_id in xrange(len(self.lc)):
+            for div_id in xrange(len(self.ld[conf_id])):
+                div_id_flat = conf_id*self.max_divisions_in_conference + div_id # 0-5 rather than 0-2 and 0-2
 
-            self.treeview_standings[row[0]] = gtk.TreeView()
-            self.table_standings.attach(self.treeview_standings[row[0]], conference_id, conference_id + 1, row_top, row_top + 1)
-            column_info = [[row[2], 'Won', 'Lost', 'Pct', 'Div', 'Conf'],
-                           [0,      1,     2,      3,     4,     5],
-                           [False,  False, False,  False, False, False],
-                           [False,  False, False,  True,  False, False]]
-            common.treeview_build(self.treeview_standings[row[0]], column_info)
-            self.treeview_standings[row[0]].show()
+                name = self.ld[conf_id][div_id]
+                if conf_id != conf_id_prev:
+                    row_top = 0
+                    conf_id_prev = conf_id
 
-            row_top += 1
+                self.treeview_standings[div_id_flat] = gtk.TreeView()
+                self.table_standings.attach(self.treeview_standings[div_id_flat], conf_id, conf_id + 1, row_top, row_top + 1)
+                column_info = [[name, 'Won', 'Lost', 'Pct', 'Div', 'Conf'],
+                               [0,      1,     2,      3,     4,     5],
+                               [False,  False, False,  False, False, False],
+                               [False,  False, False,  True,  False, False]]
+                common.treeview_build(self.treeview_standings[div_id_flat], column_info)
+                self.treeview_standings[div_id_flat].show()
+
+                row_top += 1
 
         self.table_standings.show()
         self.built['standings'] = True
@@ -324,10 +327,25 @@ class MainWindow:
     def update_standings(self):
         season = self.make_season_combobox(self.combobox_standings, self.combobox_standings_active)
 
-        for row in common.DB_CON.execute('SELECT division_id FROM league_divisions'):
-            column_types = [str, int, int, float, str, str]
-            query = 'SELECT region || " "  || name, won, lost, 100*won/(won + lost), won_div || "-" || lost_div, won_conf || "-" || lost_conf FROM team_attributes WHERE season = ? AND division_id = ? ORDER BY won/(won + lost) DESC'
-            common.treeview_update(self.treeview_standings[row[0]], column_types, query, (season, row[0]))
+        for conf_id in xrange(len(self.lc)):
+            for div_id in xrange(len(self.ld[conf_id])):
+                div_id_flat = conf_id*self.max_divisions_in_conference + div_id # 0-5 rather than 0-2 and 0-2
+
+#                query = 'SELECT region || " "  || name, won, lost, 100*won/(won + lost), won_div || "-" || lost_div, won_conf || "-" || lost_conf FROM team_attributes WHERE season = ? AND div_id = ? ORDER BY won/(won + lost) DESC'
+#                common.treeview_update(self.treeview_standings[div_id], column_types, query, (season, div_id))
+
+                column_types = [str, int, int, float, str, str]
+                liststore = gtk.ListStore(*column_types)
+                self.treeview_standings[div_id_flat].set_model(liststore)
+                for t_id, row in self.t.items():
+                    if row[self.conf.year]['div_id'] == div_id_flat:
+                        gp = row[self.conf.year]['won']+row[self.conf.year]['lost']
+                        if gp > 0:
+                            wp = 1.0*row[self.conf.year]['won']/gp
+                        else:
+                            wp = random.randint(0,100)
+                        values = ['%s %s' % (row[self.conf.year]['region'], row[self.conf.year]['name']), row[self.conf.year]['won'], row[self.conf.year]['lost'], wp, '6-7', '7-8']
+                        liststore.append(values)
         self.updated['standings'] = True
 
     def build_finances(self):
@@ -364,15 +382,15 @@ class MainWindow:
         self.treeview_finances.append_column(column)
 
         column_types = [int, str, int, int, int, int, int]
-        query = 'SELECT team_id, region || " " || name, 0, 0, 0, cash, (SELECT SUM(contract_amount*1000) FROM player_attributes WHERE player_attributes.team_id = team_attributes.team_id) FROM team_attributes WHERE season = ? ORDER BY region ASC, name ASC'
-        common.treeview_update(self.treeview_finances, column_types, query, (common.SEASON,))
+        query = 'SELECT t_id, region || " " || name, 0, 0, 0, cash, (SELECT SUM(contract_amount*1000) FROM player_attributes WHERE player_attributes.t_id = team_attributes.t_id) FROM team_attributes WHERE season = ? ORDER BY region ASC, name ASC'
+        common.treeview_update(self.treeview_finances, column_types, query, (self.conf.year,))
 
         self.built['finances'] = True
 
     def update_finances(self):
         new_values = {}
-        query = 'SELECT ta.team_id, ta.region || " " || ta.name, AVG(ts.attendance), SUM(ts.attendance)*?, SUM(ts.attendance)*? - SUM(ts.cost), ta.cash, (SELECT SUM(contract_amount*1000) FROM player_attributes WHERE player_attributes.team_id = ta.team_id) FROM team_attributes as ta, team_stats as ts WHERE ta.season = ts.season AND ta.season = ? AND ta.team_id = ts.team_id GROUP BY ta.team_id ORDER BY ta.region ASC, ta.name ASC'
-        for row in common.DB_CON.execute(query, (common.TICKET_PRICE, common.TICKET_PRICE, common.SEASON,)):
+        query = 'SELECT ta.t_id, ta.region || " " || ta.name, AVG(ts.attendance), SUM(ts.attendance)*?, SUM(ts.attendance)*? - SUM(ts.cost), ta.cash, (SELECT SUM(contract_amount*1000) FROM player_attributes WHERE player_attributes.t_id = ta.t_id) FROM team_attributes as ta, team_stats as ts WHERE ta.season = ts.season AND ta.season = ? AND ta.t_id = ts.t_id GROUP BY ta.t_id ORDER BY ta.region ASC, ta.name ASC'
+        for row in common.DB_CON.execute(query, (common.TICKET_PRICE, common.TICKET_PRICE, self.conf.year,)):
             new_values[row[0]] = row[1:]
 
         model = self.treeview_finances.get_model()
@@ -400,7 +418,7 @@ class MainWindow:
 
     def update_player_ratings(self):
         column_types = [int, int, str, str, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int]
-        query = "SELECT player_attributes.player_id, player_attributes.team_id, player_attributes.name, (SELECT abbreviation FROM team_attributes WHERE team_id = player_attributes.team_id), ROUND((julianday('%s-06-01') - julianday(born_date))/365.25), player_ratings.overall, player_ratings.height, player_ratings.strength, player_ratings.speed, player_ratings.jumping, player_ratings.endurance, player_ratings.shooting_inside, player_ratings.shooting_layups, player_ratings.shooting_free_throws, player_ratings.shooting_two_pointers, player_ratings.shooting_three_pointers, player_ratings.blocks, player_ratings.steals, player_ratings.dribbling, player_ratings.passing, player_ratings.rebounding FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id >= -1" % common.SEASON # team_id >= -1: Don't select draft or retired players
+        query = "SELECT player_attributes.player_id, player_attributes.t_id, player_attributes.name, (SELECT abbreviation FROM team_attributes WHERE t_id = player_attributes.t_id), ROUND((julianday('%s-06-01') - julianday(born_date))/365.25), player_ratings.overall, player_ratings.height, player_ratings.strength, player_ratings.speed, player_ratings.jumping, player_ratings.endurance, player_ratings.shooting_inside, player_ratings.shooting_layups, player_ratings.shooting_free_throws, player_ratings.shooting_two_pointers, player_ratings.shooting_three_pointers, player_ratings.blocks, player_ratings.steals, player_ratings.dribbling, player_ratings.passing, player_ratings.rebounding FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.t_id >= -1" % self.conf.year # t_id >= -1: Don't select draft or retired players
         common.treeview_update(self.treeview_player_ratings, column_types, query)
         self.updated['player_ratings'] = True
 
@@ -414,16 +432,16 @@ class MainWindow:
 
     def update_player_stats(self):
         season = self.make_season_combobox(self.combobox_player_stats_season, self.combobox_player_stats_season_active)
-        team_id = self.make_team_combobox(self.combobox_player_stats_team, self.combobox_player_stats_team_active, season, True)
+        t_id = self.make_team_combobox(self.combobox_player_stats_team, self.combobox_player_stats_team_active, season, True)
 
-        if team_id == 666:
+        if t_id == 666:
             all_teams = 1
         else:
             all_teams = 0
 
         column_types = [int, int, str, str, int, int, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float]
-        query = 'SELECT player_attributes.player_id, player_attributes.team_id, player_attributes.name, (SELECT abbreviation FROM team_attributes WHERE team_id = player_attributes.team_id), COUNT(*), SUM(player_stats.starter), AVG(player_stats.minutes), AVG(player_stats.field_goals_made), AVG(player_stats.field_goals_attempted), AVG(100*player_stats.field_goals_made/player_stats.field_goals_attempted), AVG(player_stats.three_pointers_made), AVG(player_stats.three_pointers_attempted), AVG(100*player_stats.three_pointers_made/player_stats.three_pointers_attempted), AVG(player_stats.free_throws_made), AVG(player_stats.free_throws_attempted), AVG(100*player_stats.free_throws_made/player_stats.free_throws_attempted), AVG(player_stats.offensive_rebounds), AVG(player_stats.defensive_rebounds), AVG(player_stats.offensive_rebounds + player_stats.defensive_rebounds), AVG(player_stats.assists), AVG(player_stats.turnovers), AVG(player_stats.steals), AVG(player_stats.blocks), AVG(player_stats.personal_fouls), AVG(player_stats.points) FROM player_attributes, player_stats WHERE player_attributes.player_id = player_stats.player_id AND player_stats.season = ? AND player_stats.is_playoffs = 0 AND (player_attributes.team_id = ? OR ?) GROUP BY player_attributes.player_id'
-        common.treeview_update(self.treeview_player_stats, column_types, query, (season, team_id, all_teams))
+        query = 'SELECT player_attributes.player_id, player_attributes.t_id, player_attributes.name, (SELECT abbreviation FROM team_attributes WHERE t_id = player_attributes.t_id), COUNT(*), SUM(player_stats.starter), AVG(player_stats.minutes), AVG(player_stats.field_goals_made), AVG(player_stats.field_goals_attempted), AVG(100*player_stats.field_goals_made/player_stats.field_goals_attempted), AVG(player_stats.three_pointers_made), AVG(player_stats.three_pointers_attempted), AVG(100*player_stats.three_pointers_made/player_stats.three_pointers_attempted), AVG(player_stats.free_throws_made), AVG(player_stats.free_throws_attempted), AVG(100*player_stats.free_throws_made/player_stats.free_throws_attempted), AVG(player_stats.offensive_rebounds), AVG(player_stats.defensive_rebounds), AVG(player_stats.offensive_rebounds + player_stats.defensive_rebounds), AVG(player_stats.assists), AVG(player_stats.turnovers), AVG(player_stats.steals), AVG(player_stats.blocks), AVG(player_stats.personal_fouls), AVG(player_stats.points) FROM player_attributes, player_stats WHERE player_attributes.player_id = player_stats.player_id AND player_stats.season = ? AND player_stats.is_playoffs = 0 AND (player_attributes.t_id = ? OR ?) GROUP BY player_attributes.player_id'
+        common.treeview_update(self.treeview_player_stats, column_types, query, (season, t_id, all_teams))
         self.updated['player_stats'] = True
 
     def build_team_stats(self):
@@ -438,7 +456,7 @@ class MainWindow:
         season = self.make_season_combobox(self.combobox_team_stats_season, self.combobox_team_stats_season_active)
 
         column_types = [str, int, int, int, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float]
-        query = 'SELECT abbreviation, COUNT(*), SUM(team_stats.won), COUNT(*)-SUM(team_stats.won), AVG(team_stats.field_goals_made), AVG(team_stats.field_goals_attempted), AVG(100*team_stats.field_goals_made/team_stats.field_goals_attempted), AVG(team_stats.three_pointers_made), AVG(team_stats.three_pointers_attempted), AVG(100*team_stats.three_pointers_made/team_stats.three_pointers_attempted), AVG(team_stats.free_throws_made), AVG(team_stats.free_throws_attempted), AVG(100*team_stats.free_throws_made/team_stats.free_throws_attempted), AVG(team_stats.offensive_rebounds), AVG(team_stats.defensive_rebounds), AVG(team_stats.offensive_rebounds + team_stats.defensive_rebounds), AVG(team_stats.assists), AVG(team_stats.turnovers), AVG(team_stats.steals), AVG(team_stats.blocks), AVG(team_stats.personal_fouls), AVG(team_stats.points), AVG(team_stats.opponent_points) FROM team_attributes, team_stats WHERE team_attributes.team_id = team_stats.team_id AND team_attributes.season = team_stats.season AND team_stats.season = ? AND team_stats.is_playoffs = 0 GROUP BY team_stats.team_id'
+        query = 'SELECT abbreviation, COUNT(*), SUM(team_stats.won), COUNT(*)-SUM(team_stats.won), AVG(team_stats.field_goals_made), AVG(team_stats.field_goals_attempted), AVG(100*team_stats.field_goals_made/team_stats.field_goals_attempted), AVG(team_stats.three_pointers_made), AVG(team_stats.three_pointers_attempted), AVG(100*team_stats.three_pointers_made/team_stats.three_pointers_attempted), AVG(team_stats.free_throws_made), AVG(team_stats.free_throws_attempted), AVG(100*team_stats.free_throws_made/team_stats.free_throws_attempted), AVG(team_stats.offensive_rebounds), AVG(team_stats.defensive_rebounds), AVG(team_stats.offensive_rebounds + team_stats.defensive_rebounds), AVG(team_stats.assists), AVG(team_stats.turnovers), AVG(team_stats.steals), AVG(team_stats.blocks), AVG(team_stats.personal_fouls), AVG(team_stats.points), AVG(team_stats.opponent_points) FROM team_attributes, team_stats WHERE team_attributes.t_id = team_stats.t_id AND team_attributes.season = team_stats.season AND team_stats.season = ? AND team_stats.is_playoffs = 0 GROUP BY team_stats.t_id'
         common.treeview_update(self.treeview_team_stats, column_types, query, (season,))
         self.updated['team_stats'] = True
 
@@ -452,11 +470,11 @@ class MainWindow:
 
     def update_games_list(self):
         season = self.make_season_combobox(self.combobox_game_log_season, self.combobox_game_log_season_active)
-        team_id = self.make_team_combobox(self.combobox_game_log_team, self.combobox_game_log_team_active, season, False)
+        t_id = self.make_team_combobox(self.combobox_game_log_team, self.combobox_game_log_team_active, season, False)
 
         column_types = [int, str, str, str]
-        query = 'SELECT game_id, (SELECT abbreviation FROM team_attributes WHERE team_id = team_stats.opponent_team_id), (SELECT val FROM enum_w_l WHERE key = team_stats.won), points || "-" || opponent_points FROM team_stats WHERE team_id = ? AND season = ?'
-        query_bindings = (team_id, season)
+        query = 'SELECT game_id, (SELECT abbreviation FROM team_attributes WHERE t_id = team_stats.opponent_t_id), (SELECT val FROM enum_w_l WHERE key = team_stats.won), points || "-" || opponent_points FROM team_stats WHERE t_id = ? AND season = ?'
+        query_bindings = (t_id, season)
         common.treeview_update(self.treeview_games_list, column_types, query, query_bindings)
         self.updated['games_list'] = True
 
@@ -468,7 +486,7 @@ class MainWindow:
                 self.label_playoffs[i+1][j+1].set_text('')
 
         # Update cells
-        for series_id, series_round, name_home, name_away, seed_home, seed_away, won_home, won_away in common.DB_CON.execute('SELECT series_id, series_round, (SELECT region || " " || name FROM team_attributes WHERE team_id = active_playoff_series.team_id_home), (SELECT region || " " || name FROM team_attributes WHERE team_id = active_playoff_series.team_id_away), seed_home, seed_away, won_home, won_away FROM active_playoff_series'):
+        for series_id, series_round, name_home, name_away, seed_home, seed_away, won_home, won_away in common.DB_CON.execute('SELECT series_id, series_round, (SELECT region || " " || name FROM team_attributes WHERE t_id = active_playoff_series.t_id_home), (SELECT region || " " || name FROM team_attributes WHERE t_id = active_playoff_series.t_id_away), seed_home, seed_away, won_home, won_away FROM active_playoff_series'):
             self.label_playoffs[series_round][series_id].set_text('%d. %s (%d)\n%d. %s (%d)' % (seed_home, name_home, won_home, seed_away, name_away, won_away))
 
         self.updated['playoffs'] = True
@@ -519,7 +537,7 @@ class MainWindow:
         if hasattr(self, 'pw') and (self.pw.player_window.flags() & gtk.VISIBLE):
            self.pw.update_player(-1)
 
-    def new_game(self, team_id):
+    def new_game(self, t_id):
         '''
         Starts a new game.  Call this only after checking for saves, etc.
         '''
@@ -536,57 +554,54 @@ class MainWindow:
         while gtk.events_pending():
             gtk.main_iteration(False)
 
-        # Delete old database
-        if os.path.exists(common.DB_TEMP_FILENAME):
-            os.remove(common.DB_TEMP_FILENAME)
-
         # Generate new players
+        self.p = []
+        self.free_agents = []
         profiles = ['Point', 'Wing', 'Big', '']
-        gp = player.GeneratePlayer()
-        sql = ''
-        player_id = 1
-        for t in range(-1, 30):
-            self.progressbar_new_game.set_fraction(0.6*(t+1)/31.0)
+        p_id = 0
+        for t_id in range(-1, 30): # -1 is for free agents
+            self.progressbar_new_game.set_fraction((t_id+1)/31.0)
             while gtk.events_pending():
                 gtk.main_iteration(False)
             base_ratings = [40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29]
             potentials = [70, 60, 50, 50, 55, 45, 65, 35, 50, 45, 55, 55]
             random.shuffle(potentials)
             for p in range(12):
-                i = random.randrange(len(profiles))
-                profile = profiles[i]
+                profile = profiles[random.randrange(len(profiles))]
+                age = 19+random.randint(0,3)
 
-                aging_years = random.randint(0,19)
 
-                gp.new(player_id, t, 19, profile, base_ratings[p], potentials[p])
-                gp.develop(aging_years)
+                self.p.append(player.Player(self.conf, p_id, t_id, age, profile, base_ratings[p], potentials[p]))
 
-                sql += gp.sql_insert()
+                aging_years = random.randint(0,15)
+                self.p[p_id].develop(aging_years)
 
-                player_id += 1
-        f = open(os.path.join(common.DATA_FOLDER, 'data/players.sql'), 'w')
-        f.write(sql)
-        f.close()
+                if t_id == -1:
+                    self.free_agents.append(p_id)
+                else:
+                    self.t[t_id][self.conf.year]['players'].append(p_id)
 
-        self.progressbar_new_game.set_fraction(0.6)
-        self.progressbar_new_game.set_text('Creating database')
-        while gtk.events_pending():
-            gtk.main_iteration(False)
-
-        # Create new database
-        common.DB_FILENAME = common.DB_TEMP_FILENAME
-        self.connect(team_id)
+                p_id += 1
 
         self.progressbar_new_game.set_fraction(1)
         self.progressbar_new_game.set_text('Done') # Not really, but close
         while gtk.events_pending():
             gtk.main_iteration(False)
 
+        # League conferences
+        self.lc = ['Eastern Conference', 'Western Conference']
+        # League divisions
+        self.ld = [['Atlantic', 'Central', 'Southeast'], ['Southwest', 'Northwest', 'Pacific']] 
+
+        # Set some game variables
+        self.t_id = t_id
+        self.phase = 0
+
         # Make schedule, start season
         self.new_phase(1)
 
-        #Auto sort player's roster
-        self.roster_auto_sort(common.PLAYER_TEAM_ID)
+        # Auto sort player's roster
+        self.roster_auto_sort(self.conf.t_id)
 
         # Make standings treeviews based on league_* tables
         self.build_standings()
@@ -634,44 +649,18 @@ class MainWindow:
 
         return True
 
-    def connect(self, team_id = -1):
+    def connect(self, t_id = -1):
         '''
         Connect to the database
         Get the team ID, season #, and schedule
-        If team_id is passed as a parameter, then this is being called from new_game and the schema should be loaded and the team_id should be set in game_attributes
+        If t_id is passed as a parameter, then this is being called from new_game and the schema should be loaded and the t_id should be set in game_attributes
         '''
-        common.DB_CON = sqlite3.connect(common.DB_TEMP_FILENAME)
-        common.DB_CON.execute('PRAGMA synchronous=OFF')
-        common.DB_CON.isolation_level = 'IMMEDIATE'
-        if team_id >= 0:
-            # Starting a new game, so load data into the database and update the progressbar
-            for fn in ['data/tables.sql', 'data/league.sql', 'data/teams.sql', 'data/players.sql']:
-                c = common.DB_CON.cursor()
-                if fn == 'data/tables.sql':
-                    # tables.sql contains multiline queries, so this is easier
-                    f = open(os.path.join(common.DATA_FOLDER, fn))
-                    data = f.read()
-                    f.close()
-                    common.DB_CON.executescript(data)
-                else:
-                    # This method is faster for bulk queries though
-                    f = open(os.path.join(common.DATA_FOLDER, fn))
-                    for line in f.readlines():
-                        c.execute(line)
-                    f.close()
-                common.DB_CON.commit()
-                c.close()
-
-                self.progressbar_new_game.set_fraction(self.progressbar_new_game.get_fraction()+0.1)
-                while gtk.events_pending():
-                    gtk.main_iteration(False)
-            common.DB_CON.execute('UPDATE game_attributes SET team_id = ?', (team_id,))
-        row = common.DB_CON.execute('SELECT team_id, season, phase, schedule FROM game_attributes').fetchone()
-        common.PLAYER_TEAM_ID = row[0]
-        common.SEASON = row[1]
+        row = common.DB_CON.execute('SELECT t_id, season, phase, schedule FROM game_attributes').fetchone()
+        self.conf.t_id = row[0]
+        self.conf.year = row[1]
         self.phase = row[2]
 
-        if team_id == -1:
+        if t_id == -1:
             # Opening a saved game
             # If this is a new game, update_all_pages() is called in new_game()
             self.update_all_pages()
@@ -691,7 +680,7 @@ class MainWindow:
         '''
         # Schedule
         schedule = pickle.dumps(self.schedule)
-        common.DB_CON.execute('UPDATE game_attributes SET schedule = ? WHERE team_id = ?', (schedule, common.PLAYER_TEAM_ID))
+        common.DB_CON.execute('UPDATE game_attributes SET schedule = ? WHERE t_id = ?', (schedule, self.conf.t_id))
 
         common.DB_CON.commit()
 
@@ -761,8 +750,8 @@ class MainWindow:
                 active_series = False
                 num_active_teams = 0
                 current_round, = common.DB_CON.execute('SELECT MAX(series_round) FROM active_playoff_series').fetchone()
-                for team_id_home, team_id_away in common.DB_CON.execute('SELECT team_id_home, team_id_away FROM active_playoff_series WHERE won_home < 4 AND won_away < 4 AND series_round = ?', (current_round,)):
-                    self.schedule.append([team_id_home, team_id_away])
+                for t_id_home, t_id_away in common.DB_CON.execute('SELECT t_id_home, t_id_away FROM active_playoff_series WHERE won_home < 4 AND won_away < 4 AND series_round = ?', (current_round,)):
+                    self.schedule.append([t_id_home, t_id_away])
                     active_series = True
                     num_active_teams += 2
                 if not active_series:
@@ -773,14 +762,14 @@ class MainWindow:
                         break
                     # Add a new round to the database
                     winners = {}
-                    for series_id, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away in common.DB_CON.execute('SELECT series_id, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away FROM active_playoff_series WHERE series_round = ? ORDER BY series_id ASC', (current_round,)):    
+                    for series_id, t_id_home, t_id_away, seed_home, seed_away, won_home, won_away in common.DB_CON.execute('SELECT series_id, t_id_home, t_id_away, seed_home, seed_away, won_home, won_away FROM active_playoff_series WHERE series_round = ? ORDER BY series_id ASC', (current_round,)):    
                         if won_home == 4:
-                            winners[series_id] = [team_id_home, seed_home]
+                            winners[series_id] = [t_id_home, seed_home]
                         else:
-                            winners[series_id] = [team_id_away, seed_away]
+                            winners[series_id] = [t_id_away, seed_away]
                     series_id = 1
                     current_round += 1
-                    query = 'INSERT INTO active_playoff_series (series_id, series_round, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away) VALUES (?, ?, ?, ?, ?, ?, 0, 0)'
+                    query = 'INSERT INTO active_playoff_series (series_id, series_round, t_id_home, t_id_away, seed_home, seed_away, won_home, won_away) VALUES (?, ?, ?, ?, ?, ?, 0, 0)'
                     for i in range(1, len(winners), 2): # Go through winners by 2
                         if winners[i][1] < winners[i+1][1]: # Which team is the home team?
                             new_series = (series_id, current_round, winners[i][0], winners[i+1][0], winners[i][1], winners[i+1][1])
@@ -829,19 +818,19 @@ class MainWindow:
         # Make sure we are looking at this year's standings, stats, and games after playing some games
         self.combobox_standings_active = 0
         self.combobox_player_stats_season_active = 0
-        self.combobox_player_stats_team_active = common.PLAYER_TEAM_ID
+        self.combobox_player_stats_team_active = self.conf.t_id
         self.combobox_team_stats_season_active = 0
         self.combobox_game_log_season_active = 0
-        self.combobox_game_log_team_active = common.PLAYER_TEAM_ID
+        self.combobox_game_log_team_active = self.conf.t_id
 
         season_over = False
         if self.phase == 3:
             self.update_playoffs()
         else:
             # Check to see if the season is over
-            row = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?', (common.SEASON,)).fetchone()
+            row = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?', (self.conf.year,)).fetchone()
             days_played = row[0]
-            if days_played == common.SEASON_LENGTH:
+            if days_played == self.conf.year_LENGTH:
                 season_over = True
 
                 sew = season_end_window.SeasonEndWindow(self)
@@ -861,15 +850,13 @@ class MainWindow:
         model = combobox.get_model()
         combobox.set_model(None)
         model.clear()
-        for row in common.DB_CON.execute('SELECT season FROM team_stats GROUP BY season ORDER BY season DESC'):
-            model.append(['%s' % row[0]])
-            populated = True
-        if not populated:
-            row = common.DB_CON.execute('SELECT season FROM game_attributes').fetchone()
-            model.append(['%s' % row[0]])
-            populated = True
+
+        for i in xrange(self.conf.year-self.conf.year_initial+1):
+            model.append(['%s' % (self.conf.year_initial+i,)])
+
         combobox.set_model(model)
         combobox.set_active(active)
+
         season = combobox.get_active_text()
         return season
 
@@ -880,44 +867,17 @@ class MainWindow:
         combobox.pack_start(renderer, True)
         if all_teams_option:
             model.append(['All Teams', 666]) # 666 is the magin number to find all teams
-        for row in common.DB_CON.execute('SELECT abbreviation, team_id FROM team_attributes WHERE season = ? ORDER BY abbreviation ASC', (season,)):
+        for row in common.DB_CON.execute('SELECT abbreviation, t_id FROM team_attributes WHERE season = ? ORDER BY abbreviation ASC', (season,)):
             model.append(['%s' % row[0], row[1]])
         combobox.set_model(model)
         combobox.set_active(active)
         iter = combobox.get_active_iter()
-        team_id = model.get_value(iter, 1)
-        return team_id
+        t_id = model.get_value(iter, 1)
+        return t_id
 
-    def roster_auto_sort(self, team_id, from_button = False):
-        players = []
-        query = 'SELECT player_attributes.player_id, player_ratings.overall, player_ratings.endurance FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = ? ORDER BY player_ratings.roster_position ASC'
-
-        for row in common.DB_CON.execute(query, (team_id,)):
-            players.append(list(row))
-
-        # Order
-        players.sort(cmp=lambda x,y: y[1]-x[1]) # Sort by rating
-
-        # Minutes
-        overall_ratings = []
-        total_minutes = 0
-        for player in players:
-            overall_ratings.append(player[1])
-            player[2] = player[2]*(45-20)/100 + 20 # Scale endurance from 20 to 45
-            total_minutes += player[2]
-        i = 1
-        while total_minutes > 240:
-            if players[-i][2] > 0:
-                players[-i][2] -= 1
-                total_minutes -= 1
-            else:
-                i += 1
-
-        # Update
-        roster_position = 1
-        for player in players:
-            common.DB_CON.execute('UPDATE player_ratings SET average_playing_time = ?, roster_position = ? WHERE player_id = ?', (player[2], roster_position, player[0]))
-            roster_position += 1
+    def roster_auto_sort(self, t_id):
+        # Should just sort the self.t[t_id][year]['players'] list by overall rating, but not implemented yet
+        pass
 
     def auto_sign_free_agents(self):
         '''
@@ -925,9 +885,9 @@ class MainWindow:
         '''
         p = player.Player()
         # Build free_agents containing player ids and desired contracts
-        num_days_played, = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?', (common.SEASON,)).fetchone()
+        num_days_played, = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?', (self.conf.year,)).fetchone()
         free_agents = []
-        for player_id, in common.DB_CON.execute('SELECT pa.player_id FROM player_attributes as pa, player_ratings as pr WHERE pa.team_id = -1 AND pa.player_id = pr.player_id ORDER BY pr.overall + pr.potential DESC'):
+        for player_id, in common.DB_CON.execute('SELECT pa.player_id FROM player_attributes as pa, player_ratings as pr WHERE pa.t_id = -1 AND pa.player_id = pr.player_id ORDER BY pr.overall + pr.potential DESC'):
             p.load(player_id)
             amount, expiration = p.contract()
             # Decrease amount by 20% (assume negotiations) or 5% for each day into season
@@ -942,24 +902,24 @@ class MainWindow:
             free_agents.append([player_id, amount, expiration, False])
 
         # Randomly order teams and let them sign free agents
-        team_ids = range(30)
-        random.shuffle(team_ids)
+        t_ids = range(30)
+        random.shuffle(t_ids)
         for i in xrange(30):
-            team_id = team_ids[i]
-            if team_id == common.PLAYER_TEAM_ID:
+            t_id = t_ids[i]
+            if t_id == self.conf.t_id:
                 continue # Skip the user's team
-            num_players, payroll = common.DB_CON.execute('SELECT count(*), sum(pa.contract_amount) FROM team_attributes as ta, player_attributes as pa WHERE pa.team_id = ta.team_id AND ta.team_id = ? AND pa.contract_expiration >= ? AND ta.season = ?', (team_id, common.SEASON, common.SEASON,)).fetchone()
+            num_players, payroll = common.DB_CON.execute('SELECT count(*), sum(pa.contract_amount) FROM team_attributes as ta, player_attributes as pa WHERE pa.t_id = ta.t_id AND ta.t_id = ? AND pa.contract_expiration >= ? AND ta.season = ?', (t_id, self.conf.year, self.conf.year,)).fetchone()
             while payroll < common.SALARY_CAP and num_players < 15:
                 j = 0
                 new_player = False
                 for player_id, amount, expiration, signed in free_agents:
                     if amount + payroll <= common.SALARY_CAP and not signed:
-                        common.DB_CON.execute('UPDATE player_attributes SET team_id = ?, contract_amount = ?, contract_expiration = ? WHERE player_id = ?', (team_id, amount, expiration, player_id))
+                        common.DB_CON.execute('UPDATE player_attributes SET t_id = ?, contract_amount = ?, contract_expiration = ? WHERE player_id = ?', (t_id, amount, expiration, player_id))
                         free_agents[j][-1] = True # Mark player signed
                         new_player = True
                         num_players += 1
                         payroll += amount
-                        self.roster_auto_sort(team_id)
+                        self.roster_auto_sort(t_id)
                     j += 1
                 if not new_player:
                     break                
@@ -973,7 +933,7 @@ class MainWindow:
             common.DB_CON.execute('UPDATE player_attributes SET contract_amount = ?, contract_expiration = ? WHERE player_id = ?', (amount, expiration, player_id))
 
         else:
-            common.DB_CON.execute('UPDATE player_attributes SET team_id = -1 WHERE player_id = ?', (player_id,))
+            common.DB_CON.execute('UPDATE player_attributes SET t_id = -1 WHERE player_id = ?', (player_id,))
 
     def quit(self):
         '''
@@ -996,30 +956,29 @@ class MainWindow:
         new_game_dialog.set_transient_for(self.main_window)
         combobox_new_game_teams = self.builder.get_object('combobox_new_game_teams')
 
-        # We're not currently connected to the database, so create a temporary one in memory to load the team attributes
-        temp_db_con = sqlite3.connect(':memory:')
-        for fn in ['data/tables.sql', 'data/teams.sql']:
-            f = open(os.path.join(common.DATA_FOLDER, fn))
-            data = f.read()
-            f.close()
-            temp_db_con.executescript(data)
+        # Load initial data
+        self.t = {}
+        t_csv = csv.reader(open(os.path.join(self.conf.data_dir, 'teams.csv'), 'r'))
+        for row in t_csv:
+            t_id, div_id, conf_id, region, name, abbrev, cash = row
+            self.t[int(t_id)] = {self.conf.year: {'div_id': int(div_id), 'conf_id': int(conf_id), 'region': region, 'name': name, 'abbrev': abbrev, 'won': 0, 'lost': 0, 'cash': int(cash), 'players': []}}
 
         # Add teams to combobox
         model = combobox_new_game_teams.get_model()
         combobox_new_game_teams.set_model(None)
         model.clear()
-        for row in temp_db_con.execute('SELECT region || " " || name FROM team_attributes ORDER BY team_id ASC'):
-            model.append(['%s' % row[0]])
+        for i in xrange(len(self.t)):
+            model.append(['%s %s' % (self.t[i][self.conf.year]['region'], self.t[i][self.conf.year]['name'])])
         combobox_new_game_teams.set_model(model)
-        combobox_new_game_teams.set_active(3)
+        combobox_new_game_teams.set_active(14)
         result = new_game_dialog.run()
         new_game_dialog.hide()
-        team_id = combobox_new_game_teams.get_active()
+        t_id = combobox_new_game_teams.get_active()
 
         while gtk.events_pending():
             gtk.main_iteration(False)
 
-        return result, team_id
+        return result, t_id
 
     def open_game_dialog(self):
         open_dialog = gtk.FileChooserDialog(title='Open Game', action=gtk.FILE_CHOOSER_ACTION_OPEN, buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
@@ -1084,24 +1043,24 @@ class MainWindow:
 
     def new_schedule(self):
         teams = []
-        for row in common.DB_CON.execute('SELECT team_id, division_id, (SELECT conference_id FROM league_divisions WHERE league_divisions.division_id = team_attributes.division_id) FROM team_attributes WHERE season = ?', (common.SEASON,)):
-            teams.append({'team_id': row[0], 'division_id': row[1], 'conference_id': row[2], 'home_games': 0, 'away_games': 0})
+        for t_id, row in self.t.items():
+            teams.append({'t_id': t_id, 'div_id': row[self.conf.year]['div_id'], 'conf_id': row[self.conf.year]['conf_id'], 'home_games': 0, 'away_games': 0})
 
-        self.schedule = [] # team_id_home, team_id_away
+        self.schedule = [] # t_id_home, t_id_away
 
         for i in range(len(teams)):
             for j in range(len(teams)):
-                if teams[i]['team_id'] != teams[j]['team_id']:
-                    game = [teams[i]['team_id'], teams[j]['team_id']]
+                if teams[i]['t_id'] != teams[j]['t_id']:
+                    game = [teams[i]['t_id'], teams[j]['t_id']]
 
                     # Constraint: 1 home game vs. each team in other conference
-                    if teams[i]['conference_id'] != teams[j]['conference_id']:
+                    if teams[i]['conf_id'] != teams[j]['conf_id']:
                         self.schedule.append(game)
                         teams[i]['home_games'] += 1
                         teams[j]['away_games'] += 1
 
                     # Constraint: 2 home self.schedule vs. each team in same division
-                    if teams[i]['division_id'] == teams[j]['division_id']:
+                    if teams[i]['div_id'] == teams[j]['div_id']:
                         self.schedule.append(game)
                         self.schedule.append(game)
                         teams[i]['home_games'] += 2
@@ -1109,18 +1068,18 @@ class MainWindow:
 
                     # Constraint: 1-2 home self.schedule vs. each team in same conference and different division
                     # Only do 1 now
-                    if teams[i]['conference_id'] == teams[j]['conference_id'] and teams[i]['division_id'] != teams[j]['division_id']:
+                    if teams[i]['conf_id'] == teams[j]['conf_id'] and teams[i]['div_id'] != teams[j]['div_id']:
                         self.schedule.append(game)
                         teams[i]['home_games'] += 1
                         teams[j]['away_games'] += 1
 
         # Constraint: 1-2 home self.schedule vs. each team in same conference and different division
         # Constraint: We need 8 more of these games per home team!
-        team_ids_by_conference = [[], []]
-        division_ids = [[], []]
+        t_ids_by_conference = [[], []]
+        div_ids = [[], []]
         for i in range(len(teams)):
-            team_ids_by_conference[teams[i]['conference_id']].append(i)
-            division_ids[teams[i]['conference_id']].append(teams[i]['division_id'])
+            t_ids_by_conference[teams[i]['conf_id']].append(i)
+            div_ids[teams[i]['conf_id']].append(teams[i]['div_id'])
         for d in range(2):
             matchups = []
             matchups.append(range(15))
@@ -1133,7 +1092,7 @@ class MainWindow:
                     while True:
                         try_n = random.randint(0,14)
                         # Pick try_n such that it is in a different division than n and has not been picked before
-                        if division_ids[d][try_n] != division_ids[d][n] and try_n not in new_matchup:
+                        if div_ids[d][try_n] != div_ids[d][n] and try_n not in new_matchup:
                             good = True
                             # Check for duplicate games
                             for matchup in matchups:
@@ -1156,9 +1115,9 @@ class MainWindow:
             matchups.pop(0) # Remove the first row in matchups
             for matchup in matchups:
                 for t in matchup:
-                    i = team_ids_by_conference[d][t]
-                    j = team_ids_by_conference[d][matchup[t]]
-                    game = [teams[i]['team_id'], teams[j]['team_id']]
+                    i = t_ids_by_conference[d][t]
+                    j = t_ids_by_conference[d][matchup[t]]
+                    game = [teams[i]['t_id'], teams[j]['t_id']]
                     self.schedule.append(game)
                     teams[i]['home_games'] += 1
                     teams[j]['away_games'] += 1
@@ -1170,19 +1129,17 @@ class MainWindow:
 
         old_phase = self.phase
         self.phase = phase
-        common.DB_CON.execute('UPDATE game_attributes SET phase = ?', (self.phase,))
 
         # Preseason
         if self.phase == 0:
-            common.SEASON += 1
-            common.DB_CON.execute('UPDATE game_attributes SET season = season + 1')
+            self.conf.year += 1
 
-            # Get rid of old playoffs
-            common.DB_CON.execute('DELETE FROM active_playoff_series')
+###################################            # Get rid of old playoffs
+###################################            common.DB_CON.execute('DELETE FROM active_playoff_series')
 
             # Create new rows in team_attributes
-            for row in common.DB_CON.execute('SELECT team_id, division_id, region, name, abbreviation, cash FROM team_attributes WHERE season = ?', (common.SEASON-1,)):
-                common.DB_CON.execute('INSERT INTO team_attributes (team_id, division_id, region, name, abbreviation, cash, season) VALUES (?, ?, ?, ?, ?, ?, ?)', (row[0], row[1], row[2], row[3], row[4], row[5], common.SEASON))
+            for row in common.DB_CON.execute('SELECT t_id, div_id, region, name, abbreviation, cash FROM team_attributes WHERE season = ?', (self.conf.year-1,)):
+                common.DB_CON.execute('INSERT INTO team_attributes (t_id, div_id, region, name, abbreviation, cash, season) VALUES (?, ?, ?, ?, ?, ?, ?)', (row[0], row[1], row[2], row[3], row[4], row[5], self.conf.year))
             # Age players
             player_ids = []
             for row in common.DB_CON.execute('SELECT player_id, born_date FROM player_attributes'):
@@ -1198,7 +1155,7 @@ class MainWindow:
 
             self.update_play_menu(self.phase)
 
-            self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Preseason'))
+            self.main_window.set_title('%s %s - Basketball General Manager' % (self.conf.year, 'Preseason'))
 
             self.update_all_pages()
 
@@ -1208,52 +1165,52 @@ class MainWindow:
 
             # Auto sort rosters (except player's team)
             for t in range(30):
-                if t != common.PLAYER_TEAM_ID:
+                if t != self.conf.t_id:
                     self.roster_auto_sort(t)
 
             self.update_play_menu(self.phase)
 
-            self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Regular Season'))
+            self.main_window.set_title('%s %s - Basketball General Manager' % (self.conf.year, 'Regular Season'))
 
         # Regular Season - post trading deadline
         elif self.phase == 2:
             self.update_play_menu(self.phase)
 
-            self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Regular Season'))
+            self.main_window.set_title('%s %s - Basketball General Manager' % (self.conf.year, 'Regular Season'))
 
         # Playoffs
         elif self.phase == 3:
             self.update_play_menu(self.phase)
 
             # Set playoff matchups
-            for conference_id in range(2):
+            for conf_id in range(2):
                 teams = []
                 seed = 1
-                for team_id, in common.DB_CON.execute('SELECT ta.team_id FROM team_attributes as ta, league_divisions as ld WHERE ld.division_id = ta.division_id AND ld.conference_id = ? AND ta.season = ? ORDER BY ta.won/(ta.won + ta.lost) DESC LIMIT 8', (conference_id, common.SEASON)):
-                    teams.append(team_id)
+                for t_id, in common.DB_CON.execute('SELECT ta.t_id FROM team_attributes as ta, league_divisions as ld WHERE ld.div_id = ta.div_id AND ld.conf_id = ? AND ta.season = ? ORDER BY ta.won/(ta.won + ta.lost) DESC LIMIT 8', (conf_id, self.conf.year)):
+                    teams.append(t_id)
 
-                query = 'INSERT INTO active_playoff_series (series_id, series_round, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away) VALUES (?, 1, ?, ?, ?, ?, 0, 0)'
-                common.DB_CON.execute(query, (conference_id*4+1, teams[0], teams[7], 1, 8))
-                common.DB_CON.execute(query, (conference_id*4+2, teams[3], teams[4], 4, 5))
-                common.DB_CON.execute(query, (conference_id*4+3, teams[2], teams[5], 3, 6))
-                common.DB_CON.execute(query, (conference_id*4+4, teams[1], teams[6], 2, 7))
+                query = 'INSERT INTO active_playoff_series (series_id, series_round, t_id_home, t_id_away, seed_home, seed_away, won_home, won_away) VALUES (?, 1, ?, ?, ?, ?, 0, 0)'
+                common.DB_CON.execute(query, (conf_id*4+1, teams[0], teams[7], 1, 8))
+                common.DB_CON.execute(query, (conf_id*4+2, teams[3], teams[4], 4, 5))
+                common.DB_CON.execute(query, (conf_id*4+3, teams[2], teams[5], 3, 6))
+                common.DB_CON.execute(query, (conf_id*4+4, teams[1], teams[6], 2, 7))
 
             self.updated['playoffs'] = False
             self.notebook.set_current_page(self.pages['playoffs'])
 
-            self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Playoffs'))
+            self.main_window.set_title('%s %s - Basketball General Manager' % (self.conf.year, 'Playoffs'))
 
         # Offseason - pre draft
         elif self.phase == 4:
             self.update_play_menu(self.phase)
 
-            self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Playoffs'))
+            self.main_window.set_title('%s %s - Basketball General Manager' % (self.conf.year, 'Playoffs'))
 
         # Draft
         elif self.phase == 5:
             self.update_play_menu(self.phase)
 
-            self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Off-season'))
+            self.main_window.set_title('%s %s - Basketball General Manager' % (self.conf.year, 'Off-season'))
 
             if old_phase != 5: # Can't check hasattr because we need a new draft every year
                 self.dd = draft_dialog.DraftDialog(self)
@@ -1267,16 +1224,16 @@ class MainWindow:
         elif self.phase == 6:
             self.update_play_menu(self.phase)
 
-            self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Off-season'))
+            self.main_window.set_title('%s %s - Basketball General Manager' % (self.conf.year, 'Off-season'))
 
         # Offseason - free agency
         elif self.phase == 7:
             self.update_play_menu(self.phase)
 
             # Move undrafted players to free agent pool
-            common.DB_CON.execute('UPDATE player_attributes SET team_id = -1, draft_year = -1, draft_round = -1, draft_pick = -1, draft_team_id = -1 WHERE team_id = -2')
+            common.DB_CON.execute('UPDATE player_attributes SET t_id = -1, draft_year = -1, draft_round = -1, draft_pick = -1, draft_t_id = -1 WHERE t_id = -2')
 
-            self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Off-season'))
+            self.main_window.set_title('%s %s - Basketball General Manager' % (self.conf.year, 'Off-season'))
 
             # Check for retiring players
             # Call the contructor each season because that's where the code to check for retirement is
@@ -1285,8 +1242,8 @@ class MainWindow:
             rpw.retired_players_window.destroy()
 
             # Resign players
-            for player_id, team_id, name in common.DB_CON.execute('SELECT player_id, team_id, name FROM player_attributes WHERE contract_expiration = ?', (common.SEASON,)):
-                if team_id != common.PLAYER_TEAM_ID:
+            for player_id, t_id, name in common.DB_CON.execute('SELECT player_id, t_id, name FROM player_attributes WHERE contract_expiration = ?', (self.conf.year,)):
+                if t_id != self.conf.t_id:
                     # Automaitcally negotiate with teams
                     self.player_contract_expire(player_id)
                 else:
@@ -1343,9 +1300,9 @@ class MainWindow:
         t = 0
         common.DB_CON.row_factory = sqlite3.Row
 
-        for row in common.DB_CON.execute('SELECT team_id FROM team_stats WHERE game_id = ?', (game_id,)):
-            team_id = row[0]
-            row2 = common.DB_CON.execute('SELECT region || " " || name FROM team_attributes WHERE team_id = ?', (team_id,)).fetchone()
+        for row in common.DB_CON.execute('SELECT t_id FROM team_stats WHERE game_id = ?', (game_id,)):
+            t_id = row[0]
+            row2 = common.DB_CON.execute('SELECT region || " " || name FROM team_attributes WHERE t_id = ?', (t_id,)).fetchone()
             team_name_long = row2[0]
             dashes = ''
             for i in range(len(team_name_long)):
@@ -1354,10 +1311,10 @@ class MainWindow:
 
             box += format % ('Name', 'Pos', 'Min', 'FG', '3Pt', 'FT', 'Off', 'Reb', 'Ast', 'TO', 'Stl', 'Blk', 'PF', 'Pts')
 
-            for player_stats in common.DB_CON.execute('SELECT player_attributes.name, player_attributes.position, player_stats.minutes, player_stats.field_goals_made, player_stats.field_goals_attempted, player_stats.three_pointers_made, player_stats.three_pointers_attempted, player_stats.free_throws_made, player_stats.free_throws_attempted, player_stats.offensive_rebounds, player_stats.defensive_rebounds, player_stats.assists, player_stats.turnovers, player_stats.steals, player_stats.blocks, player_stats.personal_fouls, player_stats.points FROM player_attributes, player_stats WHERE player_attributes.player_id = player_stats.player_id AND player_stats.game_id = ? AND player_attributes.team_id = ? ORDER BY player_stats.starter DESC, player_stats.minutes DESC', (game_id, team_id)):
+            for player_stats in common.DB_CON.execute('SELECT player_attributes.name, player_attributes.position, player_stats.minutes, player_stats.field_goals_made, player_stats.field_goals_attempted, player_stats.three_pointers_made, player_stats.three_pointers_attempted, player_stats.free_throws_made, player_stats.free_throws_attempted, player_stats.offensive_rebounds, player_stats.defensive_rebounds, player_stats.assists, player_stats.turnovers, player_stats.steals, player_stats.blocks, player_stats.personal_fouls, player_stats.points FROM player_attributes, player_stats WHERE player_attributes.player_id = player_stats.player_id AND player_stats.game_id = ? AND player_attributes.t_id = ? ORDER BY player_stats.starter DESC, player_stats.minutes DESC', (game_id, t_id)):
                 rebounds = player_stats['offensive_rebounds'] + player_stats['defensive_rebounds']
                 box += format % (player_stats['name'], player_stats['position'], player_stats['minutes'], '%s-%s' % (player_stats['field_goals_made'], player_stats['field_goals_attempted']), '%s-%s' % (player_stats['three_pointers_made'], player_stats['three_pointers_attempted']), '%s-%s' % (player_stats['free_throws_made'], player_stats['free_throws_attempted']), player_stats['offensive_rebounds'], rebounds, player_stats['assists'], player_stats['turnovers'], player_stats['steals'], player_stats['blocks'], player_stats['personal_fouls'], player_stats['points'])
-            team_stats = common.DB_CON.execute('SELECT *  FROM team_stats WHERE game_id = ? AND team_id = ?', (game_id, team_id)).fetchone()
+            team_stats = common.DB_CON.execute('SELECT *  FROM team_stats WHERE game_id = ? AND t_id = ?', (game_id, t_id)).fetchone()
             rebounds = team_stats['offensive_rebounds'] + team_stats['defensive_rebounds']
             box += format % ('Total', '', team_stats['minutes'], '%s-%s' % (team_stats['field_goals_made'], team_stats['field_goals_attempted']), '%s-%s' % (team_stats['three_pointers_made'], team_stats['three_pointers_attempted']), '%s-%s' % (team_stats['free_throws_made'], team_stats['free_throws_attempted']), team_stats['offensive_rebounds'], rebounds, team_stats['assists'], team_stats['turnovers'], team_stats['steals'], team_stats['blocks'], team_stats['personal_fouls'], team_stats['points'])
             if (t==0):
@@ -1368,7 +1325,9 @@ class MainWindow:
 
         return box
 
-    def __init__(self):
+    def __init__(self, conf):
+        self.conf = conf
+
         self.builder = gtk.Builder()
         self.builder.add_objects_from_file(common.GTKBUILDER_PATH, ['aboutdialog', 'accelgroup1', 'liststore3', 'liststore4', 'liststore5', 'liststore6', 'liststore7', 'liststore8', 'main_window', 'new_game_dialog', 'new_game_progressbar_window'])
 
@@ -1422,10 +1381,10 @@ class MainWindow:
         # Initialize combobox positions
         self.combobox_standings_active = 0
         self.combobox_player_stats_season_active = 0
-        self.combobox_player_stats_team_active = common.PLAYER_TEAM_ID
+        self.combobox_player_stats_team_active = self.conf.t_id
         self.combobox_team_stats_season_active = 0
         self.combobox_game_log_season_active = 0
-        self.combobox_game_log_team_active = common.PLAYER_TEAM_ID
+        self.combobox_game_log_team_active = self.conf.t_id
 
         self.builder.connect_signals(self)
 

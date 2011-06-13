@@ -15,9 +15,10 @@ class Config:
         if not os.path.exists(self.saves_dir):
             os.mkdir(self.saves_dir, 0755)
 
-        # These are set to real values in basketball_gm.py
-        self.t_id = 3
-        self.year = 2008
+        self.t_id = -1 # Placeholder team ID
+
+        self.year_initial = 2011
+        self.year = 2011
 
         # These should probably be defined somewhere else (user settings)
         self.salary_cap = 60000

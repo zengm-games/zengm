@@ -1,21 +1,29 @@
 import csv
-import mx.DateTime
 import os
 import random
 import re
 import string
 
 class Player:
-    def __init__(self, config, p_id, age, profile, base_rating, potential):
+    """Player ratings, stats, and attributes.
+
+    Each instance of this class represents a player, so it should be called
+    each time a player is created (before the draft to make rookies or at the
+    beginning of a new game to make everyone).
+
+    When loading a saved game, self.conf needs to be updated!
+
+    Attributes:
+        (A list should be here, but they're all in __init__)
+    """
+
+    def __init__(self, conf, p_id, t_id, age, profile, base_rating, potential):
         """Generate a new player.
-        
-        Each instance of this class represents a player, so it should be called
-        each time a player is created (before the draft to make rookies or at
-        the beginning of a new game to make everyone)
 
         Args:
-            config: Instance of the Config class from config.py.
+            conf: Instance of the Config class from config.py.
             p_id: Player ID number.
+            t_id: Team ID number.
             age: The player's age as a rookie.
             profile: Type of player. Can be 'Point', 'Wing', 'Big', or ''. The
                 blank string means no specialty. This is used to determine
@@ -23,17 +31,17 @@ class Player:
             base_rating: Roughly, the overall rating before the draft.
             potential: Initial potential overall rating.
         """
-        self.config = config
+        self.conf = conf
 
         # ID numbers
         self.id = p_id
-        self.t_id = -1 # -1 means free agent
+        self.t_id = t_id # -1 means free agent
 
         # Ratings and stats
         self.r = self._gen_ratings(profile, base_rating, potential)
         self._update_overall()
-        self.ss = {self.config.year: self._blank_stats()} # Season stats - dict for years, list of stats
-        self.gs = {self.config.year: {}} # Game stats - dict for years, dict for game IDs, list of stats
+        self.ss = {self.conf.year: self._blank_stats()} # Season stats - dict for years, list of stats
+        self.gs = {self.conf.year: {}} # Game stats - dict for years, dict for game IDs, list of stats
 
         # Player attributes
         self.name = self._gen_name() # First and last name
@@ -145,14 +153,14 @@ class Player:
         http://www.census.gov/genealogy/names/names_files.html
         """
         # First name data
-        fn_reader = csv.reader(open(os.path.join(self.config.data_dir, 'first_names.txt'), 'rb'))
+        fn_reader = csv.reader(open(os.path.join(self.conf.data_dir, 'first_names.txt'), 'rb'))
         fn_data = []
         for row in fn_reader:
             fn_data.append(row)
         fn_max = 90.040
 
         # Last name data (This data has been truncated to make the file smaller)
-        ln_reader = csv.reader(open(os.path.join(self.config.data_dir, "last_names.txt"), 'rb'))
+        ln_reader = csv.reader(open(os.path.join(self.conf.data_dir, "last_names.txt"), 'rb'))
         ln_data = []
         for row in ln_reader:
             ln_data.append(row)
@@ -252,7 +260,7 @@ class Player:
         amount = ((2.0 * self.r['overall'] + self.r['potential']) - 120)/(210 - 120) # Scale from 0 to 1 (approx)
         amount = amount * (max_amount - min_amount) + min_amount # Scale from 500k to 15mil
         amount *= random.gauss(1, 0.1) # Randomize
-        expiration = self.config.year + random.randrange(0, 6)
+        expiration = self.conf.year + random.randrange(0, 6)
         if amount < min_amount:
             amount = min_amount
         elif amount > max_amount:

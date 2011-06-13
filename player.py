@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import csv
 import mx.DateTime
 import os
@@ -123,12 +124,12 @@ class GeneratePlayer(Player):
         for row in ln_reader:
             self.ln_data.append(row)  
 
-	# Nationality data
-	nat_reader = csv.reader(open(os.path.join(common.DATA_FOLDER, "data/nationalities.txt"), "rb"))
-	self.nat_data = []
-	for row in nat_reader:
-	     self.nat_data.append(row)
-	self.nat_max = 100
+    # Nationality data
+    nat_reader = csv.reader(open(os.path.join(common.DATA_FOLDER, "data/nationalities.txt"), "rb"))
+    self.nat_data = []
+    for row in nat_reader:
+      self.nat_data.append(row)
+    self.nat_max = 100
 
     def new(self, player_id, team_id, age, profile, base_rating, potential, draft_year, player_nat=""):
         self.id = player_id
@@ -138,7 +139,7 @@ class GeneratePlayer(Player):
         self.rating['roster_position'] = player_id
         self.attribute = {}
         self.attribute['team_id'] = team_id
-	self.attribute['draft_year'] = draft_year
+    self.attribute['draft_year'] = draft_year
 
         self.generate_ratings(profile, base_rating)
         self.generate_attributes(age, player_nat)
@@ -187,26 +188,26 @@ class GeneratePlayer(Player):
         self.attribute['born_date'] = self._born_date(age)
 
 #If the nationality isn't given, randomly choose one.	
-	if player_nat == "":
-		nationality_rand = random.uniform (0, self.nat_max)
-		for row in self.nat_data:
-            	    if float(row[2]) >= nationality_rand:
-                	break
-		nationality = string.capitalize(row[0])
-		self.fn_max = float(row[4])
-		self.ln_max = float(row[5])
-	else:
-		nationality = player_nat
-		for row in self.nat_data:
-            	    if row[0].upper() == nationality.upper():
-                	break
-		self.fn_max = float(row[4])
-		self.ln_max = float(row[5])
+        if player_nat == "":
+            nationality_rand = random.uniform (0, self.nat_max)
+            for row in self.nat_data:
+                if float(row[2]) >= nationality_rand:
+                    break
+            nationality = string.capitalize(row[0])
+            self.fn_max = float(row[4])
+            self.ln_max = float(row[5])
+        else:
+            nationality = player_nat
+            for row in self.nat_data:
+                if row[0].upper() == nationality.upper():
+                    break
+            self.fn_max = float(row[4])
+            self.ln_max = float(row[5])
 
-       	self.attribute['born_location'] = nationality
-	self.attribute['name'] = self._name(nationality)        
+        self.attribute['born_location'] = nationality
+        self.attribute['name'] = self._name(nationality)        
 
-	self.attribute['college'] = 0
+        self.attribute['college'] = 0
         self.attribute['draft_round'] = 0
         self.attribute['draft_pick'] = 0
         self.attribute['draft_team_id'] = 0
@@ -216,18 +217,18 @@ class GeneratePlayer(Player):
         # First name
         fn_rand = random.uniform(0, self.fn_max)
         for row in self.fn_data:
-	    if nationality == string.capitalize(row[4]):
-            	if float(row[2]) >= fn_rand:
-                	break
+            if nationality == string.capitalize(row[4]):
+                if float(row[2]) >= fn_rand:
+                    break
         fn = string.capitalize(row[0])
 
         # Last name
         ln_rand = random.uniform(0, self.ln_max)
         for row in self.ln_data:
-	    if nationality == string.capitalize(row[4]):
-            	if float(row[2]) >= ln_rand:
-               	 #   if (random.random() < 0.3): # This is needed because there are some duplicate CDF's in last_names.txt
-               	     break
+            if nationality == string.capitalize(row[4]):
+                if float(row[2]) >= ln_rand:
+                #   if (random.random() < 0.3): # This is needed because there are some duplicate CDF's in last_names.txt
+                    break
         ln = string.capitalize(row[0])
         # McWhatever
         if len(ln) > 3:

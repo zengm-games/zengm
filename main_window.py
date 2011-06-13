@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # This file implements the main window GUI.  It is rather large and
 # unorganized, and it should probably be refactored.
 
@@ -558,7 +559,7 @@ class MainWindow:
 
                 aging_years = random.randint(0,19)
 
-		draft_year = common.SEASON - 1 - aging_years
+                draft_year = common.SEASON - 1 - aging_years
 
                 gp.new(player_id, t, 19, profile, base_ratings[p], potentials[p], draft_year)
                 gp.develop(aging_years)

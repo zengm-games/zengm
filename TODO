@@ -1,6 +1,29 @@
 when negotiating, players change values too much when you try to change years
 when you press close and the save/nosave/cancel dialog comes up, it should warn you about the save if you press save
 
+multiprocessing
+- SQLite database is a problem. doesn't deal well with concurrency. but it's so helpful for other things... i think i might need to abstract it out of game_sim.py for parallel stuff to work though
+- maybe i can get away without an SQLite database, using the GTK widgets for sorting and stuff? then just use normal python dicts+objects
+- Look through SQLqueries.txt and see how painful this would be. Make notes below and delete lines that are satisfied by the structure below.
+p[id].s[2009]['stat'] - stats, separated by year. keep season totals and game stats separate somehow
+p[id].s[2009p]['stat'] - playoff stats, as above
+p[id].r['attr'] - ratings
+p[id].t_id - team ID
+p[id].c_amt - contract amount
+p[id].c_exp - contract expiration year
+t[id].s[2009]['stat'] - stats, separated by year. keep season totals and game stats separate somehow. include W and L and attendance
+t[id].s[2009p]['stat'] - playoff stats, as above
+t[id].players - list of player IDs on a team, ordered by roster position
+t[id].abbrev - team abbreviation
+t[id].div - team's division
+t[id].reg - team's region
+t[id].cash - team cash
+g.season - current season
+g.seasons - list of all previous seasons and current
+something for the divisions to define the league
+g.sched - list of scheduled games
+g.phase - game phase
+g.t_id - ID of user's team
 
 ======
 FUTURE

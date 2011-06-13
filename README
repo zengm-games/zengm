@@ -34,13 +34,20 @@ Dependencies
 
 Required packages on Ubuntu 8.04 (probably similar on other distros):
 
-* libsqlite3-0
 * python >= 2.5
 * python-egenix-mxdatetime
 * python-gtk2
 
 I haven't tried any other platforms, but if you install the packages listed
 above on Windows maybe it would work.
+
+
+
+Style
+-----
+
+http://google-styleguide.googlecode.com/svn/trunk/pyguide.html
+
 
 
 Use

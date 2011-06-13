@@ -124,12 +124,12 @@ class GeneratePlayer(Player):
         for row in ln_reader:
             self.ln_data.append(row)  
 
-    # Nationality data
-    nat_reader = csv.reader(open(os.path.join(common.DATA_FOLDER, "data/nationalities.txt"), "rb"))
-    self.nat_data = []
-    for row in nat_reader:
-      self.nat_data.append(row)
-    self.nat_max = 100
+        # Nationality data
+        nat_reader = csv.reader(open(os.path.join(common.DATA_FOLDER, "data/nationalities.txt"), "rb"))
+        self.nat_data = []
+        for row in nat_reader:
+            self.nat_data.append(row)
+        self.nat_max = 100
 
     def new(self, player_id, team_id, age, profile, base_rating, potential, draft_year, player_nat=""):
         self.id = player_id
@@ -139,8 +139,7 @@ class GeneratePlayer(Player):
         self.rating['roster_position'] = player_id
         self.attribute = {}
         self.attribute['team_id'] = team_id
-    self.attribute['draft_year'] = draft_year
-
+        self.attribute['draft_year'] = draft_year
         self.generate_ratings(profile, base_rating)
         self.generate_attributes(age, player_nat)
 

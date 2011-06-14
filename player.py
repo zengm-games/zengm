@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import csv
 import mx.DateTime
 import os
@@ -185,7 +186,7 @@ class GeneratePlayer(Player):
         self.attribute['weight'] = int(random.gauss(1, 0.02)*((self.rating['height']+0.5*self.rating['strength'])*(max_weight-min_weight)/150+min_weight)) # Weight in points (from min_weight to max_weight)
         self.attribute['born_date'] = self._born_date(age)
 
-#If the nationality isn't given, randomly choose one.	
+        #If the nationality isn't given, randomly choose one.	
         if player_nat == "":
             nationality_rand = random.uniform (0, self.nat_max)
             for row in self.nat_data:

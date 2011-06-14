@@ -24,7 +24,7 @@ if not os.path.exists(DATA_FOLDER):
     shutil.copy(os.path.join(SRC_FOLDER, 'data/first_names.txt'), os.path.join(DATA_FOLDER, 'data'))
     shutil.copy(os.path.join(SRC_FOLDER, 'data/last_names.txt'), os.path.join(DATA_FOLDER, 'data'))
     shutil.copy(os.path.join(SRC_FOLDER, 'data/league.sql'), os.path.join(DATA_FOLDER, 'data'))
-    shutil.copy(os.path.join(SRC_FOLDER, 'data/players_NBA.sql'), os.path.join(DATA_FOLDER, 'data'))
+    shutil.copy(os.path.join(SRC_FOLDER, 'data/players.sql'), os.path.join(DATA_FOLDER, 'data'))
     shutil.copy(os.path.join(SRC_FOLDER, 'data/tables.sql'), os.path.join(DATA_FOLDER, 'data'))
     shutil.copy(os.path.join(SRC_FOLDER, 'data/teams.sql'), os.path.join(DATA_FOLDER, 'data'))
     shutil.copy(os.path.join(SRC_FOLDER, 'data/nationalities.txt'), os.path.join(DATA_FOLDER, 'data'))

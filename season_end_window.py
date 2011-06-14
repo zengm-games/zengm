@@ -12,7 +12,7 @@ class SeasonEndWindow:
         self.main_window = main_window
 
         self.builder = gtk.Builder()
-        self.builder.add_from_file(common.GTKBUILDER_PATH) 
+        self.builder.add_objects_from_file(common.GTKBUILDER_PATH, ['season_end_window'])
 
         self.season_end_window = self.builder.get_object('season_end_window')
         label_season_end_1 = self.builder.get_object('label_season_end_1')
@@ -22,6 +22,8 @@ class SeasonEndWindow:
 
         self.builder.connect_signals(self)
 
+        self.season_end_window.set_transient_for(self.main_window.main_window)
+        
         self.season_end_window.set_title('%d Season Awards' % common.SEASON)
 
         best_record_0 = common.DB_CON.execute('SELECT region || " " || name, won, lost FROM team_attributes WHERE season = ? AND (SELECT conference_id FROM league_divisions WHERE league_divisions.division_id = team_attributes.division_id) = 0 ORDER BY won/(won + lost) DESC', (common.SEASON,)).fetchone()

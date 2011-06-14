@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # This file implements the main window GUI.  It is rather large and
 # unorganized, and it should probably be refactored.
 

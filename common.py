@@ -27,6 +27,7 @@ if not os.path.exists(DATA_FOLDER):
     shutil.copy(os.path.join(SRC_FOLDER, 'data/players.sql'), os.path.join(DATA_FOLDER, 'data'))
     shutil.copy(os.path.join(SRC_FOLDER, 'data/tables.sql'), os.path.join(DATA_FOLDER, 'data'))
     shutil.copy(os.path.join(SRC_FOLDER, 'data/teams.sql'), os.path.join(DATA_FOLDER, 'data'))
+    shutil.copy(os.path.join(SRC_FOLDER, 'data/nationalities.txt'), os.path.join(DATA_FOLDER, 'data'))
 
 if not os.path.exists(SAVES_FOLDER):
     os.mkdir(SAVES_FOLDER, 0755)
@@ -69,8 +70,7 @@ def add_column(treeview, title, column_id, sort=False, truncate_float=False):
     if sort:
         column.set_sort_column_id(column_id)
     if truncate_float:
-        # Truncate floats to 1 decimal place
-        column.set_cell_data_func(renderer,
-            lambda column, cell, model, iter: cell.set_property('text', '%.1f' % model.get_value(iter, column_id)))
+      # Truncate floats to 1 decimal place
+        column.set_cell_data_func(renderer, lambda column, cell, model, iter: cell.set_property('text', '%.1f' % model.get_value(iter, column_id)))
     treeview.append_column(column)
 

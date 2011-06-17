@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import csv
 import mx.DateTime
 import os
@@ -116,16 +117,21 @@ class GeneratePlayer(Player):
         self.fn_data = []
         for row in fn_reader:
             self.fn_data.append(row)
-        self.fn_max = 90.040
 
         # Last name data (This data has been truncated to make the file smaller)
         ln_reader = csv.reader(open(os.path.join(common.DATA_FOLDER, "data/last_names.txt"), "rb"))
         self.ln_data = []
         for row in ln_reader:
             self.ln_data.append(row)  
-        self.ln_max = 77.480
 
-    def new(self, player_id, team_id, age, profile, base_rating, potential):
+        # Nationality data
+        nat_reader = csv.reader(open(os.path.join(common.DATA_FOLDER, "data/nationalities.txt"), "rb"))
+        self.nat_data = []
+        for row in nat_reader:
+            self.nat_data.append(row)
+        self.nat_max = 100
+
+    def new(self, player_id, team_id, age, profile, base_rating, potential, draft_year, player_nat=""):
         self.id = player_id
 
         self.rating = {}
@@ -133,9 +139,9 @@ class GeneratePlayer(Player):
         self.rating['roster_position'] = player_id
         self.attribute = {}
         self.attribute['team_id'] = team_id
-
+        self.attribute['draft_year'] = draft_year
         self.generate_ratings(profile, base_rating)
-        self.generate_attributes(age)
+        self.generate_attributes(age, player_nat)
 
     def generate_ratings(self, profile, base_rating):
         if profile == 'Point':
@@ -168,38 +174,59 @@ class GeneratePlayer(Player):
             i += 1
 
     # Call generate_ratings before this method!
-    def generate_attributes(self, age):
+    def generate_attributes(self, age, player_nat):
         min_height = 71 # 5'11"
         max_height = 89 # 7'5"
         min_weight = 150
         max_weight = 290
 
-        self.attribute['name'] = self._name()
+        
         self.attribute['position'] = self._position() # Position (PG, SG, SF, PF, C, G, GF, FC)
         self.attribute['height'] = int(random.gauss(1, 0.02)*(self.rating['height']*(max_height-min_height)/100+min_height)) # Height in inches (from min_height to max_height)
         self.attribute['weight'] = int(random.gauss(1, 0.02)*((self.rating['height']+0.5*self.rating['strength'])*(max_weight-min_weight)/150+min_weight)) # Weight in points (from min_weight to max_weight)
         self.attribute['born_date'] = self._born_date(age)
-        self.attribute['born_location'] = 0
+
+        #If the nationality isn't given, randomly choose one.	
+        if player_nat == "":
+            nationality_rand = random.uniform (0, self.nat_max)
+            for row in self.nat_data:
+                if float(row[2]) >= nationality_rand:
+                    break
+            nationality = string.capitalize(row[0])
+            self.fn_max = float(row[4])
+            self.ln_max = float(row[5])
+        else:
+            nationality = player_nat
+            for row in self.nat_data:
+                if row[0].upper() == nationality.upper():
+                    break
+            self.fn_max = float(row[4])
+            self.ln_max = float(row[5])
+
+        self.attribute['born_location'] = nationality
+        self.attribute['name'] = self._name(nationality)        
+
         self.attribute['college'] = 0
-        self.attribute['draft_year'] = 0
         self.attribute['draft_round'] = 0
         self.attribute['draft_pick'] = 0
         self.attribute['draft_team_id'] = 0
         self.attribute['contract_amount'], self.attribute['contract_expiration'] = self.contract()
 
-    def _name(self):
+    def _name(self,nationality):
         # First name
         fn_rand = random.uniform(0, self.fn_max)
         for row in self.fn_data:
-            if float(row[2]) >= fn_rand:
-                break
+            if nationality == string.capitalize(row[4]):
+                if float(row[2]) >= fn_rand:
+                    break
         fn = string.capitalize(row[0])
 
         # Last name
         ln_rand = random.uniform(0, self.ln_max)
         for row in self.ln_data:
-            if float(row[2]) >= ln_rand:
-                if (random.random() < 0.3): # This is needed because there are some duplicate CDF's in last_names.txt
+            if nationality == string.capitalize(row[4]):
+                if float(row[2]) >= ln_rand:
+                #   if (random.random() < 0.3): # This is needed because there are some duplicate CDF's in last_names.txt
                     break
         ln = string.capitalize(row[0])
         # McWhatever

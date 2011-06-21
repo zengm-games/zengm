@@ -1340,7 +1340,7 @@ class MainWindow:
             self.menuitem_play[i].set_sensitive(show_menus[i])
 
     def box_score(self, game_id):
-        format = '%-23s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s\n'
+        format = '%-23s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s<br />'
         box = ''
         t = 0
         common.DB_CON.row_factory = sqlite3.Row
@@ -1352,7 +1352,7 @@ class MainWindow:
             dashes = ''
             for i in range(len(team_name_long)):
                 dashes += '-'
-            box += team_name_long + '\n' + dashes + '\n'
+            box += team_name_long + '<br />' + dashes + '<br />'
 
             box += format % ('Name', 'Pos', 'Min', 'FG', '3Pt', 'FT', 'Off', 'Reb', 'Ast', 'TO', 'Stl', 'Blk', 'PF', 'Pts')
 
@@ -1363,7 +1363,7 @@ class MainWindow:
             rebounds = team_stats['offensive_rebounds'] + team_stats['defensive_rebounds']
             box += format % ('Total', '', team_stats['minutes'], '%s-%s' % (team_stats['field_goals_made'], team_stats['field_goals_attempted']), '%s-%s' % (team_stats['three_pointers_made'], team_stats['three_pointers_attempted']), '%s-%s' % (team_stats['free_throws_made'], team_stats['free_throws_attempted']), team_stats['offensive_rebounds'], rebounds, team_stats['assists'], team_stats['turnovers'], team_stats['steals'], team_stats['blocks'], team_stats['personal_fouls'], team_stats['points'])
             if (t==0):
-                box += '\n'
+                box += '<br />'
             t += 1
 
         common.DB_CON.row_factory = None

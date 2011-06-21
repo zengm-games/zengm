@@ -566,9 +566,7 @@ class MainWindow:
                 sql += gp.sql_insert()
 
                 player_id += 1
-        f = open(os.path.join(common.DATA_FOLDER, 'data/players.sql'), 'w')
-        f.write(sql)
-        f.close()
+        self.players_sql = sql
 
         self.progressbar_new_game.set_fraction(0.6)
         self.progressbar_new_game.set_text('Creating database')
@@ -647,14 +645,19 @@ class MainWindow:
         common.DB_CON.isolation_level = 'IMMEDIATE'
         if team_id >= 0:
             # Starting a new game, so load data into the database and update the progressbar
-            for fn in ['data/tables.sql', 'data/league.sql', 'data/teams.sql', 'data/players.sql']:
+            for fn in ['tables.sql', 'league.sql', 'teams.sql', 'players.sql']:
                 c = common.DB_CON.cursor()
-                if fn == 'data/tables.sql':
+                if fn == 'tables.sql':
                     # tables.sql contains multiline queries, so this is easier
                     f = open(os.path.join(common.DATA_FOLDER, fn))
                     data = f.read()
                     f.close()
                     common.DB_CON.executescript(data)
+                elif fn == 'players.sql':
+                    for line in self.players_sql.split('\n'):
+                        c.execute(line)
+                    f.close()
+                    del self.players_sql
                 else:
                     # This method is faster for bulk queries though
                     f = open(os.path.join(common.DATA_FOLDER, fn))
@@ -1000,7 +1003,7 @@ class MainWindow:
 
         # We're not currently connected to the database, so create a temporary one in memory to load the team attributes
         temp_db_con = sqlite3.connect(':memory:')
-        for fn in ['data/tables.sql', 'data/teams.sql']:
+        for fn in ['tables.sql', 'teams.sql']:
             f = open(os.path.join(common.DATA_FOLDER, fn))
             data = f.read()
             f.close()

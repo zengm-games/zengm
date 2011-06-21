@@ -10,24 +10,12 @@ SRC_FOLDER = os.path.dirname(os.path.abspath(__file__))
 
 # basketball_gm.xml should be in the same folder as this file
 # GTKBUILDER_PATH = os.path.join(SRC_FOLDER, 'basketball_gm.xml');
-GTKBUILDER_PATH = os.path.join(SRC_FOLDER, 'basketball_gm.glade');
+GTKBUILDER_PATH = os.path.join(SRC_FOLDER, 'ui/basketballgm.glade');
 
-DATA_FOLDER = os.path.expanduser("~/.basketball-gm")
-SAVES_FOLDER = os.path.join(DATA_FOLDER, 'saves')
-DB_TEMP_FILENAME = os.path.join(DATA_FOLDER, 'temp.sqlite')
-DB_FILENAME = os.path.join(DATA_FOLDER, 'temp.sqlite')
-
-# Make folders if they doesn't exist:
-if not os.path.exists(DATA_FOLDER):
-    os.mkdir(DATA_FOLDER, 0755)
-    os.mkdir(os.path.join(DATA_FOLDER, 'data'))
-    shutil.copy(os.path.join(SRC_FOLDER, 'data/first_names.txt'), os.path.join(DATA_FOLDER, 'data'))
-    shutil.copy(os.path.join(SRC_FOLDER, 'data/last_names.txt'), os.path.join(DATA_FOLDER, 'data'))
-    shutil.copy(os.path.join(SRC_FOLDER, 'data/league.sql'), os.path.join(DATA_FOLDER, 'data'))
-    shutil.copy(os.path.join(SRC_FOLDER, 'data/players.sql'), os.path.join(DATA_FOLDER, 'data'))
-    shutil.copy(os.path.join(SRC_FOLDER, 'data/tables.sql'), os.path.join(DATA_FOLDER, 'data'))
-    shutil.copy(os.path.join(SRC_FOLDER, 'data/teams.sql'), os.path.join(DATA_FOLDER, 'data'))
-    shutil.copy(os.path.join(SRC_FOLDER, 'data/nationalities.txt'), os.path.join(DATA_FOLDER, 'data'))
+DATA_FOLDER = os.path.join(SRC_FOLDER, 'data')
+SAVES_FOLDER = os.path.expanduser('~/.basketball-gm')
+DB_TEMP_FILENAME = os.path.join(SAVES_FOLDER, 'temp.sqlite')
+DB_FILENAME = os.path.join(SAVES_FOLDER, 'temp.sqlite')
 
 if not os.path.exists(SAVES_FOLDER):
     os.mkdir(SAVES_FOLDER, 0755)

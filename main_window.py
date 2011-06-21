@@ -12,6 +12,7 @@ import sqlite3
 import shutil
 import locale
 import time
+import webkit
 
 # My modules
 import common
@@ -285,8 +286,7 @@ class MainWindow:
     def on_treeview_games_list_cursor_changed(self, treeview, data=None):
         (treemodel, treeiter) = treeview.get_selection().get_selected()
         game_id = treemodel.get_value(treeiter, 0)
-        buffer = self.textview_box_score.get_buffer()
-        buffer.set_text(self.box_score(game_id))
+        self.browser_box_score.load_string(self.box_score(game_id), 'text/html', 'utf8', 'file://')
         return True
 
     # Pages
@@ -1401,8 +1401,13 @@ class MainWindow:
         self.treeview_games_list = self.builder.get_object('treeview_games_list')
         self.combobox_game_log_season = self.builder.get_object('combobox_game_log_season')
         self.combobox_game_log_team = self.builder.get_object('combobox_game_log_team')
+        self.scrolledwindow_box_score = self.builder.get_object('scrolledwindow_box_score')
         self.textview_box_score = self.builder.get_object('textview_box_score')
         self.textview_box_score.modify_font(pango.FontDescription("Monospace 8"))
+        self.browser_box_score = webkit.WebView()
+        self.scrolledwindow_box_score.remove(self.textview_box_score)
+        self.scrolledwindow_box_score.add(self.browser_box_score)
+        self.browser_box_score.show()
         self.label_playoffs = {1: {}, 2: {}, 3: {}, 4: {}}
         for i in range(4):
             ii = 3 - i

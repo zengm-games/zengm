@@ -4,8 +4,8 @@ import gtk
 import os.path
 import sys
 
-import main_window
-import welcome_dialog
+from views import main_window
+from views import welcome_dialog
 
 if __name__ == '__main__':
     mw = main_window.MainWindow()

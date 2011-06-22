@@ -1,224 +1,191 @@
-from sqlalchemy import Table, Column, Boolean, Float, Integer, String, Text, MetaData, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, backref
+from sqlobject import *
 
-Base = declarative_base()
-
-class Player(Base):
-    __tablename__ = 'player'
-
-    id = Column(Integer, primary_key=True)
-
-    name = Column(String(200))
-    team_id = Column(Integer, ForeignKey('team.id'))
-    pos = Column(String(2))
-    roster_pos = Column(Integer)
+class Player(SQLObject):
+    name = StringCol(length=200)
+    team = ForeignKey('Team')
+    pos = StringCol(length=2)
+    roster_pos = IntCol()
 
     # Measurements
-    height = Column(Integer) # inches
-    weight = Column(Integer) # pounds
-    age = Column(Integer)
+    height = IntCol() # inches
+    weight = IntCol() # pounds
+    age = IntCol()
 
     # Bio info
-    born = Column(String(200)) # City, State/Country
-    college = Column(String(200)) # or HS or country, if applicable
+    born = StringCol(length=200) # City, State/Country
+    college = StringCol(length=200) # or HS or country, if applicable
 
     # Draft info
-    draft_season = Column(Integer)
-    draft_round = Column(Integer)
-    draft_pick = Column(Integer)
-    draft_team_id = Column(Integer, ForeignKey('team.id'))
+    draft_season = IntCol()
+    draft_round = IntCol()
+    draft_pick = IntCol()
+    draft_team = ForeignKey('Team')
 
     # Contract info
-    con_amt = Column(Integer)
-    con_exp = Column(Integer)
+    con_amt = IntCol()
+    con_exp = IntCol()
 
     # Ratings
-    ovr = Column(Integer) # Overall
-    pot = Column(Integer) # Potential
-    hgt = Column(Integer) # Height
-    str = Column(Integer) # Strength
-    spd = Column(Integer) # Speed
-    jmp = Column(Integer) # Jumping
-    end = Column(Integer) # Endurance
-    ins = Column(Integer) # Inside Scoring
-    dnk = Column(Integer) # Dunks/Layups
-    ft = Column(Integer) # Free Throw Shooting
-    two = Column(Integer) # Two-Point Shooting
-    thr = Column(Integer) # Three-Point Shooting
-    blk = Column(Integer) # Blocks
-    stl = Column(Integer) # Steals
-    drb = Column(Integer) # Dribbling
-    pss = Column(Integer) # Passing
-    reb = Column(Integer) # Rebounding
+    ovr = IntCol() # Overall
+    pot = IntCol() # Potential
+    hgt = IntCol() # Height
+    str = IntCol() # Strength
+    spd = IntCol() # Speed
+    jmp = IntCol() # Jumping
+    end = IntCol() # Endurance
+    ins = IntCol() # Inside Scoring
+    dnk = IntCol() # Dunks/Layups
+    ft = IntCol() # Free Throw Shooting
+    two = IntCol() # Two-Point Shooting
+    thr = IntCol() # Three-Point Shooting
+    blk = IntCol() # Blocks
+    stl = IntCol() # Steals
+    drb = IntCol() # Dribbling
+    pss = IntCol() # Passing
+    reb = IntCol() # Rebounding
 
-    team = relationship('Team', backref='player')
-    draft_team = relationship('Team', backref='draft_player')
+#    team = relationship('Team', backref='player')
+#    team = relationship('Team')
+#    draft_team = relationship('Team', backref='draft_player')
+#    draft_team = relationship('Team')
 
-    def __unicode__(self):
-        return "<Player('%s', '%s')>" % (self.name, self.position)
+    def __repr__(self):
+        return "<Player('%s', '%s', '%s')>" % (self.id, self.name, self.pos)
 
-class PlayerStats(Base):
-    __tablename__ = 'player_stats'
-
-    id = Column(Integer, primary_key=True)
-
-    player_id = Column(Integer, ForeignKey('player.id'))
-    team_id = Column(Integer, ForeignKey('team.id'))
-    game_id = Column(Integer) # INDEX
-    season = Column(Integer) # INDEX
-    playoffs = Column(Boolean) # INDEX
-    won = Column(Boolean, default=False)
-    starter = Column(Boolean)
-    minutes = Column(Float, default=0)
-    field_goals_made = Column(Integer, default=0)
-    field_goals_attempted = Column(Integer, default=0)
-    three_pointers_made = Column(Integer, default=0)
-    three_pointers_attempted = Column(Integer, default=0)
-    free_throws_made = Column(Integer, default=0)
-    free_throws_attempted = Column(Integer, default=0)
-    offensive_rebounds = Column(Integer, default=0)
-    defensive_rebounds = Column(Integer, default=0)
-    assists = Column(Integer, default=0)
-    turnovers = Column(Integer, default=0)
-    steals = Column(Integer, default=0)
-    blocks = Column(Integer, default=0)
-    personal_fouls = Column(Integer, default=0)
-    points = Column(Integer, default=0)
+class PlayerStats(SQLObject):
+    player = ForeignKey('Player')
+    team = ForeignKey('Team')
+    game = IntCol() # INDEX
+    season = IntCol() # INDEX
+    playoffs = BoolCol() # INDEX
+    won = BoolCol(default=False)
+    start = BoolCol()
+    min = FloatCol(default=0)
+    fgm = IntCol(default=0)
+    fga = IntCol(default=0)
+    tpm = IntCol(default=0)
+    tpa = IntCol(default=0)
+    ftm = IntCol(default=0)
+    fta = IntCol(default=0)
+    oreb = IntCol(default=0)
+    dreb = IntCol(default=0)
+    ast = IntCol(default=0)
+    tov = IntCol(default=0)
+    stl = IntCol(default=0)
+    blk = IntCol(default=0)
+    pf = IntCol(default=0)
+    pts = IntCol(default=0)
     # These are convenience variables for game simulation
-    court_time = Column(Float, default=0)
-    bench_time = Column(Float, default=0)
-    energy = Column(Float, default=0)
+    court_time = FloatCol(default=0)
+    bench_time = FloatCol(default=0)
+    energy = FloatCol(default=0)
 
-    player = relationship(Player, backref='stats')
-    team = relationship('Team')
+#    player = relationship(Player, backref='stats')
+#    team = relationship('Team')
 
-class Team(Base):
-    __tablename__ = 'team'
+class Team(SQLObject):
+    region = StringCol(length=200)
+    name = StringCol(length=200)
+    abbrev = StringCol(length=4)
+    conf = ForeignKey('Conf')
+    div = ForeignKey('Div')
+    won = IntCol(default=0)
+    lost = IntCol(default=0)
+    won_home = IntCol(default=0)
+    lost_home = IntCol(default=0)
+    won_road = IntCol(default=0)
+    lost_road = IntCol(default=0)
+    won_div = IntCol(default=0)
+    lost_div = IntCol(default=0)
+    won_conf = IntCol(default=0)
+    lost_conf = IntCol(default=0)
+    cash_season = IntCol(default=0)
+    cash_tot = IntCol()
 
-    id = Column(Integer, primary_key=True)
+#    conf = relationship('Conf', backref='team')
+#    div = relationship('Div', backref='team')
 
-    region = Column(String(200))
-    name = Column(String(200))
-    abbreviation = Column(String(4))
-    conf_id = Column(Integer, ForeignKey('conf.id'))
-    div_id = Column(Integer, ForeignKey('div.id'))
-    won = Column(Integer, default=0)
-    lost = Column(Integer, default=0)
-    won_home = Column(Integer, default=0)
-    lost_home = Column(Integer, default=0)
-    won_road = Column(Integer, default=0)
-    lost_road = Column(Integer, default=0)
-    won_div = Column(Integer, default=0)
-    lost_div = Column(Integer, default=0)
-    won_conf = Column(Integer, default=0)
-    lost_conf = Column(Integer, default=0)
-    cash_season = Column(Integer, default=0)
-    cash_total = Column(Integer)
-
-    conf = relationship('Conf', backref='team')
-    div = relationship('Div', backref='team')
-
-    def __unicode__(self):
+    def __repr__(self):
         return "<Team('%s', '%s')>" % (self.region, self.name)
 
-class TeamHistory(Base):
-    __tablename__ = 'team_history'
+class TeamHistory(SQLObject):
+    team = ForeignKey('Team')
+    conf = ForeignKey('Conf')
+    div = ForeignKey('Div')
+    season = IntCol() # INDEX
+    region = StringCol(length=200)
+    name = StringCol(length=200)
+    abbrev = StringCol(length=4)
+    won = IntCol()
+    lost = IntCol()
+    won_home = IntCol()
+    lost_home = IntCol()
+    won_road = IntCol()
+    lost_road = IntCol()
+    won_div = IntCol()
+    lost_div = IntCol()
+    won_conf = IntCol()
+    lost_conf = IntCol()
+    cash_season = IntCol()
+    cash_tot = IntCol()
 
-    id = Column(Integer, primary_key=True)
+#    team = relationship(Team, backref='team_history')
+#    conf = relationship('Conf', backref='team_history')
+#    div = relationship('Div', backref='team_history')
 
-    team_id = Column(Integer, ForeignKey('team.id'))
-    conf_id = Column(Integer, ForeignKey('conf.id'))
-    div_id = Column(Integer, ForeignKey('div.id'))
-    season = Column(Integer) # INDEX
-    region = Column(String(200))
-    name = Column(String(200))
-    abbreviation = Column(String(4))
-    won = Column(Integer)
-    lost = Column(Integer)
-    won_home = Column(Integer)
-    lost_home = Column(Integer)
-    won_road = Column(Integer)
-    lost_road = Column(Integer)
-    won_div = Column(Integer)
-    lost_div = Column(Integer)
-    won_conf = Column(Integer)
-    lost_conf = Column(Integer)
-    cash_season = Column(Integer)
-    cash_total = Column(Integer)
-
-    team = relationship(Team, backref='team_history')
-    conf = relationship('Conf', backref='team_history')
-    div = relationship('Div', backref='team_history')
-
-    def __unicode__(self):
+    def __repr__(self):
         return "<TeamHistory('%s', '%s', '%s')>" % (self.region, self.name, self.season)
 
-class TeamStats(Base):
-    __tablename__ = 'team_stats'
+class TeamStats(SQLObject):
+    game_id = IntCol() # INDEX
+    team = ForeignKey('Team')
+    opp_team = ForeignKey('Team')
+    season = IntCol() # INDEX
+    playoffs = BoolCol() # INDEX
+    home = BoolCol()
+    won = BoolCol(default=False)
+    fgm = IntCol(default=0)
+    fga = IntCol(default=0)
+    tpm = IntCol(default=0) # Three-Pointers Made
+    tpa = IntCol(default=0) # Three-Pointers Attempted
+    ftm = IntCol(default=0) 
+    fta = IntCol(default=0)
+    oreb = IntCol(default=0) # Offensive Rebounds
+    dreb = IntCol(default=0) # Defensive Rebounds
+    ast = IntCol(default=0) # Assists
+    tov = IntCol(default=0) # Turnovers
+    stl = IntCol(default=0) # Steals
+    blk = IntCol(default=0) # Blocks
+    pf = IntCol(default=0) # Personal Fouls
+    pts = IntCol(default=0)
+    opp_pts = IntCol(default=0)
+    attend = IntCol(default=0)
+    cost = IntCol(default=0)
 
-    id = Column(Integer, primary_key=True)
+#    team = relationship(Team, backref='stats')
+#    team = relationship(Team)
+#    opp_team = relationship(Team)
 
-    game_id = Column(Integer) # INDEX
-    team_id = Column(Integer, ForeignKey('team.id'))
-    opp_team_id = Column(Integer, ForeignKey('team.id'))
-    season = Column(Integer) # INDEX
-    playoffs = Column(Boolean) # INDEX
-    home = Column(Boolean)
-    won = Column(Boolean, default=False)
-    field_goals_made = Column(Integer, default=0)
-    field_goals_attempted = Column(Integer, default=0)
-    three_pointers_made = Column(Integer, default=0)
-    three_pointers_attempted = Column(Integer, default=0)
-    free_throws_made = Column(Integer, default=0)
-    free_throws_attempted = Column(Integer, default=0)
-    offensive_rebounds = Column(Integer, default=0)
-    defensive_rebounds = Column(Integer, default=0)
-    assists = Column(Integer, default=0)
-    turnovers = Column(Integer, default=0)
-    steals = Column(Integer, default=0)
-    blocks = Column(Integer, default=0)
-    personal_fouls = Column(Integer, default=0)
-    points = Column(Integer, default=0)
-    opponent_points = Column(Integer, default=0)
-    attendance = Column(Integer, default=0)
-    cost = Column(Integer, default=0)
+class Conf(SQLObject):
+    name = StringCol(length=200)
 
-    team = relationship(Team, backref='stats')
-    opp_team = relationship(Team)
+    def __repr__(self):
+        return "<Conf('%s', '%s')>" % (self.id, self.name)
 
-class Conf(Base):
-    __tablename__ = 'conf'
+class Div(SQLObject):
+    name = StringCol(length=200)
+    conf = ForeignKey('Conf')
 
-    id = Column(Integer, primary_key=True)
+#    conf = relationship(Conf, backref='div')
 
-    name = Column(String(200))
+    def __repr__(self):
+        return "<Conf('%s', '%s', '%s')>" % (self.id, self.conf.id, self.name)
 
-    def __unicode__(self):
-        return "<Conf('%s')>" % (self.name,)
+class State(SQLObject):
+    team = ForeignKey('Team')
+    season = IntCol()
+    phase = IntCol()
+    schedule = StringCol()
 
-class Div(Base):
-    __tablename__ = 'div'
-
-    id = Column(Integer, primary_key=True)
-
-    conf_id = Column(Integer, ForeignKey('conf.id'))
-    name = Column(String(200))
-
-    conf = relationship(Conf, backref='div')
-
-    def __unicode__(self):
-        return "<Div('%s')>" % (self.name,)
-
-class State(Base):
-    __tablename__ = 'state'
-
-    id = Column(Integer, primary_key=True)
-
-    team_id = Column(Integer, ForeignKey('team.id'))
-    season = Column(Integer)
-    phase = Column(Integer)
-    schedule = Column(Text)
-
-    team = relationship(Team)
+#    team = relationship(Team)
 

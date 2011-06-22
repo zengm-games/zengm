@@ -1,7 +1,11 @@
 REFACTORING
 1. Divide each window/dialog/tab into its own file, consistently
-2. SQLAlchemy - declarative_base
+2. SQLObject
 3. Some kind of HTML template engine for the Webkit stuff
+
+SQLObject:
+- Lazy Updates http://www.sqlobject.org/SQLObject.html#id25
+- Backport Gorlami's changes
 
 Prettier UI: embed Webkit
 - http://www.aclevername.com/articles/python-webgui/
@@ -12,7 +16,6 @@ numpy rand
 
 when negotiating, players change values too much when you try to change years
 when you press close and the save/nosave/cancel dialog comes up, it should warn you about the save if you press save
-
 
 ======
 FUTURE

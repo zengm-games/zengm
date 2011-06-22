@@ -8,14 +8,17 @@ import gtk
 import os
 import pango
 import random
-import sqlite3
 import shutil
+from sqlobject import *
+import sqlite3
 import locale
 import time
 import webkit
 
 # My modules
 import common
+import libplayer
+from models import *
 import game_sim
 import player
 import schedule
@@ -540,42 +543,29 @@ class MainWindow:
         if os.path.exists(common.DB_TEMP_FILENAME):
             os.remove(common.DB_TEMP_FILENAME)
 
+        # New database
+        sqlhub.processConnection = connectionForURI('sqlite:/:memory:')
+
+        Player.createTable()
+        PlayerStats.createTable()
+        Team.createTable()
+        TeamHistory.createTable()
+        TeamStats.createTable()
+        Conf.createTable()
+        Div.createTable()
+        State.createTable()
+
         # Generate new players
-        profiles = ['Point', 'Wing', 'Big', '']
-        gp = player.GeneratePlayer()
-        sql = ''
-        player_id = 1
-        for t in range(-1, 30):
-            self.progressbar_new_game.set_fraction(0.6*(t+1)/31.0)
-            while gtk.events_pending():
-                gtk.main_iteration(False)
-            base_ratings = [40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29]
-            potentials = [70, 60, 50, 50, 55, 45, 65, 35, 50, 45, 55, 55]
-            random.shuffle(potentials)
-            for p in range(12):
-                i = random.randrange(len(profiles))
-                profile = profiles[i]
+        libplayer.new_game(self.progressbar_new_game)
 
-                aging_years = random.randint(0,19)
-
-                draft_year = common.SEASON - 1 - aging_years
-
-                gp.new(player_id, t, 19, profile, base_ratings[p], potentials[p], draft_year)
-                gp.develop(aging_years)
-
-                sql += gp.sql_insert()
-
-                player_id += 1
-        self.players_sql = sql
-
-        self.progressbar_new_game.set_fraction(0.6)
+        self.progressbar_new_game.set_fraction(0.95)
         self.progressbar_new_game.set_text('Creating database')
         while gtk.events_pending():
             gtk.main_iteration(False)
 
         # Create new database
-        common.DB_FILENAME = common.DB_TEMP_FILENAME
-        self.connect(team_id)
+#        common.DB_FILENAME = common.DB_TEMP_FILENAME
+#        self.connect(team_id)
 
         self.progressbar_new_game.set_fraction(1)
         self.progressbar_new_game.set_text('Done') # Not really, but close
@@ -583,6 +573,7 @@ class MainWindow:
             gtk.main_iteration(False)
 
         # Make schedule, start season
+        self.phase = 0
         self.new_phase(1)
 
         #Auto sort player's roster

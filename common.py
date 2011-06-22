@@ -1,7 +1,6 @@
 import gtk
 import os
 import shutil
-import sqlite3
 
 TEAMS = range(30) # If team id's aren't consecutive integers starting with 0, then some things will break
 SEASON_LENGTH = 82 # If this isn't 82 the scheduling gets fucked up.  Only set it lower for debugging (faster seasons)

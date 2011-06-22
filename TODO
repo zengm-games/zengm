@@ -1,6 +1,6 @@
 REFACTORING
 1. Divide each window/dialog/tab into its own file, consistently
-2. SQLAlchemy
+2. SQLAlchemy - declarative_base
 3. Some kind of HTML template engine for the Webkit stuff
 
 Prettier UI: embed Webkit

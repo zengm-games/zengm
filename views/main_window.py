@@ -9,7 +9,8 @@ import os
 import pango
 import random
 import shutil
-from sqlobject import *
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 import sqlite3
 import locale
 import time
@@ -544,19 +545,13 @@ class MainWindow:
             os.remove(common.DB_TEMP_FILENAME)
 
         # New database
-        sqlhub.processConnection = connectionForURI('sqlite:/:memory:')
+        engine = create_engine('sqlite://')
+        Base.metadata.create_all(engine)
 
-        Player.createTable()
-        PlayerStats.createTable()
-        Team.createTable()
-        TeamHistory.createTable()
-        TeamStats.createTable()
-        Conf.createTable()
-        Div.createTable()
-        State.createTable()
+        Session = sessionmaker(bind=engine)
 
         # Generate new players
-        libplayer.new_game(self.progressbar_new_game)
+        libplayer.new_game(self.progressbar_new_game, Session)
 
         self.progressbar_new_game.set_fraction(0.95)
         self.progressbar_new_game.set_text('Creating database')

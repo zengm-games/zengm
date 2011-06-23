@@ -1,11 +1,14 @@
+Try switching back to SQLAlchemy. Be more careful about Foreign Key relationships
+
 REFACTORING
 1. Divide each window/dialog/tab into its own file, consistently
-2. SQLObject
+2. SQLAlchemy
 3. Some kind of HTML template engine for the Webkit stuff
 
-SQLObject:
-- Lazy Updates http://www.sqlobject.org/SQLObject.html#id25
-- Backport Gorlami's changes
+SQLAlchemy:
+- INDEX
+
+Backport Gorlami's changes
 
 Prettier UI: embed Webkit
 - http://www.aclevername.com/articles/python-webgui/

@@ -7,28 +7,32 @@ import random
 import re
 import string
 
-def new_game(progressbar=None):
+def new_game(progressbar=None, Session=None):
+    session = Session()
+
     # Generate league structure
+
     # Confs and divs
-    ec = Conf(id=1, name='Eastern')
-    Div(id=1, name='Atlantic', conf=ec)
-    Div(id=2, name='Central', conf=ec)
-    Div(id=3, name='Southeast', conf=ec)
-    wc = Conf(id=2, name='Western')
-    Div(id=4, name='Southwest', conf=ec)
-    Div(id=5, name='Northwest', conf=ec)
-    Div(id=6, name='Pacific', conf=ec)
-    # Teams 
+    confs = [Conf(name='Eastern'), Conf(name='Western')]
+    divs = [Div(name='Atlantic', conf=confs[0]), Div(name='Central', conf=confs[0]), Div(name='Southeast', conf=confs[0]), Div(name='Southwest', conf=confs[1]), Div(name='Northwest', conf=confs[1]), Div(name='Pacific', conf=confs[1])]
+    session.add_all(confs)
+    session.add_all(divs)
+
+    # Teams
     t_csv = csv.reader(open('data/teams.csv', 'r'))
+    teams = []
     for row in t_csv:
         t_id, div_id, conf_id, region, name, abbrev, cash_tot = row
-        Team(conf=Conf.get(conf_id), div=Div.get(div_id), region=region, name=name, abbrev=abbrev, cash_tot=int(cash_tot))
+        conf_id = int(conf_id)
+        div_id = int(div_id)
+        teams.append(Team(conf=confs[conf_id-1], div=divs[div_id-1], region=region, name=name, abbrev=abbrev, cash_tot=int(cash_tot)))
+    session.add_all(teams)
 
     # Generate new players
     profiles = ['Point', 'Wing', 'Big', '']
     n_players = 0
-    for team in Team.select():
-
+    players = []
+    for team in teams:
         progress = 1.0*n_players/360
         if progressbar is not None:
             progressbar.set_fraction(0.95*progress)
@@ -44,12 +48,16 @@ def new_game(progressbar=None):
             profile = profiles[random.randrange(len(profiles))]
             age = 19+random.randint(0,3)
 
-            player = generate(team, age, profile, base_ratings[i], potentials[i])
+            players.append(generate(team, age, profile, base_ratings[i], potentials[i]))
 
             aging_years = random.randint(0,15)
-            develop(player, aging_years)
+            players[-1] = develop(players[-1], aging_years)
+            print players[-1]
 
             n_players += 1
+    session.add_all(players)
+
+    session.commit()
 
 def generate(team, age, profile, base_rating, potential):
     """Generate a new player.
@@ -291,6 +299,8 @@ def develop(p, years=1):
         p.pot += -2 + int(random.gauss(0, 2))
         if p.ovr > p.pot or p.age > 28:
             p.pot = p.ovr
+
+    return p
 
 def update_overall(p):
     """Call this after a rating is changed to update the overall rating.

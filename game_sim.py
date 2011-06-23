@@ -1,4 +1,5 @@
 import math
+import numpy
 import random
 import sqlite3
 
@@ -17,9 +18,9 @@ class Game:
         # What is the attendance of the game?
         games_played, winp, = common.DB_CON.execute('SELECT won+lost, won/(won + lost) FROM team_attributes WHERE season = ? AND (team_id = ? OR team_id = ?)', (common.SEASON, self.team[0].id, self.team[1].id)).fetchone()
         if games_played < 5:
-            self.attendance = random.gauss(22000 + games_played*1000, 1000)
+            self.attendance = numpy.random.normal(22000 + games_played*1000, 1000)
         else:
-            self.attendance = random.gauss(winp*36000, 1000)
+            self.attendance = numpy.random.normal(winp*36000, 1000)
         if self.attendance > 25000:
             self.attendance = 25000
         elif self.attendance < 10000:
@@ -42,11 +43,14 @@ class Game:
         # Starting lineups - FIX THIS
         self.players_on_court = [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]]
 
+        subs_every_n = 5 # How many possessions to wait before doing subs
+
         # Simulate the game
         for self.o in range(2):
             self.d = 0 if self.o==1 else 1
             for i in range(self.num_possessions):
-                self.update_players_on_court(i)
+                if i % subs_every_n == 0:
+                    self.update_players_on_court(subs_every_n)
                 if not self.is_turnover():
                     # Shot if there is no turnover
                     ratios = self.rating_array('shot_ratio', self.o)
@@ -59,17 +63,17 @@ class Game:
     def get_num_possessions(self):
         return 100
 
-    def update_players_on_court(self, possession_num):
+    def update_players_on_court(self, subs_every_n):
         '''
         Update players_on_court, track energy levels, and record the number of
         minutes each player plays. This function is currently VERY SLOW.
         '''
 
-        dt = 48.0/(2*self.num_possessions) # Time elapsed in this possession
+        dt = 48.0/(2*self.num_possessions)*subs_every_n # Time elapsed in this possession
 
         for t in range(2):
             # Overall ratings scaled by fatigue
-            overalls = [self.team[t].player[i].rating['overall'] * self.team[t].player[i].stat['energy'] * random.gauss(1, .04) for i in xrange(len(self.team[t].player_ids))]
+            overalls = [self.team[t].player[i].rating['overall'] * self.team[t].player[i].stat['energy'] * numpy.random.normal(1, .04) for i in xrange(len(self.team[t].player_ids))]
 
             # Loop through players on court (in inverse order of current roster position)
             i = 0
@@ -80,10 +84,10 @@ class Game:
                     if b not in self.players_on_court[t] and self.team[t].player[p].stat['court_time'] > 3 and self.team[t].player[b].stat['bench_time'] > 3 and overalls[b] > overalls[p]:
                         # Substitute player
                         self.players_on_court[t][i] = b
-                        self.team[t].player[b].stat['court_time'] = random.gauss(0, 2)
-                        self.team[t].player[b].stat['bench_time'] = random.gauss(0, 2)
-                        self.team[t].player[p].stat['court_time'] = random.gauss(0, 2)
-                        self.team[t].player[p].stat['bench_time'] = random.gauss(0, 2)
+                        self.team[t].player[b].stat['court_time'] = numpy.random.normal(0, 2)
+                        self.team[t].player[b].stat['bench_time'] = numpy.random.normal(0, 2)
+                        self.team[t].player[p].stat['court_time'] = numpy.random.normal(0, 2)
+                        self.team[t].player[p].stat['bench_time'] = numpy.random.normal(0, 2)
                 i += 1
 
             # Update minutes (overall, court, and bench)
@@ -375,7 +379,7 @@ class Player:
         r = r / (100.0 * len(components))  # 0-1
         r = r * (maxval - minval) + minval  # Min-Max
         # Randomize: Mulitply by a random number from N(1,0.1)
-        r = random.gauss(1, 0.1) * r
+        r = numpy.random.normal(1, 0.1) * r
         return r
 
     def _initialize_stats(self):

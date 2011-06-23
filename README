@@ -39,6 +39,7 @@ Required packages on Ubuntu 11.04 (probably similar on other distros):
 * python-egenix-mxdatetime
 * python-gtk2
 * python-gtkmvc?
+* python-numpy
 * python-webkit
 
 I haven't tried any other platforms, but if you install the packages listed

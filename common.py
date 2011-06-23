@@ -27,6 +27,10 @@ SEASON = 2008
 SALARY_CAP = 60000
 TICKET_PRICE = 45
 
+# SQLAlchemy Session, to be later connected to an engine
+from sqlalchemy.orm import sessionmaker
+Session = sessionmaker()
+
 # These functions are crap and should be replaced eventually
 def treeview_build(treeview, column_info):
     """

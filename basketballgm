@@ -3,6 +3,7 @@
 import gtk
 import os.path
 import sys
+from sqlalchemy.orm import sessionmaker
 
 from views import main_window
 from views import welcome_dialog

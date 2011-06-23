@@ -1,3 +1,4 @@
+import common
 from models import *
 
 import csv
@@ -7,9 +8,8 @@ import random
 import re
 import string
 
-def new_game(progressbar=None, Session=None):
-    session = Session()
-
+def new_game(progressbar=None):
+    session = common.Session()
     # Generate league structure
 
     # Confs and divs
@@ -52,7 +52,6 @@ def new_game(progressbar=None, Session=None):
 
             aging_years = random.randint(0,15)
             players[-1] = develop(players[-1], aging_years)
-            print players[-1]
 
             n_players += 1
     session.add_all(players)

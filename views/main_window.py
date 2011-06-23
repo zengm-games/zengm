@@ -547,11 +547,10 @@ class MainWindow:
         # New database
         engine = create_engine('sqlite://')
         Base.metadata.create_all(engine)
-
-        Session = sessionmaker(bind=engine)
+        common.Session.configure(bind=engine)
 
         # Generate new players
-        libplayer.new_game(self.progressbar_new_game, Session)
+        libplayer.new_game(self.progressbar_new_game)
 
         self.progressbar_new_game.set_fraction(0.95)
         self.progressbar_new_game.set_text('Creating database')

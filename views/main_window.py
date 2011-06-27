@@ -33,6 +33,7 @@ import welcome_dialog
 # Tabs
 import standings_tab
 import finances_tab
+import player_ratings_tab
 
 class MainWindow:
     def on_main_window_delete_event(self, widget, data=None):
@@ -204,6 +205,7 @@ class MainWindow:
 
     # Tab selections
     def on_notebook_select_page(self, widget, page, page_num, data=None):
+        print 'on_notebook_select_page', page_num
         if (page_num == self.pages['standings']):
             if not self.standings.built:
                 self.standings.build()
@@ -215,10 +217,10 @@ class MainWindow:
             if not self.finances.updated:
                 self.finances.update()
         elif (page_num == self.pages['player_ratings']):
-            if not self.built['player_ratings']:
-                self.build_player_ratings()
-            if not self.updated['player_ratings']:
-                self.update_player_ratings()
+            if not self.player_ratings.built:
+                self.player_ratings.build()
+            if not self.player_ratings.updated:
+                self.player_ratings.update()
         elif (page_num == self.pages['player_stats']):
             if not self.built['player_stats']:
                 self.build_player_stats()
@@ -287,20 +289,6 @@ class MainWindow:
         return True
 
     # Pages
-    def build_player_ratings(self):
-        column_info = [['Name', 'Team', 'Age', 'Overall', 'Height', 'Stength', 'Speed', 'Jumping', 'Endurance', 'Inside Scoring', 'Layups', 'Free Throws', 'Two Pointers', 'Three Pointers', 'Blocks', 'Steals', 'Dribbling', 'Passing', 'Rebounding'],
-                       [2,      3,      4,     5,         6,        7,         8,       9,         10,          11,               12,       13,            14,             15,               16,       17,       18,          19,        20],
-                       [True,   True,   True,  True,      True,     True,      True,    True,      True,        True,             True,     True,          True,           True,             True,     True,     True,        True,      True],
-                       [False,  False,  False, False,     False,    False,     False,   False,     False,       False,            False,    False,         False,          False,            False,    False,    False,       False,     False]]
-        common.treeview_build(self.treeview_player_ratings, column_info)
-        self.built['player_ratings'] = True
-
-    def update_player_ratings(self):
-        column_types = [int, int, str, str, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int]
-        query = "SELECT player_attributes.player_id, player_attributes.team_id, player_attributes.name, (SELECT abbreviation FROM team_attributes WHERE team_id = player_attributes.team_id), ROUND((julianday('%s-06-01') - julianday(born_date))/365.25), player_ratings.overall, player_ratings.height, player_ratings.strength, player_ratings.speed, player_ratings.jumping, player_ratings.endurance, player_ratings.shooting_inside, player_ratings.shooting_layups, player_ratings.shooting_free_throws, player_ratings.shooting_two_pointers, player_ratings.shooting_three_pointers, player_ratings.blocks, player_ratings.steals, player_ratings.dribbling, player_ratings.passing, player_ratings.rebounding FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id >= -1" % common.SEASON # team_id >= -1: Don't select draft or retired players
-        common.treeview_update(self.treeview_player_ratings, column_types, query)
-        self.updated['player_ratings'] = True
-
     def build_player_stats(self):
         column_info = [['Name', 'Team', 'GP',  'GS',  'Min', 'FGM', 'FGA', 'FG%', '3PM', '3PA', '3P%', 'FTM', 'FTA', 'FT%', 'Oreb', 'Dreb', 'Reb', 'Ast', 'TO', 'Stl', 'Blk', 'PF', 'PPG'],
                        [2,      3,      4,     5,     6,     7,     8,     9,     10,    11,    12,    13,    14,    15,    16,     17,     18,    19,    20,   21,    22,    23,   24],
@@ -371,6 +359,7 @@ class MainWindow:
         self.updated['playoffs'] = True
 
     def update_current_page(self):
+        print 'update_current_page'
         if self.notebook.get_current_page() == self.pages['standings']:
             if not self.standings.built:
                 self.standings.build()
@@ -380,9 +369,9 @@ class MainWindow:
                 self.finances.build()
             self.finances.update()
         elif self.notebook.get_current_page() == self.pages['player_ratings']:
-            if not self.built['player_ratings']:
-                self.build_player_ratings()
-            self.update_player_ratings()
+            if not self.player_ratings.built:
+                self.player_ratings.build()
+            self.player_ratings.update()
         elif self.notebook.get_current_page() == self.pages['player_stats']:
             if not self.built['player_stats']:
                 self.build_player_stats()
@@ -407,7 +396,8 @@ class MainWindow:
             self.updated[key] = False
         self.standings.updated = False
         self.finances.updated = False
-        # dict(player_ratings=False, player_stats=False, team_stats=False, games_list=False, playoffs=False, player_window_stats=False, player_window_game_log=False)
+        self.player_ratings.updated = False
+        # dict(player_stats=False, team_stats=False, games_list=False, playoffs=False, player_window_stats=False, player_window_game_log=False)
         self.update_current_page()
 
         if hasattr(self, 'rw') and (self.rw.roster_window.flags() & gtk.VISIBLE):
@@ -481,6 +471,9 @@ class MainWindow:
         self.progressbar_new_game.set_text('Done') # Not really, but close
         while gtk.events_pending():
             gtk.main_iteration(False)
+
+        # Update ratings view
+        self.player_ratings.build()
 
         # Make schedule, start season
         self.new_phase(1)
@@ -1292,7 +1285,6 @@ class MainWindow:
         self.notebook = self.builder.get_object('notebook')
         self.statusbar = self.builder.get_object('statusbar')
         self.statusbar_context_id = self.statusbar.get_context_id('Main Window Statusbar')
-        self.treeview_player_ratings = self.builder.get_object('treeview_player_ratings')
         self.treeview_player_stats = self.builder.get_object('treeview_player_stats')
         self.combobox_player_stats_season = self.builder.get_object('combobox_player_stats_season')
         self.combobox_player_stats_team = self.builder.get_object('combobox_player_stats_team')
@@ -1316,9 +1308,9 @@ class MainWindow:
 
         self.pages = dict(standings=0, finances=1, player_ratings=2, player_stats=3, team_stats=4, game_log=5, playoffs=6)
         # Set to True when treeview columns (or whatever) are set up
-        self.built = dict(player_ratings=False, player_stats=False, team_stats=False, games_list=False, playoffs=False, player_window_stats=False, player_window_game_log=False)
+        self.built = dict(player_stats=False, team_stats=False, games_list=False, playoffs=False, player_window_stats=False, player_window_game_log=False)
         # Set to True if data on this pane is current
-        self.updated = dict(player_ratings=False, player_stats=False, team_stats=False, games_list=False, playoffs=False, player_window_stats=False, player_window_game_log=False)
+        self.updated = dict(player_stats=False, team_stats=False, games_list=False, playoffs=False, player_window_stats=False, player_window_game_log=False)
         # Set to true when a change is made
         self.unsaved_changes = False
         # Set to true and games will be stopped after the current day's simulation finishes
@@ -1328,6 +1320,8 @@ class MainWindow:
 
         self.standings = standings_tab.StandingsTab(self)
         self.finances = finances_tab.FinancesTab(self)
+        self.player_ratings = player_ratings_tab.PlayerRatingsTab(self)
+        # dict(player_stats=False, team_stats=False, games_list=False, playoffs=False, player_window_stats=False, player_window_game_log=False)
 
         # Initialize combobox positions
         self.combobox_player_stats_season_active = 0

@@ -10,7 +10,6 @@ import pango
 import random
 import sqlite3
 import shutil
-import locale
 import time
 import webkit
 
@@ -28,9 +27,12 @@ import retired_players_window
 import roster_window
 import player_window
 import season_end_window
-import standings_tab
 import trade_window
 import welcome_dialog
+
+# Tabs
+import standings_tab
+import finances_tab
 
 class MainWindow:
     def on_main_window_delete_event(self, widget, data=None):
@@ -208,10 +210,10 @@ class MainWindow:
             if not self.standings.updated:
                 self.standings.update()
         elif (page_num == self.pages['finances']):
-            if not self.built['finances']:
-                self.build_finances()
-            if not self.updated['finances']:
-                self.update_finances()
+            if not self.finances.built:
+                self.finances.build()
+            if not self.finances.updated:
+                self.finances.update()
         elif (page_num == self.pages['player_ratings']):
             if not self.built['player_ratings']:
                 self.build_player_ratings()
@@ -285,66 +287,6 @@ class MainWindow:
         return True
 
     # Pages
-    def build_finances(self):
-        renderer = gtk.CellRendererText()
-        column = gtk.TreeViewColumn('Team', renderer, text=1)
-        column.set_sort_column_id(1)
-        self.treeview_finances.append_column(column)
-        renderer = gtk.CellRendererText()
-        column = gtk.TreeViewColumn('Avg Attendance', renderer, text=2)
-        column.set_sort_column_id(2)
-        column.set_cell_data_func(renderer,
-            lambda column, cell, model, iter: cell.set_property('text', '%s' % locale.format('%d', model.get_value(iter, 2), True)))
-        self.treeview_finances.append_column(column)
-        renderer = gtk.CellRendererText()
-        column = gtk.TreeViewColumn('Revenue (YTD)', renderer, text=3)
-        column.set_sort_column_id(3)
-        column.set_cell_data_func(renderer,
-            lambda column, cell, model, iter: cell.set_property('text', '%sM' % locale.currency(model.get_value(iter, 3)/1000000.0, True, True)))
-        self.treeview_finances.append_column(column)
-        column = gtk.TreeViewColumn('Profit (YTD)', renderer, text=4)
-        column.set_sort_column_id(4)
-        column.set_cell_data_func(renderer,
-            lambda column, cell, model, iter: cell.set_property('text', '%sM' % locale.currency(model.get_value(iter, 4)/1000000.0, True, True)))
-        self.treeview_finances.append_column(column)
-        column = gtk.TreeViewColumn('Cash', renderer, text=5)
-        column.set_sort_column_id(5)
-        column.set_cell_data_func(renderer,
-            lambda column, cell, model, iter: cell.set_property('text', '%sM' % locale.currency(model.get_value(iter, 5)/1000000.0, True, True)))
-        self.treeview_finances.append_column(column)
-        column = gtk.TreeViewColumn('Payroll', renderer, text=6)
-        column.set_sort_column_id(6)
-        column.set_cell_data_func(renderer,
-            lambda column, cell, model, iter: cell.set_property('text', '%sM' % locale.currency(model.get_value(iter, 6)/1000000.0, True, True)))
-        self.treeview_finances.append_column(column)
-
-        column_types = [int, str, int, int, int, int, int]
-        query = 'SELECT team_id, region || " " || name, 0, 0, 0, cash, (SELECT SUM(contract_amount*1000) FROM player_attributes WHERE player_attributes.team_id = team_attributes.team_id) FROM team_attributes WHERE season = ? ORDER BY region ASC, name ASC'
-        common.treeview_update(self.treeview_finances, column_types, query, (common.SEASON,))
-
-        self.built['finances'] = True
-
-    def update_finances(self):
-        new_values = {}
-        query = 'SELECT ta.team_id, ta.region || " " || ta.name, AVG(ts.attendance), SUM(ts.attendance)*?, SUM(ts.attendance)*? - SUM(ts.cost), ta.cash, (SELECT SUM(contract_amount*1000) FROM player_attributes WHERE player_attributes.team_id = ta.team_id) FROM team_attributes as ta, team_stats as ts WHERE ta.season = ts.season AND ta.season = ? AND ta.team_id = ts.team_id GROUP BY ta.team_id ORDER BY ta.region ASC, ta.name ASC'
-        for row in common.DB_CON.execute(query, (common.TICKET_PRICE, common.TICKET_PRICE, common.SEASON,)):
-            new_values[row[0]] = row[1:]
-
-        model = self.treeview_finances.get_model()
-        for row in model:
-            if new_values.get(row[0], False):
-                i = 1
-                for new_value in new_values[row[0]]:
-                    model[(row[0],)][i] = new_value
-                    i += 1
-            else:
-                # Reset values when starting a new season
-                model[(row[0],)][2] = 0
-                model[(row[0],)][3] = 0
-                model[(row[0],)][4] = 0
-
-        self.updated['finances'] = True
-
     def build_player_ratings(self):
         column_info = [['Name', 'Team', 'Age', 'Overall', 'Height', 'Stength', 'Speed', 'Jumping', 'Endurance', 'Inside Scoring', 'Layups', 'Free Throws', 'Two Pointers', 'Three Pointers', 'Blocks', 'Steals', 'Dribbling', 'Passing', 'Rebounding'],
                        [2,      3,      4,     5,         6,        7,         8,       9,         10,          11,               12,       13,            14,             15,               16,       17,       18,          19,        20],
@@ -434,9 +376,9 @@ class MainWindow:
                 self.standings.build()
             self.standings.update()
         elif self.notebook.get_current_page() == self.pages['finances']:
-            if not self.built['finances']:
-                self.build_finances()
-            self.update_finances()
+            if not self.finances.built:
+                self.finances.build()
+            self.finances.update()
         elif self.notebook.get_current_page() == self.pages['player_ratings']:
             if not self.built['player_ratings']:
                 self.build_player_ratings()
@@ -464,6 +406,8 @@ class MainWindow:
         for key in self.updated.iterkeys():
             self.updated[key] = False
         self.standings.updated = False
+        self.finances.updated = False
+        # dict(player_ratings=False, player_stats=False, team_stats=False, games_list=False, playoffs=False, player_window_stats=False, player_window_game_log=False)
         self.update_current_page()
 
         if hasattr(self, 'rw') and (self.rw.roster_window.flags() & gtk.VISIBLE):
@@ -1221,7 +1165,7 @@ class MainWindow:
             else:
                 self.dd.draft_dialog.show() # Show the window
                 self.dd.draft_dialog.window.show() # Raise the window if it's in the background
-            self.updated['finances'] = False
+            self.finances.updated = False
             self.update_all_pages()
 
         # Offseason - post draft
@@ -1255,7 +1199,7 @@ class MainWindow:
                     cw = contract_window.ContractWindow(self, player_id)
                     cw.contract_window.run()
                     cw.contract_window.destroy()
-            self.updated['finances'] = False
+            self.finances.updated = False
             self.update_all_pages()
 
     def update_play_menu(self, phase):
@@ -1348,7 +1292,6 @@ class MainWindow:
         self.notebook = self.builder.get_object('notebook')
         self.statusbar = self.builder.get_object('statusbar')
         self.statusbar_context_id = self.statusbar.get_context_id('Main Window Statusbar')
-        self.treeview_finances = self.builder.get_object('treeview_finances')
         self.treeview_player_ratings = self.builder.get_object('treeview_player_ratings')
         self.treeview_player_stats = self.builder.get_object('treeview_player_stats')
         self.combobox_player_stats_season = self.builder.get_object('combobox_player_stats_season')
@@ -1373,9 +1316,9 @@ class MainWindow:
 
         self.pages = dict(standings=0, finances=1, player_ratings=2, player_stats=3, team_stats=4, game_log=5, playoffs=6)
         # Set to True when treeview columns (or whatever) are set up
-        self.built = dict(finances=False, player_ratings=False, player_stats=False, team_stats=False, games_list=False, playoffs=False, player_window_stats=False, player_window_game_log=False)
+        self.built = dict(player_ratings=False, player_stats=False, team_stats=False, games_list=False, playoffs=False, player_window_stats=False, player_window_game_log=False)
         # Set to True if data on this pane is current
-        self.updated = dict(finances=False, player_ratings=False, player_stats=False, team_stats=False, games_list=False, playoffs=False, player_window_stats=False, player_window_game_log=False)
+        self.updated = dict(player_ratings=False, player_stats=False, team_stats=False, games_list=False, playoffs=False, player_window_stats=False, player_window_game_log=False)
         # Set to true when a change is made
         self.unsaved_changes = False
         # Set to true and games will be stopped after the current day's simulation finishes
@@ -1384,6 +1327,7 @@ class MainWindow:
         self.games_in_progress = False
 
         self.standings = standings_tab.StandingsTab(self)
+        self.finances = finances_tab.FinancesTab(self)
 
         # Initialize combobox positions
         self.combobox_player_stats_season_active = 0

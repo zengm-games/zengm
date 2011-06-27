@@ -1,5 +1,4 @@
 import gtk
-import mx.DateTime
 import sqlite3
 
 import common
@@ -24,7 +23,6 @@ class StandingsTab:
             pass
         self.table_standings = gtk.Table(max_divisions_in_conference, num_conferences)
         self.scrolledwindow_standings = self.builder.get_object('scrolledwindow_standings')
-        print self.scrolledwindow_standings
         self.scrolledwindow_standings.add_with_viewport(self.table_standings)
 
         self.treeview_standings = {} # This will contain treeviews for each conference

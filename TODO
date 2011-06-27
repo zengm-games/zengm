@@ -3,12 +3,25 @@ REFACTORING
 2. SQLAlchemy
 3. Some kind of HTML template engine for the Webkit stuff
 
+Separate files
+- Each window/dialog/tab gets its own glade file and own .py file in views folder
+- Start with tabs. Do each like standings tab, then delete notebook contents from glade file
+
 Prettier UI: embed Webkit
 - http://www.aclevername.com/articles/python-webgui/
 - first try for box score
+  - how to make HTML links do external stuff
+- then for standings
+- then status/summary toolbar/sidebar
+  - team
+  - record
+  - standings
+  - finances: annual profit/loss, total cash/debt
+  - history: total record, playoffs, championships, all star appearances, hall of fame selections
+- Use theme settings for fonts and colors
 
 numpy rand
-- speed increase?
+- make this optional
 
 when negotiating, players change values too much when you try to change years
 when you press close and the save/nosave/cancel dialog comes up, it should warn you about the save if you press save
@@ -60,7 +73,6 @@ luxury tax: (team_salary - 65mil) penalty if team salary is > 65mil
 BACKEND
 -------
 archive stats as averages - this will make the end of season awards feasible, and make the stats view faster/easier
-pyprocessing to parallelize game simulation - pyprocessing will be in python 2.6 as muiltiprocessing
 uncertainty in rating - for each player, calculate a randn(0, 3) with max/min of +/- 5
     calculate a new one each year and add it to 1/2 of the previous one
 teams should be smart in resigning players (now it's just random)

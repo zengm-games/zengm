@@ -28,6 +28,7 @@ import retired_players_window
 import roster_window
 import player_window
 import season_end_window
+import standings_tab
 import trade_window
 import welcome_dialog
 
@@ -202,10 +203,10 @@ class MainWindow:
     # Tab selections
     def on_notebook_select_page(self, widget, page, page_num, data=None):
         if (page_num == self.pages['standings']):
-            if not self.built['standings']:
-                self.build_standings()
-            if not self.updated['standings']:
-                self.update_standings()
+            if not self.standings.built:
+                self.standings.build()
+            if not self.standings.updated:
+                self.standings.update()
         elif (page_num == self.pages['finances']):
             if not self.built['finances']:
                 self.build_finances()
@@ -236,12 +237,6 @@ class MainWindow:
                 self.update_playoffs()
 
     # Events in the main notebook
-    def on_combobox_standings_changed(self, combobox, data=None):
-        old = self.combobox_standings_active
-        self.combobox_standings_active = combobox.get_active()
-        if self.combobox_standings_active != old:
-            self.update_standings()
-
     def on_combobox_player_stats_season_changed(self, combobox, data=None):
         old = self.combobox_player_stats_season_active
         self.combobox_player_stats_season_active = combobox.get_active()
@@ -290,46 +285,6 @@ class MainWindow:
         return True
 
     # Pages
-    def build_standings(self):
-        max_divisions_in_conference, num_conferences = common.DB_CON.execute('SELECT (SELECT COUNT(*) FROM league_divisions GROUP BY conference_id ORDER BY COUNT(*) LIMIT 1), COUNT(*) FROM league_conferences').fetchone()
-        try:
-            self.table_standings.destroy() # Destroy table if it already exists... this will be called after starting a new game from the menu
-        except:
-            pass
-        self.table_standings = gtk.Table(max_divisions_in_conference, num_conferences)
-        self.scrolledwindow_standings = self.builder.get_object('scrolledwindow_standings')
-        self.scrolledwindow_standings.add_with_viewport(self.table_standings)
-
-        self.treeview_standings = {} # This will contain treeviews for each conference
-        conference_id = -1
-        for row in common.DB_CON.execute('SELECT division_id, conference_id, name FROM league_divisions'):
-            if conference_id != row[1]:
-                row_top = 0
-                conference_id = row[1]
-
-            self.treeview_standings[row[0]] = gtk.TreeView()
-            self.table_standings.attach(self.treeview_standings[row[0]], conference_id, conference_id + 1, row_top, row_top + 1)
-            column_info = [[row[2], 'Won', 'Lost', 'Pct', 'Div', 'Conf'],
-                           [0,      1,     2,      3,     4,     5],
-                           [False,  False, False,  False, False, False],
-                           [False,  False, False,  True,  False, False]]
-            common.treeview_build(self.treeview_standings[row[0]], column_info)
-            self.treeview_standings[row[0]].show()
-
-            row_top += 1
-
-        self.table_standings.show()
-        self.built['standings'] = True
-
-    def update_standings(self):
-        season = self.make_season_combobox(self.combobox_standings, self.combobox_standings_active)
-
-        for row in common.DB_CON.execute('SELECT division_id FROM league_divisions'):
-            column_types = [str, int, int, float, str, str]
-            query = 'SELECT region || " "  || name, won, lost, 100*won/(won + lost), won_div || "-" || lost_div, won_conf || "-" || lost_conf FROM team_attributes WHERE season = ? AND division_id = ? ORDER BY won/(won + lost) DESC'
-            common.treeview_update(self.treeview_standings[row[0]], column_types, query, (season, row[0]))
-        self.updated['standings'] = True
-
     def build_finances(self):
         renderer = gtk.CellRendererText()
         column = gtk.TreeViewColumn('Team', renderer, text=1)
@@ -475,9 +430,9 @@ class MainWindow:
 
     def update_current_page(self):
         if self.notebook.get_current_page() == self.pages['standings']:
-            if not self.built['standings']:
-                self.build_standings()
-            self.update_standings()
+            if not self.standings.built:
+                self.standings.build()
+            self.standings.update()
         elif self.notebook.get_current_page() == self.pages['finances']:
             if not self.built['finances']:
                 self.build_finances()
@@ -508,6 +463,7 @@ class MainWindow:
         '''
         for key in self.updated.iterkeys():
             self.updated[key] = False
+        self.standings.updated = False
         self.update_current_page()
 
         if hasattr(self, 'rw') and (self.rw.roster_window.flags() & gtk.VISIBLE):
@@ -589,7 +545,7 @@ class MainWindow:
         self.roster_auto_sort(common.PLAYER_TEAM_ID)
 
         # Make standings treeviews based on league_* tables
-        self.build_standings()
+        self.standings.build()
 
         self.update_all_pages()
 
@@ -832,7 +788,7 @@ class MainWindow:
         self.update_play_menu(self.phase)
 
         # Make sure we are looking at this year's standings, stats, and games after playing some games
-        self.combobox_standings_active = 0
+        self.standings.combobox_active = 0
         self.combobox_player_stats_season_active = 0
         self.combobox_player_stats_team_active = common.PLAYER_TEAM_ID
         self.combobox_team_stats_season_active = 0
@@ -1392,8 +1348,6 @@ class MainWindow:
         self.notebook = self.builder.get_object('notebook')
         self.statusbar = self.builder.get_object('statusbar')
         self.statusbar_context_id = self.statusbar.get_context_id('Main Window Statusbar')
-        self.scrolledwindow_standings = self.builder.get_object('scrolledwindow_standings')
-        self.combobox_standings = self.builder.get_object('combobox_standings')
         self.treeview_finances = self.builder.get_object('treeview_finances')
         self.treeview_player_ratings = self.builder.get_object('treeview_player_ratings')
         self.treeview_player_stats = self.builder.get_object('treeview_player_stats')
@@ -1419,9 +1373,9 @@ class MainWindow:
 
         self.pages = dict(standings=0, finances=1, player_ratings=2, player_stats=3, team_stats=4, game_log=5, playoffs=6)
         # Set to True when treeview columns (or whatever) are set up
-        self.built = dict(standings=False, finances=False, player_ratings=False, player_stats=False, team_stats=False, games_list=False, playoffs=False, player_window_stats=False, player_window_game_log=False)
+        self.built = dict(finances=False, player_ratings=False, player_stats=False, team_stats=False, games_list=False, playoffs=False, player_window_stats=False, player_window_game_log=False)
         # Set to True if data on this pane is current
-        self.updated = dict(standings=False, finances=False, player_ratings=False, player_stats=False, team_stats=False, games_list=False, playoffs=False, player_window_stats=False, player_window_game_log=False)
+        self.updated = dict(finances=False, player_ratings=False, player_stats=False, team_stats=False, games_list=False, playoffs=False, player_window_stats=False, player_window_game_log=False)
         # Set to true when a change is made
         self.unsaved_changes = False
         # Set to true and games will be stopped after the current day's simulation finishes
@@ -1429,8 +1383,9 @@ class MainWindow:
         # True when games are being played
         self.games_in_progress = False
 
+        self.standings = standings_tab.StandingsTab(self)
+
         # Initialize combobox positions
-        self.combobox_standings_active = 0
         self.combobox_player_stats_season_active = 0
         self.combobox_player_stats_team_active = common.PLAYER_TEAM_ID
         self.combobox_team_stats_season_active = 0

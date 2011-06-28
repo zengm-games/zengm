@@ -21,6 +21,9 @@ class PlayerStatsTab:
         if self.combobox_team_active != old:
             self.update()
 
+    def on_treeview_player_row_activated(self, treeview, path, view_column, data=None):
+        self.mw.on_treeview_player_row_activated(self, treeview, path, view_column, data)
+
     def build(self):
         print 'build player stats'
         column_info = [['Name', 'Team', 'GP',  'GS',  'Min', 'FGM', 'FGA', 'FG%', '3PM', '3PA', '3P%', 'FTM', 'FTA', 'FT%', 'Oreb', 'Dreb', 'Reb', 'Ast', 'TO', 'Stl', 'Blk', 'PF', 'PPG'],

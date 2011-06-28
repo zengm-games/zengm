@@ -7,6 +7,10 @@ class PlayerRatingsTab:
     updated = False
     built = False
 
+    def sss(self, treeview, path, view_column, data=None):
+        print 'HIII'
+        self.mw.on_treeview_player_row_activated(self, treeview, path, view_column, data)
+
     def build(self):
         print 'build player ratings'
         column_info = [['Name', 'Team', 'Age', 'Overall', 'Height', 'Stength', 'Speed', 'Jumping', 'Endurance', 'Inside Scoring', 'Layups', 'Free Throws', 'Two Pointers', 'Three Pointers', 'Blocks', 'Steals', 'Dribbling', 'Passing', 'Rebounding'],

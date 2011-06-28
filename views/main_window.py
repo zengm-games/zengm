@@ -374,24 +374,6 @@ class MainWindow:
         while gtk.events_pending():
             gtk.main_iteration(False)
 
-        # Build tabs
-        if not self.standings.built:
-            self.standings.build()
-        if not self.finances.built:
-            self.finances.build()
-        if not self.player_ratings.built:
-            self.player_ratings.build()
-        if not self.player_stats.built:
-            self.player_stats.build()
-        print self.team_stats.built
-        if not self.team_stats.built:
-            self.team_stats.build()
-        if not self.game_log.built:
-            self.game_log.build()
-        if not self.playoffs.built:
-            self.playoffs.build()
-
-
         # Make schedule, start season
         self.new_phase(1)
 
@@ -485,6 +467,23 @@ class MainWindow:
         common.PLAYER_TEAM_ID = row[0]
         common.SEASON = row[1]
         self.phase = row[2]
+
+        # Now that the database is set, we can build the tabs
+        if not self.standings.built:
+            self.standings.build()
+        if not self.finances.built:
+            self.finances.build()
+        if not self.player_ratings.built:
+            self.player_ratings.build()
+        if not self.player_stats.built:
+            self.player_stats.build()
+        print self.team_stats.built
+        if not self.team_stats.built:
+            self.team_stats.build()
+        if not self.game_log.built:
+            self.game_log.build()
+        if not self.playoffs.built:
+            self.playoffs.build()
 
         if team_id == -1:
             # Opening a saved game

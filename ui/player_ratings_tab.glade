@@ -12,6 +12,7 @@
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="search_column">2</property>
+        <signal name="row-activated" handler="on_treeview_player_ratings_row_activated" swapped="no"/>
       </object>
     </child>
   </object>

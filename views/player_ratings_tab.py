@@ -7,9 +7,8 @@ class PlayerRatingsTab:
     updated = False
     built = False
 
-    def sss(self, treeview, path, view_column, data=None):
-        print 'HIII'
-        self.mw.on_treeview_player_row_activated(self, treeview, path, view_column, data)
+    def on_treeview_player_ratings_row_activated(self, treeview, path, view_column, data=None):
+        self.mw.on_treeview_player_row_activated(treeview, path, view_column, data)
 
     def build(self):
         print 'build player ratings'

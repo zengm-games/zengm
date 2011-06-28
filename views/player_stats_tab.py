@@ -21,8 +21,8 @@ class PlayerStatsTab:
         if self.combobox_team_active != old:
             self.update()
 
-    def on_treeview_player_row_activated(self, treeview, path, view_column, data=None):
-        self.mw.on_treeview_player_row_activated(self, treeview, path, view_column, data)
+    def on_treeview_player_stats_row_activated(self, treeview, path, view_column, data=None):
+        self.mw.on_treeview_player_row_activated(treeview, path, view_column, data)
 
     def build(self):
         print 'build player stats'

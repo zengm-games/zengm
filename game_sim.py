@@ -356,7 +356,7 @@ class Player:
         self.composite_rating['shot_ratio'] = self._composite(0, 0.5, ['shooting_inside', 'shooting_layups', 'shooting_two_pointers', 'shooting_three_pointers'])
         self.composite_rating['assist_ratio'] = self._composite(0, 0.5, ['dribbling', 'passing', 'speed'])
         self.composite_rating['turnover_ratio'] = self._composite(0, 0.5, ['dribbling', 'passing', 'speed'], True)
-        self.composite_rating['field_goal_percentage'] = self._composite(0.3, 0.6, ['height', 'jumping', 'shooting_inside', 'shooting_layups', 'shooting_two_pointers', 'shooting_three_pointers'])
+        self.composite_rating['field_goal_percentage'] = self._composite(0.45, 0.75, ['height', 'jumping', 'shooting_inside', 'shooting_layups', 'shooting_two_pointers', 'shooting_three_pointers'])
         self.composite_rating['free_throw_percentage'] = self._composite(0.4, 1, ['shooting_free_throws'])
         self.composite_rating['three_pointer_percentage'] = self._composite(0, 0.45, ['shooting_three_pointers'])
         self.composite_rating['rebound_ratio'] = self._composite(0, 0.5, ['height', 'strength', 'jumping', 'rebounding'])
@@ -366,7 +366,8 @@ class Player:
         self.composite_rating['defense'] = self._composite(0, 0.5, ['speed'])
 
     def _composite(self, minval, maxval, components, inverse=False):
-        r = 0
+        r = 0.0
+        rmax = 0.0
         if inverse:
             sign = -1
             add = -100
@@ -375,8 +376,10 @@ class Player:
             add = 0
         for component in components:
             r = r + sign * (add + self.rating[component])
+            rmax = rmax + sign * (add + 100)
         # Scale from minval to maxval
         r = r / (100.0 * len(components))  # 0-1
+#        r = r / (rmax * len(components))  # 0-1
         r = r * (maxval - minval) + minval  # Min-Max
         # Randomize: Mulitply by a random number from N(1,0.1)
         r = numpy.random.normal(1, 0.1) * r

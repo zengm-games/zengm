@@ -37,8 +37,8 @@ Required packages on Ubuntu 11.04 (probably similar on other distros):
 * libsqlite3-0
 * python >= 2.5
 * python-egenix-mxdatetime
+* python-jinja2
 * python-gtk2
-* python-gtkmvc?
 * python-numpy
 * python-webkit
 

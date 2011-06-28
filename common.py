@@ -10,9 +10,10 @@ SRC_FOLDER = os.path.dirname(os.path.abspath(__file__))
 
 # basketball_gm.xml should be in the same folder as this file
 # GTKBUILDER_PATH = os.path.join(SRC_FOLDER, 'basketball_gm.xml');
-GTKBUILDER_PATH = os.path.join(SRC_FOLDER, 'ui/basketballgm.glade');
+GTKBUILDER_PATH = os.path.join(SRC_FOLDER, 'ui', 'basketballgm.glade');
 
 DATA_FOLDER = os.path.join(SRC_FOLDER, 'data')
+TEMPLATES_FOLDER = os.path.join(SRC_FOLDER, 'ui', 'templates')
 SAVES_FOLDER = os.path.expanduser('~/.basketball-gm')
 DB_TEMP_FILENAME = os.path.join(SAVES_FOLDER, 'temp.sqlite')
 DB_FILENAME = os.path.join(SAVES_FOLDER, 'temp.sqlite')

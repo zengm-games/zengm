@@ -11,6 +11,8 @@ Prettier UI: embed Webkit
 - http://www.aclevername.com/articles/python-webgui/
 - first try for box score
   - how to make HTML links do external stuff
+  - total rebounds
+  - starters/bench distinction {% if forloop.counter == 5 %} separator{% endif %}
 - then for standings
 - then status/summary toolbar/sidebar
   - team
@@ -90,7 +92,7 @@ opponent GM trade AI based on their team's status: contending or rebuilding
 change prices of tickets, concessions, etc
 hire coaches to influence development
 different sized cities with differently passionate fanbases - affects attendance and home court advantage
-playoffs
 multi-team trades... how can i make a good UI for that?
 advanced stats (+/-, PER, etc)
 punishment for going in debt: if cash is less than $10M, can't sign any new contracts
+advisors

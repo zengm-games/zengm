@@ -43,12 +43,11 @@ class StandingsTab:
 
             row_top += 1
 
-#        self.mw.notebook.remove_page(self.mw.pages['standings'])
-        self.mw.notebook.insert_page(self.vbox4, gtk.Label('Standings'), self.mw.pages['standings'])
+        self.mw.hbox1.pack_start(self.vbox4) # When I had all the tabs added dynamically, the switch-notes signal went crazy. So I have the first one added like this.
+#        self.mw.notebook.insert_page(self.vbox4, gtk.Label('Standings'), self.mw.pages['standings'])
 
         self.table_standings.show()
         self.built = True
-#        self.vbox4.show_all()
 
     def update(self):
         print 'update standings'
@@ -73,5 +72,4 @@ class StandingsTab:
         self.builder.connect_signals(self)
 
 #        self.build()
-#        self.update()
 

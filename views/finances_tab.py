@@ -46,7 +46,7 @@ class FinancesTab:
         query = 'SELECT team_id, region || " " || name, 0, 0, 0, cash, (SELECT SUM(contract_amount*1000) FROM player_attributes WHERE player_attributes.team_id = team_attributes.team_id) FROM team_attributes WHERE season = ? ORDER BY region ASC, name ASC'
         common.treeview_update(self.treeview_finances, column_types, query, (common.SEASON,))
 
-        self.mw.notebook.insert_page(self.vbox9, gtk.Label('Finances2'), self.mw.pages['finances'])
+        self.mw.notebook.insert_page(self.vbox9, gtk.Label('Finances'), self.mw.pages['finances'])
 
         self.built = True
 
@@ -84,5 +84,4 @@ class FinancesTab:
         self.builder.connect_signals(self)
 
 #        self.build()
-#        self.update()
 

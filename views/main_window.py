@@ -36,9 +36,8 @@ import finances_tab
 import player_ratings_tab
 import player_stats_tab
 import team_stats_tab
-
+import game_log_tab
 import playoffs_tab
-# dict(games_list=False, player_window_stats=False, player_window_game_log=False)
 
 class MainWindow:
     def on_main_window_delete_event(self, widget, data=None):
@@ -209,8 +208,8 @@ class MainWindow:
         return True
 
     # Tab selections
-    def on_notebook_select_page(self, widget, page, page_num, data=None):
-        print 'on_notebook_select_page', page_num
+    def on_notebook_switch_page(self, widget, page, page_num, data=None):
+        print 'on_notebook_switch_page', page_num
         if (page_num == self.pages['standings']):
             if not self.standings.built:
                 self.standings.build()
@@ -237,27 +236,15 @@ class MainWindow:
             if not self.team_stats.updated:
                 self.team_stats.update()
         elif (page_num == self.pages['game_log']):
-            if not self.built['games_list']:
-                self.build_games_list()
-            if not self.updated['games_list']:
-                self.update_games_list()
+            if not self.game_log.built:
+                self.game_log.build()
+            if not self.game_log.updated:
+                self.game_log.update()
         elif (page_num == self.pages['playoffs']):
             if not self.playoffs.updated:
                 self.playoffs.update()
 
     # Events in the main notebook
-    def on_combobox_game_log_season_changed(self, combobox, data=None):
-        old = self.combobox_game_log_season_active
-        self.combobox_game_log_season_active = combobox.get_active()
-        if self.combobox_game_log_season_active != old:
-            self.update_games_list()
-
-    def on_combobox_game_log_team_changed(self, combobox, data=None):
-        old = self.combobox_game_log_team_active
-        self.combobox_game_log_team_active = combobox.get_active()
-        if self.combobox_game_log_team_active != old:
-            self.update_games_list()
-
     def on_treeview_player_row_activated(self, treeview, path, view_column, data=None):
         '''
         Called from any player row in a treeview to open the player info window
@@ -269,48 +256,21 @@ class MainWindow:
         self.pw.update_player(player_id)
         return True
 
-    def on_treeview_games_list_cursor_changed(self, treeview, data=None):
-        (treemodel, treeiter) = treeview.get_selection().get_selected()
-        game_id = treemodel.get_value(treeiter, 0)
-        self.browser_box_score.load_string(self.box_score(game_id), 'text/html', 'utf8', 'file://')
-        return True
-
     # Pages
-    def build_games_list(self):
-        column_info = [['Opponent', 'W/L', 'Score'],
-                       [1,          2,     3],
-                       [True,       True,  False],
-                       [False,      False, False]]
-        common.treeview_build(self.treeview_games_list, column_info)
-        self.built['games_list'] = True
-
-    def update_games_list(self):
-        season = self.make_season_combobox(self.combobox_game_log_season, self.combobox_game_log_season_active)
-        team_id = self.make_team_combobox(self.combobox_game_log_team, self.combobox_game_log_team_active, season, False)
-
-        column_types = [int, str, str, str]
-        query = 'SELECT game_id, (SELECT abbreviation FROM team_attributes WHERE team_id = team_stats.opponent_team_id), (SELECT val FROM enum_w_l WHERE key = team_stats.won), points || "-" || opponent_points FROM team_stats WHERE team_id = ? AND season = ?'
-        query_bindings = (team_id, season)
-        common.treeview_update(self.treeview_games_list, column_types, query, query_bindings)
-        self.updated['games_list'] = True
-
     def update_current_page(self):
         print 'update_current_page'
         if self.notebook.get_current_page() == self.pages['standings']:
             if not self.standings.built:
                 self.standings.build()
-            if not self.standings.updated:
-                self.standings.update()
+            self.standings.update()
         elif self.notebook.get_current_page() == self.pages['finances']:
             if not self.finances.built:
                 self.finances.build()
-            if not self.finances.updated:
-                self.finances.update()
+            self.finances.update()
         elif self.notebook.get_current_page() == self.pages['player_ratings']:
             if not self.player_ratings.built:
                 self.player_ratings.build()
-            if not self.player_ratings.updated:
-                self.player_ratings.update()
+            self.player_ratings.update()
         elif self.notebook.get_current_page() == self.pages['player_stats']:
             if not self.player_stats.built:
                 self.player_stats.build()
@@ -319,15 +279,13 @@ class MainWindow:
         elif self.notebook.get_current_page() == self.pages['team_stats']:
             if not self.team_stats.built:
                 self.team_stats.build()
-            if not self.team_stats.updated:
-                self.team_stats.update()
+            self.team_stats.update()
         elif self.notebook.get_current_page() == self.pages['game_log']:
-            if not self.built['games_list']:
-                self.build_games_list()
-            self.update_games_list()
+            if not self.game_log.built:
+                self.game_log.build()
+            self.game_log.update()
         elif self.notebook.get_current_page() == self.pages['playoffs']:
-            if not self.playoffs.updated:
-                self.playoffs.update()
+            self.playoffs.update()
 
     def update_all_pages(self):
         '''
@@ -340,9 +298,8 @@ class MainWindow:
         self.player_ratings.updated = False
         self.player_stats.updated = False
         self.team_stats.updated = False
-
+        self.game_log.updated = False
         self.playoffs.updated = False
-        # dict(games_list=False, player_window_stats=False, player_window_game_log=False)
         self.update_current_page()
 
         if hasattr(self, 'rw') and (self.rw.roster_window.flags() & gtk.VISIBLE):
@@ -417,7 +374,11 @@ class MainWindow:
         while gtk.events_pending():
             gtk.main_iteration(False)
 
-        # Build tabs DELETE THIS CRAp
+        # Build tabs
+        if not self.standings.built:
+            self.standings.build()
+        if not self.finances.built:
+            self.finances.build()
         if not self.player_ratings.built:
             self.player_ratings.build()
         if not self.player_stats.built:
@@ -425,7 +386,11 @@ class MainWindow:
         print self.team_stats.built
         if not self.team_stats.built:
             self.team_stats.build()
-        # dict(games_list=False, playoffs=False, player_window_stats=False, player_window_game_log=False)
+        if not self.game_log.built:
+            self.game_log.build()
+        if not self.playoffs.built:
+            self.playoffs.build()
+
 
         # Make schedule, start season
         self.new_phase(1)
@@ -434,7 +399,7 @@ class MainWindow:
         self.roster_auto_sort(common.PLAYER_TEAM_ID)
 
         # Make standings treeviews based on league_* tables
-        self.standings.build()
+#        self.standings.build()
 
         self.update_all_pages()
 
@@ -681,8 +646,8 @@ class MainWindow:
         self.player_stats.combobox_season_active = 0
         self.player_stats.combobox_team_active = common.PLAYER_TEAM_ID
         self.team_stats.combobox_season_active = 0
-        self.combobox_game_log_season_active = 0
-        self.combobox_game_log_team_active = common.PLAYER_TEAM_ID
+        self.game_log.combobox_season_active = 0
+        self.game_log.combobox_team_active = common.PLAYER_TEAM_ID
 
         season_over = False
         if self.phase == 3:
@@ -1187,36 +1152,6 @@ class MainWindow:
         for i in range(len(self.menuitem_play)):
             self.menuitem_play[i].set_sensitive(show_menus[i])
 
-    def box_score(self, game_id):
-        format = '%-23s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s%-7s<br />'
-        box = ''
-        t = 0
-        common.DB_CON.row_factory = sqlite3.Row
-
-        for row in common.DB_CON.execute('SELECT team_id FROM team_stats WHERE game_id = ?', (game_id,)):
-            team_id = row[0]
-            row2 = common.DB_CON.execute('SELECT region || " " || name FROM team_attributes WHERE team_id = ?', (team_id,)).fetchone()
-            team_name_long = row2[0]
-            dashes = ''
-            for i in range(len(team_name_long)):
-                dashes += '-'
-            box += team_name_long + '<br />' + dashes + '<br />'
-
-            box += format % ('Name', 'Pos', 'Min', 'FG', '3Pt', 'FT', 'Off', 'Reb', 'Ast', 'TO', 'Stl', 'Blk', 'PF', 'Pts')
-
-            for player_stats in common.DB_CON.execute('SELECT player_attributes.name, player_attributes.position, player_stats.minutes, player_stats.field_goals_made, player_stats.field_goals_attempted, player_stats.three_pointers_made, player_stats.three_pointers_attempted, player_stats.free_throws_made, player_stats.free_throws_attempted, player_stats.offensive_rebounds, player_stats.defensive_rebounds, player_stats.assists, player_stats.turnovers, player_stats.steals, player_stats.blocks, player_stats.personal_fouls, player_stats.points FROM player_attributes, player_stats WHERE player_attributes.player_id = player_stats.player_id AND player_stats.game_id = ? AND player_attributes.team_id = ? ORDER BY player_stats.starter DESC, player_stats.minutes DESC', (game_id, team_id)):
-                rebounds = player_stats['offensive_rebounds'] + player_stats['defensive_rebounds']
-                box += format % (player_stats['name'], player_stats['position'], player_stats['minutes'], '%s-%s' % (player_stats['field_goals_made'], player_stats['field_goals_attempted']), '%s-%s' % (player_stats['three_pointers_made'], player_stats['three_pointers_attempted']), '%s-%s' % (player_stats['free_throws_made'], player_stats['free_throws_attempted']), player_stats['offensive_rebounds'], rebounds, player_stats['assists'], player_stats['turnovers'], player_stats['steals'], player_stats['blocks'], player_stats['personal_fouls'], player_stats['points'])
-            team_stats = common.DB_CON.execute('SELECT *  FROM team_stats WHERE game_id = ? AND team_id = ?', (game_id, team_id)).fetchone()
-            rebounds = team_stats['offensive_rebounds'] + team_stats['defensive_rebounds']
-            box += format % ('Total', '', team_stats['minutes'], '%s-%s' % (team_stats['field_goals_made'], team_stats['field_goals_attempted']), '%s-%s' % (team_stats['three_pointers_made'], team_stats['three_pointers_attempted']), '%s-%s' % (team_stats['free_throws_made'], team_stats['free_throws_attempted']), team_stats['offensive_rebounds'], rebounds, team_stats['assists'], team_stats['turnovers'], team_stats['steals'], team_stats['blocks'], team_stats['personal_fouls'], team_stats['points'])
-            if (t==0):
-                box += '<br />'
-            t += 1
-
-        common.DB_CON.row_factory = None
-
-        return box
 
     def __init__(self):
         self.builder = gtk.Builder()
@@ -1235,24 +1170,16 @@ class MainWindow:
         self.menuitem_play.append(self.builder.get_object('menuitem_until_preseason'))
         self.menuitem_play.append(self.builder.get_object('menuitem_until_regular_season'))
         self.notebook = self.builder.get_object('notebook')
+        self.hbox1 = self.builder.get_object('hbox1')
         self.statusbar = self.builder.get_object('statusbar')
         self.statusbar_context_id = self.statusbar.get_context_id('Main Window Statusbar')
-        self.treeview_games_list = self.builder.get_object('treeview_games_list')
-        self.combobox_game_log_season = self.builder.get_object('combobox_game_log_season')
-        self.combobox_game_log_team = self.builder.get_object('combobox_game_log_team')
-        self.scrolledwindow_box_score = self.builder.get_object('scrolledwindow_box_score')
-        self.textview_box_score = self.builder.get_object('textview_box_score')
-        self.textview_box_score.modify_font(pango.FontDescription("Monospace 8"))
-        self.browser_box_score = webkit.WebView()
-        self.scrolledwindow_box_score.remove(self.textview_box_score)
-        self.scrolledwindow_box_score.add(self.browser_box_score)
-        self.browser_box_score.show()
+
 
         self.pages = dict(standings=0, finances=1, player_ratings=2, player_stats=3, team_stats=4, game_log=5, playoffs=6)
         # Set to True when treeview columns (or whatever) are set up
-        self.built = dict(games_list=False, playoffs=False, player_window_stats=False, player_window_game_log=False)
+        self.built = dict(player_window_stats=False, player_window_game_log=False)
         # Set to True if data on this pane is current
-        self.updated = dict(games_list=False, playoffs=False, player_window_stats=False, player_window_game_log=False)
+        self.updated = dict(player_window_stats=False, player_window_game_log=False)
         # Set to true when a change is made
         self.unsaved_changes = False
         # Set to true and games will be stopped after the current day's simulation finishes
@@ -1260,14 +1187,14 @@ class MainWindow:
         # True when games are being played
         self.games_in_progress = False
 
+        # Load tabs
         self.standings = standings_tab.StandingsTab(self)
         self.finances = finances_tab.FinancesTab(self)
         self.player_ratings = player_ratings_tab.PlayerRatingsTab(self)
         self.player_stats = player_stats_tab.PlayerStatsTab(self)
         self.team_stats = team_stats_tab.TeamStatsTab(self)
-
+        self.game_log = game_log_tab.GameLogTab(self)
         self.playoffs = playoffs_tab.PlayoffsTab(self)
-        # dict(games_list=False, player_window_stats=False, player_window_game_log=False)
 
         # Initialize combobox positions
         self.combobox_game_log_season_active = 0

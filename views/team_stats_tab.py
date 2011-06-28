@@ -22,7 +22,7 @@ class TeamStatsTab:
                        [False,  False, False, False, True,  True,  True,  True,  True,  True,  True,  True,  True,  True,  True,    True,  True,  True, True,  True,  True, True,  True]]
         common.treeview_build(self.treeview_team_stats, column_info)
 
-        self.mw.notebook.insert_page(self.vbox7, gtk.Label('Team Stats2'), self.mw.pages['team_stats'])
+        self.mw.notebook.insert_page(self.vbox7, gtk.Label('Team Stats'), self.mw.pages['team_stats'])
 
         self.built = True
 
@@ -49,5 +49,4 @@ class TeamStatsTab:
         self.builder.connect_signals(self)
 
 #        self.build()
-#        self.update()
 

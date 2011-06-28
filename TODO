@@ -7,7 +7,7 @@ Separate files
 - Each window/dialog/tab gets its own glade file and own .py file in views folder
 - Start with tabs. Do each like standings tab, then delete notebook contents from glade file
 - initial build in each constructor DELETE THIS CRAP
-- 
+- double click to open player info window
 
 Prettier UI: embed Webkit
 - http://www.aclevername.com/articles/python-webgui/

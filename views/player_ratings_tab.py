@@ -19,7 +19,7 @@ class PlayerRatingsTab:
                        [False,  False,  False, False,     False,    False,     False,   False,     False,       False,            False,    False,         False,          False,            False,    False,    False,       False,     False]]
         common.treeview_build(self.treeview_player_ratings, column_info)
 
-        self.mw.notebook.insert_page(self.scrolledwindow8, gtk.Label('Player Ratings2'), self.mw.pages['player_ratings'])
+        self.mw.notebook.insert_page(self.scrolledwindow8, gtk.Label('Player Ratings'), self.mw.pages['player_ratings'])
 
         self.built = True
 
@@ -42,5 +42,4 @@ class PlayerRatingsTab:
         self.builder.connect_signals(self)
 
 #        self.build()
-#        self.update()
 

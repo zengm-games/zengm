@@ -5,11 +5,14 @@ import common
 
 class PlayoffsTab:
     updated = False
+    built = False
 
     def build(self):
         print 'build playoffs'
 
-        self.mw.notebook.insert_page(self.table8, gtk.Label('Playoffs2'), self.mw.pages['playoffs'])
+        self.mw.notebook.insert_page(self.table8, gtk.Label('Playoffs'), self.mw.pages['playoffs'])
+
+        self.built = True
 
     def update(self):
         print 'update playoffs'
@@ -40,6 +43,6 @@ class PlayoffsTab:
 
         self.builder.connect_signals(self)
 
-        self.build()
+#        self.build()
 #        self.update()
 

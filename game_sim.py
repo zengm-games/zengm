@@ -12,7 +12,7 @@ class Game:
         self.team.append(Team(t2))
         self.is_playoffs = is_playoffs
         self.id = random.randint(0, 100000000)
-        self.num_possessions = self.get_num_possessions()
+        self.num_possessions = int(round(self.get_num_possessions()))
         self.season = common.SEASON
 
         # What is the attendance of the game?
@@ -61,7 +61,7 @@ class Game:
                                 self.do_rebound()
 
     def get_num_possessions(self):
-        return 100
+        return (self.team[0].pace + self.team[1].pace)/2 * numpy.random.normal(1, 0.03)
 
     def update_players_on_court(self, subs_every_n):
         '''
@@ -325,6 +325,7 @@ class Team:
             self.player_ids.append(row[0])
             p += 1
         self.num_players = p
+        self.pace = sum([self.player[i].composite_rating['pace'] for i in xrange(7)])/7 # Should be scaled by average minutes played
 
     def load_team_attributes(self):
         query = 'SELECT region, name FROM team_attributes WHERE team_id = ?'
@@ -352,20 +353,20 @@ class Player:
 
     def make_composite_ratings(self):
         self.composite_rating = {}
-        self.composite_rating['pace'] = self._composite(70, 130, ['speed', 'jumping', 'shooting_layups', 'shooting_three_pointers', 'steals', 'dribbling', 'passing'])
+        self.composite_rating['pace'] = self._composite(70, 130, ['speed', 'jumping', 'shooting_layups', 'shooting_three_pointers', 'steals', 'dribbling', 'passing'], random=False)
         self.composite_rating['shot_ratio'] = self._composite(0, 0.5, ['shooting_inside', 'shooting_layups', 'shooting_two_pointers', 'shooting_three_pointers'])
         self.composite_rating['assist_ratio'] = self._composite(0, 0.5, ['dribbling', 'passing', 'speed'])
-        self.composite_rating['turnover_ratio'] = self._composite(0, 0.5, ['dribbling', 'passing', 'speed'], True)
-        self.composite_rating['field_goal_percentage'] = self._composite(0.45, 0.75, ['height', 'jumping', 'shooting_inside', 'shooting_layups', 'shooting_two_pointers', 'shooting_three_pointers'])
+        self.composite_rating['turnover_ratio'] = self._composite(0, 0.5, ['dribbling', 'passing', 'speed'], inverse=True)
+        self.composite_rating['field_goal_percentage'] = self._composite(0.3, 0.6, ['height', 'jumping', 'shooting_inside', 'shooting_layups', 'shooting_two_pointers', 'shooting_three_pointers'])
         self.composite_rating['free_throw_percentage'] = self._composite(0.4, 1, ['shooting_free_throws'])
         self.composite_rating['three_pointer_percentage'] = self._composite(0, 0.45, ['shooting_three_pointers'])
         self.composite_rating['rebound_ratio'] = self._composite(0, 0.5, ['height', 'strength', 'jumping', 'rebounding'])
         self.composite_rating['steal_ratio'] = self._composite(0, 0.5, ['speed', 'steals'])
         self.composite_rating['block_ratio'] = self._composite(0, 0.5, ['height', 'jumping', 'blocks'])
-        self.composite_rating['foul_ratio'] = self._composite(0, 0.5, ['speed'], True)
+        self.composite_rating['foul_ratio'] = self._composite(0, 0.5, ['speed'], inverse=True)
         self.composite_rating['defense'] = self._composite(0, 0.5, ['speed'])
 
-    def _composite(self, minval, maxval, components, inverse=False):
+    def _composite(self, minval, maxval, components, inverse=False, random=True):
         r = 0.0
         rmax = 0.0
         if inverse:
@@ -382,7 +383,8 @@ class Player:
 #        r = r / (rmax * len(components))  # 0-1
         r = r * (maxval - minval) + minval  # Min-Max
         # Randomize: Mulitply by a random number from N(1,0.1)
-        r = numpy.random.normal(1, 0.1) * r
+        if random:
+            r = numpy.random.normal(1, 0.1) * r
         return r
 
     def _initialize_stats(self):

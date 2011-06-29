@@ -211,33 +211,21 @@ class MainWindow:
     def on_notebook_switch_page(self, widget, page, page_num, data=None):
         print 'on_notebook_switch_page', page_num
         if (page_num == self.pages['standings']):
-            if not self.standings.built:
-                self.standings.build()
             if not self.standings.updated:
                 self.standings.update()
         elif (page_num == self.pages['finances']):
-            if not self.finances.built:
-                self.finances.build()
             if not self.finances.updated:
                 self.finances.update()
         elif (page_num == self.pages['player_ratings']):
-            if not self.player_ratings.built:
-                self.player_ratings.build()
             if not self.player_ratings.updated:
                 self.player_ratings.update()
         elif (page_num == self.pages['player_stats']):
-            if not self.player_stats.built:
-                self.player_stats.build()
             if not self.player_stats.updated:
                 self.player_stats.update()
         elif (page_num == self.pages['team_stats']):
-            if not self.team_stats.built:
-                self.team_stats.build()
             if not self.team_stats.updated:
                 self.team_stats.update()
         elif (page_num == self.pages['game_log']):
-            if not self.game_log.built:
-                self.game_log.build()
             if not self.game_log.updated:
                 self.game_log.update()
         elif (page_num == self.pages['playoffs']):

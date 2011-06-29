@@ -1,3 +1,17 @@
+BLOCKERS FOR 0.2.0:
+Make it more fun/realistic:
+- Feedback from trades (way off, that's close, etc)
+- "Synergy" in game simulation
+- More realistic stats
+- CPU proposes trades
+- free agents should have a memory. you shouldn't be able to just open the window a bunch of times and see different demands
+  - same for trading partners. "Oh, you again?" after failed trade attempts
+If it's actually fun, make a .deb and distribute
+
+All the other UI prettifying and code refactoring stuff can wait.
+
+---
+
 REFACTORING
 1. Divide each window/dialog/tab into its own file, consistently
 2. SQLAlchemy
@@ -82,7 +96,6 @@ use constants for phase #'s, other things.  maybe create a dict CONST in common.
 
 AI (NON-GAMESIM)
 ----------------
-free agents should have a memory. you shouldn't be able to just open the window a bunch of times and see different demands
 opponent GM trade AI based on their team's status: contending or rebuilding
 
 FEATURES

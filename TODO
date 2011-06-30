@@ -3,13 +3,16 @@ Make it more fun/realistic:
 - Feedback from trades (way off, that's close, etc)
 - "Synergy" in game simulation
 - More realistic stats
-- CPU proposes trades
 - free agents
   - free agents should have a memory. you shouldn't be able to just open the window a bunch of times and see different demands
   - same for trading partners. "Oh, you again?" after failed trade attempts
   - "asking for" column in free agents window
   - AI teams above the cap are still resigning players. fix that.
     -Really, redo AI free agent behavior. Too many good players get left behind because teams can't manage caps
+- released player contracts should count against your cap
+- bought out players shouldn't, but they should cost cash
+- team history
+- league history
 If it's actually fun, make a .deb and distribute
 
 All the other UI prettifying and code refactoring stuff can wait.

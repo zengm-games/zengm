@@ -638,10 +638,10 @@ class MainWindow:
         # Make sure we are looking at this year's standings, stats, and games after playing some games
         self.standings.combobox_active = 0
         self.player_stats.combobox_season_active = 0
-        self.player_stats.combobox_team_active = common.PLAYER_TEAM_ID+1
+#        self.player_stats.combobox_team_active = common.PLAYER_TEAM_ID+1
         self.team_stats.combobox_season_active = 0
         self.game_log.combobox_season_active = 0
-        self.game_log.combobox_team_active = common.PLAYER_TEAM_ID
+#        self.game_log.combobox_team_active = common.PLAYER_TEAM_ID
 
         season_over = False
         if self.phase == 3:

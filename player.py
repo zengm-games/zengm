@@ -40,9 +40,7 @@ class Player:
         age = mx.DateTime.Age(mx.DateTime.Date(common.SEASON, 1, 1), born).years
 
         for i in range(years):
-            [y, m, d] = self.attribute['born_date'].split('-', 2)
-            born = mx.DateTime.Date(int(y), int(m), int(d))
-            age = mx.DateTime.Age(mx.DateTime.Date(common.SEASON + i, 1, 1), born).years
+            age += 1
 
             potential = numpy.random.normal(self.rating['potential'], 5)
             overall = self.overall_rating()
@@ -51,9 +49,11 @@ class Player:
                 plus_minus = 28 - age
                 if plus_minus > 0:
                     if potential > overall:
-                        plus_minus *= (potential - overall) / 20.0 + 1/2
+                        if potential - overall < 10:
+                            plus_minus *= (potential - overall) / 20.0 + 0.5
+                        # Otherwise, it's just multiplied by 1
                     else:
-                        plus_minus *= 1/2
+                        plus_minus *= 0.5
                 else:
                     plus_minus *= 30.0 / potential
                 increase = numpy.random.normal(1, 2) * plus_minus
@@ -75,7 +75,7 @@ class Player:
     def bonus(self, amount):
         """Add or subtract from all ratings"""
 
-        for key in ('strength', 'speed', 'jumping', 'endurance', 'shooting_inside', 'shooting_layups', 'shooting_free_throws', 'shooting_two_pointers', 'shooting_three_pointers', 'blocks', 'steals', 'dribbling', 'passing', 'rebounding'):
+        for key in ('strength', 'speed', 'jumping', 'endurance', 'shooting_inside', 'shooting_layups', 'shooting_free_throws', 'shooting_two_pointers', 'shooting_three_pointers', 'blocks', 'steals', 'dribbling', 'passing', 'rebounding', 'potential'):
             self.rating[key] = self._limit_rating(self.rating[key]+amount)
 
     def _limit_rating(self, rating):
@@ -95,8 +95,8 @@ class Player:
         max_amount = 20000
 
         self.rating['overall'] = self.overall_rating()
-        # Scale amount from 500k to 15mil, proportional to overall*2 + potential 120-210
-        amount = ((2.0 * self.rating['overall'] + self.rating['potential']) - 120)/(210 - 120) # Scale from 0 to 1 (approx)
+        # Scale amount from 500k to 15mil, proportional to (overall*2 + potential)*0.5 120-210
+        amount = ((2.0 * self.rating['overall'] + self.rating['potential'])*0.85 - 120)/(210 - 120) # Scale from 0 to 1 (approx)
         amount = amount * (max_amount - min_amount) + min_amount # Scale from 500k to 15mil
         amount *= numpy.random.normal(1, 0.1) # Randomize
         expiration = common.SEASON + random.randrange(0, 6)

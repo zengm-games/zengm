@@ -334,7 +334,8 @@ class MainWindow:
             self.progressbar_new_game.set_fraction(0.6*(t+1)/31.0)
             while gtk.events_pending():
                 gtk.main_iteration(False)
-            base_ratings = [40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29]
+#            base_ratings = [40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29]
+            base_ratings = [30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19]
             potentials = [70, 60, 50, 50, 55, 45, 65, 35, 50, 45, 55, 55]
             random.shuffle(potentials)
             for p in range(12):
@@ -349,6 +350,10 @@ class MainWindow:
                 gp.develop(aging_years)
                 if p < 5:
                     gp.bonus(good_neutral_bad*random.randint(0,20))
+                if t == -1: # Free agents
+                    gp.bonus(-15)
+                # Update contract based on development
+                gp.attribute['contract_amount'], gp.attribute['contract_expiration'] = gp.contract()
 
                 sql += gp.sql_insert()
 
@@ -706,25 +711,10 @@ class MainWindow:
         # Order
         players.sort(cmp=lambda x,y: y[1]-x[1]) # Sort by rating
 
-        # Minutes
-        overall_ratings = []
-        total_minutes = 0
-        for player in players:
-            overall_ratings.append(player[1])
-            player[2] = player[2]*(45-20)/100 + 20 # Scale endurance from 20 to 45
-            total_minutes += player[2]
-        i = 1
-        while total_minutes > 240:
-            if players[-i][2] > 0:
-                players[-i][2] -= 1
-                total_minutes -= 1
-            else:
-                i += 1
-
         # Update
         roster_position = 1
         for player in players:
-            common.DB_CON.execute('UPDATE player_ratings SET average_playing_time = ?, roster_position = ? WHERE player_id = ?', (player[2], roster_position, player[0]))
+            common.DB_CON.execute('UPDATE player_ratings SET roster_position = ? WHERE player_id = ?', (roster_position, player[0]))
             roster_position += 1
 
     def auto_sign_free_agents(self):
@@ -767,6 +757,7 @@ class MainWindow:
                         new_player = True
                         num_players += 1
                         payroll += amount
+                        print payroll, amount, common.SALARY_CAP
                         self.roster_auto_sort(team_id)
                     j += 1
                 if not new_player:

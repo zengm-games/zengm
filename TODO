@@ -4,10 +4,14 @@ Make it more fun/realistic:
 - "Synergy" in game simulation
 - More realistic stats
 - CPU proposes trades
-- free agents should have a memory. you shouldn't be able to just open the window a bunch of times and see different demands
+- free agents
+  - free agents should have a memory. you shouldn't be able to just open the window a bunch of times and see different demands
   - same for trading partners. "Oh, you again?" after failed trade attempts
-- AI teams above the cap are still resigning players. fix that.
-  -Really, redo AI free agent behavior. Too many good players get left behind because teams can't manage caps
+  - "asking for" column in free agents window
+  - AI teams above the cap are still resigning players. fix that.
+    -Really, redo AI free agent behavior. Too many good players get left behind because teams can't manage caps
+- fix magic growing team selection box
+  - and add one for player ratings
 If it's actually fun, make a .deb and distribute
 
 All the other UI prettifying and code refactoring stuff can wait.

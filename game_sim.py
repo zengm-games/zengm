@@ -345,7 +345,7 @@ class Player:
     # Load the raw rating values from the database
     def load_ratings(self):
         common.DB_CON.row_factory = sqlite3.Row
-        query = 'SELECT overall, average_playing_time, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, passing, rebounding FROM player_ratings WHERE player_id = ?'
+        query = 'SELECT overall, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, passing, rebounding FROM player_ratings WHERE player_id = ?'
         self.rating = common.DB_CON.execute(query, (self.id,)).fetchone()
         query = 'SELECT name, position FROM player_attributes WHERE player_id = ?'
         self.attribute = common.DB_CON.execute(query, (self.id,)).fetchone()

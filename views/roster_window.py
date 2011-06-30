@@ -41,13 +41,6 @@ class RosterWindow:
             path = treemodel.get_path(treeiter)
             self.main_window.on_treeview_player_row_activated(self.treeview_roster, path, None, None)
 
-    def on_button_roster_edit_minutes_clicked(self, button, data=None):
-        treemodel, treeiter = self.treeview_roster.get_selection().get_selected()
-        if treeiter:
-            path = treemodel.get_path(treeiter)
-            focus_column = self.treeview_roster.get_column(8) # The index here is the position wrt visible columns, so this might need to be changed some time
-            self.treeview_roster.set_cursor(path, focus_column, start_editing=True)
-
     def on_button_roster_release_clicked(self, button, data=None):
         treemodel, treeiter = self.treeview_roster.get_selection().get_selected()
         if treeiter:
@@ -82,23 +75,6 @@ class RosterWindow:
         self.unsaved_changes = True
         return True
 
-    def on_edited_average_playing_time(self, cell, path, new_text, model=None):
-        '''
-        Updates the average playing time in the roster page
-        '''
-        average_playing_time = int(new_text)
-        player_id = model[path][0]
-        common.DB_CON.execute('UPDATE player_ratings SET average_playing_time = ? WHERE player_id = ?', (average_playing_time, player_id))
-        self.unsaved_changes = True
-        if average_playing_time > 48:
-            model[path][9] = 48
-        elif average_playing_time < 0:
-            model[path][9] = 0
-        else:
-            model[path][9] = average_playing_time
-        self.update_roster_info()
-        return True
-
     def on_treeview_player_row_activated(self, treeview, path, view_column, data=None):
         '''
         Map to the same function in main_window.py
@@ -111,8 +87,6 @@ class RosterWindow:
         #               [False,  False,      False,    False,      False, False, False, False],
         #               [False,  False,      False,    False,      False, False, False, False]]
         renderer = gtk.CellRendererText()
-        self.renderer_roster_editable = gtk.CellRendererText()
-        self.renderer_roster_editable.set_property('editable', True)
         column = gtk.TreeViewColumn('Name', renderer, text=1)
         self.treeview_roster.append_column(column)
         column = gtk.TreeViewColumn('Position', renderer, text=2)
@@ -123,19 +97,21 @@ class RosterWindow:
         self.treeview_roster.append_column(column)
         column = gtk.TreeViewColumn('Contract', renderer, text=5)
         self.treeview_roster.append_column(column)
-        column = gtk.TreeViewColumn('PPG', renderer, text=6)
+        column = gtk.TreeViewColumn('Min', renderer, text=6)
         column.set_cell_data_func(renderer,
             lambda column, cell, model, iter: cell.set_property('text', '%.1f' % model.get_value(iter, 6)))
         self.treeview_roster.append_column(column)
-        column = gtk.TreeViewColumn('Reb', renderer, text=6)
+        column = gtk.TreeViewColumn('PPG', renderer, text=7)
         column.set_cell_data_func(renderer,
             lambda column, cell, model, iter: cell.set_property('text', '%.1f' % model.get_value(iter, 7)))
         self.treeview_roster.append_column(column)
-        column = gtk.TreeViewColumn('Ast', renderer, text=7)
+        column = gtk.TreeViewColumn('Reb', renderer, text=8)
         column.set_cell_data_func(renderer,
             lambda column, cell, model, iter: cell.set_property('text', '%.1f' % model.get_value(iter, 8)))
         self.treeview_roster.append_column(column)
-        column = gtk.TreeViewColumn('Average Playing Time', self.renderer_roster_editable, text=9)
+        column = gtk.TreeViewColumn('Ast', renderer, text=9)
+        column.set_cell_data_func(renderer,
+            lambda column, cell, model, iter: cell.set_property('text', '%.1f' % model.get_value(iter, 9)))
         self.treeview_roster.append_column(column)
 
         # This treeview is used to list the positions to the left of the players
@@ -144,7 +120,6 @@ class RosterWindow:
                        [False],
                        [False]]
         common.treeview_build(self.treeview_roster_info, column_info)
-        self.renderer_roster_editable_handle_id = 0 # This variable is used in update_roster
 
     def update_roster(self):
         print 'ur'
@@ -152,18 +127,12 @@ class RosterWindow:
         self.update_roster_info()
 
         # Roster list
-        column_types = [int, str, str, int, int, str, float, float, float, int]
-        query = 'SELECT player_attributes.player_id, player_attributes.name, player_attributes.position, ROUND((julianday("%d-06-01") - julianday(player_attributes.born_date))/365.25), player_ratings.overall, "$" || round(contract_amount/1000.0, 2) || "M thru " || contract_expiration, 0, 0, 0, player_ratings.average_playing_time FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = ? ORDER BY player_ratings.roster_position ASC' % common.SEASON
-        query_bindings = (common.PLAYER_TEAM_ID,)
+        column_types = [int, str, str, int, int, str, float, float, float, float]
+        query = 'SELECT player_attributes.player_id, player_attributes.name, player_attributes.position, ROUND((julianday("%d-06-01") - julianday(player_attributes.born_date))/365.25), player_ratings.overall, "$" || round(contract_amount/1000.0, 2) || "M thru " || contract_expiration, AVG(player_stats.minutes), AVG(player_stats.points), AVG(player_stats.offensive_rebounds + player_stats.defensive_rebounds), AVG(player_stats.assists) FROM player_attributes, player_ratings, player_stats WHERE player_attributes.player_id = player_ratings.player_id AND player_stats.player_id = player_ratings.player_id AND player_attributes.team_id = ? AND player_stats.season = ? GROUP BY player_stats.player_id ORDER BY player_ratings.roster_position ASC' % common.SEASON
+        query_bindings = (common.PLAYER_TEAM_ID,common.SEASON)
         common.treeview_update(self.treeview_roster, column_types, query, query_bindings)
         model = self.treeview_roster.get_model()
         model.connect('row-deleted', self.on_treeview_roster_row_deleted);
-
-        # Delete the old handler (if it exists) to prevent multiple and erroneous playing time updates
-        if self.renderer_roster_editable_handle_id != 0:
-            self.renderer_roster_editable.disconnect(self.renderer_roster_editable_handle_id)
-
-        self.renderer_roster_editable_handle_id = self.renderer_roster_editable.connect('edited', self.on_edited_average_playing_time, model)
 
         # Positions
         liststore = gtk.ListStore(str)
@@ -173,16 +142,9 @@ class RosterWindow:
             liststore.append([spot])
 
     def update_roster_info(self):
-        row = common.DB_CON.execute('SELECT 15 - COUNT(*), 240 - SUM(player_ratings.average_playing_time) FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = ?', (common.PLAYER_TEAM_ID,)).fetchone()
+        row = common.DB_CON.execute('SELECT 15 - COUNT(*) FROM player_attributes WHERE team_id = ?', (common.PLAYER_TEAM_ID,)).fetchone()
         empty_roster_spots = row[0]
-        extra_playing_time = row[1]
-        if extra_playing_time == 0:
-            playing_time_text = 'no unallocated playing time'
-        elif extra_playing_time > 0:
-            playing_time_text = '%d minutes of unallocated playing time' % extra_playing_time
-        else:
-            playing_time_text = '%d too many minutes of allocated playing time' % -extra_playing_time
-        self.label_roster_info.set_markup('You currently have <b>%d empty roster spots</b> and <b>%s</b>.\n' % (empty_roster_spots, playing_time_text))
+        self.label_roster_info.set_markup('You currently have <b>%d empty roster spots</b>.\n' % (empty_roster_spots))
 
     def __init__(self, main_window):
         self.main_window = main_window

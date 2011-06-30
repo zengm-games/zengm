@@ -689,8 +689,8 @@ class MainWindow:
     def make_team_combobox(self, combobox, active, season, all_teams_option):
         # Team combobox
         model = gtk.ListStore(str, int)
-        renderer = gtk.CellRendererText()
-        combobox.pack_start(renderer, True)
+#        renderer = gtk.CellRendererText()
+#        combobox.pack_start(renderer, True)
         if all_teams_option:
             model.append(['All Teams', 666]) # 666 is the magin number to find all teams
         for row in common.DB_CON.execute('SELECT abbreviation, team_id FROM team_attributes WHERE season = ? ORDER BY abbreviation ASC', (season,)):

@@ -1,4 +1,4 @@
-<h2><a href="">{{ team_region }} {{ team_name }}</a></h2>
+<h2>{{ team_region }} {{ team_name }}</h2>
 <p>
 <table class="gamelog_boxscore">
 <thead>
@@ -6,7 +6,7 @@
 </thead>
 <tbody>
 {% for player_stats in players_stats %}
-  <tr class="{{ loop.cycle('odd', 'even') }}"><td class="first"><a href="">{{ player_stats['name'] }}</a></td><td>{{ player_stats['position'] }}</td><td>{{ player_stats['minutes'] }}</td><td>{{ player_stats['field_goals_made'] }}-{{ player_stats['field_goals_attempted'] }}</td><td>{{ player_stats['three_pointers_made'] }}-{{ player_stats['three_pointers_attempted'] }}</td><td>{{ player_stats['free_throws_made'] }}-{{ player_stats['free_throws_attempted'] }}</td><td>{{ player_stats['offensive_rebounds'] }}</td><td>666</td><td> {{player_stats['assists'] }}</td><td>{{ player_stats['turnovers'] }}</td><td>{{ player_stats['steals'] }}</td><td>{{ player_stats['blocks'] }}</td><td>{{ player_stats['personal_fouls'] }}</td><td>{{ player_stats['points'] }}</td></tr>
+  <tr class="{{ loop.cycle('odd', 'even') }}"><td class="first">{{ player_stats['name'] }}</td><td>{{ player_stats['position'] }}</td><td>{{ player_stats['minutes'] }}</td><td>{{ player_stats['field_goals_made'] }}-{{ player_stats['field_goals_attempted'] }}</td><td>{{ player_stats['three_pointers_made'] }}-{{ player_stats['three_pointers_attempted'] }}</td><td>{{ player_stats['free_throws_made'] }}-{{ player_stats['free_throws_attempted'] }}</td><td>{{ player_stats['offensive_rebounds'] }}</td><td>666</td><td> {{player_stats['assists'] }}</td><td>{{ player_stats['turnovers'] }}</td><td>{{ player_stats['steals'] }}</td><td>{{ player_stats['blocks'] }}</td><td>{{ player_stats['personal_fouls'] }}</td><td>{{ player_stats['points'] }}</td></tr>
 {% endfor %}
 </tbody>
 <tfoot>

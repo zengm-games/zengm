@@ -2,18 +2,82 @@
 <interface>
   <requires lib="gtk+" version="2.24"/>
   <!-- interface-naming-policy project-wide -->
-  <object class="GtkScrolledWindow" id="scrolledwindow8">
+  <object class="GtkListStore" id="liststore_team">
+    <columns>
+      <!-- column-name item -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Placeholder</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkVBox" id="vbox">
     <property name="visible">True</property>
-    <property name="can_focus">True</property>
-    <property name="hscrollbar_policy">automatic</property>
-    <property name="vscrollbar_policy">automatic</property>
+    <property name="can_focus">False</property>
     <child>
-      <object class="GtkTreeView" id="treeview_player_ratings">
+      <object class="GtkHBox" id="hbox">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <child>
+          <object class="GtkLabel" id="label">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes"> Team: </property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkComboBox" id="combobox_team">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="model">liststore_team</property>
+            <signal name="changed" handler="on_combobox_team_changed" swapped="no"/>
+            <child>
+              <object class="GtkCellRendererText" id="cellrenderertext_game_log_team1"/>
+              <attributes>
+                <attribute name="text">0</attribute>
+              </attributes>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkScrolledWindow" id="scrolledwindow">
         <property name="visible">True</property>
         <property name="can_focus">True</property>
-        <property name="search_column">2</property>
-        <signal name="row-activated" handler="on_treeview_player_ratings_row_activated" swapped="no"/>
+        <property name="hscrollbar_policy">automatic</property>
+        <property name="vscrollbar_policy">automatic</property>
+        <child>
+          <object class="GtkTreeView" id="treeview_player_ratings">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="search_column">2</property>
+            <signal name="row-activated" handler="on_treeview_player_ratings_row_activated" swapped="no"/>
+          </object>
+        </child>
       </object>
+      <packing>
+        <property name="expand">True</property>
+        <property name="fill">True</property>
+        <property name="position">1</property>
+      </packing>
     </child>
   </object>
 </interface>

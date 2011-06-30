@@ -6,6 +6,13 @@ import common
 class PlayerRatingsTab:
     updated = False
     built = False
+    combobox_team_active = common.PLAYER_TEAM_ID+1
+
+    def on_combobox_team_changed(self, combobox, data=None):
+        old = self.combobox_team_active
+        self.combobox_team_active = combobox.get_active()
+        if self.combobox_team_active != old:
+            self.update()
 
     def on_treeview_player_ratings_row_activated(self, treeview, path, view_column, data=None):
         self.mw.on_treeview_player_row_activated(treeview, path, view_column, data)
@@ -18,15 +25,22 @@ class PlayerRatingsTab:
                        [False,  False,  False, False,     False,    False,     False,   False,     False,       False,            False,    False,         False,          False,            False,    False,    False,       False,     False]]
         common.treeview_build(self.treeview_player_ratings, column_info)
 
-        self.mw.notebook.insert_page(self.scrolledwindow8, gtk.Label('Player Ratings'), self.mw.pages['player_ratings'])
+        self.mw.notebook.insert_page(self.vbox, gtk.Label('Player Ratings'), self.mw.pages['player_ratings'])
 
         self.built = True
 
     def update(self):
         print 'update player ratings'
+        team_id = self.mw.make_team_combobox(self.combobox_team, self.combobox_team_active, common.SEASON, True)
+
+        if team_id == 666:
+            all_teams = 1
+        else:
+            all_teams = 0
+
         column_types = [int, int, str, str, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int]
-        query = "SELECT player_attributes.player_id, player_attributes.team_id, player_attributes.name, (SELECT abbreviation FROM team_attributes WHERE team_id = player_attributes.team_id), ROUND((julianday('%s-06-01') - julianday(born_date))/365.25), player_ratings.overall, player_ratings.height, player_ratings.strength, player_ratings.speed, player_ratings.jumping, player_ratings.endurance, player_ratings.shooting_inside, player_ratings.shooting_layups, player_ratings.shooting_free_throws, player_ratings.shooting_two_pointers, player_ratings.shooting_three_pointers, player_ratings.blocks, player_ratings.steals, player_ratings.dribbling, player_ratings.passing, player_ratings.rebounding FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id >= -1" % common.SEASON # team_id >= -1: Don't select draft or retired players
-        common.treeview_update(self.treeview_player_ratings, column_types, query)
+        query = "SELECT player_attributes.player_id, player_attributes.team_id, player_attributes.name, (SELECT abbreviation FROM team_attributes WHERE team_id = player_attributes.team_id), ROUND((julianday('%s-06-01') - julianday(born_date))/365.25), player_ratings.overall, player_ratings.height, player_ratings.strength, player_ratings.speed, player_ratings.jumping, player_ratings.endurance, player_ratings.shooting_inside, player_ratings.shooting_layups, player_ratings.shooting_free_throws, player_ratings.shooting_two_pointers, player_ratings.shooting_three_pointers, player_ratings.blocks, player_ratings.steals, player_ratings.dribbling, player_ratings.passing, player_ratings.rebounding FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id >= -1 AND (player_attributes.team_id = ? OR ?)" % common.SEASON # team_id >= -1: Don't select draft or retired players
+        common.treeview_update(self.treeview_player_ratings, column_types, query, (team_id, all_teams))
         self.updated = True
 
     def __init__(self, main_window):
@@ -35,8 +49,9 @@ class PlayerRatingsTab:
         self.builder = gtk.Builder()
         self.builder.add_from_file('ui/player_ratings_tab.glade')
 
-        self.scrolledwindow8 = self.builder.get_object('scrolledwindow8')
+        self.vbox = self.builder.get_object('vbox')
         self.treeview_player_ratings = self.builder.get_object('treeview_player_ratings')
+        self.combobox_team = self.builder.get_object('combobox_team')
 
         self.builder.connect_signals(self)
 

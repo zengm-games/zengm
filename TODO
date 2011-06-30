@@ -10,7 +10,6 @@ Make it more fun/realistic:
   - "asking for" column in free agents window
   - AI teams above the cap are still resigning players. fix that.
     -Really, redo AI free agent behavior. Too many good players get left behind because teams can't manage caps
-- player ratings team combobox
 If it's actually fun, make a .deb and distribute
 
 All the other UI prettifying and code refactoring stuff can wait.

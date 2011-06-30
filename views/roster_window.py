@@ -10,8 +10,8 @@ class RosterWindow:
         return True
 
     def on_button_roster_auto_sort_clicked(self, button, data=None):
-        self.main_window.roster_auto_sort(common.PLAYER_TEAM_ID)
-        self.main_window.unsaved_changes = True
+        self.mw.roster_auto_sort(common.PLAYER_TEAM_ID)
+        self.mw.unsaved_changes = True
         self.update_roster()
 
     def on_button_roster_up_clicked(self, button, data=None):
@@ -39,7 +39,7 @@ class RosterWindow:
         treemodel, treeiter = self.treeview_roster.get_selection().get_selected()
         if treeiter:
             path = treemodel.get_path(treeiter)
-            self.main_window.on_treeview_player_row_activated(self.treeview_roster, path, None, None)
+            self.mw.on_treeview_player_row_activated(self.treeview_roster, path, None, None)
 
     def on_button_roster_release_clicked(self, button, data=None):
         treemodel, treeiter = self.treeview_roster.get_selection().get_selected()
@@ -57,10 +57,10 @@ class RosterWindow:
                 # Update roster info
                 self.update_roster_info()
                 # Update tabs in the main window
-                self.main_window.updated['finances'] = False
-                self.main_window.updated['player_stats'] = False
-                self.main_window.updated['player_ratings'] = False
-                self.main_window.update_current_page()
+                self.mw.updated['finances'] = False
+                self.mw.updated['player_stats'] = False
+                self.mw.updated['player_ratings'] = False
+                self.mw.update_current_page()
 
     def on_treeview_roster_row_deleted(self, treemodel, path, data=None):
         '''
@@ -79,7 +79,7 @@ class RosterWindow:
         '''
         Map to the same function in main_window.py
         '''
-        self.main_window.on_treeview_player_row_activated(treeview, path, view_column, data)
+        self.mw.on_treeview_player_row_activated(treeview, path, view_column, data)
 
     def build_roster(self):
         #column_info = [['Name', 'Position', 'Rating', 'Contract', 'PPG', 'Reb', 'Ast', 'Average Playing Time'],
@@ -129,9 +129,15 @@ class RosterWindow:
         self.update_roster_info()
 
         # Roster list
-        column_types = [int, str, str, int, int, int, str, float, float, float, float]
-        query = 'SELECT player_attributes.player_id, player_attributes.name, player_attributes.position, ROUND((julianday("%d-06-01") - julianday(player_attributes.born_date))/365.25), player_ratings.overall, player_ratings.potential, "$" || round(contract_amount/1000.0, 2) || "M thru " || contract_expiration, AVG(player_stats.minutes), AVG(player_stats.points), AVG(player_stats.offensive_rebounds + player_stats.defensive_rebounds), AVG(player_stats.assists) FROM player_attributes, player_ratings, player_stats WHERE player_attributes.player_id = player_ratings.player_id AND player_stats.player_id = player_ratings.player_id AND player_attributes.team_id = ? AND player_stats.season = ? GROUP BY player_stats.player_id ORDER BY player_ratings.roster_position ASC' % common.SEASON
-        query_bindings = (common.PLAYER_TEAM_ID,common.SEASON)
+        # Only display stats if it's during the season. Otherwise, players won't show up in the roster
+        if self.mw.phase >= 1 and self.mw.phase <= 4: # Regular season to right before draft
+            column_types = [int, str, str, int, int, int, str, float, float, float, float]
+            query = 'SELECT player_attributes.player_id, player_attributes.name, player_attributes.position, ROUND((julianday("%d-06-01") - julianday(player_attributes.born_date))/365.25), player_ratings.overall, player_ratings.potential, "$" || round(contract_amount/1000.0, 2) || "M thru " || contract_expiration, AVG(player_stats.minutes), AVG(player_stats.points), AVG(player_stats.offensive_rebounds + player_stats.defensive_rebounds), AVG(player_stats.assists) FROM player_attributes, player_ratings, player_stats WHERE player_attributes.player_id = player_ratings.player_id AND player_stats.player_id = player_ratings.player_id AND player_attributes.team_id = ? AND player_stats.season = ? GROUP BY player_stats.player_id ORDER BY player_ratings.roster_position ASC' % common.SEASON
+            query_bindings = (common.PLAYER_TEAM_ID,common.SEASON)
+        else: # Other phases
+            column_types = [int, str, str, int, int, int, str, float, float, float, float]
+            query = 'SELECT player_attributes.player_id, player_attributes.name, player_attributes.position, ROUND((julianday("%d-06-01") - julianday(player_attributes.born_date))/365.25), player_ratings.overall, player_ratings.potential, "$" || round(contract_amount/1000.0, 2) || "M thru " || contract_expiration, 0, 0, 0, 0 FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = ? ORDER BY player_ratings.roster_position ASC' % common.SEASON
+            query_bindings = (common.PLAYER_TEAM_ID,)
         common.treeview_update(self.treeview_roster, column_types, query, query_bindings)
         model = self.treeview_roster.get_model()
         model.connect('row-deleted', self.on_treeview_roster_row_deleted);
@@ -149,7 +155,7 @@ class RosterWindow:
         self.label_roster_info.set_markup('You currently have <b>%d empty roster spots</b>.\n' % (empty_roster_spots))
 
     def __init__(self, main_window):
-        self.main_window = main_window
+        self.mw = main_window
 
         self.builder = gtk.Builder()
         self.builder.add_objects_from_file(common.GTKBUILDER_PATH, ['roster_window'])

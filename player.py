@@ -72,6 +72,12 @@ class Player:
             age += 1
             self.attribute['born_date'] = self._born_date(age)
 
+    def bonus(self, amount):
+        """Add or subtract from all ratings"""
+
+        for key in ('strength', 'speed', 'jumping', 'endurance', 'shooting_inside', 'shooting_layups', 'shooting_free_throws', 'shooting_two_pointers', 'shooting_three_pointers', 'blocks', 'steals', 'dribbling', 'passing', 'rebounding'):
+            self.rating[key] = self._limit_rating(self.rating[key]+amount)
+
     def _limit_rating(self, rating):
         if rating > 100:
             return 100

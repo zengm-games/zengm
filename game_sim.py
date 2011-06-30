@@ -376,7 +376,13 @@ class Player:
             sign = 1
             add = 0
         for component in components:
-            r = r + sign * (add + self.rating[component])
+            # Sigmoidal transformation
+            y = (self.rating[component]-70)/10
+            rcomp = y/math.sqrt(1+pow(y, 2))
+            rcomp = (rcomp + 1)*50
+#            rcomp = self.rating[component]
+
+            r = r + sign * (add + rcomp)
             rmax = rmax + sign * (add + 100)
         # Scale from minval to maxval
         r = r / (100.0 * len(components))  # 0-1

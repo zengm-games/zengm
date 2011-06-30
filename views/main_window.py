@@ -256,9 +256,12 @@ class MainWindow:
                 self.finances.build()
             self.finances.update()
         elif self.notebook.get_current_page() == self.pages['player_ratings']:
+            print self.player_ratings.updated
             if not self.player_ratings.built:
                 self.player_ratings.build()
-            self.player_ratings.update()
+            if not self.player_ratings.updated:
+                self.player_ratings.update()
+            print self.player_ratings.updated
         elif self.notebook.get_current_page() == self.pages['player_stats']:
             if not self.player_stats.built:
                 self.player_stats.build()
@@ -283,7 +286,7 @@ class MainWindow:
             self.updated[key] = False
         self.standings.updated = False
         self.finances.updated = False
-        self.player_ratings.updated = False
+#        self.player_ratings.updated = False
         self.player_stats.updated = False
         self.team_stats.updated = False
         self.game_log.updated = False
@@ -326,6 +329,8 @@ class MainWindow:
         sql = ''
         player_id = 1
         for t in range(-1, 30):
+            good_neutral_bad = random.randrange(-1, 2) # Determines if this will be a good team or not
+
             self.progressbar_new_game.set_fraction(0.6*(t+1)/31.0)
             while gtk.events_pending():
                 gtk.main_iteration(False)
@@ -342,6 +347,8 @@ class MainWindow:
 
                 gp.new(player_id, t, 19, profile, base_ratings[p], potentials[p], draft_year)
                 gp.develop(aging_years)
+                if p < 5:
+                    gp.bonus(good_neutral_bad*random.randint(0,20))
 
                 sql += gp.sql_insert()
 
@@ -631,7 +638,7 @@ class MainWindow:
         # Make sure we are looking at this year's standings, stats, and games after playing some games
         self.standings.combobox_active = 0
         self.player_stats.combobox_season_active = 0
-        self.player_stats.combobox_team_active = common.PLAYER_TEAM_ID
+        self.player_stats.combobox_team_active = common.PLAYER_TEAM_ID+1
         self.team_stats.combobox_season_active = 0
         self.game_log.combobox_season_active = 0
         self.game_log.combobox_team_active = common.PLAYER_TEAM_ID

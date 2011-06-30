@@ -256,12 +256,10 @@ class MainWindow:
                 self.finances.build()
             self.finances.update()
         elif self.notebook.get_current_page() == self.pages['player_ratings']:
-            print self.player_ratings.updated
             if not self.player_ratings.built:
                 self.player_ratings.build()
             if not self.player_ratings.updated:
                 self.player_ratings.update()
-            print self.player_ratings.updated
         elif self.notebook.get_current_page() == self.pages['player_stats']:
             if not self.player_stats.built:
                 self.player_stats.build()
@@ -284,9 +282,11 @@ class MainWindow:
         '''
         for key in self.updated.iterkeys():
             self.updated[key] = False
+
         self.standings.updated = False
         self.finances.updated = False
-#        self.player_ratings.updated = False
+        if self.notebook.get_current_page() != self.pages['player_ratings']:
+            self.player_ratings.updated = False
         self.player_stats.updated = False
         self.team_stats.updated = False
         self.game_log.updated = False
@@ -659,8 +659,7 @@ class MainWindow:
 
                 self.new_phase(3) # Start playoffs
 
-        if season_over or self.notebook.get_current_page() != self.pages['player_ratings']:
-            self.update_all_pages()
+        self.update_all_pages()
         self.unsaved_changes = True
         self.games_in_progress = False
 

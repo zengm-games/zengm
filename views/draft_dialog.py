@@ -64,7 +64,7 @@ class DraftDialog:
         player_id = row[0]
         team_id = -2 # -2 is the team_id for players generated for the draft
         for p in range(70):
-            base_rating = random.randrange(20, 40)
+            base_rating = random.randrange(0, 20)
             potential = int(random.gauss(45, 20))
             if potential < base_rating:
                 potential = base_rating

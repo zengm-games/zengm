@@ -1102,6 +1102,7 @@ For more information on this, and how to apply and follow the GNU AGPL, see
     <property name="border_width">5</property>
     <property name="title" translatable="yes">Draft</property>
     <property name="window_position">center-on-parent</property>
+    <property name="default_width">1024</property>
     <property name="icon">basketballgm.svg</property>
     <property name="type_hint">normal</property>
     <signal name="close" handler="on_draft_dialog_close" swapped="no"/>
@@ -1428,6 +1429,7 @@ For more information on this, and how to apply and follow the GNU AGPL, see
     <property name="height_request">600</property>
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Basketball General Manager</property>
+    <property name="default_width">1024</property>
     <property name="icon">basketballgm.svg</property>
     <accel-groups>
       <group name="accelgroup1"/>

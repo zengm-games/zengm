@@ -17,6 +17,13 @@ Make it more fun/realistic:
   - APG not skewed enough
 - rewrite common.treeview_build and common.treeview_update as i've done in player_stats_tab.py
   - same thing with comboboxes
+- common.treeview_update_new
+  - game log tab - games list
+  - player ratings tab
+  - player window
+  - free agents window
+  - team stats tab
+- ratings log tab on player window
 If it's actually fun, make a .deb and distribute
 
 

@@ -49,9 +49,11 @@ class Player:
                 plus_minus = 28 - age
                 if plus_minus > 0:
                     if potential > overall:
-                        if potential - overall < 10:
+                        # Cap potential growth
+                        if potential - overall < 20:
                             plus_minus *= (potential - overall) / 20.0 + 0.5
-                        # Otherwise, it's just multiplied by 1
+                        else:
+                            plus_minus *= 1.5
                     else:
                         plus_minus *= 0.5
                 else:

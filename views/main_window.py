@@ -118,9 +118,10 @@ class MainWindow:
         return True
 
     def on_menuitem_team_history_activate(self, widget, data=None):
-        thw = team_history_window.TeamHistoryWindow(self)
-        thw.team_history_window.show()
-#        thw.team_history_window.destroy()
+        if not hasattr(self, 'thw'):
+            self.thw = team_history_window.TeamHistoryWindow(self)
+        self.thw.update()
+        self.thw.team_history_window.show()
 
     def on_menuitem_trade_activate(self, widget, data=None):
         tw = trade_window.TradeWindow(self)
@@ -301,6 +302,9 @@ class MainWindow:
 
         if hasattr(self, 'rw') and (self.rw.roster_window.flags() & gtk.VISIBLE):
             self.rw.update_roster()
+
+        if hasattr(self, 'thw') and (self.thw.team_history_window.flags() & gtk.VISIBLE):
+            self.thw.update()
 
         if hasattr(self, 'faw') and (self.faw.free_agents_window.flags() & gtk.VISIBLE):
             self.faw.update_free_agents()
@@ -589,11 +593,8 @@ class MainWindow:
                     num_active_teams += 2
                 if not active_series:
                     # The previous round is over
-                    # Is the whole playoffs over?
-                    if current_round == 4:
-                        self.new_phase(4)
-                        break
-                    # Add a new round to the database
+
+                    # Who won?
                     winners = {}
                     for series_id, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away in common.DB_CON.execute('SELECT series_id, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away FROM active_playoff_series WHERE series_round = ? ORDER BY series_id ASC', (current_round,)):    
                         if won_home == 4:
@@ -601,10 +602,17 @@ class MainWindow:
                         else:
                             winners[series_id] = [team_id_away, seed_away]
                         # Record user's team as conference and league champion
-                        if winners[series_id][0] == common.PLAYER_TEAM_ID and current_round == 2:
+                        if winners[series_id][0] == common.PLAYER_TEAM_ID and current_round == 3:
                             common.DB_CON.execute('UPDATE team_attributes SET won_conference = 1 WHERE season = ? AND team_id = ?', (common.SEASON, common.PLAYER_TEAM_ID))
-                        elif winners[series_id][0] == common.PLAYER_TEAM_ID and current_round == 3:
+                        elif winners[series_id][0] == common.PLAYER_TEAM_ID and current_round == 4:
                             common.DB_CON.execute('UPDATE team_attributes SET won_championship = 1 WHERE season = ? AND team_id = ?', (common.SEASON, common.PLAYER_TEAM_ID))
+
+                    # Are the whole playoffs over?
+                    if current_round == 4:
+                        self.new_phase(4)
+                        break
+
+                    # Add a new round to the database
                     series_id = 1
                     current_round += 1
                     query = 'INSERT INTO active_playoff_series (series_id, series_round, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away) VALUES (?, ?, ?, ?, ?, ?, 0, 0)'

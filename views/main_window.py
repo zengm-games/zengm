@@ -121,7 +121,9 @@ class MainWindow:
         if not hasattr(self, 'thw'):
             self.thw = team_history_window.TeamHistoryWindow(self)
         self.thw.update()
-        self.thw.team_history_window.show()
+        self.thw.team_history_window.show() # Show the dialog
+        self.thw.team_history_window.window.show() # Raise the dialog if it's in the background
+        return True
 
     def on_menuitem_trade_activate(self, widget, data=None):
         tw = trade_window.TradeWindow(self)
@@ -202,7 +204,7 @@ class MainWindow:
         self.aboutdialog.show()
         return True
 
-    # The aboutdialog signal functions are copied from PyGTK FAQ entry 10.13
+    # PyGTK FAQ entry 10.13
     def on_aboutdialog_response(self, widget, response, data=None):
         # system-defined GtkDialog responses are always negative, in which    
         # case we want to hide it

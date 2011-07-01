@@ -56,10 +56,11 @@ class PlayerStatsTab:
 
 #        common.treeview_update(self.treeview_player_stats, column_types, query, (season, team_id, all_teams))
 
+        self.treeview_player_stats.freeze_child_notify()
+
         do_not_delete = [] # List of player_id
         query = 'SELECT player_id FROM player_attributes WHERE team_id = ? OR ?'
         for player_id, in common.DB_CON.execute(query, (team_id, all_teams)):
-            print player_id
             found_player = False
             for i in xrange(len(self.liststore_player_stats)):
                 if self.liststore_player_stats[i][0] == player_id:
@@ -75,6 +76,8 @@ class PlayerStatsTab:
                         else:
                             values.append(row[j])
                     self.liststore_player_stats[i] = values
+                    break # We found the player in the liststore, so move on to next player
+
             if not found_player:
                 do_not_delete.append(player_id)
                 # Add new row
@@ -92,6 +95,8 @@ class PlayerStatsTab:
         for i in reversed(xrange(len(self.liststore_player_stats))): # Search backwards to not fuck things up
             if self.liststore_player_stats[i][0] not in do_not_delete:
                 del self.liststore_player_stats[i]
+
+        self.treeview_player_stats.thaw_child_notify()
 
         self.updated = True
 

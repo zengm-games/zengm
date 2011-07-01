@@ -6,7 +6,15 @@ import common
 class TeamHistoryWindow:
     updated = False
 
+    def on_team_history_window_response(self, widget, response, data=None):
+        self.team_history_window.hide()
+
+    def on_team_history_window_close(self, widget, data=None):
+        self.team_history_window.hide()
+        return True
+
     def update(self):
+        print 'update team history'
         query = 'SELECT season, won, lost, playoffs, won_conference, won_championship FROM team_attributes WHERE team_id = ? ORDER BY season DESC'
         text = ''
         for season, won, lost, playoffs, won_conference, won_championship in common.DB_CON.execute(query, (common.PLAYER_TEAM_ID,)):
@@ -21,7 +29,7 @@ class TeamHistoryWindow:
             else:
                 text += '\n'
 
-        self.label.set_markup(text)
+        self.label.set_markup(text.rstrip())
 
         self.updated = True
 

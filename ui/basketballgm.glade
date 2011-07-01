@@ -1685,6 +1685,7 @@ For more information on this, and how to apply and follow the GNU AGPL, see
                         <property name="use_action_appearance">False</property>
                         <property name="label" translatable="yes">_History</property>
                         <property name="use_underline">True</property>
+                        <accelerator key="h" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                         <signal name="activate" handler="on_menuitem_team_history_activate" swapped="no"/>
                       </object>
                     </child>

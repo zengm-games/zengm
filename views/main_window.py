@@ -27,6 +27,7 @@ import retired_players_window
 import roster_window
 import player_window
 import season_end_window
+import team_history_window
 import trade_window
 import welcome_dialog
 
@@ -115,6 +116,11 @@ class MainWindow:
             else:
                 self.rw.roster_window.show() # Show the window
         return True
+
+    def on_menuitem_team_history_activate(self, widget, data=None):
+        thw = team_history_window.TeamHistoryWindow(self)
+        thw.team_history_window.show()
+#        thw.team_history_window.destroy()
 
     def on_menuitem_trade_activate(self, widget, data=None):
         tw = trade_window.TradeWindow(self)
@@ -574,7 +580,9 @@ class MainWindow:
                 # Make today's  playoff schedule
                 active_series = False
                 num_active_teams = 0
+                # Round: 1, 2, 3, or 4
                 current_round, = common.DB_CON.execute('SELECT MAX(series_round) FROM active_playoff_series').fetchone()
+
                 for team_id_home, team_id_away in common.DB_CON.execute('SELECT team_id_home, team_id_away FROM active_playoff_series WHERE won_home < 4 AND won_away < 4 AND series_round = ?', (current_round,)):
                     self.schedule.append([team_id_home, team_id_away])
                     active_series = True
@@ -592,6 +600,11 @@ class MainWindow:
                             winners[series_id] = [team_id_home, seed_home]
                         else:
                             winners[series_id] = [team_id_away, seed_away]
+                        # Record user's team as conference and league champion
+                        if winners[series_id][0] == common.PLAYER_TEAM_ID and current_round == 2:
+                            common.DB_CON.execute('UPDATE team_attributes SET won_conference = 1 WHERE season = ? AND team_id = ?', (common.SEASON, common.PLAYER_TEAM_ID))
+                        elif winners[series_id][0] == common.PLAYER_TEAM_ID and current_round == 3:
+                            common.DB_CON.execute('UPDATE team_attributes SET won_championship = 1 WHERE season = ? AND team_id = ?', (common.SEASON, common.PLAYER_TEAM_ID))
                     series_id = 1
                     current_round += 1
                     query = 'INSERT INTO active_playoff_series (series_id, series_round, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away) VALUES (?, ?, ?, ?, ?, ?, 0, 0)'
@@ -1030,6 +1043,9 @@ class MainWindow:
                 seed = 1
                 for team_id, in common.DB_CON.execute('SELECT ta.team_id FROM team_attributes as ta, league_divisions as ld WHERE ld.division_id = ta.division_id AND ld.conference_id = ? AND ta.season = ? ORDER BY ta.won/(ta.won + ta.lost) DESC LIMIT 8', (conference_id, common.SEASON)):
                     teams.append(team_id)
+                    # Record playoff appearance for player's team
+                    if team_id == common.PLAYER_TEAM_ID:
+                        common.DB_CON.execute('UPDATE team_attributes SET playoffs = 1 WHERE season = ? AND team_id = ?', (common.SEASON, common.PLAYER_TEAM_ID))
 
                 query = 'INSERT INTO active_playoff_series (series_id, series_round, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away) VALUES (?, 1, ?, ?, ?, ?, 0, 0)'
                 common.DB_CON.execute(query, (conference_id*4+1, teams[0], teams[7], 1, 8))

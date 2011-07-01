@@ -1685,7 +1685,7 @@ For more information on this, and how to apply and follow the GNU AGPL, see
                         <property name="use_action_appearance">False</property>
                         <property name="label" translatable="yes">_History</property>
                         <property name="use_underline">True</property>
-                        <signal name="activate" handler="on_placeholder" swapped="no"/>
+                        <signal name="activate" handler="on_menuitem_team_history_activate" swapped="no"/>
                       </object>
                     </child>
                   </object>

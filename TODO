@@ -11,9 +11,12 @@ Make it more fun/realistic:
     -Really, redo AI free agent behavior. Too many good players get left behind because teams can't manage caps
 - released player contracts should count against your cap
 - bought out players shouldn't, but they should cost cash
-- team history
 - league history
+- Point balance
+  - PPG is too skewed
+  - APG not skewed enough
 If it's actually fun, make a .deb and distribute
+
 
 All the other UI prettifying and code refactoring stuff can wait.
 

@@ -56,13 +56,14 @@ class PlayerStatsTab:
 
 #        common.treeview_update(self.treeview_player_stats, column_types, query, (season, team_id, all_teams))
 
-        to_delete = [True for i in xrange(len(self.liststore_player_stats))] # If this remains true after the for loop below, then the corresponding rows in the liststore should be deleted
+        do_not_delete = [] # List of player_id
         query = 'SELECT player_id FROM player_attributes WHERE team_id = ? OR ?'
         for player_id, in common.DB_CON.execute(query, (team_id, all_teams)):
+            print player_id
             found_player = False
             for i in xrange(len(self.liststore_player_stats)):
                 if self.liststore_player_stats[i][0] == player_id:
-                    to_delete[i] = False
+                    do_not_delete.append(player_id)
                     found_player = True
                     # Update row
                     row = common.DB_CON.execute(query_player, (player_id, season, team_id, all_teams)).fetchone()
@@ -75,6 +76,7 @@ class PlayerStatsTab:
                             values.append(row[j])
                     self.liststore_player_stats[i] = values
             if not found_player:
+                do_not_delete.append(player_id)
                 # Add new row
                 row = common.DB_CON.execute(query_player, (player_id, season, team_id, all_teams)).fetchone()
                 values = []
@@ -85,8 +87,10 @@ class PlayerStatsTab:
                     else:
                         values.append(row[j])
                 self.liststore_player_stats.append(values)
-        for i in reversed(xrange(len(to_delete))):
-            if to_delete[i]:
+
+        # Remove rows from model if they shouldn't be showing
+        for i in reversed(xrange(len(self.liststore_player_stats))): # Search backwards to not fuck things up
+            if self.liststore_player_stats[i][0] not in do_not_delete:
                 del self.liststore_player_stats[i]
 
         self.updated = True

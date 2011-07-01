@@ -105,6 +105,7 @@ def treeview_update_new(treeview, query_ids, params_ids, query_row, params_row, 
     liststore = treeview.get_model()
 
     do_not_delete = [] # List of player_id
+
     for player_id, in DB_CON.execute(query_ids, tuple(params_ids)):
         params_row[0] = player_id
         params_row_alt[0] = player_id
@@ -113,30 +114,27 @@ def treeview_update_new(treeview, query_ids, params_ids, query_row, params_row, 
             if liststore[i][0] == player_id:
                 do_not_delete.append(player_id)
                 found_player = True
-                # Update row
-                row = DB_CON.execute(query_row, params_row).fetchone()
-                values = []
-                for j in range(0, len(row)):
-                    if row[j] == None:
-                        values.append(0.0)
-                    else:
-                        values.append(row[j])
-                liststore[i] = values
                 break # We found the player in the liststore, so move on to next player
 
+        # Get row contents
+        row = DB_CON.execute(query_row, params_row).fetchone()
+        if row == None:
+            # Run alternative query if necessary, for players with no stats
+            row = DB_CON.execute(query_row_alt, params_row_alt).fetchone()
+        values = []
+        for j in range(0, len(row)):
+            if row[j] == None:
+                values.append(0.0)
+            else:
+                values.append(row[j])
+
+        # Add a new row or update an existing row?
         if not found_player:
-            do_not_delete.append(player_id)
-            # Add new row
-            row = DB_CON.execute(query_row, params_row).fetchone()
-            if row == None:
-                row = DB_CON.execute(query_row_alt, params_row_alt).fetchone()
-            values = []
-            for j in range(0, len(row)):
-                if row[j] == None:
-                    values.append(0.0)
-                else:
-                    values.append(row[j])
-            liststore.append(values)
+            liststore.append(values) # Add row
+        else:
+            liststore[i] = values # Update row
+
+        do_not_delete.append(player_id) # This player was either added to the list or updated
 
     # Remove rows from model if they shouldn't be showing
     for i in reversed(xrange(len(liststore))): # Search backwards to not fuck things up

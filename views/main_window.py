@@ -739,6 +739,7 @@ class MainWindow:
         for player in players:
             common.DB_CON.execute('UPDATE player_ratings SET roster_position = ? WHERE player_id = ?', (roster_position, player[0]))
             roster_position += 1
+            print roster_position
 
     def auto_sign_free_agents(self):
         '''

@@ -11,7 +11,9 @@ class RosterWindow:
 
     def on_button_roster_auto_sort_clicked(self, button, data=None):
         self.mw.roster_auto_sort(common.PLAYER_TEAM_ID)
+#        self.treeview_roster.get_model().clear()
         self.mw.unsaved_changes = True
+        self.build_roster()
         self.update_roster()
 
     def on_button_roster_up_clicked(self, button, data=None):
@@ -82,74 +84,31 @@ class RosterWindow:
         self.mw.on_treeview_player_row_activated(treeview, path, view_column, data)
 
     def build_roster(self):
-        #column_info = [['Name', 'Position', 'Rating', 'Contract', 'PPG', 'Reb', 'Ast', 'Average Playing Time'],
-        #               [1,      2,          3,        4,          5,     6,     7,     8],
-        #               [False,  False,      False,    False,      False, False, False, False],
-        #               [False,  False,      False,    False,      False, False, False, False]]
-        renderer = gtk.CellRendererText()
-        column = gtk.TreeViewColumn('Name', renderer, text=1)
-        self.treeview_roster.append_column(column)
-        column = gtk.TreeViewColumn('Position', renderer, text=2)
-        self.treeview_roster.append_column(column)
-        column = gtk.TreeViewColumn('Age', renderer, text=3)
-        self.treeview_roster.append_column(column)
-        column = gtk.TreeViewColumn('Rating', renderer, text=4)
-        self.treeview_roster.append_column(column)
-        column = gtk.TreeViewColumn('Potential', renderer, text=5)
-        self.treeview_roster.append_column(column)
-        column = gtk.TreeViewColumn('Contract', renderer, text=6)
-        self.treeview_roster.append_column(column)
-        column = gtk.TreeViewColumn('Min', renderer, text=7)
-        column.set_cell_data_func(renderer,
-            lambda column, cell, model, iter: cell.set_property('text', '%.1f' % model.get_value(iter, 7)))
-        self.treeview_roster.append_column(column)
-        column = gtk.TreeViewColumn('PPG', renderer, text=8)
-        column.set_cell_data_func(renderer,
-            lambda column, cell, model, iter: cell.set_property('text', '%.1f' % model.get_value(iter, 8)))
-        self.treeview_roster.append_column(column)
-        column = gtk.TreeViewColumn('Reb', renderer, text=9)
-        column.set_cell_data_func(renderer,
-            lambda column, cell, model, iter: cell.set_property('text', '%.1f' % model.get_value(iter, 9)))
-        self.treeview_roster.append_column(column)
-        column = gtk.TreeViewColumn('Ast', renderer, text=10)
-        column.set_cell_data_func(renderer,
-            lambda column, cell, model, iter: cell.set_property('text', '%.1f' % model.get_value(iter, 10)))
-        self.treeview_roster.append_column(column)
-
-        # This treeview is used to list the positions to the left of the players
-        column_info = [['',],
-                       [0],
-                       [False],
-                       [False]]
-        common.treeview_build(self.treeview_roster_info, column_info)
+        print 'build roster window'
+        column_types = [int, str, str, int, int, int, str, float, float, float, float]
+        column_info = [['Name', 'Position', 'Age',    'Rating',   'Potential', 'Contract', 'Min', 'PPG', 'Reb', 'Ast'],
+                       [1,      2,          3,        4,          5,           6,          7,     8,     9,     10],
+                       [False,  False,      False,    False,      False,       False,      False, False, False, False],
+                       [False,  False,      False,    False,      False,       False,      True,  True,  True,  True]]
+        common.treeview_build_new(self.treeview_roster, column_types, column_info)
 
     def update_roster(self):
-        print 'ur'
+        print 'update roster window'
         # Roster info
         self.update_roster_info()
-        n_games_played, = common.DB_CON.execute('SELECT COUNT(*) FROM team_stats WHERE season = ? AND team_id = ?', (common.SEASON, common.PLAYER_TEAM_ID)).fetchone()
 
         # Roster list
-        # Only display stats if it's during the season AND the first game has been played. Otherwise, players won't show up in the roster
-        if (self.mw.phase == 1 and n_games_played > 0) or  (self.mw.phase >= 2 and self.mw.phase <= 4): # Regular season to right before draft
-            column_types = [int, str, str, int, int, int, str, float, float, float, float]
-            query = 'SELECT player_attributes.player_id, player_attributes.name, player_attributes.position, ROUND((julianday("%d-06-01") - julianday(player_attributes.born_date))/365.25), player_ratings.overall, player_ratings.potential, "$" || round(contract_amount/1000.0, 2) || "M thru " || contract_expiration, AVG(player_stats.minutes), AVG(player_stats.points), AVG(player_stats.offensive_rebounds + player_stats.defensive_rebounds), AVG(player_stats.assists) FROM player_attributes, player_ratings, player_stats WHERE player_attributes.player_id = player_ratings.player_id AND player_stats.player_id = player_ratings.player_id AND player_attributes.team_id = ? AND player_stats.season = ? GROUP BY player_stats.player_id ORDER BY player_ratings.roster_position ASC' % common.SEASON
-            query_bindings = (common.PLAYER_TEAM_ID,common.SEASON)
-        else: # Other phases
-            column_types = [int, str, str, int, int, int, str, float, float, float, float]
-            query = 'SELECT player_attributes.player_id, player_attributes.name, player_attributes.position, ROUND((julianday("%d-06-01") - julianday(player_attributes.born_date))/365.25), player_ratings.overall, player_ratings.potential, "$" || round(contract_amount/1000.0, 2) || "M thru " || contract_expiration, 0, 0, 0, 0 FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = ? ORDER BY player_ratings.roster_position ASC' % common.SEASON
-            query_bindings = (common.PLAYER_TEAM_ID,)
+        query_ids = 'SELECT player_attributes.player_id FROM player_attributes, player_ratings WHERE player_attributes.team_id = ? AND player_attributes.player_id = player_ratings.player_id ORDER BY player_ratings.roster_position ASC'
+        params_ids = [common.PLAYER_TEAM_ID]
+        query_row = 'SELECT player_attributes.player_id, player_attributes.name, player_attributes.position, ROUND((julianday("%d-06-01") - julianday(player_attributes.born_date))/365.25), player_ratings.overall, player_ratings.potential, "$" || round(contract_amount/1000.0, 2) || "M thru " || contract_expiration, AVG(player_stats.minutes), AVG(player_stats.points), AVG(player_stats.offensive_rebounds + player_stats.defensive_rebounds), AVG(player_stats.assists) FROM player_attributes, player_ratings, player_stats WHERE player_attributes.player_id = ? AND player_attributes.player_id = player_ratings.player_id AND player_stats.player_id = player_ratings.player_id AND player_stats.season = ? GROUP BY player_stats.player_id' % common.SEASON
+        params_row = [-1, common.SEASON]
+        query_row_alt = 'SELECT player_attributes.player_id, player_attributes.name, player_attributes.position, ROUND((julianday("%d-06-01") - julianday(player_attributes.born_date))/365.25), player_ratings.overall, player_ratings.potential, "$" || round(contract_amount/1000.0, 2) || "M thru " || contract_expiration, 0, 0, 0, 0 FROM player_attributes, player_ratings WHERE player_attributes.player_id = ? AND player_attributes.player_id = player_ratings.player_id' % common.SEASON
+        params_row_alt = [-1]
 
-        common.treeview_update(self.treeview_roster, column_types, query, query_bindings)
+        common.treeview_update_new(self.treeview_roster, query_ids, params_ids, query_row, params_row, query_row_alt, params_row_alt)
+
         model = self.treeview_roster.get_model()
         model.connect('row-deleted', self.on_treeview_roster_row_deleted);
-
-        # Positions
-        liststore = gtk.ListStore(str)
-        self.treeview_roster_info.set_model(liststore)
-        spots = ('Starter', 'Starter', 'Starter', 'Starter', 'Starter', 'Bench', 'Bench', 'Bench', 'Bench', 'Bench', 'Bench', 'Bench', 'Inactive', 'Inactive', 'Inactive')
-        for spot in spots:
-            liststore.append([spot])
 
     def update_roster_info(self):
         row = common.DB_CON.execute('SELECT 15 - COUNT(*) FROM player_attributes WHERE team_id = ?', (common.PLAYER_TEAM_ID,)).fetchone()
@@ -168,6 +127,20 @@ class RosterWindow:
         self.treeview_roster_info = self.builder.get_object('treeview_roster_info')
 
         self.builder.connect_signals(self)
+
+
+        # This treeview is used to list the positions to the left of the players
+        column_info = [['',],
+                       [0],
+                       [False],
+                       [False]]
+        common.treeview_build(self.treeview_roster_info, column_info)
+        liststore = gtk.ListStore(str)
+        self.treeview_roster_info.set_model(liststore)
+        spots = ('Starter', 'Starter', 'Starter', 'Starter', 'Starter', 'Bench', 'Bench', 'Bench', 'Bench', 'Bench', 'Bench', 'Bench', 'Inactive', 'Inactive', 'Inactive')
+        for spot in spots:
+            liststore.append([spot])
+
 
         self.build_roster()
         self.update_roster()

@@ -53,6 +53,24 @@ def treeview_update(treeview, column_types, query, query_bindings=()):
                 values.append(row[i])
         liststore.append(values)
 
+def treeview_build_new(treeview, column_types, column_info):
+    """Shortcut function to add columns and a liststore to a treeview.
+
+    Args:
+        treeview: gtk.treview instance.
+        column_types: A list of data types for the columns in the model
+        column_info: A list containing four lists of equal size, with each set
+            of four elements from those lists corresponding to one visible
+            column. 1: title; 2: column ID (corresponds to index in
+            column_types); 3: sortable? (boolean); 4: truncate after first
+            decimal place? (boolean).
+    """
+    for i in range(len(column_info[0])):
+        add_column(treeview, column_info[0][i], column_info[1][i], column_info[2][i], column_info[3][i])
+
+    liststore = gtk.ListStore(*column_types)
+    treeview.set_model(liststore)
+
 def treeview_update_new(treeview, query_ids, params_ids, query_row, params_row, query_row_alt, params_row_alt):
     """Shortcut function to update a list of players in a treeview.
 
@@ -64,7 +82,8 @@ def treeview_update_new(treeview, query_ids, params_ids, query_row, params_row, 
     handle it.
 
     Args:
-        treeview: gtk.treeview instance. Must already have a model.
+        treeview: gtk.treeview instance. Must already have a model, such as if
+            treeview_build_new is called first.
         query_ids: SQL query that will return a list of player IDs for the
             players that are to be shown.
         params_ids: A list of parameters used in query_ids.

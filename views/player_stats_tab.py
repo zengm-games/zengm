@@ -26,15 +26,12 @@ class PlayerStatsTab:
 
     def build(self):
         print 'build player stats'
+        column_types = [int, int, str, str, int, int, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float]
         column_info = [['Name', 'Team', 'GP',  'GS',  'Min', 'FGM', 'FGA', 'FG%', '3PM', '3PA', '3P%', 'FTM', 'FTA', 'FT%', 'Oreb', 'Dreb', 'Reb', 'Ast', 'TO', 'Stl', 'Blk', 'PF', 'PPG'],
                        [2,      3,      4,     5,     6,     7,     8,     9,     10,    11,    12,    13,    14,    15,    16,     17,     18,    19,    20,   21,    22,    23,   24],
                        [True,   True,   True,  True,  True,  True,  True,  True,  True,  True,  True,  True,  True,  True,  True,   True,   True,  True,  True, True,  True,  True, True],
                        [False,  False,  False, False, True,  True,  True,  True,  True,  True,  True,  True,  True,  True,  True,   True,   True,  True,  True, True,  True,  True, True]]
-        common.treeview_build(self.treeview_player_stats, column_info)
-
-        column_types = [int, int, str, str, int, int, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float]
-        self.liststore_player_stats = gtk.ListStore(*column_types)
-        self.treeview_player_stats.set_model(self.liststore_player_stats)
+        common.treeview_build_new(self.treeview_player_stats, column_types, column_info)
 
         self.mw.notebook.insert_page(self.vbox6, gtk.Label('Player Stats'), self.mw.pages['player_stats'])
 

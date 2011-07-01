@@ -53,6 +53,79 @@ def treeview_update(treeview, column_types, query, query_bindings=()):
                 values.append(row[i])
         liststore.append(values)
 
+def treeview_update_new(treeview, query_ids, params_ids, query_row, params_row, query_row_alt, params_row_alt):
+    """Shortcut function to update a list of players in a treeview.
+
+    This function will update a list of players (showing stats, ratings,
+    whatever) in a treeview by updating players already in the model, deleting
+    players who should no longer be in the model, and adding players who now
+    need to be in the model. So if the user switches to viewing another team,
+    or new stats are recorded, or a trade happens, etc... this function can
+    handle it.
+
+    Args:
+        treeview: gtk.treeview instance. Must already have a model.
+        query_ids: SQL query that will return a list of player IDs for the
+            players that are to be shown.
+        params_ids: A list of parameters used in query_ids.
+        query_row: SQL query that will run for each player ID from the other
+            query, and return exactly the elements to add to the model for this
+            player.
+        params_row: A list of parameters used in query_row. NOTE: the first
+            parameter in this list should be a dummy/placeholder, as it is
+            replaced by the appropriate player ID!
+        query_row_alt: SQL query that will run for each player ID in cases when
+            there are no stats entered for a player (such as right after the
+            draft).
+        params_row_alt: A list of parameters used in query_row_alt. NOTE: the
+            first parameter in this list should be a dummy/placeholder, as it
+            is replaced by the appropriate player ID!
+    """
+    treeview.freeze_child_notify()
+
+    liststore = treeview.get_model()
+
+    do_not_delete = [] # List of player_id
+    for player_id, in DB_CON.execute(query_ids, tuple(params_ids)):
+        params_row[0] = player_id
+        params_row_alt[0] = player_id
+        found_player = False
+        for i in xrange(len(liststore)):
+            if liststore[i][0] == player_id:
+                do_not_delete.append(player_id)
+                found_player = True
+                # Update row
+                row = DB_CON.execute(query_row, params_row).fetchone()
+                values = []
+                for j in range(0, len(row)):
+                    if row[j] == None:
+                        values.append(0.0)
+                    else:
+                        values.append(row[j])
+                liststore[i] = values
+                break # We found the player in the liststore, so move on to next player
+
+        if not found_player:
+            do_not_delete.append(player_id)
+            # Add new row
+            row = DB_CON.execute(query_row, params_row).fetchone()
+            if row == None:
+                row = DB_CON.execute(query_row_alt, params_row_alt).fetchone()
+            values = []
+            for j in range(0, len(row)):
+                if row[j] == None:
+                    values.append(0.0)
+                else:
+                    values.append(row[j])
+            liststore.append(values)
+
+    # Remove rows from model if they shouldn't be showing
+    for i in reversed(xrange(len(liststore))): # Search backwards to not fuck things up
+        if liststore[i][0] not in do_not_delete:
+            del liststore[i]
+
+    treeview.thaw_child_notify()
+
 def add_column(treeview, title, column_id, sort=False, truncate_float=False):
     renderer = gtk.CellRendererText()
     column = gtk.TreeViewColumn(title, renderer, text=column_id)

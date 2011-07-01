@@ -52,51 +52,15 @@ class PlayerStatsTab:
 
 #        column_types = [int, int, str, str, int, int, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float]
 #        query = 'SELECT player_attributes.player_id, player_attributes.team_id, player_attributes.name, (SELECT abbreviation FROM team_attributes WHERE team_id = player_attributes.team_id), SUM(player_stats.minutes>0), SUM(player_stats.starter), AVG(player_stats.minutes), AVG(player_stats.field_goals_made), AVG(player_stats.field_goals_attempted), AVG(100*player_stats.field_goals_made/player_stats.field_goals_attempted), AVG(player_stats.three_pointers_made), AVG(player_stats.three_pointers_attempted), AVG(100*player_stats.three_pointers_made/player_stats.three_pointers_attempted), AVG(player_stats.free_throws_made), AVG(player_stats.free_throws_attempted), AVG(100*player_stats.free_throws_made/player_stats.free_throws_attempted), AVG(player_stats.offensive_rebounds), AVG(player_stats.defensive_rebounds), AVG(player_stats.offensive_rebounds + player_stats.defensive_rebounds), AVG(player_stats.assists), AVG(player_stats.turnovers), AVG(player_stats.steals), AVG(player_stats.blocks), AVG(player_stats.personal_fouls), AVG(player_stats.points) FROM player_attributes, player_stats WHERE player_attributes.player_id = player_stats.player_id AND player_stats.season = ? AND player_stats.is_playoffs = 0 AND (player_attributes.team_id = ? OR ?) GROUP BY player_attributes.player_id'
-        query_player = 'SELECT player_attributes.player_id, player_attributes.team_id, player_attributes.name, (SELECT abbreviation FROM team_attributes WHERE team_id = player_attributes.team_id), SUM(player_stats.minutes>0), SUM(player_stats.starter), AVG(player_stats.minutes), AVG(player_stats.field_goals_made), AVG(player_stats.field_goals_attempted), AVG(100*player_stats.field_goals_made/player_stats.field_goals_attempted), AVG(player_stats.three_pointers_made), AVG(player_stats.three_pointers_attempted), AVG(100*player_stats.three_pointers_made/player_stats.three_pointers_attempted), AVG(player_stats.free_throws_made), AVG(player_stats.free_throws_attempted), AVG(100*player_stats.free_throws_made/player_stats.free_throws_attempted), AVG(player_stats.offensive_rebounds), AVG(player_stats.defensive_rebounds), AVG(player_stats.offensive_rebounds + player_stats.defensive_rebounds), AVG(player_stats.assists), AVG(player_stats.turnovers), AVG(player_stats.steals), AVG(player_stats.blocks), AVG(player_stats.personal_fouls), AVG(player_stats.points) FROM player_attributes, player_stats WHERE player_attributes.player_id = ? AND player_attributes.player_id = player_stats.player_id AND player_stats.season = ? AND player_stats.is_playoffs = 0 AND (player_attributes.team_id = ? OR ?) GROUP BY player_attributes.player_id'
-
 #        common.treeview_update(self.treeview_player_stats, column_types, query, (season, team_id, all_teams))
+        query_ids = 'SELECT player_id FROM player_attributes WHERE team_id = ? OR ?'
+        params_ids = [team_id, all_teams]
+        query_row = 'SELECT player_attributes.player_id, player_attributes.team_id, player_attributes.name, team_attributes.abbreviation, SUM(player_stats.minutes>0), SUM(player_stats.starter), AVG(player_stats.minutes), AVG(player_stats.field_goals_made), AVG(player_stats.field_goals_attempted), AVG(100*player_stats.field_goals_made/player_stats.field_goals_attempted), AVG(player_stats.three_pointers_made), AVG(player_stats.three_pointers_attempted), AVG(100*player_stats.three_pointers_made/player_stats.three_pointers_attempted), AVG(player_stats.free_throws_made), AVG(player_stats.free_throws_attempted), AVG(100*player_stats.free_throws_made/player_stats.free_throws_attempted), AVG(player_stats.offensive_rebounds), AVG(player_stats.defensive_rebounds), AVG(player_stats.offensive_rebounds + player_stats.defensive_rebounds), AVG(player_stats.assists), AVG(player_stats.turnovers), AVG(player_stats.steals), AVG(player_stats.blocks), AVG(player_stats.personal_fouls), AVG(player_stats.points) FROM player_attributes, player_stats, team_attributes WHERE player_attributes.player_id = ? AND player_attributes.player_id = player_stats.player_id AND player_stats.season = ? AND player_stats.is_playoffs = 0 AND team_attributes.team_id = player_attributes.team_id AND team_attributes.season = player_stats.season GROUP BY player_attributes.player_id'
+        params_row = [-1, season]
+        query_row_alt = 'SELECT player_attributes.player_id, player_attributes.team_id, player_attributes.name, team_attributes.abbreviation, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 FROM player_attributes, team_attributes WHERE player_attributes.player_id = ? AND team_attributes.team_id = player_attributes.team_id AND team_attributes.season = ?'
+        params_row_alt = [-1, season]
 
-        self.treeview_player_stats.freeze_child_notify()
-
-        do_not_delete = [] # List of player_id
-        query = 'SELECT player_id FROM player_attributes WHERE team_id = ? OR ?'
-        for player_id, in common.DB_CON.execute(query, (team_id, all_teams)):
-            found_player = False
-            for i in xrange(len(self.liststore_player_stats)):
-                if self.liststore_player_stats[i][0] == player_id:
-                    do_not_delete.append(player_id)
-                    found_player = True
-                    # Update row
-                    row = common.DB_CON.execute(query_player, (player_id, season, team_id, all_teams)).fetchone()
-                    values = []
-                    for j in range(0, len(row)):
-                        # Divide by zero errors
-                        if row[j] == None:
-                            values.append(0.0)
-                        else:
-                            values.append(row[j])
-                    self.liststore_player_stats[i] = values
-                    break # We found the player in the liststore, so move on to next player
-
-            if not found_player:
-                do_not_delete.append(player_id)
-                # Add new row
-                row = common.DB_CON.execute(query_player, (player_id, season, team_id, all_teams)).fetchone()
-                values = []
-                for j in range(0, len(row)):
-                    # Divide by zero errors
-                    if row[j] == None:
-                        values.append(0.0)
-                    else:
-                        values.append(row[j])
-                self.liststore_player_stats.append(values)
-
-        # Remove rows from model if they shouldn't be showing
-        for i in reversed(xrange(len(self.liststore_player_stats))): # Search backwards to not fuck things up
-            if self.liststore_player_stats[i][0] not in do_not_delete:
-                del self.liststore_player_stats[i]
-
-        self.treeview_player_stats.thaw_child_notify()
+        common.treeview_update_new(self.treeview_player_stats, query_ids, params_ids, query_row, params_row, query_row_alt, params_row_alt)
 
         self.updated = True
 

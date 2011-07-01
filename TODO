@@ -15,6 +15,8 @@ Make it more fun/realistic:
 - Point balance
   - PPG is too skewed
   - APG not skewed enough
+- rewrite common.treeview_build and common.treeview_update as i've done in player_stats_tab.py
+  - same thing with comboboxes
 If it's actually fun, make a .deb and distribute
 
 

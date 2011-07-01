@@ -9,8 +9,8 @@ class TeamHistoryWindow:
     def update(self):
         query = 'SELECT season, won, lost, playoffs, won_conference, won_championship FROM team_attributes WHERE team_id = ? ORDER BY season DESC'
         text = ''
-        for row in common.DB_CON.execute(query, (common.PLAYER_TEAM_ID,)):
-            season, won, lost, playoffs, won_conference, won_championship = row
+        for season, won, lost, playoffs, won_conference, won_championship in common.DB_CON.execute(query, (common.PLAYER_TEAM_ID,)):
+#             = row
             text += '%d season: %d-%d' % (season, won, lost)
             if won_championship:
                 text += ', <b>LEAGUE CHAMPIONS</b>\n'

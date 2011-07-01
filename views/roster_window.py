@@ -128,7 +128,7 @@ class RosterWindow:
         # Roster info
         self.update_roster_info()
         n_games_played, = common.DB_CON.execute('SELECT COUNT(*) FROM team_stats WHERE season = ? AND team_id = ?', (common.SEASON, common.PLAYER_TEAM_ID)).fetchone()
-        print n_games_played
+
         # Roster list
         # Only display stats if it's during the season AND the first game has been played. Otherwise, players won't show up in the roster
         if (self.mw.phase == 1 and n_games_played > 0) or  (self.mw.phase >= 2 and self.mw.phase <= 4): # Regular season to right before draft
@@ -139,6 +139,7 @@ class RosterWindow:
             column_types = [int, str, str, int, int, int, str, float, float, float, float]
             query = 'SELECT player_attributes.player_id, player_attributes.name, player_attributes.position, ROUND((julianday("%d-06-01") - julianday(player_attributes.born_date))/365.25), player_ratings.overall, player_ratings.potential, "$" || round(contract_amount/1000.0, 2) || "M thru " || contract_expiration, 0, 0, 0, 0 FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = ? ORDER BY player_ratings.roster_position ASC' % common.SEASON
             query_bindings = (common.PLAYER_TEAM_ID,)
+
         common.treeview_update(self.treeview_roster, column_types, query, query_bindings)
         model = self.treeview_roster.get_model()
         model.connect('row-deleted', self.on_treeview_roster_row_deleted);

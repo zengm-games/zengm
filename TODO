@@ -10,7 +10,6 @@ BLOCKERS FOR 0.2.0:
     -Really, redo AI free agent behavior. Too many good players get left behind because teams can't manage caps
 - released player contracts should count against your cap
   - bought out players shouldn't, but they should cost cash
-- 666 in rebounds in box score
 - Point balance
   - PPG is too skewed
   - APG not skewed enough

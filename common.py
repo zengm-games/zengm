@@ -54,11 +54,11 @@ def treeview_update(treeview, column_types, query, query_bindings=()):
         liststore.append(values)
 
 def treeview_build_new(treeview, column_types, column_info):
-    """Shortcut function to add columns and a liststore to a treeview.
+    """Shortcut function to add columns and a ListStore to a treeview.
 
     Args:
         treeview: gtk.treview instance.
-        column_types: A list of data types for the columns in the model
+        column_types: A list of data types for the columns in the model.
         column_info: A list containing four lists of equal size, with each set
             of four elements from those lists corresponding to one visible
             column. 1: title; 2: column ID (corresponds to index in

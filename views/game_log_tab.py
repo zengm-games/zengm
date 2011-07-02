@@ -80,8 +80,8 @@ class GameLogTab:
 
         query_ids = 'SELECT game_id FROM team_stats WHERE team_id = ? AND season = ?'
         params_ids = [team_id, season]
-        query_row = 'SELECT game_id, (SELECT abbreviation FROM team_attributes WHERE team_id = team_stats.opponent_team_id), (SELECT val FROM enum_w_l WHERE key = team_stats.won), points || "-" || opponent_points FROM team_stats WHERE game_id = ?'
-        params_row = [-1]
+        query_row = 'SELECT game_id, (SELECT abbreviation FROM team_attributes WHERE team_id = team_stats.opponent_team_id), (SELECT val FROM enum_w_l WHERE key = team_stats.won), points || "-" || opponent_points FROM team_stats WHERE game_id = ? AND team_id = ?'
+        params_row = [-1, team_id]
 
         common.treeview_update_new(self.treeview_games_list, query_ids, params_ids, query_row, params_row)
 

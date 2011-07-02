@@ -689,11 +689,26 @@ class MainWindow:
         self.games_in_progress = False
 
     def make_season_combobox(self, combobox, active):
+        """Make season combobox and return the active season.
+
+        Populates a combobox with the list of seasons in the game, and keeps
+        updating it each time the function is called as seasons are added.
+
+        The season (year) of the active combobox row is returned.
+
+        Args:
+            combobox: The combobox for the seasons menu.
+            active: The index of the active row of the ListStore, typically
+                found by combobox.get_active() before this function is called.
+
+        Returns:
+            The season (year) of the active row in the combobox, as defined by
+            the active argument.
+        """
         # Season combobox
         populated = False
         model = combobox.get_model()
         for season, in common.DB_CON.execute('SELECT season FROM team_stats GROUP BY season ORDER BY season DESC'):
-            print season
             found = False
             for row in model:
                 if int(row[0]) == season:
@@ -711,7 +726,31 @@ class MainWindow:
         return season
 
     def make_team_combobox(self, combobox, active, season, all_teams_option):
-        # Team combobox
+        """Make team combobox and return the active team_id.
+
+        When given a combobox with a blank model, a new ListStore is created
+        and filled with the team names and team IDs, under the assumption that
+        this will remain constant. If there is already something in the model,
+        then this is skipped under the assumption that the teams are all
+        already correctly there.
+
+        Then, the team_id of the active combobox row is returned.
+
+        Args:
+            combobox: The combobox for the teams menu.
+            active: The index of the active row of the ListStore, typically
+                found by combobox.get_active() before this function is called.
+            season: The current season (can be any season, really, as the game
+                doesn't currently support contraction/expansion of teams, so
+                all seasons have the same teams).
+            all_teams_option: Boolean. If True, an option for 'All Teams' with
+                a special team_id of 666 is put at the front of the ListStore
+                when it is created.
+
+        Returns:
+            The team_id of the active row in the combobox, as defined by the
+            active argument.
+        """
         model = combobox.get_model()
         if len(model) == 0:
             model = gtk.ListStore(str, int)

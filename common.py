@@ -81,6 +81,10 @@ def treeview_update_new(treeview, query_ids, params_ids, query_row, params_row, 
     or new stats are recorded, or a trade happens, etc... this function can
     handle it.
 
+    This works most efficiently when all the rows in the model need updating.
+    Otherwise, it's somewhat inefficient and I should probably write another
+    function optimized for those cases.
+
     Three queries are used rather than just one because when a player is first
     added to a team (or at the beginning of a season), he doesn't have any
     stats with that team, so that would fuck up queries on player_stats.

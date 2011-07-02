@@ -1,5 +1,4 @@
 BLOCKERS FOR 0.2.0:
-Make it more fun/realistic:
 - Feedback from trades (way off, that's close, etc)
 - "Synergy" in game simulation
 - More realistic stats
@@ -15,20 +14,13 @@ Make it more fun/realistic:
 - Point balance
   - PPG is too skewed
   - APG not skewed enough
-- rewrite common.treeview_build and common.treeview_update as i've done in player_stats_tab.py
-  - same thing with comboboxes
-- common.treeview_update_new
-If it's actually fun, make a .deb and distribute
+- fix combobox refresh issue
+- If it's actually fun, make a .deb and distribute
 
 
 All the other UI prettifying and code refactoring stuff can wait.
 
 ---
-
-REFACTORING
-1. Divide each window/dialog/tab into its own file, consistently
-2. SQLAlchemy
-3. Some kind of HTML template engine for the Webkit stuff
 
 Separate files
 - Each window/dialog gets its own glade file and own .py file in views folder
@@ -75,14 +67,10 @@ view any team in the roster window
     drop down box at the top with team names
     all actions disabled unless team_id == common.PLAYER_TEAM_ID
     open this window when a team is double-clicked on in the standings
-need a good way of updating windows (player, roster, etc.) on changes
-    do this after getting a good general treeview system for updates
-    player/roster window should update after game played, player signed/released/drafted
 customize which columns are displayed in treeviews - kiwi
 treeview formatting
     str, int, float, currency, date, age - do formatting based on column type
 progress bars
-combine ratings and stats tabs - use one model and just show different columns
 filtering should be done with treemodelfilter - see pygtk tutorial
 play menu
     even after hiding, accelerators still work, so on menuitem activation, check to make sure it's a valid choice!!!

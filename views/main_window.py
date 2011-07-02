@@ -387,7 +387,7 @@ class MainWindow:
         self.new_phase(1)
 
         #Auto sort player's roster
-        self.roster_auto_sort(common.PLAYER_TEAM_ID)
+        common.roster_auto_sort(common.PLAYER_TEAM_ID)
 
         # Make standings treeviews based on league_* tables
 #        self.standings.build()
@@ -822,7 +822,7 @@ class MainWindow:
                         num_players += 1
                         payroll += amount
                         print payroll, amount, common.SALARY_CAP
-                        self.roster_auto_sort(team_id)
+                        common.roster_auto_sort(team_id)
                     j += 1
                 if not new_player:
                     break                
@@ -1072,7 +1072,7 @@ class MainWindow:
             # Auto sort rosters (except player's team)
             for t in range(30):
                 if t != common.PLAYER_TEAM_ID:
-                    self.roster_auto_sort(t)
+                    common.roster_auto_sort(t)
 
             self.update_play_menu(self.phase)
 

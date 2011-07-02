@@ -97,7 +97,7 @@ class TradeWindow:
                 for player_id, team_id, name, age, rating, potential, contract_amount in self.trade.offer[i].values():
                     common.DB_CON.execute('UPDATE player_attributes SET team_id = ? WHERE player_id = ?', (new_team_id, player_id))
             # Auto-sort computer team
-            self.mw.roster_auto_sort(self.trade.team_id)
+            common.roster_auto_sort(self.trade.team_id)
 
             # Show dialog
             dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_INFO, gtk.BUTTONS_CLOSE, 'Your trade proposal was accepted.')

@@ -11,7 +11,7 @@ class RosterWindow:
 
     def on_button_roster_auto_sort_clicked(self, button, data=None):
         self.treeview_roster.get_model().clear()
-        self.mw.roster_auto_sort(common.PLAYER_TEAM_ID)
+        common.roster_auto_sort(common.PLAYER_TEAM_ID)
         self.mw.unsaved_changes = True
         self.update_roster()
 

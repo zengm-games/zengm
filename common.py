@@ -176,11 +176,12 @@ def add_column(treeview, title, column_id, sort=False, truncate_float=False):
     treeview.append_column(column)
 
 
-def roster_auto_sort(self, team_id, from_button = False):
+def roster_auto_sort(team_id, from_button = False):
+    """Sort the roster of team_id by overall rating."""
     players = []
     query = 'SELECT player_attributes.player_id, player_ratings.overall, player_ratings.endurance FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = ? ORDER BY player_ratings.roster_position ASC'
 
-    for row in common.DB_CON.execute(query, (team_id,)):
+    for row in DB_CON.execute(query, (team_id,)):
         players.append(list(row))
 
     # Order
@@ -189,6 +190,5 @@ def roster_auto_sort(self, team_id, from_button = False):
     # Update
     roster_position = 1
     for player in players:
-        common.DB_CON.execute('UPDATE player_ratings SET roster_position = ? WHERE player_id = ?', (roster_position, player[0]))
+        DB_CON.execute('UPDATE player_ratings SET roster_position = ? WHERE player_id = ?', (roster_position, player[0]))
         roster_position += 1
-        print roster_position

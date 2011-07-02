@@ -15,6 +15,7 @@
     <property name="version">0.1+</property>
     <property name="copyright" translatable="yes">Copyright © 2008-2011 Jeremy Scheff</property>
     <property name="comments" translatable="yes">A basketball simulation game</property>
+    <property name="website">https://github.com/jdscheff/basketball-gm</property>
     <property name="license" translatable="yes"> GNU AFFERO GENERAL PUBLIC LICENSE
                        Version 3, 19 November 2007
 

@@ -708,13 +708,13 @@ class MainWindow:
         # Season combobox
         populated = False
         model = combobox.get_model()
-        for season, in common.DB_CON.execute('SELECT season FROM team_stats GROUP BY season ORDER BY season DESC'):
+        for season, in common.DB_CON.execute('SELECT season FROM team_stats GROUP BY season ORDER BY season ASC'):
             found = False
             for row in model:
                 if int(row[0]) == season:
                     found = True # Already in the liststore, so we don't need to add it
             if not found:
-                model.append(['%s' % season])
+                model.prepend(['%s' % season])
             populated = True
 
         if not populated: # Nothing was found in the liststore or in the team_stats database

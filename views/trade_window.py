@@ -10,8 +10,6 @@ class TradeWindow:
     def __init__(self, main_window, team_id=-1, player_id=-1):
         self.mw = main_window
 
-        print team_id, player_id
-
         if team_id < 0:
             team_id = 0
         self.trade = Trade(team_id)
@@ -86,16 +84,17 @@ class TradeWindow:
         self.mw.on_treeview_player_row_activated(treeview, path, view_column, data)
 
     def on_button_trade_propose_clicked(self, button, data=None):
-        if self.trade.value[0] - 0.5 > self.trade.value[1]:
+        accept, comment = self.trade.propose()
+        if accept:
             self.trade.process()
 
             # Show dialog
-            dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_INFO, gtk.BUTTONS_CLOSE, 'Your trade proposal was accepted.')
+            dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_INFO, gtk.BUTTONS_CLOSE, 'Your trade proposal was accepted.\n\n"%s"' % (comment,))
             dialog.run()
             dialog.destroy()
             self.trade_window.destroy()
         else:
-            dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_INFO, gtk.BUTTONS_CLOSE, 'Your trade proposal was rejected.')
+            dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_INFO, gtk.BUTTONS_CLOSE, 'Your trade proposal was rejected.\n\n"%s"' % (comment,))
             dialog.run()
             dialog.destroy()
 
@@ -131,23 +130,20 @@ class TradeWindow:
 
         player_id = model[path][0]
         team_id = model[path][1]
-        name = model[path][3]
+        player_name = model[path][3]
         age = model[path][5]
         rating = model[path][6]
         potential = model[path][7]
+
         if team_id == common.PLAYER_TEAM_ID:
             i = 0
         else:
             i = 1
 
-        if model[path][2]:
-            # Check: add player to offer
-            contract_amount, = common.DB_CON.execute('SELECT contract_amount FROM player_attributes WHERE player_id = ?', (player_id,)).fetchone()
-
-            self.trade.offer[i][player_id] = [player_id, team_id, name, age, rating, potential, contract_amount]
-        else:
-            # Uncheck: delete player from offer
-            del self.trade.offer[i][player_id]
+        if model[path][2]: # Check: add player to offer
+            self.trade.add_player(i, player_id, team_id, player_name, age, rating, potential)
+        else: # Uncheck: delete player from offer
+            self.trade.remove_player(i, player_id)
 
         self.update_trade_summary()
 
@@ -172,7 +168,7 @@ class TradeWindow:
     def update_trade_summary(self):
         self.label_trade_summary.set_markup('<b>Trade Summary</b>\n\nSalary Cap: $%.2fM\n' % (common.SALARY_CAP/1000.0))
 
-        self.trade.update()
+        self.trade.update() # Update all the data which is then displayed below
 
         for team_id in [common.PLAYER_TEAM_ID, self.trade.team_id]:
             if team_id == common.PLAYER_TEAM_ID:

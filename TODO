@@ -16,11 +16,6 @@ BLOCKERS FOR 0.2.0:
 - rename stuff back to basketball-gm ..?
 
 Trade
-- remove all references in trade_window.py to:
-  - self.trade.team_id
-  - self.trade.offer
-  - self.trade.value
-  - self.trade.update()
 - "Oh, you again?" after failed trade attempts
 - value should be somewhat more additive than it is now
 

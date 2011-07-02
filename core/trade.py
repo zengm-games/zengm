@@ -5,14 +5,17 @@ import common
 import random
 
 class Trade:
-    """All parts of a trade, from adding players to proposing to processing.
+    """All non-GUI parts of a trade.
 
     Currently, it only works for trading between the user's team and a CPU
     team.
     """
+
+    # In all of these variables, the first element represents the user's team
+    # and the second element represents the CPU team.
     offer = [{}, {}]
     payroll_after_trade = [0, 0]
-    total = [0, 0] # Total contract amount for each team
+    total = [0, 0] # Total contract amount for players in trade
     value = [0, 0]
     over_cap = [False, False]
     ratios = [0, 0]
@@ -29,7 +32,8 @@ class Trade:
     def update(self):
         """Update all the class attributes.
 
-        This should be called after any change is made to the trade.
+        This should be called by the view after any change is made and before
+        the UI updates.
         """
         for team_id in [common.PLAYER_TEAM_ID, self.team_id]:
             if team_id == common.PLAYER_TEAM_ID:
@@ -76,29 +80,27 @@ class Trade:
         self.team_id = team_id
         self.offer[1] = {} # Empty player list
 
-    def add_player(self):
-        """Adds a player to the deal."""
-        pass
+    def add_player(self, i, player_id, team_id, player_name, age, rating, potential):
+        """Adds a player to the deal.
 
-    def check_salary_cap(self):
-        """Check the salary cap implications of the proposed trade.
-
-
+        Args:
+            i: 0 for the user's team, 1 for the CPU team.
+            player_id: player_id of the player to add.
+            ...
         """
-        pass
+        contract_amount, = common.DB_CON.execute('SELECT contract_amount FROM player_attributes WHERE player_id = ?', (player_id,)).fetchone()
+        self.offer[i][player_id] = [player_id, team_id, player_name, age, rating, potential, contract_amount]
 
-    def get_values(self):
-        """Calculate the percieved values of the trade/no-trade scenarios.
+    def remove_player(self, i, player_id):
+        """Removes a player from the deal.
 
-        Returns:
-            A list containing two numbers, from the perspective of the team the
-            user is trying to trade with (the CPU team): the percieved value of
-            the players being traded away from the CPU team, and the percieved
-            values of the players being traded to the CPU team.
+        Args:
+            i: 0 for the user's team, 1 for the CPU team.
+            player_id: player_id of the player to remove.
         """
-        pass
+        del self.offer[i][player_id]
 
-    def propose_trade(self):
+    def propose(self):
         """Propose the trade to the other team.
 
         Returns:
@@ -106,6 +108,10 @@ class Trade:
             trade was accepted (True) or not (False); 2. a string containing
             the response from the CPU team.
         """
+        if self.value[0] - 0.5 > self.value[1]:
+            return [True, 'Nice doing business with you!']
+        else:
+            return [False, 'What, are you crazy?']
 
     def process(self):
         """Process the proposed trade.

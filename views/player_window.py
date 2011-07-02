@@ -7,8 +7,12 @@ import common
 import trade_window
 
 class PlayerWindow:
+    pages = {'stats': 0, 'game_log': 1}
+    built = dict(stats=False, game_log=False)
+    updated = dict(stats=False, game_log=False)
+
     def update_player(self, player_id):
-        print 'update_player'
+        print 'update player window'
         # If player_id is -1, then keep same player
         if player_id != -1:
             self.player_id = player_id
@@ -53,95 +57,61 @@ class PlayerWindow:
         # Stats
         if not self.built['stats']:
             self.build_player_window_stats()
-        self.update_player_window_stats()
+        if self.notebook1.get_current_page() == self.pages['stats']:
+            self.update_player_window_stats()
+        else:
+            self.updated['stats'] = False
         # Game Log
         if not self.built['game_log']:
             self.build_player_window_game_log()
-        self.update_player_window_game_log()
+        if self.notebook1.get_current_page() == self.pages['game_log']:
+            self.update_player_window_game_log()
+        else:
+            self.updated['game_log'] = False
 
         if player_id != -1: # Don't raise the dialog if it's in the background
             self.player_window.show() # Show the dialog
             self.player_window.window.show() # Raise the dialog if it's in the background
 
     def build_player_window_stats(self):
-        common.add_column(self.treeview_player_window_stats, 'Year', 0, True)
-        common.add_column(self.treeview_player_window_stats, 'Team', 1, True)
-        common.add_column(self.treeview_player_window_stats, 'GP', 2, True)
-        common.add_column(self.treeview_player_window_stats, 'GS', 3, True)
-        common.add_column(self.treeview_player_window_stats, 'Min', 4, True, True)
-        common.add_column(self.treeview_player_window_stats, 'FGM', 5, True, True)
-        common.add_column(self.treeview_player_window_stats, 'FGA', 6, True, True)
-        common.add_column(self.treeview_player_window_stats, 'FG%', 7, True, True)
-        common.add_column(self.treeview_player_window_stats, '3PM', 8, True, True)
-        common.add_column(self.treeview_player_window_stats, '3PA', 9, True, True)
-        common.add_column(self.treeview_player_window_stats, '3P%', 10, True, True)
-        common.add_column(self.treeview_player_window_stats, 'FTM', 11, True, True)
-        common.add_column(self.treeview_player_window_stats, 'FTA', 12, True, True)
-        common.add_column(self.treeview_player_window_stats, 'FT%', 13, True, True)
-        common.add_column(self.treeview_player_window_stats, 'OReb', 14, True, True)
-        common.add_column(self.treeview_player_window_stats, 'Dreb', 15, True, True)
-        common.add_column(self.treeview_player_window_stats, 'Reb', 16, True, True)
-        common.add_column(self.treeview_player_window_stats, 'Ast', 17, True, True)
-        common.add_column(self.treeview_player_window_stats, 'TO', 18, True, True)
-        common.add_column(self.treeview_player_window_stats, 'Stl', 19, True, True)
-        common.add_column(self.treeview_player_window_stats, 'Blk', 20, True, True)
-        common.add_column(self.treeview_player_window_stats, 'PF', 21, True, True)
-        common.add_column(self.treeview_player_window_stats, 'PPG', 22, True, True)
+        column_types = [int, str, int, int, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float]
+        column_info = [['Year', 'Team', 'GP',  'GS',  'Min', 'FGM', 'FGA', 'FG%', '3PM', '3PA', '3P%', 'FTM', 'FTA', 'FT%', 'Oreb', 'Dreb', 'Reb', 'Ast', 'TO', 'Stl', 'Blk', 'PF', 'PPG'],
+                       [0,      1,      2,     3,     4,     5,     6,     7,     8,     9,     10,    11,    12,    13,    14,     15,     16,    17,    18,   19,    20,    21,   22],
+                       [True,   True,   True,  True,  True,  True,  True,  True,  True,  True,  True,  True,  True,  True,  True,   True,   True,  True,  True, True,  True,  True, True],
+                       [False,  False,  False, False, True,  True,  True,  True,  True,  True,  True,  True,  True,  True,  True,   True,   True,  True,  True, True,  True,  True, True]]
+        common.treeview_build_new(self.treeview_player_window_stats, column_types, column_info)
+
         self.built['stats'] = True
 
     def update_player_window_stats(self):
-        self.liststore_player_window_stats = gtk.ListStore(int, str, int, int, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float)
-        self.treeview_player_window_stats.set_model(self.liststore_player_window_stats)
-        query = 'SELECT player_stats.season, (SELECT abbreviation FROM team_attributes WHERE team_id = player_stats.team_id), SUM(player_stats.minutes>0), SUM(player_stats.starter), AVG(player_stats.minutes), AVG(player_stats.field_goals_made), AVG(player_stats.field_goals_attempted), AVG(100*player_stats.field_goals_made/player_stats.field_goals_attempted), AVG(player_stats.three_pointers_made), AVG(player_stats.three_pointers_attempted), AVG(100*player_stats.three_pointers_made/player_stats.three_pointers_attempted), AVG(player_stats.free_throws_made), AVG(player_stats.free_throws_attempted), AVG(100*player_stats.free_throws_made/player_stats.free_throws_attempted), AVG(player_stats.offensive_rebounds), AVG(player_stats.defensive_rebounds), AVG(player_stats.offensive_rebounds + player_stats.defensive_rebounds), AVG(player_stats.assists), AVG(player_stats.turnovers), AVG(player_stats.steals), AVG(player_stats.blocks), AVG(player_stats.personal_fouls), AVG(player_stats.points) FROM player_attributes, player_stats WHERE player_attributes.player_id = player_stats.player_id AND player_attributes.player_id = ? AND player_stats.is_playoffs = 0 GROUP BY player_attributes.player_id, player_stats.season, player_stats.team_id ORDER BY player_stats.season DESC'
-        for row in common.DB_CON.execute(query, (self.player_id,)):
-            stats = []
-            for i in range(len(row)):
-                # Divide by zero errors
-                if row[i] == None:
-                    stats.append(0.0)
-                else:
-                    stats.append(row[i])
-            self.liststore_player_window_stats.append(stats)
+        print 'update player window stats'
+        query_ids = 'SELECT season FROM player_stats WHERE player_id = ? GROUP BY season ORDER BY season ASC'
+        params_ids = [self.player_id]
+        query_row = 'SELECT player_stats.season, (SELECT abbreviation FROM team_attributes WHERE team_id = player_stats.team_id), SUM(player_stats.minutes>0), SUM(player_stats.starter), AVG(player_stats.minutes), AVG(player_stats.field_goals_made), AVG(player_stats.field_goals_attempted), AVG(100*player_stats.field_goals_made/player_stats.field_goals_attempted), AVG(player_stats.three_pointers_made), AVG(player_stats.three_pointers_attempted), AVG(100*player_stats.three_pointers_made/player_stats.three_pointers_attempted), AVG(player_stats.free_throws_made), AVG(player_stats.free_throws_attempted), AVG(100*player_stats.free_throws_made/player_stats.free_throws_attempted), AVG(player_stats.offensive_rebounds), AVG(player_stats.defensive_rebounds), AVG(player_stats.offensive_rebounds + player_stats.defensive_rebounds), AVG(player_stats.assists), AVG(player_stats.turnovers), AVG(player_stats.steals), AVG(player_stats.blocks), AVG(player_stats.personal_fouls), AVG(player_stats.points) FROM player_attributes, player_stats WHERE player_stats.season = ? AND player_attributes.player_id = ? AND player_attributes.player_id = player_stats.player_id AND player_stats.is_playoffs = 0'
+        params_row = [-1, self.player_id]
+
+        common.treeview_update_new(self.treeview_player_window_stats, query_ids, params_ids, query_row, params_row)
+
         self.updated['stats'] = True
 
     def build_player_window_game_log(self):
-        common.add_column(self.treeview_player_window_game_log, 'Game #', 0, True)
-        common.add_column(self.treeview_player_window_game_log, 'Team', 1, True)
-        common.add_column(self.treeview_player_window_game_log, 'GS', 2, True)
-        common.add_column(self.treeview_player_window_game_log, 'Min', 3, True, True)
-        common.add_column(self.treeview_player_window_game_log, 'FGM', 4, True, True)
-        common.add_column(self.treeview_player_window_game_log, 'FGA', 5, True, True)
-        common.add_column(self.treeview_player_window_game_log, 'FG%', 6, True, True)
-        common.add_column(self.treeview_player_window_game_log, '3PM', 7, True, True)
-        common.add_column(self.treeview_player_window_game_log, '3PA', 8, True, True)
-        common.add_column(self.treeview_player_window_game_log, '3P%', 9, True, True)
-        common.add_column(self.treeview_player_window_game_log, 'FTM', 10, True, True)
-        common.add_column(self.treeview_player_window_game_log, 'FTA', 11, True, True)
-        common.add_column(self.treeview_player_window_game_log, 'FT%', 12, True, True)
-        common.add_column(self.treeview_player_window_game_log, 'OReb', 13, True, True)
-        common.add_column(self.treeview_player_window_game_log, 'Dreb', 14, True, True)
-        common.add_column(self.treeview_player_window_game_log, 'Reb', 15, True, True)
-        common.add_column(self.treeview_player_window_game_log, 'Ast', 16, True, True)
-        common.add_column(self.treeview_player_window_game_log, 'TO', 17, True, True)
-        common.add_column(self.treeview_player_window_game_log, 'Stl', 18, True, True)
-        common.add_column(self.treeview_player_window_game_log, 'Blk', 19, True, True)
-        common.add_column(self.treeview_player_window_game_log, 'PF', 20, True, True)
-        common.add_column(self.treeview_player_window_game_log, 'Pts', 21, True, True)
+        column_types = [int, str, int, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float]
+        column_info = [['Team', 'GS',  'Min', 'FGM', 'FGA', 'FG%', '3PM', '3PA', '3P%', 'FTM', 'FTA', 'FT%', 'Oreb', 'Dreb', 'Reb', 'Ast', 'TO', 'Stl', 'Blk', 'PF', 'Pts'],
+                       [1,      2,     3,     4,     5,     6,     7,     8,     9,     10,    11,    12,    13,     14,     15,    16,    17,   18,    19,    20,   21],
+                       [True,   True,  True,  True,  True,  True,  True,  True,  True,  True,  True,  True,  True,   True,   True,  True,  True, True,  True,  True, True],
+                       [False,  False, True,  True,  True,  True,  True,  True,  True,  True,  True,  True,  True,   True,   True,  True,  True, True,  True,  True, True]]
+        common.treeview_build_new(self.treeview_player_window_game_log, column_types, column_info)
         self.built['game_log'] = True
 
     def update_player_window_game_log(self):
-        self.liststore_player_window_game_log = gtk.ListStore(int, str, int, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float)
-        self.treeview_player_window_game_log.set_model(self.liststore_player_window_game_log)
-        query = 'SELECT 666, (SELECT abbreviation FROM team_attributes WHERE team_id = player_attributes.team_id), player_stats.starter, player_stats.minutes, player_stats.field_goals_made, player_stats.field_goals_attempted, 100*player_stats.field_goals_made/player_stats.field_goals_attempted, player_stats.three_pointers_made, player_stats.three_pointers_attempted, 100*player_stats.three_pointers_made/player_stats.three_pointers_attempted, player_stats.free_throws_made, player_stats.free_throws_attempted, 100*player_stats.free_throws_made/player_stats.free_throws_attempted, player_stats.offensive_rebounds, player_stats.defensive_rebounds, player_stats.offensive_rebounds + player_stats.defensive_rebounds, player_stats.assists, player_stats.turnovers, player_stats.steals, player_stats.blocks, player_stats.personal_fouls, player_stats.points FROM player_attributes, player_stats WHERE player_attributes.player_id = player_stats.player_id AND player_attributes.player_id = ? AND player_stats.season = ?'
-        for row in common.DB_CON.execute(query, (self.player_id, common.SEASON)):
-            stats = []
-            for i in range(len(row)):
-                # Divide by zero errors
-                if row[i] == None:
-                    stats.append(0.0)
-                else:
-                    stats.append(row[i])
-            self.liststore_player_window_game_log.append(stats)
+        print 'update player window game log'
+        query_ids = 'SELECT game_id FROM player_stats WHERE player_id = ? AND season = ?'
+        params_ids = [self.player_id, common.SEASON]
+        query_row = 'SELECT player_stats.game_id, (SELECT abbreviation FROM team_attributes WHERE team_id = player_attributes.team_id), player_stats.starter, player_stats.minutes, player_stats.field_goals_made, player_stats.field_goals_attempted, 100*player_stats.field_goals_made/player_stats.field_goals_attempted, player_stats.three_pointers_made, player_stats.three_pointers_attempted, 100*player_stats.three_pointers_made/player_stats.three_pointers_attempted, player_stats.free_throws_made, player_stats.free_throws_attempted, 100*player_stats.free_throws_made/player_stats.free_throws_attempted, player_stats.offensive_rebounds, player_stats.defensive_rebounds, player_stats.offensive_rebounds + player_stats.defensive_rebounds, player_stats.assists, player_stats.turnovers, player_stats.steals, player_stats.blocks, player_stats.personal_fouls, player_stats.points FROM player_attributes, player_stats WHERE player_stats.game_id = ? AND player_stats.player_id = ? AND player_attributes.player_id = player_stats.player_id'
+        params_row = [-1, self.player_id]
+
+        common.treeview_update_new(self.treeview_player_window_game_log, query_ids, params_ids, query_row, params_row)
+
         self.updated['game_log'] = True
 
     def on_player_window_close(self, widget, data=None):
@@ -176,6 +146,15 @@ class PlayerWindow:
     def on_button_close_clicked(self, button, data=None):
         self.player_window.hide()
 
+    def on_notebook1_switch_page(self, widget, page, page_num, data=None):
+        print 'player window on_notebook_switch_page', page_num
+        if (page_num == self.pages['stats']):
+            if not self.updated['stats']:
+                self.update_player_window_stats()
+        elif (page_num == self.pages['game_log']):
+            if not self.updated['game_log']:
+                self.update_player_window_game_log()
+
     def __init__(self, main_window):
         self.main_window = main_window
 
@@ -183,14 +162,12 @@ class PlayerWindow:
         self.builder.add_objects_from_file(common.GTKBUILDER_PATH, ['player_window'])
 
         self.player_window = self.builder.get_object('player_window')
+        self.notebook1 = self.builder.get_object('notebook1')
         self.label_player_window_info = self.builder.get_object('label_player_window_info')
         self.label_player_window_ratings = self.builder.get_object('label_player_window_ratings')
         self.treeview_player_window_stats = self.builder.get_object('treeview_player_window_stats')
         self.treeview_player_window_game_log = self.builder.get_object('treeview_player_window_game_log')
         self.button_trade = self.builder.get_object('button_trade')
-
-        self.built = dict(stats=False, game_log=False)
-        self.updated = dict(stats=False, game_log=False)
 
         self.builder.connect_signals(self)
 

@@ -1990,6 +1990,8 @@ For more information on this, and how to apply and follow the GNU AGPL, see
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
     <property name="window_position">center-on-parent</property>
+    <property name="default_width">1024</property>
+    <property name="default_height">600</property>
     <property name="icon">basketballgm.svg</property>
     <property name="type_hint">normal</property>
     <signal name="close" handler="on_player_window_close" swapped="no"/>
@@ -2608,6 +2610,7 @@ For more information on this, and how to apply and follow the GNU AGPL, see
               <object class="GtkNotebook" id="notebook1">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <signal name="switch-page" handler="on_notebook1_switch_page" swapped="no"/>
                 <child>
                   <object class="GtkScrolledWindow" id="scrolledwindow6">
                     <property name="visible">True</property>

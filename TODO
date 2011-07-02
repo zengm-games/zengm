@@ -18,8 +18,6 @@ Make it more fun/realistic:
 - rewrite common.treeview_build and common.treeview_update as i've done in player_stats_tab.py
   - same thing with comboboxes
 - common.treeview_update_new
-  - player window
-  - free agents window
 If it's actually fun, make a .deb and distribute
 
 
@@ -53,6 +51,8 @@ Prettier UI: embed Webkit
 
 numpy rand
 - make this optional
+
+Player window and game log list should be sped up by not checking the old (static) rows
 
 when negotiating, players change values too much when you try to change years
 when you press close and the save/nosave/cancel dialog comes up, it should warn you about the save if you press save

@@ -17,7 +17,6 @@ BLOCKERS FOR 0.2.0:
 - fix combobox refresh issue
 - If it's actually fun, make a .deb and distribute
 
-
 All the other UI prettifying and code refactoring stuff can wait.
 
 ---

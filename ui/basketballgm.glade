@@ -11,7 +11,7 @@
     <property name="icon">basketballgm.svg</property>
     <property name="type_hint">dialog</property>
     <property name="transient_for">main_window</property>
-    <property name="program_name">Basketball General Manager</property>
+    <property name="program_name">Basketball GM</property>
     <property name="version">0.1+</property>
     <property name="copyright" translatable="yes">Copyright © 2008-2011 Jeremy Scheff</property>
     <property name="comments" translatable="yes">A basketball simulation game</property>
@@ -677,7 +677,7 @@ if any, to sign a "copyright disclaimer" for the program, if necessary.
 For more information on this, and how to apply and follow the GNU AGPL, see
 &lt;http://www.gnu.org/licenses/&gt;.
 </property>
-    <property name="authors">Jeremy Scheff &lt;dumbmatter@gmail.com&gt;</property>
+    <property name="authors">Jeremy Scheff &lt;jdscheff@gmail.com&gt;</property>
     <property name="artists">Logo by Gioppino on Open Clip Art</property>
     <property name="logo">basketballgm.png</property>
     <signal name="close" handler="on_aboutdialog_close" swapped="no"/>

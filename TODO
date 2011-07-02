@@ -12,13 +12,13 @@ Make it more fun/realistic:
 - released player contracts should count against your cap
 - bought out players shouldn't, but they should cost cash
 - league history
+- 666 in rebounds in box score
 - Point balance
   - PPG is too skewed
   - APG not skewed enough
 - rewrite common.treeview_build and common.treeview_update as i've done in player_stats_tab.py
   - same thing with comboboxes
 - common.treeview_update_new
-  - game log tab - games list
   - player ratings tab
   - player window
   - free agents window

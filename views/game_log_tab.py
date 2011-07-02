@@ -62,11 +62,12 @@ class GameLogTab:
 
     def build(self):
         print 'build game log'
+        column_types = [int, str, str, str]
         column_info = [['Opponent', 'W/L', 'Score'],
                        [1,          2,     3],
                        [True,       True,  False],
                        [False,      False, False]]
-        common.treeview_build(self.treeview_games_list, column_info)
+        common.treeview_build_new(self.treeview_games_list, column_types, column_info)
 
         self.mw.notebook.insert_page(self.vbox5, gtk.Label('Game Log'), self.mw.pages['game_log'])
 
@@ -77,10 +78,13 @@ class GameLogTab:
         season = self.mw.make_season_combobox(self.combobox_season, self.combobox_season_active)
         team_id = self.mw.make_team_combobox(self.combobox_team, self.combobox_team_active, season, False)
 
-        column_types = [int, str, str, str]
-        query = 'SELECT game_id, (SELECT abbreviation FROM team_attributes WHERE team_id = team_stats.opponent_team_id), (SELECT val FROM enum_w_l WHERE key = team_stats.won), points || "-" || opponent_points FROM team_stats WHERE team_id = ? AND season = ?'
-        query_bindings = (team_id, season)
-        common.treeview_update(self.treeview_games_list, column_types, query, query_bindings)
+        query_ids = 'SELECT game_id FROM team_stats WHERE team_id = ? AND season = ?'
+        params_ids = [team_id, season]
+        query_row = 'SELECT game_id, (SELECT abbreviation FROM team_attributes WHERE team_id = team_stats.opponent_team_id), (SELECT val FROM enum_w_l WHERE key = team_stats.won), points || "-" || opponent_points FROM team_stats WHERE game_id = ?'
+        params_row = [-1]
+
+        common.treeview_update_new(self.treeview_games_list, query_ids, params_ids, query_row, params_row)
+
         self.updated = True
 
     def __init__(self, main_window):

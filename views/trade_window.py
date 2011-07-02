@@ -4,12 +4,77 @@ import sqlite3
 
 import common
 import random
+from core.trade import Trade
 
 class TradeWindow:
+    def __init__(self, main_window, team_id=-1, player_id=-1):
+        self.mw = main_window
+
+        print team_id, player_id
+
+        self.builder = gtk.Builder()
+        self.builder.add_objects_from_file(common.GTKBUILDER_PATH, ['liststore1', 'trade_window'])
+
+        self.trade_window = self.builder.get_object('trade_window')
+        self.combobox_trade_teams = self.builder.get_object('combobox_trade_teams')
+        self.treeview_trade = []
+        self.treeview_trade.append(self.builder.get_object('treeview_trade_0'))
+        self.treeview_trade.append(self.builder.get_object('treeview_trade_1'))
+        self.label_team_name = self.builder.get_object('label_team_name')
+        self.label_trade_summary = self.builder.get_object('label_trade_summary')
+        self.label_trade = []
+        self.label_trade.append(self.builder.get_object('label_trade_0'))
+        self.label_trade.append(self.builder.get_object('label_trade_1'))
+        self.label_trade_cap_warning = self.builder.get_object('label_trade_cap_warning')
+        self.button_trade_propose = self.builder.get_object('button_trade_propose')
+
+        self.builder.connect_signals(self)
+
+        # Fill the combobox with teams
+        if team_id < 0:
+            team_id = 0
+        self.trade = Trade(team_id)
+        model = self.combobox_trade_teams.get_model()
+        self.combobox_trade_teams.set_model(None)
+        model.clear()
+        for row in common.DB_CON.execute('SELECT region || " " || name, team_id FROM team_attributes WHERE season = ? ORDER BY team_id ASC', (common.SEASON,)):
+            model.append(['%s' % row[0]])
+            if row[1] == common.PLAYER_TEAM_ID:
+                self.label_team_name.set_text(row[0])
+        self.combobox_trade_teams.set_model(model)
+        self.combobox_trade_teams.set_active(self.trade.team_id)
+
+        # Show the team rosters
+        self.renderer_0 = gtk.CellRendererToggle()
+        self.renderer_0.set_property('activatable', True)
+        self.renderer_1 = gtk.CellRendererToggle()
+        self.renderer_1.set_property('activatable', True)
+        self.build_roster(self.treeview_trade[0], self.renderer_0)
+        self.build_roster(self.treeview_trade[1], self.renderer_1)
+        self.update_roster(self.treeview_trade[0], common.PLAYER_TEAM_ID)
+        self.update_roster(self.treeview_trade[1], self.trade.team_id)
+        self.renderer_0.connect('toggled', self.on_player_toggled, self.treeview_trade[0].get_model())
+        self.renderer_1_toggled_handle_id = self.renderer_1.connect('toggled', self.on_player_toggled, self.treeview_trade[1].get_model())
+
+        # Select a player if a player ID has been passed to this function
+        # There's probably a more elegant way of doing this
+        self.update_trade_summary_done = False
+        if player_id != -1:
+            model = self.treeview_trade[1].get_model()
+            path = 0
+            for row in model:
+                if player_id == row[0]:
+                    self.on_player_toggled([], path, model, data=None)
+                    self.update_trade_summary_done = True
+                path += 1
+
+        if not self.update_trade_summary_done:
+            self.update_trade_summary()
+
+        self.trade_window.set_transient_for(self.mw.main_window)
+
     def on_trade_window_response(self, dialog, response, *args):
-        '''
-        This is so the dialog isn't closed on any button except close.
-        '''
+        """Don't close the dialog on any button except close."""
         if response >= 0:
             self.trade_window.emit_stop_by_name('response')
 
@@ -17,36 +82,36 @@ class TradeWindow:
         '''
         Map to the same function in main_window.py
         '''
-        self.main_window.on_treeview_player_row_activated(treeview, path, view_column, data)
+        self.mw.on_treeview_player_row_activated(treeview, path, view_column, data)
 
     def on_button_trade_propose_clicked(self, button, data=None):
         if self.value[0] - 0.5 > self.value[1]:
             # Trade players
-            for team_id in [common.PLAYER_TEAM_ID, self.other_team_id]:
+            for team_id in [common.PLAYER_TEAM_ID, self.trade.team_id]:
                 if team_id == common.PLAYER_TEAM_ID:
                     i = 0
-                    new_team_id = self.other_team_id
+                    new_team_id = self.trade.team_id
                 else:
                     i = 1
                     new_team_id = common.PLAYER_TEAM_ID
-                for player_id, team_id, name, age, rating, potential, contract_amount in self.offer[i].values():
+                for player_id, team_id, name, age, rating, potential, contract_amount in self.trade.offer[i].values():
                     common.DB_CON.execute('UPDATE player_attributes SET team_id = ? WHERE player_id = ?', (new_team_id, player_id))
             # Auto-sort computer team
-            self.main_window.roster_auto_sort(self.other_team_id)
+            self.mw.roster_auto_sort(self.trade.team_id)
 
             # Show dialog
             dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_INFO, gtk.BUTTONS_CLOSE, 'Your trade proposal was accepted.')
-            response = dialog.run()
+            dialog.run()
             dialog.destroy()
             self.trade_window.destroy()
         else:
             dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_INFO, gtk.BUTTONS_CLOSE, 'Your trade proposal was rejected.')
-            response = dialog.run()
+            dialog.run()
             dialog.destroy()
 
     def on_button_trade_clear_clicked(self, button, data=None):
-        # Reset the offer
-        self.offer = [{}, {}]
+        """Reset the offer, but keep the same teams open."""
+        self.trade.clear_offer()
         for i in range(2):
             model = self.treeview_trade[i].get_model()
             for row in model:
@@ -54,24 +119,21 @@ class TradeWindow:
         self.update_trade_summary()
 
     def on_combobox_trade_teams_changed(self, combobox, data=None):
-        old = self.other_team_id
-        self.other_team_id = combobox.get_active()
+        new_team_id = combobox.get_active()
 
-        # Can't trade with yourself
-        if self.other_team_id == common.PLAYER_TEAM_ID:
-            combobox.set_active(old)
+        if new_team_id == common.PLAYER_TEAM_ID: # Can't trade with yourself
+            combobox.set_active(self.trade.team_id)
+        else: # Update/reset everything if a new team is picked
+            self.trade.new_team(new_team_id)
 
-        # Update/reset everything if a new team is picked
-        if self.other_team_id != old:
             # Reset and update treeview
             for column in self.treeview_trade[1].get_columns():
                 self.treeview_trade[1].remove_column(column)
             self.build_roster(self.treeview_trade[1], self.renderer_1)
-            self.update_roster(self.treeview_trade[1], self.other_team_id)
+            self.update_roster(self.treeview_trade[1], self.trade.team_id)
             self.renderer_1.disconnect(self.renderer_1_toggled_handle_id)
             self.renderer_1_toggled_handle_id = self.renderer_1.connect('toggled', self.on_player_toggled, self.treeview_trade[1].get_model())
 
-            self.offer[1] = {} # Reset offer for other team only
             self.update_trade_summary()
 
     def on_player_toggled(self, cell, path, model, data=None):
@@ -92,10 +154,10 @@ class TradeWindow:
             # Check: add player to offer
             contract_amount, = common.DB_CON.execute('SELECT contract_amount FROM player_attributes WHERE player_id = ?', (player_id,)).fetchone()
 
-            self.offer[i][player_id] = [player_id, team_id, name, age, rating, potential, contract_amount]
+            self.trade.offer[i][player_id] = [player_id, team_id, name, age, rating, potential, contract_amount]
         else:
             # Uncheck: delete player from offer
-            del self.offer[i][player_id]
+            del self.trade.offer[i][player_id]
 
         self.update_trade_summary()
 
@@ -126,7 +188,7 @@ class TradeWindow:
         over_cap = [False, False]
         ratios = [0, 0]
         names = []
-        for team_id in [common.PLAYER_TEAM_ID, self.other_team_id]:
+        for team_id in [common.PLAYER_TEAM_ID, self.trade.team_id]:
             if team_id == common.PLAYER_TEAM_ID:
                 i = 0
                 j = 1
@@ -139,7 +201,7 @@ class TradeWindow:
 
             total[i] = 0
             self.value[i] = 0
-            for player_id, team_id, name, age, rating, potential, contract_amount in self.offer[i].values():
+            for player_id, team_id, name, age, rating, potential, contract_amount in self.trade.offer[i].values():
                 text += '%s ($%.2fM)\n' % (name, contract_amount/1000.0)
                 total[i] += contract_amount
                 self.value[i] += 10**(potential/10.0 + rating/20.0 - age/10.0 - contract_amount/10000.0) # Set in 2 places!!
@@ -151,7 +213,7 @@ class TradeWindow:
 
             total[j] = 0
             self.value[j] = 0
-            for player_id, team_id, name, age, rating, potential, contract_amount in self.offer[j].values():
+            for player_id, team_id, name, age, rating, potential, contract_amount in self.trade.offer[j].values():
                 text += '%s ($%.2fM)\n' % (name, contract_amount/1000.0)
                 total[j] += contract_amount
                 self.value[j] += 10**(potential/10.0 + rating/20.0 - age/10.0 - contract_amount/10000.0) # Set in 2 places!!
@@ -191,74 +253,4 @@ class TradeWindow:
         else:
             self.label_trade_cap_warning.set_text('')
             self.button_trade_propose.set_sensitive(True)
-
-    def __init__(self, main_window, other_team_id=-1, player_id=-1):
-        self.main_window = main_window
-
-        print other_team_id, player_id
-
-        self.builder = gtk.Builder()
-        self.builder.add_objects_from_file(common.GTKBUILDER_PATH, ['liststore1', 'trade_window'])
-
-        self.trade_window = self.builder.get_object('trade_window')
-        self.combobox_trade_teams = self.builder.get_object('combobox_trade_teams')
-        self.treeview_trade = []
-        self.treeview_trade.append(self.builder.get_object('treeview_trade_0'))
-        self.treeview_trade.append(self.builder.get_object('treeview_trade_1'))
-        self.label_team_name = self.builder.get_object('label_team_name')
-        self.label_trade_summary = self.builder.get_object('label_trade_summary')
-        self.label_trade = []
-        self.label_trade.append(self.builder.get_object('label_trade_0'))
-        self.label_trade.append(self.builder.get_object('label_trade_1'))
-        self.label_trade_cap_warning = self.builder.get_object('label_trade_cap_warning')
-        self.button_trade_propose = self.builder.get_object('button_trade_propose')
-
-        self.builder.connect_signals(self)
-
-        # Fill the combobox with teams
-        if other_team_id != -1:
-            self.other_team_id = other_team_id
-        else:
-            self.other_team_id = 0
-        model = self.combobox_trade_teams.get_model()
-        self.combobox_trade_teams.set_model(None)
-        model.clear()
-        for row in common.DB_CON.execute('SELECT region || " " || name, team_id FROM team_attributes WHERE season = ? ORDER BY team_id ASC', (common.SEASON,)):
-            model.append(['%s' % row[0]])
-            if row[1] == common.PLAYER_TEAM_ID:
-                self.label_team_name.set_text(row[0])
-        self.combobox_trade_teams.set_model(model)
-        self.combobox_trade_teams.set_active(self.other_team_id)
-
-        # Show the team rosters
-        self.renderer_0 = gtk.CellRendererToggle()
-        self.renderer_0.set_property('activatable', True)
-        self.renderer_1 = gtk.CellRendererToggle()
-        self.renderer_1.set_property('activatable', True)
-        self.build_roster(self.treeview_trade[0], self.renderer_0)
-        self.build_roster(self.treeview_trade[1], self.renderer_1)
-        self.update_roster(self.treeview_trade[0], common.PLAYER_TEAM_ID)
-        self.update_roster(self.treeview_trade[1], self.other_team_id)
-        self.renderer_0.connect('toggled', self.on_player_toggled, self.treeview_trade[0].get_model())
-        self.renderer_1_toggled_handle_id = self.renderer_1.connect('toggled', self.on_player_toggled, self.treeview_trade[1].get_model())
-
-        # Initialize offer variable
-        self.offer = [{}, {}]
-
-        # Select a player if a player ID has been passed to this function
-        # There's probably a more elegant way of doing this
-        self.update_trade_summary_done = False
-        if player_id != -1:
-            model = self.treeview_trade[1].get_model()
-            path = 0
-            for row in model:
-                if player_id == row[0]:
-                    self.on_player_toggled([], path, model, data=None)
-                    self.update_trade_summary_done = True
-                path += 1
-
-        if not self.update_trade_summary_done:
-            self.update_trade_summary()
-
-        #self.trade_window.set_transient_for(self.main_window.main_window)
 

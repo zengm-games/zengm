@@ -175,3 +175,20 @@ def add_column(treeview, title, column_id, sort=False, truncate_float=False):
         column.set_cell_data_func(renderer, lambda column, cell, model, iter: cell.set_property('text', '%.1f' % model.get_value(iter, column_id)))
     treeview.append_column(column)
 
+
+def roster_auto_sort(self, team_id, from_button = False):
+    players = []
+    query = 'SELECT player_attributes.player_id, player_ratings.overall, player_ratings.endurance FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = ? ORDER BY player_ratings.roster_position ASC'
+
+    for row in common.DB_CON.execute(query, (team_id,)):
+        players.append(list(row))
+
+    # Order
+    players.sort(cmp=lambda x,y: y[1]-x[1]) # Sort by rating
+
+    # Update
+    roster_position = 1
+    for player in players:
+        common.DB_CON.execute('UPDATE player_ratings SET roster_position = ? WHERE player_id = ?', (roster_position, player[0]))
+        roster_position += 1
+        print roster_position

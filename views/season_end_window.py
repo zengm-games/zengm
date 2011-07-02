@@ -9,7 +9,7 @@ class SeasonEndWindow:
         return True
 
     def __init__(self, main_window):
-        self.main_window = main_window
+        self.mw = main_window
 
         self.builder = gtk.Builder()
         self.builder.add_objects_from_file(common.GTKBUILDER_PATH, ['season_end_window'])
@@ -22,7 +22,7 @@ class SeasonEndWindow:
 
         self.builder.connect_signals(self)
 
-        self.season_end_window.set_transient_for(self.main_window.main_window)
+        self.season_end_window.set_transient_for(self.mw.main_window)
         
         self.season_end_window.set_title('%d Season Awards' % common.SEASON)
 

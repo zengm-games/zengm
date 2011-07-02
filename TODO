@@ -38,6 +38,7 @@ Prettier UI: embed Webkit
   - finances: annual profit/loss, total cash/debt
   - history: total record, playoffs, championships, all star appearances, hall of fame selections
 - Use theme settings for fonts and colors
+  - https://wiki.ubuntu.com/Quickly/Snippets "Get Gtk+ theme colors"
 
 numpy rand
 - make this optional
@@ -47,6 +48,8 @@ Player window and game log list should be sped up by not checking the old (stati
 when negotiating, players change values too much when you try to change years
 when you press close and the save/nosave/cancel dialog comes up, it should warn you about the save if you press save
 
+factor out game logic from views
+- lib or core or something folder
 
 ======
 FUTURE

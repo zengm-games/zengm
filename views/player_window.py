@@ -54,6 +54,14 @@ class PlayerWindow:
             self.label_rating[rating].set_text('%d' % row[rating])
         self.label_player_window_ratings.set_markup('<span size="x-large" weight="bold">Overall Rating: %s</span>\nPotential: %s' % (row['overall'], row['potential']));
 
+        # Get rid of the old player's stats
+        m = self.treeview_player_window_stats.get_model()
+        if m != None:
+            m.clear()
+        m = self.treeview_player_window_game_log.get_model()
+        if m != None:
+            m.clear()
+
         # Stats
         if not self.built['stats']:
             self.build_player_window_stats()
@@ -139,7 +147,7 @@ class PlayerWindow:
         Open a window set to trade for this player, unless he is already on your team
         '''
         if self.team_id != common.PLAYER_TEAM_ID:
-            tw = trade_window.TradeWindow(self.main_window, self.team_id, self.player_id)
+            tw = trade_window.TradeWindow(self.mw, self.team_id, self.player_id)
             response = tw.trade_window.run()
             tw.trade_window.destroy()
 
@@ -156,7 +164,7 @@ class PlayerWindow:
                 self.update_player_window_game_log()
 
     def __init__(self, main_window):
-        self.main_window = main_window
+        self.mw = main_window
 
         self.builder = gtk.Builder()
         self.builder.add_objects_from_file(common.GTKBUILDER_PATH, ['player_window'])

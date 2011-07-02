@@ -7,11 +7,6 @@
       <!-- column-name item -->
       <column type="gchararray"/>
     </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Placeholder</col>
-      </row>
-    </data>
   </object>
   <object class="GtkVBox" id="vbox">
     <property name="visible">True</property>

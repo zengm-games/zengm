@@ -13,8 +13,9 @@ BLOCKERS FOR 0.2.0:
 - Point balance
   - PPG is too skewed
   - APG not skewed enough
-- fix combobox refresh issue
+- games list displays stuff wrong
 - If it's actually fun, make a .deb and distribute
+- rename stuff back to basketball-gm
 
 All the other UI prettifying and code refactoring stuff can wait.
 

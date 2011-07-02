@@ -7,22 +7,12 @@
       <!-- column-name item -->
       <column type="gchararray"/>
     </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Placeholder</col>
-      </row>
-    </data>
   </object>
   <object class="GtkListStore" id="liststore7">
     <columns>
       <!-- column-name item -->
       <column type="gchararray"/>
     </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Placeholder</col>
-      </row>
-    </data>
   </object>
   <object class="GtkVBox" id="vbox6">
     <property name="visible">True</property>

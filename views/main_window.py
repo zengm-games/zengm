@@ -692,30 +692,34 @@ class MainWindow:
         # Season combobox
         populated = False
         model = combobox.get_model()
-        combobox.set_model(None)
-        model.clear()
-        for row in common.DB_CON.execute('SELECT season FROM team_stats GROUP BY season ORDER BY season DESC'):
-            model.append(['%s' % row[0]])
+        for season, in common.DB_CON.execute('SELECT season FROM team_stats GROUP BY season ORDER BY season DESC'):
+            print season
+            found = False
+            for row in model:
+                if int(row[0]) == season:
+                    found = True # Already in the liststore, so we don't need to add it
+            if not found:
+                model.append(['%s' % season])
             populated = True
-        if not populated:
-            row = common.DB_CON.execute('SELECT season FROM game_attributes').fetchone()
-            model.append(['%s' % row[0]])
+
+        if not populated: # Nothing was found in the liststore or in the team_stats database
+            season, = common.DB_CON.execute('SELECT season FROM game_attributes').fetchone()
+            model.append(['%s' % season])
             populated = True
-        combobox.set_model(model)
         combobox.set_active(active)
         season = combobox.get_active_text()
         return season
 
     def make_team_combobox(self, combobox, active, season, all_teams_option):
         # Team combobox
-        model = gtk.ListStore(str, int)
-#        renderer = gtk.CellRendererText()
-#        combobox.pack_start(renderer, True)
-        if all_teams_option:
-            model.append(['All Teams', 666]) # 666 is the magin number to find all teams
-        for row in common.DB_CON.execute('SELECT abbreviation, team_id FROM team_attributes WHERE season = ? ORDER BY abbreviation ASC', (season,)):
-            model.append(['%s' % row[0], row[1]])
-        combobox.set_model(model)
+        model = combobox.get_model()
+        if len(model) == 0:
+            model = gtk.ListStore(str, int)
+            if all_teams_option:
+                model.append(['All Teams', 666]) # 666 is the magin number to find all teams
+            for row in common.DB_CON.execute('SELECT abbreviation, team_id FROM team_attributes WHERE season = ? ORDER BY abbreviation ASC', (season,)):
+                model.append(['%s' % row[0], row[1]])
+            combobox.set_model(model)
         combobox.set_active(active)
         iter = combobox.get_active_iter()
         team_id = model.get_value(iter, 1)

@@ -33,18 +33,26 @@ class FreeAgentsWindow:
         self.main_window.on_treeview_player_row_activated(treeview, path, view_column, data)
 
     def build_free_agents(self):
-        column_info = [['Name', 'Position', 'Age', 'Rating', 'Potential'],
-                       [1,      2,          3,     4,        5],
-                       [True,   True,       True,  True,     True],
-                       [False,  False,      False, False,    False]]
-        common.treeview_build(self.treeview_free_agents, column_info)
+        column_types = [int, str, str, int, int, int, float, float, float, float]
+        column_info = [['Name', 'Position', 'Age', 'Rating', 'Potential', 'Min', 'Pts', 'Reb', 'Ast'],
+                       [1,      2,          3,     4,        5,           6,     7,     8,     9],
+                       [True,   True,       True,  True,     True,        True,  True,  True,  True],
+                       [False,  False,      False, False,    False,       True,  True,  True,  True]]
+        common.treeview_build_new(self.treeview_free_agents, column_types, column_info)
 
     def update_free_agents(self):
         print 'ufa'
-        # free_agents list
-        column_types = [int, str, str, int, int, int]
-        query = "SELECT player_attributes.player_id, player_attributes.name, player_attributes.position, ROUND((julianday('%s-06-01') - julianday(player_attributes.born_date))/365.25), player_ratings.overall, player_ratings.potential FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = -1 ORDER BY player_ratings.overall DESC" % common.SEASON
-        common.treeview_update(self.treeview_free_agents, column_types, query)
+
+        # Display (in order of preference) stats from this year, stats from last year, or nothing
+        query_ids = 'SELECT player_attributes.player_id FROM player_attributes, player_ratings WHERE player_attributes.team_id = -1 AND player_attributes.player_id = player_ratings.player_id ORDER BY player_ratings.overall DESC'
+        params_ids = []
+        query_row = "SELECT player_attributes.player_id, player_attributes.name, player_attributes.position, ROUND((julianday('%s-06-01') - julianday(player_attributes.born_date))/365.25), player_ratings.overall, player_ratings.potential, AVG(player_stats.minutes), AVG(player_stats.points), AVG(player_stats.offensive_rebounds + player_stats.defensive_rebounds), AVG(player_stats.assists) FROM player_attributes, player_ratings, player_stats WHERE player_attributes.player_id = ? AND player_attributes.player_id = player_ratings.player_id AND player_stats.player_id = player_ratings.player_id AND player_stats.season = ?" % common.SEASON
+        params_row = [-1, common.SEASON]
+        params_row_alt = [-1, common.SEASON-1]
+        query_row_alt_2 = "SELECT player_attributes.player_id, player_attributes.name, player_attributes.position, ROUND((julianday('%s-06-01') - julianday(player_attributes.born_date))/365.25), player_ratings.overall, player_ratings.potential, 0, 0, 0, 0 FROM player_attributes, player_ratings WHERE player_attributes.player_id = ? AND player_attributes.player_id = player_ratings.player_id" % common.SEASON
+        params_row_alt_2 = [-1]
+
+        common.treeview_update_new(self.treeview_free_agents, query_ids, params_ids, query_row, params_row, query_row, params_row_alt, query_row_alt_2, params_row_alt_2)
 
     def __init__(self, main_window):
         self.main_window = main_window

@@ -71,7 +71,7 @@ def treeview_build_new(treeview, column_types, column_info):
     liststore = gtk.ListStore(*column_types)
     treeview.set_model(liststore)
 
-def treeview_update_new(treeview, query_ids, params_ids, query_row, params_row, query_row_alt='', params_row_alt=[-1]):
+def treeview_update_new(treeview, query_ids, params_ids, query_row, params_row, query_row_alt='', params_row_alt=[-1], query_row_alt_2='', params_row_alt_2=[-1]):
     """Shortcut function to update a list of players in a treeview.
 
     This function will update a list of, i.e., players (showing stats, ratings,
@@ -85,7 +85,7 @@ def treeview_update_new(treeview, query_ids, params_ids, query_row, params_row, 
     added to a team (or at the beginning of a season), he doesn't have any
     stats with that team, so that would fuck up queries on player_stats.
 
-    If you're absolutely sure you'll never need them, the last two arguments
+    If you're absolutely sure you'll never need them, the last four arguments
     are optional.
 
     There are a few gotchas, so please read the description of the arguments
@@ -105,11 +105,13 @@ def treeview_update_new(treeview, query_ids, params_ids, query_row, params_row, 
             parameter in this list should be a dummy/placeholder, as it is
             replaced by the appropriate player ID!
         query_row_alt: SQL query that will run for each player ID in cases when
-            there are no stats entered for a player (such as right after the
-            draft).
-        params_row_alt: A list of parameters used in query_row_alt. NOTE: the
-            first parameter in this list should be a dummy/placeholder, as it
-            is replaced by the appropriate player ID!
+            there is nothing returned for query_row (i.e. no stats right after
+            the draft).
+        params_row_alt: Like params_row, but for query_row_alt.
+        query_row_alt_2: SQL query that will run for each player ID in cases
+            when there is nothing returned for query_row (i.e. no stats right
+            after the draft).
+        params_row_alt_2: Like params_row, but for query_row_alt_2.
     """
     treeview.freeze_child_notify()
 
@@ -120,6 +122,7 @@ def treeview_update_new(treeview, query_ids, params_ids, query_row, params_row, 
     for row_id, in DB_CON.execute(query_ids, tuple(params_ids)):
         params_row[0] = row_id
         params_row_alt[0] = row_id
+        params_row_alt_2[0] = row_id
         found_row_id = False
         for i in xrange(len(liststore)):
             if liststore[i][0] == row_id:
@@ -133,8 +136,8 @@ def treeview_update_new(treeview, query_ids, params_ids, query_row, params_row, 
             # Run alternative query if necessary, i.e. for players with no stats
             row = DB_CON.execute(query_row_alt, params_row_alt).fetchone()
         if row == None or row[0] == None:
-            # Still None even after tha alternative query? Bad.
-            print "common.treeview_update_new got a bad query:", query_row_alt, params_row_alt
+            # Run second alternative query if necessary, i.e. for players with no stats
+            row = DB_CON.execute(query_row_alt_2, params_row_alt_2).fetchone()
 
         values = []
         for j in range(0, len(row)):

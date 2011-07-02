@@ -74,16 +74,24 @@ def treeview_build_new(treeview, column_types, column_info):
 def treeview_update_new(treeview, query_ids, params_ids, query_row, params_row, query_row_alt, params_row_alt):
     """Shortcut function to update a list of players in a treeview.
 
-    This function will update a list of players (showing stats, ratings,
+    This function will update a list of, i.e., players (showing stats, ratings,
     whatever) in a treeview by updating players already in the model, deleting
     players who should no longer be in the model, and adding players who now
     need to be in the model. So if the user switches to viewing another team,
     or new stats are recorded, or a trade happens, etc... this function can
     handle it.
 
+    Three queries are used rather than just one because when a player is first
+    added to a team (or at the beginning of a season), he doesn't have any
+    stats with that team, so that would fuck up queries on player_stats.
+
+    There are a few gotchas, so please read the description of the arguments
+    below.
+
     Args:
         treeview: gtk.treeview instance. Must already have a model, such as if
-            treeview_build_new is called first.
+            treeview_build_new is called first. Also, the first column in the
+            model MUST correspond to the IDs returned by query_ids.
         query_ids: SQL query that will return a list of player IDs for the
             players that are to be shown.
         params_ids: A list of parameters used in query_ids.
@@ -104,23 +112,27 @@ def treeview_update_new(treeview, query_ids, params_ids, query_row, params_row, 
 
     liststore = treeview.get_model()
 
-    do_not_delete = [] # List of player_id
+    do_not_delete = [] # List of row_id
 
-    for player_id, in DB_CON.execute(query_ids, tuple(params_ids)):
-        params_row[0] = player_id
-        params_row_alt[0] = player_id
-        found_player = False
+    for row_id, in DB_CON.execute(query_ids, tuple(params_ids)):
+        params_row[0] = row_id
+        params_row_alt[0] = row_id
+        found_row_id = False
         for i in xrange(len(liststore)):
-            if liststore[i][0] == player_id:
-                do_not_delete.append(player_id)
-                found_player = True
-                break # We found the player in the liststore, so move on to next player
+            if liststore[i][0] == row_id:
+                do_not_delete.append(row_id)
+                found_row_id = True
+                break # We found the row_id in the liststore, so move on to next row
 
         # Get row contents
         row = DB_CON.execute(query_row, params_row).fetchone()
-        if row == None:
-            # Run alternative query if necessary, for players with no stats
+        if row == None or row[0] == None:
+            # Run alternative query if necessary, i.e. for players with no stats
             row = DB_CON.execute(query_row_alt, params_row_alt).fetchone()
+        if row == None or row[0] == None:
+            # Still None even after tha alternative query? Bad.
+            print "common.treeview_update_new got a bad query:", query_row_alt, params_row_alt
+
         values = []
         for j in range(0, len(row)):
             if row[j] == None:
@@ -129,12 +141,12 @@ def treeview_update_new(treeview, query_ids, params_ids, query_row, params_row, 
                 values.append(row[j])
 
         # Add a new row or update an existing row?
-        if not found_player:
+        if not found_row_id:
             liststore.append(values) # Add row
         else:
             liststore[i] = values # Update row
 
-        do_not_delete.append(player_id) # This player was either added to the list or updated
+        do_not_delete.append(row_id) # This row was either added to the list or updated
 
     # Remove rows from model if they shouldn't be showing
     for i in reversed(xrange(len(liststore))): # Search backwards to not fuck things up

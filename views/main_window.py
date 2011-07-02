@@ -267,13 +267,11 @@ class MainWindow:
         elif self.notebook.get_current_page() == self.pages['player_ratings']:
             if not self.player_ratings.built:
                 self.player_ratings.build()
-            if not self.player_ratings.updated:
-                self.player_ratings.update()
+            self.player_ratings.update()
         elif self.notebook.get_current_page() == self.pages['player_stats']:
             if not self.player_stats.built:
                 self.player_stats.build()
-            if not self.player_stats.updated:
-                self.player_stats.update()
+            self.player_stats.update()
         elif self.notebook.get_current_page() == self.pages['team_stats']:
             if not self.team_stats.built:
                 self.team_stats.build()
@@ -294,8 +292,7 @@ class MainWindow:
 
         self.standings.updated = False
         self.finances.updated = False
-        if self.notebook.get_current_page() != self.pages['player_ratings']:
-            self.player_ratings.updated = False
+        self.player_ratings.updated = False
         self.player_stats.updated = False
         self.team_stats.updated = False
         self.game_log.updated = False

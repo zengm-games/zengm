@@ -71,7 +71,7 @@ def treeview_build_new(treeview, column_types, column_info):
     liststore = gtk.ListStore(*column_types)
     treeview.set_model(liststore)
 
-def treeview_update_new(treeview, query_ids, params_ids, query_row, params_row, query_row_alt='', params_row_alt=''):
+def treeview_update_new(treeview, query_ids, params_ids, query_row, params_row, query_row_alt='', params_row_alt=[-1]):
     """Shortcut function to update a list of players in a treeview.
 
     This function will update a list of, i.e., players (showing stats, ratings,

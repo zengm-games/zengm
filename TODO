@@ -10,8 +10,7 @@ Make it more fun/realistic:
   - AI teams above the cap are still resigning players. fix that.
     -Really, redo AI free agent behavior. Too many good players get left behind because teams can't manage caps
 - released player contracts should count against your cap
-- bought out players shouldn't, but they should cost cash
-- league history
+  - bought out players shouldn't, but they should cost cash
 - 666 in rebounds in box score
 - Point balance
   - PPG is too skewed
@@ -19,10 +18,8 @@ Make it more fun/realistic:
 - rewrite common.treeview_build and common.treeview_update as i've done in player_stats_tab.py
   - same thing with comboboxes
 - common.treeview_update_new
-  - player ratings tab
   - player window
   - free agents window
-- ratings log tab on player window
 If it's actually fun, make a .deb and distribute
 
 
@@ -93,6 +90,7 @@ play menu
 on new/open game:
     close all open dialogs/windows
     refresh all tabs of the main window
+ratings log tab on player window
 
 NBA
 ---

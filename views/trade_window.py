@@ -12,6 +12,10 @@ class TradeWindow:
 
         print team_id, player_id
 
+        if team_id < 0:
+            team_id = 0
+        self.trade = Trade(team_id)
+
         self.builder = gtk.Builder()
         self.builder.add_objects_from_file(common.GTKBUILDER_PATH, ['liststore1', 'trade_window'])
 
@@ -30,20 +34,6 @@ class TradeWindow:
 
         self.builder.connect_signals(self)
 
-        # Fill the combobox with teams
-        if team_id < 0:
-            team_id = 0
-        self.trade = Trade(team_id)
-        model = self.combobox_trade_teams.get_model()
-        self.combobox_trade_teams.set_model(None)
-        model.clear()
-        for row in common.DB_CON.execute('SELECT region || " " || name, team_id FROM team_attributes WHERE season = ? ORDER BY team_id ASC', (common.SEASON,)):
-            model.append(['%s' % row[0]])
-            if row[1] == common.PLAYER_TEAM_ID:
-                self.label_team_name.set_text(row[0])
-        self.combobox_trade_teams.set_model(model)
-        self.combobox_trade_teams.set_active(self.trade.team_id)
-
         # Show the team rosters
         self.renderer_0 = gtk.CellRendererToggle()
         self.renderer_0.set_property('activatable', True)
@@ -55,6 +45,17 @@ class TradeWindow:
         self.update_roster(self.treeview_trade[1], self.trade.team_id)
         self.renderer_0.connect('toggled', self.on_player_toggled, self.treeview_trade[0].get_model())
         self.renderer_1_toggled_handle_id = self.renderer_1.connect('toggled', self.on_player_toggled, self.treeview_trade[1].get_model())
+
+        # Fill the combobox with teams
+        model = self.combobox_trade_teams.get_model()
+        self.combobox_trade_teams.set_model(None)
+        model.clear()
+        for row in common.DB_CON.execute('SELECT region || " " || name, team_id FROM team_attributes WHERE season = ? ORDER BY team_id ASC', (common.SEASON,)):
+            model.append(['%s' % row[0]])
+            if row[1] == common.PLAYER_TEAM_ID:
+                self.label_team_name.set_text(row[0])
+        self.combobox_trade_teams.set_model(model)
+        self.combobox_trade_teams.set_active(self.trade.team_id)
 
         # Select a player if a player ID has been passed to this function
         # There's probably a more elegant way of doing this
@@ -85,19 +86,8 @@ class TradeWindow:
         self.mw.on_treeview_player_row_activated(treeview, path, view_column, data)
 
     def on_button_trade_propose_clicked(self, button, data=None):
-        if self.value[0] - 0.5 > self.value[1]:
-            # Trade players
-            for team_id in [common.PLAYER_TEAM_ID, self.trade.team_id]:
-                if team_id == common.PLAYER_TEAM_ID:
-                    i = 0
-                    new_team_id = self.trade.team_id
-                else:
-                    i = 1
-                    new_team_id = common.PLAYER_TEAM_ID
-                for player_id, team_id, name, age, rating, potential, contract_amount in self.trade.offer[i].values():
-                    common.DB_CON.execute('UPDATE player_attributes SET team_id = ? WHERE player_id = ?', (new_team_id, player_id))
-            # Auto-sort computer team
-            common.roster_auto_sort(self.trade.team_id)
+        if self.trade.value[0] - 0.5 > self.trade.value[1]:
+            self.trade.process()
 
             # Show dialog
             dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_INFO, gtk.BUTTONS_CLOSE, 'Your trade proposal was accepted.')
@@ -182,12 +172,8 @@ class TradeWindow:
     def update_trade_summary(self):
         self.label_trade_summary.set_markup('<b>Trade Summary</b>\n\nSalary Cap: $%.2fM\n' % (common.SALARY_CAP/1000.0))
 
-        payroll_after_trade = [0, 0]
-        total = [0, 0]
-        self.value = [0, 0]
-        over_cap = [False, False]
-        ratios = [0, 0]
-        names = []
+        self.trade.update()
+
         for team_id in [common.PLAYER_TEAM_ID, self.trade.team_id]:
             if team_id == common.PLAYER_TEAM_ID:
                 i = 0
@@ -195,58 +181,34 @@ class TradeWindow:
             else:
                 i = 1
                 j = 0
-            name, payroll = common.DB_CON.execute('SELECT ta.region || " " || ta.name, sum(pa.contract_amount) FROM team_attributes as ta, player_attributes as pa WHERE pa.team_id = ta.team_id AND ta.team_id = ? AND pa.contract_expiration >= ? AND ta.season = ?', (team_id, common.SEASON, common.SEASON,)).fetchone()
-            names.append(name)
-            text = '<b>%s</b>\n\nTrade:\n' % name
+            text = '<b>%s</b>\n\nTrade:\n' % self.trade.team_names[i]
 
-            total[i] = 0
-            self.value[i] = 0
-            for player_id, team_id, name, age, rating, potential, contract_amount in self.trade.offer[i].values():
-                text += '%s ($%.2fM)\n' % (name, contract_amount/1000.0)
-                total[i] += contract_amount
-                self.value[i] += 10**(potential/10.0 + rating/20.0 - age/10.0 - contract_amount/10000.0) # Set in 2 places!!
-            if self.value[i] > 0:
-                self.value[i] = math.log(self.value[i])
-            text += '$%.2fM total\n\n' % (total[i]/1000.0)
-            #text += 'Value: %.4f\n\n' % (self.value[i])
+            for player_id, team_id, player_name, age, rating, potential, contract_amount in self.trade.offer[i].values():
+                text += '%s ($%.2fM)\n' % (player_name, contract_amount/1000.0)
+            text += '$%.2fM total\n\n' % (self.trade.total[i]/1000.0)
+            text += 'Value: %.4f\n\n' % (self.trade.value[i])
             text += 'Recieve:\n'
 
-            total[j] = 0
-            self.value[j] = 0
-            for player_id, team_id, name, age, rating, potential, contract_amount in self.trade.offer[j].values():
-                text += '%s ($%.2fM)\n' % (name, contract_amount/1000.0)
-                total[j] += contract_amount
-                self.value[j] += 10**(potential/10.0 + rating/20.0 - age/10.0 - contract_amount/10000.0) # Set in 2 places!!
-            if self.value[j] > 0:
-                self.value[j] = math.log(self.value[j])
-            text += '$%.2fM total\n\n' % (total[j]/1000.0)
-            #text += 'Value: %.4f\n\n' % (self.value[j])
-            payroll_after_trade[i] = total[j]+payroll
-            text += 'Payroll After Trade: $%.2fM' % (payroll_after_trade[i]/1000.0)
+            for player_id, team_id, player_name, age, rating, potential, contract_amount in self.trade.offer[j].values():
+                text += '%s ($%.2fM)\n' % (player_name, contract_amount/1000.0)
+            text += '$%.2fM total\n\n' % (self.trade.total[j]/1000.0)
+            text += 'Value: %.4f\n\n' % (self.trade.value[j])
+            text += 'Payroll After Trade: $%.2fM' % (self.trade.payroll_after_trade[i]/1000.0)
 
             self.label_trade[i].set_markup(text);
 
-            if payroll_after_trade[i] > common.SALARY_CAP:
-                over_cap[i] = True
-            if total[i] > 0:
-                ratios[i] = int((100.0*total[j])/total[i])
-            elif total[j] > 0:
-                ratios[i] = float('inf')
-            else:
-                ratios[i] = 1
-
         # Update "Propose Trade" button and the salary cap warning
-        if (ratios[0] > 125 and over_cap[0] == True) or (ratios[1] > 125 and over_cap[1] == True):
+        if (self.trade.ratios[0] > 125 and self.trade.over_cap[0] == True) or (self.trade.ratios[1] > 125 and self.trade.over_cap[1] == True):
             self.button_trade_propose.set_sensitive(False)
             # Which team is at fault?
-            if ratios[0] > 125:
-                name = names[0]
-                ratio = ratios[0]
+            if self.trade.ratios[0] > 125:
+                team_name = self.trade.team_names[0]
+                ratio = self.trade.ratios[0]
             else:
-                name = names[1]
-                ratio = ratios[1]
-            self.label_trade_cap_warning.set_markup('\n<b>The %s are over the salary cap, so the players it receives must have a combined salary less than 125%% of the players it trades.  Currently, that value is %s%%.</b>' % (name, ratio))
-        elif sum(total) == 0:
+                team_name = self.trade.team_names[1]
+                ratio = self.trade.ratios[1]
+            self.label_trade_cap_warning.set_markup('\n<b>The %s are over the salary cap, so the players it receives must have a combined salary less than 125%% of the players it trades.  Currently, that value is %s%%.</b>' % (team_name, ratio))
+        elif sum(self.trade.total) == 0:
             # No trades with no players
             self.label_trade_cap_warning.set_text('')
             self.button_trade_propose.set_sensitive(False)

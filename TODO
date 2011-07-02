@@ -4,7 +4,6 @@ BLOCKERS FOR 0.2.0:
 - More realistic stats
 - free agents
   - free agents should have a memory. you shouldn't be able to just open the window a bunch of times and see different demands
-  - same for trading partners. "Oh, you again?" after failed trade attempts
   - "asking for" column in free agents window
   - AI teams above the cap are still resigning players. fix that.
     -Really, redo AI free agent behavior. Too many good players get left behind because teams can't manage caps
@@ -15,6 +14,15 @@ BLOCKERS FOR 0.2.0:
   - APG not skewed enough
 - If it's actually fun, make a .deb and distribute
 - rename stuff back to basketball-gm ..?
+
+Trade
+- remove all references in trade_window.py to:
+  - self.trade.team_id
+  - self.trade.offer
+  - self.trade.value
+  - self.trade.update()
+- "Oh, you again?" after failed trade attempts
+- value should be somewhat more additive than it is now
 
 All the other UI prettifying and code refactoring stuff can wait.
 

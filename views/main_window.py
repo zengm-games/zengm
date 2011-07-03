@@ -15,9 +15,7 @@ import webkit
 
 # My modules
 import common
-import game_sim
-import player
-import schedule
+from core import game_sim, player, schedule
 
 # Windows and dialogs
 import contract_window

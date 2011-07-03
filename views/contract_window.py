@@ -3,7 +3,7 @@ import sqlite3
 import ctypes
 
 import common
-import player
+from core import player
 import player_window
 import random
 

@@ -6,7 +6,7 @@ import sqlite3
 import time
 
 import common
-import player
+from core import player
 
 class DraftDialog:
     def on_draft_dialog_close(self, widget, data=None):

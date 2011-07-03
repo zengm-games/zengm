@@ -141,7 +141,8 @@ class TradeWindow:
             i = 1
 
         if model[path][2]: # Check: add player to offer
-            self.trade.add_player(i, player_id, team_id, player_name, age, rating, potential)
+            contract_amount, = common.DB_CON.execute('SELECT contract_amount FROM player_attributes WHERE player_id = ?', (player_id,)).fetchone()
+            self.trade.add_player(i, player_id, team_id, player_name, age, rating, potential, contract_amount)
         else: # Uncheck: delete player from offer
             self.trade.remove_player(i, player_id)
 

@@ -33,7 +33,9 @@ class Trade:
         """Update all the class attributes.
 
         This should be called by the view after any change is made and before
-        the UI updates.
+        the UI updates. It isn't called automatically because there is already
+        some UI function that's tracking updates, and it's just easier to call
+        this from there.
         """
         for team_id in [common.PLAYER_TEAM_ID, self.team_id]:
             if team_id == common.PLAYER_TEAM_ID:
@@ -80,7 +82,7 @@ class Trade:
         self.team_id = team_id
         self.offer[1] = {} # Empty player list
 
-    def add_player(self, i, player_id, team_id, player_name, age, rating, potential):
+    def add_player(self, i, player_id, team_id, player_name, age, rating, potential, contract_amount):
         """Adds a player to the deal.
 
         Args:
@@ -88,7 +90,6 @@ class Trade:
             player_id: player_id of the player to add.
             ...
         """
-        contract_amount, = common.DB_CON.execute('SELECT contract_amount FROM player_attributes WHERE player_id = ?', (player_id,)).fetchone()
         self.offer[i][player_id] = [player_id, team_id, player_name, age, rating, potential, contract_amount]
 
     def remove_player(self, i, player_id):

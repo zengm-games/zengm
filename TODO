@@ -12,12 +12,10 @@ BLOCKERS FOR 0.2.0:
   - PPG is too skewed
   - APG not skewed enough
 - If it's actually fun, make a .deb and distribute
-- rename stuff back to basketball-gm ..?
-
-Trade
-- Feedback from trades (way off, that's close, etc)
-- "Oh, you again?" after failed trade attempts
-- value should be somewhat more additive than it is now, and it shouldn't depend on who else is in the trade
+- Trade
+  - Feedback from trades (way off, that's close, etc)
+  - "Oh, you again?" after failed trade attempts
+  - value should be somewhat more additive than it is now, and it shouldn't depend on who else is in the trade
 
 All the other UI prettifying and code refactoring stuff can wait.
 

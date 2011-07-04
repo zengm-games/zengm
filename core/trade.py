@@ -45,23 +45,23 @@ class Trade:
                 i = 1
                 j = 0
             team_name, payroll = common.DB_CON.execute('SELECT ta.region || " " || ta.name, sum(pa.contract_amount) FROM team_attributes as ta, player_attributes as pa WHERE pa.team_id = ta.team_id AND ta.team_id = ? AND pa.contract_expiration >= ? AND ta.season = ?', (team_id, common.SEASON, common.SEASON,)).fetchone()
-            self.team_names.append(team_name)
+            self.team_names[i] = team_name
 
             self.total[i] = 0
-            self.value[i] = 0
+            self.value[i] = 0.0
             for player_id, team_id, player_name, age, rating, potential, contract_amount in self.offer[i].values():
                 self.total[i] += contract_amount
-                self.value[i] += 10**(potential/10.0 + rating/20.0 - age/10.0 - contract_amount/10000.0) # Set in 2 places!!
-            if self.value[i] > 0:
-                self.value[i] = math.log(self.value[i])
+                self.value[i] += 10**(potential/10.0 + rating/20.0 - age/10.0 - contract_amount/10000.0)
+#            if self.value[i] > 0:
+#                self.value[i] = math.log10(self.value[i])
 
             self.total[j] = 0
-            self.value[j] = 0
+#            self.value[j] = 0
             for player_id, team_id, team_name, age, rating, potential, contract_amount in self.offer[j].values():
                 self.total[j] += contract_amount
-                self.value[j] += 10**(potential/10.0 + rating/20.0 - age/10.0 - contract_amount/10000.0) # Set in 2 places!!
-            if self.value[j] > 0:
-                self.value[j] = math.log(self.value[j])
+#                self.value[j] += 10**(potential/10.0 + rating/20.0 - age/10.0 - contract_amount/10000.0) # Set in 2 places!!
+#            if self.value[j] > 0:
+#                self.value[j] = math.log(self.value[j])
             self.payroll_after_trade[i] = self.total[j]+payroll
 
             if self.payroll_after_trade[i] > common.SALARY_CAP:

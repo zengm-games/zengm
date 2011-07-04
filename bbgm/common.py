@@ -21,6 +21,8 @@ DB_FILENAME = os.path.join(SAVES_FOLDER, 'temp.sqlite')
 if not os.path.exists(SAVES_FOLDER):
     os.mkdir(SAVES_FOLDER, 0755)
 
+DB_CON = '' # Placeholder. Set by bbgm.views.main_window.connect()
+
 # These are set to real values in basketball_gm.py
 PLAYER_TEAM_ID = 3
 SEASON = 2008

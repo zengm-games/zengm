@@ -42,13 +42,17 @@ Required packages on Ubuntu 11.04 (probably similar on other distros):
 * python-numpy
 * python-webkit
 
+To install all these, run:
+
+sudo apt-get install libsqlite3-0 python-egenix-mxdatetime python-jinja2 python-gtk2 python-numpy python-webkit
+
 I haven't tried any other platforms, but if you install the packages listed
-above on Windows maybe it would work.
+above on Windows, maybe it would work.
 
 
 Use
 ---
 
-To run the game, just type:
-./basketball-gm
+To run the game, just execute:
+./bin/basketball-gm
 

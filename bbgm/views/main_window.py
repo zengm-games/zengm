@@ -700,16 +700,14 @@ class MainWindow:
         model = combobox.get_model()
         for season, in common.DB_CON.execute('SELECT season FROM team_stats GROUP BY season ORDER BY season ASC'):
             found = False
-            for i in len(model):
+            for i in xrange(len(model)):
                 if int(model[i][0]) == season:
-#                    if found == True:
-#                        del model[i] # Duplicate year (such as if another game was started/opened)
                     found = True # Already in the liststore, so we don't need to add it
             if not found:
                 model.prepend(['%s' % season])
             populated = True
 
-        if not populated: # Nothing was found in the liststore or in the team_stats database
+        if not populated: # Nothing was found in the liststore or nothing was found in the team_stats database
             season, = common.DB_CON.execute('SELECT season FROM game_attributes').fetchone()
             model.append(['%s' % season])
             populated = True

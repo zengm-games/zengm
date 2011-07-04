@@ -1,6 +1,7 @@
-import common
 import random
 import sqlite3
+
+from bbgm import common
 
 class Schedule:
     def generate(self):

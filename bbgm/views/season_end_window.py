@@ -1,7 +1,7 @@
 import gtk
 import sqlite3
 
-import common
+from bbgm import common
 
 class SeasonEndWindow:
     def on_season_end_window_close(self, widget, data=None):

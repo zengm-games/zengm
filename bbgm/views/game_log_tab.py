@@ -1,9 +1,10 @@
 import gtk
 from jinja2 import Environment, FileSystemLoader, Template
+import os
 import sqlite3
 import webkit
 
-import common
+from bbgm import common
 
 class GameLogTab:
     updated = False
@@ -91,7 +92,7 @@ class GameLogTab:
         self.mw = main_window
 
         self.builder = gtk.Builder()
-        self.builder.add_from_file('ui/game_log_tab.glade')
+        self.builder.add_from_file(os.path.join(common.UI_FOLDER, 'game_log_tab.glade'))
 
         self.vbox5 = self.builder.get_object('vbox5')
         self.treeview_games_list = self.builder.get_object('treeview_games_list')

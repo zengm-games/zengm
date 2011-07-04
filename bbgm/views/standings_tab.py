@@ -1,7 +1,8 @@
 import gtk
+import os
 import sqlite3
 
-import common
+from bbgm import common
 
 class StandingsTab:
     updated = False
@@ -63,7 +64,7 @@ class StandingsTab:
         self.mw = main_window
 
         self.builder = gtk.Builder()
-        self.builder.add_from_file('ui/standings_tab.glade')
+        self.builder.add_from_file(os.path.join(common.UI_FOLDER, 'standings_tab.glade'))
 
         self.vbox4 = self.builder.get_object('vbox4')
         self.scrolledwindow_standings = self.builder.get_object('scrolledwindow_standings')

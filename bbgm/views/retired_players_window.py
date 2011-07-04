@@ -2,7 +2,7 @@ import gtk
 import random
 import sqlite3
 
-import common
+from bbgm import common
 
 class RetiredPlayersWindow:
     def on_treeview_player_row_activated(self, treeview, path, view_column, data=None):

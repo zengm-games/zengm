@@ -1,7 +1,8 @@
 import gtk
+import os
 import sqlite3
 
-import common
+from bbgm import common
 
 class PlayerRatingsTab:
     updated = False
@@ -52,7 +53,7 @@ class PlayerRatingsTab:
         self.mw = main_window
 
         self.builder = gtk.Builder()
-        self.builder.add_from_file('ui/player_ratings_tab.glade')
+        self.builder.add_from_file(os.path.join(common.UI_FOLDER, 'player_ratings_tab.glade'))
 
         self.vbox = self.builder.get_object('vbox')
         self.treeview_player_ratings = self.builder.get_object('treeview_player_ratings')

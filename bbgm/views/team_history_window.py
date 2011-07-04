@@ -1,7 +1,7 @@
 import gtk
 import sqlite3
 
-import common
+from bbgm import common
 
 class TeamHistoryWindow:
     updated = False

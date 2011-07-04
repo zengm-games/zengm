@@ -1,8 +1,8 @@
 import math
+import random
 import sqlite3
 
-import common
-import random
+from bbgm import common
 
 class Trade:
     """All non-GUI parts of a trade.

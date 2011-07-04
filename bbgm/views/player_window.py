@@ -3,8 +3,8 @@ import mx.DateTime
 import random
 import sqlite3
 
-import common
-import trade_window
+from bbgm import common
+from bbgm.views import trade_window
 
 class PlayerWindow:
     pages = {'stats': 0, 'game_log': 1}

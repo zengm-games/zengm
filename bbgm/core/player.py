@@ -8,7 +8,7 @@ import re
 import sqlite3
 import string
 
-import common
+from bbgm import common
 
 class Player:
     def load(self, player_id):

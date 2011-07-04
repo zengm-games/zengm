@@ -1,0 +1,26 @@
+#!/usr/bin/env python
+
+import gtk
+import os.path
+import sys
+
+# I copied this voodoo from gwibber
+SOURCE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'bbgm')
+sys.path.insert(0, os.path.realpath(os.path.dirname(SOURCE_DIR)))
+
+from bbgm.common import SAVES_FOLDER
+from bbgm.views import main_window, welcome_dialog
+
+if __name__ == '__main__':
+    mw = main_window.MainWindow()
+
+    # If a file is given as an argument, try to open it
+    if len(sys.argv) > 1 and os.path.exists(sys.argv[1]):
+        mw.open_game(sys.argv[1])
+    elif len(sys.argv) > 1 and os.path.exists(os.path.join(SAVES_FOLDER, sys.argv[1])):
+        mw.open_game(os.path.join(SAVES_FOLDER, sys.argv[1]))
+    else:
+        welcome_dialog.WelcomeDialog(mw)
+
+    gtk.main()
+

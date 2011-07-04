@@ -3,7 +3,7 @@ import numpy
 import random
 import sqlite3
 
-import common
+from bbgm import common
 
 class Game:
     def play(self, t1, t2, is_playoffs):

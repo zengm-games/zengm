@@ -5,8 +5,8 @@ import random
 import sqlite3
 import time
 
-import common
-from core import player
+from bbgm import common
+from bbgm.core import player
 
 class DraftDialog:
     def on_draft_dialog_close(self, widget, data=None):

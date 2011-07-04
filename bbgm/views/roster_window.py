@@ -2,7 +2,7 @@ import gtk
 import mx.DateTime
 import sqlite3
 
-import common
+from bbgm import common
 
 class RosterWindow:
     def on_roster_window_close(self, widget, data=None):

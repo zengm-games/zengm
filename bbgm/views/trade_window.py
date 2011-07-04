@@ -1,10 +1,10 @@
 import gtk
 import math
+import random
 import sqlite3
 
-import common
-import random
-from core.trade import Trade
+from bbgm import common
+from bbgm.core.trade import Trade
 
 class TradeWindow:
     def __init__(self, main_window, team_id=-1, player_id=-1):

@@ -1,7 +1,8 @@
 import gtk
+import os
 import sqlite3
 
-import common
+from bbgm import common
 
 class PlayoffsTab:
     updated = False
@@ -32,7 +33,7 @@ class PlayoffsTab:
         self.mw = main_window
 
         self.builder = gtk.Builder()
-        self.builder.add_from_file('ui/playoffs_tab.glade')
+        self.builder.add_from_file(os.path.join(common.UI_FOLDER, 'playoffs_tab.glade'))
 
         self.table8 = self.builder.get_object('table8')
         self.label_playoffs = {1: {}, 2: {}, 3: {}, 4: {}}

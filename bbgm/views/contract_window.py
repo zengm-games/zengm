@@ -1,11 +1,11 @@
-import gtk
-import sqlite3
 import ctypes
-
-import common
-from core import player
-import player_window
+import gtk
 import random
+import sqlite3
+
+from bbgm import common
+from bbgm.core import player
+from bbgm.views import player_window
 
 class ContractWindow:
     def on_contract_window_response(self, dialog, response, *args):

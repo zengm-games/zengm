@@ -2,8 +2,8 @@ import gtk
 import mx.DateTime
 import sqlite3
 
-import common
-import contract_window
+from bbgm import common
+from bbgm.views import contract_window
 
 class FreeAgentsWindow:
     def on_free_agents_window_close(self, widget, data=None):

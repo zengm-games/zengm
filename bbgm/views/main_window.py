@@ -14,29 +14,14 @@ import time
 import webkit
 
 # My modules
-import common
-from core import game_sim, player, schedule
+from bbgm import common
+from bbgm.core import game_sim, player, schedule
 
 # Windows and dialogs
-import contract_window
-import draft_dialog
-import free_agents_window
-import retired_players_window
-import roster_window
-import player_window
-import season_end_window
-import team_history_window
-import trade_window
-import welcome_dialog
+from bbgm.views import contract_window, draft_dialog, free_agents_window, retired_players_window, roster_window, player_window, season_end_window, team_history_window, trade_window, welcome_dialog
 
 # Tabs
-import standings_tab
-import finances_tab
-import player_ratings_tab
-import player_stats_tab
-import team_stats_tab
-import game_log_tab
-import playoffs_tab
+from bbgm.views import standings_tab, finances_tab, player_ratings_tab, player_stats_tab, team_stats_tab, game_log_tab, playoffs_tab
 
 class MainWindow:
     def on_main_window_delete_event(self, widget, data=None):

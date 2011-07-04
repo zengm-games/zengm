@@ -1,5 +1,5 @@
 import gtk
-import os
+import os.path
 import sqlite3
 
 from bbgm import common

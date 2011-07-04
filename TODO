@@ -13,8 +13,6 @@ BLOCKERS FOR 0.2.0:
   - APG not skewed enough
 - If it's actually fun, make a .deb and distribute
 - Trade
-  - Feedback from trades (way off, that's close, etc)
-  - "Oh, you again?" after failed trade attempts
   - value should be somewhat more additive than it is now, and it shouldn't depend on who else is in the trade
 
 All the other UI prettifying and code refactoring stuff can wait.
@@ -51,6 +49,8 @@ when you press close and the save/nosave/cancel dialog comes up, it should warn 
 
 factor out game logic from views
 - lib or core or something folder
+
+pylint
 
 ======
 FUTURE
@@ -102,7 +102,11 @@ use constants for phase #'s, other things.  maybe create a dict CONST in common.
 
 AI (NON-GAMESIM)
 ----------------
-opponent GM trade AI based on their team's status: contending or rebuilding
+trade
+- opponent GM trade AI based on their team's status: contending or rebuilding
+- record player value for contending and rebuilding teams in player_attributes, so opposing GMs can more easily suggest trades (i.e. "i'll make the deal if you throw in X")
+- Feedback from trades (way off, that's close, etc)
+- "Oh, you again?" after failed trade attempts
 
 FEATURES
 --------

@@ -3,6 +3,7 @@
   <requires lib="gtk+" version="2.24"/>
   <!-- interface-naming-policy project-wide -->
   <object class="GtkDialog" id="team_history_window">
+    <property name="width_request">250</property>
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
     <property name="title" translatable="yes">Team History</property>
@@ -69,14 +70,5 @@
     <action-widgets>
       <action-widget response="0">button1</action-widget>
     </action-widgets>
-  </object>
-  <object class="GtkWindow" id="team_history_window_old">
-    <property name="can_focus">False</property>
-    <property name="title" translatable="yes">Team History</property>
-    <property name="window_position">center-on-parent</property>
-    <property name="icon">basketball-gm.svg</property>
-    <child>
-      <placeholder/>
-    </child>
   </object>
 </interface>

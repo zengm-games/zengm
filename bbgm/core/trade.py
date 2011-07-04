@@ -51,7 +51,7 @@ class Trade:
             self.value[i] = 0.0
             for player_id, team_id, player_name, age, rating, potential, contract_amount in self.offer[i].values():
                 self.total[i] += contract_amount
-                self.value[i] += 10**(potential/10.0 + rating/20.0 - age/10.0 - contract_amount/10000.0)
+                self.value[i] += 10**(potential/10.0 + rating/20.0 - age/10.0 - contract_amount/100000.0)
 #            if self.value[i] > 0:
 #                self.value[i] = math.log10(self.value[i])
 
@@ -102,14 +102,14 @@ class Trade:
         del self.offer[i][player_id]
 
     def propose(self):
-        """Propose the trade to the other team.
+        """Propose the trade to the other team. Is it accepted?
 
         Returns:
             A list containing two elements: 1. a boolean indicating if the
             trade was accepted (True) or not (False); 2. a string containing
             the response from the CPU team.
         """
-        if self.value[0] - 0.5 > self.value[1]:
+        if self.value[0]*0.9 > self.value[1]:
             return [True, 'Nice doing business with you!']
         else:
             return [False, 'What, are you crazy?']

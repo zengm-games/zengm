@@ -40,15 +40,21 @@ class MainWindow:
         '''
         First check if there are unsaved changes before starting a new game
         '''
-        proceed = False
-        if self.unsaved_changes:
-            if self.save_nosave_cancel():
-                proceed = True
-        if not self.unsaved_changes or proceed:
-            result, team_id = self.new_game_dialog()
-            if result == gtk.RESPONSE_OK and team_id >= 0:
-                self.new_game(team_id)
-                self.unsaved_changes = True
+        if self.games_in_progress:
+            self.stop_games = True
+            md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, 'Can\'t start a new game while simulation is in progress.  Wait until the current day\'s games are over and try again.')
+            md.run()
+            md.destroy()
+        else:
+            proceed = False
+            if self.unsaved_changes:
+                if self.save_nosave_cancel():
+                    proceed = True
+            if not self.unsaved_changes or proceed:
+                result, team_id = self.new_game_dialog()
+                if result == gtk.RESPONSE_OK and team_id >= 0:
+                    self.new_game(team_id)
+                    self.unsaved_changes = True
 
     def on_menuitem_open_activate(self, widget=None, data=None):
         if self.games_in_progress:
@@ -110,6 +116,7 @@ class MainWindow:
 
     def on_menuitem_trade_activate(self, widget, data=None):
         tw = trade_window.TradeWindow(self)
+        tw.trade.clear_offer() # Clear previous trade offer
         response = tw.trade_window.run()
         tw.trade_window.destroy()
         return True

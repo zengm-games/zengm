@@ -135,3 +135,13 @@ seed_home INTEGER,
 seed_away INTEGER,
 won_home INTEGER,
 won_away INTEGER);
+
+CREATE INDEX a ON team_attributes(team_id, season, division_id, region);
+CREATE INDEX b ON player_stats(player_id, season, is_playoffs);
+CREATE INDEX c ON team_attributes(season, division_id, won, lost);
+CREATE INDEX d ON player_stats(team_id, game_id);
+CREATE INDEX e ON player_ratings(player_id, team_id, overall);
+CREATE INDEX f ON player_attributes(player_id, team_id);
+CREATE INDEX g ON league_divisions(conference_id);
+CREATE INDEX h ON active_playoff_series(series_id, series_round);
+

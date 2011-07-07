@@ -109,7 +109,7 @@ class Trade:
             trade was accepted (True) or not (False); 2. a string containing
             the response from the CPU team.
         """
-        if self.value[0]*0.9 > self.value[1]:
+        if self.value[0] > self.value[1]*0.9:
             return [True, 'Nice doing business with you!']
         else:
             return [False, 'What, are you crazy?']

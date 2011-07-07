@@ -805,13 +805,12 @@ class MainWindow:
                 j = 0
                 new_player = False
                 for player_id, amount, expiration, signed in free_agents:
-                    if amount + payroll <= common.SALARY_CAP and not signed:
+                    if amount + payroll <= common.SALARY_CAP and not signed and num_players < 15:
                         common.DB_CON.execute('UPDATE player_attributes SET team_id = ?, contract_amount = ?, contract_expiration = ? WHERE player_id = ?', (team_id, amount, expiration, player_id))
                         free_agents[j][-1] = True # Mark player signed
                         new_player = True
                         num_players += 1
                         payroll += amount
-                        print payroll, amount, common.SALARY_CAP
                         common.roster_auto_sort(team_id)
                     j += 1
                 if not new_player:
@@ -1129,9 +1128,6 @@ class MainWindow:
         elif self.phase == 7:
             self.update_play_menu(self.phase)
 
-            # Move undrafted players to free agent pool
-            common.DB_CON.execute('UPDATE player_attributes SET team_id = -1, draft_year = -1, draft_round = -1, draft_pick = -1, draft_team_id = -1 WHERE team_id = -2')
-
             self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Off-season'))
 
             # Check for retiring players
@@ -1140,8 +1136,11 @@ class MainWindow:
             rpw.retired_players_window.run()
             rpw.retired_players_window.destroy()
 
+            # Move undrafted players to free agent pool
+            common.DB_CON.execute('UPDATE player_attributes SET team_id = -1, draft_year = -1, draft_round = -1, draft_pick = -1, draft_team_id = -1 WHERE team_id = -2')
+
             # Resign players
-            for player_id, team_id, name in common.DB_CON.execute('SELECT player_id, team_id, name FROM player_attributes WHERE contract_expiration = ?', (common.SEASON,)):
+            for player_id, team_id, name in common.DB_CON.execute('SELECT player_id, team_id, name FROM player_attributes WHERE contract_expiration = ? AND team >= 0', (common.SEASON,)):
                 if team_id != common.PLAYER_TEAM_ID:
                     # Automaitcally negotiate with teams
                     self.player_contract_expire(player_id)

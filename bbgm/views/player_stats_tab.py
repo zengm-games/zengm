@@ -54,8 +54,10 @@ class PlayerStatsTab:
         params_row = [-1, season]
         query_row_alt = 'SELECT player_attributes.player_id, player_attributes.team_id, player_attributes.name, team_attributes.abbreviation, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 FROM player_attributes, team_attributes WHERE player_attributes.player_id = ? AND team_attributes.team_id = player_attributes.team_id AND team_attributes.season = ?'
         params_row_alt = [-1, season]
+        query_row_alt_2 = 'SELECT player_attributes.player_id, player_attributes.team_id, player_attributes.name, \'FA\', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 FROM player_attributes WHERE player_attributes.player_id = ?'
+        params_row_alt_2 = [-1]
 
-        common.treeview_update_new(self.treeview_player_stats, query_ids, params_ids, query_row, params_row, query_row_alt, params_row_alt)
+        common.treeview_update_new(self.treeview_player_stats, query_ids, params_ids, query_row, params_row, query_row_alt, params_row_alt, query_row_alt_2, params_row_alt_2)
 
         self.updated = True
 

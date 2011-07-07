@@ -14,9 +14,13 @@ BLOCKERS FOR 0.2.0:
 - If it's actually fun, make a .deb and distribute
 - Trade
   - value should be somewhat more additive than it is now, and it shouldn't depend on who else is in the trade
-- If a player has been a free agent for 2 years, retire.
+- FA window
+  - If a player has been a free agent for 2+ years, retire.
+  - For some reason, the wrong players are showing up in the free agents window. Not everyone there is a free agent.
 
 All the other UI prettifying and code refactoring stuff can wait.
+
+'Various free agent fixes: AI teams can no longer sign FAs if their roster is full; retired players window made more accurate
 
 ---
 

@@ -5,6 +5,7 @@ import sqlite3
 
 from bbgm import common
 
+
 class Game:
     def play(self, t1, t2, is_playoffs):
         self.team = []
@@ -18,9 +19,9 @@ class Game:
         # What is the attendance of the game?
         games_played, winp, = common.DB_CON.execute('SELECT won+lost, won/(won + lost) FROM team_attributes WHERE season = ? AND (team_id = ? OR team_id = ?)', (common.SEASON, self.team[0].id, self.team[1].id)).fetchone()
         if games_played < 5:
-            self.attendance = numpy.random.normal(22000 + games_played*1000, 1000)
+            self.attendance = numpy.random.normal(22000 + games_played * 1000, 1000)
         else:
-            self.attendance = numpy.random.normal(winp*36000, 1000)
+            self.attendance = numpy.random.normal(winp * 36000, 1000)
         if self.attendance > 25000:
             self.attendance = 25000
         elif self.attendance < 10000:
@@ -43,11 +44,11 @@ class Game:
         # Starting lineups - FIX THIS
         self.players_on_court = [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]]
 
-        subs_every_n = 5 # How many possessions to wait before doing subs
+        subs_every_n = 5  # How many possessions to wait before doing subs
 
         # Simulate the game
         for self.o in range(2):
-            self.d = 0 if self.o==1 else 1
+            self.d = 0 if self.o == 1 else 1
             for i in range(self.num_possessions):
                 if i % subs_every_n == 0:
                     self.update_players_on_court(subs_every_n)
@@ -61,7 +62,7 @@ class Game:
                                 self.do_rebound()
 
     def get_num_possessions(self):
-        return (self.team[0].pace + self.team[1].pace)/2 * numpy.random.normal(1, 0.03)
+        return (self.team[0].pace + self.team[1].pace) / 2 * numpy.random.normal(1, 0.03)
 
     def update_players_on_court(self, subs_every_n):
         '''
@@ -69,7 +70,7 @@ class Game:
         minutes each player plays. This function is currently VERY SLOW.
         '''
 
-        dt = 48.0/(2*self.num_possessions)*subs_every_n # Time elapsed in this possession
+        dt = 48.0 / (2 * self.num_possessions) * subs_every_n  # Time elapsed in this possession
 
         for t in range(2):
             # Overall ratings scaled by fatigue
@@ -95,12 +96,12 @@ class Game:
                 if p in self.players_on_court[t]:
                     self.team[t].player[p].record_stat('minutes', dt)
                     self.team[t].player[p].record_stat('court_time', dt)
-                    self.team[t].player[p].record_stat('energy', -dt*0.01 )
+                    self.team[t].player[p].record_stat('energy', -dt * 0.01)
                     if self.team[t].player[p].stat['energy'] < 0:
                         self.team[t].player[p].stat['energy'] = 0
                 else:
                     self.team[t].player[p].record_stat('bench_time', dt)
-                    self.team[t].player[p].record_stat('energy', dt*0.2)
+                    self.team[t].player[p].record_stat('energy', dt * 0.2)
                     if self.team[t].player[p].stat['energy'] > 1:
                         self.team[t].player[p].stat['energy'] = 1
 
@@ -180,7 +181,7 @@ class Game:
         self.do_foul(shooter)
         p = self.players_on_court[self.o][shooter]
         for i in range(amount):
-            self.team[self.o].player[p].record_stat('free_throws_attempted');
+            self.team[self.o].player[p].record_stat('free_throws_attempted')
             if random.random() < self.team[self.o].player[p].composite_rating['free_throw_percentage']:
                 self.team[self.o].player[p].record_stat('free_throws_made')
                 self.team[self.o].player[p].record_stat('points')
@@ -201,9 +202,9 @@ class Game:
             self.team[self.o].player[p].record_stat('assists')
         p = self.players_on_court[self.o][shooter]
         self.team[self.o].player[p].record_stat('field_goals_made')
-        self.team[self.o].player[p].record_stat('points', 2) # 2 points for 2's
+        self.team[self.o].player[p].record_stat('points', 2)  # 2 points for 2's
         if (type == 3):
-            self.team[self.o].player[p].record_stat('three_pointers_made') # Extra point for 3's
+            self.team[self.o].player[p].record_stat('three_pointers_made')  # Extra point for 3's
             self.team[self.o].player[p].record_stat('points')
 
     def do_rebound(self):
@@ -271,7 +272,7 @@ class Game:
             t2 = 0
         if self.team[t].stat['points'] > self.team[t2].stat['points']:
             won = True
-            if self.is_playoffs and t==0:
+            if self.is_playoffs and t == 0:
                 common.DB_CON.execute('UPDATE active_playoff_series SET won_home = won_home + 1 WHERE team_id_home = ? AND team_id_away = ?', (self.team[t].id, self.team[t2].id))
             elif self.is_playoffs:
                 common.DB_CON.execute('UPDATE active_playoff_series SET won_away = won_away + 1 WHERE team_id_home = ? AND team_id_away = ?', (self.team[t2].id, self.team[t].id))
@@ -279,7 +280,7 @@ class Game:
             won = False
 
         cost, = common.DB_CON.execute('SELECT SUM(contract_amount)*1000/82 FROM player_attributes WHERE team_id = ?', (self.team[t].id,)).fetchone()
-        common.DB_CON.execute('UPDATE team_attributes SET cash = cash + ? - ? WHERE season = ? AND team_id = ?', (common.TICKET_PRICE*self.attendance, cost, common.SEASON, self.team[t].id))
+        common.DB_CON.execute('UPDATE team_attributes SET cash = cash + ? - ? WHERE season = ? AND team_id = ?', (common.TICKET_PRICE * self.attendance, cost, common.SEASON, self.team[t].id))
 
         query = 'INSERT INTO team_stats \
                  (team_id, opponent_team_id, game_id, season, is_playoffs, won, minutes, field_goals_made, field_goals_attempted, three_pointers_made, three_pointers_attempted, free_throws_made, free_throws_attempted, offensive_rebounds, defensive_rebounds, assists, turnovers, steals, blocks, personal_fouls, points, opponent_points, attendance, cost) \
@@ -325,7 +326,7 @@ class Team:
             self.player_ids.append(row[0])
             p += 1
         self.num_players = p
-        self.pace = sum([self.player[i].composite_rating['pace'] for i in xrange(7)])/7 # Should be scaled by average minutes played
+        self.pace = sum([self.player[i].composite_rating['pace'] for i in xrange(7)]) / 7  # Should be scaled by average minutes played
 
     def load_team_attributes(self):
         query = 'SELECT region, name FROM team_attributes WHERE team_id = ?'
@@ -377,9 +378,9 @@ class Player:
             add = 0
         for component in components:
             # Sigmoidal transformation
-            y = (self.rating[component]-70)/10
-            rcomp = y/math.sqrt(1+pow(y, 2))
-            rcomp = (rcomp + 1)*50
+            y = (self.rating[component] - 70) / 10
+            rcomp = y / math.sqrt(1 + pow(y, 2))
+            rcomp = (rcomp + 1) * 50
 #            rcomp = self.rating[component]
 
             r = r + sign * (add + rcomp)
@@ -405,4 +406,3 @@ class Player:
         self.stat[s] = self.stat[s] + amount
         if s != 'starter' and s != 'court_time' and s != 'bench_time' and s != 'energy':
             self.team_stat[s] = self.team_stat[s] + amount
-

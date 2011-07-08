@@ -4,6 +4,7 @@ import sqlite3
 
 from bbgm import common
 
+
 class RosterWindow:
     def on_roster_window_close(self, widget, data=None):
         self.roster_window.hide()
@@ -21,7 +22,7 @@ class RosterWindow:
             path = treemodel.get_path(treeiter)
             current_position = path[0]
             if current_position > 0:
-                position = treemodel.get_iter((current_position-1,))
+                position = treemodel.get_iter((current_position - 1,))
                 treemodel.move_before(treeiter, position)
                 self.on_treeview_roster_row_deleted(treemodel, None, None)
 
@@ -32,7 +33,7 @@ class RosterWindow:
             current_position = path[0]
             max_position = len(treemodel) - 1
             if current_position < max_position:
-                position = treemodel.get_iter((current_position+1,))
+                position = treemodel.get_iter((current_position + 1,))
                 treemodel.move_after(treeiter, position)
                 self.on_treeview_roster_row_deleted(treemodel, None, None)
 
@@ -107,7 +108,7 @@ class RosterWindow:
         common.treeview_update_new(self.treeview_roster, query_ids, params_ids, query_row, params_row, query_row_alt, params_row_alt)
 
         model = self.treeview_roster.get_model()
-        model.connect('row-deleted', self.on_treeview_roster_row_deleted);
+        model.connect('row-deleted', self.on_treeview_roster_row_deleted)
 
     def update_roster_info(self):
         row = common.DB_CON.execute('SELECT 15 - COUNT(*) FROM player_attributes WHERE team_id = ?', (common.PLAYER_TEAM_ID,)).fetchone()
@@ -127,9 +128,8 @@ class RosterWindow:
 
         self.builder.connect_signals(self)
 
-
         # This treeview is used to list the positions to the left of the players
-        column_info = [['',],
+        column_info = [[''],
                        [0],
                        [False],
                        [False]]
@@ -140,9 +140,7 @@ class RosterWindow:
         for spot in spots:
             liststore.append([spot])
 
-
         self.build_roster()
         self.update_roster()
 
         self.roster_window.show()
-

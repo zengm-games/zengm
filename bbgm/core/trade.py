@@ -4,6 +4,7 @@ import sqlite3
 
 from bbgm import common
 
+
 class Trade:
     """All non-GUI parts of a trade.
 
@@ -15,7 +16,7 @@ class Trade:
     # and the second element represents the CPU team.
     offer = [{}, {}]
     payroll_after_trade = [0, 0]
-    total = [0, 0] # Total contract amount for players in trade
+    total = [0, 0]  # Total contract amount for players in trade
     value = [0, 0]
     over_cap = [False, False]
     ratios = [0, 0]
@@ -51,7 +52,7 @@ class Trade:
             self.value[i] = 0.0
             for player_id, team_id, player_name, age, rating, potential, contract_amount in self.offer[i].values():
                 self.total[i] += contract_amount
-                self.value[i] += 10**(potential/10.0 + rating/20.0 - age/10.0 - contract_amount/100000.0)
+                self.value[i] += 10 ** (potential / 10.0 + rating / 20.0 - age / 10.0 - contract_amount / 100000.0)
 #            if self.value[i] > 0:
 #                self.value[i] = math.log10(self.value[i])
 
@@ -59,15 +60,15 @@ class Trade:
 #            self.value[j] = 0
             for player_id, team_id, team_name, age, rating, potential, contract_amount in self.offer[j].values():
                 self.total[j] += contract_amount
-#                self.value[j] += 10**(potential/10.0 + rating/20.0 - age/10.0 - contract_amount/10000.0) # Set in 2 places!!
+#                self.value[j] += 10 ** (potential / 10.0 + rating / 20.0 - age / 10.0 - contract_amount / 10000.0)  # Set in 2 places!!
 #            if self.value[j] > 0:
 #                self.value[j] = math.log(self.value[j])
-            self.payroll_after_trade[i] = self.total[j]+payroll
+            self.payroll_after_trade[i] = self.total[j] + payroll
 
             if self.payroll_after_trade[i] > common.SALARY_CAP:
                 self.over_cap[i] = True
             if self.total[i] > 0:
-                self.ratios[i] = int((100.0*self.total[j])/self.total[i])
+                self.ratios[i] = int((100.0 * self.total[j]) / self.total[i])
             elif self.total[j] > 0:
                 self.ratios[i] = float('inf')
             else:
@@ -80,7 +81,7 @@ class Trade:
     def new_team(self, team_id):
         """Switch to a new trading partner."""
         self.team_id = team_id
-        self.offer[1] = {} # Empty player list
+        self.offer[1] = {}  # Empty player list
 
     def add_player(self, i, player_id, team_id, player_name, age, rating, potential, contract_amount):
         """Adds a player to the deal.
@@ -109,7 +110,7 @@ class Trade:
             trade was accepted (True) or not (False); 2. a string containing
             the response from the CPU team.
         """
-        if self.value[0] > self.value[1]*0.9:
+        if self.value[0] > self.value[1] * 0.9:
             return [True, 'Nice doing business with you!']
         else:
             return [False, 'What, are you crazy?']
@@ -133,4 +134,3 @@ class Trade:
 
         # Auto-sort CPU team roster
         common.roster_auto_sort(self.team_id)
-

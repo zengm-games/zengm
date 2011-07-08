@@ -4,6 +4,7 @@ import sqlite3
 
 from bbgm import common
 
+
 class PlayoffsTab:
     updated = False
     built = False
@@ -20,8 +21,8 @@ class PlayoffsTab:
         # Initialize to blank page
         for i in range(4):
             ii = 3 - i
-            for j in range(2**ii):
-                self.label_playoffs[i+1][j+1].set_text('')
+            for j in range(2 ** ii):
+                self.label_playoffs[i + 1][j + 1].set_text('')
 
         # Update cells
         for series_id, series_round, name_home, name_away, seed_home, seed_away, won_home, won_away in common.DB_CON.execute('SELECT series_id, series_round, (SELECT region || " " || name FROM team_attributes WHERE team_id = active_playoff_series.team_id_home), (SELECT region || " " || name FROM team_attributes WHERE team_id = active_playoff_series.team_id_away), seed_home, seed_away, won_home, won_away FROM active_playoff_series'):
@@ -39,11 +40,10 @@ class PlayoffsTab:
         self.label_playoffs = {1: {}, 2: {}, 3: {}, 4: {}}
         for i in range(4):
             ii = 3 - i
-            for j in range(2**ii):
-                self.label_playoffs[i+1][j+1] = self.builder.get_object('label_playoffs_%d_%d' % (i+1, j+1))
+            for j in range(2 ** ii):
+                self.label_playoffs[i + 1][j + 1] = self.builder.get_object('label_playoffs_%d_%d' % (i + 1, j + 1))
 
         self.builder.connect_signals(self)
 
 #        self.build()
 #        self.update()
-

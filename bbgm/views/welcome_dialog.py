@@ -2,6 +2,7 @@ import gtk
 
 from bbgm import common
 
+
 class WelcomeDialog:
     def on_button_new_clicked(self, button, data=None):
         self.welcome_dialog.hide()
@@ -31,7 +32,7 @@ class WelcomeDialog:
 
         self.builder = gtk.Builder()
         self.builder.add_objects_from_file(common.GTKBUILDER_PATH, ['welcome_dialog'])
-        
+
         self.welcome_dialog = self.builder.get_object('welcome_dialog')
 
         self.builder.connect_signals(self)
@@ -39,4 +40,3 @@ class WelcomeDialog:
         self.welcome_dialog.set_transient_for(self.mw.main_window)
 
         self.welcome_dialog.show()
-

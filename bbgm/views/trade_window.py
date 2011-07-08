@@ -6,6 +6,7 @@ import sqlite3
 from bbgm import common
 from bbgm.core.trade import Trade
 
+
 class TradeWindow:
     def __init__(self, main_window, team_id=-1, player_id=-1):
         self.mw = main_window
@@ -110,9 +111,9 @@ class TradeWindow:
     def on_combobox_trade_teams_changed(self, combobox, data=None):
         new_team_id = combobox.get_active()
 
-        if new_team_id == common.PLAYER_TEAM_ID: # Can't trade with yourself
+        if new_team_id == common.PLAYER_TEAM_ID:  # Can't trade with yourself
             combobox.set_active(self.trade.team_id)
-        else: # Update/reset everything if a new team is picked
+        else:  # Update/reset everything if a new team is picked
             self.trade.new_team(new_team_id)
 
             # Reset and update treeview
@@ -126,7 +127,7 @@ class TradeWindow:
             self.update_trade_summary()
 
     def on_player_toggled(self, cell, path, model, data=None):
-        model[path][2] = not model[path][2] # Update checkbox
+        model[path][2] = not model[path][2]  # Update checkbox
 
         player_id = model[path][0]
         team_id = model[path][1]
@@ -140,10 +141,10 @@ class TradeWindow:
         else:
             i = 1
 
-        if model[path][2]: # Check: add player to offer
+        if model[path][2]:  # Check: add player to offer
             contract_amount, = common.DB_CON.execute('SELECT contract_amount FROM player_attributes WHERE player_id = ?', (player_id,)).fetchone()
             self.trade.add_player(i, player_id, team_id, player_name, age, rating, potential, contract_amount)
-        else: # Uncheck: delete player from offer
+        else:  # Uncheck: delete player from offer
             self.trade.remove_player(i, player_id)
 
         self.update_trade_summary()
@@ -167,9 +168,9 @@ class TradeWindow:
         common.treeview_update(treeview, column_types, query, query_bindings)
 
     def update_trade_summary(self):
-        self.label_trade_summary.set_markup('<b>Trade Summary</b>\n\nSalary Cap: $%.2fM\n' % (common.SALARY_CAP/1000.0))
+        self.label_trade_summary.set_markup('<b>Trade Summary</b>\n\nSalary Cap: $%.2fM\n' % (common.SALARY_CAP / 1000.0))
 
-        self.trade.update() # Update all the data which is then displayed below
+        self.trade.update()  # Update all the data which is then displayed below
 
         for team_id in [common.PLAYER_TEAM_ID, self.trade.team_id]:
             if team_id == common.PLAYER_TEAM_ID:
@@ -181,18 +182,18 @@ class TradeWindow:
             text = '<b>%s</b>\n\nTrade:\n' % self.trade.team_names[i]
 
             for player_id, team_id, player_name, age, rating, potential, contract_amount in self.trade.offer[i].values():
-                text += '%s ($%.2fM)\n' % (player_name, contract_amount/1000.0)
-            text += '$%.2fM total\n\n' % (self.trade.total[i]/1000.0)
+                text += '%s ($%.2fM)\n' % (player_name, contract_amount / 1000.0)
+            text += '$%.2fM total\n\n' % (self.trade.total[i] / 1000.0)
             text += 'Value: %s\n\n' % ('{:,.0f}'.format(self.trade.value[i]))
             text += 'Recieve:\n'
 
             for player_id, team_id, player_name, age, rating, potential, contract_amount in self.trade.offer[j].values():
-                text += '%s ($%.2fM)\n' % (player_name, contract_amount/1000.0)
-            text += '$%.2fM total\n\n' % (self.trade.total[j]/1000.0)
+                text += '%s ($%.2fM)\n' % (player_name, contract_amount / 1000.0)
+            text += '$%.2fM total\n\n' % (self.trade.total[j] / 1000.0)
             text += 'Value: %s\n\n' % ('{:,.0f}'.format(self.trade.value[j]))
-            text += 'Payroll After Trade: $%.2fM' % (self.trade.payroll_after_trade[i]/1000.0)
+            text += 'Payroll After Trade: $%.2fM' % (self.trade.payroll_after_trade[i] / 1000.0)
 
-            self.label_trade[i].set_markup(text);
+            self.label_trade[i].set_markup(text)
 
         # Update "Propose Trade" button and the salary cap warning
         if (self.trade.ratios[0] > 125 and self.trade.over_cap[0] == True) or (self.trade.ratios[1] > 125 and self.trade.over_cap[1] == True):
@@ -212,4 +213,3 @@ class TradeWindow:
         else:
             self.label_trade_cap_warning.set_text('')
             self.button_trade_propose.set_sensitive(True)
-

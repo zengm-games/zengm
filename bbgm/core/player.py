@@ -10,6 +10,7 @@ import string
 
 from bbgm import common
 
+
 class Player:
     def load(self, player_id):
         self.id = player_id
@@ -26,7 +27,6 @@ class Player:
         for idx, col in enumerate(cursor.description):
             d[col[0]] = row[idx]
         return d
-
 
     def save(self):
         self.rating['overall'] = self.overall_rating()
@@ -78,7 +78,7 @@ class Player:
         """Add or subtract from all ratings"""
 
         for key in ('strength', 'speed', 'jumping', 'endurance', 'shooting_inside', 'shooting_layups', 'shooting_free_throws', 'shooting_two_pointers', 'shooting_three_pointers', 'blocks', 'steals', 'dribbling', 'passing', 'rebounding', 'potential'):
-            self.rating[key] = self._limit_rating(self.rating[key]+amount)
+            self.rating[key] = self._limit_rating(self.rating[key] + amount)
 
     def _limit_rating(self, rating):
         if rating > 100:
@@ -89,7 +89,7 @@ class Player:
             return int(rating)
 
     def overall_rating(self):
-        return (self.rating['height'] + self.rating['strength'] + self.rating['speed'] + self.rating['jumping'] + self.rating['endurance'] + self.rating['shooting_inside'] + self.rating['shooting_layups'] + self.rating['shooting_free_throws'] + self.rating['shooting_two_pointers'] + self.rating['shooting_three_pointers'] + self.rating['blocks'] + self.rating['steals'] + self.rating['dribbling'] + self.rating['passing'] + self.rating['rebounding'])/15
+        return (self.rating['height'] + self.rating['strength'] + self.rating['speed'] + self.rating['jumping'] + self.rating['endurance'] + self.rating['shooting_inside'] + self.rating['shooting_layups'] + self.rating['shooting_free_throws'] + self.rating['shooting_two_pointers'] + self.rating['shooting_three_pointers'] + self.rating['blocks'] + self.rating['steals'] + self.rating['dribbling'] + self.rating['passing'] + self.rating['rebounding']) / 15
 
     def contract(self):
         # Limits on yearly contract amount, in $1000's
@@ -98,19 +98,18 @@ class Player:
 
         self.rating['overall'] = self.overall_rating()
         # Scale amount from 500k to 15mil, proportional to (overall*2 + potential)*0.5 120-210
-        amount = ((2.0 * self.rating['overall'] + self.rating['potential'])*0.85 - 120)/(210 - 120) # Scale from 0 to 1 (approx)
-        amount = amount * (max_amount - min_amount) + min_amount # Scale from 500k to 15mil
-        amount *= numpy.random.normal(1, 0.1) # Randomize
+        amount = ((2.0 * self.rating['overall'] + self.rating['potential']) * 0.85 - 120) / (210 - 120)  # Scale from 0 to 1 (approx)
+        amount = amount * (max_amount - min_amount) + min_amount  # Scale from 500k to 15mil
+        amount *= numpy.random.normal(1, 0.1)  # Randomize
         expiration = common.SEASON + random.randrange(0, 6)
         if amount < min_amount:
             amount = min_amount
         elif amount > max_amount:
             amount = max_amount
-        else:   
-            amount = 50*round(amount/50.0) # Make it a multiple of 50k
+        else:
+            amount = 50 * round(amount / 50.0)  # Make it a multiple of 50k
 
         return amount, expiration
-
 
 
 class GeneratePlayer(Player):
@@ -131,7 +130,7 @@ class GeneratePlayer(Player):
         ln_reader = csv.reader(open(os.path.join(common.DATA_FOLDER, 'last_names.txt'), 'rb'))
         self.ln_data = []
         for row in ln_reader:
-            self.ln_data.append(row)  
+            self.ln_data.append(row)
 
         # Nationality data
         nat_reader = csv.reader(open(os.path.join(common.DATA_FOLDER, 'nationalities.txt'), 'rb'))
@@ -163,10 +162,10 @@ class GeneratePlayer(Player):
             profile_id = 0
 
         # Each row should sum to ~150
-        profiles = [[10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10], # Base 
-                    [-30, -10, 40,  15,  0,   0,   0,   10,  15,  0,   0,   20,  40,  40,  0], # Point Guard
-                    [10,  10,  15,  15,  0,   0,   25,  15,  15,  5,   0,   10,  15,  0,   15], # Wing
-                    [30,  30,  -10, -10, 10,  30,  30,  0,   -10, -20, 30,  0,   -10, -10, 30]] # Big
+        profiles = [[10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10],  # Base 
+                    [-30, -10, 40,  15,  0,   0,   0,   10,  15,  0,   0,   20,  40,  40,  0],   # Point Guard
+                    [10,  10,  15,  15,  0,   0,   25,  15,  15,  5,   0,   10,  15,  0,   15],  # Wing
+                    [30,  30,  -10, -10, 10,  30,  30,  0,   -10, -20, 30,  0,   -10, -10, 30]]  # Big
         sigmas = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]
         base_rating = numpy.random.normal(base_rating, 5)
 
@@ -184,20 +183,19 @@ class GeneratePlayer(Player):
 
     # Call generate_ratings before this method!
     def generate_attributes(self, age, player_nat):
-        min_height = 71 # 5'11"
-        max_height = 89 # 7'5"
+        min_height = 71  # 5'11"
+        max_height = 89  # 7'5"
         min_weight = 150
         max_weight = 290
 
-        
-        self.attribute['position'] = self._position() # Position (PG, SG, SF, PF, C, G, GF, FC)
-        self.attribute['height'] = int(numpy.random.normal(1, 0.02)*(self.rating['height']*(max_height-min_height)/100+min_height)) # Height in inches (from min_height to max_height)
-        self.attribute['weight'] = int(numpy.random.normal(1, 0.02)*((self.rating['height']+0.5*self.rating['strength'])*(max_weight-min_weight)/150+min_weight)) # Weight in points (from min_weight to max_weight)
+        self.attribute['position'] = self._position()  # Position (PG, SG, SF, PF, C, G, GF, FC)
+        self.attribute['height'] = int(numpy.random.normal(1, 0.02) * (self.rating['height'] * (max_height - min_height) / 100 + min_height))  # Height in inches (from min_height to max_height)
+        self.attribute['weight'] = int(numpy.random.normal(1, 0.02) * ((self.rating['height'] + 0.5 * self.rating['strength']) * (max_weight - min_weight) / 150 + min_weight))  # Weight in points (from min_weight to max_weight)
         self.attribute['born_date'] = self._born_date(age)
 
         #If the nationality isn't given, randomly choose one.	
         if player_nat == "":
-            nationality_rand = random.uniform (0, self.nat_max)
+            nationality_rand = random.uniform(0, self.nat_max)
             for row in self.nat_data:
                 if float(row[2]) >= nationality_rand:
                     break
@@ -221,7 +219,7 @@ class GeneratePlayer(Player):
         self.attribute['draft_team_id'] = 0
         self.attribute['contract_amount'], self.attribute['contract_expiration'] = self.contract()
 
-    def _name(self,nationality):
+    def _name(self, nationality):
         # First name
         fn_rand = random.uniform(0, self.fn_max)
         for row in self.fn_data:
@@ -235,7 +233,7 @@ class GeneratePlayer(Player):
         for row in self.ln_data:
             if nationality == string.capitalize(row[4]):
                 if float(row[2]) >= ln_rand:
-                #   if (random.random() < 0.3): # This is needed because there are some duplicate CDF's in last_names.txt
+                #   if (random.random() < 0.3):  # This is needed because there are some duplicate CDF's in last_names.txt
                     break
         ln = string.capitalize(row[0])
         # McWhatever
@@ -318,4 +316,3 @@ class GeneratePlayer(Player):
             return value
         else:
             return "'%s'" % value
-

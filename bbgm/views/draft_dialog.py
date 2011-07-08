@@ -8,6 +8,7 @@ import time
 from bbgm import common
 from bbgm.core import player
 
+
 class DraftDialog:
     def on_draft_dialog_close(self, widget, data=None):
         if self.done_draft:
@@ -31,7 +32,7 @@ class DraftDialog:
         self.button_draft_player.add(alignment)
         self.draft_dialog.add_action_widget(self.button_draft_player, 0)
         self.button_draft_player.connect('clicked', self.on_button_draft_player_clicked)
-        self.button_draft_player.set_sensitive(False) # User can't click it until their turn
+        self.button_draft_player.set_sensitive(False)  # User can't click it until their turn
         self.button_draft_player.show_all()
 
         self.do_draft()
@@ -53,7 +54,7 @@ class DraftDialog:
         Map to the same function in main_window.py
         '''
         treemodel, treeiter = treeview.get_selection().get_selected()
-        if treemodel.get_value(treeiter, 0) >= 0: # Make sure it's not a placeholder row
+        if treemodel.get_value(treeiter, 0) >= 0:  # Make sure it's not a placeholder row
             self.main_window.on_treeview_player_row_activated(treeview, path, view_column, data)
 
     def generate_players(self):
@@ -62,7 +63,7 @@ class DraftDialog:
         sql = ''
         row = common.DB_CON.execute('SELECT MAX(player_id) + 1 FROM player_attributes').fetchone()
         player_id = row[0]
-        team_id = -2 # -2 is the team_id for players generated for the draft
+        team_id = -2  # -2 is the team_id for players generated for the draft
         for p in range(70):
             base_rating = random.randrange(0, 20)
             potential = int(random.gauss(45, 20))
@@ -132,13 +133,13 @@ class DraftDialog:
         # Do the draft
         for row in self.liststore_draft_results:
             while gtk.events_pending():
-                gtk.main_iteration(False) # This stops everything from freezing
+                gtk.main_iteration(False)  # This stops everything from freezing
 
             team_id = row[1]
             self.round = row[2]
 
             if team_id != common.PLAYER_TEAM_ID:
-                self.pick = abs(int(random.gauss(0,3)))
+                self.pick = abs(int(random.gauss(0, 3)))
                 time.sleep(0.1)
             else:
                 # The player has to pick
@@ -146,7 +147,7 @@ class DraftDialog:
                 self.picked = False
                 while not self.picked:
                     while gtk.events_pending():
-                        gtk.main_iteration(False) # This stops everything from freezing
+                        gtk.main_iteration(False)  # This stops everything from freezing
                     time.sleep(0.01)
                 self.button_draft_player.set_sensitive(False)
             self.pick_player(row, self.pick)
@@ -170,8 +171,8 @@ class DraftDialog:
         int pick is the offset from the top of draft_available
         row is the current row in draft_results
         '''
-        row[5] = self.liststore_draft_available[pick][3] # Name
-        row[0] = self.liststore_draft_available[pick][0] # Player ID
+        row[5] = self.liststore_draft_available[pick][3]  # Name
+        row[0] = self.liststore_draft_available[pick][0]  # Player ID
 
         # Update team_id and roster_position
         row2 = common.DB_CON.execute('SELECT MAX(player_ratings.roster_position) + 1 FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = ?', (row[1],)).fetchone()
@@ -181,9 +182,9 @@ class DraftDialog:
         del self.liststore_draft_available[pick]
 
         # Contract
-        i = row[3]-1 + 30*(row[2]-1)
+        i = row[3] - 1 + 30 * (row[2] - 1)
         contract_amount = self.rookie_salaries[i]
-        years = 4 - row[2] # 2 years for 2nd round, 3 years for 1st round
+        years = 4 - row[2]  # 2 years for 2nd round, 3 years for 1st round
         contract_expiration = common.SEASON + years
         common.DB_CON.execute('UPDATE player_attributes SET contract_amount = ?, contract_expiration = ? WHERE player_id = ?', (contract_amount, contract_expiration, row[0]))
 
@@ -218,7 +219,7 @@ class DraftDialog:
         self.button_start_draft.show_all()
 
         # Any time it sets self.picked to True
-        self.done_draft = False # Dialog can't be closed until this is True
+        self.done_draft = False  # Dialog can't be closed until this is True
 
         # Generate 80 players
         self.generate_players()
@@ -234,4 +235,3 @@ class DraftDialog:
 
         # Show the dialog
         self.draft_dialog.show()
-

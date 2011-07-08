@@ -3,15 +3,15 @@ import os
 import shutil
 import sqlite3
 
-TEAMS = range(30) # If team id's aren't consecutive integers starting with 0, then some things will break
-SEASON_LENGTH = 82 # If this isn't 82 the scheduling gets fucked up.  Only set it lower for debugging (faster seasons)
+TEAMS = range(30)  # If team id's aren't consecutive integers starting with 0, then some things will break
+SEASON_LENGTH = 82  # If this isn't 82 the scheduling gets fucked up.  Only set it lower for debugging (faster seasons)
 
 SRC_FOLDER = os.path.dirname(os.path.abspath(__file__))
 
 # basketball_gm.xml should be in the same folder as this file
-GTKBUILDER_PATH = os.path.join(SRC_FOLDER, '..', 'ui', 'basketball-gm.glade');
+GTKBUILDER_PATH = os.path.join(SRC_FOLDER, '..', 'ui', 'basketball-gm.glade')
 
-UI_FOLDER = os.path.join(SRC_FOLDER, '..', 'ui');
+UI_FOLDER = os.path.join(SRC_FOLDER, '..', 'ui')
 DATA_FOLDER = os.path.join(SRC_FOLDER, '..', 'data')
 TEMPLATES_FOLDER = os.path.join(UI_FOLDER, 'templates')
 SAVES_FOLDER = os.path.expanduser('~/.basketball-gm')
@@ -21,7 +21,7 @@ DB_FILENAME = os.path.join(SAVES_FOLDER, 'temp.sqlite')
 if not os.path.exists(SAVES_FOLDER):
     os.mkdir(SAVES_FOLDER, 0755)
 
-DB_CON = '' # Placeholder. Set by bbgm.views.main_window.connect()
+DB_CON = ''  # Placeholder. Set by bbgm.views.main_window.connect()
 
 # These are set to real values in basketball_gm.py
 PLAYER_TEAM_ID = 3
@@ -31,6 +31,7 @@ SEASON = 2008
 SALARY_CAP = 60000
 TICKET_PRICE = 45
 
+
 # These functions are crap and should be replaced eventually
 def treeview_build(treeview, column_info):
     """
@@ -38,6 +39,7 @@ def treeview_build(treeview, column_info):
     """
     for i in range(len(column_info[0])):
         add_column(treeview, column_info[0][i], column_info[1][i], column_info[2][i], column_info[3][i])
+
 
 def treeview_update(treeview, column_types, query, query_bindings=()):
     """
@@ -54,6 +56,7 @@ def treeview_update(treeview, column_types, query, query_bindings=()):
             else:
                 values.append(row[i])
         liststore.append(values)
+
 
 def treeview_build_new(treeview, column_types, column_info):
     """Shortcut function to add columns and a ListStore to a treeview.
@@ -72,6 +75,7 @@ def treeview_build_new(treeview, column_types, column_info):
 
     liststore = gtk.ListStore(*column_types)
     treeview.set_model(liststore)
+
 
 def treeview_update_new(treeview, query_ids, params_ids, query_row, params_row, query_row_alt='', params_row_alt=[-1], query_row_alt_2='', params_row_alt_2=[-1]):
     """Shortcut function to update a list of players in a treeview.
@@ -123,7 +127,7 @@ def treeview_update_new(treeview, query_ids, params_ids, query_row, params_row, 
 
     liststore = treeview.get_model()
 
-    do_not_delete = [] # List of row_id
+    do_not_delete = []  # List of row_id
 
     for row_id, in DB_CON.execute(query_ids, tuple(params_ids)):
         params_row[0] = row_id
@@ -134,7 +138,7 @@ def treeview_update_new(treeview, query_ids, params_ids, query_row, params_row, 
             if liststore[i][0] == row_id:
                 do_not_delete.append(row_id)
                 found_row_id = True
-                break # We found the row_id in the liststore, so move on to next row
+                break  # We found the row_id in the liststore, so move on to next row
 
         # Get row contents
         row = DB_CON.execute(query_row, params_row).fetchone()
@@ -154,18 +158,19 @@ def treeview_update_new(treeview, query_ids, params_ids, query_row, params_row, 
 
         # Add a new row or update an existing row?
         if not found_row_id:
-            liststore.append(values) # Add row
+            liststore.append(values)  # Add row
         else:
-            liststore[i] = values # Update row
+            liststore[i] = values  # Update row
 
-        do_not_delete.append(row_id) # This row was either added to the list or updated
+        do_not_delete.append(row_id)  # This row was either added to the list or updated
 
     # Remove rows from model if they shouldn't be showing
-    for i in reversed(xrange(len(liststore))): # Search backwards to not fuck things up
+    for i in reversed(xrange(len(liststore))):  # Search backwards to not fuck things up
         if liststore[i][0] not in do_not_delete:
             del liststore[i]
 
     treeview.thaw_child_notify()
+
 
 def add_column(treeview, title, column_id, sort=False, truncate_float=False):
     renderer = gtk.CellRendererText()
@@ -178,7 +183,7 @@ def add_column(treeview, title, column_id, sort=False, truncate_float=False):
     treeview.append_column(column)
 
 
-def roster_auto_sort(team_id, from_button = False):
+def roster_auto_sort(team_id, from_button=False):
     """Sort the roster of team_id by overall rating."""
     players = []
     query = 'SELECT player_attributes.player_id, player_ratings.overall, player_ratings.endurance FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = ? ORDER BY player_ratings.roster_position ASC'
@@ -187,7 +192,7 @@ def roster_auto_sort(team_id, from_button = False):
         players.append(list(row))
 
     # Order
-    players.sort(cmp=lambda x,y: y[1]-x[1]) # Sort by rating
+    players.sort(cmp=lambda x, y: y[1] - x[1])  # Sort by rating
 
     # Update
     roster_position = 1

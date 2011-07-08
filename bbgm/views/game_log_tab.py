@@ -6,6 +6,7 @@ import webkit
 
 from bbgm import common
 
+
 class GameLogTab:
     updated = False
     built = False
@@ -105,4 +106,3 @@ class GameLogTab:
         self.builder.connect_signals(self)
 
 #        self.build()
-

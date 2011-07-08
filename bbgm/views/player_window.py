@@ -6,6 +6,7 @@ import sqlite3
 from bbgm import common
 from bbgm.views import trade_window
 
+
 class PlayerWindow:
     pages = {'stats': 0, 'game_log': 1}
     built = dict(stats=False, game_log=False)
@@ -39,8 +40,8 @@ class PlayerWindow:
         height = '%d\'%d"' % (row[3] // 12, row[3] % 12);
         born = mx.DateTime.Date(int(y), int(m), int(d))
         age = mx.DateTime.Age(mx.DateTime.Date(common.SEASON, 1, 1), born).years
-        experience = 77 # This should be calculated by how many seasons are recorded, because a player could be injured all year or be out of the leauge
-        contract_amount = '$%.2fM' % (row[12]/1000.0)
+        experience = 77  # This should be calculated by how many seasons are recorded, because a player could be injured all year or be out of the leauge
+        contract_amount = '$%.2fM' % (row[12] / 1000.0)
         self.label_player_window_info.set_markup('<span size="x-large" weight="bold">%s</span>\n<span weight="bold">%s - %s</span>\nHeight: %s\nWeight: %s lbs\nAge: %s\nExperience: %s\nBorn: %s - %s\nCollege: %s\nDraft: %s - Round %s (Pick %s) by the %s\nContract: %s per year through %d' % (row[0], row[1], row[2], height, row[4], age, experience, born.strftime("%B %e, %Y"), row[6], row[7], row[8], row[9], row[10], row[11], contract_amount, row[13]))
 
         # Ratings
@@ -77,9 +78,9 @@ class PlayerWindow:
         else:
             self.updated['game_log'] = False
 
-        if player_id != -1: # Don't raise the dialog if it's in the background
-            self.player_window.show() # Show the dialog
-            self.player_window.window.show() # Raise the dialog if it's in the background
+        if player_id != -1:  # Don't raise the dialog if it's in the background
+            self.player_window.show()  # Show the dialog
+            self.player_window.window.show()  # Raise the dialog if it's in the background
 
     def build_player_window_stats(self):
         column_types = [int, str, int, int, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float]
@@ -178,4 +179,3 @@ class PlayerWindow:
         self.button_trade = self.builder.get_object('button_trade')
 
         self.builder.connect_signals(self)
-

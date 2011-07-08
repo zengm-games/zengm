@@ -4,11 +4,12 @@ import sqlite3
 
 from bbgm import common
 
+
 class PlayerStatsTab:
     updated = False
     built = False
     combobox_season_active = 0
-    combobox_team_active = common.PLAYER_TEAM_ID+1
+    combobox_team_active = common.PLAYER_TEAM_ID + 1
 
     def on_combobox_season_changed(self, combobox, data=None):
         old = self.combobox_season_active
@@ -75,4 +76,3 @@ class PlayerStatsTab:
         self.builder.connect_signals(self)
 
 #        self.build()
-

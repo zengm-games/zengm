@@ -4,6 +4,7 @@ import sqlite3
 
 from bbgm import common
 
+
 class StandingsTab:
     updated = False
     built = False
@@ -19,14 +20,14 @@ class StandingsTab:
         print 'build standings'
         max_divisions_in_conference, num_conferences = common.DB_CON.execute('SELECT (SELECT COUNT(*) FROM league_divisions GROUP BY conference_id ORDER BY COUNT(*) LIMIT 1), COUNT(*) FROM league_conferences').fetchone()
         try:
-            self.table_standings.destroy() # Destroy table if it already exists... this will be called after starting a new game from the menu
+            self.table_standings.destroy()  # Destroy table if it already exists... this will be called after starting a new game from the menu
         except:
             pass
         self.table_standings = gtk.Table(max_divisions_in_conference, num_conferences)
         self.scrolledwindow_standings = self.builder.get_object('scrolledwindow_standings')
         self.scrolledwindow_standings.add_with_viewport(self.table_standings)
 
-        self.treeview_standings = {} # This will contain treeviews for each conference
+        self.treeview_standings = {}  # This will contain treeviews for each conference
         conference_id = -1
         for row in common.DB_CON.execute('SELECT division_id, conference_id, name FROM league_divisions'):
             if conference_id != row[1]:
@@ -44,7 +45,7 @@ class StandingsTab:
 
             row_top += 1
 
-        self.mw.hbox1.pack_start(self.vbox4) # When I had all the tabs added dynamically, the switch-notes signal went crazy. So I have the first one added like this.
+        self.mw.hbox1.pack_start(self.vbox4)  # When I had all the tabs added dynamically, the switch-notes signal went crazy. So I have the first one added like this.
 #        self.mw.notebook.insert_page(self.vbox4, gtk.Label('Standings'), self.mw.pages['standings'])
 
         self.table_standings.show()
@@ -73,4 +74,3 @@ class StandingsTab:
         self.builder.connect_signals(self)
 
 #        self.build()
-

@@ -4,6 +4,7 @@ import sqlite3
 
 from bbgm import common
 
+
 class TeamStatsTab:
     updated = False
     built = False
@@ -56,4 +57,3 @@ class TeamStatsTab:
         self.builder.connect_signals(self)
 
 #        self.build()
-

@@ -45,10 +45,9 @@ Player window and game log list should be sped up by not checking the old (stati
 when negotiating, players change values too much when you try to change years
 when you press close and the save/nosave/cancel dialog comes up, it should warn you about the save if you press save
 
-factor out game logic from views
-- lib or core or something folder
+continue factoring out game logic from views to core
 
-pylint
+pyflakes
 
 ======
 FUTURE

@@ -3,13 +3,14 @@ import sqlite3
 
 from bbgm import common
 
+
 class Schedule:
     def generate(self):
-        teams = [] # division_id, conference_id
+        teams = []  # division_id, conference_id
         for row in common.DB_CON.execute('SELECT team_id, division_id, (SELECT conference_id FROM league_divisions WHERE league_divisions.division_id = team_attributes.division_id) FROM team_attributes WHERE season = ?', (common.SEASON,)):
             teams.append({'team_id': row[0], 'division_id': row[1], 'conference_id': row[2]})
 
-        games = [] # team_id_home, team_id_away
+        games = []  # team_id_home, team_id_away
 
         for i in range(len(teams)):
             for j in range(len(teams)):
@@ -31,7 +32,7 @@ class Schedule:
 
         # Constraint: 1-2 home games vs. each team in same conference and different division
         # Randomly assign games until there are none left
-        while len(games) < 82*15:
+        while len(games) < 82 * 15:
             # Pick two teams randomly
             i = random.randint(0, 29)
             while True:
@@ -71,4 +72,3 @@ class Schedule:
         random.shuffle(games)
 
         return games
-

@@ -7,6 +7,7 @@ from bbgm import common
 from bbgm.core import player
 from bbgm.views import player_window
 
+
 class ContractWindow:
     def on_contract_window_response(self, dialog, response, *args):
         '''
@@ -20,7 +21,7 @@ class ContractWindow:
     def on_spinbutton_contract_team_amount_input(self, spinbutton, gpointer, data=None):
         text = spinbutton.get_text()
         if text.startswith('$'):
-            text = text[1:-1] # Get rid of the $ and the M
+            text = text[1:-1]  # Get rid of the $ and the M
         double = ctypes.c_double.from_address(hash(gpointer))
         double.value = float(text)
         return True
@@ -46,7 +47,7 @@ class ContractWindow:
             md.destroy()
 
     def on_button_contract_submit_clicked(self, button, data=None):
-        team_amount = self.spinbutton_contract_team_amount.get_value()*1000
+        team_amount = self.spinbutton_contract_team_amount.get_value() * 1000
         team_years = self.spinbutton_contract_team_years.get_value_as_int()
         self.steps += 1
 
@@ -58,14 +59,14 @@ class ContractWindow:
             elif team_years > self.player_years:
                 self.player_years += 1
                 self.player_amount *= 1.5
-            if team_amount < self.player_amount and team_amount > 0.7*self.player_amount:
-                self.player_amount = .75*self.player_amount + .25*team_amount
+            if team_amount < self.player_amount and team_amount > 0.7 * self.player_amount:
+                self.player_amount = .75 * self.player_amount + .25 * team_amount
             elif team_amount < self.player_amount:
                 self.player_amount *= 1.1
             if team_amount > self.player_amount:
                 self.player_amount = team_amount
         else:
-            self.player_amount = 1.05*self.player_amount
+            self.player_amount = 1.05 * self.player_amount
 
         if self.player_amount > 20000:
             self.player_amount = 20000
@@ -75,8 +76,8 @@ class ContractWindow:
         self.update_label_contract_player_proposal()
 
     def update_label_contract_player_proposal(self):
-        self.player_amount = 50*round(self.player_amount/50.0) # Make it a multiple of 50k
-        salary = '$%.2fM' % (self.player_amount/1000.0)
+        self.player_amount = 50 * round(self.player_amount / 50.0)  # Make it a multiple of 50k
+        salary = '$%.2fM' % (self.player_amount / 1000.0)
         self.label_contract_player_proposal.set_markup('<big><big><b>Player Proposal</b></big></big>\n\
 %d years (Through %d)\n\
 %s' % (self.player_years, common.SEASON + self.player_years, salary))
@@ -97,7 +98,7 @@ class ContractWindow:
 
         self.builder.connect_signals(self)
 
-        self.steps = 0 # Number of compromises/negotiations
+        self.steps = 0  # Number of compromises/negotiations
         self.max_steps = random.randint(1, 5)
 
         name, self.team_id, overall, potential = common.DB_CON.execute('SELECT pa.name, pa.team_id, pr.overall, pr.potential FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.player_id = ?', (self.player_id,)).fetchone()
@@ -106,22 +107,22 @@ Overall: %d\n\
 Potential: %d' % (name, overall, potential))
 
         name, self.payroll = common.DB_CON.execute('SELECT ta.region || " " || ta.name, sum(pa.contract_amount) FROM team_attributes as ta, player_attributes as pa WHERE pa.team_id = ta.team_id AND ta.team_id = ? AND pa.contract_expiration >= ? AND ta.season = ?', (common.PLAYER_TEAM_ID, common.SEASON, common.SEASON,)).fetchone()
-        salary_cap = '$%.2fM' % (common.SALARY_CAP/1000.0)
-        payroll = '$%.2fM' % (self.payroll/1000.0)
+        salary_cap = '$%.2fM' % (common.SALARY_CAP / 1000.0)
+        payroll = '$%.2fM' % (self.payroll / 1000.0)
         self.label_contract_team_info.set_markup('<big><big><b>%s</b></big></big>\n\
 Payroll: %s\n\
 Salary Cap: %s' % (name, payroll, salary_cap))
 
         # Initial player proposal
         potential_difference = round((potential - overall) / 4.0)
-        self.player_years = 5 - potential_difference # Players with high potentials want short contracts
+        self.player_years = 5 - potential_difference  # Players with high potentials want short contracts
         if self.player_years < 1:
             self.player_years = 1
         p = player.Player()
         p.load(self.player_id)
         self.player_amount, expiration = p.contract()
         self.update_label_contract_player_proposal()
-        self.spinbutton_contract_team_amount.set_value(self.player_amount/1000.0)
+        self.spinbutton_contract_team_amount.set_value(self.player_amount / 1000.0)
         self.spinbutton_contract_team_years.set_value(self.player_years)
 
         # If signing free agents, close should be Cancel.  For resigning players it should be Release Player.
@@ -141,4 +142,3 @@ Salary Cap: %s' % (name, payroll, salary_cap))
         button.add(alignment)
         self.contract_window.add_action_widget(button, gtk.RESPONSE_CLOSE)
         button.show_all()
-

@@ -22,4 +22,3 @@ else:
     welcome_dialog.WelcomeDialog(mw)
 
 gtk.main()
-

@@ -5,6 +5,7 @@ import sqlite3
 
 from bbgm import common
 
+
 class FinancesTab:
     updated = False
     built = False
@@ -25,22 +26,22 @@ class FinancesTab:
         column = gtk.TreeViewColumn('Revenue (YTD)', renderer, text=3)
         column.set_sort_column_id(3)
         column.set_cell_data_func(renderer,
-            lambda column, cell, model, iter: cell.set_property('text', '%sM' % locale.currency(model.get_value(iter, 3)/1000000.0, True, True)))
+            lambda column, cell, model, iter: cell.set_property('text', '%sM' % locale.currency(model.get_value(iter, 3) / 1000000.0, True, True)))
         self.treeview_finances.append_column(column)
         column = gtk.TreeViewColumn('Profit (YTD)', renderer, text=4)
         column.set_sort_column_id(4)
         column.set_cell_data_func(renderer,
-            lambda column, cell, model, iter: cell.set_property('text', '%sM' % locale.currency(model.get_value(iter, 4)/1000000.0, True, True)))
+            lambda column, cell, model, iter: cell.set_property('text', '%sM' % locale.currency(model.get_value(iter, 4) / 1000000.0, True, True)))
         self.treeview_finances.append_column(column)
         column = gtk.TreeViewColumn('Cash', renderer, text=5)
         column.set_sort_column_id(5)
         column.set_cell_data_func(renderer,
-            lambda column, cell, model, iter: cell.set_property('text', '%sM' % locale.currency(model.get_value(iter, 5)/1000000.0, True, True)))
+            lambda column, cell, model, iter: cell.set_property('text', '%sM' % locale.currency(model.get_value(iter, 5) / 1000000.0, True, True)))
         self.treeview_finances.append_column(column)
         column = gtk.TreeViewColumn('Payroll', renderer, text=6)
         column.set_sort_column_id(6)
         column.set_cell_data_func(renderer,
-            lambda column, cell, model, iter: cell.set_property('text', '%sM' % locale.currency(model.get_value(iter, 6)/1000000.0, True, True)))
+            lambda column, cell, model, iter: cell.set_property('text', '%sM' % locale.currency(model.get_value(iter, 6) / 1000000.0, True, True)))
         self.treeview_finances.append_column(column)
 
         column_types = [int, str, int, int, int, int, int]
@@ -85,4 +86,3 @@ class FinancesTab:
         self.builder.connect_signals(self)
 
 #        self.build()
-

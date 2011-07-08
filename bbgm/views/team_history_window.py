@@ -4,6 +4,7 @@ import sqlite3
 
 from bbgm import common
 
+
 class TeamHistoryWindow:
     updated = False
 

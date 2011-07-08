@@ -1140,7 +1140,7 @@ class MainWindow:
             common.DB_CON.execute('UPDATE player_attributes SET team_id = -1, draft_year = -1, draft_round = -1, draft_pick = -1, draft_team_id = -1 WHERE team_id = -2')
 
             # Resign players
-            for player_id, team_id, name in common.DB_CON.execute('SELECT player_id, team_id, name FROM player_attributes WHERE contract_expiration = ? AND team >= 0', (common.SEASON,)):
+            for player_id, team_id, name in common.DB_CON.execute('SELECT player_id, team_id, name FROM player_attributes WHERE contract_expiration = ? AND team_id >= 0', (common.SEASON,)):
                 if team_id != common.PLAYER_TEAM_ID:
                     # Automaitcally negotiate with teams
                     self.player_contract_expire(player_id)

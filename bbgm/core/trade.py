@@ -45,7 +45,7 @@ class Trade:
             else:
                 i = 1
                 j = 0
-            team_name, payroll = common.DB_CON.execute('SELECT ta.region || " " || ta.name, sum(pa.contract_amount) FROM team_attributes as ta, player_attributes as pa WHERE pa.team_id = ta.team_id AND ta.team_id = ? AND pa.contract_expiration >= ? AND ta.season = ?', (team_id, common.SEASON, common.SEASON,)).fetchone()
+            team_name, payroll = common.DB_CON.execute('SELECT ta.region || " " || ta.name, SUM(pa.contract_amount) + (SELECT TOTAL(contract_amount) FROM released_players_salaries WHERE released_players_salaries.team_id = ta.team_id) FROM team_attributes as ta, player_attributes as pa WHERE pa.team_id = ta.team_id AND ta.team_id = ? AND pa.contract_expiration >= ? AND ta.season = ?', (team_id, common.SEASON, common.SEASON,)).fetchone()
             self.team_names[i] = team_name
 
             self.total[i] = 0

@@ -87,10 +87,13 @@ class RosterWindow:
         if treeiter:
             player_id = treemodel.get_value(treeiter, 0)
             name = treemodel.get_value(treeiter, 1)
-            dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK_CANCEL, 'Are you sure you want to release %s?  He will become a free agent and will be able to sign with any team.' % name)
+            contract_amount, contract_expiration = common.DB_CON.execute('SELECT contract_amount, contract_expiration FROM player_attributes WHERE player_id = ?', (player_id,)).fetchone()
+            dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK_CANCEL, 'Are you sure you want to release %s?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary until his contract expires in %d.' % (name, contract_expiration))
             response = dialog.run()
             dialog.destroy()
             if response == gtk.RESPONSE_OK:
+                # Keep track of player salary even when he's off the team
+                common.DB_CON.execute('INSERT INTO released_players_salaries (player_id, team_id, contract_amount, contract_expiration) VALUES (?, ?, ?, ?)', (player_id, common.PLAYER_TEAM_ID, contract_amount, contract_expiration))
                 # Set to FA in database
                 common.DB_CON.execute('UPDATE player_attributes SET team_id = -1 WHERE player_id = ?', (player_id,))
                 # Delete from roster treeview

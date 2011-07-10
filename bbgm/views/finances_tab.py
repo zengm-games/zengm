@@ -47,7 +47,7 @@ class FinancesTab:
         self.treeview_finances.append_column(column)
 
         column_types = [int, str, int, int, int, int, int]
-        query = 'SELECT team_id, region || " " || name, 0, 0, 0, cash, (SELECT SUM(contract_amount*1000) FROM player_attributes WHERE player_attributes.team_id = team_attributes.team_id) FROM team_attributes WHERE season = ? ORDER BY region ASC, name ASC'
+        query = 'SELECT team_id, region || " " || name, 0, 0, 0, cash, (SELECT SUM(contract_amount*1000) FROM player_attributes WHERE player_attributes.team_id = team_attributes.team_id) + (SELECT TOTAL(contract_amount*1000) FROM released_players_salaries WHERE released_players_salaries.team_id = team_attributes.team_id) FROM team_attributes WHERE season = ? ORDER BY region ASC, name ASC'
         common.treeview_update(self.treeview_finances, column_types, query, (common.SEASON,))
 
         self.mw.notebook.insert_page(self.vbox9, gtk.Label('Finances'), self.mw.pages['finances'])
@@ -60,9 +60,9 @@ class FinancesTab:
 
         query_ids = 'SELECT team_id FROM team_attributes WHERE season = ? ORDER BY region ASC, name ASC'
         params_ids = [common.SEASON]
-        query_row = 'SELECT ta.team_id, ta.region || " " || ta.name, AVG(ts.attendance), SUM(ts.attendance)*%d, SUM(ts.attendance)*%d - SUM(ts.cost), ta.cash, (SELECT SUM(contract_amount*1000) FROM player_attributes WHERE player_attributes.team_id = ta.team_id) FROM team_attributes as ta, team_stats as ts WHERE ta.team_id = ? AND ta.season = ts.season AND ta.season = ? AND ta.team_id = ts.team_id' % (common.TICKET_PRICE, common.TICKET_PRICE)
+        query_row = 'SELECT ta.team_id, ta.region || " " || ta.name, AVG(ts.attendance), SUM(ts.attendance)*%d, SUM(ts.attendance)*%d - SUM(ts.cost), ta.cash, (SELECT SUM(contract_amount*1000) FROM player_attributes WHERE player_attributes.team_id = ta.team_id) + (SELECT TOTAL(contract_amount*1000) FROM released_players_salaries WHERE released_players_salaries.team_id = ta.team_id) FROM team_attributes as ta, team_stats as ts WHERE ta.team_id = ? AND ta.season = ts.season AND ta.season = ? AND ta.team_id = ts.team_id' % (common.TICKET_PRICE, common.TICKET_PRICE)
         params_row = [-1, common.SEASON]
-        query_row_alt = 'SELECT team_id, region || " " || name, 0, 0, 0, cash, (SELECT SUM(contract_amount*1000) FROM player_attributes WHERE player_attributes.team_id = team_attributes.team_id) FROM team_attributes WHERE team_id = ? AND season = ?'
+        query_row_alt = 'SELECT team_id, region || " " || name, 0, 0, 0, cash, (SELECT SUM(contract_amount*1000) FROM player_attributes WHERE player_attributes.team_id = team_attributes.team_id) + (SELECT TOTAL(contract_amount*1000) FROM released_players_salaries WHERE released_players_salaries.team_id = team_attributes.team_id) FROM team_attributes WHERE team_id = ? AND season = ?'
         params_row_alt = [-1, common.SEASON]
 
         common.treeview_update_new(self.treeview_finances, query_ids, params_ids, query_row, params_row, query_row_alt, params_row_alt)

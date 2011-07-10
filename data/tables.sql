@@ -32,6 +32,12 @@ contract_amount INTEGER,
 contract_expiration INTEGER,
 years_free_agent INTEGER DEFAULT 0);
 
+CREATE TABLE released_players_salaries (
+player_id INTEGER PRIMARY KEY,
+team_id INTEGER,
+contract_amount INTEGER,
+contract_expiration INTEGER);
+
 CREATE TABLE player_ratings (
 player_id INTEGER PRIMARY KEY,
 roster_position INTEGER,
@@ -147,4 +153,5 @@ CREATE INDEX g ON player_ratings(player_id, overall);
 CREATE INDEX h ON player_attributes(player_id, team_id);
 CREATE INDEX i ON league_divisions(conference_id);
 CREATE INDEX j ON active_playoff_series(series_id, series_round);
+CREATE INDEX k ON released_players_salaries(team_id);
 

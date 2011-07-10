@@ -106,7 +106,7 @@ class ContractWindow:
 Overall: %d\n\
 Potential: %d' % (name, overall, potential))
 
-        name, self.payroll = common.DB_CON.execute('SELECT ta.region || " " || ta.name, sum(pa.contract_amount) FROM team_attributes as ta, player_attributes as pa WHERE pa.team_id = ta.team_id AND ta.team_id = ? AND pa.contract_expiration >= ? AND ta.season = ?', (common.PLAYER_TEAM_ID, common.SEASON, common.SEASON,)).fetchone()
+        name, self.payroll = common.DB_CON.execute('SELECT ta.region || " " || ta.name, SUM(pa.contract_amount) + (SELECT TOTAL(contract_amount) FROM released_players_salaries WHERE released_players_salaries.team_id = ta.team_id) FROM team_attributes as ta, player_attributes as pa WHERE pa.team_id = ta.team_id AND ta.team_id = ? AND pa.contract_expiration >= ? AND ta.season = ?', (common.PLAYER_TEAM_ID, common.SEASON, common.SEASON,)).fetchone()
         salary_cap = '$%.2fM' % (common.SALARY_CAP / 1000.0)
         payroll = '$%.2fM' % (self.payroll / 1000.0)
         self.label_contract_team_info.set_markup('<big><big><b>%s</b></big></big>\n\

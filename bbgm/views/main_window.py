@@ -802,7 +802,7 @@ class MainWindow:
             team_id = team_ids[i]
             if team_id == common.PLAYER_TEAM_ID:
                 continue # Skip the user's team
-            num_players, payroll = common.DB_CON.execute('SELECT count(*), sum(pa.contract_amount) FROM team_attributes as ta, player_attributes as pa WHERE pa.team_id = ta.team_id AND ta.team_id = ? AND pa.contract_expiration >= ? AND ta.season = ?', (team_id, common.SEASON, common.SEASON,)).fetchone()
+            num_players, payroll = common.DB_CON.execute('SELECT count(*), SUM(pa.contract_amount) + (SELECT TOTAL(contract_amount) FROM released_players_salaries WHERE released_players_salaries.team_id = ta.team_id) FROM team_attributes as ta, player_attributes as pa WHERE pa.team_id = ta.team_id AND ta.team_id = ? AND pa.contract_expiration >= ? AND ta.season = ?', (team_id, common.SEASON, common.SEASON,)).fetchone()
             while payroll < common.SALARY_CAP and num_players < 15:
                 j = 0
                 new_player = False
@@ -1103,6 +1103,11 @@ class MainWindow:
         # Offseason - pre draft
         elif self.phase == 4:
             self.update_play_menu(self.phase)
+
+            # Remove released players' salaries from payrolls
+            common.DB_CON.execute('DELETE FROM released_players_salaries WHERE contract_expiration <= ?', (common.SEASON,))
+            self.finances.updated = False
+            self.update_all_pages()
 
             self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Playoffs'))
 

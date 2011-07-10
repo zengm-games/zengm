@@ -125,7 +125,10 @@
             <property name="hscrollbar_policy">automatic</property>
             <property name="vscrollbar_policy">automatic</property>
             <child>
-              <placeholder/>
+              <object class="GtkTextView" id="textview_box_score">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+              </object>
             </child>
           </object>
           <packing>

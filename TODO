@@ -1,4 +1,4 @@
-BLOCKERS FOR 0.2.0:
+BLOCKERS FOR 1.0:
 - "Synergy" in game simulation
 - free agents
   - free agents should have a memory. you shouldn't be able to just open the window a bunch of times and see different demands
@@ -8,6 +8,7 @@ BLOCKERS FOR 0.2.0:
 - limit max roster size
 - cost of playoff games should be free, not adding to expenses in finances tab
 - payroll after player added to trade - is this subtracting correctly?
+- numpy rand: make this optional
 - If it's actually fun, make a .deb and distribute
 
 All the other UI prettifying and code refactoring stuff can wait.
@@ -34,8 +35,6 @@ Prettier UI: embed Webkit
 - Use theme settings for fonts and colors
   - https://wiki.ubuntu.com/Quickly/Snippets "Get Gtk+ theme colors"
 
-numpy rand
-- make this optional
 
 Player window and game log list should be sped up by not checking the old (static) rows
 

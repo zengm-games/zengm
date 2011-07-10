@@ -16,7 +16,6 @@ BLOCKERS FOR 1.0:
   - What do ratings mean? 80s=superstar, etc.
   - Relationship to NBA
   - Salary cap rules, contract rules, roster size rules
-- change default year to 2011
 
 All the other UI prettifying and code refactoring stuff can wait.
 

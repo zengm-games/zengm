@@ -36,7 +36,7 @@ DB_CON = ''  # Placeholder. Set by bbgm.views.main_window.connect()
 
 # These are set to real values in basketball_gm.py
 PLAYER_TEAM_ID = 3
-SEASON = 2008
+SEASON = 2011
 
 # These should probably be defined somewhere else (user settings)
 SALARY_CAP = 60000

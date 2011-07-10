@@ -38,9 +38,12 @@ Required packages on Ubuntu 11.04 (probably similar on other distros):
 * python >= 2.5
 * python-egenix-mxdatetime
 * python-gtk2
+
+Optional packages (speeds up gameplay by about 10%):
+
 * python-numpy
 
-To install all these, run:
+To install all these packages in Ubuntu, run:
 
 sudo apt-get install libsqlite3-0 python-egenix-mxdatetime python-gtk2 python-numpy
 

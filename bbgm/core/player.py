@@ -2,13 +2,13 @@
 import csv
 import mx.DateTime
 import os
-import numpy
 import random
 import re
 import sqlite3
 import string
 
 from bbgm import common
+from bbgm.core import fast_random
 
 
 class Player:
@@ -42,7 +42,7 @@ class Player:
         for i in range(years):
             age += 1
 
-            potential = numpy.random.normal(self.rating['potential'], 5)
+            potential = fast_random.gauss(self.rating['potential'], 5)
             overall = self.overall_rating()
 
             for key in ('strength', 'speed', 'jumping', 'endurance', 'shooting_inside', 'shooting_layups', 'shooting_free_throws', 'shooting_two_pointers', 'shooting_three_pointers', 'blocks', 'steals', 'dribbling', 'passing', 'rebounding'):
@@ -58,14 +58,14 @@ class Player:
                         plus_minus *= 0.5
                 else:
                     plus_minus *= 30.0 / potential
-                increase = numpy.random.normal(1, 2) * plus_minus
+                increase = fast_random.gauss(1, 2) * plus_minus
                 #increase = plus_minus
                 self.rating[key] += increase
                 self.rating[key] = self._limit_rating(self.rating[key])
 
             # Update potential
             overall = self.overall_rating()
-            self.rating['potential'] += -2 + int(numpy.random.normal(0, 2))
+            self.rating['potential'] += -2 + int(fast_random.gauss(0, 2))
             if overall > self.rating['potential'] or age > 28:
                 self.rating['potential'] = overall
 
@@ -100,7 +100,7 @@ class Player:
         # Scale amount from 500k to 15mil, proportional to (overall*2 + potential)*0.5 120-210
         amount = ((2.0 * self.rating['overall'] + self.rating['potential']) * 0.85 - 120) / (210 - 120)  # Scale from 0 to 1 (approx)
         amount = amount * (max_amount - min_amount) + min_amount  # Scale from 500k to 15mil
-        amount *= numpy.random.normal(1, 0.1)  # Randomize
+        amount *= fast_random.gauss(1, 0.1)  # Randomize
         expiration = common.SEASON + random.randrange(0, 6)
         if amount < min_amount:
             amount = min_amount
@@ -167,13 +167,13 @@ class GeneratePlayer(Player):
                     [10,  10,  15,  15,  0,   0,   25,  15,  15,  5,   0,   10,  15,  0,   15],  # Wing
                     [30,  30,  -10, -10, 10,  30,  30,  0,   -10, -20, 30,  0,   -10, -10, 30]]  # Big
         sigmas = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]
-        base_rating = numpy.random.normal(base_rating, 5)
+        base_rating = fast_random.gauss(base_rating, 5)
 
         ratings = profiles[profile_id]
         for i in range(len(ratings)):
             ratings[i] += base_rating
 
-        ratings = map(numpy.random.normal, ratings, sigmas)
+        ratings = map(fast_random.gauss, ratings, sigmas)
         ratings = map(self._limit_rating, ratings)
 
         i = 0
@@ -189,8 +189,8 @@ class GeneratePlayer(Player):
         max_weight = 290
 
         self.attribute['position'] = self._position()  # Position (PG, SG, SF, PF, C, G, GF, FC)
-        self.attribute['height'] = int(numpy.random.normal(1, 0.02) * (self.rating['height'] * (max_height - min_height) / 100 + min_height))  # Height in inches (from min_height to max_height)
-        self.attribute['weight'] = int(numpy.random.normal(1, 0.02) * ((self.rating['height'] + 0.5 * self.rating['strength']) * (max_weight - min_weight) / 150 + min_weight))  # Weight in points (from min_weight to max_weight)
+        self.attribute['height'] = int(fast_random.gauss(1, 0.02) * (self.rating['height'] * (max_height - min_height) / 100 + min_height))  # Height in inches (from min_height to max_height)
+        self.attribute['weight'] = int(fast_random.gauss(1, 0.02) * ((self.rating['height'] + 0.5 * self.rating['strength']) * (max_weight - min_weight) / 150 + min_weight))  # Weight in points (from min_weight to max_weight)
         self.attribute['born_date'] = self._born_date(age)
 
         #If the nationality isn't given, randomly choose one.	

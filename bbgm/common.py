@@ -10,6 +10,11 @@ import sqlite3
 #   lets you see what the CPU team is thinking
 DEBUG = True
 
+# If True, will attempt to use numpy for random numbers, which is about 10%
+# faster. If numpy is not available, it will automatically fall back on
+# Python's random module. So, this should only be set to False for debugging.
+NUMPY = True
+
 TEAMS = range(30)  # If team id's aren't consecutive integers starting with 0, then some things will break
 SEASON_LENGTH = 82  # If this isn't 82 the scheduling gets fucked up.  Only set it lower for debugging (faster seasons)
 

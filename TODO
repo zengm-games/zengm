@@ -8,7 +8,7 @@ BLOCKERS FOR 1.0:
 - limit max roster size
 - cost of playoff games should be free, not adding to expenses in finances tab
 - payroll after player added to trade - is this subtracting correctly?
-- numpy rand: make this optional
+- player info window spawned from trade dialog should have clickable controls
 - If it's actually fun, make a .deb and distribute
 
 All the other UI prettifying and code refactoring stuff can wait.

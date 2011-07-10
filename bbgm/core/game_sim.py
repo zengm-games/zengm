@@ -1,10 +1,9 @@
 import math
-import numpy
 import random
 import sqlite3
 
 from bbgm import common
-
+from bbgm.core import fast_random
 
 class Game:
     def play(self, t1, t2, is_playoffs):
@@ -19,9 +18,9 @@ class Game:
         # What is the attendance of the game?
         games_played, winp, = common.DB_CON.execute('SELECT won+lost, won/(won + lost) FROM team_attributes WHERE season = ? AND (team_id = ? OR team_id = ?)', (common.SEASON, self.team[0].id, self.team[1].id)).fetchone()
         if games_played < 5:
-            self.attendance = numpy.random.normal(22000 + games_played * 1000, 1000)
+            self.attendance = fast_random.gauss(22000 + games_played * 1000, 1000)
         else:
-            self.attendance = numpy.random.normal(winp * 36000, 1000)
+            self.attendance = fast_random.gauss(winp * 36000, 1000)
         if self.attendance > 25000:
             self.attendance = 25000
         elif self.attendance < 10000:
@@ -62,7 +61,7 @@ class Game:
                                 self.do_rebound()
 
     def get_num_possessions(self):
-        return (self.team[0].pace + self.team[1].pace) / 2 * numpy.random.normal(1, 0.03)
+        return (self.team[0].pace + self.team[1].pace) / 2 * fast_random.gauss(1, 0.03)
 
     def update_players_on_court(self, subs_every_n):
         '''
@@ -74,7 +73,7 @@ class Game:
 
         for t in range(2):
             # Overall ratings scaled by fatigue
-            overalls = [self.team[t].player[i].rating['overall'] * self.team[t].player[i].stat['energy'] * numpy.random.normal(1, .04) for i in xrange(len(self.team[t].player_ids))]
+            overalls = [self.team[t].player[i].rating['overall'] * self.team[t].player[i].stat['energy'] * fast_random.gauss(1, .04) for i in xrange(len(self.team[t].player_ids))]
 
             # Loop through players on court (in inverse order of current roster position)
             i = 0
@@ -85,10 +84,10 @@ class Game:
                     if b not in self.players_on_court[t] and self.team[t].player[p].stat['court_time'] > 3 and self.team[t].player[b].stat['bench_time'] > 3 and overalls[b] > overalls[p]:
                         # Substitute player
                         self.players_on_court[t][i] = b
-                        self.team[t].player[b].stat['court_time'] = numpy.random.normal(0, 2)
-                        self.team[t].player[b].stat['bench_time'] = numpy.random.normal(0, 2)
-                        self.team[t].player[p].stat['court_time'] = numpy.random.normal(0, 2)
-                        self.team[t].player[p].stat['bench_time'] = numpy.random.normal(0, 2)
+                        self.team[t].player[b].stat['court_time'] = fast_random.gauss(0, 2)
+                        self.team[t].player[b].stat['bench_time'] = fast_random.gauss(0, 2)
+                        self.team[t].player[p].stat['court_time'] = fast_random.gauss(0, 2)
+                        self.team[t].player[p].stat['bench_time'] = fast_random.gauss(0, 2)
                 i += 1
 
             # Update minutes (overall, court, and bench)
@@ -391,7 +390,7 @@ class Player:
         r = r * (maxval - minval) + minval  # Min-Max
         # Randomize: Mulitply by a random number from N(1,0.1)
         if random:
-            r = numpy.random.normal(1, 0.1) * r
+            r = fast_random.gauss(1, 0.1) * r
         return r
 
     def _initialize_stats(self):

@@ -63,7 +63,7 @@ class Trade:
 #                self.value[j] += 10 ** (potential / 10.0 + rating / 20.0 - age / 10.0 - contract_amount / 10000.0)  # Set in 2 places!!
 #            if self.value[j] > 0:
 #                self.value[j] = math.log(self.value[j])
-            self.payroll_after_trade[i] = self.total[j] + payroll
+            self.payroll_after_trade[i] = payroll - self.total[i] + self.total[j]
 
             if self.payroll_after_trade[i] > common.SALARY_CAP:
                 self.over_cap[i] = True

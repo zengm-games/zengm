@@ -10,12 +10,12 @@ BLOCKERS FOR 1.0:
   - draft
 - cost of playoff games should be free, not adding to expenses in finances tab
 - If it's actually fun, make a .deb and distribute
-- AUTHORS file
 - Manual
   - Overview of gameplay
   - What do ratings mean? 80s=superstar, etc.
   - Relationship to NBA
   - Salary cap rules, contract rules, roster size rules
+- Position balance
 
 All the other UI prettifying and code refactoring stuff can wait.
 

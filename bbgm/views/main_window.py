@@ -2,7 +2,6 @@
 # unorganized, and it should probably be refactored.
 
 # Python modules
-import bz2
 import cPickle as pickle
 import gtk
 import os
@@ -391,16 +390,13 @@ class MainWindow:
         self.new_game_progressbar_window.hide()
 
     def open_game(self, filename):
-        # See if it's a valid bz2 file
         try:
             f = open(filename)
-            data_bz2 = f.read()
+            data = f.read()
             f.close()
-
-            data = bz2.decompress(data_bz2)
         except IOError:
             md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK)
-            md.set_markup("<span size='large' weight='bold'>Cannot load file '%s'.</span>\n\nThe file either not a BBGM save file or it is corrupted." % filename)
+            md.set_markup("<span size='large' weight='bold'>Cannot load file '%s'.</span>" % filename)
             md.run()
             md.destroy()
 
@@ -515,10 +511,8 @@ class MainWindow:
         data = f.read()
         f.close()
 
-        data_bz2 = bz2.compress(data)
-
         f = open(filename, 'w')
-        f.write(data_bz2)
+        f.write(data)
         f.close()
 
         self.unsaved_changes = False

@@ -20,12 +20,23 @@ class FreeAgentsWindow:
     def on_button_free_agents_sign_clicked(self, button, data=None):
         treemodel, treeiter = self.treeview_free_agents.get_selection().get_selected()
         if treeiter:
-            player_id = treemodel.get_value(treeiter, 0)
-            cw = contract_window.ContractWindow(self.main_window, player_id)
-            response = cw.contract_window.run()
-            if response != int(gtk.RESPONSE_CLOSE) and response != int(gtk.RESPONSE_DELETE_EVENT):  # CLOSE = cancel/release; DELETE_EVENT = escape/X-button
-                self.main_window.update_all_pages()
-            cw.contract_window.destroy()
+            num_players_on_roster, = common.DB_CON.execute('SELECT COUNT(*) FROM player_attributes WHERE team_id = ?', (common.PLAYER_TEAM_ID,)).fetchone()
+            payroll, = common.DB_CON.execute('SELECT SUM(pa.contract_amount) + (SELECT TOTAL(contract_amount) FROM released_players_salaries WHERE released_players_salaries.team_id = ta.team_id) FROM team_attributes as ta, player_attributes as pa WHERE pa.team_id = ta.team_id AND ta.team_id = ?', (common.PLAYER_TEAM_ID,)).fetchone()
+            if num_players_on_roster >= 15:
+                dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, 'Your roster is full. Before you can sign a free agent, you\'ll have to buy out or release one of your current players.')
+                dialog.run()
+                dialog.destroy()
+            elif payroll >= common.SALARY_CAP:
+                dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, 'You are over the salary cap, and you can\'t sign a free agent unless you are under the salary cap.')
+                dialog.run()
+                dialog.destroy()
+            else:
+                player_id = treemodel.get_value(treeiter, 0)
+                cw = contract_window.ContractWindow(self.main_window, player_id)
+                response = cw.contract_window.run()
+                if response != int(gtk.RESPONSE_CLOSE) and response != int(gtk.RESPONSE_DELETE_EVENT):  # CLOSE = cancel/release; DELETE_EVENT = escape/X-button
+                    self.main_window.update_all_pages()
+                cw.contract_window.destroy()
 
     def on_treeview_player_row_activated(self, treeview, path, view_column, data=None):
         '''

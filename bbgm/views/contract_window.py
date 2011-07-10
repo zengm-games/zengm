@@ -42,7 +42,7 @@ class ContractWindow:
             common.DB_CON.execute('UPDATE player_attributes SET team_id = ?, contract_amount = ?, contract_expiration = ? WHERE player_id = ?', (common.PLAYER_TEAM_ID, self.player_amount, common.SEASON + self.player_years, self.player_id))
             self.contract_window.destroy()
         else:
-            md = gtk.MessageDialog(parent=self.contract_window, flags=0, type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_CLOSE, message_format='You can only sign free agents at the league minimum when you are over the salary cap.')
+            md = gtk.MessageDialog(parent=self.contract_window, flags=0, type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_CLOSE, message_format='This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary.')
             md.run()
             md.destroy()
 

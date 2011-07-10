@@ -5,11 +5,19 @@ BLOCKERS FOR 1.0:
   - "asking for" column in free agents window
   - AI teams above the cap are still resigning players. fix that.
     -Really, redo AI free agent behavior. Too many good players get left behind because teams can't manage caps
-- limit max roster size
+- hard limit on max roster size
+  - trades
+  - draft
 - cost of playoff games should be free, not adding to expenses in finances tab
 - payroll after player added to trade - is this subtracting correctly?
 - If it's actually fun, make a .deb and distribute
 - AUTHORS file
+- Manual
+  - Overview of gameplay
+  - What do ratings mean? 80s=superstar, etc.
+  - Relationship to NBA
+  - Salary cap rules, contract rules, roster size rules
+- Get rid of bz2 on saves file
 - change default year to 2011
 
 All the other UI prettifying and code refactoring stuff can wait.

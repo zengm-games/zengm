@@ -6,8 +6,8 @@ BLOCKERS FOR 0.2.0:
   - AI teams above the cap are still resigning players. fix that.
     -Really, redo AI free agent behavior. Too many good players get left behind because teams can't manage caps
 - released player contracts should count against your cap
-- finances tab new update
 - limit max roster size
+- cost of playoff games should be free, not adding to expenses in finances tab
 - If it's actually fun, make a .deb and distribute
 
 All the other UI prettifying and code refactoring stuff can wait.

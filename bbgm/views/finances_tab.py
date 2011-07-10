@@ -58,23 +58,14 @@ class FinancesTab:
         if common.DEBUG:
             print 'update finances_tab'
 
-        new_values = {}
-        query = 'SELECT ta.team_id, ta.region || " " || ta.name, AVG(ts.attendance), SUM(ts.attendance)*?, SUM(ts.attendance)*? - SUM(ts.cost), ta.cash, (SELECT SUM(contract_amount*1000) FROM player_attributes WHERE player_attributes.team_id = ta.team_id) FROM team_attributes as ta, team_stats as ts WHERE ta.season = ts.season AND ta.season = ? AND ta.team_id = ts.team_id GROUP BY ta.team_id ORDER BY ta.region ASC, ta.name ASC'
-        for row in common.DB_CON.execute(query, (common.TICKET_PRICE, common.TICKET_PRICE, common.SEASON,)):
-            new_values[row[0]] = row[1:]
+        query_ids = 'SELECT team_id FROM team_attributes WHERE season = ? ORDER BY region ASC, name ASC'
+        params_ids = [common.SEASON]
+        query_row = 'SELECT ta.team_id, ta.region || " " || ta.name, AVG(ts.attendance), SUM(ts.attendance)*%d, SUM(ts.attendance)*%d - SUM(ts.cost), ta.cash, (SELECT SUM(contract_amount*1000) FROM player_attributes WHERE player_attributes.team_id = ta.team_id) FROM team_attributes as ta, team_stats as ts WHERE ta.team_id = ? AND ta.season = ts.season AND ta.season = ? AND ta.team_id = ts.team_id' % (common.TICKET_PRICE, common.TICKET_PRICE)
+        params_row = [-1, common.SEASON]
+        query_row_alt = 'SELECT team_id, region || " " || name, 0, 0, 0, cash, (SELECT SUM(contract_amount*1000) FROM player_attributes WHERE player_attributes.team_id = team_attributes.team_id) FROM team_attributes WHERE team_id = ? AND season = ?'
+        params_row_alt = [-1, common.SEASON]
 
-        model = self.treeview_finances.get_model()
-        for row in model:
-            if new_values.get(row[0], False):
-                i = 1
-                for new_value in new_values[row[0]]:
-                    model[(row[0],)][i] = new_value
-                    i += 1
-            else:
-                # Reset values when starting a new season
-                model[(row[0],)][2] = 0
-                model[(row[0],)][3] = 0
-                model[(row[0],)][4] = 0
+        common.treeview_update_new(self.treeview_finances, query_ids, params_ids, query_row, params_row, query_row_alt, params_row_alt)
 
         self.updated = True
 

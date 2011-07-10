@@ -3,7 +3,9 @@ import os
 import shutil
 import sqlite3
 
-# When DEBUG is True,:
+# When DEBUG is True:
+# - Debugging info (largely related to updating treeviews) is printed to the
+#   console
 # - The internal "Value" variable is shown when you're making a trade, which
 #   lets you see what the CPU team is thinking
 DEBUG = True

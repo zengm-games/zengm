@@ -6,7 +6,7 @@ BLOCKERS FOR 0.2.0:
   - AI teams above the cap are still resigning players. fix that.
     -Really, redo AI free agent behavior. Too many good players get left behind because teams can't manage caps
 - released player contracts should count against your cap
-- add button to buy out player - pay his contract from available cash, and he's off the books
+- finances tab new update
 - limit max roster size
 - If it's actually fun, make a .deb and distribute
 

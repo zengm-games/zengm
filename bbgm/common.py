@@ -6,7 +6,7 @@ import sqlite3
 # When DEBUG is True,:
 # - The internal "Value" variable is shown when you're making a trade, which
 #   lets you see what the CPU team is thinking
-DEBUG = False
+DEBUG = True
 
 TEAMS = range(30)  # If team id's aren't consecutive integers starting with 0, then some things will break
 SEASON_LENGTH = 82  # If this isn't 82 the scheduling gets fucked up.  Only set it lower for debugging (faster seasons)

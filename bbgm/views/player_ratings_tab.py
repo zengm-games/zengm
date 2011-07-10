@@ -38,7 +38,6 @@ class PlayerRatingsTab:
         if common.DEBUG:
             print 'update player_ratings_tab'
 
-        print 'update player ratings'
         team_id = self.mw.make_team_combobox(self.combobox_team, self.combobox_team_active, common.SEASON, True)
 
         if team_id == 666:

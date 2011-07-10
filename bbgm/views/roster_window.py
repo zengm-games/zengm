@@ -1,4 +1,5 @@
 import gtk
+import locale
 import mx.DateTime
 import sqlite3
 
@@ -43,6 +44,44 @@ class RosterWindow:
             path = treemodel.get_path(treeiter)
             self.mw.on_treeview_player_row_activated(self.treeview_roster, path, None, None)
 
+    def on_button_roster_buy_out_clicked(self, button, data=None):
+        treemodel, treeiter = self.treeview_roster.get_selection().get_selected()
+        if treeiter:
+            player_id = treemodel.get_value(treeiter, 0)
+            name = treemodel.get_value(treeiter, 1)
+
+            # How much cash does the team have?
+            cash, = common.DB_CON.execute('SELECT cash FROM team_attributes WHERE team_id = ? AND season = ?', (common.PLAYER_TEAM_ID, common.SEASON)).fetchone()
+
+            # How much money is owed to the player?
+            contract_amount, contract_expiration = common.DB_CON.execute('SELECT contract_amount, contract_expiration FROM player_attributes WHERE player_id = ?', (player_id,)).fetchone()
+            n_games, = common.DB_CON.execute('SELECT COUNT(*) FROM team_stats WHERE team_id = ? AND season = ? AND is_playoffs = 0', (common.PLAYER_TEAM_ID, common.SEASON)).fetchone()
+            cash_owed = ((1 + contract_expiration - common.SEASON) * contract_amount - n_games / 82.0 * contract_amount) * 1000
+
+            if cash > cash_owed:
+                # Team has enough money
+                dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK_CANCEL, 'To buy out %s, you have to pay him the %sM remaining on his contract. You have %sM in cash.\n\nIf you buy out %s, he will become a free agent and his contract will no longer count against your payroll.\n\nProceed?' % (name, locale.currency(cash_owed / 1000000.0), locale.currency(cash / 1000000.0), name))
+                response = dialog.run()
+                dialog.destroy()
+                if response == gtk.RESPONSE_OK:
+                    # Pay the cash
+                    common.DB_CON.execute('UPDATE team_attributes SET cash = cash - ? WHERE team_id = ? AND season = ?', (cash_owed, common.PLAYER_TEAM_ID, common.SEASON))
+                    # Set to FA in database
+                    common.DB_CON.execute('UPDATE player_attributes SET team_id = -1 WHERE player_id = ?', (player_id,))
+                    # Delete from roster treeview
+                    treemodel.remove(treeiter)
+                    # Update roster info
+                    self.update_roster_info()
+                    # Update tabs in the main window
+                    self.mw.finances.updated = False
+                    self.mw.player_stats.updated = False
+                    self.mw.player_ratings.updated = False
+                    self.mw.update_current_page()
+            else:
+                dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, 'To buy out %s, you have to pay him the %sM remaining on his contract. However, you only have %sM in cash.' % (name, locale.currency(cash_owed / 1000000.0), locale.currency(cash / 1000000.0)))
+                dialog.run()
+                dialog.destroy()
+
     def on_button_roster_release_clicked(self, button, data=None):
         treemodel, treeiter = self.treeview_roster.get_selection().get_selected()
         if treeiter:
@@ -59,9 +98,9 @@ class RosterWindow:
                 # Update roster info
                 self.update_roster_info()
                 # Update tabs in the main window
-                self.mw.updated['finances'] = False
-                self.mw.updated['player_stats'] = False
-                self.mw.updated['player_ratings'] = False
+                self.mw.finances.updated = False
+                self.mw.player_stats.updated = False
+                self.mw.player_ratings.updated = False
                 self.mw.update_current_page()
 
     def on_treeview_roster_row_deleted(self, treemodel, path, data=None):
@@ -115,8 +154,7 @@ class RosterWindow:
         model.connect('row-deleted', self.on_treeview_roster_row_deleted)
 
     def update_roster_info(self):
-        row = common.DB_CON.execute('SELECT 15 - COUNT(*) FROM player_attributes WHERE team_id = ?', (common.PLAYER_TEAM_ID,)).fetchone()
-        empty_roster_spots = row[0]
+        empty_roster_spots, = common.DB_CON.execute('SELECT 15 - COUNT(*) FROM player_attributes WHERE team_id = ?', (common.PLAYER_TEAM_ID,)).fetchone()
         self.label_roster_info.set_markup('You currently have <b>%d empty roster spots</b>.\n' % (empty_roster_spots))
 
     def __init__(self, main_window):

@@ -8,9 +8,6 @@ BLOCKERS FOR 0.2.0:
 - released player contracts should count against your cap
 - add button to buy out player - pay his contract from available cash, and he's off the books
 - limit max roster size
-- Point balance
-  - PPG is too skewed
-  - APG not skewed enough
 - If it's actually fun, make a .deb and distribute
 
 All the other UI prettifying and code refactoring stuff can wait.

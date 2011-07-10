@@ -17,7 +17,9 @@ class StandingsTab:
             self.update()
 
     def build(self):
-        print 'build standings'
+        if common.DEBUG:
+            print 'build standings_tab'
+
         max_divisions_in_conference, num_conferences = common.DB_CON.execute('SELECT (SELECT COUNT(*) FROM league_divisions GROUP BY conference_id ORDER BY COUNT(*) LIMIT 1), COUNT(*) FROM league_conferences').fetchone()
         try:
             self.table_standings.destroy()  # Destroy table if it already exists... this will be called after starting a new game from the menu
@@ -52,7 +54,9 @@ class StandingsTab:
         self.built = True
 
     def update(self):
-        print 'update standings'
+        if common.DEBUG:
+            print 'update standings_tab'
+
         season = self.mw.make_season_combobox(self.combobox_standings, self.combobox_active)
 
         for row in common.DB_CON.execute('SELECT division_id FROM league_divisions'):

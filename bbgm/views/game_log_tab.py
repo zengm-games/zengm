@@ -63,7 +63,9 @@ class GameLogTab:
         return output
 
     def build(self):
-        print 'build game log'
+        if common.DEBUG:
+            print 'build game_log_tab'
+
         column_types = [int, str, str, str]
         column_info = [['Opponent', 'W/L', 'Score'],
                        [1,          2,     3],
@@ -76,7 +78,9 @@ class GameLogTab:
         self.built = True
 
     def update(self):
-        print 'update game log'
+        if common.DEBUG:
+            print 'update game_log_tab'
+
         season = self.mw.make_season_combobox(self.combobox_season, self.combobox_season_active)
         team_id = self.mw.make_team_combobox(self.combobox_team, self.combobox_team_active, season, False)
 

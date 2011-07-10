@@ -16,7 +16,9 @@ class TeamHistoryWindow:
         return True
 
     def update(self):
-        print 'update team history'
+        if common.DEBUG:
+            print 'update team_history_window'
+
         query = 'SELECT season, won, lost, playoffs, won_conference, won_championship FROM team_attributes WHERE team_id = ? ORDER BY season DESC'
         text = ''
         for season, won, lost, playoffs, won_conference, won_championship in common.DB_CON.execute(query, (common.PLAYER_TEAM_ID,)):

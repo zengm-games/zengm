@@ -11,7 +11,9 @@ class FinancesTab:
     built = False
 
     def build(self):
-        print 'build finances'
+        if common.DEBUG:
+            print 'build finances_tab'
+
         renderer = gtk.CellRendererText()
         column = gtk.TreeViewColumn('Team', renderer, text=1)
         column.set_sort_column_id(1)
@@ -53,7 +55,9 @@ class FinancesTab:
         self.built = True
 
     def update(self):
-        print 'update finances'
+        if common.DEBUG:
+            print 'update finances_tab'
+
         new_values = {}
         query = 'SELECT ta.team_id, ta.region || " " || ta.name, AVG(ts.attendance), SUM(ts.attendance)*?, SUM(ts.attendance)*? - SUM(ts.cost), ta.cash, (SELECT SUM(contract_amount*1000) FROM player_attributes WHERE player_attributes.team_id = ta.team_id) FROM team_attributes as ta, team_stats as ts WHERE ta.season = ts.season AND ta.season = ? AND ta.team_id = ts.team_id GROUP BY ta.team_id ORDER BY ta.region ASC, ta.name ASC'
         for row in common.DB_CON.execute(query, (common.TICKET_PRICE, common.TICKET_PRICE, common.SEASON,)):

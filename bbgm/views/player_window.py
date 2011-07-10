@@ -13,7 +13,9 @@ class PlayerWindow:
     updated = dict(stats=False, game_log=False)
 
     def update_player(self, player_id):
-        print 'update player window'
+        if common.DEBUG:
+            print 'build player_window'
+
         # If player_id is -1, then keep same player
         if player_id != -1:
             self.player_id = player_id
@@ -93,7 +95,9 @@ class PlayerWindow:
         self.built['stats'] = True
 
     def update_player_window_stats(self):
-        print 'update player window stats'
+        if common.DEBUG:
+            print 'update player_window stats'
+
         query_ids = 'SELECT season FROM player_stats WHERE player_id = ? GROUP BY season ORDER BY season ASC'
         params_ids = [self.player_id]
         query_row = 'SELECT player_stats.season, (SELECT abbreviation FROM team_attributes WHERE team_id = player_stats.team_id), SUM(player_stats.minutes>0), SUM(player_stats.starter), AVG(player_stats.minutes), AVG(player_stats.field_goals_made), AVG(player_stats.field_goals_attempted), AVG(100*player_stats.field_goals_made/player_stats.field_goals_attempted), AVG(player_stats.three_pointers_made), AVG(player_stats.three_pointers_attempted), AVG(100*player_stats.three_pointers_made/player_stats.three_pointers_attempted), AVG(player_stats.free_throws_made), AVG(player_stats.free_throws_attempted), AVG(100*player_stats.free_throws_made/player_stats.free_throws_attempted), AVG(player_stats.offensive_rebounds), AVG(player_stats.defensive_rebounds), AVG(player_stats.offensive_rebounds + player_stats.defensive_rebounds), AVG(player_stats.assists), AVG(player_stats.turnovers), AVG(player_stats.steals), AVG(player_stats.blocks), AVG(player_stats.personal_fouls), AVG(player_stats.points) FROM player_attributes, player_stats WHERE player_stats.season = ? AND player_attributes.player_id = ? AND player_attributes.player_id = player_stats.player_id AND player_stats.is_playoffs = 0'
@@ -113,7 +117,9 @@ class PlayerWindow:
         self.built['game_log'] = True
 
     def update_player_window_game_log(self):
-        print 'update player window game log'
+        if common.DEBUG:
+            print 'update player_window game_log'
+
         query_ids = 'SELECT game_id FROM player_stats WHERE player_id = ? AND season = ?'
         params_ids = [self.player_id, common.SEASON]
         query_row = 'SELECT player_stats.game_id, (SELECT abbreviation FROM team_attributes WHERE team_id = player_attributes.team_id), player_stats.starter, player_stats.minutes, player_stats.field_goals_made, player_stats.field_goals_attempted, 100*player_stats.field_goals_made/player_stats.field_goals_attempted, player_stats.three_pointers_made, player_stats.three_pointers_attempted, 100*player_stats.three_pointers_made/player_stats.three_pointers_attempted, player_stats.free_throws_made, player_stats.free_throws_attempted, 100*player_stats.free_throws_made/player_stats.free_throws_attempted, player_stats.offensive_rebounds, player_stats.defensive_rebounds, player_stats.offensive_rebounds + player_stats.defensive_rebounds, player_stats.assists, player_stats.turnovers, player_stats.steals, player_stats.blocks, player_stats.personal_fouls, player_stats.points FROM player_attributes, player_stats WHERE player_stats.game_id = ? AND player_stats.player_id = ? AND player_attributes.player_id = player_stats.player_id'
@@ -156,7 +162,6 @@ class PlayerWindow:
         self.player_window.hide()
 
     def on_notebook1_switch_page(self, widget, page, page_num, data=None):
-        print 'player window on_notebook_switch_page', page_num
         if (page_num == self.pages['stats']):
             if not self.updated['stats']:
                 self.update_player_window_stats()

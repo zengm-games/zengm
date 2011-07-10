@@ -27,7 +27,9 @@ class PlayerStatsTab:
         self.mw.on_treeview_player_row_activated(treeview, path, view_column, data)
 
     def build(self):
-        print 'build player stats'
+        if common.DEBUG:
+            print 'build player_stats_tab'
+
         column_types = [int, int, str, str, int, int, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float]
         column_info = [['Name', 'Team', 'GP',  'GS',  'Min', 'FGM', 'FGA', 'FG%', '3PM', '3PA', '3P%', 'FTM', 'FTA', 'FT%', 'Oreb', 'Dreb', 'Reb', 'Ast', 'TO', 'Stl', 'Blk', 'PF', 'PPG'],
                        [2,      3,      4,     5,     6,     7,     8,     9,     10,    11,    12,    13,    14,    15,    16,     17,     18,    19,    20,   21,    22,    23,   24],
@@ -40,7 +42,9 @@ class PlayerStatsTab:
         self.built = True
 
     def update(self):
-        print 'update player stats'
+        if common.DEBUG:
+            print 'update player_stats_tab'
+
         season = self.mw.make_season_combobox(self.combobox_season, self.combobox_season_active)
         team_id = self.mw.make_team_combobox(self.combobox_team, self.combobox_team_active, season, True)
 

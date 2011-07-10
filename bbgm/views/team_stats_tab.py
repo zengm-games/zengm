@@ -17,7 +17,9 @@ class TeamStatsTab:
             self.update()
 
     def build(self):
-        print 'build team stats'
+        if common.DEBUG:
+            print 'build team_stats_tab'
+
         column_types = [int, str, int, int, int, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float]
         column_info = [['Team', 'GP',  'W',   'L',   'FGM', 'FGA', 'FG%', '3PM', '3PA', '3P%', 'FTM', 'FTA', 'FT%', 'Oreb', 'Dreb', 'Reb', 'Ast', 'TO', 'Stl', 'Blk', 'PF', 'PPG', 'OPPG'],
                        [1,      2,     3,     4,     5,     6,     7,     8,     9,     10,    11,    12,    13,    14,    15,      16,    17,    18,   19,    20,    21,   22,    23],
@@ -30,7 +32,9 @@ class TeamStatsTab:
         self.built = True
 
     def update(self):
-        print 'update team stats'
+        if common.DEBUG:
+            print 'update team_stats_tab'
+
         season = self.mw.make_season_combobox(self.combobox_season, self.combobox_season_active)
 
         query_ids = 'SELECT team_id FROM team_attributes WHERE season = ?'

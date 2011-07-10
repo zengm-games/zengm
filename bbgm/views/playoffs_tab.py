@@ -10,14 +10,17 @@ class PlayoffsTab:
     built = False
 
     def build(self):
-        print 'build playoffs'
+        if common.DEBUG:
+            print 'build playoffs_tab'
 
         self.mw.notebook.insert_page(self.table8, gtk.Label('Playoffs'), self.mw.pages['playoffs'])
 
         self.built = True
 
     def update(self):
-        print 'update playoffs'
+        if common.DEBUG:
+            print 'update playoffs_tab'
+
         # Initialize to blank page
         for i in range(4):
             ii = 3 - i

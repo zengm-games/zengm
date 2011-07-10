@@ -84,7 +84,9 @@ class RosterWindow:
         self.mw.on_treeview_player_row_activated(treeview, path, view_column, data)
 
     def build_roster(self):
-        print 'build roster window'
+        if common.DEBUG:
+            print 'build roster_window'
+
         column_types = [int, str, str, int, int, int, str, float, float, float, float]
         column_info = [['Name', 'Position', 'Age',    'Rating',   'Potential', 'Contract', 'Min', 'PPG', 'Reb', 'Ast'],
                        [1,      2,          3,        4,          5,           6,          7,     8,     9,     10],
@@ -93,7 +95,9 @@ class RosterWindow:
         common.treeview_build_new(self.treeview_roster, column_types, column_info)
 
     def update_roster(self):
-        print 'update roster window'
+        if common.DEBUG:
+            print 'update roster_window'
+
         # Roster info
         self.update_roster_info()
 

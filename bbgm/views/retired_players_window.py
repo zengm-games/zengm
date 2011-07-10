@@ -48,7 +48,6 @@ class RetiredPlayersWindow:
             overall = int(overall)
             age_excess = 0
             if age > 34 or team == 'FA':  # Only players older than 34 or without a contract will retire
-                print team_id, name
                 if age > 34:
                     age_excess = (age - 34) / 20.0  # 0.05 for each year beyond 34
                 potential_excess = (40 - potential) / 50.0  # 0.02 for each potential rating below 40 (this can be negative)

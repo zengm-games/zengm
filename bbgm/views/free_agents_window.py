@@ -42,7 +42,8 @@ class FreeAgentsWindow:
         common.treeview_build_new(self.treeview_free_agents, column_types, column_info)
 
     def update_free_agents(self):
-        print 'ufa'
+        if common.DEBUG:
+            print 'update free_agents_window'
 
         # Display (in order of preference) stats from this year, stats from last year, or nothing
         query_ids = 'SELECT player_attributes.player_id FROM player_attributes, player_ratings WHERE player_attributes.team_id = -1 AND player_attributes.player_id = player_ratings.player_id ORDER BY player_ratings.overall DESC'

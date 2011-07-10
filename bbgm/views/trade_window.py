@@ -184,13 +184,15 @@ class TradeWindow:
             for player_id, team_id, player_name, age, rating, potential, contract_amount in self.trade.offer[i].values():
                 text += '%s ($%.2fM)\n' % (player_name, contract_amount / 1000.0)
             text += '$%.2fM total\n\n' % (self.trade.total[i] / 1000.0)
-            text += 'Value: %s\n\n' % ('{:,.0f}'.format(self.trade.value[i]))
+            if common.DEBUG:
+                text += 'Value: %s\n\n' % ('{:,.0f}'.format(self.trade.value[i]))
             text += 'Recieve:\n'
 
             for player_id, team_id, player_name, age, rating, potential, contract_amount in self.trade.offer[j].values():
                 text += '%s ($%.2fM)\n' % (player_name, contract_amount / 1000.0)
             text += '$%.2fM total\n\n' % (self.trade.total[j] / 1000.0)
-            text += 'Value: %s\n\n' % ('{:,.0f}'.format(self.trade.value[j]))
+            if common.DEBUG:
+                text += 'Value: %s\n\n' % ('{:,.0f}'.format(self.trade.value[j]))
             text += 'Payroll After Trade: $%.2fM' % (self.trade.payroll_after_trade[i] / 1000.0)
 
             self.label_trade[i].set_markup(text)

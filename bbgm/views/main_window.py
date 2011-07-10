@@ -208,7 +208,9 @@ class MainWindow:
 
     # Tab selections
     def on_notebook_switch_page(self, widget, page, page_num, data=None):
-        print 'on_notebook_switch_page', page_num
+        if common.DEBUG:
+            print 'on_notebook_switch_page', page_num
+
         if (page_num == self.pages['standings']):
             if not self.standings.updated:
                 self.standings.update()
@@ -245,7 +247,9 @@ class MainWindow:
 
     # Pages
     def update_current_page(self):
-        print 'update_current_page'
+        if common.DEBUG:
+            print 'update_current_page'
+
         if self.notebook.get_current_page() == self.pages['standings']:
             if not self.standings.built:
                 self.standings.build()
@@ -476,7 +480,6 @@ class MainWindow:
             self.player_ratings.build()
         if not self.player_stats.built:
             self.player_stats.build()
-        print self.team_stats.built
         if not self.team_stats.built:
             self.team_stats.build()
         if not self.game_log.built:
@@ -769,7 +772,6 @@ class MainWindow:
         for player in players:
             common.DB_CON.execute('UPDATE player_ratings SET roster_position = ? WHERE player_id = ?', (roster_position, player[0]))
             roster_position += 1
-            print roster_position
 
     def auto_sign_free_agents(self):
         '''

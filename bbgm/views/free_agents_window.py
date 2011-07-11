@@ -21,7 +21,7 @@ class FreeAgentsWindow:
         treemodel, treeiter = self.treeview_free_agents.get_selection().get_selected()
         if treeiter:
             num_players_on_roster, = common.DB_CON.execute('SELECT COUNT(*) FROM player_attributes WHERE team_id = ?', (common.PLAYER_TEAM_ID,)).fetchone()
-            payroll, = common.DB_CON.execute('SELECT SUM(pa.contract_amount) + (SELECT TOTAL(contract_amount) FROM released_players_salaries WHERE released_players_salaries.team_id = ta.team_id) FROM team_attributes as ta, player_attributes as pa WHERE pa.team_id = ta.team_id AND ta.team_id = ?', (common.PLAYER_TEAM_ID,)).fetchone()
+            payroll, = common.DB_CON.execute('SELECT SUM(pa.contract_amount) + (SELECT TOTAL(contract_amount) FROM released_players_salaries WHERE released_players_salaries.team_id = ta.team_id) FROM team_attributes as ta, player_attributes as pa WHERE pa.team_id = ta.team_id AND ta.team_id = ? AND ta.season = ?', (common.PLAYER_TEAM_ID, common.SEASON)).fetchone()
             if num_players_on_roster >= 15:
                 dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, 'Your roster is full. Before you can sign a free agent, you\'ll have to buy out or release one of your current players.')
                 dialog.run()

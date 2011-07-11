@@ -94,6 +94,12 @@ class TradeWindow:
             dialog.run()
             dialog.destroy()
             self.trade_window.destroy()
+
+            # Update tabs in the main window
+            self.mw.finances.updated = False
+            self.mw.player_stats.updated = False
+            self.mw.player_ratings.updated = False
+            self.mw.update_current_page()
         else:
             dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_INFO, gtk.BUTTONS_CLOSE, 'Your trade proposal was rejected.\n\n"%s"' % (comment,))
             dialog.run()

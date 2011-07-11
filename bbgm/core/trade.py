@@ -67,6 +67,8 @@ class Trade:
 
             if self.payroll_after_trade[i] > common.SALARY_CAP:
                 self.over_cap[i] = True
+            else:
+                self.over_cap[i] = False
             if self.total[i] > 0:
                 self.ratios[i] = int((100.0 * self.total[j]) / self.total[i])
             elif self.total[j] > 0:

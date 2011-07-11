@@ -165,7 +165,7 @@ class GeneratePlayer(Player):
         profiles = [[10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10],  # Base 
                     [-30, -10, 40,  15,  0,   0,   0,   10,  15,  0,   0,   20,  40,  40,  0],   # Point Guard
                     [10,  10,  15,  15,  0,   0,   25,  15,  15,  5,   0,   10,  15,  0,   15],  # Wing
-                    [30,  30,  -10, -10, 10,  30,  30,  0,   -10, -20, 30,  0,   -10, -10, 30]]  # Big
+                    [40,  30,  -10, -10, 10,  30,  30,  0,   -10, -20, 30,  0,   -10, -10, 30]]  # Big
         sigmas = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]
         base_rating = fast_random.gauss(base_rating, 5)
 
@@ -261,15 +261,15 @@ class GeneratePlayer(Player):
 
         if self.rating['height'] <= 30 or self.rating['speed'] >= 85:
             g = True
-            if (self.rating['passing'] + self.rating['dribbling']) >= 140:
+            if (self.rating['passing'] + self.rating['dribbling']) >= 100:
                 pg = True
             if self.rating['height'] >= 30:
                 sg = True
-        if self.rating['height'] >= 50 and self.rating['height'] <= 80 and self.rating['speed'] >= 40:
+        if self.rating['height'] >= 50 and self.rating['height'] <= 65 and self.rating['speed'] >= 40:
             sf = True
-        if (self.rating['height'] + self.rating['strength']) >= 120 and self.rating['speed'] >= 30:
+        if self.rating['height'] >= 70:
             pf = True
-        if (self.rating['height'] + self.rating['strength']) >= 140:
+        if (self.rating['height'] + self.rating['strength']) >= 130:
             c = True
 
         if pg and not sg and not sf and not pf and not c:
@@ -290,6 +290,9 @@ class GeneratePlayer(Player):
             position = 'FC'
         elif pg and sg:
             position = 'G'
+
+        if position is 'F' and self.rating['dribbling'] <= 20:
+            position = 'PF'
 
         return position
 

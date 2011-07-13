@@ -2,14 +2,32 @@
 BASKETBALL GENERAL MANAGER 0.1+
 ===============================
 
+A basketball simulation game. Make trades, set rosters, draft players, and try
+to build the next dynasty. Built with PyGTK and SQLite.
+
 Website: https://github.com/jdscheff/basketball-gm
 Author:  Jeremy Scheff <jdscheff@gmail.com>
 
-Don't send me any bug reports right now because I know there are plenty of bugs
-and plenty of features that need to be added.  However, if you are a Python
-hacker who wants to work on the game, please email me.  There is a lot of work
-left to be done to make this game more fun, and I can't do it all myself.
 
+Plea for help
+-------------
+
+Do you like this game? Or, do you at least like the idea of what this game
+could one day be? Then PLEASE HELP US! We need people with all kinds of skill
+sets to work on (and this is not an exhaustive list):
+
+* Artwork
+* UI design and implementation
+* Database optimization
+* Game simulation
+* Opposing manager AI
+* Localization
+* New gameplay features
+* Packaging
+
+So please, get the code on GitHub <https://github.com/jdscheff/basketball-gm>
+and start hacking. Or email me <jdscheff@gmail.com> and we can discuss how you
+want to contribute.
 
 
 License
@@ -26,7 +44,6 @@ details.
 
 You should have received a copy of the GNU Affero General Public License along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 
 
 Dependencies

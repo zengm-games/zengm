@@ -1,19 +1,31 @@
 BLOCKERS FOR 1.0:
 - "Synergy" in game simulation
-- free agents
-  - free agents should have a memory. you shouldn't be able to just open the window a bunch of times and see different demands
+  - Gameplay bonuses when any of the following are true...
+    - At least one player with dribbling > X
+    - At least two players with shooting_three_pointers > X
+    - At least three players with shooting_three_pointers > X
+    - At least four players with shooting_three_pointers > X
+    - At least one player with rebounding > X
+    - At least one player with blocks > X
+    - At least three players with steals > X
+    - At least one player with inside_scoring > X
+    - At least three players with speed > X and (shooting_layups > X or shooting_layups + jumping > X)
+- free agents should have a memory. you shouldn't be able to just open the window a bunch of times and see different demands
+  - get rid of randomness
+    - store in contract_amount and contract_expiration the predetermined values when team_id is free agent
+  - free_agent_times_asked stores the number of times the "sign" button is clicked. then, after 2 times, gradually increase demands
   - "asking for" column in free agents window
-  - AI teams above the cap are still resigning players. fix that.
-    -Really, redo AI free agent behavior. Too many good players get left behind because teams can't manage caps
 - hard limit on max roster size
   - trades
   - draft
-- If it's actually fun, make a .deb and distribute
+    - release players if necessary
 - Manual
   - Overview of gameplay
   - What do ratings mean? 80s=superstar, etc.
   - Relationship to NBA
-  - Salary cap rules, contract rules, roster size rules
+  - Salary cap rules, contract rules, roster size rules, free agents, etc.
+  - Synergy
+- Make a .deb and distribute
 
 All the other UI prettifying and code refactoring stuff can wait.
 

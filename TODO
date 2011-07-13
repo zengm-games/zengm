@@ -94,6 +94,7 @@ on new/open game:
 ratings log tab on player window
 player info window spawned from trade dialog should have clickable controls
 rapidly clicking and unclicking a player's checkbox on the trade window shouldn't open the player's info window
+some indication of synergy
 
 NBA
 ---

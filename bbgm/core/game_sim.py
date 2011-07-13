@@ -278,7 +278,11 @@ class Game:
         else:
             won = False
 
-        cost, = common.DB_CON.execute('SELECT (SUM(contract_amount) + (SELECT TOTAL(contract_amount) FROM released_players_salaries WHERE released_players_salaries.team_id = ?))*1000/82 FROM player_attributes WHERE team_id = ?', (self.team[t].id, self.team[t].id)).fetchone()
+        # Only pay player salaries for regular season games.
+        if not self.is_playoffs:
+            cost, = common.DB_CON.execute('SELECT (SUM(contract_amount) + (SELECT TOTAL(contract_amount) FROM released_players_salaries WHERE released_players_salaries.team_id = ?))*1000/82 FROM player_attributes WHERE team_id = ?', (self.team[t].id, self.team[t].id)).fetchone()
+        else:
+            cost = 0
         common.DB_CON.execute('UPDATE team_attributes SET cash = cash + ? - ? WHERE season = ? AND team_id = ?', (common.TICKET_PRICE * self.attendance, cost, common.SEASON, self.team[t].id))
 
         query = 'INSERT INTO team_stats \

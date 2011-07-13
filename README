@@ -6,7 +6,7 @@ A basketball simulation game. Make trades, set rosters, draft players, and try
 to build the next dynasty. Built with PyGTK and SQLite.
 
 Website: https://github.com/jdscheff/basketball-gm
-Author:  Jeremy Scheff <jdscheff@gmail.com>
+Main developer: Jeremy Scheff <jdscheff@gmail.com>
 
 
 Plea for help

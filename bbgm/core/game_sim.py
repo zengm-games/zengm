@@ -3,7 +3,7 @@ import random
 import sqlite3
 
 from bbgm import common
-from bbgm.core import fast_random
+from bbgm.util import fast_random
 
 class Game:
     def play(self, t1, t2, is_playoffs):

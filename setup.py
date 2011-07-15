@@ -8,7 +8,7 @@ setup(name='Basketball GM',
       url='https://github.com/jdscheff/basketball-gm',
       maintainer='Jeremy Scheff',
       maintainer_email='jdscheff@gmail.com',
-      packages=['bbgm', 'bbgm.core', 'bbgm.views'],
+      packages=['bbgm', 'bbgm.core', 'bbgm.views', 'bbgm.util'],
       data_files=[
     ('share/basketball-gm/data', glob("data/*.*")),
     ('share/basketball-gm/ui', glob("ui/*.*")),

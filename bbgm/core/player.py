@@ -8,7 +8,7 @@ import sqlite3
 import string
 
 from bbgm import common
-from bbgm.core import fast_random
+from bbgm.util import fast_random
 
 
 class Player:

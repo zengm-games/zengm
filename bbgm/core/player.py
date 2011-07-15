@@ -8,7 +8,7 @@ import sqlite3
 import string
 
 from bbgm import common
-from bbgm.util import fast_random
+from bbgm.util import fast_random, resources
 
 
 class Player:
@@ -121,19 +121,19 @@ class GeneratePlayer(Player):
 
     def __init__(self):
         # First name data
-        fn_reader = csv.reader(open(os.path.join(common.DATA_FOLDER, 'first_names.txt'), 'rb'))
+        fn_reader = csv.reader(open(resources.get_asset('data', 'first_names.txt'), 'rb'))
         self.fn_data = []
         for row in fn_reader:
             self.fn_data.append(row)
 
         # Last name data (This data has been truncated to make the file smaller)
-        ln_reader = csv.reader(open(os.path.join(common.DATA_FOLDER, 'last_names.txt'), 'rb'))
+        ln_reader = csv.reader(open(resources.get_asset('data', 'last_names.txt'), 'rb'))
         self.ln_data = []
         for row in ln_reader:
             self.ln_data.append(row)
 
         # Nationality data
-        nat_reader = csv.reader(open(os.path.join(common.DATA_FOLDER, 'nationalities.txt'), 'rb'))
+        nat_reader = csv.reader(open(resources.get_asset('data', 'nationalities.txt'), 'rb'))
         self.nat_data = []
         for row in nat_reader:
             self.nat_data.append(row)

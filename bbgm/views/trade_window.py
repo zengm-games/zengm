@@ -5,6 +5,7 @@ import sqlite3
 
 from bbgm import common
 from bbgm.core.trade import Trade
+from bbgm.util import resources
 
 
 class TradeWindow:
@@ -16,7 +17,7 @@ class TradeWindow:
         self.trade = Trade(team_id)
 
         self.builder = gtk.Builder()
-        self.builder.add_objects_from_file(common.GTKBUILDER_PATH, ['liststore1', 'trade_window'])
+        self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.glade'), ['liststore1', 'trade_window'])
 
         self.trade_window = self.builder.get_object('trade_window')
         self.combobox_trade_teams = self.builder.get_object('combobox_trade_teams')

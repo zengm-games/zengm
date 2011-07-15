@@ -15,6 +15,7 @@ import webkit
 # My modules
 from bbgm import common
 from bbgm.core import game_sim, player, schedule
+from bbgm.util import resources
 
 # Windows and dialogs
 from bbgm.views import contract_window, draft_dialog, free_agents_window, retired_players_window, roster_window, player_window, season_end_window, team_history_window, trade_window, welcome_dialog
@@ -440,7 +441,7 @@ class MainWindow:
                 c = common.DB_CON.cursor()
                 if fn == 'tables.sql':
                     # tables.sql contains multiline queries, so this is easier
-                    f = open(os.path.join(common.DATA_FOLDER, fn))
+                    f = open(resources.get_asset('data', fn))
                     data = f.read()
                     f.close()
                     common.DB_CON.executescript(data)
@@ -451,7 +452,7 @@ class MainWindow:
                     del self.players_sql
                 else:
                     # This method is faster for bulk queries though
-                    f = open(os.path.join(common.DATA_FOLDER, fn))
+                    f = open(resources.get_asset('data', fn))
                     for line in f.readlines():
                         c.execute(line)
                     f.close()
@@ -847,7 +848,7 @@ class MainWindow:
         # We're not currently connected to the database, so create a temporary one in memory to load the team attributes
         temp_db_con = sqlite3.connect(':memory:')
         for fn in ['tables.sql', 'teams.sql']:
-            f = open(os.path.join(common.DATA_FOLDER, fn))
+            f = open(resources.get_asset('data', fn))
             data = f.read()
             f.close()
             temp_db_con.executescript(data)
@@ -1196,7 +1197,7 @@ class MainWindow:
 
     def __init__(self):
         self.builder = gtk.Builder()
-        self.builder.add_objects_from_file(common.GTKBUILDER_PATH, ['aboutdialog', 'accelgroup1', 'liststore3', 'liststore4', 'liststore5', 'liststore6', 'liststore7', 'liststore8', 'main_window', 'new_game_dialog', 'new_game_progressbar_window'])
+        self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.glade'), ['aboutdialog', 'accelgroup1', 'liststore3', 'liststore4', 'liststore5', 'liststore6', 'liststore7', 'liststore8', 'main_window', 'new_game_dialog', 'new_game_progressbar_window'])
 
         self.main_window = self.builder.get_object('main_window')
         self.menuitem_play = []

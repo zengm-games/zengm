@@ -1,5 +1,5 @@
 """
-bbgm.core.fast_random
+bbgm.util.fast_random
 
 This module will use numpy.random when it is both available and faster than
 Python's native random, but it will gracefully fallback to random if numpy is

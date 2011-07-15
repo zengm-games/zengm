@@ -5,6 +5,7 @@ import sqlite3
 
 from bbgm import common
 from bbgm.core import player
+from bbgm.util import resources
 from bbgm.views import player_window
 
 
@@ -87,7 +88,7 @@ class ContractWindow:
         self.player_id = player_id
 
         self.builder = gtk.Builder()
-        self.builder.add_objects_from_file(common.GTKBUILDER_PATH, ['adjustment1', 'adjustment2', 'contract_window'])
+        self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.glade'), ['adjustment1', 'adjustment2', 'contract_window'])
 
         self.contract_window = self.builder.get_object('contract_window')
         self.label_contract_team_info = self.builder.get_object('label_contract_team_info')

@@ -2,6 +2,7 @@ import gtk
 import sqlite3
 
 from bbgm import common
+from bbgm.util import resources
 
 
 class SeasonEndWindow:
@@ -13,7 +14,7 @@ class SeasonEndWindow:
         self.mw = main_window
 
         self.builder = gtk.Builder()
-        self.builder.add_objects_from_file(common.GTKBUILDER_PATH, ['season_end_window'])
+        self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.glade'), ['season_end_window'])
 
         self.season_end_window = self.builder.get_object('season_end_window')
         label_season_end_1 = self.builder.get_object('label_season_end_1')

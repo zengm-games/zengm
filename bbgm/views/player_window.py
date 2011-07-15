@@ -4,6 +4,7 @@ import random
 import sqlite3
 
 from bbgm import common
+from bbgm.util import resources
 from bbgm.views import trade_window
 
 
@@ -173,7 +174,7 @@ class PlayerWindow:
         self.mw = main_window
 
         self.builder = gtk.Builder()
-        self.builder.add_objects_from_file(common.GTKBUILDER_PATH, ['player_window'])
+        self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.glade'), ['player_window'])
 
         self.player_window = self.builder.get_object('player_window')
         self.notebook1 = self.builder.get_object('notebook1')

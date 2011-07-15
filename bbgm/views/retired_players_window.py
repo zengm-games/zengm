@@ -3,6 +3,7 @@ import random
 import sqlite3
 
 from bbgm import common
+from bbgm.util import resources
 
 
 class RetiredPlayersWindow:
@@ -16,7 +17,7 @@ class RetiredPlayersWindow:
         self.main_window = main_window
 
         self.builder = gtk.Builder()
-        self.builder.add_objects_from_file(common.GTKBUILDER_PATH, ['retired_players_window'])
+        self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.glade'), ['retired_players_window'])
 
         self.retired_players_window = self.builder.get_object('retired_players_window')
         self.treeview_retired_players = self.builder.get_object('treeview_retired_players')

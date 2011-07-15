@@ -4,6 +4,7 @@ import os
 import sqlite3
 
 from bbgm import common
+from bbgm.util import resources
 
 
 class FinancesTab:
@@ -73,7 +74,7 @@ class FinancesTab:
         self.mw = main_window
 
         self.builder = gtk.Builder()
-        self.builder.add_from_file(os.path.join(common.UI_FOLDER, 'finances_tab.glade'))
+        self.builder.add_from_file(resources.get_asset('ui', 'finances_tab.glade'))
 
         self.vbox9 = self.builder.get_object('vbox9')
         self.treeview_finances = self.builder.get_object('treeview_finances')

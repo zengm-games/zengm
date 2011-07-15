@@ -10,10 +10,9 @@ setup(name='Basketball GM',
       maintainer_email='jdscheff@gmail.com',
       packages=['bbgm', 'bbgm.core', 'bbgm.views', 'bbgm.util'],
       data_files=[
-    ('share/basketball-gm/data', glob("data/*.*")),
-    ('share/basketball-gm/ui', glob("ui/*.*")),
-    # Icon stuff
-    ],
+          ('share/basketball-gm/data', glob("data/*.*")),
+          ('share/basketball-gm/ui', glob("ui/*.*")),
+      ],
       scripts=['bin/basketball-gm']
      )
 

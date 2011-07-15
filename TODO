@@ -29,9 +29,6 @@ BLOCKERS FOR 1.0:
   - Salary cap rules, contract rules, roster size rules, free agents, etc.
   - Synergy
 - Make a .deb and distribute
-  - setup.py
-    - gwibber/microblog/util/resources.py get_ui_asset
-      - write similar (common.get_file_path) to first check relative path and then /usr/loca/share/basketball-gm
 
 All the other UI prettifying and code refactoring stuff can wait.
 

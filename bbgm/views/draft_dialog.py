@@ -7,6 +7,7 @@ import time
 
 from bbgm import common
 from bbgm.core import player
+from bbgm.util import resources
 
 
 class DraftDialog:
@@ -192,7 +193,7 @@ class DraftDialog:
         self.main_window = main_window
 
         self.builder = gtk.Builder()
-        self.builder.add_objects_from_file(common.GTKBUILDER_PATH, ['draft_dialog'])
+        self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.glade'), ['draft_dialog'])
 
         self.draft_dialog = self.builder.get_object('draft_dialog')
         self.treeview_draft_available = self.builder.get_object('treeview_draft_available')

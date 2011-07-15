@@ -3,6 +3,7 @@ import os.path
 import sqlite3
 
 from bbgm import common
+from bbgm.util import resources
 
 
 class TeamHistoryWindow:
@@ -41,7 +42,7 @@ class TeamHistoryWindow:
         self.mw = main_window
 
         self.builder = gtk.Builder()
-        self.builder.add_from_file(os.path.join(common.UI_FOLDER, 'team_history_window.glade'))
+        self.builder.add_from_file(resources.get_asset('ui', 'team_history_window.glade'))
 
         self.team_history_window = self.builder.get_object('team_history_window')
         self.label = self.builder.get_object('label')

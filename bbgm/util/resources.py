@@ -41,7 +41,8 @@ def get_asset(asset_type, asset_name):
     for base in DATA_DIRS:
         asset_path = os.path.join(base, asset_type, asset_name)
         if os.path.exists(asset_path):
-            print asset_path
+            if common.DEBUG:
+                print asset_path
             return asset_path
     return None
 

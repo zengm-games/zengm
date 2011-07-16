@@ -777,13 +777,10 @@ class MainWindow:
         '''
         AI teams sign free agents.
         '''
-        p = player.Player()
         # Build free_agents containing player ids and desired contracts
         num_days_played, = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?', (common.SEASON,)).fetchone()
         free_agents = []
-        for player_id, in common.DB_CON.execute('SELECT pa.player_id FROM player_attributes as pa, player_ratings as pr WHERE pa.team_id = -1 AND pa.player_id = pr.player_id ORDER BY pr.overall + pr.potential DESC'):
-            p.load(player_id)
-            amount, expiration = p.contract()
+        for player_id, amount, expiration in common.DB_CON.execute('SELECT pa.player_id, pa.contract_amount, pa.contract_expiration FROM player_attributes as pa, player_ratings as pr WHERE pa.team_id = -1 AND pa.player_id = pr.player_id ORDER BY pr.overall + pr.potential DESC'):
             # Decrease amount by 20% (assume negotiations) or 5% for each day into season
             if num_days_played > 0:
                 amount *= .95**num_days_played

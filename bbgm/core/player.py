@@ -91,7 +91,7 @@ class Player:
     def overall_rating(self):
         return (self.rating['height'] + self.rating['strength'] + self.rating['speed'] + self.rating['jumping'] + self.rating['endurance'] + self.rating['shooting_inside'] + self.rating['shooting_layups'] + self.rating['shooting_free_throws'] + self.rating['shooting_two_pointers'] + self.rating['shooting_three_pointers'] + self.rating['blocks'] + self.rating['steals'] + self.rating['dribbling'] + self.rating['passing'] + self.rating['rebounding']) / 15
 
-    def contract(self):
+    def contract(self, randomize_expiration = False):
         # Limits on yearly contract amount, in $1000's
         min_amount = 500
         max_amount = 20000
@@ -113,6 +113,10 @@ class Player:
             years = 1
         elif self.rating['potential'] < 50:
             years = 2
+
+        # Randomize expiration for contracts generated at beginning of new game
+        if randomize_expiration:
+            years = random.randrange(1, years+1)
 
         expiration = common.SEASON + years - 1
         if amount < min_amount:

@@ -355,8 +355,13 @@ class MainWindow:
                     gp.bonus(good_neutral_bad*random.randint(0,20))
                 if t == -1: # Free agents
                     gp.bonus(-15)
+
                 # Update contract based on development
-                gp.attribute['contract_amount'], gp.attribute['contract_expiration'] = gp.contract()
+                if t >= 0:
+                    randomize_expiration = True  # Players on teams already get randomized contracts
+                else:
+                    randomize_expiration = False
+                gp.attribute['contract_amount'], gp.attribute['contract_expiration'] = gp.contract(randomize_expiration = randomize_expiration)
 
                 sql += gp.sql_insert()
 

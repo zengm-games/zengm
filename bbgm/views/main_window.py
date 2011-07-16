@@ -1105,6 +1105,9 @@ class MainWindow:
 
             self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Playoffs'))
 
+            # Add a year to the free agents
+            common.DB_CON.execute('UPDATE player_attributes SET contract_expiration = contract_expiration + 1 WHERE team_id = -1')
+
         # Draft
         elif self.phase == 5:
             self.update_play_menu(self.phase)

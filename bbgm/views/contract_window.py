@@ -109,7 +109,7 @@ class ContractWindow:
 Overall: %d\n\
 Potential: %d' % (name, overall, potential))
 
-        name, self.payroll = common.DB_CON.execute('SELECT ta.region || " " || ta.name, SUM(pa.contract_amount) + (SELECT TOTAL(contract_amount) FROM released_players_salaries WHERE released_players_salaries.team_id = ta.team_id) FROM team_attributes as ta, player_attributes as pa WHERE pa.team_id = ta.team_id AND ta.team_id = ? AND pa.contract_expiration >= ? AND ta.season = ?', (common.PLAYER_TEAM_ID, common.SEASON, common.SEASON,)).fetchone()
+        name, self.payroll = common.DB_CON.execute('SELECT ta.region || " " || ta.name, SUM(pa.contract_amount) + (SELECT TOTAL(contract_amount) FROM released_players_salaries WHERE released_players_salaries.team_id = ta.team_id) FROM team_attributes as ta, player_attributes as pa WHERE pa.team_id = ta.team_id AND ta.team_id = ? AND pa.contract_expiration >= ? AND ta.season = ?', (common.PLAYER_TEAM_ID, common.SEASON, common.SEASON)).fetchone()
         salary_cap = '$%.2fM' % (common.SALARY_CAP / 1000.0)
         payroll = '$%.2fM' % (self.payroll / 1000.0)
         self.label_contract_team_info.set_markup('<big><big><b>%s</b></big></big>\n\
@@ -117,13 +117,9 @@ Payroll: %s\n\
 Salary Cap: %s' % (name, payroll, salary_cap))
 
         # Initial player proposal
-        potential_difference = round((potential - overall) / 4.0)
-        self.player_years = 5 - potential_difference  # Players with high potentials want short contracts
-        if self.player_years < 1:
-            self.player_years = 1
-        p = player.Player()
-        p.load(self.player_id)
-        self.player_amount, expiration = p.contract()
+        self.player_amount, expiration = common.DB_CON.execute('SELECT contract_amount, contract_expiration FROM player_attributes WHERE player_id = ?', (self.player_id,)).fetchone()
+        self.player_years = expiration - common.SEASON + 1
+        print self.player_years, expiration
         self.update_label_contract_player_proposal()
         self.spinbutton_contract_team_amount.set_value(self.player_amount / 1000.0)
         self.spinbutton_contract_team_years.set_value(self.player_years)

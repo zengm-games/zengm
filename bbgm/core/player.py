@@ -101,7 +101,21 @@ class Player:
         amount = ((2.0 * self.rating['overall'] + self.rating['potential']) * 0.85 - 120) / (210 - 120)  # Scale from 0 to 1 (approx)
         amount = amount * (max_amount - min_amount) + min_amount  # Scale from 500k to 15mil
         amount *= fast_random.gauss(1, 0.1)  # Randomize
-        expiration = common.SEASON + random.randrange(0, 6)
+
+        # Expiration
+        # Players with high potentials want short contracts
+        potential_difference = round((self.rating['potential'] - self.rating['overall']) / 4.0)
+        years = 5 - potential_difference
+        if years < 1:
+            years = 1
+        # Bad players can only ask for short deals
+        if self.rating['potential'] < 40:
+            years = 1
+        elif self.rating['potential'] < 50:
+            years = 2
+
+        expiration = common.SEASON + years - 1
+
         if amount < min_amount:
             amount = min_amount
         elif amount > max_amount:
@@ -124,11 +138,6 @@ class Player:
         """
         # Player's desired contract
         amount, expiration = self.contract()
-
-        # After regular season, before next year starts, to prevent players from
-        # signing contracts that expire before they even play a game.
-        if phase >= 2:
-            expiration += 1
 
         common.DB_CON.execute('UPDATE player_attributes SET team_id = -1, contract_amount = ?, contract_expiration = ? WHERE player_id = ?', (amount, expiration, self.id))
 

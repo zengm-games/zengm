@@ -815,14 +815,13 @@ class MainWindow:
 
     def player_contract_expire(self, player_id):
         resign = random.choice([True, False])
+        p = player.Player()
+        p.load(player_id)
         if resign:
-            p = player.Player()
-            p.load(player_id)
             amount, expiration = p.contract()
             common.DB_CON.execute('UPDATE player_attributes SET contract_amount = ?, contract_expiration = ? WHERE player_id = ?', (amount, expiration, player_id))
-
         else:
-            common.DB_CON.execute('UPDATE player_attributes SET team_id = -1 WHERE player_id = ?', (player_id,))
+            p.add_to_free_agents(self.phase)
 
     def quit(self):
         '''
@@ -1139,7 +1138,11 @@ class MainWindow:
             rpw.retired_players_window.destroy()
 
             # Move undrafted players to free agent pool
-            common.DB_CON.execute('UPDATE player_attributes SET team_id = -1, draft_year = -1, draft_round = -1, draft_pick = -1, draft_team_id = -1 WHERE team_id = -2')
+            for player_id, in common.DB_CON.execute('SELECT player_id FROM player_attributes WHERE team_id = -2'):
+                common.DB_CON.execute('UPDATE player_attributes SET draft_year = -1, draft_round = -1, draft_pick = -1, draft_team_id = -1 WHERE player_id = ?', (player_id,))
+                p = player.Player()
+                p.load(player_id)
+                p.add_to_free_agents(self.phase)
 
             # Resign players
             for player_id, team_id, name in common.DB_CON.execute('SELECT player_id, team_id, name FROM player_attributes WHERE contract_expiration = ? AND team_id >= 0', (common.SEASON,)):

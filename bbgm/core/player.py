@@ -111,6 +111,24 @@ class Player:
 
         return amount, expiration
 
+    def add_to_free_agents(self, phase):
+        """Adds a player to the free agents list.
+
+        This should be THE ONLY way that players are added to the free agents
+        list, because this will also calculate their demanded contract.
+
+        Args:
+            phase: self.phase from bbgm.views.main_window
+        """
+        # Player's desired contract
+        amount, expiration = self.contract()
+
+        # After regular season, before next year starts, to prevent players from
+        # signing contracts that expire before they even play a game.
+        if phase >= 2:
+            expiration += 1
+
+        common.DB_CON.execute('UPDATE player_attributes SET team_id = -1, contract_amount = ?, contract_expiration = ? WHERE player_id = ?', (amount, expiration, self.id))
 
 class GeneratePlayer(Player):
     '''

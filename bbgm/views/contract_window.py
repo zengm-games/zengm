@@ -15,7 +15,9 @@ class ContractWindow:
         This is so the dialog isn't closed on any button except close.
         '''
         if response < 0:
-            common.DB_CON.execute('UPDATE player_attributes SET team_id = -1 WHERE player_id = ?', (self.player_id,))
+            p = player.Player()
+            p.load(self.player_id)
+            p.add_to_free_agents(self.mw.phase)
         else:
             self.contract_window.emit_stop_by_name('response')
 

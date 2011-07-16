@@ -68,7 +68,9 @@ class RosterWindow:
                     # Pay the cash
                     common.DB_CON.execute('UPDATE team_attributes SET cash = cash - ? WHERE team_id = ? AND season = ?', (cash_owed, common.PLAYER_TEAM_ID, common.SEASON))
                     # Set to FA in database
-                    common.DB_CON.execute('UPDATE player_attributes SET team_id = -1 WHERE player_id = ?', (player_id,))
+                    p = player.Player()
+                    p.load(player_id)
+                    p.add_to_free_agents(self.mw.phase)
                     # Delete from roster treeview
                     treemodel.remove(treeiter)
                     # Update roster info
@@ -96,7 +98,9 @@ class RosterWindow:
                 # Keep track of player salary even when he's off the team
                 common.DB_CON.execute('INSERT INTO released_players_salaries (player_id, team_id, contract_amount, contract_expiration) VALUES (?, ?, ?, ?)', (player_id, common.PLAYER_TEAM_ID, contract_amount, contract_expiration))
                 # Set to FA in database
-                common.DB_CON.execute('UPDATE player_attributes SET team_id = -1 WHERE player_id = ?', (player_id,))
+                p = player.Player()
+                p.load(player_id)
+                p.add_to_free_agents(self.mw.phase)
                 # Delete from roster treeview
                 treemodel.remove(treeiter)
                 # Update roster info

@@ -70,7 +70,7 @@ class StandingsTab:
         self.mw = main_window
 
         self.builder = gtk.Builder()
-        self.builder.add_from_file(resources.get_asset('ui', 'standings_tab.glade'))
+        self.builder.add_from_file(resources.get_asset('ui', 'standings_tab.ui'))
 
         self.vbox4 = self.builder.get_object('vbox4')
         self.scrolledwindow_standings = self.builder.get_object('scrolledwindow_standings')

@@ -53,7 +53,7 @@ class TeamStatsTab:
         self.mw = main_window
 
         self.builder = gtk.Builder()
-        self.builder.add_from_file(resources.get_asset('ui', 'team_stats_tab.glade'))
+        self.builder.add_from_file(resources.get_asset('ui', 'team_stats_tab.ui'))
 
         self.vbox7 = self.builder.get_object('vbox7')
         self.treeview_team_stats = self.builder.get_object('treeview_team_stats')

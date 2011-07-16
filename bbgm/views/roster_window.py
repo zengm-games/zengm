@@ -170,7 +170,7 @@ class RosterWindow:
         self.mw = main_window
 
         self.builder = gtk.Builder()
-        self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.glade'), ['roster_window'])
+        self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.ui'), ['roster_window'])
 
         self.roster_window = self.builder.get_object('roster_window')
         self.label_roster_info = self.builder.get_object('label_roster_info')

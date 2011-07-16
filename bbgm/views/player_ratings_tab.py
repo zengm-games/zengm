@@ -59,7 +59,7 @@ class PlayerRatingsTab:
         self.mw = main_window
 
         self.builder = gtk.Builder()
-        self.builder.add_from_file(resources.get_asset('ui', 'player_ratings_tab.glade'))
+        self.builder.add_from_file(resources.get_asset('ui', 'player_ratings_tab.ui'))
 
         self.vbox = self.builder.get_object('vbox')
         self.treeview_player_ratings = self.builder.get_object('treeview_player_ratings')

@@ -32,7 +32,7 @@ class WelcomeDialog:
         self.mw = main_window
 
         self.builder = gtk.Builder()
-        self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.glade'), ['welcome_dialog'])
+        self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.ui'), ['welcome_dialog'])
 
         self.welcome_dialog = self.builder.get_object('welcome_dialog')
 

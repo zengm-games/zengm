@@ -98,7 +98,7 @@ class GameLogTab:
         self.mw = main_window
 
         self.builder = gtk.Builder()
-        self.builder.add_from_file(resources.get_asset('ui', 'game_log_tab.glade'))
+        self.builder.add_from_file(resources.get_asset('ui', 'game_log_tab.ui'))
 
         self.vbox5 = self.builder.get_object('vbox5')
         self.treeview_games_list = self.builder.get_object('treeview_games_list')

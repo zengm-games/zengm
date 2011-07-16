@@ -71,7 +71,7 @@ class PlayerStatsTab:
         self.mw = main_window
 
         self.builder = gtk.Builder()
-        self.builder.add_from_file(resources.get_asset('ui', 'player_stats_tab.glade'))
+        self.builder.add_from_file(resources.get_asset('ui', 'player_stats_tab.ui'))
 
         self.vbox6 = self.builder.get_object('vbox6')
         self.treeview_player_stats = self.builder.get_object('treeview_player_stats')

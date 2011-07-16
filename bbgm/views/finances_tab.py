@@ -74,7 +74,7 @@ class FinancesTab:
         self.mw = main_window
 
         self.builder = gtk.Builder()
-        self.builder.add_from_file(resources.get_asset('ui', 'finances_tab.glade'))
+        self.builder.add_from_file(resources.get_asset('ui', 'finances_tab.ui'))
 
         self.vbox9 = self.builder.get_object('vbox9')
         self.treeview_finances = self.builder.get_object('treeview_finances')

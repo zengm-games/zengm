@@ -1209,7 +1209,7 @@ class MainWindow:
 
     def __init__(self):
         self.builder = gtk.Builder()
-        self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.glade'), ['aboutdialog', 'accelgroup1', 'liststore3', 'liststore4', 'liststore5', 'liststore6', 'liststore7', 'liststore8', 'main_window', 'new_game_dialog', 'new_game_progressbar_window'])
+        self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.ui'), ['aboutdialog', 'accelgroup1', 'liststore3', 'liststore4', 'liststore5', 'liststore6', 'liststore7', 'liststore8', 'main_window', 'new_game_dialog', 'new_game_progressbar_window'])
 
         self.main_window = self.builder.get_object('main_window')
         self.menuitem_play = []

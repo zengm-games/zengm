@@ -95,7 +95,7 @@ class ContractWindow:
         self.allow_over_salary_cap = allow_over_salary_cap  # To allow for a team to resign its own players
 
         self.builder = gtk.Builder()
-        self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.glade'), ['adjustment1', 'adjustment2', 'contract_window'])
+        self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.ui'), ['adjustment1', 'adjustment2', 'contract_window'])
 
         self.contract_window = self.builder.get_object('contract_window')
         self.label_contract_team_info = self.builder.get_object('label_contract_team_info')

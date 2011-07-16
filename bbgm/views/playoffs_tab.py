@@ -38,7 +38,7 @@ class PlayoffsTab:
         self.mw = main_window
 
         self.builder = gtk.Builder()
-        self.builder.add_from_file(resources.get_asset('ui', 'playoffs_tab.glade'))
+        self.builder.add_from_file(resources.get_asset('ui', 'playoffs_tab.ui'))
 
         self.table8 = self.builder.get_object('table8')
         self.label_playoffs = {1: {}, 2: {}, 3: {}, 4: {}}

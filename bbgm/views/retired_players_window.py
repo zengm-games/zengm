@@ -17,7 +17,7 @@ class RetiredPlayersWindow:
         self.main_window = main_window
 
         self.builder = gtk.Builder()
-        self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.glade'), ['retired_players_window'])
+        self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.ui'), ['retired_players_window'])
 
         self.retired_players_window = self.builder.get_object('retired_players_window')
         self.treeview_retired_players = self.builder.get_object('treeview_retired_players')

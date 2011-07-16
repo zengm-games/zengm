@@ -1048,7 +1048,7 @@ class MainWindow:
 
             self.update_play_menu(self.phase)
 
-            self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Preseason'))
+            self.main_window.set_title('%s %s - Basketball GM' % (common.SEASON, 'Preseason'))
 
             self.update_all_pages()
 
@@ -1063,13 +1063,13 @@ class MainWindow:
 
             self.update_play_menu(self.phase)
 
-            self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Regular Season'))
+            self.main_window.set_title('%s %s - Basketball GM' % (common.SEASON, 'Regular Season'))
 
         # Regular Season - post trading deadline
         elif self.phase == 2:
             self.update_play_menu(self.phase)
 
-            self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Regular Season'))
+            self.main_window.set_title('%s %s - Basketball GM' % (common.SEASON, 'Regular Season'))
 
         # Playoffs
         elif self.phase == 3:
@@ -1094,7 +1094,7 @@ class MainWindow:
             self.playoffs.updated = False
             self.notebook.set_current_page(self.pages['playoffs'])
 
-            self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Playoffs'))
+            self.main_window.set_title('%s %s - Basketball GM' % (common.SEASON, 'Playoffs'))
 
         # Offseason - pre draft
         elif self.phase == 4:
@@ -1108,13 +1108,13 @@ class MainWindow:
             # Add a year to the free agents
             common.DB_CON.execute('UPDATE player_attributes SET contract_expiration = contract_expiration + 1 WHERE team_id = -1')
 
-            self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Playoffs'))
+            self.main_window.set_title('%s %s - Basketball GM' % (common.SEASON, 'Playoffs'))
 
         # Draft
         elif self.phase == 5:
             self.update_play_menu(self.phase)
 
-            self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Off-season'))
+            self.main_window.set_title('%s %s - Basketball GM' % (common.SEASON, 'Off-season'))
 
             if old_phase != 5: # Can't check hasattr because we need a new draft every year
                 self.dd = draft_dialog.DraftDialog(self)
@@ -1128,13 +1128,13 @@ class MainWindow:
         elif self.phase == 6:
             self.update_play_menu(self.phase)
 
-            self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Off-season'))
+            self.main_window.set_title('%s %s - Basketball GM' % (common.SEASON, 'Off-season'))
 
         # Offseason - free agency
         elif self.phase == 7:
             self.update_play_menu(self.phase)
 
-            self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Off-season'))
+            self.main_window.set_title('%s %s - Basketball GM' % (common.SEASON, 'Off-season'))
 
             # Check for retiring players
             # Call the contructor each season because that's where the code to check for retirement is

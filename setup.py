@@ -2,7 +2,7 @@ from distutils.core import setup
 from glob import glob
 
 setup(name='Basketball GM',
-      version='0.1+',
+      version='1.0.0alpha',
       description='A basketball simulation game. Make trades, set rosters, draft players, and try to build the next dynasty.',
       license='AGPLv3',
       url='https://github.com/jdscheff/basketball-gm',

@@ -5,14 +5,14 @@
   <object class="GtkAboutDialog" id="aboutdialog">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
-    <property name="title" translatable="yes">About Basketball General Manager</property>
+    <property name="title" translatable="yes">About Basketball GM</property>
     <property name="resizable">False</property>
     <property name="window_position">center-on-parent</property>
     <property name="icon">basketball-gm.svg</property>
     <property name="type_hint">dialog</property>
     <property name="transient_for">main_window</property>
     <property name="program_name">Basketball GM</property>
-    <property name="version">0.1+</property>
+    <property name="version">1.0.0alpha</property>
     <property name="copyright" translatable="yes">Copyright © 2008-2011 Jeremy Scheff</property>
     <property name="comments" translatable="yes">A basketball simulation game</property>
     <property name="website">https://github.com/jdscheff/basketball-gm</property>
@@ -1430,7 +1430,7 @@ For more information on this, and how to apply and follow the GNU AGPL, see
     <property name="width_request">800</property>
     <property name="height_request">600</property>
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">Basketball General Manager</property>
+    <property name="title" translatable="yes">Basketball GM</property>
     <property name="default_width">1024</property>
     <property name="icon">basketball-gm.svg</property>
     <accel-groups>
@@ -4300,7 +4300,7 @@ Placeholder (???)</property>
   <object class="GtkDialog" id="welcome_dialog">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
-    <property name="title" translatable="yes">Welcome to Basketball General Manager!</property>
+    <property name="title" translatable="yes">Welcome to Basketball GM!</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
     <property name="window_position">center-on-parent</property>

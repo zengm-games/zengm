@@ -1,6 +1,5 @@
-===============================
-BASKETBALL GENERAL MANAGER 0.1+
-===============================
+Basketball GM 1.0.0alpha
+========================
 
 A basketball simulation game. Make trades, set rosters, draft players, and try
 to build the next dynasty. Built with PyGTK and SQLite.
@@ -57,6 +56,12 @@ above on Windows, maybe it would work.
 Use
 ---
 
-To run the game, just execute:
-./bin/basketball-gm
+To run the game form this directory:
 
+    $ ./bin/basketball-gm
+
+Or, to install the game systemwide and then run it:
+
+    $ sudo python setup.py install
+
+    $ basketball-gm

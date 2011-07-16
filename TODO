@@ -18,6 +18,10 @@ BLOCKERS FOR 1.0:
   - draft
     - release players if necessary
 - Awards window speed, especially for games with many seasons
+- Add version number to save file
+- on new/open game:
+  - close all open dialogs/windows
+  - refresh all tabs of the main window
 - Manual
   - Overview of gameplay
   - What do ratings mean? 80s=superstar, etc.
@@ -31,7 +35,7 @@ All the other UI prettifying and code refactoring stuff can wait.
 ---
 
 On release
-- Update all version numbers (setup.py, README, about dialog box)
+- Update all version numbers (setup.py, README, about dialog box, save file)
 - Turn off debug mode
 
 ---
@@ -91,9 +95,6 @@ filtering should be done with treemodelfilter? - see pygtk tutorial
 play menu
     even after hiding, accelerators still work, so on menuitem activation, check to make sure it's a valid choice!!!
         or: set accelerators in python code, not glade.  then i can reuse accelerators
-on new/open game:
-    close all open dialogs/windows
-    refresh all tabs of the main window
 ratings log tab on player window
 player info window spawned from trade dialog should have clickable controls
 rapidly clicking and unclicking a player's checkbox on the trade window shouldn't open the player's info window

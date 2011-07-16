@@ -17,4 +17,3 @@ setup(name='Basketball GM',
       ],
       scripts=['bin/basketball-gm']
      )
-

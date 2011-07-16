@@ -38,7 +38,7 @@ Dependencies
 Required packages on Ubuntu 11.04 (probably similar on other distros):
 
 * libsqlite3-0
-* python >= 2.5
+* python
 * python-egenix-mxdatetime
 * python-gtk2
 

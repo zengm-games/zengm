@@ -12,6 +12,8 @@ setup(name='Basketball GM',
       data_files=[
           ('share/basketball-gm/data', glob("data/*.*")),
           ('share/basketball-gm/ui', glob("ui/*.*")),
+          ('share/icons/scalable/apps', ['ui/basketball-gm.svg']),
+          ('share/applications', ['ui/basketball-gm.desktop']),
       ],
       scripts=['bin/basketball-gm']
      )

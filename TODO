@@ -15,7 +15,6 @@ BLOCKERS FOR 1.0:
 - test new free agent stuff
 - fix new free agent stuff
   - allow signing minimum salary free agents when above salary cap
-  - allow resigning your own players for more than minimum salary when above salary cap
   - randomize contract lenghts on game start
 - hard limit on max roster size
   - draft

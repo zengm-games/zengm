@@ -40,7 +40,7 @@ class ContractWindow:
 
     def on_button_contract_accept_clicked(self, button, data=None):
         # Check salary cap for free agents
-        if self.team_id == common.PLAYER_TEAM_ID or (common.SALARY_CAP >= self.payroll + self.player_amount or self.player_amount == 500):
+        if self.allow_over_salary_cap or (common.SALARY_CAP >= self.payroll + self.player_amount or self.player_amount == 500):
             # Adjust to account for in-season signings
             if self.mw.phase <= 2:
                 player_years = self.player_years - 1
@@ -89,9 +89,10 @@ class ContractWindow:
 %d years (Through %d)\n\
 %s' % (self.player_years, common.SEASON + self.player_years, salary))
 
-    def __init__(self, main_window, player_id):
+    def __init__(self, main_window, player_id, allow_over_salary_cap = False):
         self.mw = main_window
         self.player_id = player_id
+        self.allow_over_salary_cap = allow_over_salary_cap  # To allow for a team to resign its own players
 
         self.builder = gtk.Builder()
         self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.glade'), ['adjustment1', 'adjustment2', 'contract_window'])

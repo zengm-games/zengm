@@ -1158,7 +1158,7 @@ class MainWindow:
                     p.load(player_id)
                     p.add_to_free_agents(self.phase)
                     # Open a contract_window
-                    cw = contract_window.ContractWindow(self, player_id)
+                    cw = contract_window.ContractWindow(self, player_id, True)
                     cw.contract_window.run()
                     cw.contract_window.destroy()
             self.finances.updated = False

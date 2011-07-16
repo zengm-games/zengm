@@ -122,8 +122,6 @@ class Player:
         else:
             amount = 50 * round(amount / 50.0)  # Make it a multiple of 50k
 
-        print self.attribute['name'], amount, expiration
-
         return amount, expiration
 
     def add_to_free_agents(self, phase):

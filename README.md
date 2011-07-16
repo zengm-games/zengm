@@ -4,8 +4,9 @@ Basketball GM 1.0.0alpha
 A basketball simulation game. Make trades, set rosters, draft players, and try
 to build the next dynasty. Built with PyGTK and SQLite.
 
-Website: https://github.com/jdscheff/basketball-gm
-Main developer: Jeremy Scheff <jdscheff@gmail.com>
+* Website: https://github.com/jdscheff/basketball-gm
+
+* Main developer: Jeremy Scheff <jdscheff@gmail.com>
 
 
 Plea for help
@@ -47,7 +48,7 @@ Optional packages (speeds up gameplay by about 10%):
 
 To install all these packages in Ubuntu, run:
 
-sudo apt-get install libsqlite3-0 python-egenix-mxdatetime python-gtk2 python-numpy
+    sudo apt-get install libsqlite3-0 python-egenix-mxdatetime python-gtk2 python-numpy
 
 I haven't tried any other platforms, but if you install the packages listed
 above on Windows, maybe it would work.
@@ -58,10 +59,10 @@ Use
 
 To run the game form this directory:
 
-    $ ./bin/basketball-gm
+    ./bin/basketball-gm
 
-Or, to install the game systemwide and then run it:
+Or, to install the game system-wide and then run it:
 
-    $ sudo python setup.py install
+    sudo python setup.py install
 
-    $ basketball-gm
+    basketball-gm

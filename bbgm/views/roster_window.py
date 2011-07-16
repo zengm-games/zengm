@@ -4,6 +4,7 @@ import mx.DateTime
 import sqlite3
 
 from bbgm import common
+from bbgm.core import player
 from bbgm.util import resources
 
 

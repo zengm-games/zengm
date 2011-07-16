@@ -123,6 +123,7 @@ use constants for phase #'s, other things.  maybe create a dict CONST in common.
 AI (NON-GAMESIM)
 ----------------
 trade
+- AI teams trade with each other
 - opponent GM trade AI based on their team's status: contending or rebuilding
 - record player value for contending and rebuilding teams in player_attributes, so opposing GMs can more easily suggest trades (i.e. "i'll make the deal if you throw in X")
 - Feedback from trades (way off, that's close, etc)
@@ -139,3 +140,7 @@ multi-team trades... how can i make a good UI for that?
 advanced stats (+/-, PER, etc)
 punishment for going in debt: if cash is less than $10M, can't sign any new contracts
 advisors
+trades
+- draft picks
+- cash
+- drop players as part of trade, to free up roster space

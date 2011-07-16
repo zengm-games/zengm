@@ -115,13 +115,14 @@ class Player:
             years = 2
 
         expiration = common.SEASON + years - 1
-
         if amount < min_amount:
             amount = min_amount
         elif amount > max_amount:
             amount = max_amount
         else:
             amount = 50 * round(amount / 50.0)  # Make it a multiple of 50k
+
+        print self.attribute['name'], amount, expiration
 
         return amount, expiration
 
@@ -138,6 +139,11 @@ class Player:
         """
         # Player's desired contract
         amount, expiration = self.contract()
+
+        # During regular season, or before season starts, allow contracts for
+        # just this year.
+        if phase > 2:
+            expiration += 1
 
         common.DB_CON.execute('UPDATE player_attributes SET team_id = -1, contract_amount = ?, contract_expiration = ? WHERE player_id = ?', (amount, expiration, self.id))
 

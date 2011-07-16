@@ -15,9 +15,8 @@ class ContractWindow:
         This is so the dialog isn't closed on any button except close.
         '''
         if response < 0:
-            p = player.Player()
-            p.load(self.player_id)
-            p.add_to_free_agents(self.mw.phase)
+            # Player should already be a free agent, so...
+            pass
         else:
             self.contract_window.emit_stop_by_name('response')
 
@@ -42,7 +41,12 @@ class ContractWindow:
     def on_button_contract_accept_clicked(self, button, data=None):
         # Check salary cap for free agents
         if self.team_id == common.PLAYER_TEAM_ID or (common.SALARY_CAP >= self.payroll + self.player_amount or self.player_amount == 500):
-            common.DB_CON.execute('UPDATE player_attributes SET team_id = ?, contract_amount = ?, contract_expiration = ? WHERE player_id = ?', (common.PLAYER_TEAM_ID, self.player_amount, common.SEASON + self.player_years, self.player_id))
+            # Adjust to account for in-season signings
+            if self.mw.phase <= 2:
+                player_years = self.player_years - 1
+            else:
+                player_years = self.player_years
+            common.DB_CON.execute('UPDATE player_attributes SET team_id = ?, contract_amount = ?, contract_expiration = ? WHERE player_id = ?', (common.PLAYER_TEAM_ID, self.player_amount, common.SEASON + player_years, self.player_id))
             self.contract_window.destroy()
         else:
             md = gtk.MessageDialog(parent=self.contract_window, flags=0, type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_CLOSE, message_format='This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary.')
@@ -118,8 +122,10 @@ Salary Cap: %s' % (name, payroll, salary_cap))
 
         # Initial player proposal
         self.player_amount, expiration = common.DB_CON.execute('SELECT contract_amount, contract_expiration FROM player_attributes WHERE player_id = ?', (self.player_id,)).fetchone()
-        self.player_years = expiration - common.SEASON + 1
-        print self.player_years, expiration
+        self.player_years = expiration - common.SEASON
+        # Adjust to account for in-season signings
+        if self.mw.phase <= 2:
+            self.player_years += 1
         self.update_label_contract_player_proposal()
         self.spinbutton_contract_team_amount.set_value(self.player_amount / 1000.0)
         self.spinbutton_contract_team_years.set_value(self.player_years)

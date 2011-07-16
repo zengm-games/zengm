@@ -338,10 +338,10 @@ class MainWindow:
             while gtk.events_pending():
                 gtk.main_iteration(False)
 #            base_ratings = [40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29]
-            base_ratings = [30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19]
-            potentials = [70, 60, 50, 50, 55, 45, 65, 35, 50, 45, 55, 55]
+            base_ratings = [30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 19, 19]
+            potentials = [70, 60, 50, 50, 55, 45, 65, 35, 50, 45, 55, 55, 40, 40]
             random.shuffle(potentials)
-            for p in range(12):
+            for p in range(14):
                 i = random.randrange(len(profiles))
                 profile = profiles[i]
 
@@ -1103,10 +1103,10 @@ class MainWindow:
             self.finances.updated = False
             self.update_all_pages()
 
-            self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Playoffs'))
-
             # Add a year to the free agents
             common.DB_CON.execute('UPDATE player_attributes SET contract_expiration = contract_expiration + 1 WHERE team_id = -1')
+
+            self.main_window.set_title('%s %s - Basketball General Manager' % (common.SEASON, 'Playoffs'))
 
         # Draft
         elif self.phase == 5:
@@ -1153,6 +1153,10 @@ class MainWindow:
                     # Automaitcally negotiate with teams
                     self.player_contract_expire(player_id)
                 else:
+                    # Add to free agents first, to generate a contract demand
+                    p = player.Player()
+                    p.load(player_id)
+                    p.add_to_free_agents(self.phase)
                     # Open a contract_window
                     cw = contract_window.ContractWindow(self, player_id)
                     cw.contract_window.run()

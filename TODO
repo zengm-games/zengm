@@ -12,10 +12,9 @@ BLOCKERS FOR 1.0:
     - At least three players with speed > X and (shooting_layups > X or shooting_layups + jumping > X)
   - Make sure all ratings are used adequately in simulation
 - free agents should have a memory. you shouldn't be able to just open the window a bunch of times and see different demands
-  - add_to_free_agents for players at beginning of new game
+  - negotiations based on stored values
   - at end of season, automatically negotiate with free agents that used to be on team. ~10% discount
   - free_agent_times_asked stores the number of times the "sign" button is clicked. then, after 2 times, gradually increase demands
-  - "asking for" column in free agents window
 - hard limit on max roster size
   - draft
     - release players if necessary

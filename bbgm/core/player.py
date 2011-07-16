@@ -115,7 +115,9 @@ class Player:
         """Adds a player to the free agents list.
 
         This should be THE ONLY way that players are added to the free agents
-        list, because this will also calculate their demanded contract.
+        list, because this will also calculate their demanded contract. But
+        currently, the free agents generated at the beginning of the game don't
+        use this function.
 
         Args:
             phase: self.phase from bbgm.views.main_window

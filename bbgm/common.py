@@ -19,7 +19,6 @@ SEASON_LENGTH = 82  # If this isn't 82 the scheduling gets fucked up.  Only set 
 
 SRC_FOLDER = os.path.dirname(os.path.abspath(__file__))
 
-#DATA_FOLDER = os.path.join(SRC_FOLDER, '..', 'data')
 SAVES_FOLDER = os.path.expanduser('~/.basketball-gm')
 DB_TEMP_FILENAME = os.path.join(SAVES_FOLDER, 'temp.sqlite')
 DB_FILENAME = os.path.join(SAVES_FOLDER, 'temp.sqlite')

@@ -35,9 +35,9 @@ class ContractWindow:
         return True
 
     def on_button_contract_player_info_clicked(self, button, data=None):
-        if not hasattr(self.main_window, 'pw'):
-            self.main_window.pw = player_window.PlayerWindow(self.main_window)
-        self.main_window.pw.update_player(self.player_id)
+        if not hasattr(self.mw, 'pw'):
+            self.mw.pw = player_window.PlayerWindow(self.mw)
+        self.mw.pw.update_player(self.player_id)
 
     def on_button_contract_accept_clicked(self, button, data=None):
         # Check salary cap for free agents
@@ -86,7 +86,7 @@ class ContractWindow:
 %s' % (self.player_years, common.SEASON + self.player_years, salary))
 
     def __init__(self, main_window, player_id):
-        self.main_window = main_window
+        self.mw = main_window
         self.player_id = player_id
 
         self.builder = gtk.Builder()

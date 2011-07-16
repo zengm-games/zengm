@@ -19,6 +19,7 @@ class Trade:
     total = [0, 0]  # Total contract amount for players in trade
     value = [0, 0]
     over_cap = [False, False]
+    over_roster_limit = [False, False]
     ratios = [0, 0]
     team_names = ['', '']
 
@@ -47,6 +48,7 @@ class Trade:
                 j = 0
             team_name, payroll = common.DB_CON.execute('SELECT ta.region || " " || ta.name, SUM(pa.contract_amount) + (SELECT TOTAL(contract_amount) FROM released_players_salaries WHERE released_players_salaries.team_id = ta.team_id) FROM team_attributes as ta, player_attributes as pa WHERE pa.team_id = ta.team_id AND ta.team_id = ? AND pa.contract_expiration >= ? AND ta.season = ?', (team_id, common.SEASON, common.SEASON,)).fetchone()
             self.team_names[i] = team_name
+            num_players_on_roster, = common.DB_CON.execute('SELECT COUNT(*) FROM player_attributes WHERE team_id = ?', (team_id,)).fetchone()
 
             self.total[i] = 0
             self.value[i] = 0.0
@@ -69,6 +71,10 @@ class Trade:
                 self.over_cap[i] = True
             else:
                 self.over_cap[i] = False
+            if num_players_on_roster - len(self.offer[i]) + len(self.offer[j]) > 15:
+                self.over_roster_limit[i] = True
+            else:
+                self.over_roster_limit[i] = False
             if self.total[i] > 0:
                 self.ratios[i] = int((100.0 * self.total[j]) / self.total[i])
             elif self.total[j] > 0:

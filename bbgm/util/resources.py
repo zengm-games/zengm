@@ -42,7 +42,7 @@ def get_asset(asset_type, asset_name):
         asset_path = os.path.join(base, asset_type, asset_name)
         if os.path.exists(asset_path):
             if common.DEBUG:
-                print asset_path
+                print 'get_asset', asset_path
             return asset_path
     return None
 

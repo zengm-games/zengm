@@ -204,8 +204,16 @@ class TradeWindow:
 
             self.label_trade[i].set_markup(text)
 
-        # Update "Propose Trade" button and the salary cap warning
-        if (self.trade.ratios[0] > 125 and self.trade.over_cap[0] == True) or (self.trade.ratios[1] > 125 and self.trade.over_cap[1] == True):
+        # Update "Propose Trade" button and the warnings (over salary cap or over roster limit)
+        if self.trade.over_roster_limit[0] == True or self.trade.over_roster_limit[1] == True:
+            self.button_trade_propose.set_sensitive(False)
+            # Which team is at fault?
+            if self.trade.over_roster_limit[0] == True:
+                team_name = self.trade.team_names[0]
+            else:
+                team_name = self.trade.team_names[1]
+            self.label_trade_cap_warning.set_markup('\n<b>This trade would put the %s over the maximum roster size limit of 15 players.</b>' % (team_name,))
+        elif (self.trade.ratios[0] > 125 and self.trade.over_cap[0] == True) or (self.trade.ratios[1] > 125 and self.trade.over_cap[1] == True):
             self.button_trade_propose.set_sensitive(False)
             # Which team is at fault?
             if self.trade.ratios[0] > 125:

@@ -135,7 +135,7 @@ Salary Cap: %s' % (name, payroll, salary_cap))
         button = gtk.Button()
         image = gtk.Image()
         image.set_from_stock(gtk.STOCK_CANCEL, gtk.ICON_SIZE_BUTTON)
-        if self.team_id == common.PLAYER_TEAM_ID:
+        if allow_over_salary_cap:
             label = gtk.Label('_Release Player')
         else:
             label = gtk.Label('_Cancel')

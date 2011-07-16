@@ -17,6 +17,7 @@ BLOCKERS FOR 1.0:
 - hard limit on max roster size
   - draft
     - release players if necessary
+- Awards window speed, especially for games with many seasons
 - Manual
   - Overview of gameplay
   - What do ratings mean? 80s=superstar, etc.
@@ -124,6 +125,7 @@ trade
 - record player value for contending and rebuilding teams in player_attributes, so opposing GMs can more easily suggest trades (i.e. "i'll make the deal if you throw in X")
 - Feedback from trades (way off, that's close, etc)
 - "Oh, you again?" after failed trade attempts
+- AI teams should be aware of contract lengths and the implications thereof
 
 FEATURES
 --------

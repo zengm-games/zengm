@@ -23,9 +23,8 @@ BLOCKERS FOR 1.0:
 - test in unity and gnome 3
 - Abbreviate treeview column headings, add tooltips
   - player stats tab
-  - roster window
-  - free agents window
   - trade window
+    - Switch to treeview_build_new
   - player window
 - Manual
   - Overview of gameplay

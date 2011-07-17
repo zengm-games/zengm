@@ -136,11 +136,12 @@ class RosterWindow:
             print 'build roster_window'
 
         column_types = [int, str, str, int, int, int, str, float, float, float, float]
-        column_info = [['Name', 'Position', 'Age',    'Rating',   'Potential', 'Contract', 'Min', 'PPG', 'Reb', 'Ast'],
-                       [1,      2,          3,        4,          5,           6,          7,     8,     9,     10],
-                       [False,  False,      False,    False,      False,       False,      False, False, False, False],
-                       [False,  False,      False,    False,      False,       False,      True,  True,  True,  True]]
-        common.treeview_build_new(self.treeview_roster, column_types, column_info)
+        column_info = [['Name', 'Pos', 'Age',    'Ovr', 'Pot', 'Contract', 'Min', 'Pts', 'Reb', 'Ast'],
+                       [1,      2,     3,        4,     5,     6,          7,     8,     9,     10],
+                       [False,  False, False,    False, False, False,      False, False, False, False],
+                       [False,  False, False,    False, False, False,      True,  True,  True,  True]]
+        tooltips = ['', 'Position', '', 'Overall rating', 'Potential rating', '', 'Minutes', 'Points', 'Rebounds', 'Assists']
+        common.treeview_build_new(self.treeview_roster, column_types, column_info, tooltips)
 
     def update_roster(self):
         if common.DEBUG:

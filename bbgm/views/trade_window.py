@@ -50,7 +50,7 @@ class TradeWindow:
         model = self.combobox_trade_teams.get_model()
         self.combobox_trade_teams.set_model(None)
         model.clear()
-        for row in common.DB_CON.execute('SELECT region || " " || name, team_id FROM team_attributes WHERE season = ? ORDER BY team_id ASC', (common.SEASON,)):
+        for row in common.DB_CON.execute('SELECT region || " " || name, team_id FROM team_attributes WHERE season = ?  AND team_id != ? ORDER BY team_id ASC', (common.SEASON, common.PLAYER_TEAM_ID)):
             model.append(['%s' % row[0]])
             if row[1] == common.PLAYER_TEAM_ID:
                 self.label_team_name.set_text(row[0])
@@ -118,17 +118,14 @@ class TradeWindow:
     def on_combobox_trade_teams_changed(self, combobox, data=None):
         new_team_id = combobox.get_active()
 
-        if new_team_id == common.PLAYER_TEAM_ID:  # Can't trade with yourself
-            combobox.set_active(self.trade.team_id)
-        else:  # Update/reset everything if a new team is picked
-            self.trade.new_team(new_team_id)
+        self.trade.new_team(new_team_id)
 
-            # Reset and update treeview
-            self.update_roster(self.treeview_trade[1], self.trade.team_id)
-            self.renderer_1.disconnect(self.renderer_1_toggled_handle_id)
-            self.renderer_1_toggled_handle_id = self.renderer_1.connect('toggled', self.on_player_toggled, self.treeview_trade[1].get_model())
+        # Reset and update treeview
+        self.update_roster(self.treeview_trade[1], self.trade.team_id)
+        self.renderer_1.disconnect(self.renderer_1_toggled_handle_id)
+        self.renderer_1_toggled_handle_id = self.renderer_1.connect('toggled', self.on_player_toggled, self.treeview_trade[1].get_model())
 
-            self.update_trade_summary()
+        self.update_trade_summary()
 
     def on_player_toggled(self, cell, path, model, data=None):
         model[path][2] = not model[path][2]  # Update checkbox

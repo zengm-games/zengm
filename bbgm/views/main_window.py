@@ -703,16 +703,24 @@ class MainWindow:
         # Season combobox
         populated = False
         model = combobox.get_model()
+
+        # Delete seasons left over from a previously open game
+        if len(model) > 0:
+            if int(model[0][0]) > common.SEASON:  # If the largest season in the liststore is greater than the current season
+                model.clear()
+                active = 0  # There will only be one entry, so select that one
+
         for season, in common.DB_CON.execute('SELECT season FROM team_stats GROUP BY season ORDER BY season ASC'):
             found = False
-            for i in xrange(len(model)):
-                if int(model[i][0]) == season:
-                    found = True # Already in the liststore, so we don't need to add it
-            if not found:
-                model.prepend(['%s' % season])
-            populated = True
+            if season:
+                for i in xrange(len(model)):
+                    if int(model[i][0]) == season:
+                        found = True  # Already in the liststore, so we don't need to add it
+                if not found:
+                    model.prepend(['%s' % season])
+                populated = True
 
-        if not populated: # Nothing was found in the liststore or nothing was found in the team_stats database
+        if not populated and len(model) == 0:  # Nothing was found in the liststore or nothing was found in the team_stats database
             season, = common.DB_CON.execute('SELECT season FROM game_attributes').fetchone()
             model.append(['%s' % season])
             populated = True

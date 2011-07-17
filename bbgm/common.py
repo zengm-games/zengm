@@ -63,7 +63,7 @@ def treeview_update(treeview, column_types, query, query_bindings=()):
         liststore.append(values)
 
 
-def treeview_build_new(treeview, column_types, column_info):
+def treeview_build_new(treeview, column_types, column_info, tooltips = []):
     """Shortcut function to add columns and a ListStore to a treeview.
 
     Args:
@@ -74,9 +74,18 @@ def treeview_build_new(treeview, column_types, column_info):
             column. 1: title; 2: column ID (corresponds to index in
             column_types); 3: sortable? (boolean); 4: truncate after first
             decimal place? (boolean).
+        tooltips: A vector of the same size as each of the lists in column_info
+            (one element for each displayed column) containing the tooltips for
+            the column headers. Blank strings mean no tooltip. Also, if no
+            vector is given, no tooltips will be shown.
     """
     for i in range(len(column_info[0])):
-        add_column(treeview, column_info[0][i], column_info[1][i], column_info[2][i], column_info[3][i])
+        if len(tooltips) > 0:
+            tooltip = tooltips[i]
+        else:
+            tooltip = ''
+
+        add_column(treeview, column_info[0][i], column_info[1][i], column_info[2][i], column_info[3][i], tooltip)
 
     liststore = gtk.ListStore(*column_types)
     treeview.set_model(liststore)
@@ -177,9 +186,21 @@ def treeview_update_new(treeview, query_ids, params_ids, query_row, params_row, 
     treeview.thaw_child_notify()
 
 
-def add_column(treeview, title, column_id, sort=False, truncate_float=False):
+def add_column(treeview, title, column_id, sort=False, truncate_float=False, tooltip=''):
     renderer = gtk.CellRendererText()
-    column = gtk.TreeViewColumn(title, renderer, text=column_id)
+    column = gtk.TreeViewColumn()
+    column.pack_start(renderer, True)
+    column.add_attribute(renderer, 'text', column_id)
+
+    if len(tooltip) > 0:
+        tooltips = gtk.Tooltips()
+        column_header = gtk.Label(title)
+        column_header.show()
+        column.set_widget(column_header)
+        tooltips.set_tip(column_header, tooltip)
+    else:
+        column.set_title(title)
+
     if sort:
         column.set_sort_column_id(column_id)
     if truncate_float:

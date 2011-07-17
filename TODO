@@ -21,6 +21,12 @@ BLOCKERS FOR 1.0:
 - Awards window speed, especially for games with many seasons
 - Add version number to save file
 - test in unity and gnome 3
+- Abbreviate treeview column headings, add tooltips
+  - player stats tab
+  - roster window
+  - free agents window
+  - trade window
+  - player window
 - Manual
   - Overview of gameplay
   - What do ratings mean? 80s=superstar, etc.

@@ -21,9 +21,9 @@ BLOCKERS FOR 1.0:
 - Awards window speed, especially for games with many seasons
 - Add version number to save file
 - test in unity and gnome 3
-- Abbreviate treeview column headings, add tooltips
-  - trade window
-    - Switch to treeview_build_new
+- trade window
+  - show stats, as in roster
+  - don't show user's team in trading partners list
 - Manual
   - Overview of gameplay
   - What do ratings mean? 80s=superstar, etc.

@@ -67,4 +67,4 @@ Or, to install the game system-wide and then run it:
 
     basketball-gm
 
-The system-wide install through setup.py should also put make a launcher for "Basketball GM".
+The system-wide install through setup.py should also make a launcher for "Basketball GM".

@@ -140,7 +140,7 @@ class RosterWindow:
                        [1,      2,     3,        4,     5,     6,          7,     8,     9,     10],
                        [False,  False, False,    False, False, False,      False, False, False, False],
                        [False,  False, False,    False, False, False,      True,  True,  True,  True]]
-        tooltips = ['', 'Position', '', 'Overall rating', 'Potential rating', '', 'Minutes', 'Points', 'Rebounds', 'Assists']
+        tooltips = ['', 'Position', '', 'Overall Rating', 'Potential Rating', '', 'Minutes', 'Points', 'Rebounds', 'Assists']
         common.treeview_build_new(self.treeview_roster, column_types, column_info, tooltips)
 
     def update_roster(self):

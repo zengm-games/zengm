@@ -87,11 +87,12 @@ class PlayerWindow:
 
     def build_player_window_stats(self):
         column_types = [int, str, int, int, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float]
-        column_info = [['Year', 'Team', 'GP',  'GS',  'Min', 'FGM', 'FGA', 'FG%', '3PM', '3PA', '3P%', 'FTM', 'FTA', 'FT%', 'Oreb', 'Dreb', 'Reb', 'Ast', 'TO', 'Stl', 'Blk', 'PF', 'PPG'],
+        column_info = [['Year', 'Team', 'G',  'GS',  'Min', 'FGM', 'FGA', 'FG%', '3PM', '3PA', '3P%', 'FTM', 'FTA', 'FT%', 'Oreb', 'Dreb', 'Reb', 'Ast', 'TO', 'Stl', 'Blk', 'PF', 'Pts'],
                        [0,      1,      2,     3,     4,     5,     6,     7,     8,     9,     10,    11,    12,    13,    14,     15,     16,    17,    18,   19,    20,    21,   22],
                        [True,   True,   True,  True,  True,  True,  True,  True,  True,  True,  True,  True,  True,  True,  True,   True,   True,  True,  True, True,  True,  True, True],
                        [False,  False,  False, False, True,  True,  True,  True,  True,  True,  True,  True,  True,  True,  True,   True,   True,  True,  True, True,  True,  True, True]]
-        common.treeview_build_new(self.treeview_player_window_stats, column_types, column_info)
+        tooltips = ['', '', 'Games Played', 'Games Started', 'Minutes', 'Field Goals Made', 'Field Goals Attempted', 'Field Goal Percentage', 'Three-Pointers Made', 'Three-Pointers Attempted', 'Three-Point Field Goal Percentage', 'Free Throws Made', 'Free Throws Attempted', 'Free Throw Percentage', 'Offensive Rebounds', 'Defensive Rebounds', 'Total Rebounds', 'Assists', 'Turnovers', 'Steals', 'Blocks', 'Personal Fouls', 'Points']
+        common.treeview_build_new(self.treeview_player_window_stats, column_types, column_info, tooltips)
 
         self.built['stats'] = True
 
@@ -114,7 +115,8 @@ class PlayerWindow:
                        [1,      2,     3,     4,     5,     6,     7,     8,     9,     10,    11,    12,    13,     14,     15,    16,    17,   18,    19,    20,   21],
                        [True,   True,  True,  True,  True,  True,  True,  True,  True,  True,  True,  True,  True,   True,   True,  True,  True, True,  True,  True, True],
                        [False,  False, True,  True,  True,  True,  True,  True,  True,  True,  True,  True,  True,   True,   True,  True,  True, True,  True,  True, True]]
-        common.treeview_build_new(self.treeview_player_window_game_log, column_types, column_info)
+        tooltips = ['', 'Starter', 'Minutes', 'Field Goals Made', 'Field Goals Attempted', 'Field Goal Percentage', 'Three-Pointers Made', 'Three-Pointers Attempted', 'Three-Point Field Goal Percentage', 'Free Throws Made', 'Free Throws Attempted', 'Free Throw Percentage', 'Offensive Rebounds', 'Defensive Rebounds', 'Total Rebounds', 'Assists', 'Turnovers', 'Steals', 'Blocks', 'Personal Fouls', 'Points']
+        common.treeview_build_new(self.treeview_player_window_game_log, column_types, column_info, tooltips)
         self.built['game_log'] = True
 
     def update_player_window_game_log(self):

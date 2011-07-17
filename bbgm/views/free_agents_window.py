@@ -47,7 +47,7 @@ class FreeAgentsWindow:
                        [1,      2,          3,     4,     5,     6,     7,     8,     9,     10],
                        [True,   True,       True,  True,  True,  True,  True,  True,  True,  True],
                        [False,  False,      False, False, False, True,  True,  True,  True,  False]]
-        tooltips = ['', '', '', 'Overall rating', 'Potential rating', 'Minutes', 'Points', 'Rebounds', 'Assists', '']
+        tooltips = ['', '', '', 'Overall Rating', 'Potential Rating', 'Minutes', 'Points', 'Rebounds', 'Assists', '']
         common.treeview_build_new(self.treeview_free_agents, column_types, column_info, tooltips)
 
     def update_free_agents(self):

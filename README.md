@@ -57,7 +57,7 @@ above on Windows, maybe it would work.
 Use
 ---
 
-To run the game form this directory:
+To run the game from this directory:
 
     ./bin/basketball-gm
 
@@ -66,3 +66,5 @@ Or, to install the game system-wide and then run it:
     sudo python setup.py install
 
     basketball-gm
+
+The system-wide install through setup.py should also put make a launcher for "Basketball GM".

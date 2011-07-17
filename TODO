@@ -22,6 +22,9 @@ BLOCKERS FOR 1.0:
 - on new/open game:
   - close all open dialogs/windows
   - refresh all tabs of the main window
+  - new/open weirdness currently:
+    - comboboxes don't reset
+- test in unity and gnome 3
 - Manual
   - Overview of gameplay
   - What do ratings mean? 80s=superstar, etc.
@@ -99,6 +102,9 @@ ratings log tab on player window
 player info window spawned from trade dialog should have clickable controls
 rapidly clicking and unclicking a player's checkbox on the trade window shouldn't open the player's info window
 some indication of synergy
+toolbar to supplement the menubar
+- New Open Save | Play (drop down menu) | Roster TeamHistory | Trade FreeAgents
+league history
 
 NBA
 ---

@@ -310,6 +310,8 @@ class MainWindow:
         Starts a new game.  Call this only after checking for saves, etc.
         '''
 
+        common.SEASON = 2011  # HACK! There should be a better way of doing this.
+
         self.new_game_progressbar_window = self.builder.get_object('new_game_progressbar_window')
         self.progressbar_new_game = self.builder.get_object('progressbar_new_game')
         self.new_game_progressbar_window.set_transient_for(self.main_window)

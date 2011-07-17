@@ -620,6 +620,17 @@ class MainWindow:
                     self.playoffs.updated = False
                     continue
             else:
+                # Decrease free agent demands
+                for player_id, amount, expiration in common.DB_CON.execute('SELECT player_id, contract_amount, contract_expiration FROM player_attributes WHERE team_id = -1 AND contract_amount > 500'):
+                    amount -= 50
+                    if amount < 500:
+                        amount = 500
+                    if amount  < 2000:
+                        expiration = common.SEASON + 1
+                    if amount  < 1000:
+                        expiration = common.SEASON
+                    common.DB_CON.execute('UPDATE player_attributes SET contract_amount = ?, contract_expiration = ? WHERE player_id = ?', (amount, expiration, player_id))
+
                 # Sign available free agents
                 self.auto_sign_free_agents()
 
@@ -791,15 +802,6 @@ class MainWindow:
         num_days_played, = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?', (common.SEASON,)).fetchone()
         free_agents = []
         for player_id, amount, expiration in common.DB_CON.execute('SELECT pa.player_id, pa.contract_amount, pa.contract_expiration FROM player_attributes as pa, player_ratings as pr WHERE pa.team_id = -1 AND pa.player_id = pr.player_id ORDER BY pr.overall + pr.potential DESC'):
-            # Decrease amount by 20% (assume negotiations) or 5% for each day into season
-            if num_days_played > 0:
-                amount *= .95**num_days_played
-            else:
-                amount *= 0.8
-            if amount < 500:
-                amount = 500
-            else:
-                amount = 50*round(amount/50.0) # Make it a multiple of 50k
             free_agents.append([player_id, amount, expiration, False])
 
         # Randomly order teams and let them sign free agents

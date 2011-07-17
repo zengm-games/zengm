@@ -12,11 +12,12 @@ BLOCKERS FOR 1.0:
     - At least three players with speed > X and (shooting_layups > X or shooting_layups + jumping > X)
   - Make sure all ratings are used adequately in simulation
 - free_agent_times_asked stores the number of times the "sign" button is clicked. then, after 2 times, gradually increase demands, but only for the player
+- set new free agent contract amount demand at beginning of each season
 - test new free agent stuff
-- free agent salary decreases in auto_sign_free_agents should apply to the user as well
 - hard limit on max roster size
   - draft
     - release players if necessary
+- release/buy out players to sign a better free agent
 - Awards window speed, especially for games with many seasons
 - Add version number to save file
 - test in unity and gnome 3

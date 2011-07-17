@@ -21,8 +21,6 @@ BLOCKERS FOR 1.0:
 - Awards window speed, especially for games with many seasons
 - Add version number to save file
 - test in unity and gnome 3
-- trade window
-  - show stats, as in roster
 - Manual
   - Overview of gameplay
   - What do ratings mean? 80s=superstar, etc.
@@ -103,6 +101,7 @@ some indication of synergy
 toolbar to supplement the menubar
 - New Open Save | Play (drop down menu) | Roster TeamHistory | Trade FreeAgents
 league history
+should trade window be a window or dialog?
 
 NBA
 ---

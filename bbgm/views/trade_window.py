@@ -156,25 +156,23 @@ class TradeWindow:
         column.set_sort_column_id(2)
         treeview.append_column(column)
 
-        column_types = [int, int, 'gboolean', str, str, int, int, int, str]
-        column_info = [['Name', 'Pos', 'Age', 'Ovr', 'Pot', 'Contract'],
-                       [3,      4,     5,     6,        7,           8],
-                       [True,   True,  True,  True,     True,        True],
-                       [False,  False, False, False,    False,       False]]
-        tooltips = ['', 'Position', '', 'Overall Rating', 'Potential Rating', '']
+        column_types = [int, int, 'gboolean', str, str, int, int, int, str, float, float, float, float]
+        column_info = [['Name', 'Pos', 'Age', 'Ovr', 'Pot', 'Contract', 'Min', 'Pts', 'Reb', 'Ast'],
+                       [3,      4,     5,     6,     7,     8,          9,     10,    11,    12],
+                       [True,   True,  True,  True,  True,  True,       True,  True,  True,  True],
+                       [False,  False, False, False, False, False,      True,  True,  True,  True]]
+        tooltips = ['', 'Position', '', 'Overall Rating', 'Potential Rating', '', 'Minutes', 'Points', 'Rebounds', 'Assists']
         common.treeview_build_new(treeview, column_types, column_info, tooltips)
 
     def update_roster(self, treeview, team_id):
-#        query = 'SELECT player_attributes.player_id, player_attributes.team_id, 0, player_attributes.name, player_attributes.position, ROUND((julianday("%d-06-01") - julianday(player_attributes.born_date))/365.25), player_ratings.overall, player_ratings.potential, "$" || round(contract_amount/1000.0, 2) || "M thru " || contract_expiration FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = ? ORDER BY player_ratings.roster_position ASC' % common.SEASON
-#        query_bindings = (team_id,)
-#        common.treeview_update(treeview, column_types, query, query_bindings)
-
         query_ids = 'SELECT player_attributes.player_id FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = ? ORDER BY player_ratings.roster_position ASC'
         params_ids = [team_id]
-        query_row = 'SELECT player_attributes.player_id, player_attributes.team_id, 0, player_attributes.name, player_attributes.position, ROUND((julianday("%d-06-01") - julianday(player_attributes.born_date))/365.25), player_ratings.overall, player_ratings.potential, "$" || round(contract_amount/1000.0, 2) || "M thru " || contract_expiration FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.player_id = ?' % common.SEASON
-        params_row = [-1]
+        query_row = 'SELECT player_attributes.player_id, player_attributes.team_id, 0, player_attributes.name, player_attributes.position, ROUND((julianday("%d-06-01") - julianday(player_attributes.born_date))/365.25), player_ratings.overall, player_ratings.potential, "$" || round(contract_amount/1000.0, 2) || "M thru " || contract_expiration, AVG(player_stats.minutes), AVG(player_stats.points), AVG(player_stats.offensive_rebounds + player_stats.defensive_rebounds), AVG(player_stats.assists) FROM player_attributes, player_ratings, player_stats WHERE player_attributes.player_id = ? AND player_attributes.player_id = player_ratings.player_id AND player_stats.player_id = player_ratings.player_id AND player_stats.season = ?' % common.SEASON
+        params_row = [-1, common.SEASON]
+        query_row_alt = 'SELECT player_attributes.player_id, player_attributes.team_id, 0, player_attributes.name, player_attributes.position, ROUND((julianday("%d-06-01") - julianday(player_attributes.born_date))/365.25), player_ratings.overall, player_ratings.potential, "$" || round(contract_amount/1000.0, 2) || "M thru " || contract_expiration, 0, 0, 0, 0 FROM player_attributes, player_ratings WHERE player_attributes.player_id = ? AND player_attributes.player_id = player_ratings.player_id' % common.SEASON
+        params_row_alt = [-1]
 
-        common.treeview_update_new(treeview, query_ids, params_ids, query_row, params_row)
+        common.treeview_update_new(treeview, query_ids, params_ids, query_row, params_row, query_row_alt, params_row_alt)
 
     def update_trade_summary(self):
         self.label_trade_summary.set_markup('<b>Trade Summary</b>\n\nSalary Cap: $%.2fM\n' % (common.SALARY_CAP / 1000.0))

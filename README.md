@@ -13,7 +13,7 @@ Plea for help
 -------------
 
 Do you like this game? Or, do you at least like the idea of what this game
-could one day be? Then PLEASE HELP US! See README_DEV for more info.
+could one day be? Then PLEASE HELP US! See the HACKING file for more info.
 
 
 License
@@ -54,8 +54,8 @@ I haven't tried any other platforms, but if you install the packages listed
 above on Windows, maybe it would work.
 
 
-Use
----
+Running and/or installing
+-------------------------
 
 To run the game from this directory:
 

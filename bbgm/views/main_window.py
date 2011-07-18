@@ -1148,6 +1148,12 @@ class MainWindow:
 
             self.main_window.set_title('%s %s - Basketball GM' % (common.SEASON, 'Off-season'))
 
+            # Reset contract demands of current free agents
+            for player_id, in common.DB_CON.execute('SELECT player_id FROM player_attributes WHERE team_id = -1'):
+                p = player.Player()
+                p.load(player_id)
+                p.add_to_free_agents(self.phase)
+
             # Check for retiring players
             # Call the contructor each season because that's where the code to check for retirement is
             rpw = retired_players_window.RetiredPlayersWindow(self) # Do the retired player check

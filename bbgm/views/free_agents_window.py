@@ -50,12 +50,15 @@ class FreeAgentsWindow:
         tooltips = ['', '', '', 'Overall Rating', 'Potential Rating', 'Minutes', 'Points', 'Rebounds', 'Assists', '']
         common.treeview_build_new(self.treeview_free_agents, column_types, column_info, tooltips)
 
+        liststore = self.treeview_free_agents.get_model()
+        liststore.set_sort_column_id(4, gtk.SORT_DESCENDING)
+
     def update_free_agents(self):
         if common.DEBUG:
             print 'update free_agents_window'
 
         # Display (in order of preference) stats from this year, stats from last year, or nothing
-        query_ids = 'SELECT player_attributes.player_id FROM player_attributes, player_ratings WHERE player_attributes.team_id = -1 AND player_attributes.player_id = player_ratings.player_id ORDER BY player_ratings.overall DESC'
+        query_ids = 'SELECT player_attributes.player_id FROM player_attributes, player_ratings WHERE player_attributes.team_id = -1 AND player_attributes.player_id = player_ratings.player_id'
         params_ids = []
         query_row = "SELECT player_attributes.player_id, player_attributes.name, player_attributes.position, ROUND((julianday('%s-06-01') - julianday(player_attributes.born_date))/365.25), player_ratings.overall, player_ratings.potential, AVG(player_stats.minutes), AVG(player_stats.points), AVG(player_stats.offensive_rebounds + player_stats.defensive_rebounds), AVG(player_stats.assists), '$' || round(contract_amount/1000.0, 2) || 'M thru ' || contract_expiration FROM player_attributes, player_ratings, player_stats WHERE player_attributes.player_id = ? AND player_attributes.player_id = player_ratings.player_id AND player_stats.player_id = player_ratings.player_id AND player_stats.season = ?" % common.SEASON
         params_row = [-1, common.SEASON]

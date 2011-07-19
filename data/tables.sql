@@ -11,8 +11,9 @@ CREATE TABLE game_attributes (
 team_id INTEGER,
 season INTEGER,
 phase INTEGER,
-schedule TEXT);
-INSERT INTO "game_attributes" (team_id, season, phase) VALUES(3, 2011, 0);
+schedule TEXT,
+version TEXT);
+INSERT INTO "game_attributes" (team_id, season, phase, version) VALUES(3, 2011, 0, '1.0.0alpha');
 
 CREATE TABLE player_attributes (
 player_id INTEGER PRIMARY KEY,

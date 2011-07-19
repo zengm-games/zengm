@@ -18,7 +18,6 @@ BLOCKERS FOR 1.0:
     - release players if necessary
 - AI teams release/buy out players to sign a better free agent
 - Awards window speed, especially for games with many seasons
-- Add version number to save file
 - test in unity and gnome 3
 - Manual
   - Overview of gameplay
@@ -33,7 +32,7 @@ All the other UI prettifying and code refactoring stuff can wait.
 ---
 
 On release
-- Update all version numbers (setup.py, README, about dialog box, save file)
+- Update all version numbers (setup.py, README, about dialog box, save file, tables.sql (game_attributes))
 - Turn off debug mode
 
 ---

@@ -10,7 +10,6 @@ import random
 import sqlite3
 import shutil
 import time
-import webkit
 
 # My modules
 from bbgm import common

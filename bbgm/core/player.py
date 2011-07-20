@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import csv
-import mx.DateTime
 import os
 import random
 import re
@@ -35,9 +34,7 @@ class Player:
 
     def develop(self, years=1):
         # Make sure age is always defined
-        [y, m, d] = self.attribute['born_date'].split('-', 2)
-        born = mx.DateTime.Date(int(y), int(m), int(d))
-        age = mx.DateTime.Age(mx.DateTime.Date(common.SEASON, 1, 1), born).years
+        age = common.SEASON - self.attribute['born_date']
 
         for i in range(years):
             age += 1
@@ -72,7 +69,7 @@ class Player:
         # Account for new players being developed in "new game"
         if years > 1:
             age += 1
-            self.attribute['born_date'] = self._born_date(age)
+            self.attribute['born_date'] = common.SEASON - age
 
     def bonus(self, amount):
         """Add or subtract from all ratings"""
@@ -228,7 +225,7 @@ class GeneratePlayer(Player):
         self.attribute['position'] = self._position()  # Position (PG, SG, SF, PF, C, G, GF, FC)
         self.attribute['height'] = int(fast_random.gauss(1, 0.02) * (self.rating['height'] * (max_height - min_height) / 100 + min_height))  # Height in inches (from min_height to max_height)
         self.attribute['weight'] = int(fast_random.gauss(1, 0.02) * ((self.rating['height'] + 0.5 * self.rating['strength']) * (max_weight - min_weight) / 150 + min_weight))  # Weight in points (from min_weight to max_weight)
-        self.attribute['born_date'] = self._born_date(age)
+        self.attribute['born_date'] = common.SEASON - age
 
         #If the nationality isn't given, randomly choose one.	
         if player_nat == "":
@@ -332,18 +329,6 @@ class GeneratePlayer(Player):
             position = 'PF'
 
         return position
-
-    def _born_date(self, age):
-        year = common.SEASON - age
-        month = random.randint(1, 12)
-        if month == 2:
-            max_day = 28
-        elif month == 9 or month == 4 or month == 6 or month == 11:
-            max_day = 30
-        else:
-            max_day = 31
-        day = random.randint(1, max_day)
-        return '%d-%02d-%02d' % (year, month, day)
 
     def sql_insert(self):
         self.rating['overall'] = self.overall_rating()

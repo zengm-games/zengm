@@ -22,7 +22,7 @@ team_id INTEGER,
 position TEXT,
 height INTEGER, -- inches
 weight INTEGER, -- pounds
-born_date TEXT, -- YYYY-MM-DD for birthday
+born_date INTEGER, -- YYYY for birth year
 born_location TEXT, -- City, State/Country
 college TEXT, -- or HS or country, if applicable
 draft_year INTEGER,

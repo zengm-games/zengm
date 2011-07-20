@@ -1,5 +1,4 @@
 import gtk
-import mx.DateTime
 import random
 import sqlite3
 
@@ -39,13 +38,10 @@ class PlayerWindow:
         # Info
         row = common.DB_CON.execute('SELECT name, position, (SELECT region || " " || name FROM team_attributes WHERE team_id = player_attributes.team_id), height, weight, born_date, born_location, college, draft_year, draft_round, draft_pick, (SELECT region || " " || name FROM team_attributes WHERE team_id = player_attributes.draft_team_id), contract_amount, contract_expiration FROM player_attributes WHERE player_id = ?', (self.player_id,)).fetchone()
         self.player_window.set_title('%s - Player Info' % row[0]);
-        [y, m, d] = row[5].split('-', 2)
         height = '%d\'%d"' % (row[3] // 12, row[3] % 12);
-        born = mx.DateTime.Date(int(y), int(m), int(d))
-        age = mx.DateTime.Age(mx.DateTime.Date(common.SEASON, 1, 1), born).years
         experience = 77  # This should be calculated by how many seasons are recorded, because a player could be injured all year or be out of the leauge
         contract_amount = '$%.2fM' % (row[12] / 1000.0)
-        self.label_player_window_info.set_markup('<span size="x-large" weight="bold">%s</span>\n<span weight="bold">%s - %s</span>\nHeight: %s\nWeight: %s lbs\nAge: %s\nExperience: %s\nBorn: %s - %s\nCollege: %s\nDraft: %s - Round %s (Pick %s) by the %s\nContract: %s per year through %d' % (row[0], row[1], row[2], height, row[4], age, experience, born.strftime("%B %e, %Y"), row[6], row[7], row[8], row[9], row[10], row[11], contract_amount, row[13]))
+        self.label_player_window_info.set_markup('<span size="x-large" weight="bold">%s</span>\n<span weight="bold">%s - %s</span>\nHeight: %s\nWeight: %s lbs\nAge: %s\nExperience: %s\nBorn: %s - %s\nCollege: %s\nDraft: %s - Round %s (Pick %s) by the %s\nContract: %s per year through %d' % (row[0], row[1], row[2], height, row[4], common.SEASON - row[5], experience, row[5], row[6], row[7], row[8], row[9], row[10], row[11], contract_amount, row[13]))
 
         # Ratings
         common.DB_CON.row_factory = sqlite3.Row

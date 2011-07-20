@@ -41,7 +41,7 @@ class RetiredPlayersWindow:
         liststore = gtk.ListStore(int, str, str, int, int)
         self.treeview_retired_players.set_model(liststore)
 
-        query = "SELECT player_ratings.player_id, player_attributes.name, (SELECT abbreviation FROM team_attributes WHERE team_id = player_attributes.team_id), ROUND((julianday('%d-06-01') - julianday(born_date))/365.25), player_ratings.overall, player_ratings.potential, player_attributes.team_id FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND (player_ratings.potential < ? OR ROUND((julianday('%d-06-01') - julianday(born_date))/365.25) > ?) AND player_attributes.team_id != -3 ORDER BY player_ratings.overall DESC" % (common.SEASON, common.SEASON)
+        query = "SELECT player_ratings.player_id, player_attributes.name, (SELECT abbreviation FROM team_attributes WHERE team_id = player_attributes.team_id), %d - player_attributes.born_date, player_ratings.overall, player_ratings.potential, player_attributes.team_id FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND (player_ratings.potential < ? OR (%d - player_attributes.born_date) > ?) AND player_attributes.team_id != -3 ORDER BY player_ratings.overall DESC" % (common.SEASON, common.SEASON)
         for row in common.DB_CON.execute(query, (min_potential, max_age)):
             player_id, name, team, age, overall, potential, team_id = row
             if team == None:
@@ -58,7 +58,7 @@ class RetiredPlayersWindow:
                     liststore.append([player_id, name, team, age, overall])
 
         # Update "free agent years" counter and retire players who have been free agents for more than one years
-        query = "SELECT player_ratings.player_id, player_attributes.name, 'FA', ROUND((julianday('%d-06-01') - julianday(born_date))/365.25), player_ratings.overall, player_ratings.potential FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND years_free_agent >= 1 AND team_id = -1 ORDER BY player_ratings.overall DESC" % (common.SEASON)
+        query = "SELECT player_ratings.player_id, player_attributes.name, 'FA', %d - player_attributes.born_date, player_ratings.overall, player_ratings.potential FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND years_free_agent >= 1 AND team_id = -1 ORDER BY player_ratings.overall DESC" % (common.SEASON)
         for row in common.DB_CON.execute(query):
             player_id, name, team, age, overall, potential = row
             overall = int(overall)

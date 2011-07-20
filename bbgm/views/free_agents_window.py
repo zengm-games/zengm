@@ -1,5 +1,4 @@
 import gtk
-import mx.DateTime
 import sqlite3
 
 from bbgm import common
@@ -60,10 +59,10 @@ class FreeAgentsWindow:
         # Display (in order of preference) stats from this year, stats from last year, or nothing
         query_ids = 'SELECT player_attributes.player_id FROM player_attributes, player_ratings WHERE player_attributes.team_id = -1 AND player_attributes.player_id = player_ratings.player_id'
         params_ids = []
-        query_row = "SELECT player_attributes.player_id, player_attributes.name, player_attributes.position, ROUND((julianday('%s-06-01') - julianday(player_attributes.born_date))/365.25), player_ratings.overall, player_ratings.potential, AVG(player_stats.minutes), AVG(player_stats.points), AVG(player_stats.offensive_rebounds + player_stats.defensive_rebounds), AVG(player_stats.assists), '$' || round(contract_amount/1000.0, 2) || 'M thru ' || contract_expiration FROM player_attributes, player_ratings, player_stats WHERE player_attributes.player_id = ? AND player_attributes.player_id = player_ratings.player_id AND player_stats.player_id = player_ratings.player_id AND player_stats.season = ?" % common.SEASON
+        query_row = "SELECT player_attributes.player_id, player_attributes.name, player_attributes.position, %d - player_attributes.born_date, player_ratings.overall, player_ratings.potential, AVG(player_stats.minutes), AVG(player_stats.points), AVG(player_stats.offensive_rebounds + player_stats.defensive_rebounds), AVG(player_stats.assists), '$' || round(contract_amount/1000.0, 2) || 'M thru ' || contract_expiration FROM player_attributes, player_ratings, player_stats WHERE player_attributes.player_id = ? AND player_attributes.player_id = player_ratings.player_id AND player_stats.player_id = player_ratings.player_id AND player_stats.season = ?" % common.SEASON
         params_row = [-1, common.SEASON]
         params_row_alt = [-1, common.SEASON - 1]
-        query_row_alt_2 = "SELECT player_attributes.player_id, player_attributes.name, player_attributes.position, ROUND((julianday('%s-06-01') - julianday(player_attributes.born_date))/365.25), player_ratings.overall, player_ratings.potential, 0, 0, 0, 0, '$' || round(contract_amount/1000.0, 2) || 'M thru ' || contract_expiration FROM player_attributes, player_ratings WHERE player_attributes.player_id = ? AND player_attributes.player_id = player_ratings.player_id" % common.SEASON
+        query_row_alt_2 = "SELECT player_attributes.player_id, player_attributes.name, player_attributes.position, %d - player_attributes.born_date, player_ratings.overall, player_ratings.potential, 0, 0, 0, 0, '$' || round(contract_amount/1000.0, 2) || 'M thru ' || contract_expiration FROM player_attributes, player_ratings WHERE player_attributes.player_id = ? AND player_attributes.player_id = player_ratings.player_id" % common.SEASON
         params_row_alt_2 = [-1]
 
         common.treeview_update_new(self.treeview_free_agents, query_ids, params_ids, query_row, params_row, query_row, params_row_alt, query_row_alt_2, params_row_alt_2)

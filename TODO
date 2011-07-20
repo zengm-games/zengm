@@ -17,8 +17,8 @@ BLOCKERS FOR 1.0:
   - draft
     - release players if necessary
 - AI teams release/buy out players to sign a better free agent
-- Awards window speed, especially for games with many seasons
 - test in unity and gnome 3
+- Young players shouldn't be so eager to sign 1 year deals unless they have really low overall ratings relative to potential
 - Manual
   - Overview of gameplay
   - What do ratings mean? 80s=superstar, etc.

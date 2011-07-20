@@ -35,19 +35,22 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 Dependencies
 ------------
 
-Required packages on Ubuntu 11.04 (probably similar on other distros):
+Required:
 
-* libsqlite3-0
-* python
-* python-gtk2
+* PyGTK
+* SQLite
 
 Optional packages (speeds up gameplay by about 10%):
 
-* python-numpy
+* Numpy
 
-To install all these packages in Ubuntu, run:
+To install all these packages in Ubuntu 11.04, run:
 
-    sudo apt-get install libsqlite3-0 python-gtk2 python-numpy
+    sudo apt-get install python-gtk2 libsqlite3-0 python-numpy
+
+To install all these packages in Fedora 15, run as root:
+
+    yum install pygtk2 sqlite numpy
 
 I haven't tried any other platforms, but if you install the packages listed
 above on Windows, maybe it would work.

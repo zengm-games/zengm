@@ -45,7 +45,7 @@ class SeasonEndWindow:
         mvp = common.DB_CON.execute('SELECT name, abbreviation, points, rebounds, assists FROM awards_avg ORDER BY (0.75 * points) + assists + rebounds DESC').fetchone()
         roy = common.DB_CON.execute('SELECT name, abbreviation, points, rebounds, assists FROM awards_avg WHERE draft_year = ? - 1 ORDER BY (0.75 * points) + assists + rebounds DESC', (common.SEASON,)).fetchone()
         dpoy = common.DB_CON.execute('SELECT name, abbreviation, rebounds, blocks, steals FROM awards_avg ORDER BY rebounds + 5 * blocks + 5 * steals DESC').fetchone()
-        ipoy = common.DB_CON.execute('SELECT name, abbreviation, born_location, points, rebounds, assists FROM awards_avg WHERE born_location is not "Usa" ORDER BY (0.75 * points) + assists + rebounds DESC').fetchone()
+        ipoy = common.DB_CON.execute('SELECT name, abbreviation, born_location, points, rebounds, assists FROM awards_avg WHERE born_location is not "USA" ORDER BY (0.75 * points) + assists + rebounds DESC').fetchone()
         firstteam = common.DB_CON.execute('SELECT name, abbreviation FROM awards_avg ORDER BY (0.75 * points) + assists + rebounds DESC').fetchmany(15)
         defteam = common.DB_CON.execute('SELECT name, abbreviation FROM awards_avg ORDER BY rebounds + 5 * blocks + 5 * steals DESC').fetchmany(15)
         most_points = common.DB_CON.execute('SELECT name, abbreviation, points FROM awards_avg ORDER BY points DESC').fetchone()

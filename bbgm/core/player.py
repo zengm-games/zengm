@@ -236,7 +236,7 @@ class GeneratePlayer(Player):
             for row in self.nat_data:
                 if float(row[2]) >= nationality_rand:
                     break
-            nationality = string.capitalize(row[0])
+            nationality = row[0]
             self.fn_max = float(row[4])
             self.ln_max = float(row[5])
         else:
@@ -260,7 +260,7 @@ class GeneratePlayer(Player):
         # First name
         fn_rand = random.uniform(0, self.fn_max)
         for row in self.fn_data:
-            if nationality == string.capitalize(row[4]):
+            if row[4].upper() == nationality.upper():
                 if float(row[2]) >= fn_rand:
                     break
         fn = string.capitalize(row[0])
@@ -268,7 +268,7 @@ class GeneratePlayer(Player):
         # Last name
         ln_rand = random.uniform(0, self.ln_max)
         for row in self.ln_data:
-            if nationality == string.capitalize(row[4]):
+            if row[4].upper() == nationality.upper():
                 if float(row[2]) >= ln_rand:
                 #   if (random.random() < 0.3):  # This is needed because there are some duplicate CDF's in last_names.txt
                     break

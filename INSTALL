@@ -25,9 +25,6 @@ To install all these packages in Fedora 15, run as root:
 
     yum install pygtk2 sqlite numpy
 
-I haven't tried any other platforms, but if you install the packages listed
-above on Windows, maybe it would work.
-
 
 Running and/or installing
 -------------------------

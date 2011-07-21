@@ -22,11 +22,12 @@ class TeamStatsTab:
             print 'build team_stats_tab'
 
         column_types = [int, str, int, int, int, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float]
-        column_info = [['Team', 'GP',  'W',   'L',   'FGM', 'FGA', 'FG%', '3PM', '3PA', '3P%', 'FTM', 'FTA', 'FT%', 'Oreb', 'Dreb', 'Reb', 'Ast', 'TO', 'Stl', 'Blk', 'PF', 'PPG', 'OPPG'],
+        column_info = [['Team', 'GP',  'W',   'L',   'FGM', 'FGA', 'FG%', '3PM', '3PA', '3P%', 'FTM', 'FTA', 'FT%', 'Oreb', 'Dreb', 'Reb', 'Ast', 'TO', 'Stl', 'Blk', 'PF', 'Pts', 'OPts'],
                        [1,      2,     3,     4,     5,     6,     7,     8,     9,     10,    11,    12,    13,    14,    15,      16,    17,    18,   19,    20,    21,   22,    23],
                        [True,   True,  True,  True,  True,  True,  True,  True,  True,  True,  True,  True,  True,  True,  True,    True,  True,  True, True,  True,  True, True,  True],
                        [False,  False, False, False, True,  True,  True,  True,  True,  True,  True,  True,  True,  True,  True,    True,  True,  True, True,  True,  True, True,  True]]
-        common.treeview_build_new(self.treeview_team_stats, column_types, column_info)
+        tooltips = ['', 'Games Played', 'Won', 'Lost', 'Field Goals Made', 'Field Goals Attempted', 'Field Goal Percentage', 'Three-Pointers Made', 'Three-Pointers Attempted', 'Three-Point Field Goal Percentage', 'Free Throws Made', 'Free Throws Attempted', 'Free Throw Percentage', 'Offensive Rebounds', 'Defensive Rebounds', 'Total Rebounds', 'Assists', 'Turnovers', 'Steals', 'Blocks', 'Personal Fouls', 'Points', 'Opponent\'s Points']
+        common.treeview_build_new(self.treeview_team_stats, column_types, column_info, tooltips)
 
         self.mw.notebook.insert_page(self.vbox7, gtk.Label('Team Stats'), self.mw.pages['team_stats'])
 

@@ -1,0 +1,77 @@
+Basketball GM should work pretty much anywhere PyGTK runs. For now, this file
+includes instructions for Linux and Windows.
+
+
+Linux
+=====
+
+Dependencies
+------------
+
+Required:
+
+* PyGTK
+* SQLite
+
+Optional packages (speeds up gameplay by about 10%):
+
+* Numpy
+
+To install all these packages in Ubuntu 11.04, run:
+
+    sudo apt-get install python-gtk2 libsqlite3-0 python-numpy
+
+To install all these packages in Fedora 15, run as root:
+
+    yum install pygtk2 sqlite numpy
+
+I haven't tried any other platforms, but if you install the packages listed
+above on Windows, maybe it would work.
+
+
+Running and/or installing
+-------------------------
+
+To run the game from this directory:
+
+    ./bin/basketball-gm
+
+Or, to install the game system-wide and then run it:
+
+    sudo python setup.py install
+
+    basketball-gm
+
+The system-wide install through setup.py should also make a launcher for "Basketball GM".
+
+This should work pretty much anywhere PyGTK runs. For now, this file includes
+instructions for Linux and Windows.
+
+
+Windows
+=======
+
+WARNING: THERE ARE BUGS HERE! For instance, loading and saving games doesn't
+seem to work. But the rest of the game runs beautifully!
+
+
+Dependencies
+------------
+
+At a minimum, you need Python, PyGTK, and pysqlite set up. As of July 2011, the
+latest Windows installers of these three packages can be found here:
+
+Python 2.7 installer:http://www.python.org/getit/
+PyGTK 2.22 all-in-one installer:
+    http://ftp.gnome.org/pub/GNOME/binaries/win32/pygtk/2.22/
+pysqlite 2.6 installer: http://code.google.com/p/pysqlite/downloads/list
+
+
+Running and/or installing
+-------------------------
+
+The installer currently doesn't work on Windows, but you can run it without
+installing. Open up a command prompt, navigate to this directory, and run
+something like (depending on your Python installation):
+
+    C:\Python27\python.exe bin\basketball-gm

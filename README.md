@@ -32,32 +32,11 @@ You should have received a copy of the GNU Affero General Public License along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-Dependencies
-------------
-
-Required:
-
-* PyGTK
-* SQLite
-
-Optional packages (speeds up gameplay by about 10%):
-
-* Numpy
-
-To install all these packages in Ubuntu 11.04, run:
-
-    sudo apt-get install python-gtk2 libsqlite3-0 python-numpy
-
-To install all these packages in Fedora 15, run as root:
-
-    yum install pygtk2 sqlite numpy
-
-I haven't tried any other platforms, but if you install the packages listed
-above on Windows, maybe it would work.
-
-
 Running and/or installing
 -------------------------
+
+See INSTALL for more details on dependencies and platform-specific
+instructions. But in general...
 
 To run the game from this directory:
 

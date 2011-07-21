@@ -62,10 +62,10 @@ class ContractWindow:
         if self.steps <= self.max_steps:
             if team_years < self.player_years:
                 self.player_years -= 1
-                self.player_amount *= 1.5
+                self.player_amount *= 1.2
             elif team_years > self.player_years:
                 self.player_years += 1
-                self.player_amount *= 1.5
+                self.player_amount *= 1.2
             if team_amount < self.player_amount and team_amount > 0.7 * self.player_amount:
                 self.player_amount = .75 * self.player_amount + .25 * team_amount
             elif team_amount < self.player_amount:

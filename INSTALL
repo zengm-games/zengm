@@ -58,7 +58,7 @@ Dependencies
 At a minimum, you need Python, PyGTK, and pysqlite set up. As of July 2011, the
 latest Windows installers of these three packages can be found here:
 
-Python 2.7 installer:http://www.python.org/getit/
+Python 2.7 installer: http://www.python.org/getit/
 PyGTK 2.22 all-in-one installer:
     http://ftp.gnome.org/pub/GNOME/binaries/win32/pygtk/2.22/
 pysqlite 2.6 installer: http://code.google.com/p/pysqlite/downloads/list

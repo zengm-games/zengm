@@ -19,7 +19,6 @@ BLOCKERS FOR 1.0:
 - AI teams release/buy out players to sign a better free agent
 - player info window spawned from trade dialog and contract window should have clickable controls
 - test in unity and gnome 3
-- Young players shouldn't be so eager to sign 1 year deals unless they have really low overall ratings relative to potential
 - Manual
   - Overview of gameplay
   - What do ratings mean? 80s=superstar, etc.
@@ -100,6 +99,7 @@ toolbar to supplement the menubar
 - New Open Save | Play (drop down menu) | Roster TeamHistory | Trade FreeAgents
 league history
 should trade window be a window or dialog?
+update statusbar while game is saving/loading
 
 NBA
 ---

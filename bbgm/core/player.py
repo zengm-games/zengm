@@ -103,13 +103,15 @@ class Player:
         # Players with high potentials want short contracts
         potential_difference = round((self.rating['potential'] - self.rating['overall']) / 4.0)
         years = 5 - potential_difference
-        if years < 1:
-            years = 1
+        if years < 2:
+            years = 2
         # Bad players can only ask for short deals
         if self.rating['potential'] < 40:
             years = 1
         elif self.rating['potential'] < 50:
             years = 2
+        elif self.rating['potential'] < 60:
+            years = 3
 
         # Randomize expiration for contracts generated at beginning of new game
         if randomize_expiration:

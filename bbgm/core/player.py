@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 import csv
-import os
 import random
 import re
-import sqlite3
 import string
 
 from bbgm import common

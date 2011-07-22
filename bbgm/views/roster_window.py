@@ -1,6 +1,5 @@
 import gtk
 import locale
-import sqlite3
 
 from bbgm import common
 from bbgm.core import player

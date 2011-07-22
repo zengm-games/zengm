@@ -1,6 +1,5 @@
 import gtk
 
-from bbgm import common
 from bbgm.util import resources
 
 

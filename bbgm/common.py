@@ -1,6 +1,5 @@
 import gtk
 import os
-import sqlite3
 
 # When DEBUG is True:
 # - Debugging info (largely related to updating treeviews) is printed to the

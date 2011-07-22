@@ -1,7 +1,4 @@
 import gtk
-import math
-import random
-import sqlite3
 
 from bbgm import common
 from bbgm.core.trade import Trade

@@ -1,7 +1,5 @@
 import gtk
 import locale
-import os
-import sqlite3
 
 from bbgm import common
 from bbgm.util import resources

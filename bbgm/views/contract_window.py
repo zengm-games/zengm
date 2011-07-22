@@ -1,10 +1,8 @@
 import ctypes
 import gtk
 import random
-import sqlite3
 
 from bbgm import common
-from bbgm.core import player
 from bbgm.util import resources
 from bbgm.views import player_window
 

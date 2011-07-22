@@ -1,5 +1,4 @@
 import gtk
-import os
 import pango
 import sqlite3
 

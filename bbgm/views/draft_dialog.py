@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import gtk
 import random
-import sqlite3
 import time
 
 from bbgm import common

@@ -80,6 +80,9 @@ class ContractWindow:
 
         self.update_label_contract_player_proposal()
 
+        # Account for the number of times the player has tried to negotiate
+        common.DB_CON.execute('UPDATE player_attributes SET free_agent_times_asked = free_agent_times_asked + 1 WHERE player_id = ?', (self.player_id,)).fetchone()
+
     def update_label_contract_player_proposal(self):
         self.player_amount = 50 * round(self.player_amount / 50.0)  # Make it a multiple of 50k
         salary = '$%.2fM' % (self.player_amount / 1000.0)
@@ -120,7 +123,8 @@ Payroll: %s\n\
 Salary Cap: %s' % (name, payroll, salary_cap))
 
         # Initial player proposal
-        self.player_amount, expiration = common.DB_CON.execute('SELECT contract_amount, contract_expiration FROM player_attributes WHERE player_id = ?', (self.player_id,)).fetchone()
+        self.player_amount, expiration, self.times_asked = common.DB_CON.execute('SELECT contract_amount, contract_expiration, free_agent_times_asked FROM player_attributes WHERE player_id = ?', (self.player_id,)).fetchone()
+        print self.player_amount, self.times_asked
         self.player_years = expiration - common.SEASON
         # Adjust to account for in-season signings
         if self.mw.phase <= 2:

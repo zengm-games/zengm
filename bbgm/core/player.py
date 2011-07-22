@@ -144,7 +144,7 @@ class Player:
         if phase > 2:
             expiration += 1
 
-        common.DB_CON.execute('UPDATE player_attributes SET team_id = -1, contract_amount = ?, contract_expiration = ? WHERE player_id = ?', (amount, expiration, self.id))
+        common.DB_CON.execute('UPDATE player_attributes SET team_id = -1, contract_amount = ?, contract_expiration = ?, free_agent_times_asked WHERE player_id = ?', (amount, expiration, self.id))
 
 class GeneratePlayer(Player):
     '''

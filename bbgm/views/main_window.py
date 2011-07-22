@@ -114,7 +114,7 @@ class MainWindow:
     def on_menuitem_trade_activate(self, widget, data=None):
         tw = trade_window.TradeWindow(self)
         tw.trade.clear_offer() # Clear previous trade offer
-        response = tw.trade_window.run()
+        tw.trade_window.run()
         tw.trade_window.destroy()
         return True
 
@@ -410,7 +410,7 @@ class MainWindow:
                 welcome_dialog.WelcomeDialog(self)
 
             return False
-        
+
         # Close the connection if there is one open.  If not, do nothing.
         try:
             common.DB_CON.close();
@@ -535,7 +535,7 @@ class MainWindow:
             gtk.MESSAGE_WARNING,
             gtk.BUTTONS_NONE)
         dlg.set_markup(message)
-        
+
         dlg.add_button("Close _Without Saving", gtk.RESPONSE_NO)
         dlg.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
         defaultAction = dlg.add_button(gtk.STOCK_SAVE, gtk.RESPONSE_YES)
@@ -1272,4 +1272,3 @@ class MainWindow:
         self.builder.connect_signals(self)
 
         self.main_window.show()
-

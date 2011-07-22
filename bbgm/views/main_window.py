@@ -5,15 +5,13 @@
 import cPickle as pickle
 import gtk
 import os
-import pango
 import random
 import sqlite3
-import shutil
 import time
 
 # My modules
 from bbgm import common
-from bbgm.core import game_sim, player, schedule
+from bbgm.core import game_sim, player
 from bbgm.util import resources
 
 # Windows and dialogs

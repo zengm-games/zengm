@@ -25,8 +25,9 @@ Coding style
 
 http://www.python.org/dev/peps/pep-0008/ with the following exceptions:
 
-* Use a maximum line length of 120 in Python files. (NOTE: The current code
-  doesn't always obey this rule, but it will be updated.)
+* Use a maximum line length of 120 in Python files, except in comment blocks
+  where the limit is 80. (NOTE: The current code doesn't always obey this rule,
+  but it will be updated.)
 
 * Use Google-style comments, because I like them better
   http://google-styleguide.googlecode.com/svn/trunk/pyguide.html#Comments

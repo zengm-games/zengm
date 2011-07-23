@@ -124,7 +124,6 @@ Salary Cap: %s' % (name, payroll, salary_cap))
 
         # Initial player proposal
         self.player_amount, expiration, self.times_asked = common.DB_CON.execute('SELECT contract_amount, contract_expiration, free_agent_times_asked FROM player_attributes WHERE player_id = ?', (self.player_id,)).fetchone()
-        print self.player_amount, self.times_asked
         self.player_years = expiration - common.SEASON
         # Adjust to account for in-season signings
         if self.mw.phase <= 2:

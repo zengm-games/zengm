@@ -15,20 +15,24 @@ from bbgm.core import game_sim, player
 from bbgm.util import resources
 
 # Windows and dialogs
-from bbgm.views import contract_window, draft_dialog, free_agents_window, retired_players_window, roster_window, player_window, season_end_window, team_history_window, trade_window, welcome_dialog
+from bbgm.views import (contract_window, draft_dialog, free_agents_window, retired_players_window, roster_window,
+                        player_window, season_end_window, team_history_window, trade_window, welcome_dialog)
 
 # Tabs
-from bbgm.views import standings_tab, finances_tab, player_ratings_tab, player_stats_tab, team_stats_tab, game_log_tab, playoffs_tab
+from bbgm.views import (standings_tab, finances_tab, player_ratings_tab, player_stats_tab, team_stats_tab, game_log_tab,
+                        playoffs_tab)
+
 
 class MainWindow:
     def on_main_window_delete_event(self, widget, data=None):
-        return self.quit() # If false, proceed to on_main_window_destroy. Otherwise, it was cancelled.
+        return self.quit()  # If false, proceed to on_main_window_destroy. Otherwise, it was cancelled.
 
     def on_main_window_destroy(self, widget, data=None):
         gtk.main_quit()
 
     def on_placeholder(self, widget, data=None):
-        md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, 'Sorry, this feature isn\'t implemented yet.')
+        md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING,
+                               gtk.BUTTONS_CLOSE, 'Sorry, this feature isn\'t implemented yet.')
         md.run()
         md.destroy()
 
@@ -39,7 +43,9 @@ class MainWindow:
         '''
         if self.games_in_progress:
             self.stop_games = True
-            md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, 'Can\'t start a new game while simulation is in progress.  Wait until the current day\'s games are over and try again.')
+            md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                                   gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, ('Can\'t start a new game while simulation'
+                                   'is in progress.  Wait until the current day\'s games are over and try again.'))
             md.run()
             md.destroy()
         else:
@@ -56,7 +62,9 @@ class MainWindow:
     def on_menuitem_open_activate(self, widget=None, data=None):
         if self.games_in_progress:
             self.stop_games = True
-            md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, 'Can\'t open game while simulation is in progress.  Wait until the current day\'s games are over and try again.')
+            md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                                   gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, ('Can\'t open game while simulation'
+                                   'is in progress.  Wait until the current day\'s games are over and try again.'))
             md.run()
             md.destroy()
         else:
@@ -72,7 +80,9 @@ class MainWindow:
     def on_menuitem_save_activate(self, widget, data=None):
         if self.games_in_progress:
             self.stop_games = True
-            md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, 'Can\'t save game while simulation is in progress.  Wait until the current day\'s games are over and try again.')
+            md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                                   gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, ('Can\'t save game while simulation'
+                                   'is in progress.  Wait until the current day\'s games are over and try again.'))
             md.run()
             md.destroy()
         else:
@@ -81,7 +91,9 @@ class MainWindow:
     def on_menuitem_save_as_activate(self, widget, data=None):
         if self.games_in_progress:
             self.stop_games = True
-            md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, 'Can\'t save game while simulation is in progress.  Wait until the current day\'s games are over and try again.')
+            md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                                   gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, 'Can\'t save game while simulation'
+                                   'is in progress.  Wait until the current day\'s games are over and try again.')
             md.run()
             md.destroy()
         else:
@@ -98,22 +110,22 @@ class MainWindow:
         else:
             self.rw.update_roster()
             if self.rw.roster_window.flags() & gtk.VISIBLE:
-                self.rw.roster_window.window.show() # Raise the window if it's in the background
+                self.rw.roster_window.window.show()  # Raise the window if it's in the background
             else:
-                self.rw.roster_window.show() # Show the window
+                self.rw.roster_window.show()  # Show the window
         return True
 
     def on_menuitem_team_history_activate(self, widget, data=None):
         if not hasattr(self, 'thw'):
             self.thw = team_history_window.TeamHistoryWindow(self)
         self.thw.update()
-        self.thw.team_history_window.show() # Show the dialog
-        self.thw.team_history_window.window.show() # Raise the dialog if it's in the background
+        self.thw.team_history_window.show()  # Show the dialog
+        self.thw.team_history_window.window.show()  # Raise the dialog if it's in the background
         return True
 
     def on_menuitem_trade_activate(self, widget, data=None):
         tw = trade_window.TradeWindow(self)
-        tw.trade.clear_offer() # Clear previous trade offer
+        tw.trade.clear_offer()  # Clear previous trade offer
         tw.trade_window.run()
         tw.trade_window.destroy()
         return True
@@ -124,9 +136,9 @@ class MainWindow:
         else:
             self.faw.update_free_agents()
             if self.faw.free_agents_window.flags() & gtk.VISIBLE:
-                self.faw.free_agents_window.window.show() # Raise the window if it's in the background
+                self.faw.free_agents_window.window.show()  # Raise the window if it's in the background
             else:
-                self.faw.free_agents_window.show() # Show the window
+                self.faw.free_agents_window.show()  # Show the window
         return True
 
     def on_menuitem_stop_activate(self, widget, data=None):
@@ -140,8 +152,9 @@ class MainWindow:
 
     def on_menuitem_one_week_activate(self, widget, data=None):
         if self.phase != 3:
-            row = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?', (common.SEASON,)).fetchone()
-            num_days = common.SEASON_LENGTH - row[0] # Number of days remaining
+            row = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?',
+                                        (common.SEASON,)).fetchone()
+            num_days = common.SEASON_LENGTH - row[0]  # Number of days remaining
             if num_days > 7:
                 num_days = 7
         else:
@@ -151,8 +164,9 @@ class MainWindow:
 
     def on_menuitem_one_month_activate(self, widget, data=None):
         if self.phase != 3:
-            row = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?', (common.SEASON,)).fetchone()
-            num_days = common.SEASON_LENGTH - row[0] # Number of days remaining
+            row = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?',
+                                        (common.SEASON,)).fetchone()
+            num_days = common.SEASON_LENGTH - row[0]  # Number of days remaining
             if num_days > 30:
                 num_days = 30
         else:
@@ -162,12 +176,13 @@ class MainWindow:
 
     def on_menuitem_until_playoffs_activate(self, widget, data=None):
         row = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?', (common.SEASON,)).fetchone()
-        num_days = common.SEASON_LENGTH - row[0] # Number of days remaining
+        num_days = common.SEASON_LENGTH - row[0]  # Number of days remaining
         self.play_games(num_days)
         return True
 
     def on_menuitem_through_playoffs_activate(self, widget, data=None):
-        self.play_games(100) # There aren't 100 days in the playoffs, so 100 will cover all the games and the sim stops when the playoffs end
+        self.play_games(100)  # There aren't 100 days in the playoffs, so 100 will cover all the games and the sim stops
+                              # when the playoffs end
         return True
 
     def on_menuitem_until_draft_activate(self, widget, data=None):
@@ -193,8 +208,7 @@ class MainWindow:
 
     # PyGTK FAQ entry 10.13
     def on_aboutdialog_response(self, widget, response, data=None):
-        # system-defined GtkDialog responses are always negative, in which    
-        # case we want to hide it
+        # system-defined GtkDialog responses are always negative, in which case we want to hide it
         if response < 0:
             self.aboutdialog.hide()
             self.aboutdialog.emit_stop_by_name('response')
@@ -300,7 +314,7 @@ class MainWindow:
             self.faw.update_free_agents()
 
         if hasattr(self, 'pw') and (self.pw.player_window.flags() & gtk.VISIBLE):
-           self.pw.update_player(-1)
+            self.pw.update_player(-1)
 
     def new_game(self, team_id):
         '''
@@ -331,9 +345,9 @@ class MainWindow:
         sql = ''
         player_id = 1
         for t in range(-1, 30):
-            good_neutral_bad = random.randrange(-1, 2) # Determines if this will be a good team or not
+            good_neutral_bad = random.randrange(-1, 2)  # Determines if this will be a good team or not
 
-            self.progressbar_new_game.set_fraction(0.6*(t+1)/31.0)
+            self.progressbar_new_game.set_fraction(0.6 * (t + 1) / 31.0)
             while gtk.events_pending():
                 gtk.main_iteration(False)
 #            base_ratings = [40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29]
@@ -344,15 +358,15 @@ class MainWindow:
                 i = random.randrange(len(profiles))
                 profile = profiles[i]
 
-                aging_years = random.randint(0,19)
+                aging_years = random.randint(0, 19)
 
                 draft_year = common.SEASON - 1 - aging_years
 
                 gp.new(player_id, t, 19, profile, base_ratings[p], potentials[p], draft_year)
                 gp.develop(aging_years)
                 if p < 5:
-                    gp.bonus(good_neutral_bad*random.randint(0,20))
-                if t == -1: # Free agents
+                    gp.bonus(good_neutral_bad * random.randint(0, 20))
+                if t == -1:  # Free agents
                     gp.bonus(-15)
 
                 # Update contract based on development
@@ -360,7 +374,8 @@ class MainWindow:
                     randomize_expiration = True  # Players on teams already get randomized contracts
                 else:
                     randomize_expiration = False
-                gp.attribute['contract_amount'], gp.attribute['contract_expiration'] = gp.contract(randomize_expiration = randomize_expiration)
+                amount, expiration = gp.contract(randomize_expiration=randomize_expiration)
+                gp.attribute['contract_amount'], gp.attribute['contract_expiration'] = amount, expiration
 
                 sql += gp.sql_insert()
 
@@ -377,7 +392,7 @@ class MainWindow:
         self.connect(team_id)
 
         self.progressbar_new_game.set_fraction(1)
-        self.progressbar_new_game.set_text('Done') # Not really, but close
+        self.progressbar_new_game.set_text('Done')  # Not really, but close
         while gtk.events_pending():
             gtk.main_iteration(False)
 
@@ -400,7 +415,8 @@ class MainWindow:
             data = f.read()
             f.close()
         except IOError:
-            md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK)
+            md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                                   gtk.MESSAGE_ERROR, gtk.BUTTONS_OK)
             md.set_markup("<span size='large' weight='bold'>Cannot load file '%s'.</span>" % filename)
             md.run()
             md.destroy()
@@ -413,7 +429,7 @@ class MainWindow:
 
         # Close the connection if there is one open.  If not, do nothing.
         try:
-            common.DB_CON.close();
+            common.DB_CON.close()
         except:
             pass
 
@@ -430,12 +446,13 @@ class MainWindow:
 
         return True
 
-    def connect(self, team_id = -1):
-        '''
-        Connect to the database
-        Get the team ID, season #, and schedule
-        If team_id is passed as a parameter, then this is being called from new_game and the schema should be loaded and the team_id should be set in game_attributes
-        '''
+    def connect(self, team_id=-1):
+        """Connect to the SQLite database and set up other game settings.
+
+        If team_id is passed as a parameter, then this is being called from
+        self.new_game and the schema is be loaded and the team_id is be set in
+        game_attributes. The seaon, team_id, schedule, and phase are set here.
+        """
         common.DB_CON = sqlite3.connect(common.DB_TEMP_FILENAME)
         common.DB_CON.execute('PRAGMA synchronous=OFF')
         common.DB_CON.isolation_level = 'IMMEDIATE'
@@ -463,7 +480,7 @@ class MainWindow:
                 common.DB_CON.commit()
                 c.close()
 
-                self.progressbar_new_game.set_fraction(self.progressbar_new_game.get_fraction()+0.1)
+                self.progressbar_new_game.set_fraction(self.progressbar_new_game.get_fraction() + 0.1)
                 while gtk.events_pending():
                     gtk.main_iteration(False)
             common.DB_CON.execute('UPDATE game_attributes SET team_id = ?', (team_id,))
@@ -508,7 +525,8 @@ class MainWindow:
         '''
         # Schedule
         schedule = pickle.dumps(self.schedule)
-        common.DB_CON.execute('UPDATE game_attributes SET schedule = ? WHERE team_id = ?', (schedule, common.PLAYER_TEAM_ID))
+        common.DB_CON.execute('UPDATE game_attributes SET schedule = ? WHERE team_id = ?', (schedule,
+                              common.PLAYER_TEAM_ID))
 
         common.DB_CON.commit()
 
@@ -527,7 +545,8 @@ class MainWindow:
         Call this when there is unsaved stuff and the user wants to start a new
         game or open a saved game.  Returns 1 to proceed or 0 to abort.
         '''
-        message = "<span size='large' weight='bold'>Save changes to your current game before closing?</span>\n\nYour changes will be lost if you don't save them."
+        message = ("<span size='large' weight='bold'>Save changes to your current game before closing?</span>\n\n"
+                   "Your changes will be lost if you don't save them.")
 
         dlg = gtk.MessageDialog(self.main_window,
             gtk.DIALOG_MODAL |
@@ -541,7 +560,7 @@ class MainWindow:
         defaultAction = dlg.add_button(gtk.STOCK_SAVE, gtk.RESPONSE_YES)
         #make save the default action when enter is pressed
         dlg.set_default(defaultAction)
-        
+
         dlg.set_transient_for(self.main_window)
 
         response = dlg.run()
@@ -578,7 +597,10 @@ class MainWindow:
                 # Round: 1, 2, 3, or 4
                 current_round, = common.DB_CON.execute('SELECT MAX(series_round) FROM active_playoff_series').fetchone()
 
-                for team_id_home, team_id_away in common.DB_CON.execute('SELECT team_id_home, team_id_away FROM active_playoff_series WHERE won_home < 4 AND won_away < 4 AND series_round = ?', (current_round,)):
+                for team_id_home, team_id_away in common.DB_CON.execute('SELECT team_id_home, team_id_away FROM'
+                                                                        'active_playoff_series WHERE won_home < 4 AND'
+                                                                        'won_away < 4 AND series_round = ?',
+                                                                        (current_round,)):
                     self.schedule.append([team_id_home, team_id_away])
                     active_series = True
                     num_active_teams += 2
@@ -587,16 +609,21 @@ class MainWindow:
 
                     # Who won?
                     winners = {}
-                    for series_id, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away in common.DB_CON.execute('SELECT series_id, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away FROM active_playoff_series WHERE series_round = ? ORDER BY series_id ASC', (current_round,)):    
+                    for row in common.DB_CON.execute(('SELECT series_id, team_id_home, team_id_away, seed_home,'
+                                                      'seed_away, won_home, won_away FROM active_playoff_series WHERE'
+                                                      'series_round = ? ORDER BY series_id ASC'), (current_round,)):
+                        series_id, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away = row
                         if won_home == 4:
                             winners[series_id] = [team_id_home, seed_home]
                         else:
                             winners[series_id] = [team_id_away, seed_away]
                         # Record user's team as conference and league champion
                         if winners[series_id][0] == common.PLAYER_TEAM_ID and current_round == 3:
-                            common.DB_CON.execute('UPDATE team_attributes SET won_conference = 1 WHERE season = ? AND team_id = ?', (common.SEASON, common.PLAYER_TEAM_ID))
+                            common.DB_CON.execute('UPDATE team_attributes SET won_conference = 1 WHERE season = ? AND'
+                                                  'team_id = ?', (common.SEASON, common.PLAYER_TEAM_ID))
                         elif winners[series_id][0] == common.PLAYER_TEAM_ID and current_round == 4:
-                            common.DB_CON.execute('UPDATE team_attributes SET won_championship = 1 WHERE season = ? AND team_id = ?', (common.SEASON, common.PLAYER_TEAM_ID))
+                            common.DB_CON.execute('UPDATE team_attributes SET won_championship = 1 WHERE season = ? AND'
+                                                  'team_id = ?', (common.SEASON, common.PLAYER_TEAM_ID))
 
                     # Are the whole playoffs over?
                     if current_round == 4:
@@ -606,33 +633,40 @@ class MainWindow:
                     # Add a new round to the database
                     series_id = 1
                     current_round += 1
-                    query = 'INSERT INTO active_playoff_series (series_id, series_round, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away) VALUES (?, ?, ?, ?, ?, ?, 0, 0)'
-                    for i in range(1, len(winners), 2): # Go through winners by 2
-                        if winners[i][1] < winners[i+1][1]: # Which team is the home team?
-                            new_series = (series_id, current_round, winners[i][0], winners[i+1][0], winners[i][1], winners[i+1][1])
+                    query = ('INSERT INTO active_playoff_series (series_id, series_round, team_id_home, team_id_away,'
+                             'seed_home, seed_away, won_home, won_away) VALUES (?, ?, ?, ?, ?, ?, 0, 0)')
+                    for i in range(1, len(winners), 2):  # Go through winners by 2
+                        if winners[i][1] < winners[i + 1][1]:  # Which team is the home team?
+                            new_series = (series_id, current_round, winners[i][0], winners[i + 1][0], winners[i][1],
+                                          winners[i + 1][1])
                         else:
-                            new_series = (series_id, current_round, winners[i+1][0], winners[i][0], winners[i+1][1], winners[i][1])
+                            new_series = (series_id, current_round, winners[i + 1][0], winners[i][0], winners[i + 1][1],
+                                          winners[i][1])
                         common.DB_CON.execute(query, new_series)
                         series_id += 1
                     self.playoffs.updated = False
                     continue
             else:
                 # Decrease free agent demands
-                for player_id, amount, expiration in common.DB_CON.execute('SELECT player_id, contract_amount, contract_expiration FROM player_attributes WHERE team_id = -1 AND contract_amount > 500'):
+                for player_id, amount, expiration in common.DB_CON.execute('SELECT player_id, contract_amount, '
+                                                                           'contract_expiration FROM player_attributes '
+                                                                           'WHERE team_id = -1 AND contract_amount > '
+                                                                           '500'):
                     amount -= 50
                     if amount < 500:
                         amount = 500
-                    if amount  < 2000:
+                    if amount < 2000:
                         expiration = common.SEASON + 1
-                    if amount  < 1000:
+                    if amount < 1000:
                         expiration = common.SEASON
-                    common.DB_CON.execute('UPDATE player_attributes SET contract_amount = ?, contract_expiration = ? WHERE player_id = ?', (amount, expiration, player_id))
+                    common.DB_CON.execute(('UPDATE player_attributes SET contract_amount = ?, contract_expiration = ?'
+                                           'WHERE player_id = ?'), (amount, expiration, player_id))
 
                 # Sign available free agents
                 self.auto_sign_free_agents()
 
             # If the user wants to stop the simulation, then stop the simulation
-            if d == 0: # But not on the first day
+            if d == 0:  # But not on the first day
                 self.stop_games = False
             if self.stop_games:
                 self.stop_games = False
@@ -642,7 +676,7 @@ class MainWindow:
                 num_active_teams = len(common.TEAMS)
 
             self.statusbar.push(self.statusbar_context_id, 'Playing day %d of %d...' % (d, num_days))
-            for i in range(num_active_teams/2):
+            for i in range(num_active_teams / 2):
                 teams = self.schedule.pop()
 
                 while gtk.events_pending():
@@ -656,7 +690,7 @@ class MainWindow:
                 game.write_stats()
             if self.phase == 3:
                 self.playoffs.updated = False
-                time.sleep(0.3) # Or else it updates too fast to see what's going on
+                time.sleep(0.3)  # Or else it updates too fast to see what's going on
             self.update_all_pages()
             self.statusbar.pop(self.statusbar_context_id)
 
@@ -676,16 +710,17 @@ class MainWindow:
             self.playoffs.updated = False
         else:
             # Check to see if the season is over
-            row = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?', (common.SEASON,)).fetchone()
+            row = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?',
+                                        (common.SEASON,)).fetchone()
             days_played = row[0]
             if days_played == common.SEASON_LENGTH:
                 season_over = True
 
                 sew = season_end_window.SeasonEndWindow(self)
-                sew.season_end_window.show() # Show the window
-                sew.season_end_window.window.show() # Raise the window if it's in the background
+                sew.season_end_window.show()  # Show the window
+                sew.season_end_window.window.show()  # Raise the window if it's in the background
 
-                self.new_phase(3) # Start playoffs
+                self.new_phase(3)  # Start playoffs
 
         self.update_all_pages()
         self.unsaved_changes = True
@@ -714,7 +749,8 @@ class MainWindow:
 
         # Delete seasons left over from a previously open game
         if len(model) > 0:
-            if int(model[0][0]) > common.SEASON:  # If the largest season in the liststore is greater than the current season
+            # If the largest season in the liststore is greater than the current season
+            if int(model[0][0]) > common.SEASON:
                 model.clear()
                 active = 0  # There will only be one entry, so select that one
 
@@ -728,7 +764,8 @@ class MainWindow:
                     model.prepend(['%s' % season])
                 populated = True
 
-        if not populated and len(model) == 0:  # Nothing was found in the liststore or nothing was found in the team_stats database
+        # Nothing was found in the liststore or nothing was found in the team_stats database
+        if not populated and len(model) == 0:
             season, = common.DB_CON.execute('SELECT season FROM game_attributes').fetchone()
             model.append(['%s' % season])
             populated = True
@@ -766,8 +803,9 @@ class MainWindow:
         if len(model) == 0:
             model = gtk.ListStore(str, int)
             if all_teams_option:
-                model.append(['All Teams', 666]) # 666 is the magin number to find all teams
-            for row in common.DB_CON.execute('SELECT abbreviation, team_id FROM team_attributes WHERE season = ? ORDER BY abbreviation ASC', (season,)):
+                model.append(['All Teams', 666])  # 666 is the magic number to find all teams
+            for row in common.DB_CON.execute('SELECT abbreviation, team_id FROM team_attributes WHERE season = ? ORDER'
+                                             'BY abbreviation ASC', (season,)):
                 model.append(['%s' % row[0], row[1]])
             combobox.set_model(model)
         combobox.set_active(active)
@@ -775,20 +813,23 @@ class MainWindow:
         team_id = model.get_value(iter, 1)
         return team_id
 
-    def roster_auto_sort(self, team_id, from_button = False):
+    def roster_auto_sort(self, team_id, from_button=False):
         players = []
-        query = 'SELECT player_attributes.player_id, player_ratings.overall, player_ratings.endurance FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = ? ORDER BY player_ratings.roster_position ASC'
+        query = ('SELECT player_attributes.player_id, player_ratings.overall, player_ratings.endurance FROM'
+                 'player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND'
+                 'player_attributes.team_id = ? ORDER BY player_ratings.roster_position ASC')
 
         for row in common.DB_CON.execute(query, (team_id,)):
             players.append(list(row))
 
         # Order
-        players.sort(cmp=lambda x,y: y[1]-x[1]) # Sort by rating
+        players.sort(cmp=lambda x, y: y[1] - x[1])  # Sort by rating
 
         # Update
         roster_position = 1
         for player in players:
-            common.DB_CON.execute('UPDATE player_ratings SET roster_position = ? WHERE player_id = ?', (roster_position, player[0]))
+            common.DB_CON.execute('UPDATE player_ratings SET roster_position = ? WHERE player_id = ?',
+                                  (roster_position, player[0]))
             roster_position += 1
 
     def auto_sign_free_agents(self):
@@ -796,9 +837,13 @@ class MainWindow:
         AI teams sign free agents.
         '''
         # Build free_agents containing player ids and desired contracts
-        num_days_played, = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?', (common.SEASON,)).fetchone()
+        num_days_played, = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?',
+                                                 (common.SEASON,)).fetchone()
         free_agents = []
-        for player_id, amount, expiration in common.DB_CON.execute('SELECT pa.player_id, pa.contract_amount, pa.contract_expiration FROM player_attributes as pa, player_ratings as pr WHERE pa.team_id = -1 AND pa.player_id = pr.player_id ORDER BY pr.overall + pr.potential DESC'):
+        query = ('SELECT pa.player_id, pa.contract_amount, pa.contract_expiration FROM player_attributes as pa,'
+                 'player_ratings as pr WHERE pa.team_id = -1 AND pa.player_id = pr.player_id ORDER BY pr.overall +'
+                 'pr.potential DESC')
+        for player_id, amount, expiration in common.DB_CON.execute(query):
             free_agents.append([player_id, amount, expiration, False])
 
         # Randomly order teams and let them sign free agents
@@ -807,22 +852,28 @@ class MainWindow:
         for i in xrange(30):
             team_id = team_ids[i]
             if team_id == common.PLAYER_TEAM_ID:
-                continue # Skip the user's team
-            num_players, payroll = common.DB_CON.execute('SELECT count(*), SUM(pa.contract_amount) + (SELECT TOTAL(contract_amount) FROM released_players_salaries WHERE released_players_salaries.team_id = ta.team_id) FROM team_attributes as ta, player_attributes as pa WHERE pa.team_id = ta.team_id AND ta.team_id = ? AND pa.contract_expiration >= ? AND ta.season = ?', (team_id, common.SEASON, common.SEASON,)).fetchone()
+                continue  # Skip the user's team
+            query = ('SELECT count(*), SUM(pa.contract_amount) + (SELECT TOTAL(contract_amount) FROM '
+                     'released_players_salaries WHERE released_players_salaries.team_id = ta.team_id) FROM '
+                     'team_attributes as ta, player_attributes as pa WHERE pa.team_id = ta.team_id AND ta.team_id = ? '
+                     'AND pa.contract_expiration >= ? AND ta.season = ?')
+            num_players, payroll = common.DB_CON.execute(query, (team_id, common.SEASON, common.SEASON,)).fetchone()
             while payroll < common.SALARY_CAP and num_players < 15:
                 j = 0
                 new_player = False
                 for player_id, amount, expiration, signed in free_agents:
                     if amount + payroll <= common.SALARY_CAP and not signed and num_players < 15:
-                        common.DB_CON.execute('UPDATE player_attributes SET team_id = ?, contract_amount = ?, contract_expiration = ? WHERE player_id = ?', (team_id, amount, expiration, player_id))
-                        free_agents[j][-1] = True # Mark player signed
+                        query = ('UPDATE player_attributes SET team_id = ?, contract_amount = ?,'
+                                 'contract_expiration = ? WHERE player_id = ?')
+                        common.DB_CON.execute(query, (team_id, amount, expiration, player_id))
+                        free_agents[j][-1] = True  # Mark player signed
                         new_player = True
                         num_players += 1
                         payroll += amount
                         common.roster_auto_sort(team_id)
                     j += 1
                 if not new_player:
-                    break                
+                    break
 
     def player_contract_expire(self, player_id):
         resign = random.choice([True, False])
@@ -830,7 +881,8 @@ class MainWindow:
         p.load(player_id)
         if resign:
             amount, expiration = p.contract()
-            common.DB_CON.execute('UPDATE player_attributes SET contract_amount = ?, contract_expiration = ? WHERE player_id = ?', (amount, expiration, player_id))
+            common.DB_CON.execute(('UPDATE player_attributes SET contract_amount = ?, contract_expiration = ? WHERE'
+                                   'player_id = ?'), (amount, expiration, player_id))
         else:
             p.add_to_free_agents(self.phase)
 
@@ -881,7 +933,9 @@ class MainWindow:
         return result, team_id
 
     def open_game_dialog(self):
-        open_dialog = gtk.FileChooserDialog(title='Open Game', action=gtk.FILE_CHOOSER_ACTION_OPEN, buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        open_dialog = gtk.FileChooserDialog(title='Open Game', action=gtk.FILE_CHOOSER_ACTION_OPEN,
+                                            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN,
+                                            gtk.RESPONSE_OK))
         open_dialog.set_current_folder(common.SAVES_FOLDER)
         open_dialog.set_transient_for(self.main_window)
 
@@ -906,8 +960,9 @@ class MainWindow:
         '''
         Return True if the game is saved, False otherwise
         '''
-        buttons = (gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_SAVE,gtk.RESPONSE_OK)
-        save_game_dialog = gtk.FileChooserDialog("Choose a location to save the game", self.main_window, gtk.FILE_CHOOSER_ACTION_SAVE, buttons)
+        buttons = (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_SAVE, gtk.RESPONSE_OK)
+        save_game_dialog = gtk.FileChooserDialog('Choose a location to save the game', self.main_window,
+                                                 gtk.FILE_CHOOSER_ACTION_SAVE, buttons)
         save_game_dialog.set_do_overwrite_confirmation(True)
         save_game_dialog.set_default_response(gtk.RESPONSE_OK)
         save_game_dialog.set_current_folder(common.SAVES_FOLDER)
@@ -943,10 +998,13 @@ class MainWindow:
 
     def new_schedule(self):
         teams = []
-        for row in common.DB_CON.execute('SELECT team_id, division_id, (SELECT conference_id FROM league_divisions WHERE league_divisions.division_id = team_attributes.division_id) FROM team_attributes WHERE season = ?', (common.SEASON,)):
-            teams.append({'team_id': row[0], 'division_id': row[1], 'conference_id': row[2], 'home_games': 0, 'away_games': 0})
+        query = ('SELECT team_id, division_id, (SELECT conference_id FROM league_divisions WHERE '
+                 'league_divisions.division_id = team_attributes.division_id) FROM team_attributes WHERE season = ?')
+        for row in common.DB_CON.execute(query, (common.SEASON,)):
+            teams.append({'team_id': row[0], 'division_id': row[1], 'conference_id': row[2], 'home_games': 0,
+                          'away_games': 0})
 
-        self.schedule = [] # team_id_home, team_id_away
+        self.schedule = []  # team_id_home, team_id_away
 
         for i in range(len(teams)):
             for j in range(len(teams)):
@@ -968,7 +1026,8 @@ class MainWindow:
 
                     # Constraint: 1-2 home self.schedule vs. each team in same conference and different division
                     # Only do 1 now
-                    if teams[i]['conference_id'] == teams[j]['conference_id'] and teams[i]['division_id'] != teams[j]['division_id']:
+                    if (teams[i]['conference_id'] == teams[j]['conference_id'] and
+                        teams[i]['division_id'] != teams[j]['division_id']):
                         self.schedule.append(game)
                         teams[i]['home_games'] += 1
                         teams[j]['away_games'] += 1
@@ -987,10 +1046,10 @@ class MainWindow:
             while games < 8:
                 new_matchup = []
                 n = 0
-                while n <= 14: # 14 = num teams in conference - 1
+                while n <= 14:  # 14 = num teams in conference - 1
                     iters = 0
                     while True:
-                        try_n = random.randint(0,14)
+                        try_n = random.randint(0, 14)
                         # Pick try_n such that it is in a different division than n and has not been picked before
                         if division_ids[d][try_n] != division_ids[d][n] and try_n not in new_matchup:
                             good = True
@@ -1012,7 +1071,7 @@ class MainWindow:
                     n += 1
                 matchups.append(new_matchup)
                 games += 1
-            matchups.pop(0) # Remove the first row in matchups
+            matchups.pop(0)  # Remove the first row in matchups
             for matchup in matchups:
                 for t in matchup:
                     i = team_ids_by_conference[d][t]
@@ -1040,8 +1099,12 @@ class MainWindow:
             common.DB_CON.execute('DELETE FROM active_playoff_series')
 
             # Create new rows in team_attributes
-            for row in common.DB_CON.execute('SELECT team_id, division_id, region, name, abbreviation, cash FROM team_attributes WHERE season = ?', (common.SEASON-1,)):
-                common.DB_CON.execute('INSERT INTO team_attributes (team_id, division_id, region, name, abbreviation, cash, season) VALUES (?, ?, ?, ?, ?, ?, ?)', (row[0], row[1], row[2], row[3], row[4], row[5], common.SEASON))
+            query = ('SELECT team_id, division_id, region, name, abbreviation, cash FROM team_attributes WHERE '
+                     'season = ?')
+            for row in common.DB_CON.execute(query, (common.SEASON - 1,)):
+                common.DB_CON.execute(('INSERT INTO team_attributes (team_id, division_id, region, name, abbreviation,'
+                                       'cash, season) VALUES (?, ?, ?, ?, ?, ?, ?)'), (row[0], row[1], row[2], row[3],
+                                       row[4], row[5], common.SEASON))
             # Age players
             player_ids = []
             for row in common.DB_CON.execute('SELECT player_id, born_date FROM player_attributes'):
@@ -1087,18 +1150,22 @@ class MainWindow:
             # Set playoff matchups
             for conference_id in range(2):
                 teams = []
-                seed = 1
-                for team_id, in common.DB_CON.execute('SELECT ta.team_id FROM team_attributes as ta, league_divisions as ld WHERE ld.division_id = ta.division_id AND ld.conference_id = ? AND ta.season = ? ORDER BY ta.won/(ta.won + ta.lost) DESC LIMIT 8', (conference_id, common.SEASON)):
+                query = ('SELECT ta.team_id FROM team_attributes as ta, league_divisions as ld WHERE ld.division_id = '
+                         'ta.division_id AND ld.conference_id = ? AND ta.season = ? ORDER BY ta.won/(ta.won + ta.lost) '
+                         'DESC LIMIT 8')
+                for team_id, in common.DB_CON.execute(query, (conference_id, common.SEASON)):
                     teams.append(team_id)
                     # Record playoff appearance for player's team
                     if team_id == common.PLAYER_TEAM_ID:
-                        common.DB_CON.execute('UPDATE team_attributes SET playoffs = 1 WHERE season = ? AND team_id = ?', (common.SEASON, common.PLAYER_TEAM_ID))
+                        common.DB_CON.execute(('UPDATE team_attributes SET playoffs = 1 WHERE season = ? AND team_id ='
+                                               '?'), (common.SEASON, common.PLAYER_TEAM_ID))
 
-                query = 'INSERT INTO active_playoff_series (series_id, series_round, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away) VALUES (?, 1, ?, ?, ?, ?, 0, 0)'
-                common.DB_CON.execute(query, (conference_id*4+1, teams[0], teams[7], 1, 8))
-                common.DB_CON.execute(query, (conference_id*4+2, teams[3], teams[4], 4, 5))
-                common.DB_CON.execute(query, (conference_id*4+3, teams[2], teams[5], 3, 6))
-                common.DB_CON.execute(query, (conference_id*4+4, teams[1], teams[6], 2, 7))
+                query = ('INSERT INTO active_playoff_series (series_id, series_round, team_id_home, team_id_away,'
+                         'seed_home, seed_away, won_home, won_away) VALUES (?, 1, ?, ?, ?, ?, 0, 0)')
+                common.DB_CON.execute(query, (conference_id * 4 + 1, teams[0], teams[7], 1, 8))
+                common.DB_CON.execute(query, (conference_id * 4 + 2, teams[3], teams[4], 4, 5))
+                common.DB_CON.execute(query, (conference_id * 4 + 3, teams[2], teams[5], 3, 6))
+                common.DB_CON.execute(query, (conference_id * 4 + 4, teams[1], teams[6], 2, 7))
 
             self.playoffs.updated = False
             self.notebook.set_current_page(self.pages['playoffs'])
@@ -1110,12 +1177,14 @@ class MainWindow:
             self.update_play_menu(self.phase)
 
             # Remove released players' salaries from payrolls
-            common.DB_CON.execute('DELETE FROM released_players_salaries WHERE contract_expiration <= ?', (common.SEASON,))
+            common.DB_CON.execute('DELETE FROM released_players_salaries WHERE contract_expiration <= ?',
+                                  (common.SEASON,))
             self.finances.updated = False
             self.update_all_pages()
 
             # Add a year to the free agents
-            common.DB_CON.execute('UPDATE player_attributes SET contract_expiration = contract_expiration + 1 WHERE team_id = -1')
+            common.DB_CON.execute(('UPDATE player_attributes SET contract_expiration = contract_expiration + 1 WHERE'
+                                   'team_id = -1'))
 
             self.main_window.set_title('%s %s - Basketball GM' % (common.SEASON, 'Playoffs'))
 
@@ -1125,11 +1194,11 @@ class MainWindow:
 
             self.main_window.set_title('%s %s - Basketball GM' % (common.SEASON, 'Off-season'))
 
-            if old_phase != 5: # Can't check hasattr because we need a new draft every year
+            if old_phase != 5:  # Can't check hasattr because we need a new draft every year
                 self.dd = draft_dialog.DraftDialog(self)
             else:
-                self.dd.draft_dialog.show() # Show the window
-                self.dd.draft_dialog.window.show() # Raise the window if it's in the background
+                self.dd.draft_dialog.show()  # Show the window
+                self.dd.draft_dialog.window.show()  # Raise the window if it's in the background
             self.finances.updated = False
             self.update_all_pages()
 
@@ -1153,19 +1222,22 @@ class MainWindow:
 
             # Check for retiring players
             # Call the contructor each season because that's where the code to check for retirement is
-            rpw = retired_players_window.RetiredPlayersWindow(self) # Do the retired player check
+            rpw = retired_players_window.RetiredPlayersWindow(self)  # Do the retired player check
             rpw.retired_players_window.run()
             rpw.retired_players_window.destroy()
 
             # Move undrafted players to free agent pool
             for player_id, in common.DB_CON.execute('SELECT player_id FROM player_attributes WHERE team_id = -2'):
-                common.DB_CON.execute('UPDATE player_attributes SET draft_year = -1, draft_round = -1, draft_pick = -1, draft_team_id = -1 WHERE player_id = ?', (player_id,))
+                common.DB_CON.execute(('UPDATE player_attributes SET draft_year = -1, draft_round = -1, draft_pick = -1'
+                                       ', draft_team_id = -1 WHERE player_id = ?'), (player_id,))
                 p = player.Player()
                 p.load(player_id)
                 p.add_to_free_agents(self.phase)
 
             # Resign players
-            for player_id, team_id, name in common.DB_CON.execute('SELECT player_id, team_id, name FROM player_attributes WHERE contract_expiration = ? AND team_id >= 0', (common.SEASON,)):
+            query = ('SELECT player_id, team_id, name FROM player_attributes WHERE contract_expiration = ? AND'
+                     'team_id >= 0')
+            for player_id, team_id, name in common.DB_CON.execute(query, (common.SEASON,)):
                 if team_id != common.PLAYER_TEAM_ID:
                     # Automaitcally negotiate with teams
                     self.player_contract_expire(player_id)
@@ -1221,10 +1293,12 @@ class MainWindow:
         for i in range(len(self.menuitem_play)):
             self.menuitem_play[i].set_sensitive(show_menus[i])
 
-
     def __init__(self):
         self.builder = gtk.Builder()
-        self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.ui'), ['aboutdialog', 'accelgroup1', 'liststore3', 'liststore4', 'liststore5', 'liststore6', 'liststore7', 'liststore8', 'main_window', 'new_game_dialog', 'new_game_progressbar_window'])
+        self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.ui'), ['aboutdialog', 'accelgroup1',
+                                                               'liststore3', 'liststore4', 'liststore5', 'liststore6',
+                                                               'liststore7', 'liststore8', 'main_window',
+                                                               'new_game_dialog', 'new_game_progressbar_window'])
 
         self.main_window = self.builder.get_object('main_window')
         self.menuitem_play = []
@@ -1243,8 +1317,8 @@ class MainWindow:
         self.statusbar = self.builder.get_object('statusbar')
         self.statusbar_context_id = self.statusbar.get_context_id('Main Window Statusbar')
 
-
-        self.pages = dict(standings=0, finances=1, player_ratings=2, player_stats=3, team_stats=4, game_log=5, playoffs=6)
+        self.pages = dict(standings=0, finances=1, player_ratings=2, player_stats=3, team_stats=4, game_log=5,
+                          playoffs=6)
         # Set to True when treeview columns (or whatever) are set up
         self.built = dict(player_window_stats=False, player_window_game_log=False)
         # Set to True if data on this pane is current

@@ -40,7 +40,13 @@ class RetiredPlayersWindow:
         liststore = gtk.ListStore(int, str, str, int, int)
         self.treeview_retired_players.set_model(liststore)
 
-        query = "SELECT player_ratings.player_id, player_attributes.name, (SELECT abbreviation FROM team_attributes WHERE team_id = player_attributes.team_id), %d - player_attributes.born_date, player_ratings.overall, player_ratings.potential, player_attributes.team_id FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND (player_ratings.potential < ? OR (%d - player_attributes.born_date) > ?) AND player_attributes.team_id != -3 ORDER BY player_ratings.overall DESC" % (common.SEASON, common.SEASON)
+        query = ('SELECT player_ratings.player_id, player_attributes.name, (SELECT abbreviation FROM team_attributes '
+                 'WHERE team_id = player_attributes.team_id), %d - player_attributes.born_date, '
+                 'player_ratings.overall, player_ratings.potential, player_attributes.team_id FROM player_attributes, '
+                 'player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND '
+                 '(player_ratings.potential < ? OR (%d - player_attributes.born_date) > ?) AND '
+                 'player_attributes.team_id != -3 ORDER BY player_ratings.overall DESC'
+                 % (common.SEASON, common.SEASON))
         for row in common.DB_CON.execute(query, (min_potential, max_age)):
             player_id, name, team, age, overall, potential, team_id = row
             if team == None:
@@ -50,14 +56,18 @@ class RetiredPlayersWindow:
             if age > 34 or team == 'FA':  # Only players older than 34 or without a contract will retire
                 if age > 34:
                     age_excess = (age - 34) / 20.0  # 0.05 for each year beyond 34
-                potential_excess = (40 - potential) / 50.0  # 0.02 for each potential rating below 40 (this can be negative)
+                # 0.02 for each potential rating below 40 (this can be negative)
+                potential_excess = (40 - potential) / 50.0
                 r = (age_excess + potential_excess) + random.gauss(0, 1)
                 if r > 0:
                     common.DB_CON.execute('UPDATE player_attributes SET team_id = -3 WHERE player_id = ?', (player_id,))
                     liststore.append([player_id, name, team, age, overall])
 
         # Update "free agent years" counter and retire players who have been free agents for more than one years
-        query = "SELECT player_ratings.player_id, player_attributes.name, 'FA', %d - player_attributes.born_date, player_ratings.overall, player_ratings.potential FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND years_free_agent >= 1 AND team_id = -1 ORDER BY player_ratings.overall DESC" % (common.SEASON)
+        query = ('SELECT player_ratings.player_id, player_attributes.name, "FA", %d - player_attributes.born_date, '
+                 'player_ratings.overall, player_ratings.potential FROM player_attributes, player_ratings WHERE '
+                 'player_attributes.player_id = player_ratings.player_id AND years_free_agent >= 1 AND team_id = -1 '
+                 'ORDER BY player_ratings.overall DESC' % (common.SEASON))
         for row in common.DB_CON.execute(query):
             player_id, name, team, age, overall, potential = row
             overall = int(overall)

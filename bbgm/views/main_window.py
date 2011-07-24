@@ -804,7 +804,7 @@ class MainWindow:
             model = gtk.ListStore(str, int)
             if all_teams_option:
                 model.append(['All Teams', 666])  # 666 is the magic number to find all teams
-            for row in common.DB_CON.execute('SELECT abbreviation, team_id FROM team_attributes WHERE season = ? ORDER'
+            for row in common.DB_CON.execute('SELECT abbreviation, team_id FROM team_attributes WHERE season = ? ORDER '
                                              'BY abbreviation ASC', (season,)):
                 model.append(['%s' % row[0], row[1]])
             combobox.set_model(model)
@@ -815,8 +815,8 @@ class MainWindow:
 
     def roster_auto_sort(self, team_id, from_button=False):
         players = []
-        query = ('SELECT player_attributes.player_id, player_ratings.overall, player_ratings.endurance FROM'
-                 'player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND'
+        query = ('SELECT player_attributes.player_id, player_ratings.overall, player_ratings.endurance FROM '
+                 'player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND '
                  'player_attributes.team_id = ? ORDER BY player_ratings.roster_position ASC')
 
         for row in common.DB_CON.execute(query, (team_id,)):
@@ -840,8 +840,8 @@ class MainWindow:
         num_days_played, = common.DB_CON.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = ?',
                                                  (common.SEASON,)).fetchone()
         free_agents = []
-        query = ('SELECT pa.player_id, pa.contract_amount, pa.contract_expiration FROM player_attributes as pa,'
-                 'player_ratings as pr WHERE pa.team_id = -1 AND pa.player_id = pr.player_id ORDER BY pr.overall +'
+        query = ('SELECT pa.player_id, pa.contract_amount, pa.contract_expiration FROM player_attributes as pa, '
+                 'player_ratings as pr WHERE pa.team_id = -1 AND pa.player_id = pr.player_id ORDER BY pr.overall + '
                  'pr.potential DESC')
         for player_id, amount, expiration in common.DB_CON.execute(query):
             free_agents.append([player_id, amount, expiration, False])
@@ -863,7 +863,7 @@ class MainWindow:
                 new_player = False
                 for player_id, amount, expiration, signed in free_agents:
                     if amount + payroll <= common.SALARY_CAP and not signed and num_players < 15:
-                        query = ('UPDATE player_attributes SET team_id = ?, contract_amount = ?,'
+                        query = ('UPDATE player_attributes SET team_id = ?, contract_amount = ?, '
                                  'contract_expiration = ? WHERE player_id = ?')
                         common.DB_CON.execute(query, (team_id, amount, expiration, player_id))
                         free_agents[j][-1] = True  # Mark player signed
@@ -881,7 +881,7 @@ class MainWindow:
         p.load(player_id)
         if resign:
             amount, expiration = p.contract()
-            common.DB_CON.execute(('UPDATE player_attributes SET contract_amount = ?, contract_expiration = ? WHERE'
+            common.DB_CON.execute(('UPDATE player_attributes SET contract_amount = ?, contract_expiration = ? WHERE '
                                    'player_id = ?'), (amount, expiration, player_id))
         else:
             p.add_to_free_agents(self.phase)
@@ -1235,7 +1235,7 @@ class MainWindow:
                 p.add_to_free_agents(self.phase)
 
             # Resign players
-            query = ('SELECT player_id, team_id, name FROM player_attributes WHERE contract_expiration = ? AND'
+            query = ('SELECT player_id, team_id, name FROM player_attributes WHERE contract_expiration = ? AND '
                      'team_id >= 0')
             for player_id, team_id, name in common.DB_CON.execute(query, (common.SEASON,)):
                 if team_id != common.PLAYER_TEAM_ID:

@@ -3,7 +3,8 @@ from glob import glob
 
 setup(name='Basketball GM',
       version='1.0.0alpha',
-      description='A basketball simulation game. Make trades, set rosters, draft players, and try to build the next dynasty.',
+      description=('A basketball simulation game. Make trades, set rosters, draft players, and try to build the next '
+                   'dynasty.'),
       license='AGPLv3',
       url='https://github.com/jdscheff/basketball-gm',
       maintainer='Jeremy Scheff',
@@ -15,5 +16,4 @@ setup(name='Basketball GM',
           ('share/pixmaps', ['ui/basketball-gm.svg']),
           ('share/applications', ['ui/basketball-gm.desktop']),
       ],
-      scripts=['bin/basketball-gm']
-     )
+      scripts=['bin/basketball-gm'])

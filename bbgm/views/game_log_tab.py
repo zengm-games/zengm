@@ -39,22 +39,42 @@ class GameLogTab:
 
         for row in common.DB_CON.execute('SELECT team_id FROM team_stats WHERE game_id = ?', (game_id,)):
             team_id = row[0]
-            row2 = common.DB_CON.execute('SELECT region || " " || name FROM team_attributes WHERE team_id = ?', (team_id,)).fetchone()
+            row2 = common.DB_CON.execute('SELECT region || " " || name FROM team_attributes WHERE team_id = ?',
+                                         (team_id,)).fetchone()
             team_name_long = row2[0]
             dashes = ''
             for i in range(len(team_name_long)):
                 dashes += '-'
             box += team_name_long + '\n' + dashes + '\n'
 
-            box += format % ('Name', 'Pos', 'Min', 'FG', '3Pt', 'FT', 'Off', 'Reb', 'Ast', 'TO', 'Stl', 'Blk', 'PF', 'Pts')
+            box += format % ('Name', 'Pos', 'Min', 'FG', '3Pt', 'FT', 'Off', 'Reb', 'Ast', 'TO', 'Stl', 'Blk', 'PF',
+                             'Pts')
 
-            for player_stats in common.DB_CON.execute('SELECT player_attributes.name, player_attributes.position, player_stats.minutes, player_stats.field_goals_made, player_stats.field_goals_attempted, player_stats.three_pointers_made, player_stats.three_pointers_attempted, player_stats.free_throws_made, player_stats.free_throws_attempted, player_stats.offensive_rebounds, player_stats.defensive_rebounds, player_stats.assists, player_stats.turnovers, player_stats.steals, player_stats.blocks, player_stats.personal_fouls, player_stats.points FROM player_attributes, player_stats WHERE player_attributes.player_id = player_stats.player_id AND player_stats.game_id = ? AND player_attributes.team_id = ? ORDER BY player_stats.starter DESC, player_stats.minutes DESC', (game_id, team_id)):
+            query = ('SELECT pa.name, pa.position, ps.minutes, ps.field_goals_made, ps.field_goals_attempted, '
+                     'ps.three_pointers_made, ps.three_pointers_attempted, ps.free_throws_made, '
+                     'ps.free_throws_attempted, ps.offensive_rebounds, ps.defensive_rebounds, ps.assists, '
+                     'ps.turnovers, ps.steals, ps.blocks, ps.personal_fouls, ps.points FROM player_attributes as pa, '
+                     'player_stats as ps WHERE pa.player_id = ps.player_id AND ps.game_id = ? AND pa.team_id = ? '
+                     'ORDER BY ps.starter DESC, ps.minutes DESC')
+            for player_stats in common.DB_CON.execute(query, (game_id, team_id)):
                 rebounds = player_stats['offensive_rebounds'] + player_stats['defensive_rebounds']
-                box += format % (player_stats['name'], player_stats['position'], player_stats['minutes'], '%s-%s' % (player_stats['field_goals_made'], player_stats['field_goals_attempted']), '%s-%s' % (player_stats['three_pointers_made'], player_stats['three_pointers_attempted']), '%s-%s' % (player_stats['free_throws_made'], player_stats['free_throws_attempted']), player_stats['offensive_rebounds'], rebounds, player_stats['assists'], player_stats['turnovers'], player_stats['steals'], player_stats['blocks'], player_stats['personal_fouls'], player_stats['points'])
-            team_stats = common.DB_CON.execute('SELECT *  FROM team_stats WHERE game_id = ? AND team_id = ?', (game_id, team_id)).fetchone()
+                box += format % (player_stats['name'], player_stats['position'], player_stats['minutes'], '%s-%s' %
+                                 (player_stats['field_goals_made'], player_stats['field_goals_attempted']), '%s-%s' % 
+                                 (player_stats['three_pointers_made'], player_stats['three_pointers_attempted']),
+                                 '%s-%s' % (player_stats['free_throws_made'], player_stats['free_throws_attempted']),
+                                 player_stats['offensive_rebounds'], rebounds, player_stats['assists'],
+                                 player_stats['turnovers'], player_stats['steals'], player_stats['blocks'],
+                                 player_stats['personal_fouls'], player_stats['points'])
+            team_stats = common.DB_CON.execute('SELECT *  FROM team_stats WHERE game_id = ? AND team_id = ?',
+                                               (game_id, team_id)).fetchone()
             rebounds = team_stats['offensive_rebounds'] + team_stats['defensive_rebounds']
-            box += format % ('Total', '', 240, '%s-%s' % (team_stats['field_goals_made'], team_stats['field_goals_attempted']), '%s-%s' % (team_stats['three_pointers_made'], team_stats['three_pointers_attempted']), '%s-%s' % (team_stats['free_throws_made'], team_stats['free_throws_attempted']), team_stats['offensive_rebounds'], rebounds, team_stats['assists'], team_stats['turnovers'], team_stats['steals'], team_stats['blocks'], team_stats['personal_fouls'], team_stats['points'])
-            if (t==0):
+            box += format % ('Total', '', 240, '%s-%s' % (team_stats['field_goals_made'],
+                             team_stats['field_goals_attempted']), '%s-%s' % (team_stats['three_pointers_made'],
+                             team_stats['three_pointers_attempted']), '%s-%s' % (team_stats['free_throws_made'],
+                             team_stats['free_throws_attempted']), team_stats['offensive_rebounds'], rebounds,
+                             team_stats['assists'], team_stats['turnovers'], team_stats['steals'], team_stats['blocks'],
+                             team_stats['personal_fouls'], team_stats['points'])
+            if (t == 0):
                 box += '\n'
             t += 1
 
@@ -86,7 +106,9 @@ class GameLogTab:
 
         query_ids = 'SELECT game_id FROM team_stats WHERE team_id = ? AND season = ?'
         params_ids = [team_id, season]
-        query_row = 'SELECT game_id, (SELECT abbreviation FROM team_attributes WHERE team_id = team_stats.opponent_team_id), (SELECT val FROM enum_w_l WHERE key = team_stats.won), points || "-" || opponent_points FROM team_stats WHERE game_id = ? AND team_id = ?'
+        query_row = ('SELECT game_id, (SELECT abbreviation FROM team_attributes WHERE team_id = '
+                     'team_stats.opponent_team_id), (SELECT val FROM enum_w_l WHERE key = team_stats.won), '
+                     'points || "-" || opponent_points FROM team_stats WHERE game_id = ? AND team_id = ?')
         params_row = [-1, team_id]
 
         common.treeview_update_new(self.treeview_games_list, query_ids, params_ids, query_row, params_row)

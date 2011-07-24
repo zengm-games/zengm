@@ -87,8 +87,13 @@ class DraftDialog:
 
         # Update roster positions (so next/prev buttons work in player dialog)
         roster_position = 1
-        for row in common.DB_CON.execute('SELECT player_ratings.player_id FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = -2 ORDER BY player_ratings.potential DESC'):
-            common.DB_CON.execute('UPDATE player_ratings SET roster_position = ? WHERE player_id = ?', (roster_position, row[0]))
+
+        query = ('SELECT player_ratings.player_id FROM player_attributes, player_ratings WHERE '
+                 'player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = -2 ORDER BY '
+                 'player_ratings.potential DESC')
+        for row in common.DB_CON.execute(query):
+            common.DB_CON.execute('UPDATE player_ratings SET roster_position = ? WHERE player_id = ?', (roster_position,
+                                  row[0]))
             roster_position += 1
 
     def build_available(self):
@@ -100,7 +105,11 @@ class DraftDialog:
 
         self.liststore_draft_available = gtk.ListStore(int, int, str, str, int, int, int)
         self.treeview_draft_available.set_model(self.liststore_draft_available)
-        query = "SELECT player_attributes.player_id, player_attributes.position, player_attributes.name, %d - player_attributes.born_date, player_ratings.overall, player_ratings.potential FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = -2 ORDER BY player_ratings.overall + 2*player_ratings.potential DESC" % common.SEASON
+        query = ('SELECT player_attributes.player_id, player_attributes.position, player_attributes.name, %d - '
+                 'player_attributes.born_date, player_ratings.overall, player_ratings.potential FROM '
+                 'player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND '
+                 'player_attributes.team_id = -2 ORDER BY player_ratings.overall + 2*player_ratings.potential DESC'
+                 % common.SEASON)
         rank = 1
         for row in common.DB_CON.execute(query):
             real_row = [row[0], rank] + list(row[1::])
@@ -111,7 +120,9 @@ class DraftDialog:
         self.draft_results = []
         for round_ in range(1, 3):
             pick = 1
-            for row in common.DB_CON.execute('SELECT team_id, abbreviation FROM team_attributes WHERE season = ? ORDER BY won/(won + lost) ASC', (common.SEASON,)):
+            for row in common.DB_CON.execute(('SELECT team_id, abbreviation FROM team_attributes WHERE '
+                                              'season = ? ORDER BY won/(won + lost) ASC'),
+                                              (common.SEASON,)):
                 team_id, abbreviation = row
                 name = ''
                 self.draft_results.append([-1, team_id, round_, pick, abbreviation, name])
@@ -174,10 +185,15 @@ class DraftDialog:
         row[0] = self.liststore_draft_available[pick][0]  # Player ID
 
         # Update team_id and roster_position
-        row2 = common.DB_CON.execute('SELECT MAX(player_ratings.roster_position) + 1 FROM player_attributes, player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND player_attributes.team_id = ?', (row[1],)).fetchone()
+        row2 = common.DB_CON.execute(('SELECT MAX(player_ratings.roster_position) + 1 FROM player_attributes, '
+                                      'player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND '
+                                      'player_attributes.team_id = ?'), (row[1],)).fetchone()
         roster_position = row2[0]
-        common.DB_CON.execute('UPDATE player_attributes SET team_id = ?, draft_year = ?, draft_round = ?, draft_pick = ?, draft_team_id = ? WHERE player_id = ?', (row[1], common.SEASON, row[2], row[3], row[1], row[0]))
-        common.DB_CON.execute('UPDATE player_ratings SET roster_position = ? WHERE player_id = ?', (roster_position, row[0]))
+        common.DB_CON.execute(('UPDATE player_attributes SET team_id = ?, draft_year = ?, draft_round = ?, '
+                               'draft_pick = ?, draft_team_id = ? WHERE player_id = ?'), (row[1], common.SEASON, row[2],
+                               row[3], row[1], row[0]))
+        common.DB_CON.execute('UPDATE player_ratings SET roster_position = ? WHERE player_id = ?', (roster_position,
+                              row[0]))
         del self.liststore_draft_available[pick]
 
         # Contract
@@ -185,7 +201,8 @@ class DraftDialog:
         contract_amount = self.rookie_salaries[i]
         years = 4 - row[2]  # 2 years for 2nd round, 3 years for 1st round
         contract_expiration = common.SEASON + years
-        common.DB_CON.execute('UPDATE player_attributes SET contract_amount = ?, contract_expiration = ? WHERE player_id = ?', (contract_amount, contract_expiration, row[0]))
+        common.DB_CON.execute(('UPDATE player_attributes SET contract_amount = ?, contract_expiration = ? WHERE '
+                               'player_id = ?'), (contract_amount, contract_expiration, row[0]))
 
     def __init__(self, main_window):
         self.main_window = main_window
@@ -199,7 +216,10 @@ class DraftDialog:
 
         self.builder.connect_signals(self)
 
-        self.rookie_salaries = (5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500)
+        self.rookie_salaries = (5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500,
+                                1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000,
+                                1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500,
+                                500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500)
 
         # Make the Start Draft button
         self.button_start_draft = gtk.Button()

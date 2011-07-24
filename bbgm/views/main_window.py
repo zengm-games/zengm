@@ -44,7 +44,7 @@ class MainWindow:
         if self.games_in_progress:
             self.stop_games = True
             md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                                   gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, ('Can\'t start a new game while simulation'
+                                   gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, ('Can\'t start a new game while simulation '
                                    'is in progress.  Wait until the current day\'s games are over and try again.'))
             md.run()
             md.destroy()
@@ -63,7 +63,7 @@ class MainWindow:
         if self.games_in_progress:
             self.stop_games = True
             md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                                   gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, ('Can\'t open game while simulation'
+                                   gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, ('Can\'t open game while simulation '
                                    'is in progress.  Wait until the current day\'s games are over and try again.'))
             md.run()
             md.destroy()
@@ -81,7 +81,7 @@ class MainWindow:
         if self.games_in_progress:
             self.stop_games = True
             md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                                   gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, ('Can\'t save game while simulation'
+                                   gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, ('Can\'t save game while simulation '
                                    'is in progress.  Wait until the current day\'s games are over and try again.'))
             md.run()
             md.destroy()
@@ -92,7 +92,7 @@ class MainWindow:
         if self.games_in_progress:
             self.stop_games = True
             md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                                   gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, 'Can\'t save game while simulation'
+                                   gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, 'Can\'t save game while simulation '
                                    'is in progress.  Wait until the current day\'s games are over and try again.')
             md.run()
             md.destroy()
@@ -597,8 +597,8 @@ class MainWindow:
                 # Round: 1, 2, 3, or 4
                 current_round, = common.DB_CON.execute('SELECT MAX(series_round) FROM active_playoff_series').fetchone()
 
-                for team_id_home, team_id_away in common.DB_CON.execute('SELECT team_id_home, team_id_away FROM'
-                                                                        'active_playoff_series WHERE won_home < 4 AND'
+                for team_id_home, team_id_away in common.DB_CON.execute('SELECT team_id_home, team_id_away FROM '
+                                                                        'active_playoff_series WHERE won_home < 4 AND '
                                                                         'won_away < 4 AND series_round = ?',
                                                                         (current_round,)):
                     self.schedule.append([team_id_home, team_id_away])
@@ -609,8 +609,8 @@ class MainWindow:
 
                     # Who won?
                     winners = {}
-                    for row in common.DB_CON.execute(('SELECT series_id, team_id_home, team_id_away, seed_home,'
-                                                      'seed_away, won_home, won_away FROM active_playoff_series WHERE'
+                    for row in common.DB_CON.execute(('SELECT series_id, team_id_home, team_id_away, seed_home, '
+                                                      'seed_away, won_home, won_away FROM active_playoff_series WHERE '
                                                       'series_round = ? ORDER BY series_id ASC'), (current_round,)):
                         series_id, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away = row
                         if won_home == 4:
@@ -619,10 +619,10 @@ class MainWindow:
                             winners[series_id] = [team_id_away, seed_away]
                         # Record user's team as conference and league champion
                         if winners[series_id][0] == common.PLAYER_TEAM_ID and current_round == 3:
-                            common.DB_CON.execute('UPDATE team_attributes SET won_conference = 1 WHERE season = ? AND'
+                            common.DB_CON.execute('UPDATE team_attributes SET won_conference = 1 WHERE season = ? AND '
                                                   'team_id = ?', (common.SEASON, common.PLAYER_TEAM_ID))
                         elif winners[series_id][0] == common.PLAYER_TEAM_ID and current_round == 4:
-                            common.DB_CON.execute('UPDATE team_attributes SET won_championship = 1 WHERE season = ? AND'
+                            common.DB_CON.execute('UPDATE team_attributes SET won_championship = 1 WHERE season = ? AND '
                                                   'team_id = ?', (common.SEASON, common.PLAYER_TEAM_ID))
 
                     # Are the whole playoffs over?
@@ -1183,7 +1183,7 @@ class MainWindow:
             self.update_all_pages()
 
             # Add a year to the free agents
-            common.DB_CON.execute(('UPDATE player_attributes SET contract_expiration = contract_expiration + 1 WHERE'
+            common.DB_CON.execute(('UPDATE player_attributes SET contract_expiration = contract_expiration + 1 WHERE '
                                    'team_id = -1'))
 
             self.main_window.set_title('%s %s - Basketball GM' % (common.SEASON, 'Playoffs'))

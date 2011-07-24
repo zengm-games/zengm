@@ -38,11 +38,16 @@ class StandingsTab:
             self.treeview_standings[row[0]] = gtk.TreeView()
             self.table_standings.attach(self.treeview_standings[row[0]], conference_id, conference_id + 1, row_top, row_top + 1)
             column_info = [[row[2], 'Won', 'Lost', 'Pct', 'Div', 'Conf'],
-                           [0,      1,     2,      3,     4,     5],
+                           [1,      2,     3,      4,     5,     6],
                            [False,  False, False,  False, False, False],
                            [False,  False, False,  True,  False, False]]
             common.treeview_build(self.treeview_standings[row[0]], column_info)
             self.treeview_standings[row[0]].show()
+
+            column_types = [int, str, int, int, float, str, str]
+            liststore = gtk.ListStore(*column_types)
+            liststore.set_sort_column_id(4, gtk.SORT_DESCENDING)  # Sort by winning percentage
+            self.treeview_standings[row[0]].set_model(liststore)
 
             row_top += 1
 
@@ -59,9 +64,11 @@ class StandingsTab:
         season = self.mw.make_season_combobox(self.combobox_standings, self.combobox_active)
 
         for row in common.DB_CON.execute('SELECT division_id FROM league_divisions'):
-            column_types = [str, int, int, float, str, str]
-            query = 'SELECT region || " "  || name, won, lost, 100*won/(won + lost), won_div || "-" || lost_div, won_conf || "-" || lost_conf FROM team_attributes WHERE season = ? AND division_id = ? ORDER BY won/(won + lost) DESC'
-            common.treeview_update(self.treeview_standings[row[0]], column_types, query, (season, row[0]))
+            query_ids = 'SELECT team_id FROM team_attributes WHERE season = ? AND division_id = ?'
+            params_ids = [season, row[0]]
+            query_rows = 'SELECT team_id, region || " "  || name, won, lost, 100*won/(won + lost), won_div || "-" || lost_div, won_conf || "-" || lost_conf FROM team_attributes WHERE team_id = ? AND season = ?'
+            params_rows = [-1, season]
+            common.treeview_update_new(self.treeview_standings[row[0]], query_ids, params_ids, query_rows, params_rows)
         self.updated = True
 
     def __init__(self, main_window):

@@ -46,8 +46,9 @@ class FinancesTab:
         self.treeview_finances.append_column(column)
 
         column_types = [int, str, int, int, int, int, int]
-        query = 'SELECT team_id, region || " " || name, 0, 0, 0, cash, (SELECT SUM(contract_amount*1000) FROM player_attributes WHERE player_attributes.team_id = team_attributes.team_id) + (SELECT TOTAL(contract_amount*1000) FROM released_players_salaries WHERE released_players_salaries.team_id = team_attributes.team_id) FROM team_attributes WHERE season = ? ORDER BY region ASC, name ASC'
-        common.treeview_update(self.treeview_finances, column_types, query, (common.SEASON,))
+        liststore = gtk.ListStore(*column_types)
+        self.treeview_finances.set_model(liststore)
+#        self.update()
 
         self.mw.notebook.insert_page(self.vbox9, gtk.Label('Finances'), self.mw.pages['finances'])
 

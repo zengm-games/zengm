@@ -45,23 +45,6 @@ def treeview_build(treeview, column_info):
         add_column(treeview, column_info[0][i], column_info[1][i], column_info[2][i], column_info[3][i])
 
 
-def treeview_update(treeview, column_types, query, query_bindings=()):
-    """
-    Shortcut function to add data to a treeview
-    """
-    liststore = gtk.ListStore(*column_types)
-    treeview.set_model(liststore)
-    for row in DB_CON.execute(query, query_bindings):
-        values = []
-        for i in range(0, len(row)):
-            # Divide by zero errors
-            if row[i] == None:
-                values.append(0.0)
-            else:
-                values.append(row[i])
-        liststore.append(values)
-
-
 def treeview_build_new(treeview, column_types, column_info, tooltips = []):
     """Shortcut function to add columns and a ListStore to a treeview.
 
@@ -181,7 +164,6 @@ def treeview_update_new(treeview, query_ids, params_ids, query_row, params_row, 
     for i in reversed(xrange(len(liststore))):  # Search backwards to not fuck things up
         if liststore[i][0] not in do_not_delete:
             del liststore[i]
-
     treeview.thaw_child_notify()
 
 

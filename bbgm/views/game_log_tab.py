@@ -59,7 +59,7 @@ class GameLogTab:
             for player_stats in common.DB_CON.execute(query, (game_id, team_id)):
                 rebounds = player_stats['offensive_rebounds'] + player_stats['defensive_rebounds']
                 box += format % (player_stats['name'], player_stats['position'], player_stats['minutes'], '%s-%s' %
-                                 (player_stats['field_goals_made'], player_stats['field_goals_attempted']), '%s-%s' % 
+                                 (player_stats['field_goals_made'], player_stats['field_goals_attempted']), '%s-%s' %
                                  (player_stats['three_pointers_made'], player_stats['three_pointers_attempted']),
                                  '%s-%s' % (player_stats['free_throws_made'], player_stats['free_throws_attempted']),
                                  player_stats['offensive_rebounds'], rebounds, player_stats['assists'],

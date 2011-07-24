@@ -22,12 +22,15 @@ class PlayerRatingsTab:
         if common.DEBUG:
             print 'build player_ratings_tab'
 
-        column_types = [int, int, str, str, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int]
+        column_types = [int, int, str, str, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int,
+                        int, int, int]
         column_info = [['Name', 'Team', 'Age', 'Ovr', 'Pot', 'Hgt', 'Str', 'Spd', 'Jmp', 'End', 'Ins', 'Dnk', 'FT', '2pt', '3pt', 'Blk', 'Stl', 'Drb', 'Pss', 'Reb'],
                        [2,      3,      4,     5,         6,        7,         8,       9,         10,          11,               12,       13,            14,             15,               16,       17,       18,          19,        20,        21],
                        [True,   True,   True,  True,      True,     True,      True,    True,      True,        True,             True,     True,          True,           True,             True,     True,     True,        True,      True,      True],
                        [False,  False,  False, False,     False,    False,     False,   False,     False,       False,            False,    False,         False,          False,            False,    False,    False,       False,     False,     False]]
-        tooltips = ['', '', '', 'Overall', 'Potential', 'Height', 'Stength', 'Speed', 'Jumping', 'Endurance', 'Inside Scoring', 'Dunks/Layups', 'Free Throw Shooting', 'Two-Point Shooting', 'Three-Point Shooting', 'Blocks', 'Steals', 'Dribbling', 'Passing', 'Rebounding']
+        tooltips = ['', '', '', 'Overall', 'Potential', 'Height', 'Stength', 'Speed', 'Jumping', 'Endurance',
+                    'Inside Scoring', 'Dunks/Layups', 'Free Throw Shooting', 'Two-Point Shooting',
+                    'Three-Point Shooting', 'Blocks', 'Steals', 'Dribbling', 'Passing', 'Rebounding']
         common.treeview_build_new(self.treeview_player_ratings, column_types, column_info, tooltips)
 
         self.mw.notebook.insert_page(self.vbox, gtk.Label('Player Ratings'), self.mw.pages['player_ratings'])

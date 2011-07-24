@@ -38,16 +38,22 @@ class ContractWindow:
 
     def on_button_contract_accept_clicked(self, button, data=None):
         # Check salary cap for free agents
-        if self.allow_over_salary_cap or (common.SALARY_CAP >= self.payroll + self.player_amount or self.player_amount == 500):
+        if self.allow_over_salary_cap or (common.SALARY_CAP >= self.payroll + self.player_amount or
+                                          self.player_amount == 500):
             # Adjust to account for in-season signings
             if self.mw.phase <= 2:
                 player_years = self.player_years - 1
             else:
                 player_years = self.player_years
-            common.DB_CON.execute('UPDATE player_attributes SET team_id = ?, contract_amount = ?, contract_expiration = ? WHERE player_id = ?', (common.PLAYER_TEAM_ID, self.player_amount, common.SEASON + player_years, self.player_id))
+            common.DB_CON.execute(('UPDATE player_attributes SET team_id = ?, contract_amount = ?, contract_expiration '
+                                   '= ? WHERE player_id = ?'), (common.PLAYER_TEAM_ID, self.player_amount,
+                                   common.SEASON + player_years, self.player_id))
             self.contract_window.destroy()
         else:
-            md = gtk.MessageDialog(parent=self.contract_window, flags=0, type=gtk.MESSAGE_WARNING, buttons=gtk.BUTTONS_CLOSE, message_format='This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary.')
+            md = gtk.MessageDialog(parent=self.contract_window, flags=0, type=gtk.MESSAGE_WARNING,
+                                   buttons=gtk.BUTTONS_CLOSE, message_format=('This contract would put you over the '
+                                   'salary cap. You cannot go over the salary cap to sign free agents to contracts '
+                                   'higher than the minimum salary.'))
             md.run()
             md.destroy()
 
@@ -81,7 +87,8 @@ class ContractWindow:
         self.update_label_contract_player_proposal()
 
         # Account for the number of times the player has tried to negotiate
-        common.DB_CON.execute('UPDATE player_attributes SET free_agent_times_asked = free_agent_times_asked + 1 WHERE player_id = ?', (self.player_id,)).fetchone()
+        common.DB_CON.execute(('UPDATE player_attributes SET free_agent_times_asked = free_agent_times_asked + 1 WHERE '
+                               'player_id = ?'), (self.player_id,)).fetchone()
 
     def update_label_contract_player_proposal(self):
         self.player_amount = 50 * round(self.player_amount / 50.0)  # Make it a multiple of 50k
@@ -90,13 +97,14 @@ class ContractWindow:
 %d years (Through %d)\n\
 %s' % (self.player_years, common.SEASON + self.player_years, salary))
 
-    def __init__(self, main_window, player_id, allow_over_salary_cap = False):
+    def __init__(self, main_window, player_id, allow_over_salary_cap=False):
         self.mw = main_window
         self.player_id = player_id
         self.allow_over_salary_cap = allow_over_salary_cap  # To allow for a team to resign its own players
 
         self.builder = gtk.Builder()
-        self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.ui'), ['adjustment1', 'adjustment2', 'contract_window'])
+        self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.ui'), ['adjustment1', 'adjustment2',
+                                           'contract_window'])
 
         self.contract_window = self.builder.get_object('contract_window')
         self.label_contract_team_info = self.builder.get_object('label_contract_team_info')
@@ -110,12 +118,19 @@ class ContractWindow:
         self.steps = 0  # Number of compromises/negotiations
         self.max_steps = random.randint(1, 5)
 
-        name, self.team_id, overall, potential = common.DB_CON.execute('SELECT pa.name, pa.team_id, pr.overall, pr.potential FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.player_id = ?', (self.player_id,)).fetchone()
+        query = ('SELECT pa.name, pa.team_id, pr.overall, pr.potential FROM player_attributes as pa, player_ratings as '
+                 'pr WHERE pa.player_id = pr.player_id AND pa.player_id = ?')
+        name, self.team_id, overall, potential = common.DB_CON.execute(query, (self.player_id,)).fetchone()
         self.label_contract_player_info.set_markup('<big><big><b>%s</b></big></big>\n\
 Overall: %d\n\
 Potential: %d' % (name, overall, potential))
 
-        name, self.payroll = common.DB_CON.execute('SELECT ta.region || " " || ta.name, SUM(pa.contract_amount) + (SELECT TOTAL(contract_amount) FROM released_players_salaries WHERE released_players_salaries.team_id = ta.team_id) FROM team_attributes as ta, player_attributes as pa WHERE pa.team_id = ta.team_id AND ta.team_id = ? AND pa.contract_expiration >= ? AND ta.season = ?', (common.PLAYER_TEAM_ID, common.SEASON, common.SEASON)).fetchone()
+        query = ('SELECT ta.region || " " || ta.name, SUM(pa.contract_amount) + (SELECT TOTAL(contract_amount) FROM '
+                 'released_players_salaries WHERE released_players_salaries.team_id = ta.team_id) FROM team_attributes '
+                 'as ta, player_attributes as pa WHERE pa.team_id = ta.team_id AND ta.team_id = ? AND '
+                 'pa.contract_expiration >= ? AND ta.season = ?')
+        name, self.payroll = common.DB_CON.execute(query, (common.PLAYER_TEAM_ID, common.SEASON,
+                                                   common.SEASON)).fetchone()
         salary_cap = '$%.2fM' % (common.SALARY_CAP / 1000.0)
         payroll = '$%.2fM' % (self.payroll / 1000.0)
         self.label_contract_team_info.set_markup('<big><big><b>%s</b></big></big>\n\
@@ -123,7 +138,9 @@ Payroll: %s\n\
 Salary Cap: %s' % (name, payroll, salary_cap))
 
         # Initial player proposal
-        self.player_amount, expiration, self.times_asked = common.DB_CON.execute('SELECT contract_amount, contract_expiration, free_agent_times_asked FROM player_attributes WHERE player_id = ?', (self.player_id,)).fetchone()
+        query = ('SELECT contract_amount, contract_expiration, free_agent_times_asked FROM player_attributes WHERE '
+                 'player_id = ?')
+        self.player_amount, expiration, self.times_asked = common.DB_CON.execute(query, (self.player_id,)).fetchone()
         self.player_years = expiration - common.SEASON
         # Adjust to account for in-season signings
         if self.mw.phase <= 2:

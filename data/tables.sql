@@ -31,7 +31,7 @@ draft_pick INTEGER,
 draft_team_id INTEGER,
 contract_amount INTEGER,
 contract_expiration INTEGER,
-free_agent_times_asked INTEGER DEFAULT 0,
+free_agent_times_asked FLOAT DEFAULT 0.0,
 years_free_agent INTEGER DEFAULT 0);
 
 CREATE TABLE released_players_salaries (

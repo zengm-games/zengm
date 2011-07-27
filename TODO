@@ -12,9 +12,6 @@ BLOCKERS FOR 1.0:
     - At least three players with speed > X and (shooting_layups > X or shooting_layups + jumping > X)
   - Make sure all ratings are used adequately in simulation
 - free_agent_times_asked
-  - Currently, this is set to zero when a player becomes a free agent.
-    - It should also decay while a player is a free agent. Maybe by 1 every 10 games? Count by length of schedule or something
-    - It increments with the "Submit Offer" button is pressed in the contract window
   - Need to make it impact the negoatiation
     - Display in free agents list
     - Initial negotiation in contract window

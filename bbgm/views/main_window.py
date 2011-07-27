@@ -662,6 +662,11 @@ class MainWindow:
                     common.DB_CON.execute('UPDATE player_attributes SET contract_amount = ?, contract_expiration = ?'
                                           'WHERE player_id = ?', (amount, expiration, player_id))
 
+                # Free agents' resistance to previous signing attempts by player decays
+                # Decay by 0.1 per game, for 82 games in the regular season
+                common.DB_CON.execute('UPDATE player_attributes SET free_agent_times_asked = free_agent_times_asked - 0.1 WHERE team_id = -1')
+                common.DB_CON.execute('UPDATE player_attributes SET free_agent_times_asked = 0 WHERE team_id = -1 AND free_agent_times_asked < 0')
+
                 # Sign available free agents
                 self.auto_sign_free_agents()
 

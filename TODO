@@ -13,7 +13,6 @@ BLOCKERS FOR 1.0:
   - Make sure all ratings are used adequately in simulation
 - free_agent_times_asked
   - Introduce a similar mechanism for trades. Column in team_attributes?
-- Poisson distribution of player ages at start of new game
 - hard limit on max roster size
   - draft
     - release players if necessary

@@ -358,7 +358,13 @@ class MainWindow:
                 i = random.randrange(len(profiles))
                 profile = profiles[i]
 
-                aging_years = random.randint(0, 19)
+                aging_years = random.randint(0, 16)
+#                if aging_years < 3:
+#                    aging_years += random.randint(0, 1)
+#                if aging_years > 15:
+#                    aging_years -= random.randint(0, 6)
+#                if aging_years > 10:
+#                    aging_years -= random.randint(0, 6)
 
                 draft_year = common.SEASON - 1 - aging_years
 

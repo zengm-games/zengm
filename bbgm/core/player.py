@@ -64,11 +64,6 @@ class Player:
             if overall > self.rating['potential'] or age > 28:
                 self.rating['potential'] = overall
 
-        # Account for new players being developed in "new game"
-        if years > 1:
-            age += 1
-            self.attribute['born_date'] = common.SEASON - age
-
     def bonus(self, amount):
         """Add or subtract from all ratings"""
 
@@ -144,7 +139,9 @@ class Player:
         if phase > 2:
             expiration += 1
 
-        common.DB_CON.execute('UPDATE player_attributes SET team_id = -1, contract_amount = ?, contract_expiration = ?, free_agent_times_asked = 0 WHERE player_id = ?', (amount, expiration, self.id))
+        common.DB_CON.execute('UPDATE player_attributes SET team_id = -1, contract_amount = ?, contract_expiration = ?,'
+                              ' free_agent_times_asked = 0 WHERE player_id = ?', (amount, expiration, self.id))
+
 
 class GeneratePlayer(Player):
     '''
@@ -184,6 +181,17 @@ class GeneratePlayer(Player):
         self.attribute['draft_year'] = draft_year
         self.generate_ratings(profile, base_rating)
         self.generate_attributes(age, player_nat)
+
+    def develop(self, years=1):
+        """Develop and age a player.
+
+        This just calls Player.develop and then adds the appropriate number of
+        years to the player's born_date.
+        """
+        Player.develop(self, years)
+        age = common.SEASON - self.attribute['born_date'] + years
+        self.attribute['born_date'] = common.SEASON - age
+        print years
 
     def generate_ratings(self, profile, base_rating):
         if profile == 'Point':

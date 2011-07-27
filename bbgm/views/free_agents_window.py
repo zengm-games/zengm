@@ -37,6 +37,7 @@ class FreeAgentsWindow:
                 if response != int(gtk.RESPONSE_CLOSE) and response != int(gtk.RESPONSE_DELETE_EVENT):
                     self.main_window.update_all_pages()
                 cw.contract_window.destroy()
+                self.update_free_agents()
 
     def on_treeview_player_row_activated(self, treeview, path, view_column, data=None):
         '''
@@ -68,7 +69,7 @@ class FreeAgentsWindow:
                      'player_attributes.born_date, player_ratings.overall, player_ratings.potential, '
                      'AVG(player_stats.minutes), AVG(player_stats.points), AVG(player_stats.offensive_rebounds + '
                      'player_stats.defensive_rebounds), AVG(player_stats.assists), "$" || '
-                     'round(contract_amount/1000.0, 2) || "M thru " || contract_expiration FROM player_attributes, '
+                     'round(contract_amount/1000.0*(1+free_agent_times_asked/10), 2) || "M thru " || contract_expiration FROM player_attributes, '
                      'player_ratings, player_stats WHERE player_attributes.player_id = ? AND '
                      'player_attributes.player_id = player_ratings.player_id AND player_stats.player_id = '
                      'player_ratings.player_id AND player_stats.season = ?' % common.SEASON)
@@ -76,7 +77,7 @@ class FreeAgentsWindow:
         params_row_alt = [-1, common.SEASON - 1]
         query_row_alt_2 = ('SELECT player_attributes.player_id, player_attributes.name, player_attributes.position, %d '
                            '- player_attributes.born_date, player_ratings.overall, player_ratings.potential, 0, 0, 0, '
-                           '0, "$" || round(contract_amount/1000.0, 2) || "M thru " || contract_expiration FROM '
+                           '0, "$" || round(contract_amount/1000.0*(1+free_agent_times_asked/10), 2) || "M thru " || contract_expiration FROM '
                            'player_attributes, player_ratings WHERE player_attributes.player_id = ? AND '
                            'player_attributes.player_id = player_ratings.player_id' % common.SEASON)
         params_row_alt_2 = [-1]

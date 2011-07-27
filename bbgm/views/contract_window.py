@@ -45,9 +45,9 @@ class ContractWindow:
                 player_years = self.player_years - 1
             else:
                 player_years = self.player_years
-            common.DB_CON.execute(('UPDATE player_attributes SET team_id = ?, contract_amount = ?, contract_expiration '
-                                   '= ? WHERE player_id = ?'), (common.PLAYER_TEAM_ID, self.player_amount,
-                                   common.SEASON + player_years, self.player_id))
+            common.DB_CON.execute('UPDATE player_attributes SET team_id = ?, contract_amount = ?, contract_expiration '
+                                  '= ? WHERE player_id = ?', (common.PLAYER_TEAM_ID, self.player_amount,
+                                  common.SEASON + player_years, self.player_id))
             self.contract_window.destroy()
         else:
             md = gtk.MessageDialog(parent=self.contract_window, flags=0, type=gtk.MESSAGE_WARNING,
@@ -87,8 +87,8 @@ class ContractWindow:
         self.update_label_contract_player_proposal()
 
         # Account for the number of times the player has tried to negotiate
-        common.DB_CON.execute(('UPDATE player_attributes SET free_agent_times_asked = free_agent_times_asked + 1 WHERE '
-                               'player_id = ?'), (self.player_id,)).fetchone()
+        common.DB_CON.execute('UPDATE player_attributes SET free_agent_times_asked = free_agent_times_asked + 1 WHERE '
+                              'player_id = ?', (self.player_id,)).fetchone()
 
     def update_label_contract_player_proposal(self):
         self.player_amount = 50 * round(self.player_amount / 50.0)  # Make it a multiple of 50k

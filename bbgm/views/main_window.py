@@ -609,9 +609,9 @@ class MainWindow:
 
                     # Who won?
                     winners = {}
-                    for row in common.DB_CON.execute(('SELECT series_id, team_id_home, team_id_away, seed_home, '
-                                                      'seed_away, won_home, won_away FROM active_playoff_series WHERE '
-                                                      'series_round = ? ORDER BY series_id ASC'), (current_round,)):
+                    for row in common.DB_CON.execute('SELECT series_id, team_id_home, team_id_away, seed_home, '
+                                                     'seed_away, won_home, won_away FROM active_playoff_series WHERE '
+                                                     'series_round = ? ORDER BY series_id ASC', (current_round,)):
                         series_id, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away = row
                         if won_home == 4:
                             winners[series_id] = [team_id_home, seed_home]
@@ -659,8 +659,8 @@ class MainWindow:
                         expiration = common.SEASON + 1
                     if amount < 1000:
                         expiration = common.SEASON
-                    common.DB_CON.execute(('UPDATE player_attributes SET contract_amount = ?, contract_expiration = ?'
-                                           'WHERE player_id = ?'), (amount, expiration, player_id))
+                    common.DB_CON.execute('UPDATE player_attributes SET contract_amount = ?, contract_expiration = ?'
+                                          'WHERE player_id = ?', (amount, expiration, player_id))
 
                 # Sign available free agents
                 self.auto_sign_free_agents()
@@ -881,8 +881,8 @@ class MainWindow:
         p.load(player_id)
         if resign:
             amount, expiration = p.contract()
-            common.DB_CON.execute(('UPDATE player_attributes SET contract_amount = ?, contract_expiration = ? WHERE '
-                                   'player_id = ?'), (amount, expiration, player_id))
+            common.DB_CON.execute('UPDATE player_attributes SET contract_amount = ?, contract_expiration = ? WHERE '
+                                  'player_id = ?', (amount, expiration, player_id))
         else:
             p.add_to_free_agents(self.phase)
 
@@ -1102,8 +1102,8 @@ class MainWindow:
             query = ('SELECT team_id, division_id, region, name, abbreviation, cash FROM team_attributes WHERE '
                      'season = ?')
             for row in common.DB_CON.execute(query, (common.SEASON - 1,)):
-                common.DB_CON.execute(('INSERT INTO team_attributes (team_id, division_id, region, name, abbreviation,'
-                                       'cash, season) VALUES (?, ?, ?, ?, ?, ?, ?)'), (row[0], row[1], row[2], row[3],
+                common.DB_CON.execute('INSERT INTO team_attributes (team_id, division_id, region, name, abbreviation,'
+                                      'cash, season) VALUES (?, ?, ?, ?, ?, ?, ?)', (row[0], row[1], row[2], row[3],
                                        row[4], row[5], common.SEASON))
             # Age players
             player_ids = []
@@ -1157,8 +1157,8 @@ class MainWindow:
                     teams.append(team_id)
                     # Record playoff appearance for player's team
                     if team_id == common.PLAYER_TEAM_ID:
-                        common.DB_CON.execute(('UPDATE team_attributes SET playoffs = 1 WHERE season = ? AND team_id ='
-                                               '?'), (common.SEASON, common.PLAYER_TEAM_ID))
+                        common.DB_CON.execute('UPDATE team_attributes SET playoffs = 1 WHERE season = ? AND team_id ='
+                                              '?', (common.SEASON, common.PLAYER_TEAM_ID))
 
                 query = ('INSERT INTO active_playoff_series (series_id, series_round, team_id_home, team_id_away,'
                          'seed_home, seed_away, won_home, won_away) VALUES (?, 1, ?, ?, ?, ?, 0, 0)')
@@ -1183,8 +1183,8 @@ class MainWindow:
             self.update_all_pages()
 
             # Add a year to the free agents
-            common.DB_CON.execute(('UPDATE player_attributes SET contract_expiration = contract_expiration + 1 WHERE '
-                                   'team_id = -1'))
+            common.DB_CON.execute('UPDATE player_attributes SET contract_expiration = contract_expiration + 1 WHERE '
+                                  'team_id = -1')
 
             self.main_window.set_title('%s %s - Basketball GM' % (common.SEASON, 'Playoffs'))
 
@@ -1228,8 +1228,8 @@ class MainWindow:
 
             # Move undrafted players to free agent pool
             for player_id, in common.DB_CON.execute('SELECT player_id FROM player_attributes WHERE team_id = -2'):
-                common.DB_CON.execute(('UPDATE player_attributes SET draft_year = -1, draft_round = -1, draft_pick = -1'
-                                       ', draft_team_id = -1 WHERE player_id = ?'), (player_id,))
+                common.DB_CON.execute('UPDATE player_attributes SET draft_year = -1, draft_round = -1, draft_pick = -1'
+                                      ', draft_team_id = -1 WHERE player_id = ?', (player_id,))
                 p = player.Player()
                 p.load(player_id)
                 p.add_to_free_agents(self.phase)

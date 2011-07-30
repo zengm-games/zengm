@@ -11,15 +11,11 @@ BLOCKERS FOR 1.0:
     - At least one player with inside_scoring > X
     - At least three players with speed > X and (shooting_layups > X or shooting_layups + jumping > X)
   - Make sure all ratings are used adequately in simulation
-- free_agent_times_asked
-  - Introduce a similar mechanism for trades. Column in team_attributes?
 - hard limit on max roster size
   - draft
     - release players if necessary
 - AI teams release/buy out players to sign a better free agent
 - test in unity and gnome 3
-- unit tests
-  - schedule
 - Manual
   - Overview of gameplay
   - What do ratings mean? 80s=superstar, etc.
@@ -27,6 +23,7 @@ BLOCKERS FOR 1.0:
   - Salary cap rules, contract rules, roster size rules, free agents, etc.
   - Synergy
 - Make a .deb and distribute
+  - start PPA with the alpha .deb, but don't promote. when beta is ready, make sure upgrade works, then promote
 
 All the other UI prettifying and code refactoring stuff can wait.
 
@@ -37,6 +34,9 @@ On release
 - Turn off debug mode
 
 ---
+
+- unit tests
+  - schedule
 
 Separate files
 - Each window/dialog gets its own glade file and own .py file in views folder
@@ -126,6 +126,7 @@ use constants for phase #'s, other things.  maybe create a dict CONST in common.
 AI (NON-GAMESIM)
 ----------------
 trade
+- mechanism similar to free_agent_times_asked to prevent prolonged negotiations
 - AI teams trade with each other
 - opponent GM trade AI based on their team's status: contending or rebuilding
 - record player value for contending and rebuilding teams in player_attributes, so opposing GMs can more easily suggest trades (i.e. "i'll make the deal if you throw in X")

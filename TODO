@@ -18,7 +18,7 @@ All the other UI prettifying and code refactoring stuff can wait.
 ---
 
 On release
-- Update all version numbers (setup.py, README, about dialog box, save file, tables.sql (game_attributes))
+- Update all version numbers (setup.py, README, about dialog box, save file, tables.sql (game_attributes), debian/changelog)
 - Turn off debug mode
 
 ---
@@ -102,6 +102,7 @@ should trade window be a window or dialog?
 update statusbar while game is saving/loading
 player info window spawned from trade dialog and contract window should have clickable controls
 - problem: a minimal example doesn't have this problem, so I don't know what's wrong
+in team stats tab, allow toggle to show opponent stats
 
 NBA
 ---
@@ -121,6 +122,7 @@ uncertainty in rating - for each player, calculate a randn(0, 3) with max/min of
     calculate a new one each year and add it to 1/2 of the previous one
 teams should be smart in resigning players (now it's just random)
 use constants for phase #'s, other things.  maybe create a dict CONST in common.py?
+    confirm that teams always have at least 5 players
 
 AI (NON-GAMESIM)
 ----------------

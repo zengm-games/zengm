@@ -342,8 +342,14 @@ class Team:
         self.region = row[0]
         self.name = row[1]
 
-        self.pace = sum([self.player[i].composite_rating['pace'] for i in xrange(7)]) / 7  # Should be scaled by average minutes played
-        self.defense = sum([self.player[i].composite_rating['defense'] for i in xrange(7)]) / 7 # 0 to 0.5
+        # Number of players to factor into pace and defense rating calculation
+        n_players = len(self.player)
+        if n_players > 7:
+            n_players = 7
+
+        # Would be better if these were scaled by average minutes played and endurance
+        self.pace = sum([self.player[i].composite_rating['pace'] for i in xrange(n_players)]) / 7
+        self.defense = sum([self.player[i].composite_rating['defense'] for i in xrange(n_players)]) / 7 # 0 to 0.5
         self.defense /= 4 # This gives the percentage points subtracted from the other team's normal FG%
 
 
@@ -368,7 +374,7 @@ class Player:
 
     def make_composite_ratings(self):
         self.composite_rating = {}
-        self.composite_rating['pace'] = self._composite(70, 130, ['speed', 'jumping', 'shooting_layups',
+        self.composite_rating['pace'] = self._composite(90, 140, ['speed', 'jumping', 'shooting_layups',
                                                         'shooting_three_pointers', 'steals', 'dribbling',
                                                         'passing'], random=False)
         self.composite_rating['shot_ratio'] = self._composite(0, 0.5, ['shooting_inside', 'shooting_layups',

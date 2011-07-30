@@ -5,6 +5,7 @@ import sqlite3
 from bbgm import common
 from bbgm.util import fast_random
 
+
 class Game:
     def play(self, t1, t2, is_playoffs):
         self.team = []
@@ -223,9 +224,9 @@ class Game:
             array[i] = self.team[t].player[p].composite_rating[rating]
         return array
 
-    # exempt is_ a player that can't be picked (you can't assis_t your own shot, which is_ the only current use of exempt)
-    # The value of exempt is_ an integer from 0 to 4 that represents the index of the player in players_on_court
-    # This_ is_ *NOT* the same value as the playerID or the index of the team.player array
+    # exempt is a player that can't be picked (you can't assist your own shot, which is the only current use of exempt)
+    # The value of exempt is an integer from 0 to 4 that represents the index of the player in players_on_court
+    # This is *NOT* the same value as the playerID or the index of the team.player array
     # Yes, that's confusing
     def pick_player(self, ratios, exempt=False):
         if exempt != False:
@@ -349,7 +350,9 @@ class Player:
     # Load the raw rating values from the database
     def load_ratings(self):
         common.DB_CON.row_factory = sqlite3.Row
-        query = 'SELECT overall, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, passing, rebounding FROM player_ratings WHERE player_id = ?'
+        query = ('SELECT overall, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, '
+                'shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, '
+                'passing, rebounding FROM player_ratings WHERE player_id = ?')
         self.rating = common.DB_CON.execute(query, (self.id,)).fetchone()
         query = 'SELECT name, position FROM player_attributes WHERE player_id = ?'
         self.attribute = common.DB_CON.execute(query, (self.id,)).fetchone()
@@ -357,14 +360,22 @@ class Player:
 
     def make_composite_ratings(self):
         self.composite_rating = {}
-        self.composite_rating['pace'] = self._composite(70, 130, ['speed', 'jumping', 'shooting_layups', 'shooting_three_pointers', 'steals', 'dribbling', 'passing'], random=False)
-        self.composite_rating['shot_ratio'] = self._composite(0, 0.5, ['shooting_inside', 'shooting_layups', 'shooting_two_pointers', 'shooting_three_pointers'])
+        self.composite_rating['pace'] = self._composite(70, 130, ['speed', 'jumping', 'shooting_layups',
+                                                        'shooting_three_pointers', 'steals', 'dribbling',
+                                                        'passing'], random=False)
+        self.composite_rating['shot_ratio'] = self._composite(0, 0.5, ['shooting_inside', 'shooting_layups',
+                                                              'shooting_two_pointers', 'shooting_three_pointers'])
         self.composite_rating['assist_ratio'] = self._composite(0, 0.5, ['dribbling', 'passing', 'speed'])
-        self.composite_rating['turnover_ratio'] = self._composite(0, 0.5, ['dribbling', 'passing', 'speed'], inverse=True)
-        self.composite_rating['field_goal_percentage'] = self._composite(0.38, 0.68, ['height', 'jumping', 'shooting_inside', 'shooting_layups', 'shooting_two_pointers', 'shooting_three_pointers'])
+        self.composite_rating['turnover_ratio'] = self._composite(0, 0.5, ['dribbling', 'passing', 'speed'],
+                                                                  inverse=True)
+        self.composite_rating['field_goal_percentage'] = self._composite(0.38, 0.68, ['height', 'jumping',
+                                                                         'shooting_inside', 'shooting_layups',
+                                                                         'shooting_two_pointers',
+                                                                         'shooting_three_pointers'])
         self.composite_rating['free_throw_percentage'] = self._composite(0.65, 0.9, ['shooting_free_throws'])
         self.composite_rating['three_pointer_percentage'] = self._composite(0, 0.45, ['shooting_three_pointers'])
-        self.composite_rating['rebound_ratio'] = self._composite(0, 0.5, ['height', 'strength', 'jumping', 'rebounding'])
+        self.composite_rating['rebound_ratio'] = self._composite(0, 0.5, ['height', 'strength', 'jumping',
+                                                                 'rebounding'])
         self.composite_rating['steal_ratio'] = self._composite(0, 0.5, ['speed', 'steals'])
         self.composite_rating['block_ratio'] = self._composite(0, 0.5, ['height', 'jumping', 'blocks'])
         self.composite_rating['foul_ratio'] = self._composite(0, 0.5, ['speed'], inverse=True)

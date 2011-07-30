@@ -1,0 +1,18 @@
+Source: basketball-gm
+Section: games
+Priority: optional
+Maintainer: Jeremy Scheff <jdscheff@gmail.com>
+Build-Depends: cdbs, debhelper (>= 7.0.50~), python (>= 2.4), python-support
+Standards-Version: 3.9.1
+Homepage: https://github.com/jdscheff/basketball-gm
+Vcs-Git: git://github.com/jdscheff/basketball-gm.git
+Vcs-Browser: https://github.com/jdscheff/basketball-gm
+
+Package: basketball-gm
+Architecture: all
+Depends: ${misc:Depends}, python-gtk2, libsqlite3-0, ${python:Depends}
+Recommends: python-numpy
+Description: Basketball simulation game
+ Basketball simulation game. You are the general manager of
+ a basketball team. Make trades, set rosters, draft players,
+ and try to build the next dynasty.

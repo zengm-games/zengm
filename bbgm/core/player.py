@@ -191,7 +191,6 @@ class GeneratePlayer(Player):
         Player.develop(self, years)
         age = common.SEASON - self.attribute['born_date'] + years
         self.attribute['born_date'] = common.SEASON - age
-        print years
 
     def generate_ratings(self, profile, base_rating):
         if profile == 'Point':

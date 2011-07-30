@@ -1,19 +1,7 @@
 BLOCKERS FOR 1.0:
-- Game simulation
-  - Gameplay bonuses when any of the following are true...
-    - At least one player with dribbling > X
-    - At least two players with shooting_three_pointers > X
-    - At least three players with shooting_three_pointers > X
-    - At least four players with shooting_three_pointers > X
-    - At least one player with rebounding > X
-    - At least one player with blocks > X
-    - At least three players with steals > X
-    - At least one player with inside_scoring > X
-    - At least three players with speed > X and (shooting_layups > X or shooting_layups + jumping > X)
 - hard limit on max roster size
   - draft
     - release players if necessary
-- AI teams release/buy out players to sign a better free agent
 - test in unity and gnome 3
 - Manual
   - Overview of gameplay
@@ -77,6 +65,17 @@ overtime
 take all ratings into account
 blocks, assists (maybe other things) should not be so evenly distributed
 home and away games
+synergy
+- Gameplay bonuses when any of the following are true...
+  - At least one player with dribbling > X
+  - At least two players with shooting_three_pointers > X
+  - At least three players with shooting_three_pointers > X
+  - At least four players with shooting_three_pointers > X
+  - At least one player with rebounding > X
+  - At least one player with blocks > X
+  - At least three players with steals > X
+  - At least one player with inside_scoring > X
+  - At least three players with speed > X and (shooting_layups > X or shooting_layups + jumping > X)
 
 UI
 --
@@ -132,6 +131,7 @@ trade
 - Feedback from trades (way off, that's close, etc)
 - "Oh, you again?" after failed trade attempts
 - AI teams should be aware of contract lengths and the implications thereof
+AI teams release/buy out players to sign a better free agent
 
 FEATURES
 --------

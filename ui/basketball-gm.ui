@@ -15,7 +15,7 @@
     <property name="version">1.0.0alpha</property>
     <property name="copyright" translatable="yes">Copyright © 2008-2011 Jeremy Scheff</property>
     <property name="comments" translatable="yes">A basketball simulation game</property>
-    <property name="website">https://github.com/jdscheff/basketball-gm</property>
+    <property name="website">http://www.basketball-gm.com/</property>
     <property name="license" translatable="yes"> GNU AFFERO GENERAL PUBLIC LICENSE
                        Version 3, 19 November 2007
 
@@ -1743,6 +1743,16 @@ For more information on this, and how to apply and follow the GNU AGPL, see
                   <object class="GtkMenu" id="menu5">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkMenuItem" id="menuitem_manual">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="label" translatable="yes">_Manual</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="on_menuitem_manual_activate" swapped="no"/>
+                      </object>
+                    </child>
                     <child>
                       <object class="GtkImageMenuItem" id="menuitem_about">
                         <property name="label">_About</property>

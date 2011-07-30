@@ -8,6 +8,7 @@ import os
 import random
 import sqlite3
 import time
+import webbrowser
 
 # My modules
 from bbgm import common
@@ -200,6 +201,9 @@ class MainWindow:
     def on_menuitem_until_regular_season_activate(self, widget, data=None):
         self.new_phase(1)
         return True
+
+    def on_menuitem_manual_activate(self, widget, data=None):
+        webbrowser.open('http://www.basketball-gm.com/manual/1.0/')
 
     def on_menuitem_about_activate(self, widget, data=None):
         self.aboutdialog = self.builder.get_object('aboutdialog')

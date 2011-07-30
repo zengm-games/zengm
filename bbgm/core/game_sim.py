@@ -106,21 +106,21 @@ class Game:
                         self.team[t].player[p].stat['energy'] = 1
 
     def is_turnover(self):
-        if random.random() < 0.1:
+        if random.random() < 0.1 + self.team[self.d].defense:
             self.do_turnover()
             return True
         else:
             return False
 
     def is_steal(self):
-        if random.random() < 0.7:
+        if random.random() < 0.55:
             self.do_steal()
             return True
         else:
             return False
 
     def is_block(self):
-        if random.random() < 0.04:
+        if random.random() < (0.02 + self.team[self.d].defense):
             self.do_block()
             return True
         else:
@@ -145,7 +145,7 @@ class Game:
             type = 2
             stat = 'field_goal_percentage'
         # Make or miss
-        if random.random() < self.team[self.o].player[p].composite_rating[stat]:
+        if random.random() < (self.team[self.o].player[p].composite_rating[stat] - self.team[self.d].defense):
             self.do_made_shot(shooter, type)
             # And 1
             if random.random() < 0.1:
@@ -330,13 +330,21 @@ class Team:
             self.player_ids.append(row[0])
             p += 1
         self.num_players = p
-        self.pace = sum([self.player[i].composite_rating['pace'] for i in xrange(7)]) / 7  # Should be scaled by average minutes played
 
     def load_team_attributes(self):
+        """Load team attributes.
+
+        This must be called after self.load_players to allow for generation of
+        self.defense and self.pace.
+        """
         query = 'SELECT region, name FROM team_attributes WHERE team_id = ?'
         row = common.DB_CON.execute(query, (self.id,)).fetchone()
         self.region = row[0]
         self.name = row[1]
+
+        self.pace = sum([self.player[i].composite_rating['pace'] for i in xrange(7)]) / 7  # Should be scaled by average minutes played
+        self.defense = sum([self.player[i].composite_rating['defense'] for i in xrange(7)]) / 7 # 0 to 0.5
+        self.defense /= 4 # This gives the percentage points subtracted from the other team's normal FG%
 
 
 class Player:
@@ -379,7 +387,7 @@ class Player:
         self.composite_rating['steal_ratio'] = self._composite(0, 0.5, ['speed', 'steals'])
         self.composite_rating['block_ratio'] = self._composite(0, 0.5, ['height', 'jumping', 'blocks'])
         self.composite_rating['foul_ratio'] = self._composite(0, 0.5, ['speed'], inverse=True)
-        self.composite_rating['defense'] = self._composite(0, 0.5, ['speed'])
+        self.composite_rating['defense'] = self._composite(0, 0.5, ['strength', 'speed'])
 
     def _composite(self, minval, maxval, components, inverse=False, random=True):
         r = 0.0

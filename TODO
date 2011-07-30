@@ -1,5 +1,5 @@
 BLOCKERS FOR 1.0:
-- "Synergy" in game simulation
+- Game simulation
   - Gameplay bonuses when any of the following are true...
     - At least one player with dribbling > X
     - At least two players with shooting_three_pointers > X
@@ -10,7 +10,6 @@ BLOCKERS FOR 1.0:
     - At least three players with steals > X
     - At least one player with inside_scoring > X
     - At least three players with speed > X and (shooting_layups > X or shooting_layups + jumping > X)
-  - Make sure all ratings are used adequately in simulation
 - hard limit on max roster size
   - draft
     - release players if necessary

@@ -14,5 +14,5 @@ Depends: ${misc:Depends}, python-gtk2, libsqlite3-0, ${python:Depends}
 Recommends: python-numpy
 Description: Basketball simulation game
  Basketball simulation game. You are the general manager of
- a basketball team. Make trades, set rosters, draft players,
- and try to build the next dynasty.
+ a basketball team. Make trades, set the roster, draft players,
+ sign free agents, and try to build the next dynasty.

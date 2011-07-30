@@ -11,6 +11,7 @@ BLOCKERS FOR 1.0:
   - Synergy
 - Make a .deb and distribute
   - start PPA with the alpha .deb, but don't promote. when beta is ready, make sure upgrade works, then promote
+  - How to correctly set name, icon, and (non) technical item status in Software Center?
 
 All the other UI prettifying and code refactoring stuff can wait.
 

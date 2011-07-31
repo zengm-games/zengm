@@ -25,7 +25,6 @@ To install all these packages in Fedora 15, run as root:
 
     yum install pygtk2 sqlite numpy
 
-
 Running and/or installing
 -------------------------
 
@@ -41,16 +40,12 @@ Or, to install the game system-wide and then run it:
 
 The system-wide install through setup.py should also make a launcher for "Basketball GM".
 
-This should work pretty much anywhere PyGTK runs. For now, this file includes
-instructions for Linux and Windows.
-
 
 Windows
 =======
 
 WARNING: THERE ARE BUGS HERE! For instance, loading and saving games doesn't
 seem to work. But the rest of the game runs beautifully!
-
 
 Dependencies
 ------------
@@ -62,7 +57,6 @@ Python 2.7 installer: http://www.python.org/getit/
 PyGTK 2.22 all-in-one installer:
     http://ftp.gnome.org/pub/GNOME/binaries/win32/pygtk/2.22/
 pysqlite 2.6 installer: http://code.google.com/p/pysqlite/downloads/list
-
 
 Running and/or installing
 -------------------------

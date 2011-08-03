@@ -142,6 +142,22 @@ class Player:
         common.DB_CON.execute('UPDATE player_attributes SET team_id = -1, contract_amount = ?, contract_expiration = ?,'
                               ' free_agent_times_asked = 0 WHERE player_id = ?', (amount, expiration, self.id))
 
+    def release(self, phase):
+        """Release player.
+
+        This keeps track of what the player's current team owes him, and then
+        calls add_to_free_agents.
+
+        Args:
+            phase: self.phase from bbgm.views.main_window
+        """
+
+        # Keep track of player salary even when he's off the team
+        contract_amount, contract_expiration, team_id = common.DB_CON.execute('SELECT contract_amount, contract_expiration, team_id FROM player_attributes WHERE player_id = ?', (self.id,)).fetchone()
+        common.DB_CON.execute('INSERT INTO released_players_salaries (player_id, team_id, contract_amount, contract_expiration) VALUES (?, ?, ?, ?)', (self.id, team_id, contract_amount, contract_expiration))
+
+        self.add_to_free_agents(phase)
+
 
 class GeneratePlayer(Player):
     '''

@@ -4,10 +4,10 @@ BLOCKERS FOR 1.0:
     - for computer teams, release or buy out worst players
     - update manual
   - also put minimum roster size checks everywhere a max roster size check is (search for 15)
+    - and when players are released or bought out during regular season or playoffs
 - test in unity and gnome 3
 - Make a .deb and distribute
   - start PPA with the alpha .deb, but don't promote. when beta is ready, make sure upgrade works, then promote
-  - How to correctly set name, icon, and (non) technical item status in Software Center?
 
 All the other UI prettifying and code refactoring stuff can wait.
 

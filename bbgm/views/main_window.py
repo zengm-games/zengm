@@ -1141,6 +1141,31 @@ class MainWindow:
 
         # Regular Season - pre trading deadline
         elif self.phase == 1:
+            # First, make sure teams are all within the roster limits
+            # CPU teams
+            query = ('SELECT ta.team_id, COUNT(*) FROM team_attributes as ta, player_attributes as pa WHERE ta.team_id '
+                     '= pa.team_id AND ta.season = ? GROUP BY pa.team_id')
+            for team_id, num_players_on_roster in common.DB_CON.execute(query, (common.SEASON,)):
+                if num_players_on_roster > 15:
+                    if team_id == common.PLAYER_TEAM_ID:
+                        pass
+                    else:
+                        # Automatically drop lowest potential players until we reach 15
+                        query2 = ('SELECT pa.player_id FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = ? ORDER BY pr.potential ASC LIMIT ?')
+                        for player_id in common.DB_CON.execute(query2, (team_id, num_players_on_roster-15)):
+                            # Buy out player if there is enough money. Otherwise, release.
+                            pass
+                elif num_players_on_roster < 5:
+                    if team_id == common.PLAYER_TEAM_ID:
+                        pass
+                    else:
+                        # Should auto-add players
+                        pass
+
+
+
+
+
             self.new_schedule()
 
             # Auto sort rosters (except player's team)

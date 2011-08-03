@@ -1152,9 +1152,12 @@ class MainWindow:
                     else:
                         # Automatically drop lowest potential players until we reach 15
                         query2 = ('SELECT pa.player_id FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = ? ORDER BY pr.potential ASC LIMIT ?')
-                        for player_id in common.DB_CON.execute(query2, (team_id, num_players_on_roster-15)):
-                            # Buy out player if there is enough money. Otherwise, release.
-                            pass
+                        for player_id, in common.DB_CON.execute(query2, (team_id, num_players_on_roster-15)):
+                            print team_id, player_id
+                            # Release player.
+                            p = player.Player()
+                            p.load(player_id)
+                            p.release(self.phase)
                 elif num_players_on_roster < 5:
                     if team_id == common.PLAYER_TEAM_ID:
                         pass

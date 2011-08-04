@@ -327,11 +327,33 @@ class MainWindow:
 
         common.SEASON = 2011  # HACK! There should be a better way of doing this.
 
+        loading_messages = [
+            'Generating new players',
+            'Reticulating splines',
+            'Generating humorous loading message',
+            'To increase performance, shovel more coal into the firebox',
+            'Whipping the llama',
+            'Charging flux capacitor',
+            'On a good computer, you wouldn\'t have enough time to read this',
+            'Loading',
+            'Connecting to FBI server',
+            'Deleting family photos',
+            'Mining Bitcoins',
+            'Time is an illusion',
+            'Reconfoobling the energymotron',
+            'Insert quarter',
+            'Scanning for grues',
+            'Calculating infinity',
+            'Caching Internet locally',
+            'War is peace',
+        ]
+
         self.new_game_progressbar_window = self.builder.get_object('new_game_progressbar_window')
         self.progressbar_new_game = self.builder.get_object('progressbar_new_game')
         self.new_game_progressbar_window.set_transient_for(self.main_window)
         self.progressbar_new_game.set_fraction(0.0)
-        self.progressbar_new_game.set_text('Generating new players')
+        self.progressbar_new_game.set_text(random.choice(loading_messages))
+#        self.progressbar_new_game.set_text('Generating new players')
         while gtk.events_pending():
             gtk.main_iteration(False)
         self.new_game_progressbar_window.show()
@@ -351,7 +373,7 @@ class MainWindow:
         for t in range(-1, 30):
             good_neutral_bad = random.randrange(-1, 2)  # Determines if this will be a good team or not
 
-            self.progressbar_new_game.set_fraction(0.6 * (t + 1) / 31.0)
+            self.progressbar_new_game.set_fraction(0.75 * (t + 1) / 31.0)
             while gtk.events_pending():
                 gtk.main_iteration(False)
 #            base_ratings = [40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29]
@@ -392,8 +414,8 @@ class MainWindow:
                 player_id += 1
         self.players_sql = sql
 
-        self.progressbar_new_game.set_fraction(0.6)
-        self.progressbar_new_game.set_text('Creating database')
+        self.progressbar_new_game.set_fraction(0.75)
+#        self.progressbar_new_game.set_text('Creating database')
         while gtk.events_pending():
             gtk.main_iteration(False)
 
@@ -402,7 +424,7 @@ class MainWindow:
         self.connect(team_id)
 
         self.progressbar_new_game.set_fraction(1)
-        self.progressbar_new_game.set_text('Done')  # Not really, but close
+#        self.progressbar_new_game.set_text('Done')  # Not really, but close
         while gtk.events_pending():
             gtk.main_iteration(False)
 

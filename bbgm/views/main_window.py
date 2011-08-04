@@ -1143,42 +1143,55 @@ class MainWindow:
         elif self.phase == 1:
             # First, make sure teams are all within the roster limits
             # CPU teams
+            keep_going = True
             query = ('SELECT ta.team_id, COUNT(*) FROM team_attributes as ta, player_attributes as pa WHERE ta.team_id '
                      '= pa.team_id AND ta.season = ? GROUP BY pa.team_id')
             for team_id, num_players_on_roster in common.DB_CON.execute(query, (common.SEASON,)):
                 if num_players_on_roster > 15:
                     if team_id == common.PLAYER_TEAM_ID:
-                        pass
+                        md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                                               gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, ('Your team currently has more '
+                                               'than the maximum number of players (15). You must release or buy out '
+                                               'players (from the Roster window) before the season starts.'))
+                        md.run()
+                        md.destroy()
+                        keep_going = False
                     else:
                         # Automatically drop lowest potential players until we reach 15
-                        query2 = ('SELECT pa.player_id FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = ? ORDER BY pr.potential ASC LIMIT ?')
+                        query2 = ('SELECT pa.player_id FROM player_attributes as pa, player_ratings as pr WHERE '
+                                  'pa.player_id = pr.player_id AND pa.team_id = ? ORDER BY pr.potential ASC LIMIT ?')
                         for player_id, in common.DB_CON.execute(query2, (team_id, num_players_on_roster-15)):
-                            print team_id, player_id
                             # Release player.
                             p = player.Player()
                             p.load(player_id)
                             p.release(self.phase)
                 elif num_players_on_roster < 5:
                     if team_id == common.PLAYER_TEAM_ID:
-                        pass
+                        md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                                               gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, ('Your team currently has less '
+                                               'than the minimum number of players (5). You must add players (through '
+                                               'free agency or trades) before the season starts.'))
+                        md.run()
+                        md.destroy()
+                        keep_going = False
                     else:
                         # Should auto-add players
                         pass
 
+            if keep_going:
+                self.new_schedule()
 
+                # Auto sort rosters (except player's team)
+                for t in range(30):
+                    if t != common.PLAYER_TEAM_ID:
+                        common.roster_auto_sort(t)
 
+                self.update_play_menu(self.phase)
 
-
-            self.new_schedule()
-
-            # Auto sort rosters (except player's team)
-            for t in range(30):
-                if t != common.PLAYER_TEAM_ID:
-                    common.roster_auto_sort(t)
-
-            self.update_play_menu(self.phase)
-
-            self.main_window.set_title('%s %s - Basketball GM' % (common.SEASON, 'Regular Season'))
+                self.main_window.set_title('%s %s - Basketball GM' % (common.SEASON, 'Regular Season'))
+            else:
+                self.phase = old_phase
+                common.DB_CON.execute('UPDATE game_attributes SET phase = ?', (self.phase,))
 
         # Regular Season - post trading deadline
         elif self.phase == 2:

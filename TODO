@@ -1,10 +1,6 @@
 BLOCKERS FOR 1.0:
 - hard limit on max roster size
-  - before regular season starts, confirm that roster size is <= 15. this will account for the draft
-    - for computer teams, release or buy out worst players
-    - update manual
-  - also put minimum roster size checks everywhere a max roster size check is (search for 15)
-    - and when players are released or bought out during regular season or playoffs
+  - also put minimum roster size when players are released or bought out during regular season or playoffs
 - test in unity and gnome 3
 - Make a .deb and distribute
   - start PPA with the alpha .deb, but don't promote. when beta is ready, make sure upgrade works, then promote

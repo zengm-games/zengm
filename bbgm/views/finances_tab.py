@@ -1,5 +1,4 @@
 import gtk
-import locale
 
 from bbgm import common
 from bbgm.util import resources
@@ -21,28 +20,28 @@ class FinancesTab:
         column = gtk.TreeViewColumn('Avg Attendance', renderer, text=2)
         column.set_sort_column_id(2)
         column.set_cell_data_func(renderer,
-            lambda column, cell, model, iter: cell.set_property('text', '%s' % locale.format('%d', model.get_value(iter, 2), True)))
+            lambda column, cell, model, iter: cell.set_property('text', '%s' % self.group(model.get_value(iter, 2))))
         self.treeview_finances.append_column(column)
         renderer = gtk.CellRendererText()
         column = gtk.TreeViewColumn('Revenue (YTD)', renderer, text=3)
         column.set_sort_column_id(3)
         column.set_cell_data_func(renderer,
-            lambda column, cell, model, iter: cell.set_property('text', '%sM' % locale.currency(model.get_value(iter, 3) / 1000000.0, True, True)))
+            lambda column, cell, model, iter: cell.set_property('text', '$%.2fM' % float(model.get_value(iter, 3) / 1000000.0)))
         self.treeview_finances.append_column(column)
         column = gtk.TreeViewColumn('Profit (YTD)', renderer, text=4)
         column.set_sort_column_id(4)
         column.set_cell_data_func(renderer,
-            lambda column, cell, model, iter: cell.set_property('text', '%sM' % locale.currency(model.get_value(iter, 4) / 1000000.0, True, True)))
+            lambda column, cell, model, iter: cell.set_property('text', '$%.2fM' % float(model.get_value(iter, 4) / 1000000.0)))
         self.treeview_finances.append_column(column)
         column = gtk.TreeViewColumn('Cash', renderer, text=5)
         column.set_sort_column_id(5)
         column.set_cell_data_func(renderer,
-            lambda column, cell, model, iter: cell.set_property('text', '%sM' % locale.currency(model.get_value(iter, 5) / 1000000.0, True, True)))
+            lambda column, cell, model, iter: cell.set_property('text', '$%.2fM' % float(model.get_value(iter, 5) / 1000000.0)))
         self.treeview_finances.append_column(column)
         column = gtk.TreeViewColumn('Payroll', renderer, text=6)
         column.set_sort_column_id(6)
         column.set_cell_data_func(renderer,
-            lambda column, cell, model, iter: cell.set_property('text', '%sM' % locale.currency(model.get_value(iter, 6) / 1000000.0, True, True)))
+            lambda column, cell, model, iter: cell.set_property('text', '$%.2fM' % float(model.get_value(iter,  6) / 1000000.0)))
         self.treeview_finances.append_column(column)
 
         column_types = [int, str, int, int, int, int, int]
@@ -68,6 +67,15 @@ class FinancesTab:
         common.treeview_update_new(self.treeview_finances, query_ids, params_ids, query_row, params_row, query_row_alt, params_row_alt)
 
         self.updated = True
+
+    def group(self, number):
+        """Add commas every 3 places in a number."""
+        s = '%d' % number
+        groups = []
+        while s and s[-1].isdigit():
+            groups.append(s[-3:])
+            s = s[:-3]
+        return s + ','.join(reversed(groups))
 
     def __init__(self, main_window):
         self.mw = main_window

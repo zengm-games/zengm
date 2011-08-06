@@ -506,7 +506,7 @@ class MainWindow:
                 common.DB_CON.commit()
                 c.close()
 
-                self.progressbar_new_game.set_fraction(self.progressbar_new_game.get_fraction() + 0.1)
+                self.progressbar_new_game.set_fraction(self.progressbar_new_game.get_fraction() + 0.05)
                 while gtk.events_pending():
                     gtk.main_iteration(False)
             common.DB_CON.execute('UPDATE game_attributes SET team_id = ?', (team_id,))

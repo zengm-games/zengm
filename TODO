@@ -1,9 +1,8 @@
 BLOCKERS FOR 1.0:
-- hard limit on max roster size
-  - also put minimum roster size when players are released or bought out during regular season or playoffs
 - test in unity and gnome 3
 - Make a .deb and distribute
   - start PPA with the alpha .deb, but don't promote. when beta is ready, make sure upgrade works, then promote
+- Windows?
 
 All the other UI prettifying and code refactoring stuff can wait.
 

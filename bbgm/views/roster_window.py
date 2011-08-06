@@ -72,8 +72,8 @@ class RosterWindow:
                     p.add_to_free_agents(self.mw.phase)
                     # Delete from roster treeview
                     treemodel.remove(treeiter)
-                    # Update roster info
-                    self.update_roster_info()
+                    # Update roster
+                    self.update_roster()
                     # Update tabs in the main window
                     self.mw.finances.updated = False
                     self.mw.player_stats.updated = False
@@ -100,8 +100,8 @@ class RosterWindow:
                 p.release(self.mw.phase)
                 # Delete from roster treeview
                 treemodel.remove(treeiter)
-                # Update roster info
-                self.update_roster_info()
+                # Update roster
+                self.update_roster()
                 # Update tabs in the main window
                 self.mw.finances.updated = False
                 self.mw.player_stats.updated = False
@@ -159,9 +159,21 @@ class RosterWindow:
         model = self.treeview_roster.get_model()
         model.connect('row-deleted', self.on_treeview_roster_row_deleted)
 
+        # Set release and buy out buttons insensitive based on minimum roster size
+        if self.get_num_players_on_roster() <= 5:
+            self.button_roster_release.set_sensitive(False)
+            self.button_roster_buy_out.set_sensitive(False)
+        else:
+            self.button_roster_release.set_sensitive(True)
+            self.button_roster_buy_out.set_sensitive(True)
+
     def update_roster_info(self):
-        empty_roster_spots, = common.DB_CON.execute('SELECT 15 - COUNT(*) FROM player_attributes WHERE team_id = ?', (common.PLAYER_TEAM_ID,)).fetchone()
+        empty_roster_spots = 15 - self.get_num_players_on_roster()
         self.label_roster_info.set_markup('You currently have <b>%d empty roster spots</b>.\n' % (empty_roster_spots))
+
+    def get_num_players_on_roster(self):
+        num_players_on_roster, = common.DB_CON.execute('SELECT COUNT(*) FROM player_attributes WHERE team_id = ?', (common.PLAYER_TEAM_ID,)).fetchone()
+        return num_players_on_roster
 
     def __init__(self, main_window):
         self.mw = main_window
@@ -173,6 +185,8 @@ class RosterWindow:
         self.label_roster_info = self.builder.get_object('label_roster_info')
         self.treeview_roster = self.builder.get_object('treeview_roster')
         self.treeview_roster_info = self.builder.get_object('treeview_roster_info')
+        self.button_roster_release = self.builder.get_object('button_roster_release')
+        self.button_roster_buy_out = self.builder.get_object('button_roster_buy_out')
 
         self.builder.connect_signals(self)
 

@@ -6,6 +6,7 @@ import cPickle as pickle
 import gtk
 import os
 import random
+import shutil
 import sqlite3
 import time
 import webbrowser
@@ -443,9 +444,7 @@ class MainWindow:
 
     def open_game(self, filename):
         try:
-            f = open(filename)
-            data = f.read()
-            f.close()
+            shutil.copyfile(filename, common.DB_TEMP_FILENAME)
         except IOError:
             md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
                                    gtk.MESSAGE_ERROR, gtk.BUTTONS_OK)
@@ -464,11 +463,6 @@ class MainWindow:
             common.DB_CON.close()
         except:
             pass
-
-        # Write decompressed data from the save file to the temp SQLite DB file
-        f = open(common.DB_TEMP_FILENAME, 'w')
-        f.write(data)
-        f.close()
 
         common.DB_FILENAME = filename
 
@@ -562,13 +556,7 @@ class MainWindow:
 
         common.DB_CON.commit()
 
-        f = open(common.DB_TEMP_FILENAME)
-        data = f.read()
-        f.close()
-
-        f = open(filename, 'w')
-        f.write(data)
-        f.close()
+        shutil.copyfile(common.DB_TEMP_FILENAME, filename)
 
         self.unsaved_changes = False
 

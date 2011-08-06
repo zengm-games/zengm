@@ -38,14 +38,15 @@ Or, to install the game system-wide and then run it:
 
     basketball-gm
 
-The system-wide install through setup.py should also make a launcher for "Basketball GM".
+The system-wide install through setup.py should also make a launcher for
+"Basketball GM".
 
 
 Windows
 =======
 
-WARNING: THERE ARE BUGS HERE! For instance, loading and saving games doesn't
-seem to work. But the rest of the game runs beautifully!
+WARNING: THERE ARE BUGS HERE! Basketball GM has not been extensively tested
+under Windows.
 
 Dependencies
 ------------

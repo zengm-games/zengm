@@ -1,5 +1,5 @@
-Basketball GM 1.0.0alpha
-========================
+Basketball GM 1.0.0beta
+=======================
 
 A basketball simulation game. Make trades, set rosters, draft players, and try
 to build the next dynasty. Built with PyGTK and SQLite.

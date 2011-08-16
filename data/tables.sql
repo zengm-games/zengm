@@ -13,7 +13,7 @@ season INTEGER,
 phase INTEGER,
 schedule TEXT,
 version TEXT);
-INSERT INTO "game_attributes" (team_id, season, phase, version) VALUES(3, 2011, 0, '1.0.0alpha');
+INSERT INTO "game_attributes" (team_id, season, phase, version) VALUES(3, 2011, 0, '1.0.0beta');
 
 CREATE TABLE player_attributes (
 player_id INTEGER PRIMARY KEY,

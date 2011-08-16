@@ -6,7 +6,7 @@ import os
 #   console
 # - The internal "Value" variable is shown when you're making a trade, which
 #   lets you see what the CPU team is thinking
-DEBUG = True
+DEBUG = False
 
 # If True, will attempt to use numpy for random numbers, which is about 10%
 # faster. If numpy is not available, it will automatically fall back on

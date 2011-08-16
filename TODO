@@ -1,9 +1,5 @@
 BLOCKERS FOR 1.0:
-- test in unity and gnome 3
-- Make a .deb and distribute
-  - start PPA with the alpha .deb, but don't promote. when beta is ready, make sure upgrade works, then promote
-- Windows?
-  - finances_tab.py line 40 "Currency formatting is not possible using the 'C' locale."
+- test in unity and gnome 3 and windows and elsewhere
 All the other UI prettifying and code refactoring stuff can wait.
 
 ---

@@ -14,7 +14,7 @@ class TradeWindow:
         self.trade = Trade(team_id)
 
         self.builder = gtk.Builder()
-        self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.ui'), ['liststore1', 'trade_window'])
+        self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.ui'), ['trade_window'])
 
         self.trade_window = self.builder.get_object('trade_window')
         self.combobox_trade_teams = self.builder.get_object('combobox_trade_teams')
@@ -44,15 +44,19 @@ class TradeWindow:
         self.renderer_1_toggled_handle_id = self.renderer_1.connect('toggled', self.on_player_toggled, self.treeview_trade[1].get_model())
 
         # Fill the combobox with teams
-        model = self.combobox_trade_teams.get_model()
-        self.combobox_trade_teams.set_model(None)
-        model.clear()
-        for row in common.DB_CON.execute('SELECT region || " " || name, team_id FROM team_attributes WHERE season = ?  AND team_id != ? ORDER BY team_id ASC', (common.SEASON, common.PLAYER_TEAM_ID)):
-            model.append(['%s' % row[0]])
-            if row[1] == common.PLAYER_TEAM_ID:
-                self.label_team_name.set_text(row[0])
+        model = gtk.ListStore(int, str)
+        cell = gtk.CellRendererText()
+        self.combobox_trade_teams.pack_start(cell, True)
+        self.combobox_trade_teams.add_attribute(cell, 'text', 1)
+
+        i = 0
+        for row in common.DB_CON.execute('SELECT team_id, region || " " || name FROM team_attributes WHERE season = ?  AND team_id != ? ORDER BY team_id ASC', (common.SEASON, common.PLAYER_TEAM_ID)):
+            model.append([row[0], '%s' % row[1]])
+            if row[0] == self.trade.team_id:
+                active = i
+            i += 1
         self.combobox_trade_teams.set_model(model)
-        self.combobox_trade_teams.set_active(self.trade.team_id)
+        self.combobox_trade_teams.set_active(active)
 
         # Select a player if a player ID has been passed to this function
         # There's probably a more elegant way of doing this
@@ -113,7 +117,8 @@ class TradeWindow:
         self.update_trade_summary()
 
     def on_combobox_trade_teams_changed(self, combobox, data=None):
-        new_team_id = combobox.get_active()
+        active = combobox.get_active()
+        new_team_id = combobox.get_model()[active][0]
 
         self.trade.new_team(new_team_id)
 

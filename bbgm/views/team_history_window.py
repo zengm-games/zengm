@@ -1,4 +1,4 @@
-import gtk
+from gi.repository import Gtk
 
 from bbgm import common
 from bbgm.util import resources
@@ -39,7 +39,7 @@ class TeamHistoryWindow:
     def __init__(self, main_window):
         self.mw = main_window
 
-        self.builder = gtk.Builder()
+        self.builder = Gtk.Builder()
         self.builder.add_from_file(resources.get_asset('ui', 'team_history_window.ui'))
 
         self.team_history_window = self.builder.get_object('team_history_window')

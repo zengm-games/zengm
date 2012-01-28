@@ -1,4 +1,4 @@
-import gtk
+from gi.repository import Gtk
 
 from bbgm import common
 from bbgm.util import resources
@@ -12,7 +12,7 @@ class SeasonEndWindow:
     def __init__(self, main_window):
         self.mw = main_window
 
-        self.builder = gtk.Builder()
+        self.builder = Gtk.Builder()
         self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.ui'), ['season_end_window'])
 
         self.season_end_window = self.builder.get_object('season_end_window')

@@ -1,4 +1,4 @@
-import gtk
+from gi.repository import Gtk
 
 from bbgm import common
 from bbgm.core.trade import Trade
@@ -13,7 +13,7 @@ class TradeWindow:
             team_id = 0
         self.trade = Trade(team_id)
 
-        self.builder = gtk.Builder()
+        self.builder = Gtk.Builder()
         self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.ui'), ['trade_window'])
 
         self.trade_window = self.builder.get_object('trade_window')
@@ -32,9 +32,9 @@ class TradeWindow:
         self.builder.connect_signals(self)
 
         # Show the team rosters
-        self.renderer_0 = gtk.CellRendererToggle()
+        self.renderer_0 = Gtk.CellRendererToggle()
         self.renderer_0.set_property('activatable', True)
-        self.renderer_1 = gtk.CellRendererToggle()
+        self.renderer_1 = Gtk.CellRendererToggle()
         self.renderer_1.set_property('activatable', True)
         self.build_roster(self.treeview_trade[0], self.renderer_0)
         self.build_roster(self.treeview_trade[1], self.renderer_1)
@@ -44,8 +44,8 @@ class TradeWindow:
         self.renderer_1_toggled_handle_id = self.renderer_1.connect('toggled', self.on_player_toggled, self.treeview_trade[1].get_model())
 
         # Fill the combobox with teams
-        model = gtk.ListStore(int, str)
-        cell = gtk.CellRendererText()
+        model = Gtk.ListStore(int, str)
+        cell = Gtk.CellRendererText()
         self.combobox_trade_teams.pack_start(cell, True)
         self.combobox_trade_teams.add_attribute(cell, 'text', 1)
 
@@ -92,7 +92,7 @@ class TradeWindow:
             self.trade.process()
 
             # Show dialog
-            dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_INFO, gtk.BUTTONS_CLOSE, 'Your trade proposal was accepted.\n\n"%s"' % (comment,))
+            dialog = Gtk.MessageDialog(None, 0, Gtk.MessageType.INFO, Gtk.ButtonsType.CLOSE, 'Your trade proposal was accepted.\n\n"%s"' % (comment,))
             dialog.run()
             dialog.destroy()
             self.trade_window.destroy()
@@ -100,7 +100,7 @@ class TradeWindow:
             # Update tabs in the main window, as well as the roster window
             self.mw.update_all_pages()
         else:
-            dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_INFO, gtk.BUTTONS_CLOSE, 'Your trade proposal was rejected.\n\n"%s"' % (comment,))
+            dialog = Gtk.MessageDialog(None, 0, Gtk.MessageType.INFO, Gtk.ButtonsType.CLOSE, 'Your trade proposal was rejected.\n\n"%s"' % (comment,))
             dialog.run()
             dialog.destroy()
 
@@ -150,7 +150,7 @@ class TradeWindow:
         self.update_trade_summary()
 
     def build_roster(self, treeview, renderer_toggle):
-        column = gtk.TreeViewColumn('Trade', renderer_toggle)
+        column = Gtk.TreeViewColumn('Trade', renderer_toggle)
         column.add_attribute(renderer_toggle, 'active', 2)
         column.set_sort_column_id(2)
         treeview.append_column(column)

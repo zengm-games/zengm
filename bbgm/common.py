@@ -1,4 +1,4 @@
-import gtk
+from gi.repository import Gtk
 import os
 
 # When DEBUG is True:
@@ -49,7 +49,7 @@ def treeview_build_new(treeview, column_types, column_info, tooltips = []):
     """Shortcut function to add columns and a ListStore to a treeview.
 
     Args:
-        treeview: gtk.treview instance.
+        treeview: Gtk.treview instance.
         column_types: A list of data types for the columns in the model.
         column_info: A list containing four lists of equal size, with each set
             of four elements from those lists corresponding to one visible
@@ -69,7 +69,7 @@ def treeview_build_new(treeview, column_types, column_info, tooltips = []):
 
         add_column(treeview, column_info[0][i], column_info[1][i], column_info[2][i], column_info[3][i], tooltip)
 
-    liststore = gtk.ListStore(*column_types)
+    liststore = Gtk.ListStore(*column_types)
     treeview.set_model(liststore)
 
 
@@ -98,7 +98,7 @@ def treeview_update_new(treeview, query_ids, params_ids, query_row, params_row, 
     below.
 
     Args:
-        treeview: gtk.treeview instance. Must already have a model, such as if
+        treeview: Gtk.treeview instance. Must already have a model, such as if
             treeview_build_new is called first. Also, the first column in the
             model MUST correspond to the IDs returned by query_ids.
         query_ids: SQL query that will return a list of player IDs for the
@@ -168,14 +168,14 @@ def treeview_update_new(treeview, query_ids, params_ids, query_row, params_row, 
 
 
 def add_column(treeview, title, column_id, sort=False, truncate_float=False, tooltip=''):
-    renderer = gtk.CellRendererText()
-    column = gtk.TreeViewColumn()
+    renderer = Gtk.CellRendererText()
+    column = Gtk.TreeViewColumn()
     column.pack_start(renderer, True)
     column.add_attribute(renderer, 'text', column_id)
 
     if len(tooltip) > 0:
-        tooltips = gtk.Tooltips()
-        column_header = gtk.Label(title)
+        tooltips = Gtk.Tooltips()
+        column_header = Gtk.Label(label=title)
         column_header.show()
         column.set_widget(column_header)
         tooltips.set_tip(column_header, tooltip)

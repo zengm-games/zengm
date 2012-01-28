@@ -1,5 +1,5 @@
-import gtk
-import pango
+from gi.repository import Gtk
+from gi.repository import Pango
 import sqlite3
 
 from bbgm import common
@@ -93,7 +93,7 @@ class GameLogTab:
                        [False,      False, False]]
         common.treeview_build_new(self.treeview_games_list, column_types, column_info)
 
-        self.mw.notebook.insert_page(self.vbox5, gtk.Label('Game Log'), self.mw.pages['game_log'])
+        self.mw.notebook.insert_page(self.vbox5, Gtk.Label(label='Game Log'), self.mw.pages['game_log'])
 
         self.built = True
 
@@ -118,7 +118,7 @@ class GameLogTab:
     def __init__(self, main_window):
         self.mw = main_window
 
-        self.builder = gtk.Builder()
+        self.builder = Gtk.Builder()
         self.builder.add_from_file(resources.get_asset('ui', 'game_log_tab.ui'))
 
         self.vbox5 = self.builder.get_object('vbox5')
@@ -126,7 +126,7 @@ class GameLogTab:
         self.combobox_season = self.builder.get_object('combobox_season')
         self.combobox_team = self.builder.get_object('combobox_team')
         self.textview_box_score = self.builder.get_object('textview_box_score')
-        self.textview_box_score.modify_font(pango.FontDescription("Monospace 8"))
+        self.textview_box_score.modify_font(Pango.FontDescription("Monospace 8"))
         self.builder.connect_signals(self)
 
 #        self.build()

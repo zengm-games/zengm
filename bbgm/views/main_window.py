@@ -3,7 +3,7 @@
 
 # Python modules
 import cPickle as pickle
-import gtk
+from gi.repository import Gtk
 import os
 import random
 import shutil
@@ -30,11 +30,11 @@ class MainWindow:
         return self.quit()  # If false, proceed to on_main_window_destroy. Otherwise, it was cancelled.
 
     def on_main_window_destroy(self, widget, data=None):
-        gtk.main_quit()
+        Gtk.main_quit()
 
     def on_placeholder(self, widget, data=None):
-        md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING,
-                               gtk.BUTTONS_CLOSE, 'Sorry, this feature isn\'t implemented yet.')
+        md = Gtk.MessageDialog(self.main_window, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, Gtk.MessageType.WARNING,
+                               Gtk.ButtonsType.CLOSE, 'Sorry, this feature isn\'t implemented yet.')
         md.run()
         md.destroy()
 
@@ -45,8 +45,8 @@ class MainWindow:
         '''
         if self.games_in_progress:
             self.stop_games = True
-            md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                                   gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, ('Can\'t start a new game while simulation '
+            md = Gtk.MessageDialog(self.main_window, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                                   Gtk.MessageType.WARNING, Gtk.ButtonsType.CLOSE, ('Can\'t start a new game while simulation '
                                    'is in progress.  Wait until the current day\'s games are over and try again.'))
             md.run()
             md.destroy()
@@ -57,15 +57,15 @@ class MainWindow:
                     proceed = True
             if not self.unsaved_changes or proceed:
                 result, team_id = self.new_game_dialog()
-                if result == gtk.RESPONSE_OK and team_id >= 0:
+                if result == Gtk.ResponseType.OK and team_id >= 0:
                     self.new_game(team_id)
                     self.unsaved_changes = True
 
     def on_menuitem_open_activate(self, widget=None, data=None):
         if self.games_in_progress:
             self.stop_games = True
-            md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                                   gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, ('Can\'t open game while simulation '
+            md = Gtk.MessageDialog(self.main_window, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                                   Gtk.MessageType.WARNING, Gtk.ButtonsType.CLOSE, ('Can\'t open game while simulation '
                                    'is in progress.  Wait until the current day\'s games are over and try again.'))
             md.run()
             md.destroy()
@@ -82,8 +82,8 @@ class MainWindow:
     def on_menuitem_save_activate(self, widget, data=None):
         if self.games_in_progress:
             self.stop_games = True
-            md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                                   gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, ('Can\'t save game while simulation '
+            md = Gtk.MessageDialog(self.main_window, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                                   Gtk.MessageType.WARNING, Gtk.ButtonsType.CLOSE, ('Can\'t save game while simulation '
                                    'is in progress.  Wait until the current day\'s games are over and try again.'))
             md.run()
             md.destroy()
@@ -93,8 +93,8 @@ class MainWindow:
     def on_menuitem_save_as_activate(self, widget, data=None):
         if self.games_in_progress:
             self.stop_games = True
-            md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                                   gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, 'Can\'t save game while simulation '
+            md = Gtk.MessageDialog(self.main_window, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                                   Gtk.MessageType.WARNING, Gtk.ButtonsType.CLOSE, 'Can\'t save game while simulation '
                                    'is in progress.  Wait until the current day\'s games are over and try again.')
             md.run()
             md.destroy()
@@ -103,7 +103,7 @@ class MainWindow:
 
     def on_menuitem_quit_activate(self, widget, data=None):
         if not self.quit():
-            gtk.main_quit()
+            Gtk.main_quit()
         return True
 
     def on_menuitem_roster_activate(self, widget, data=None):
@@ -111,7 +111,7 @@ class MainWindow:
             self.rw = roster_window.RosterWindow(self)
         else:
             self.rw.update_roster()
-            if self.rw.roster_window.flags() & gtk.VISIBLE:
+            if self.rw.roster_window.flags() & Gtk.VISIBLE:
                 self.rw.roster_window.window.show()  # Raise the window if it's in the background
             else:
                 self.rw.roster_window.show()  # Show the window
@@ -137,7 +137,7 @@ class MainWindow:
             self.faw = free_agents_window.FreeAgentsWindow(self)
         else:
             self.faw.update_free_agents()
-            if self.faw.free_agents_window.flags() & gtk.VISIBLE:
+            if self.faw.free_agents_window.flags() & Gtk.VISIBLE:
                 self.faw.free_agents_window.window.show()  # Raise the window if it's in the background
             else:
                 self.faw.free_agents_window.show()  # Show the window
@@ -309,16 +309,16 @@ class MainWindow:
         self.playoffs.updated = False
         self.update_current_page()
 
-        if hasattr(self, 'rw') and (self.rw.roster_window.flags() & gtk.VISIBLE):
+        if hasattr(self, 'rw') and (self.rw.roster_window.flags() & Gtk.VISIBLE):
             self.rw.update_roster()
 
-        if hasattr(self, 'thw') and (self.thw.team_history_window.flags() & gtk.VISIBLE):
+        if hasattr(self, 'thw') and (self.thw.team_history_window.flags() & Gtk.VISIBLE):
             self.thw.update()
 
-        if hasattr(self, 'faw') and (self.faw.free_agents_window.flags() & gtk.VISIBLE):
+        if hasattr(self, 'faw') and (self.faw.free_agents_window.flags() & Gtk.VISIBLE):
             self.faw.update_free_agents()
 
-        if hasattr(self, 'pw') and (self.pw.player_window.flags() & gtk.VISIBLE):
+        if hasattr(self, 'pw') and (self.pw.player_window.flags() & Gtk.VISIBLE):
             self.pw.update_player(-1)
 
     def new_game(self, team_id):
@@ -355,12 +355,12 @@ class MainWindow:
         self.progressbar_new_game.set_fraction(0.0)
         self.progressbar_new_game.set_text(random.choice(loading_messages))
 #        self.progressbar_new_game.set_text('Generating new players')
-        while gtk.events_pending():
-            gtk.main_iteration(False)
+        while Gtk.events_pending():
+            Gtk.main_iteration(False)
         self.new_game_progressbar_window.show()
 
-        while gtk.events_pending():
-            gtk.main_iteration(False)
+        while Gtk.events_pending():
+            Gtk.main_iteration(False)
 
         # Delete old database
         if os.path.exists(common.DB_TEMP_FILENAME):
@@ -375,8 +375,8 @@ class MainWindow:
             good_neutral_bad = random.randrange(-1, 2)  # Determines if this will be a good team or not
 
             self.progressbar_new_game.set_fraction(0.75 * (t + 1) / 31.0)
-            while gtk.events_pending():
-                gtk.main_iteration(False)
+            while Gtk.events_pending():
+                Gtk.main_iteration(False)
 #            base_ratings = [40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29]
             base_ratings = [30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 19, 19]
             potentials = [70, 60, 50, 50, 55, 45, 65, 35, 50, 45, 55, 55, 40, 40]
@@ -417,8 +417,8 @@ class MainWindow:
 
         self.progressbar_new_game.set_fraction(0.75)
 #        self.progressbar_new_game.set_text('Creating database')
-        while gtk.events_pending():
-            gtk.main_iteration(False)
+        while Gtk.events_pending():
+            Gtk.main_iteration(False)
 
         # Create new database
         common.DB_FILENAME = common.DB_TEMP_FILENAME
@@ -426,8 +426,8 @@ class MainWindow:
 
         self.progressbar_new_game.set_fraction(1)
 #        self.progressbar_new_game.set_text('Done')  # Not really, but close
-        while gtk.events_pending():
-            gtk.main_iteration(False)
+        while Gtk.events_pending():
+            Gtk.main_iteration(False)
 
         # Make schedule, start season
         self.new_phase(1)
@@ -446,8 +446,8 @@ class MainWindow:
         try:
             shutil.copyfile(filename, common.DB_TEMP_FILENAME)
         except IOError:
-            md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                                   gtk.MESSAGE_ERROR, gtk.BUTTONS_OK)
+            md = Gtk.MessageDialog(self.main_window, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                                   Gtk.MessageType.ERROR, Gtk.ButtonsType.OK)
             md.set_markup("<span size='large' weight='bold'>Cannot load file '%s'.</span>" % filename)
             md.run()
             md.destroy()
@@ -507,8 +507,8 @@ class MainWindow:
                 c.close()
 
                 self.progressbar_new_game.set_fraction(self.progressbar_new_game.get_fraction() + 0.05)
-                while gtk.events_pending():
-                    gtk.main_iteration(False)
+                while Gtk.events_pending():
+                    Gtk.main_iteration(False)
             common.DB_CON.execute('UPDATE game_attributes SET team_id = ?', (team_id,))
         row = common.DB_CON.execute('SELECT team_id, season, phase, schedule FROM game_attributes').fetchone()
         common.PLAYER_TEAM_ID = row[0]
@@ -568,16 +568,16 @@ class MainWindow:
         message = ("<span size='large' weight='bold'>Save changes to your current game before closing?</span>\n\n"
                    "Your changes will be lost if you don't save them.")
 
-        dlg = gtk.MessageDialog(self.main_window,
-            gtk.DIALOG_MODAL |
-            gtk.DIALOG_DESTROY_WITH_PARENT,
-            gtk.MESSAGE_WARNING,
-            gtk.BUTTONS_NONE)
+        dlg = Gtk.MessageDialog(self.main_window,
+            Gtk.DialogFlags.MODAL |
+            Gtk.DialogFlags.DESTROY_WITH_PARENT,
+            Gtk.MessageType.WARNING,
+            Gtk.ButtonsType.NONE)
         dlg.set_markup(message)
 
-        dlg.add_button("Close _Without Saving", gtk.RESPONSE_NO)
-        dlg.add_button(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL)
-        defaultAction = dlg.add_button(gtk.STOCK_SAVE, gtk.RESPONSE_YES)
+        dlg.add_button("Close _Without Saving", Gtk.ResponseType.NO)
+        dlg.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
+        defaultAction = dlg.add_button(Gtk.STOCK_SAVE, Gtk.ResponseType.YES)
         #make save the default action when enter is pressed
         dlg.set_default(defaultAction)
 
@@ -585,14 +585,14 @@ class MainWindow:
 
         response = dlg.run()
         dlg.destroy()
-        if response == gtk.RESPONSE_YES:
+        if response == Gtk.ResponseType.YES:
             if self.save_game():
                 return 1
             else:
                 return 0
-        elif response == gtk.RESPONSE_NO:
+        elif response == Gtk.ResponseType.NO:
             return 1
-        elif response == gtk.RESPONSE_CANCEL or response == gtk.RESPONSE_DELETE_EVENT:
+        elif response == Gtk.ResponseType.CANCEL or response == Gtk.ResponseType.DELETE_EVENT:
             return 0
 
     def play_games(self, num_days):
@@ -704,8 +704,8 @@ class MainWindow:
             for i in range(num_active_teams / 2):
                 teams = self.schedule.pop()
 
-                while gtk.events_pending():
-                    gtk.main_iteration(False)
+                while Gtk.events_pending():
+                    Gtk.main_iteration(False)
 #                t1 = random.randint(0, len(common.TEAMS)-1)
 #                while True:
 #                    t2 = random.randint(0, len(common.TEAMS)-1)
@@ -826,7 +826,7 @@ class MainWindow:
         """
         model = combobox.get_model()
         if len(model) == 0:
-            model = gtk.ListStore(str, int)
+            model = Gtk.ListStore(str, int)
             if all_teams_option:
                 model.append(['All Teams', 666])  # 666 is the magic number to find all teams
             for row in common.DB_CON.execute('SELECT abbreviation, team_id FROM team_attributes WHERE season = ? ORDER '
@@ -952,30 +952,30 @@ class MainWindow:
         new_game_dialog.hide()
         team_id = combobox_new_game_teams.get_active()
 
-        while gtk.events_pending():
-            gtk.main_iteration(False)
+        while Gtk.events_pending():
+            Gtk.main_iteration(False)
 
         return result, team_id
 
     def open_game_dialog(self):
-        open_dialog = gtk.FileChooserDialog(title='Open Game', action=gtk.FILE_CHOOSER_ACTION_OPEN,
-                                            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN,
-                                            gtk.RESPONSE_OK))
+        open_dialog = Gtk.FileChooserDialog(title='Open Game', action=Gtk.FileChooserAction.OPEN,
+                                            buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN,
+                                            Gtk.ResponseType.OK))
         open_dialog.set_current_folder(common.SAVES_FOLDER)
         open_dialog.set_transient_for(self.main_window)
 
         # Filters
-        filter = gtk.FileFilter()
+        filter = Gtk.FileFilter()
         filter.set_name('Basketball GM saves')
         filter.add_pattern('*.bbgm')
         open_dialog.add_filter(filter)
-        filter = gtk.FileFilter()
+        filter = Gtk.FileFilter()
         filter.set_name('All files')
         filter.add_pattern('*')
         open_dialog.add_filter(filter)
 
         result = ''
-        if open_dialog.run() == gtk.RESPONSE_OK:
+        if open_dialog.run() == Gtk.ResponseType.OK:
             result = open_dialog.get_filename()
         open_dialog.destroy()
 
@@ -985,25 +985,25 @@ class MainWindow:
         '''
         Return True if the game is saved, False otherwise
         '''
-        buttons = (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_SAVE, gtk.RESPONSE_OK)
-        save_game_dialog = gtk.FileChooserDialog('Choose a location to save the game', self.main_window,
-                                                 gtk.FILE_CHOOSER_ACTION_SAVE, buttons)
+        buttons = (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_SAVE, Gtk.ResponseType.OK)
+        save_game_dialog = Gtk.FileChooserDialog('Choose a location to save the game', self.main_window,
+                                                 Gtk.FileChooserAction.SAVE, buttons)
         save_game_dialog.set_do_overwrite_confirmation(True)
-        save_game_dialog.set_default_response(gtk.RESPONSE_OK)
+        save_game_dialog.set_default_response(Gtk.ResponseType.OK)
         save_game_dialog.set_current_folder(common.SAVES_FOLDER)
 
         # Filters
-        filter = gtk.FileFilter()
+        filter = Gtk.FileFilter()
         filter.set_name('Basketball GM saves')
         filter.add_pattern('*.bbgm')
         save_game_dialog.add_filter(filter)
-        filter = gtk.FileFilter()
+        filter = Gtk.FileFilter()
         filter.set_name('All files')
         filter.add_pattern('*')
         save_game_dialog.add_filter(filter)
 
         response = save_game_dialog.run()
-        if response == gtk.RESPONSE_OK:
+        if response == Gtk.ResponseType.OK:
             # commit, close, copy to new location, open
             filename = save_game_dialog.get_filename()
 
@@ -1159,8 +1159,8 @@ class MainWindow:
             for team_id, num_players_on_roster in common.DB_CON.execute(query, (common.SEASON,)):
                 if num_players_on_roster > 15:
                     if team_id == common.PLAYER_TEAM_ID:
-                        md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                                               gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, ('Your team currently has more '
+                        md = Gtk.MessageDialog(self.main_window, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                                               Gtk.MessageType.WARNING, Gtk.ButtonsType.CLOSE, ('Your team currently has more '
                                                'than the maximum number of players (15). You must release or buy out '
                                                'players (from the Roster window) before the season starts.'))
                         md.run()
@@ -1177,8 +1177,8 @@ class MainWindow:
                             p.release(self.phase)
                 elif num_players_on_roster < 5:
                     if team_id == common.PLAYER_TEAM_ID:
-                        md = gtk.MessageDialog(self.main_window, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                                               gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, ('Your team currently has less '
+                        md = Gtk.MessageDialog(self.main_window, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                                               Gtk.MessageType.WARNING, Gtk.ButtonsType.CLOSE, ('Your team currently has less '
                                                'than the minimum number of players (5). You must add players (through '
                                                'free agency or trades) before the season starts.'))
                         md.run()
@@ -1360,7 +1360,7 @@ class MainWindow:
             self.menuitem_play[i].set_sensitive(show_menus[i])
 
     def __init__(self):
-        self.builder = gtk.Builder()
+        self.builder = Gtk.Builder()
         self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.ui'), ['aboutdialog', 'accelgroup1',
                                                                'liststore3', 'liststore4', 'liststore5', 'liststore6',
                                                                'liststore7', 'liststore8', 'main_window',

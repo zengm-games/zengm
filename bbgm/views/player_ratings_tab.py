@@ -1,4 +1,4 @@
-import gtk
+from gi.repository import Gtk
 
 from bbgm import common
 from bbgm.util import resources
@@ -33,7 +33,7 @@ class PlayerRatingsTab:
                     'Three-Point Shooting', 'Blocks', 'Steals', 'Dribbling', 'Passing', 'Rebounding']
         common.treeview_build_new(self.treeview_player_ratings, column_types, column_info, tooltips)
 
-        self.mw.notebook.insert_page(self.vbox, gtk.Label('Player Ratings'), self.mw.pages['player_ratings'])
+        self.mw.notebook.insert_page(self.vbox, Gtk.Label(label='Player Ratings'), self.mw.pages['player_ratings'])
 
         self.built = True
 
@@ -60,7 +60,7 @@ class PlayerRatingsTab:
     def __init__(self, main_window):
         self.mw = main_window
 
-        self.builder = gtk.Builder()
+        self.builder = Gtk.Builder()
         self.builder.add_from_file(resources.get_asset('ui', 'player_ratings_tab.ui'))
 
         self.vbox = self.builder.get_object('vbox')

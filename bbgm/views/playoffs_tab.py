@@ -1,4 +1,4 @@
-import gtk
+from gi.repository import Gtk
 
 from bbgm import common
 from bbgm.util import resources
@@ -12,7 +12,7 @@ class PlayoffsTab:
         if common.DEBUG:
             print 'build playoffs_tab'
 
-        self.mw.notebook.insert_page(self.table8, gtk.Label('Playoffs'), self.mw.pages['playoffs'])
+        self.mw.notebook.insert_page(self.table8, Gtk.Label(label='Playoffs'), self.mw.pages['playoffs'])
 
         self.built = True
 
@@ -35,7 +35,7 @@ class PlayoffsTab:
     def __init__(self, main_window):
         self.mw = main_window
 
-        self.builder = gtk.Builder()
+        self.builder = Gtk.Builder()
         self.builder.add_from_file(resources.get_asset('ui', 'playoffs_tab.ui'))
 
         self.table8 = self.builder.get_object('table8')

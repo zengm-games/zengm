@@ -1,4 +1,4 @@
-import gtk
+from gi.repository import Gtk
 
 from bbgm import common
 from bbgm.util import resources
@@ -27,7 +27,7 @@ class TeamStatsTab:
         tooltips = ['', 'Games Played', 'Won', 'Lost', 'Field Goals Made', 'Field Goals Attempted', 'Field Goal Percentage', 'Three-Pointers Made', 'Three-Pointers Attempted', 'Three-Point Field Goal Percentage', 'Free Throws Made', 'Free Throws Attempted', 'Free Throw Percentage', 'Offensive Rebounds', 'Defensive Rebounds', 'Total Rebounds', 'Assists', 'Turnovers', 'Steals', 'Blocks', 'Personal Fouls', 'Points', 'Opponent\'s Points']
         common.treeview_build_new(self.treeview_team_stats, column_types, column_info, tooltips)
 
-        self.mw.notebook.insert_page(self.vbox7, gtk.Label('Team Stats'), self.mw.pages['team_stats'])
+        self.mw.notebook.insert_page(self.vbox7, Gtk.Label(label='Team Stats'), self.mw.pages['team_stats'])
 
         self.built = True
 
@@ -51,7 +51,7 @@ class TeamStatsTab:
     def __init__(self, main_window):
         self.mw = main_window
 
-        self.builder = gtk.Builder()
+        self.builder = Gtk.Builder()
         self.builder.add_from_file(resources.get_asset('ui', 'team_stats_tab.ui'))
 
         self.vbox7 = self.builder.get_object('vbox7')

@@ -1,5 +1,5 @@
 import ctypes
-import gtk
+from gi.repository import Gtk
 import random
 
 from bbgm import common
@@ -52,8 +52,8 @@ class ContractWindow:
                                   common.SEASON + player_years, self.player_id))
             self.contract_window.destroy()
         else:
-            md = gtk.MessageDialog(parent=self.contract_window, flags=0, type=gtk.MESSAGE_WARNING,
-                                   buttons=gtk.BUTTONS_CLOSE, message_format=('This contract would put you over the '
+            md = Gtk.MessageDialog(parent=self.contract_window, flags=0, type=Gtk.MessageType.WARNING,
+                                   buttons=Gtk.ButtonsType.CLOSE, message_format=('This contract would put you over the '
                                    'salary cap. You cannot go over the salary cap to sign free agents to contracts '
                                    'higher than the minimum salary.'))
             md.run()
@@ -100,7 +100,7 @@ class ContractWindow:
         self.player_id = player_id
         self.allow_over_salary_cap = allow_over_salary_cap  # To allow for a team to resign its own players
 
-        self.builder = gtk.Builder()
+        self.builder = Gtk.Builder()
         self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.ui'), ['adjustment1', 'adjustment2',
                                            'contract_window'])
 
@@ -148,19 +148,19 @@ Salary Cap: %s' % (name, payroll, salary_cap))
         self.spinbutton_contract_team_years.set_value(self.player_years)
 
         # If signing free agents, close should be Cancel.  For resigning players it should be Release Player.
-        button = gtk.Button()
-        image = gtk.Image()
-        image.set_from_stock(gtk.STOCK_CANCEL, gtk.ICON_SIZE_BUTTON)
+        button = Gtk.Button()
+        image = Gtk.Image()
+        image.set_from_stock(Gtk.STOCK_CANCEL, Gtk.IconSize.BUTTON)
         if allow_over_salary_cap:
-            label = gtk.Label('_Release Player')
+            label = Gtk.Label(label='_Release Player')
         else:
-            label = gtk.Label('_Cancel')
+            label = Gtk.Label(label='_Cancel')
         label.set_use_underline(True)
-        hbox = gtk.HBox(False, 2)
-        hbox.pack_start(image)
-        hbox.pack_start(label)
-        alignment = gtk.Alignment(0.5, 0.5, 0, 0)
+        hbox = Gtk.HBox(False, 2)
+        hbox.pack_start(image, True, True, 0)
+        hbox.pack_start(label, True, True, 0)
+        alignment = Gtk.Alignment.new(0.5, 0.5, 0, 0)
         alignment.add(hbox)
         button.add(alignment)
-        self.contract_window.add_action_widget(button, gtk.RESPONSE_CLOSE)
+        self.contract_window.add_action_widget(button, Gtk.ResponseType.CLOSE)
         button.show_all()

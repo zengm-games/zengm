@@ -1,4 +1,4 @@
-import gtk
+from gi.repository import Gtk
 import random
 
 from bbgm import common
@@ -15,7 +15,7 @@ class RetiredPlayersWindow:
     def __init__(self, main_window):
         self.main_window = main_window
 
-        self.builder = gtk.Builder()
+        self.builder = Gtk.Builder()
         self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.ui'), ['retired_players_window'])
 
         self.retired_players_window = self.builder.get_object('retired_players_window')
@@ -37,7 +37,7 @@ class RetiredPlayersWindow:
         common.treeview_build(self.treeview_retired_players, column_info)
 
         # Update treeview
-        liststore = gtk.ListStore(int, str, str, int, int)
+        liststore = Gtk.ListStore(int, str, str, int, int)
         self.treeview_retired_players.set_model(liststore)
 
         query = ('SELECT player_ratings.player_id, player_attributes.name, (SELECT abbreviation FROM team_attributes '

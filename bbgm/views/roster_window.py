@@ -1,4 +1,4 @@
-import gtk
+from gi.repository import Gtk
 import locale
 
 from bbgm import common
@@ -60,10 +60,10 @@ class RosterWindow:
 
             if cash > cash_owed:
                 # Team has enough money
-                dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK_CANCEL, 'To buy out %s, you have to pay him the %sM remaining on his contract. You have %sM in cash.\n\nIf you buy out %s, he will become a free agent and his contract will no longer count against your payroll.\n\nProceed?' % (name, locale.currency(cash_owed / 1000000.0), locale.currency(cash / 1000000.0), name))
+                dialog = Gtk.MessageDialog(None, 0, Gtk.MessageType.QUESTION, Gtk.ButtonsType.OK_CANCEL, 'To buy out %s, you have to pay him the %sM remaining on his contract. You have %sM in cash.\n\nIf you buy out %s, he will become a free agent and his contract will no longer count against your payroll.\n\nProceed?' % (name, locale.currency(cash_owed / 1000000.0), locale.currency(cash / 1000000.0), name))
                 response = dialog.run()
                 dialog.destroy()
-                if response == gtk.RESPONSE_OK:
+                if response == Gtk.ResponseType.OK:
                     # Pay the cash
                     common.DB_CON.execute('UPDATE team_attributes SET cash = cash - ? WHERE team_id = ? AND season = ?', (cash_owed, common.PLAYER_TEAM_ID, common.SEASON))
                     # Set to FA in database
@@ -80,7 +80,7 @@ class RosterWindow:
                     self.mw.player_ratings.updated = False
                     self.mw.update_current_page()
             else:
-                dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_WARNING, gtk.BUTTONS_CLOSE, 'To buy out %s, you have to pay him the %sM remaining on his contract. However, you only have %sM in cash.' % (name, locale.currency(cash_owed / 1000000.0), locale.currency(cash / 1000000.0)))
+                dialog = Gtk.MessageDialog(None, 0, Gtk.MessageType.WARNING, Gtk.ButtonsType.CLOSE, 'To buy out %s, you have to pay him the %sM remaining on his contract. However, you only have %sM in cash.' % (name, locale.currency(cash_owed / 1000000.0), locale.currency(cash / 1000000.0)))
                 dialog.run()
                 dialog.destroy()
 
@@ -90,10 +90,10 @@ class RosterWindow:
             player_id = treemodel.get_value(treeiter, 0)
             name = treemodel.get_value(treeiter, 1)
             contract_amount, contract_expiration = common.DB_CON.execute('SELECT contract_amount, contract_expiration FROM player_attributes WHERE player_id = ?', (player_id,)).fetchone()
-            dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_QUESTION, gtk.BUTTONS_OK_CANCEL, 'Are you sure you want to release %s?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary until his contract expires in %d.' % (name, contract_expiration))
+            dialog = Gtk.MessageDialog(None, 0, Gtk.MessageType.QUESTION, Gtk.ButtonsType.OK_CANCEL, 'Are you sure you want to release %s?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary until his contract expires in %d.' % (name, contract_expiration))
             response = dialog.run()
             dialog.destroy()
-            if response == gtk.RESPONSE_OK:
+            if response == Gtk.ResponseType.OK:
                 # Release and set to FA
                 p = player.Player()
                 p.load(player_id)
@@ -178,7 +178,7 @@ class RosterWindow:
     def __init__(self, main_window):
         self.mw = main_window
 
-        self.builder = gtk.Builder()
+        self.builder = Gtk.Builder()
         self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.ui'), ['roster_window'])
 
         self.roster_window = self.builder.get_object('roster_window')
@@ -196,7 +196,7 @@ class RosterWindow:
                        [False],
                        [False]]
         common.treeview_build(self.treeview_roster_info, column_info)
-        liststore = gtk.ListStore(str)
+        liststore = Gtk.ListStore(str)
         self.treeview_roster_info.set_model(liststore)
         spots = ('Starter', 'Starter', 'Starter', 'Starter', 'Starter', 'Bench', 'Bench', 'Bench', 'Bench', 'Bench', 'Bench', 'Bench', 'Inactive', 'Inactive', 'Inactive')
         for spot in spots:

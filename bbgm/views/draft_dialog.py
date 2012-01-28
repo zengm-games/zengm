@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import gtk
+from gi.repository import Gtk
 import random
 import time
 
@@ -18,15 +18,15 @@ class DraftDialog:
     def on_button_start_draft_clicked(self, button, data=None):
         # Replace Start Draft button with Draft Player button
         self.button_start_draft.destroy()
-        self.button_draft_player = gtk.Button()
-        image = gtk.Image()
-        image.set_from_stock(gtk.STOCK_YES, gtk.ICON_SIZE_BUTTON)
-        label = gtk.Label('_Draft Player')
+        self.button_draft_player = Gtk.Button()
+        image = Gtk.Image()
+        image.set_from_stock(Gtk.STOCK_YES, Gtk.IconSize.BUTTON)
+        label = Gtk.Label(label='_Draft Player')
         label.set_use_underline(True)
-        hbox = gtk.HBox(False, 2)
-        hbox.pack_start(image)
-        hbox.pack_start(label)
-        alignment = gtk.Alignment(0.5, 0.5, 0, 0)
+        hbox = Gtk.HBox(False, 2)
+        hbox.pack_start(image, True, True, 0)
+        hbox.pack_start(label, True, True, 0)
+        alignment = Gtk.Alignment.new(0.5, 0.5, 0, 0)
         alignment.add(hbox)
         self.button_draft_player.add(alignment)
         self.draft_dialog.add_action_widget(self.button_draft_player, 0)
@@ -103,7 +103,7 @@ class DraftDialog:
                        [False,  False,  False, False,     False,     False]]
         common.treeview_build(self.treeview_draft_available, column_info)
 
-        self.liststore_draft_available = gtk.ListStore(int, int, str, str, int, int, int)
+        self.liststore_draft_available = Gtk.ListStore(int, int, str, str, int, int, int)
         self.treeview_draft_available.set_model(self.liststore_draft_available)
         query = ('SELECT player_attributes.player_id, player_attributes.position, player_attributes.name, %d - '
                  'player_attributes.born_date, player_ratings.overall, player_ratings.potential FROM '
@@ -134,7 +134,7 @@ class DraftDialog:
         common.add_column(self.treeview_draft_results, 'Team', 4)
         common.add_column(self.treeview_draft_results, 'Player Name', 5)
 
-        self.liststore_draft_results = gtk.ListStore(int, int, int, int, str, str)
+        self.liststore_draft_results = Gtk.ListStore(int, int, int, int, str, str)
         self.treeview_draft_results.set_model(self.liststore_draft_results)
         for row in self.draft_results:
             self.liststore_draft_results.append(row)
@@ -142,8 +142,8 @@ class DraftDialog:
     def do_draft(self):
         # Do the draft
         for row in self.liststore_draft_results:
-            while gtk.events_pending():
-                gtk.main_iteration(False)  # This stops everything from freezing
+            while Gtk.events_pending():
+                Gtk.main_iteration(False)  # This stops everything from freezing
 
             team_id = row[1]
             self.round = row[2]
@@ -156,15 +156,15 @@ class DraftDialog:
                 self.button_draft_player.set_sensitive(True)
                 self.picked = False
                 while not self.picked:
-                    while gtk.events_pending():
-                        gtk.main_iteration(False)  # This stops everything from freezing
+                    while Gtk.events_pending():
+                        Gtk.main_iteration(False)  # This stops everything from freezing
                     time.sleep(0.01)
                 self.button_draft_player.set_sensitive(False)
             self.pick_player(row, self.pick)
 
         # Replace Draft Player button with stock Close button
         self.button_draft_player.destroy()
-        self.button_close = self.draft_dialog.add_button(gtk.STOCK_CLOSE, gtk.RESPONSE_CLOSE)
+        self.button_close = self.draft_dialog.add_button(Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE)
         self.button_close.connect('clicked', self.on_button_close_clicked)
 
         # Set to True to allow dialog to be closed
@@ -207,7 +207,7 @@ class DraftDialog:
     def __init__(self, main_window):
         self.main_window = main_window
 
-        self.builder = gtk.Builder()
+        self.builder = Gtk.Builder()
         self.builder.add_objects_from_file(resources.get_asset('ui', 'basketball-gm.ui'), ['draft_dialog'])
 
         self.draft_dialog = self.builder.get_object('draft_dialog')
@@ -222,15 +222,15 @@ class DraftDialog:
                                 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500)
 
         # Make the Start Draft button
-        self.button_start_draft = gtk.Button()
-        image = gtk.Image()
-        image.set_from_stock(gtk.STOCK_GO_FORWARD, gtk.ICON_SIZE_BUTTON)
-        label = gtk.Label('_Start Draft')
+        self.button_start_draft = Gtk.Button()
+        image = Gtk.Image()
+        image.set_from_stock(Gtk.STOCK_GO_FORWARD, Gtk.IconSize.BUTTON)
+        label = Gtk.Label(label='_Start Draft')
         label.set_use_underline(True)
-        hbox = gtk.HBox(False, 2)
-        hbox.pack_start(image)
-        hbox.pack_start(label)
-        alignment = gtk.Alignment(0.5, 0.5, 0, 0)
+        hbox = Gtk.HBox(False, 2)
+        hbox.pack_start(image, True, True, 0)
+        hbox.pack_start(label, True, True, 0)
+        alignment = Gtk.Alignment.new(0.5, 0.5, 0, 0)
         alignment.add(hbox)
         self.button_start_draft.add(alignment)
         self.draft_dialog.add_action_widget(self.button_start_draft, 0)

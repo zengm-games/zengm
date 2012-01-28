@@ -1,4 +1,4 @@
-import gtk
+from gi.repository import Gtk
 
 from bbgm import common
 from bbgm.util import resources
@@ -12,44 +12,44 @@ class FinancesTab:
         if common.DEBUG:
             print 'build finances_tab'
 
-        renderer = gtk.CellRendererText()
-        column = gtk.TreeViewColumn('Team', renderer, text=1)
+        renderer = Gtk.CellRendererText()
+        column = Gtk.TreeViewColumn('Team', renderer, text=1)
         column.set_sort_column_id(1)
         self.treeview_finances.append_column(column)
-        renderer = gtk.CellRendererText()
-        column = gtk.TreeViewColumn('Avg Attendance', renderer, text=2)
+        renderer = Gtk.CellRendererText()
+        column = Gtk.TreeViewColumn('Avg Attendance', renderer, text=2)
         column.set_sort_column_id(2)
         column.set_cell_data_func(renderer,
             lambda column, cell, model, iter: cell.set_property('text', '%s' % self.group(model.get_value(iter, 2))))
         self.treeview_finances.append_column(column)
-        renderer = gtk.CellRendererText()
-        column = gtk.TreeViewColumn('Revenue (YTD)', renderer, text=3)
+        renderer = Gtk.CellRendererText()
+        column = Gtk.TreeViewColumn('Revenue (YTD)', renderer, text=3)
         column.set_sort_column_id(3)
         column.set_cell_data_func(renderer,
             lambda column, cell, model, iter: cell.set_property('text', '$%.2fM' % float(model.get_value(iter, 3) / 1000000.0)))
         self.treeview_finances.append_column(column)
-        column = gtk.TreeViewColumn('Profit (YTD)', renderer, text=4)
+        column = Gtk.TreeViewColumn('Profit (YTD)', renderer, text=4)
         column.set_sort_column_id(4)
         column.set_cell_data_func(renderer,
             lambda column, cell, model, iter: cell.set_property('text', '$%.2fM' % float(model.get_value(iter, 4) / 1000000.0)))
         self.treeview_finances.append_column(column)
-        column = gtk.TreeViewColumn('Cash', renderer, text=5)
+        column = Gtk.TreeViewColumn('Cash', renderer, text=5)
         column.set_sort_column_id(5)
         column.set_cell_data_func(renderer,
             lambda column, cell, model, iter: cell.set_property('text', '$%.2fM' % float(model.get_value(iter, 5) / 1000000.0)))
         self.treeview_finances.append_column(column)
-        column = gtk.TreeViewColumn('Payroll', renderer, text=6)
+        column = Gtk.TreeViewColumn('Payroll', renderer, text=6)
         column.set_sort_column_id(6)
         column.set_cell_data_func(renderer,
             lambda column, cell, model, iter: cell.set_property('text', '$%.2fM' % float(model.get_value(iter,  6) / 1000000.0)))
         self.treeview_finances.append_column(column)
 
         column_types = [int, str, int, int, int, int, int]
-        liststore = gtk.ListStore(*column_types)
+        liststore = Gtk.ListStore(*column_types)
         self.treeview_finances.set_model(liststore)
 #        self.update()
 
-        self.mw.notebook.insert_page(self.vbox9, gtk.Label('Finances'), self.mw.pages['finances'])
+        self.mw.notebook.insert_page(self.vbox9, Gtk.Label(label='Finances'), self.mw.pages['finances'])
 
         self.built = True
 
@@ -80,7 +80,7 @@ class FinancesTab:
     def __init__(self, main_window):
         self.mw = main_window
 
-        self.builder = gtk.Builder()
+        self.builder = Gtk.Builder()
         self.builder.add_from_file(resources.get_asset('ui', 'finances_tab.ui'))
 
         self.vbox9 = self.builder.get_object('vbox9')

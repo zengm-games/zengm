@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import gtk
+from gi.repository import Gtk
 import os.path
 import sys
 
@@ -21,4 +21,4 @@ elif len(sys.argv) > 1 and os.path.exists(os.path.join(common.SAVES_FOLDER, sys.
 else:
     welcome_dialog.WelcomeDialog(mw)
 
-gtk.main()
+Gtk.main()

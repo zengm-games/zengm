@@ -1,4 +1,4 @@
-import gtk
+from gi.repository import Gtk
 
 from bbgm import common
 from bbgm.util import resources
@@ -24,7 +24,7 @@ class StandingsTab:
             self.table_standings.destroy()  # Destroy table if it already exists... this will be called after starting a new game from the menu
         except:
             pass
-        self.table_standings = gtk.Table(max_divisions_in_conference, num_conferences)
+        self.table_standings = Gtk.Table(max_divisions_in_conference, num_conferences)
         self.scrolledwindow_standings = self.builder.get_object('scrolledwindow_standings')
         self.scrolledwindow_standings.add_with_viewport(self.table_standings)
 
@@ -35,7 +35,7 @@ class StandingsTab:
                 row_top = 0
                 conference_id = row[1]
 
-            self.treeview_standings[row[0]] = gtk.TreeView()
+            self.treeview_standings[row[0]] = Gtk.TreeView()
             self.table_standings.attach(self.treeview_standings[row[0]], conference_id, conference_id + 1, row_top, row_top + 1)
             column_info = [[row[2], 'Won', 'Lost', 'Pct', 'Div', 'Conf'],
                            [1,      2,     3,      4,     5,     6],
@@ -45,14 +45,14 @@ class StandingsTab:
             self.treeview_standings[row[0]].show()
 
             column_types = [int, str, int, int, float, str, str]
-            liststore = gtk.ListStore(*column_types)
-            liststore.set_sort_column_id(4, gtk.SORT_DESCENDING)  # Sort by winning percentage
+            liststore = Gtk.ListStore(*column_types)
+            liststore.set_sort_column_id(4, Gtk.SortType.DESCENDING)  # Sort by winning percentage
             self.treeview_standings[row[0]].set_model(liststore)
 
             row_top += 1
 
-        self.mw.hbox1.pack_start(self.vbox4)  # When I had all the tabs added dynamically, the switch-notes signal went crazy. So I have the first one added like this.
-#        self.mw.notebook.insert_page(self.vbox4, gtk.Label('Standings'), self.mw.pages['standings'])
+        self.mw.hbox1.pack_start(self.vbox4, True, True, 0)  # When I had all the tabs added dynamically, the switch-notes signal went crazy. So I have the first one added like this.
+#        self.mw.notebook.insert_page(self.vbox4, Gtk.Label(label='Standings'), self.mw.pages['standings'])
 
         self.table_standings.show()
         self.built = True
@@ -74,7 +74,7 @@ class StandingsTab:
     def __init__(self, main_window):
         self.mw = main_window
 
-        self.builder = gtk.Builder()
+        self.builder = Gtk.Builder()
         self.builder.add_from_file(resources.get_asset('ui', 'standings_tab.ui'))
 
         self.vbox4 = self.builder.get_object('vbox4')

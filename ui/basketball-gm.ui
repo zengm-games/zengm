@@ -11,8 +11,8 @@
     <property name="type_hint">dialog</property>
     <property name="transient_for">main_window</property>
     <property name="program_name">Basketball GM</property>
-    <property name="version">1.0.0beta</property>
-    <property name="copyright" translatable="yes">Copyright © 2008-2011 Jeremy Scheff</property>
+    <property name="version">1.0.0beta+</property>
+    <property name="copyright" translatable="yes">Copyright © 2008-2012 Jeremy Scheff</property>
     <property name="comments" translatable="yes">A basketball simulation game</property>
     <property name="website">http://www.basketball-gm.com/</property>
     <property name="license" translatable="yes"> GNU AFFERO GENERAL PUBLIC LICENSE

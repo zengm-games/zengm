@@ -1,3 +1,11 @@
+PyGObject todo:
+
+Game log tab
+Much more testing
+Seems to be updating much much more slowly.. like showing all stats of all players while playing games is excruciating
+
+---
+
 BLOCKERS FOR 1.0:
 - test in unity and gnome 3 and windows and elsewhere
 All the other UI prettifying and code refactoring stuff can wait.

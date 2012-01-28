@@ -356,11 +356,11 @@ class MainWindow:
         self.progressbar_new_game.set_text(random.choice(loading_messages))
 #        self.progressbar_new_game.set_text('Generating new players')
         while Gtk.events_pending():
-            Gtk.main_iteration(False)
+            Gtk.main_iteration()
         self.new_game_progressbar_window.show()
 
         while Gtk.events_pending():
-            Gtk.main_iteration(False)
+            Gtk.main_iteration()
 
         # Delete old database
         if os.path.exists(common.DB_TEMP_FILENAME):
@@ -376,7 +376,7 @@ class MainWindow:
 
             self.progressbar_new_game.set_fraction(0.75 * (t + 1) / 31.0)
             while Gtk.events_pending():
-                Gtk.main_iteration(False)
+                Gtk.main_iteration()
 #            base_ratings = [40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29]
             base_ratings = [30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 19, 19]
             potentials = [70, 60, 50, 50, 55, 45, 65, 35, 50, 45, 55, 55, 40, 40]
@@ -418,7 +418,7 @@ class MainWindow:
         self.progressbar_new_game.set_fraction(0.75)
 #        self.progressbar_new_game.set_text('Creating database')
         while Gtk.events_pending():
-            Gtk.main_iteration(False)
+            Gtk.main_iteration()
 
         # Create new database
         common.DB_FILENAME = common.DB_TEMP_FILENAME
@@ -427,7 +427,7 @@ class MainWindow:
         self.progressbar_new_game.set_fraction(1)
 #        self.progressbar_new_game.set_text('Done')  # Not really, but close
         while Gtk.events_pending():
-            Gtk.main_iteration(False)
+            Gtk.main_iteration()
 
         # Make schedule, start season
         self.new_phase(1)
@@ -508,7 +508,7 @@ class MainWindow:
 
                 self.progressbar_new_game.set_fraction(self.progressbar_new_game.get_fraction() + 0.05)
                 while Gtk.events_pending():
-                    Gtk.main_iteration(False)
+                    Gtk.main_iteration()
             common.DB_CON.execute('UPDATE game_attributes SET team_id = ?', (team_id,))
         row = common.DB_CON.execute('SELECT team_id, season, phase, schedule FROM game_attributes').fetchone()
         common.PLAYER_TEAM_ID = row[0]
@@ -705,7 +705,7 @@ class MainWindow:
                 teams = self.schedule.pop()
 
                 while Gtk.events_pending():
-                    Gtk.main_iteration(False)
+                    Gtk.main_iteration()
 #                t1 = random.randint(0, len(common.TEAMS)-1)
 #                while True:
 #                    t2 = random.randint(0, len(common.TEAMS)-1)
@@ -953,7 +953,7 @@ class MainWindow:
         team_id = combobox_new_game_teams.get_active()
 
         while Gtk.events_pending():
-            Gtk.main_iteration(False)
+            Gtk.main_iteration()
 
         return result, team_id
 

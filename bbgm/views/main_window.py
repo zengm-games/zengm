@@ -301,12 +301,13 @@ class MainWindow:
             self.updated[key] = False
 
         self.standings.updated = False
-        self.finances.updated = False
-        self.player_ratings.updated = False
-        self.player_stats.updated = False
-        self.team_stats.updated = False
-        self.game_log.updated = False
-        self.playoffs.updated = False
+## TEMPORARY FOR PORTING
+#        self.finances.updated = False
+#        self.player_ratings.updated = False
+#        self.player_stats.updated = False
+#        self.team_stats.updated = False
+#        self.game_log.updated = False
+#        self.playoffs.updated = False
         self.update_current_page()
 
         if hasattr(self, 'rw') and (self.rw.roster_window.flags() & Gtk.VISIBLE):
@@ -795,7 +796,7 @@ class MainWindow:
             model.append(['%s' % season])
             populated = True
         combobox.set_active(active)
-        season = combobox.get_active_text()
+        season = model[combobox.get_active_iter()][0]
         return season
 
     def make_team_combobox(self, combobox, active, season, all_teams_option):

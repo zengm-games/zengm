@@ -1,4 +1,5 @@
 from gi.repository import Gtk
+from gi.repository import GObject
 import os
 
 # When DEBUG is True:
@@ -148,9 +149,16 @@ def treeview_update_new(treeview, query_ids, params_ids, query_row, params_row, 
         values = []
         for j in range(0, len(row)):
             if row[j] == None:
-                values.append(0.0)
+                # Make sure to pass an int to an int column and a float to a float column
+                if liststore.get_column_type(j) == GObject.TYPE_INT:
+                    values.append(0)
+                else:
+                    values.append(0.0)
             else:
-                values.append(row[j])
+                if liststore.get_column_type(j) == GObject.TYPE_INT:
+                    values.append(int(row[j]))
+                else:
+                    values.append(row[j])
 
         # Add a new row or update an existing row?
         if not found_row_id:

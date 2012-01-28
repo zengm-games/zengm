@@ -301,8 +301,8 @@ class MainWindow:
             self.updated[key] = False
 
         self.standings.updated = False
+        self.finances.updated = False
 ## TEMPORARY FOR PORTING
-#        self.finances.updated = False
 #        self.player_ratings.updated = False
 #        self.player_stats.updated = False
 #        self.team_stats.updated = False

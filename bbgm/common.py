@@ -174,18 +174,19 @@ def add_column(treeview, title, column_id, sort=False, truncate_float=False, too
     column.add_attribute(renderer, 'text', column_id)
 
     if len(tooltip) > 0:
-        tooltips = Gtk.Tooltips()
+        tooltips = Gtk.Tooltip()
         column_header = Gtk.Label(label=title)
         column_header.show()
         column.set_widget(column_header)
-        tooltips.set_tip(column_header, tooltip)
+        tooltips.set_custom(column_header)
+        tooltips.set_text(tooltip)
     else:
         column.set_title(title)
 
     if sort:
         column.set_sort_column_id(column_id)
     if truncate_float:
-      # Truncate floats to 1 decimal place
+        # Truncate floats to 1 decimal place
         column.set_cell_data_func(renderer, lambda column, cell, model, iter: cell.set_property('text', '%.1f' % model.get_value(iter, column_id)))
     treeview.append_column(column)
 

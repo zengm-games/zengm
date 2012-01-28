@@ -157,6 +157,8 @@ def treeview_update_new(treeview, query_ids, params_ids, query_row, params_row, 
             else:
                 if liststore.get_column_type(j) == GObject.TYPE_INT:
                     values.append(int(row[j]))
+                elif liststore.get_column_type(j) == GObject.TYPE_DOUBLE:
+                    values.append(float(row[j]))
                 else:
                     values.append(row[j])
 

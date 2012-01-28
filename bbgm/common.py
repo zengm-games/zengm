@@ -197,7 +197,7 @@ def add_column(treeview, title, column_id, sort=False, truncate_float=False, too
         column.set_sort_column_id(column_id)
     if truncate_float:
         # Truncate floats to 1 decimal place
-        column.set_cell_data_func(renderer, lambda column, cell, model, iter: cell.set_property('text', '%.1f' % model.get_value(iter, column_id)))
+        column.set_cell_data_func(renderer, lambda column, cell, model, iter_, data=None: cell.set_property('text', '%.1f' % model.get_value(iter_, column_id)))
     treeview.append_column(column)
 
 

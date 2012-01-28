@@ -184,12 +184,15 @@ def add_column(treeview, title, column_id, sort=False, truncate_float=False, too
     column.add_attribute(renderer, 'text', column_id)
 
     if len(tooltip) > 0:
+        # Using gtk.Tooltips, I got it to display the tooltip for hoving over anywhere in the entire column header, not
+        # just over the text, by using gtk.Tooltips.set_tip. Not sure how to do that with Gtk.Tooltip.
+        column.set_title(title)
         tooltips = Gtk.Tooltip()
         column_header = Gtk.Label(label=title)
         column_header.show()
+        column_header.set_tooltip_text(tooltip)
         column.set_widget(column_header)
-        tooltips.set_custom(column_header)
-        tooltips.set_text(tooltip)
+#        tooltips.set_tip(column_header, tooltip)
     else:
         column.set_title(title)
 

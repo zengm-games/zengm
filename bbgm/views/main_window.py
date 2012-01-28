@@ -302,12 +302,11 @@ class MainWindow:
 
         self.standings.updated = False
         self.finances.updated = False
-## TEMPORARY FOR PORTING
-#        self.player_ratings.updated = False
-#        self.player_stats.updated = False
-#        self.team_stats.updated = False
-#        self.game_log.updated = False
-#        self.playoffs.updated = False
+        self.player_ratings.updated = False
+        self.player_stats.updated = False
+        self.team_stats.updated = False
+        self.game_log.updated = False
+        self.playoffs.updated = False
         self.update_current_page()
 
         if hasattr(self, 'rw') and (self.rw.roster_window.flags() & Gtk.VISIBLE):

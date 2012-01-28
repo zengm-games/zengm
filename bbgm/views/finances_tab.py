@@ -20,28 +20,28 @@ class FinancesTab:
         column = Gtk.TreeViewColumn('Avg Attendance', renderer, text=2)
         column.set_sort_column_id(2)
         column.set_cell_data_func(renderer,
-            lambda column, cell, model, iter: cell.set_property('text', '%s' % self.group(model.get_value(iter, 2))))
+            lambda column, cell, model, iter_, data=None: cell.set_property('text', '%s' % self.group(model.get_value(iter_, 2))))
         self.treeview_finances.append_column(column)
         renderer = Gtk.CellRendererText()
         column = Gtk.TreeViewColumn('Revenue (YTD)', renderer, text=3)
         column.set_sort_column_id(3)
         column.set_cell_data_func(renderer,
-            lambda column, cell, model, iter: cell.set_property('text', '$%.2fM' % float(model.get_value(iter, 3) / 1000000.0)))
+            lambda column, cell, model, iter_, data=None: cell.set_property('text', '$%.2fM' % float(model.get_value(iter_, 3) / 1000000.0)))
         self.treeview_finances.append_column(column)
         column = Gtk.TreeViewColumn('Profit (YTD)', renderer, text=4)
         column.set_sort_column_id(4)
         column.set_cell_data_func(renderer,
-            lambda column, cell, model, iter: cell.set_property('text', '$%.2fM' % float(model.get_value(iter, 4) / 1000000.0)))
+            lambda column, cell, model, iter_, data=None: cell.set_property('text', '$%.2fM' % float(model.get_value(iter_, 4) / 1000000.0)))
         self.treeview_finances.append_column(column)
         column = Gtk.TreeViewColumn('Cash', renderer, text=5)
         column.set_sort_column_id(5)
         column.set_cell_data_func(renderer,
-            lambda column, cell, model, iter: cell.set_property('text', '$%.2fM' % float(model.get_value(iter, 5) / 1000000.0)))
+            lambda column, cell, model, iter_, data=None: cell.set_property('text', '$%.2fM' % float(model.get_value(iter_, 5) / 1000000.0)))
         self.treeview_finances.append_column(column)
         column = Gtk.TreeViewColumn('Payroll', renderer, text=6)
         column.set_sort_column_id(6)
         column.set_cell_data_func(renderer,
-            lambda column, cell, model, iter: cell.set_property('text', '$%.2fM' % float(model.get_value(iter,  6) / 1000000.0)))
+            lambda column, cell, model, iter_, data=None: cell.set_property('text', '$%.2fM' % float(model.get_value(iter_,  6) / 1000000.0)))
         self.treeview_finances.append_column(column)
 
         column_types = [int, str, int, int, int, int, int]

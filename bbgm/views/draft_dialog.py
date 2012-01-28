@@ -143,7 +143,7 @@ class DraftDialog:
         # Do the draft
         for row in self.liststore_draft_results:
             while Gtk.events_pending():
-                Gtk.main_iteration  # This stops everything from freezing
+                Gtk.main_iteration()  # This stops everything from freezing
 
             team_id = row[1]
             self.round = row[2]
@@ -157,7 +157,7 @@ class DraftDialog:
                 self.picked = False
                 while not self.picked:
                     while Gtk.events_pending():
-                        Gtk.main_iteration  # This stops everything from freezing
+                        Gtk.main_iteration()  # This stops everything from freezing
                     time.sleep(0.01)
                 self.button_draft_player.set_sensitive(False)
             self.pick_player(row, self.pick)

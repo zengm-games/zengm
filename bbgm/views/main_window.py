@@ -111,7 +111,7 @@ class MainWindow:
             self.rw = roster_window.RosterWindow(self)
         else:
             self.rw.update_roster()
-            if self.rw.roster_window.flags() & Gtk.VISIBLE:
+            if self.rw.roster_window.get_property('visible'):
                 self.rw.roster_window.window.show()  # Raise the window if it's in the background
             else:
                 self.rw.roster_window.show()  # Show the window
@@ -137,7 +137,7 @@ class MainWindow:
             self.faw = free_agents_window.FreeAgentsWindow(self)
         else:
             self.faw.update_free_agents()
-            if self.faw.free_agents_window.flags() & Gtk.VISIBLE:
+            if self.faw.free_agents_window.get_property('visible'):
                 self.faw.free_agents_window.window.show()  # Raise the window if it's in the background
             else:
                 self.faw.free_agents_window.show()  # Show the window
@@ -309,16 +309,16 @@ class MainWindow:
         self.playoffs.updated = False
         self.update_current_page()
 
-        if hasattr(self, 'rw') and (self.rw.roster_window.flags() & Gtk.VISIBLE):
+        if hasattr(self, 'rw') and self.rw.roster_window.get_property('visible'):
             self.rw.update_roster()
 
-        if hasattr(self, 'thw') and (self.thw.team_history_window.flags() & Gtk.VISIBLE):
+        if hasattr(self, 'thw') and self.thw.team_history_window.get_property('visible'):
             self.thw.update()
 
-        if hasattr(self, 'faw') and (self.faw.free_agents_window.flags() & Gtk.VISIBLE):
+        if hasattr(self, 'faw') and self.faw.free_agents_window.get_property('visible'):
             self.faw.update_free_agents()
 
-        if hasattr(self, 'pw') and (self.pw.player_window.flags() & Gtk.VISIBLE):
+        if hasattr(self, 'pw') and self.pw.player_window.get_property('visible'):
             self.pw.update_player(-1)
 
     def new_game(self, team_id):

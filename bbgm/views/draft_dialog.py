@@ -194,7 +194,7 @@ class DraftDialog:
                               row[3], row[1], row[0]))
         common.DB_CON.execute('UPDATE player_ratings SET roster_position = ? WHERE player_id = ?', (roster_position,
                               row[0]))
-        del self.liststore_draft_available[pick]
+        self.liststore_draft_available.remove(self.liststore_draft_available.get_iter(pick))
 
         # Contract
         i = row[3] - 1 + 30 * (row[2] - 1)

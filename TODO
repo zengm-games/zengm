@@ -7,6 +7,7 @@ Crash when you go up or down in the contract window http://stackoverflow.com/que
 - If no fix is found, just move the $ outside the SpinButton
 Clear Trade button crashes the trade window
 Average attendance calculation seems off
+Playoff teams aren't set correctly, somehow?
 
 ---
 

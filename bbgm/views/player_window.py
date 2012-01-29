@@ -76,8 +76,7 @@ class PlayerWindow:
             self.updated['game_log'] = False
 
         if player_id != -1:  # Don't raise the dialog if it's in the background
-            self.player_window.show()  # Show the dialog
-            self.player_window.window.show()  # Raise the dialog if it's in the background
+            self.player_window.present()
 
     def build_player_window_stats(self):
         column_types = [int, str, int, int, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float]

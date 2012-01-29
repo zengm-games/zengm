@@ -111,18 +111,14 @@ class MainWindow:
             self.rw = roster_window.RosterWindow(self)
         else:
             self.rw.update_roster()
-            if self.rw.roster_window.get_property('visible'):
-                self.rw.roster_window.window.show()  # Raise the window if it's in the background
-            else:
-                self.rw.roster_window.show()  # Show the window
+            self.rw.roster_window.present()
         return True
 
     def on_menuitem_team_history_activate(self, widget, data=None):
         if not hasattr(self, 'thw'):
             self.thw = team_history_window.TeamHistoryWindow(self)
         self.thw.update()
-        self.thw.team_history_window.show()  # Show the dialog
-        self.thw.team_history_window.window.show()  # Raise the dialog if it's in the background
+        self.thw.team_history_window.present()
         return True
 
     def on_menuitem_trade_activate(self, widget, data=None):
@@ -137,10 +133,7 @@ class MainWindow:
             self.faw = free_agents_window.FreeAgentsWindow(self)
         else:
             self.faw.update_free_agents()
-            if self.faw.free_agents_window.get_property('visible'):
-                self.faw.free_agents_window.window.show()  # Raise the window if it's in the background
-            else:
-                self.faw.free_agents_window.show()  # Show the window
+            self.faw.free_agents_window.present()  # Show the window
         return True
 
     def on_menuitem_stop_activate(self, widget, data=None):
@@ -742,8 +735,7 @@ class MainWindow:
                 season_over = True
 
                 sew = season_end_window.SeasonEndWindow(self)
-                sew.season_end_window.show()  # Show the window
-                sew.season_end_window.window.show()  # Raise the window if it's in the background
+                sew.season_end_window.present()
 
                 self.new_phase(3)  # Start playoffs
 
@@ -1263,8 +1255,7 @@ class MainWindow:
             if old_phase != 5:  # Can't check hasattr because we need a new draft every year
                 self.dd = draft_dialog.DraftDialog(self)
             else:
-                self.dd.draft_dialog.show()  # Show the window
-                self.dd.draft_dialog.window.show()  # Raise the window if it's in the background
+                self.dd.draft_dialog.present()
             self.finances.updated = False
             self.update_all_pages()
 

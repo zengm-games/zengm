@@ -3,6 +3,9 @@ PyGObject todo:
 Game log tab
 Much more testing
 Seems to be updating much much more slowly.. like showing all stats of all players while playing games is excruciating
+Crash when you go up or down in the contract window http://stackoverflow.com/questions/9051163/formatting-a-spinbuttons-display-in-pygobject-gtk3
+- If no fix is found, just move the $ outside the SpinButton
+Clear Trade button crashes the trade window
 
 ---
 

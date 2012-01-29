@@ -173,7 +173,7 @@ def treeview_update_new(treeview, query_ids, params_ids, query_row, params_row, 
     # Remove rows from model if they shouldn't be showing
     for i in reversed(xrange(len(liststore))):  # Search backwards to not fuck things up
         if liststore[i][0] not in do_not_delete:
-            del liststore[i]
+            liststore.remove(liststore.get_iter(i))
     treeview.thaw_child_notify()
 
 

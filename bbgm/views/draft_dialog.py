@@ -121,7 +121,7 @@ class DraftDialog:
         for round_ in range(1, 3):
             pick = 1
             for row in common.DB_CON.execute('SELECT team_id, abbreviation FROM team_attributes WHERE '
-                                             'season = ? ORDER BY won/(won + lost) ASC',
+                                             'season = ? ORDER BY 1.0*won/(won + lost) ASC',
                                              (common.SEASON,)):
                 team_id, abbreviation = row
                 name = ''

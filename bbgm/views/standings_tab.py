@@ -66,7 +66,7 @@ class StandingsTab:
         for row in common.DB_CON.execute('SELECT division_id FROM league_divisions'):
             query_ids = 'SELECT team_id FROM team_attributes WHERE season = ? AND division_id = ?'
             params_ids = [season, row[0]]
-            query_rows = 'SELECT team_id, region || " "  || name, won, lost, 100*won/(won + lost), won_div || "-" || lost_div, won_conf || "-" || lost_conf FROM team_attributes WHERE team_id = ? AND season = ?'
+            query_rows = 'SELECT team_id, region || " "  || name, won, lost, 100.0*won/(won + lost), won_div || "-" || lost_div, won_conf || "-" || lost_conf FROM team_attributes WHERE team_id = ? AND season = ?'
             params_rows = [-1, season]
             common.treeview_update_new(self.treeview_standings[row[0]], query_ids, params_ids, query_rows, params_rows)
         self.updated = True

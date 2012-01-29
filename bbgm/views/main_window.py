@@ -1209,7 +1209,7 @@ class MainWindow:
             for conference_id in range(2):
                 teams = []
                 query = ('SELECT ta.team_id FROM team_attributes as ta, league_divisions as ld WHERE ld.division_id = '
-                         'ta.division_id AND ld.conference_id = ? AND ta.season = ? ORDER BY ta.won/(ta.won + ta.lost) '
+                         'ta.division_id AND ld.conference_id = ? AND ta.season = ? ORDER BY 1.0*ta.won/(ta.won + ta.lost) '
                          'DESC LIMIT 8')
                 for team_id, in common.DB_CON.execute(query, (conference_id, common.SEASON)):
                     teams.append(team_id)

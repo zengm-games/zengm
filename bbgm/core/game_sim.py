@@ -17,7 +17,7 @@ class Game:
         self.season = common.SEASON
 
         # What is the attendance of the game?
-        games_played, winp, = common.DB_CON.execute('SELECT won+lost, won/(won + lost) FROM team_attributes WHERE season = ? AND (team_id = ? OR team_id = ?)', (common.SEASON, self.team[0].id, self.team[1].id)).fetchone()
+        games_played, winp, = common.DB_CON.execute('SELECT won+lost, 1.0*won/(won + lost) FROM team_attributes WHERE season = ? AND (team_id = ? OR team_id = ?)', (common.SEASON, self.team[0].id, self.team[1].id)).fetchone()
         if games_played < 5:
             self.attendance = fast_random.gauss(22000 + games_played * 1000, 1000)
         else:

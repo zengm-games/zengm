@@ -7,14 +7,12 @@ Crash when you go up or down in the contract window http://stackoverflow.com/que
 - If no fix is found, just move the $ outside the SpinButton
 Clear Trade button crashes the trade window
 Average attendance calculation seems off
-Playoff teams aren't set correctly, somehow?
-- Draft order too. Same reason?
 
 ---
 
-BLOCKERS FOR 1.0:
-- test in unity and gnome 3 and windows and elsewhere
-All the other UI prettifying and code refactoring stuff can wait.
+Minor bugs:
+
+Lottery should be for the 14 teams not in the playoffs, which isn't necessarily the same as the 14 worst teams.
 
 ---
 

@@ -40,7 +40,7 @@ class DraftDialog:
         treemodel, treeiter = self.treeview_draft_available.get_selection().get_selected()
         if treeiter:
             path = treemodel.get_path(treeiter)
-            self.pick = path[0]
+            self.pick = path.get_indices()[0]
             self.picked = True
 
     def on_button_close_clicked(self, button, data=None):

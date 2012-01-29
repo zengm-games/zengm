@@ -21,7 +21,7 @@ class RosterWindow:
         treemodel, treeiter = self.treeview_roster.get_selection().get_selected()
         if treeiter:
             path = treemodel.get_path(treeiter)
-            current_position = path[0]
+            current_position = path.get_indices()[0]
             if current_position > 0:
                 position = treemodel.get_iter((current_position - 1,))
                 treemodel.move_before(treeiter, position)
@@ -31,7 +31,7 @@ class RosterWindow:
         treemodel, treeiter = self.treeview_roster.get_selection().get_selected()
         if treeiter:
             path = treemodel.get_path(treeiter)
-            current_position = path[0]
+            current_position = path.get_indices()[0]
             max_position = len(treemodel) - 1
             if current_position < max_position:
                 position = treemodel.get_iter((current_position + 1,))

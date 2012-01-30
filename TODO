@@ -8,6 +8,9 @@ Crash when you go up or down in the contract window http://stackoverflow.com/que
 Clear Trade button crashes the trade window
 - emit_stop_by_name('response') seems to not be working
   - this is only an issue in the trade window.
+  - but ~/test4.py works?
+  - make test5 based on Glade file, then converge with test4
+  - http://stackoverflow.com/questions/9058987/dialog-breaks-when-using-gtkbuilder-to-automatically-connect-signals-but-works
 Average attendance calculation seems off
 
 ---

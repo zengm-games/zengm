@@ -9,16 +9,10 @@ from bbgm.views import player_window
 
 class ContractWindow:
     def on_contract_window_response(self, dialog, response, *args):
-        '''
-        This is so the dialog isn't closed on any button except close.
-        '''
-        if response < 0:
-            # This means the user pressed "Cancel"
-            # Account for the number of times the player has tried to negotiate
-            common.DB_CON.execute('UPDATE player_attributes SET free_agent_times_asked = free_agent_times_asked + 1 '
-                                  'WHERE player_id = ?', (self.player_id,)).fetchone()
-        else:
-            self.contract_window.emit_stop_by_name('response')
+        # This means the user pressed the "Cancel" button
+        # Account for the number of times the player has tried to negotiate
+        common.DB_CON.execute('UPDATE player_attributes SET free_agent_times_asked = free_agent_times_asked + 1 '
+                              'WHERE player_id = ?', (self.player_id,)).fetchone()
 
     def on_spinbutton_contract_team_amount_input(self, spinbutton, gpointer, data=None):
         text = spinbutton.get_text()

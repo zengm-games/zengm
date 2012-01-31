@@ -30,6 +30,8 @@ class TradeWindow:
         self.button_trade_propose = self.builder.get_object('button_trade_propose')
 
         self.builder.connect_signals(self)
+        # The following can't be done in Glade because of http://stackoverflow.com/q/9058987
+        self.trade_window.connect('response', self.on_trade_window_response)
 
         # Show the team rosters
         self.renderer_0 = Gtk.CellRendererToggle()

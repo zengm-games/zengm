@@ -3386,7 +3386,6 @@ Placeholder (???)</property>
     <property name="window_position">center-on-parent</property>
     <property name="icon">basketball-gm.svg</property>
     <property name="type_hint">dialog</property>
-    <signal name="response" handler="on_trade_window_response" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox9">
         <property name="visible">True</property>

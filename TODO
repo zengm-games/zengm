@@ -5,13 +5,13 @@ Much more testing
 Seems to be updating much much more slowly.. like showing all stats of all players while playing games is excruciating
 Crash when you go up or down in the contract window http://stackoverflow.com/questions/9051163/formatting-a-spinbuttons-display-in-pygobject-gtk3
 - If no fix is found, just move the $ outside the SpinButton
-Average attendance calculation seems off
 
 ---
 
 Minor bugs:
 
 Lottery should be for the 14 teams not in the playoffs, which isn't necessarily the same as the 14 worst teams.
+Don't allow sort from first column of trade window
 
 ---
 

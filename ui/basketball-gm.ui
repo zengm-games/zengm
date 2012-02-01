@@ -784,7 +784,7 @@ For more information on this, and how to apply and follow the GNU AGPL, see
               <object class="GtkTable" id="table6">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="n_rows">3</property>
+                <property name="n_rows">4</property>
                 <property name="n_columns">2</property>
                 <child>
                   <object class="GtkLabel" id="label56">
@@ -849,14 +849,25 @@ For more information on this, and how to apply and follow the GNU AGPL, see
                     <property name="adjustment">adjustment1</property>
                     <property name="digits">2</property>
                     <property name="snap_to_ticks">True</property>
-                    <signal name="output" handler="on_spinbutton_contract_team_amount_output" swapped="no"/>
-                    <signal name="input" handler="on_spinbutton_contract_team_amount_input" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
                     <property name="right_attach">2</property>
                     <property name="top_attach">2</property>
                     <property name="bottom_attach">3</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="label29">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="xalign">0</property>
+                    <property name="label" translatable="yes">(in millions of $)</property>
+                  </object>
+                  <packing>
+                    <property name="right_attach">2</property>
+                    <property name="top_attach">3</property>
+                    <property name="bottom_attach">4</property>
                   </packing>
                 </child>
               </object>

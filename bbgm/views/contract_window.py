@@ -14,18 +14,18 @@ class ContractWindow:
         common.DB_CON.execute('UPDATE player_attributes SET free_agent_times_asked = free_agent_times_asked + 1 '
                               'WHERE player_id = ?', (self.player_id,)).fetchone()
 
-    def on_spinbutton_contract_team_amount_input(self, spinbutton, gpointer, data=None):
-        text = spinbutton.get_text()
-        if text.startswith('$'):
-            text = text[1:-1]  # Get rid of the $ and the M
-        double = ctypes.c_double.from_address(hash(gpointer))
-        double.value = float(text)
-        return True
+#    def on_spinbutton_contract_team_amount_input(self, spinbutton, gpointer, data=None):
+#        text = spinbutton.get_text()
+#        if text.startswith('$'):
+#            text = text[1:-1]  # Get rid of the $ and the M
+#        double = ctypes.c_double.from_address(hash(gpointer))
+#        double.value = float(text)
+#        return True
 
-    def on_spinbutton_contract_team_amount_output(self, spinbutton, data=None):
-        text = '$%.2fM' % spinbutton.get_value()
-        spinbutton.set_text(text)
-        return True
+#    def on_spinbutton_contract_team_amount_output(self, spinbutton, data=None):
+#        text = '$%.2fM' % spinbutton.get_value()
+#        spinbutton.set_text(text)
+#        return True
 
     def on_button_contract_player_info_clicked(self, button, data=None):
         if not hasattr(self.mw, 'pw'):

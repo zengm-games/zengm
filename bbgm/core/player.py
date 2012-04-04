@@ -4,9 +4,10 @@ import random
 import re
 import string
 
-from bbgm import common
-from bbgm.util import fast_random, resources
+from flask import g
 
+from bbgm import app
+from bbgm.util import fast_random
 
 class Player:
     def load(self, player_id):
@@ -27,12 +28,12 @@ class Player:
 
     def save(self):
         self.rating['overall'] = self.overall_rating()
-        query = 'UPDATE "player_ratings" SET overall = ?, height = ?, strength = ?, speed = ?, jumping = ?, endurance = ?, shooting_inside = ?, shooting_layups = ?, shooting_free_throws = ?, shooting_two_pointers = ?, shooting_three_pointers = ?, blocks = ?, steals = ?, dribbling = ?, passing = ?, rebounding = ?, potential = ? WHERE player_id = ?'
-        common.DB_CON.execute(query, (self.rating['overall'], self.rating['height'], self.rating['strength'], self.rating['speed'], self.rating['jumping'], self.rating['endurance'], self.rating['shooting_inside'], self.rating['shooting_layups'], self.rating['shooting_free_throws'], self.rating['shooting_two_pointers'], self.rating['shooting_three_pointers'], self.rating['blocks'], self.rating['steals'], self.rating['dribbling'], self.rating['passing'], self.rating['rebounding'], self.rating['potential'], self.id))
+        query = 'UPDATE player_ratings SET overall = ?, height = ?, strength = ?, speed = ?, jumping = ?, endurance = ?, shooting_inside = ?, shooting_layups = ?, shooting_free_throws = ?, shooting_two_pointers = ?, shooting_three_pointers = ?, blocks = ?, steals = ?, dribbling = ?, passing = ?, rebounding = ?, potential = ? WHERE player_id = ?'
+        g.db.execute(query, (self.rating['overall'], self.rating['height'], self.rating['strength'], self.rating['speed'], self.rating['jumping'], self.rating['endurance'], self.rating['shooting_inside'], self.rating['shooting_layups'], self.rating['shooting_free_throws'], self.rating['shooting_two_pointers'], self.rating['shooting_three_pointers'], self.rating['blocks'], self.rating['steals'], self.rating['dribbling'], self.rating['passing'], self.rating['rebounding'], self.rating['potential'], self.id))
 
     def develop(self, years=1):
         # Make sure age is always defined
-        age = common.SEASON - self.attribute['born_date']
+        age = g.starting_season - self.attribute['born_date']
 
         for i in range(years):
             age += 1
@@ -110,7 +111,7 @@ class Player:
         if randomize_expiration:
             years = random.randrange(1, years+1)
 
-        expiration = common.SEASON + years - 1
+        expiration = g.starting_season + years - 1
         if amount < min_amount:
             amount = min_amount
         elif amount > max_amount:
@@ -139,7 +140,7 @@ class Player:
         if phase > 2:
             expiration += 1
 
-        common.DB_CON.execute('UPDATE player_attributes SET team_id = -1, contract_amount = ?, contract_expiration = ?,'
+        g.db.execute('UPDATE player_attributes SET team_id = -1, contract_amount = ?, contract_expiration = ?,'
                               ' free_agent_times_asked = 0 WHERE player_id = ?', (amount, expiration, self.id))
 
     def release(self, phase):
@@ -153,8 +154,9 @@ class Player:
         """
 
         # Keep track of player salary even when he's off the team
-        contract_amount, contract_expiration, team_id = common.DB_CON.execute('SELECT contract_amount, contract_expiration, team_id FROM player_attributes WHERE player_id = ?', (self.id,)).fetchone()
-        common.DB_CON.execute('INSERT INTO released_players_salaries (player_id, team_id, contract_amount, contract_expiration) VALUES (?, ?, ?, ?)', (self.id, team_id, contract_amount, contract_expiration))
+        g.db.execute('SELECT contract_amount, contract_expiration, team_id FROM player_attributes WHERE player_id = ?', (self.id,))
+        contract_amount, contract_expiration, team_id = g.db.fetchone()
+        g.db.execute('INSERT INTO released_players_salaries (player_id, team_id, contract_amount, contract_expiration) VALUES (?, ?, ?, ?)', (self.id, team_id, contract_amount, contract_expiration))
 
         self.add_to_free_agents(phase)
 
@@ -168,19 +170,19 @@ class GeneratePlayer(Player):
 
     def __init__(self):
         # First name data
-        fn_reader = csv.reader(open(resources.get_asset('data', 'first_names.txt'), 'rb'))
+        fn_reader = csv.reader(app.open_resource('data/first_names.txt'))
         self.fn_data = []
         for row in fn_reader:
             self.fn_data.append(row)
 
         # Last name data (This data has been truncated to make the file smaller)
-        ln_reader = csv.reader(open(resources.get_asset('data', 'last_names.txt'), 'rb'))
+        ln_reader = csv.reader(app.open_resource('data/last_names.txt'))
         self.ln_data = []
         for row in ln_reader:
             self.ln_data.append(row)
 
         # Nationality data
-        nat_reader = csv.reader(open(resources.get_asset('data', 'nationalities.txt'), 'rb'))
+        nat_reader = csv.reader(app.open_resource('data/nationalities.txt'))
         self.nat_data = []
         for row in nat_reader:
             self.nat_data.append(row)
@@ -205,8 +207,8 @@ class GeneratePlayer(Player):
         years to the player's born_date.
         """
         Player.develop(self, years)
-        age = common.SEASON - self.attribute['born_date'] + years
-        self.attribute['born_date'] = common.SEASON - age
+        age = g.starting_season - self.attribute['born_date'] + years
+        self.attribute['born_date'] = g.starting_season - age
 
     def generate_ratings(self, profile, base_rating):
         if profile == 'Point':
@@ -248,7 +250,7 @@ class GeneratePlayer(Player):
         self.attribute['position'] = self._position()  # Position (PG, SG, SF, PF, C, G, GF, FC)
         self.attribute['height'] = int(fast_random.gauss(1, 0.02) * (self.rating['height'] * (max_height - min_height) / 100 + min_height))  # Height in inches (from min_height to max_height)
         self.attribute['weight'] = int(fast_random.gauss(1, 0.02) * ((self.rating['height'] + 0.5 * self.rating['strength']) * (max_weight - min_weight) / 150 + min_weight))  # Weight in points (from min_weight to max_weight)
-        self.attribute['born_date'] = common.SEASON - age
+        self.attribute['born_date'] = g.starting_season - age
 
         #If the nationality isn't given, randomly choose one.	
         if player_nat == "":
@@ -353,10 +355,10 @@ class GeneratePlayer(Player):
 
         return position
 
-    def sql_insert(self):
+    def sql_insert(self, league_id):
         self.rating['overall'] = self.overall_rating()
-        sql = 'INSERT INTO player_ratings (%s) VALUES (%s);\nINSERT INTO player_attributes (%s) VALUES (%s);\n'
-        return sql % (', '.join(map(str, self.rating.keys())), ', '.join(map(self._sql_prep, self.rating.values())), ', '.join(map(str, self.attribute.keys())), ', '.join(map(self._sql_prep, self.attribute.values())))
+        sql = 'INSERT INTO %d_player_ratings (%s) VALUES (%s);\nINSERT INTO %d_player_attributes (%s) VALUES (%s);\n'
+        return sql % (league_id, ', '.join(map(str, self.rating.keys())), ', '.join(map(self._sql_prep, self.rating.values())), league_id, ', '.join(map(str, self.attribute.keys())), ', '.join(map(self._sql_prep, self.attribute.values())))
 
     def _sql_prep(self, value):
         value = str(value)

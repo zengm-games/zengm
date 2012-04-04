@@ -9,10 +9,10 @@ In practice, using this speeds up game simulation by about 10% just by using
 numpy.random.normal rather than random.gauss.
 """
 
-from bbgm import common
+from bbgm import app
 
 use_numpy = False
-if common.NUMPY:
+if app.config['TRY_NUMPY']:
     try:
         import numpy.random
         use_numpy = True
@@ -21,7 +21,7 @@ if common.NUMPY:
 else:
     import random
 
-if common.DEBUG:
+if app.config['DEBUG']:
     if use_numpy:
         print 'bbgm.core.fast_random is using numpy (fast)'
     else:

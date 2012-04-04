@@ -1,6 +1,0 @@
-basketball-gm (1.0.0beta-1) natty; urgency=low
-
-  * Defense is now accounted for in game simulation
-  * Many minor bug fixes
-
- -- Jeremy Scheff <jdscheff@gmail.com>  Sat, 15 Aug 2011 10:36:52 -0400

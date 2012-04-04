@@ -1,0 +1,65 @@
+{% extends "layout.html" %}
+
+{% block title %} - League {{ league_id }} {% block league_title %}{% endblock %}{% endblock %}
+
+{% block content %}
+  <div class="row-fluid">
+    <div class="span3">
+      <div class="well sidebar-nav">
+
+        <ul class="nav nav-list">
+          <div id="play_menu" style="margin-bottom: 1em">
+            <div id="play_status"></div>
+            <div id="play_button" class="btn-group"></div>
+          </div>
+          <li class="nav-header">League</li>
+          <li><a href="{{ url_for('league_dashboard', league_id=league_id) }}">Dashboard</a></li>
+          <li><a href="{{ url_for('standings', league_id=league_id) }}">Standings</a></li>
+          <li><a href="{{ url_for('schedule', league_id=league_id) }}">Schedule</a></li>
+          <li><a href="#">Playoffs</a></li>
+          <li><a href="#">Finances</a></li>
+          <li><a href="#">Transaction log</a></li>
+          <li><a href="#">History</a></li>
+          <li class="nav-header">Team</li>
+          <li><a href="#">Roster</a></li>
+          <li><a href="#">Free agents</a></li>
+          <li><a href="#">Trade</a></li>
+          <li><a href="#">Advisors</a></li>
+          <li><a href="#">History</a></li>
+          <li class="nav-header">Stats</li>
+          <li><a href="{{ url_for('game_log', league_id=league_id) }}">Game log</a></li>
+          <li><a href="#">League leaders</a></li>
+          <li><a href="{{ url_for('player_ratings', league_id=league_id) }}">Player ratings</a></li>
+          <li><a href="{{ url_for('player_stats', league_id=league_id) }}">Player stats</a></li>
+          <li><a href="#">Team stats</a></li>
+        </ul>
+      </div><!--/.well -->
+    </div><!--/span-->
+    <div class="span9">
+      {% block league_content %}{% endblock %}
+    </div><!--/span-->
+  </div><!--/row-->
+
+  <script src="http://127.0.0.1:8080/application.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+    $(document).ready(function() {
+        $play_status = $('#play_status')
+        $play_button = $('#play_button')
+
+        var jug = new Juggernaut;
+
+        // Load cached play menu - this only runs once, which is good, but I'm not sure why.
+        jug.on('connect', function(){
+            $.get('{{ url_for('push_play_menu', league_id=league_id) }}');
+        });
+
+        // Listen for updates to play menu
+        jug.subscribe('{{ league_id }}_status', function(data){
+            $play_status.html(data);
+        });
+        jug.subscribe('{{ league_id }}_button', function(data){
+            $play_button.html(data);
+        });
+    });
+  </script>
+{% endblock %}

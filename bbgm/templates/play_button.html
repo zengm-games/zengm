@@ -1,0 +1,9 @@
+<a href="{{ url_for('play_games', league_id=league_id, amount='day') }}" class="btn btn-primary">Play one day</a>
+<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+  <span class="caret"></span>
+</button>
+<ul class="dropdown-menu">
+  {% for option in options %}
+    <li><a onclick="javascript:$.get('{{ option.url }} ');" href="javascript:void(0);">{{ option.label }}</a></li>
+  {% endfor %}
+</ul>

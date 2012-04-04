@@ -1,0 +1,20 @@
+{% extends "league_layout.html" %}
+
+{% block league_title %} - Schedule{% endblock %}
+
+{% block league_content %}
+  <h1>Upcoming schedule</h1>
+
+  <ol>
+  {% for game in games %}
+    <li><a href="#">{{ game[0].region }} {{ game[0].name }}</a>
+    {% if g.player_team_id == game[0].team_id %}
+      at
+    {% else %}
+      vs
+    {% endif %}
+    <a href="#">{{ game[1].region }} {{ game[1].name }}</a>
+  {% endfor %}
+  </ol>
+
+{% endblock %}

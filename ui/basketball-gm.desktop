@@ -1,9 +1,0 @@
-[Desktop Entry]
-Name=Basketball GM
-Comment=Basketball management simulation game
-Exec=basketball-gm
-Icon=basketball-gm
-Terminal=false
-Type=Application
-StartupNotify=true
-Categories=GTK;Game;Simulation;SportsGame;StrategyGame;Sports;

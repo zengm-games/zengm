@@ -1,0 +1,7 @@
+table#game_log_list tbody tr:hover {
+  cursor: pointer;
+}
+
+tr.separator {
+  border-bottom: 2px solid #000;
+}

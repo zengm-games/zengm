@@ -12,8 +12,6 @@ sets to work on (and this is not an exhaustive list):
 * Opposing manager AI
 * Localization
 * New gameplay features
-* Packaging
-* Windows/Mac testing and bugfixing
 
 So please, get the code on GitHub <https://github.com/jdscheff/basketball-gm>
 and start hacking. Or email me <jdscheff@gmail.com> and we can discuss how you
@@ -25,43 +23,7 @@ Coding style
 
 http://www.python.org/dev/peps/pep-0008/ with the following exceptions:
 
-* Use a maximum line length of 120 in Python files, except in comment blocks
-  where the limit is 80. (NOTE: The current code doesn't always obey this rule,
-  but it will be updated.)
+* Don't worry too mucuh about line length, for now.
 
 * Use Google-style comments, because I like them better
   http://google-styleguide.googlecode.com/svn/trunk/pyguide.html#Comments
-
-
-Directory structure
--------------------
-
-This describes an *ideal*, not what things actually are in practice. For
-instance, a lot of stuff in ./bbgm/views should be elsewhere within ./bbgm.
-Slowly, this will be corrected. But try to stick to these guidelines for new
-stuff, at least.
-
-./bbgm
-    Main Python module.
-
-./bbgm/core
-    Game logic. No UI code.
-
-./bbgm/views
-    UI code. No game logic. (Currently, there is tons of game logic here,
-    especially in main_window.py. There shouldn't be.)
-
-./bbgm/util
-    Convenience functions, glue functions, and stuff that doesn't fit elsewhere.
-
-./bin
-    Contains the main executable that launches the game.
-
-./data
-    Any data files, including database schema.
-
-./tests
-    Tests (Currently, basically nothing is here.)
-
-./ui
-    Any UI files: GtkBuilder files, images, etc.

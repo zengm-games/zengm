@@ -1,23 +1,13 @@
-Basketball GM 1.0.0beta+
-========================
+# Basketball GM 2.0.0alpha
 
-A basketball simulation game. Make trades, set rosters, draft players, and try
-to build the next dynasty. Built with PyGTK and SQLite.
+A single-player basketball simulation game. Make trades, set rosters, draft
+players, and try to build the next dynasty, all from within your web browser.
 
 * Website: https://github.com/jdscheff/basketball-gm
 
 * Main developer: Jeremy Scheff <jdscheff@gmail.com>
 
-
-Plea for help
--------------
-
-Do you like this game? Or, do you at least like the idea of what this game
-could one day be? Then PLEASE HELP US! See the HACKING file for more info.
-
-
-License
--------
+## License
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU Affero General Public License version 3 as published by
@@ -31,21 +21,59 @@ details.
 You should have received a copy of the GNU Affero General Public License along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+## Warning
 
-Running and/or installing
--------------------------
+This is a (currently) very incomplete port of Basketball GM from PyGObject
+(GTK+) to web-based technologies. Ultimately, this may or may not be a good
+idea. Due to all the missing features still, I haven't put a lot of time into
+making it easy to use. It's basically only of interest to developers now, but
+hopefully that will change relatively soon.
 
-See INSTALL for more details on dependencies and platform-specific
-instructions. But in general...
+## Dependencies
 
-To run the game from this directory:
+### Required
 
-    ./bin/basketball-gm
+* python-flask
+* python-mysqldb
+* redis-server
+* node.js
+* juggernaut
+* python-juggernaut
 
-Or, to install the game system-wide and then run it:
+For the first three, you can just use the normal Ubuntu (or whatever) packages
+and it will probably work fine.
 
-    sudo python setup.py install
+For node.js, install it however you want. This is what I used:
+https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager
+The same Ubuntu PPA linked there also has npm packaged, which you can then use
+to install Juggernaut:
 
-    basketball-gm
+    sudo npm install -g juggernaut
 
-The system-wide install through setup.py should also make a launcher for "Basketball GM".
+Finally, to install the Juggernaut Python library, run:
+
+    sudo apt-get install python-pip
+    sudo pip install juggernaut
+
+### Optional packages
+
+* python-numpy
+
+This speeds up gameplay by about 10%, for now at least.
+
+## Installing and running
+
+1. Create a new MySQL database called bbgm
+
+2. Run these commands in the Python interpreter, from this folder:
+
+    import bbgm
+    bbgm.init_db()
+
+2. On the command line, run these three commands:
+
+    redis_server
+    juggernaut
+    python bbgm/runserver.py
+
+4. Point your browser to http://127.0.0.1:5000/

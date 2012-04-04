@@ -1,0 +1,18 @@
+<h2><a href="#">{{ won_region }} {{ won_name }}</a> {{ won_points }}, <a href="#">{{ lost_region }} {{ lost_name }}</a> {{ lost_points }}</h2>
+
+{% for team in teams %}
+  <h3><a href="#">{{ team.region }} {{ team.name }}</a></h2>
+  <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed">
+  <thead>
+    <tr><th>Name</th><th>Pos</th><th>Min</th><th>FG</th><th>3Pt</th><th>FT</th><th>Off</th><th>Reb</th><th>Ast</th><th>TO</th><th>Stl</th><th>Blk</th><th>PF</th><th>Pts</th></tr>
+  </thead>
+  <tbody>
+  {% for player in team.players %}
+    <tr><td><a href="#">{{ player.name }}</a></td><td>{{ player.position }}</td><td>{{ player.minutes|round|int }}</td><td>{{ player.field_goals_made }}-{{ player.field_goals_attempted}}</td><td>{{ player.three_pointers_made }}-{{ player.three_pointers_attempted }}</td><td>{{ player.free_throws_made }}-{{ player.free_throws_attempted}}</td><td>{{ player.offensive_rebounds }}</td><td>{{ player.rebounds }}</td><td> {{player.assists }}</td><td>{{ player.turnovers }}</td><td>{{ player.steals }}</td><td>{{ player.blocks }}</td><td>{{ player.personal_fouls }}</td><td>{{ player.points }}</td></tr>
+  {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr><td>Total</td><td></td><td>240</td><td>{{ team.field_goals_made }}-{{ team.field_goals_attempted}}</td><td>{{ team.three_pointers_made }}-{{ team.three_pointers_attempted }}</td><td>{{ team.free_throws_made }}-{{ team.free_throws_attempted}}</td><td>{{ team.offensive_rebounds }}</td><td>{{ team.rebounds }}</td><td> {{team.assists }}</td><td>{{ team.turnovers }}</td><td>{{ team.steals }}</td><td>{{ team.blocks }}</td><td>{{ team.personal_fouls }}</td><td>{{ team.points }}</td></tr>
+  </tfoot>
+  </table>
+{% endfor %}

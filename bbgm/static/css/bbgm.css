@@ -5,12 +5,12 @@ table#game_log_list tbody tr:hover td {
   cursor: pointer;
 }
 
-tr.separator {
-  border-bottom: 2px solid #000;
-}
-
-.table-striped tbody tr.alert-info td {
+table#game_log_list tbody tr.alert-info td {
   background-color: #d9edf7;
   border-color: #bce8f1;
   color: #3a87ad;
+}
+
+.table-striped tbody tr.separator td {
+  border-bottom: 1px solid #000;
 }

@@ -30,7 +30,7 @@
         </thead>
         <tbody>
         {% for team in conference.teams %}
-          <tr><td>{% if loop.index <= 8 %}<strong>{% endif %}{{ loop.index }}.{% if loop.index <= 8 %}</strong>{% endif %} <a href="#">{{ team.region }}</a></td><td align="right">GB</td></tr>
+          <tr{% if loop.index == 8 %} class="separator"{% endif %}><td>{{ loop.index }}.{% if loop.index <= 8 %}</strong>{% endif %} <a href="#">{{ team.region }}</a></td><td align="right">GB</td></tr>
         {% endfor %}
         </tbody>
         </table>

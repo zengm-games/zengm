@@ -69,10 +69,6 @@ next redirect like http://flask.pocoo.org/docs/reqcontext/?highlight=url#diving-
 
 unit tests like https://github.com/mitsuhiko/flask/blob/master/examples/minitwit/minitwit_tests.py
 
-game log viewer
-- "separator" css class to denote starters in box score, playoff teams in standings
-- some better hover highlight indicator for games list
-
 
 
 

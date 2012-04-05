@@ -3,18 +3,77 @@ import random
 from bbgm.util import fast_random
 
 class GameSim:
+    """Single game simulation.
+
+    When an instance of this class is created, information about the two teams
+    is passed to __init__(). Then run() will actually simulate a game and
+    return the results (stats) of the simulation.
+    """
+
     def __init__(self, team1, team2):
+        """Initialize the two teams that are playing this game.
+
+        Args:
+            team1: dict containing information about the home team. There are
+                four top-level elements in this dict: defense (a float
+                containing the overall team defensive rating), pace (a float
+                containing the team's pace, which is the mean number of
+                possessions they like to have in a game), stat (a dict for
+                storing team stats), and player (a list of dicts, one for each
+                player on the team, ordered by roster_position). Each player's
+                dict contains anohter four elements: id (player's unique ID
+                number), overall_rating (overall rating, as stored in the DB),
+                stat (a dict for storing player stats, similar to the one for
+                team stats), and composite_ratings (a dict containing various
+                ratings used in the game simulation). In other words...
+                    {
+                        "defense": 0,
+                        "pace": 0,
+                        "stat": {},
+                        "player": [
+                            {
+                                "id": 0,
+                                "overall_rating": 0,
+                                "stat": {},
+                                "composite_rating": {}
+                            },
+                            ...
+                        ]
+                    }
+            team2: Same as team1, but for the away team.
+        """
         self.team = []
         self.team.append(team1)
         self.team.append(team2)
-        self.num_possessions = int(round(self.get_num_possessions()))
+        self.num_possessions = int(round((self.team[0]['pace'] + self.team[1]['pace']) / 2 * fast_random.gauss(1, 0.03)))
 
-        # Starting lineups - FIX THIS
+        # Starting lineups, which works because players are ordered by their roster_position
         self.players_on_court = [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]]
 
         self.subs_every_n = 5  # How many possessions to wait before doing subs
 
     def run(self):
+        """Simulates the game and returns the results.
+
+        Returns:
+            A list of dicts, one for each team, similar to the inputs to
+            __init__, but with both the team and player "stat" dicts filled in
+            and the extraneous data (defense, pace, overall_rating,
+            composite_rating) removed. In other words...
+                [
+                    {
+                        "stat": {},
+                        "player": [
+                            {
+                                "id": 0,
+                                "stat": {}
+                            },
+                            ...
+                        ]
+                    },
+                ...
+                ]
+        """
         # Simulate the game
         for self.o in xrange(2):
             self.d = 0 if self.o == 1 else 1
@@ -34,32 +93,29 @@ class GameSim:
         for t in xrange(2):
             del self.team[t]['defense']
             del self.team[t]['pace']
-            for p in xrange(len(self.team[t]['player_ids'])):
+            for p in xrange(len(self.team[t]['player'])):
                 del self.team[t]['player'][p]['overall_rating']
                 del self.team[t]['player'][p]['composite_rating']
+
         return self.team
 
-    def get_num_possessions(self):
-        return (self.team[0]['pace'] + self.team[1]['pace']) / 2 * fast_random.gauss(1, 0.03)
-
     def update_players_on_court(self):
-        '''
-        Update players_on_court, track energy levels, and record the number of
-        minutes each player plays. This function is currently VERY SLOW.
-        '''
+        """Do substitutions when appropriate, track energy levels, and record
+        the number of minutes each player plays. This function is currently VERY SLOW.
+        """
 
         dt = 48.0 / (2 * self.num_possessions) * self.subs_every_n  # Time elapsed in this possession
 
         for t in range(2):
             # Overall ratings scaled by fatigue
-            overalls = [self.team[t]['player'][i]['overall_rating'] * self.team[t]['player'][i]['stat']['energy'] * fast_random.gauss(1, .04) for i in xrange(len(self.team[t]['player_ids']))]
+            overalls = [self.team[t]['player'][i]['overall_rating'] * self.team[t]['player'][i]['stat']['energy'] * fast_random.gauss(1, .04) for i in xrange(len(self.team[t]['player']))]
 
             # Loop through players on court (in inverse order of current roster position)
             i = 0
             for p in self.players_on_court[t]:
                 self.players_on_court[t][i] = p
                 # Loop through bench players (in order of current roster position) to see if any should be subbed in)
-                for b in xrange(len(self.team[t]['player_ids'])):
+                for b in xrange(len(self.team[t]['player'])):
                     if b not in self.players_on_court[t] and self.team[t]['player'][p]['stat']['court_time'] > 3 and self.team[t]['player'][b]['stat']['bench_time'] > 3 and overalls[b] > overalls[p]:
                         # Substitute player
                         self.players_on_court[t][i] = b
@@ -70,7 +126,7 @@ class GameSim:
                 i += 1
 
             # Update minutes (overall, court, and bench)
-            for p in xrange(len(self.team[t]['player_ids'])):
+            for p in xrange(len(self.team[t]['player'])):
                 if p in self.players_on_court[t]:
                     self.record_stat(t, p, 'minutes', dt)
                     self.record_stat(t, p, 'court_time', dt)
@@ -154,7 +210,6 @@ class GameSim:
         p = self.players_on_court[self.d][self.pick_player(ratios)]
         self.record_stat(self.d, p, 'blocks')
 
-    # For and1's, set amount=1.  Else, set amount=2
     def do_free_throw(self, shooter, amount):
         self.do_foul(shooter)
         p = self.players_on_court[self.o][shooter]
@@ -164,13 +219,12 @@ class GameSim:
                 self.record_stat(self.o, p, 'free_throws_made')
                 self.record_stat(self.o, p, 'points')
 
-    # Assign a foul to anyone who isn't shooter
-    # If fouls == 6, then foul out!
     def do_foul(self, shooter):
+        """Assign a foul to anyone who isn't shooter."""
         ratios = self.rating_array('foul_ratio', self.d)
         p = self.players_on_court[self.d][self.pick_player(ratios)]
         self.record_stat(self.d, p, 'personal_fouls')
-        # Foul out: remove from player_ids array, decrement num_players, and then they won't be selected anymore by update_players_on_court()
+        # Foul out
         #if self.team[self.d]['player'][p]['stat']['personal_fouls'] >= 6:
 
     def do_made_shot(self, shooter, type):
@@ -202,11 +256,18 @@ class GameSim:
             array[i] = self.team[t]['player'][p]['composite_rating'][rating]
         return array
 
-    # exempt is a player that can't be picked (you can't assist your own shot, which is the only current use of exempt)
-    # The value of exempt is an integer from 0 to 4 that represents the index of the player in players_on_court
-    # This is *NOT* the same value as the playerID or the index of the team.player array
-    # Yes, that's confusing
     def pick_player(self, ratios, exempt=False):
+        """Pick a player to do something.
+
+        Args:
+            ratios: 
+        exempt: An integer representing a player that can't be picked (i.e. you
+            can't assist your own shot, which is the only current use of
+            exempt). The value of exempt ranges from 0 to 4, corresponding to
+            the index of the player in self.players_on_court. This is *NOT* the
+            same value as the player ID *or* the index of the
+            self.team[t]['player'] list. Yes, that's confusing.
+        """
         if exempt != False:
             ratios[exempt] = 0
         rand = random.random() * (ratios[0] + ratios[1] + ratios[2] + ratios[3] + ratios[4])

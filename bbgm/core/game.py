@@ -12,7 +12,7 @@ from bbgm.util import fast_random
 class Game:
     def play(self, t1, t2, is_playoffs):
         # Run simulation and get stats
-        gs = game_sim.GameSim(Team(t1).to_dict(), Team(t2).to_dict())
+        gs = game_sim.GameSim(team(t1), team(t2))
         self.team = gs.run()
 
         self.is_playoffs = is_playoffs
@@ -53,14 +53,14 @@ class Game:
         for t in range(2):
             g.db.execute('SELECT pa.player_id FROM %s_player_attributes as pa, %s_player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s AND pr.roster_position <= 5', (g.league_id, g.league_id, self.team_id[t]))
             for row in g.db.fetchall():
-                for p in xrange(len(self.team[t]['player_ids'])):
+                for p in xrange(len(self.team[t]['player'])):
                     if self.team[t]['player'][p]['id'] == row[0]:
                         self.record_stat(t, p, 'starter')
 
         # Player stats and team stats
         for t in range(2):
             self.write_team_stats(t)
-            for p in xrange(len(self.team[t]['player_ids'])):
+            for p in xrange(len(self.team[t]['player'])):
                 self.write_player_stats(t, p)
 
     def write_player_stats(self, t, p):
@@ -113,136 +113,108 @@ class Game:
                 g.db.execute('UPDATE %s_team_attributes SET lost_conf = lost_conf + 1 WHERE team_id = %s AND season = %s', (g.league_id, self.team_id[t], self.season))
 
 
-class Team:
-    def __init__(self, team_id):
-        self.id = team_id
-        self._initialize_stats()
-        self.load_players()
-        self.load_team_attributes()
-        self.home = False
+def team(team_id):
+    """Returns a dict containing the minimal information about a team needed to
+    simulate a game.
+    """
+    t = {'defense': 0, 'pace': 0, 'stat': {}, 'player': []}
 
-    def _initialize_stats(self):
-        self.stat = dict(minutes=0, field_goals_made=0, field_goals_attempted=0,
-                         three_pointers_made=0, three_pointers_attempted=0,
-                         free_throws_made=0, free_throws_attempted=0,
-                         offensive_rebounds=0, defensive_rebounds=0, assists=0,
-                         turnovers=0, steals=0, blocks=0, personal_fouls=0,
-                         points=0)
+    g.db.execute('SELECT pa.player_id FROM %s_player_attributes as pa, %s_player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s ORDER BY pr.roster_position ASC', (g.league_id, g.league_id, team_id))
+    for row in g.db.fetchall():
+        t['player'].append(player(row[0]))
 
-    def load_players(self):
-        self.player = []
-        self.player_ids = []
-        p = 0
-        g.db.execute('SELECT pa.player_id FROM %s_player_attributes as pa, %s_player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s ORDER BY pr.roster_position ASC', (g.league_id, g.league_id, self.id))
-        for row in g.db.fetchall():
-            self.player.append(Player(row[0]))
-            self.player_ids.append(row[0])
-            p += 1
+    # Number of players to factor into pace and defense rating calculation
+    n_players = len(t['player'])
+    if n_players > 7:
+        n_players = 7
 
-    def load_team_attributes(self):
-        """Load team attributes.
-
-        This must be called after self.load_players to allow for generation of
-        self.defense and self.pace.
-        """
-        g.db.execute('SELECT region, name FROM %s_team_attributes WHERE team_id = %s', (g.league_id, self.id))
-        row = g.db.fetchone()
-        self.region = row[0]
-        self.name = row[1]
-
-        # Number of players to factor into pace and defense rating calculation
-        n_players = len(self.player)
-        if n_players > 7:
-            n_players = 7
-
-        # Would be better if these were scaled by average minutes played and endurance
-        self.pace = sum([self.player[i].composite_rating['pace'] for i in xrange(n_players)]) / 7
-        self.defense = sum([self.player[i].composite_rating['defense'] for i in xrange(n_players)]) / 7 # 0 to 0.5
-        self.defense /= 4 # This gives the percentage points subtracted from the other team's normal FG%
-
-    def to_dict(self):
-        """Create JSON of minimal team attributes needed to simulate a game."""
-        t = {'defense': self.defense, 'pace': self.pace, 'player_ids': self.player_ids, 'stat': self.stat, 'player': []}
-        for p in self.player:
-            t['player'].append({'id': p.id, 'overall_rating': p.overall_rating, 'stat': p.stat, 'composite_rating': p.composite_rating})
-#        return json.dumps(t)
-        return t
+    # Would be better if these were scaled by average minutes played and endurance
+    t['pace'] = sum([t['player'][i]['composite_rating']['pace'] for i in xrange(n_players)]) / 7
+    t['defense'] = sum([t['player'][i]['composite_rating']['defense'] for i in xrange(n_players)]) / 7 # 0 to 0.5
+    t['defense'] /= 4 # This gives the percentage points subtracted from the other team's normal FG%
 
 
-class Player:
-    def __init__(self, player_id):
-        self.id = player_id
-        self.load_ratings()
-        self.overall_rating = self.rating['overall']
-        self.make_composite_ratings()
-        self._initialize_stats()
+    t['stat'] = dict(minutes=0, field_goals_made=0, field_goals_attempted=0,
+                three_pointers_made=0, three_pointers_attempted=0,
+                free_throws_made=0, free_throws_attempted=0,
+                offensive_rebounds=0, defensive_rebounds=0, assists=0,
+                turnovers=0, steals=0, blocks=0, personal_fouls=0,
+                points=0)
 
-    # Load the raw rating values from the database
-    def load_ratings(self):
-        g.dbd.execute('SELECT overall, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, '
-                'shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, '
-                'passing, rebounding FROM %s_player_ratings WHERE player_id = %s', (g.league_id, self.id))
-        self.rating = g.dbd.fetchone()
-        g.dbd.execute('SELECT name, position FROM %s_player_attributes WHERE player_id = %s', (g.league_id, self.id))
-        self.attribute = g.dbd.fetchone()
+#    return json.dumps(t)
+    return t
 
-    def make_composite_ratings(self):
-        self.composite_rating = {}
-        self.composite_rating['pace'] = self._composite(90, 140, ['speed', 'jumping', 'shooting_layups',
-                                                        'shooting_three_pointers', 'steals', 'dribbling',
-                                                        'passing'], random=False)
-        self.composite_rating['shot_ratio'] = self._composite(0, 0.5, ['shooting_inside', 'shooting_layups',
-                                                              'shooting_two_pointers', 'shooting_three_pointers'])
-        self.composite_rating['assist_ratio'] = self._composite(0, 0.5, ['dribbling', 'passing', 'speed'])
-        self.composite_rating['turnover_ratio'] = self._composite(0, 0.5, ['dribbling', 'passing', 'speed'],
-                                                                  inverse=True)
-        self.composite_rating['field_goal_percentage'] = self._composite(0.38, 0.68, ['height', 'jumping',
-                                                                         'shooting_inside', 'shooting_layups',
-                                                                         'shooting_two_pointers',
-                                                                         'shooting_three_pointers'])
-        self.composite_rating['free_throw_percentage'] = self._composite(0.65, 0.9, ['shooting_free_throws'])
-        self.composite_rating['three_pointer_percentage'] = self._composite(0, 0.45, ['shooting_three_pointers'])
-        self.composite_rating['rebound_ratio'] = self._composite(0, 0.5, ['height', 'strength', 'jumping',
-                                                                 'rebounding'])
-        self.composite_rating['steal_ratio'] = self._composite(0, 0.5, ['speed', 'steals'])
-        self.composite_rating['block_ratio'] = self._composite(0, 0.5, ['height', 'jumping', 'blocks'])
-        self.composite_rating['foul_ratio'] = self._composite(0, 0.5, ['speed'], inverse=True)
-        self.composite_rating['defense'] = self._composite(0, 0.5, ['strength', 'speed'])
 
-    def _composite(self, minval, maxval, components, inverse=False, random=True):
-        r = 0.0
-        rmax = 0.0
-        if inverse:
-            sign = -1
-            add = -100
-        else:
-            sign = 1
-            add = 0
-        for component in components:
-            # Sigmoidal transformation
-            y = (self.rating[component] - 70) / 10
-            rcomp = y / math.sqrt(1 + pow(y, 2))
-            rcomp = (rcomp + 1) * 50
-#            rcomp = self.rating[component]
+def player(player_id):
+    """Returns a dict containing the minimal information about a player needed
+    to simulate a game.
+    """
+    p = {'id': player_id, 'overall_rating': 0, 'stat': {}, 'composite_rating': {}}
 
-            r = r + sign * (add + rcomp)
-            rmax = rmax + sign * (add + 100)
-        # Scale from minval to maxval
-        r = r / (100.0 * len(components))  # 0-1
-#        r = r / (rmax * len(components))  # 0-1
-        r = r * (maxval - minval) + minval  # Min-Max
-        # Randomize: Mulitply by a random number from N(1,0.1)
-        if random:
-            r = fast_random.gauss(1, 0.1) * r
-        return r
+    g.dbd.execute('SELECT overall, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, '
+            'shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, '
+            'passing, rebounding FROM %s_player_ratings WHERE player_id = %s', (g.league_id, p['id']))
+    rating = g.dbd.fetchone()
 
-    def _initialize_stats(self):
-        self.stat = dict(starter=0, minutes=0, field_goals_made=0, field_goals_attempted=0,
-                         three_pointers_made=0, three_pointers_attempted=0,
-                         free_throws_made=0, free_throws_attempted=0,
-                         offensive_rebounds=0, defensive_rebounds=0, assists=0,
-                         turnovers=0, steals=0, blocks=0, personal_fouls=0,
-                         points=0, court_time=0, bench_time=0, energy=1)
+    p['overall_rating'] = rating['overall']
+
+    p['composite_rating']['pace'] = _composite(90, 140, rating, ['speed', 'jumping', 'shooting_layups',
+                                                    'shooting_three_pointers', 'steals', 'dribbling',
+                                                    'passing'], random=False)
+    p['composite_rating']['shot_ratio'] = _composite(0, 0.5, rating, ['shooting_inside', 'shooting_layups',
+                                                          'shooting_two_pointers', 'shooting_three_pointers'])
+    p['composite_rating']['assist_ratio'] = _composite(0, 0.5, rating, ['dribbling', 'passing', 'speed'])
+    p['composite_rating']['turnover_ratio'] = _composite(0, 0.5, rating, ['dribbling', 'passing', 'speed'],
+                                                              inverse=True)
+    p['composite_rating']['field_goal_percentage'] = _composite(0.38, 0.68, rating, ['height', 'jumping',
+                                                                     'shooting_inside', 'shooting_layups',
+                                                                     'shooting_two_pointers',
+                                                                     'shooting_three_pointers'])
+    p['composite_rating']['free_throw_percentage'] = _composite(0.65, 0.9, rating, ['shooting_free_throws'])
+    p['composite_rating']['three_pointer_percentage'] = _composite(0, 0.45, rating, ['shooting_three_pointers'])
+    p['composite_rating']['rebound_ratio'] = _composite(0, 0.5, rating, ['height', 'strength', 'jumping',
+                                                             'rebounding'])
+    p['composite_rating']['steal_ratio'] = _composite(0, 0.5, rating, ['speed', 'steals'])
+    p['composite_rating']['block_ratio'] = _composite(0, 0.5, rating, ['height', 'jumping', 'blocks'])
+    p['composite_rating']['foul_ratio'] = _composite(0, 0.5, rating, ['speed'], inverse=True)
+    p['composite_rating']['defense'] = _composite(0, 0.5, rating, ['strength', 'speed'])
+
+    p['stat'] = dict(starter=0, minutes=0, field_goals_made=0, field_goals_attempted=0,
+                     three_pointers_made=0, three_pointers_attempted=0,
+                     free_throws_made=0, free_throws_attempted=0,
+                     offensive_rebounds=0, defensive_rebounds=0, assists=0,
+                     turnovers=0, steals=0, blocks=0, personal_fouls=0,
+                     points=0, court_time=0, bench_time=0, energy=1)
+
+    return p
+
+def _composite(minval, maxval, rating, components, inverse=False, random=True):
+    r = 0.0
+    rmax = 0.0
+    if inverse:
+        sign = -1
+        add = -100
+    else:
+        sign = 1
+        add = 0
+    for component in components:
+        # Sigmoidal transformation
+        y = (rating[component] - 70) / 10
+        rcomp = y / math.sqrt(1 + pow(y, 2))
+        rcomp = (rcomp + 1) * 50
+#        rcomp = rating[component]
+
+        r = r + sign * (add + rcomp)
+        rmax = rmax + sign * (add + 100)
+    # Scale from minval to maxval
+    r = r / (100.0 * len(components))  # 0-1
+#    r = r / (rmax * len(components))  # 0-1
+    r = r * (maxval - minval) + minval  # Min-Max
+    # Randomize: Mulitply by a random number from N(1,0.1)
+    if random:
+        r = fast_random.gauss(1, 0.1) * r
+    return r
+
 
 def play(num_days):
     """Play num_days days worth of games.

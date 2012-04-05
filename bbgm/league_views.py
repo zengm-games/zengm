@@ -28,7 +28,7 @@ def league_dashboard():
     g.dbd.execute('SELECT team_id, region, name FROM teams ORDER BY team_id ASC')
     teams = g.dbd.fetchall()
 
-    return render_template('league_dashboard.html', league_id=g.league_id)
+    return render_template('league_dashboard.html')
 
 @app.route('/league/<int:league_id>/player_ratings')
 @league_crap
@@ -36,7 +36,7 @@ def player_ratings():
     g.dbd.execute('SELECT pa.player_id, pa.team_id, pa.name, (SELECT abbreviation FROM %s_team_attributes WHERE team_id = pa.team_id) as team_abbreviation, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, pr.height, pr.strength, pr.speed, pr.jumping, pr.endurance, pr.shooting_inside, pr.shooting_layups, pr.shooting_free_throws, pr.shooting_two_pointers, pr.shooting_three_pointers, pr.blocks, pr.steals, pr.dribbling, pr.passing, pr.rebounding FROM %s_player_attributes as pa, %s_player_ratings as pr WHERE pa.player_id = pr.player_id', (g.league_id, g.season, g.league_id, g.league_id))
     players = g.dbd.fetchall()
 
-    return render_template('player_ratings.html', league_id=g.league_id, players=players)
+    return render_template('player_ratings.html', players=players)
 
 @app.route('/league/<int:league_id>/player_stats')
 @league_crap
@@ -50,7 +50,7 @@ def player_stats():
             if not players[i][key]:
                 players[i][key] = 0
 
-    return render_template('player_stats.html', league_id=g.league_id, players=players)
+    return render_template('player_stats.html', players=players)
 
 # Change to POST (with CSRF protection) later
 @app.route('/league/<int:league_id>/play_games/<amount>')
@@ -84,7 +84,7 @@ def schedule():
                 row = g.dbd.fetchone()
                 games[-1].append(row)
 
-    return render_template('schedule.html', league_id=g.league_id, games=games)
+    return render_template('schedule.html', games=games)
 
 @app.route('/league/<int:league_id>/standings')
 @league_crap
@@ -102,7 +102,7 @@ def standings():
             conferences[-1]['divisions'].append({'name': division_name})
             conferences[-1]['divisions'][-1]['teams'] = g.dbd.fetchall()
 
-    return render_template('standings.html', league_id=g.league_id, conferences=conferences)
+    return render_template('standings.html', conferences=conferences)
 
 @app.route('/league/<int:league_id>/game_log')
 @app.route('/league/<int:league_id>/game_log/<int:season>')
@@ -115,7 +115,7 @@ def game_log(season=None, abbreviation=None):
     g.dbd.execute('SELECT abbreviation FROM %s_team_attributes WHERE season = %s ORDER BY team_id ASC', (g.league_id, g.season))
     teams = g.dbd.fetchall()
 
-    return render_template('game_log.html', league_id=g.league_id, abbreviation=abbreviation, teams=teams)
+    return render_template('game_log.html', abbreviation=abbreviation, teams=teams)
 
 @app.route('/league/<int:league_id>/box_score')
 @league_crap_ajax
@@ -142,7 +142,7 @@ def box_score():
     else:
         won_lost = {'won_points': teams[1]['points'], 'won_region': teams[1]['region'], 'won_name': teams[1]['name'], 'won_abbreviation': teams[1]['abbreviation'], 'lost_points': teams[0]['points'], 'lost_region': teams[0]['region'], 'lost_name': teams[0]['name'], 'lost_abbreviation': teams[0]['abbreviation']}
 
-    return render_template('box_score.html', league_id=g.league_id, teams=teams, **won_lost)
+    return render_template('box_score.html', teams=teams, **won_lost)
 
 @app.route('/league/<int:league_id>/game_log_list')
 @league_crap_ajax
@@ -156,7 +156,7 @@ def game_log_list():
     g.dbd.execute('SELECT game_id, home, (SELECT abbreviation FROM %s_team_attributes WHERE team_id = opponent_team_id AND season = %s) as opponent_abbreviation, won, points, opponent_points FROM %s_team_stats WHERE team_id = %s AND season = %s', (g.league_id, season, g.league_id, team_id, season))
     games = g.dbd.fetchall()
 
-    return render_template('game_log_list.html', league_id=g.league_id, games=games)
+    return render_template('game_log_list.html', games=games)
 
 
 @app.route('/league/<int:league_id>/push_play_menu')
@@ -199,7 +199,7 @@ def push_play_menu():
 #        button = ''
 #    else:
 #        # TODO: pass options to play_menu.options()
-#        button = render_template('play_button.html', league_id=g.league_id, options=play_menu.options())
+#        button = render_template('play_button.html', options=play_menu.options())
 #
 #    x = {'status': status, 'button': button, 'status_t': status_t, 'options_t': options_t}
 #

@@ -13,7 +13,7 @@
   </div>
 
   <div class="span3">
-    <form action="{{ url_for('game_log', league_id=league_id) }}" method="GET" class="form-inline well">
+    <form action="{{ url_for('game_log', league_id=g.league_id) }}" method="GET" class="form-inline well">
       <select id="game_log_select_season" name="season" class="span1">
         <option value="2012" selected="selected">2012</option>
       </select>
@@ -37,7 +37,7 @@
       function load_game_log_list(season, abbreviation, first_time) {
         $.ajax({
           type: 'GET',
-          url: '{{ url_for('game_log_list', league_id=league_id) }}',
+          url: '{{ url_for('game_log_list', league_id=g.league_id) }}',
           data: {season: season, abbreviation: abbreviation},
           success: function(msg) {
             // Display the list of games
@@ -64,7 +64,7 @@
         $clicked_tr = $(this)
         $.ajax({
           type: 'GET',
-          url: '{{ url_for('box_score', league_id=league_id) }}',
+          url: '{{ url_for('box_score', league_id=g.league_id) }}',
           data: {game_id: $(this).attr('id')},
           success: function(msg) {
             // Update boxscore

@@ -8,10 +8,21 @@ some way of local processing of game simulations?
   - can spawn multiple workers in parallel
   - "transferable objects" would speed it up
 - if i do this, retain both options in parallel, so that a multiplayer game could be made with server-side simulations. javascript on server side? similar to juggernaut for message passing.. could have a "game simulation" server?
+Game simulation framework
+- celery + rabbitmq
+  - should this run as another server, i guess?
+- add games to queue and set games_in_progress lock
+- also add a marker after every day's games to do the free agent and playoff checking as in bbgm.core.game.play
+  - might need some extra work to make playoffs work, but don't worry about that now
+- server-side python version
+  - get game from queue, simulate, save results, update play status, repeat
+- client-side javascript version
+  - check if a client is connected to this league
+  - if so, get game from queue, send to browser, save results, update play status, repeat
+  - if not, pause all league's games until we get a signal from the browser for that league
+- when queue is empty for a league, remove the games_in_progress lock
 
 global lock: only one game simulation (draft, contract negotiation, ...) at a time
-
-database global like bottom of https://github.com/sean-/flask-skeleton/blob/master/skeleton/__init__.py
 
 play button requirements
 - show current immediate options

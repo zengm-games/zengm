@@ -318,9 +318,7 @@ def play(num_days):
             teams = schedule.pop()
             game.play(teams[0], teams[1], g.phase == 3)
             game.write_stats()
-#        if self.phase == 3:
-#            self.playoffs.updated = False
-#            time.sleep(0.3)  # Or else it updates too fast to see what's going on
+
     play_menu.set_status('Idle')
 
 #    season_over = False

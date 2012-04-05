@@ -63,17 +63,17 @@ This speeds up gameplay by about 10%, for now at least.
 
 ## Installing and running
 
-1. Create a new MySQL database called bbgm
+Create a new MySQL database called bbgm
 
-2. Run these commands in the Python interpreter, from this folder:
+Run these commands in the Python interpreter, from this folder:
 
     import bbgm
     bbgm.init_db()
 
-2. On the command line, run these three commands:
+On the command line, run these three commands:
 
     redis_server
     juggernaut
     python bbgm/runserver.py
 
-4. Point your browser to http://127.0.0.1:5000/
+Point your browser to http://127.0.0.1:5000/

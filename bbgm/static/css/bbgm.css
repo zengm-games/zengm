@@ -1,7 +1,16 @@
-table#game_log_list tbody tr:hover {
+table#game_log_list tbody tr:hover td {
+  background-color: #d9edf7;
+  border-color: #bce8f1;
+  color: #3a87ad;
   cursor: pointer;
 }
 
 tr.separator {
   border-bottom: 2px solid #000;
+}
+
+.table-striped tbody tr.alert-info td {
+  background-color: #d9edf7;
+  border-color: #bce8f1;
+  color: #3a87ad;
 }

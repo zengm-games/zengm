@@ -72,8 +72,6 @@ unit tests like https://github.com/mitsuhiko/flask/blob/master/examples/minitwit
 game log viewer
 - "separator" css class to denote starters in box score, playoff teams in standings
 - some better hover highlight indicator for games list
-- change color of active row in games list, regardless of striping
-  - http://stackoverflow.com/questions/9952320/highlighting-the-clicked-row-of-a-striped-html-table/9952366#9952366
 
 
 

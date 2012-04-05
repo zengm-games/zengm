@@ -2,7 +2,7 @@ import math
 import random
 import sqlite3
 
-from flask import g, jsonify, json
+from flask import g, json
 
 from bbgm import app
 from bbgm.core import game_sim, season, play_menu
@@ -12,8 +12,7 @@ from bbgm.util import fast_random
 class Game:
     def play(self, t1, t2, is_playoffs):
         # Run simulation and get stats
-        print Team(t1).to_json()
-        gs = game_sim.GameSim(Team(t1), Team(t2))
+        gs = game_sim.GameSim(Team(t1).to_dict(), Team(t2).to_dict())
         self.team = gs.run()
 
         self.is_playoffs = is_playoffs
@@ -54,28 +53,28 @@ class Game:
         for t in range(2):
             g.db.execute('SELECT pa.player_id FROM %s_player_attributes as pa, %s_player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s AND pr.roster_position <= 5', (g.league_id, g.league_id, self.team_id[t]))
             for row in g.db.fetchall():
-                for p in range(self.team[t].num_players):
-                    if self.team[t].player[p].id == row[0]:
+                for p in xrange(len(self.team[t]['player_ids'])):
+                    if self.team[t]['player'][p]['id'] == row[0]:
                         self.record_stat(t, p, 'starter')
 
         # Player stats and team stats
         for t in range(2):
             self.write_team_stats(t)
-            for p in range(self.team[t].num_players):
+            for p in xrange(len(self.team[t]['player_ids'])):
                 self.write_player_stats(t, p)
 
     def write_player_stats(self, t, p):
         query = 'INSERT INTO %s_player_stats \
                  (player_id, team_id, game_id, season, is_playoffs, starter, minutes, field_goals_made, field_goals_attempted, three_pointers_made, three_pointers_attempted, free_throws_made, free_throws_attempted, offensive_rebounds, defensive_rebounds, assists, turnovers, steals, blocks, personal_fouls, points) \
                  VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
-        g.db.execute(query, (g.league_id, self.team[t].player[p].id, self.team_id[t], self.id, self.season, self.is_playoffs, self.team[t].player[p].stat['starter'], int(round(self.team[t].player[p].stat['minutes'])), self.team[t].player[p].stat['field_goals_made'], self.team[t].player[p].stat['field_goals_attempted'], self.team[t].player[p].stat['three_pointers_made'], self.team[t].player[p].stat['three_pointers_attempted'], self.team[t].player[p].stat['free_throws_made'], self.team[t].player[p].stat['free_throws_attempted'], self.team[t].player[p].stat['offensive_rebounds'], self.team[t].player[p].stat['defensive_rebounds'], self.team[t].player[p].stat['assists'], self.team[t].player[p].stat['turnovers'], self.team[t].player[p].stat['steals'], self.team[t].player[p].stat['blocks'], self.team[t].player[p].stat['personal_fouls'], self.team[t].player[p].stat['points']))
+        g.db.execute(query, (g.league_id, self.team[t]['player'][p]['id'], self.team_id[t], self.id, self.season, self.is_playoffs, self.team[t]['player'][p]['stat']['starter'], int(round(self.team[t]['player'][p]['stat']['minutes'])), self.team[t]['player'][p]['stat']['field_goals_made'], self.team[t]['player'][p]['stat']['field_goals_attempted'], self.team[t]['player'][p]['stat']['three_pointers_made'], self.team[t]['player'][p]['stat']['three_pointers_attempted'], self.team[t]['player'][p]['stat']['free_throws_made'], self.team[t]['player'][p]['stat']['free_throws_attempted'], self.team[t]['player'][p]['stat']['offensive_rebounds'], self.team[t]['player'][p]['stat']['defensive_rebounds'], self.team[t]['player'][p]['stat']['assists'], self.team[t]['player'][p]['stat']['turnovers'], self.team[t]['player'][p]['stat']['steals'], self.team[t]['player'][p]['stat']['blocks'], self.team[t]['player'][p]['stat']['personal_fouls'], self.team[t]['player'][p]['stat']['points']))
 
     def write_team_stats(self, t):
         if t == 0:
             t2 = 1
         else:
             t2 = 0
-        if self.team[t].stat['points'] > self.team[t2].stat['points']:
+        if self.team[t]['stat']['points'] > self.team[t2]['stat']['points']:
             won = True
             if self.is_playoffs and t == 0:
                 g.db.execute('UPDATE %s_active_playoff_series SET won_home = won_home + 1 WHERE team_id_home = %s AND team_id_away = %s', (g.league_id, self.team_id[t], self.team_id[t2]))
@@ -99,7 +98,7 @@ class Game:
         query = 'INSERT INTO %s_team_stats \
                  (team_id, opponent_team_id, game_id, season, is_playoffs, won, home, minutes, field_goals_made, field_goals_attempted, three_pointers_made, three_pointers_attempted, free_throws_made, free_throws_attempted, offensive_rebounds, defensive_rebounds, assists, turnovers, steals, blocks, personal_fouls, points, opponent_points, attendance, cost) \
                  VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
-        g.db.execute(query, (g.league_id, self.team_id[t], self.team[t2].id, self.id, self.season, self.is_playoffs, won, self.home[t], int(round(self.team[t].stat['minutes'])), self.team[t].stat['field_goals_made'], self.team[t].stat['field_goals_attempted'], self.team[t].stat['three_pointers_made'], self.team[t].stat['three_pointers_attempted'], self.team[t].stat['free_throws_made'], self.team[t].stat['free_throws_attempted'], self.team[t].stat['offensive_rebounds'], self.team[t].stat['defensive_rebounds'], self.team[t].stat['assists'], self.team[t].stat['turnovers'], self.team[t].stat['steals'], self.team[t].stat['blocks'], self.team[t].stat['personal_fouls'], self.team[t].stat['points'], self.team[t2].stat['points'], self.attendance, cost))
+        g.db.execute(query, (g.league_id, self.team_id[t], self.team_id[t2], self.id, self.season, self.is_playoffs, won, self.home[t], int(round(self.team[t]['stat']['minutes'])), self.team[t]['stat']['field_goals_made'], self.team[t]['stat']['field_goals_attempted'], self.team[t]['stat']['three_pointers_made'], self.team[t]['stat']['three_pointers_attempted'], self.team[t]['stat']['free_throws_made'], self.team[t]['stat']['free_throws_attempted'], self.team[t]['stat']['offensive_rebounds'], self.team[t]['stat']['defensive_rebounds'], self.team[t]['stat']['assists'], self.team[t]['stat']['turnovers'], self.team[t]['stat']['steals'], self.team[t]['stat']['blocks'], self.team[t]['stat']['personal_fouls'], self.team[t]['stat']['points'], self.team[t2]['stat']['points'], self.attendance, cost))
         if won and not self.is_playoffs:
             g.db.execute('UPDATE %s_team_attributes SET won = won + 1 WHERE team_id = %s AND season = %s', (g.league_id, self.team_id[t], self.season))
             if self.same_division:
@@ -139,7 +138,6 @@ class Team:
             self.player.append(Player(row[0]))
             self.player_ids.append(row[0])
             p += 1
-        self.num_players = p
 
     def load_team_attributes(self):
         """Load team attributes.
@@ -162,12 +160,13 @@ class Team:
         self.defense = sum([self.player[i].composite_rating['defense'] for i in xrange(n_players)]) / 7 # 0 to 0.5
         self.defense /= 4 # This gives the percentage points subtracted from the other team's normal FG%
 
-    def to_json(self):
+    def to_dict(self):
         """Create JSON of minimal team attributes needed to simulate a game."""
-        t = {'defense': self.defense, 'pace': self.pace, 'player_ids': self.player_ids, 'player': []}
+        t = {'defense': self.defense, 'pace': self.pace, 'player_ids': self.player_ids, 'stat': self.stat, 'player': []}
         for p in self.player:
-            t['player'].append({'overall_rating': p.overall_rating, 'stat': p.stat, 'composite_rating': p.composite_rating})
-        return json.dumps(t)
+            t['player'].append({'id': p.id, 'overall_rating': p.overall_rating, 'stat': p.stat, 'composite_rating': p.composite_rating})
+#        return json.dumps(t)
+        return t
 
 
 class Player:

@@ -40,6 +40,12 @@ play button requirements
 Single page application
 - Within a league, just load the internal bit. Outside of that, keep everything (play menu, dashboard) updated by Juggernaut
 - When a simulation is done (or a player is signed, or whatever), the current page should be reloaded, maintaining state as best possible
+- Issues
+  - How can I use the same jinja2 templates, since they need to extend the higher level layout files (or not)
+  - What about updating the title and other sections?
+    - is there a way, with jinja2, to get all of the blocks in JSON?
+one js file with all my stuff?
+- what about things that are run only once on one page? put them in a function and call that from the page?
 
 playoffs
 
@@ -54,9 +60,6 @@ resign players at end of season
 
 urls like http://flask.pocoo.org/docs/quickstart/#rendering-templates default to g.season
 - make validate_season work correctly
-
-one js file with all my stuff?
-- what about things that are run only once on one page? put them in a function and call that from the page?
 
 fix commented lines in:
 - bbgm.core.season
@@ -88,13 +91,6 @@ unit tests like https://github.com/mitsuhiko/flask/blob/master/examples/minitwit
 
 
 # BELOW IS OLD STUFF
-
-PyGObject todo:
-
-Much more testing
-Seems to be updating much much more slowly.. like showing all stats of all players while playing games is excruciating
-
----
 
 Minor bugs:
 

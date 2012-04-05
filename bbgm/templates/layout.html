@@ -15,7 +15,7 @@
         padding-bottom: 40px;
       }
     </style>
-    <link href="/static/css/bootstrap-responsive.css" rel="stylesheet">
+<!--    <link href="/static/css/bootstrap-responsive.css" rel="stylesheet">-->
     <link href="/static/css/bbgm.css" rel="stylesheet">
     {% block extra_css %}{% endblock %}
 
@@ -52,12 +52,21 @@
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
           <a class="brand" href="/">Basketball GM</a>
-          {% if not session.logged_in %}
-            <p class="navbar-text pull-right"><a href="{{ url_for('register') }}">Register</a> or <a href="{{ url_for('login') }}">log in</a></p>
-          {% else %}
-            <p class="navbar-text pull-right">Logged in as {{ session.username }} (<a href="{{ url_for('logout') }}">log out</a>)</p>
-          {% endif %}
+          <div class="nav-collapse">
+            <div class="navbar-text"><div id="play_button" class="nav btn-group"></div></div>
+            <div class="nav"><span id="phase">Phase</span><br /><span id="play_status"></span></div>
+            {% if not session.logged_in %}
+              <p class="navbar-text pull-right"><a href="{{ url_for('register') }}">Register</a> or <a href="{{ url_for('login') }}">log in</a></p>
+            {% else %}
+              <p class="navbar-text pull-right">Logged in as {{ session.username }} (<a href="{{ url_for('logout') }}">log out</a>)</p>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>

@@ -3,11 +3,13 @@ import random
 import sqlite3
 
 from flask import g, json
+from flask.ext.celery import Celery
 
 from bbgm import app
 from bbgm.core import game_sim, season, play_menu
 from bbgm.util import fast_random
 
+celery = Celery(app)
 
 class Game:
     def load(self, results, is_playoffs):
@@ -314,9 +316,9 @@ def play(num_days):
         play_menu.set_status('Playing day %d of %d...' % (d+1, num_days))
         for i in range(num_active_teams / 2):
             teams = schedule.pop()
-            results, is_playoffs = game_sim.sim(team(teams[0]), team(teams[1]), g.phase == 3)
-            game.load(results, is_playoffs)
-            game.write_stats()
+#            sim.apply_async((team(teams[0]), team(teams[1]), g.phase == 3), link=callback())
+            results, is_playoffs = sim(team(teams[0]), team(teams[1]), g.phase == 3)
+            callback(results, is_playoffs)
 
     play_menu.set_status('Idle')
 
@@ -343,3 +345,14 @@ def play(num_days):
 def games_in_progress(status):
     g.db.execute('UPDATE %s_game_attributes SET games_in_progress = %s', (g.league_id, status))
 
+@celery.task(name='bbgm.core.game_sim.sim')
+def sim(team1, team2, is_playoffs):
+    """Convenience function (for Celery) to call GameSim."""
+    gs = game_sim.GameSim(team1, team2)
+    return gs.run(), is_playoffs
+
+def callback(results, is_playoffs):
+    """Callback function (for Celery) to save game stats."""
+    g = Game()
+    g.load(results, is_playoffs)
+    g.write_stats()

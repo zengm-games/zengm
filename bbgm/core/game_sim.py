@@ -1,24 +1,6 @@
 import random
 
-from flask.ext.celery import Celery
-
-from bbgm import app
-#from bbgm.core import game
 from bbgm.util import fast_random
-
-celery = Celery(app)
-
-#@celery.task(name='bbgm.core.game_sim.sim')
-def sim(team1, team2, is_playoffs):
-    """Convenience function (for Celery) to call GameSim."""
-    gs = GameSim(team1, team2)
-    return gs.run(), is_playoffs
-
-def callback(results, is_playoffs):
-    """Callback function (for Celery) to save game stats."""
-    g = game.Game()
-    g.load(results, is_playoffs)
-    g.write_stats()
 
 class GameSim:
     """Single game simulation.

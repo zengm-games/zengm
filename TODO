@@ -1,25 +1,20 @@
 To acquire parity with the GTK version:
 
-send is_playoffs
-
 Think about how all this will work with playoffs.
 
 some way of local processing of game simulations? Javascript equivalent of game_sim.py
 - web workers? https://developer.mozilla.org/En/Using_web_workers
   - can spawn multiple workers in parallel. "transferable objects" would speed it up
 But first... get a framework working in Python. General idea:
-- Have some centralized server running that will asynchronously process games
-- Send the team IDs and league IDs to a queue. set games_in_progress lock
-  - celery + rabbitmq
 - also add an item to the queue to signal, after every day's games, to do the free agent and playoff checking as in bbgm.core.game.play
   - PLAYOFFS?????
-- server-side python version
-  - get game from queue, simulate, save results, update play status, repeat
 - client-side javascript version
   - check if a client is connected to this league
   - if so, get game from queue, send to browser, save results, update play status, repeat
   - if not, pause all league's games until we get a signal from the browser for that league
 - when queue is empty for a league, remove the games_in_progress lock
+- Make this robust to failure.. somehow..
+- use callback function
 
 global lock: only one game simulation (draft, contract negotiation, ...) at a time
 

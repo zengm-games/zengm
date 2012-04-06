@@ -81,6 +81,7 @@ On the command line, run these three commands:
 
     redis_server
     juggernaut
-    python bbgm/runserver.py
+    python manage.py celeryd
+    python runserver.py
 
 Point your browser to http://127.0.0.1:5000/

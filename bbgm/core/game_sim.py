@@ -1,6 +1,24 @@
 import random
 
+from flask.ext.celery import Celery
+
+from bbgm import app
+#from bbgm.core import game
 from bbgm.util import fast_random
+
+celery = Celery(app)
+
+#@celery.task(name='bbgm.core.game_sim.sim')
+def sim(team1, team2, is_playoffs):
+    """Convenience function (for Celery) to call GameSim."""
+    gs = GameSim(team1, team2)
+    return gs.run(), is_playoffs
+
+def callback(results, is_playoffs):
+    """Callback function (for Celery) to save game stats."""
+    g = game.Game()
+    g.load(results, is_playoffs)
+    g.write_stats()
 
 class GameSim:
     """Single game simulation.
@@ -15,9 +33,9 @@ class GameSim:
 
         Args:
             team1: dict containing information about the home team. There are
-                four top-level elements in this dict: defense (a float
-                containing the overall team defensive rating), pace (a float
-                containing the team's pace, which is the mean number of
+                four top-level elements in this dict: id (team), defense (a
+                float containing the overall team defensive rating), pace (a
+                float containing the team's pace, which is the mean number of
                 possessions they like to have in a game), stat (a dict for
                 storing team stats), and player (a list of dicts, one for each
                 player on the team, ordered by roster_position). Each player's
@@ -27,6 +45,7 @@ class GameSim:
                 team stats), and composite_ratings (a dict containing various
                 ratings used in the game simulation). In other words...
                     {
+                        "id": 0,
                         "defense": 0,
                         "pace": 0,
                         "stat": {},
@@ -62,6 +81,7 @@ class GameSim:
             composite_rating) removed. In other words...
                 [
                     {
+                        "id": 0,
                         "stat": {},
                         "player": [
                             {

@@ -39,6 +39,8 @@ hopefully that will change relatively soon.
 * node.js
 * juggernaut
 * python-juggernaut
+* Celery
+* Flask-Celery
 
 For the first three, you can just use the normal Ubuntu (or whatever) packages
 and it will probably work fine.
@@ -50,10 +52,15 @@ to install Juggernaut:
 
     sudo npm install -g juggernaut
 
-Finally, to install the Juggernaut Python library, run:
+To install the Juggernaut Python library, run:
 
     sudo apt-get install python-pip
     sudo pip install juggernaut
+
+And to install both Celery and Flask-Celery, run:
+
+    sudo pip install Celery
+    sudo pip install Flask-Celery
 
 ### Optional packages
 

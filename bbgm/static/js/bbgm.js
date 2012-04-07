@@ -27,26 +27,45 @@ function comet_play_menu(url, status_t, options_t) {
 	    }		
     });
 }
-
+http://127.0.0.1:5000/13/
 $(document).ready(function() {
-//    var links = document.getElementsByTagName("a");  
-    var links = $('a');
-    for (i=0; i<links.length; i++) {  
-        links[i].onclick = function() {  
-            if (this.href.indexOf('standings') !== -1) {
-                var url = this.href;  
-                $.getJSON(url, {'json': true}, function (data) {
-                    for (var block in data) {
-                        if (block == 'title') {
-                            $('title').text(data[block]);
+    // Find URL up to http://domain.com/<int:league_id>/
+    var end = 0;
+    var in_league = true;
+    for (i=0; i<4; i++) {
+        end_old = end;
+        end = document.URL.indexOf('/', end)+1;
+        if (end == 0) {
+            if (i == 3 && end_old != document.URL.length) {
+                end = document.URL.length; // http://domain.com/<int:league_id> (no trailing slash)
+            }
+            else {
+                in_league = false;
+                break;
+            }
+        }
+    }
+
+    if (in_league) {
+        league_root_url = document.URL.substr(0, end - 1)
+        var links = $('a');
+        for (i=0; i<links.length; i++) {  
+            links[i].onclick = function() {  
+                if (this.href.indexOf(league_root_url) !== -1) {
+                    var url = this.href;
+                    $.getJSON(url, {'json': true}, function (data) {
+                        for (var block in data) {
+                            if (block == 'title') {
+                                $('title').text(data[block]);
+                            }
+                            else {
+                                $('#' + block).html(data[block]);
+                            }
                         }
-                        else {
-                            $('#' + block).html(data[block]);
-                        }
-                    }
-                });
-                return false;  
-            }  
-        };
+                    });
+                    return false;  
+                }  
+            };
+        }
     }
 });

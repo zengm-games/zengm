@@ -38,7 +38,7 @@ def player_ratings():
     g.dbd.execute('SELECT pa.player_id, pa.team_id, pa.name, (SELECT abbreviation FROM %s_team_attributes WHERE team_id = pa.team_id) as team_abbreviation, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, pr.height, pr.strength, pr.speed, pr.jumping, pr.endurance, pr.shooting_inside, pr.shooting_layups, pr.shooting_free_throws, pr.shooting_two_pointers, pr.shooting_three_pointers, pr.blocks, pr.steals, pr.dribbling, pr.passing, pr.rebounding FROM %s_player_attributes as pa, %s_player_ratings as pr WHERE pa.player_id = pr.player_id', (g.league_id, g.season, g.league_id, g.league_id))
     players = g.dbd.fetchall()
 
-    return render_template('player_ratings.html', players=players)
+    return render_all_or_json('player_ratings.html', {'players': players})
 
 @app.route('/<int:league_id>/player_stats')
 @league_crap
@@ -52,7 +52,7 @@ def player_stats():
             if not players[i][key]:
                 players[i][key] = 0
 
-    return render_template('player_stats.html', players=players)
+    return render_all_or_json('player_stats.html', {'players': players})
 
 # Change to POST (with CSRF protection) later
 @app.route('/<int:league_id>/play_games/<amount>')
@@ -86,7 +86,7 @@ def schedule():
                 row = g.dbd.fetchone()
                 games[-1].append(row)
 
-    return render_template('schedule.html', games=games)
+    return render_all_or_json('schedule.html', {'games': games})
 
 @app.route('/<int:league_id>/standings')
 @league_crap
@@ -104,9 +104,7 @@ def standings():
             conferences[-1]['divisions'].append({'name': division_name})
             conferences[-1]['divisions'][-1]['teams'] = g.dbd.fetchall()
 
-    template_file = 'standings.html'
-    template_args = {'conferences': conferences}
-    return render_all_or_json(template_file, template_args, request.args.get('json', False, type=bool))
+    return render_all_or_json('standings.html', {'conferences': conferences})
 
 @app.route('/<int:league_id>/game_log')
 @app.route('/<int:league_id>/game_log/<int:season>')
@@ -119,7 +117,7 @@ def game_log(season=None, abbreviation=None):
     g.dbd.execute('SELECT abbreviation FROM %s_team_attributes WHERE season = %s ORDER BY team_id ASC', (g.league_id, g.season))
     teams = g.dbd.fetchall()
 
-    return render_template('game_log.html', abbreviation=abbreviation, teams=teams)
+    return render_all_or_json('game_log.html', {'abbreviation': abbreviation, 'teams': teams})
 
 @app.route('/<int:league_id>/box_score')
 @league_crap_ajax
@@ -161,7 +159,6 @@ def game_log_list():
     games = g.dbd.fetchall()
 
     return render_template('game_log_list.html', games=games)
-
 
 @app.route('/<int:league_id>/push_play_menu')
 @league_crap_ajax
@@ -266,9 +263,9 @@ def validate_season(season):
 
     return season
 
-def render_all_or_json(template_file, template_args, json):
+def render_all_or_json(template_file, template_args):
     """Return rendered template, or JSON containing rendered blocks."""
-    if json:
+    if request.args.get('json', False, type=bool):
         ctx = _request_ctx_stack.top  # Not sure what this does
         ctx.app.update_template_context(template_args)  # Not sure what this does
         template = ctx.app.jinja_env.get_template(template_file)

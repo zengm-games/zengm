@@ -46,6 +46,7 @@ $(document).ready(function() {
         }
     }
 
+    // Handle league internal URLs
     if (in_league) {
         league_root_url = document.URL.substr(0, end - 1)
         var links = $('a');

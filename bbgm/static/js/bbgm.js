@@ -33,12 +33,16 @@ $(document).ready(function() {
     var links = $('a');
     for (i=0; i<links.length; i++) {  
         links[i].onclick = function() {  
-            if (this.href.indexOf("standings") !== -1) {
+            if (this.href.indexOf('standings') !== -1) {
                 var url = this.href;  
                 $.getJSON(url, {'json': true}, function (data) {
-                    console.log(data);
                     for (var block in data) {
-                        $('#' + block).html(data[block]);
+                        if (block == 'title') {
+                            $('title').text(data[block]);
+                        }
+                        else {
+                            $('#' + block).html(data[block]);
+                        }
                     }
                 });
                 return false;  

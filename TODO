@@ -45,11 +45,13 @@ Single page application
   - Pass ajax: True or something via GET to return JSON of the blocks
   - On the server side, use the same Jinja2 teamplates and get the blocks: http://stackoverflow.com/questions/10036484/getting-a-dict-of-all-the-blocks-in-a-jinja2-template
   - On the client side, update blocks with corresponding IDs
-- Issues
-  - !!!! How to make links work like this, unobtrusively, and fall back on loading the whole page? Can I selectively turn on/off individual links, just to see how it works?
-    - jsonify doesn't work on dict? why?
-  - Will this work for every page?
+- Plan
   - pushState
+  - Factor out code in standings into a simple function
+  - scan links for basketball-gm.com/#/... and only work on those league-internal links
+    - get rid of "league" in URLs first
+  - Will this work for every page, like game log?
+  - Update titel tag in other league templates
 
 one js file with all my stuff?
 - what about things that are run only once on one page? put them in a function and call that from the page?

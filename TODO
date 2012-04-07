@@ -46,11 +46,11 @@ Single page application
   - On the server side, use the same Jinja2 teamplates and get the blocks: http://stackoverflow.com/questions/10036484/getting-a-dict-of-all-the-blocks-in-a-jinja2-template
   - On the client side, update blocks with corresponding IDs
 - Plan
-  - pushState
   - Factor out code in standings into a simple function
   - scan links for basketball-gm.com/#/... and only work on those league-internal links
     - get rid of "league" in URLs first
   - Will this work for every page, like game log?
+  - pushState
   - Update titel tag in other league templates
 
 one js file with all my stuff?

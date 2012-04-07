@@ -106,31 +106,7 @@ def standings():
 
     template_file = 'standings.html'
     template_args = {'conferences': conferences}
-    if request.args.get('json', False, type=bool):
-        ctx = _request_ctx_stack.top  # Not sure what this does
-        ctx.app.update_template_context(template_args)  # Not sure what this does
-        template = ctx.app.jinja_env.get_template(template_file)
-        context = template.new_context(template_args)
-#        print list(template.blocks)
-#        template = Template(t)
-#        context = template.new_context(template_args)
-#        A = concat(template.blocks['A'](context))
-#        B = concat(template.blocks['B'](context))
-#        C = concat(template.blocks['C'](context))
-#
-        d = {}
-        for key, blockfun in template.blocks.iteritems():
-            d[key] = concat(blockfun(context))
-
-#        return render_template_json('standings.html', )
-#        return template
-#        print d
-#        return json.dumps(d)
-#        d['league_content'] = '<b>fuck</b>'
-        return jsonify(d)
-#        return '{"league_content": "<b>hi</b>"}'
-    else:
-        return render_template(template_file, **template_args)
+    return render_all_or_json(template_file, template_args, request.args.get('json', False, type=bool))
 
 @app.route('/league/<int:league_id>/game_log')
 @app.route('/league/<int:league_id>/game_log/<int:season>')
@@ -290,3 +266,16 @@ def validate_season(season):
 
     return season
 
+def render_all_or_json(template_file, template_args, json):
+    """Return rendered template, or JSON containing rendered blocks."""
+    if json:
+        ctx = _request_ctx_stack.top  # Not sure what this does
+        ctx.app.update_template_context(template_args)  # Not sure what this does
+        template = ctx.app.jinja_env.get_template(template_file)
+        context = template.new_context(template_args)
+        d = {}
+        for key, blockfun in template.blocks.iteritems():
+            d[key] = concat(blockfun(context))
+        return jsonify(d)
+    else:
+        return render_template(template_file, **template_args)

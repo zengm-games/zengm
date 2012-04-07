@@ -5,6 +5,7 @@ import MySQLdb
 from contextlib import closing
 #from gevent.event import Event
 
+BBGM_VERSION = '2.0.0alpha'
 DEBUG = True
 SECRET_KEY = 'A0Zr98j/gry43 etwN]LWX/,?RT'
 DB = 'bbgm'
@@ -57,6 +58,7 @@ def before_request():
     g.db_conn = connect_db()
     g.db = g.db_conn.cursor()  # Return a tuple
     g.dbd = g.db_conn.cursor(MySQLdb.cursors.DictCursor)  # Return a dict
+    g.bbgm_version = app.config['BBGM_VERSION']
     g.starting_season = 2012
     g.salary_cap = 60000
     g.ticket_price = 45

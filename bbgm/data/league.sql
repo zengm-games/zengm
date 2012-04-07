@@ -24,7 +24,7 @@ games_in_progress BOOLEAN DEFAULT 0,
 pm_status VARCHAR(255),
 pm_options TEXT,
 version VARCHAR(255));
-INSERT INTO game_attributes (team_id, season, phase, version) VALUES(3, 2012, 0, '1.0.0beta+');
+INSERT INTO game_attributes (team_id, season, phase, version) VALUES(3, 2012, 0, '2.0.0alpha');
 
 CREATE TABLE player_attributes (
 player_id INTEGER PRIMARY KEY AUTO_INCREMENT,

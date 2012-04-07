@@ -171,40 +171,6 @@ def push_play_menu():
     play_menu.set_options()
 
     return 'fuck'
-#@app.route('/<int:league_id>/play_menu')
-#@league_crap_ajax
-#def play_menu_():
-#    """Update the play menu based on the Comet technique."""
-#    old_status_t = request.args.get('status_t', None, type=int)
-#    old_options_t = request.args.get('options_t', None, type=int)
-#
-#    g.db.execute('SELECT pm_status, pm_options, pm_status_t, pm_options_t FROM %s_game_attributes WHERE season = %s', (g.league_id, g.season))
-#    status, options, status_t, options_t = g.db.fetchone()
-#
-#    if old_status_t and old_options_t:
-#        app.event.wait()
-#    g.db.execute('SELECT pm_status, pm_options, pm_status_t, pm_options_t FROM %s_game_attributes WHERE season = %s', (g.league_id, g.season))
-#    status, options, status_t, options_t = g.db.fetchone()
-    # Wait in this loop until something changes
-#    while old_status_t >= status_t and old_options_t >= options_t:
-#        time.sleep(0.1)
-#
-#        g.db.execute('SELECT pm_status, pm_options, pm_status_t, pm_options_t FROM %s_game_attributes WHERE season = %s', (g.league_id, g.season))
-#        status, options, status_t, options_t = g.db.fetchone()
-#    status = 'Status: Idle %f' % (random.random(),)
-#
-#    # Don't update status if it's not changed. Same with options. Blank values passed to JavaScript won't be used.
-#    if status_t == old_status_t:
-#        status = ''
-#    if options_t == old_options_t:
-#        button = ''
-#    else:
-#        # TODO: pass options to play_menu.options()
-#        button = render_template('play_button.html', options=play_menu.options())
-#
-#    x = {'status': status, 'button': button, 'status_t': status_t, 'options_t': options_t}
-#
-#    return json.dumps(x)
 
 
 

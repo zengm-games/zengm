@@ -1,3 +1,4 @@
+import httplib, urllib
 import math
 import MySQLdb
 import random
@@ -226,12 +227,15 @@ def _composite(minval, maxval, rating, components, inverse=False, random=True):
     return r
 
 @celery.task(name='bbgm.core.game.sim')
-def sim(t1, t2, is_playoffs, league_id, season, ticket_price):
+def sim(t1, t2, is_playoffs, league_id, season, ticket_price, d, num_days):
     """Convenience function (for Celery) to call GameSim."""
     print 'SIM START'
     db_conn = MySQLdb.connect('localhost', app.config['DB_USERNAME'], app.config['DB_PASSWORD'], app.config['DB'])
     db = db_conn.cursor()  # Return a tuple
     dbd = db_conn.cursor(MySQLdb.cursors.DictCursor)  # Return a dict
+
+    play_menu.set_status('Playing day %d of %d...' % (d+1, num_days), db, league_id, season)
+
     gs = game_sim.GameSim(team(t1, league_id, db, dbd), team(t2, league_id, db, dbd))
     print 'SIM END'
     save_results(gs.run(), is_playoffs, league_id, season, ticket_price)
@@ -342,13 +346,12 @@ def play(num_days):
         if g.phase != 3:
             num_active_teams = g.num_teams
 
-        play_menu.set_status('Playing day %d of %d...' % (d+1, num_days))
         for i in range(num_active_teams / 2):
             teams = schedule.pop()
 #            sim.apply_async((team(teams[0]), team(teams[1]), g.phase == 3, g.league_id, g.season, g.ticket_price), link=save_results.subtask())
 #            results, is_playoffs = sim(team(teams[0]), team(teams[1]), g.phase == 3, g.league_id, g.season, g.ticket_price)
 #            save_results(results, is_playoffs)
-            sim.apply_async((teams[0], teams[1], g.phase == 3, g.league_id, g.season, g.ticket_price))
+            sim.apply_async((teams[0], teams[1], g.phase == 3, g.league_id, g.season, g.ticket_price, d, num_days))
 #            sim(team(teams[0]), team(teams[1]), g.phase == 3, g.league_id, g.season, g.ticket_price)
 
     play_menu.set_status('Idle')

@@ -17,8 +17,6 @@ But first... get a framework working in Python. General idea:
 - use callback function
   - is this really necessary? how will it work in JS?
 
-update game simulation status more accurately, somehow
-
 speed it up
 - somehow cache team (and/or player) dicts, so we don't need separate SQL queries all the time
 
@@ -66,7 +64,8 @@ include sidebar(s) showing all relevant information, plus make that stuff genera
 
 grep for # links
 
-fabric
+how to start/manage all these services?
+- supervisor
 
 security
 - password hashing

@@ -30,7 +30,7 @@ def options(keys=None):
     else:
         return all_options
 
-def set_status(status=None):
+def set_status(status=None, db=None, league_id=None, season=None):
     """Save status to database and push to client.
 
     If no status is given, load the last status from the database and push that
@@ -39,13 +39,26 @@ def set_status(status=None):
     Args:
         status: A string containing the current status message to be pushed to
             the client.
+        db: A database cursor (if not given, g.db is used).
+        league_id: League ID (if not given, g.league_id is used).
+        season: Year of the current season (if not given, g.season is used).
     """
-    if status:
-        g.db.execute('UPDATE %s_game_attributes SET pm_status = %s WHERE season = %s', (g.league_id, status, g.season))
-    else:
-        g.db.execute('SELECT pm_status FROM %s_game_attributes WHERE season = %s', (g.league_id, g.season))
-        status, = g.db.fetchone()
-    jug.publish('%d_status' % (g.league_id,), status)
+    if not db:
+        db = g.db
+    if not league_id:
+        league_id = g.league_id
+    if not season:
+        season = g.season
+
+    db.execute('SELECT pm_status FROM %s_game_attributes WHERE season = %s', (league_id, season))
+    old_status, = db.fetchone()
+
+    if not status:
+        status = old_status
+        jug.publish('%d_status' % (league_id,), status)
+    if status != old_status:
+        db.execute('UPDATE %s_game_attributes SET pm_status = %s WHERE season = %s', (league_id, status, season))
+        jug.publish('%d_status' % (league_id,), status)
 
 def set_options(options_keys=None):
     """Save options_ids to database and push rendered play button to client.

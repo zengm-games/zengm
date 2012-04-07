@@ -30,7 +30,7 @@ def league_dashboard():
     g.dbd.execute('SELECT team_id, region, name FROM teams ORDER BY team_id ASC')
     teams = g.dbd.fetchall()
 
-    return render_template('league_dashboard.html')
+    return render_all_or_json('league_dashboard.html')
 
 @app.route('/<int:league_id>/player_ratings')
 @league_crap
@@ -263,7 +263,7 @@ def validate_season(season):
 
     return season
 
-def render_all_or_json(template_file, template_args):
+def render_all_or_json(template_file, template_args={}):
     """Return rendered template, or JSON containing rendered blocks."""
     if request.args.get('json', False, type=bool):
         ctx = _request_ctx_stack.top  # Not sure what this does

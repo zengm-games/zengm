@@ -2,36 +2,7 @@
 
 {% block league_title %} - Game log{% endblock %}
 
-{% block league_content %}
-  <h1>Game log</h1>
-
-<div class="row-fluid">
-  <div class="span9">
-    <div id="game_log_box_score">
-      <p>Select a game from the menu on the right to view a box score.</p>
-    </div>
-  </div>
-
-  <div class="span3">
-    <form action="{{ url_for('game_log', league_id=g.league_id) }}" method="GET" class="form-inline well">
-      <select id="game_log_select_season" name="season" class="span1">
-        <option value="2012" selected="selected">2012</option>
-      </select>
-      <select id="game_log_select_abbreviation" name="abbreviation" class="span1">
-        {% for team in teams %}
-          <option value="{{ team.abbreviation }}"{% if abbreviation == team.abbreviation %} selected="selected"{% endif %}>{{ team.abbreviation }}</option>
-        {% endfor %}
-      </select> 
-    </form>
-    <div id="game_log_list">
-    </div>
-  </div>
-</div>
-
-{% endblock %}
-
-{% block extra_javascript %}
-  <script type="text/javascript" charset="utf-8">
+{% block league_content %}  <script type="text/javascript" charset="utf-8">
     // Load game log list table and activate form
     $(document).ready(function() {
       function load_game_log_list(season, abbreviation, first_time) {
@@ -80,4 +51,29 @@
 
     });
   </script>
+
+  <h1>Game log</h1>
+
+<div class="row-fluid">
+  <div class="span9">
+    <div id="game_log_box_score">
+      <p>Select a game from the menu on the right to view a box score.</p>
+    </div>
+  </div>
+
+  <div class="span3">
+    <form action="{{ url_for('game_log', league_id=g.league_id) }}" method="GET" class="form-inline well">
+      <select id="game_log_select_season" name="season" class="span1">
+        <option value="2012" selected="selected">2012</option>
+      </select>
+      <select id="game_log_select_abbreviation" name="abbreviation" class="span1">
+        {% for team in teams %}
+          <option value="{{ team.abbreviation }}"{% if abbreviation == team.abbreviation %} selected="selected"{% endif %}>{{ team.abbreviation }}</option>
+        {% endfor %}
+      </select> 
+    </form>
+    <div id="game_log_list">
+    </div>
+  </div>
+</div>
 {% endblock %}

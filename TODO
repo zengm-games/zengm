@@ -46,7 +46,6 @@ Single page application
   - On the server side, use the same Jinja2 teamplates and get the blocks: http://stackoverflow.com/questions/10036484/getting-a-dict-of-all-the-blocks-in-a-jinja2-template
   - On the client side, update blocks with corresponding IDs
 - Plan
-  - game log doesn't work, for some reason
   - pushState
   - Update title tag in other league templates
 

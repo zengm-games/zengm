@@ -47,7 +47,6 @@ Single page application
   - On the client side, update blocks with corresponding IDs
 - Plan
   - pushState
-  - Update title tag in other league templates
 
 one js file with all my stuff?
 - what about things that are run only once on one page? put them in a function and call that from the page?

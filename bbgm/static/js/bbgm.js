@@ -63,10 +63,15 @@ $(document).ready(function() {
                                 $('#' + block).html(data[block]);
                             }
                         }
+                        history.pushState(data, '', url);
                     });
                     return false;  
                 }  
             };
         }
     }
+
+    window.onpopstate = function(event) {  
+      alert("location: " + document.location + ", state: " + JSON.stringify(event.state));  
+    };
 });

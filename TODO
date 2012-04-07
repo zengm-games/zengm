@@ -38,15 +38,8 @@ play button requirements
 - when phase changes, change the play button (for now, just list all possible options, like defined in Glade)
 
 Single page application
-- General idea:
-  - Within a league, just load the internal bit. Outside of that, keep everything (play menu, dashboard) updated by Juggernaut
-  - When a simulation is done (or a player is signed, or whatever), the current page should be reloaded, maintaining state as best possible
-- Implementation
-  - Pass ajax: True or something via GET to return JSON of the blocks
-  - On the server side, use the same Jinja2 teamplates and get the blocks: http://stackoverflow.com/questions/10036484/getting-a-dict-of-all-the-blocks-in-a-jinja2-template
-  - On the client side, update blocks with corresponding IDs
-- Plan
-  - pushState
+- When a simulation is done (or a player is signed, or whatever), the current page should be reloaded, maintaining state as best possible
+- pushState
 
 one js file with all my stuff?
 - what about things that are run only once on one page? put them in a function and call that from the page?

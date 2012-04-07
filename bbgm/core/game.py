@@ -9,7 +9,7 @@ from flask.ext.celery import Celery
 
 from bbgm import app
 from bbgm.core import game_sim, season, play_menu
-from bbgm.util import celery_request_context, fast_random
+from bbgm.util import request_context_globals, fast_random
 
 celery = Celery(app)
 
@@ -222,10 +222,7 @@ def sim(league_id, t1, t2, is_playoffs, d, num_days):
     """Convenience function (for Celery) to call GameSim."""
 #    print 'SIM START'
     with app.test_request_context():
-        app.preprocess_request()  # So that g is available
-        g.league_id = league_id
-        g.db.execute('SELECT team_id, season, phase, schedule, version FROM %s_game_attributes LIMIT 1', (g.league_id,))
-        g.user_team_id, g.season, g.phase, g.schedule, g.version = g.db.fetchone()
+        request_context_globals(league_id)
 
         play_menu.set_status('Playing day %d of %d...' % (d+1, num_days))
 
@@ -235,11 +232,11 @@ def sim(league_id, t1, t2, is_playoffs, d, num_days):
 
 @celery.task(name='bbgm.core.game.sim_wrapper')
 def sim_wrapper(league_id, schedule, num_active_teams, is_playoffs, num_days):
+    """Asynchonously simulate a day's game, then do some housekeeping before
+    moving on to the next day.
+    """
     with app.test_request_context():
-        app.preprocess_request()  # So that g is available
-        g.league_id = league_id
-        g.db.execute('SELECT team_id, season, phase, schedule, version FROM %s_game_attributes LIMIT 1', (g.league_id,))
-        g.user_team_id, g.season, g.phase, g.schedule, g.version = g.db.fetchone()
+        request_context_globals(league_id)
 
         for d in xrange(num_days):
             print 'SCHEDULE LENGTH', len(schedule)

@@ -2,9 +2,6 @@ To acquire parity with the GTK version:
 
 Think about how all this will work with playoffs.
 
-some way of local processing of game simulations? Javascript equivalent of game_sim.py
-- web workers? https://developer.mozilla.org/En/Using_web_workers
-  - can spawn multiple workers in parallel. "transferable objects" would speed it up
 But first... get a framework working in Python. General idea:
 - also add an item to the queue to signal, after every day's games, to do the free agent and playoff checking as in bbgm.core.game.play
   - PLAYOFFS?????
@@ -14,8 +11,6 @@ But first... get a framework working in Python. General idea:
   - if not, pause all league's games until we get a signal from the browser for that league
 - when queue is empty for a league, remove the games_in_progress lock
 - Make this robust to failure.. somehow.. only pop from schedule on completion? if games_in_progress lock is set, that'll work
-- use callback function
-  - is this really necessary? how will it work in JS?
 
 speed it up
 - somehow cache team (and/or player) dicts, so we don't need separate SQL queries all the time
@@ -56,7 +51,7 @@ urls like http://flask.pocoo.org/docs/quickstart/#rendering-templates default to
 fix commented lines in:
 - bbgm.core.season
 
-set title based on phase
+set phase div
 
 Flask-Assets
 
@@ -80,7 +75,9 @@ next redirect like http://flask.pocoo.org/docs/reqcontext/?highlight=url#diving-
 
 unit tests like https://github.com/mitsuhiko/flask/blob/master/examples/minitwit/minitwit_tests.py
 
-
+some way of local processing of game simulations? Javascript equivalent of game_sim.py
+- web workers? https://developer.mozilla.org/En/Using_web_workers
+  - can spawn multiple workers in parallel. "transferable objects" would speed it up
 
 
 

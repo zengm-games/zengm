@@ -65,4 +65,5 @@ def before_request():
 
 @app.teardown_request
 def teardown_request(exception):
-    g.db_conn.close()
+    if hasattr(g, 'db_conn'):
+        g.db_conn.close()

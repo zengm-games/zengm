@@ -2,11 +2,21 @@ To acquire parity with the GTK version:
 
 Think about how all this will work with playoffs.
 
+single page javascript links: do nothing if link points to current page
+
 Game simulation:
 - also add an item to the queue to signal, after every day's games, to do the free agent and playoff checking as in bbgm.core.game.play
   - PLAYOFFS?????
 - when queue is empty for a league, remove the games_in_progress lock
 - Make this robust to failure.. somehow.. only pop from schedule on completion? if games_in_progress lock is set, that'll work
+- somehow check queue and switch to "Idle" status when finished
+- have another task submitted that day to do it andd other daily bookkeeping
+  - But this will execute asynchronously
+BIG PICTURE
+- Each game in the schedule has an associated "day", from 1 to 365
+- Simulating a day adds all games for that day to the queue
+- At the end of the day (HOW DO I KNOW THIS? When all the tasks finish. HOW DO I KNOW THAT?) run the housekeeping code (create future playoff games, sign free agents, etc.)
+- This could be done by another function in celery, like a meta-task that spawns a day's games, waits for them all to finish, runs the housekeeping function, and then runs another day's games
 
 speed it up
 - somehow cache team (and/or player) dicts, so we don't need separate SQL queries all the time

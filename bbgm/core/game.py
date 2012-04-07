@@ -9,7 +9,7 @@ from flask.ext.celery import Celery
 
 from bbgm import app
 from bbgm.core import game_sim, season, play_menu
-from bbgm.util import fast_random
+from bbgm.util import celery_request_context, fast_random
 
 celery = Celery(app)
 
@@ -220,7 +220,7 @@ def _composite(minval, maxval, rating, components, inverse=False, random=True):
 @celery.task(name='bbgm.core.game.sim')
 def sim(league_id, t1, t2, is_playoffs, d, num_days):
     """Convenience function (for Celery) to call GameSim."""
-    print 'SIM START'
+#    print 'SIM START'
     with app.test_request_context():
         app.preprocess_request()  # So that g is available
         g.league_id = league_id
@@ -231,12 +231,27 @@ def sim(league_id, t1, t2, is_playoffs, d, num_days):
 
         gs = game_sim.GameSim(team(t1), team(t2))
         save_results(gs.run(), is_playoffs)
-    print 'SIM END'
+#    print 'SIM END'
 
-#@celery.task(name='bbgm.core.game.save_results')
+@celery.task(name='bbgm.core.game.sim_wrapper')
+def sim_wrapper(league_id, schedule, num_active_teams, is_playoffs, num_days):
+    with app.test_request_context():
+        app.preprocess_request()  # So that g is available
+        g.league_id = league_id
+        g.db.execute('SELECT team_id, season, phase, schedule, version FROM %s_game_attributes LIMIT 1', (g.league_id,))
+        g.user_team_id, g.season, g.phase, g.schedule, g.version = g.db.fetchone()
+
+        for d in xrange(num_days):
+            print 'SCHEDULE LENGTH', len(schedule)
+            for i in range(num_active_teams / 2):
+                teams = schedule.pop()
+                sim.apply_async((league_id, teams[0], teams[1], is_playoffs, d, num_days))
+            print len(schedule)
+            season.set_schedule(schedule)
+
 def save_results(results, is_playoffs):
     """Callback function (for Celery) to save game stats."""
-    print 'SAVE RESULTS'
+#    print 'SAVE RESULTS'
     game = Game()
     game.load(results, is_playoffs)
     game.write_stats()
@@ -249,106 +264,97 @@ def play(num_days):
 
     games_in_progress(True)
     schedule = season.get_schedule()
+#    for d in range(num_days):
+#        # Check if it's the playoffs and do some special stuff if it is
+#        if g.phase == 3:
+#            # Make today's  playoff schedule
+#            active_series = False
+#            num_active_teams = 0
+#            # Round: 1, 2, 3, or 4
+#            g.db.execute('SELECT MAX(series_round) FROM %s_active_playoff_series', (g.league_id,))
+#            current_round, = g.db.fetchone()
+#
+#            g.db.execute('SELECT team_id_home, team_id_away FROM %s_active_playoff_series WHERE won_home < 4 AND won_away < 4 AND series_round = %s', (g.league_id, current_round))
+#            for team_id_home, team_id_away in g.db.fetchall():
+#                schedule.append([team_id_home, team_id_away])
+#                active_series = True
+#                num_active_teams += 2
+#            if not active_series:
+#                # The previous round is over
+#
+#                # Who won?
+#                winners = {}
+#                for row in g.db.execute('SELECT series_id, team_id_home, team_id_away, seed_home, '
+#                                                 'seed_away, won_home, won_away FROM active_playoff_series WHERE '
+#                                                 'series_round = ? ORDER BY series_id ASC', (current_round,)):
+#                    series_id, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away = row
+#                    if won_home == 4:
+#                        winners[series_id] = [team_id_home, seed_home]
+#                    else:
+#                        winners[series_id] = [team_id_away, seed_away]
+#                    # Record user's team as conference and league champion
+#                    if winners[series_id][0] == common.PLAYER_TEAM_ID and current_round == 3:
+#                        g.db.execute('UPDATE team_attributes SET won_conference = 1 WHERE season = ? AND '
+#                                              'team_id = ?', (g.season, common.PLAYER_TEAM_ID))
+#                    elif winners[series_id][0] == common.PLAYER_TEAM_ID and current_round == 4:
+#                        g.db.execute('UPDATE team_attributes SET won_championship = 1 WHERE season = ? AND '
+#                                              'team_id = ?', (g.season, common.PLAYER_TEAM_ID))
+#
+#                # Are the whole playoffs over?
+#                if current_round == 4:
+#                    season.new_phase(4)
+#                    break
+#
+#                # Add a new round to the database
+#                series_id = 1
+#                current_round += 1
+#                query = ('INSERT INTO active_playoff_series (series_id, series_round, team_id_home, team_id_away,'
+#                         'seed_home, seed_away, won_home, won_away) VALUES (?, ?, ?, ?, ?, ?, 0, 0)')
+#                for i in range(1, len(winners), 2):  # Go through winners by 2
+#                    if winners[i][1] < winners[i + 1][1]:  # Which team is the home team?
+#                        new_series = (series_id, current_round, winners[i][0], winners[i + 1][0], winners[i][1],
+#                                      winners[i + 1][1])
+#                    else:
+#                        new_series = (series_id, current_round, winners[i + 1][0], winners[i][0], winners[i + 1][1],
+#                                      winners[i][1])
+#                    g.db.execute(query, new_series)
+#                    series_id += 1
+#                continue
+#        else:
+#            # Decrease free agent demands
+#            g.db.execute('SELECT player_id, contract_amount, contract_expiration FROM %s_player_attributes WHERE team_id = -1 AND contract_amount > 500', (g.league_id,))
+#            for player_id, amount, expiration in g.db.fetchall():
+#                amount -= 50
+#                if amount < 500:
+#                    amount = 500
+#                if amount < 2000:
+#                    expiration = g.season + 1
+#                if amount < 1000:
+#                    expiration = g.season
+#                g.db.execute('UPDATE %s_player_attributes SET contract_amount = %s, contract_expiration = %s WHERE player_id = %s', (g.league_id, amount, expiration, player_id))
+#
+#            # Free agents' resistance to previous signing attempts by player decays
+#            # Decay by 0.1 per game, for 82 games in the regular season
+#            g.db.execute('UPDATE %s_player_attributes SET free_agent_times_asked = free_agent_times_asked - 0.1 WHERE team_id = -1', (g.league_id,))
+#            g.db.execute('UPDATE %s_player_attributes SET free_agent_times_asked = 0 WHERE team_id = -1 AND free_agent_times_asked < 0', #(g.league_id,))
+#
+#            # Sign available free agents
+##            self.auto_sign_free_agents()
+#
+#        # If the user wants to stop the simulation, then stop the simulation
+##        if d == 0:  # But not on the first day
+##            self.stop_games = False
+##        if self.stop_games:
+##            self.stop_games = False
+##            break
+    # THIS USED TO RUN EVERY DAY
+    if g.phase != 3:
+        num_active_teams = g.num_teams
 
-    game = Game()
-    for d in range(num_days):
-        # Check if it's the playoffs and do some special stuff if it is
-        if g.phase == 3:
-            # Make today's  playoff schedule
-            active_series = False
-            num_active_teams = 0
-            # Round: 1, 2, 3, or 4
-            g.db.execute('SELECT MAX(series_round) FROM %s_active_playoff_series', (g.league_id,))
-            current_round, = g.db.fetchone()
-
-            g.db.execute('SELECT team_id_home, team_id_away FROM %s_active_playoff_series WHERE won_home < 4 AND won_away < 4 AND series_round = %s', (g.league_id, current_round))
-            for team_id_home, team_id_away in g.db.fetchall():
-                schedule.append([team_id_home, team_id_away])
-                active_series = True
-                num_active_teams += 2
-            if not active_series:
-                # The previous round is over
-
-                # Who won?
-                winners = {}
-                for row in g.db.execute('SELECT series_id, team_id_home, team_id_away, seed_home, '
-                                                 'seed_away, won_home, won_away FROM active_playoff_series WHERE '
-                                                 'series_round = ? ORDER BY series_id ASC', (current_round,)):
-                    series_id, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away = row
-                    if won_home == 4:
-                        winners[series_id] = [team_id_home, seed_home]
-                    else:
-                        winners[series_id] = [team_id_away, seed_away]
-                    # Record user's team as conference and league champion
-                    if winners[series_id][0] == common.PLAYER_TEAM_ID and current_round == 3:
-                        g.db.execute('UPDATE team_attributes SET won_conference = 1 WHERE season = ? AND '
-                                              'team_id = ?', (g.season, common.PLAYER_TEAM_ID))
-                    elif winners[series_id][0] == common.PLAYER_TEAM_ID and current_round == 4:
-                        g.db.execute('UPDATE team_attributes SET won_championship = 1 WHERE season = ? AND '
-                                              'team_id = ?', (g.season, common.PLAYER_TEAM_ID))
-
-                # Are the whole playoffs over?
-                if current_round == 4:
-                    season.new_phase(4)
-                    break
-
-                # Add a new round to the database
-                series_id = 1
-                current_round += 1
-                query = ('INSERT INTO active_playoff_series (series_id, series_round, team_id_home, team_id_away,'
-                         'seed_home, seed_away, won_home, won_away) VALUES (?, ?, ?, ?, ?, ?, 0, 0)')
-                for i in range(1, len(winners), 2):  # Go through winners by 2
-                    if winners[i][1] < winners[i + 1][1]:  # Which team is the home team?
-                        new_series = (series_id, current_round, winners[i][0], winners[i + 1][0], winners[i][1],
-                                      winners[i + 1][1])
-                    else:
-                        new_series = (series_id, current_round, winners[i + 1][0], winners[i][0], winners[i + 1][1],
-                                      winners[i][1])
-                    g.db.execute(query, new_series)
-                    series_id += 1
-                continue
-        else:
-            # Decrease free agent demands
-            g.db.execute('SELECT player_id, contract_amount, contract_expiration FROM %s_player_attributes WHERE team_id = -1 AND contract_amount > 500', (g.league_id,))
-            for player_id, amount, expiration in g.db.fetchall():
-                amount -= 50
-                if amount < 500:
-                    amount = 500
-                if amount < 2000:
-                    expiration = g.season + 1
-                if amount < 1000:
-                    expiration = g.season
-                g.db.execute('UPDATE %s_player_attributes SET contract_amount = %s, contract_expiration = %s WHERE player_id = %s', (g.league_id, amount, expiration, player_id))
-
-            # Free agents' resistance to previous signing attempts by player decays
-            # Decay by 0.1 per game, for 82 games in the regular season
-            g.db.execute('UPDATE %s_player_attributes SET free_agent_times_asked = free_agent_times_asked - 0.1 WHERE team_id = -1', (g.league_id,))
-            g.db.execute('UPDATE %s_player_attributes SET free_agent_times_asked = 0 WHERE team_id = -1 AND free_agent_times_asked < 0', (g.league_id,))
-
-            # Sign available free agents
-#            self.auto_sign_free_agents()
-
-        # If the user wants to stop the simulation, then stop the simulation
-#        if d == 0:  # But not on the first day
-#            self.stop_games = False
-#        if self.stop_games:
-#            self.stop_games = False
-#            break
-
-        if g.phase != 3:
-            num_active_teams = g.num_teams
-
-        for i in range(num_active_teams / 2):
-            teams = schedule.pop()
-#            sim.apply_async((team(teams[0]), team(teams[1]), g.phase == 3, g.league_id, g.season, g.ticket_price), link=save_results.subtask())
-#            results, is_playoffs = sim(team(teams[0]), team(teams[1]), g.phase == 3, g.league_id, g.season, g.ticket_price)
-#            save_results(results, is_playoffs)
-            sim.apply_async((g.league_id, teams[0], teams[1], g.phase == 3, d, num_days))
-#            sim(team(teams[0]), team(teams[1]), g.phase == 3, g.league_id, g.season, g.ticket_price)
+    sim_wrapper.apply_async((g.league_id, schedule, num_active_teams, g.phase == 3, num_days))
 
     play_menu.set_status('Idle')
 
-#    season_over = False
     if g.phase == 3:
         pass
 #        self.playoffs.updated = False
@@ -358,14 +364,13 @@ def play(num_days):
         row = g.db.fetchone()
         days_played = row[0]
         if days_played == g.season_length:
-#            season_over = True
 
             sew = season_end_window.SeasonEndWindow(self)
             sew.season_end_window.present()
 
             season.new_phase(3)  # Start playoffs
 
-    season.set_schedule(schedule)
+#    season.set_schedule(schedule)
     games_in_progress(False)
 
 def games_in_progress(status):

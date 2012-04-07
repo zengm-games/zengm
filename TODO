@@ -38,8 +38,8 @@ play button requirements
 - when phase changes, change the play button (for now, just list all possible options, like defined in Glade)
 
 Single page application
-- When a simulation is done (or a player is signed, or whatever), the current page should be reloaded, maintaining state as best possible
-- pushState
+- When a simulation is done (or a player is signed, or whatever), the current page should be reloaded
+- during page reloads or back/forward... what about handling deeper content? i.e., what box score is being viewed? what year? what stat is sorted? what page in rankings? etc.
 
 one js file with all my stuff?
 - what about things that are run only once on one page? put them in a function and call that from the page?

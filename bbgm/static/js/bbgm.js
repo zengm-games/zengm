@@ -46,6 +46,15 @@ $(document).ready(function() {
         }
     }
 
+    // For AJAX updating pages
+    function ajax_update(data, url) {
+        $('title').text(data['title']);
+        $('#league_content').html(data['league_content']);
+        if (arguments.length == 2) { // Only if a url is passed
+            history.pushState(data, '', url);
+        }
+    }
+
     // Handle league internal URLs
     if (in_league) {
         league_root_url = document.URL.substr(0, end - 1)
@@ -55,15 +64,7 @@ $(document).ready(function() {
                 if (this.href.indexOf(league_root_url) !== -1) {
                     var url = this.href;
                     $.getJSON(url, {'json': true}, function (data) {
-                        for (var block in data) {
-                            if (block == 'title') {
-                                $('title').text(data[block]);
-                            }
-                            else {
-                                $('#' + block).html(data[block]);
-                            }
-                        }
-                        history.pushState(data, '', url);
+                        ajax_update(data, url);
                     });
                     return false;  
                 }  
@@ -71,7 +72,7 @@ $(document).ready(function() {
         }
     }
 
-    window.onpopstate = function(event) {  
-      alert("location: " + document.location + ", state: " + JSON.stringify(event.state));  
+    window.onpopstate = function(event) {
+        ajax_update(event.state);
     };
 });

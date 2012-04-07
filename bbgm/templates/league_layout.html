@@ -1,7 +1,5 @@
 {% extends "layout.html" %}
 
-{% block title %} - League {{ g.league_id }} {% block league_title %}{% endblock %}{% endblock %}
-
 {% block content %}
   <div class="row-fluid">
     <div class="span2">
@@ -35,7 +33,7 @@
         </ul>
       </div><!--/.well -->
     </div><!--/span-->
-    <div class="span10">
+    <div class="span10" id="league_content">
       {% block league_content %}{% endblock %}
     </div><!--/span-->
   </div><!--/row-->

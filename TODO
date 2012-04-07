@@ -13,8 +13,14 @@ But first... get a framework working in Python. General idea:
   - if so, get game from queue, send to browser, save results, update play status, repeat
   - if not, pause all league's games until we get a signal from the browser for that league
 - when queue is empty for a league, remove the games_in_progress lock
-- Make this robust to failure.. somehow..
+- Make this robust to failure.. somehow.. only pop from schedule on completion? if games_in_progress lock is set, that'll work
 - use callback function
+  - is this really necessary? how will it work in JS?
+
+update game simulation status more accurately, somehow
+
+speed it up
+- somehow cache team (and/or player) dicts, so we don't need separate SQL queries all the time
 
 global lock: only one game simulation (draft, contract negotiation, ...) at a time
 
@@ -32,14 +38,23 @@ play button requirements
 - when phase changes, change the play button (for now, just list all possible options, like defined in Glade)
 
 Single page application
-- Within a league, just load the internal bit. Outside of that, keep everything (play menu, dashboard) updated by Juggernaut
-- When a simulation is done (or a player is signed, or whatever), the current page should be reloaded, maintaining state as best possible
+- General idea:
+  - Within a league, just load the internal bit. Outside of that, keep everything (play menu, dashboard) updated by Juggernaut
+  - When a simulation is done (or a player is signed, or whatever), the current page should be reloaded, maintaining state as best possible
+- Implementation
+  - Pass ajax: True or something via GET to return JSON of the blocks
+  - On the server side, use the same Jinja2 teamplates and get the blocks: http://stackoverflow.com/questions/10036484/getting-a-dict-of-all-the-blocks-in-a-jinja2-template
+  - On the client side, update blocks with corresponding IDs
 - Issues
-  - How can I use the same jinja2 templates, since they need to extend the higher level layout files (or not)
-  - What about updating the title and other sections?
-    - is there a way, with jinja2, to get all of the blocks in JSON?
+  - !!!! How to make links work like this, unobtrusively, and fall back on loading the whole page? Can I selectively turn on/off individual links, just to see how it works?
+    - jsonify doesn't work on dict? why?
+  - Will this work for every page?
+  - pushState
+
 one js file with all my stuff?
 - what about things that are run only once on one page? put them in a function and call that from the page?
+
+fabric
 
 playoffs
 

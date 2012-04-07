@@ -1,8 +1,10 @@
+from jinja2.utils import concat
 import json
 import random
 import time
 
-from flask import render_template, url_for, request, session, redirect, g
+from flask import jsonify, render_template, url_for, request, session, redirect, g
+from flask.globals import _request_ctx_stack
 
 from bbgm import app
 from bbgm.core import game, play_menu, season
@@ -102,7 +104,33 @@ def standings():
             conferences[-1]['divisions'].append({'name': division_name})
             conferences[-1]['divisions'][-1]['teams'] = g.dbd.fetchall()
 
-    return render_template('standings.html', conferences=conferences)
+    template_file = 'standings.html'
+    template_args = {'conferences': conferences}
+    if request.args.get('json', False, type=bool):
+        ctx = _request_ctx_stack.top  # Not sure what this does
+        ctx.app.update_template_context(template_args)  # Not sure what this does
+        template = ctx.app.jinja_env.get_template(template_file)
+        context = template.new_context(template_args)
+#        print list(template.blocks)
+#        template = Template(t)
+#        context = template.new_context(template_args)
+#        A = concat(template.blocks['A'](context))
+#        B = concat(template.blocks['B'](context))
+#        C = concat(template.blocks['C'](context))
+#
+        d = {}
+        for key, blockfun in template.blocks.iteritems():
+            d[key] = concat(blockfun(context))
+
+#        return render_template_json('standings.html', )
+#        return template
+#        print d
+#        return json.dumps(d)
+#        d['league_content'] = '<b>fuck</b>'
+        return jsonify(d)
+#        return '{"league_content": "<b>hi</b>"}'
+    else:
+        return render_template(template_file, **template_args)
 
 @app.route('/league/<int:league_id>/game_log')
 @app.route('/league/<int:league_id>/game_log/<int:season>')

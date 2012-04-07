@@ -27,3 +27,22 @@ function comet_play_menu(url, status_t, options_t) {
 	    }		
     });
 }
+
+$(document).ready(function() {
+//    var links = document.getElementsByTagName("a");  
+    var links = $('a');
+    for (i=0; i<links.length; i++) {  
+        links[i].onclick = function() {  
+            if (this.href.indexOf("standings") !== -1) {
+                var url = this.href;  
+                $.getJSON(url, {'json': true}, function (data) {
+                    console.log(data);
+                    for (var block in data) {
+                        $('#' + block).html(data[block]);
+                    }
+                });
+                return false;  
+            }  
+        };
+    }
+});

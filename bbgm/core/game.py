@@ -123,15 +123,15 @@ class Game:
                 self.db.execute('UPDATE %s_team_attributes SET lost_conf = lost_conf + 1 WHERE team_id = %s AND season = %s', (self.league_id, self.team[t]['id'], self.season))
 
 
-def team(team_id):
+def team(team_id, league_id, db, dbd):
     """Returns a dict containing the minimal information about a team needed to
     simulate a game.
     """
     t = {'id': team_id, 'defense': 0, 'pace': 0, 'stat': {}, 'player': []}
 
-    g.db.execute('SELECT pa.player_id FROM %s_player_attributes as pa, %s_player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s ORDER BY pr.roster_position ASC', (g.league_id, g.league_id, team_id))
-    for row in g.db.fetchall():
-        t['player'].append(player(row[0]))
+    db.execute('SELECT pa.player_id FROM %s_player_attributes as pa, %s_player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s ORDER BY pr.roster_position ASC', (league_id, league_id, team_id))
+    for row in db.fetchall():
+        t['player'].append(player(row[0], league_id, dbd))
 
     # Number of players to factor into pace and defense rating calculation
     n_players = len(t['player'])
@@ -155,16 +155,16 @@ def team(team_id):
     return t
 
 
-def player(player_id):
+def player(player_id, league_id, dbd):
     """Returns a dict containing the minimal information about a player needed
     to simulate a game.
     """
     p = {'id': player_id, 'overall_rating': 0, 'stat': {}, 'composite_rating': {}}
 
-    g.dbd.execute('SELECT overall, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, '
+    dbd.execute('SELECT overall, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, '
             'shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, '
-            'passing, rebounding FROM %s_player_ratings WHERE player_id = %s', (g.league_id, p['id']))
-    rating = g.dbd.fetchone()
+            'passing, rebounding FROM %s_player_ratings WHERE player_id = %s', (league_id, p['id']))
+    rating = dbd.fetchone()
 
     p['overall_rating'] = rating['overall']
 
@@ -226,21 +226,24 @@ def _composite(minval, maxval, rating, components, inverse=False, random=True):
     return r
 
 @celery.task(name='bbgm.core.game.sim')
-def sim(team1, team2, is_playoffs, league_id, season, ticket_price):
+def sim(t1, t2, is_playoffs, league_id, season, ticket_price):
     """Convenience function (for Celery) to call GameSim."""
     print 'SIM START'
-    gs = game_sim.GameSim(team1, team2)
+    db_conn = MySQLdb.connect('localhost', app.config['DB_USERNAME'], app.config['DB_PASSWORD'], app.config['DB'])
+    db = db_conn.cursor()  # Return a tuple
+    dbd = db_conn.cursor(MySQLdb.cursors.DictCursor)  # Return a dict
+    gs = game_sim.GameSim(team(t1, league_id, db, dbd), team(t2, league_id, db, dbd))
     print 'SIM END'
     save_results(gs.run(), is_playoffs, league_id, season, ticket_price)
-#    return gs.run(), is_playoffs
+    db_conn.close()
 
 @celery.task(name='bbgm.core.game.save_results')
 def save_results(results, is_playoffs, league_id, season, ticket_price):
     """Callback function (for Celery) to save game stats."""
     print 'SAVE RESULTS'
-    g = Game()
-    g.load(results, is_playoffs, league_id, season, ticket_price)
-    g.write_stats()
+    game = Game()
+    game.load(results, is_playoffs, league_id, season, ticket_price)
+    game.write_stats()
 
 def play(num_days):
     """Play num_days days worth of games.
@@ -345,7 +348,7 @@ def play(num_days):
 #            sim.apply_async((team(teams[0]), team(teams[1]), g.phase == 3, g.league_id, g.season, g.ticket_price), link=save_results.subtask())
 #            results, is_playoffs = sim(team(teams[0]), team(teams[1]), g.phase == 3, g.league_id, g.season, g.ticket_price)
 #            save_results(results, is_playoffs)
-            sim.apply_async((team(teams[0]), team(teams[1]), g.phase == 3, g.league_id, g.season, g.ticket_price))
+            sim.apply_async((teams[0], teams[1], g.phase == 3, g.league_id, g.season, g.ticket_price))
 #            sim(team(teams[0]), team(teams[1]), g.phase == 3, g.league_id, g.season, g.ticket_price)
 
     play_menu.set_status('Idle')

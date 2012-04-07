@@ -24,7 +24,7 @@ def pull_league_id(endpoint, values):
     print values
     g.league_id = values.pop('league_id', None)
 
-@app.route('/league/<int:league_id>')
+@app.route('/<int:league_id>')
 @league_crap
 def league_dashboard():
     g.dbd.execute('SELECT team_id, region, name FROM teams ORDER BY team_id ASC')
@@ -32,7 +32,7 @@ def league_dashboard():
 
     return render_template('league_dashboard.html')
 
-@app.route('/league/<int:league_id>/player_ratings')
+@app.route('/<int:league_id>/player_ratings')
 @league_crap
 def player_ratings():
     g.dbd.execute('SELECT pa.player_id, pa.team_id, pa.name, (SELECT abbreviation FROM %s_team_attributes WHERE team_id = pa.team_id) as team_abbreviation, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, pr.height, pr.strength, pr.speed, pr.jumping, pr.endurance, pr.shooting_inside, pr.shooting_layups, pr.shooting_free_throws, pr.shooting_two_pointers, pr.shooting_three_pointers, pr.blocks, pr.steals, pr.dribbling, pr.passing, pr.rebounding FROM %s_player_attributes as pa, %s_player_ratings as pr WHERE pa.player_id = pr.player_id', (g.league_id, g.season, g.league_id, g.league_id))
@@ -40,7 +40,7 @@ def player_ratings():
 
     return render_template('player_ratings.html', players=players)
 
-@app.route('/league/<int:league_id>/player_stats')
+@app.route('/<int:league_id>/player_stats')
 @league_crap
 def player_stats():
     g.dbd.execute('SELECT pa.player_id, pa.team_id, pa.name, ta.abbreviation, pa.position, SUM(ps.minutes>0) AS games_played, SUM(ps.starter) AS games_started, AVG(ps.minutes) AS minutes, AVG(ps.field_goals_made) AS field_goals_made, AVG(ps.field_goals_attempted) AS field_goals_attempted, 100*AVG(ps.field_goals_made/ps.field_goals_attempted) AS field_goal_percentage, AVG(ps.three_pointers_made) AS three_pointers_made, AVG(ps.three_pointers_attempted) AS three_pointers_attempted, 100*AVG(ps.three_pointers_made/ps.three_pointers_attempted) AS three_point_percentage, AVG(ps.free_throws_made) AS free_throws_made, AVG(ps.free_throws_attempted) AS free_throws_attempted, 100*AVG(ps.free_throws_made/ps.free_throws_attempted) AS free_throw_percentage, AVG(ps.offensive_rebounds) AS offensive_rebounds, AVG(ps.defensive_rebounds) AS defensive_rebounds, AVG(ps.offensive_rebounds+ps.defensive_rebounds) AS rebounds, AVG(ps.assists) AS assists, AVG(ps.turnovers) AS turnovers, AVG(ps.steals) AS steals, AVG(ps.blocks) AS blocks, AVG(ps.personal_fouls) AS personal_fouls, AVG(ps.points) AS points FROM %s_player_attributes as pa, %s_player_stats as ps, %s_team_attributes as ta WHERE pa.player_id = ps.player_id AND ps.season = %s AND ps.is_playoffs = 0 AND ta.team_id = pa.team_id AND ta.season = ps.season GROUP BY ps.player_id', (g.league_id, g.league_id, g.league_id, g.season))
@@ -55,7 +55,7 @@ def player_stats():
     return render_template('player_stats.html', players=players)
 
 # Change to POST (with CSRF protection) later
-@app.route('/league/<int:league_id>/play_games/<amount>')
+@app.route('/<int:league_id>/play_games/<amount>')
 @league_crap
 def play_games(amount):
     if amount == 'day':
@@ -71,7 +71,7 @@ def play_games(amount):
     game.play(num_days)
     return '%s days! fuck, this should be done asynchronously via POST and then show the progress.. um.. somewhere' % (num_days,)
 
-@app.route('/league/<int:league_id>/schedule')
+@app.route('/<int:league_id>/schedule')
 @league_crap
 def schedule():
     schedule_ = season.get_schedule()
@@ -88,7 +88,7 @@ def schedule():
 
     return render_template('schedule.html', games=games)
 
-@app.route('/league/<int:league_id>/standings')
+@app.route('/<int:league_id>/standings')
 @league_crap
 def standings():
     conferences = []
@@ -108,9 +108,9 @@ def standings():
     template_args = {'conferences': conferences}
     return render_all_or_json(template_file, template_args, request.args.get('json', False, type=bool))
 
-@app.route('/league/<int:league_id>/game_log')
-@app.route('/league/<int:league_id>/game_log/<int:season>')
-@app.route('/league/<int:league_id>/game_log/<int:season>/<abbreviation>')
+@app.route('/<int:league_id>/game_log')
+@app.route('/<int:league_id>/game_log/<int:season>')
+@app.route('/<int:league_id>/game_log/<int:season>/<abbreviation>')
 @league_crap
 def game_log(season=None, abbreviation=None):
     season = validate_season(season)
@@ -121,7 +121,7 @@ def game_log(season=None, abbreviation=None):
 
     return render_template('game_log.html', abbreviation=abbreviation, teams=teams)
 
-@app.route('/league/<int:league_id>/box_score')
+@app.route('/<int:league_id>/box_score')
 @league_crap_ajax
 def box_score():
     game_id = request.args.get('game_id', None, type=int)
@@ -148,7 +148,7 @@ def box_score():
 
     return render_template('box_score.html', teams=teams, **won_lost)
 
-@app.route('/league/<int:league_id>/game_log_list')
+@app.route('/<int:league_id>/game_log_list')
 @league_crap_ajax
 def game_log_list():
     season = request.args.get('season', None, type=int)
@@ -163,7 +163,7 @@ def game_log_list():
     return render_template('game_log_list.html', games=games)
 
 
-@app.route('/league/<int:league_id>/push_play_menu')
+@app.route('/<int:league_id>/push_play_menu')
 @league_crap_ajax
 def push_play_menu():
     """This should only be called on initial page load. Further updates are
@@ -174,7 +174,7 @@ def push_play_menu():
     play_menu.set_options()
 
     return 'fuck'
-#@app.route('/league/<int:league_id>/play_menu')
+#@app.route('/<int:league_id>/play_menu')
 #@league_crap_ajax
 #def play_menu_():
 #    """Update the play menu based on the Comet technique."""

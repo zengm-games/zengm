@@ -13,10 +13,10 @@ def options(keys=None):
                    {'id': 'month', 'url': url_for('play', league_id=g.league_id, amount='month'), 'label': 'One month'},
                    {'id': 'until_playoffs', 'url': url_for('play', league_id=g.league_id, amount='until_playoffs'), 'label': 'Until playoffs'},
                    {'id': 'through_playoffs', 'url': url_for('play', league_id=g.league_id, amount='through_playoffs'), 'label': 'Through playoffs'},
-                   {'id': 'begin_draft', 'url': '#', 'label': 'Begin draft'},
-                   {'id': 'until_free_agency', 'url': '#', 'label': 'Until free agency'},
-                   {'id': 'until_preseason', 'url': '#', 'label': 'Until preseason'},
-                   {'id': 'until_regular_season', 'url': '#', 'label': 'Until regular season'},
+                   {'id': 'begin_draft', 'url': url_for('play', league_id=g.league_id, amount='until_draft'), 'label': 'Until draft'},
+                   {'id': 'until_free_agency', 'url': url_for('play', league_id=g.league_id, amount='until_free_agency'), 'label': 'Until free agency'},
+                   {'id': 'until_preseason', 'url': url_for('play', league_id=g.league_id, amount='until_preseason'), 'label': 'Until preseason'},
+                   {'id': 'until_regular_season', 'url': url_for('play', league_id=g.league_id, amount='until_regular_season'), 'label': 'Until regular season'},
                    {'id': 'negotiate', 'url': '#', 'label': 'Negotiate'},
                    {'id': 'cancel', 'url': '#', 'label': 'Cancel'}]
 

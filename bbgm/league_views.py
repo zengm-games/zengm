@@ -71,7 +71,14 @@ def play(amount):
         game.play(num_days)
     elif amount == 'through_playoffs':
         game.play(100)  # There aren't 100 days in the playoffs, so 100 will cover all the games and the sim stops when the playoffs end
-
+    elif amount == 'until_draft':
+        season.new_phase(5)
+    elif amount == 'until_free_agency':
+        season.new_phase(7)
+    elif amount == 'until_preseason':
+        season.new_phase(0)
+    elif amount == 'until_regular_season':
+        season.new_phase(1)
     return 'yay'
 
 @app.route('/<int:league_id>/schedule')
@@ -118,6 +125,13 @@ def playoffs():
         series[s['series_round']-1].append(s)
 
     return render_all_or_json('playoffs.html', {'series': series})
+
+
+@app.route('/<int:league_id>/roster')
+@app.route('/<int:league_id>/roster/<abbreviation>')
+@league_crap
+def roster(abbreviation=None):
+    return abbreviation
 
 @app.route('/<int:league_id>/game_log')
 @app.route('/<int:league_id>/game_log/<int:season>')

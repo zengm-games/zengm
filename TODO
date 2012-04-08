@@ -32,13 +32,13 @@ Single page application
 - highlight link in menu for current page - current JS only will work for links on the sidebar itself. need something more general
   - on AJAX success, remove other highlights. then somehow figure out the right one to add
 
-playoffs
-- on playoffs start, automatically switch to playoffs view
-- make function for each matchup
-- bold winner
-- before playoffs, show current playoff seedings
+roster
+- see old web code
 
 draft
+- before this, make the roster view so it's easy to see results working
+- bbgm.core.draft, based on old draft_dialog, initiated from season.py
+- switch to draft view on button press
 
 free agents
 
@@ -91,6 +91,11 @@ some way of local processing of game simulations? Javascript equivalent of game_
   - if so, get game from queue, send to browser, save results, update play status, repeat
   - if not, pause all league's games until we get a signal from the browser for that league
 
+playoffs
+- on playoffs start, automatically switch to playoffs view
+- make function for each matchup
+- bold winner
+- before playoffs, show current playoff seedings
 
 
 

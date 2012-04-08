@@ -377,7 +377,6 @@ def play(num_days):
 
     sim_wrapper.apply_async((g.league_id, num_days, schedule))
 
-#    season.set_schedule(schedule)
     games_in_progress(False)
 
 def games_in_progress(status):

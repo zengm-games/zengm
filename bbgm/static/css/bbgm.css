@@ -3,6 +3,15 @@ body {
   padding-bottom: 40px;
 }
 
+a.brand img {
+  vertical-align: top;
+}
+
+footer {
+  color: #666666;
+  text-align: center;
+}
+
 table#game_log_list tbody tr:hover td {
   background-color: #d9edf7;
   border-color: #bce8f1;

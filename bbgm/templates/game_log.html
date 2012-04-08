@@ -1,8 +1,10 @@
 {% extends "league_layout.html" %}
+{% set active_page = "game_log" %}
 
 {% block title %}Game log - League {{ g.league_id }} - Basketball GM{% endblock %}
 
-{% block league_content %}  <script type="text/javascript" charset="utf-8">
+{% block league_content %}
+  <script type="text/javascript">
     // Load game log list table and activate form
     $(document).ready(function() {
       function load_game_log_list(season, abbreviation, first_time) {
@@ -32,7 +34,7 @@
 
       // Clickable rows for game log list table
       $('#game_log_list tbody tr').live('click', function(event) {
-        $clicked_tr = $(this)
+        $clicked_tr = $(this);
         $.ajax({
           type: 'GET',
           url: '{{ url_for('box_score', league_id=g.league_id) }}',
@@ -42,13 +44,12 @@
             $('#game_log_box_score').html(msg);
             // Update gamelist highlighting
             $clicked_tr.parent().children().each(function() {
-              $(this).removeClass('alert-info')
+              $(this).removeClass('alert-info');
             });
             $clicked_tr.addClass('alert-info');
           }
         });
       });
-
     });
   </script>
 

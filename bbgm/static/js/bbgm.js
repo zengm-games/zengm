@@ -54,6 +54,14 @@ $(document).ready(function() {
         for (i=0; i<links.length; i++) {  
             links[i].onclick = function() {  
                 if (this.href.indexOf(league_root_url) !== -1) {
+                    //Highlight active page
+/*            links[i].parent().parent().children().each(function() {
+              $(this).removeClass('active')
+            });
+            this.addClass('active');
+console.log(this)*/
+
+                    // Update content
                     var url = this.href;
                     $.getJSON(url, {'json': true}, function (data) {
                         ajax_update(data, url);
@@ -66,6 +74,16 @@ $(document).ready(function() {
     window.onpopstate = function(event) {
         ajax_update(event.state);
     };
+
+    //Highlight active page in sidebar
+    $('#league_sidebar li').live('click', function(event) {
+        $clicked_li = $(this);
+        console.log($clicked_li)
+        $clicked_li.parent().children().each(function() {
+            $(this).removeClass('active');
+        });
+        $clicked_li.addClass('active');
+    });
 
 
     // Play button

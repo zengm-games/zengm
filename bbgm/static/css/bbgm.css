@@ -7,6 +7,10 @@ a.brand img {
   vertical-align: top;
 }
 
+.sidebar-nav {
+  padding: 9px 0;
+}
+
 footer {
   color: #666666;
   text-align: center;

@@ -4,32 +4,27 @@
   <div class="row-fluid">
     <div class="span2">
       <div class="well sidebar-nav">
-
-        <ul class="nav nav-list">
-          <div id="play_menu" style="margin-bottom: 1em">
-            <div id="play_status"></div>
-            <div id="play_button" class="btn-group"></div>
-          </div>
+        <ul class="nav nav-list" id="league_sidebar">
           <li class="nav-header">League</li>
-          <li><a href="{{ url_for('league_dashboard', league_id=g.league_id) }}">Dashboard</a></li>
-          <li><a href="{{ url_for('standings', league_id=g.league_id) }}">Standings</a></li>
-          <li><a href="{{ url_for('schedule', league_id=g.league_id) }}">Schedule</a></li>
-          <li><a href="{{ url_for('playoffs', league_id=g.league_id) }}">Playoffs</a></li>
-          <li><a href="#">Finances</a></li>
-          <li><a href="#">Transaction log</a></li>
-          <li><a href="#">History</a></li>
+          <li{% if active_page == 'league_dashboard' %} class="active"{% endif %}><a href="{{ url_for('league_dashboard', league_id=g.league_id) }}">Dashboard</a></li>
+          <li{% if active_page == 'standings' %} class="active"{% endif %}><a href="{{ url_for('standings', league_id=g.league_id) }}">Standings</a></li>
+          <li{% if active_page == 'schedule' %} class="active"{% endif %}><a href="{{ url_for('schedule', league_id=g.league_id) }}">Schedule</a></li>
+          <li{% if active_page == 'playoffs' %} class="active"{% endif %}><a href="{{ url_for('playoffs', league_id=g.league_id) }}">Playoffs</a></li>
+          <li{% if active_page == 'finances' %} class="active"{% endif %}><a href="#">Finances</a></li>
+          <li{% if active_page == 'transaction_log' %} class="active"{% endif %}><a href="#">Transaction log</a></li>
+          <li{% if active_page == 'history' %} class="active"{% endif %}><a href="#">History</a></li>
           <li class="nav-header">Team</li>
-          <li><a href="#">Roster</a></li>
-          <li><a href="#">Free agents</a></li>
-          <li><a href="#">Trade</a></li>
-          <li><a href="#">Advisors</a></li>
-          <li><a href="#">History</a></li>
+          <li{% if active_page == 'roster' %} class="active"{% endif %}><a href="#">Roster</a></li>
+          <li{% if active_page == 'free_agents' %} class="active"{% endif %}><a href="#">Free agents</a></li>
+          <li{% if active_page == 'trade' %} class="active"{% endif %}><a href="#">Trade</a></li>
+          <li{% if active_page == 'advisors' %} class="active"{% endif %}><a href="#">Advisors</a></li>
+          <li{% if active_page == 'history' %} class="active"{% endif %}><a href="#">History</a></li>
           <li class="nav-header">Stats</li>
-          <li><a href="{{ url_for('game_log', league_id=g.league_id) }}">Game log</a></li>
-          <li><a href="#">League leaders</a></li>
-          <li><a href="{{ url_for('player_ratings', league_id=g.league_id) }}">Player ratings</a></li>
-          <li><a href="{{ url_for('player_stats', league_id=g.league_id) }}">Player stats</a></li>
-          <li><a href="#">Team stats</a></li>
+          <li{% if active_page == 'game_log' %} class="active"{% endif %}><a href="{{ url_for('game_log', league_id=g.league_id) }}">Game log</a></li>
+          <li{% if active_page == 'leaders' %} class="active"{% endif %}><a href="#">League leaders</a></li>
+          <li{% if active_page == 'player_ratings' %} class="active"{% endif %}><a href="{{ url_for('player_ratings', league_id=g.league_id) }}">Player ratings</a></li>
+          <li{% if active_page == 'player_stats' %} class="active"{% endif %}><a href="{{ url_for('player_stats', league_id=g.league_id) }}">Player stats</a></li>
+          <li{% if active_page == 'team_stats' %} class="active"{% endif %}><a href="#">Team stats</a></li>
         </ul>
       </div>
     </div>

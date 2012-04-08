@@ -1,3 +1,8 @@
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+
 table#game_log_list tbody tr:hover td {
   background-color: #d9edf7;
   border-color: #bce8f1;

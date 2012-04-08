@@ -8,7 +8,7 @@
   <ol>
   {% for game in games %}
     <li><a href="#">{{ game[0].region }} {{ game[0].name }}</a>
-    {% if g.player_team_id == game[0].team_id %}
+    {% if g.user_team_id == game[0].team_id %}
       at
     {% else %}
       vs

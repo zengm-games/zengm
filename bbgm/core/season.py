@@ -63,7 +63,7 @@ def new_phase(phase):
         teams = g.db.fetchall()
         for team_id, num_players_on_roster in teams:
             if num_players_on_roster > 15:
-                if team_id == g.player_team_id:
+                if team_id == g.user_team_id:
                     md = Gtk.MessageDialog(self.main_window, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
                                            Gtk.MessageType.WARNING, Gtk.ButtonsType.CLOSE, ('Your team currently has more '
                                            'than the maximum number of players (15). You must release or buy out '
@@ -80,7 +80,7 @@ def new_phase(phase):
                         p.load(player_id)
                         p.release(g.phase)
             elif num_players_on_roster < 5:
-                if team_id == g.player_team_id:
+                if team_id == g.user_team_id:
                     md = Gtk.MessageDialog(self.main_window, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
                                            Gtk.MessageType.WARNING, Gtk.ButtonsType.CLOSE, ('Your team currently has less '
                                            'than the minimum number of players (5). You must add players (through '
@@ -97,7 +97,7 @@ def new_phase(phase):
 
             # Auto sort rosters (except player's team)
 #            for t in range(30):
-#                if t != g.player_team_id:
+#                if t != g.user_team_id:
 #                    common.roster_auto_sort(t)
         else:
             g.phase = old_phase
@@ -117,8 +117,8 @@ def new_phase(phase):
             for team_id, in team_ids:
                 teams.append(team_id)
                 # Record playoff appearance for player's team
-                if team_id == g.player_team_id:
-                    g.db.execute('UPDATE %s_team_attributes SET playoffs = 1 WHERE season = %s AND team_id = %s', (g.league_id, g.season, g.player_team_id))
+                if team_id == g.user_team_id:
+                    g.db.execute('UPDATE %s_team_attributes SET playoffs = 1 WHERE season = %s AND team_id = %s', (g.league_id, g.season, g.user_team_id))
 
             query = ('INSERT INTO %s_active_playoff_series (series_id, series_round, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away) VALUES (%s, 1, %s, %s, %s, %s, 0, 0)')
             g.db.execute(query, (g.league_id, conference_id * 4 + 1, teams[0], teams[7], 1, 8))
@@ -171,7 +171,7 @@ def new_phase(phase):
         # Resign players
         g.db.execute('SELECT player_id, team_id, name FROM %s_player_attributes WHERE contract_expiration = %s AND team_id >= 0', (g.league_id, g.season))
         for player_id, team_id, name in g.db.fetchall():
-            if team_id != g.player_team_id:
+            if team_id != g.user_team_id:
                 # Automaitcally negotiate with teams
                 self.player_contract_expire(player_id)
             else:

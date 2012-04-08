@@ -71,13 +71,13 @@ def new(team_id):
     # Set and get global game attributes
     g.db.execute('UPDATE %s_game_attributes SET team_id = %s', (g.league_id, team_id))
     g.db.execute('SELECT team_id, season, phase, schedule, version FROM %s_game_attributes LIMIT 1', (g.league_id,))
-    g.player_team_id, g.season, g.phase, g.schedule, g.version = g.db.fetchone()
+    g.user_team_id, g.season, g.phase, g.schedule, g.version = g.db.fetchone()
 
     # Make schedule, start season
     season.new_phase(1)
 
     #Auto sort player's roster
-#    common.roster_auto_sort(common.PLAYER_TEAM_ID)
+#    common.roster_auto_sort(g.user_team_id)
 
     return g.league_id
 

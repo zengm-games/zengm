@@ -273,12 +273,12 @@ def sim_wrapper(league_id, num_days, schedule):
                         else:
                             winners[series_id] = [team_id_away, seed_away]
                         # Record user's team as conference and league champion
-                        if winners[series_id][0] == common.PLAYER_TEAM_ID and current_round == 3:
+                        if winners[series_id][0] == g.user_team_id and current_round == 3:
                             g.db.execute('UPDATE team_attributes SET won_conference = 1 WHERE season = ? AND '
-                                                  'team_id = ?', (g.season, common.PLAYER_TEAM_ID))
-                        elif winners[series_id][0] == common.PLAYER_TEAM_ID and current_round == 4:
+                                                  'team_id = ?', (g.season, g.user_team_id))
+                        elif winners[series_id][0] == g.user_team_id and current_round == 4:
                             g.db.execute('UPDATE team_attributes SET won_championship = 1 WHERE season = ? AND '
-                                                  'team_id = ?', (g.season, common.PLAYER_TEAM_ID))
+                                                  'team_id = ?', (g.season, g.user_team_id))
 
                     # Are the whole playoffs over?
                     if current_round == 4:

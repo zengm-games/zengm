@@ -13,23 +13,15 @@ class Player:
     def load(self, player_id):
         self.id = player_id
 
-        common.DB_CON.row_factory = self.dict_factory
-        query = 'SELECT * FROM player_ratings WHERE player_id = ?'
-        self.rating = common.DB_CON.execute(query, (self.id,)).fetchone()
-        query = 'SELECT * FROM player_attributes WHERE player_id = ?'
-        self.attribute = common.DB_CON.execute(query, (self.id,)).fetchone()
-        common.DB_CON.row_factory = None
-
-    def dict_factory(self, cursor, row):
-        d = {}
-        for idx, col in enumerate(cursor.description):
-            d[col[0]] = row[idx]
-        return d
+        g.dbd.execute('SELECT * FROM %s_player_ratings WHERE player_id = %s', (g.league_id, self.id))
+        self.rating = g.dbd.fetchone()
+        g.dbd.execute('SELECT * FROM %s_player_attributes WHERE player_id = %s' (g.league_id, self.id))
+        self.attribute = g.dbd.fetchone()
 
     def save(self):
         self.rating['overall'] = self.overall_rating()
-        query = 'UPDATE player_ratings SET overall = ?, height = ?, strength = ?, speed = ?, jumping = ?, endurance = ?, shooting_inside = ?, shooting_layups = ?, shooting_free_throws = ?, shooting_two_pointers = ?, shooting_three_pointers = ?, blocks = ?, steals = ?, dribbling = ?, passing = ?, rebounding = ?, potential = ? WHERE player_id = ?'
-        g.db.execute(query, (self.rating['overall'], self.rating['height'], self.rating['strength'], self.rating['speed'], self.rating['jumping'], self.rating['endurance'], self.rating['shooting_inside'], self.rating['shooting_layups'], self.rating['shooting_free_throws'], self.rating['shooting_two_pointers'], self.rating['shooting_three_pointers'], self.rating['blocks'], self.rating['steals'], self.rating['dribbling'], self.rating['passing'], self.rating['rebounding'], self.rating['potential'], self.id))
+        query = 'UPDATE %s_player_ratings SET overall = %s, height = %s, strength = %s, speed = %s, jumping = %s, endurance = %s, shooting_inside = %s, shooting_layups = %s, shooting_free_throws = %s, shooting_two_pointers = %s, shooting_three_pointers = %s, blocks = %s, steals = %s, dribbling = %s, passing = %s, rebounding = %s, potential = %s WHERE player_id = %s'
+        g.db.execute(query, (g.league_id, self.rating['overall'], self.rating['height'], self.rating['strength'], self.rating['speed'], self.rating['jumping'], self.rating['endurance'], self.rating['shooting_inside'], self.rating['shooting_layups'], self.rating['shooting_free_throws'], self.rating['shooting_two_pointers'], self.rating['shooting_three_pointers'], self.rating['blocks'], self.rating['steals'], self.rating['dribbling'], self.rating['passing'], self.rating['rebounding'], self.rating['potential'], self.id))
 
     def develop(self, years=1):
         # Make sure age is always defined
@@ -140,8 +132,8 @@ class Player:
         if phase > 2:
             expiration += 1
 
-        g.db.execute('UPDATE player_attributes SET team_id = -1, contract_amount = ?, contract_expiration = ?,'
-                              ' free_agent_times_asked = 0 WHERE player_id = ?', (amount, expiration, self.id))
+        g.db.execute('UPDATE %s_player_attributes SET team_id = -1, contract_amount = %s, contract_expiration = %s,'
+                     ' free_agent_times_asked = 0 WHERE player_id = %s', (g.league_id, amount, expiration, self.id))
 
     def release(self, phase):
         """Release player.
@@ -154,9 +146,9 @@ class Player:
         """
 
         # Keep track of player salary even when he's off the team
-        g.db.execute('SELECT contract_amount, contract_expiration, team_id FROM player_attributes WHERE player_id = ?', (self.id,))
+        g.db.execute('SELECT contract_amount, contract_expiration, team_id FROM %s_player_attributes WHERE player_id = %s', (g.league_id, self.id))
         contract_amount, contract_expiration, team_id = g.db.fetchone()
-        g.db.execute('INSERT INTO released_players_salaries (player_id, team_id, contract_amount, contract_expiration) VALUES (?, ?, ?, ?)', (self.id, team_id, contract_amount, contract_expiration))
+        g.db.execute('INSERT INTO %s_released_players_salaries (player_id, team_id, contract_amount, contract_expiration) VALUES (%s, %s, %s, %s)', (g.league_id, self.id, team_id, contract_amount, contract_expiration))
 
         self.add_to_free_agents(phase)
 

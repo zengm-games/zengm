@@ -8,6 +8,9 @@ class GameSim:
     When an instance of this class is created, information about the two teams
     is passed to __init__(). Then run() will actually simulate a game and
     return the results (stats) of the simulation.
+
+    This function is self-contained and independent of the database, so that
+    eventually it can be ported to JavaScript and run client-side.
     """
 
     def __init__(self, team1, team2):

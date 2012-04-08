@@ -1,8 +1,10 @@
+from celery.task.sets import TaskSet
 import httplib, urllib
 import math
 import MySQLdb
 import random
 import sqlite3
+import time
 
 from flask import g, json
 from flask.ext.celery import Celery
@@ -218,13 +220,11 @@ def _composite(minval, maxval, rating, components, inverse=False, random=True):
     return r
 
 @celery.task(name='bbgm.core.game.sim')
-def sim(league_id, t1, t2, is_playoffs, d, num_days):
+def sim(league_id, t1, t2, is_playoffs, num_days):
     """Convenience function (for Celery) to call GameSim."""
 #    print 'SIM START'
     with app.test_request_context():
         request_context_globals(league_id)
-
-        play_menu.set_status('Playing day %d of %d...' % (d+1, num_days))
 
         gs = game_sim.GameSim(team(t1), team(t2))
         save_results(gs.run(), is_playoffs)
@@ -240,11 +240,23 @@ def sim_wrapper(league_id, schedule, num_active_teams, is_playoffs, num_days):
 
         for d in xrange(num_days):
             print 'SCHEDULE LENGTH', len(schedule)
+            play_menu.set_status('Playing day %d of %d...' % (d+1, num_days))
+
+
+            tasks = []
             for i in range(num_active_teams / 2):
                 teams = schedule.pop()
-                sim.apply_async((league_id, teams[0], teams[1], is_playoffs, d, num_days))
+#                sim.apply_async((league_id, teams[0], teams[1], is_playoffs, num_days))
+                tasks.append(sim.subtask((league_id, teams[0], teams[1], is_playoffs, num_days)))
+            job = TaskSet(tasks=tasks)
+            result = job.apply_async()
+            while not result.ready():
+                time.sleep(0.25)
+
             print len(schedule)
             season.set_schedule(schedule)
+
+        play_menu.set_status('Idle')
 
 def save_results(results, is_playoffs):
     """Callback function (for Celery) to save game stats."""

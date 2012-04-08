@@ -17,7 +17,6 @@ BIG PICTURE
 - Simulating a day adds all games for that day to the queue
 - At the end of the day (HOW DO I KNOW THIS? When all the tasks finish. HOW DO I KNOW THAT?) run the housekeeping code (create future playoff games, sign free agents, etc.)
 - This could be done by another function in celery, like a meta-task that spawns a day's games, waits for them all to finish, runs the housekeeping function, and then runs another day's games
-****************  - How does it know when a day has finished, and how to wait???
 
 speed it up
 - somehow cache team (and/or player) dicts, so we don't need separate SQL queries all the time

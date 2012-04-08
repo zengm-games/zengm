@@ -27,9 +27,18 @@ function comet_play_menu(url, status_t, options_t) {
 	    }		
     });
 }
-http://127.0.0.1:5000/13/
+
+// For AJAX updating pages
+function ajax_update(data, url) {
+    $('title').text(data['title']);
+    $('#league_content').html(data['league_content']);
+    if (arguments.length == 2) { // Only if a url is passed
+        history.pushState(data, '', url);
+    }
+}
+
 $(document).ready(function() {
-    // Find URL up to http://domain.com/<int:league_id>/
+    // Find URL up to http://domain.com/<int:league_id>
     var end = 0;
     var in_league = true;
     for (i=0; i<4; i++) {
@@ -46,18 +55,15 @@ $(document).ready(function() {
         }
     }
 
-    // For AJAX updating pages
-    function ajax_update(data, url) {
-        $('title').text(data['title']);
-        $('#league_content').html(data['league_content']);
-        if (arguments.length == 2) { // Only if a url is passed
-            history.pushState(data, '', url);
-        }
+    // League variables
+    if (in_league) {
+        split_url = document.URL.split('/', 4);
+        league_root_url = split_url.join('/'); // document.URL.substr(0, end - 1);
+        league_id = split_url[3];
     }
 
     // Handle league internal URLs
     if (in_league) {
-        league_root_url = document.URL.substr(0, end - 1)
         var links = $('a');
         for (i=0; i<links.length; i++) {  
             links[i].onclick = function() {  
@@ -71,8 +77,55 @@ $(document).ready(function() {
             };
         }
     }
-
     window.onpopstate = function(event) {
         ajax_update(event.state);
     };
+
+
+    // Play button
+    if (in_league) {
+        $play_status = $('#play_status');
+        $play_button = $('#play_button');
+
+        var jug = new Juggernaut;
+
+        // Load cached play menu - this only runs once, which is good, but I'm not sure why.
+        jug.on('connect', function(){
+            $.get(league_root_url + '/push_play_menu');
+        });
+
+        // Listen for updates to play menu
+        jug.subscribe(league_id + '_status', function(data){
+            $play_status.html(data);
+        });
+        jug.subscribe(league_id + '_button', function(data){
+            $play_button.html(data);
+        });
+    }
+
+    // Data tables
+    if($('#player_ratings').length > 0) {
+        $('#player_ratings').dataTable( {
+            "aaSorting": [[ 4, "desc" ]],
+            "sPaginationType": "bootstrap",
+            "oLanguage": {
+                "sLengthMenu": "_MENU_ players per page",
+                "sInfo": "Showing _START_ to _END_ of _TOTAL_ players",
+                "sInfoEmpty": "Showing 0 to 0 of 0 players",
+                "sInfoFiltered": "(filtered from _MAX_ total players)"
+            }
+        } );
+    }
+    if($('#player_stats').length > 0) {
+        $('#player_stats').dataTable( {
+            "aaSorting": [[ 23, "desc" ]],
+            "sPaginationType": "bootstrap",
+            "oLanguage": {
+                "sLengthMenu": "_MENU_ players per page",
+                "sInfo": "Showing _START_ to _END_ of _TOTAL_ players",
+                "sInfoEmpty": "Showing 0 to 0 of 0 players",
+                "sInfoFiltered": "(filtered from _MAX_ total players)"
+            }
+      } );
+    }
 });

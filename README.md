@@ -42,6 +42,7 @@ hopefully that will change relatively soon.
 * Celery
 * Flask-Celery
 * Flask-Assets
+* Closure Compiler
 
 For the first three, you can just use the normal Ubuntu (or whatever) packages
 and it will probably work fine.
@@ -60,6 +61,7 @@ And to install the rest, run:
     sudo pip install Celery
     sudo pip install Flask-Celery
     sudo pip install Flask-Assets
+    sudo pip install closure
 
 ### Optional packages
 

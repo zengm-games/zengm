@@ -37,29 +37,6 @@
       {% block league_content %}{% endblock %}
     </div>
   </div>
-
-  <script src="http://127.0.0.1:8080/application.js" type="text/javascript" charset="utf-8"></script>
-  <script type="text/javascript" charset="utf-8">
-    $(document).ready(function() {
-        $play_status = $('#play_status')
-        $play_button = $('#play_button')
-
-        var jug = new Juggernaut;
-
-        // Load cached play menu - this only runs once, which is good, but I'm not sure why.
-        jug.on('connect', function(){
-            $.get('{{ url_for('push_play_menu', league_id=g.league_id) }}');
-        });
-
-        // Listen for updates to play menu
-        jug.subscribe('{{ g.league_id }}_status', function(data){
-            $play_status.html(data);
-        });
-        jug.subscribe('{{ g.league_id }}_button', function(data){
-            $play_button.html(data);
-        });
-    });
-  </script>
 {% endblock %}
 
 {% block extra_css %}

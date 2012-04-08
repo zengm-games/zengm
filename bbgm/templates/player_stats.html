@@ -3,21 +3,6 @@
 {% block title %}Player stats - League {{ g.league_id }} - Basketball GM{% endblock %}
 
 {% block league_content %}
-  <script type="text/javascript" charset="utf-8">
-    $(document).ready(function() {
-      $('#player_stats').dataTable( {
-        "aaSorting": [[ 23, "desc" ]],
-        "sPaginationType": "bootstrap",
-        "oLanguage": {
-        "sLengthMenu": "_MENU_ players per page",
-        "sInfo": "Showing _START_ to _END_ of _TOTAL_ players",
-        "sInfoEmpty": "Showing 0 to 0 of 0 players",
-        "sInfoFiltered": "(filtered from _MAX_ total players)"
-        }
-      } );
-    } );
-  </script>
-
   <h1>Player stats</h1>
 
   <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="player_stats">

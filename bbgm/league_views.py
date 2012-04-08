@@ -106,6 +106,16 @@ def standings():
 
     return render_all_or_json('standings.html', {'conferences': conferences})
 
+@app.route('/<int:league_id>/playoffs')
+@league_crap
+def playoffs():
+    g.dbd.execute('SELECT series_id, series_round, (SELECT name FROM %s_team_attributes WHERE team_id = aps.team_id_home AND season = %s) as name_home, (SELECT name FROM %s_team_attributes WHERE team_id = aps.team_id_away AND season = %s) as name_away, seed_home, seed_away, won_home, won_away FROM %s_active_playoff_series as aps ORDER BY series_round, series_id ASC', (g.league_id, g.season, g.league_id, g.season, g.league_id))
+    series = [[], [], [], []] # First round, second round, third round, fourth round
+    for s in g.dbd.fetchall():
+        series[s['series_round']-1].append(s)
+
+    return render_all_or_json('playoffs.html', {'series': series})
+
 @app.route('/<int:league_id>/game_log')
 @app.route('/<int:league_id>/game_log/<int:season>')
 @app.route('/<int:league_id>/game_log/<int:season>/<abbreviation>')

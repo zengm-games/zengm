@@ -77,11 +77,12 @@ Run these commands in the Python interpreter, from this folder:
     import bbgm
     bbgm.init_db()
 
-On the command line, run these three commands:
+On the command line, run these four commands (note: some services may already be
+running, such as redis_server if you install the normal Ubuntu package):
 
     redis_server
     juggernaut
     python manage.py celeryd
-    python runserver.py
+    python manage.py runserver
 
 Point your browser to http://127.0.0.1:5000/

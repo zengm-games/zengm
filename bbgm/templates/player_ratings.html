@@ -3,6 +3,12 @@
 {% block title %}Player ratings - League {{ g.league_id }} - Basketball GM{% endblock %}
 
 {% block league_content %}
+  <script type="text/javascript">
+    $(document).ready(function() {
+      bbgm_data_table($('#player_ratings'), 4);
+    } );
+  </script>
+
   <h1>Player ratings</h1>
 
   <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="player_ratings">

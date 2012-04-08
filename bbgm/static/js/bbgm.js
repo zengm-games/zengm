@@ -37,6 +37,22 @@ function ajax_update(data, url) {
     }
 }
 
+// Data tables
+function bbgm_data_table(table, col) {
+    if(table.length > 0) {
+        table.dataTable( {
+            "aaSorting": [[ col, "desc" ]],
+            "sPaginationType": "bootstrap",
+            "oLanguage": {
+                "sLengthMenu": "_MENU_ players per page",
+                "sInfo": "Showing _START_ to _END_ of _TOTAL_ players",
+                "sInfoEmpty": "Showing 0 to 0 of 0 players",
+                "sInfoFiltered": "(filtered from _MAX_ total players)"
+            }
+        } );
+    }
+}
+
 $(document).ready(function() {
     // Find URL up to http://domain.com/<int:league_id>
     var end = 0;
@@ -101,31 +117,5 @@ $(document).ready(function() {
         jug.subscribe(league_id + '_button', function(data){
             $play_button.html(data);
         });
-    }
-
-    // Data tables
-    if($('#player_ratings').length > 0) {
-        $('#player_ratings').dataTable( {
-            "aaSorting": [[ 4, "desc" ]],
-            "sPaginationType": "bootstrap",
-            "oLanguage": {
-                "sLengthMenu": "_MENU_ players per page",
-                "sInfo": "Showing _START_ to _END_ of _TOTAL_ players",
-                "sInfoEmpty": "Showing 0 to 0 of 0 players",
-                "sInfoFiltered": "(filtered from _MAX_ total players)"
-            }
-        } );
-    }
-    if($('#player_stats').length > 0) {
-        $('#player_stats').dataTable( {
-            "aaSorting": [[ 23, "desc" ]],
-            "sPaginationType": "bootstrap",
-            "oLanguage": {
-                "sLengthMenu": "_MENU_ players per page",
-                "sInfo": "Showing _START_ to _END_ of _TOTAL_ players",
-                "sInfoEmpty": "Showing 0 to 0 of 0 players",
-                "sInfoFiltered": "(filtered from _MAX_ total players)"
-            }
-      } );
     }
 });

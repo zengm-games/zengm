@@ -22,6 +22,9 @@ play button requirements
   - red: other immediate action
 - move to top bar?
 - when phase changes, change the play button (for now, just list all possible options, like defined in Glade)
+- http://twitter.github.com/bootstrap/javascript.html#buttons stateful!
+- http://twitter.github.com/bootstrap/javascript.html#popovers for warnings on button!
+- http://twitter.github.com/bootstrap/javascript.html#dropdowns maybe use this look rather than a button?
 
 Single page application
 - When a simulation is done (or a player is signed, or whatever), the current page should be reloaded
@@ -29,6 +32,7 @@ Single page application
 - highlight link in menu for current page - maybe add a new block to do this? or http://jinja.pocoo.org/docs/tricks/#highlighting-active-menu-items
 
 playoffs
+- on playoffs start, automatically switch to playoffs view
 - make function for each matchup
 - bold winner
 - before playoffs, show current playoff seedings
@@ -38,6 +42,9 @@ draft
 free agents
 
 organize imports
+
+player view
+- http://twitter.github.com/bootstrap/javascript.html#tabs
 
 resign players at end of season
 - Play button changes to "Resign free agents"

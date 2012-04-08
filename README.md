@@ -41,6 +41,7 @@ hopefully that will change relatively soon.
 * python-juggernaut
 * Celery
 * Flask-Celery
+* Flask-Assets
 
 For the first three, you can just use the normal Ubuntu (or whatever) packages
 and it will probably work fine.
@@ -52,15 +53,13 @@ to install Juggernaut:
 
     sudo npm install -g juggernaut
 
-To install the Juggernaut Python library, run:
+And to install the rest, run:
 
     sudo apt-get install python-pip
     sudo pip install juggernaut
-
-And to install both Celery and Flask-Celery, run:
-
     sudo pip install Celery
     sudo pip install Flask-Celery
+    sudo pip install Flask-Assets
 
 ### Optional packages
 

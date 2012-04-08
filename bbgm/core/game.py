@@ -264,9 +264,10 @@ def sim_wrapper(league_id, num_days, schedule):
 
                     # Who won?
                     winners = {}
-                    for row in g.db.execute('SELECT series_id, team_id_home, team_id_away, seed_home, '
-                                                     'seed_away, won_home, won_away FROM active_playoff_series WHERE '
-                                                     'series_round = ? ORDER BY series_id ASC', (current_round,)):
+                    g.db.execute('SELECT series_id, team_id_home, team_id_away, seed_home, '
+                                 'seed_away, won_home, won_away FROM %s_active_playoff_series WHERE '
+                                 'series_round = %s ORDER BY series_id ASC', (g.league_id, current_round))
+                    for row in g.db.fetchall():
                         series_id, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away = row
                         if won_home == 4:
                             winners[series_id] = [team_id_home, seed_home]
@@ -274,11 +275,11 @@ def sim_wrapper(league_id, num_days, schedule):
                             winners[series_id] = [team_id_away, seed_away]
                         # Record user's team as conference and league champion
                         if winners[series_id][0] == g.user_team_id and current_round == 3:
-                            g.db.execute('UPDATE team_attributes SET won_conference = 1 WHERE season = ? AND '
-                                                  'team_id = ?', (g.season, g.user_team_id))
+                            g.db.execute('UPDATE %s_team_attributes SET won_conference = 1 WHERE season = %s AND '
+                                         'team_id = %s', (g.league_id, g.season, g.user_team_id))
                         elif winners[series_id][0] == g.user_team_id and current_round == 4:
-                            g.db.execute('UPDATE team_attributes SET won_championship = 1 WHERE season = ? AND '
-                                                  'team_id = ?', (g.season, g.user_team_id))
+                            g.db.execute('UPDATE %s_team_attributes SET won_championship = 1 WHERE season = %s AND '
+                                         'team_id = %s', (g.league_id, g.season, g.user_team_id))
 
                     # Are the whole playoffs over?
                     if current_round == 4:
@@ -288,14 +289,14 @@ def sim_wrapper(league_id, num_days, schedule):
                     # Add a new round to the database
                     series_id = 1
                     current_round += 1
-                    query = ('INSERT INTO active_playoff_series (series_id, series_round, team_id_home, team_id_away,'
-                             'seed_home, seed_away, won_home, won_away) VALUES (?, ?, ?, ?, ?, ?, 0, 0)')
+                    query = ('INSERT INTO %s_active_playoff_series (series_id, series_round, team_id_home, team_id_away,'
+                             'seed_home, seed_away, won_home, won_away) VALUES (%s, %s, %s, %s, %s, %s, 0, 0)')
                     for i in range(1, len(winners), 2):  # Go through winners by 2
                         if winners[i][1] < winners[i + 1][1]:  # Which team is the home team?
-                            new_series = (series_id, current_round, winners[i][0], winners[i + 1][0], winners[i][1],
+                            new_series = (g.league_id, series_id, current_round, winners[i][0], winners[i + 1][0], winners[i][1],
                                           winners[i + 1][1])
                         else:
-                            new_series = (series_id, current_round, winners[i + 1][0], winners[i][0], winners[i + 1][1],
+                            new_series = (g.league_id, series_id, current_round, winners[i + 1][0], winners[i][0], winners[i + 1][1],
                                           winners[i][1])
                         g.db.execute(query, new_series)
                         series_id += 1

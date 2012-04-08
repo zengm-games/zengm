@@ -4,7 +4,6 @@ single page javascript links: do nothing if link points to current page
 
 Game simulation:
 - Make this robust to failure.. somehow.. only pop from schedule on completion? if games_in_progress lock is set, that'll work
-- Playoffs?
 
 speed it up
 - somehow cache team (and/or player) dicts, so we don't need separate SQL queries all the time
@@ -28,7 +27,7 @@ Single page application
 - When a simulation is done (or a player is signed, or whatever), the current page should be reloaded
 - during page reloads or back/forward... what about handling deeper content? i.e., what box score is being viewed? what year? what stat is sorted? what page in rankings? etc.
 
-playoffs
+playoffs UI
 
 draft
 

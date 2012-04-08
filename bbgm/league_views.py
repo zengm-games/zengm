@@ -55,21 +55,24 @@ def player_stats():
     return render_all_or_json('player_stats.html', {'players': players})
 
 # Change to POST (with CSRF protection) later
-@app.route('/<int:league_id>/play_games/<amount>')
+@app.route('/<int:league_id>/play/<amount>')
 @league_crap
-def play_games(amount):
+def play(amount):
     if amount == 'day':
-        num_days = 1
+        game.play(1)
     elif amount == 'week':
-        num_days = 7
+        game.play(7)
     elif amount == 'month':
-        num_days = 30
+        game.play(30)
     elif amount == 'until_playoffs':
         g.db.execute('SELECT COUNT(*)/%s FROM %s_team_stats WHERE season = %s', (g.num_teams, g.league_id, g.season))
         row = g.db.fetchone()
         num_days = g.season_length - row[0]  # Number of days remaining
-    game.play(num_days)
-    return '%s days! fuck, this should be done asynchronously via POST and then show the progress.. um.. somewhere' % (num_days,)
+        game.play(num_days)
+    elif amount == 'through_playoffs':
+        game.play(100)  # There aren't 100 days in the playoffs, so 100 will cover all the games and the sim stops when the playoffs end
+
+    return 'yay'
 
 @app.route('/<int:league_id>/schedule')
 @league_crap

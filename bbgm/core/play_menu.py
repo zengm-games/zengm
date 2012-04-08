@@ -8,11 +8,11 @@ jug = Juggernaut()
 
 def options(keys=None):
     all_options = [{'id': 'stop', 'url': '#', 'label': 'Stop'},
-                   {'id': 'day', 'url': url_for('play_games', league_id=g.league_id, amount='day'), 'label': 'One day'},
-                   {'id': 'week', 'url': url_for('play_games', league_id=g.league_id, amount='week'), 'label': 'One week'},
-                   {'id': 'month', 'url': url_for('play_games', league_id=g.league_id, amount='month'), 'label': 'One month'},
-                   {'id': 'until_playoffs', 'url': url_for('play_games', league_id=g.league_id, amount='until_playoffs'), 'label': 'Until playoffs'},
-                   {'id': 'through_playoffs', 'url': '#', 'label': 'Through playoffs'},
+                   {'id': 'day', 'url': url_for('play', league_id=g.league_id, amount='day'), 'label': 'One day'},
+                   {'id': 'week', 'url': url_for('play', league_id=g.league_id, amount='week'), 'label': 'One week'},
+                   {'id': 'month', 'url': url_for('play', league_id=g.league_id, amount='month'), 'label': 'One month'},
+                   {'id': 'until_playoffs', 'url': url_for('play', league_id=g.league_id, amount='until_playoffs'), 'label': 'Until playoffs'},
+                   {'id': 'through_playoffs', 'url': url_for('play', league_id=g.league_id, amount='through_playoffs'), 'label': 'Through playoffs'},
                    {'id': 'begin_draft', 'url': '#', 'label': 'Begin draft'},
                    {'id': 'until_free_agency', 'url': '#', 'label': 'Until free agency'},
                    {'id': 'until_preseason', 'url': '#', 'label': 'Until preseason'},

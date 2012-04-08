@@ -76,7 +76,7 @@ console.log(this)*/
     };
 
     //Highlight active page in sidebar
-    $('#league_sidebar li').live('click', function(event) {
+    $('#league_sidebar li').click(function(event) {
         $clicked_li = $(this);
         console.log($clicked_li)
         $clicked_li.parent().children().each(function() {

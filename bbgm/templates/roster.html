@@ -1,0 +1,23 @@
+{% extends "league_layout.html" %}
+{% set active_page = "roster" %}
+
+{% block title %}Roster - League {{ g.league_id }} - Basketball GM{% endblock %}
+
+{% block league_content %}
+  <h1>Roster</h1>
+
+  <p>Drag and drop row handles to move players between the starting lineup (<span class="roster_starter">&#9632;</span>) and the bench (<span class="roster_bench">&#9632;</span>).</p>
+
+  <div class="row-fluid">
+    <div class="span9">
+      <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="roster">
+      <thead>
+        <tr><th></th><th>Name</th><th title="Position">Pos</th><th title="Overall rating">Ovr</th><th title="Potential rating">Pot</th><th>Age</th><th>Contract</th><th title="Minutes per game">MPG</th><th title="Points per game">PPG</th><th title="Rebounds per game">Reb</th><th title="Assists per game">Ast</th></tr>
+      </thead>
+      {% for player in players %}
+        <tr id="roster_{{ player.id }}"><td class="{% if loop.index <= 5 %}btn-primary starter{% else %}btn-info bench{% endif %}"></td><td><a href="#">{{ player.name }}</a></td><td>{{ player.position }}</td><td>{{ player.overall }}</td><td>{{ player.potential }}</td><td>{{ player.age }}</td><td>${{ player.contract_amount|int }}k through {{ player.contract_expiration }}</td><td>{{ player.mpg|round(1) }}</td><td>{{ player.ppg|round(1) }}</td><td>{{ player.rpg|round(1) }}</td><td>{{ player.apg|round(1) }}</td></tr>
+      {% endfor %}
+      </table>
+    </div>
+  </div>
+{% endblock %}

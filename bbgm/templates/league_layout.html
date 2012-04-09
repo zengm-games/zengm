@@ -14,7 +14,7 @@
           <li{% if active_page == 'transaction_log' %} class="active"{% endif %}><a href="#">Transaction log</a></li>
           <li{% if active_page == 'history' %} class="active"{% endif %}><a href="#">History</a></li>
           <li class="nav-header">Team</li>
-          <li{% if active_page == 'roster' %} class="active"{% endif %}><a href="#">Roster</a></li>
+          <li{% if active_page == 'roster' %} class="active"{% endif %}><a href="{{ url_for('roster', league_id=g.league_id) }}">Roster</a></li>
           <li{% if active_page == 'free_agents' %} class="active"{% endif %}><a href="#">Free agents</a></li>
           <li{% if active_page == 'trade' %} class="active"{% endif %}><a href="#">Trade</a></li>
           <li{% if active_page == 'advisors' %} class="active"{% endif %}><a href="#">Advisors</a></li>

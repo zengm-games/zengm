@@ -33,7 +33,11 @@ Single page application
   - on AJAX success, remove other highlights. then somehow figure out the right one to add
 
 roster
-- see old web code
+- reordering
+  - see old web code
+- view other teams, but not reorder
+- release
+- buy out
 
 draft
 - before this, make the roster view so it's easy to see results working

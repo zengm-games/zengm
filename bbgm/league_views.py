@@ -131,7 +131,12 @@ def playoffs():
 @app.route('/<int:league_id>/roster/<abbreviation>')
 @league_crap
 def roster(abbreviation=None):
-    return abbreviation
+    team_id, abbreviation = validate_abbreviation(abbreviation)
+    g.dbd.execute('SELECT pa.player_id, name, position, %s - born_date as age, overall, potential, contract_amount,  contract_expiration, AVG(minutes) as mpg, AVG(points) as ppg, AVG(offensive_rebounds + defensive_rebounds) as rpg, AVG(assists) as apg FROM %s_player_attributes as pa, %s_player_ratings as pr, %s_player_stats as ps WHERE pa.player_id = pr.player_id AND ps.player_id = pr.player_id AND ps.season = %s AND pa.team_id = %s GROUP BY pa.player_id ORDER BY pr.roster_position ASC', (g.season, g.league_id, g.league_id, g.league_id, g.season, team_id))
+    players = g.dbd.fetchall()
+    print len(players)
+
+    return render_all_or_json('roster.html', {'players': players})
 
 @app.route('/<int:league_id>/game_log')
 @app.route('/<int:league_id>/game_log/<int:season>')

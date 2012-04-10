@@ -4,6 +4,10 @@
 </button>
 <ul class="dropdown-menu">
   {% for option in options %}
-    <li><a onclick="javascript:$.get('{{ option.url }} ');" href="javascript:void(0);">{{ option.label }}</a></li>
+    {% if option.normal_link %}
+      <li><a href="{{ option.url }}">{{ option.label }}</a></li>
+    {% else %}
+      <li><a onclick="javascript:$.get('{{ option.url }} ');" href="javascript:void(0);">{{ option.label }}</a></li>
+    {% endif %}
   {% endfor %}
 </ul>

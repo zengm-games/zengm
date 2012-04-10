@@ -7,18 +7,19 @@ from flask import url_for, g, render_template
 jug = Juggernaut()
 
 def options(keys=None):
-    all_options = [{'id': 'stop', 'url': '#', 'label': 'Stop'},
-                   {'id': 'day', 'url': url_for('play', league_id=g.league_id, amount='day'), 'label': 'One day'},
-                   {'id': 'week', 'url': url_for('play', league_id=g.league_id, amount='week'), 'label': 'One week'},
-                   {'id': 'month', 'url': url_for('play', league_id=g.league_id, amount='month'), 'label': 'One month'},
-                   {'id': 'until_playoffs', 'url': url_for('play', league_id=g.league_id, amount='until_playoffs'), 'label': 'Until playoffs'},
-                   {'id': 'through_playoffs', 'url': url_for('play', league_id=g.league_id, amount='through_playoffs'), 'label': 'Through playoffs'},
-                   {'id': 'begin_draft', 'url': url_for('play', league_id=g.league_id, amount='until_draft'), 'label': 'Until draft'},
-                   {'id': 'until_free_agency', 'url': url_for('play', league_id=g.league_id, amount='until_free_agency'), 'label': 'Until free agency'},
-                   {'id': 'until_preseason', 'url': url_for('play', league_id=g.league_id, amount='until_preseason'), 'label': 'Until preseason'},
-                   {'id': 'until_regular_season', 'url': url_for('play', league_id=g.league_id, amount='until_regular_season'), 'label': 'Until regular season'},
-                   {'id': 'negotiate', 'url': '#', 'label': 'Negotiate'},
-                   {'id': 'cancel', 'url': '#', 'label': 'Cancel'}]
+    all_options = [{'id': 'stop', 'url': '#', 'label': 'Stop', 'normal_link': False},
+                   {'id': 'day', 'url': url_for('play', league_id=g.league_id, amount='day'), 'label': 'One day', 'normal_link': False},
+                   {'id': 'week', 'url': url_for('play', league_id=g.league_id, amount='week'), 'label': 'One week', 'normal_link': False},
+                   {'id': 'month', 'url': url_for('play', league_id=g.league_id, amount='month'), 'label': 'One month', 'normal_link': False},
+                   {'id': 'until_playoffs', 'url': url_for('play', league_id=g.league_id, amount='until_playoffs'), 'label': 'Until playoffs', 'normal_link': False},
+                   {'id': 'through_playoffs', 'url': url_for('play', league_id=g.league_id, amount='through_playoffs'), 'label': 'Through playoffs', 'normal_link': False},
+                   {'id': 'until_draft', 'url': url_for('play', league_id=g.league_id, amount='until_draft'), 'label': 'Until draft', 'normal_link': False},
+                   {'id': 'view_draft', 'url': url_for('draft'), 'label': 'View draft', 'normal_link': True},
+                   {'id': 'until_free_agency', 'url': url_for('play', league_id=g.league_id, amount='until_free_agency'), 'label': 'Until free agency', 'normal_link': False},
+                   {'id': 'until_preseason', 'url': url_for('play', league_id=g.league_id, amount='until_preseason'), 'label': 'Until preseason', 'normal_link': False},
+                   {'id': 'until_regular_season', 'url': url_for('play', league_id=g.league_id, amount='until_regular_season'), 'label': 'Until regular season', 'normal_link': False},
+                   {'id': 'negotiate', 'url': '#', 'label': 'Negotiate', 'normal_link': False},
+                   {'id': 'cancel', 'url': '#', 'label': 'Cancel', 'normal_link': False}]
 
     if keys:
 #        dict_you_want = { your_key: old_dict[your_key] for your_key in your_keys }

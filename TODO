@@ -31,6 +31,7 @@ Single page application
 - during page reloads or back/forward... what about handling deeper content? i.e., what box score is being viewed? what year? what stat is sorted? what page in rankings? etc.
 - highlight link in menu for current page - current JS only will work for links on the sidebar itself. need something more general
   - on AJAX success, remove other highlights. then somehow figure out the right one to add
+- internal links, like the "View draft" link from the play menu
 
 roster
 - reordering
@@ -40,9 +41,11 @@ roster
 - buy out
 
 draft
-- bbgm.core.draft, based on old draft_dialog, initiated from season.py
 - switch to draft view on button press. how? maybe return URL to button?
 - in draft view, a button linking to an async ajax call starts the draft, and updates the results until player's turn
+  - button press calls function to do draft up to player's spot
+  - when the user drafts a player, then it does gets results up to user's second round pick (or end of draft, for second time)
+  - draft results must be saved to database and partial results loaded from database
 
 free agents
 

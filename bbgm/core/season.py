@@ -5,7 +5,7 @@ from flask import session, g
 
 import bbgm
 from bbgm import app
-from bbgm.core import draft, player
+from bbgm.core import draft, play_menu, player
 
 def new_phase(phase):
     """Set a new phase of the game.
@@ -31,6 +31,7 @@ def new_phase(phase):
     if phase == 0:
         g.season += 1
         g.db.execute('UPDATE %s_game_attributes SET season = season + 1', (g.league_id,))
+        phase_text = '%s preseason' % (g.season,)
 
         # Get rid of old playoffs
         g.db.execute('DELETE FROM %s_active_playoff_series', (g.league_id,))
@@ -56,6 +57,7 @@ def new_phase(phase):
 
     # Regular season, before trade deadline
     elif phase == 1:
+        phase_text = '%s regular season' % (g.season,)
         # First, make sure teams are all within the roster limits
         # CPU teams
         keep_going = True
@@ -105,10 +107,13 @@ def new_phase(phase):
 
     # Regular season, after trade deadline
     elif phase == 2:
+        phase_text = '%s regular season, after trade deadline' % (g.season,)
         pass
 
     # Playoffs
     elif phase == 3:
+        phase_text = '%s playoffs' % (g.season,)
+
         # Set playoff matchups
         for conference_id in range(2):
             teams = []
@@ -128,6 +133,7 @@ def new_phase(phase):
 
     # Offseason, before draft
     elif phase == 4:
+        phase_text = '%s before draft' % (g.season,)
         # Remove released players' salaries from payrolls
         g.db.execute('DELETE FROM %s_released_players_salaries WHERE contract_expiration <= %s', (g.league_id, g.season))
 
@@ -136,15 +142,18 @@ def new_phase(phase):
 
     # Draft
     elif phase == 5:
+        phase_text = '%s draft' % (g.season,)
         draft.generate_players()
         draft.set_draft_order()
 
     # Offseason, after draft
     elif phase == 6:
+        phase_text = '%s after draft' % (g.season,)
         pass
 
     # Offseason, free agency
     elif phase == 7:
+        phase_text = '%s free agency' % (g.season,)
         # Reset contract demands of current free agents
         g.db.execute('SELECT player_id FROM %s_player_attributes WHERE team_id = -1', (g.league_id,))
         for player_id, in g.db.fetchall():
@@ -186,6 +195,8 @@ def new_phase(phase):
     g.phase = phase
 
     g.db.execute('UPDATE %s_game_attributes SET phase = %s', (g.league_id, g.phase))
+
+    play_menu.set_phase(phase_text)
 
 def new_schedule():
     teams = []

@@ -40,9 +40,6 @@ def set_status(status=None):
     Args:
         status: A string containing the current status message to be pushed to
             the client.
-        db: A database cursor (if not given, g.db is used).
-        league_id: League ID (if not given, g.league_id is used).
-        season: Year of the current season (if not given, g.season is used).
     """
     g.db.execute('SELECT pm_status FROM %s_game_attributes WHERE season = %s', (g.league_id, g.season))
     old_status, = g.db.fetchone()
@@ -57,25 +54,22 @@ def set_status(status=None):
 def set_phase(phase_text=None):
     """Save phase text to database and push to client.
 
-    If no phase text is given, load the last status from the database and push
-    that to the client.
+    If no phase text is given, load the last phase text from the database and
+    push that to the client.
 
     Args:
         phase_text: A string containing the current phase text to be pushed to
             the client.
-        db: A database cursor (if not given, g.db is used).
-        league_id: League ID (if not given, g.league_id is used).
-        season: Year of the current season (if not given, g.season is used).
     """
     g.db.execute('SELECT pm_phase FROM %s_game_attributes WHERE season = %s', (g.league_id, g.season))
-    old_status, = g.db.fetchone()
+    old_phase_text, = g.db.fetchone()
 
-    if not status:
-        status = old_status
-        jug.publish('%d_status' % (g.league_id,), status)
-    if status != old_status:
-        g.db.execute('UPDATE %s_game_attributes SET pm_status = %s WHERE season = %s', (g.league_id, status, g.season))
-        jug.publish('%d_status' % (g.league_id,), status)
+    if not phase_text:
+        phase_text = old_phase_text
+        jug.publish('%d_phase' % (g.league_id,), phase_text)
+    if phase_text != old_phase_text:
+        g.db.execute('UPDATE %s_game_attributes SET pm_phase = %s WHERE season = %s', (g.league_id, phase_text, g.season))
+        jug.publish('%d_phase' % (g.league_id,), phase_text)
 
 def set_options(options_keys=None):
     """Save options_ids to database and push rendered play button to client.
@@ -84,8 +78,8 @@ def set_options(options_keys=None):
     a button created from them.
 
     Args:
-        status: A list containing the IDs of the various predefined options to
-            be shown to the user (see bbgm.core.play_menu.options()).
+        options_keys: A list containing the IDs of the various predefined
+            options to be shown to the user (see bbgm.core.play_menu.options()).
     """
     if options_keys:
         g.db.execute('UPDATE %s_game_attributes SET pm_options = %s WHERE season = %s', (g.league_id, pickle.dumps(options_ids), g.season))

@@ -45,7 +45,7 @@
           <a class="brand" href="/"><img src="{{ url_for('static', filename='ico/logo.png') }}" width="20" height="20"> Basketball GM</a>
           <div class="nav-collapse">
             <div class="navbar-text"><div id="play_button" class="nav btn-group"></div></div>
-            <div class="nav"><span id="phase">Phase</span><br /><span id="play_status"></span></div>
+            <div class="nav"><span id="play_phase"></span><br /><span id="play_status"></span></div>
             {% if not session.logged_in %}
               <p class="navbar-text pull-right"><a href="{{ url_for('register') }}">Register</a> or <a href="{{ url_for('login') }}">log in</a></p>
             {% else %}

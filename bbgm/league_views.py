@@ -214,6 +214,7 @@ def push_play_menu():
     bbgm.core.play_menu.set_options, which push updates to the client.
     """
     play_menu.set_status()
+    play_menu.set_phase()
     play_menu.set_options()
 
     return 'fuck'

@@ -89,6 +89,7 @@ console.log(this)*/
     // Play button
     if (in_league) {
         $play_status = $('#play_status');
+        $play_phase = $('#play_phase');
         $play_button = $('#play_button');
 
         var jug = new Juggernaut;
@@ -101,6 +102,9 @@ console.log(this)*/
         // Listen for updates to play menu
         jug.subscribe(league_id + '_status', function(data){
             $play_status.html(data);
+        });
+        jug.subscribe(league_id + '_phase', function(data){
+            $play_phase.html(data);
         });
         jug.subscribe(league_id + '_button', function(data){
             $play_button.html(data);

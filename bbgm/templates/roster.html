@@ -14,9 +14,11 @@
       <thead>
         <tr><th></th><th>Name</th><th title="Position">Pos</th><th title="Overall rating">Ovr</th><th title="Potential rating">Pot</th><th>Age</th><th>Contract</th><th title="Minutes per game">MPG</th><th title="Points per game">PPG</th><th title="Rebounds per game">Reb</th><th title="Assists per game">Ast</th></tr>
       </thead>
-      {% for player in players %}
-        <tr id="roster_{{ player.id }}"><td class="{% if loop.index <= 5 %}btn-primary starter{% else %}btn-info bench{% endif %}"></td><td><a href="#">{{ player.name }}</a></td><td>{{ player.position }}</td><td>{{ player.overall }}</td><td>{{ player.potential }}</td><td>{{ player.age }}</td><td>${{ player.contract_amount|int }}k through {{ player.contract_expiration }}</td><td>{{ player.mpg|round(1) }}</td><td>{{ player.ppg|round(1) }}</td><td>{{ player.rpg|round(1) }}</td><td>{{ player.apg|round(1) }}</td></tr>
-      {% endfor %}
+      <tbody>
+        {% for player in players %}
+          <tr id="roster_{{ player.id }}"><td class="{% if loop.index <= 5 %}btn-primary starter{% else %}btn-info bench{% endif %}"></td><td><a href="#">{{ player.name }}</a></td><td>{{ player.position }}</td><td>{{ player.overall }}</td><td>{{ player.potential }}</td><td>{{ player.age }}</td><td>${{ player.contract_amount|int }}k through {{ player.contract_expiration }}</td><td>{{ player.mpg|round(1) }}</td><td>{{ player.ppg|round(1) }}</td><td>{{ player.rpg|round(1) }}</td><td>{{ player.apg|round(1) }}</td></tr>
+        {% endfor %}
+      </tbody>
       </table>
     </div>
   </div>

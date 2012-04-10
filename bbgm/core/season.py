@@ -5,7 +5,7 @@ from flask import session, g
 
 import bbgm
 from bbgm import app
-from bbgm.core import player
+from bbgm.core import draft, player
 
 def new_phase(phase):
     """Set a new phase of the game.
@@ -24,7 +24,11 @@ def new_phase(phase):
 
     old_phase = g.phase
     g.phase = phase
-    print g.league_id
+
+# UNCOMMENT WHEN DONE TESTING
+#    if old_phase == g.phase:
+#        return
+
     g.db.execute('UPDATE %s_game_attributes SET phase = %s', (g.league_id, g.phase))
 
     # Preseason
@@ -136,10 +140,8 @@ def new_phase(phase):
 
     # Draft
     elif g.phase == 5:
-        if old_phase != 5:  # Can't check hasattr because we need a new draft every year
-            self.dd = draft_dialog.DraftDialog(self)
-        else:
-            self.dd.draft_dialog.present()
+        draft.generate_players()
+#        draft.set_draft_order()
 
     # Offseason, after draft
     elif g.phase == 6:

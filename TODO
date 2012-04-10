@@ -40,9 +40,9 @@ roster
 - buy out
 
 draft
-- before this, make the roster view so it's easy to see results working
 - bbgm.core.draft, based on old draft_dialog, initiated from season.py
-- switch to draft view on button press
+- switch to draft view on button press. how? maybe return URL to button?
+- in draft view, a button linking to an async ajax call starts the draft, and updates the results until player's turn
 
 free agents
 

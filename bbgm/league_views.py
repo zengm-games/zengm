@@ -151,6 +151,20 @@ def game_log(season=None, abbreviation=None):
 
     return render_all_or_json('game_log.html', {'abbreviation': abbreviation, 'teams': teams})
 
+@app.route('/<int:league_id>/draft')
+@league_crap
+def draft():
+    if g.phase != 5:
+        error = "It's not time for the draft right now."
+        return render_all_or_json('league_error.html', {'error': error})
+
+    g.dbd.execute('SELECT pa.player_id, pa.position, pa.name, %s - pa.born_date as age, pr.overall, pr.potential FROM %s_player_attributes as pa, %s_player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = -2 ORDER BY pr.overall + 2*pr.potential DESC', (g.season, g.league_id, g.league_id))
+    players = g.dbd.fetchall()
+
+    return render_all_or_json('draft.html', {'players': players})
+
+# Utility views
+
 @app.route('/<int:league_id>/box_score')
 @league_crap_ajax
 def box_score():

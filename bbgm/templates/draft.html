@@ -1,0 +1,29 @@
+{% extends "league_layout.html" %}
+{% set active_page = "draft" %}
+
+{% block title %}Draft - League {{ g.league_id }} - Basketball GM{% endblock %}
+
+{% block league_content %}
+  <h1>Draft</h1>
+
+  <p>When your turn in the draft comes up, select from the list of available players on the left.</p>
+
+  <form action="" method="POST">
+    <button type="submit" class="btn btn-large btn-primary">Start draft</button>  
+  </form>
+
+  <div class="row-fluid">
+    <div class="span6">
+      <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="draft">
+      <thead>
+        <tr><th>Rank</th><th title="Position">Pos</th><th>Name</th><th>Age</th><th title="Overall rating">Ovr</th><th title="Potential rating">Pot</th><th>Draft</th></tr>
+      </thead>
+      <tbody>
+        {% for player in players %}
+          <tr id="draft_{{ player.player_id }}"><td>{{ loop.index }}</td><td>{{ player.position }}</td><td><a href="#">{{ player.name }}</a></td><td>{{ player.age }}<td>{{ player.overall }}</td><td>{{ player.potential }}</td><td><a href="#">Draft</a></td></tr>
+        {% endfor %}
+      </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

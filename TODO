@@ -26,6 +26,10 @@ play button requirements
 - http://twitter.github.com/bootstrap/javascript.html#popovers for warnings on button!
 - http://twitter.github.com/bootstrap/javascript.html#dropdowns maybe use this look rather than a button?
 
+play menu
+- just send everything over one juggernaut connection?
+- phase updating
+
 Single page application
 - When a simulation is done (or a player is signed, or whatever), the current page should be reloaded
 - during page reloads or back/forward... what about handling deeper content? i.e., what box score is being viewed? what year? what stat is sorted? what page in rankings? etc.

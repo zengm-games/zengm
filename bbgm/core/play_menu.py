@@ -54,6 +54,29 @@ def set_status(status=None):
         g.db.execute('UPDATE %s_game_attributes SET pm_status = %s WHERE season = %s', (g.league_id, status, g.season))
         jug.publish('%d_status' % (g.league_id,), status)
 
+def set_phase(phase_text=None):
+    """Save phase text to database and push to client.
+
+    If no phase text is given, load the last status from the database and push
+    that to the client.
+
+    Args:
+        phase_text: A string containing the current phase text to be pushed to
+            the client.
+        db: A database cursor (if not given, g.db is used).
+        league_id: League ID (if not given, g.league_id is used).
+        season: Year of the current season (if not given, g.season is used).
+    """
+    g.db.execute('SELECT pm_phase FROM %s_game_attributes WHERE season = %s', (g.league_id, g.season))
+    old_status, = g.db.fetchone()
+
+    if not status:
+        status = old_status
+        jug.publish('%d_status' % (g.league_id,), status)
+    if status != old_status:
+        g.db.execute('UPDATE %s_game_attributes SET pm_status = %s WHERE season = %s', (g.league_id, status, g.season))
+        jug.publish('%d_status' % (g.league_id,), status)
+
 def set_options(options_keys=None):
     """Save options_ids to database and push rendered play button to client.
 

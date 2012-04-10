@@ -22,17 +22,13 @@ def new_phase(phase):
         7: Offseason, free agency
     """
 
-    old_phase = g.phase
-    g.phase = phase
-
 # UNCOMMENT WHEN DONE TESTING
-#    if old_phase == g.phase:
+#    # Prevent code running twice
+#    if phase == g.phase:
 #        return
 
-    g.db.execute('UPDATE %s_game_attributes SET phase = %s', (g.league_id, g.phase))
-
     # Preseason
-    if g.phase == 0:
+    if phase == 0:
         g.season += 1
         g.db.execute('UPDATE %s_game_attributes SET season = season + 1', (g.league_id,))
 
@@ -59,7 +55,7 @@ def new_phase(phase):
         self.auto_sign_free_agents()
 
     # Regular season, before trade deadline
-    elif g.phase == 1:
+    elif phase == 1:
         # First, make sure teams are all within the roster limits
         # CPU teams
         keep_going = True
@@ -82,7 +78,7 @@ def new_phase(phase):
                         # Release player.
                         p = player.Player()
                         p.load(player_id)
-                        p.release(g.phase)
+                        p.release(phase)
             elif num_players_on_roster < 5:
                 if team_id == g.user_team_id:
                     md = Gtk.MessageDialog(self.main_window, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
@@ -104,15 +100,15 @@ def new_phase(phase):
 #                if t != g.user_team_id:
 #                    common.roster_auto_sort(t)
         else:
-            g.phase = old_phase
-            g.db.execute('UPDATE %s_game_attributes SET phase = %s', (g.league_id, g.phase))
+            g.db.execute('UPDATE %s_game_attributes SET phase = %s', (g.league_id, phase))
+            return
 
     # Regular season, after trade deadline
-    elif g.phase == 2:
+    elif phase == 2:
         pass
 
     # Playoffs
-    elif g.phase == 3:
+    elif phase == 3:
         # Set playoff matchups
         for conference_id in range(2):
             teams = []
@@ -131,7 +127,7 @@ def new_phase(phase):
             g.db.execute(query, (g.league_id, conference_id * 4 + 4, teams[1], teams[6], 2, 7))
 
     # Offseason, before draft
-    elif g.phase == 4:
+    elif phase == 4:
         # Remove released players' salaries from payrolls
         g.db.execute('DELETE FROM %s_released_players_salaries WHERE contract_expiration <= %s', (g.league_id, g.season))
 
@@ -139,22 +135,22 @@ def new_phase(phase):
         g.db.execute('UPDATE %s_player_attributes SET contract_expiration = contract_expiration + 1 WHERE team_id = -1', (g.league_id,))
 
     # Draft
-    elif g.phase == 5:
+    elif phase == 5:
         draft.generate_players()
         draft.set_draft_order()
 
     # Offseason, after draft
-    elif g.phase == 6:
+    elif phase == 6:
         pass
 
     # Offseason, free agency
-    elif g.phase == 7:
+    elif phase == 7:
         # Reset contract demands of current free agents
         g.db.execute('SELECT player_id FROM %s_player_attributes WHERE team_id = -1', (g.league_id,))
         for player_id, in g.db.fetchall():
             p = player.Player()
             p.load(player_id)
-            p.add_to_free_agents(g.phase)
+            p.add_to_free_agents(phase)
 
         # Check for retiring players
         # Call the contructor each season because that's where the code to check for retirement is
@@ -168,7 +164,7 @@ def new_phase(phase):
             g.db.execute('UPDATE %s_player_attributes SET draft_year = -1, draft_round = -1, draft_pick = -1, draft_team_id = -1 WHERE player_id = %s', (g.league_id, player_id))
             p = player.Player()
             p.load(player_id)
-            p.add_to_free_agents(g.phase)
+            p.add_to_free_agents(phase)
 
         # Resign players
         g.db.execute('SELECT player_id, team_id, name FROM %s_player_attributes WHERE contract_expiration = %s AND team_id >= 0', (g.league_id, g.season))
@@ -180,11 +176,16 @@ def new_phase(phase):
                 # Add to free agents first, to generate a contract demand
                 p = player.Player()
                 p.load(player_id)
-                p.add_to_free_agents(g.phase)
+                p.add_to_free_agents(phase)
                 # Open a contract_window
                 cw = contract_window.ContractWindow(self, player_id, True)
                 cw.contract_window.run()
                 cw.contract_window.destroy()
+
+    old_phase = g.phase
+    g.phase = phase
+
+    g.db.execute('UPDATE %s_game_attributes SET phase = %s', (g.league_id, g.phase))
 
 def new_schedule():
     teams = []

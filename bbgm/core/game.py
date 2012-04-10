@@ -355,7 +355,7 @@ def sim_wrapper(league_id, num_days, schedule):
         play_menu.set_status('Idle')
 
 def save_results(results, is_playoffs):
-    """Callback function (for Celery) to save game stats."""
+    """Convenience function (for Celery) to save game stats."""
     game = Game()
     game.load(results, is_playoffs)
     game.write_stats()

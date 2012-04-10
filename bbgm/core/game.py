@@ -346,11 +346,11 @@ def sim_wrapper(league_id, num_days, schedule):
                 time.sleep(0.25)
 
             # Check to see if the season is over
-            if len(schedule) == 0:
+            if len(schedule) == 0 and g.phase < 3:
                 break  # Don't try to play any more of the regular season
 
         # Check to see if the season is over
-        if len(schedule) == 0:
+        if len(schedule) == 0 and g.phase < 3:
 #            sew = season_end_window.SeasonEndWindow(self)
 #            sew.season_end_window.present()
             season.new_phase(3)  # Start playoffs

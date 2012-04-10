@@ -4,7 +4,7 @@ from flask import session, g
 
 import bbgm
 from bbgm import app
-from bbgm.core import player, season
+from bbgm.core import play_menu, player, season
 
 def new(team_id):
     # Add to main record
@@ -75,6 +75,7 @@ def new(team_id):
 
     # Make schedule, start season
     season.new_phase(1)
+    play_menu.set_status('Idle')
 
     #Auto sort player's roster
 #    common.roster_auto_sort(g.user_team_id)

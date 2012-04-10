@@ -1,7 +1,5 @@
 To acquire parity with the GTK version:
 
-single page javascript links: do nothing if link points to current page
-
 Game simulation:
 - Make this robust to failure.. somehow.. only pop from schedule on completion? if games_in_progress lock is set, that'll work
 

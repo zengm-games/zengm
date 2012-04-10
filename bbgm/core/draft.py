@@ -43,13 +43,12 @@ def generate_players():
         roster_position += 1
 
 def set_draft_order():
-    for round_ in xrange(1, 3):
+    """Sets draft order based on winning percentage (no lottery)."""
+    for draft_round in xrange(1, 3):
         pick = 1
         g.db.execute('SELECT team_id, abbreviation FROM %s_team_attributes WHERE season =  %s ORDER BY 1.0*won/(won + lost) ASC', (g.league_id, g.season))
-        for row in g.db.fetchall():
-            team_id, abbreviation = row
-            name = ''
-            self.draft_results.append([-1, team_id, round_, pick, abbreviation, name])
+        for team_id, abbreviation in g.db.fetchall():
+            g.db.execute('INSERT INTO %s_draft_results (season, draft_round, pick, team_id, abbreviation, player_id, player_name) VALUES (%s, %s, %s, %s, %s, %s, %s)', (g.league_id, g.season, draft_round, pick, team_id, abbreviation, 0, ''))
             pick += 1
 
 def do_draft():

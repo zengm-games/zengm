@@ -46,7 +46,7 @@ draft
   - button press calls function to do draft up to player's spot
   - when the user drafts a player, then it does gets results up to user's second round pick (or end of draft, for second time)
   - draft results must be saved to database and partial results loaded from database
-
+    - bonus: this allows for archiving of past draft results. so, make a view for that (league_id/draft/2012)
 free agents
 
 organize imports

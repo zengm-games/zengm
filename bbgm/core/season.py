@@ -141,7 +141,7 @@ def new_phase(phase):
     # Draft
     elif g.phase == 5:
         draft.generate_players()
-#        draft.set_draft_order()
+        draft.set_draft_order()
 
     # Offseason, after draft
     elif g.phase == 6:

@@ -345,18 +345,12 @@ def sim_wrapper(league_id, num_days, schedule):
             while not result.ready():
                 time.sleep(0.25)
 
-        if g.phase == 3:
-            pass
-#            self.playoffs.updated = False
-        else:
             # Check to see if the season is over
-            g.db.execute('SELECT COUNT(*)/30 FROM %s_team_stats WHERE season = %s', (g.league_id, g.season))
-            days_played, = g.db.fetchone()
-            if days_played == g.season_length:
+            if len(schedule) == 0:
 #                sew = season_end_window.SeasonEndWindow(self)
 #                sew.season_end_window.present()
-
                 season.new_phase(3)  # Start playoffs
+                break  # Don't try to play any more of the regular season
 
         play_menu.set_status('Idle')
 

@@ -142,7 +142,11 @@ pick INTEGER,
 team_id INTEGER,
 abbreviation VARCHAR(3),
 player_id INTEGER,
-player_name VARCHAR(255));
+name VARCHAR(255),
+position VARCHAR(2),
+born_date INTEGER, -- YYYY for birth year
+overall INTEGER,
+potential INTEGER);
 
 CREATE INDEX a ON team_attributes(team_id, season, division_id, region);
 CREATE INDEX b ON player_stats(player_id, season, is_playoffs);

@@ -6,6 +6,8 @@ Game simulation:
 speed it up
 - somehow cache team (and/or player) dicts, so we don't need separate SQL queries all the time
 
+make player stats/ratings tables faster, somehow
+
 global lock: only one game simulation (draft, contract negotiation, ...) at a time
 
 play button requirements
@@ -42,8 +44,7 @@ roster
 - buy out
 
 draft
-- switch to draft view on button press. how? maybe return URL to button?
-- in draft view, a button linking to an async ajax call starts the draft, and updates the results until player's turn
+- in draft view, a button linking to an async ajax call starts the draft (league_views.start_draft -> draft.draft_until_user_or_end), and updates the results until player's turn
   - button press calls function to do draft up to player's spot
     - return JSON which can be cutely loaded
   - when the user drafts a player, then it does gets results up to user's second round pick (or end of draft, for second time)

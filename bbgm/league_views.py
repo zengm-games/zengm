@@ -7,7 +7,7 @@ from flask import jsonify, render_template, url_for, request, session, redirect,
 from flask.globals import _request_ctx_stack
 
 from bbgm import app
-from bbgm.core import game, play_menu, season
+from bbgm.core import draft, game, play_menu, season
 from bbgm.util.decorators import league_crap, league_crap_ajax
 
 # All the views in here are for within a league.
@@ -153,15 +153,18 @@ def game_log(season=None, abbreviation=None):
 
 @app.route('/<int:league_id>/draft')
 @league_crap
-def draft():
+def draft_():
     if g.phase != 5:
         error = "It's not time for the draft right now."
         return render_all_or_json('league_error.html', {'error': error})
 
     g.dbd.execute('SELECT pa.player_id, pa.position, pa.name, %s - pa.born_date as age, pr.overall, pr.potential FROM %s_player_attributes as pa, %s_player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = -2 ORDER BY pr.overall + 2*pr.potential DESC', (g.season, g.league_id, g.league_id))
-    players = g.dbd.fetchall()
+    undrafted = g.dbd.fetchall()
 
-    return render_all_or_json('draft.html', {'players': players})
+    g.dbd.execute('SELECT draft_round, pick, abbreviation, player_id, name, %s - born_date as age, position, overall, potential FROM %s_draft_results WHERE season =  %s ORDER BY draft_round, pick ASC', (g.season, g.league_id, g.season))
+    drafted = g.dbd.fetchall()
+
+    return render_all_or_json('draft.html', {'undrafted': undrafted, 'drafted': drafted})
 
 # Utility views
 
@@ -219,8 +222,12 @@ def push_play_menu():
 
     return 'fuck'
 
+@app.route('/<int:league_id>/start_draft', methods=['POST'])
+@league_crap_ajax
+def start_draft():
+    draft.draft_until_user_or_end()
 
-
+    return 'fuck'  # Should return draft results
 
 
 

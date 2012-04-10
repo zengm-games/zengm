@@ -48,43 +48,25 @@ def set_draft_order():
         pick = 1
         g.db.execute('SELECT team_id, abbreviation FROM %s_team_attributes WHERE season =  %s ORDER BY 1.0*won/(won + lost) ASC', (g.league_id, g.season))
         for team_id, abbreviation in g.db.fetchall():
-            g.db.execute('INSERT INTO %s_draft_results (season, draft_round, pick, team_id, abbreviation, player_id, player_name) VALUES (%s, %s, %s, %s, %s, %s, %s)', (g.league_id, g.season, draft_round, pick, team_id, abbreviation, 0, ''))
+            g.db.execute('INSERT INTO %s_draft_results (season, draft_round, pick, team_id, abbreviation, player_id, name, position) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', (g.league_id, g.season, draft_round, pick, team_id, abbreviation, 0, '', ''))
             pick += 1
 
-def do_draft():
-    # Do the draft
-    for row in self.liststore_draft_results:
-        while Gtk.events_pending():
-            Gtk.main_iteration()  # This stops everything from freezing
+def draft_until_user_or_end():
+    """Simulate draft picks until it's the user's turn or the draft is over."""
+    g.db.execute('SELECT team_id, draft_round, pick FROM %s_draft_results WHERE season =  %s AND player_id = 0 ORDER BY draft_round, pick ASC', (g.league_id, g.season))
+    for team_id, draft_round, pick in g.db.fetchall():
+        if team_id == g.user_team_id:
+            return
+        team_pick = abs(int(random.gauss(0, 3)))  # 0=best prospect, 1=next best prospect, etc.
+        g.db.execute('SELECT pr.player_id, pa.name, pa.position, pa.born_date, pr.overall, pr.potential FROM %s_player_attributes as pa, %s_player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = -2 ORDER BY pr.overall + 2*pr.potential DESC LIMIT %s, 1', (g.league_id, g.league_id, team_pick))
+        player_id, name, position, born_date, overall, potential = g.db.fetchone()
+        g.db.execute('UPDATE %s_player_attributes SET team_id = %s WHERE player_id = %s', (g.league_id, team_id, player_id))
+        g.db.execute('UPDATE %s_draft_results SET player_id = %s, name = %s, position = %s, born_date = %s, overall = %s, potential = %s WHERE season = %s AND draft_round = %s AND pick = %s', (g.league_id, player_id, name, position, born_date, overall, potential, g.season, draft_round, pick))
 
-        team_id = row[1]
-        self.round = row[2]
-
-        if team_id != g.user_team_id:
-            self.pick = abs(int(random.gauss(0, 3)))
-            time.sleep(0.1)
-        else:
-            # The player has to pick
-            self.button_draft_player.set_sensitive(True)
-            self.picked = False
-            while not self.picked:
-                while Gtk.events_pending():
-                    Gtk.main_iteration()  # This stops everything from freezing
-                time.sleep(0.01)
-            self.button_draft_player.set_sensitive(False)
-        self.pick_player(row, self.pick)
-
-    # Replace Draft Player button with stock Close button
-    self.button_draft_player.destroy()
-    self.button_close = self.draft_dialog.add_button(Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE)
-    self.button_close.connect('clicked', self.on_button_close_clicked)
-
-    # Set to True to allow dialog to be closed
-    self.done_draft = True
-
-    # Update the main window because we have added new players
-    self.main_window.update_all_pages()
-    self.main_window.new_phase(6)
+    # Is draft over?
+    g.db.execute('SELECT 1 FROM %s_draft_results WHERE season =  %s AND player_id = 0', (g.league_id, g.season))
+    if g.db.rowcount > 0:
+        season.new_phase(6)
 
 def pick_player(self, row, pick):
     '''

@@ -33,12 +33,13 @@ hopefully that will change relatively soon.
 
 ### Required
 
-* python-flask
+* mysql-server
 * python-mysqldb
 * redis-server
 * node.js
 * juggernaut
 * python-juggernaut
+* Flask
 * Celery
 * Flask-Celery
 * Flask-Assets
@@ -58,6 +59,7 @@ And to install the rest, run:
 
     sudo apt-get install python-pip
     sudo pip install juggernaut
+    sudo pip install Flask
     sudo pip install Celery
     sudo pip install Flask-Celery
     sudo pip install Flask-Assets
@@ -71,9 +73,14 @@ This speeds up gameplay by about 10%, for now at least.
 
 ## Installing and running
 
-Create a new MySQL database called bbgm
+Create a new MySQL database called bbgm. To do this, from the command line run
+something like:
 
-Run these commands in the Python interpreter, from this folder:
+    mysql -u root -p
+    CREATE DATABASE bbgm;
+    GRANT ALL ON bbgm.* TO testuser@localhost IDENTIFIED BY 'test623';
+
+Then these commands in the Python interpreter, from this folder:
 
     import bbgm
     bbgm.init_db()

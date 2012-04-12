@@ -6,11 +6,6 @@ Game simulation:
 speed it up
 - somehow cache team (and/or player) dicts, so we don't need separate SQL queries all the time
 
-make player stats/ratings tables faster, somehow
-- first try: http://datatables.net/examples/data_sources/js_array.html
-- do in player_stats
-- generalize to new bbgm_data_table (or bbgm_datatable)
-
 global lock: only one game simulation (draft, contract negotiation, ...) at a time
 
 play button requirements

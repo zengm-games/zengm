@@ -8,19 +8,18 @@ function ajax_update(data, url) {
 }
 
 // Data tables
-function bbgm_data_table(table, col) {
-    if(table.length > 0) {
-        table.dataTable( {
-            "aaSorting": [[ col, "desc" ]],
-            "sPaginationType": "bootstrap",
-            "oLanguage": {
-                "sLengthMenu": "_MENU_ players per page",
-                "sInfo": "Showing _START_ to _END_ of _TOTAL_ players",
-                "sInfoEmpty": "Showing 0 to 0 of 0 players",
-                "sInfoFiltered": "(filtered from _MAX_ total players)"
-            }
-        } );
-    }
+function bbgm_datatable(table, sort_col, data) {
+    table.dataTable( {
+        "aaData": data,
+        "aaSorting": [[ sort_col, "desc" ]],
+        "sPaginationType": "bootstrap",
+        "oLanguage": {
+            "sLengthMenu": "_MENU_ players per page",
+            "sInfo": "Showing _START_ to _END_ of _TOTAL_ players",
+            "sInfoEmpty": "Showing 0 to 0 of 0 players",
+            "sInfoFiltered": "(filtered from _MAX_ total players)"
+        }
+    } );
 }
 
 $(document).ready(function() {

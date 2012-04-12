@@ -5,24 +5,13 @@
 
 {% block league_content %}
   <script type="text/javascript">
-$(document).ready(function() {
-    col = 4;
-	$('#player_ratings').dataTable( {
-		"aaData": [
-            {% for player in players %}
-			    [ '<a href="#"><nobr>{{ player.name }}</nobr></a>', '{{ player.position }}', '<a href="#">{{ player.team_abbreviation }}</a>', '{{ player.age }}', '{{ player.overall }}', '{{ player.potential }}', '{{ player.height }}', '{{ player.strength }}', '{{ player.speed }}', '{{ player.jumping }}', '{{ player.endurance }}', '{{ player.shooting_inside }}', '{{ player.shooting_layups }}', '{{ player.shooting_free_throws }}', '{{ player.shooting_two_pointers }}', '{{ player.shooting_three_pointers }}', '{{ player.blocks }}', '{{ player.steals }}', '{{ player.dribbling }}', '{{ player.passing }}', '{{ player.rebounding }}' ],
-            {% endfor %}
-		],
-        "aaSorting": [[ col, "desc" ]],
-        "sPaginationType": "bootstrap",
-        "oLanguage": {
-            "sLengthMenu": "_MENU_ players per page",
-            "sInfo": "Showing _START_ to _END_ of _TOTAL_ players",
-            "sInfoEmpty": "Showing 0 to 0 of 0 players",
-            "sInfoFiltered": "(filtered from _MAX_ total players)"
-        }
-	} );	
-} );
+    $(document).ready(function() {
+      bbgm_datatable($('#player_ratings'), 4, [
+        {% for player in players %}
+		  [ '<a href="#"><nobr>{{ player.name }}</nobr></a>', '{{ player.position }}', '<a href="#">{{ player.team_abbreviation }}</a>', '{{ player.age }}', '{{ player.overall }}', '{{ player.potential }}', '{{ player.height }}', '{{ player.strength }}', '{{ player.speed }}', '{{ player.jumping }}', '{{ player.endurance }}', '{{ player.shooting_inside }}', '{{ player.shooting_layups }}', '{{ player.shooting_free_throws }}', '{{ player.shooting_two_pointers }}', '{{ player.shooting_three_pointers }}', '{{ player.blocks }}', '{{ player.steals }}', '{{ player.dribbling }}', '{{ player.passing }}', '{{ player.rebounding }}' ],
+        {% endfor %}
+      ]);
+    } );
   </script>
 
   <h1>Player ratings</h1>

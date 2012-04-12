@@ -5,9 +5,24 @@
 
 {% block league_content %}
   <script type="text/javascript">
-    $(document).ready(function() {
-      bbgm_data_table($('#player_stats'), 23);
-    } );
+$(document).ready(function() {
+    col = 23;
+	$('#player_stats').dataTable( {
+		"aaData": [
+            {% for player in players %}
+			    [ '<a href="#"><nobr>{{ player.name }}</nobr></a>', '{{ player.position }}', '<a href="#">{{ player.abbreviation }}</a>', '{{ player.games_played }}', '{{ player.games_started }}', '{{ player.minutes|round(1) }}', '{{ player.field_goals_made|round(1) }}', '{{ player.field_goals_attempted|round(1) }}', '{{ player.field_goal_percentage|round(1) }}', '{{ player.three_pointers_made|round(1) }}', '{{ player.three_pointers_attempted|round(1) }}', '{{ player.three_point_percentage|round(1) }}', '{{ player.free_throws_made|round(1) }}', '{{ player.free_throws_attempted|round(1) }}', '{{ player.free_throw_percentage|round(1) }}', '{{ player.offensive_rebounds|round(1) }}', '{{ player.defensive_rebounds|round(1) }}', '{{ player.rebounds|round(1) }}', '{{ player.assists|round(1) }}', '{{ player.turnovers|round(1) }}', '{{ player.steals|round(1) }}', '{{ player.blocks|round(1) }}', '{{ player.personal_fouls|round(1) }}', '{{ player.points|round(1) }}' ],
+            {% endfor %}
+		],
+        "aaSorting": [[ col, "desc" ]],
+        "sPaginationType": "bootstrap",
+        "oLanguage": {
+            "sLengthMenu": "_MENU_ players per page",
+            "sInfo": "Showing _START_ to _END_ of _TOTAL_ players",
+            "sInfoEmpty": "Showing 0 to 0 of 0 players",
+            "sInfoFiltered": "(filtered from _MAX_ total players)"
+        }
+	} );	
+} );
   </script>
 
   <h1>Player stats</h1>
@@ -17,8 +32,5 @@
     <tr><th colspan="6"></th><th colspan="3" style="text-align: center">FG</th><th colspan="3" style="text-align: center">3PT</th><th colspan="3" style="text-align: center">FT</th><th colspan="3" style="text-align: center">Reb</th><th colspan="6"></th></tr>
     <tr><th>Name</th><th>Pos</th><th>Team</th><th>GP</th><th>GS</th><th>Min</th><th>M</th><th>A</th><th>%</th><th>M</th><th>A</th><th>%</th><th>M</th><th>A</th><th>%</th><th>Off</th><th>Def</th><th>Tot</th><th>Ast</th><th>TO</th><th>Stl</th><th>Blk</th><th>PF</th><th>PPG</th></tr>
   </thead>
-  {% for player in players %}
-    <tr><td><a href="#"><nobr>{{ player.name }}</nobr></a></td><td>{{ player.position }}</td><td><a href="#">{{ player.abbreviation }}</a></td><td>{{ player.games_played }}</td><td>{{ player.games_started }}</td><td>{{ player.minutes|round(1) }}</td><td>{{ player.field_goals_made|round(1) }}</td><td>{{ player.field_goals_attempted|round(1) }}</td><td>{{ player.field_goal_percentage|round(1) }}</td><td>{{ player.three_pointers_made|round(1) }}</td><td>{{ player.three_pointers_attempted|round(1) }}</td><td>{{ player.three_point_percentage|round(1) }}</td><td>{{ player.free_throws_made|round(1) }}</td><td>{{ player.free_throws_attempted|round(1) }}</td><td>{{ player.free_throw_percentage|round(1) }}</td><td>{{ player.offensive_rebounds|round(1) }}</td><td>{{ player.defensive_rebounds|round(1) }}</td><td>{{ player.rebounds|round(1) }}</td><td>{{ player.assists|round(1) }}</td><td>{{ player.turnovers|round(1) }}</td><td>{{ player.steals|round(1) }}</td><td>{{ player.blocks|round(1) }}</td><td>{{ player.personal_fouls|round(1) }}</td><td>{{ player.points|round(1) }}</td></tr>
-  {% endfor %}
   </table>
 {% endblock %}

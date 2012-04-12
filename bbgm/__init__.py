@@ -1,7 +1,7 @@
 #from gevent import monkey
 #monkey.patch_all()
 from flask import Flask, g
-from flaskext.assets import Environment, Bundle
+from flask.ext.assets import Environment, Bundle
 import MySQLdb
 from contextlib import closing
 #from gevent.event import Event

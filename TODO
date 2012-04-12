@@ -7,6 +7,8 @@ speed it up
 - somehow cache team (and/or player) dicts, so we don't need separate SQL queries all the time
 
 make player stats/ratings tables faster, somehow
+- first try: http://datatables.net/examples/data_sources/js_array.html
+- second try: http://datatables.net/examples/data_sources/server_side.html
 
 global lock: only one game simulation (draft, contract negotiation, ...) at a time
 
@@ -74,8 +76,6 @@ urls like http://flask.pocoo.org/docs/quickstart/#rendering-templates default to
 fix commented lines in:
 - bbgm.core.season
 
-set phase div
-
 Flask-Assets
 - CSS
 
@@ -85,6 +85,7 @@ grep for # links
 
 how to start/manage all these services?
 - supervisor
+  - https://github.com/ask/celery/tree/master/contrib/supervisord/
 
 security
 - password hashing

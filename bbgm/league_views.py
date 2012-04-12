@@ -222,13 +222,21 @@ def push_play_menu():
 
     return 'fuck'
 
-@app.route('/<int:league_id>/start_draft', methods=['POST'])
+@app.route('/<int:league_id>/draft/until_user_or_end', methods=['POST'])
 @league_crap_ajax
-def start_draft():
-    draft.draft_until_user_or_end()
+def draft_until_user_or_end():
+    player_ids = draft.until_user_or_end()
 
-    return 'fuck'  # Should return draft results
+    return jsonify(player_ids=player_ids)
 
+@app.route('/<int:league_id>/draft/user', methods=['POST'])
+@league_crap_ajax
+def draft_user():
+    player_id = int(request.form['player_id'])
+#    player_ids = draft.player(player_id)
+
+#    return jsonify(player_ids=player_ids)
+    return jsonify(player_ids=[player_id])
 
 
 

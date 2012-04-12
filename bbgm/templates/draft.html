@@ -4,13 +4,61 @@
 {% block title %}Draft - League {{ g.league_id }} - Basketball GM{% endblock %}
 
 {% block league_content %}
+  <script type="text/javascript">
+$(document).ready(function() {
+    function update_draft_tables(player_ids) {
+        console.log(player_ids);
+        for (var i=0; i<player_ids.length; i++) {
+            var drafted_player = new Array(5);
+            // Find row in undrafted players table, get metadata, delete row
+            undrafted_tds = $('#undrafted_' + player_ids[i] + ' td')
+            for (var j=1; j<6; j++) {
+                drafted_player[j-1] = undrafted_tds[j].innerHTML;
+            }
+
+            // Find correct row (first blank row) in drafted players table, write metadata
+            drafted_rows = $('#drafted tbody tr');
+            for (var j=0; j<drafted_rows.length; j++) {
+                if (drafted_rows[j].children[3].innerHTML.length == 0) {
+                    $('#undrafted_' + player_ids[i]).remove();
+                    drafted_rows[j].children[2].innerHTML = drafted_player[0];
+                    drafted_rows[j].children[3].innerHTML = drafted_player[1];
+                    drafted_rows[j].children[4].innerHTML = drafted_player[2];
+                    drafted_rows[j].children[5].innerHTML = drafted_player[3];
+                    drafted_rows[j].children[6].innerHTML = drafted_player[4];
+                    break;
+                }
+            }
+        }
+    }
+
+    function draft_until_user_or_end() {
+        $.post('{{ url_for('draft_until_user_or_end', league_id=g.league_id) }}', function (data) {
+            update_draft_tables(data['player_ids']);
+            $('#undrafted button').removeAttr('disabled');
+        }, 'json');
+    }
+
+    $('#start_draft').click(function(event) {
+        $('#start_draft').hide();
+        draft_until_user_or_end();
+    });
+
+    $('#undrafted button').click(function(event) {
+        $('#undrafted button').attr('disabled', 'disabled');
+        $.post('{{ url_for('draft_user', league_id=g.league_id) }}', {'player_id': this.getAttribute('data-player-id')}, function (data) {
+            update_draft_tables(data['player_ids']);
+            draft_until_user_or_end();
+        }, 'json');
+    });
+});
+  </script>
+
   <h1>Draft</h1>
 
   <p>When your turn in the draft comes up, select from the list of available players on the left.</p>
 
-  <form action="{{ url_for('start_draft', league_id=g.league_id) }}" method="POST">
-    <button type="submit" class="btn btn-large btn-primary">Start draft</button>  
-  </form>
+  <p><button class="btn btn-large btn-primary" id="start_draft">Start draft</button></p>
 
   <div class="row-fluid">
     <div class="span6">
@@ -21,7 +69,7 @@
       </thead>
       <tbody>
         {% for player in undrafted %}
-          <tr><td>{{ loop.index }}</td><td><a href="#">{{ player.name }}</a></td><td>{{ player.position }}</td><td>{{ player.age }}<td>{{ player.overall }}</td><td>{{ player.potential }}</td><td><a href="#">Draft {{ player.player_id }}</a></td></tr>
+          <tr id="undrafted_{{ player.player_id }}"><td>{{ loop.index }}</td><td><a href="#">{{ player.name }}</a></td><td>{{ player.position }}</td><td>{{ player.age }}<td>{{ player.overall }}</td><td>{{ player.potential }}</td><td><button class="btn btn-mini btn-primary" data-player-id="{{ player.player_id }}" disabled="disabled">Draft</button></td></tr>
         {% endfor %}
       </tbody>
       </table>

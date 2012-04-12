@@ -42,7 +42,7 @@ def generate_players():
         g.db.execute('UPDATE %s_player_ratings SET roster_position = %s WHERE player_id = %s', (g.league_id, roster_position, player_id))
         roster_position += 1
 
-def set_draft_order():
+def set_order():
     """Sets draft order based on winning percentage (no lottery)."""
     for draft_round in xrange(1, 3):
         pick = 1
@@ -51,33 +51,33 @@ def set_draft_order():
             g.db.execute('INSERT INTO %s_draft_results (season, draft_round, pick, team_id, abbreviation, player_id, name, position) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)', (g.league_id, g.season, draft_round, pick, team_id, abbreviation, 0, '', ''))
             pick += 1
 
-def draft_until_user_or_end():
-    """Simulate draft picks until it's the user's turn or the draft is over."""
+def until_user_or_end():
+    """Simulate draft picks until it's the user's turn or the draft is over.
+    Returns:
+        A list of player IDs who were drafted.
+    """
+    player_ids = []
+
     g.db.execute('SELECT team_id, draft_round, pick FROM %s_draft_results WHERE season =  %s AND player_id = 0 ORDER BY draft_round, pick ASC', (g.league_id, g.season))
     for team_id, draft_round, pick in g.db.fetchall():
         if team_id == g.user_team_id:
-            return
+            return player_ids
         team_pick = abs(int(random.gauss(0, 3)))  # 0=best prospect, 1=next best prospect, etc.
         g.db.execute('SELECT pr.player_id, pa.name, pa.position, pa.born_date, pr.overall, pr.potential FROM %s_player_attributes as pa, %s_player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = -2 ORDER BY pr.overall + 2*pr.potential DESC LIMIT %s, 1', (g.league_id, g.league_id, team_pick))
         player_id, name, position, born_date, overall, potential = g.db.fetchone()
         g.db.execute('UPDATE %s_player_attributes SET team_id = %s WHERE player_id = %s', (g.league_id, team_id, player_id))
         g.db.execute('UPDATE %s_draft_results SET player_id = %s, name = %s, position = %s, born_date = %s, overall = %s, potential = %s WHERE season = %s AND draft_round = %s AND pick = %s', (g.league_id, player_id, name, position, born_date, overall, potential, g.season, draft_round, pick))
+        player_ids.append(player_id)
 
     # Is draft over?
     g.db.execute('SELECT 1 FROM %s_draft_results WHERE season =  %s AND player_id = 0', (g.league_id, g.season))
     if g.db.rowcount > 0:
         season.new_phase(6)
 
-def pick_player(self, row, pick):
-    '''
-    Copy the selected name and player ID to the draft_results
-    Delete the selected row from draft_available
-    int pick is the offset from the top of draft_available
-    row is the current row in draft_results
-    '''
-    row[5] = self.liststore_draft_available[pick][3]  # Name
-    row[0] = self.liststore_draft_available[pick][0]  # Player ID
+    return player_ids
 
+
+def player(self, player_id):
     # Update team_id and roster_position
     row2 = common.DB_CON.execute('SELECT MAX(player_ratings.roster_position) + 1 FROM player_attributes, '
                                  'player_ratings WHERE player_attributes.player_id = player_ratings.player_id AND '

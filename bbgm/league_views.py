@@ -52,7 +52,7 @@ def player_stats():
             if not players[i][key]:
                 players[i][key] = 0
 
-    return render_all_or_json('player_stats.html', {'players': players})
+    return render_all_or_json('ps.html', {'players': players})
 
 # Change to POST (with CSRF protection) later
 @app.route('/<int:league_id>/play/<amount>')
@@ -177,16 +177,15 @@ def player(player_id):
     info['contract_amount'] = '$%.2fM' % (info['contract_amount'] / 1000.0)
 
     # Ratings
-#    common.DB_CON.row_factory = sqlite3.Row
-#    query = 'SELECT overall, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, passing, rebounding, potential FROM player_ratings WHERE player_id = ?'
-#    row = common.DB_CON.execute(query, (self.player_id,)).fetchone()
-#    common.DB_CON.row_factory = None
-#    self.label_rating = {}
-#    for rating in ('height', 'strength', 'speed', 'jumping', 'endurance', 'shooting_inside', 'shooting_layups', 'shooting_free_throws', 'shooting_two_pointers', 'shooting_three_pointers', 'blocks', 'steals', 'dribbling', 'passing', 'rebounding'):
-#        self.label_rating[rating] = self.builder.get_object('label_rating_%s' % rating)
-#        self.label_rating[rating].set_text('%d' % row[rating])
-#    self.label_player_window_ratings.set_markup('<span size="x-large" weight="bold">Overall Rating: %s</span>\nPotential: %s' % (row['overall'], row['potential']));
-    return render_all_or_json('player.html', {'info': info})
+    g.dbd.execute('SELECT overall, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, passing, rebounding, potential FROM %s_player_ratings WHERE player_id = %s', (g.league_id, player_id))
+    ratings = g.dbd.fetchone()
+
+    # Season stats
+    g.dbd.execute('SELECT ps.season, ta.abbreviation, SUM(ps.minutes>0) AS games_played, SUM(ps.starter) AS games_started, AVG(ps.minutes) AS minutes, AVG(ps.field_goals_made) AS field_goals_made, AVG(ps.field_goals_attempted) AS field_goals_attempted, 100*AVG(ps.field_goals_made/ps.field_goals_attempted) AS field_goal_percentage, AVG(ps.three_pointers_made) AS three_pointers_made, AVG(ps.three_pointers_attempted) AS three_pointers_attempted, 100*AVG(ps.three_pointers_made/ps.three_pointers_attempted) AS three_point_percentage, AVG(ps.free_throws_made) AS free_throws_made, AVG(ps.free_throws_attempted) AS free_throws_attempted, 100*AVG(ps.free_throws_made/ps.free_throws_attempted) AS free_throw_percentage, AVG(ps.offensive_rebounds) AS offensive_rebounds, AVG(ps.defensive_rebounds) AS defensive_rebounds, AVG(ps.offensive_rebounds+ps.defensive_rebounds) AS rebounds, AVG(ps.assists) AS assists, AVG(ps.turnovers) AS turnovers, AVG(ps.steals) AS steals, AVG(ps.blocks) AS blocks, AVG(ps.personal_fouls) AS personal_fouls, AVG(ps.points) AS points FROM %s_player_attributes as pa, %s_player_stats as ps, %s_team_attributes as ta WHERE pa.player_id = ps.player_id AND pa.player_id = %s AND ps.is_playoffs = 0 AND ta.team_id = pa.team_id AND ta.season = ps.season GROUP BY ps.season', (g.league_id, g.league_id, g.league_id, player_id))
+#    g.dbd.execute('SELECT ps.season, (SELECT abbreviation FROM %s_team_attributes WHERE team_id = ps.team_id) as abbreviation, SUM(ps.minutes>0), SUM(ps.starter), AVG(ps.minutes), AVG(ps.field_goals_made), AVG(ps.field_goals_attempted), AVG(100*ps.field_goals_made/ps.field_goals_attempted), AVG(ps.three_pointers_made), AVG(ps.three_pointers_attempted), AVG(100*ps.three_pointers_made/ps.three_pointers_attempted), AVG(ps.free_throws_made), AVG(ps.free_throws_attempted), AVG(100*ps.free_throws_made/ps.free_throws_attempted), AVG(ps.offensive_rebounds), AVG(ps.defensive_rebounds), AVG(ps.offensive_rebounds + ps.defensive_rebounds), AVG(ps.assists), AVG(ps.turnovers), AVG(ps.steals), AVG(ps.blocks), AVG(ps.personal_fouls), AVG(ps.points) FROM %s_player_attributes as pa, %s_player_stats as ps WHERE AND pa.player_id = %s AND pa.player_id = ps.player_id AND ps.is_playoffs = 0 GROUP BY ps.season', (g.league_id, g.league_id, g.league_id, player_id))
+    seasons = g.dbd.fetchall()
+
+    return render_all_or_json('player.html', {'info': info, 'ratings': ratings, 'seasons': seasons})
 
 # Utility views
 

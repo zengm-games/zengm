@@ -63,6 +63,8 @@ player view
 - next, previous buttons (also active on left/right arrows)
 - "trade for" button
 - http://twitter.github.com/bootstrap/javascript.html#tabs
+  - tab for playoff stats
+  - tab for game log
 
 resign players at end of season
 - Play button changes to "Resign free agents"

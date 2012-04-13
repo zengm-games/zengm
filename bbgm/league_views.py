@@ -128,16 +128,28 @@ def playoffs():
 
     return render_all_or_json('playoffs.html', {'series': series})
 
+@app.route('/<int:league_id>/draft')
+@league_crap
+def draft_():
+    if g.phase != 5:
+        error = "It's not time for the draft right now."
+        return render_all_or_json('league_error.html', {'error': error})
+
+    g.dbd.execute('SELECT pa.player_id, pa.position, pa.name, %s - pa.born_date as age, pr.overall, pr.potential FROM %s_player_attributes as pa, %s_player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = -2 ORDER BY pr.overall + 2*pr.potential DESC', (g.season, g.league_id, g.league_id))
+    undrafted = g.dbd.fetchall()
+
+    g.dbd.execute('SELECT draft_round, pick, abbreviation, player_id, name, %s - born_date as age, position, overall, potential FROM %s_draft_results WHERE season =  %s ORDER BY draft_round, pick ASC', (g.season, g.league_id, g.season))
+    drafted = g.dbd.fetchall()
+
+    return render_all_or_json('draft.html', {'undrafted': undrafted, 'drafted': drafted})
 
 @app.route('/<int:league_id>/roster')
 @app.route('/<int:league_id>/roster/<abbreviation>')
 @league_crap
 def roster(abbreviation=None):
     team_id, abbreviation = validate_abbreviation(abbreviation)
-#    g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, pa.contract_amount,  pa.contract_expiration, AVG(ps.minutes) as mpg, AVG(ps.points) as ppg, AVG(ps.offensive_rebounds + ps.defensive_rebounds) as rpg, AVG(ps.assists) as apg FROM %s_player_attributes as pa, %s_player_ratings as pr, %s_player_stats as ps WHERE pa.player_id = pr.player_id AND ps.player_id = pr.player_id AND ps.season = %s AND pa.team_id = %s GROUP BY pa.player_id ORDER BY pr.roster_position ASC', (g.season, g.league_id, g.league_id, g.league_id, g.season, team_id))
     g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, pa.contract_amount,  pa.contract_expiration, AVG(ps.minutes) as mpg, AVG(ps.points) as ppg, AVG(ps.offensive_rebounds + ps.defensive_rebounds) as rpg, AVG(ps.assists) as apg FROM %s_player_attributes as pa LEFT OUTER JOIN %s_player_ratings as pr ON pa.player_id = pr.player_id LEFT OUTER JOIN %s_player_stats as ps ON ps.season = %s AND pa.player_id = ps.player_id WHERE pa.team_id = %s GROUP BY pa.player_id ORDER BY pr.roster_position ASC', (g.season, g.league_id, g.league_id, g.league_id, g.season, team_id))
     players = g.dbd.fetchall()
-    print 'QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ'
 
     return render_all_or_json('roster.html', {'players': players})
 
@@ -154,20 +166,27 @@ def game_log(season=None, abbreviation=None):
 
     return render_all_or_json('game_log.html', {'abbreviation': abbreviation, 'teams': teams})
 
-@app.route('/<int:league_id>/draft')
+@app.route('/<int:league_id>/player/<int:player_id>')
 @league_crap
-def draft_():
-    if g.phase != 5:
-        error = "It's not time for the draft right now."
-        return render_all_or_json('league_error.html', {'error': error})
+def player(player_id):
+    # Info
+    g.dbd.execute('SELECT name, position, (SELECT CONCAT(region, " ", name) FROM %s_team_attributes as ta WHERE pa.team_id = ta.team_id) as team, height, weight, %s - born_date as age, born_date, born_location, college, draft_year, draft_round, draft_pick, (SELECT CONCAT(region, " ", name) FROM %s_team_attributes as ta WHERE ta.team_id = pa.draft_team_id) as draft_team, contract_amount, contract_expiration FROM %s_player_attributes as pa WHERE player_id = %s', (g.league_id, g.season, g.league_id, g.league_id, player_id))
+    info = g.dbd.fetchone()
+    print info
+    info['height'] = '%d\'%d"' % (info['height'] // 12, info['height'] % 12);
+    info['contract_amount'] = '$%.2fM' % (info['contract_amount'] / 1000.0)
 
-    g.dbd.execute('SELECT pa.player_id, pa.position, pa.name, %s - pa.born_date as age, pr.overall, pr.potential FROM %s_player_attributes as pa, %s_player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = -2 ORDER BY pr.overall + 2*pr.potential DESC', (g.season, g.league_id, g.league_id))
-    undrafted = g.dbd.fetchall()
-
-    g.dbd.execute('SELECT draft_round, pick, abbreviation, player_id, name, %s - born_date as age, position, overall, potential FROM %s_draft_results WHERE season =  %s ORDER BY draft_round, pick ASC', (g.season, g.league_id, g.season))
-    drafted = g.dbd.fetchall()
-
-    return render_all_or_json('draft.html', {'undrafted': undrafted, 'drafted': drafted})
+    # Ratings
+#    common.DB_CON.row_factory = sqlite3.Row
+#    query = 'SELECT overall, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, passing, rebounding, potential FROM player_ratings WHERE player_id = ?'
+#    row = common.DB_CON.execute(query, (self.player_id,)).fetchone()
+#    common.DB_CON.row_factory = None
+#    self.label_rating = {}
+#    for rating in ('height', 'strength', 'speed', 'jumping', 'endurance', 'shooting_inside', 'shooting_layups', 'shooting_free_throws', 'shooting_two_pointers', 'shooting_three_pointers', 'blocks', 'steals', 'dribbling', 'passing', 'rebounding'):
+#        self.label_rating[rating] = self.builder.get_object('label_rating_%s' % rating)
+#        self.label_rating[rating].set_text('%d' % row[rating])
+#    self.label_player_window_ratings.set_markup('<span size="x-large" weight="bold">Overall Rating: %s</span>\nPotential: %s' % (row['overall'], row['potential']));
+    return render_all_or_json('player.html', {'info': info})
 
 # Utility views
 

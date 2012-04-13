@@ -10,7 +10,8 @@
           <li{% if active_page == 'standings' %} class="active"{% endif %}><a href="{{ url_for('standings', league_id=g.league_id) }}">Standings</a></li>
           <li{% if active_page == 'schedule' %} class="active"{% endif %}><a href="{{ url_for('schedule', league_id=g.league_id) }}">Schedule</a></li>
           <li{% if active_page == 'playoffs' %} class="active"{% endif %}><a href="{{ url_for('playoffs', league_id=g.league_id) }}">Playoffs</a></li>
-          <li{% if active_page == 'finances' %} class="active"{% endif %}><a href="#">Finances</a></li>
+          <li{% if active_page == 'playoffs' %} class="active"{% endif %}><a href="{{ url_for('draft_', league_id=g.league_id) }}">Draft</a></li>
+          <li{% if active_page == 'draft' %} class="active"{% endif %}><a href="#">Finances</a></li>
           <li{% if active_page == 'transaction_log' %} class="active"{% endif %}><a href="#">Transaction log</a></li>
           <li{% if active_page == 'history' %} class="active"{% endif %}><a href="#">History</a></li>
           <li class="nav-header">Team</li>

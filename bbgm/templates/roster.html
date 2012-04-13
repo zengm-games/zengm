@@ -16,7 +16,7 @@
       </thead>
       <tbody>
         {% for player in players %}
-          <tr id="roster_{{ player.id }}"><td class="{% if loop.index <= 5 %}btn-primary starter{% else %}btn-info bench{% endif %}"></td><td><a href="#">{{ player.name }}</a></td><td>{{ player.position }}</td><td>{{ player.overall }}</td><td>{{ player.potential }}</td><td>{{ player.age }}</td><td>${{ player.contract_amount|int }}k through {{ player.contract_expiration }}</td><td>{% if player.mpg %} {{ player.mpg|round(1) }} {% endif %}</td><td>{% if player.ppg %} {{ player.ppg|round(1) }} {% endif %}</td><td>{% if player.rpg %} {{ player.rpg|round(1) }} {% endif %}</td><td>{% if player.apg %} {{ player.apg|round(1) }} {% endif %}</td></tr>
+          <tr id="roster_{{ player.player_id }}"><td class="{% if loop.index <= 5 %}btn-primary starter{% else %}btn-info bench{% endif %}"></td><td><a href="{{ url_for('player', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a></td><td>{{ player.position }}</td><td>{{ player.overall }}</td><td>{{ player.potential }}</td><td>{{ player.age }}</td><td>${{ player.contract_amount|int }}k through {{ player.contract_expiration }}</td><td>{% if player.mpg %} {{ player.mpg|round(1) }} {% endif %}</td><td>{% if player.ppg %} {{ player.ppg|round(1) }} {% endif %}</td><td>{% if player.rpg %} {{ player.rpg|round(1) }} {% endif %}</td><td>{% if player.apg %} {{ player.apg|round(1) }} {% endif %}</td></tr>
         {% endfor %}
       </tbody>
       </table>

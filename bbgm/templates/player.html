@@ -1,0 +1,28 @@
+{% extends "league_layout.html" %}
+{% set active_page = "player" %}
+
+{% block title %}{{ info.name }} - League {{ g.league_id }} - Basketball GM{% endblock %}
+
+{% block league_content %}
+  <div class="row-fluid">
+    <div class="span6">
+      <h1>{{ info.name }}</h1>
+      <strong>{{ info.team }}</strong><br />
+      Height: {{ info.height }}<br />
+      Weight: {{ info.weight }}<br />
+      Age: {{ info.age }}<br />
+      Born: {{ info.born_date }} - {{ info.born_location }}<br />
+      Draft: {{ info.draft_year }} - Round {{ info.draft_round }} (Pick {{ info.draft_pick }}) by the {{ info.draft_team }}<br />
+      Contract: {{ info.contract_amount }} per year through {{ info.contract_expiration }}<br />
+    </div>
+    <div class="span6">
+      <h2>Overall rating: </h2>
+      Potential: <br /><br />
+    <div class="row-fluid">
+      <div class="span4">
+        <strong><center>Physical</center></strong>
+      </div>
+    </div>
+    </div>
+  </div>
+{% endblock %}

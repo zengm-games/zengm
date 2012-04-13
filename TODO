@@ -60,6 +60,8 @@ free agents
 organize imports
 
 player view
+- next, previous buttons (also active on left/right arrows)
+- "trade for" button
 - http://twitter.github.com/bootstrap/javascript.html#tabs
 
 resign players at end of season

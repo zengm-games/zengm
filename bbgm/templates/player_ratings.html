@@ -8,7 +8,7 @@
     $(document).ready(function() {
       bbgm_datatable($('#player_ratings'), 4, [
         {% for player in players %}
-		  [ '<a href="#"><nobr><a href="{{ url_for('player', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a></nobr></a>', '{{ player.position }}', '<a href="#">{{ player.team_abbreviation }}</a>', '{{ player.age }}', '{{ player.overall }}', '{{ player.potential }}', '{{ player.height }}', '{{ player.strength }}', '{{ player.speed }}', '{{ player.jumping }}', '{{ player.endurance }}', '{{ player.shooting_inside }}', '{{ player.shooting_layups }}', '{{ player.shooting_free_throws }}', '{{ player.shooting_two_pointers }}', '{{ player.shooting_three_pointers }}', '{{ player.blocks }}', '{{ player.steals }}', '{{ player.dribbling }}', '{{ player.passing }}', '{{ player.rebounding }}' ],
+		  [ '<a href="#"><a href="{{ url_for('player', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a></a>', '{{ player.position }}', '<a href="#">{{ player.team_abbreviation }}</a>', '{{ player.age }}', '{{ player.overall }}', '{{ player.potential }}', '{{ player.height }}', '{{ player.strength }}', '{{ player.speed }}', '{{ player.jumping }}', '{{ player.endurance }}', '{{ player.shooting_inside }}', '{{ player.shooting_layups }}', '{{ player.shooting_free_throws }}', '{{ player.shooting_two_pointers }}', '{{ player.shooting_three_pointers }}', '{{ player.blocks }}', '{{ player.steals }}', '{{ player.dribbling }}', '{{ player.passing }}', '{{ player.rebounding }}' ],
         {% endfor %}
       ]);
     } );

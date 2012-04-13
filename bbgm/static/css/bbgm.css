@@ -29,6 +29,10 @@ footer {
   text-align: center;
 }
 
+table {
+  white-space: nowrap;
+}
+
 div#play_button ul.btn {
   -webkit-border-top-right-radius: 0;
   -moz-border-radius-topright: 0;

@@ -1,20 +1,20 @@
 To acquire parity with the GTK version:
 
+logging
+- use in developing contract negotiation
+
 contract negotiation
 - bbgm.league_views.negotiate(player_id)
   - show negotiation form
   - handle POST requests of submitted offers, or if the user wants to walk away
   - after offer, see if the DB row is still there. if so, refresh view. if not, redirect to dashboard
 - bbgm.core.negotiation.new(player_id)
-  - check if over roster limit
-  - check if there's already a negotiaion in progress, or games being played
-    - util.lock.can_start_negotiation
   - add row to table to track negotiation
     - num_offers_made, team_amount, team_years, player_amount, player_years
   - util.lock.set_negotiation_in_progress(True)
   - set status to negotiation in progress
   - set play menu to "Negotiate"
-- bbgm.ccore.negotiation.offer(team_amount, team_years)
+- bbgm.core.negotiation.offer(team_amount, team_years)
   - see if it's close enough to accept. if so:
     - update contract and team in player_attributes
     - delete row in negotiations table

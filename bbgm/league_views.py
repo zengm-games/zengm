@@ -7,7 +7,7 @@ from flask import jsonify, render_template, url_for, request, session, redirect,
 from flask.globals import _request_ctx_stack
 
 from bbgm import app
-from bbgm.core import draft, game, play_menu, season
+from bbgm.core import draft, game, negotiation, play_menu, season
 from bbgm.util.decorators import league_crap, league_crap_ajax
 
 # All the views in here are for within a league.
@@ -202,11 +202,16 @@ def player(player_id):
 @app.route('/<int:league_id>/negotiate/<int:player_id>')
 @league_crap
 def negotiate(player_id):
-    g.db.execute('SELECT team_amount, team_years, player_amount, player_years FROM %s_negotiation WHERE player_id = %s', (g.league_id, player_id))
+    g.db.execute('SELECT 1 FROM %s_negotiation WHERE player_id = %s', (g.league_id, player_id))
     if g.db.rowcount:
-        team_amount, team_years, player_amount, player_years = g.db.fetchone()
+        team_amount, team_years, player_amount, player_years = negotiation.get_status(player_id)
     else:
-        team_amount, team_years, player_amount, player_years = negotiation.new(player_id)
+        error = negotiation.new(player_id)
+
+        if error:
+            return render_all_or_json('league_error.html', {'error': error})
+
+        team_amount, team_years, player_amount, player_years = negotiation.get_status(player_id)
 
     return render_all_or_json('negotiate.html', {'team_amount': team_amount, 'team_years': team_years, 'player_amount': player_amount, 'player_years': player_years})
 

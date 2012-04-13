@@ -22,10 +22,9 @@ def new_phase(phase):
         7: Offseason, free agency
     """
 
-# UNCOMMENT WHEN DONE TESTING
-#    # Prevent code running twice
-#    if phase == g.phase:
-#        return
+    # Prevent code running twice
+    if phase == g.phase:
+        return
 
     # Preseason
     if phase == 0:

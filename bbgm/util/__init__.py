@@ -1,6 +1,18 @@
+import logging
+
 from flask import g
 
 from bbgm import app
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+file_handler = logging.FileHandler('example.log')
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(logging.Formatter(
+    '%(asctime)s %(levelname)s: %(message)s '
+    '[in %(pathname)s:%(lineno)d]'
+))
+logger.addHandler(file_handler)
 
 def request_context_globals(league_id):
     """Call this within an app.test_request_context() to set other globals."""

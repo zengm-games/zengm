@@ -9,10 +9,6 @@ contract negotiation
   - handle POST requests of submitted offers, or if the user wants to walk away
   - after offer, see if the DB row is still there. if so, refresh view. if not, redirect to dashboard
 - bbgm.core.negotiation.new(player_id)
-  - add row to table to track negotiation
-    - num_offers_made, team_amount, team_years, player_amount, player_years
-  - util.lock.set_negotiation_in_progress(True)
-  - set status to negotiation in progress
   - set play menu to "Negotiate"
 - bbgm.core.negotiation.offer(team_amount, team_years)
   - see if it's close enough to accept. if so:
@@ -22,6 +18,9 @@ contract negotiation
   - else:
     - update player_amount and player_years as appropriate, writing to database
 - test on free agents first
+
+free agents list
+- deired contract
 
 resign players at end of season
 - Play button changes to "Resign free agents"

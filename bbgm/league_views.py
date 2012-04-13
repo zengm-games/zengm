@@ -134,9 +134,10 @@ def playoffs():
 @league_crap
 def roster(abbreviation=None):
     team_id, abbreviation = validate_abbreviation(abbreviation)
-    g.dbd.execute('SELECT pa.player_id, name, position, %s - born_date as age, overall, potential, contract_amount,  contract_expiration, AVG(minutes) as mpg, AVG(points) as ppg, AVG(offensive_rebounds + defensive_rebounds) as rpg, AVG(assists) as apg FROM %s_player_attributes as pa, %s_player_ratings as pr, %s_player_stats as ps WHERE pa.player_id = pr.player_id AND ps.player_id = pr.player_id AND ps.season = %s AND pa.team_id = %s GROUP BY pa.player_id ORDER BY pr.roster_position ASC', (g.season, g.league_id, g.league_id, g.league_id, g.season, team_id))
+#    g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, pa.contract_amount,  pa.contract_expiration, AVG(ps.minutes) as mpg, AVG(ps.points) as ppg, AVG(ps.offensive_rebounds + ps.defensive_rebounds) as rpg, AVG(ps.assists) as apg FROM %s_player_attributes as pa, %s_player_ratings as pr, %s_player_stats as ps WHERE pa.player_id = pr.player_id AND ps.player_id = pr.player_id AND ps.season = %s AND pa.team_id = %s GROUP BY pa.player_id ORDER BY pr.roster_position ASC', (g.season, g.league_id, g.league_id, g.league_id, g.season, team_id))
+    g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, pa.contract_amount,  pa.contract_expiration, AVG(ps.minutes) as mpg, AVG(ps.points) as ppg, AVG(ps.offensive_rebounds + ps.defensive_rebounds) as rpg, AVG(ps.assists) as apg FROM %s_player_attributes as pa LEFT OUTER JOIN %s_player_ratings as pr ON pa.player_id = pr.player_id LEFT OUTER JOIN %s_player_stats as ps ON ps.season = %s AND pa.player_id = ps.player_id WHERE pa.team_id = %s GROUP BY pa.player_id ORDER BY pr.roster_position ASC', (g.season, g.league_id, g.league_id, g.league_id, g.season, team_id))
     players = g.dbd.fetchall()
-    print len(players)
+    print 'QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ'
 
     return render_all_or_json('roster.html', {'players': players})
 

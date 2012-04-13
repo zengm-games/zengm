@@ -53,7 +53,7 @@ draft
 - undrafted numbering should be redone after each pick
 
 roster
-- How to handle players with no stats, such as right after the draft?
+- Make sure the outer join works when next season starts
 
 free agents
 

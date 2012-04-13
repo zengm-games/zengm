@@ -9,7 +9,7 @@ contract negotiation
   - handle POST requests of submitted offers, or if the user wants to walk away
   - after offer, see if the DB row is still there. if so, refresh view. if not, redirect to dashboard
 - bbgm.core.negotiation.new(player_id)
-  - set play menu to "Negotiate"
+  - set play button to "Negotiate"
 - bbgm.core.negotiation.offer(team_amount, team_years)
   - see if it's close enough to accept. if so:
     - update contract and team in player_attributes
@@ -34,21 +34,6 @@ speed it up
 - somehow cache team (and/or player) dicts, so we don't need separate SQL queries all the time
 
 global lock: only one game simulation (draft, contract negotiation, ...) at a time
-
-play button requirements
-- show current immediate options
-  - play X days
-  - Negotiate
-  - Move to next phase
-  - ALL OF THESE THINGS SHOULD HAVE GLOBAL LOCKING
-- colors:
-  - green: move to new phase
-  - blue: play games
-  - red: other immediate action
-- when phase changes, change the play button (for now, just list all possible options, like defined in Glade)
-- http://twitter.github.com/bootstrap/javascript.html#buttons stateful!
-- http://twitter.github.com/bootstrap/javascript.html#popovers for warnings on button!
-- http://twitter.github.com/bootstrap/javascript.html#dropdowns maybe use this look rather than a button?
 
 play menu
 - just send everything over one juggernaut connection?
@@ -76,6 +61,15 @@ draft
   - Draft buttons should be activated, as appropriate
   - Draft buttons should be disabled when the draft ends, somehow
 - undrafted numbering should be redone after each pick
+
+play button requirements
+- colors:
+  - green: move to new phase
+  - blue: play games
+  - red: other immediate action
+- http://twitter.github.com/bootstrap/javascript.html#buttons stateful!
+- http://twitter.github.com/bootstrap/javascript.html#popovers for warnings on button!
+- http://twitter.github.com/bootstrap/javascript.html#dropdowns maybe use this look rather than a button?
 
 organize imports
 

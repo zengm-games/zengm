@@ -4,9 +4,21 @@ import time
 
 from flask import url_for, g, render_template
 
+from bbgm.util import lock
+
 jug = Juggernaut()
 
 def options(keys=None):
+    """Set the options to be shown in the play button.
+
+    Arguments:
+        keys: A list of strings identifying the options to be shown. If left
+            blank, the default options are shown based on the game state.
+
+    Returns:
+        A list of dicts, each dict containing the properties needed to build the
+        play button.
+    """
     all_options = [{'id': 'stop', 'url': '#', 'label': 'Stop', 'normal_link': False},
                    {'id': 'day', 'url': url_for('play', league_id=g.league_id, amount='day'), 'label': 'One day', 'normal_link': False},
                    {'id': 'week', 'url': url_for('play', league_id=g.league_id, amount='week'), 'label': 'One week', 'normal_link': False},
@@ -18,18 +30,55 @@ def options(keys=None):
                    {'id': 'until_free_agency', 'url': url_for('play', league_id=g.league_id, amount='until_free_agency'), 'label': 'Until free agency', 'normal_link': False},
                    {'id': 'until_preseason', 'url': url_for('play', league_id=g.league_id, amount='until_preseason'), 'label': 'Until preseason', 'normal_link': False},
                    {'id': 'until_regular_season', 'url': url_for('play', league_id=g.league_id, amount='until_regular_season'), 'label': 'Until regular season', 'normal_link': False},
-                   {'id': 'negotiate', 'url': '#', 'label': 'Negotiate', 'normal_link': False},
-                   {'id': 'cancel', 'url': '#', 'label': 'Cancel', 'normal_link': False}]
+                   {'id': 'trade', 'url': '#', 'label': 'Continue trade negotiation', 'normal_link': False},
+                   {'id': 'negotiate', 'url': '#', 'label': 'Continue contract negotiation', 'normal_link': False}]
 
-    if keys:
-#        dict_you_want = { your_key: old_dict[your_key] for your_key in your_keys }
-#        some_options = {key: old_dict[your_key] for key in keys}
-        some_options = []
-        for key in keys:
-            some_options.append()
-        return some_options
-    else:
-        return all_options
+    if not keys:
+        # Preseason
+        if g.phase == 0:
+            keys = ['until_regular_season']
+        # Regular season - pre trading deadline
+        elif g.phase == 1:
+            keys = ['day', 'week', 'month', 'until_playoffs']
+        # Regular season - post trading deadline
+        elif g.phase == 2:
+            keys = ['day', 'week', 'month', 'until_playoffs']
+        # Playoffs
+        elif g.phase == 3:
+            keys = ['day', 'week', 'month', 'through_playoffs']
+        # Offseason - pre draft
+        elif g.phase == 4:
+            keys = ['until_draft']
+        # Draft
+        elif g.phase == 5:
+            keys = ['view_draft']
+        # Offseason - post draft
+        elif g.phase == 6:
+            keys = ['until_free_agency']
+        # Offseason - free agency
+        elif g.phase == 7:
+            keys = ['until_preseason']
+
+        if lock.games_in_progress():
+            keys = ['stop']
+        if lock.trade_in_progress():
+            keys = ['trade']
+        if lock.negotiation_in_progress():
+            keys = ['negotiate']
+
+    # This code is very ugly. Basically I just want to filter all_options into
+    # some_options based on if the ID matches one of the keys.
+    ids = [o['id'] for o in all_options]
+    some_options = []
+    for key in keys:
+        i = 0
+        for id_ in ids:
+            if id_ == key:
+                some_options.append(all_options[i])
+                break
+            i += 1
+
+    return some_options
 
 def set_status(status=None):
     """Save status to database and push to client.
@@ -71,25 +120,10 @@ def set_phase(phase_text=None):
         g.db.execute('UPDATE %s_game_attributes SET pm_phase = %s WHERE season = %s', (g.league_id, phase_text, g.season))
         jug.publish('%d_phase' % (g.league_id,), phase_text)
 
-def set_options(options_keys=None):
-    """Save options_ids to database and push rendered play button to client.
-
-    If no options_ids are given, load the last ones from the database and push
-    a button created from them.
-
-    Args:
-        options_keys: A list containing the IDs of the various predefined
-            options to be shown to the user (see bbgm.core.play_menu.options()).
+def refresh_options():
+    """Get current options based on game state and push rendered play button
+    to client.
     """
-    if options_keys:
-        g.db.execute('UPDATE %s_game_attributes SET pm_options = %s WHERE season = %s', (g.league_id, pickle.dumps(options_ids), g.season))
-    else:
-        g.db.execute('SELECT pm_options FROM %s_game_attributes WHERE season = %s', (g.league_id, g.season))
-        row = g.db.fetchone()
-        try:
-            options_keys = pickle.loads(row[0].encode('ascii'))
-        except:
-            options_keys = []
-    button = render_template('play_button.html', league_id=g.league_id, options=options(options_keys))
+    button = render_template('play_button.html', league_id=g.league_id, options=options())
     jug.publish('%d_button' % (g.league_id,), button)
 

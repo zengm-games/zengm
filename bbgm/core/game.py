@@ -241,6 +241,7 @@ def sim_wrapper(league_id, num_days, schedule):
         request_context_globals(league_id)
 
         lock.set_games_in_progress(True)
+        play_menu.refresh_options()
 
         for d in xrange(num_days):
             play_menu.set_status('Playing day %d of %d...' % (d+1, num_days))
@@ -359,6 +360,7 @@ def sim_wrapper(league_id, num_days, schedule):
 
         play_menu.set_status('Idle')
         lock.set_games_in_progress(False)
+        play_menu.refresh_options()
 
 def save_results(results, is_playoffs):
     """Convenience function (for Celery) to save game stats."""

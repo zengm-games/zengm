@@ -263,11 +263,11 @@ def game_log_list():
 def push_play_menu():
     """This should only be called on initial page load. Further updates are
     done through bbgm.core.play_menu.set_status and
-    bbgm.core.play_menu.set_options, which push updates to the client.
+    bbgm.core.play_menu.refresh_options, which push updates to the client.
     """
     play_menu.set_status()
     play_menu.set_phase()
-    play_menu.set_options()
+    play_menu.refresh_options()
 
     return 'fuck'
 

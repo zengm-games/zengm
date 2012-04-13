@@ -193,6 +193,7 @@ def new_phase(phase):
     g.db.execute('UPDATE %s_game_attributes SET phase = %s', (g.league_id, g.phase))
 
     play_menu.set_phase(phase_text)
+    play_menu.refresh_options()
 
 def new_schedule():
     teams = []

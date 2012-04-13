@@ -23,6 +23,21 @@ def set_trade_in_progress(status):
 def set_negotiation_in_progress(status):
     g.db.execute('UPDATE %s_game_attributes SET negotiation_in_progress = %s', (g.league_id, status))
 
+def games_in_progress():
+    g.db.execute('SELECT games_in_progress FROM %s_game_attributes', (g.league_id))
+    in_progress, = g.db.fetchone()
+    return in_progress
+
+def trade_in_progress():
+    g.db.execute('SELECT trade_in_progress FROM %s_game_attributes', (g.league_id))
+    in_progress, = g.db.fetchone()
+    return in_progress
+
+def negotiation_in_progress():
+    g.db.execute('SELECT negotiation_in_progress FROM %s_game_attributes', (g.league_id))
+    in_progress, = g.db.fetchone()
+    return in_progress
+
 def can_start_games():
     g.db.execute('SELECT games_in_progress, trade_in_progress, negotiation_in_progress FROM %s_game_attributes', (g.league_id,))
     row = g.db.fetchone()

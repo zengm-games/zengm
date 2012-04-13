@@ -3,12 +3,25 @@ body {
   padding-bottom: 40px;
 }
 
-a.brand img {
-  vertical-align: top;
-}
-
 .sidebar-nav {
   padding: 9px 0;
+}
+
+#contentwrapper{
+  float: left;
+  width: 100%;
+}
+#league_content{
+ margin-left: 145px; /*Set left margin to LeftColumnWidth*/
+}
+#league_menu{
+  float: left;
+  width: 125px; /*Width of left column*/
+  margin-left: -100%;
+}
+
+a.brand img {
+  vertical-align: top;
 }
 
 footer {

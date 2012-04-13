@@ -52,7 +52,7 @@ def player_stats():
             if not players[i][key]:
                 players[i][key] = 0
 
-    return render_all_or_json('ps.html', {'players': players})
+    return render_all_or_json('player_stats.html', {'players': players})
 
 # Change to POST (with CSRF protection) later
 @app.route('/<int:league_id>/play/<amount>')
@@ -198,6 +198,17 @@ def player(player_id):
     seasons = g.dbd.fetchall()
 
     return render_all_or_json('player.html', {'info': info, 'ratings': ratings, 'seasons': seasons})
+
+@app.route('/<int:league_id>/negotiate/<int:player_id>')
+@league_crap
+def negotiate(player_id):
+    g.db.execute('SELECT team_amount, team_years, player_amount, player_years FROM %s_player_ratings WHERE player_id = %s', (g.league_id, player_id))
+    if g.db.rowcount:
+        team_amount, team_years, player_amount, player_years = g.db.fetchone()
+    else:
+        team_amount, team_years, player_amount, player_years = negotiation.new(player_id)
+
+    return render_all_or_json('negotiate.html', {'team_amount': team_amount, 'team_years': team_years, 'player_amount': player_amount, 'player_years': player_years})
 
 # Utility views
 

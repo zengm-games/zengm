@@ -148,6 +148,14 @@ born_date INTEGER, -- YYYY for birth year
 overall INTEGER,
 potential INTEGER);
 
+CREATE TABLE negotiations (
+player_id INTEGER PRIMARY KEY,
+team_amount INTEGER,
+team_years INTEGER,
+player_amount INTEGER,
+player_years INTEGER,
+num_offers_made INTEGER);
+
 CREATE INDEX a ON team_attributes(team_id, season, division_id, region);
 CREATE INDEX b ON player_stats(player_id, season, is_playoffs);
 CREATE INDEX c ON team_attributes(season, division_id, won, lost);

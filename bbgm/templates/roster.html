@@ -10,11 +10,11 @@
 
   <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="roster">
   <thead>
-    <tr><th></th><th>Name</th><th title="Position">Pos</th><th title="Overall rating">Ovr</th><th title="Potential rating">Pot</th><th>Age</th><th>Contract</th><th title="Minutes per game">MPG</th><th title="Points per game">PPG</th><th title="Rebounds per game">Reb</th><th title="Assists per game">Ast</th></tr>
+    <tr><th></th><th>Name</th><th title="Position">Pos</th><th title="Overall rating">Ovr</th><th title="Potential rating">Pot</th><th>Age</th><th>Contract</th><th title="Minutes per game">Min</th><th title="Points per game">PPG</th><th title="Rebounds per game">Reb</th><th title="Assists per game">Ast</th></tr>
   </thead>
   <tbody>
     {% for player in players %}
-      <tr id="roster_{{ player.player_id }}"><td class="{% if loop.index <= 5 %}btn-primary starter{% else %}btn-info bench{% endif %}"></td><td><a href="{{ url_for('player', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a></td><td>{{ player.position }}</td><td>{{ player.overall }}</td><td>{{ player.potential }}</td><td>{{ player.age }}</td><td>${{ player.contract_amount|int }}k through {{ player.contract_expiration }}</td><td>{% if player.mpg %} {{ player.mpg|float|round(1) }} {% endif %}</td><td>{% if player.ppg %} {{ player.ppg|float|round(1) }} {% endif %}</td><td>{% if player.rpg %} {{ player.rpg|float|round(1) }} {% endif %}</td><td>{% if player.apg %} {{ player.apg|float|round(1) }} {% endif %}</td></tr>
+      <tr id="roster_{{ player.player_id }}"><td class="{% if loop.index <= 5 %}btn-primary starter{% else %}btn-info bench{% endif %}"></td><td><a href="{{ url_for('player', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a></td><td>{{ player.position }}</td><td>{{ player.overall }}</td><td>{{ player.potential }}</td><td>{{ player.age }}</td><td>${{ player.contract_amount|int }}k through {{ player.contract_expiration }}</td><td>{% if player.minutes %} {{ player.minutes|float|round(1) }} {% endif %}</td><td>{% if player.points %} {{ player.points|float|round(1) }} {% endif %}</td><td>{% if player.rebounds %} {{ player.rebounds|float|round(1) }} {% endif %}</td><td>{% if player.assists %} {{ player.assists|float|round(1) }} {% endif %}</td></tr>
     {% endfor %}
   </tbody>
   </table>

@@ -23,7 +23,7 @@
         <li{% if active_page == 'advisors' %} class="active"{% endif %}><a href="#">Advisors</a></li>
         <li{% if active_page == 'history' %} class="active"{% endif %}><a href="#">History</a></li>
         <li class="nav-header">Players</li>
-        <li{% if active_page == 'free_agents' %} class="active"{% endif %}><a href="#">Free agents</a></li>
+        <li{% if active_page == 'free_agents' %} class="active"{% endif %}><a href="{{ url_for('free_agents', league_id=g.league_id) }}">Free agents</a></li>
         <li{% if active_page == 'trade' %} class="active"{% endif %}><a href="#">Trade</a></li>
         <li{% if active_page == 'draft' %} class="active"{% endif %}><a href="{{ url_for('draft_', league_id=g.league_id) }}">Draft</a></li>
         <li class="nav-header">Stats</li>

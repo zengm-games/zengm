@@ -128,6 +128,19 @@ def playoffs():
 
     return render_all_or_json('playoffs.html', {'series': series})
 
+@app.route('/<int:league_id>/free_agents')
+@league_crap
+def free_agents():
+    if g.phase >= 2 and g.phase <= 6:
+        error = "You're not allowed to sign free agents now."
+        return render_all_or_json('league_error.html', {'error': error})
+
+    g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, AVG(ps.minutes) as minutes, AVG(ps.points) as points, AVG(ps.offensive_rebounds + ps.defensive_rebounds) as rebounds, AVG(ps.assists) as assists, pa.contract_amount/1000.0*(1+pa.free_agent_times_asked/10) as contract_amount, pa.contract_expiration FROM %s_player_attributes as pa LEFT OUTER JOIN %s_player_ratings as pr ON pa.player_id = pr.player_id LEFT OUTER JOIN %s_player_stats as ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE pa.team_id = -1 GROUP BY pa.player_id', (g.season, g.league_id, g.league_id, g.league_id, g.season))
+
+    players = g.dbd.fetchall()
+
+    return render_all_or_json('free_agents.html', {'players': players})
+
 @app.route('/<int:league_id>/draft')
 @league_crap
 def draft_():
@@ -148,7 +161,7 @@ def draft_():
 @league_crap
 def roster(abbreviation=None):
     team_id, abbreviation = validate_abbreviation(abbreviation)
-    g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, pa.contract_amount,  pa.contract_expiration, AVG(ps.minutes) as mpg, AVG(ps.points) as ppg, AVG(ps.offensive_rebounds + ps.defensive_rebounds) as rpg, AVG(ps.assists) as apg FROM %s_player_attributes as pa LEFT OUTER JOIN %s_player_ratings as pr ON pa.player_id = pr.player_id LEFT OUTER JOIN %s_player_stats as ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE pa.team_id = %s GROUP BY pa.player_id ORDER BY pr.roster_position ASC', (g.season, g.league_id, g.league_id, g.league_id, g.season, team_id))
+    g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, pa.contract_amount,  pa.contract_expiration, AVG(ps.minutes) as minutes, AVG(ps.points) as points, AVG(ps.offensive_rebounds + ps.defensive_rebounds) as rebounds, AVG(ps.assists) as assists FROM %s_player_attributes as pa LEFT OUTER JOIN %s_player_ratings as pr ON pa.player_id = pr.player_id LEFT OUTER JOIN %s_player_stats as ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE pa.team_id = %s GROUP BY pa.player_id ORDER BY pr.roster_position ASC', (g.season, g.league_id, g.league_id, g.league_id, g.season, team_id))
     players = g.dbd.fetchall()
 
     return render_all_or_json('roster.html', {'players': players})

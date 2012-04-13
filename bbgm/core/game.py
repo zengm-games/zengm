@@ -11,7 +11,7 @@ from flask.ext.celery import Celery
 
 from bbgm import app
 from bbgm.core import game_sim, season, play_menu
-from bbgm.util import request_context_globals, fast_random
+from bbgm.util import lock, fast_random, request_context_globals
 
 celery = Celery(app)
 
@@ -240,6 +240,8 @@ def sim_wrapper(league_id, num_days, schedule):
     with app.test_request_context():
         request_context_globals(league_id)
 
+        lock.set_games_in_progress(True)
+
         for d in xrange(num_days):
             play_menu.set_status('Playing day %d of %d...' % (d+1, num_days))
 
@@ -356,6 +358,7 @@ def sim_wrapper(league_id, num_days, schedule):
             season.new_phase(3)  # Start playoffs
 
         play_menu.set_status('Idle')
+        lock.set_games_in_progress(False)
 
 def save_results(results, is_playoffs):
     """Convenience function (for Celery) to save game stats."""
@@ -369,12 +372,6 @@ def play(num_days):
     This function also handles a lot of the playoffs logic, for some reason.
     """
 
-    games_in_progress(True)
-    schedule = season.get_schedule()
-
-    sim_wrapper.apply_async((g.league_id, num_days, schedule))
-
-    games_in_progress(False)
-
-def games_in_progress(status):
-    g.db.execute('UPDATE %s_game_attributes SET games_in_progress = %s', (g.league_id, status))
+    if lock.can_start_games():
+        schedule = season.get_schedule()
+        sim_wrapper.apply_async((g.league_id, num_days, schedule))

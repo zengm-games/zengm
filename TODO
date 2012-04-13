@@ -8,36 +8,19 @@ contract negotiation
 - bbgm.core.negotiation.new(player_id)
   - check if over roster limit
   - check if there's already a negotiaion in progress, or games being played
-    - ANY OTHER LOCKABLE SCENARIOS? trade
-    - util.lock
-      - set_games_in_progress (replace where this is already used)
-      - set_trade_in_progress
-      - set_negotiation_in_progress
-      - can_start_games
-        - negotiations table empty
-        - trades table empty
-        - no games_in_progress
-        - no trade_in_progress
-        - no negotiation_in_progress
-      - can_start_trade
-        - negotiations table empty
-        - trades table empty
-        - no games_in_progress
-        - no trade_in_progress
-        - no negotiation_in_progress
-      - can_start_negotiation
-        - negotiations table empty
-        - trades table empty
-        - no games_in_progress
-        - no trade_in_progress
-        - no negotiation_in_progress
+    - util.lock.can_start_negotiation
   - add row to table to track negotiation
     - num_offers_made, team_amount, team_years, player_amount, player_years
+  - util.lock.set_negotiation_in_progress(True)
   - set status to negotiation in progress
   - set play menu to "Negotiate"
 - bbgm.ccore.negotiation.offer(team_amount, team_years)
-  - see if it's close enough to accept. if so, update contract and team in player_attributes
-  - update player_amoutn and player_years as appropriate, writing to database
+  - see if it's close enough to accept. if so:
+    - update contract and team in player_attributes
+    - delete row in negotiations table
+    - call util.lock.set_negotiation_in_progress(False)
+  - else:
+    - update player_amount and player_years as appropriate, writing to database
 - test on free agents first
 
 resign players at end of season

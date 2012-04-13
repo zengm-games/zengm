@@ -21,6 +21,8 @@ season INTEGER,
 phase INTEGER,
 schedule TEXT,
 games_in_progress BOOLEAN DEFAULT 0,
+trade_in_progress BOOLEAN DEFAULT 0,
+negotiation_in_progress BOOLEAN DEFAULT 0,
 pm_status VARCHAR(255),
 pm_phase VARCHAR(255),
 pm_options TEXT,
@@ -148,13 +150,16 @@ born_date INTEGER, -- YYYY for birth year
 overall INTEGER,
 potential INTEGER);
 
-CREATE TABLE negotiations (
+CREATE TABLE negotiation (
 player_id INTEGER PRIMARY KEY,
 team_amount INTEGER,
 team_years INTEGER,
 player_amount INTEGER,
 player_years INTEGER,
 num_offers_made INTEGER);
+
+CREATE TABLE trade (
+placeholder INTEGER);
 
 CREATE INDEX a ON team_attributes(team_id, season, division_id, region);
 CREATE INDEX b ON player_stats(player_id, season, is_playoffs);

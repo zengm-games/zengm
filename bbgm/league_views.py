@@ -202,7 +202,7 @@ def player(player_id):
 @app.route('/<int:league_id>/negotiate/<int:player_id>')
 @league_crap
 def negotiate(player_id):
-    g.db.execute('SELECT team_amount, team_years, player_amount, player_years FROM %s_player_ratings WHERE player_id = %s', (g.league_id, player_id))
+    g.db.execute('SELECT team_amount, team_years, player_amount, player_years FROM %s_negotiation WHERE player_id = %s', (g.league_id, player_id))
     if g.db.rowcount:
         team_amount, team_years, player_amount, player_years = g.db.fetchone()
     else:

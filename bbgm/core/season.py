@@ -5,7 +5,7 @@ from flask import session, g
 
 import bbgm
 from bbgm import app
-from bbgm.core import draft, play_menu, player
+from bbgm.core import play_menu, player
 
 def new_phase(phase):
     """Set a new phase of the game.
@@ -143,13 +143,10 @@ def new_phase(phase):
     # Draft
     elif phase == 5:
         phase_text = '%s draft' % (g.season,)
-        draft.generate_players()
-        draft.set_order()
 
     # Offseason, after draft
     elif phase == 6:
         phase_text = '%s after draft' % (g.season,)
-        pass
 
     # Offseason, free agency
     elif phase == 7:

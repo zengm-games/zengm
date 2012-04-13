@@ -72,6 +72,8 @@ def play(amount):
     elif amount == 'through_playoffs':
         game.play(100)  # There aren't 100 days in the playoffs, so 100 will cover all the games and the sim stops when the playoffs end
     elif amount == 'until_draft':
+        draft.generate_players()
+        draft.set_order()
         season.new_phase(5)
     elif amount == 'until_free_agency':
         season.new_phase(7)
@@ -233,9 +235,8 @@ def draft_until_user_or_end():
 @league_crap_ajax
 def draft_user():
     player_id = int(request.form['player_id'])
-#    player_ids = draft.player(player_id)
+    player_id = draft.pick_player(g.user_team_id, player_id)
 
-#    return jsonify(player_ids=player_ids)
     return jsonify(player_ids=[player_id])
 
 

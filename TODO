@@ -45,24 +45,15 @@ roster
 - buy out
 
 draft
-- in draft view, a button linking to an async ajax call starts the draft (league_views.start_draft -> draft.draft_until_user_or_end), and updates the results until player's turn
-  - button press calls function to do draft up to player's spot
-    - return JSON which can be cutely loaded
-  - when the user drafts a player, then it does gets results up to user's second round pick (or end of draft, for second time)
-  - draft results must be saved to database and partial results loaded from database
-    - bonus: this allows for archiving of past draft results. so, make a view for that (league_id/draft/2012)
-- OVERALL IDEA
-  - click "start button". start button disappears, sends POST request async to /draft/until_user_or_end (renamed from start_draft)
-  - this returns a JSON arrya of hte first N picks. all that's needed is the player id, and the rest of the metadata can be read from the undrafted table. then, delete row from undrafted table and update row in drafted table.
-    - then, activate DRAFT buttons
-  - wait for user to click a "draft" button, which sends POST request async to /draft/user with the player_id
-    - NOW: Implement this, along with using draft.player in draft.until...
-  - when that comes back, move player between tables as above, and then POST again to /draft/until_user_or_end and repeat above steps until draft ends
-- MINOR ISSUES
-  - on page load
-    - Start button should be disappeared, as appropriate
-    - Draft buttons should be activated, as appropriate
-  - undrafted numbering should be redone after each pick
+- make a view for past drafts (league_id/draft/2012)
+- on page load
+  - Start button should be disappeared, as appropriate
+  - Draft buttons should be activated, as appropriate
+  - Draft buttons should be disabled when the draft ends, somehow
+- undrafted numbering should be redone after each pick
+
+roster
+- How to handle players with no stats, such as right after the draft?
 
 free agents
 

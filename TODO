@@ -1,5 +1,14 @@
 To acquire parity with the GTK version:
 
+free agents list
+
+contract negotiation
+
+resign players at end of season
+- Play button changes to "Resign free agents"
+- link brings you to a page listing only your free agents, and explaining that this is your chance to sign them before they become available to the whole league
+- besides that notice, this should work like the normal free agents page
+
 Game simulation:
 - Make this robust to failure.. somehow.. only pop from schedule on completion? if games_in_progress lock is set, that'll work
 
@@ -40,6 +49,7 @@ roster
 - view other teams, but not reorder
 - release
 - buy out
+- Make sure the outer join works when next season starts
 
 draft
 - make a view for past drafts (league_id/draft/2012)
@@ -49,11 +59,6 @@ draft
   - Draft buttons should be disabled when the draft ends, somehow
 - undrafted numbering should be redone after each pick
 
-roster
-- Make sure the outer join works when next season starts
-
-free agents
-
 organize imports
 
 player view
@@ -62,11 +67,6 @@ player view
 - http://twitter.github.com/bootstrap/javascript.html#tabs
   - tab for playoff stats
   - tab for game log
-
-resign players at end of season
-- Play button changes to "Resign free agents"
-- link brings you to a page listing only your free agents, and explaining that this is your chance to sign them before they become available to the whole league
-- besides that notice, this should work like the normal free agents page
 
 urls like http://flask.pocoo.org/docs/quickstart/#rendering-templates default to g.season
 - make validate_season work correctly
@@ -108,7 +108,6 @@ some way of local processing of game simulations? Javascript equivalent of game_
 
 playoffs
 - on playoffs start, automatically switch to playoffs view
-- make function for each matchup
 - bold winner
 - before playoffs, show current playoff seedings
 

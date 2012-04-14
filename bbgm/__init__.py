@@ -2,6 +2,7 @@
 #monkey.patch_all()
 from flask import Flask, g
 from flask.ext.assets import Environment, Bundle
+import logging
 import MySQLdb
 from contextlib import closing
 #from gevent.event import Event
@@ -24,6 +25,15 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 #app.event = Event()
 
+fh = logging.FileHandler('debug.log')
+fh.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]')
+fh.setFormatter(formatter)
+
+app.logger.setLevel(logging.DEBUG)
+app.logger.addHandler(fh)
+app.logger.debug('Started')
+
 # Assets
 assets = Environment(app)
 js = Bundle('js/jquery.js', 'js/bootstrap-dropdown.js', 'js/jquery.dataTables.min.js', 'js/DT_bootstrap.js', 'js/bbgm.js', 'js/juggernaut.js', filters='closure_js', output='gen/packed.js')
@@ -32,7 +42,6 @@ assets.register('js_all', js)
 # Views
 import bbgm.views
 import bbgm.league_views
-
 
 def connect_db():
     return MySQLdb.connect('localhost', app.config['DB_USERNAME'], app.config['DB_PASSWORD'], app.config['DB'])

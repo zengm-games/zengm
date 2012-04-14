@@ -1,7 +1,8 @@
 from flask import g
 
+from bbgm import app
 from bbgm.core import play_menu
-from bbgm.util import lock, logger
+from bbgm.util import lock
 
 def new(player_id):
     """Start a new contract negotiation with player.
@@ -11,7 +12,7 @@ def new(player_id):
     Returns False if the new negotiation is started successfully. Otherwise, it
     returns a string containing an error message to be sent to the user.
     """
-    logger.debug('Trying to start new contract negotiation with player %d' % (player_id,))
+    app.logger.debug('Trying to start new contract negotiation with player %d' % (player_id,))
 
     g.db.execute('SELECT COUNT(*) FROM %s_player_attributes WHERE team_id = %s', (g.league_id, g.user_team_id))
     num_players_on_roster, = g.db.fetchone()

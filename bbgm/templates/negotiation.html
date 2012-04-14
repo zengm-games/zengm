@@ -1,9 +1,35 @@
 {% extends "league_layout.html" %}
 {% set active_page = "negotiate" %}
 
-{% block title %}{{ name }} - Contract negotiation - League {{ g.league_id }} - Basketball GM{% endblock %}
+{% block title %}{{ player.name }} - Contract negotiation - League {{ g.league_id }} - Basketball GM{% endblock %}
 
 {% block league_content %}
   <h1>Contract negotiation</h1>
+
+  <div class="row-fluid">
+    <div class="span6">
+      <h2>{{ team_name }}</h2>
+      <p>Current payroll: ${{ payroll|round(1) }}M</p>
+      <p>Salary cap: ${{ salary_cap|round(1) }}M</p>
+      <h2>Your proposal</h2>
+      <form action="{{ url_for('negotiation', league_id=g.league_id, player_id=player.player_id) }}" class="form-horizontal" method="POST">
+        <p><input type="text" id="team_years" class="span1" value="{{ team_years }}"> years</p>
+        <p><div class="input-prepend input-append">
+          <span class="add-on">$</span><input type="text" id="team_amount" class="span1" value="{{ team_amount }}"><span class="add-on">M</span> per year
+        </div></p>
+        <p><button class="btn btn-large btn-primary" id="accept">Submit proposal</button></p>
+      </form>
+
+    </div>
+    <div class="span6">
+      <h2><a href="{{ url_for('player', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a></h2>
+      <p>Overal: {{ player.overall }}</p>
+      <p>Potential: {{ player.potential }}</p>
+      <h2>Player proposal</h2>
+      <p>{{ player_years }} year{% if player_years > 1 %}s{% endif %} (through {{ player_expiration }})</p>
+      <p>${{ player_amount|round(1) }}M per year</p>
+      <p><button class="btn btn-large btn-primary" id="accept">Accept player proposal</button></p>
+    </div>
+  </div>
 
 {% endblock %}

@@ -5,7 +5,6 @@ logging
 
 contract negotiation
 - bbgm.league_views.negotiate(player_id)
-  - show negotiation form
   - handle POST requests of submitted offers, or if the user wants to walk away
   - after offer, see if the DB row is still there. if so, refresh view. if not, redirect to dashboard
 - bbgm.core.negotiation.new(player_id)
@@ -43,7 +42,7 @@ Single page application
 - during page reloads or back/forward... what about handling deeper content? i.e., what box score is being viewed? what year? what stat is sorted? what page in rankings? etc.
 - highlight link in menu for current page - current JS only will work for links on the sidebar itself. need something more general
   - on AJAX success, remove other highlights. then somehow figure out the right one to add
-- internal links, like the "View draft" link from the play menu
+- internal links, like the "View draft" and "Continue negotiation" links from the play menu
 
 roster
 - reordering

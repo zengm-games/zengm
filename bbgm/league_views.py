@@ -216,13 +216,28 @@ def negotiation(player_id=None):
         team_amount, team_years, player_amount, player_years = contract_negotiation.get_status(player_id)
     else:
         error = contract_negotiation.new(player_id)
-
         if error:
             return render_all_or_json('league_error.html', {'error': error})
-
         team_amount, team_years, player_amount, player_years = contract_negotiation.get_status(player_id)
 
-    return render_all_or_json('negotiation.html', {'team_amount': team_amount, 'team_years': team_years, 'player_amount': player_amount, 'player_years': player_years})
+    player_amount /= 1000.0
+    team_amount /= 1000.0
+    player_expiration = player_years + g.season
+    # Adjust to account for in-season signings
+    if g.phase <= 2:
+        player_expiration -= 1
+
+    g.dbd.execute('SELECT pa.player_id, pa.name, pr.overall, pr.potential FROM %s_player_attributes as pa, %s_player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.player_id = %s', (g.league_id, g.league_id, player_id))
+    player = g.dbd.fetchone()
+
+    salary_cap = g.salary_cap / 1000.0
+    g.db.execute('SELECT CONCAT(ta.region, " ", ta.name), SUM(pa.contract_amount), (SELECT SUM(contract_amount) FROM %s_released_players_salaries as rps WHERE rps.team_id = ta.team_id) FROM %s_team_attributes as ta, %s_player_attributes as pa WHERE pa.team_id = ta.team_id AND ta.team_id = %s AND pa.contract_expiration >= %s AND ta.season = %s', (g.league_id, g.league_id, g.league_id, g.user_team_id, g.season, g.season))
+    team_name, payroll, released_players_salaries = g.db.fetchone()
+    if released_players_salaries:
+        payroll += released_players_salaries
+    payroll /= 1000  # Because payroll is a Decimal
+
+    return render_all_or_json('negotiation.html', {'team_amount': team_amount, 'team_years': team_years, 'player_amount': player_amount, 'player_years': player_years, 'player_expiration': player_expiration, 'player': player, 'salary_cap': salary_cap, 'team_name': team_name, 'payroll': payroll})
 
 # Utility views
 

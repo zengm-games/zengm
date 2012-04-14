@@ -1,8 +1,5 @@
 To acquire parity with the GTK version:
 
-free agents list
-- desired contract
-
 resign players at end of season
 - set allow_over_salary_cap, somehow
 - Play button changes to "Resign free agents"
@@ -11,6 +8,7 @@ resign players at end of season
 
 Game simulation:
 - Make this robust to failure.. somehow.. only pop from schedule on completion? if games_in_progress lock is set, that'll work
+- Stop
 
 speed it up
 - somehow cache team (and/or player) dicts, so we don't need separate SQL queries all the time

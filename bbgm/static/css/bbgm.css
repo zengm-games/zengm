@@ -24,6 +24,10 @@ a.brand img {
   vertical-align: top;
 }
 
+#play_phase, #play_status {
+  color: #dddddd;
+}
+
 footer {
   color: #666666;
   text-align: center;

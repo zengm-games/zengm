@@ -8,7 +8,7 @@
     $(document).ready(function() {
       bbgm_datatable($('#free_agents'), 4, [
         {% for player in players %}
-			    [ '<a href="#"><a href="{{ url_for('player', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a></a>', '{{ player.position }}', '{{ player.age }}', '{{ player.overall }}', '{{ player.potential }}', '{% if player.minutes %} {{ player.minutes|float|round(1) }} {% endif %}', '{% if player.points %} {{ player.points|float|round(1) }} {% endif %}', '{% if player.rebounds %} {{ player.rebounds|float|round(1) }} {% endif %}', '{% if player.assists %} {{ player.assists|float|round(1) }} {% endif %}', '<a href="{{ url_for('negotiation', league_id=g.league_id, player_id=player.player_id) }}" class="btn btn-mini btn-primary">Negotiate</a>' ],
+			    [ '<a href="#"><a href="{{ url_for('player', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a></a>', '{{ player.position }}', '{{ player.age }}', '{{ player.overall }}', '{{ player.potential }}', '{% if player.minutes %} {{ player.minutes|float|round(1) }} {% endif %}', '{% if player.points %} {{ player.points|float|round(1) }} {% endif %}', '{% if player.rebounds %} {{ player.rebounds|float|round(1) }} {% endif %}', '{% if player.assists %} {{ player.assists|float|round(1) }} {% endif %}', '${{ player.contract_amount|float|round(3) }}M through {{ player.contract_expiration }}', '<a href="{{ url_for('negotiation', league_id=g.league_id, player_id=player.player_id) }}" class="btn btn-mini btn-primary">Negotiate</a>' ],
         {% endfor %}
 		  ]);
     } );
@@ -18,7 +18,7 @@
 
   <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="free_agents">
   <thead>
-    <tr><th>Name</th><th title="Position">Pos</th><th>Age</th><th title="Overall">Ovr</th><th title="Potential">Pot</th><th title="Minutes">Min</th><th title="Points">PPG</th><th title="Rebounds per game">Reb</th><th title="Assists per game">Ast</th><th>Negotiate</th></tr>
+    <tr><th>Name</th><th title="Position">Pos</th><th>Age</th><th title="Overall">Ovr</th><th title="Potential">Pot</th><th title="Minutes">Min</th><th title="Points">PPG</th><th title="Rebounds per game">Reb</th><th title="Assists per game">Ast</th><th>Asking for</th><th>Negotiate</th></tr>
   </thead>
   </table>
 {% endblock %}

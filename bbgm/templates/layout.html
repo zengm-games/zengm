@@ -46,11 +46,13 @@
           <div class="nav-collapse">
             <div id="play_button"></div>
             <div class="nav"><span id="play_phase"></span><br /><span id="play_status"></span></div>
+            <p class="navbar-text pull-right">
             {% if not session.logged_in %}
-              <p class="navbar-text pull-right"><a href="{{ url_for('register') }}">Register</a> or <a href="{{ url_for('login') }}">log in</a></p>
+              <a href="{{ url_for('register') }}">Register</a> or <a href="{{ url_for('login') }}">log in</a>
             {% else %}
-              <p class="navbar-text pull-right">Logged in as {{ session.username }} (<a href="{{ url_for('logout') }}">log out</a>)</p>
+              Logged in as {{ session.username }} (<a href="{{ url_for('logout') }}">log out</a>)
             {% endif %}
+            </p>
           </div>
         </div>
       </div>

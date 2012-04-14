@@ -25,11 +25,21 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 #app.event = Event()
 
+# Logging
+class ContextFilter(logging.Filter):
+    """This filter injects the league ID, if available into the log."""
+    def filter(self, record):
+        try:
+            record.league_id = g.league_id
+        except RuntimeError:
+            record.league_id = '?'
+        return True
 fh = logging.FileHandler('debug.log')
 fh.setLevel(logging.DEBUG)
-formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]')
+formatter = logging.Formatter('%(asctime)s %(levelname)s: League %(league_id)s: %(message)s [in %(pathname)s:%(lineno)d]')
 fh.setFormatter(formatter)
-
+f = ContextFilter()
+app.logger.addFilter(f)
 app.logger.setLevel(logging.DEBUG)
 app.logger.addHandler(fh)
 app.logger.debug('Started')

@@ -1,8 +1,5 @@
 To acquire parity with the GTK version:
 
-logging
-- how to report league ID every time? http://docs.python.org/howto/logging-cookbook.html#filters-contextual
-
 contract negotiation
 - bbgm.league_views.negotiate(player_id)
   - handle POST requests of submitted offers, or if the user wants to walk away

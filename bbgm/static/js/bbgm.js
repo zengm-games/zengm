@@ -22,74 +22,83 @@ function bbgm_datatable(table, sort_col, data) {
     } );
 }
 
-$(document).ready(function() {
-    // Find URL up to http://domain.com/<int:league_id>
-    var end = 0;
-    var in_league = true;
-    for (i=0; i<4; i++) {
-        end_old = end;
-        end = document.URL.indexOf('/', end)+1;
-        if (end == 0) {
-            if (i == 3 && end_old != document.URL.length) {
-                end = document.URL.length; // http://domain.com/<int:league_id> (no trailing slash)
-            }
-            else {
-                in_league = false;
-                break;
-            }
-        }
+function parse_league_url(url) {
+    // Returns a list containing the integer league ID (0 if none), the
+    // league root URL up to the league ID (empty string if none), and the
+    // league page (first URL folder after the ID) (empty string if none).
+
+    var league_id = 0;
+    var league_root_url = '';
+    var league_page = '';
+
+    split_url = url.split('/', 5);
+
+    // If there's a URL that starts http://domain.com/<int:league_id>,
+    // split_url will have length 4 or 5, depending on if there is a page after
+    // the league ID.
+
+    if (split_url.length >= 4) {
+        league_id = parseInt(split_url[3]);
+        league_root_url = split_url.slice(0, 4).join('/');
+    }
+    if (split_url.length == 5) {
+        // Get rid of any trailing #
+        league_page = split_url[4].split('#')[0];
     }
 
-    // League variables
-    if (in_league) {
-        split_url = document.URL.split('/', 4);
-        league_root_url = split_url.join('/'); // document.URL.substr(0, end - 1);
-        league_id = split_url[3];
+    return [league_id, league_root_url, league_page];
+}
+
+function highlight_nav(league_page) {
+    if (league_page == '') {
+        league_page = 'league_dashboard';
     }
+    $('#league_sidebar li').removeClass('active');
+    $('#nav_' + league_page).addClass('active');
+}
+
+$(document).ready(function() {
+    var result = parse_league_url(document.URL);
+    var league_id = result[0];
+    var league_root_url = result[1];
+    var league_page = result[2];
+    highlight_nav(league_page);
 
     // Handle league internal URLs
-    if (in_league) {
-        var links = $('a');
-        for (i=0; i<links.length; i++) {  
-            links[i].onclick = function() {  
-                if (this.href.indexOf(league_root_url) !== -1) {
-                    //Highlight active page
-/*            links[i].parent().parent().children().each(function() {
-              $(this).removeClass('active')
-            });
-            this.addClass('active');
-console.log(this)*/
+    $(document).on('click', 'a', function(event) {
+        linked_url = this.href;
 
-                    // Update content
-                    var url = this.href;
-                    $.getJSON(url, {'json': true}, function (data) {
-                        ajax_update(data, url);
-                    });
-                    return false;  
-                }  
-            };
+        // Get league root URLs for both the current URL and the linked URL
+        var result = parse_league_url(document.URL);
+        var league_root_url_1 = result[1];
+        var result = parse_league_url(linked_url);
+        var league_id_2 = result[0];
+        var league_root_url_2 = result[1];
+        var league_page_2 = result[2];
+
+        // If they are the same, do AJAX page load
+        if (league_id_2 > 0 && league_root_url_1 == league_root_url_2) {
+            $.getJSON(linked_url, {'json': true}, function (data) {
+                ajax_update(data, linked_url);
+            });
+
+            //Highlight active page in sidebar
+            highlight_nav(league_page_2);
+
+            // If we made it this far, cancel normal page load
+            return false;
         }
-    }
+    });
+
     window.onpopstate = function(event) {
         ajax_update(event.state);
     };
 
-    //Highlight active page in sidebar
-    $('#league_sidebar li').click(function(event) {
-        $clicked_li = $(this);
-        console.log($clicked_li)
-        $clicked_li.parent().children().each(function() {
-            $(this).removeClass('active');
-        });
-        $clicked_li.addClass('active');
-    });
-
-
-    // Play button
-    if (in_league) {
-        $play_status = $('#play_status');
-        $play_phase = $('#play_phase');
-        $play_button = $('#play_button');
+    // Play menu
+    if (league_id > 0) {
+        var play_status = $('#play_status');
+        var play_phase = $('#play_phase');
+        var play_button = $('#play_button');
 
         var jug = new Juggernaut;
 
@@ -100,13 +109,13 @@ console.log(this)*/
 
         // Listen for updates to play menu
         jug.subscribe(league_id + '_status', function(data){
-            $play_status.html(data);
+            play_status.html(data);
         });
         jug.subscribe(league_id + '_phase', function(data){
-            $play_phase.html(data);
+            play_phase.html(data);
         });
         jug.subscribe(league_id + '_button', function(data){
-            $play_button.html(data);
+            play_button.html(data);
         });
     }
 });

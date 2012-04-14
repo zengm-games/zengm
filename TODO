@@ -1,11 +1,7 @@
 To acquire parity with the GTK version:
 
-contract negotiation
-- does roster_position need to be set for newly signed players?
-
 free agents list
 - desired contract
-- link to negotiation page
 
 resign players at end of season
 - set allow_over_salary_cap, somehow
@@ -25,10 +21,7 @@ play menu
 Single page application
 - When a simulation is done (or a player is signed, or whatever), the current page should be reloaded
 - during page reloads or back/forward... what about handling deeper content? i.e., what box score is being viewed? what year? what stat is sorted? what page in rankings? etc.
-- highlight link in menu for current page - current JS only will work for links on the sidebar itself. need something more general
-  - on AJAX success, remove other highlights. then somehow figure out the right one to add
-- internal links, like the "View draft" and "Continue negotiation" links from the play menu
-- contract negotiation (or, forms in general)
+- contract negotiation form (or, forms in general)
 
 roster
 - reordering
@@ -62,6 +55,7 @@ player view
 - http://twitter.github.com/bootstrap/javascript.html#tabs
   - tab for playoff stats
   - tab for game log
+- link to team roster
 
 urls like http://flask.pocoo.org/docs/quickstart/#rendering-templates default to g.season
 - make validate_season work correctly
@@ -88,6 +82,9 @@ security
   - even for ajax https://docs.djangoproject.com/en/1.2/releases/1.2.5/#csrf-exception-for-ajax-requests
 - http://pypi.python.org/pypi/Flask-KVSession
 - http://packages.python.org/Flask-Login/
+
+contract negotiation
+- does roster_position need to be set for newly signed players?
 
 pep8
 

@@ -33,7 +33,7 @@
       }
 
       // Clickable rows for game log list table
-      $('#game_log_list tbody tr').live('click', function(event) {
+      $(document).on('click', '#game_log_list tbody tr', function(event) {
         $clicked_tr = $(this);
         $.ajax({
           type: 'GET',
@@ -42,6 +42,7 @@
           success: function(msg) {
             // Update boxscore
             $('#game_log_box_score').html(msg);
+
             // Update gamelist highlighting
             $clicked_tr.parent().children().each(function() {
               $(this).removeClass('alert-info');

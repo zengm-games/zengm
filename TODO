@@ -13,6 +13,7 @@ contract negotiation
     - call util.lock.set_negotiation_in_progress(False)
   - else:
     - update player_amount and player_years as appropriate, writing to database
+- "walk away" button
 - test on free agents first
 
 free agents list
@@ -28,8 +29,6 @@ Game simulation:
 
 speed it up
 - somehow cache team (and/or player) dicts, so we don't need separate SQL queries all the time
-
-global lock: only one game simulation (draft, contract negotiation, ...) at a time
 
 play menu
 - just send everything over one juggernaut connection?
@@ -63,9 +62,7 @@ play button requirements
   - green: move to new phase
   - blue: play games
   - red: other immediate action
-- http://twitter.github.com/bootstrap/javascript.html#buttons stateful!
 - http://twitter.github.com/bootstrap/javascript.html#popovers for warnings on button!
-- http://twitter.github.com/bootstrap/javascript.html#dropdowns maybe use this look rather than a button?
 
 organize imports
 
@@ -101,6 +98,8 @@ security
   - even for ajax https://docs.djangoproject.com/en/1.2/releases/1.2.5/#csrf-exception-for-ajax-requests
 - http://pypi.python.org/pypi/Flask-KVSession
 - http://packages.python.org/Flask-Login/
+
+pep8
 
 next redirect like http://flask.pocoo.org/docs/reqcontext/?highlight=url#diving-into-context-locals
 

@@ -8,6 +8,7 @@ from flask.globals import _request_ctx_stack
 
 from bbgm import app
 from bbgm.core import draft, game, contract_negotiation, play_menu, season
+from bbgm.util import get_payroll
 from bbgm.util.decorators import league_crap, league_crap_ajax
 
 # All the views in here are for within a league.
@@ -21,7 +22,6 @@ def add_league_id(endpoint, values):
         values['league_id'] = g.league_id
 @app.url_value_preprocessor
 def pull_league_id(endpoint, values):
-    print values
     g.league_id = values.pop('league_id', None)
 
 @app.route('/<int:league_id>')
@@ -200,9 +200,10 @@ def player(player_id):
     return render_all_or_json('player.html', {'info': info, 'ratings': ratings, 'seasons': seasons})
 
 @app.route('/<int:league_id>/negotiation')
-@app.route('/<int:league_id>/negotiation/<int:player_id>')
+@app.route('/<int:league_id>/negotiation/<int:player_id>', methods=['GET', 'POST'])
 @league_crap
 def negotiation(player_id=None):
+    # If player_id is not passed, then there must be an active negotiation
     if not player_id:
         g.db.execute('SELECT player_id FROM %s_negotiation', (g.league_id,))
         if g.db.rowcount:
@@ -211,14 +212,29 @@ def negotiation(player_id=None):
             error = 'There is no negotiation in progress.'
             return render_all_or_json('league_error.html', {'error': error})
 
-    g.db.execute('SELECT 1 FROM %s_negotiation WHERE player_id = %s', (g.league_id, player_id))
-    if g.db.rowcount:
-        team_amount, team_years, player_amount, player_years = contract_negotiation.get_status(player_id)
+    if request.method == 'POST':
+        if 'cancel' in request.form:
+            contract_negotiation.cancel(player_id)
+            return redirect(url_for('league_dashboard', league_id=g.league_id))
+        elif 'accept' in request.form:
+            error = contract_negotiation.accept(player_id)
+            if error:
+                return render_all_or_json('league_error.html', {'error': error})
+            return redirect(url_for('roster', league_id=g.league_id))
+        else:
+            team_amount_new = int(float(request.form['team_amount'])*1000)
+            team_years_new = int(request.form['team_years'])
+            contract_negotiation.offer(player_id, team_amount_new, team_years_new)
     else:
-        error = contract_negotiation.new(player_id)
-        if error:
-            return render_all_or_json('league_error.html', {'error': error})
-        team_amount, team_years, player_amount, player_years = contract_negotiation.get_status(player_id)
+        # If there is no active negotiation with this player_id, create it
+        g.db.execute('SELECT 1 FROM %s_negotiation WHERE player_id = %s', (g.league_id, player_id))
+        if not g.db.rowcount:
+            error = contract_negotiation.new(player_id)
+            if error:
+                return render_all_or_json('league_error.html', {'error': error})
+
+    g.db.execute('SELECT team_amount, team_years, player_amount, player_years, allow_over_salary_cap FROM %s_negotiation WHERE player_id = %s', (g.league_id, player_id))
+    team_amount, team_years, player_amount, player_years, allow_over_salary_cap = g.db.fetchone()
 
     player_amount /= 1000.0
     team_amount /= 1000.0
@@ -231,13 +247,13 @@ def negotiation(player_id=None):
     player = g.dbd.fetchone()
 
     salary_cap = g.salary_cap / 1000.0
-    g.db.execute('SELECT CONCAT(ta.region, " ", ta.name), SUM(pa.contract_amount), (SELECT SUM(contract_amount) FROM %s_released_players_salaries as rps WHERE rps.team_id = ta.team_id) FROM %s_team_attributes as ta, %s_player_attributes as pa WHERE pa.team_id = ta.team_id AND ta.team_id = %s AND pa.contract_expiration >= %s AND ta.season = %s', (g.league_id, g.league_id, g.league_id, g.user_team_id, g.season, g.season))
-    team_name, payroll, released_players_salaries = g.db.fetchone()
-    if released_players_salaries:
-        payroll += released_players_salaries
-    payroll /= 1000  # Because payroll is a Decimal
+    g.db.execute('SELECT CONCAT(region, " ", name) FROM %s_team_attributes WHERE team_id = %s AND season = %s', (g.league_id, g.user_team_id, g.season))
+    team_name, = g.db.fetchone()
 
-    return render_all_or_json('negotiation.html', {'team_amount': team_amount, 'team_years': team_years, 'player_amount': player_amount, 'player_years': player_years, 'player_expiration': player_expiration, 'player': player, 'salary_cap': salary_cap, 'team_name': team_name, 'payroll': payroll})
+    payroll = get_payroll(g.user_team_id)
+    payroll /= 1000.0
+
+    return render_all_or_json('negotiation.html', {'team_amount': team_amount, 'team_years': team_years, 'player_amount': player_amount, 'player_years': player_years, 'player_expiration': player_expiration, 'allow_over_salary_cap': allow_over_salary_cap, 'player': player, 'salary_cap': salary_cap, 'team_name': team_name, 'payroll': payroll})
 
 # Utility views
 

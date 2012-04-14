@@ -1,25 +1,14 @@
 To acquire parity with the GTK version:
 
 contract negotiation
-- bbgm.league_views.negotiate(player_id)
-  - handle POST requests of submitted offers, or if the user wants to walk away
-  - after offer, see if the DB row is still there. if so, refresh view. if not, redirect to dashboard
-- bbgm.core.negotiation.new(player_id)
-  - set play button to "Negotiate"
-- bbgm.core.negotiation.offer(team_amount, team_years)
-  - see if it's close enough to accept. if so:
-    - update contract and team in player_attributes
-    - delete row in negotiations table
-    - call util.lock.set_negotiation_in_progress(False)
-  - else:
-    - update player_amount and player_years as appropriate, writing to database
-- "walk away" button
-- test on free agents first
+- does roster_position need to be set for newly signed players?
 
 free agents list
-- deired contract
+- desired contract
+- link to negotiation page
 
 resign players at end of season
+- set allow_over_salary_cap, somehow
 - Play button changes to "Resign free agents"
 - link brings you to a page listing only your free agents, and explaining that this is your chance to sign them before they become available to the whole league
 - besides that notice, this should work like the normal free agents page
@@ -39,6 +28,7 @@ Single page application
 - highlight link in menu for current page - current JS only will work for links on the sidebar itself. need something more general
   - on AJAX success, remove other highlights. then somehow figure out the right one to add
 - internal links, like the "View draft" and "Continue negotiation" links from the play menu
+- contract negotiation (or, forms in general)
 
 roster
 - reordering

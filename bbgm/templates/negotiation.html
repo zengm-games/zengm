@@ -6,6 +6,12 @@
 {% block league_content %}
   <h1>Contract negotiation</h1>
 
+  {% if allowed_over_salary_cap %}
+    <p>You are allowed to go over the salary cap to make this deal because you are resigning <a href="{{ url_for('player', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a> to a contract extension.</p>
+  {% else %}
+    <p>You are not allowed to go over the salary cap to make this deal because <a href="{{ url_for('player', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a> is a free agent.</p>
+  {% endif %}
+
   <div class="row-fluid">
     <div class="span6">
       <h2>{{ team_name }}</h2>
@@ -13,11 +19,15 @@
       <p>Salary cap: ${{ salary_cap|round(1) }}M</p>
       <h2>Your proposal</h2>
       <form action="{{ url_for('negotiation', league_id=g.league_id, player_id=player.player_id) }}" class="form-horizontal" method="POST">
-        <p><input type="text" id="team_years" class="span1" value="{{ team_years }}"> years</p>
+        <input type="text" name="team_years" id="team_years" class="span1" value="{{ team_years }}"> years
         <p><div class="input-prepend input-append">
-          <span class="add-on">$</span><input type="text" id="team_amount" class="span1" value="{{ team_amount }}"><span class="add-on">M</span> per year
+          <span class="add-on">$</span><input type="text" name="team_amount" id="team_amount" class="span1" value="{{ team_amount }}"><span class="add-on">M</span> per year
         </div></p>
-        <p><button class="btn btn-large btn-primary" id="accept">Submit proposal</button></p>
+        <button class="btn btn-large btn-primary" id="submit">Submit proposal</button>  
+      </form>
+
+      <form action="{{ url_for('negotiation', league_id=g.league_id, player_id=player.player_id) }}" class="form-horizontal" method="POST">
+        <button name="cancel" class="btn btn btn-danger" id="cancel">Can't reach a deal? End negotiation</button>
       </form>
 
     </div>
@@ -27,8 +37,10 @@
       <p>Potential: {{ player.potential }}</p>
       <h2>Player proposal</h2>
       <p>{{ player_years }} year{% if player_years > 1 %}s{% endif %} (through {{ player_expiration }})</p>
-      <p>${{ player_amount|round(1) }}M per year</p>
-      <p><button class="btn btn-large btn-primary" id="accept">Accept player proposal</button></p>
+      <p>${{ player_amount|round(3) }}M per year</p>
+      <form action="{{ url_for('negotiation', league_id=g.league_id, player_id=player.player_id) }}" class="form-horizontal" method="POST">
+        <button name="accept" class="btn btn-large btn-primary" id="accept">Accept player proposal</button>
+      </form>
     </div>
   </div>
 

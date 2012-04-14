@@ -215,12 +215,12 @@ def negotiation(player_id=None):
     if request.method == 'POST':
         if 'cancel' in request.form:
             contract_negotiation.cancel(player_id)
-            return redirect(url_for('league_dashboard', league_id=g.league_id))
+            return redirect_or_json('league_dashboard')
         elif 'accept' in request.form:
             error = contract_negotiation.accept(player_id)
             if error:
                 return render_all_or_json('league_error.html', {'error': error})
-            return redirect(url_for('roster', league_id=g.league_id))
+            return redirect_or_json('roster')
         else:
             team_amount_new = int(float(request.form['team_amount'])*1000)
             team_years_new = int(request.form['team_years'])
@@ -381,7 +381,7 @@ def validate_season(season):
 
 def render_all_or_json(template_file, template_args={}):
     """Return rendered template, or JSON containing rendered blocks."""
-    if request.args.get('json', False, type=bool):
+    if request.args.get('json', 0, type=int) or request.form.get('json', 0, type=int):
         ctx = _request_ctx_stack.top  # Not sure what this does
         ctx.app.update_template_context(template_args)  # Not sure what this does
         template = ctx.app.jinja_env.get_template(template_file)
@@ -392,3 +392,12 @@ def render_all_or_json(template_file, template_args={}):
         return jsonify(d)
     else:
         return render_template(template_file, **template_args)
+
+def redirect_or_json(f):
+    """Redirect to function's URL, or return a JSON response containing rendered
+    blocks from a function's template.
+    """
+    if request.args.get('json', 0, type=int) or request.form.get('json', 0, type=int):
+        return globals()[f]()
+    else:
+        return redirect(url_for(f, league_id=g.league_id))

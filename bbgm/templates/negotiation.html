@@ -23,11 +23,12 @@
         <p><div class="input-prepend input-append">
           <span class="add-on">$</span><input type="text" name="team_amount" id="team_amount" class="span1" value="{{ team_amount }}"><span class="add-on">M</span> per year
         </div></p>
-        <button class="btn btn-large btn-primary" id="submit">Submit proposal</button>  
+        <button type="submit" class="btn btn-large btn-primary">Submit proposal</button>  
       </form>
 
       <form action="{{ url_for('negotiation', league_id=g.league_id, player_id=player.player_id) }}" class="form-horizontal" method="POST">
-        <button name="cancel" class="btn btn btn-danger" id="cancel">Can't reach a deal? End negotiation</button>
+        <input type="hidden" name="cancel" value="1">
+        <button type="submit" class="btn btn btn-danger">Can't reach a deal? End negotiation</button>
       </form>
 
     </div>
@@ -39,7 +40,8 @@
       <p>{{ player_years }} year{% if player_years > 1 %}s{% endif %} (through {{ player_expiration }})</p>
       <p>${{ player_amount|round(3) }}M per year</p>
       <form action="{{ url_for('negotiation', league_id=g.league_id, player_id=player.player_id) }}" class="form-horizontal" method="POST">
-        <button name="accept" class="btn btn-large btn-primary" id="accept">Accept player proposal</button>
+        <input type="hidden" name="accept" value="1">
+        <button type="submit" class="btn btn-large btn-primary" id="accept">Accept player proposal</button>
       </form>
     </div>
   </div>

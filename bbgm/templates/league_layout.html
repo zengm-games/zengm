@@ -28,7 +28,7 @@
         <li id="nav_draft"><a href="{{ url_for('draft_', league_id=g.league_id) }}">Draft</a></li>
         <li class="nav-header">Stats</li>
         <li id="nav_game_log"><a href="{{ url_for('game_log', league_id=g.league_id) }}">Game log</a></li>
-        <li id="nav_leaders"><a href="#">League leaders</a></li>
+        <li id="nav_leaders"><a href="{{ url_for('leaders', league_id=g.league_id) }}">League leaders</a></li>
         <li id="nav_player_ratings"><a href="{{ url_for('player_ratings', league_id=g.league_id) }}">Player ratings</a></li>
         <li id="nav_player_stats"><a href="{{ url_for('player_stats', league_id=g.league_id) }}">Player stats</a></li>
         <li id="nav_team_stats"><a href="#">Team stats</a></li>

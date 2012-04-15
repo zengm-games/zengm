@@ -32,6 +32,35 @@ def league_dashboard():
 
     return render_all_or_json('league_dashboard.html')
 
+@app.route('/<int:league_id>/leaders')
+@league_crap
+def leaders():
+    categories = []
+    categories.append({'name': 'Points', 'stat': 'Pts',
+                       'title': 'Points per game', 'data': []})
+    categories.append({'name': 'Rebounds', 'stat': 'Reb',
+                       'title': 'Rebounds per game', 'data': []})
+    categories.append({'name': 'Assists', 'stat': 'Ast',
+                       'title': 'Assists per game', 'data': []})
+    categories.append({'name': 'Field goal percentage', 'stat': 'FG%',
+                       'title': 'Field goal percentage', 'data': []})
+    categories.append({'name': 'Blocks', 'stat': 'Blk',
+                       'title': 'Blocks per game', 'data': []})
+    categories.append({'name': 'Steals', 'stat': 'Stl',
+                       'title': 'Steals per game', 'data': []})
+
+    cols = ['ps.points', 'ps.offensive_rebounds+ps.defensive_rebounds',
+            'ps.assists', '100*ps.field_goals_made/ps.field_goals_attempted',
+            'ps.blocks', 'ps.steals']
+    for i in xrange(len(cols)):
+        # I have to insert the cateogry using string formatting because
+        # otherwise it mangles the syntax. But it's okay, cols is defined just a
+        # few lines up. Nothing malicious there.
+        g.dbd.execute('SELECT pa.player_id, pa.name, ta.abbreviation, AVG(%s) as stat FROM %s_player_attributes as pa, %s_player_stats as ps, %s_team_attributes as ta WHERE pa.player_id = ps.player_id AND ps.season = %s AND ps.is_playoffs = 0 AND ta.team_id = pa.team_id AND ta.season = ps.season GROUP BY ps.player_id ORDER BY AVG(%s) DESC LIMIT 10' % (cols[i], '%s', '%s', '%s', '%s', cols[i]), (g.league_id, g.league_id, g.league_id, g.season))
+        categories[i]['data'] = g.dbd.fetchall()
+
+    return render_all_or_json('leaders.html', {'categories': categories})
+
 @app.route('/<int:league_id>/player_ratings')
 @league_crap
 def player_ratings():

@@ -44,6 +44,7 @@ hopefully that will change relatively soon.
 * Flask-Celery
 * Flask-Assets
 * Closure Compiler
+* YUI Compressor
 
 For the first three, you can just use the normal Ubuntu (or whatever) packages
 and it will probably work fine.
@@ -64,6 +65,7 @@ And to install the rest, run:
     sudo pip install Flask-Celery
     sudo pip install Flask-Assets
     sudo pip install closure
+    sudo pip install yuicompressor
 
 ### Optional packages
 

@@ -4,6 +4,7 @@ import time
 
 from flask import url_for, g, render_template
 
+from bbgm import app
 from bbgm.util import lock
 
 jug = Juggernaut()
@@ -99,6 +100,7 @@ def set_status(status=None):
     if status != old_status:
         g.db.execute('UPDATE %s_game_attributes SET pm_status = %s WHERE season = %s', (g.league_id, status, g.season))
         jug.publish('%d_status' % (g.league_id,), status)
+        app.logger.debug('Set status: %s' % (status,))
 
 def set_phase(phase_text=None):
     """Save phase text to database and push to client.
@@ -119,6 +121,7 @@ def set_phase(phase_text=None):
     if phase_text != old_phase_text:
         g.db.execute('UPDATE %s_game_attributes SET pm_phase = %s WHERE season = %s', (g.league_id, phase_text, g.season))
         jug.publish('%d_phase' % (g.league_id,), phase_text)
+        app.logger.debug('Set phase: %s' % (phase_text,))
 
 def refresh_options():
     """Get current options based on game state and push rendered play button

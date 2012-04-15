@@ -76,8 +76,16 @@ $(document).ready(function() {
         var league_root_url_2 = result[1];
         var league_page_2 = result[2];
 
+        // Make exceptions for some links
+        exception = false;
+        // Pagination on datatables
+        console.log($(this).parent().parent().parent().hasClass('dataTables_paginate'))
+        if ($(this).parent().parent().parent().hasClass('dataTables_paginate')) {
+            exception = true;
+        }
+
         // If they are the same, do AJAX page load
-        if (league_id_2 > 0 && league_root_url_1 == league_root_url_2) {
+        if (league_id_2 > 0 && league_root_url_1 == league_root_url_2 && !exception) {
             $.getJSON(linked_url, {'json': 1}, function (data) {
                 ajax_update(data, linked_url);
             });

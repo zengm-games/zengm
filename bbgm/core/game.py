@@ -55,11 +55,11 @@ class Game:
     def write_stats(self):
         # Record who the starters are
         for t in range(2):
-            g.db.execute('SELECT pa.player_id FROM %s_player_attributes as pa, %s_player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s AND pr.roster_position <= 5', (g.league_id, g.league_id, self.team[t]['id']))
-            for row in g.db.fetchall():
+            g.db.execute('SELECT pa.player_id FROM %s_player_attributes as pa, %s_player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s ORDER BY pr.roster_position ASC LIMIT 5', (g.league_id, g.league_id, self.team[t]['id']))
+            for starter_id, in g.db.fetchall():
                 for p in xrange(len(self.team[t]['player'])):
-                    if self.team[t]['player'][p]['id'] == row[0]:
-                        self.record_stat(t, p, 'starter')
+                    if self.team[t]['player'][p]['id'] == starter_id:
+                        self.team[t]['player'][p]['stat']['starter'] = 1
 
         # Player stats and team stats
         for t in range(2):

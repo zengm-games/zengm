@@ -10,7 +10,6 @@ DROP TABLE if EXISTS leagues;
 CREATE TABLE leagues (
     league_id INTEGER PRIMARY KEY AUTO_INCREMENT,
     user_id INTEGER,
-    description VARCHAR(255),
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 

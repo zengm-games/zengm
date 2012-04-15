@@ -5,12 +5,16 @@
 {% block content %}
   <h1>Active leagues</h1>
 
-<ul class="nav nav-pills nav-stacked">
-{% for league in leagues %}
-  <li><form action="{{ url_for('delete_league') }}" method="POST"><input type="hidden" name="league_id" value="{{ league.league_id }}"><button class="btn btn-small pull-right">Delete</button></form><a href="{{ url_for('league_dashboard', league_id=league.league_id) }}"><h3>League {{ league.league_id }}</h3><span class="clearfix">{{ league.description }}</span></a><hr></li>
-{% endfor %}
-</ul>
+  <ul class="dashboard_league">
+  {% for league in leagues %}
+  <!--  <form action="{{ url_for('delete_league') }}" method="POST"><input type="hidden" name="league_id" value="{{ league.league_id }}"><button class="btn btn-small pull-right">Delete</button></form>-->
 
-  <a href="{{ url_for('new_league') }}" class="btn">Create new league</a>
+    <li>
+      <a href="{{ url_for('league_dashboard', league_id=league.league_id) }}"><h3>League {{ league.league_id }}</h3><span class="clearfix">{{ league.team }}</span><span class="clearfix">{{ league.pm_phase }}</span></a>
+    </li>
+  {% endfor %}
+
+  <li class="dashboard_league_new"><a href="{{ url_for('new_league') }}"><h2>Create new league</h2></a></li>
+</ul>
 
 {% endblock %}

@@ -7,8 +7,14 @@ from bbgm.util.decorators import login_required
 @app.route('/')
 def index():
     if session.has_key('logged_in') and session['logged_in']:
-        g.dbd.execute('SELECT league_id, description FROM leagues WHERE user_id = %s ORDER BY league_id ASC', (session['user_id'],))
-        leagues = g.dbd.fetchall()
+        leagues = []
+        g.db.execute('SELECT league_id FROM leagues WHERE user_id = %s ORDER BY league_id ASC', (session['user_id'],))
+        for league_id, in g.db.fetchall():
+            g.db.execute('SELECT team_id, season, pm_phase FROM %s_game_attributes', (league_id,))
+            user_team_id, season, pm_phase = g.db.fetchone()
+            g.db.execute('SELECT CONCAT(region, " ", name) FROM %s_team_attributes WHERE team_id = %s AND season = %s', (league_id, user_team_id, season))
+            team, = g.db.fetchone()
+            leagues.append({'league_id': league_id, 'pm_phase': pm_phase, 'team': team})
         return render_template('dashboard.html', leagues=leagues)
     else:
         return render_template('hello.html')

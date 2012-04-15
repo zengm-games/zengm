@@ -73,7 +73,7 @@ And to install the rest, run:
 
 This speeds up gameplay by about 10%, for now at least.
 
-## Installing and running
+## Installing
 
 Create a new MySQL database called bbgm. To do this, from the command line run
 something like:
@@ -82,10 +82,14 @@ something like:
     CREATE DATABASE bbgm;
     GRANT ALL ON bbgm.* TO testuser@localhost IDENTIFIED BY 'test623';
 
-Then these commands in the Python interpreter, from this folder:
+Make sure your database settings in bbgm/__init__.py match the user and
+database you just created. Then, to create the database tables, run the
+following command (WARNING: make sure you use a new database, as this will
+delete everything else in the database):
 
-    import bbgm
-    bbgm.init_db()
+    python manage.py init_db
+
+## Running
 
 On the command line, run these four commands (note: some services may already be
 running, such as redis_server if you install the normal Ubuntu package):

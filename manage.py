@@ -1,14 +1,16 @@
 from flask.ext import celery, script
 
-from bbgm import app, init_db
+import bbgm
 
 # This creates default commands runserver and shell
-manager = script.Manager(app)
-
-manager.add_command('init_db', init_db())
+manager = script.Manager(bbgm.app)
 
 # This creates celeryd, celerybeat, celeryev, celeryctl, and camqadm commands
 celery.install_commands(manager)
+
+@manager.command
+def init_db():
+    bbgm.init_db()
 
 if __name__ == "__main__":
     manager.run()

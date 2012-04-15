@@ -1,5 +1,7 @@
 To acquire parity with the GTK version:
 
+user team game simulations not working?
+
 resign players at end of season
 - set allow_over_salary_cap, somehow
 - Play button changes to "Resign free agents"
@@ -21,10 +23,10 @@ Single page application
 - during page reloads or back/forward... what about handling deeper content? i.e., what box score is being viewed? what year? what stat is sorted? what page in rankings? etc.
 - when a form uses redirect_or_json, the URL isn't updated. not sure what the best way to fix that is.
 
+move to new window button, like gmail, that will open a view in a new window with a minimal UI
+
 roster
-- reordering
-  - see old web code
-  - highlight handle on hover, like button
+- highlight handle on hover, like button
 - view other teams, but not reorder
 - release
 - buy out

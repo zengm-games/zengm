@@ -326,6 +326,19 @@ def draft_user():
 
     return jsonify(player_ids=[player_id])
 
+@app.route('/<int:league_id>/roster/reorder', methods=['POST'])
+@league_crap_ajax
+def roster_reorder():
+    roster_position = 1
+    for player_id in request.form.getlist('roster[]'):
+        player_id = int(player_id)
+        g.db.execute('SELECT team_id FROM %s_player_attributes WHERE player_id = %s', (g.league_id, player_id))
+        team_id, = g.db.fetchone()
+        if team_id == g.user_team_id:  # Don't let the user update CPU-controlled rosters
+            g.db.execute('UPDATE %s_player_ratings SET roster_position = %s WHERE player_id = %s', (g.league_id, roster_position, player_id))
+            roster_position += 1
+
+    return 'fuck'
 
 
 

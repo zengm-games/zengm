@@ -149,4 +149,34 @@ $(document).ready(function() {
             play_button.html(data);
         });
     }
+
+    // Sortable (reorder rows) roster
+    var fixHelper = function(e, ui) {
+      // Return helper which preserves the width of table cells being reordered
+      ui.children().each(function() {
+          $(this).width($(this).width());
+      });
+      return ui;
+    };
+    $('#roster tbody').sortable({
+        helper: fixHelper,
+        cursor: 'move',
+        update: function(e, ui) {
+            sorted = $(this).sortable('serialize');
+            $.post(league_root_url + '/roster/reorder', sorted, function(msg) {
+                var i = 1;
+                $('#roster tbody').children().each(function() {
+                    if (i <= 5) {
+                        $(this).find('td:first').removeClass('btn-info');
+                        $(this).find('td:first').addClass('btn-primary');
+                    }
+                    else {
+                        $(this).find('td:first').removeClass('btn-primary');
+                        $(this).find('td:first').addClass('btn-info');
+                    }
+                    i++;
+                });
+            });
+        }
+    }).disableSelection();
 });

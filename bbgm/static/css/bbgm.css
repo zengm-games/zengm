@@ -71,17 +71,12 @@ div#play_button ul li a.dropdown-toggle:hover {
   border-bottom: 1px solid #000;
 }
 
-table#roster td.starter  {
-  background-repeat: repeat-x;
+table#roster td.starter, table#roster td.bench   {
   cursor: move;
   width: 18px;
 }
 span.roster_starter  {
   color: #0074cc;
-}
-table#roster td.bench  {
-  cursor: move;
-  width: 18px;
 }
 span.roster_bench  {
   color: #49afcd;

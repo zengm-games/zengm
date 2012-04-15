@@ -46,7 +46,7 @@ app.logger.debug('Started')
 
 # Assets
 assets = Environment(app)
-js = Bundle('js/jquery.js', 'js/bootstrap-dropdown.js', 'js/jquery.dataTables.min.js', 'js/DT_bootstrap.js', 'js/bbgm.js', 'js/juggernaut.js', filters='closure_js', output='gen/packed.js')
+js = Bundle('js/jquery.js', 'js/jquery-ui.js', 'js/bootstrap-dropdown.js', 'js/jquery.dataTables.min.js', 'js/DT_bootstrap.js', 'js/bbgm.js', 'js/juggernaut.js', filters='closure_js', output='gen/packed.js')
 assets.register('js_all', js)
 
 # Views

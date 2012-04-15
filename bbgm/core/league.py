@@ -84,7 +84,7 @@ def new(team_id):
 
 def delete(league_id):
     g.db.execute("DELETE FROM leagues WHERE league_id = %s", (league_id,))
-    tables = ['active_playoff_series', 'game_attributes', 'league_conferences', 'league_divisions', 'player_attributes', 'player_ratings', 'player_stats', 'released_players_salaries', 'team_attributes', 'team_stats', 'draft_results']
+    tables = ['active_playoff_series', 'game_attributes', 'league_conferences', 'league_divisions', 'player_attributes', 'player_ratings', 'player_stats', 'released_players_salaries', 'team_attributes', 'team_stats', 'draft_results', 'negotiation', 'trade']
     for table in tables:
         g.db.execute("DROP TABLE %s_%s" % (league_id, table))
 

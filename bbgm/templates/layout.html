@@ -7,19 +7,23 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link href="/static/css/bootstrap.css" rel="stylesheet">
+    {% assets filter='cssutils', output='gen/packed.css', 'css/bootstrap.css', 'css/bbgm-responsive.css', 'css/bbgm.css', 'css/DT_bootstrap.css' %}
+        <link href="{{ ASSET_URL }}" rel="stylesheet">
+    {% endassets %}
+<!--    <link href="/static/css/bootstrap.css" rel="stylesheet">
     <link href="/static/css/bbgm-responsive.css" rel="stylesheet">
     <link href="/static/css/bbgm.css" rel="stylesheet">
-    <link href="/static/css/DT_bootstrap.css" rel="stylesheet">
+    <link href="/static/css/DT_bootstrap.css" rel="stylesheet">-->
 
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
-    {% assets "js_all" %}
-      <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% assets filter='closure_js', output='gen/packed.js', 'js/jquery.js', 'js/jquery-ui.js', 'js/bootstrap-dropdown.js', 'js/jquery.dataTables.min.js', 'js/DT_bootstrap.js', 'js/bbgm.js', 'js/juggernaut.js' %}
+        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
     {% endassets %}
 <!--    <script src="/static/js/jquery.js"></script>
+    <script src="/static/js/jquery-ui.js"></script>
     <script src="/static/js/bootstrap-dropdown.js"></script>
     <script src="/static/js/jquery.dataTables.min.js"></script>
     <script src="/static/js/DT_bootstrap.js"></script>

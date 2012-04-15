@@ -7,13 +7,11 @@ import sqlite3
 import time
 
 from flask import g, json
-from flask.ext.celery import Celery
 
-from bbgm import app
+from bbgm import app, celery
 from bbgm.core import game_sim, season, play_menu
 from bbgm.util import lock, fast_random, request_context_globals
 
-celery = Celery(app)
 
 class Game:
     """This needs to not depend on g."""

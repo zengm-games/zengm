@@ -2,6 +2,7 @@
 #monkey.patch_all()
 from flask import Flask, g
 from flask.ext.assets import Environment, Bundle
+from flask.ext.celery import Celery
 import logging
 import MySQLdb
 from contextlib import closing
@@ -23,6 +24,7 @@ BROKER_URL = 'redis://localhost:6379/0'
 
 app = Flask(__name__)
 app.config.from_object(__name__)
+celery = Celery(app)
 #app.event = Event()
 
 # Logging

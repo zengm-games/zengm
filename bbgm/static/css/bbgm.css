@@ -17,15 +17,17 @@ ul.dashboard_league {
   margin: 0 -1em 0 0;
   padding: 0;
 }
+ul.dashboard_league li {
+  float: left;
+  margin: 1em 1em 0 0;
+  position: relative;
+}
 ul.dashboard_league li a {
   background-color: #eeeeee;
   display: block;
-  float: left;
   height: 70px;
-  width: 130px;
-
   padding: 8px;
-  margin: 1em 1em 0 0;
+  width: 130px;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   border-radius: 5px;
@@ -33,6 +35,11 @@ ul.dashboard_league li a {
 ul.dashboard_league li a:hover {
   background-color: #dddddd;
   text-decoration: none;
+}
+ul.dashboard_league li form {
+  position: absolute;
+  top: 0px;
+  right: 0px;
 }
 ul.dashboard_league li.dashboard_league_new a {
   color: #46a546;

@@ -11,6 +11,7 @@
 
     <li>
       <a href="{{ url_for('league_dashboard', league_id=league.league_id) }}"><h3>League {{ league.league_id }}</h3><span class="clearfix">{{ league.team }}</span><span class="clearfix">{{ league.pm_phase }}</span></a>
+      <form action="{{ url_for('delete_league') }}" method="POST"><input type="hidden" name="league_id" value="{{ league.league_id }}"><button class="btn btn-mini">Delete</button></form>
     </li>
   {% endfor %}
 

@@ -1,5 +1,7 @@
 To acquire parity with the GTK version:
 
+concurrent game simulation in more than one league fails
+
 resign players at end of season
 - set allow_over_salary_cap, somehow
 - Play button changes to "Resign free agents"
@@ -79,10 +81,16 @@ security
 - http://pypi.python.org/pypi/Flask-KVSession
 - http://packages.python.org/Flask-Login/
 
-contract negotiation
-- does roster_position need to be set for newly signed players?
+roster_position
+- what happened in pygobject version?
+  - set automatically when season starts, or when league is created?
+  - set after trade (auto) or signing (stick at bottom)
 
 pep8
+
+logging
+- should be more ubiquitous
+- doesn't get saved to file inside celery task, but they do show up on the celeryd screen
 
 next redirect like http://flask.pocoo.org/docs/reqcontext/?highlight=url#diving-into-context-locals
 

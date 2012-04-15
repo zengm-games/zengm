@@ -5,6 +5,7 @@ from flask.ext.assets import Environment, Bundle
 from flask.ext.celery import Celery
 import logging
 import MySQLdb
+import subprocess
 from contextlib import closing
 #from gevent.event import Event
 
@@ -66,19 +67,22 @@ def bulk_execute(sql):
     Args:
         sql: A string containing SQL queries to be executed.
     """
-    from subprocess import Popen, PIPE
-    process = Popen('mysql %s -u%s -p%s' % (app.config['DB'], app.config['DB_USERNAME'], app.config['DB_PASSWORD']), stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
+    process = subprocess.Popen('mysql %s -u%s -p%s' % (app.config['DB'], app.config['DB_USERNAME'], app.config['DB_PASSWORD']), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     stdoutdata, stderrdata = process.communicate(sql)
 #    print sql
 #    print stdoutdata
 #    print stderrdata
 
 def init_db():
+    # Delete any current tables in database
+    print 'mysqldump -u%s -p%s --add-drop-table %s | grep ^DROP | mysql -u%s -p%s %s' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD'], app.config['DB'], app.config['DB_USERNAME'], app.config['DB_PASSWORD'], app.config['DB'])
+    subprocess.call('mysqldump -u%s -p%s --add-drop-table %s | grep ^DROP | mysql -u%s -p%s %s' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD'], app.config['DB'], app.config['DB_USERNAME'], app.config['DB_PASSWORD'], app.config['DB']), shell=True)
+#    subprocess.call('mysqldump -u%s -p%s --add-drop-table %s' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD'], app.config['DB']))
+    # Create new tables
     f = app.open_resource('data/core.sql')
     sql = ''
     for line in f:
         sql += line
-
     bulk_execute(sql)
 
 @app.before_request

@@ -141,6 +141,16 @@ $(document).ready(function() {
         // Listen for updates to play menu
         jug.subscribe(league_id + '_status', function(data){
             play_status.html(data);
+
+            // Refresh page, as appropriate
+            var refresh_pages = ['standings', 'playoffs', 'schedule', 'free_agents']
+            var result = parse_league_url(document.URL);
+            var league_page = result[2];
+            if (jQuery.inArray(league_page, refresh_pages) > -1) {
+                $.getJSON(document.URL, {'json': 1}, function (data) {
+                    ajax_update(data);
+                });
+            }
         });
         jug.subscribe(league_id + '_phase', function(data){
             play_phase.html(data);

@@ -59,7 +59,10 @@ def leaders():
         g.dbd.execute('SELECT pa.player_id, pa.name, ta.abbreviation, AVG(%s) as stat FROM %s_player_attributes as pa, %s_player_stats as ps, %s_team_attributes as ta WHERE pa.player_id = ps.player_id AND ps.season = %s AND ps.is_playoffs = 0 AND ta.team_id = pa.team_id AND ta.season = ps.season GROUP BY ps.player_id ORDER BY AVG(%s) DESC LIMIT 10' % (cols[i], '%s', '%s', '%s', '%s', cols[i]), (g.league_id, g.league_id, g.league_id, g.season))
         categories[i]['data'] = g.dbd.fetchall()
 
-    return render_all_or_json('leaders.html', {'categories': categories})
+    g.db.execute('SELECT abbreviation FROM %s_team_attributes WHERE team_id = %s AND season = %s', (g.league_id, g.user_team_id, g.season))
+    user_abbreviation, = g.db.fetchone()
+
+    return render_all_or_json('leaders.html', {'categories': categories, 'user_abbreviation': user_abbreviation})
 
 @app.route('/<int:league_id>/player_ratings')
 @league_crap

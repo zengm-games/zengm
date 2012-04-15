@@ -1,7 +1,5 @@
 To acquire parity with the GTK version:
 
-concurrent game simulation in more than one league fails
-
 resign players at end of season
 - set allow_over_salary_cap, somehow
 - Play button changes to "Resign free agents"

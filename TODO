@@ -1,7 +1,6 @@
-To acquire parity with the GTK version:
+# To acquire parity with the GTK version and be good enough to share:
 
-dashboard
-- delete button
+configuration in text file?
 
 resign players at end of season
 - set allow_over_salary_cap, somehow
@@ -10,14 +9,18 @@ resign players at end of season
 - besides that notice, this should work like the normal free agents page
 
 Game simulation:
-- Make this robust to failure.. somehow.. only pop from schedule on completion? if games_in_progress lock is set, that'll work
+- Robustness
+  - only pop from schedule on completion
+  - gracefully handle celery crash and restart
+  - gracefully handle intermediate numbers of days
+    - move to a more sensible calendar?
 - Stop
 
 speed it up
 - somehow cache team (and/or player) dicts, so we don't need separate SQL queries all the time
 
 play menu
-- just send everything over one juggernaut connection?
+- just send everything over one juggernaut connection per league?
 
 Single page application
 - When a simulation is done (or a player is signed, or whatever), the current page should be reloaded
@@ -111,6 +114,9 @@ playoffs
 - before playoffs, show current playoff seedings
 
 
+# Then
+
+self-contained game simulation code, to allow other people to hack on it easily. automatically make charts and stuff.
 
 
 
@@ -140,27 +146,8 @@ Separate files
 
 Prettier UI: embed Webkit
 - http://www.aclevername.com/articles/python-webgui/
-- first try for box score
-  - how to make HTML links do external stuff
-  - total rebounds
-  - starters/bench distinction {% if forloop.counter == 5 %} separator{% endif %}
-- then for standings
-- then status/summary toolbar/sidebar
-  - team
-  - record
-  - standings
-  - finances: annual profit/loss, total cash/debt
-  - history: total record, playoffs, championships, all star appearances, hall of fame selections
-- Use theme settings for fonts and colors
-  - https://wiki.ubuntu.com/Quickly/Snippets "Get Gtk+ theme colors"
-
-
-Player window and game log list should be sped up by not checking the old (static) rows
 
 when negotiating, players change values too much when you try to change years
-when you press close and the save/nosave/cancel dialog comes up, it should warn you about the save if you press save
-
-continue factoring out game logic from views to core
 
 pyflakes
 
@@ -201,7 +188,6 @@ play menu
     even after hiding, accelerators still work, so on menuitem activation, check to make sure it's a valid choice!!!
         or: set accelerators in python code, not glade.  then i can reuse accelerators
 ratings log tab on player window
-rapidly clicking and unclicking a player's checkbox on the trade window shouldn't open the player's info window
 some indication of synergy
 toolbar to supplement the menubar
 - New Open Save | Play (drop down menu) | Roster TeamHistory | Trade FreeAgents

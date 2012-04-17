@@ -40,17 +40,17 @@ def negotiation_in_progress():
 
 def can_start_games():
     g.db.execute('SELECT games_in_progress, trade_in_progress, negotiation_in_progress FROM %s_game_attributes', (g.league_id,))
-    row = g.db.fetchone()
+    games_in_progress, trade_in_progress, negotiation_in_progress = g.db.fetchone()
 
-    if any(row):
+    if games_in_progress:
         return False
 
     g.db.execute('SELECT 1 FROM %s_trade', (g.league_id,))
-    if g.db.rowcount:
+    if trade_in_progress or g.db.rowcount:
         return False
 
-    g.db.execute('SELECT 1 FROM %s_negotiation', (g.league_id,))
-    if g.db.rowcount:
+    g.db.execute('SELECT 1 FROM %s_negotiation WHERE resigning = 0', (g.league_id,))
+    if negotiation_in_progress or g.db.rowcount:
         return False
 
     return True
@@ -59,4 +59,19 @@ def can_start_trade():
     return can_start_games()
 
 def can_start_negotiation():
-    return can_start_games()
+    g.db.execute('SELECT games_in_progress, trade_in_progress, negotiation_in_progress FROM %s_game_attributes', (g.league_id,))
+    games_in_progress, trade_in_progress, negotiation_in_progress = g.db.fetchone()
+
+    if games_in_progress:
+        return False
+
+    g.db.execute('SELECT 1 FROM %s_trade', (g.league_id,))
+    if trade_in_progress or g.db.rowcount:
+        return False
+
+    # Allow multiple parallel negotiations (ignore negotiation_in_progress) only for resigning players
+    g.db.execute('SELECT 1 FROM %s_negotiation WHERE resigning = 0', (g.league_id,))
+    if g.db.rowcount:
+        return False
+
+    return True

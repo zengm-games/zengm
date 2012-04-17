@@ -5,7 +5,7 @@ from flask import session, g
 
 import bbgm
 from bbgm import app
-from bbgm.core import play_menu, player
+from bbgm.core import contract_negotiation, play_menu, player
 
 def new_phase(phase):
     """Set a new phase of the game.
@@ -159,9 +159,9 @@ def new_phase(phase):
 
         # Check for retiring players
         # Call the contructor each season because that's where the code to check for retirement is
-        rpw = retired_players_window.RetiredPlayersWindow(self)  # Do the retired player check
-        rpw.retired_players_window.run()
-        rpw.retired_players_window.destroy()
+#        rpw = retired_players_window.RetiredPlayersWindow(self)  # Do the retired player check
+#        rpw.retired_players_window.run()
+#        rpw.retired_players_window.destroy()
 
         # Move undrafted players to free agent pool
         g.db.execute('SELECT player_id FROM %s_player_attributes WHERE team_id = -2', (g.league_id,))
@@ -175,17 +175,19 @@ def new_phase(phase):
         g.db.execute('SELECT player_id, team_id, name FROM %s_player_attributes WHERE contract_expiration = %s AND team_id >= 0', (g.league_id, g.season))
         for player_id, team_id, name in g.db.fetchall():
             if team_id != g.user_team_id:
-                # Automaitcally negotiate with teams
-                self.player_contract_expire(player_id)
+                # Automatically negotiate with teams
+#                self.player_contract_expire(player_id)
+                pass
             else:
                 # Add to free agents first, to generate a contract demand
                 p = player.Player()
                 p.load(player_id)
                 p.add_to_free_agents(phase)
-                # Open a contract_window
-                cw = contract_window.ContractWindow(self, player_id, True)
-                cw.contract_window.run()
-                cw.contract_window.destroy()
+
+                # Open negotiations with player
+                error = contract_negotiation.new(player_id, resigning=True)
+                if error:
+                    app.logger.debug(error)
 
     old_phase = g.phase
     g.phase = phase

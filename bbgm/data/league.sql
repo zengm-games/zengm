@@ -158,7 +158,7 @@ player_amount INTEGER,
 player_years INTEGER,
 num_offers_made INTEGER,
 max_offers INTEGER,
-allow_over_salary_cap BOOLEAN DEFAULT 0);
+resigning BOOLEAN DEFAULT 0);
 
 CREATE TABLE trade (
 placeholder INTEGER);

@@ -32,7 +32,7 @@ def options(keys=None):
                    {'id': 'until_preseason', 'url': url_for('play', league_id=g.league_id, amount='until_preseason'), 'label': 'Until preseason', 'normal_link': False},
                    {'id': 'until_regular_season', 'url': url_for('play', league_id=g.league_id, amount='until_regular_season'), 'label': 'Until regular season', 'normal_link': False},
                    {'id': 'trade', 'url': '#', 'label': 'Continue trade negotiation', 'normal_link': False},
-                   {'id': 'contract_negotiation', 'url': url_for('negotiation', league_id=g.league_id), 'label': 'Continue contract negotiation', 'normal_link': True}]
+                   {'id': 'contract_negotiation', 'url': url_for('negotiation_list', league_id=g.league_id), 'label': 'Continue contract negotiation', 'normal_link': True}]
 
     if not keys:
         # Preseason

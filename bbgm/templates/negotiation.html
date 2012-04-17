@@ -6,7 +6,7 @@
 {% block league_content %}
   <h1>Contract negotiation</h1>
 
-  {% if allowed_over_salary_cap %}
+  {% if resigning %}
     <p>You are allowed to go over the salary cap to make this deal because you are resigning <a href="{{ url_for('player', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a> to a contract extension.</p>
   {% else %}
     <p>You are not allowed to go over the salary cap to make this deal because <a href="{{ url_for('player', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a> is a free agent.</p>

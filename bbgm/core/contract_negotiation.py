@@ -6,22 +6,32 @@ from bbgm import app
 from bbgm.core import play_menu
 from bbgm.util import get_payroll, lock
 
-def new(player_id):
+def new(player_id, resigning=False):
     """Start a new contract negotiation with player.
 
-    player_id must correspond with a free agent.
+    Args: 
+        player_id: An integer that must correspond with a free agent.
+        resigning: A boolean. True if this is a negotiation for a contract
+            extension with a current player who just became a free agent. False
+            otherwise.
 
-    Returns False if the new negotiation is started successfully. Otherwise, it
-    returns a string containing an error message to be sent to the user.
+    Returns:
+        False if the new negotiation is started successfully. Otherwise, it
+        returns a string containing an error message to be sent to the user.
     """
     app.logger.debug('Trying to start new contract negotiation with player %d' % (player_id,))
 
+    if resigning:
+        resigning = True
+    else:
+        resigning = False
+
     g.db.execute('SELECT COUNT(*) FROM %s_player_attributes WHERE team_id = %s', (g.league_id, g.user_team_id))
     num_players_on_roster, = g.db.fetchone()
-    if num_players_on_roster >= 15:
+    if num_players_on_roster >= 15 and not resigning:
         return "Your roster is full. Before you can sign a free agent, you'll have to buy out or release one of your current players.";
     if not lock.can_start_negotiation():
-        return "You cannot initiate a new negotiaion while game simulation is in progress, a previous contract negotiation is in process, or a trade is in progress.";
+        return "You cannot initiate a new negotiaion while game simulation is in progress, a previous contract negotiation is in process, or a trade is in progress."
     g.db.execute('SELECT team_id FROM %s_player_attributes WHERE player_id = %s', (g.league_id, player_id))
     if g.db.rowcount:
         team_id, = g.db.fetchone()
@@ -40,7 +50,7 @@ def new(player_id):
 
     max_offers = random.randint(1, 5)
 
-    g.db.execute('INSERT INTO %s_negotiation (player_id, team_amount, team_years, player_amount, player_years, num_offers_made, max_offers) VALUES (%s, %s, %s, %s, %s, 0, %s)', (g.league_id, player_id, player_amount, player_years, player_amount, player_years, max_offers))
+    g.db.execute('INSERT INTO %s_negotiation (player_id, team_amount, team_years, player_amount, player_years, num_offers_made, max_offers, resigning) VALUES (%s, %s, %s, %s, %s, 0, %s, %s)', (g.league_id, player_id, player_amount, player_years, player_amount, player_years, max_offers, resigning))
     lock.set_negotiation_in_progress(True)
     play_menu.set_status('Contract negotiation in progress')
     play_menu.refresh_options()
@@ -103,13 +113,13 @@ def accept(player_id):
     """
     app.logger.debug('User accepted contract proposal from %d' % (player_id))
 
-    g.db.execute('SELECT player_amount, player_years, allow_over_salary_cap FROM %s_negotiation WHERE player_id = %s', (g.league_id, player_id))
-    player_amount, player_years, allow_over_salary_cap = g.db.fetchone()
+    g.db.execute('SELECT player_amount, player_years, resigning FROM %s_negotiation WHERE player_id = %s', (g.league_id, player_id))
+    player_amount, player_years, resigning = g.db.fetchone()
 
     # If this contract brings team over the salary cap, it's not a minimum
     # contract, and it's not resigning a current player, ERROR!
     payroll = get_payroll(g.user_team_id)
-    if not allow_over_salary_cap and (payroll + player_amount > g.salary_cap and player_amount != 500):
+    if not resigning and (payroll + player_amount > g.salary_cap and player_amount != 500):
         return 'This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract, buy out a player currently on your roster, or cancel the negotiation.'
 
     # Adjust to account for in-season signings

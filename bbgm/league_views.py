@@ -232,18 +232,21 @@ def player(player_id):
     return render_all_or_json('player.html', {'info': info, 'ratings': ratings, 'seasons': seasons})
 
 @app.route('/<int:league_id>/negotiation')
+@league_crap
+def negotiation_list(player_id=None):
+    # If there is only one active negotiation, go to it
+    g.db.execute('SELECT player_id FROM %s_negotiation', (g.league_id,))
+    print g.db.rowcount
+    if g.db.rowcount == 1:
+        player_id, = g.db.fetchone()
+        return redirect_or_json('negotiation', {'player_id': player_id})
+
+    return 'hello'
+
+
 @app.route('/<int:league_id>/negotiation/<int:player_id>', methods=['GET', 'POST'])
 @league_crap
-def negotiation(player_id=None):
-    # If player_id is not passed, then there must be an active negotiation
-    if not player_id:
-        g.db.execute('SELECT player_id FROM %s_negotiation', (g.league_id,))
-        if g.db.rowcount:
-            player_id, = g.db.fetchone()
-        else:
-            error = 'There is no negotiation in progress.'
-            return render_all_or_json('league_error.html', {'error': error})
-
+def negotiation(player_id):
     if request.method == 'POST':
         if 'cancel' in request.form:
             contract_negotiation.cancel(player_id)
@@ -265,8 +268,8 @@ def negotiation(player_id=None):
             if error:
                 return render_all_or_json('league_error.html', {'error': error})
 
-    g.db.execute('SELECT team_amount, team_years, player_amount, player_years, allow_over_salary_cap FROM %s_negotiation WHERE player_id = %s', (g.league_id, player_id))
-    team_amount, team_years, player_amount, player_years, allow_over_salary_cap = g.db.fetchone()
+    g.db.execute('SELECT team_amount, team_years, player_amount, player_years, resigning FROM %s_negotiation WHERE player_id = %s', (g.league_id, player_id))
+    team_amount, team_years, player_amount, player_years, resigning = g.db.fetchone()
 
     player_amount /= 1000.0
     team_amount /= 1000.0
@@ -285,7 +288,7 @@ def negotiation(player_id=None):
     payroll = get_payroll(g.user_team_id)
     payroll /= 1000.0
 
-    return render_all_or_json('negotiation.html', {'team_amount': team_amount, 'team_years': team_years, 'player_amount': player_amount, 'player_years': player_years, 'player_expiration': player_expiration, 'allow_over_salary_cap': allow_over_salary_cap, 'player': player, 'salary_cap': salary_cap, 'team_name': team_name, 'payroll': payroll})
+    return render_all_or_json('negotiation.html', {'team_amount': team_amount, 'team_years': team_years, 'player_amount': player_amount, 'player_years': player_years, 'player_expiration': player_expiration, 'resigning': resigning, 'player': player, 'salary_cap': salary_cap, 'team_name': team_name, 'payroll': payroll})
 
 # Utility views
 
@@ -438,11 +441,15 @@ def render_all_or_json(template_file, template_args={}):
     else:
         return render_template(template_file, **template_args)
 
-def redirect_or_json(f):
+def redirect_or_json(f, args={}):
     """Redirect to function's URL, or return a JSON response containing rendered
     blocks from a function's template.
+
+    This kind of sucks because it currently doesn't pass the URL, so there's no
+    way to update it with pushState on the client side.
     """
     if request.args.get('json', 0, type=int) or request.form.get('json', 0, type=int):
-        return globals()[f]()
+        return globals()[f](**args)
     else:
-        return redirect(url_for(f, league_id=g.league_id))
+        args['league_id'] = g.league_id
+        return redirect(url_for(f, **args))

@@ -15,7 +15,7 @@ class Player:
 
         g.dbd.execute('SELECT * FROM %s_player_ratings WHERE player_id = %s', (g.league_id, self.id))
         self.rating = g.dbd.fetchone()
-        g.dbd.execute('SELECT * FROM %s_player_attributes WHERE player_id = %s' (g.league_id, self.id))
+        g.dbd.execute('SELECT * FROM %s_player_attributes WHERE player_id = %s', (g.league_id, self.id))
         self.attribute = g.dbd.fetchone()
 
     def save(self):

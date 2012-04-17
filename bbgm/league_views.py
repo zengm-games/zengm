@@ -234,9 +234,8 @@ def player(player_id):
 @app.route('/<int:league_id>/negotiation')
 @league_crap
 def negotiation_list(player_id=None):
-    # If there is only one active negotiation, go to it
-    g.db.execute('SELECT player_id FROM %s_negotiation', (g.league_id,))
-    print g.db.rowcount
+    # If there is only one active negotiation with a free agent, go to it
+    g.db.execute('SELECT player_id FROM %s_negotiation WHERE resigning = 0', (g.league_id,))
     if g.db.rowcount == 1:
         player_id, = g.db.fetchone()
         return redirect_or_json('negotiation', {'player_id': player_id})

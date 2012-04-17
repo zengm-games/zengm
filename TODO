@@ -3,11 +3,11 @@
 configuration in text file?
 
 resign players at end of season
-- Add all to negotiation table
-- Play button changes to "Resign free agents", links to /negotiation
-- /negotiation displays a list of the free agents. if only one though, redirect to it
+- Add another phase before free agency, and make sure this doesn't fuck up anything
+- Play button changes to "Resign your free agents", links to /negotiation
 - link brings you to a page listing only your free agents, and explaining that this is your chance to sign them before they become available to the whole league
 - Share template code with free agents list
+- you only get one negotiation to sign the player
 
 fix commented lines in bbgm.core.season
 

@@ -147,29 +147,15 @@ def new_phase(phase):
     elif phase == 6:
         phase_text = '%s after draft' % (g.season,)
 
-    # Offseason, free agency
+    # Offseason, resign players
     elif phase == 7:
-        phase_text = '%s free agency' % (g.season,)
-        # Reset contract demands of current free agents
-        g.db.execute('SELECT player_id FROM %s_player_attributes WHERE team_id = -1', (g.league_id,))
-        for player_id, in g.db.fetchall():
-            p = player.Player()
-            p.load(player_id)
-            p.add_to_free_agents(phase)
+        phase_text = '%s resign players' % (g.season,)
 
         # Check for retiring players
         # Call the contructor each season because that's where the code to check for retirement is
 #        rpw = retired_players_window.RetiredPlayersWindow(self)  # Do the retired player check
 #        rpw.retired_players_window.run()
 #        rpw.retired_players_window.destroy()
-
-        # Move undrafted players to free agent pool
-        g.db.execute('SELECT player_id FROM %s_player_attributes WHERE team_id = -2', (g.league_id,))
-        for player_id, in g.db.fetchall():
-            g.db.execute('UPDATE %s_player_attributes SET draft_year = -1, draft_round = -1, draft_pick = -1, draft_team_id = -1 WHERE player_id = %s', (g.league_id, player_id))
-            p = player.Player()
-            p.load(player_id)
-            p.add_to_free_agents(phase)
 
         # Resign players
         g.db.execute('SELECT player_id, team_id, name FROM %s_player_attributes WHERE contract_expiration = %s AND team_id >= 0', (g.league_id, g.season))
@@ -188,6 +174,24 @@ def new_phase(phase):
                 error = contract_negotiation.new(player_id, resigning=True)
                 if error:
                     app.logger.debug(error)
+
+    # Offseason, free agency
+    elif phase == 8:
+        phase_text = '%s free agency' % (g.season,)
+        # Reset contract demands of current free agents
+        g.db.execute('SELECT player_id FROM %s_player_attributes WHERE team_id = -1', (g.league_id,))
+        for player_id, in g.db.fetchall():
+            p = player.Player()
+            p.load(player_id)
+            p.add_to_free_agents(phase)
+
+        # Move undrafted players to free agent pool
+        g.db.execute('SELECT player_id FROM %s_player_attributes WHERE team_id = -2', (g.league_id,))
+        for player_id, in g.db.fetchall():
+            g.db.execute('UPDATE %s_player_attributes SET draft_year = -1, draft_round = -1, draft_pick = -1, draft_team_id = -1 WHERE player_id = %s', (g.league_id, player_id))
+            p = player.Player()
+            p.load(player_id)
+            p.add_to_free_agents(phase)
 
     old_phase = g.phase
     g.phase = phase

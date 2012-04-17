@@ -107,8 +107,10 @@ def play(amount):
         draft.generate_players()
         draft.set_order()
         season.new_phase(5)
-    elif amount == 'until_free_agency':
+    elif amount == 'until_resign_players':
         season.new_phase(7)
+    elif amount == 'until_free_agency':
+        season.new_phase(8)
     elif amount == 'until_preseason':
         season.new_phase(0)
     elif amount == 'until_regular_season':
@@ -163,7 +165,7 @@ def playoffs():
 @app.route('/<int:league_id>/free_agents')
 @league_crap
 def free_agents():
-    if g.phase >= 2 and g.phase <= 6:
+    if g.phase >= 2 and g.phase <= 7:
         error = "You're not allowed to sign free agents now."
         return render_all_or_json('league_error.html', {'error': error})
 

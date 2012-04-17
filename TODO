@@ -6,10 +6,13 @@ resign players at end of season
 - Add another phase before free agency, and make sure this doesn't fuck up anything
 - Play button changes to "Resign your free agents", links to /negotiation
 - link brings you to a page listing only your free agents, and explaining that this is your chance to sign them before they become available to the whole league
-- Share template code with free agents list
+- Share template code with free agents list?
 - you only get one negotiation to sign the player
 
 fix commented lines in bbgm.core.season
+
+make sure free agents can only be signed in the appropriate phases
+- not just displaying list, but in core.contract_negotiation and/or util.lock too
 
 Game simulation:
 - Robustness

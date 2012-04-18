@@ -79,7 +79,6 @@ $(document).ready(function() {
         // Make exceptions for some links
         exception = false;
         // Pagination on datatables
-        console.log($(this).parent().parent().parent().hasClass('dataTables_paginate'))
         if ($(this).parent().parent().parent().hasClass('dataTables_paginate')) {
             exception = true;
         }
@@ -151,7 +150,7 @@ $(document).ready(function() {
             play_status.html(data);
 
             // Refresh page, as appropriate
-            var refresh_pages = ['standings', 'playoffs', 'schedule', 'free_agents']
+            var refresh_pages = ['standings', 'playoffs', 'schedule']
             var result = parse_league_url(document.URL);
             var league_page = result[2];
             if (jQuery.inArray(league_page, refresh_pages) > -1) {

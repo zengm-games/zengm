@@ -201,17 +201,22 @@ def roster(abbreviation=None):
     return render_all_or_json('roster.html', {'players': players})
 
 @app.route('/<int:league_id>/game_log')
-@app.route('/<int:league_id>/game_log/<int:season>')
-@app.route('/<int:league_id>/game_log/<int:season>/<abbreviation>')
+@app.route('/<int:league_id>/game_log/<int:current_season>')
+@app.route('/<int:league_id>/game_log/<int:current_season>/<abbreviation>')
 @league_crap
-def game_log(season=None, abbreviation=None):
-    season = validate_season(season)
+def game_log(current_season=None, abbreviation=None):
+    current_season = validate_season(current_season)
     team_id, abbreviation = validate_abbreviation(abbreviation)
 
-    g.dbd.execute('SELECT abbreviation FROM %s_team_attributes WHERE season = %s ORDER BY team_id ASC', (g.league_id, g.season))
+    g.dbd.execute('SELECT abbreviation FROM %s_team_attributes WHERE season = %s ORDER BY team_id ASC', (g.league_id, current_season))
     teams = g.dbd.fetchall()
 
-    return render_all_or_json('game_log.html', {'abbreviation': abbreviation, 'teams': teams})
+    seasons = []
+    g.db.execute('SELECT season FROM %s_team_attributes GROUP BY season ORDER BY season DESC', (g.league_id))
+    for season, in g.db.fetchall():
+        seasons.append(season)  
+
+    return render_all_or_json('game_log.html', {'abbreviation': abbreviation, 'teams': teams, 'seasons': seasons, 'current_season': current_season})
 
 @app.route('/<int:league_id>/player/<int:player_id>')
 @league_crap

@@ -16,6 +16,8 @@ Game simulation:
 - Stop
   - see saved SO question
 
+add years droptown to all relevant views
+
 speed it up
 - somehow cache team (and/or player) dicts, so we don't need separate SQL queries all the time
 

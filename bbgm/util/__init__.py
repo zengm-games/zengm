@@ -28,3 +28,22 @@ def get_payroll(team_id):
         payroll += released_players_salaries
 
     return int(payroll)
+
+def roster_auto_sort(team_id):
+    """Sort the roster (i.e. pick the starters) of team_id based on overall
+    rating.
+    """
+    # Get roster
+    players = []
+    g.db.execute('SELECT pa.player_id, pr.overall, pr.endurance FROM %s_player_attributes as pa, %s_player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s', (g.league_id, g.league_id, team_id))
+    for row in g.db.fetchall():
+        players.append([int(i) for i in list(row)])
+
+    # Sort by rating
+    players.sort(cmp=lambda x, y: y[1] - x[1])
+
+    # Update positions
+    roster_position = 1
+    for player in players:
+        g.db.execute('UPDATE %s_player_ratings SET roster_position = %s WHERE player_id = %s', (g.league_id, roster_position, player[0]))
+        roster_position += 1

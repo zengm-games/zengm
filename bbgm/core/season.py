@@ -6,7 +6,7 @@ from flask import session, g
 import bbgm
 from bbgm import app
 from bbgm.core import contract_negotiation, play_menu, player
-from bbgm.util import lock
+from bbgm.util import lock, roster_auto_sort
 
 def new_phase(phase):
     """Set a new phase of the game.
@@ -98,9 +98,9 @@ def new_phase(phase):
             new_schedule()
 
             # Auto sort rosters (except player's team)
-#            for t in range(30):
-#                if t != g.user_team_id:
-#                    common.roster_auto_sort(t)
+            for t in range(30):
+                if t != g.user_team_id:
+                    roster_auto_sort(t)
         else:
             g.db.execute('UPDATE %s_game_attributes SET phase = %s', (g.league_id, phase))
             return

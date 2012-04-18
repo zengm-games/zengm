@@ -1,5 +1,4 @@
-from bbgm import common
-
+from bbgm.util import roster_auto_sort
 
 class Trade:
     """All non-GUI parts of a trade.
@@ -137,4 +136,4 @@ class Trade:
                 common.DB_CON.execute('UPDATE player_attributes SET team_id = ? WHERE player_id = ?', (new_team_id, player_id))
 
         # Auto-sort CPU team roster
-        common.roster_auto_sort(self.team_id)
+        roster_auto_sort(self.team_id)

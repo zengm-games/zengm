@@ -2,6 +2,8 @@
 
 configuration in text file?
 
+auto sort button in roster view
+
 fix commented lines in bbgm.core.season
 
 Game simulation:
@@ -12,6 +14,8 @@ Game simulation:
     - move to a more sensible calendar?
 - Stop
   - see saved SO question
+
+refactor player.py
 
 add years droptown to all relevant views
 - player stats

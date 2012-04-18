@@ -5,6 +5,7 @@ from flask import session, g
 import bbgm
 from bbgm import app
 from bbgm.core import play_menu, player, season
+from bbgm.util import roster_auto_sort
 
 def new(team_id):
     # Add to main record
@@ -77,8 +78,8 @@ def new(team_id):
     season.new_phase(1)
     play_menu.set_status('Idle')
 
-    #Auto sort player's roster
-#    common.roster_auto_sort(g.user_team_id)
+    # Auto sort player's roster (other teams will be done in season.new_phase(1))
+    roster_auto_sort(g.user_team_id)
 
     return g.league_id
 

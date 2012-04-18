@@ -217,7 +217,7 @@ def game_log(season=None, abbreviation=None):
 @league_crap
 def player(player_id):
     # Info
-    g.dbd.execute('SELECT name, position, (SELECT CONCAT(region, " ", name) FROM %s_team_attributes as ta WHERE pa.team_id = ta.team_id) as team, height, weight, %s - born_date as age, born_date, born_location, college, draft_year, draft_round, draft_pick, (SELECT CONCAT(region, " ", name) FROM %s_team_attributes as ta WHERE ta.team_id = pa.draft_team_id) as draft_team, contract_amount, contract_expiration FROM %s_player_attributes as pa WHERE player_id = %s', (g.league_id, g.season, g.league_id, g.league_id, player_id))
+    g.dbd.execute('SELECT name, position, (SELECT CONCAT(region, " ", name) FROM %s_team_attributes as ta WHERE pa.team_id = ta.team_id AND ta.season = %s) as team, height, weight, %s - born_date as age, born_date, born_location, college, draft_year, draft_round, draft_pick, (SELECT CONCAT(region, " ", name) FROM %s_team_attributes as ta WHERE ta.team_id = pa.draft_team_id AND ta.season = %s) as draft_team, contract_amount, contract_expiration FROM %s_player_attributes as pa WHERE player_id = %s', (g.league_id, g.season, g.season, g.league_id, g.season, g.league_id, player_id))
     info = g.dbd.fetchone()
     print 'INFO', info
     info['height'] = '%d\'%d"' % (info['height'] // 12, info['height'] % 12);

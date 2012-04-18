@@ -43,9 +43,9 @@ def new_phase(phase):
             g.db.execute('INSERT INTO %s_team_attributes (team_id, division_id, region, name, abbreviation, cash, season) VALUES (%s, %s, %s, %s, %s, %s, %s)', (g.league_id, row[0], row[1], row[2], row[3], row[4], row[5], g.season))
         # Age players
         player_ids = []
-        g.db.execute('SELECT player_id, born_date FROM %s_player_attributes', (g.league_id,))
-        for row in g.db.techall():
-            player_ids.append(row[0])
+        g.db.execute('SELECT player_id FROM %s_player_attributes', (g.league_id,))
+        for player_id, in g.db.fetchall():
+            player_ids.append(player_id)
         up = player.Player()
         for player_id in player_ids:
             up.load(player_id)
@@ -53,7 +53,7 @@ def new_phase(phase):
             up.save()
 
         # AI teams sign free agents
-        self.auto_sign_free_agents()
+#        self.auto_sign_free_agents()
 
     # Regular season, before trade deadline
     elif phase == 1:

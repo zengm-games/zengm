@@ -142,7 +142,12 @@ def cancel(player_id):
     """
     app.logger.debug('User canceled contract negotiations with %d' % (player_id))
 
+    # Delete negotiation
     g.db.execute('DELETE FROM %s_negotiation WHERE player_id = %s', (g.league_id, player_id))
-    lock.set_negotiation_in_progress(False)
-    play_menu.set_status('Idle')
-    play_menu.refresh_options()
+
+    # If no negotiations are in progress, update status
+    g.db.execute('SELECT 1 FROM %s_negotiation', (g.league_id,))
+    if g.db.rowcount == 0:
+        lock.set_negotiation_in_progress(False)
+        play_menu.set_status('Idle')
+        play_menu.refresh_options()

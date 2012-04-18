@@ -2,12 +2,7 @@
 
 configuration in text file?
 
-resign players at end of season
-- Add another phase before free agency, and make sure this doesn't fuck up anything
-- Play button changes to "Resign your free agents", links to /negotiation
-- link brings you to a page listing only your free agents, and explaining that this is your chance to sign them before they become available to the whole league
-- Share template code with free agents list?
-- you only get one negotiation to sign the player
+player view for free agents shows no stats?
 
 fix commented lines in bbgm.core.season
 

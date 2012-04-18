@@ -6,6 +6,7 @@ from flask import session, g
 import bbgm
 from bbgm import app
 from bbgm.core import contract_negotiation, play_menu, player
+from bbgm.util import lock
 
 def new_phase(phase):
     """Set a new phase of the game.
@@ -178,6 +179,11 @@ def new_phase(phase):
     # Offseason, free agency
     elif phase == 8:
         phase_text = '%s free agency' % (g.season,)
+
+        # Delete all current negotiations to resign players
+        g.db.execute('DELETE FROM %s_negotiation', (g.league_id))
+        lock.set_negotiation_in_progress(False)
+
         # Reset contract demands of current free agents
         g.db.execute('SELECT player_id FROM %s_player_attributes WHERE team_id = -1', (g.league_id,))
         for player_id, in g.db.fetchall():

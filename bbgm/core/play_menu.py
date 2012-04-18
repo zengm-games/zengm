@@ -33,7 +33,8 @@ def options(keys=None):
                    {'id': 'until_preseason', 'url': url_for('play', league_id=g.league_id, amount='until_preseason'), 'label': 'Until preseason', 'normal_link': False},
                    {'id': 'until_regular_season', 'url': url_for('play', league_id=g.league_id, amount='until_regular_season'), 'label': 'Until regular season', 'normal_link': False},
                    {'id': 'trade', 'url': '#', 'label': 'Continue trade negotiation', 'normal_link': False},
-                   {'id': 'contract_negotiation', 'url': url_for('negotiation_list', league_id=g.league_id), 'label': 'Continue contract negotiation', 'normal_link': True}]
+                   {'id': 'contract_negotiation', 'url': url_for('negotiation_list', league_id=g.league_id), 'label': 'Continue contract negotiation', 'normal_link': True},
+                   {'id': 'contract_negotiation_list', 'url': url_for('negotiation_list', league_id=g.league_id), 'label': 'Continue resigning players', 'normal_link': True}]
 
     if not keys:
         # Preseason
@@ -59,16 +60,16 @@ def options(keys=None):
             keys = ['until_resign_players']
         # Offseason - resign players
         elif g.phase == 7:
-            keys = ['until_free_agency']
+            keys = ['contract_negotiation_list', 'until_free_agency']
         # Offseason - free agency
-        elif g.phase == 7:
+        elif g.phase == 8:
             keys = ['until_preseason']
 
         if lock.games_in_progress():
             keys = ['stop']
         if lock.trade_in_progress():
             keys = ['trade']
-        if lock.negotiation_in_progress():
+        if lock.negotiation_in_progress() and g.phase != 7:
             keys = ['contract_negotiation']
 
     # This code is very ugly. Basically I just want to filter all_options into

@@ -131,6 +131,10 @@ table#game_log_list tbody tr.alert-info td, table.leaders tbody tr.alert-info td
   color: #3a87ad;
 }
 
+select.season {
+  width: 120px;
+}
+
 
 /* From bootstrap-responsive.css, force big size */
   .row {

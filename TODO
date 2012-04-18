@@ -14,6 +14,10 @@ Game simulation:
   - see saved SO question
 
 add years droptown to all relevant views
+- player stats
+- draft
+- player ratings, eventually
+- playoffs, eventually
 
 speed it up
 - somehow cache team (and/or player) dicts, so we don't need separate SQL queries all the time
@@ -29,7 +33,7 @@ Single page application
 move to new window button, like gmail, that will open a view in a new window with a minimal UI
 
 game log
-- pushstate for individual box scores as well as teams and seasons
+- pushstate for individual box scores as well as teams and seasons, somehow?
 
 roster
 - highlight handle on hover, like button
@@ -62,6 +66,7 @@ player view
 - http://twitter.github.com/bootstrap/javascript.html#tabs
   - tab for playoff stats
   - tab for game log
+  - tab for player ratings, eventually
 - link to team roster
 
 urls like http://flask.pocoo.org/docs/quickstart/#rendering-templates default to g.season

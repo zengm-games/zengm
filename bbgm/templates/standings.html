@@ -4,6 +4,33 @@
 {% block title %}Standings - League {{ g.league_id }} - Basketball GM{% endblock %}
 
 {% block league_content %}
+  <script type="text/javascript">
+    // Load game log list table and activate form
+    $(document).ready(function() {
+      var standings_select_season = $('#standings_select_season')
+      standings_select_season.change(function(event) {
+        var url = '{{ url_for('standings', league_id=g.league_id) }}/' + standings_select_season.val();
+        $.ajax({
+          type: 'GET',
+          url: url,
+          data: {'json': 1},
+          success: function (data) {
+              ajax_update(data, url);
+          },
+          dataType: 'json'
+        });
+      });
+    });
+  </script>
+
+  <form action="{{ url_for('standings', league_id=g.league_id) }}" method="GET" class="form-inline pull-right">
+    <select id="standings_select_season" name="season" class="season">
+      {% for season in seasons %}
+        <option value="{{ season }}"{% if season == current_season %} selected="selected"{% endif %}>{{ season }} season</option>
+      {% endfor %}
+    </select>
+  </form>
+
   <h1>Standings</h1>
 
   {% for conference in conferences %}

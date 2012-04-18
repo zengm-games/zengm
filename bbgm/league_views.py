@@ -135,22 +135,29 @@ def schedule():
     return render_all_or_json('schedule.html', {'games': games})
 
 @app.route('/<int:league_id>/standings')
+@app.route('/<int:league_id>/standings/<int:current_season>')
 @league_crap
-def standings():
+def standings(current_season=None):
+    current_season = validate_season(current_season)
+    seasons = []
+    g.db.execute('SELECT season FROM %s_team_attributes GROUP BY season ORDER BY season DESC', (g.league_id))
+    for season, in g.db.fetchall():
+        seasons.append(season)
+
     conferences = []
     g.db.execute('SELECT conference_id, name FROM %s_league_conferences ORDER BY conference_id ASC', (g.league_id,))
     for conference_id, conference_name in g.db.fetchall():
         conferences.append({'id': conference_id, 'name': conference_name, 'divisions': [], 'standings': ''})
-        g.dbd.execute('SELECT * FROM %s_team_attributes as ta WHERE ta.division_id IN (SELECT ld.division_id FROM %s_league_divisions as ld WHERE ld.conference_id = %s) AND season = %s ORDER BY won/(won+lost) DESC', (g.league_id, g.league_id, conference_id, g.season))
+        g.dbd.execute('SELECT * FROM %s_team_attributes as ta WHERE ta.division_id IN (SELECT ld.division_id FROM %s_league_divisions as ld WHERE ld.conference_id = %s) AND season = %s ORDER BY won/(won+lost) DESC', (g.league_id, g.league_id, conference_id, current_season))
         conferences[-1]['teams'] = g.dbd.fetchall()
 
         g.db.execute('SELECT division_id, name FROM %s_league_divisions WHERE conference_id = %s ORDER BY name ASC', (g.league_id, conference_id))
         for division_id, division_name in g.db.fetchall():
-            g.dbd.execute('SELECT * FROM %s_team_attributes WHERE division_id = %s AND season = %s ORDER BY won/(won+lost) DESC', (g.league_id, division_id, g.season))
+            g.dbd.execute('SELECT * FROM %s_team_attributes WHERE division_id = %s AND season = %s ORDER BY won/(won+lost) DESC', (g.league_id, division_id, current_season))
             conferences[-1]['divisions'].append({'name': division_name})
             conferences[-1]['divisions'][-1]['teams'] = g.dbd.fetchall()
 
-    return render_all_or_json('standings.html', {'conferences': conferences})
+    return render_all_or_json('standings.html', {'conferences': conferences, 'seasons': seasons, 'current_season': current_season})
 
 @app.route('/<int:league_id>/playoffs')
 @league_crap
@@ -214,7 +221,7 @@ def game_log(current_season=None, abbreviation=None):
     seasons = []
     g.db.execute('SELECT season FROM %s_team_attributes GROUP BY season ORDER BY season DESC', (g.league_id))
     for season, in g.db.fetchall():
-        seasons.append(season)  
+        seasons.append(season)
 
     return render_all_or_json('game_log.html', {'abbreviation': abbreviation, 'teams': teams, 'seasons': seasons, 'current_season': current_season})
 

@@ -20,6 +20,10 @@
               // Click the first one to show its boxscore by default
               $('#game_log_list tbody tr').first().click();
             }
+            else {
+              // Update URL
+//              history.pushState({'league_content': $('#league_content').html()}, '', '{{ url_for('game_log', league_id=g.league_id) }}' + '/' + season + '/' + abbreviation);
+            }
           }
         });
       }

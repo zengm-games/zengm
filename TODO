@@ -4,9 +4,6 @@ configuration in text file?
 
 fix commented lines in bbgm.core.season
 
-make sure free agents can only be signed in the appropriate phases
-- not just displaying list, but in core.contract_negotiation and/or util.lock too
-
 Game simulation:
 - Robustness
   - only pop from schedule on completion
@@ -30,6 +27,9 @@ Single page application
 - when a form uses redirect_or_json, the URL isn't updated. not sure what the best way to fix that is.
 
 move to new window button, like gmail, that will open a view in a new window with a minimal UI
+
+game log
+- pushstate for individual box scores as well as teams and seasons
 
 roster
 - highlight handle on hover, like button

@@ -26,6 +26,8 @@ def new(player_id, resigning=False):
     else:
         resigning = False
 
+    if (g.phase >= 2 and g.phase <= 6) or (g.phase == 7 and not resigning):
+        return "You're not allowed to sign free agents now."
     g.db.execute('SELECT COUNT(*) FROM %s_player_attributes WHERE team_id = %s', (g.league_id, g.user_team_id))
     num_players_on_roster, = g.db.fetchone()
     if num_players_on_roster >= 15 and not resigning:

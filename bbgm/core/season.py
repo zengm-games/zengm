@@ -21,6 +21,10 @@ def new_phase(phase):
         5: Draft
         6: Offseason, after draft
         7: Offseason, free agency
+
+    Returns:
+        False if everything went well, or the string containing an error message
+        to be sent to the client.
     """
 
     # Prevent code running twice
@@ -60,19 +64,12 @@ def new_phase(phase):
         phase_text = '%s regular season' % (g.season,)
         # First, make sure teams are all within the roster limits
         # CPU teams
-        keep_going = True
         g.db.execute('SELECT ta.team_id, COUNT(*) FROM %s_team_attributes as ta, %s_player_attributes as pa WHERE ta.team_id = pa.team_id AND ta.season = %s GROUP BY pa.team_id', (g.league_id, g.league_id, g.season))
         teams = g.db.fetchall()
         for team_id, num_players_on_roster in teams:
             if num_players_on_roster > 15:
                 if team_id == g.user_team_id:
-                    md = Gtk.MessageDialog(self.main_window, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
-                                           Gtk.MessageType.WARNING, Gtk.ButtonsType.CLOSE, ('Your team currently has more '
-                                           'than the maximum number of players (15). You must release or buy out '
-                                           'players (from the Roster window) before the season starts.'))
-                    md.run()
-                    md.destroy()
-                    keep_going = False
+                    return 'Your team currently has more than the maximum number of players (15). You must release or buy out players (from the Roster page) before the season starts.'
                 else:
                     # Automatically drop lowest potential players until we reach 15
                     g.db.execute('SELECT pa.player_id FROM %s_player_attributes as pa, %s_player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s ORDER BY pr.potential ASC LIMIT %s', (g.league_id, g.league_id, team_id, num_players_on_roster-15))
@@ -83,27 +80,17 @@ def new_phase(phase):
                         p.release(phase)
             elif num_players_on_roster < 5:
                 if team_id == g.user_team_id:
-                    md = Gtk.MessageDialog(self.main_window, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
-                                           Gtk.MessageType.WARNING, Gtk.ButtonsType.CLOSE, ('Your team currently has less '
-                                           'than the minimum number of players (5). You must add players (through '
-                                           'free agency or trades) before the season starts.'))
-                    md.run()
-                    md.destroy()
-                    keep_going = False
+                    return 'Your team currently has less than the minimum number of players (5). You must add players (through free agency or trades) before the season starts.'
                 else:
                     # Should auto-add players
                     pass
 
-        if keep_going:
-            new_schedule()
+        new_schedule()
 
-            # Auto sort rosters (except player's team)
-            for t in range(30):
-                if t != g.user_team_id:
-                    roster_auto_sort(t)
-        else:
-            g.db.execute('UPDATE %s_game_attributes SET phase = %s', (g.league_id, phase))
-            return
+        # Auto sort rosters (except player's team)
+        for t in range(30):
+            if t != g.user_team_id:
+                roster_auto_sort(t)
 
     # Regular season, after trade deadline
     elif phase == 2:
@@ -206,6 +193,8 @@ def new_phase(phase):
 
     play_menu.set_phase(phase_text)
     play_menu.refresh_options()
+
+    return False
 
 def new_schedule():
     teams = []

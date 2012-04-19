@@ -2,10 +2,7 @@
 
 configuration in text file?
 
-replace gtk warnings in season.py with.. something
-- need infrastructure to send message back to the user from here
-  - season.new_phase(1) called from league_views.play
-  - so, i can return the error message and chack for it there, and send it to the browser
+resigning team's players doesn't seem to work anymore
 
 roster
 - highlight handle on hover, like button
@@ -13,6 +10,17 @@ roster
 - release
 - buy out
 - Make sure the outer join works when next season starts
+
+dashboard: a bunch of boxes showing..
+- record
+- playoff scenario
+- history
+- roster spots
+- payroll
+- expiring contracts
+- top free agents
+- league leaders
+- team leaders
 
 fix commented lines in bbgm.core.season
 

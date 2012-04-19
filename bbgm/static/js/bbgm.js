@@ -1,3 +1,12 @@
+// Play button
+function play_button(url) {
+    $.get(url, function (data) {
+        if (data['error'].length) {
+            alert(data['error']);
+        }
+    }, 'json');
+}
+
 // For AJAX updating pages
 function ajax_update(data, url) {
     $('title').text(data['title']);

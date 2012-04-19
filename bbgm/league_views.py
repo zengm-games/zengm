@@ -86,10 +86,12 @@ def player_stats():
 
     return render_all_or_json('player_stats.html', {'players': players})
 
-# Change to POST (with CSRF protection) later
+# Change to POST (with CSRF protection) later (gives a weird error when I try that now)
 @app.route('/<int:league_id>/play/<amount>')
 @league_crap
 def play(amount):
+    error = ''
+
     if amount == 'day':
         game.play(1)
     elif amount == 'week':
@@ -114,8 +116,9 @@ def play(amount):
     elif amount == 'until_preseason':
         season.new_phase(0)
     elif amount == 'until_regular_season':
-        season.new_phase(1)
-    return 'yay'
+        error = season.new_phase(1)
+
+    return jsonify(error=error)
 
 @app.route('/<int:league_id>/schedule')
 @league_crap

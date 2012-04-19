@@ -2,7 +2,14 @@
 
 configuration in text file?
 
-auto sort button in roster view
+replace gtk warnings in season.py with.. something
+
+roster
+- highlight handle on hover, like button
+- view other teams, but not reorder
+- release
+- buy out
+- Make sure the outer join works when next season starts
 
 fix commented lines in bbgm.core.season
 
@@ -38,13 +45,6 @@ move to new window button, like gmail, that will open a view in a new window wit
 
 game log
 - pushstate for individual box scores as well as teams and seasons, somehow?
-
-roster
-- highlight handle on hover, like button
-- view other teams, but not reorder
-- release
-- buy out
-- Make sure the outer join works when next season starts
 
 draft
 - make a view for past drafts (league_id/draft/2012)

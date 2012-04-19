@@ -8,7 +8,7 @@ from flask.globals import _request_ctx_stack
 
 from bbgm import app
 from bbgm.core import draft, game, contract_negotiation, play_menu, season
-from bbgm.util import get_payroll
+from bbgm.util import get_payroll, roster_auto_sort
 from bbgm.util.decorators import league_crap, league_crap_ajax
 
 # All the views in here are for within a league.
@@ -206,6 +206,13 @@ def roster(abbreviation=None):
     players = g.dbd.fetchall()
 
     return render_all_or_json('roster.html', {'players': players})
+
+@app.route('/<int:league_id>/roster/auto_sort', methods=['POST'])
+@league_crap
+def auto_sort_roster(abbreviation=None):
+    roster_auto_sort(g.user_team_id)
+
+    return redirect_or_json('roster')
 
 @app.route('/<int:league_id>/game_log')
 @app.route('/<int:league_id>/game_log/<int:current_season>')

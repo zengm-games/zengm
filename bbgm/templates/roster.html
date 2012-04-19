@@ -37,11 +37,19 @@
                 });
             }
         }).disableSelection();
+
+      $('#auto_sort_roster').click(function(event) {
+          $.post(league_root_url + '/roster/auto_sort', {'json': 1}, function (data) {
+              ajax_update(data);
+          }, 'json');
+      });
     });
   </script>
   <h1>Roster</h1>
 
   <p>Drag and drop row handles to move players between the starting lineup (<span class="roster_starter">&#9632;</span>) and the bench (<span class="roster_bench">&#9632;</span>).</p>
+
+  <p><button class="btn" id="auto_sort_roster">Auto sort roster</button></p>
 
   <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="roster">
   <thead>

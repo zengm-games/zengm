@@ -19,6 +19,7 @@ Game simulation:
   - gracefully handle celery crash and restart
   - gracefully handle intermediate numbers of days
     - move to a more sensible calendar?
+      - grep for num_days_played to see what it affects
 - Stop
   - see saved SO question
 

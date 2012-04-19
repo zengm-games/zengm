@@ -10,7 +10,7 @@ from flask import g, json
 
 from bbgm import app, celery
 from bbgm.core import game_sim, season, play_menu
-from bbgm.util import lock, fast_random, request_context_globals
+from bbgm.util import auto_sign_free_agents, lock, fast_random, request_context_globals
 
 
 class Game:
@@ -324,7 +324,7 @@ def sim_wrapper(league_id, num_days, schedule):
                 g.db.execute('UPDATE %s_player_attributes SET free_agent_times_asked = 0 WHERE team_id = -1 AND free_agent_times_asked < 0', (g.league_id,))
 
                 # Sign available free agents
-#                self.auto_sign_free_agents()
+                auto_sign_free_agents()
 
             # If the user wants to stop the simulation, then stop the simulation
 #            if d == 0:  # But not on the first day

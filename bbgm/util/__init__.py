@@ -1,3 +1,5 @@
+import random
+
 from flask import g
 
 from bbgm import app
@@ -47,3 +49,42 @@ def roster_auto_sort(team_id):
     for player in players:
         g.db.execute('UPDATE %s_player_ratings SET roster_position = %s WHERE player_id = %s', (g.league_id, roster_position, player[0]))
         roster_position += 1
+
+def auto_sign_free_agents():
+    """AI teams sign free agents."""
+    # Build free_agents containing player ids and desired contracts
+    g.db.execute('SELECT COUNT(*)/30 FROM %s_team_stats WHERE season = %s', (g.league_id, g.season))
+    num_days_played, = g.db.fetchone()
+    free_agents = []
+    g.db.execute('SELECT pa.player_id, pa.contract_amount, pa.contract_expiration FROM %s_player_attributes as pa, %s_player_ratings as pr WHERE pa.team_id = -1 AND pa.player_id = pr.player_id ORDER BY pr.overall + 2*pr.potential DESC', (g.league_id, g.league_id))
+    for player_id, amount, expiration in g.db.fetchall():
+        free_agents.append([player_id, amount, expiration, False])
+
+    print 'FREE_AGENTS', free_agents
+
+    # Randomly order teams and let them sign free agents
+    team_ids = list(xrange(30))
+    random.shuffle(team_ids)
+    for i in xrange(30):
+        team_id = team_ids[i]
+
+        if team_id == g.user_team_id:
+            continue  # Skip the user's team
+
+        g.db.execute('SELECT count(*) FROM %s_player_attributes WHERE team_id = %s', (g.league_id, team_id))
+        num_players, = g.db.fetchone()
+        payroll = get_payroll(team_id)
+        while payroll < g.salary_cap and num_players < 15:
+            j = 0
+            new_player = False
+            for player_id, amount, expiration, signed in free_agents:
+                if amount + payroll <= g.salary_cap and not signed and num_players < 15:
+                    g.db.execute('UPDATE %s_player_attributes SET team_id = %s, contract_amount = %s, contract_expiration = %s WHERE player_id = %s', (g.league_id, team_id, amount, expiration, player_id))
+                    free_agents[j][-1] = True  # Mark player signed
+                    new_player = True
+                    num_players += 1
+                    payroll += amount
+                    roster_auto_sort(team_id)
+                j += 1
+            if not new_player:
+                break

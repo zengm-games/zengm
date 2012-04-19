@@ -87,8 +87,8 @@ def player_stats():
     return render_all_or_json('player_stats.html', {'players': players})
 
 # Change to POST (with CSRF protection) later (gives a weird error when I try that now)
-@app.route('/<int:league_id>/play/<amount>')
-@league_crap
+@app.route('/<int:league_id>/play/<amount>', methods=['POST'])
+@league_crap_ajax
 def play(amount):
     error = ''
 

@@ -1,6 +1,6 @@
 // Play button
 function play_button(url) {
-    $.get(url, function (data) {
+    $.post(url, function (data) {
         if (data['error'].length) {
             alert(data['error']);
         }

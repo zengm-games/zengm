@@ -4,12 +4,20 @@ configuration in text file?
 
 resigning team's players doesn't seem to work anymore
 
+when appropriate, redirect from play menu
+- starting draft
+- contract negotiations
+
 roster
 - highlight handle on hover, like button
 - view other teams, but not reorder
 - release
 - buy out
+  - send ajax to get the $ situation, then display appropriate modal dialog
 - Make sure the outer join works when next season starts
+
+contract negotiation view
+- bring back to either free agent view or resigning view after either accept or cancel
 
 dashboard: a bunch of boxes showing..
 - record

@@ -26,7 +26,7 @@ def new(player_id, resigning=False):
     else:
         resigning = False
 
-    if (g.phase >= 2 and g.phase <= 6) or (g.phase == 7 and not resigning):
+    if (g.phase >= 2 and g.phase <= 6) and not resigning:
         return "You're not allowed to sign free agents now."
     g.db.execute('SELECT COUNT(*) FROM %s_player_attributes WHERE team_id = %s', (g.league_id, g.user_team_id))
     num_players_on_roster, = g.db.fetchone()
@@ -57,8 +57,9 @@ def new(player_id, resigning=False):
     play_menu.set_status('Contract negotiation in progress')
     play_menu.refresh_options()
 
-    # Keep track of how many times negotiations happen
-    g.db.execute('UPDATE %s_player_attributes SET free_agent_times_asked = free_agent_times_asked + 1 WHERE player_id = %s', (g.league_id, player_id))
+    # Keep track of how many times negotiations happen with a player
+    if not resigning:
+        g.db.execute('UPDATE %s_player_attributes SET free_agent_times_asked = free_agent_times_asked + 1 WHERE player_id = %s', (g.league_id, player_id))
 
     return False
 

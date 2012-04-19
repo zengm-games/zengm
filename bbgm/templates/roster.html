@@ -45,7 +45,17 @@
         });
 
         // Release player
+        $('#roster button').click(function(event) {
+console.log(this.dataset)
+            if (this.dataset.action == 'release') {
+                if (window.confirm('Are you sure you want to release ' + this.dataset.playerName + '?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary until his contract expires in ' + this.dataset.contractExpiration + '.')) {
+                    console.log('RELEASE');
+                }
+            }
+            else if (this.dataset.action == 'buy_out') {
 
+            }
+        });
     });
   </script>
   <h1>Roster</h1>
@@ -62,7 +72,7 @@
   </thead>
   <tbody>
     {% for player in players %}
-      <tr id="roster_{{ player.player_id }}"><td class="{% if loop.index <= 5 %}btn-primary starter{% else %}btn-info bench{% endif %}"></td><td><a href="{{ url_for('player', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a></td><td>{{ player.position }}</td><td>{{ player.overall }}</td><td>{{ player.potential }}</td><td>{{ player.age }}</td><td>${{ player.contract_amount|int }}k through {{ player.contract_expiration }}</td><td>{% if player.minutes %} {{ player.minutes|float|round(1) }} {% endif %}</td><td>{% if player.points %} {{ player.points|float|round(1) }} {% endif %}</td><td>{% if player.rebounds %} {{ player.rebounds|float|round(1) }} {% endif %}</td><td>{% if player.assists %} {{ player.assists|float|round(1) }} {% endif %}</td><td><button id="release_{{ player.player_id }}" class="btn btn-mini">Release...</button></td><td><button id="buy_out_{{ player.player_id }}" class="btn btn-mini">Buy out...</button></td></tr>
+      <tr id="roster_{{ player.player_id }}"><td class="{% if loop.index <= 5 %}btn-primary starter{% else %}btn-info bench{% endif %}"></td><td><a href="{{ url_for('player', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a></td><td>{{ player.position }}</td><td>{{ player.overall }}</td><td>{{ player.potential }}</td><td>{{ player.age }}</td><td>${{ player.contract_amount|int }}k through {{ player.contract_expiration }}</td><td>{% if player.minutes %} {{ player.minutes|float|round(1) }} {% endif %}</td><td>{% if player.points %} {{ player.points|float|round(1) }} {% endif %}</td><td>{% if player.rebounds %} {{ player.rebounds|float|round(1) }} {% endif %}</td><td>{% if player.assists %} {{ player.assists|float|round(1) }} {% endif %}</td><td><button class="btn btn-mini" data-action="release" data-player-id="{{ player.player_id }}" data-player-name="{{ player.name }}" data-contract-expiration="{{ player.contract_expiration }}">Release...</button></td><td><button class="btn btn-mini" data-action="buy_out" data-player-id="{{ player.player_id }}">Buy out...</button></td></tr>
     {% endfor %}
   </tbody>
   </table>

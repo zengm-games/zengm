@@ -205,7 +205,7 @@ def roster(abbreviation=None):
     g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, pa.contract_amount,  pa.contract_expiration, AVG(ps.minutes) as minutes, AVG(ps.points) as points, AVG(ps.offensive_rebounds + ps.defensive_rebounds) as rebounds, AVG(ps.assists) as assists FROM %s_player_attributes as pa LEFT OUTER JOIN %s_player_ratings as pr ON pa.player_id = pr.player_id LEFT OUTER JOIN %s_player_stats as ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE pa.team_id = %s GROUP BY pa.player_id ORDER BY pr.roster_position ASC', (g.season, g.league_id, g.league_id, g.league_id, g.season, team_id))
     players = g.dbd.fetchall()
 
-    return render_all_or_json('roster.html', {'players': players})
+    return render_all_or_json('roster.html', {'players': players, 'num_roster_spots': 15-len(players)})
 
 @app.route('/<int:league_id>/roster/auto_sort', methods=['POST'])
 @league_crap

@@ -47,6 +47,8 @@
   </script>
   <h1>Roster</h1>
 
+  <p>You currently have {% if num_roster_spots == 1 %}1 empty roster spot{% else %}{{ num_roster_spots }} empty roster spots{% endif %}.</p>
+
   <p>Drag and drop row handles to move players between the starting lineup (<span class="roster_starter">&#9632;</span>) and the bench (<span class="roster_bench">&#9632;</span>).</p>
 
   <p><button class="btn" id="auto_sort_roster">Auto sort roster</button></p>

@@ -3,6 +3,9 @@
 configuration in text file?
 
 replace gtk warnings in season.py with.. something
+- need infrastructure to send message back to the user from here
+  - season.new_phase(1) called from league_views.play
+  - so, i can return the error message and chack for it there, and send it to the browser
 
 roster
 - highlight handle on hover, like button

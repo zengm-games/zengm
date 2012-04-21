@@ -12,8 +12,8 @@ $(document).ready(function() {
             var drafted_player = new Array(5);
             // Find row in undrafted players table, get metadata, delete row
             undrafted_tds = $('#undrafted_' + player_ids[i] + ' td')
-            for (var j=1; j<6; j++) {
-                drafted_player[j-1] = undrafted_tds[j].innerHTML;
+            for (var j=0; j<5; j++) {
+                drafted_player[j] = undrafted_tds[j].innerHTML;
             }
 
             // Find correct row (first blank row) in drafted players table, write metadata
@@ -35,12 +35,14 @@ $(document).ready(function() {
     function draft_until_user_or_end() {
         $.post('{{ url_for('draft_until_user_or_end', league_id=g.league_id) }}', function (data) {
             update_draft_tables(data['player_ids']);
-            $('#undrafted button').removeAttr('disabled');
+            if (!data['done']) {
+                $('#undrafted button').removeAttr('disabled');
+            }
         }, 'json');
     }
 
     $('#start_draft').click(function(event) {
-        $('#start_draft').hide();
+        $($('#start_draft').parent()).hide()
         draft_until_user_or_end();
     });
 
@@ -58,18 +60,18 @@ $(document).ready(function() {
 
   <p>When your turn in the draft comes up, select from the list of available players on the left.</p>
 
-  <p><button class="btn btn-large btn-primary" id="start_draft">Start draft</button></p>
+  <p{% if drafted[0].player_id > 0 %} style="display: none;"{% endif%}><button class="btn btn-large btn-primary" id="start_draft">Start draft</button></p>
 
   <div class="row-fluid">
     <div class="span6">
       <h2>Undrafted players</h2>
       <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="undrafted">
       <thead>
-        <tr><th>Rank</th><th>Name</th><th title="Position">Pos</th><th>Age</th><th title="Overall rating">Ovr</th><th title="Potential rating">Pot</th><th>Draft</th></tr>
+        <tr><th>Name</th><th title="Position">Pos</th><th>Age</th><th title="Overall rating">Ovr</th><th title="Potential rating">Pot</th><th>Draft</th></tr>
       </thead>
       <tbody>
         {% for player in undrafted %}
-          <tr id="undrafted_{{ player.player_id }}"><td>{{ loop.index }}</td><td><a href="#">{{ player.name }}</a></td><td>{{ player.position }}</td><td>{{ player.age }}<td>{{ player.overall }}</td><td>{{ player.potential }}</td><td><button class="btn btn-mini btn-primary" data-player-id="{{ player.player_id }}" disabled="disabled">Draft</button></td></tr>
+          <tr id="undrafted_{{ player.player_id }}"><td><a href="#">{{ player.name }}</a></td><td>{{ player.position }}</td><td>{{ player.age }}<td>{{ player.overall }}</td><td>{{ player.potential }}</td><td><button class="btn btn-mini btn-primary" data-player-id="{{ player.player_id }}"{% if drafted[0].player_id == 0 %} disabled="disabled"{% endif %}>Draft</button></td></tr>
         {% endfor %}
       </tbody>
       </table>

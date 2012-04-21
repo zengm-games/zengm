@@ -384,7 +384,11 @@ def push_play_menu():
 def draft_until_user_or_end():
     player_ids = draft.until_user_or_end()
 
-    return jsonify(player_ids=player_ids)
+    done = False
+    if g.phase == 6:
+        done = True
+
+    return jsonify(player_ids=player_ids, done=done)
 
 @app.route('/<int:league_id>/draft/user', methods=['POST'])
 @league_crap_ajax

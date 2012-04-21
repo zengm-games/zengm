@@ -68,12 +68,7 @@ game log
 
 draft
 - make a view for past drafts (league_id/draft/2012)
-- on page load
-  - Start button should be disappeared, as appropriate
-  - Draft buttons should be activated, as appropriate
-  - Draft buttons should be disabled when the draft ends, somehow
-- undrafted numbering should be redone after each pick
-- disable buttons at end
+- is it possibel for a race condition (specially timed loading of the draft page) to cause the draft to end before it starts?
 
 play button requirements
 - colors - is this a good idea?

@@ -52,6 +52,7 @@ def set_order():
 
 def until_user_or_end():
     """Simulate draft picks until it's the user's turn or the draft is over.
+
     Returns:
         A list of player IDs who were drafted.
     """

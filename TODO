@@ -2,11 +2,8 @@
 
 configuration in text file?
 
-resigning team's players doesn't seem to work anymore
-
 roster
 - highlight handle on hover, like button
-- view other teams, but not reorder
 - release
 - buy out
   - send ajax to get the $ situation, then display appropriate modal dialog

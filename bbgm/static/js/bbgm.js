@@ -1,8 +1,19 @@
 // Play button
 function play_button(url) {
     $.post(url, function (data) {
-        if (data['error'].length) {
-            alert(data['error']);
+console.log(data);
+        error = data['error'];
+        url = data['url'];
+        if (error) {
+            alert(error);
+        }
+        if (url) {
+            $.getJSON(data['url'], {'json': 1}, function (data) {
+                ajax_update(data, url);
+                var result = parse_league_url(document.URL);
+                var league_page = result[2];
+                highlight_nav(league_page);
+            });
         }
     }, 'json');
 }

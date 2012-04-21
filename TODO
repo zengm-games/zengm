@@ -7,6 +7,7 @@ resigning team's players doesn't seem to work anymore
 when appropriate, redirect from play menu
 - starting draft
 - contract negotiations
+- This kind of works... but why does it load the page multiple times?
 
 roster
 - highlight handle on hover, like button
@@ -68,7 +69,6 @@ game log
 
 draft
 - make a view for past drafts (league_id/draft/2012)
-- is it possibel for a race condition (specially timed loading of the draft page) to cause the draft to end before it starts?
 
 play button requirements
 - colors - is this a good idea?

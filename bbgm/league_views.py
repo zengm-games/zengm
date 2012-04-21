@@ -90,7 +90,9 @@ def player_stats():
 @app.route('/<int:league_id>/play/<amount>', methods=['POST'])
 @league_crap_ajax
 def play(amount):
-    error = ''
+    error = None
+    url = None
+    url = 'http://127.0.0.1:5000/40/standings'
 
     if amount == 'day':
         game.play(1)
@@ -118,7 +120,7 @@ def play(amount):
     elif amount == 'until_regular_season':
         error = season.new_phase(1)
 
-    return jsonify(error=error)
+    return jsonify(url=url, error=error)
 
 @app.route('/<int:league_id>/schedule')
 @league_crap

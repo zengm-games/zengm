@@ -45,7 +45,7 @@
             </thead>
             <tbody>
             {% for team in division.teams %}
-              <tr><td><a href="#">{{ team.region }} {{ team.name }}</a></td><td>{{ team.won }}</td><td>{{ team.lost }}</td><td>%</td><td>GB</td><td>{{ team.won_home }}-{{ team.lost_home }}</td><td>{{ team.won_road }}-{{ team.lost_road }}</td><td>{{ team.won_div }}-{{ team.lost_div }}</td><td>{{ team.won_conf }}-{{ team.lost_conf }}</td><td>Streak</td><td>L10</td></tr>
+              <tr><td><a href="{{ url_for('roster', league_id=g.league_id, abbreviation=team.abbreviation) }}">{{ team.region }} {{ team.name }}</a></td><td>{{ team.won }}</td><td>{{ team.lost }}</td><td>%</td><td>GB</td><td>{{ team.won_home }}-{{ team.lost_home }}</td><td>{{ team.won_road }}-{{ team.lost_road }}</td><td>{{ team.won_div }}-{{ team.lost_div }}</td><td>{{ team.won_conf }}-{{ team.lost_conf }}</td><td>Streak</td><td>L10</td></tr>
             {% endfor %}
             </tbody>
             </table>
@@ -59,7 +59,7 @@
         </thead>
         <tbody>
         {% for team in conference.teams %}
-          <tr{% if loop.index == 8 %} class="separator"{% endif %}><td>{{ loop.index }}.{% if loop.index <= 8 %}</strong>{% endif %} <a href="#">{{ team.region }}</a></td><td align="right">GB</td></tr>
+          <tr{% if loop.index == 8 %} class="separator"{% endif %}><td>{{ loop.index }}.{% if loop.index <= 8 %}</strong>{% endif %} <a href="{{ url_for('roster', league_id=g.league_id, abbreviation=team.abbreviation) }}">{{ team.region }}</a></td><td align="right">GB</td></tr>
         {% endfor %}
         </tbody>
         </table>

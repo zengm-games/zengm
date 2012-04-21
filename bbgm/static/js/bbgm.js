@@ -1,13 +1,12 @@
 // Play button
 function play_button(url) {
     $.post(url, function (data) {
-console.log(data);
         error = data['error'];
         url = data['url'];
         if (error) {
             alert(error);
         }
-        if (url) {
+        if (url && url != document.URL) {
             $.getJSON(data['url'], {'json': 1}, function (data) {
                 ajax_update(data, url);
                 var result = parse_league_url(document.URL);
@@ -169,15 +168,15 @@ $(document).ready(function() {
         jug.subscribe(league_id + '_status', function(data){
             play_status.html(data);
 
-            // Refresh page, as appropriate
-            var refresh_pages = ['standings', 'playoffs', 'schedule']
+            // Refresh page, as appropriate - maybe this isn't the best place for this
+/*            var refresh_pages = ['standings', 'playoffs', 'schedule']
             var result = parse_league_url(document.URL);
             var league_page = result[2];
             if (jQuery.inArray(league_page, refresh_pages) > -1) {
                 $.getJSON(document.URL, {'json': 1}, function (data) {
                     ajax_update(data);
                 });
-            }
+            }*/
         });
         jug.subscribe(league_id + '_phase', function(data){
             play_phase.html(data);

@@ -92,7 +92,6 @@ def player_stats():
 def play(amount):
     error = None
     url = None
-    url = 'http://127.0.0.1:5000/40/standings'
 
     if amount == 'day':
         game.play(1)
@@ -111,10 +110,13 @@ def play(amount):
         draft.generate_players()
         draft.set_order()
         season.new_phase(5)
+        url = url_for('draft_', league_id=g.league_id)
     elif amount == 'until_resign_players':
         season.new_phase(7)
+        url = url_for('negotiation_list', league_id=g.league_id)
     elif amount == 'until_free_agency':
         season.new_phase(8)
+        url = url_for('free_agents', league_id=g.league_id)
     elif amount == 'until_preseason':
         season.new_phase(0)
     elif amount == 'until_regular_season':

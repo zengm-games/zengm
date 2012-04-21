@@ -3,6 +3,7 @@ import random
 from flask import session, g
 
 import bbgm
+from bbgm import app
 from bbgm.core import player, season
 
 def generate_players():
@@ -77,7 +78,7 @@ def pick_player(team_id, player_id):
     team_id_next, draft_round, pick = g.db.fetchone()
 
     if team_id_next != team_id:
-        print 'WARNING: Team tried to draft out of order'
+        app.logger.debug('WARNING: Team %d tried to draft out of order' % (team_id,))
         return
 
     # Draft player, update roster potision

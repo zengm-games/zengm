@@ -6,19 +6,7 @@
 {% block league_content %}
   <script type="text/javascript">
     $(document).ready(function() {
-        var roster_select_team = $('#roster_select_team')
-        roster_select_team.change(function(event) {
-            var url = '{{ url_for('roster', league_id=g.league_id) }}/' + roster_select_team.val();
-            $.ajax({
-                type: 'GET',
-                url: url,
-                data: {'json': 1},
-                success: function (data) {
-                    ajax_update(data, url);
-                },
-                dataType: 'json'
-            });
-        });
+        dropdown($('#roster_select_team'));
 
         {% if team_id == g.user_team_id %}
             var result = parse_league_url(document.URL);

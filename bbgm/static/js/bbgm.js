@@ -76,6 +76,25 @@ function highlight_nav(league_page) {
     $('#nav_' + league_page).addClass('active');
 }
 
+// For dropdown menus to change team/season/whatever
+function dropdown(select) {
+    select.change(function(event) {
+        var result = parse_league_url(document.URL);
+        var league_root_url = result[1];
+        var league_page = result[2];
+        var url = league_root_url + '/' + league_page + '/' + select.val();
+        $.ajax({
+            type: 'GET',
+            url: url,
+            data: {'json': 1},
+            success: function (data) {
+                ajax_update(data, url);
+            },
+            dataType: 'json'
+        });
+    });
+}
+
 $(document).ready(function() {
     var result = parse_league_url(document.URL);
     var league_id = result[0];

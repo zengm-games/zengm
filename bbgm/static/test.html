@@ -1,0 +1,46 @@
+<script type="text/javascript">
+var indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;   
+
+var db = null;
+
+var request = indexedDB.open("test");
+request.onerror = function(event) {  
+  alert("Why didn't you allow my web app to use IndexedDB?!");  
+};  
+request.onsuccess = function(event) {  
+  db = request.result;  
+};  
+  
+
+// This is what our customer data looks like.  
+const customerData = [  
+  { ssn: "444-44-4444", name: "Bill", age: 35, email: "bill@company.com" },  
+  { ssn: "555-55-5555", name: "Donna", age: 32, email: "donna@home.org" }  
+];  
+
+request.onerror = function(event) {  
+  // Handle errors.  
+};  
+
+var transaction = db.transaction(["customers"], IDBTransaction.READ_WRITE);  
+
+// Do something when all the data is added to the database.  
+transaction.oncomplete = function(event) {  
+  alert("All done!");  
+};  
+  
+transaction.onerror = function(event) {  
+  // Don't forget to handle errors!  
+};  
+  
+var objectStore = transaction.objectStore("customers");  
+for (var i in customerData) {  
+  var request = objectStore.add(customerData[i]);  
+  request.onsuccess = function(event) {  
+    console.log(event.target.result);
+    // event.target.result == customerData[i].ssn  
+  };  
+}  
+
+
+</script>

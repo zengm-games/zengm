@@ -8,7 +8,7 @@ from flask.globals import _request_ctx_stack
 
 from bbgm import app
 from bbgm.core import draft, game, contract_negotiation, play_menu, season
-from bbgm.util import get_payroll, roster_auto_sort
+from bbgm.util import get_payroll, get_seasons, roster_auto_sort
 from bbgm.util.decorators import league_crap, league_crap_ajax
 
 # All the views in here are for within a league.
@@ -33,8 +33,12 @@ def league_dashboard():
     return render_all_or_json('league_dashboard.html')
 
 @app.route('/<int:league_id>/leaders')
+@app.route('/<int:league_id>/leaders/<int:current_season>')
 @league_crap
-def leaders():
+def leaders(current_season=None):
+    current_season = validate_season(current_season)
+    seasons = get_seasons()
+
     categories = []
     categories.append({'name': 'Points', 'stat': 'Pts',
                        'title': 'Points per game', 'data': []})
@@ -56,13 +60,13 @@ def leaders():
         # I have to insert the cateogry using string formatting because
         # otherwise it mangles the syntax. But it's okay, cols is defined just a
         # few lines up. Nothing malicious there.
-        g.dbd.execute('SELECT pa.player_id, pa.name, ta.abbreviation, AVG(%s) as stat FROM %s_player_attributes as pa, %s_player_stats as ps, %s_team_attributes as ta WHERE pa.player_id = ps.player_id AND ps.season = %s AND ps.is_playoffs = 0 AND ta.team_id = pa.team_id AND ta.season = ps.season GROUP BY ps.player_id ORDER BY AVG(%s) DESC LIMIT 10' % (cols[i], '%s', '%s', '%s', '%s', cols[i]), (g.league_id, g.league_id, g.league_id, g.season))
+        g.dbd.execute('SELECT pa.player_id, pa.name, ta.abbreviation, AVG(%s) as stat FROM %s_player_attributes as pa, %s_player_stats as ps, %s_team_attributes as ta WHERE pa.player_id = ps.player_id AND ps.season = %s AND ps.is_playoffs = 0 AND ta.team_id = pa.team_id AND ta.season = ps.season GROUP BY ps.player_id ORDER BY AVG(%s) DESC LIMIT 10' % (cols[i], '%s', '%s', '%s', '%s', cols[i]), (g.league_id, g.league_id, g.league_id, current_season))
         categories[i]['data'] = g.dbd.fetchall()
 
-    g.db.execute('SELECT abbreviation FROM %s_team_attributes WHERE team_id = %s AND season = %s', (g.league_id, g.user_team_id, g.season))
+    g.db.execute('SELECT abbreviation FROM %s_team_attributes WHERE team_id = %s AND season = %s', (g.league_id, g.user_team_id, current_season))
     user_abbreviation, = g.db.fetchone()
 
-    return render_all_or_json('leaders.html', {'categories': categories, 'user_abbreviation': user_abbreviation})
+    return render_all_or_json('leaders.html', {'categories': categories, 'user_abbreviation': user_abbreviation, 'seasons': seasons, 'current_season': current_season})
 
 @app.route('/<int:league_id>/player_ratings')
 @league_crap
@@ -73,9 +77,13 @@ def player_ratings():
     return render_all_or_json('player_ratings.html', {'players': players})
 
 @app.route('/<int:league_id>/player_stats')
+@app.route('/<int:league_id>/player_stats/<int:current_season>')
 @league_crap
-def player_stats():
-    g.dbd.execute('SELECT pa.player_id, pa.team_id, pa.name, ta.abbreviation, pa.position, SUM(ps.minutes>0) AS games_played, SUM(ps.starter) AS games_started, AVG(ps.minutes) AS minutes, AVG(ps.field_goals_made) AS field_goals_made, AVG(ps.field_goals_attempted) AS field_goals_attempted, 100*AVG(ps.field_goals_made/ps.field_goals_attempted) AS field_goal_percentage, AVG(ps.three_pointers_made) AS three_pointers_made, AVG(ps.three_pointers_attempted) AS three_pointers_attempted, 100*AVG(ps.three_pointers_made/ps.three_pointers_attempted) AS three_point_percentage, AVG(ps.free_throws_made) AS free_throws_made, AVG(ps.free_throws_attempted) AS free_throws_attempted, 100*AVG(ps.free_throws_made/ps.free_throws_attempted) AS free_throw_percentage, AVG(ps.offensive_rebounds) AS offensive_rebounds, AVG(ps.defensive_rebounds) AS defensive_rebounds, AVG(ps.offensive_rebounds+ps.defensive_rebounds) AS rebounds, AVG(ps.assists) AS assists, AVG(ps.turnovers) AS turnovers, AVG(ps.steals) AS steals, AVG(ps.blocks) AS blocks, AVG(ps.personal_fouls) AS personal_fouls, AVG(ps.points) AS points FROM %s_player_attributes as pa, %s_player_stats as ps, %s_team_attributes as ta WHERE pa.player_id = ps.player_id AND ps.season = %s AND ps.is_playoffs = 0 AND ta.team_id = pa.team_id AND ta.season = ps.season GROUP BY ps.player_id', (g.league_id, g.league_id, g.league_id, g.season))
+def player_stats(current_season=None):
+    current_season = validate_season(current_season)
+    seasons = get_seasons()
+
+    g.dbd.execute('SELECT pa.player_id, pa.team_id, pa.name, ta.abbreviation, pa.position, SUM(ps.minutes>0) AS games_played, SUM(ps.starter) AS games_started, AVG(ps.minutes) AS minutes, AVG(ps.field_goals_made) AS field_goals_made, AVG(ps.field_goals_attempted) AS field_goals_attempted, 100*AVG(ps.field_goals_made/ps.field_goals_attempted) AS field_goal_percentage, AVG(ps.three_pointers_made) AS three_pointers_made, AVG(ps.three_pointers_attempted) AS three_pointers_attempted, 100*AVG(ps.three_pointers_made/ps.three_pointers_attempted) AS three_point_percentage, AVG(ps.free_throws_made) AS free_throws_made, AVG(ps.free_throws_attempted) AS free_throws_attempted, 100*AVG(ps.free_throws_made/ps.free_throws_attempted) AS free_throw_percentage, AVG(ps.offensive_rebounds) AS offensive_rebounds, AVG(ps.defensive_rebounds) AS defensive_rebounds, AVG(ps.offensive_rebounds+ps.defensive_rebounds) AS rebounds, AVG(ps.assists) AS assists, AVG(ps.turnovers) AS turnovers, AVG(ps.steals) AS steals, AVG(ps.blocks) AS blocks, AVG(ps.personal_fouls) AS personal_fouls, AVG(ps.points) AS points FROM %s_player_attributes as pa, %s_player_stats as ps, %s_team_attributes as ta WHERE pa.player_id = ps.player_id AND ps.season = %s AND ps.is_playoffs = 0 AND ta.team_id = pa.team_id AND ta.season = ps.season GROUP BY ps.player_id', (g.league_id, g.league_id, g.league_id, current_season))
     players = g.dbd.fetchall()
 
     # Don't pass blank values where floats are expected by the template
@@ -84,7 +92,7 @@ def player_stats():
             if not players[i][key]:
                 players[i][key] = 0
 
-    return render_all_or_json('player_stats.html', {'players': players})
+    return render_all_or_json('player_stats.html', {'players': players, 'seasons': seasons, 'current_season': current_season})
 
 # Change to POST (with CSRF protection) later (gives a weird error when I try that now)
 @app.route('/<int:league_id>/play/<amount>', methods=['POST'])
@@ -146,10 +154,7 @@ def schedule():
 @league_crap
 def standings(current_season=None):
     current_season = validate_season(current_season)
-    seasons = []
-    g.db.execute('SELECT season FROM %s_team_attributes GROUP BY season ORDER BY season DESC', (g.league_id))
-    for season, in g.db.fetchall():
-        seasons.append(season)
+    seasons = get_seasons()
 
     conferences = []
     g.db.execute('SELECT conference_id, name FROM %s_league_conferences ORDER BY conference_id ASC', (g.league_id,))

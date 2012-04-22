@@ -6,6 +6,8 @@
 {% block league_content %}
   <script type="text/javascript">
     $(document).ready(function() {
+      dropdown($('#player_stats_select_season'));
+
       bbgm_datatable($('#player_stats'), 23, [
         {% for player in players %}
 			    [ '<a href="#"><a href="{{ url_for('player', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a></a>', '{{ player.position }}', '<a href="{{ url_for('roster', league_id=g.league_id, abbreviation=player.abbreviation) }}">{{ player.abbreviation }}</a>', '{{ player.games_played }}', '{{ player.games_started }}', '{{ player.minutes|float|round(1) }}', '{{ player.field_goals_made|float|round(1) }}', '{{ player.field_goals_attempted|float|round(1) }}', '{{ player.field_goal_percentage|float|round(1) }}', '{{ player.three_pointers_made|float|round(1) }}', '{{ player.three_pointers_attempted|float|round(1) }}', '{{ player.three_point_percentage|float|round(1) }}', '{{ player.free_throws_made|float|round(1) }}', '{{ player.free_throws_attempted|float|round(1) }}', '{{ player.free_throw_percentage|float|round(1) }}', '{{ player.offensive_rebounds|float|round(1) }}', '{{ player.defensive_rebounds|float|round(1) }}', '{{ player.rebounds|float|round(1) }}', '{{ player.assists|float|round(1) }}', '{{ player.turnovers|float|round(1) }}', '{{ player.steals|float|round(1) }}', '{{ player.blocks|float|round(1) }}', '{{ player.personal_fouls|float|round(1) }}', '{{ player.points|float|round(1) }}' ],
@@ -14,12 +16,22 @@
     } );
   </script>
 
+  <form action="{{ url_for('standings', league_id=g.league_id) }}" method="GET" class="form-inline pull-right">
+    <select id="player_stats_select_season" name="season" class="season">
+      {% for season in seasons %}
+        <option value="{{ season }}"{% if season == current_season %} selected="selected"{% endif %}>{{ season }} season</option>
+      {% endfor %}
+    </select>
+  </form>
+
   <h1>Player stats</h1>
 
+  <p class="clearfix">
   <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="player_stats">
   <thead>
     <tr><th colspan="6"></th><th colspan="3" style="text-align: center" title="Field Goals">FG</th><th colspan="3" style="text-align: center" title="Three-Pointers">3PT</th><th colspan="3" style="text-align: center" title="Free Throws">FT</th><th colspan="3" style="text-align: center" title="Rebounds">Reb</th><th colspan="6"></th></tr>
     <tr><th>Name</th><th title="Position">Pos</th><th>Team</th><th title="Games Played">GP</th><th title="Games Started">GS</th><th title="Minutes">Min</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Offensive">Off</th><th title="Defensive">Def</th><th title="Total">Tot</th><th title="Assists">Ast</th><th title="Turnovers">TO</th><th title="Steals">Stl</th><th title="Blocks">Blk</th><th title="Personal Fouls">PF</th><th title="Points">PPG</th></tr>
   </thead>
   </table>
+  </p>
 {% endblock %}

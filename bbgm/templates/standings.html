@@ -5,21 +5,7 @@
 
 {% block league_content %}
   <script type="text/javascript">
-    // Load game log list table and activate form
     $(document).ready(function() {
-/*      var standings_select_season = $('#standings_select_season')
-      standings_select_season.change(function(event) {
-        var url = '{{ url_for('standings', league_id=g.league_id) }}/' + standings_select_season.val();
-        $.ajax({
-          type: 'GET',
-          url: url,
-          data: {'json': 1},
-          success: function (data) {
-              ajax_update(data, url);
-          },
-          dataType: 'json'
-        });
-      });*/
         dropdown($('#standings_select_season'));
     });
   </script>

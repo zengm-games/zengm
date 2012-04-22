@@ -88,3 +88,11 @@ def auto_sign_free_agents():
                 j += 1
             if not new_player:
                 break
+
+def get_seasons():
+    """Returns a list of all the seasons, past and present."""
+    seasons = []
+    g.db.execute('SELECT season FROM %s_team_attributes GROUP BY season ORDER BY season DESC', (g.league_id))
+    for season, in g.db.fetchall():
+        seasons.append(season)
+    return seasons

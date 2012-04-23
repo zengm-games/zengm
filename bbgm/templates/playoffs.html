@@ -6,8 +6,8 @@
 
 {% block league_content %}
   {% macro matchup(s) %}
-    {{ s.seed_home }}. {{ s.name_home }} {{ s.won_home }}<br />
-    {{ s.seed_away }}. {{ s.name_away }} {{ s.won_away }}
+    {% if s.won_home == 4 %}<strong>{% endif %}{{ s.seed_home }}. {{ s.name_home }} {{ s.won_home }}{% if s.won_home == 4 %}</strong>{% endif %}<br />
+    {% if s.won_away == 4 %}<strong>{% endif %}{{ s.seed_away }}. {{ s.name_away }} {{ s.won_away }}{% if s.won_away == 4 %}</strong>{% endif %}
   {%- endmacro %}
 
   <h1>Playoffs</h1>

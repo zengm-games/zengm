@@ -71,7 +71,7 @@
     <form action="{{ url_for('game_log', league_id=g.league_id) }}" method="GET" class="form-inline well">
       <select id="game_log_select_season" name="season" class="span1">
         {% for season in seasons %}
-          <option value="{{ season }}"{% if season == current_season %} selected="selected"{% endif %}>{{ season }}</option>
+          <option value="{{ season }}"{% if season == view_season %} selected="selected"{% endif %}>{{ season }}</option>
         {% endfor %}
       </select>
       <select id="game_log_select_abbreviation" name="abbreviation" class="span1">

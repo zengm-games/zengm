@@ -13,7 +13,7 @@
   <form action="{{ url_for('standings', league_id=g.league_id) }}" method="GET" class="form-inline pull-right">
     <select id="leaders_select_season" name="season" class="season">
       {% for season in seasons %}
-        <option value="{{ season }}"{% if season == current_season %} selected="selected"{% endif %}>{{ season }} season</option>
+        <option value="{{ season }}"{% if season == view_season %} selected="selected"{% endif %}>{{ season }} season</option>
       {% endfor %}
     </select>
   </form>

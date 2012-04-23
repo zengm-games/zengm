@@ -33,10 +33,10 @@ def league_dashboard():
     return render_all_or_json('league_dashboard.html')
 
 @app.route('/<int:league_id>/leaders')
-@app.route('/<int:league_id>/leaders/<int:current_season>')
+@app.route('/<int:league_id>/leaders/<int:view_season>')
 @league_crap
-def leaders(current_season=None):
-    current_season = validate_season(current_season)
+def leaders(view_season=None):
+    view_season = validate_season(view_season)
     seasons = get_seasons()
 
     categories = []
@@ -60,13 +60,13 @@ def leaders(current_season=None):
         # I have to insert the cateogry using string formatting because
         # otherwise it mangles the syntax. But it's okay, cols is defined just a
         # few lines up. Nothing malicious there.
-        g.dbd.execute('SELECT pa.player_id, pa.name, ta.abbreviation, AVG(%s) as stat FROM %s_player_attributes as pa, %s_player_stats as ps, %s_team_attributes as ta WHERE pa.player_id = ps.player_id AND ps.season = %s AND ps.is_playoffs = 0 AND ta.team_id = pa.team_id AND ta.season = ps.season GROUP BY ps.player_id ORDER BY AVG(%s) DESC LIMIT 10' % (cols[i], '%s', '%s', '%s', '%s', cols[i]), (g.league_id, g.league_id, g.league_id, current_season))
+        g.dbd.execute('SELECT pa.player_id, pa.name, ta.abbreviation, AVG(%s) as stat FROM %s_player_attributes as pa, %s_player_stats as ps, %s_team_attributes as ta WHERE pa.player_id = ps.player_id AND ps.season = %s AND ps.is_playoffs = 0 AND ta.team_id = pa.team_id AND ta.season = ps.season GROUP BY ps.player_id ORDER BY AVG(%s) DESC LIMIT 10' % (cols[i], '%s', '%s', '%s', '%s', cols[i]), (g.league_id, g.league_id, g.league_id, view_season))
         categories[i]['data'] = g.dbd.fetchall()
 
-    g.db.execute('SELECT abbreviation FROM %s_team_attributes WHERE team_id = %s AND season = %s', (g.league_id, g.user_team_id, current_season))
+    g.db.execute('SELECT abbreviation FROM %s_team_attributes WHERE team_id = %s AND season = %s', (g.league_id, g.user_team_id, view_season))
     user_abbreviation, = g.db.fetchone()
 
-    return render_all_or_json('leaders.html', {'categories': categories, 'user_abbreviation': user_abbreviation, 'seasons': seasons, 'current_season': current_season})
+    return render_all_or_json('leaders.html', {'categories': categories, 'user_abbreviation': user_abbreviation, 'seasons': seasons, 'view_season': view_season})
 
 @app.route('/<int:league_id>/player_ratings')
 @league_crap
@@ -77,13 +77,13 @@ def player_ratings():
     return render_all_or_json('player_ratings.html', {'players': players})
 
 @app.route('/<int:league_id>/player_stats')
-@app.route('/<int:league_id>/player_stats/<int:current_season>')
+@app.route('/<int:league_id>/player_stats/<int:view_season>')
 @league_crap
-def player_stats(current_season=None):
-    current_season = validate_season(current_season)
+def player_stats(view_season=None):
+    view_season = validate_season(view_season)
     seasons = get_seasons()
 
-    g.dbd.execute('SELECT pa.player_id, pa.team_id, pa.name, ta.abbreviation, pa.position, SUM(ps.minutes>0) AS games_played, SUM(ps.starter) AS games_started, AVG(ps.minutes) AS minutes, AVG(ps.field_goals_made) AS field_goals_made, AVG(ps.field_goals_attempted) AS field_goals_attempted, 100*AVG(ps.field_goals_made/ps.field_goals_attempted) AS field_goal_percentage, AVG(ps.three_pointers_made) AS three_pointers_made, AVG(ps.three_pointers_attempted) AS three_pointers_attempted, 100*AVG(ps.three_pointers_made/ps.three_pointers_attempted) AS three_point_percentage, AVG(ps.free_throws_made) AS free_throws_made, AVG(ps.free_throws_attempted) AS free_throws_attempted, 100*AVG(ps.free_throws_made/ps.free_throws_attempted) AS free_throw_percentage, AVG(ps.offensive_rebounds) AS offensive_rebounds, AVG(ps.defensive_rebounds) AS defensive_rebounds, AVG(ps.offensive_rebounds+ps.defensive_rebounds) AS rebounds, AVG(ps.assists) AS assists, AVG(ps.turnovers) AS turnovers, AVG(ps.steals) AS steals, AVG(ps.blocks) AS blocks, AVG(ps.personal_fouls) AS personal_fouls, AVG(ps.points) AS points FROM %s_player_attributes as pa, %s_player_stats as ps, %s_team_attributes as ta WHERE pa.player_id = ps.player_id AND ps.season = %s AND ps.is_playoffs = 0 AND ta.team_id = pa.team_id AND ta.season = ps.season GROUP BY ps.player_id', (g.league_id, g.league_id, g.league_id, current_season))
+    g.dbd.execute('SELECT pa.player_id, pa.team_id, pa.name, ta.abbreviation, pa.position, SUM(ps.minutes>0) AS games_played, SUM(ps.starter) AS games_started, AVG(ps.minutes) AS minutes, AVG(ps.field_goals_made) AS field_goals_made, AVG(ps.field_goals_attempted) AS field_goals_attempted, 100*AVG(ps.field_goals_made/ps.field_goals_attempted) AS field_goal_percentage, AVG(ps.three_pointers_made) AS three_pointers_made, AVG(ps.three_pointers_attempted) AS three_pointers_attempted, 100*AVG(ps.three_pointers_made/ps.three_pointers_attempted) AS three_point_percentage, AVG(ps.free_throws_made) AS free_throws_made, AVG(ps.free_throws_attempted) AS free_throws_attempted, 100*AVG(ps.free_throws_made/ps.free_throws_attempted) AS free_throw_percentage, AVG(ps.offensive_rebounds) AS offensive_rebounds, AVG(ps.defensive_rebounds) AS defensive_rebounds, AVG(ps.offensive_rebounds+ps.defensive_rebounds) AS rebounds, AVG(ps.assists) AS assists, AVG(ps.turnovers) AS turnovers, AVG(ps.steals) AS steals, AVG(ps.blocks) AS blocks, AVG(ps.personal_fouls) AS personal_fouls, AVG(ps.points) AS points FROM %s_player_attributes as pa, %s_player_stats as ps, %s_team_attributes as ta WHERE pa.player_id = ps.player_id AND ps.season = %s AND ps.is_playoffs = 0 AND ta.team_id = pa.team_id AND ta.season = ps.season GROUP BY ps.player_id', (g.league_id, g.league_id, g.league_id, view_season))
     players = g.dbd.fetchall()
 
     # Don't pass blank values where floats are expected by the template
@@ -92,7 +92,7 @@ def player_stats(current_season=None):
             if not players[i][key]:
                 players[i][key] = 0
 
-    return render_all_or_json('player_stats.html', {'players': players, 'seasons': seasons, 'current_season': current_season})
+    return render_all_or_json('player_stats.html', {'players': players, 'seasons': seasons, 'view_season': view_season})
 
 # Change to POST (with CSRF protection) later (gives a weird error when I try that now)
 @app.route('/<int:league_id>/play/<amount>', methods=['POST'])
@@ -150,26 +150,26 @@ def schedule():
     return render_all_or_json('schedule.html', {'games': games})
 
 @app.route('/<int:league_id>/standings')
-@app.route('/<int:league_id>/standings/<int:current_season>')
+@app.route('/<int:league_id>/standings/<int:view_season>')
 @league_crap
-def standings(current_season=None):
-    current_season = validate_season(current_season)
+def standings(view_season=None):
+    view_season = validate_season(view_season)
     seasons = get_seasons()
 
     conferences = []
     g.db.execute('SELECT conference_id, name FROM %s_league_conferences ORDER BY conference_id ASC', (g.league_id,))
     for conference_id, conference_name in g.db.fetchall():
         conferences.append({'id': conference_id, 'name': conference_name, 'divisions': [], 'standings': ''})
-        g.dbd.execute('SELECT * FROM %s_team_attributes as ta WHERE ta.division_id IN (SELECT ld.division_id FROM %s_league_divisions as ld WHERE ld.conference_id = %s) AND season = %s ORDER BY won/(won+lost) DESC', (g.league_id, g.league_id, conference_id, current_season))
+        g.dbd.execute('SELECT * FROM %s_team_attributes as ta WHERE ta.division_id IN (SELECT ld.division_id FROM %s_league_divisions as ld WHERE ld.conference_id = %s) AND season = %s ORDER BY won/(won+lost) DESC', (g.league_id, g.league_id, conference_id, view_season))
         conferences[-1]['teams'] = g.dbd.fetchall()
 
         g.db.execute('SELECT division_id, name FROM %s_league_divisions WHERE conference_id = %s ORDER BY name ASC', (g.league_id, conference_id))
         for division_id, division_name in g.db.fetchall():
-            g.dbd.execute('SELECT * FROM %s_team_attributes WHERE division_id = %s AND season = %s ORDER BY won/(won+lost) DESC', (g.league_id, division_id, current_season))
+            g.dbd.execute('SELECT * FROM %s_team_attributes WHERE division_id = %s AND season = %s ORDER BY won/(won+lost) DESC', (g.league_id, division_id, view_season))
             conferences[-1]['divisions'].append({'name': division_name})
             conferences[-1]['divisions'][-1]['teams'] = g.dbd.fetchall()
 
-    return render_all_or_json('standings.html', {'conferences': conferences, 'seasons': seasons, 'current_season': current_season})
+    return render_all_or_json('standings.html', {'conferences': conferences, 'seasons': seasons, 'view_season': view_season})
 
 @app.route('/<int:league_id>/playoffs')
 @league_crap
@@ -233,14 +233,14 @@ def auto_sort_roster(abbreviation=None):
     return redirect_or_json('roster')
 
 @app.route('/<int:league_id>/game_log')
-@app.route('/<int:league_id>/game_log/<int:current_season>')
-@app.route('/<int:league_id>/game_log/<int:current_season>/<abbreviation>')
+@app.route('/<int:league_id>/game_log/<int:view_season>')
+@app.route('/<int:league_id>/game_log/<int:view_season>/<abbreviation>')
 @league_crap
-def game_log(current_season=None, abbreviation=None):
-    current_season = validate_season(current_season)
+def game_log(view_season=None, abbreviation=None):
+    view_season = validate_season(view_season)
     team_id, abbreviation = validate_abbreviation(abbreviation)
 
-    g.dbd.execute('SELECT abbreviation FROM %s_team_attributes WHERE season = %s ORDER BY team_id ASC', (g.league_id, current_season))
+    g.dbd.execute('SELECT abbreviation FROM %s_team_attributes WHERE season = %s ORDER BY team_id ASC', (g.league_id, view_season))
     teams = g.dbd.fetchall()
 
     seasons = []
@@ -248,7 +248,7 @@ def game_log(current_season=None, abbreviation=None):
     for season, in g.db.fetchall():
         seasons.append(season)
 
-    return render_all_or_json('game_log.html', {'abbreviation': abbreviation, 'teams': teams, 'seasons': seasons, 'current_season': current_season})
+    return render_all_or_json('game_log.html', {'abbreviation': abbreviation, 'teams': teams, 'seasons': seasons, 'view_season': view_season})
 
 @app.route('/<int:league_id>/player/<int:player_id>')
 @league_crap

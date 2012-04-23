@@ -39,6 +39,9 @@ refactor player.py
 
 add years dropdown to all relevant views
 - draft
+  - make a view for past drafts (league_id/draft/2012)
+  - display stats as in roster
+  - but when current season is selected, use the current draft function to display either a warning or the active draft
 - player ratings, eventually
 - playoffs, eventually
 
@@ -57,9 +60,6 @@ move to new window button, like gmail, that will open a view in a new window wit
 
 game log
 - pushstate for individual box scores as well as teams and seasons, somehow?
-
-draft
-- make a view for past drafts (league_id/draft/2012)
 
 play button requirements
 - colors - is this a good idea?

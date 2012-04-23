@@ -33,21 +33,19 @@ hopefully that will change relatively soon.
 
 ### Required
 
+#### Non-Python packages
+
 * mysql-server
 * python-mysqldb
+* python-pip
 * redis-server
 * node.js
 * juggernaut
-* python-juggernaut
-* Flask
-* Celery
-* Flask-Celery
-* Flask-Assets
-* Closure Compiler
-* YUI Compressor
 
-For the first three, you can just use the normal Ubuntu (or whatever) packages
-and it will probably work fine.
+For the first four, you can just use the normal Ubuntu (or whatever) packages
+and it will probably work fine. In Ubuntu:
+
+    sudo apt-get install mysql-server python-mysqldb python-pip redis-server
 
 For node.js, install it however you want. This is what I used:
 https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager
@@ -56,16 +54,12 @@ to install Juggernaut:
 
     sudo npm install -g juggernaut
 
-And to install the rest, run:
+#### Python packages
 
-    sudo apt-get install python-pip
-    sudo pip install juggernaut
-    sudo pip install Flask
-    sudo pip install Celery
-    sudo pip install Flask-Celery
-    sudo pip install Flask-Assets
-    sudo pip install closure
-    sudo pip install yuicompressor
+There are also various Python-based dependencies listed in requirements.txt.
+You can install them all with this command:
+
+    pip install -r requirements.txt
 
 ### Optional packages
 

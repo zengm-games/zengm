@@ -1,0 +1,7 @@
+Flask
+Flask-Assets
+Flask-Celery
+celery
+closure
+juggernaut
+yuicompressor

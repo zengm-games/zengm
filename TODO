@@ -7,7 +7,7 @@ roster
 - release
 - buy out
   - send ajax to get the $ situation, then display appropriate modal dialog
-- Make sure the outer join works when next season starts
+- "Trade for" button in other teams' view
 
 contract negotiation view
 - bring back to either free agent view or resigning view after either accept or cancel

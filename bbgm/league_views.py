@@ -213,6 +213,7 @@ def draft_():
 @app.route('/<int:league_id>/awards/<int:view_season>')
 @league_crap
 def awards(view_season=None):
+    season.awards()
     return 'hi'
 
 @app.route('/<int:league_id>/roster')

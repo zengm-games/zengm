@@ -75,7 +75,8 @@ def bulk_execute(sql):
 
 def init_db():
     # Delete any current tables in database
-    subprocess.call('mysqldump -u%s -p%s --add-drop-table %s | grep ^DROP | mysql -u%s -p%s %s' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD'], app.config['DB'], app.config['DB_USERNAME'], app.config['DB_PASSWORD'], app.config['DB']), shell=True)
+    process = subprocess.Popen('mysqldump -u%s -p%s --add-drop-table %s | grep ^DROP | mysql -u%s -p%s %s' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD'], app.config['DB'], app.config['DB_USERNAME'], app.config['DB_PASSWORD'], app.config['DB']), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    stdoutdata, stderrdata = process.communicate()
 
     # Create new tables
     f = app.open_resource('data/core.sql')

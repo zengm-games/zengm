@@ -209,6 +209,12 @@ def draft_():
 
     return render_all_or_json('draft.html', {'undrafted': undrafted, 'drafted': drafted})
 
+@app.route('/<int:league_id>/awards')
+@app.route('/<int:league_id>/awards/<int:view_season>')
+@league_crap
+def awards(view_season=None):
+    return 'hi'
+
 @app.route('/<int:league_id>/roster')
 @app.route('/<int:league_id>/roster/<abbreviation>')
 @league_crap

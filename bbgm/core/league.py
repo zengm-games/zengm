@@ -9,7 +9,7 @@ from bbgm.util import roster_auto_sort
 
 def new(team_id):
     # Add to main record
-    g.db.execute("INSERT INTO leagues (user_id, description) VALUES (%s, 'THIS SHOULD BE UPDATED SOMEWHERE')", (session['user_id'],))
+    g.db.execute('INSERT INTO leagues (user_id) VALUES (%s)', (session['user_id'],))
 
     g.db.execute('SELECT league_id FROM leagues WHERE user_id = %s ORDER BY league_id DESC LIMIT 1', (session['user_id'],))
     g.league_id, = g.db.fetchone()

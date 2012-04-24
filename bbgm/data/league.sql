@@ -163,6 +163,56 @@ resigning BOOLEAN DEFAULT 0);
 CREATE TABLE trade (
 placeholder INTEGER);
 
+CREATE TABLE awards (
+season INTEGER PRIMARY KEY,
+bre_team_id INTEGER,
+bre_abbreviation VARCHAR(3),
+bre_region VARCHAR(255),
+bre_name VARCHAR(255),
+bre_won INTEGER,
+bre_lost INTEGER,
+brw_team_id INTEGER,
+brw_abbreviation VARCHAR(3),
+brw_region VARCHAR(255),
+brw_name VARCHAR(255),
+brw_won INTEGER,
+brw_lost INTEGER,
+mvp_player_id INTEGER,
+mvp_name VARCHAR(255),
+mvp_team_id INTEGER,
+mvp_abbreviation VARCHAR(3),
+mvp_ppg FLOAT,
+mvp_rpg FLOAT,
+mvp_apg FLOAT,
+dpoy_player_id INTEGER,
+dpoy_name VARCHAR(255),
+dpoy_team_id INTEGER,
+dpoy_abbreviation VARCHAR(3),
+dpoy_rpg FLOAT,
+dpoy_bpg FLOAT,
+dpoy_spg FLOAT,
+smoy_player_id INTEGER,
+smoy_name VARCHAR(255),
+smoy_team_id INTEGER,
+smoy_abbreviation VARCHAR(3),
+smoy_ppg FLOAT,
+smoy_rpg FLOAT,
+smoy_apg FLOAT,
+roy_player_id INTEGER,
+roy_name VARCHAR(255),
+roy_team_id INTEGER,
+roy_abbreviation VARCHAR(3),
+roy_ppg FLOAT,
+roy_rpg FLOAT,
+roy_apg FLOAT);
+
+CREATE TABLE awards_all_league(
+season INTEGER,
+team INTEGER,
+player_id INTEGER,
+name VARCHAR(255),
+abbreviation VARCHAR(3));
+
 CREATE INDEX a ON team_attributes(team_id, season, division_id, region);
 CREATE INDEX b ON player_stats(player_id, season, is_playoffs);
 CREATE INDEX c ON team_attributes(season, division_id, won, lost);

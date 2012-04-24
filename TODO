@@ -1,5 +1,9 @@
 # To acquire parity with the GTK version and be good enough to share:
 
+/awards/<int:view_season>
+- season.awards() assigns them and saves them in the database
+- initially, have league_views.awards call season.awards every time, for testing
+
 configuration in text file?
 
 roster

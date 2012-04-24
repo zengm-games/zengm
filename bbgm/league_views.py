@@ -213,6 +213,7 @@ def draft_():
 @app.route('/<int:league_id>/awards/<int:view_season>')
 @league_crap
 def awards(view_season=None):
+    g.db.execute('DELETE FROM %s_awards', (g.league_id,))
     season.awards()
     return 'hi'
 

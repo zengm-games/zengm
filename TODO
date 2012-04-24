@@ -1,13 +1,18 @@
 # To acquire parity with the GTK version and be good enough to share:
 
-/awards/<int:view_season>
-- season.awards() assigns them and saves them in the database
-- initially, have league_views.awards call season.awards every time, for testing
+awards
+- assign all league and all defensive teams in season.awards
+- awards view
+- call season.awards() at the end of the year
+- forward to awards view at the end of the year
+- WOULD THIS BE BETTER IN AN INTEGRATED "HISTORY" VIEW?
+  - index lists all the seasons with key info. click and it brings you to detailed page, with awards (plus champions, finals MVP)
 
 configuration in text file?
 
 roster
 - highlight handle on hover, like button
+- display contract in millions
 - release
 - buy out
   - send ajax to get the $ situation, then display appropriate modal dialog

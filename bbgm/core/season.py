@@ -285,14 +285,30 @@ def new_schedule():
 def awards():
     """Computes the awards at the end of a season."""
     # Cache averages
-# Change to TEMPORARY TABLE
-#    g.db.execute('CREATE TABLE %s_awards_avg (player_id INTEGER PRIMARY KEY, name VARCHAR(255), team_id INTEGER, abbreviation VARCHAR(3), draft_year INTEGER, games_played INTEGER, games_started INTEGER, mpg FLOAT, ppg FLOAT, rpg FLOAT, apg FLOAT, bpg FLOAT, spg FLOAT)', (g.league_id,))
-# CONVERT FOR LOOP TO SUBQUERY http://stackoverflow.com/questions/2005200/insert-query-with-a-subquery
-    g.db.execute('SELECT pa.player_id, pa.name, pa.team_id, ta.abbreviation, pa.draft_year, SUM(ps.minutes>0) AS games_played, SUM(ps.starter) AS games_started, AVG(ps.minutes) AS mpg, AVG(ps.points) AS ppg, AVG(ps.offensive_rebounds+ps.defensive_rebounds) AS rpg, AVG(ps.assists) AS apg, AVG(ps.blocks) AS bpg, AVG(ps.steals) AS spg FROM %s_player_attributes as pa, %s_player_stats as ps, %s_team_attributes as ta WHERE pa.player_id = ps.player_id AND ps.season = %s AND ps.is_playoffs = 0 AND ta.team_id = pa.team_id AND ta.season = ps.season GROUP BY ps.player_id', (g.league_id, g.league_id, g.league_id, g.season))
-    for player_id, name, team_id, abbreviation, draft_year, games_played, games_started, mpg, ppg, rpg, apg, bpg, spg in g.db.fetchall():
-        g.db.execute('INSERT INTO %s_awards_avg (player_id, name, team_id, abbreviation, draft_year, games_played, games_started, mpg, ppg, rpg, apg, bpg, spg) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (g.league_id, player_id, name, team_id, abbreviation, draft_year, games_played, games_started, mpg, ppg, rpg, apg, bpg, spg))
+    g.db.execute('CREATE TEMPORARY TABLE %s_awards_avg (player_id INTEGER PRIMARY KEY, name VARCHAR(255), team_id INTEGER, abbreviation VARCHAR(3), draft_year INTEGER, games_played INTEGER, games_started INTEGER, mpg FLOAT, ppg FLOAT, rpg FLOAT, apg FLOAT, bpg FLOAT, spg FLOAT)', (g.league_id,))
+    g.db.execute('INSERT INTO %s_awards_avg (player_id, name, team_id, abbreviation, draft_year, games_played, games_started, mpg, ppg, rpg, apg, bpg, spg) (SELECT pa.player_id, pa.name, pa.team_id, ta.abbreviation, pa.draft_year, SUM(ps.minutes>0) AS games_played, SUM(ps.starter) AS games_started, AVG(ps.minutes) AS mpg, AVG(ps.points) AS ppg, AVG(ps.offensive_rebounds+ps.defensive_rebounds) AS rpg, AVG(ps.assists) AS apg, AVG(ps.blocks) AS bpg, AVG(ps.steals) AS spg FROM %s_player_attributes as pa, %s_player_stats as ps, %s_team_attributes as ta WHERE pa.player_id = ps.player_id AND ps.season = %s AND ps.is_playoffs = 0 AND ta.team_id = pa.team_id AND ta.season = ps.season GROUP BY ps.player_id)', (g.league_id, g.league_id, g.league_id, g.league_id, g.season))
 
+    g.db.execute('SELECT team_id, abbreviation, region, name, won, lost FROM %s_team_attributes AS ta WHERE season = %s AND (SELECT conference_id FROM %s_league_divisions AS ld WHERE ld.division_id = ta.division_id) = 1 ORDER BY 1.0*won/(won + lost) DESC', (g.league_id, g.season, g.league_id))
+    bre = g.db.fetchone()
+    g.db.execute('SELECT team_id, abbreviation, region, name, won, lost FROM %s_team_attributes AS ta WHERE season = %s AND (SELECT conference_id FROM %s_league_divisions AS ld WHERE ld.division_id = ta.division_id) = 1 ORDER BY 1.0*won/(won + lost) DESC', (g.league_id, g.season, g.league_id))
+    brw = g.db.fetchone()
 
+    g.db.execute('SELECT player_id, name, team_id, abbreviation, ppg, rpg, apg FROM %s_awards_avg ORDER BY (0.75 * ppg) + apg + rpg DESC', (g.league_id,))
+    mvp =  g.db.fetchone()
+    g.db.execute('SELECT player_id, name, team_id, abbreviation, rpg, bpg, spg FROM %s_awards_avg ORDER BY rpg + 5 * bpg + 5 * spg DESC', (g.league_id,))
+    dpoy = g.db.fetchone()
+    g.db.execute('SELECT player_id, name, team_id, abbreviation, ppg, rpg, apg FROM %s_awards_avg WHERE games_played/(games_started+1) > 2 ORDER BY (0.75 * ppg) + apg + rpg DESC', (g.league_id,))
+    smoy = g.db.fetchone()
+    g.db.execute('SELECT player_id, name, team_id, abbreviation, ppg, rpg, apg FROM %s_awards_avg WHERE draft_year = %s - 1 ORDER BY (0.75 * ppg) + apg + rpg DESC', (g.league_id, g.season))
+    roy = g.db.fetchone()
+    print bre, brw, mvp, dpoy, smoy, roy
+
+    g.db.execute('INSERT INTO %s_awards (season, bre_team_id, bre_abbreviation, bre_region, bre_name, bre_won, bre_lost, brw_team_id, brw_abbreviation, brw_region, brw_name, brw_won, brw_lost, mvp_player_id, mvp_name, mvp_team_id, mvp_abbreviation, mvp_ppg, mvp_rpg, mvp_apg, dpoy_player_id, dpoy_name, dpoy_team_id, dpoy_abbreviation, dpoy_rpg, dpoy_bpg, dpoy_spg, smoy_player_id, smoy_name, smoy_team_id, smoy_abbreviation, smoy_ppg, smoy_rpg, smoy_apg, roy_player_id, roy_name, roy_team_id, roy_abbreviation, roy_ppg, roy_rpg, roy_apg) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (g.league_id, g.season) + bre + brw + mvp + dpoy + smoy + roy)
+
+#    all_league = g.db.execute('SELECT name, abbreviation FROM awards_avg ORDER BY (0.75 * points) + assists + rebounds DESC').fetchmany(15)
+#    all_defensive = g.db.execute('SELECT name, abbreviation FROM awards_avg ORDER BY rebounds + 5 * blocks + 5 * steals DESC').fetchmany(15)
+
+    g.db.execute('DROP TABLE %s_awards_avg', (g.league_id,))
 
 def set_schedule(schedule):
     g.db.execute('UPDATE %s_game_attributes SET schedule = %s', (g.league_id, pickle.dumps(schedule)))

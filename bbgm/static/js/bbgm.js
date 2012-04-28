@@ -77,22 +77,57 @@ function highlight_nav(league_page) {
 }
 
 // For dropdown menus to change team/season/whatever
-function dropdown(select) {
-    select.change(function(event) {
-        var result = parse_league_url(document.URL);
-        var league_root_url = result[1];
-        var league_page = result[2];
-        var url = league_root_url + '/' + league_page + '/' + select.val();
-        $.ajax({
-            type: 'GET',
-            url: url,
-            data: {'json': 1},
-            success: function (data) {
-                ajax_update(data, url);
-            },
-            dataType: 'json'
+// This should be cleaned up, but it works for now.
+function dropdown(select1, select2) {
+    if (arguments.length == 1) {
+        select1.change(function(event) {
+            var result = parse_league_url(document.URL);
+            var league_root_url = result[1];
+            var league_page = result[2];
+            var url = league_root_url + '/' + league_page + '/' + select1.val();
+            $.ajax({
+                type: 'GET',
+                url: url,
+                data: {'json': 1},
+                success: function (data) {
+                    ajax_update(data, url);
+                },
+                dataType: 'json'
+            });
         });
-    });
+    }
+    else if (arguments.length == 2) {
+        select1.change(function(event) {
+            var result = parse_league_url(document.URL);
+            var league_root_url = result[1];
+            var league_page = result[2];
+            var url = league_root_url + '/' + league_page + '/' + select1.val() + '/' + select2.val();
+            $.ajax({
+                type: 'GET',
+                url: url,
+                data: {'json': 1},
+                success: function (data) {
+                    ajax_update(data, url);
+                },
+                dataType: 'json'
+            });
+        });
+        select2.change(function(event) {
+            var result = parse_league_url(document.URL);
+            var league_root_url = result[1];
+            var league_page = result[2];
+            var url = league_root_url + '/' + league_page + '/' + select1.val() + '/' + select2.val();
+            $.ajax({
+                type: 'GET',
+                url: url,
+                data: {'json': 1},
+                success: function (data) {
+                    ajax_update(data, url);
+                },
+                dataType: 'json'
+            });
+        });
+    }
 }
 
 $(document).ready(function() {

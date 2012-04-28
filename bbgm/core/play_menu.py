@@ -1,4 +1,3 @@
-import cPickle as pickle
 from juggernaut import Juggernaut
 import time
 

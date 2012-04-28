@@ -242,19 +242,28 @@ def history(view_season=None):
 
 @app.route('/<int:league_id>/roster')
 @app.route('/<int:league_id>/roster/<abbreviation>')
+@app.route('/<int:league_id>/roster/<abbreviation>/<int:view_season>')
 @league_crap
-def roster(abbreviation=None):
+def roster(abbreviation=None, view_season=None):
     team_id, abbreviation = validate_abbreviation(abbreviation)
-    g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, pa.contract_amount,  pa.contract_expiration, AVG(ps.minutes) as minutes, AVG(ps.points) as points, AVG(ps.offensive_rebounds + ps.defensive_rebounds) as rebounds, AVG(ps.assists) as assists FROM %s_player_attributes as pa LEFT OUTER JOIN %s_player_ratings as pr ON pa.player_id = pr.player_id LEFT OUTER JOIN %s_player_stats as ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE pa.team_id = %s GROUP BY pa.player_id ORDER BY pr.roster_position ASC', (g.season, g.league_id, g.league_id, g.league_id, g.season, team_id))
+    view_season = validate_season(view_season)
+    seasons = get_seasons()
+
+    if view_season == g.season:
+        # Show players even if they don't have any stats
+        g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, pa.contract_amount,  pa.contract_expiration, AVG(ps.minutes) as minutes, AVG(ps.points) as points, AVG(ps.offensive_rebounds + ps.defensive_rebounds) as rebounds, AVG(ps.assists) as assists FROM %s_player_attributes as pa LEFT OUTER JOIN %s_player_ratings as pr ON pa.player_id = pr.player_id LEFT OUTER JOIN %s_player_stats as ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE pa.team_id = %s GROUP BY pa.player_id ORDER BY pr.roster_position ASC', (view_season, g.league_id, g.league_id, g.league_id, view_season, team_id))
+    else:
+        # Only show players with stats, as that's where the team history is recorded
+        g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, pa.contract_amount,  pa.contract_expiration, AVG(ps.minutes) as minutes, AVG(ps.points) as points, AVG(ps.offensive_rebounds + ps.defensive_rebounds) as rebounds, AVG(ps.assists) as assists FROM %s_player_attributes as pa LEFT OUTER JOIN %s_player_ratings as pr ON pa.player_id = pr.player_id LEFT OUTER JOIN %s_player_stats as ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE ps.team_id = %s GROUP BY pa.player_id ORDER BY pr.roster_position ASC', (view_season, g.league_id, g.league_id, g.league_id, view_season, team_id))
     players = g.dbd.fetchall()
 
-    g.dbd.execute('SELECT team_id, abbreviation, region, name FROM %s_team_attributes WHERE season = %s ORDER BY team_id ASC', (g.league_id, g.season))
+    g.dbd.execute('SELECT team_id, abbreviation, region, name FROM %s_team_attributes WHERE season = %s ORDER BY team_id ASC', (g.league_id, view_season))
     teams = g.dbd.fetchall()
 
-    g.db.execute('SELECT CONCAT(region, " ", name) FROM %s_team_attributes WHERE team_id = %s AND season = %s', (g.league_id, team_id, g.season))
+    g.db.execute('SELECT CONCAT(region, " ", name) FROM %s_team_attributes WHERE team_id = %s AND season = %s', (g.league_id, team_id, view_season))
     team_name, = g.db.fetchone()
 
-    return render_all_or_json('roster.html', {'players': players, 'num_roster_spots': 15-len(players), 'teams': teams, 'team_id': team_id, 'team_name': team_name})
+    return render_all_or_json('roster.html', {'players': players, 'num_roster_spots': 15-len(players), 'teams': teams, 'team_id': team_id, 'team_name': team_name, 'view_season': view_season, 'seasons': seasons})
 
 @app.route('/<int:league_id>/roster/auto_sort', methods=['POST'])
 @league_crap

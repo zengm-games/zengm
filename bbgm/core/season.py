@@ -11,19 +11,21 @@ from bbgm.util import auto_sign_free_agents, lock, roster_auto_sort
 def new_phase(phase):
     """Set a new phase of the game.
 
-    This function is called to do all the crap that must be done during transitions between phases of the game, such as
-    moving from the regular season to the playoffs. Phases are defined as:
+    This function is called to do all the crap that must be done during
+    transitions between phases of the game, such as moving from the regular
+    season to the playoffs. Phases are defined as:
         0: Preseason
         1: Regular season, before trade deadline
-        2: Regular season, after trade deadline (NOTE: this isn't implemented yet)
+        2: Regular season, after trade deadline (NOTE: not implemented yet)
         3: Playoffs
         4: Offseason, before draft
         5: Draft
         6: Offseason, after draft
-        7: Offseason, free agency
+        7: Offseason, resign players
+        8: Offseason, free agency
 
     Returns:
-        False if everything went well, or the string containing an error message
+        False if everything went well, or a string containing an error message
         to be sent to the client.
     """
 

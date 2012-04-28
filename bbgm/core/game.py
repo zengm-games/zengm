@@ -352,8 +352,6 @@ def sim_wrapper(league_id, num_days, schedule):
 
         # Check to see if the season is over
         if len(schedule) == 0 and g.phase < 3:
-#            sew = season_end_window.SeasonEndWindow(self)
-#            sew.season_end_window.present()
             season.new_phase(3)  # Start playoffs
 
         play_menu.set_status('Idle')

@@ -208,10 +208,16 @@ roy_apg FLOAT);
 
 CREATE TABLE awards_all_league(
 season INTEGER,
-team INTEGER,
+team_type VARCHAR(9),
+player_rank INTEGER PRIMARY KEY AUTO_INCREMENT,
 player_id INTEGER,
 name VARCHAR(255),
-abbreviation VARCHAR(3));
+abbreviation VARCHAR(3),
+ppg FLOAT,
+rpg FLOAT,
+apg FLOAT,
+bpg FLOAT,
+spg FLOAT);
 
 CREATE INDEX a ON team_attributes(team_id, season, division_id, region);
 CREATE INDEX b ON player_stats(player_id, season, is_playoffs);

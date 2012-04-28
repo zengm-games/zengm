@@ -209,13 +209,40 @@ def draft_():
 
     return render_all_or_json('draft.html', {'undrafted': undrafted, 'drafted': drafted})
 
-@app.route('/<int:league_id>/awards')
-@app.route('/<int:league_id>/awards/<int:view_season>')
+@app.route('/<int:league_id>/history')
+@app.route('/<int:league_id>/history/<int:view_season>')
 @league_crap
-def awards(view_season=None):
-    g.db.execute('DELETE FROM %s_awards', (g.league_id,))
-    season.awards()
-    return 'hi'
+def history(view_season=None):
+    view_season = validate_season(view_season)
+    seasons = get_seasons()
+
+    # If this season isn't over...
+    if g.phase < 3:
+        # View last season by default
+        if view_season == g.season:
+            view_season -= 1
+        seasons.remove(g.season)  # Don't show this season as an option
+
+#    g.db.execute('DELETE FROM %s_awards', (g.league_id,))
+#    g.db.execute('DELETE FROM %s_awards_all_league', (g.league_id,))
+#    season.awards()
+
+    g.dbd.execute('SELECT bre_team_id, bre_abbreviation, bre_region, bre_name, bre_won, bre_lost, brw_team_id, brw_abbreviation, brw_region, brw_name, brw_won, brw_lost, mvp_player_id, mvp_name, mvp_team_id, mvp_abbreviation, mvp_ppg, mvp_rpg, mvp_apg, dpoy_player_id, dpoy_name, dpoy_team_id, dpoy_abbreviation, dpoy_rpg, dpoy_bpg, dpoy_spg, smoy_player_id, smoy_name, smoy_team_id, smoy_abbreviation, smoy_ppg, smoy_rpg, smoy_apg, roy_player_id, roy_name, roy_team_id, roy_abbreviation, roy_ppg, roy_rpg, roy_apg FROM %s_awards WHERE season = %s', (g.league_id, view_season))
+    if g.dbd.rowcount == 0:
+        error = "You have to play through a season before there is any league history to view."
+        return render_all_or_json('league_error.html', {'error': error})
+    awards = g.dbd.fetchone()
+
+    g.dbd.execute('SELECT player_id, name, abbreviation, ppg, rpg, apg, bpg, spg FROM %s_awards_all_league WHERE season = %s AND team_type = \'league\' ORDER BY player_rank', (g.league_id, view_season))
+    all_league = g.dbd.fetchall()
+
+    g.dbd.execute('SELECT player_id, name, abbreviation, ppg, rpg, apg, bpg, spg FROM %s_awards_all_league WHERE season = %s AND team_type = \'defensive\' ORDER BY player_rank', (g.league_id, view_season))
+    all_defensive = g.dbd.fetchall()
+
+    g.db.execute('SELECT abbreviation, region, name FROM %s_team_attributes WHERE won_championship = 1 AND season = %s', (g.league_id, view_season))
+    champ = g.dbd.fetchone()
+
+    return render_all_or_json('history.html', {'awards': awards, 'all_league': all_league, 'all_defensive': all_defensive, 'champ': champ, 'seasons': seasons, 'view_season': view_season})
 
 @app.route('/<int:league_id>/roster')
 @app.route('/<int:league_id>/roster/<abbreviation>')

@@ -1,12 +1,10 @@
 # To acquire parity with the GTK version and be good enough to share:
 
-awards
-- assign all league and all defensive teams in season.awards
-- awards view
-- call season.awards() at the end of the year
+history
 - forward to awards view at the end of the year
-- WOULD THIS BE BETTER IN AN INTEGRATED "HISTORY" VIEW?
-  - index lists all the seasons with key info. click and it brings you to detailed page, with awards (plus champions, finals MVP)
+- display champions
+
+switch to title caps
 
 configuration in text file?
 

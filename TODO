@@ -1,9 +1,5 @@
 # To acquire parity with the GTK version and be good enough to share:
 
-history
-- forward to awards view at the end of the year
-- display champions
-
 switch to title caps
 
 configuration in text file?
@@ -67,6 +63,9 @@ move to new window button, like gmail, that will open a view in a new window wit
 
 game log
 - pushstate for individual box scores as well as teams and seasons, somehow?
+
+history
+- forward to awards view at the end of the year
 
 play button requirements
 - colors - is this a good idea?

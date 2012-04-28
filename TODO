@@ -11,10 +11,6 @@ roster
 - buy out
   - send ajax to get the $ situation, then display appropriate modal dialog
 - "Trade for" button in other teams' view
-- season dropdown
-  - link directly here from:
-    - history
-    - player view (old season stats)
 
 contract negotiation view
 - bring back to either free agent view or resigning view after either accept or cancel

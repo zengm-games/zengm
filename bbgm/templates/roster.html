@@ -76,7 +76,7 @@
     </select>
   </form>
 
-  <h1>{{ team_name }} roster</h1>
+  <h1>{{ team_name }} Roster</h1>
 
   {% if team_id == g.user_team_id and view_season == g.season %}
     <p>You currently have {% if num_roster_spots == 1 %}1 empty roster spot{% else %}{{ num_roster_spots }} empty roster spots{% endif %}.</p>

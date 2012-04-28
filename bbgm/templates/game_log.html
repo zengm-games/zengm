@@ -58,30 +58,31 @@
     });
   </script>
 
+  <form action="{{ url_for('game_log', league_id=g.league_id) }}" method="GET" class="form-inline pull-right">
+    <select id="game_log_select_abbreviation" name="team" class="team">
+      {% for team in teams %}
+        <option value="{{ team.abbreviation }}"{% if team.team_id == team_id %} selected="selected"{% endif %}>{{ team.region }} {{ team.name }}</option>
+      {% endfor %}
+    </select>
+    <select id="game_log_select_season" name="season" class="season">
+      {% for season in seasons %}
+        <option value="{{ season }}"{% if season == view_season %} selected="selected"{% endif %}>{{ season }} season</option>
+      {% endfor %}
+    </select>
+  </form>
+
   <h1>Game Log</h1>
 
-<div class="row-fluid">
-  <div class="span9">
-    <div id="game_log_box_score">
-      <p>Select a game from the menu on the right to view a box score.</p>
+  <p></p>
+  <div class="row-fluid">
+    <div class="span9">
+      <div id="game_log_box_score">
+        <p>Select a game from the menu on the right to view a box score.</p>
+      </div>
     </div>
-  </div>
 
-  <div class="span3">
-    <form action="{{ url_for('game_log', league_id=g.league_id) }}" method="GET" class="form-inline well">
-      <select id="game_log_select_season" name="season" class="span1">
-        {% for season in seasons %}
-          <option value="{{ season }}"{% if season == view_season %} selected="selected"{% endif %}>{{ season }}</option>
-        {% endfor %}
-      </select>
-      <select id="game_log_select_abbreviation" name="abbreviation" class="span1">
-        {% for team in teams %}
-          <option value="{{ team.abbreviation }}"{% if abbreviation == team.abbreviation %} selected="selected"{% endif %}>{{ team.abbreviation }}</option>
-        {% endfor %}
-      </select> 
-    </form>
-    <div id="game_log_list">
-    </div>
+    <div class="span3" id="game_log_list">
+      </div>
   </div>
 </div>
 {% endblock %}

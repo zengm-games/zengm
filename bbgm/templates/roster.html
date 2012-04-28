@@ -63,7 +63,7 @@
     });
   </script>
 
-  <form action="{{ url_for('standings', league_id=g.league_id) }}" method="GET" class="form-inline pull-right">
+  <form action="{{ url_for('roster', league_id=g.league_id) }}" method="GET" class="form-inline pull-right">
     <select id="roster_select_team" name="team" class="team">
       {% for team in teams %}
         <option value="{{ team.abbreviation }}"{% if team.team_id == team_id %} selected="selected"{% endif %}>{{ team.region }} {{ team.name }}</option>

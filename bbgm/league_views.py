@@ -280,7 +280,7 @@ def game_log(view_season=None, abbreviation=None):
     view_season = validate_season(view_season)
     team_id, abbreviation = validate_abbreviation(abbreviation)
 
-    g.dbd.execute('SELECT abbreviation FROM %s_team_attributes WHERE season = %s ORDER BY team_id ASC', (g.league_id, view_season))
+    g.dbd.execute('SELECT team_id, abbreviation, region, name FROM %s_team_attributes WHERE season = %s ORDER BY team_id ASC', (g.league_id, view_season))
     teams = g.dbd.fetchall()
 
     seasons = []
@@ -288,7 +288,7 @@ def game_log(view_season=None, abbreviation=None):
     for season, in g.db.fetchall():
         seasons.append(season)
 
-    return render_all_or_json('game_log.html', {'abbreviation': abbreviation, 'teams': teams, 'seasons': seasons, 'view_season': view_season})
+    return render_all_or_json('game_log.html', {'abbreviation': abbreviation, 'teams': teams, 'team_id': team_id, 'seasons': seasons, 'view_season': view_season})
 
 @app.route('/<int:league_id>/player/<int:player_id>')
 @league_crap

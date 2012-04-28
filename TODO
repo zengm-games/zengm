@@ -6,7 +6,6 @@ configuration in text file?
 
 roster
 - highlight handle on hover, like button
-- display contract in millions
 - release
 - buy out
   - send ajax to get the $ situation, then display appropriate modal dialog

@@ -5,6 +5,13 @@ Client-side game simulation
   - update_players_on_court
   - random
   - default values in function arguments
+  - get rid of array/list comprehensions
+  - http://bonsaiden.github.com/JavaScript-Garden/
+    - for loops hasOwnProperty
+    - Namespaces "/A common problem of having only one global namespace" "In order to protect code against a possible overwritten undefined variable, a common technique used is to add an additional parameter to an anonymous wrapper that gets no argument passed to it."
+      - just copy what jquery does
+    - "For the best performance, it is recommended to always use the plain for loop and cache the length property. The use of for in on an array is a sign of badly written code that is prone to bugs and bad performance."
+    - It is highly recommended to only use the strict equality (===) operator.
 - 2: implement client-side
 - 3: figure out how to handle interrupted simulations
 - 4: web workers? https://developer.mozilla.org/En/Using_web_workers

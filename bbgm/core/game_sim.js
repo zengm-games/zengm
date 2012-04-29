@@ -147,7 +147,7 @@ GameSim.prototype.update_players_on_court = function() {
         for p in this.players_on_court[t] {
             this.players_on_court[t][i] = p
             // Loop through bench players (in order of current roster position) to see if any should be subbed in)
-            for b in xrange(len(this.team[t]['player'])) {
+            for (var b = 0; b < this.team[t]['player'].length; b++) {
                 if b !in this.players_on_court[t] and this.team[t]['player'][p]['stat']['court_time'] > 3 and this.team[t]['player'][b]['stat']['bench_time'] > 3 and overalls[b] > overalls[p] {
                     // Substitute player
                     this.players_on_court[t][i] = b
@@ -158,7 +158,7 @@ GameSim.prototype.update_players_on_court = function() {
             i += 1
 
         // Update minutes (overall, court, and bench)
-        for p in xrange(len(this.team[t]['player'])) {
+        for (var p = 0; p < this.team[t]['player'].length; p++) {
             if p in this.players_on_court[t] {
                 this.record_stat(t, p, 'minutes', dt)
                 this.record_stat(t, p, 'court_time', dt)

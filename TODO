@@ -2,6 +2,9 @@
 
 Client-side game simulation
 - 1: write javascript version of game_sim.py, call from python code (server-side)
+  - update_players_on_court
+  - random
+  - default values in function arguments
 - 2: implement client-side
 - 3: figure out how to handle interrupted simulations
 - 4: web workers? https://developer.mozilla.org/En/Using_web_workers

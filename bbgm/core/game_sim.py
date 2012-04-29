@@ -1,6 +1,6 @@
-import random
+#import random
 
-from bbgm.util import fast_random
+#from bbgm.util import fast_random
 
 class GameSim:
     """Single game simulation.
@@ -24,7 +24,7 @@ class GameSim:
                 possessions they like to have in a game), stat (a dict for
                 storing team stats), and player (a list of dicts, one for each
                 player on the team, ordered by roster_position). Each player's
-                dict contains anohter four elements: id (player's unique ID
+                dict contains another four elements: id (player's unique ID
                 number), overall_rating (overall rating, as stored in the DB),
                 stat (a dict for storing player stats, similar to the one for
                 team stats), and composite_ratings (a dict containing various

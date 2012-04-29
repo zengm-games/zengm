@@ -1,5 +1,12 @@
 # To acquire parity with the GTK version and be good enough to share:
 
+Client-side game simulation
+- 1: write javascript version of game_sim.py, call from python code (server-side)
+- 2: implement client-side
+- 3: figure out how to handle interrupted simulations
+- 4: web workers? https://developer.mozilla.org/En/Using_web_workers
+  - can spawn multiple workers in parallel. "transferable objects" would speed it up
+
 configuration in text file?
 
 roster
@@ -98,6 +105,7 @@ security
   - http://packages.python.org/passlib/new_app_quickstart.html
 - csrf protection
   - http://flask.pocoo.org/docs/security/#cross-site-request-forgery-csrf
+  - http://packages.python.org/Flask-SeaSurf/
   - even for ajax https://docs.djangoproject.com/en/1.2/releases/1.2.5/#csrf-exception-for-ajax-requests
 - http://pypi.python.org/pypi/Flask-KVSession
 - http://packages.python.org/Flask-Login/
@@ -116,14 +124,6 @@ logging
 next redirect like http://flask.pocoo.org/docs/reqcontext/?highlight=url#diving-into-context-locals
 
 unit tests like https://github.com/mitsuhiko/flask/blob/master/examples/minitwit/minitwit_tests.py
-
-some way of local processing of game simulations? Javascript equivalent of game_sim.py
-- web workers? https://developer.mozilla.org/En/Using_web_workers
-  - can spawn multiple workers in parallel. "transferable objects" would speed it up
-- client-side javascript version
-  - check if a client is connected to this league
-  - if so, get game from queue, send to browser, save results, update play status, repeat
-  - if not, pause all league's games until we get a signal from the browser for that league
 
 playoffs
 - on playoffs start, automatically switch to playoffs view

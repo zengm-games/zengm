@@ -3,8 +3,8 @@
 Client-side game simulation
 - 1: make sure javascript works
 - 1.1: test
-  - generate some fake teams
-  - write script to have them play 10000 times in python and in javascript (node or gjs). compare
+  - write javascript equivalent of test_game_sim.py
+    - factor out box score code to a common script that the output (JSON) can be piped to
 - 1.5: fix javascript
   - http://bonsaiden.github.com/JavaScript-Garden/
     - for loops hasOwnProperty

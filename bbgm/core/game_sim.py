@@ -1,6 +1,6 @@
-#import random
+import random
 
-#from bbgm.util import fast_random
+from bbgm.util import fast_random
 
 class GameSim:
     """Single game simulation.

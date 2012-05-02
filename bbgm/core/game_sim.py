@@ -49,9 +49,7 @@ class GameSim:
             team2: Same as team1, but for the away team.
         """
         self.id = game_id
-        self.team = []
-        self.team.append(team1)
-        self.team.append(team2)
+        self.team = [team1, team2]
         self.num_possessions = int(round((self.team[0]['pace'] + self.team[1]['pace']) / 2 * fast_random.gauss(1, 0.03)))
 
         # Starting lineups, which works because players are ordered by their roster_position

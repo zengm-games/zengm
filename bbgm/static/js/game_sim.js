@@ -51,7 +51,8 @@
  *             }
  *     team2: Same as team1, but for the away team.
  */
-function GameSim(team1, team2) {
+function GameSim(game_id, team1, team2) {
+    this.id = game_id
     this.team = [team1, team2];
     this.num_possessions = parseInt(Math.round((this.team[0]['pace'] + this.team[1]['pace']) / 2 * gauss_random(1, 0.03)), 10);
 
@@ -71,20 +72,23 @@ function GameSim(team1, team2) {
  *     __init__, but with both the team and player "stat" dicts filled in
  *     and the extraneous data (defense, pace, overall_rating,
  *     composite_rating) removed. In other words...
- *         [
- *             {
- *                 "id": 0,
- *                 "stat": {},
- *                 "player": [
- *                     {
- *                         "id": 0,
- *                         "stat": {}
- *                     },
- *                     ...
- *                 ]
- *             },
- *         ...
- *         ]
+ *         {
+ *             'game_id': 0,
+ *             'team': [
+ *                 {
+ *                     "id": 0,
+ *                     "stat": {},
+ *                     "player": [
+ *                         {
+ *                             "id": 0,
+ *                             "stat": {}
+ *                         },
+ *                         ...
+ *                     ]
+ *                 },
+ *             ...
+ *             ]
+ *         }
  */
 GameSim.prototype.run = function() {
     // Simulate the game
@@ -119,7 +123,7 @@ GameSim.prototype.run = function() {
         }
     }
 
-    return this.team;
+    return {'game_id': this.id, 'team': this.team};
 };
 
 

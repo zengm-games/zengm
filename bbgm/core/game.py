@@ -339,7 +339,6 @@ def sim_wrapper(league_id, num_days):
             tasks = []
             for i in range(num_active_teams / 2):
                 game = schedule[i]
-                g.db.execute('DELETE FROM %s_schedule WHERE game_id = %s', (g.league_id,game['game_id']))
                 tasks.append(sim.subtask((league_id, game['game_id'], game['home_team_id'], game['away_team_id'], is_playoffs)))
             job = TaskSet(tasks=tasks)
             result = job.apply_async()
@@ -363,16 +362,14 @@ def sim_wrapper(league_id, num_days):
         play_menu.refresh_options()
 
 def save_results(results, is_playoffs):
-    """Convenience function (for Celery) to save game stats."""
+    """Convenience function to save game stats."""
     game = Game()
     game.load(results, is_playoffs)
     game.write_stats()
+    g.db.execute('DELETE FROM %s_schedule WHERE game_id = %s', (g.league_id, results['game_id']))
 
 def play(num_days):
-    """Play num_days days worth of games.
-
-    This function also handles a lot of the playoffs logic, for some reason.
-    """
+    """Play num_days days worth of games."""
 
     if lock.can_start_games():
         sim_wrapper.apply_async((g.league_id, num_days))

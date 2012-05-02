@@ -2,6 +2,12 @@
 
 Client-side game simulation
 - 2: implement client-side, with an option to enable or disable. RETAIN BOTH!
+  - First implement a day's simulation
+  - Set lock
+  - Send all the day's games, and all the teams that play in those games, to the browser
+  - Set a timeout (col in schedule table?)
+  - when you recieve results from the browser (all at once, for a day), write to DB if it's not timed out, then unset lock
+  - If no response after timeout expires, delete timeout, then unset lock
 - 2.5: fix javascript
   - http://bonsaiden.github.com/JavaScript-Garden/
     - for loops hasOwnProperty

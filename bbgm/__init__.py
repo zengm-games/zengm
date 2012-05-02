@@ -10,12 +10,13 @@ from contextlib import closing
 #from gevent.event import Event
 
 BBGM_VERSION = '2.0.0alpha'
-DEBUG = False
+DEBUG = True
 SECRET_KEY = 'A0Zr98j/gry43 etwN]LWX/,?RT'
 DB = 'bbgm'
 DB_USERNAME = 'testuser'
 DB_PASSWORD = 'test623'
 TRY_NUMPY = True
+GAME_SIM_CLIENT_SIDE = True
 
 CELERY_RESULT_BACKEND = "redis"
 CELERY_REDIS_HOST = "localhost"

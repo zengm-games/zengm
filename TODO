@@ -1,9 +1,7 @@
 # To acquire parity with the GTK version and be good enough to share:
 
-store schedule in database normally, rather than pickled
-- use game IDs when storing game stats
-
 Client-side game simulation
+- account for game_id
 - 2: implement client-side
 - 2.5: fix javascript
   - http://bonsaiden.github.com/JavaScript-Garden/

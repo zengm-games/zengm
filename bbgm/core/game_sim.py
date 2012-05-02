@@ -14,10 +14,11 @@ class GameSim:
     eventually it can be ported to JavaScript and run client-side.
     """
 
-    def __init__(self, team1, team2):
+    def __init__(self, game_id, team1, team2):
         """Initialize the two teams that are playing this game.
 
         Args:
+            game_id: Integer unique ID of the game.
             team1: dict containing information about the home team. There are
                 four top-level elements in this dict: id (team), defense (a
                 float containing the overall team defensive rating), pace (a
@@ -47,6 +48,7 @@ class GameSim:
                     }
             team2: Same as team1, but for the away team.
         """
+        self.id = game_id
         self.team = []
         self.team.append(team1)
         self.team.append(team2)
@@ -65,20 +67,23 @@ class GameSim:
             __init__, but with both the team and player "stat" dicts filled in
             and the extraneous data (defense, pace, overall_rating,
             composite_rating) removed. In other words...
-                [
-                    {
-                        "id": 0,
-                        "stat": {},
-                        "player": [
-                            {
-                                "id": 0,
-                                "stat": {}
-                            },
-                            ...
-                        ]
-                    },
-                ...
-                ]
+                {
+                    'game_id': 0,
+                    'team': [
+                        {
+                            "id": 0,
+                            "stat": {},
+                            "player": [
+                                {
+                                    "id": 0,
+                                    "stat": {}
+                                },
+                                ...
+                            ]
+                        },
+                    ...
+                    ]
+                }
         """
         # Simulate the game
         for self.o in xrange(2):
@@ -103,7 +108,7 @@ class GameSim:
                 del self.team[t]['player'][p]['overall_rating']
                 del self.team[t]['player'][p]['composite_rating']
 
-        return self.team
+        return {'game_id': self.id, 'team': self.team}
 
     def update_players_on_court(self):
         """Do substitutions when appropriate, track energy levels, and record

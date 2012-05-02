@@ -14,13 +14,11 @@ from bbgm.util import auto_sign_free_agents, lock, fast_random, request_context_
 
 
 class Game:
-    """This needs to not depend on g."""
     def load(self, results, is_playoffs):
         # Retrieve stats
-        self.team = results
-
+        self.team = results['team']
         self.is_playoffs = is_playoffs
-        self.id = random.randint(0, 100000000)
+        self.id = results['game_id']
         self.home = [True, False]
 
         # What is the attendance of the game?
@@ -218,7 +216,7 @@ def _composite(minval, maxval, rating, components, inverse=False, random=True):
     return r
 
 @celery.task(name='bbgm.core.game.sim')
-def sim(league_id, t1, t2, is_playoffs):
+def sim(league_id, game_id, t1, t2, is_playoffs):
     """Convenience function (for Celery) to call GameSim and simulate a game.
     As long as games are all in the same day (i.e. no transactions will occur
     between games), this can be put in a queue and run asynchronously.
@@ -226,7 +224,7 @@ def sim(league_id, t1, t2, is_playoffs):
     with app.test_request_context():
         request_context_globals(league_id)
 
-        gs = game_sim.GameSim(team(t1), team(t2))
+        gs = game_sim.GameSim(game_id, team(t1), team(t2))
         save_results(gs.run(), is_playoffs)
 
 @celery.task(name='bbgm.core.game.sim_wrapper')
@@ -342,7 +340,7 @@ def sim_wrapper(league_id, num_days):
             for i in range(num_active_teams / 2):
                 game = schedule[i]
                 g.db.execute('DELETE FROM %s_schedule WHERE game_id = %s', (g.league_id,game['game_id']))
-                tasks.append(sim.subtask((league_id, game['home_team_id'], game['away_team_id'], is_playoffs)))
+                tasks.append(sim.subtask((league_id, game['game_id'], game['home_team_id'], game['away_team_id'], is_playoffs)))
             job = TaskSet(tasks=tasks)
             result = job.apply_async()
 

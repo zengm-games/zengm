@@ -1,0 +1,7 @@
+#!/bin/sh
+
+echo 'Python version:'
+python test_game_sim.py | python box_score.py
+
+echo 'JavaScript version:'
+node test_game_sim.js | python box_score.py

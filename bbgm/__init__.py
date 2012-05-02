@@ -10,7 +10,7 @@ from contextlib import closing
 #from gevent.event import Event
 
 BBGM_VERSION = '2.0.0alpha'
-DEBUG = True
+DEBUG = False
 SECRET_KEY = 'A0Zr98j/gry43 etwN]LWX/,?RT'
 DB = 'bbgm'
 DB_USERNAME = 'testuser'

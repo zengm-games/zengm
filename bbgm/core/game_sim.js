@@ -52,10 +52,8 @@
  *     team2: Same as team1, but for the away team.
  */
 function GameSim(team1, team2) {
-    this.team = [];
-    this.team.append(team1);
-    this.team.append(team2);
-    this.num_possessions = int(round((this.team[0]['pace'] + this.team[1]['pace']) / 2 * gauss_random(1, 0.03)));
+    this.team = [team1, team2];
+    this.num_possessions = parseInt(Math.round((this.team[0]['pace'] + this.team[1]['pace']) / 2 * gauss_random(1, 0.03)), 10);
 
     // Starting lineups, which works because players are ordered by their roster_position
     this.players_on_court = [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]];
@@ -104,7 +102,6 @@ GameSim.prototype.run = function() {
                     if (!this.is_free_throw(shooter)) {
                         if (!this.is_made_shot(shooter)) {
                             this.do_rebound();
-                            }
                         }
                     }
                 }
@@ -123,7 +120,7 @@ GameSim.prototype.run = function() {
     }
 
     return this.team;
-}
+};
 
 
 
@@ -179,7 +176,7 @@ GameSim.prototype.update_players_on_court = function() {
             }
         }
     }
-}
+};
 
 
 
@@ -191,7 +188,7 @@ GameSim.prototype.is_turnover = function() {
     else {
         return false;
     }
-}
+};
 
 
 
@@ -203,7 +200,7 @@ GameSim.prototype.is_steal = function() {
     else {
         return false;
     }
-}
+};
 
 
 
@@ -215,7 +212,7 @@ GameSim.prototype.is_block = function() {
     else {
         return false;
     }
-}
+};
 
 
 
@@ -227,7 +224,7 @@ GameSim.prototype.is_free_throw = function(shooter) {
     else {
         return false;
     }
-}
+};
 
 
 
@@ -256,7 +253,7 @@ GameSim.prototype.is_made_shot = function(shooter) {
     else {
         return false;
     }
-}
+};
 
 
 
@@ -267,7 +264,7 @@ GameSim.prototype.is_assist = function() {
     else {
         return false;
     }
-}
+};
 
 
 
@@ -276,7 +273,7 @@ GameSim.prototype.do_turnover = function() {
     var p = this.players_on_court[this.o][this.pick_player(ratios)];
     this.record_stat(this.o, p, 'turnovers');
     this.is_steal();
-}
+};
 
 
 
@@ -284,7 +281,7 @@ GameSim.prototype.do_steal = function() {
     var ratios = this.rating_array('steal_ratio', this.d);
     var p = this.players_on_court[this.d][this.pick_player(ratios)];
     this.record_stat(this.d, p, 'steals');
-}
+};
 
 
 
@@ -292,7 +289,7 @@ GameSim.prototype.do_block = function() {
     var ratios = this.rating_array('block_ratio', this.d);
     var p = this.players_on_court[this.d][this.pick_player(ratios)];
     this.record_stat(this.d, p, 'blocks');
-}
+};
 
 
 
@@ -306,7 +303,7 @@ GameSim.prototype.do_free_throw = function(shooter, amount) {
             this.record_stat(this.o, p, 'points');
         }
     }
-}
+};
 
 
 /**
@@ -318,7 +315,7 @@ GameSim.prototype.do_foul = function(shooter) {
     this.record_stat(this.d, p, 'personal_fouls');
     // Foul out
     //if this.team[this.d]['player'][p]['stat']['personal_fouls'] >= 6 {
-}
+};
 
 
 
@@ -335,7 +332,7 @@ GameSim.prototype.do_made_shot = function(shooter, type) {
         this.record_stat(this.o, p, 'three_pointers_made');  // Extra point for 3's
         this.record_stat(this.o, p, 'points');
     }
-}
+};
 
 
 
@@ -350,7 +347,7 @@ GameSim.prototype.do_rebound = function() {
         var p = this.players_on_court[this.o][this.pick_player(ratios)];
         this.record_stat(this.o, p, 'offensive_rebounds');
     }
-}
+};
 
 
 
@@ -361,7 +358,7 @@ GameSim.prototype.rating_array = function(rating, t) {
         array[i] = this.team[t]['player'][p]['composite_rating'][rating];
     }
     return array;
-}
+};
 
 
 
@@ -399,7 +396,7 @@ GameSim.prototype.pick_player = function(ratios, exempt) {
         pick = 4;
     }
     return pick;
-}
+};
 
 
 
@@ -413,7 +410,7 @@ GameSim.prototype.record_stat = function(t, p, s, amount) {
     if (s != 'starter' && s != 'court_time' && s != 'bench_time' && s != 'energy') {
         this.team[t]['stat'][s] = this.team[t]['stat'][s] + amount;
     }
-}
+};
 
 
 /**
@@ -425,4 +422,8 @@ function gauss_random(mu, sigma) {
     mu = typeof mu !== 'undefined' ? mu : 0;
     sigma = typeof sigma !== 'undefined' ? sigma : 1;
     return ((Math.random()*2-1)+(Math.random()*2-1)+(Math.random()*2-1))*sigma + mu;
-}
+};
+
+// This is for node.js testing
+exports.GameSim = GameSim;
+//exports.GameSim.run = GameSim.prototype.run;

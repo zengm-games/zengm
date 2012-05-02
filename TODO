@@ -1,11 +1,8 @@
 # To acquire parity with the GTK version and be good enough to share:
 
 Client-side game simulation
-- 1: make sure javascript works
-- 1.1: test
-  - write javascript equivalent of test_game_sim.py
-    - factor out box score code to a common script that the output (JSON) can be piped to
-- 1.5: fix javascript
+- 2: implement client-side
+- 2.5: fix javascript
   - http://bonsaiden.github.com/JavaScript-Garden/
     - for loops hasOwnProperty
     - Namespaces "/A common problem of having only one global namespace" "In order to protect code against a possible overwritten undefined variable, a common technique used is to add an additional parameter to an anonymous wrapper that gets no argument passed to it."
@@ -13,7 +10,6 @@ Client-side game simulation
     - "For the best performance, it is recommended to always use the plain for loop and cache the length property. The use of for in on an array is a sign of badly written code that is prone to bugs and bad performance."
     - It is highly recommended to only use the strict equality (===) operator.
   - better randomization library? http://simjs.com/random.html
-- 2: implement client-side
 - 3: figure out how to handle interrupted simulations
 - 4: web workers? https://developer.mozilla.org/En/Using_web_workers
   - can spawn multiple workers in parallel. "transferable objects" would speed it up

@@ -413,6 +413,7 @@ GameSim.prototype.record_stat = function(t, p, s, amount) {
 };
 
 
+
 /**
  * Returns a random number from an approximately Gaussian distribution with
  * mean mu (default: 0) and standard deviation sigma (default: 1).
@@ -424,6 +425,9 @@ function gauss_random(mu, sigma) {
     return ((Math.random()*2-1)+(Math.random()*2-1)+(Math.random()*2-1))*sigma + mu;
 };
 
+
+
 // This is for node.js testing
-exports.GameSim = GameSim;
-//exports.GameSim.run = GameSim.prototype.run;
+if (typeof exports !== 'undefined') {
+    exports.GameSim = GameSim;
+}

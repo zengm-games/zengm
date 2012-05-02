@@ -3,6 +3,8 @@ function play_button(url) {
     $.post(url, function (data) {
         error = data['error'];
         url = data['url'];
+/*        play_game_clientside = data['play_game_clientside'];
+        teams = data['teams'];*/
         if (error) {
             alert(error);
         }
@@ -14,6 +16,13 @@ function play_button(url) {
                 highlight_nav(league_page);
             });
         }
+/*        if (play_game_clientside) {
+console.log(teams);
+for (var i=0; i<200; i++) {
+            gs = new GameSim(teams[0], teams[1]);
+console.log(gs.run());
+}
+        }*/
     }, 'json');
 }
 

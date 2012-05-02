@@ -100,9 +100,13 @@ def player_stats(view_season=None):
 def play(amount):
     error = None
     url = None
+#    play_game_clientside = False
+#    teams = None
 
     if amount == 'day':
         game.play(1)
+#        play_game_clientside = True
+#        teams = [game.team(0), game.team(1)]
     elif amount == 'week':
         game.play(7)
     elif amount == 'month':
@@ -130,6 +134,7 @@ def play(amount):
     elif amount == 'until_regular_season':
         error = season.new_phase(1)
 
+#    return jsonify(url=url, error=error, play_game_clientside=play_game_clientside, teams=teams)
     return jsonify(url=url, error=error)
 
 @app.route('/<int:league_id>/schedule')

@@ -398,7 +398,7 @@ def box_score():
         g.db.execute('SELECT region, name, abbreviation FROM %s_team_attributes WHERE team_id = %s', (g.league_id, teams[-1]['team_id']))
         teams[-1]['region'], teams[-1]['name'], teams[-1]['abbreviation'] = g.db.fetchone()
 
-        g.dbd.execute('SELECT name, position, minutes, field_goals_made, field_goals_attempted, three_pointers_made, three_pointers_attempted, free_throws_made, free_throws_attempted, offensive_rebounds, defensive_rebounds, offensive_rebounds + defensive_rebounds AS rebounds, assists, turnovers, steals, blocks, personal_fouls, points FROM %s_player_attributes as pa, %s_player_stats as ps WHERE pa.player_id = ps.player_id AND ps.game_id = %s AND pa.team_id = %s ORDER BY starter DESC, minutes DESC', (g.league_id, g.league_id, game_id, teams[-1]['team_id']))
+        g.dbd.execute('SELECT pa.player_id, name, position, minutes, field_goals_made, field_goals_attempted, three_pointers_made, three_pointers_attempted, free_throws_made, free_throws_attempted, offensive_rebounds, defensive_rebounds, offensive_rebounds + defensive_rebounds AS rebounds, assists, turnovers, steals, blocks, personal_fouls, points FROM %s_player_attributes as pa, %s_player_stats as ps WHERE pa.player_id = ps.player_id AND ps.game_id = %s AND pa.team_id = %s ORDER BY starter DESC, minutes DESC', (g.league_id, g.league_id, game_id, teams[-1]['team_id']))
         teams[-1]['players'] = g.dbd.fetchall()
 
         # Total rebounds
@@ -410,7 +410,7 @@ def box_score():
     else:
         won_lost = {'won_points': teams[1]['points'], 'won_region': teams[1]['region'], 'won_name': teams[1]['name'], 'won_abbreviation': teams[1]['abbreviation'], 'lost_points': teams[0]['points'], 'lost_region': teams[0]['region'], 'lost_name': teams[0]['name'], 'lost_abbreviation': teams[0]['abbreviation']}
 
-    return render_template('box_score.html', teams=teams, **won_lost)
+    return render_template('box_score.html', teams=teams, view_season=teams[0]['season'], **won_lost)
 
 @app.route('/<int:league_id>/game_log_list')
 @league_crap_ajax

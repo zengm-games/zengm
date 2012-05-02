@@ -315,9 +315,13 @@ def awards():
     g.db.execute('DROP TABLE %s_awards_avg', (g.league_id,))
 
 def set_schedule(schedule):
-    g.db.execute('UPDATE %s_game_attributes SET schedule = %s', (g.league_id, pickle.dumps(schedule)))
+    """Schedule is a list of lists, each containing the team IDs of the home and
+    away teams, respectively.
+    """
+    g.db.execute('DELETE FROM %s_schedule', (g.league_id,))
+    for home_team_id, away_team_id in schedule:
+        g.db.execute('INSERT INTO %s_schedule (home_team_id, away_team_id) VALUES (%s, %s)', (g.league_id, home_team_id, away_team_id))
 
 def get_schedule():
-    g.db.execute('SELECT schedule FROM %s_game_attributes', (g.league_id,))
-    row = g.db.fetchone()
-    return pickle.loads(row[0].encode('ascii'))
+    g.db.execute('SELECT home_team_id, away_team_id FROM %s_schedule', (g.league_id,))
+    return list(g.db.fetchall())

@@ -1,5 +1,7 @@
 # To acquire parity with the GTK version and be good enough to share:
 
+store schedule in database normally, rather than pickled
+
 Client-side game simulation
 - 2: implement client-side
 - 2.5: fix javascript
@@ -15,6 +17,8 @@ Client-side game simulation
   - can spawn multiple workers in parallel. "transferable objects" would speed it up
 
 configuration in text file?
+- http://flask.pocoo.org/docs/patterns/fabric/#the-configuration-file
+- http://flask.pocoo.org/snippets/2/
 
 roster
 - highlight handle on hover, like button
@@ -113,9 +117,11 @@ security
 - csrf protection
   - http://flask.pocoo.org/docs/security/#cross-site-request-forgery-csrf
   - http://packages.python.org/Flask-SeaSurf/
+  - http://flask.pocoo.org/snippets/3/
   - even for ajax https://docs.djangoproject.com/en/1.2/releases/1.2.5/#csrf-exception-for-ajax-requests
 - http://pypi.python.org/pypi/Flask-KVSession
 - http://packages.python.org/Flask-Login/
+- http://flask.pocoo.org/snippets/70/
 
 roster_position
 - what happened in pygobject version?
@@ -123,12 +129,14 @@ roster_position
   - set after trade (auto) or signing (stick at bottom)
 
 pep8
+- https://github.com/hhatto/autopep8
 
 logging
 - should be more ubiquitous
 - doesn't get saved to file inside celery task, but they do show up on the celeryd screen
 
 next redirect like http://flask.pocoo.org/docs/reqcontext/?highlight=url#diving-into-context-locals
+- http://flask.pocoo.org/snippets/62/
 
 unit tests like https://github.com/mitsuhiko/flask/blob/master/examples/minitwit/minitwit_tests.py
 
@@ -136,6 +144,7 @@ playoffs
 - on playoffs start, automatically switch to playoffs view
 - before playoffs, show current playoff seedings
 
+http://flask.pocoo.org/snippets/11/
 
 # Then
 

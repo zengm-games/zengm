@@ -232,6 +232,10 @@ def sim_wrapper(league_id, num_days):
     """Asynchonously simulate a day's game, then do some housekeeping before
     moving on to the next day to handle playoff scheduling and free agents, then
     repeat num_days times.
+
+    If the GAME_SIM_CLIENT_SIDE option is set, then no games will actually be
+    simulated here and instead the "teams" and "schedule" lists will be prepared
+    and then eventually sent to the client.
     """
     with app.test_request_context():
         request_context_globals(league_id)
@@ -337,29 +341,45 @@ def sim_wrapper(league_id, num_days):
             schedule = season.get_schedule(num_active_teams / 2)
             print len(schedule)
             tasks = []
+            if app.config['GAME_SIM_CLIENT_SIDE']:
+                team_ids_today = []
             for i in range(num_active_teams / 2):
                 game = schedule[i]
-                tasks.append(sim.subtask((league_id, game['game_id'], game['home_team_id'], game['away_team_id'], is_playoffs)))
-            job = TaskSet(tasks=tasks)
-            result = job.apply_async()
+                g.db.execute('UPDATE %s_schedule SET in_progress_timestamp = %s WHERE game_id = %s', (g.league_id, int(time.time()), game['game_id']))
+                if app.config['GAME_SIM_CLIENT_SIDE']:
+                    team_ids_today.append(game['home_team_id'])
+                    team_ids_today.append(game['away_team_id'])
+                else:
+                    tasks.append(sim.subtask((league_id, game['game_id'], game['home_team_id'], game['away_team_id'], is_playoffs)))
+            if app.config['GAME_SIM_CLIENT_SIDE']:
+                team_ids_today = list(set(team_ids_today))  # Unique list
+                teams = []
+                for team_id in xrange(30):
+                    teams.append(team(team_id))
+            else:
+                job = TaskSet(tasks=tasks)
+                result = job.apply_async()
 
-            # Wait for the day's games to finish
-            while not result.ready():
-                time.sleep(0.25)
+                # Wait for the day's games to finish
+                while not result.ready():
+                    time.sleep(0.25)
 
             # Check to see if the season is over
-            g.db.execute('SELECT game_id FROM %s_schedule LIMIT 1', (g.league_id,))
+            g.db.execute('SELECT game_id FROM %s_schedule WHERE in_progress_timestamp = 0 LIMIT 1', (g.league_id,))
             if g.db.rowcount == 0 and g.phase < 3:
                 break  # Don't try to play any more of the regular season
 
         # Check to see if the season is over
-        g.db.execute('SELECT game_id FROM %s_schedule LIMIT 1', (g.league_id,))
+        g.db.execute('SELECT game_id FROM %s_schedule WHERE in_progress_timestamp = 0 LIMIT 1', (g.league_id,))
         if g.db.rowcount == 0 and g.phase < 3:
             season.new_phase(3)  # Start playoffs
 
         play_menu.set_status('Idle')
         lock.set_games_in_progress(False)
         play_menu.refresh_options()
+
+        if app.config['GAME_SIM_CLIENT_SIDE']:
+            return teams, schedule
 
 def save_results(results, is_playoffs):
     """Convenience function to save game stats."""
@@ -372,4 +392,8 @@ def play(num_days):
     """Play num_days days worth of games."""
 
     if lock.can_start_games():
-        sim_wrapper.apply_async((g.league_id, num_days))
+        if app.config['GAME_SIM_CLIENT_SIDE']:
+            [teams, schedule] = sim_wrapper(g.league_id, num_days)
+            return teams, schedule
+        else:
+            sim_wrapper.apply_async((g.league_id, num_days))

@@ -31,7 +31,8 @@ INSERT INTO game_attributes (team_id, season, phase, version) VALUES(3, 2012, 0,
 CREATE TABLE schedule (
 game_id INTEGER PRIMARY KEY AUTO_INCREMENT,
 home_team_id INTEGER,
-away_team_id INTEGER);
+away_team_id INTEGER,
+in_progress_timestamp INTEGER DEFAULT 0);
 
 CREATE TABLE player_attributes (
 player_id INTEGER PRIMARY KEY AUTO_INCREMENT,

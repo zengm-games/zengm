@@ -105,8 +105,9 @@ def play(amount):
 
     if amount == 'day':
         if app.config['GAME_SIM_CLIENT_SIDE']:
-            teams = [game.team(0), game.team(1)]
-            schedule = [{'game_id': 1, 'home_team_id': 0, 'away_team_id': 1}]
+            [teams, schedule] = game.play(1)
+#            teams = [game.team(0), game.team(1)]
+#            schedule = [{'game_id': 1, 'home_team_id': 0, 'away_team_id': 1}]
         else:
             game.play(1)
     elif amount == 'week':

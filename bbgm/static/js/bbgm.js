@@ -18,10 +18,10 @@ function play_button(url) {
         }
         if (schedule) {
 console.log(teams);
-for (var i=0; i<200; i++) {
-            gs = new GameSim(schedule[0]['game_id'], teams[schedule[0]['home_team_id']], teams[schedule[0]['away_team_id']]);
+            for (var i=0; i<schedule.length; i++) {
+                gs = new GameSim(schedule[i]['game_id'], teams[schedule[i]['home_team_id']], teams[schedule[i]['away_team_id']]);
 console.log(gs.run());
-}
+            }
         }
     }, 'json');
 }

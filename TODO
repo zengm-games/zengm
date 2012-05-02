@@ -1,13 +1,23 @@
 # To acquire parity with the GTK version and be good enough to share:
 
 Client-side game simulation
+- REFACTOR core.game. GOALS:
+  - support both client-side and server-side game simulation, somehow
+  - break up sim_wrapper into smaller functions
+  - sim_wrapper should be used just for the server-side simulations, but all game logic should be factored out into smaller functions that can be used to create equivalent infrastructure for client-side simulations
 - 2: implement client-side, with an option to enable or disable. RETAIN BOTH!
-  - First implement a day's simulation
-  - Set lock
-  - Send all the day's games, and all the teams that play in those games, to the browser
-  - Set a timeout (col in schedule table?)
-  - when you recieve results from the browser (all at once, for a day), write to DB if it's not timed out, then unset lock
-  - If no response after timeout expires, delete timeout, then unset lock
+  - General idea
+    - Set lock
+    - Send all the day's games, and all the teams that play in those games, to the browser
+    - Set a timeout (col in schedule table?)
+    - when you recieve results from the browser (all at once, for a day)
+      - if it's not timed out:
+        - write to DB
+        - send back more games to simulate, or unset lock
+    - If no response after timeout expires, delete timeout, then unset lock
+  - Current status
+    - Playing a day of games works, but a lot of other crap won't because of how core.game.play_games is structured. THIS NEEDS TO BE REFACTORED.
+    - Doesn't save game results.
 - 2.5: fix javascript
   - http://bonsaiden.github.com/JavaScript-Garden/
     - for loops hasOwnProperty

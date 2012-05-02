@@ -202,12 +202,15 @@ def new_phase(phase):
     return False
 
 def new_schedule():
+    """Creates a new regular season schedule with appropriate division and
+    conference matchup distributions.
+    """
     teams = []
     g.db.execute('SELECT team_id, division_id, (SELECT conference_id FROM %s_league_divisions as ld WHERE ld.division_id = ta.division_id) FROM %s_team_attributes as ta WHERE season = %s', (g.league_id, g.league_id, g.season))
     for row in g.db.fetchall():
         teams.append({'team_id': row[0], 'division_id': row[1], 'conference_id': row[2], 'home_games': 0,
                       'away_games': 0})
-    schedule = []  # team_id_home, team_id_away
+    team_ids = []  # team_id_home, team_id_away
 
     for i in range(len(teams)):
         for j in range(len(teams)):
@@ -216,14 +219,14 @@ def new_schedule():
 
                 # Constraint: 1 home game vs. each team in other conference
                 if teams[i]['conference_id'] != teams[j]['conference_id']:
-                    schedule.append(game)
+                    team_ids.append(game)
                     teams[i]['home_games'] += 1
                     teams[j]['away_games'] += 1
 
                 # Constraint: 2 home schedule vs. each team in same division
                 if teams[i]['division_id'] == teams[j]['division_id']:
-                    schedule.append(game)
-                    schedule.append(game)
+                    team_ids.append(game)
+                    team_ids.append(game)
                     teams[i]['home_games'] += 2
                     teams[j]['away_games'] += 2
 
@@ -231,7 +234,7 @@ def new_schedule():
                 # Only do 1 now
                 if (teams[i]['conference_id'] == teams[j]['conference_id'] and
                     teams[i]['division_id'] != teams[j]['division_id']):
-                    schedule.append(game)
+                    team_ids.append(game)
                     teams[i]['home_games'] += 1
                     teams[j]['away_games'] += 1
 
@@ -280,12 +283,12 @@ def new_schedule():
                 i = team_ids_by_conference[d][t]
                 j = team_ids_by_conference[d][matchup[t]]
                 game = [teams[i]['team_id'], teams[j]['team_id']]
-                schedule.append(game)
+                team_ids.append(game)
                 teams[i]['home_games'] += 1
                 teams[j]['away_games'] += 1
 
-    random.shuffle(schedule)
-    set_schedule(schedule)
+    random.shuffle(team_ids)
+    set_schedule(team_ids)
 
 def awards():
     """Computes the awards at the end of a season."""
@@ -314,14 +317,23 @@ def awards():
 
     g.db.execute('DROP TABLE %s_awards_avg', (g.league_id,))
 
-def set_schedule(schedule):
-    """Schedule is a list of lists, each containing the team IDs of the home and
-    away teams, respectively.
+def set_schedule(team_ids):
+    """Save the schedule to the database, overwriting what's currently there.
+
+    Args:
+        team_ids: A list of lists, each containing the team IDs of the home and
+            away teams, respectively, for every game in the season.
     """
     g.db.execute('DELETE FROM %s_schedule', (g.league_id,))
-    for home_team_id, away_team_id in schedule:
+    for home_team_id, away_team_id in team_ids:
         g.db.execute('INSERT INTO %s_schedule (home_team_id, away_team_id) VALUES (%s, %s)', (g.league_id, home_team_id, away_team_id))
 
-def get_schedule():
-    g.db.execute('SELECT home_team_id, away_team_id FROM %s_schedule', (g.league_id,))
-    return list(g.db.fetchall())
+def get_schedule(n_games=0):
+    """Returns a tuple of n_games games, or all games in the schedule if n_games
+    is 0 (default).
+    """
+    if n_games > 0:
+        g.dbd.execute('SELECT game_id, home_team_id, away_team_id FROM %s_schedule ORDER BY game_id ASC LIMIT %s', (g.league_id, n_games))
+    else:
+        g.dbd.execute('SELECT game_id, home_team_id, away_team_id FROM %s_schedule ORDER BY game_id ASC', (g.league_id,))
+    return g.dbd.fetchall()

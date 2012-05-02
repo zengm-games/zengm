@@ -230,7 +230,7 @@ def sim(league_id, t1, t2, is_playoffs):
         save_results(gs.run(), is_playoffs)
 
 @celery.task(name='bbgm.core.game.sim_wrapper')
-def sim_wrapper(league_id, num_days, schedule):
+def sim_wrapper(league_id, num_days):
     """Asynchonously simulate a day's game, then do some housekeeping before
     moving on to the next day to handle playoff scheduling and free agents, then
     repeat num_days times.
@@ -250,6 +250,7 @@ def sim_wrapper(league_id, num_days, schedule):
                 num_active_teams = 0
 
                 # Make today's  playoff schedule
+                team_ids = []
                 active_series = False
                 # Round: 1, 2, 3, or 4
                 g.db.execute('SELECT MAX(series_round) FROM %s_active_playoff_series', (g.league_id,))
@@ -257,9 +258,11 @@ def sim_wrapper(league_id, num_days, schedule):
 
                 g.db.execute('SELECT team_id_home, team_id_away FROM %s_active_playoff_series WHERE won_home < 4 AND won_away < 4 AND series_round = %s', (g.league_id, current_round))
                 for team_id_home, team_id_away in g.db.fetchall():
-                    schedule.append([team_id_home, team_id_away])
+                    team_ids.append([team_id_home, team_id_away])
                     active_series = True
                     num_active_teams += 2
+                if len(team_ids) > 0:
+                    season.set_schedule(team_ids)
                 if not active_series:
                     # The previous round is over
 
@@ -333,25 +336,28 @@ def sim_wrapper(league_id, num_days, schedule):
 #                self.stop_games = False
 #                break
 
+            schedule = season.get_schedule(num_active_teams / 2)
+            print len(schedule)
             tasks = []
             for i in range(num_active_teams / 2):
-                teams = schedule.pop()
-                tasks.append(sim.subtask((league_id, teams[0], teams[1], is_playoffs)))
+                game = schedule[i]
+                g.db.execute('DELETE FROM %s_schedule WHERE game_id = %s', (g.league_id,game['game_id']))
+                tasks.append(sim.subtask((league_id, game['home_team_id'], game['away_team_id'], is_playoffs)))
             job = TaskSet(tasks=tasks)
             result = job.apply_async()
-
-            season.set_schedule(schedule)
 
             # Wait for the day's games to finish
             while not result.ready():
                 time.sleep(0.25)
 
             # Check to see if the season is over
-            if len(schedule) == 0 and g.phase < 3:
+            g.db.execute('SELECT game_id FROM %s_schedule LIMIT 1', (g.league_id,))
+            if g.db.rowcount == 0 and g.phase < 3:
                 break  # Don't try to play any more of the regular season
 
         # Check to see if the season is over
-        if len(schedule) == 0 and g.phase < 3:
+        g.db.execute('SELECT game_id FROM %s_schedule LIMIT 1', (g.league_id,))
+        if g.db.rowcount == 0 and g.phase < 3:
             season.new_phase(3)  # Start playoffs
 
         play_menu.set_status('Idle')
@@ -371,5 +377,4 @@ def play(num_days):
     """
 
     if lock.can_start_games():
-        schedule = season.get_schedule()
-        sim_wrapper.apply_async((g.league_id, num_days, schedule))
+        sim_wrapper.apply_async((g.league_id, num_days))

@@ -1,9 +1,7 @@
 # To acquire parity with the GTK version and be good enough to share:
 
 store schedule in database normally, rather than pickled
-- only get the rows needed in game.py
-- delete individual rows from table when games are over, rather than overwriting everything
-- use game IDs
+- use game IDs when storing game stats
 
 Client-side game simulation
 - 2: implement client-side

@@ -141,13 +141,13 @@ def play(amount):
 @league_crap
 def schedule():
     schedule_ = season.get_schedule()
-    schedule_.reverse()
     games = []
 
     for game in schedule_:
-        if g.user_team_id in game:
+        team_ids = [game['home_team_id'], game['away_team_id']]
+        if g.user_team_id in team_ids:
             games.append([])
-            for team_id in game:
+            for team_id in team_ids:
                 g.dbd.execute('SELECT team_id, abbreviation, region, name FROM %s_team_attributes WHERE team_id = %s', (g.league_id, team_id))
                 row = g.dbd.fetchone()
                 games[-1].append(row)

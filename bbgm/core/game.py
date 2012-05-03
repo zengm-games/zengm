@@ -240,11 +240,13 @@ def sim_wrapper(league_id, num_days):
     with app.test_request_context():
         request_context_globals(league_id)
 
-        lock.set_games_in_progress(True)
-        play_menu.refresh_options()
+        if not app.config['GAME_SIM_CLIENT_SIDE']:
+            lock.set_games_in_progress(True)
+            play_menu.refresh_options()
 
         for d in xrange(num_days):
-            play_menu.set_status('Playing day %d of %d...' % (d+1, num_days))
+            if not app.config['GAME_SIM_CLIENT_SIDE']:
+                play_menu.set_status('Playing day %d of %d...' % (d+1, num_days))
 
             # Check if it's the playoffs and do some special stuff if it is
             if g.phase == 3:
@@ -376,9 +378,10 @@ def sim_wrapper(league_id, num_days):
         if g.db.rowcount == 0 and g.phase < 3:
             season.new_phase(3)  # Start playoffs
 
-        play_menu.set_status('Idle')
-        lock.set_games_in_progress(False)
-        play_menu.refresh_options()
+        if not app.config['GAME_SIM_CLIENT_SIDE']:
+            play_menu.set_status('Idle')
+            lock.set_games_in_progress(False)
+            play_menu.refresh_options()
 
         if app.config['GAME_SIM_CLIENT_SIDE']:
             return teams, schedule
@@ -393,9 +396,20 @@ def save_results(results, is_playoffs):
 def play(num_days):
     """Play num_days days worth of games."""
 
-    if lock.can_start_games():
-        if app.config['GAME_SIM_CLIENT_SIDE']:
-            [teams, schedule] = sim_wrapper(g.league_id, 1)
-            return teams, schedule
-        else:
-            sim_wrapper.apply_async((g.league_id, num_days))
+    if app.config['GAME_SIM_CLIENT_SIDE']:
+        # If this is the first day, update play menu
+        if lock.can_start_games():
+            lock.set_games_in_progress(True)
+            play_menu.refresh_options()
+        play_menu.set_status('Playing games (%d days remaining)...' % (num_days,))
+
+        [teams, schedule] = sim_wrapper(g.league_id, 1)
+
+        # If this is the last day, update play menu
+        if num_days == 1:
+            play_menu.set_status('Idle')
+            lock.set_games_in_progress(False)
+            play_menu.refresh_options()
+        return teams, schedule
+    elif lock.can_start_games():
+        sim_wrapper.apply_async((g.league_id, num_days))

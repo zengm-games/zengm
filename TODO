@@ -9,7 +9,7 @@ Client-side game simulation
 - 2: implement client-side, with an option to enable or disable. RETAIN BOTH!
   - General idea
     - Set lock
-    - Send all the first day's games, and all the teams that play in those games, to the browser
+    - Send all the first day's games, and all the teams *that play in those games*, to the browser
     - Set a timeout (col in schedule table?)
     - when you recieve results from the browser (all at once, for a day)
       - if it's not timed out:

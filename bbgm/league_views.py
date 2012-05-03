@@ -8,7 +8,7 @@ from flask.globals import _request_ctx_stack
 
 from bbgm import app
 from bbgm.core import draft, game, contract_negotiation, play_menu, season
-from bbgm.util import get_payroll, get_seasons, roster_auto_sort
+from bbgm.util import get_payroll, get_seasons, lock, roster_auto_sort
 from bbgm.util.decorators import league_crap, league_crap_ajax
 
 # All the views in here are for within a league.
@@ -124,7 +124,7 @@ def play(amount):
             num_days = 100  # There aren't 100 days in the playoffs, so 100 will cover all the games and the sim stops when the playoffs end
 
         if app.config['GAME_SIM_CLIENT_SIDE']:
-            [teams, schedule] = game.play(num_days)
+            teams, schedule = game.play(num_days)
         else:
             game.play(num_days)
     elif amount == 'until_draft':

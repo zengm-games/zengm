@@ -11,6 +11,9 @@ BUG:
 
 BUG:
 - Some teams don't play out their full schedule
+  - This happens on the last game of the season. is_playoffs erroneously enabled in league_views
+    - quick fix: pass around is_playoffs
+    - real fix: don't start playoffs until schedule is actually empty, not just queued
 
 Client-side game simulation
 - REFACTOR core.game. GOALS:

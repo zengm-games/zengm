@@ -127,6 +127,14 @@ def play(amount):
             teams, schedule = game.play(num_days)
         else:
             game.play(num_days)
+    elif amount == 'stop':
+        if app.config['GAME_SIM_CLIENT_SIDE']:
+            g.db.execute('UPDATE %s_game_attributes SET stop_games = 1 WHERE season = %s', (g.league_id, g.season))
+            g.db.execute('UPDATE %s_schedule SET in_progress_timestamp = 0', (g.league_id,))
+
+            play_menu.set_status('Idle')
+            lock.set_games_in_progress(False)
+            play_menu.refresh_options()
     elif amount == 'until_draft':
         draft.generate_players()
         draft.set_order()

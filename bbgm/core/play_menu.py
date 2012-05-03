@@ -19,7 +19,7 @@ def options(keys=None):
         A list of dicts, each dict containing the properties needed to build the
         play button.
     """
-    all_options = [{'id': 'stop', 'url': '#', 'label': 'Stop', 'normal_link': False},
+    all_options = [{'id': 'stop', 'url': url_for('play', league_id=g.league_id, amount='stop'), 'label': 'Stop', 'normal_link': False},
                    {'id': 'day', 'url': url_for('play', league_id=g.league_id, amount='day'), 'label': 'One day', 'normal_link': False},
                    {'id': 'week', 'url': url_for('play', league_id=g.league_id, amount='week'), 'label': 'One week', 'normal_link': False},
                    {'id': 'month', 'url': url_for('play', league_id=g.league_id, amount='month'), 'label': 'One month', 'normal_link': False},

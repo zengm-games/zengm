@@ -1,5 +1,17 @@
 # To acquire parity with the GTK version and be good enough to share:
 
+BUG:
+- Simulate games
+- Reload page before they finish
+- Press "Stop" to cancel
+- Simulate more games... but the first time you press the button, it doens't work. Second time, works.
+
+BUG:
+- Play through playoffs stops after each season
+
+BUG:
+- Some teams don't play out their full schedule
+
 Client-side game simulation
 - REFACTOR core.game. GOALS:
   - support both client-side and server-side game simulation, somehow
@@ -16,8 +28,6 @@ Client-side game simulation
         - write to DB
         - send back more games to simulate, or unset lock
     - If no response after timeout expires, delete timeout, then unset lock
-  - Current status
-    - Game simulation actually works, but it needs work.
 - 2.5: fix javascript
   - http://bonsaiden.github.com/JavaScript-Garden/
     - for loops hasOwnProperty

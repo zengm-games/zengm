@@ -17,7 +17,7 @@ function play_button(url) {
                 highlight_nav(league_page);
             });
         }
-        if (schedule) {
+        if (schedule && schedule.length > 0) {
             var results = [];
             for (var i=0; i<schedule.length; i++) {
                 gs = new GameSim(schedule[i]['game_id'], teams[schedule[i]['home_team_id']], teams[schedule[i]['away_team_id']]);

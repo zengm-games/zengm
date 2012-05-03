@@ -333,16 +333,22 @@ def sim_wrapper(league_id, num_days):
                 # Sign available free agents
                 auto_sign_free_agents()
 
+            schedule = []
+            if app.config['GAME_SIM_CLIENT_SIDE']:
+                teams = []
+
             # If the user wants to stop the simulation, then stop the simulation
+            g.db.execute('SELECT stop_games FROM %s_game_attributes WHERE season = %s', (g.league_id, g.season))
+            stop_games, = g.db.fetchone()
 #            if d == 0:  # But not on the first day
 #                self.stop_games = False
-#            if self.stop_games:
-#                self.stop_games = False
-#                break
+            if stop_games:
+                g.db.execute('UPDATE %s_game_attributes SET stop_games = 0 WHERE season = %s', (g.league_id, g.season))
+                break
 
             schedule = season.get_schedule(num_active_teams / 2)
-            print len(schedule)
             tasks = []
+            print len(schedule)
             if app.config['GAME_SIM_CLIENT_SIDE']:
                 team_ids_today = []
             for i in range(num_active_teams / 2):
@@ -388,10 +394,16 @@ def sim_wrapper(league_id, num_days):
 
 def save_results(results, is_playoffs):
     """Convenience function to save game stats."""
-    game = Game()
-    game.load(results, is_playoffs)
-    game.write_stats()
-    g.db.execute('DELETE FROM %s_schedule WHERE game_id = %s', (g.league_id, results['game_id']))
+    g.db.execute('SELECT in_progress_timestamp FROM %s_schedule WHERE game_id = %s', (g.league_id, results['game_id']))
+    in_progress_timestamp, = g.db.fetchone()
+    if in_progress_timestamp > 0:
+        game = Game()
+        game.load(results, is_playoffs)
+        game.write_stats()
+        g.db.execute('DELETE FROM %s_schedule WHERE game_id = %s', (g.league_id, results['game_id']))
+        app.logger.debug('Saved results for game %d' % (results['game_id'],))
+    else:
+        app.logger.debug('Ignored stale results for game %d' % (results['game_id'],))
 
 def play(num_days):
     """Play num_days days worth of games."""
@@ -406,7 +418,7 @@ def play(num_days):
         [teams, schedule] = sim_wrapper(g.league_id, 1)
 
         # If this is the last day, update play menu
-        if num_days == 1:
+        if num_days == 1 or len(schedule) == 0:
             play_menu.set_status('Idle')
             lock.set_games_in_progress(False)
             play_menu.refresh_options()

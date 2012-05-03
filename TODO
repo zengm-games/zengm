@@ -5,10 +5,11 @@ Client-side game simulation
   - support both client-side and server-side game simulation, somehow
   - break up sim_wrapper into smaller functions
   - sim_wrapper should be used just for the server-side simulations, but all game logic should be factored out into smaller functions that can be used to create equivalent infrastructure for client-side simulations
+  - Also, somewhere in here, think about how to set the play status and menu correctly in both cases
 - 2: implement client-side, with an option to enable or disable. RETAIN BOTH!
   - General idea
     - Set lock
-    - Send all the day's games, and all the teams that play in those games, to the browser
+    - Send all the first day's games, and all the teams that play in those games, to the browser
     - Set a timeout (col in schedule table?)
     - when you recieve results from the browser (all at once, for a day)
       - if it's not timed out:
@@ -16,8 +17,7 @@ Client-side game simulation
         - send back more games to simulate, or unset lock
     - If no response after timeout expires, delete timeout, then unset lock
   - Current status
-    - Playing a day of games works, but a lot of other crap won't because of how core.game.play_games is structured. THIS NEEDS TO BE REFACTORED.
-    - Doesn't save game results.
+    - Game simulation actually works, but it needs work.
 - 2.5: fix javascript
   - http://bonsaiden.github.com/JavaScript-Garden/
     - for loops hasOwnProperty
@@ -29,6 +29,10 @@ Client-side game simulation
 - 3: figure out how to handle interrupted simulations
 - 4: web workers? https://developer.mozilla.org/En/Using_web_workers
   - can spawn multiple workers in parallel. "transferable objects" would speed it up
+- Robustness of javascript code
+  - g.phase == 3 in league_views might introduce race condition
+  - validate data from client?
+  - make sure play menu doesn't ever get stuck
 
 configuration in text file?
 - http://flask.pocoo.org/docs/patterns/fabric/#the-configuration-file

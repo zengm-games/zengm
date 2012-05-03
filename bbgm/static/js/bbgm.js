@@ -1,10 +1,11 @@
 // Play button
 function play_button(url) {
     $.post(url, function (data) {
-        error = data['error'];
-        url = data['url'];
-        schedule = data['schedule'];
-        teams = data['teams'];
+        var error = data['error'];
+        var url = data['url'];
+        var schedule = data['schedule'];
+        var teams = data['teams'];
+        var num_days = data['num_days'];
         if (error) {
             alert(error);
         }
@@ -17,10 +18,17 @@ function play_button(url) {
             });
         }
         if (schedule) {
-console.log(teams);
+            var results = [];
             for (var i=0; i<schedule.length; i++) {
                 gs = new GameSim(schedule[i]['game_id'], teams[schedule[i]['home_team_id']], teams[schedule[i]['away_team_id']]);
-console.log(gs.run());
+                results.push(gs.run());
+            }
+            var result = parse_league_url(document.URL);
+            var league_root_url = result[1];
+            $.post(league_root_url + '/save_results', {'results': JSON.stringify(results)});
+            num_days = num_days - 1;
+            if (num_days > 0) {
+                play_button(league_root_url + '/play/' + num_days);
             }
         }
     }, 'json');

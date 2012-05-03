@@ -16,7 +16,7 @@ DB = 'bbgm'
 DB_USERNAME = 'testuser'
 DB_PASSWORD = 'test623'
 TRY_NUMPY = True
-GAME_SIM_CLIENT_SIDE = False
+GAME_SIM_CLIENT_SIDE = True
 
 CELERY_RESULT_BACKEND = "redis"
 CELERY_REDIS_HOST = "localhost"

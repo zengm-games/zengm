@@ -365,11 +365,13 @@ def sim_wrapper(league_id, num_days):
                     time.sleep(0.25)
 
             # Check to see if the season is over
+            # Not sure if the WHERE clause makes sense
             g.db.execute('SELECT game_id FROM %s_schedule WHERE in_progress_timestamp = 0 LIMIT 1', (g.league_id,))
             if g.db.rowcount == 0 and g.phase < 3:
                 break  # Don't try to play any more of the regular season
 
         # Check to see if the season is over
+        # Not sure if the WHERE clause makes sense
         g.db.execute('SELECT game_id FROM %s_schedule WHERE in_progress_timestamp = 0 LIMIT 1', (g.league_id,))
         if g.db.rowcount == 0 and g.phase < 3:
             season.new_phase(3)  # Start playoffs
@@ -393,7 +395,7 @@ def play(num_days):
 
     if lock.can_start_games():
         if app.config['GAME_SIM_CLIENT_SIDE']:
-            [teams, schedule] = sim_wrapper(g.league_id, num_days)
+            [teams, schedule] = sim_wrapper(g.league_id, 1)
             return teams, schedule
         else:
             sim_wrapper.apply_async((g.league_id, num_days))

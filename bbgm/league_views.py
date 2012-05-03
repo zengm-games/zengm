@@ -94,33 +94,39 @@ def player_stats(view_season=None):
 
     return render_all_or_json('player_stats.html', {'players': players, 'seasons': seasons, 'view_season': view_season})
 
-# Change to POST (with CSRF protection) later (gives a weird error when I try that now)
 @app.route('/<int:league_id>/play/<amount>', methods=['POST'])
 @league_crap_ajax
 def play(amount):
+    """This is kind of a hodgepodge that handles every request from the play
+    button and returns the appropriate response in JSON.
+    """
     error = None
     url = None
     schedule = None
     teams = None
+    try: 
+        num_days = int(amount)
+    except ValueError:
+        num_days = 0
 
-    if amount == 'day':
+    if num_days > 0 or amount in ['day', 'week', 'month', 'until_playoffs', 'through_playoffs']:
+        if amount == 'day':
+            num_days = 1
+        elif amount == 'week':
+            num_days = 7
+        elif amount == 'month':
+            num_days = 30
+        elif amount == 'until_playoffs':
+            g.db.execute('SELECT COUNT(*)/%s FROM %s_team_stats WHERE season = %s', (g.num_teams, g.league_id, g.season))
+            row = g.db.fetchone()
+            num_days = int(g.season_length - row[0])  # Number of days remaining
+        elif amount == 'through_playoffs':
+            num_days = 100  # There aren't 100 days in the playoffs, so 100 will cover all the games and the sim stops when the playoffs end
+
         if app.config['GAME_SIM_CLIENT_SIDE']:
-            [teams, schedule] = game.play(1)
-#            teams = [game.team(0), game.team(1)]
-#            schedule = [{'game_id': 1, 'home_team_id': 0, 'away_team_id': 1}]
+            [teams, schedule] = game.play(num_days)
         else:
-            game.play(1)
-    elif amount == 'week':
-        game.play(7)
-    elif amount == 'month':
-        game.play(30)
-    elif amount == 'until_playoffs':
-        g.db.execute('SELECT COUNT(*)/%s FROM %s_team_stats WHERE season = %s', (g.num_teams, g.league_id, g.season))
-        row = g.db.fetchone()
-        num_days = g.season_length - row[0]  # Number of days remaining
-        game.play(num_days)
-    elif amount == 'through_playoffs':
-        game.play(100)  # There aren't 100 days in the playoffs, so 100 will cover all the games and the sim stops when the playoffs end
+            game.play(num_days)
     elif amount == 'until_draft':
         draft.generate_players()
         draft.set_order()
@@ -137,7 +143,16 @@ def play(amount):
     elif amount == 'until_regular_season':
         error = season.new_phase(1)
 
-    return jsonify(url=url, error=error, schedule=schedule, teams=teams)
+    return jsonify(url=url, error=error, num_days=num_days, schedule=schedule, teams=teams)
+
+@app.route('/<int:league_id>/save_results', methods=['POST'])
+@league_crap_ajax
+def save_results():
+    """Record a day's game simulations."""
+    results = json.loads(request.form['results'])
+    for result in results:
+        game.save_results(result, g.phase == 3)
+    return 'fuck'
 
 @app.route('/<int:league_id>/schedule')
 @league_crap

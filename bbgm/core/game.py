@@ -101,14 +101,12 @@ class Game:
         g.db.execute(query, (g.league_id, self.team[t]['id'], self.team[t2]['id'], self.id, g.season, self.is_playoffs, won, self.home[t], int(round(self.team[t]['stat']['minutes'])), self.team[t]['stat']['field_goals_made'], self.team[t]['stat']['field_goals_attempted'], self.team[t]['stat']['three_pointers_made'], self.team[t]['stat']['three_pointers_attempted'], self.team[t]['stat']['free_throws_made'], self.team[t]['stat']['free_throws_attempted'], self.team[t]['stat']['offensive_rebounds'], self.team[t]['stat']['defensive_rebounds'], self.team[t]['stat']['assists'], self.team[t]['stat']['turnovers'], self.team[t]['stat']['steals'], self.team[t]['stat']['blocks'], self.team[t]['stat']['personal_fouls'], self.team[t]['stat']['points'], self.team[t2]['stat']['points'], self.attendance, cost))
         if won and not self.is_playoffs:
             g.db.execute('UPDATE %s_team_attributes SET won = won + 1 WHERE team_id = %s AND season = %s', (g.league_id, self.team[t]['id'], g.season))
-            app.logger.debug('won')
             if self.same_division:
                 g.db.execute('UPDATE %s_team_attributes SET won_div = won_div + 1, won_conf = won_conf + 1 WHERE team_id = %s AND season = %s', (g.league_id, self.team[t]['id'], g.season))
             elif self.same_conference:
                 g.db.execute('UPDATE %s_team_attributes SET won_conf = won_conf + 1 WHERE team_id = %s AND season = %s', (g.league_id, self.team[t]['id'], g.season))
         elif not self.is_playoffs:
             g.db.execute('UPDATE %s_team_attributes SET lost = lost + 1 WHERE team_id = %s AND season = %s', (g.league_id, self.team[t]['id'], g.season))
-            app.logger.debug('lost')
             if self.same_division:
                 g.db.execute('UPDATE %s_team_attributes SET lost_div = lost_div + 1, lost_conf = lost_conf + 1 WHERE team_id = %s AND season = %s', (g.league_id, self.team[t]['id'], g.season))
             elif self.same_conference:
@@ -245,6 +243,9 @@ def sim_wrapper(league_id, num_days):
         if not app.config['GAME_SIM_CLIENT_SIDE']:
             lock.set_games_in_progress(True)
             play_menu.refresh_options()
+        else:
+            schedule = []
+            teams = []
 
         for d in xrange(num_days):
             if not app.config['GAME_SIM_CLIENT_SIDE']:
@@ -335,10 +336,6 @@ def sim_wrapper(league_id, num_days):
                 # Sign available free agents
                 auto_sign_free_agents()
 
-            schedule = []
-            if app.config['GAME_SIM_CLIENT_SIDE']:
-                teams = []
-
             # If the user wants to stop the simulation, then stop the simulation
             g.db.execute('SELECT stop_games FROM %s_game_attributes WHERE season = %s', (g.league_id, g.season))
             stop_games, = g.db.fetchone()
@@ -415,12 +412,12 @@ def play(num_days):
         if lock.can_start_games():
             lock.set_games_in_progress(True)
             play_menu.refresh_options()
-        play_menu.set_status('Playing games (%d days remaining)...' % (num_days,))
 
         teams = []
         schedule = []
 
         if num_days > 0:
+            play_menu.set_status('Playing games (%d days remaining)...' % (num_days,))
             [teams, schedule] = sim_wrapper(g.league_id, 1)
 
         # If this is the last day, update play menu

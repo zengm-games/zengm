@@ -7,7 +7,17 @@ BUG:
 - Simulate more games... but the first time you press the button, it doens't work. Second time, works.
 
 BUG:
-- Play through playoffs stops after each season
+- Play through playoffs stops after each round
+  - Add games for next day, after current day is simulated?
+
+BUG:
+- inelegant handling of change from playoffs to draft (requires start stop start)
+
+BUG:
+- players ask for negative years contracts when resigning them
+
+BUG:
+- player ratings table doesn't show anything (maybe only after multiple seasons are played?)
 
 Client-side game simulation
 - REFACTOR core.game. GOALS:

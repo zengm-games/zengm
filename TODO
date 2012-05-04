@@ -19,7 +19,9 @@ BUG:
 can i use juggernaut to keep track of when the window is closed, and for communication?
 
 revamp lock.can_start_games
+- look at how it's used. does it make sense?
 revamp sim_wrapper
+- merge with play, refactor
 
 Client-side game simulation
 - REFACTOR core.game. GOALS:

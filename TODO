@@ -11,9 +11,6 @@ BUG:
   - Add games for next day, after current day is simulated?
 
 BUG:
-- inelegant handling of change from playoffs to draft (requires start stop start)
-
-BUG:
 - players ask for negative years contracts when resigning them
 
 can i use juggernaut to keep track of when the window is closed, and for communication?

@@ -2,7 +2,6 @@
 #monkey.patch_all()
 from flask import Flask, g
 from flask.ext.assets import Environment, Bundle
-from flask.ext.celery import Celery
 import logging
 import MySQLdb
 import subprocess
@@ -16,18 +15,9 @@ DB = 'bbgm'
 DB_USERNAME = 'testuser'
 DB_PASSWORD = 'test623'
 TRY_NUMPY = True
-GAME_SIM_CLIENT_SIDE = True
-
-CELERY_RESULT_BACKEND = "redis"
-CELERY_REDIS_HOST = "localhost"
-CELERY_REDIS_PORT = 6379
-CELERY_REDIS_DB = 0
-BROKER_URL = 'redis://localhost:6379/0'
-CELERYD_CONCURRENCY = 4
 
 app = Flask(__name__)
 app.config.from_object(__name__)
-celery = Celery(app)
 #app.event = Event()
 
 # Logging

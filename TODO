@@ -18,11 +18,12 @@ BUG:
 
 can i use juggernaut to keep track of when the window is closed, and for communication?
 
+revamp lock.can_start_games
+revamp sim_wrapper
+
 Client-side game simulation
 - REFACTOR core.game. GOALS:
-  - support both client-side and server-side game simulation, somehow
   - break up sim_wrapper into smaller functions
-  - sim_wrapper should be used just for the server-side simulations, but all game logic should be factored out into smaller functions that can be used to create equivalent infrastructure for client-side simulations
   - Also, somewhere in here, think about how to set the play status and menu correctly in both cases
 - 2: implement client-side, with an option to enable or disable. RETAIN BOTH!
   - General idea

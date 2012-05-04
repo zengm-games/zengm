@@ -65,7 +65,8 @@ You can install them all with this command:
 
 * python-numpy
 
-This speeds up gameplay by about 10%, for now at least.
+This speeds up some things a bit, but now that game simulation is done in
+JavaScript it doesn't really matter much.
 
 ## Installing
 
@@ -90,7 +91,6 @@ running, such as redis_server if you install the normal Ubuntu package):
 
     redis_server
     juggernaut
-    python manage.py celeryd
     python manage.py runserver
 
 Point your browser to http://127.0.0.1:5000/

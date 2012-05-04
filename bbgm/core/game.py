@@ -1,4 +1,3 @@
-from celery.task.sets import TaskSet
 import httplib, urllib
 import math
 import MySQLdb
@@ -8,7 +7,7 @@ import time
 
 from flask import g, json
 
-from bbgm import app, celery
+from bbgm import app
 from bbgm.core import game_sim, season, play_menu
 from bbgm.util import auto_sign_free_agents, lock, fast_random, request_context_globals
 
@@ -215,42 +214,18 @@ def _composite(minval, maxval, rating, components, inverse=False, random=True):
         r = fast_random.gauss(1, 0.1) * r
     return r
 
-@celery.task(name='bbgm.core.game.sim')
-def sim(league_id, game_id, t1, t2, is_playoffs):
-    """Convenience function (for Celery) to call GameSim and simulate a game.
-    As long as games are all in the same day (i.e. no transactions will occur
-    between games), this can be put in a queue and run asynchronously.
-    """
-    with app.test_request_context():
-        request_context_globals(league_id)
-
-        gs = game_sim.GameSim(game_id, team(t1), team(t2))
-        save_results(gs.run(), is_playoffs)
-
-@celery.task(name='bbgm.core.game.sim_wrapper')
 def sim_wrapper(league_id, num_days):
     """Asynchonously simulate a day's game, then do some housekeeping before
     moving on to the next day to handle playoff scheduling and free agents, then
     repeat num_days times.
-
-    If the GAME_SIM_CLIENT_SIDE option is set, then no games will actually be
-    simulated here and instead the "teams" and "schedule" lists will be prepared
-    and then eventually sent to the client.
     """
     with app.test_request_context():
         request_context_globals(league_id)
 
-        if not app.config['GAME_SIM_CLIENT_SIDE']:
-            lock.set_games_in_progress(True)
-            play_menu.refresh_options()
-        else:
-            schedule = []
-            teams = []
+        schedule = []
+        teams = []
 
         for d in xrange(num_days):
-            if not app.config['GAME_SIM_CLIENT_SIDE']:
-                play_menu.set_status('Playing day %d of %d...' % (d+1, num_days))
-
             # Check if it's the playoffs and do some special stuff if it is
             if g.phase == 3:
                 is_playoffs = True
@@ -348,28 +323,16 @@ def sim_wrapper(league_id, num_days):
             schedule = season.get_schedule(num_active_teams / 2)
             tasks = []
             print len(schedule)
-            if app.config['GAME_SIM_CLIENT_SIDE']:
-                team_ids_today = []
+            team_ids_today = []
             for i in range(num_active_teams / 2):
                 game = schedule[i]
                 g.db.execute('UPDATE %s_schedule SET in_progress_timestamp = %s WHERE game_id = %s', (g.league_id, int(time.time()), game['game_id']))
-                if app.config['GAME_SIM_CLIENT_SIDE']:
-                    team_ids_today.append(game['home_team_id'])
-                    team_ids_today.append(game['away_team_id'])
-                else:
-                    tasks.append(sim.subtask((league_id, game['game_id'], game['home_team_id'], game['away_team_id'], is_playoffs)))
-            if app.config['GAME_SIM_CLIENT_SIDE']:
-                team_ids_today = list(set(team_ids_today))  # Unique list
-                teams = []
-                for team_id in xrange(30):
-                    teams.append(team(team_id))
-            else:
-                job = TaskSet(tasks=tasks)
-                result = job.apply_async()
-
-                # Wait for the day's games to finish
-                while not result.ready():
-                    time.sleep(0.25)
+                team_ids_today.append(game['home_team_id'])
+                team_ids_today.append(game['away_team_id'])
+            team_ids_today = list(set(team_ids_today))  # Unique list
+            teams = []
+            for team_id in xrange(30):
+                teams.append(team(team_id))
 
             # Check to see if the season is over
             # Not sure if the WHERE clause makes sense
@@ -377,19 +340,7 @@ def sim_wrapper(league_id, num_days):
             if g.db.rowcount == 0 and g.phase < 3:
                 break  # Don't try to play any more of the regular season if there aren't any left
 
-        if not app.config['GAME_SIM_CLIENT_SIDE']:
-            # Check to see if the season is over
-            g.db.execute('SELECT game_id FROM %s_schedule LIMIT 1', (g.league_id,))
-            if g.db.rowcount == 0 and g.phase < 3:
-                season.new_phase(3)  # Start playoffs
-
-        if not app.config['GAME_SIM_CLIENT_SIDE']:
-            play_menu.set_status('Idle')
-            lock.set_games_in_progress(False)
-            play_menu.refresh_options()
-
-        if app.config['GAME_SIM_CLIENT_SIDE']:
-            return teams, schedule
+        return teams, schedule
 
 def save_results(results, is_playoffs):
     """Convenience function to save game stats."""
@@ -407,28 +358,25 @@ def save_results(results, is_playoffs):
 def play(num_days):
     """Play num_days days worth of games."""
 
-    if app.config['GAME_SIM_CLIENT_SIDE']:
-        # If this is the first day, update play menu
-        if lock.can_start_games():
-            lock.set_games_in_progress(True)
-            play_menu.refresh_options()
+    # If this is the first day, update play menu
+    if lock.can_start_games():
+        lock.set_games_in_progress(True)
+        play_menu.refresh_options()
 
-        teams = []
-        schedule = []
+    teams = []
+    schedule = []
 
-        if num_days > 0:
-            play_menu.set_status('Playing games (%d days remaining)...' % (num_days,))
-            [teams, schedule] = sim_wrapper(g.league_id, 1)
+    if num_days > 0:
+        play_menu.set_status('Playing games (%d days remaining)...' % (num_days,))
+        [teams, schedule] = sim_wrapper(g.league_id, 1)
 
-        # If this is the last day, update play menu
-        if num_days == 0 or len(schedule) == 0:
-            play_menu.set_status('Idle')
-            lock.set_games_in_progress(False)
-            play_menu.refresh_options()
-            # Check to see if the season is over
-            g.db.execute('SELECT game_id FROM %s_schedule LIMIT 1', (g.league_id,))
-            if g.db.rowcount == 0 and g.phase < 3:
-                season.new_phase(3)  # Start playoffs
-        return teams, schedule
-    elif lock.can_start_games():
-        sim_wrapper.apply_async((g.league_id, num_days))
+    # If this is the last day, update play menu
+    if num_days == 0 or len(schedule) == 0:
+        play_menu.set_status('Idle')
+        lock.set_games_in_progress(False)
+        play_menu.refresh_options()
+        # Check to see if the season is over
+        g.db.execute('SELECT game_id FROM %s_schedule LIMIT 1', (g.league_id,))
+        if g.db.rowcount == 0 and g.phase < 3:
+            season.new_phase(3)  # Start playoffs
+    return teams, schedule

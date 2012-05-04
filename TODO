@@ -16,8 +16,7 @@ BUG:
 BUG:
 - players ask for negative years contracts when resigning them
 
-BUG:
-- player ratings table doesn't show anything (maybe only after multiple seasons are played?)
+can i use juggernaut to keep track of when the window is closed, and for communication?
 
 Client-side game simulation
 - REFACTOR core.game. GOALS:

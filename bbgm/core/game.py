@@ -378,13 +378,13 @@ def sim_wrapper(league_id, num_days):
             # Not sure if the WHERE clause makes sense
             g.db.execute('SELECT game_id FROM %s_schedule WHERE in_progress_timestamp = 0 LIMIT 1', (g.league_id,))
             if g.db.rowcount == 0 and g.phase < 3:
-                break  # Don't try to play any more of the regular season
+                break  # Don't try to play any more of the regular season if there aren't any left
 
-        # Check to see if the season is over
-        # Not sure if the WHERE clause makes sense
-        g.db.execute('SELECT game_id FROM %s_schedule WHERE in_progress_timestamp = 0 LIMIT 1', (g.league_id,))
-        if g.db.rowcount == 0 and g.phase < 3:
-            season.new_phase(3)  # Start playoffs
+        if not app.config['GAME_SIM_CLIENT_SIDE']:
+            # Check to see if the season is over
+            g.db.execute('SELECT game_id FROM %s_schedule LIMIT 1', (g.league_id,))
+            if g.db.rowcount == 0 and g.phase < 3:
+                season.new_phase(3)  # Start playoffs
 
         if not app.config['GAME_SIM_CLIENT_SIDE']:
             play_menu.set_status('Idle')
@@ -417,13 +417,21 @@ def play(num_days):
             play_menu.refresh_options()
         play_menu.set_status('Playing games (%d days remaining)...' % (num_days,))
 
-        [teams, schedule] = sim_wrapper(g.league_id, 1)
+        teams = []
+        schedule = []
+
+        if num_days > 0:
+            [teams, schedule] = sim_wrapper(g.league_id, 1)
 
         # If this is the last day, update play menu
-        if num_days == 1 or len(schedule) == 0:
+        if num_days == 0 or len(schedule) == 0:
             play_menu.set_status('Idle')
             lock.set_games_in_progress(False)
             play_menu.refresh_options()
+            # Check to see if the season is over
+            g.db.execute('SELECT game_id FROM %s_schedule LIMIT 1', (g.league_id,))
+            if g.db.rowcount == 0 and g.phase < 3:
+                season.new_phase(3)  # Start playoffs
         return teams, schedule
     elif lock.can_start_games():
         sim_wrapper.apply_async((g.league_id, num_days))

@@ -107,9 +107,9 @@ def play(amount):
     try: 
         num_days = int(amount)
     except ValueError:
-        num_days = 0
+        num_days = -1
 
-    if num_days > 0 or amount in ['day', 'week', 'month', 'until_playoffs', 'through_playoffs']:
+    if num_days >= 0 or amount in ['day', 'week', 'month', 'until_playoffs', 'through_playoffs']:
         if amount == 'day':
             num_days = 1
         elif amount == 'week':

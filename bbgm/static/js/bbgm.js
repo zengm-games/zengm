@@ -27,7 +27,7 @@ function play_button(url) {
             var league_root_url = result[1];
             $.post(league_root_url + '/save_results', {'results': JSON.stringify(results)});
             num_days = num_days - 1;
-            if (num_days > 0) {
+            if (num_days >= 0) {
                 play_button(league_root_url + '/play/' + num_days);
             }
         }

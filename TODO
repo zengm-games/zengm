@@ -3,11 +3,6 @@
 BUG:
 - players ask for negative years contracts when resigning them
 
-BUG:
-- play games
-- reload before finish, interrupting simulation
-- when user presses stop, the first subsequent "play" does nothing
-
 Client-side game simulation
 - 2: implement client-side
     - If no response after timeout expires, delete timeout, then unset lock and update play menu

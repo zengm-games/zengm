@@ -251,7 +251,11 @@ def play(num_days, start=False):
         stop_games, = g.db.fetchone()
         if stop_games:
             g.db.execute('UPDATE %s_game_attributes SET stop_games = 0 WHERE season = %s', (g.league_id, g.season))
-        else:
+
+        # If we didn't just stop games, let's play
+        # Or, if we are starting games (and already passed the lock above),
+        # continue even if stop_games was just seen
+        if start or not stop_games:
             # Check if it's the playoffs and do some special stuff if it is or isn't
             if g.phase == 3:
                 num_active_teams = season.new_schedule_playoffs_day()

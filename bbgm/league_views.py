@@ -109,7 +109,13 @@ def play(amount):
     except ValueError:
         num_days = -1
 
-    if num_days >= 0 or amount in ['day', 'week', 'month', 'until_playoffs', 'through_playoffs']:
+    if num_days >= 0:
+        # Continue playing games
+        teams, schedule = game.play(num_days)
+    elif amount in ['day', 'week', 'month', 'until_playoffs', 'through_playoffs']:
+        # Start playing games
+        start = True
+
         if amount == 'day':
             num_days = 1
         elif amount == 'week':
@@ -123,7 +129,7 @@ def play(amount):
         elif amount == 'through_playoffs':
             num_days = 100  # There aren't 100 days in the playoffs, so 100 will cover all the games and the sim stops when the playoffs end
 
-        teams, schedule = game.play(num_days)
+        teams, schedule = game.play(num_days, start)
     elif amount == 'stop':
         g.db.execute('UPDATE %s_game_attributes SET stop_games = 1 WHERE season = %s', (g.league_id, g.season))
         g.db.execute('UPDATE %s_schedule SET in_progress_timestamp = 0', (g.league_id,))

@@ -339,16 +339,22 @@ def save_results(results, is_playoffs):
     else:
         app.logger.debug('Ignored stale results for game %d' % (results['game_id'],))
 
-def play(num_days):
-    """Play num_days days worth of games."""
-
-    # If this is the first day, update play menu
-    if lock.can_start_games():
-        lock.set_games_in_progress(True)
-        play_menu.refresh_options()
+def play(num_days, start=False):
+    """Play num_days days worth of games. If start is True, then this is
+    starting a new series of games. If not, then it's continuing a simulation.
+    """
 
     teams = []
     schedule = []
+
+    if start:
+        if lock.can_start_games():
+            # If this is the first day, update play menu
+            lock.set_games_in_progress(True)
+            play_menu.refresh_options()
+        else:
+            # If not allowed to start games, don't
+            return teams, schedule
 
     if num_days > 0:
         play_menu.set_status('Playing games (%d days remaining)...' % (num_days,))
@@ -363,4 +369,5 @@ def play(num_days):
         g.db.execute('SELECT game_id FROM %s_schedule LIMIT 1', (g.league_id,))
         if g.db.rowcount == 0 and g.phase < 3:
             season.new_phase(3)  # Start playoffs
+
     return teams, schedule

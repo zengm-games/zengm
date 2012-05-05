@@ -11,25 +11,12 @@ BUG:
 BUG:
 - players ask for negative years contracts when resigning them
 
-revamp lock.can_start_games
-- look at how it's used. does it make sense? maybe it does..
 revamp sim_wrapper
 - merge with play, refactor
 
 Client-side game simulation
-- REFACTOR core.game. GOALS:
-  - break up sim_wrapper into smaller functions
-  - Also, somewhere in here, think about how to set the play status and menu correctly in both cases
-- 2: implement client-side, with an option to enable or disable. RETAIN BOTH!
-  - General idea
-    - Set lock
-    - Send all the first day's games, and all the teams *that play in those games*, to the browser
-    - Set a timeout (col in schedule table?)
-    - when you recieve results from the browser (all at once, for a day)
-      - if it's not timed out:
-        - write to DB
-        - send back more games to simulate, or unset lock
-    - If no response after timeout expires, delete timeout, then unset lock
+- 2: implement client-side
+    - If no response after timeout expires, delete timeout, then unset lock and update play menu
 - 2.5: fix javascript
   - http://bonsaiden.github.com/JavaScript-Garden/
     - for loops hasOwnProperty
@@ -37,8 +24,6 @@ Client-side game simulation
       - just copy what jquery does
     - "For the best performance, it is recommended to always use the plain for loop and cache the length property. The use of for in on an array is a sign of badly written code that is prone to bugs and bad performance."
     - It is highly recommended to only use the strict equality (===) operator.
-  - better randomization library? http://simjs.com/random.html
-- 3: figure out how to handle interrupted simulations
 - 4: web workers? https://developer.mozilla.org/En/Using_web_workers
   - can spawn multiple workers in parallel. "transferable objects" would speed it up
 - Robustness of javascript code

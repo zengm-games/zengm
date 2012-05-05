@@ -53,7 +53,7 @@
  */
 function GameSim(game_id, team1, team2) {
     this.id = game_id
-    this.team = [team1, team2];
+    this.team = [deepCopy(team1), deepCopy(team2)];
     this.num_possessions = parseInt(Math.round((this.team[0]['pace'] + this.team[1]['pace']) / 2 * gauss_random(1, 0.03)), 10);
 
     // Starting lineups, which works because players are ordered by their roster_position
@@ -434,4 +434,21 @@ function gauss_random(mu, sigma) {
 // This is for node.js testing
 if (typeof exports !== 'undefined') {
     exports.GameSim = GameSim;
+}
+
+/**
+ * Clones an object. Otherwise, passing the team objects and modifying them in
+ * here will fuck up future simulations of the same team if a team plays more
+ * than one game in a day. Taken from http://stackoverflow.com/a/3284324/786644
+ */
+function deepCopy(obj) {
+    if (typeof obj !== "object") return obj;
+    if (obj.constructor === RegExp) return obj;
+
+    var retVal = new obj.constructor();
+    for (var key in obj) {
+        if (!obj.hasOwnProperty(key)) continue;
+        retVal[key] = deepCopy(obj[key]);
+    }
+    return retVal;
 }

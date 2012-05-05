@@ -1,14 +1,7 @@
 # To acquire parity with the GTK version and be good enough to share:
 
 BUG:
-- Press "stop" when simulating games and the status flickers "Idle" -> "playing" -> "Idle"
-  - When refactoring bbgm.core.game stuff, think about how to best implement stop
-
-BUG:
 - players ask for negative years contracts when resigning them
-
-revamp sim_wrapper
-- merge with play, refactor
 
 Client-side game simulation
 - 2: implement client-side

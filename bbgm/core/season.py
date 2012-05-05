@@ -6,7 +6,7 @@ from flask import session, g
 import bbgm
 from bbgm import app
 from bbgm.core import contract_negotiation, play_menu, player
-from bbgm.util import auto_sign_free_agents, lock, roster_auto_sort
+from bbgm.util import free_agents_auto_sign, lock, roster_auto_sort
 
 def new_phase(phase):
     """Set a new phase of the game.
@@ -59,7 +59,7 @@ def new_phase(phase):
             up.save()
 
         # AI teams sign free agents
-        auto_sign_free_agents()
+        free_agents_auto_sign()
 
     # Regular season, before trade deadline
     elif phase == 1:

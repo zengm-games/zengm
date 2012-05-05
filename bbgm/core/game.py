@@ -9,7 +9,7 @@ from flask import g
 
 from bbgm import app
 from bbgm.core import game_sim, season, play_menu
-from bbgm.util import auto_sign_free_agents, lock, fast_random, request_context_globals
+from bbgm.util import free_agents_auto_sign, free_agents_decrease_demands, lock, fast_random, request_context_globals
 
 
 class Game:
@@ -213,67 +213,6 @@ def _composite(minval, maxval, rating, components, inverse=False, random=True):
         r = fast_random.gauss(1, 0.1) * r
     return r
 
-def sim_wrapper():
-    """Asynchonously simulate a day's game, then do some housekeeping before
-    moving on to the next day to handle playoff scheduling and free agents.
-    """
-    schedule = []
-    teams = []
-    playoffs_continue = False
-
-    # Check if it's the playoffs and do some special stuff if it is
-    if g.phase == 3:
-        num_active_teams = season.new_schedule_playoffs_day()
-
-        # If season.new_schedule_playoffs_day didn't move the phase to 4, then
-        # the playoffs are still happening.
-        if g.phase == 3:
-            playoffs_continue = True
-    else:
-        num_active_teams = g.num_teams
-
-        # Decrease free agent demands
-        g.db.execute('SELECT player_id, contract_amount, contract_expiration FROM %s_player_attributes WHERE team_id = -1 AND contract_amount > 500', (g.league_id,))
-        for player_id, amount, expiration in g.db.fetchall():
-            amount -= 50
-            if amount < 500:
-                amount = 500
-            if amount < 2000:
-                expiration = g.season + 1
-            if amount < 1000:
-                expiration = g.season
-            g.db.execute('UPDATE %s_player_attributes SET contract_amount = %s, contract_expiration = %s WHERE player_id = %s', (g.league_id, amount, expiration, player_id))
-
-        # Free agents' resistance to previous signing attempts by player decays
-        # Decay by 0.1 per game, for 82 games in the regular season
-        g.db.execute('UPDATE %s_player_attributes SET free_agent_times_asked = free_agent_times_asked - 0.1 WHERE team_id = -1', (g.league_id,))
-        g.db.execute('UPDATE %s_player_attributes SET free_agent_times_asked = 0 WHERE team_id = -1 AND free_agent_times_asked < 0', (g.league_id,))
-
-        # Sign available free agents
-        auto_sign_free_agents()
-
-    # If the user wants to stop the simulation, then stop the simulation
-    g.db.execute('SELECT stop_games FROM %s_game_attributes WHERE season = %s', (g.league_id, g.season))
-    stop_games, = g.db.fetchone()
-    if stop_games:
-        g.db.execute('UPDATE %s_game_attributes SET stop_games = 0 WHERE season = %s', (g.league_id, g.season))
-    else:
-        schedule = season.get_schedule(num_active_teams / 2)
-        tasks = []
-        print len(schedule)
-        team_ids_today = []
-        for i in range(num_active_teams / 2):
-            game = schedule[i]
-            g.db.execute('UPDATE %s_schedule SET in_progress_timestamp = %s WHERE game_id = %s', (g.league_id, int(time.time()), game['game_id']))
-            team_ids_today.append(game['home_team_id'])
-            team_ids_today.append(game['away_team_id'])
-        team_ids_today = list(set(team_ids_today))  # Unique list
-        teams = []
-        for team_id in xrange(30):
-            teams.append(team(team_id))
-
-    return teams, schedule, playoffs_continue
-
 def save_results(results, is_playoffs):
     """Convenience function to save game stats."""
     g.db.execute('SELECT in_progress_timestamp FROM %s_schedule WHERE game_id = %s', (g.league_id, results['game_id']))
@@ -294,6 +233,7 @@ def play(num_days, start=False):
 
     teams = []
     schedule = []
+    playoffs_continue = False
 
     # If this is a request to start a new simulation... are we allowed to do
     # that? If so, set the lock and update the play menu
@@ -306,11 +246,47 @@ def play(num_days, start=False):
             return teams, schedule
 
     if num_days > 0:
-        play_menu.set_status('Playing games (%d days remaining)...' % (num_days,))
-        [teams, schedule, playoffs_continue] = sim_wrapper()
+        # If the user wants to stop the simulation, then stop the simulation
+        g.db.execute('SELECT stop_games FROM %s_game_attributes WHERE season = %s', (g.league_id, g.season))
+        stop_games, = g.db.fetchone()
+        if stop_games:
+            g.db.execute('UPDATE %s_game_attributes SET stop_games = 0 WHERE season = %s', (g.league_id, g.season))
+        else:
+            # Check if it's the playoffs and do some special stuff if it is or isn't
+            if g.phase == 3:
+                num_active_teams = season.new_schedule_playoffs_day()
+
+                # If season.new_schedule_playoffs_day didn't move the phase to 4, then
+                # the playoffs are still happening.
+                if g.phase == 3:
+                    playoffs_continue = True
+            else:
+                num_active_teams = g.num_teams
+
+                # Decrease free agent demands and let AI teams sign them
+                free_agents_decrease_demands()
+                free_agents_auto_sign()
+
+            play_menu.set_status('Playing games (%d days remaining)...' % (num_days,))
+            # Create schedule and team lists for today, to be sent to the client
+            schedule = season.get_schedule(num_active_teams / 2)
+            team_ids_today = []
+            for game in schedule:
+                g.db.execute('UPDATE %s_schedule SET in_progress_timestamp = %s WHERE game_id = %s', (g.league_id, int(time.time()), game['game_id']))
+                team_ids_today.append(game['home_team_id'])
+                team_ids_today.append(game['away_team_id'])
+#                team_ids_today = list(set(team_ids_today))  # Unique list
+            teams = []
+            for team_id in xrange(30):
+                # Only send team data for today's active teams
+                if team_id in team_ids_today:
+                    teams.append(team(team_id))
+                else:
+                    teams.append({'id': team_id})
+
 
     # If this is the last day, update play menu
-    if num_days == 0 or len(schedule) == 0:
+    if num_days == 0 or (len(schedule) == 0 and not playoffs_continue):
         play_menu.set_status('Idle')
         lock.set_games_in_progress(False)
         play_menu.refresh_options()
@@ -318,6 +294,5 @@ def play(num_days, start=False):
         g.db.execute('SELECT game_id FROM %s_schedule LIMIT 1', (g.league_id,))
         if g.db.rowcount == 0 and g.phase < 3:
             season.new_phase(3)  # Start playoffs
-
 
     return teams, schedule, playoffs_continue

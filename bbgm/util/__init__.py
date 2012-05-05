@@ -50,7 +50,7 @@ def roster_auto_sort(team_id):
         g.db.execute('UPDATE %s_player_ratings SET roster_position = %s WHERE player_id = %s', (g.league_id, roster_position, player[0]))
         roster_position += 1
 
-def auto_sign_free_agents():
+def free_agents_auto_sign():
     """AI teams sign free agents."""
     # Build free_agents containing player ids and desired contracts
     g.db.execute('SELECT COUNT(*)/30 FROM %s_team_stats WHERE season = %s', (g.league_id, g.season))
@@ -59,8 +59,6 @@ def auto_sign_free_agents():
     g.db.execute('SELECT pa.player_id, pa.contract_amount, pa.contract_expiration FROM %s_player_attributes as pa, %s_player_ratings as pr WHERE pa.team_id = -1 AND pa.player_id = pr.player_id ORDER BY pr.overall + 2*pr.potential DESC', (g.league_id, g.league_id))
     for player_id, amount, expiration in g.db.fetchall():
         free_agents.append([player_id, amount, expiration, False])
-
-    print 'FREE_AGENTS', free_agents
 
     # Randomly order teams and let them sign free agents
     team_ids = list(xrange(30))
@@ -88,6 +86,24 @@ def auto_sign_free_agents():
                 j += 1
             if not new_player:
                 break
+
+def free_agents_decrease_demands():
+    # Decrease free agent demands
+    g.db.execute('SELECT player_id, contract_amount, contract_expiration FROM %s_player_attributes WHERE team_id = -1 AND contract_amount > 500', (g.league_id,))
+    for player_id, amount, expiration in g.db.fetchall():
+        amount -= 50
+        if amount < 500:
+            amount = 500
+        if amount < 2000:
+            expiration = g.season + 1
+        if amount < 1000:
+            expiration = g.season
+        g.db.execute('UPDATE %s_player_attributes SET contract_amount = %s, contract_expiration = %s WHERE player_id = %s', (g.league_id, amount, expiration, player_id))
+
+    # Free agents' resistance to previous signing attempts by player decays
+    # Decay by 0.1 per game, for 82 games in the regular season
+    g.db.execute('UPDATE %s_player_attributes SET free_agent_times_asked = free_agent_times_asked - 0.1 WHERE team_id = -1', (g.league_id,))
+    g.db.execute('UPDATE %s_player_attributes SET free_agent_times_asked = 0 WHERE team_id = -1 AND free_agent_times_asked < 0', (g.league_id,))
 
 def get_seasons():
     """Returns a list of all the seasons, past and present."""

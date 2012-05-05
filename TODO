@@ -1,22 +1,18 @@
 # To acquire parity with the GTK version and be good enough to share:
 
 BUG:
-- Simulate games
-- Reload page before they finish
-- Press "Stop" to cancel
-- Simulate more games... but the first time you press the button, it doens't work. Second time, works.
+- Press "stop" when simulating games and the status flickers "Idle" -> "playing" -> "Idle"
+  - When refactoring bbgm.core.game stuff, think about how to best implement stop
 
 BUG:
 - Play through playoffs stops after each round
-  - Add games for next day, after current day is simulated?
+  - Add games for next day, after current day is simulated? YES. but be careful about the switch from regular season to playoffs
 
 BUG:
 - players ask for negative years contracts when resigning them
 
-can i use juggernaut to keep track of when the window is closed, and for communication?
-
 revamp lock.can_start_games
-- look at how it's used. does it make sense?
+- look at how it's used. does it make sense? maybe it does..
 revamp sim_wrapper
 - merge with play, refactor
 

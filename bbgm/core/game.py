@@ -5,7 +5,7 @@ import random
 import sqlite3
 import time
 
-from flask import g, json
+from flask import g
 
 from bbgm import app
 from bbgm.core import game_sim, season, play_menu
@@ -140,7 +140,6 @@ def team(team_id):
                 turnovers=0, steals=0, blocks=0, personal_fouls=0,
                 points=0)
 
-#    return json.dumps(t)
     return t
 
 

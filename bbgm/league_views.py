@@ -128,6 +128,7 @@ def play(amount):
         g.db.execute('UPDATE %s_game_attributes SET stop_games = 1 WHERE season = %s', (g.league_id, g.season))
         g.db.execute('UPDATE %s_schedule SET in_progress_timestamp = 0', (g.league_id,))
 
+        # This is needed because we can't be sure if bbgm.core.game.play will be called again
         play_menu.set_status('Idle')
         lock.set_games_in_progress(False)
         play_menu.refresh_options()

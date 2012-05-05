@@ -6,6 +6,7 @@ function play_button(url) {
         var schedule = data['schedule'];
         var teams = data['teams'];
         var num_days = data['num_days'];
+        var playoffs_continue = data['playoffs_continue'];
         if (error) {
             alert(error);
         }
@@ -17,7 +18,7 @@ function play_button(url) {
                 highlight_nav(league_page);
             });
         }
-        if (schedule && schedule.length > 0) {
+        if ((schedule && schedule.length > 0) || playoffs_continue) {
             var results = [];
             for (var i=0; i<schedule.length; i++) {
                 gs = new GameSim(schedule[i]['game_id'], teams[schedule[i]['home_team_id']], teams[schedule[i]['away_team_id']]);

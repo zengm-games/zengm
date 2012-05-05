@@ -290,6 +290,67 @@ def new_schedule():
     random.shuffle(team_ids)
     set_schedule(team_ids)
 
+def new_schedule_playoffs_day():
+    """Creates a single day's schedule for an in-progress playoffs."""
+    num_active_teams = 0
+
+    # Make today's  playoff schedule
+    team_ids = []
+    active_series = False
+    # Round: 1, 2, 3, or 4
+    g.db.execute('SELECT MAX(series_round) FROM %s_active_playoff_series', (g.league_id,))
+    current_round, = g.db.fetchone()
+
+    g.db.execute('SELECT team_id_home, team_id_away FROM %s_active_playoff_series WHERE won_home < 4 AND won_away < 4 AND series_round = %s', (g.league_id, current_round))
+    for team_id_home, team_id_away in g.db.fetchall():
+        team_ids.append([team_id_home, team_id_away])
+        active_series = True
+        num_active_teams += 2
+    if len(team_ids) > 0:
+        set_schedule(team_ids)
+    if not active_series:
+        # The previous round is over
+
+        # Who won?
+        winners = {}
+        g.db.execute('SELECT series_id, team_id_home, team_id_away, seed_home, '
+                     'seed_away, won_home, won_away FROM %s_active_playoff_series WHERE '
+                     'series_round = %s ORDER BY series_id ASC', (g.league_id, current_round))
+        for row in g.db.fetchall():
+            series_id, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away = row
+            if won_home == 4:
+                winners[series_id] = [team_id_home, seed_home]
+            else:
+                winners[series_id] = [team_id_away, seed_away]
+            # Record user's team as conference and league champion
+            if current_round == 3:
+                g.db.execute('UPDATE %s_team_attributes SET won_conference = 1 WHERE season = %s AND '
+                             'team_id = %s', (g.league_id, g.season, winners[series_id][0]))
+            elif current_round == 4:
+                g.db.execute('UPDATE %s_team_attributes SET won_championship = 1 WHERE season = %s AND '
+                             'team_id = %s', (g.league_id, g.season, winners[series_id][0]))
+
+        # Are the whole playoffs over?
+        if current_round == 4:
+            new_phase(4)
+
+        # Add a new round to the database
+        series_id = 1
+        current_round += 1
+        query = ('INSERT INTO %s_active_playoff_series (series_id, series_round, team_id_home, team_id_away,'
+                 'seed_home, seed_away, won_home, won_away) VALUES (%s, %s, %s, %s, %s, %s, 0, 0)')
+        for i in range(1, len(winners), 2):  # Go through winners by 2
+            if winners[i][1] < winners[i + 1][1]:  # Which team is the home team?
+                new_series = (g.league_id, series_id, current_round, winners[i][0], winners[i + 1][0], winners[i][1],
+                              winners[i + 1][1])
+            else:
+                new_series = (g.league_id, series_id, current_round, winners[i + 1][0], winners[i][0], winners[i + 1][1],
+                              winners[i][1])
+            g.db.execute(query, new_series)
+            series_id += 1
+
+    return num_active_teams
+
 def awards():
     """Computes the awards at the end of a season."""
     # Cache averages

@@ -219,69 +219,17 @@ def sim_wrapper():
     """
     schedule = []
     teams = []
+    playoffs_continue = False
 
     # Check if it's the playoffs and do some special stuff if it is
     if g.phase == 3:
-        is_playoffs = True
-        num_active_teams = 0
+        num_active_teams = season.new_schedule_playoffs_day()
 
-        # Make today's  playoff schedule
-        team_ids = []
-        active_series = False
-        # Round: 1, 2, 3, or 4
-        g.db.execute('SELECT MAX(series_round) FROM %s_active_playoff_series', (g.league_id,))
-        current_round, = g.db.fetchone()
-
-        g.db.execute('SELECT team_id_home, team_id_away FROM %s_active_playoff_series WHERE won_home < 4 AND won_away < 4 AND series_round = %s', (g.league_id, current_round))
-        for team_id_home, team_id_away in g.db.fetchall():
-            team_ids.append([team_id_home, team_id_away])
-            active_series = True
-            num_active_teams += 2
-        if len(team_ids) > 0:
-            season.set_schedule(team_ids)
-        if not active_series:
-            # The previous round is over
-
-            # Who won?
-            winners = {}
-            g.db.execute('SELECT series_id, team_id_home, team_id_away, seed_home, '
-                         'seed_away, won_home, won_away FROM %s_active_playoff_series WHERE '
-                         'series_round = %s ORDER BY series_id ASC', (g.league_id, current_round))
-            for row in g.db.fetchall():
-                series_id, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away = row
-                if won_home == 4:
-                    winners[series_id] = [team_id_home, seed_home]
-                else:
-                    winners[series_id] = [team_id_away, seed_away]
-                # Record user's team as conference and league champion
-                if current_round == 3:
-                    g.db.execute('UPDATE %s_team_attributes SET won_conference = 1 WHERE season = %s AND '
-                                 'team_id = %s', (g.league_id, g.season, winners[series_id][0]))
-                elif current_round == 4:
-                    g.db.execute('UPDATE %s_team_attributes SET won_championship = 1 WHERE season = %s AND '
-                                 'team_id = %s', (g.league_id, g.season, winners[series_id][0]))
-
-            # Are the whole playoffs over?
-            if current_round == 4:
-                season.new_phase(4)
-#                break
-
-            # Add a new round to the database
-            series_id = 1
-            current_round += 1
-            query = ('INSERT INTO %s_active_playoff_series (series_id, series_round, team_id_home, team_id_away,'
-                     'seed_home, seed_away, won_home, won_away) VALUES (%s, %s, %s, %s, %s, %s, 0, 0)')
-            for i in range(1, len(winners), 2):  # Go through winners by 2
-                if winners[i][1] < winners[i + 1][1]:  # Which team is the home team?
-                    new_series = (g.league_id, series_id, current_round, winners[i][0], winners[i + 1][0], winners[i][1],
-                                  winners[i + 1][1])
-                else:
-                    new_series = (g.league_id, series_id, current_round, winners[i + 1][0], winners[i][0], winners[i + 1][1],
-                                  winners[i][1])
-                g.db.execute(query, new_series)
-                series_id += 1
+        # If season.new_schedule_playoffs_day didn't move the phase to 4, then
+        # the playoffs are still happening.
+        if g.phase == 3:
+            playoffs_continue = True
     else:
-        is_playoffs = False
         num_active_teams = g.num_teams
 
         # Decrease free agent demands
@@ -324,7 +272,7 @@ def sim_wrapper():
         for team_id in xrange(30):
             teams.append(team(team_id))
 
-    return teams, schedule
+    return teams, schedule, playoffs_continue
 
 def save_results(results, is_playoffs):
     """Convenience function to save game stats."""
@@ -347,9 +295,10 @@ def play(num_days, start=False):
     teams = []
     schedule = []
 
+    # If this is a request to start a new simulation... are we allowed to do
+    # that? If so, set the lock and update the play menu
     if start:
         if lock.can_start_games():
-            # If this is the first day, update play menu
             lock.set_games_in_progress(True)
             play_menu.refresh_options()
         else:
@@ -358,7 +307,7 @@ def play(num_days, start=False):
 
     if num_days > 0:
         play_menu.set_status('Playing games (%d days remaining)...' % (num_days,))
-        [teams, schedule] = sim_wrapper()
+        [teams, schedule, playoffs_continue] = sim_wrapper()
 
     # If this is the last day, update play menu
     if num_days == 0 or len(schedule) == 0:
@@ -370,4 +319,5 @@ def play(num_days, start=False):
         if g.db.rowcount == 0 and g.phase < 3:
             season.new_phase(3)  # Start playoffs
 
-    return teams, schedule
+
+    return teams, schedule, playoffs_continue

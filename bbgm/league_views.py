@@ -104,14 +104,15 @@ def play(amount):
     url = None
     schedule = None
     teams = None
-    try: 
+    playoffs_continue = None
+    try:
         num_days = int(amount)
     except ValueError:
         num_days = -1
 
     if num_days >= 0:
         # Continue playing games
-        teams, schedule = game.play(num_days)
+        teams, schedule, playoffs_continue = game.play(num_days)
     elif amount in ['day', 'week', 'month', 'until_playoffs', 'through_playoffs']:
         # Start playing games
         start = True
@@ -129,7 +130,7 @@ def play(amount):
         elif amount == 'through_playoffs':
             num_days = 100  # There aren't 100 days in the playoffs, so 100 will cover all the games and the sim stops when the playoffs end
 
-        teams, schedule = game.play(num_days, start)
+        teams, schedule, playoffs_continue = game.play(num_days, start)
     elif amount == 'stop':
         g.db.execute('UPDATE %s_game_attributes SET stop_games = 1 WHERE season = %s', (g.league_id, g.season))
         g.db.execute('UPDATE %s_schedule SET in_progress_timestamp = 0', (g.league_id,))
@@ -154,7 +155,7 @@ def play(amount):
     elif amount == 'until_regular_season':
         error = season.new_phase(1)
 
-    return jsonify(url=url, error=error, num_days=num_days, schedule=schedule, teams=teams)
+    return jsonify(url=url, error=error, num_days=num_days, schedule=schedule, teams=teams, playoffs_continue=playoffs_continue)
 
 @app.route('/<int:league_id>/save_results', methods=['POST'])
 @league_crap_ajax

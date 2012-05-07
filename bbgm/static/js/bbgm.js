@@ -58,6 +58,13 @@ function bbgm_datatable(table, sort_col, data) {
         }
     } );
 }
+function bbgm_datatable_singlepage(table, sort_col, data) {
+    table.dataTable( {
+        "aaData": data,
+        "aaSorting": [[ sort_col, "desc" ]],
+        "bPaginate": false
+    } );
+}
 
 function parse_league_url(url) {
     // Returns a list containing the integer league ID (0 if none), the

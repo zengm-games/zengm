@@ -14,7 +14,7 @@
         <li class="nav-header">League</li>
         <li id="nav_standings"><a href="{{ url_for('standings', league_id=g.league_id) }}">Standings</a></li>
         <li id="nav_playoffs"><a href="{{ url_for('playoffs', league_id=g.league_id) }}">Playoffs</a></li>
-        <li id="nav_finances"><a href="#">Finances</a></li>
+        <li id="nav_finances"><a href="{{ url_for('finances', league_id=g.league_id) }}">Finances</a></li>
         <li id="nav_transaction_log"><a href="#">Transaction Log</a></li>
         <li id="nav_history"><a href="{{ url_for('history', league_id=g.league_id) }}">History</a></li>
         <li class="nav-header">Team</li>

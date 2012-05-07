@@ -215,6 +215,15 @@ def playoffs():
 
     return render_all_or_json('playoffs.html', {'series': series})
 
+@app.route('/<int:league_id>/finances')
+@league_crap
+def finances():
+    g.dbd.execute('SELECT ta.team_id, ta.region, ta.name, ta.abbreviation, AVG(ts.attendance) AS attendance, SUM(ts.attendance)*%s/1000000 AS revenue, (SUM(ts.attendance)*%s - SUM(ts.cost))/1000000 AS profit, ta.cash/1000000 as cash, ((SELECT SUM(contract_amount) FROM %s_player_attributes as pa WHERE pa.team_id = ta.team_id) + (SELECT IFNULL(SUM(contract_amount),0) FROM %s_released_players_salaries as rps WHERE rps.team_id = ta.team_id))/1000 AS payroll FROM %s_team_attributes as ta LEFT OUTER JOIN %s_team_stats as ts ON ta.season = ts.season AND ta.team_id = ts.team_id WHERE ta.season = %s GROUP BY ta.team_id', (g.ticket_price, g.ticket_price, g.league_id, g.league_id, g.league_id, g.league_id, g.season))
+
+    teams = g.dbd.fetchall()
+
+    return render_all_or_json('finances.html', {'salary_cap': g.salary_cap/1000, 'teams': teams})
+
 @app.route('/<int:league_id>/free_agents')
 @league_crap
 def free_agents():

@@ -1,5 +1,12 @@
 # To acquire parity with the GTK version and be good enough to share:
 
+warning when window is closed and game simulation is in progress
+- http://stackoverflow.com/questions/1244535/alert-when-browser-window-closed-accidentally
+- https://developer.mozilla.org/en/DOM/window.onbeforeunload
+
+finances
+- conditional formatting to show negative numbers in red: https://www.google.com/search?q=site%3Adatatables.net+conditional+formatting&ie=utf-8&oe=utf-8&client=ubuntu&channel=fs
+
 BUG:
 - players ask for negative years contracts when resigning them
 
@@ -154,6 +161,9 @@ http://flask.pocoo.org/snippets/11/
 
 self-contained game simulation code, to allow other people to hack on it easily. automatically make charts and stuff.
 
+postgresql
+- https://help.ubuntu.com/community/PostgreSQL
+- python-psycopg2
 
 
 # BELOW IS OLD STUFF

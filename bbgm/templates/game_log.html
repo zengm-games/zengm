@@ -39,20 +39,20 @@
       // Clickable rows for game log list table
       $(document).on('click', '#game_log_list tbody tr', function(event) {
         $clicked_tr = $(this);
-        $.ajax({
-          type: 'GET',
-          url: '{{ url_for('box_score', league_id=g.league_id) }}',
-          data: {game_id: $(this).attr('id')},
-          success: function(msg) {
-            // Update boxscore
-            $('#game_log_box_score').html(msg);
+        $.get('{{ url_for('box_score', league_id=g.league_id) }}/' + $clicked_tr.attr('id'), function(data) {
+          // Update boxscore
+          $('#game_log_box_score').html(data);
 
-            // Update gamelist highlighting
-            $clicked_tr.parent().children().each(function() {
-              $(this).removeClass('alert-info');
-            });
-            $clicked_tr.addClass('alert-info');
-          }
+          // Update gamelist highlighting
+          $clicked_tr.parent().children().each(function() {
+            $(this).removeClass('alert-info');
+          });
+          $clicked_tr.addClass('alert-info');
+
+          // Update URL
+//          data['title'] = document.title;
+//          data['league_content'] =  $('#league_content').html();
+//          history.pushState(data, '', '{{ url_for('game_log', league_id=g.league_id) }}/' + $clicked_tr.attr('id'));
         });
       });
     });
@@ -73,16 +73,16 @@
 
   <h1>Game Log</h1>
 
-  <p></p>
-  <div class="row-fluid">
-    <div class="span9">
-      <div id="game_log_box_score">
-        <p>Select a game from the menu on the right to view a box score.</p>
+  <p>
+    <div class="row-fluid">
+      <div class="span9">
+        <div id="game_log_box_score">
+          <p>Select a game from the menu on the right to view a box score.</p>
+        </div>
+      </div>
+
+      <div class="span3" id="game_log_list">
       </div>
     </div>
-
-    <div class="span3" id="game_log_list">
-      </div>
-  </div>
-</div>
+  </p>
 {% endblock %}

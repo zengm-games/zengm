@@ -5,7 +5,7 @@ import random
 import sqlite3
 import time
 
-from flask import g
+from flask import g, url_for
 
 from bbgm import app
 from bbgm.core import game_sim, season, play_menu
@@ -234,6 +234,7 @@ def play(num_days, start=False):
     teams = []
     schedule = []
     playoffs_continue = False
+    url = None
 
     # If this is a request to start a new simulation... are we allowed to do
     # that? If so, set the lock and update the play menu
@@ -298,5 +299,6 @@ def play(num_days, start=False):
         g.db.execute('SELECT game_id FROM %s_schedule LIMIT 1', (g.league_id,))
         if g.db.rowcount == 0 and g.phase < 3:
             season.new_phase(3)  # Start playoffs
+            url = url_for('history', league_id=g.league_id)
 
-    return teams, schedule, playoffs_continue
+    return teams, schedule, playoffs_continue, url

@@ -49,6 +49,7 @@ function bbgm_datatable(table, sort_col, data) {
     table.dataTable( {
         "aaData": data,
         "aaSorting": [[ sort_col, "desc" ]],
+        "bDeferRender": true,
         "sPaginationType": "bootstrap",
         "oLanguage": {
             "sLengthMenu": "_MENU_ players per page",

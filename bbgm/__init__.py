@@ -88,9 +88,12 @@ def before_request():
     g.num_teams = 30
     g.season_length = 82  # Changing this will break things
 
+#    g.db.execute('SET autocommit = 1')
+
 @app.teardown_request
 def teardown_request(exception):
     if hasattr(g, 'db_conn'):
+        g.db.execute('COMMIT')
         g.db_conn.close()
 
 @app.template_filter()

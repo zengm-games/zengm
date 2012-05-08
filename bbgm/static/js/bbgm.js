@@ -19,6 +19,17 @@ function play_button(url) {
             });
         }
         if ((schedule && schedule.length > 0) || playoffs_continue) {
+            // Stop game simulation when user leaves the page
+            window.onunload = function() {
+                var result = parse_league_url(document.URL);
+                var league_root_url = result[1];
+                $.ajax({
+                    type: 'POST',
+                    url: league_root_url + '/play/stop',
+                    async: false
+                });
+            };
+
             var results = [];
             for (var i=0; i<schedule.length; i++) {
                 gs = new GameSim(schedule[i]['game_id'], teams[schedule[i]['home_team_id']], teams[schedule[i]['away_team_id']]);
@@ -31,19 +42,11 @@ function play_button(url) {
             if (num_days >= 0) {
                 play_button(league_root_url + '/play/' + num_days);
             }
+            if (num_days == 0) {
+                window.onunload = function() {};
+            }
         }
     }, 'json');
-}
-
-// Stop game simulation when user leaves the page
-window.onunload = function() {
-    var result = parse_league_url(document.URL);
-    var league_root_url = result[1];
-    $.ajax({
-        type: 'POST',
-        url: league_root_url + '/play/stop',
-        async: false
-    });
 }
 
 // For AJAX updating pages

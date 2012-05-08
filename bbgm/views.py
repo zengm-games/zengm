@@ -10,7 +10,7 @@ def index():
         leagues = []
         g.db.execute('SELECT league_id FROM leagues WHERE user_id = %s ORDER BY league_id ASC', (session['user_id'],))
         for league_id, in g.db.fetchall():
-            g.db.execute('SELECT team_id, season, pm_phase FROM %s_game_attributes', (league_id,))
+            g.db.execute('SELECT team_id, season, pm_phase FROM %s_game_attributes ORDER BY season DESC LIMIT 1', (league_id,))
             user_team_id, season, pm_phase = g.db.fetchone()
             g.db.execute('SELECT CONCAT(region, " ", name) FROM %s_team_attributes WHERE team_id = %s AND season = %s', (league_id, user_team_id, season))
             team, = g.db.fetchone()

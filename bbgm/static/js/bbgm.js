@@ -35,6 +35,17 @@ function play_button(url) {
     }, 'json');
 }
 
+// Stop game simulation when user leaves the page
+window.onunload = function() {
+    var result = parse_league_url(document.URL);
+    var league_root_url = result[1];
+    $.ajax({
+        type: 'POST',
+        url: league_root_url + '/play/stop',
+        async: false
+    });
+}
+
 // For AJAX updating pages
 function ajax_update(data, url) {
     $('title').text(data['title']);

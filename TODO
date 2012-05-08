@@ -4,6 +4,8 @@ draft
 - fill in table (stats like roster view)
 - correctly sort the draft column
 
+get rid of subprocess in __init__.py
+
 datatables
 - default to sort descending when column is clicked
   - http://datatables.net/ref#asSorting will work. maybe pass it as an option to bbgm_datatable

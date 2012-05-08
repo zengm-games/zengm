@@ -37,21 +37,15 @@ hopefully that will change relatively soon.
 
 * mysql-server
 * python-mysqldb
-* python-pip
 * redis-server
-* node.js
+* nodejs
 * juggernaut
 
-For the first four, you can just use the normal Ubuntu (or whatever) packages
-and it will probably work fine. In Ubuntu:
+You can install these packages on Ubuntu 12.04 with these commands (this will
+also install python-pip and npm to make installing the other dependencies
+easier):
 
-    sudo apt-get install mysql-server python-mysqldb python-pip redis-server
-
-For node.js, install it however you want. This is what I used:
-https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager
-The same Ubuntu PPA linked there also has npm packaged, which you can then use
-to install Juggernaut:
-
+    sudo apt-get install mysql-server python-mysqldb redis-server nodejs npm python-pip
     sudo npm install -g juggernaut
 
 #### Python packages

@@ -238,19 +238,37 @@ def free_agents():
     return render_all_or_json('free_agents.html', {'players': players})
 
 @app.route('/<int:league_id>/draft')
+@app.route('/<int:league_id>/draft/<int:view_season>')
 @league_crap
-def draft_():
-    if g.phase != 5:
-        error = "It's not time for the draft right now."
+def draft_(view_season=None):
+    view_season = validate_season(view_season)
+    seasons = get_seasons()
+
+    # Draft hasn't happened yet this year
+    if g.phase < 5:
+        # View last season by default
+        if view_season == g.season:
+            view_season -= 1
+        seasons.remove(g.season)  # Don't show this season as an option
+
+    if g.phase < 5 and view_season < g.starting_season:
+        error = "There is no draft history yet. Check back after the season."
         return render_all_or_json('league_error.html', {'error': error})
 
-    g.dbd.execute('SELECT pa.player_id, pa.position, pa.name, %s - pa.born_date as age, pr.overall, pr.potential FROM %s_player_attributes as pa, %s_player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = -2 ORDER BY pr.overall + 2*pr.potential DESC', (g.season, g.league_id, g.league_id))
-    undrafted = g.dbd.fetchall()
+    # Active draft
+    if g.phase == 5 and view_season == g.season:
+        g.dbd.execute('SELECT pa.player_id, pa.position, pa.name, %s - pa.born_date as age, pr.overall, pr.potential FROM %s_player_attributes as pa, %s_player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = -2 ORDER BY pr.overall + 2*pr.potential DESC', (g.season, g.league_id, g.league_id))
+        undrafted = g.dbd.fetchall()
 
-    g.dbd.execute('SELECT draft_round, pick, abbreviation, player_id, name, %s - born_date as age, position, overall, potential FROM %s_draft_results WHERE season =  %s ORDER BY draft_round, pick ASC', (g.season, g.league_id, g.season))
-    drafted = g.dbd.fetchall()
+        g.dbd.execute('SELECT draft_round, pick, abbreviation, player_id, name, %s - born_date as age, position, overall, potential FROM %s_draft_results WHERE season =  %s ORDER BY draft_round, pick ASC', (g.season, g.league_id, g.season))
+        drafted = g.dbd.fetchall()
 
-    return render_all_or_json('draft.html', {'undrafted': undrafted, 'drafted': drafted})
+        return render_all_or_json('draft.html', {'undrafted': undrafted, 'drafted': drafted})
+
+    # Show a summary of an old draft
+    g.dbd.execute('SELECT draft_round, pick, abbreviation, player_id, name, %s - born_date as age, position, overall, potential FROM %s_draft_results WHERE season =  %s ORDER BY draft_round, pick ASC', (view_season, g.league_id, view_season))
+    players = g.dbd.fetchall()
+    return render_all_or_json('draft_summary.html', {'players': players, 'seasons': seasons, 'view_season': view_season})
 
 @app.route('/<int:league_id>/history')
 @app.route('/<int:league_id>/history/<int:view_season>')

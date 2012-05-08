@@ -1,8 +1,9 @@
 # To acquire parity with the GTK version and be good enough to share:
 
-warning when window is closed and game simulation is in progress
-- http://stackoverflow.com/questions/1244535/alert-when-browser-window-closed-accidentally
-- https://developer.mozilla.org/en/DOM/window.onbeforeunload
+draft
+- fill in table (stats like roster view)
+- correctly sort the draft column
+- bbgm_datatable_singlepage shouldn't show the search or "1 to 30 of..." text
 
 finances
 - conditional formatting to show negative numbers in red: https://www.google.com/search?q=site%3Adatatables.net+conditional+formatting&ie=utf-8&oe=utf-8&client=ubuntu&channel=fs
@@ -67,10 +68,6 @@ Game simulation:
 refactor player.py
 
 add years dropdown to all relevant views
-- draft
-  - make a view for past drafts (league_id/draft/2012)
-  - display stats as in roster
-  - but when current season is selected, use the current draft function to display either a warning or the active draft
 - player ratings, eventually
 - playoffs, eventually
 
@@ -164,6 +161,10 @@ self-contained game simulation code, to allow other people to hack on it easily.
 postgresql
 - https://help.ubuntu.com/community/PostgreSQL
 - python-psycopg2
+
+warning when window is closed and game simulation is in progress
+- http://stackoverflow.com/questions/1244535/alert-when-browser-window-closed-accidentally
+- https://developer.mozilla.org/en/DOM/window.onbeforeunload
 
 
 # BELOW IS OLD STUFF

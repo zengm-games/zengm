@@ -79,11 +79,11 @@ $(document).ready(function() {
       <h2>Draft Results</h2>
       <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="drafted">
       <thead>
-        <tr><th>Pick</th><th>team</th><th>Name</th><th title="Position">Pos</th><th>Age</th><th title="Overall rating">Ovr</th><th title="Potential rating">Pot</th></tr>
+        <tr><th>Pick</th><th>Team</th><th>Name</th><th title="Position">Pos</th><th>Age</th><th title="Overall rating">Ovr</th><th title="Potential rating">Pot</th></tr>
       </thead>
       <tbody>
         {% for player in drafted %}
-          <tr><td>{{ player.draft_round }}-{{ player.pick }}</td><td><a href="{{ url_for('roster', league_id=g.league_id, abbreviation=player.abbreviation) }}">{{ player.abbreviation }}</a><td><a href="#">{{ player.name }}</a><td>{{ player.position }}</td></td><td>{{ player.age }}<td>{{ player.overall }}</td><td>{{ player.potential }}</td></tr>
+          <tr><td>{{ player.draft_round }}-{{ player.pick }}</td><td><a href="{{ url_for('roster', league_id=g.league_id, abbreviation=player.abbreviation) }}">{{ player.abbreviation }}</a></td><td><a href="#">{{ player.name }}</a></td><td>{{ player.position }}</td><td>{{ player.age }}<td>{{ player.overall }}</td><td>{{ player.potential }}</td></tr>
         {% endfor %}
       </tbody>
       </table>

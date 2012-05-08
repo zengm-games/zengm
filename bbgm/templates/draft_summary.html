@@ -1,0 +1,36 @@
+{% extends "league_layout.html" %}
+{% set active_page = "draft" %}
+
+{% block title %}{{ view_season }} Draft Results - League {{ g.league_id }} - Basketball GM{% endblock %}
+
+{% block league_content %}
+  <script type="text/javascript">
+    $(document).ready(function() {
+        dropdown($('#draft_select_season'));
+
+        bbgm_datatable_singlepage($('#draft_results'), 0, [
+          {% for player in players %}
+		    [ '{{ player.draft_round }}-{{ player.pick }}', '<a href="#">{{ player.name }}</a>', '{{ player.position }}', '<a href="{{ url_for('roster', league_id=g.league_id, abbreviation=player.abbreviation) }}">{{ player.abbreviation }}</a>', '{{ player.age }}', '{{ player.overall }}', '{{ player.potential }}', '', '', '', '', '', '', '', '' ],
+          {% endfor %}
+        ]);
+    });
+  </script>
+
+  <form action="{{ url_for('draft_', league_id=g.league_id) }}" method="GET" class="form-inline pull-right">
+    <select id="draft_select_season" name="season" class="season">
+      {% for season in seasons %}
+        <option value="{{ season }}"{% if season == view_season %} selected="selected"{% endif %}>{{ season }} season</option>
+      {% endfor %}
+    </select>
+  </form>
+
+  <h1>{{ view_season }} Draft Results</h1>
+  <p>
+    <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="draft_results">
+    <thead>
+      <tr><th colspan="3"></th><th colspan="4" style="text-align: center">At Draft</th><th colspan="4" style="text-align: center">Current</th><th colspan="4" style="text-align: center">Career</th></tr>
+      <tr><th>Pick</th><th>Name</th><th title="Position">Pos</th><th>Team</th><th>Age</th><th title="Overall rating">Ovr</th><th title="Potential rating">Pot</th><th>Team</th><th>Age</th><th title="Overall rating">Ovr</th><th title="Potential rating">Pot</th><th title="Minutes per game">Min</th><th title="Points per game">PPG</th><th title="Rebounds per game">Reb</th><th title="Assists per game">Ast</th></tr>
+    </thead>
+    </table>
+  </p>
+{% endblock %}

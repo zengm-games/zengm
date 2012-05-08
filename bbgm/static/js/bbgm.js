@@ -62,6 +62,8 @@ function bbgm_datatable_singlepage(table, sort_col, data) {
     table.dataTable( {
         "aaData": data,
         "aaSorting": [[ sort_col, "desc" ]],
+        "bFilter": false,
+        "bInfo": false,
         "bPaginate": false
     } );
 }

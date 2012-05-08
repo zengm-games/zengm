@@ -3,7 +3,6 @@
 draft
 - fill in table (stats like roster view)
 - correctly sort the draft column
-- bbgm_datatable_singlepage shouldn't show the search or "1 to 30 of..." text
 
 finances
 - conditional formatting to show negative numbers in red: https://www.google.com/search?q=site%3Adatatables.net+conditional+formatting&ie=utf-8&oe=utf-8&client=ubuntu&channel=fs

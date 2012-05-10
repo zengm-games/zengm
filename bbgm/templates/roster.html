@@ -5,62 +5,69 @@
 
 {% block league_content %}
   <script type="text/javascript">
-    $(document).ready(function() {
-        dropdown($('#roster_select_team'), $('#roster_select_season'));
+$(document).ready(function() {
+    dropdown($('#roster_select_team'), $('#roster_select_season'));
 
-        {% if team_id == g.user_team_id and view_season == g.season %}
-            var result = parse_league_url(document.URL);
-            var league_root_url = result[1];
+    {% if team_id == g.user_team_id and view_season == g.season %}
+        var result = parse_league_url(document.URL);
+        var league_root_url = result[1];
 
-            // Roster reordering
-            var fixHelper = function(e, ui) {
-                // Return helper which preserves the width of table cells being reordered
-                ui.children().each(function() {
-                  $(this).width($(this).width());
-                });
-                return ui;
-            };
-            $('#roster tbody').sortable({
-                helper: fixHelper,
-                cursor: 'move',
-                update: function(e, ui) {
-                    sorted = $(this).sortable('serialize');
-                    $.post(league_root_url + '/roster/reorder', sorted, function(msg) {
-                        var i = 1;
-                        $('#roster tbody').children().each(function() {
-                            if (i <= 5) {
-                                $(this).find('td:first').removeClass('btn-info');
-                                $(this).find('td:first').addClass('btn-primary');
-                            }
-                            else {
-                                $(this).find('td:first').removeClass('btn-primary');
-                                $(this).find('td:first').addClass('btn-info');
-                            }
-                            i++;
-                        });
+        // Roster reordering
+        var fixHelper = function(e, ui) {
+            // Return helper which preserves the width of table cells being reordered
+            ui.children().each(function() {
+              $(this).width($(this).width());
+            });
+            return ui;
+        };
+        $('#roster tbody').sortable({
+            helper: fixHelper,
+            cursor: 'move',
+            update: function(e, ui) {
+                sorted = $(this).sortable('serialize');
+                $.post(league_root_url + '/roster/reorder', sorted, function(msg) {
+                    var i = 1;
+                    $('#roster tbody').children().each(function() {
+                        if (i <= 5) {
+                            $(this).find('td:first').removeClass('btn-info');
+                            $(this).find('td:first').addClass('btn-primary');
+                        }
+                        else {
+                            $(this).find('td:first').removeClass('btn-primary');
+                            $(this).find('td:first').addClass('btn-info');
+                        }
+                        i++;
                     });
-                }
-            }).disableSelection();
-            $('#auto_sort_roster').click(function(event) {
-                $.post(league_root_url + '/roster/auto_sort', {'json': 1}, function (data) {
-                    ajax_update(data);
-                }, 'json');
-            });
+                });
+            }
+        }).disableSelection();
+        $('#auto_sort_roster').click(function(event) {
+            $.post(league_root_url + '/roster/auto_sort', {'json': 1}, function (data) {
+                ajax_update(data);
+            }, 'json');
+        });
 
-            // Release player
-            $('#roster button').click(function(event) {
-    console.log(this.dataset)
-                if (this.dataset.action == 'release') {
-                    if (window.confirm('Are you sure you want to release ' + this.dataset.playerName + '?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary until his contract expires in ' + this.dataset.contractExpiration + '.')) {
-                        console.log('RELEASE');
-                    }
+        // Release player
+        $('#roster button').click(function(event) {
+            if (this.dataset.action == 'release') {
+                if (window.confirm('Are you sure you want to release ' + this.dataset.playerName + '?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary until his contract expires in ' + this.dataset.contractExpiration + '.')) {
+                    var tr = this.parentNode.parentNode;
+                    $.post('{{ url_for('release_player', league_id=g.league_id) }}', {'player_id': this.dataset.playerId}, function (data) {
+                        if (data['error']) {
+                            alert('Error: ' + data['error']);
+                        }
+                        else {
+                            tr.parentNode.removeChild(tr);
+                        }
+                    }, 'json');
                 }
-                else if (this.dataset.action == 'buy_out') {
+            }
+            else if (this.dataset.action == 'buy_out') {
 
-                }
-            });
-        {% endif %}
-    });
+            }
+        });
+    {% endif %}
+});
   </script>
 
   <form action="{{ url_for('roster', league_id=g.league_id) }}" method="GET" class="form-inline pull-right">
@@ -90,7 +97,7 @@
   </thead>
   <tbody>
     {% for player in players %}
-      <tr id="roster_{{ player.player_id }}">{% if team_id == g.user_team_id and view_season == g.season %}<td class="{% if loop.index <= 5 %}btn-primary starter{% else %}btn-info bench{% endif %}"></td>{% endif %}<td><a href="{{ url_for('player', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a></td><td>{{ player.position }}</td>{% if view_season == g.season %}<td>{{ player.overall }}</td><td>{{ player.potential }}</td>{% endif %}<td>{{ player.age }}</td>{% if view_season == g.season %}<td>${{ player.contract_amount|float|round(1) }}M through {{ player.contract_expiration }}</td>{% endif %}<td>{% if player.minutes %}{{ player.minutes|float|round(1) }}{% endif %}</td><td>{% if player.points %}{{ player.points|float|round(1) }}{% endif %}</td><td>{% if player.rebounds %}{{ player.rebounds|float|round(1) }}{% endif %}</td><td>{% if player.assists %}{{ player.assists|float|round(1) }}{% endif %}</td>{% if team_id == g.user_team_id and view_season == g.season %}<td><button class="btn btn-mini" data-action="release" data-player-id="{{ player.player_id }}" data-player-name="{{ player.name }}" data-contract-expiration="{{ player.contract_expiration }}">Release</button></td><td><button class="btn btn-mini" data-action="buy_out" data-player-id="{{ player.player_id }}">Buy out</button></td>{% elif view_season == g.season %}<td><button class="btn btn-mini" data-action="trade_for" data-player-id="{{ player.player_id }}">Trade for</button></td>{% endif %}</tr>
+      <tr id="roster_{{ player.player_id }}">{% if team_id == g.user_team_id and view_season == g.season %}<td class="{% if loop.index <= 5 %}btn-primary starter{% else %}btn-info bench{% endif %}"></td>{% endif %}<td><a href="{{ url_for('player_', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a></td><td>{{ player.position }}</td>{% if view_season == g.season %}<td>{{ player.overall }}</td><td>{{ player.potential }}</td>{% endif %}<td>{{ player.age }}</td>{% if view_season == g.season %}<td>${{ player.contract_amount|float|round(1) }}M through {{ player.contract_expiration }}</td>{% endif %}<td>{% if player.minutes %}{{ player.minutes|float|round(1) }}{% endif %}</td><td>{% if player.points %}{{ player.points|float|round(1) }}{% endif %}</td><td>{% if player.rebounds %}{{ player.rebounds|float|round(1) }}{% endif %}</td><td>{% if player.assists %}{{ player.assists|float|round(1) }}{% endif %}</td>{% if team_id == g.user_team_id and view_season == g.season %}<td><button class="btn btn-mini" data-action="release" data-player-id="{{ player.player_id }}" data-player-name="{{ player.name }}" data-contract-expiration="{{ player.contract_expiration }}">Release</button></td><td><button class="btn btn-mini" data-action="buy_out" data-player-id="{{ player.player_id }}">Buy out</button></td>{% elif view_season == g.season %}<td><button class="btn btn-mini" data-action="trade_for" data-player-id="{{ player.player_id }}">Trade for</button></td>{% endif %}</tr>
     {% endfor %}
   </tbody>
   </table>

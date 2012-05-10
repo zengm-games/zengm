@@ -116,36 +116,30 @@ class Player:
 
         return amount, expiration
 
-    def add_to_free_agents(self, phase):
+    def add_to_free_agents(self):
         """Adds a player to the free agents list.
 
         This should be THE ONLY way that players are added to the free agents
         list, because this will also calculate their demanded contract. But
         currently, the free agents generated at the beginning of the game don't
         use this function.
-
-        Args:
-            phase: self.phase from bbgm.views.main_window
         """
         # Player's desired contract
         amount, expiration = self.contract()
 
         # During regular season, or before season starts, allow contracts for
         # just this year.
-        if phase > 2:
+        if g.phase > 2:
             expiration += 1
 
         g.db.execute('UPDATE %s_player_attributes SET team_id = -1, contract_amount = %s, contract_expiration = %s,'
                      ' free_agent_times_asked = 0 WHERE player_id = %s', (g.league_id, amount, expiration, self.id))
 
-    def release(self, phase):
+    def release(self):
         """Release player.
 
         This keeps track of what the player's current team owes him, and then
         calls add_to_free_agents.
-
-        Args:
-            phase: self.phase from bbgm.views.main_window
         """
 
         # Keep track of player salary even when he's off the team
@@ -153,7 +147,7 @@ class Player:
         contract_amount, contract_expiration, team_id = g.db.fetchone()
         g.db.execute('INSERT INTO %s_released_players_salaries (player_id, team_id, contract_amount, contract_expiration) VALUES (%s, %s, %s, %s)', (g.league_id, self.id, team_id, contract_amount, contract_expiration))
 
-        self.add_to_free_agents(phase)
+        self.add_to_free_agents()
 
 
 class GeneratePlayer(Player):

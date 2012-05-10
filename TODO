@@ -1,7 +1,16 @@
 # To acquire parity with the GTK version and be good enough to share:
 
-get rid of subprocess in __init__.py
-- in the process, switch to pgsql?
+get rid of subprocess in __init__.py, somehow?
+
+roster
+- highlight handle on hover, like button
+- release
+  - error handling, if the player can't be released
+- buy out
+  - send ajax to get the $ situation, then display appropriate modal dialog
+- "Trade for" button in other teams' view
+
+trades
 
 datatables
 - default to sort descending when column is clicked
@@ -12,6 +21,7 @@ finances
 
 BUG:
 - players ask for negative years contracts when resigning them
+  - i think this is fixed..
 
 Client-side game simulation
 - 2: implement client-side
@@ -33,13 +43,6 @@ configuration in text file?
 - http://flask.pocoo.org/docs/patterns/fabric/#the-configuration-file
 - http://flask.pocoo.org/snippets/2/
 
-roster
-- highlight handle on hover, like button
-- release
-- buy out
-  - send ajax to get the $ situation, then display appropriate modal dialog
-- "Trade for" button in other teams' view
-
 contract negotiation view
 - bring back to either free agent view or resigning view after either accept or cancel
 
@@ -56,21 +59,7 @@ dashboard: a bunch of boxes showing..
 
 fix commented lines in bbgm.core.season
 
-Game simulation:
-- Robustness
-  - only pop from schedule on completion
-  - gracefully handle celery crash and restart
-  - gracefully handle intermediate numbers of days
-    - move to a more sensible calendar?
-      - grep for num_days_played to see what it affects
-- Stop
-  - see saved SO question
-
 refactor player.py
-
-add years dropdown to all relevant views
-- player ratings, eventually
-- playoffs, eventually
 
 speed it up
 - somehow cache team (and/or player) dicts, so we don't need separate SQL queries all the time
@@ -93,8 +82,6 @@ play button requirements
   - green: move to new phase
   - blue: play games
   - red: other immediate action
-
-organize imports
 
 player view
 - next, previous buttons (also active on left/right arrows)
@@ -162,6 +149,11 @@ warning when window is closed and game simulation is in progress
 - http://stackoverflow.com/questions/1244535/alert-when-browser-window-closed-accidentally
 - https://developer.mozilla.org/en/DOM/window.onbeforeunload
 
+abstract opposing team AI: make it a class with various methods to determine actions at different time points
+
+add years dropdown to all relevant views
+- player ratings, eventually
+- playoffs, eventually
 
 # BELOW IS OLD STUFF
 

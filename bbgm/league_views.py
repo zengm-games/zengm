@@ -7,7 +7,7 @@ from flask import jsonify, render_template, url_for, request, session, redirect,
 from flask.globals import _request_ctx_stack
 
 from bbgm import app
-from bbgm.core import draft, game, contract_negotiation, play_menu, season
+from bbgm.core import draft, game, contract_negotiation, play_menu, player, season
 from bbgm.util import get_payroll, get_seasons, lock, roster_auto_sort
 from bbgm.util.decorators import league_crap, league_crap_ajax
 
@@ -358,7 +358,7 @@ def game_log(view_season=None, abbreviation=None):
 
 @app.route('/<int:league_id>/player/<int:player_id>')
 @league_crap
-def player(player_id):
+def player_(player_id):
     # Info
     g.dbd.execute('SELECT name, position, (SELECT CONCAT(region, " ", name) FROM %s_team_attributes as ta WHERE pa.team_id = ta.team_id AND ta.season = %s) as team, height, weight, %s - born_date as age, born_date, born_location, college, draft_year, draft_round, draft_pick, (SELECT CONCAT(region, " ", name) FROM %s_team_attributes as ta WHERE ta.team_id = pa.draft_team_id AND ta.season = %s) as draft_team, contract_amount, contract_expiration FROM %s_player_attributes as pa WHERE player_id = %s', (g.league_id, g.season, g.season, g.league_id, g.season, g.league_id, player_id))
     info = g.dbd.fetchone()
@@ -531,6 +531,23 @@ def roster_reorder():
             roster_position += 1
 
     return 'fuck'
+
+@app.route('/<int:league_id>/roster/release', methods=['POST'])
+@league_crap_ajax
+def release_player():
+    error = None
+
+    g.db.execute('SELECT COUNT(*) FROM %s_player_attributes WHERE team_id = %s', (g.league_id, g.user_team_id))
+    num_players_on_roster, = g.db.fetchone()
+    if num_players_on_roster > 5:
+        player_id = int(request.form['player_id'])
+        p = player.Player()
+        p.load(player_id)
+        p.release()
+    else:
+        error = 'You must keep at least 5 players on your roster.'
+
+    return jsonify(error=error)
 
 
 

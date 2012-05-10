@@ -73,11 +73,10 @@ def new(team_id):
     g.db.execute('UPDATE %s_game_attributes SET team_id = %s', (g.league_id, team_id))
     g.db.execute('SELECT team_id, season, phase, version FROM %s_game_attributes LIMIT 1', (g.league_id,))
     g.user_team_id, g.season, g.phase, g.version = g.db.fetchone()
-    print 'AAAAAAAA', g.user_team_id, g.season, g.phase, g.version
+
     # Make schedule, start season
     season.new_phase(1)
     play_menu.set_status('Idle')
-    print 'BBBBBBBB', g.user_team_id, g.season, g.phase, g.version
 
     # Auto sort player's roster (other teams will be done in season.new_phase(1))
     roster_auto_sort(g.user_team_id)

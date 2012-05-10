@@ -140,20 +140,25 @@ def play(amount):
         lock.set_games_in_progress(False)
         play_menu.refresh_options()
     elif amount == 'until_draft':
-        draft.generate_players()
-        draft.set_order()
-        season.new_phase(5)
+        if g.phase == 4:
+            season.new_phase(5)
+            draft.generate_players()
+            draft.set_order()
         url = url_for('draft_', league_id=g.league_id)
     elif amount == 'until_resign_players':
-        season.new_phase(7)
+        if g.phase == 6:
+            season.new_phase(7)
         url = url_for('negotiation_list', league_id=g.league_id)
     elif amount == 'until_free_agency':
-        season.new_phase(8)
+        if g.phase == 7:
+            season.new_phase(8)
         url = url_for('free_agents', league_id=g.league_id)
     elif amount == 'until_preseason':
-        season.new_phase(0)
+        if g.phase == 8:
+            season.new_phase(0)
     elif amount == 'until_regular_season':
-        error = season.new_phase(1)
+        if g.phase == 0:
+            error = season.new_phase(1)
 
     return jsonify(url=url, error=error, num_days=num_days, schedule=schedule, teams=teams, playoffs_continue=playoffs_continue)
 

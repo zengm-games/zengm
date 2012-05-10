@@ -70,7 +70,7 @@ $(document).ready(function() {
       </thead>
       <tbody>
         {% for player in undrafted %}
-          <tr id="undrafted_{{ player.player_id }}"><td><a href="#">{{ player.name }}</a></td><td>{{ player.position }}</td><td>{{ player.age }}<td>{{ player.overall }}</td><td>{{ player.potential }}</td><td><button class="btn btn-mini btn-primary" data-player-id="{{ player.player_id }}"{% if drafted[0].player_id == 0 %} disabled="disabled"{% endif %}>Draft</button></td></tr>
+          <tr id="undrafted_{{ player.player_id }}"><td><a href="{{ url_for('player', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a></td><td>{{ player.position }}</td><td>{{ player.age }}<td>{{ player.overall }}</td><td>{{ player.potential }}</td><td><button class="btn btn-mini btn-primary" data-player-id="{{ player.player_id }}"{% if drafted[0].player_id == 0 %} disabled="disabled"{% endif %}>Draft</button></td></tr>
         {% endfor %}
       </tbody>
       </table>
@@ -83,7 +83,7 @@ $(document).ready(function() {
       </thead>
       <tbody>
         {% for player in drafted %}
-          <tr><td>{{ player.draft_round }}-{{ player.pick }}</td><td><a href="{{ url_for('roster', league_id=g.league_id, abbreviation=player.abbreviation) }}">{{ player.abbreviation }}</a></td><td><a href="#">{{ player.name }}</a></td><td>{{ player.position }}</td><td>{{ player.age }}<td>{{ player.overall }}</td><td>{{ player.potential }}</td></tr>
+          <tr><td>{{ player.draft_round }}-{{ player.pick }}</td><td><a href="{{ url_for('roster', league_id=g.league_id, abbreviation=player.abbreviation) }}">{{ player.abbreviation }}</a></td><td><a href="{{ url_for('player', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a></td><td>{{ player.position }}</td><td>{{ player.age }}<td>{{ player.overall }}</td><td>{{ player.potential }}</td></tr>
         {% endfor %}
       </tbody>
       </table>

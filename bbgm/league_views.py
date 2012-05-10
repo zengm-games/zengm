@@ -271,7 +271,7 @@ def draft_(view_season=None):
         return render_all_or_json('draft.html', {'undrafted': undrafted, 'drafted': drafted})
 
     # Show a summary of an old draft
-    g.dbd.execute('SELECT draft_round, pick, abbreviation, player_id, name, %s - born_date as age, position, overall, potential FROM %s_draft_results WHERE season =  %s ORDER BY draft_round, pick ASC', (view_season, g.league_id, view_season))
+    g.dbd.execute('SELECT dr.draft_round, dr.pick, dr.abbreviation, dr.player_id, dr.name, %s - dr.born_date AS age, dr.position, dr.overall, dr.potential, ta.abbreviation AS current_abbreviation, %s - dr.born_date AS current_age, pr.overall AS current_overall, pr.potential AS current_potential, SUM(ps.minutes>0) AS gp, AVG(ps.minutes) as mpg, AVG(ps.points) AS ppg, AVG(ps.offensive_rebounds + ps.defensive_rebounds) AS rpg, AVG(ps.assists) AS apg FROM %s_draft_results AS dr LEFT OUTER JOIN %s_player_ratings AS pr ON dr.player_id = pr.player_id LEFT OUTER JOIN %s_player_stats AS ps ON ps.is_playoffs = 0 AND dr.player_id = ps.player_id LEFT OUTER JOIN %s_player_attributes AS pa ON dr.player_id = pa.player_id LEFT OUTER JOIN %s_team_attributes AS ta ON pa.team_id = ta.team_id AND ta.season = %s WHERE dr.season =  %s GROUP BY dr.player_id', (view_season, g.season, g.league_id, g.league_id, g.league_id, g.league_id, g.league_id, g.season, view_season))
     players = g.dbd.fetchall()
     return render_all_or_json('draft_summary.html', {'players': players, 'seasons': seasons, 'view_season': view_season})
 

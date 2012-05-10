@@ -1,10 +1,10 @@
 # To acquire parity with the GTK version and be good enough to share:
 
 draft
-- fill in table (stats like roster view)
-- correctly sort the draft column
+- correctly sort the draft column in the summary/history page
 
 get rid of subprocess in __init__.py
+- in the process, switch to pgsql?
 
 datatables
 - default to sort descending when column is clicked

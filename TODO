@@ -1,8 +1,5 @@
 # To acquire parity with the GTK version and be good enough to share:
 
-draft
-- correctly sort the draft column in the summary/history page
-
 get rid of subprocess in __init__.py
 - in the process, switch to pgsql?
 

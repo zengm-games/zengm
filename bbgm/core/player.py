@@ -103,7 +103,10 @@ class Player:
         if randomize_expiration:
             years = random.randrange(1, years+1)
 
-        expiration = g.starting_season + years - 1
+        try:
+            expiration = g.season + years - 1
+        except AttributeError:
+            expiration = g.starting_season + years - 1
         if amount < min_amount:
             amount = min_amount
         elif amount > max_amount:

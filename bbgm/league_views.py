@@ -223,7 +223,7 @@ def playoffs():
 @app.route('/<int:league_id>/finances')
 @league_crap
 def finances():
-    g.dbd.execute('SELECT ta.team_id, ta.region, ta.name, ta.abbreviation, AVG(ts.attendance) AS attendance, SUM(ts.attendance)*%s/1000000 AS revenue, (SUM(ts.attendance)*%s - SUM(ts.cost))/1000000 AS profit, ta.cash/1000000 as cash, ((SELECT SUM(contract_amount) FROM %s_player_attributes as pa WHERE pa.team_id = ta.team_id) + (SELECT IFNULL(SUM(contract_amount),0) FROM %s_released_players_salaries as rps WHERE rps.team_id = ta.team_id))/1000 AS payroll FROM %s_team_attributes as ta LEFT OUTER JOIN %s_team_stats as ts ON ta.season = ts.season AND ta.team_id = ts.team_id WHERE ta.season = %s GROUP BY ta.team_id', (g.ticket_price, g.ticket_price, g.league_id, g.league_id, g.league_id, g.league_id, g.season))
+    g.dbd.execute('SELECT ta.team_id, ta.region, ta.name, ta.abbreviation, AVG(ts.attendance) AS attendance, SUM(ts.attendance)*%s / 1000000 AS revenue, (SUM(ts.attendance)*%s - SUM(ts.cost)) / 1000000 AS profit, ta.cash / 1000000 as cash, ((SELECT SUM(contract_amount) FROM %s_player_attributes as pa WHERE pa.team_id = ta.team_id) + (SELECT IFNULL(SUM(contract_amount),0) FROM %s_released_players_salaries as rps WHERE rps.team_id = ta.team_id)) / 1000 AS payroll FROM %s_team_attributes as ta LEFT OUTER JOIN %s_team_stats as ts ON ta.season = ts.season AND ta.team_id = ts.team_id WHERE ta.season = %s GROUP BY ta.team_id', (g.ticket_price, g.ticket_price, g.league_id, g.league_id, g.league_id, g.league_id, g.season))
 
     teams = g.dbd.fetchall()
 
@@ -315,9 +315,17 @@ def roster(abbreviation=None, view_season=None):
     view_season = validate_season(view_season)
     seasons = get_seasons()
 
+    # Used to calculate how much is remaining on a player's contract
+#    contract_amount, contract_expiration = common.DB_CON.execute('SELECT contract_amount, contract_expiration FROM player_attributes WHERE player_id = ?', (player_id,)).fetchone()
+    if team_id == g.user_team_id:
+        g.db.execute('SELECT COUNT(*) FROM %s_team_stats WHERE team_id = %s AND season = %s AND is_playoffs = 0', (g.league_id, g.user_team_id, g.season))
+        n_games_remaining, = g.db.fetchone()
+    else:
+        n_games_remaining = 0  # Dummy value because only players on the user's team can be bought out
+
     if view_season == g.season:
         # Show players even if they don't have any stats
-        g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, pa.contract_amount / 1000 as contract_amount,  pa.contract_expiration, AVG(ps.minutes) as minutes, AVG(ps.points) as points, AVG(ps.offensive_rebounds + ps.defensive_rebounds) as rebounds, AVG(ps.assists) as assists FROM %s_player_attributes as pa LEFT OUTER JOIN %s_player_ratings as pr ON pa.player_id = pr.player_id LEFT OUTER JOIN %s_player_stats as ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE pa.team_id = %s GROUP BY pa.player_id ORDER BY pr.roster_position ASC', (view_season, g.league_id, g.league_id, g.league_id, view_season, team_id))
+        g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, pa.contract_amount / 1000 as contract_amount, pa.contract_expiration, AVG(ps.minutes) as minutes, AVG(ps.points) as points, AVG(ps.offensive_rebounds + ps.defensive_rebounds) as rebounds, AVG(ps.assists) as assists, ((1 + pa.contract_expiration - %s) * pa.contract_amount - %s / 82 * pa.contract_amount) / 1000 AS cash_owed FROM %s_player_attributes as pa LEFT OUTER JOIN %s_player_ratings as pr ON pa.player_id = pr.player_id LEFT OUTER JOIN %s_player_stats as ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE pa.team_id = %s GROUP BY pa.player_id ORDER BY pr.roster_position ASC', (view_season, g.season, n_games_remaining, g.league_id, g.league_id, g.league_id, view_season, team_id))
     else:
         # Only show players with stats, as that's where the team history is recorded
         g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, pa.contract_amount / 1000 as contract_amount,  pa.contract_expiration, AVG(ps.minutes) as minutes, AVG(ps.points) as points, AVG(ps.offensive_rebounds + ps.defensive_rebounds) as rebounds, AVG(ps.assists) as assists FROM %s_player_attributes as pa LEFT OUTER JOIN %s_player_ratings as pr ON pa.player_id = pr.player_id LEFT OUTER JOIN %s_player_stats as ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE ps.team_id = %s GROUP BY pa.player_id ORDER BY pr.roster_position ASC', (view_season, g.league_id, g.league_id, g.league_id, view_season, team_id))
@@ -326,10 +334,10 @@ def roster(abbreviation=None, view_season=None):
     g.dbd.execute('SELECT team_id, abbreviation, region, name FROM %s_team_attributes WHERE season = %s ORDER BY team_id ASC', (g.league_id, view_season))
     teams = g.dbd.fetchall()
 
-    g.db.execute('SELECT CONCAT(region, " ", name) FROM %s_team_attributes WHERE team_id = %s AND season = %s', (g.league_id, team_id, view_season))
-    team_name, = g.db.fetchone()
+    g.db.execute('SELECT CONCAT(region, " ", name), cash / 1000000 FROM %s_team_attributes WHERE team_id = %s AND season = %s', (g.league_id, team_id, view_season))
+    team_name, cash = g.db.fetchone()
 
-    return render_all_or_json('roster.html', {'players': players, 'num_roster_spots': 15-len(players), 'teams': teams, 'team_id': team_id, 'team_name': team_name, 'view_season': view_season, 'seasons': seasons})
+    return render_all_or_json('roster.html', {'players': players, 'num_roster_spots': 15-len(players), 'teams': teams, 'team_id': team_id, 'team_name': team_name, 'cash': cash, 'view_season': view_season, 'seasons': seasons})
 
 @app.route('/<int:league_id>/roster/auto_sort', methods=['POST'])
 @league_crap
@@ -534,20 +542,61 @@ def roster_reorder():
 
 @app.route('/<int:league_id>/roster/release', methods=['POST'])
 @league_crap_ajax
-def release_player():
+def roster_release():
     error = None
 
     g.db.execute('SELECT COUNT(*) FROM %s_player_attributes WHERE team_id = %s', (g.league_id, g.user_team_id))
     num_players_on_roster, = g.db.fetchone()
-    if num_players_on_roster > 5:
-        player_id = int(request.form['player_id'])
-        p = player.Player()
-        p.load(player_id)
-        p.release()
-    else:
+    if num_players_on_roster <= 5:
         error = 'You must keep at least 5 players on your roster.'
+    else:
+        player_id = int(request.form['player_id'])
+        g.db.execute('SELECT team_id FROM %s_player_attributes WHERE player_id = %s', (g.league_id, player_id))
+        team_id, = g.db.fetchone()
+        if team_id == g.user_team_id:  # Don't let the user update CPU-controlled rosters
+            p = player.Player()
+            p.load(player_id)
+            p.release()
+        else:
+            error = 'You aren\'t allowed to do this.'
 
     return jsonify(error=error)
+
+@app.route('/<int:league_id>/roster/buy_out', methods=['POST'])
+@league_crap_ajax
+def roster_buy_out():
+    error = None
+
+    g.db.execute('SELECT COUNT(*) FROM %s_player_attributes WHERE team_id = %s', (g.league_id, g.user_team_id))
+    num_players_on_roster, = g.db.fetchone()
+    if num_players_on_roster <= 5:
+        error = 'You must keep at least 5 players on your roster.'
+    else:
+        player_id = int(request.form['player_id'])
+        g.db.execute('SELECT team_id FROM %s_player_attributes WHERE player_id = %s', (g.league_id, player_id))
+        team_id, = g.db.fetchone()
+        if team_id == g.user_team_id:  # Don't let the user update CPU-controlled rosters
+            g.db.execute('SELECT cash / 1000000 FROM %s_team_attributes WHERE team_id = %s AND season = %s', (g.league_id, g.user_team_id, g.season))
+            cash, = g.db.fetchone()
+            g.db.execute('SELECT COUNT(*) FROM %s_team_stats WHERE team_id = %s AND season = %s AND is_playoffs = 0', (g.league_id, g.user_team_id, g.season))
+            n_games_remaining, = g.db.fetchone()
+            g.db.execute('SELECT ((1 + pa.contract_expiration - %s) * pa.contract_amount - %s / 82 * pa.contract_amount) / 1000 FROM %s_player_attributes AS pa WHERE player_id = %s', (g.season, n_games_remaining, g.league_id, player_id))
+            cash_owed, = g.db.fetchone()
+            if cash_owed < cash:
+                # Pay the cash
+                g.db.execute('UPDATE %s_team_attributes SET cash = cash - %s WHERE team_id = %s AND season = %s', (g.league_id, cash_owed*1000000, g.user_team_id, g.season))
+                # Set to FA in database
+                p = player.Player()
+                p.load(player_id)
+                p.add_to_free_agents()
+            else:
+                error = 'Not enough cash.'
+        else:
+            error = 'You aren\'t allowed to do this.'
+
+
+    return jsonify(error=error)
+
 
 
 

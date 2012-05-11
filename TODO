@@ -3,11 +3,9 @@
 get rid of subprocess in __init__.py, somehow?
 
 roster
+- "release" only sensitive with more than 5 players
+- "buy out" only sensitive when there's enough money
 - highlight handle on hover, like button
-- release
-  - error handling, if the player can't be released
-- buy out
-  - send ajax to get the $ situation, then display appropriate modal dialog
 - "Trade for" button in other teams' view
 
 trades

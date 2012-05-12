@@ -47,10 +47,10 @@ import bbgm.views
 import bbgm.league_views
 
 def connect_db():
-    return MySQLdb.connect('localhost', app.config['DB_USERNAME'], app.config['DB_PASSWORD'], app.config['DB'])
+    return MySQLdb.connect('localhost', app.config['DB_USERNAME'], app.config['DB_PASSWORD'])
 
 
-def bulk_execute(sql):
+def bulk_execute(sql, db=None):
     """Executes a series of SQL queries, even if split across multiple lines.
 
     This emulates the functionality of executescript from sqlite3.
@@ -58,7 +58,9 @@ def bulk_execute(sql):
     Args:
         sql: A string containing SQL queries to be executed.
     """
-    process = subprocess.Popen('mysql %s -u%s -p%s' % (app.config['DB'], app.config['DB_USERNAME'], app.config['DB_PASSWORD']), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    if not db:
+        db = app.config['DB']
+    process = subprocess.Popen('mysql %s -u%s -p%s' % (db, app.config['DB_USERNAME'], app.config['DB_PASSWORD']), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     stdoutdata, stderrdata = process.communicate(sql)
 #    print sql
 #    print stdoutdata
@@ -78,22 +80,32 @@ def init_db():
 
 @app.before_request
 def before_request():
+    # Database crap
     g.db_conn = connect_db()
     g.db = g.db_conn.cursor()  # Return a tuple
     g.dbd = g.db_conn.cursor(MySQLdb.cursors.DictCursor)  # Return a dict
+
+    if g.league_id >= 0:
+        g.db.execute('USE bbgm_%s', (g.league_id,))
+        app.logger.debug('Using database bbgm_%d' % (g.league_id,))
+    else:
+        g.db.execute('USE bbgm');
+        app.logger.debug('Using database bbgm')
+
+    # Non-database crap - should probably be stored elsewhere. Also, changing
+    # some of these might break stuff.
     g.bbgm_version = app.config['BBGM_VERSION']
     g.starting_season = 2012
     g.salary_cap = 60000
     g.ticket_price = 45
     g.num_teams = 30
-    g.season_length = 82  # Changing this will break things
-
-#    g.db.execute('SET autocommit = 1')
+    g.season_length = 82
 
 @app.teardown_request
 def teardown_request(exception):
-    if hasattr(g, 'db_conn'):
+    if hasattr(g, 'db'):
         g.db.execute('COMMIT')
+    if hasattr(g, 'db_conn'):
         g.db_conn.close()
 
 @app.template_filter()

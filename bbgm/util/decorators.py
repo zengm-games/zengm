@@ -23,7 +23,7 @@ def check_permissions(f, ajax=False):
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        g.db.execute('SELECT user_id FROM leagues WHERE league_id = %s', (g.league_id,))
+        g.db.execute('SELECT user_id FROM bbgm.leagues WHERE league_id = %s', (g.league_id,))
         user_id, = g.db.fetchone()
         if session['user_id'] != user_id:
             if ajax:

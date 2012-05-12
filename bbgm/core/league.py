@@ -14,8 +14,13 @@ def new(team_id):
     g.db.execute('SELECT league_id FROM leagues WHERE user_id = %s ORDER BY league_id DESC LIMIT 1', (session['user_id'],))
     g.league_id, = g.db.fetchone()
 
+    # Create new database
+    g.db.execute('CREATE DATABASE bbgm_%s', (g.league_id,))
+    g.db.execute('GRANT ALL ON bbgm_%s.* TO %s@localhost IDENTIFIED BY \'%s\'' % (g.league_id, app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
+    g.db.execute('USE bbgm_%s', (g.league_id,))
+
     # Copy team attributes table
-    g.db.execute('CREATE TABLE %s_team_attributes SELECT * FROM teams', (g.league_id,))
+#    g.db.execute('CREATE TABLE %s_team_attributes SELECT * FROM teams', (g.league_id,))
 
     # Create other new tables
     f = app.open_resource('data/league.sql')
@@ -27,7 +32,7 @@ def new(team_id):
     sql = sql.replace('INSERT INTO ', 'INSERT INTO ' + str(g.league_id) + '_')
     sql = sql.replace(' ON ', ' ON ' + str(g.league_id) + '_')
 
-    bbgm.bulk_execute(sql)
+    bbgm.bulk_execute(sql, 'bbgm_%s' % (g.league_id,))
 
     # Generate new players
     profiles = ['Point', 'Wing', 'Big', '']
@@ -67,7 +72,7 @@ def new(team_id):
 
             player_id += 1
 
-    bbgm.bulk_execute(sql)
+    bbgm.bulk_execute(sql, 'bbgm_%s' % (g.league_id,))
 
     # Set and get global game attributes
     g.db.execute('UPDATE %s_game_attributes SET team_id = %s', (g.league_id, team_id))
@@ -80,6 +85,9 @@ def new(team_id):
 
     # Auto sort player's roster (other teams will be done in season.new_phase(1))
     roster_auto_sort(g.user_team_id)
+
+    # Switch back to the default non-league database
+    g.db.execute('USE bbgm')
 
     return g.league_id
 

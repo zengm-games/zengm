@@ -27,9 +27,6 @@ def pull_league_id(endpoint, values):
 @app.route('/<int:league_id>')
 @league_crap
 def league_dashboard():
-    g.dbd.execute('SELECT team_id, region, name FROM teams ORDER BY team_id ASC')
-    teams = g.dbd.fetchall()
-
     return render_all_or_json('league_dashboard.html')
 
 @app.route('/<int:league_id>/leaders')

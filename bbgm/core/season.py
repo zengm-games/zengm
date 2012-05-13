@@ -101,7 +101,7 @@ def new_phase(phase):
                 roster_auto_sort(t)
 
     # Regular season, after trade deadline
-    elif phase == c.PHASE_REGULAR_SEASON_AFTER_TRADE_DEADLINE:
+    elif phase == c.PHASE_AFTER_TRADE_DEADLINE:
         phase_text = '%s regular season, after trade deadline' % (g.season,)
         pass
 

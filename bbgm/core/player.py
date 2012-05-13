@@ -8,6 +8,7 @@ from flask import g
 
 from bbgm import app
 from bbgm.util import fast_random
+import bbgm.util.const as c
 
 class Player:
     def load(self, player_id):
@@ -131,11 +132,11 @@ class Player:
 
         # During regular season, or before season starts, allow contracts for
         # just this year.
-        if g.phase > g.PHASE_AFTER_TRADE_DEADLINE:
+        if g.phase > c.PHASE_AFTER_TRADE_DEADLINE:
             expiration += 1
 
         g.db.execute('UPDATE player_attributes SET team_id = %s, contract_amount = %s, contract_expiration = %s,'
-                     ' free_agent_times_asked = 0 WHERE player_id = %s', (amount, c.PLAYER_FREE_AGENT, expiration, self.id))
+                     ' free_agent_times_asked = 0 WHERE player_id = %s', (c.PLAYER_FREE_AGENT, amount, expiration, self.id))
 
     def release(self):
         """Release player.

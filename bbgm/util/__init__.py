@@ -3,7 +3,7 @@ import random
 from flask import g
 
 from bbgm import app
-import bbgm.util.const as c
+import const as c
 
 def request_context_globals(league_id):
     """Call this within an app.test_request_context() to set other globals."""

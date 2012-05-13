@@ -62,9 +62,3 @@ INSERT INTO teams (team_id,division_id,region,name,abbreviation,season,won,lost,
 INSERT INTO teams (team_id,division_id,region,name,abbreviation,season,won,lost,cash) VALUES(27,0,'Toronto','Ravens','TOR',2012,0.0,0.0,10000000);
 INSERT INTO teams (team_id,division_id,region,name,abbreviation,season,won,lost,cash) VALUES(28,4,'Utah','Jugglers','UTA',2012,0.0,0.0,10000000);
 INSERT INTO teams (team_id,division_id,region,name,abbreviation,season,won,lost,cash) VALUES(29,2,'Washington','Witches','WAS',2012,0.0,0.0,10000000);
-
-CREATE TABLE enum_w_l (
-k INTEGER,
-v VARCHAR(1));
-INSERT INTO enum_w_l VALUES(0,'L');
-INSERT INTO enum_w_l VALUES(1,'W');

@@ -38,7 +38,7 @@ def new(player_id, resigning=False):
     g.db.execute('SELECT team_id FROM player_attributes WHERE player_id = %s', (player_id))
     if g.db.rowcount:
         team_id, = g.db.fetchone()
-        if team_id != -1:
+        if team_id != c.PLAYER_FREE_AGENT:
             return "Player %d is not a free agent." % (player_id,)
     else:
         return "Player %d does not exist." % (player_id,)

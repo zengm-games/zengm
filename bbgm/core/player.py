@@ -134,8 +134,8 @@ class Player:
         if g.phase > g.PHASE_AFTER_TRADE_DEADLINE:
             expiration += 1
 
-        g.db.execute('UPDATE player_attributes SET team_id = -1, contract_amount = %s, contract_expiration = %s,'
-                     ' free_agent_times_asked = 0 WHERE player_id = %s', (amount, expiration, self.id))
+        g.db.execute('UPDATE player_attributes SET team_id = %s, contract_amount = %s, contract_expiration = %s,'
+                     ' free_agent_times_asked = 0 WHERE player_id = %s', (amount, c.PLAYER_FREE_AGENT, expiration, self.id))
 
     def release(self):
         """Release player.

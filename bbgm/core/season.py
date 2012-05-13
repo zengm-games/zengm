@@ -136,7 +136,7 @@ def new_phase(phase):
         g.db.execute('DELETE FROM released_players_salaries WHERE contract_expiration <= %s', (g.season,))
 
         # Add a year to the free agents
-        g.db.execute('UPDATE player_attributes SET contract_expiration = contract_expiration + 1 WHERE team_id = -1')
+        g.db.execute('UPDATE player_attributes SET contract_expiration = contract_expiration + 1 WHERE team_id = %s', (c.PLAYER_FREE_AGENT,))
 
     # Draft
     elif phase == c.PHASE_DRAFT:
@@ -183,14 +183,14 @@ def new_phase(phase):
         lock.set_negotiation_in_progress(False)
 
         # Reset contract demands of current free agents
-        g.db.execute('SELECT player_id FROM player_attributes WHERE team_id = -1')
+        g.db.execute('SELECT player_id FROM player_attributes WHERE team_id = %s', (c.PLAYER_FREE_AGENT,))
         for player_id, in g.db.fetchall():
             p = player.Player()
             p.load(player_id)
             p.add_to_free_agents(phase)
 
         # Move undrafted players to free agent pool
-        g.db.execute('SELECT player_id FROM player_attributes WHERE team_id = -2')
+        g.db.execute('SELECT player_id FROM player_attributes WHERE team_id = %s', (c.PLAYER_UNDRAFTED,))
         for player_id, in g.db.fetchall():
             g.db.execute('UPDATE player_attributes SET draft_year = -1, draft_round = -1, draft_pick = -1, draft_team_id = -1 WHERE player_id = %s', (player_id,))
             p = player.Player()

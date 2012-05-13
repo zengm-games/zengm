@@ -13,7 +13,6 @@ def generate_players():
     sql = ''
     g.db.execute('SELECT MAX(player_id) + 1 FROM player_attributes')
     player_id, = g.db.fetchone()
-    team_id = -2  # -2 is the team_id for players generated for the draft
     for p in xrange(70):
         base_rating = random.randrange(0, 20)
         potential = int(random.gauss(45, 20))
@@ -28,7 +27,7 @@ def generate_players():
         aging_years = random.randrange(4)
         draft_year = g.season
 
-        gp.new(player_id, team_id, 19, profile, base_rating, potential, draft_year)
+        gp.new(player_id, c.PLAYER_UNDRAFTED, 19, profile, base_rating, potential, draft_year)
         gp.develop(aging_years)
 
         sql += gp.sql_insert()
@@ -38,7 +37,7 @@ def generate_players():
 
     # Update roster positions (so next/prev buttons work in player dialog)
     roster_position = 1
-    g.db.execute('SELECT pr.player_id FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = -2 AND pr.season = %s ORDER BY pr.overall + 2*pr.potential DESC', (g.season,))
+    g.db.execute('SELECT pr.player_id FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s AND pr.season = %s ORDER BY pr.overall + 2*pr.potential DESC', (c.PLAYER_UNDRAFTED, g.season))
     for player_id, in g.db.fetchall():
         g.db.execute('UPDATE player_ratings SET roster_position = %s WHERE player_id = %s AND season = %s', (roster_position, player_id, g.season))
         roster_position += 1
@@ -65,7 +64,7 @@ def until_user_or_end():
         if team_id == g.user_team_id:
             return player_ids
         team_pick = abs(int(random.gauss(0, 3)))  # 0=best prospect, 1=next best prospect, etc.
-        g.db.execute('SELECT pr.player_id FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = -2 AND pr.season = %s ORDER BY pr.overall + 2*pr.potential DESC LIMIT %s, 1', (g.season, team_pick))
+        g.db.execute('SELECT pr.player_id FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s AND pr.season = %s ORDER BY pr.overall + 2*pr.potential DESC LIMIT %s, 1', (c.PLAYER_UNDRAFTED, g.season, team_pick))
         player_id,= g.db.fetchone()
         pick_player(team_id, player_id)
         player_ids.append(player_id)
@@ -83,7 +82,7 @@ def pick_player(team_id, player_id):
         return
 
     # Draft player, update roster potision
-    g.db.execute('SELECT pa.name, pa.position, pa.born_date, pr.overall, pr.potential FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = -2 AND pr.player_id = %s AND pr.season = %s', (player_id, g.season))
+    g.db.execute('SELECT pa.name, pa.position, pa.born_date, pr.overall, pr.potential FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s AND pr.player_id = %s AND pr.season = %s', (c.PLAYER_UNDRAFTED, player_id, g.season))
     name, position, born_date, overall, potential = g.db.fetchone()
     g.db.execute('SELECT MAX(pr.roster_position) + 1 FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s AND pr.season = %s', (team_id, g.season))
     roster_position, = g.db.fetchone()

@@ -238,7 +238,7 @@ def free_agents():
         error = "You're not allowed to sign free agents now."
         return render_all_or_json('league_error.html', {'error': error})
 
-    g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, AVG(ps.minutes) as minutes, AVG(ps.points) as points, AVG(ps.offensive_rebounds + ps.defensive_rebounds) as rebounds, AVG(ps.assists) as assists, pa.contract_amount/1000.0*(1+pa.free_agent_times_asked/10) as contract_amount, pa.contract_expiration FROM player_attributes as pa LEFT OUTER JOIN player_ratings as pr ON pr.season = %s AND pa.player_id = pr.player_id LEFT OUTER JOIN player_stats as ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE pa.team_id = -1 GROUP BY pa.player_id', (g.season, g.season, g.season))
+    g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, AVG(ps.minutes) as minutes, AVG(ps.points) as points, AVG(ps.offensive_rebounds + ps.defensive_rebounds) as rebounds, AVG(ps.assists) as assists, pa.contract_amount/1000.0*(1+pa.free_agent_times_asked/10) as contract_amount, pa.contract_expiration FROM player_attributes as pa LEFT OUTER JOIN player_ratings as pr ON pr.season = %s AND pa.player_id = pr.player_id LEFT OUTER JOIN player_stats as ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE pa.team_id = %s GROUP BY pa.player_id', (g.season, g.season, g.season, c.PLAYER_FREE_AGENT))
 
     players = g.dbd.fetchall()
 
@@ -264,7 +264,7 @@ def draft_(view_season=None):
 
     # Active draft
     if g.phase == c.PHASE_DRAFT and view_season == g.season:
-        g.dbd.execute('SELECT pa.player_id, pa.position, pa.name, %s - pa.born_date as age, pr.overall, pr.potential FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = -2 AND pr.season = %s ORDER BY pr.overall + 2*pr.potential DESC', (g.season, g.season))
+        g.dbd.execute('SELECT pa.player_id, pa.position, pa.name, %s - pa.born_date as age, pr.overall, pr.potential FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s AND pr.season = %s ORDER BY pr.overall + 2*pr.potential DESC', (g.season, c.PLAYER_UNDRAFTED, g.season))
         undrafted = g.dbd.fetchall()
 
         g.dbd.execute('SELECT draft_round, pick, abbreviation, player_id, name, %s - born_date as age, position, overall, potential FROM draft_results WHERE season =  %s ORDER BY draft_round, pick ASC', (g.season, g.season))
@@ -398,7 +398,7 @@ def negotiation_list(player_id=None):
         error = "Something bad happened."
         return render_all_or_json('league_error.html', {'error': error})
 
-    g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, AVG(ps.minutes) as minutes, AVG(ps.points) as points, AVG(ps.offensive_rebounds + ps.defensive_rebounds) as rebounds, AVG(ps.assists) as assists, pa.contract_amount/1000.0*(1+pa.free_agent_times_asked/10) as contract_amount, pa.contract_expiration FROM player_attributes as pa LEFT OUTER JOIN negotiation as n ON pa.player_id = n.player_id LEFT OUTER JOIN player_ratings as pr ON pr.season = %s AND pa.player_id = pr.player_id LEFT OUTER JOIN player_stats as ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE pa.team_id = -1 AND n.resigning = 1 GROUP BY pa.player_id', (g.season, g.season, g.season))
+    g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, AVG(ps.minutes) as minutes, AVG(ps.points) as points, AVG(ps.offensive_rebounds + ps.defensive_rebounds) as rebounds, AVG(ps.assists) as assists, pa.contract_amount/1000.0*(1+pa.free_agent_times_asked/10) as contract_amount, pa.contract_expiration FROM player_attributes as pa LEFT OUTER JOIN negotiation as n ON pa.player_id = n.player_id LEFT OUTER JOIN player_ratings as pr ON pr.season = %s AND pa.player_id = pr.player_id LEFT OUTER JOIN player_stats as ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE pa.team_id = %s AND n.resigning = 1 GROUP BY pa.player_id', (g.season, g.season, g.season, c.PLAYER_FREE_AGENT))
 
     players = g.dbd.fetchall()
 

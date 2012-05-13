@@ -3,11 +3,11 @@
 On new season, don't update ratings for retired players
 - in player view for retired players, either don't show ratings, or show ratings from best year
 
-show ratings of old years in roster view
-
 create constants for numbers (phases, freeagent/retired/whatever)
 
 BUG: "contract negotiation in progress" status appears in offseason
+
+BUG: no roster size limit seems to be applied against AI teams
 
 database crap
 - optimize

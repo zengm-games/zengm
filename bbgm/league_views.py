@@ -316,8 +316,6 @@ def roster(abbreviation=None, view_season=None):
     view_season = validate_season(view_season)
     seasons = get_seasons()
 
-    # Used to calculate how much is remaining on a player's contract
-#    contract_amount, contract_expiration = common.DB_CON.execute('SELECT contract_amount, contract_expiration FROM player_attributes WHERE player_id = ?', (player_id,)).fetchone()
     if team_id == g.user_team_id:
         g.db.execute('SELECT COUNT(*) FROM team_stats WHERE team_id = %s AND season = %s AND is_playoffs = 0', (g.user_team_id, g.season))
         n_games_remaining, = g.db.fetchone()

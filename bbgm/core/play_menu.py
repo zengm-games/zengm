@@ -5,6 +5,7 @@ from flask import url_for, g, render_template
 
 from bbgm import app
 from bbgm.util import lock
+import bbgm.util.const as c
 
 jug = Juggernaut()
 
@@ -37,38 +38,38 @@ def options(keys=None):
 
     if not keys:
         # Preseason
-        if g.phase == 0:
+        if g.phase == c.PHASE_PRESEASON:
             keys = ['until_regular_season']
         # Regular season - pre trading deadline
-        elif g.phase == 1:
+        elif g.phase == c.PHASE_REGULAR_SEASON:
             keys = ['day', 'week', 'month', 'until_playoffs']
         # Regular season - post trading deadline
-        elif g.phase == 2:
+        elif g.phase == c.PHASE_AFTER_TRADE_DEADLINE:
             keys = ['day', 'week', 'month', 'until_playoffs']
         # Playoffs
-        elif g.phase == 3:
+        elif g.phase == c.PHASE_PLAYOFFS:
             keys = ['day', 'week', 'month', 'through_playoffs']
         # Offseason - pre draft
-        elif g.phase == 4:
+        elif g.phase == c.PHASE_BEFORE_DRAFT:
             keys = ['until_draft']
         # Draft
-        elif g.phase == 5:
+        elif g.phase == c.PHASE_DRAFT:
             keys = ['view_draft']
         # Offseason - post draft
-        elif g.phase == 6:
+        elif g.phase == c.PHASE_AFTER_DRAFT:
             keys = ['until_resign_players']
         # Offseason - resign players
-        elif g.phase == 7:
+        elif g.phase == c.PHASE_RESIGN_PLAYERS:
             keys = ['contract_negotiation_list', 'until_free_agency']
         # Offseason - free agency
-        elif g.phase == 8:
+        elif g.phase == c.PHASE_FREE_AGENCY:
             keys = ['until_preseason']
 
         if lock.games_in_progress():
             keys = ['stop']
         if lock.trade_in_progress():
             keys = ['trade']
-        if lock.negotiation_in_progress() and g.phase != 7:
+        if lock.negotiation_in_progress() and g.phase != c.PHASE_RESIGN_PLAYERS:
             keys = ['contract_negotiation']
 
     # This code is very ugly. Basically I just want to filter all_options into

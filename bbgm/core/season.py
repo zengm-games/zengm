@@ -7,6 +7,7 @@ import bbgm
 from bbgm import app
 from bbgm.core import contract_negotiation, play_menu, player
 from bbgm.util import free_agents_auto_sign, lock, roster_auto_sort
+import bbgm.util.const as c
 
 def new_phase(phase):
     """Set a new phase of the game.
@@ -34,7 +35,7 @@ def new_phase(phase):
         return
 
     # Preseason
-    if phase == 0:
+    if phase == c.PHASE_PRESEASON:
         g.season += 1
         g.db.execute('UPDATE game_attributes SET season = season + 1')
         phase_text = '%s preseason' % (g.season,)
@@ -67,7 +68,7 @@ def new_phase(phase):
         free_agents_auto_sign()
 
     # Regular season, before trade deadline
-    elif phase == 1:
+    elif phase == c.PHASE_REGULAR_SEASON:
         phase_text = '%s regular season' % (g.season,)
         # First, make sure teams are all within the roster limits
         # CPU teams
@@ -100,12 +101,12 @@ def new_phase(phase):
                 roster_auto_sort(t)
 
     # Regular season, after trade deadline
-    elif phase == 2:
+    elif phase == c.PHASE_REGULAR_SEASON_AFTER_TRADE_DEADLINE:
         phase_text = '%s regular season, after trade deadline' % (g.season,)
         pass
 
     # Playoffs
-    elif phase == 3:
+    elif phase == c.PHASE_PLAYOFFS:
         phase_text = '%s playoffs' % (g.season,)
 
         # Select winners of the season's awards
@@ -129,7 +130,7 @@ def new_phase(phase):
             g.db.execute(query, (conference_id * 4 + 4, teams[1], teams[6], 2, 7))
 
     # Offseason, before draft
-    elif phase == 4:
+    elif phase == c.PHASE_BEFORE_DRAFT:
         phase_text = '%s before draft' % (g.season,)
         # Remove released players' salaries from payrolls
         g.db.execute('DELETE FROM released_players_salaries WHERE contract_expiration <= %s', (g.season,))
@@ -138,15 +139,15 @@ def new_phase(phase):
         g.db.execute('UPDATE player_attributes SET contract_expiration = contract_expiration + 1 WHERE team_id = -1')
 
     # Draft
-    elif phase == 5:
+    elif phase == c.PHASE_DRAFT:
         phase_text = '%s draft' % (g.season,)
 
     # Offseason, after draft
-    elif phase == 6:
+    elif phase == c.PHASE_AFTER_DRAFT:
         phase_text = '%s after draft' % (g.season,)
 
     # Offseason, resign players
-    elif phase == 7:
+    elif phase == c.PHASE_RESIGN_PLAYERS:
         phase_text = '%s resign players' % (g.season,)
 
         # Check for retiring players
@@ -174,7 +175,7 @@ def new_phase(phase):
                     app.logger.debug(error)
 
     # Offseason, free agency
-    elif phase == 8:
+    elif phase == c.PHASE_FREE_AGENCY:
         phase_text = '%s free agency' % (g.season,)
 
         # Delete all current negotiations to resign players
@@ -337,7 +338,7 @@ def new_schedule_playoffs_day():
 
         # Are the whole playoffs over?
         if current_round == 4:
-            new_phase(4)
+            new_phase(c.PHASE_BEFORE_DRAFT)
 
         # Add a new round to the database
         series_id = 1

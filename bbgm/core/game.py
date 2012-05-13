@@ -10,7 +10,7 @@ from flask import g, url_for
 from bbgm import app
 from bbgm.core import game_sim, season, play_menu
 from bbgm.util import free_agents_auto_sign, free_agents_decrease_demands, lock, fast_random, request_context_globals
-
+import bbgm.util.const as c
 
 class Game:
     def load(self, results, is_playoffs):
@@ -258,12 +258,12 @@ def play(num_days, start=False):
         # continue even if stop_games was just seen
         if start or not stop_games:
             # Check if it's the playoffs and do some special stuff if it is or isn't
-            if g.phase == 3:
+            if g.phase == c.PHASE_PLAYOFFS:
                 num_active_teams = season.new_schedule_playoffs_day()
 
                 # If season.new_schedule_playoffs_day didn't move the phase to 4, then
                 # the playoffs are still happening.
-                if g.phase == 3:
+                if g.phase == c.PHASE_PLAYOFFS:
                     playoffs_continue = True
             else:
                 num_active_teams = g.num_teams
@@ -297,8 +297,8 @@ def play(num_days, start=False):
         play_menu.refresh_options()
         # Check to see if the season is over
         g.db.execute('SELECT game_id FROM schedule LIMIT 1')
-        if g.db.rowcount == 0 and g.phase < 3:
-            season.new_phase(3)  # Start playoffs
+        if g.db.rowcount == 0 and g.phase < c.PHASE_PLAYOFFS:
+            season.new_phase(c.PHASE_PLAYOFFS)  # Start playoffs
             url = url_for('history', league_id=g.league_id)
 
     return teams, schedule, playoffs_continue, url

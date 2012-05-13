@@ -5,6 +5,7 @@ from flask import session, g
 import bbgm
 from bbgm import app
 from bbgm.core import player, season
+import bbgm.util.const as c
 
 def generate_players():
     profiles = ['Point', 'Wing', 'Big', 'Big', '']
@@ -105,6 +106,6 @@ def pick_player(team_id, player_id):
     # Is draft over?
     g.db.execute('SELECT 1 FROM draft_results WHERE season = %s AND player_id = 0', (g.season))
     if g.db.rowcount == 0:
-        season.new_phase(6)
+        season.new_phase(c.PHASE_AFTER_DRAFT)
 
     return player_id

@@ -10,6 +10,7 @@ from bbgm import app
 from bbgm.core import draft, game, contract_negotiation, play_menu, player, season
 from bbgm.util import get_payroll, get_seasons, lock, roster_auto_sort
 from bbgm.util.decorators import league_crap, league_crap_ajax
+import bbgm.util.const as c
 
 # All the views in here are for within a league.
 
@@ -141,25 +142,25 @@ def play(amount):
         lock.set_games_in_progress(False)
         play_menu.refresh_options()
     elif amount == 'until_draft':
-        if g.phase == 4:
-            season.new_phase(5)
+        if g.phase == c.PHASE_BEFORE_DRAFT:
+            season.new_phase(c.PHASE_DRAFT)
             draft.generate_players()
             draft.set_order()
         url = url_for('draft_', league_id=g.league_id)
     elif amount == 'until_resign_players':
-        if g.phase == 6:
-            season.new_phase(7)
+        if g.phase == c.PHASE_AFTER_DRAFT:
+            season.new_phase(c.PHASE_RESIGN_PLAYERS)
         url = url_for('negotiation_list', league_id=g.league_id)
     elif amount == 'until_free_agency':
-        if g.phase == 7:
-            season.new_phase(8)
+        if g.phase == c.PHASE_RESIGN_PLAYERS:
+            season.new_phase(c.PHASE_FREE_AGENCY)
         url = url_for('free_agents', league_id=g.league_id)
     elif amount == 'until_preseason':
-        if g.phase == 8:
-            season.new_phase(0)
+        if g.phase == c.PHASE_FREE_AGENCY:
+            season.new_phase(c.PHASE_PRESEASON)
     elif amount == 'until_regular_season':
-        if g.phase == 0:
-            error = season.new_phase(1)
+        if g.phase == c.PHASE_PRESEASON:
+            error = season.new_phase(c.PHASE_REGULAR_SEASON)
 
     return jsonify(url=url, error=error, num_days=num_days, schedule=schedule, teams=teams, playoffs_continue=playoffs_continue)
 
@@ -169,7 +170,7 @@ def save_results():
     """Record a day's game simulations."""
     results = json.loads(request.form['results'])
     for result in results:
-        game.save_results(result, g.phase == 3)
+        game.save_results(result, g.phase == c.PHASE_PLAYOFFS)
     return 'fuck'
 
 @app.route('/<int:league_id>/schedule')
@@ -233,7 +234,7 @@ def finances():
 @app.route('/<int:league_id>/free_agents')
 @league_crap
 def free_agents():
-    if g.phase >= 2 and g.phase <= 7:
+    if g.phase >= c.PHASE_AFTER_TRADE_DEADLINE and g.phase <= c.PHASE_RESIGN_PLAYERS:
         error = "You're not allowed to sign free agents now."
         return render_all_or_json('league_error.html', {'error': error})
 
@@ -251,18 +252,18 @@ def draft_(view_season=None):
     seasons = get_seasons()
 
     # Draft hasn't happened yet this year
-    if g.phase < 5:
+    if g.phase < c.PHASE_DRAFT:
         # View last season by default
         if view_season == g.season:
             view_season -= 1
         seasons.remove(g.season)  # Don't show this season as an option
 
-    if g.phase < 5 and view_season < g.starting_season:
+    if g.phase < c.PHASE_DRAFT and view_season < g.starting_season:
         error = "There is no draft history yet. Check back after the season."
         return render_all_or_json('league_error.html', {'error': error})
 
     # Active draft
-    if g.phase == 5 and view_season == g.season:
+    if g.phase == c.PHASE_DRAFT and view_season == g.season:
         g.dbd.execute('SELECT pa.player_id, pa.position, pa.name, %s - pa.born_date as age, pr.overall, pr.potential FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = -2 AND pr.season = %s ORDER BY pr.overall + 2*pr.potential DESC', (g.season, g.season))
         undrafted = g.dbd.fetchall()
 
@@ -284,7 +285,7 @@ def history(view_season=None):
     seasons = get_seasons()
 
     # If this season isn't over...
-    if g.phase < 3:
+    if g.phase < c.PHASE_PLAYOFFS:
         # View last season by default
         if view_season == g.season:
             view_season -= 1
@@ -393,7 +394,7 @@ def negotiation_list(player_id=None):
         player_id, = g.db.fetchone()
         return redirect_or_json('negotiation', {'player_id': player_id})
 
-    if g.phase != 7:
+    if g.phase != c.PHASE_RESIGN_PLAYERS:
         error = "Something bad happened."
         return render_all_or_json('league_error.html', {'error': error})
 
@@ -435,7 +436,7 @@ def negotiation(player_id):
     team_amount /= 1000.0
     player_expiration = player_years + g.season
     # Adjust to account for in-season signings
-    if g.phase <= 2:
+    if g.phase <= c.PHASE_AFTER_TRADE_DEADLINE:
         player_expiration -= 1
 
     g.dbd.execute('SELECT pa.player_id, pa.name, pr.overall, pr.potential FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.player_id = %s AND pr.season = %s', (player_id, g.season))
@@ -511,7 +512,7 @@ def draft_until_user_or_end():
     player_ids = draft.until_user_or_end()
 
     done = False
-    if g.phase == 6:
+    if g.phase == c.PHASE_AFTER_DRAFT:
         done = True
 
     return jsonify(player_ids=player_ids, done=done)

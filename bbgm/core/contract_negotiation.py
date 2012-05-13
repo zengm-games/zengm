@@ -5,6 +5,7 @@ from flask import g
 from bbgm import app
 from bbgm.core import play_menu
 from bbgm.util import get_payroll, lock
+import bbgm.util.const as c
 
 def new(player_id, resigning=False):
     """Start a new contract negotiation with player.
@@ -26,7 +27,7 @@ def new(player_id, resigning=False):
     else:
         resigning = False
 
-    if (g.phase >= 2 and g.phase <= 6) and not resigning:
+    if (g.phase >= c.PHASE_AFTER_TRADE_DEADLINE and g.phase <= c.PHASE_AFTER_DRAFT) and not resigning:
         return "You're not allowed to sign free agents now."
     g.db.execute('SELECT COUNT(*) FROM player_attributes WHERE team_id = %s', (g.user_team_id))
     num_players_on_roster, = g.db.fetchone()
@@ -47,7 +48,7 @@ def new(player_id, resigning=False):
     player_amount, expiration = g.db.fetchone()
     player_years = expiration - g.season
     # Adjust to account for in-season signings
-    if g.phase <= 2:
+    if g.phase <= c.PHASE_AFTER_TRADE_DEADLINE:
         player_years += 1
 
     max_offers = random.randint(1, 5)
@@ -126,7 +127,7 @@ def accept(player_id):
         return 'This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract, buy out a player currently on your roster, or cancel the negotiation.'
 
     # Adjust to account for in-season signings
-    if g.phase <= 2:
+    if g.phase <= c.PHASE_AFTER_TRADE_DEADLINE:
         player_years -= 1
 
     g.db.execute('UPDATE player_attributes SET team_id = %s, contract_amount = %s, contract_expiration = %s WHERE player_id = %s', (g.user_team_id, player_amount, g.season + player_years, player_id))

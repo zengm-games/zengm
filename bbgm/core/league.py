@@ -6,6 +6,7 @@ import bbgm
 from bbgm import app
 from bbgm.core import play_menu, player, season
 from bbgm.util import roster_auto_sort
+import bbgm.util.const as c
 
 def new(team_id):
     # Add to main record
@@ -80,10 +81,10 @@ def new(team_id):
     g.user_team_id, g.season, g.phase, g.version = g.db.fetchone()
 
     # Make schedule, start season
-    season.new_phase(1)
+    season.new_phase(c.PHASE_REGULAR_SEASON)
     play_menu.set_status('Idle')
 
-    # Auto sort player's roster (other teams will be done in season.new_phase(1))
+    # Auto sort player's roster (other teams will be done in season.new_phase(c.PHASE_REGULAR_SEASON))
     roster_auto_sort(g.user_team_id)
 
     # Switch back to the default non-league database

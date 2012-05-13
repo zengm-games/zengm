@@ -131,7 +131,7 @@ class Player:
 
         # During regular season, or before season starts, allow contracts for
         # just this year.
-        if g.phase > 2:
+        if g.phase > g.PHASE_AFTER_TRADE_DEADLINE:
             expiration += 1
 
         g.db.execute('UPDATE player_attributes SET team_id = -1, contract_amount = %s, contract_expiration = %s,'

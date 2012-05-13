@@ -1,16 +1,21 @@
 # To acquire parity with the GTK version and be good enough to share:
 
 database crap
-- why is it so slow, and so disk thrashy?
+- optimize
+  - why is it so slow, and so disk thrashy?
 - redo schema
   - separate dbs for leagues
     - grep -R --include="*.py" '%s_' .
     - 1. Use separate DBs but keep everything else (including table names) in place
     - what user permissions do i need, exactly? update README
+    - how will the dashboard work now?
   - new column names
   - team_attributes should be created in league.sql
+    - any drawback? was anything using the teams table?
   - ratings added every year for active players
   - normalize (especially the drafted table)
+  - get rid of INSERTS in .sql file, instead have data elsewhere
+  - get rid of weird tables, replace with a key-value store table
 
 get rid of subprocess in __init__.py, somehow?
 

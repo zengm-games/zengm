@@ -20,7 +20,7 @@ def new(team_id):
     g.db.execute('USE bbgm_%s', (g.league_id,))
 
     # Copy team attributes table
-#    g.db.execute('CREATE TABLE %s_team_attributes SELECT * FROM teams', (g.league_id,))
+    g.db.execute('CREATE TABLE %s_team_attributes SELECT * FROM bbgm.teams', (g.league_id,))
 
     # Create other new tables
     f = app.open_resource('data/league.sql')

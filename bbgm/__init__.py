@@ -67,9 +67,20 @@ def bulk_execute(sql, db=None):
 #    print stderrdata
 
 def init_db():
-    # Delete any current tables in database
-    process = subprocess.Popen('mysqldump -u%s -p%s --add-drop-table %s | grep ^DROP | mysql -u%s -p%s %s' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD'], app.config['DB'], app.config['DB_USERNAME'], app.config['DB_PASSWORD'], app.config['DB']), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-    stdoutdata, stderrdata = process.communicate()
+    g.db_conn = connect_db()
+    g.db = g.db_conn.cursor()
+
+    # Delete any current bbgm databases
+    g.db.execute("SHOW DATABASES LIKE 'bbgm%'")
+    for database, in g.db.fetchall():
+        print database
+#        g.db.execute('DROP DATABASE %s', (database,))
+        g.db.execute('DROP DATABASE %s' % (database,))
+
+    # Create new database
+    g.db.execute('CREATE DATABASE bbgm')
+    g.db.execute('GRANT ALL ON bbgm.* TO %s@localhost IDENTIFIED BY \'%s\'' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
+    g.db.execute('USE bbgm')
 
     # Create new tables
     f = app.open_resource('data/core.sql')

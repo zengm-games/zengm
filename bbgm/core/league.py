@@ -20,7 +20,7 @@ def new(team_id):
     g.db.execute('USE bbgm_%s', (g.league_id,))
 
     # Copy team attributes table
-    g.db.execute('CREATE TABLE %s_team_attributes SELECT * FROM bbgm.teams', (g.league_id,))
+    g.db.execute('CREATE TABLE team_attributes SELECT * FROM bbgm.teams')
 
     # Create other new tables
     f = app.open_resource('data/league.sql')
@@ -28,9 +28,9 @@ def new(team_id):
     for line in f:
         sql += line
 
-    sql = sql.replace('CREATE TABLE ', 'CREATE TABLE ' + str(g.league_id) + '_')
-    sql = sql.replace('INSERT INTO ', 'INSERT INTO ' + str(g.league_id) + '_')
-    sql = sql.replace(' ON ', ' ON ' + str(g.league_id) + '_')
+#    sql = sql.replace('CREATE TABLE ', 'CREATE TABLE ' + str(g.league_id) + '_')
+#    sql = sql.replace('INSERT INTO ', 'INSERT INTO ' + str(g.league_id) + '_')
+#    sql = sql.replace(' ON ', ' ON ' + str(g.league_id) + '_')
 
     bbgm.bulk_execute(sql, 'bbgm_%s' % (g.league_id,))
 
@@ -75,8 +75,8 @@ def new(team_id):
     bbgm.bulk_execute(sql, 'bbgm_%s' % (g.league_id,))
 
     # Set and get global game attributes
-    g.db.execute('UPDATE %s_game_attributes SET team_id = %s', (g.league_id, team_id))
-    g.db.execute('SELECT team_id, season, phase, version FROM %s_game_attributes LIMIT 1', (g.league_id,))
+    g.db.execute('UPDATE game_attributes SET team_id = %s', (team_id,))
+    g.db.execute('SELECT team_id, season, phase, version FROM game_attributes LIMIT 1')
     g.user_team_id, g.season, g.phase, g.version = g.db.fetchone()
 
     # Make schedule, start season
@@ -92,8 +92,5 @@ def new(team_id):
     return g.league_id
 
 def delete(league_id):
-    g.db.execute("DELETE FROM leagues WHERE league_id = %s", (league_id,))
-    tables = ['active_playoff_series', 'game_attributes', 'league_conferences', 'league_divisions', 'player_attributes', 'player_ratings', 'player_stats', 'released_players_salaries', 'team_attributes', 'team_stats', 'draft_results', 'negotiation', 'trade']
-    for table in tables:
-        g.db.execute("DROP TABLE %s_%s" % (league_id, table))
+    pass
 

@@ -57,10 +57,10 @@ def leaders(view_season=None):
         # I have to insert the cateogry using string formatting because
         # otherwise it mangles the syntax. But it's okay, cols is defined just a
         # few lines up. Nothing malicious there.
-        g.dbd.execute('SELECT pa.player_id, pa.name, ta.abbreviation, AVG(%s) as stat FROM %s_player_attributes as pa, %s_player_stats as ps, %s_team_attributes as ta WHERE pa.player_id = ps.player_id AND ps.season = %s AND ps.is_playoffs = 0 AND ta.team_id = pa.team_id AND ta.season = ps.season GROUP BY ps.player_id ORDER BY AVG(%s) DESC LIMIT 10' % (cols[i], '%s', '%s', '%s', '%s', cols[i]), (g.league_id, g.league_id, g.league_id, view_season))
+        g.dbd.execute('SELECT pa.player_id, pa.name, ta.abbreviation, AVG(%s) as stat FROM player_attributes as pa, player_stats as ps, team_attributes as ta WHERE pa.player_id = ps.player_id AND ps.season = %s AND ps.is_playoffs = 0 AND ta.team_id = pa.team_id AND ta.season = ps.season GROUP BY ps.player_id ORDER BY AVG(%s) DESC LIMIT 10' % (cols[i], '%s', cols[i]), (view_season))
         categories[i]['data'] = g.dbd.fetchall()
 
-    g.db.execute('SELECT abbreviation FROM %s_team_attributes WHERE team_id = %s AND season = %s', (g.league_id, g.user_team_id, view_season))
+    g.db.execute('SELECT abbreviation FROM team_attributes WHERE team_id = %s AND season = %s', (g.user_team_id, view_season))
     user_abbreviation, = g.db.fetchone()
 
     return render_all_or_json('leaders.html', {'categories': categories, 'user_abbreviation': user_abbreviation, 'seasons': seasons, 'view_season': view_season})
@@ -68,7 +68,7 @@ def leaders(view_season=None):
 @app.route('/<int:league_id>/player_ratings')
 @league_crap
 def player_ratings():
-    g.dbd.execute('SELECT pa.player_id, pa.team_id, pa.name, (SELECT abbreviation FROM %s_team_attributes WHERE team_id = pa.team_id AND season = %s) as abbreviation, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, pr.height, pr.strength, pr.speed, pr.jumping, pr.endurance, pr.shooting_inside, pr.shooting_layups, pr.shooting_free_throws, pr.shooting_two_pointers, pr.shooting_three_pointers, pr.blocks, pr.steals, pr.dribbling, pr.passing, pr.rebounding FROM %s_player_attributes as pa, %s_player_ratings as pr WHERE pa.player_id = pr.player_id', (g.league_id, g.season, g.season, g.league_id, g.league_id))
+    g.dbd.execute('SELECT pa.player_id, pa.team_id, pa.name, (SELECT abbreviation FROM team_attributes WHERE team_id = pa.team_id AND season = %s) as abbreviation, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, pr.height, pr.strength, pr.speed, pr.jumping, pr.endurance, pr.shooting_inside, pr.shooting_layups, pr.shooting_free_throws, pr.shooting_two_pointers, pr.shooting_three_pointers, pr.blocks, pr.steals, pr.dribbling, pr.passing, pr.rebounding FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id', (g.season, g.season))
     players = g.dbd.fetchall()
 
     return render_all_or_json('player_ratings.html', {'players': players})
@@ -80,7 +80,7 @@ def player_stats(view_season=None):
     view_season = validate_season(view_season)
     seasons = get_seasons()
 
-    g.dbd.execute('SELECT pa.player_id, pa.team_id, pa.name, ta.abbreviation, pa.position, SUM(ps.minutes>0) AS games_played, SUM(ps.starter) AS games_started, AVG(ps.minutes) AS minutes, AVG(ps.field_goals_made) AS field_goals_made, AVG(ps.field_goals_attempted) AS field_goals_attempted, 100*AVG(ps.field_goals_made/ps.field_goals_attempted) AS field_goal_percentage, AVG(ps.three_pointers_made) AS three_pointers_made, AVG(ps.three_pointers_attempted) AS three_pointers_attempted, 100*AVG(ps.three_pointers_made/ps.three_pointers_attempted) AS three_point_percentage, AVG(ps.free_throws_made) AS free_throws_made, AVG(ps.free_throws_attempted) AS free_throws_attempted, 100*AVG(ps.free_throws_made/ps.free_throws_attempted) AS free_throw_percentage, AVG(ps.offensive_rebounds) AS offensive_rebounds, AVG(ps.defensive_rebounds) AS defensive_rebounds, AVG(ps.offensive_rebounds+ps.defensive_rebounds) AS rebounds, AVG(ps.assists) AS assists, AVG(ps.turnovers) AS turnovers, AVG(ps.steals) AS steals, AVG(ps.blocks) AS blocks, AVG(ps.personal_fouls) AS personal_fouls, AVG(ps.points) AS points FROM %s_player_attributes as pa, %s_player_stats as ps, %s_team_attributes as ta WHERE pa.player_id = ps.player_id AND ps.season = %s AND ps.is_playoffs = 0 AND ta.team_id = pa.team_id AND ta.season = ps.season GROUP BY ps.player_id', (g.league_id, g.league_id, g.league_id, view_season))
+    g.dbd.execute('SELECT pa.player_id, pa.team_id, pa.name, ta.abbreviation, pa.position, SUM(ps.minutes>0) AS games_played, SUM(ps.starter) AS games_started, AVG(ps.minutes) AS minutes, AVG(ps.field_goals_made) AS field_goals_made, AVG(ps.field_goals_attempted) AS field_goals_attempted, 100*AVG(ps.field_goals_made/ps.field_goals_attempted) AS field_goal_percentage, AVG(ps.three_pointers_made) AS three_pointers_made, AVG(ps.three_pointers_attempted) AS three_pointers_attempted, 100*AVG(ps.three_pointers_made/ps.three_pointers_attempted) AS three_point_percentage, AVG(ps.free_throws_made) AS free_throws_made, AVG(ps.free_throws_attempted) AS free_throws_attempted, 100*AVG(ps.free_throws_made/ps.free_throws_attempted) AS free_throw_percentage, AVG(ps.offensive_rebounds) AS offensive_rebounds, AVG(ps.defensive_rebounds) AS defensive_rebounds, AVG(ps.offensive_rebounds+ps.defensive_rebounds) AS rebounds, AVG(ps.assists) AS assists, AVG(ps.turnovers) AS turnovers, AVG(ps.steals) AS steals, AVG(ps.blocks) AS blocks, AVG(ps.personal_fouls) AS personal_fouls, AVG(ps.points) AS points FROM player_attributes as pa, player_stats as ps, team_attributes as ta WHERE pa.player_id = ps.player_id AND ps.season = %s AND ps.is_playoffs = 0 AND ta.team_id = pa.team_id AND ta.season = ps.season GROUP BY ps.player_id', (view_season))
     players = g.dbd.fetchall()
 
     # Don't pass blank values where floats are expected by the template
@@ -121,7 +121,7 @@ def play(amount):
         elif amount == 'month':
             num_days = 30
         elif amount == 'until_playoffs':
-            g.db.execute('SELECT COUNT(*)/%s FROM %s_team_stats WHERE season = %s', (g.num_teams, g.league_id, g.season))
+            g.db.execute('SELECT COUNT(*)/%s FROM team_stats WHERE season = %s', (g.num_teams, g.season))
             row = g.db.fetchone()
             num_days = int(g.season_length - row[0])  # Number of days remaining
         elif amount == 'through_playoffs':
@@ -129,8 +129,8 @@ def play(amount):
 
         teams, schedule, playoffs_continue, url = game.play(num_days, start)
     elif amount == 'stop':
-        g.db.execute('UPDATE %s_game_attributes SET stop_games = 1 WHERE season = %s', (g.league_id, g.season))
-        g.db.execute('UPDATE %s_schedule SET in_progress_timestamp = 0', (g.league_id,))
+        g.db.execute('UPDATE game_attributes SET stop_games = 1 WHERE season = %s', (g.season))
+        g.db.execute('UPDATE schedule SET in_progress_timestamp = 0')
 
         # This is needed because we can't be sure if bbgm.core.game.play will be called again
         play_menu.set_status('Idle')
@@ -179,7 +179,7 @@ def schedule():
         if g.user_team_id in team_ids:
             games.append([])
             for team_id in team_ids:
-                g.dbd.execute('SELECT team_id, abbreviation, region, name FROM %s_team_attributes WHERE team_id = %s', (g.league_id, team_id))
+                g.dbd.execute('SELECT team_id, abbreviation, region, name FROM team_attributes WHERE team_id = %s', (team_id))
                 row = g.dbd.fetchone()
                 games[-1].append(row)
 
@@ -193,15 +193,15 @@ def standings(view_season=None):
     seasons = get_seasons()
 
     conferences = []
-    g.db.execute('SELECT conference_id, name FROM %s_league_conferences ORDER BY conference_id ASC', (g.league_id,))
+    g.db.execute('SELECT conference_id, name FROM league_conferences ORDER BY conference_id ASC')
     for conference_id, conference_name in g.db.fetchall():
         conferences.append({'id': conference_id, 'name': conference_name, 'divisions': [], 'standings': ''})
-        g.dbd.execute('SELECT * FROM %s_team_attributes as ta WHERE ta.division_id IN (SELECT ld.division_id FROM %s_league_divisions as ld WHERE ld.conference_id = %s) AND season = %s ORDER BY won/(won+lost) DESC', (g.league_id, g.league_id, conference_id, view_season))
+        g.dbd.execute('SELECT * FROM team_attributes as ta WHERE ta.division_id IN (SELECT ld.division_id FROM league_divisions as ld WHERE ld.conference_id = %s) AND season = %s ORDER BY won/(won+lost) DESC', (conference_id, view_season))
         conferences[-1]['teams'] = g.dbd.fetchall()
 
-        g.db.execute('SELECT division_id, name FROM %s_league_divisions WHERE conference_id = %s ORDER BY name ASC', (g.league_id, conference_id))
+        g.db.execute('SELECT division_id, name FROM league_divisions WHERE conference_id = %s ORDER BY name ASC', (conference_id))
         for division_id, division_name in g.db.fetchall():
-            g.dbd.execute('SELECT * FROM %s_team_attributes WHERE division_id = %s AND season = %s ORDER BY won/(won+lost) DESC', (g.league_id, division_id, view_season))
+            g.dbd.execute('SELECT * FROM team_attributes WHERE division_id = %s AND season = %s ORDER BY won/(won+lost) DESC', (division_id, view_season))
             conferences[-1]['divisions'].append({'name': division_name})
             conferences[-1]['divisions'][-1]['teams'] = g.dbd.fetchall()
 
@@ -210,7 +210,7 @@ def standings(view_season=None):
 @app.route('/<int:league_id>/playoffs')
 @league_crap
 def playoffs():
-    g.dbd.execute('SELECT series_id, series_round, (SELECT name FROM %s_team_attributes WHERE team_id = aps.team_id_home AND season = %s) as name_home, (SELECT name FROM %s_team_attributes WHERE team_id = aps.team_id_away AND season = %s) as name_away, seed_home, seed_away, won_home, won_away FROM %s_active_playoff_series as aps ORDER BY series_round, series_id ASC', (g.league_id, g.season, g.league_id, g.season, g.league_id))
+    g.dbd.execute('SELECT series_id, series_round, (SELECT name FROM team_attributes WHERE team_id = aps.team_id_home AND season = %s) as name_home, (SELECT name FROM team_attributes WHERE team_id = aps.team_id_away AND season = %s) as name_away, seed_home, seed_away, won_home, won_away FROM active_playoff_series as aps ORDER BY series_round, series_id ASC', (g.season, g.season, g.league_id))
     series = [[], [], [], []] # First round, second round, third round, fourth round
     for s in g.dbd.fetchall():
         series[s['series_round']-1].append(s)
@@ -220,7 +220,7 @@ def playoffs():
 @app.route('/<int:league_id>/finances')
 @league_crap
 def finances():
-    g.dbd.execute('SELECT ta.team_id, ta.region, ta.name, ta.abbreviation, AVG(ts.attendance) AS attendance, SUM(ts.attendance)*%s / 1000000 AS revenue, (SUM(ts.attendance)*%s - SUM(ts.cost)) / 1000000 AS profit, ta.cash / 1000000 as cash, ((SELECT SUM(contract_amount) FROM %s_player_attributes as pa WHERE pa.team_id = ta.team_id) + (SELECT IFNULL(SUM(contract_amount),0) FROM %s_released_players_salaries as rps WHERE rps.team_id = ta.team_id)) / 1000 AS payroll FROM %s_team_attributes as ta LEFT OUTER JOIN %s_team_stats as ts ON ta.season = ts.season AND ta.team_id = ts.team_id WHERE ta.season = %s GROUP BY ta.team_id', (g.ticket_price, g.ticket_price, g.league_id, g.league_id, g.league_id, g.league_id, g.season))
+    g.dbd.execute('SELECT ta.team_id, ta.region, ta.name, ta.abbreviation, AVG(ts.attendance) AS attendance, SUM(ts.attendance)*%s / 1000000 AS revenue, (SUM(ts.attendance)*%s - SUM(ts.cost)) / 1000000 AS profit, ta.cash / 1000000 as cash, ((SELECT SUM(contract_amount) FROM player_attributes as pa WHERE pa.team_id = ta.team_id) + (SELECT IFNULL(SUM(contract_amount),0) FROM released_players_salaries as rps WHERE rps.team_id = ta.team_id)) / 1000 AS payroll FROM team_attributes as ta LEFT OUTER JOIN team_stats as ts ON ta.season = ts.season AND ta.team_id = ts.team_id WHERE ta.season = %s GROUP BY ta.team_id', (g.ticket_price, g.ticket_price, g.season))
 
     teams = g.dbd.fetchall()
 
@@ -233,7 +233,7 @@ def free_agents():
         error = "You're not allowed to sign free agents now."
         return render_all_or_json('league_error.html', {'error': error})
 
-    g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, AVG(ps.minutes) as minutes, AVG(ps.points) as points, AVG(ps.offensive_rebounds + ps.defensive_rebounds) as rebounds, AVG(ps.assists) as assists, pa.contract_amount/1000.0*(1+pa.free_agent_times_asked/10) as contract_amount, pa.contract_expiration FROM %s_player_attributes as pa LEFT OUTER JOIN %s_player_ratings as pr ON pa.player_id = pr.player_id LEFT OUTER JOIN %s_player_stats as ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE pa.team_id = -1 GROUP BY pa.player_id', (g.season, g.league_id, g.league_id, g.league_id, g.season))
+    g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, AVG(ps.minutes) as minutes, AVG(ps.points) as points, AVG(ps.offensive_rebounds + ps.defensive_rebounds) as rebounds, AVG(ps.assists) as assists, pa.contract_amount/1000.0*(1+pa.free_agent_times_asked/10) as contract_amount, pa.contract_expiration FROM player_attributes as pa LEFT OUTER JOIN player_ratings as pr ON pa.player_id = pr.player_id LEFT OUTER JOIN player_stats as ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE pa.team_id = -1 GROUP BY pa.player_id', (g.season, g.season))
 
     players = g.dbd.fetchall()
 
@@ -259,16 +259,16 @@ def draft_(view_season=None):
 
     # Active draft
     if g.phase == 5 and view_season == g.season:
-        g.dbd.execute('SELECT pa.player_id, pa.position, pa.name, %s - pa.born_date as age, pr.overall, pr.potential FROM %s_player_attributes as pa, %s_player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = -2 ORDER BY pr.overall + 2*pr.potential DESC', (g.season, g.league_id, g.league_id))
+        g.dbd.execute('SELECT pa.player_id, pa.position, pa.name, %s - pa.born_date as age, pr.overall, pr.potential FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = -2 ORDER BY pr.overall + 2*pr.potential DESC', (g.season, g.league_id))
         undrafted = g.dbd.fetchall()
 
-        g.dbd.execute('SELECT draft_round, pick, abbreviation, player_id, name, %s - born_date as age, position, overall, potential FROM %s_draft_results WHERE season =  %s ORDER BY draft_round, pick ASC', (g.season, g.league_id, g.season))
+        g.dbd.execute('SELECT draft_round, pick, abbreviation, player_id, name, %s - born_date as age, position, overall, potential FROM draft_results WHERE season =  %s ORDER BY draft_round, pick ASC', (g.season, g.season))
         drafted = g.dbd.fetchall()
 
         return render_all_or_json('draft.html', {'undrafted': undrafted, 'drafted': drafted})
 
     # Show a summary of an old draft
-    g.dbd.execute('SELECT dr.draft_round, dr.pick, dr.abbreviation, dr.player_id, dr.name, %s - dr.born_date AS age, dr.position, dr.overall, dr.potential, ta.abbreviation AS current_abbreviation, %s - dr.born_date AS current_age, pr.overall AS current_overall, pr.potential AS current_potential, SUM(ps.minutes>0) AS gp, AVG(ps.minutes) as mpg, AVG(ps.points) AS ppg, AVG(ps.offensive_rebounds + ps.defensive_rebounds) AS rpg, AVG(ps.assists) AS apg FROM %s_draft_results AS dr LEFT OUTER JOIN %s_player_ratings AS pr ON dr.player_id = pr.player_id LEFT OUTER JOIN %s_player_stats AS ps ON ps.is_playoffs = 0 AND dr.player_id = ps.player_id LEFT OUTER JOIN %s_player_attributes AS pa ON dr.player_id = pa.player_id LEFT OUTER JOIN %s_team_attributes AS ta ON pa.team_id = ta.team_id AND ta.season = %s WHERE dr.season =  %s GROUP BY dr.player_id', (view_season, g.season, g.league_id, g.league_id, g.league_id, g.league_id, g.league_id, g.season, view_season))
+    g.dbd.execute('SELECT dr.draft_round, dr.pick, dr.abbreviation, dr.player_id, dr.name, %s - dr.born_date AS age, dr.position, dr.overall, dr.potential, ta.abbreviation AS current_abbreviation, %s - dr.born_date AS current_age, pr.overall AS current_overall, pr.potential AS current_potential, SUM(ps.minutes>0) AS gp, AVG(ps.minutes) as mpg, AVG(ps.points) AS ppg, AVG(ps.offensive_rebounds + ps.defensive_rebounds) AS rpg, AVG(ps.assists) AS apg FROM draft_results AS dr LEFT OUTER JOIN player_ratings AS pr ON dr.player_id = pr.player_id LEFT OUTER JOIN player_stats AS ps ON ps.is_playoffs = 0 AND dr.player_id = ps.player_id LEFT OUTER JOIN player_attributes AS pa ON dr.player_id = pa.player_id LEFT OUTER JOIN team_attributes AS ta ON pa.team_id = ta.team_id AND ta.season = %s WHERE dr.season =  %s GROUP BY dr.player_id', (view_season, g.season, g.season, view_season))
     players = g.dbd.fetchall()
     return render_all_or_json('draft_summary.html', {'players': players, 'seasons': seasons, 'view_season': view_season})
 
@@ -286,19 +286,19 @@ def history(view_season=None):
             view_season -= 1
         seasons.remove(g.season)  # Don't show this season as an option
 
-    g.dbd.execute('SELECT bre_team_id, bre_abbreviation, bre_region, bre_name, bre_won, bre_lost, brw_team_id, brw_abbreviation, brw_region, brw_name, brw_won, brw_lost, mvp_player_id, mvp_name, mvp_team_id, mvp_abbreviation, mvp_ppg, mvp_rpg, mvp_apg, dpoy_player_id, dpoy_name, dpoy_team_id, dpoy_abbreviation, dpoy_rpg, dpoy_bpg, dpoy_spg, smoy_player_id, smoy_name, smoy_team_id, smoy_abbreviation, smoy_ppg, smoy_rpg, smoy_apg, roy_player_id, roy_name, roy_team_id, roy_abbreviation, roy_ppg, roy_rpg, roy_apg FROM %s_awards WHERE season = %s', (g.league_id, view_season))
+    g.dbd.execute('SELECT bre_team_id, bre_abbreviation, bre_region, bre_name, bre_won, bre_lost, brw_team_id, brw_abbreviation, brw_region, brw_name, brw_won, brw_lost, mvp_player_id, mvp_name, mvp_team_id, mvp_abbreviation, mvp_ppg, mvp_rpg, mvp_apg, dpoy_player_id, dpoy_name, dpoy_team_id, dpoy_abbreviation, dpoy_rpg, dpoy_bpg, dpoy_spg, smoy_player_id, smoy_name, smoy_team_id, smoy_abbreviation, smoy_ppg, smoy_rpg, smoy_apg, roy_player_id, roy_name, roy_team_id, roy_abbreviation, roy_ppg, roy_rpg, roy_apg FROM awards WHERE season = %s', (view_season))
     if g.dbd.rowcount == 0:
         error = "You have to play through a season before there is any league history to view."
         return render_all_or_json('league_error.html', {'error': error})
     awards = g.dbd.fetchone()
 
-    g.dbd.execute('SELECT player_id, name, abbreviation, ppg, rpg, apg, bpg, spg FROM %s_awards_all_league WHERE season = %s AND team_type = \'league\' ORDER BY player_rank', (g.league_id, view_season))
+    g.dbd.execute('SELECT player_id, name, abbreviation, ppg, rpg, apg, bpg, spg FROM awards_all_league WHERE season = %s AND team_type = \'league\' ORDER BY player_rank', (view_season))
     all_league = g.dbd.fetchall()
 
-    g.dbd.execute('SELECT player_id, name, abbreviation, ppg, rpg, apg, bpg, spg FROM %s_awards_all_league WHERE season = %s AND team_type = \'defensive\' ORDER BY player_rank', (g.league_id, view_season))
+    g.dbd.execute('SELECT player_id, name, abbreviation, ppg, rpg, apg, bpg, spg FROM awards_all_league WHERE season = %s AND team_type = \'defensive\' ORDER BY player_rank', (view_season))
     all_defensive = g.dbd.fetchall()
 
-    g.dbd.execute('SELECT abbreviation, region, name FROM %s_team_attributes WHERE won_championship = 1 AND season = %s', (g.league_id, view_season))
+    g.dbd.execute('SELECT abbreviation, region, name FROM team_attributes WHERE won_championship = 1 AND season = %s', (view_season))
     champ = g.dbd.fetchone()
 
     return render_all_or_json('history.html', {'awards': awards, 'all_league': all_league, 'all_defensive': all_defensive, 'champ': champ, 'seasons': seasons, 'view_season': view_season})
@@ -315,23 +315,23 @@ def roster(abbreviation=None, view_season=None):
     # Used to calculate how much is remaining on a player's contract
 #    contract_amount, contract_expiration = common.DB_CON.execute('SELECT contract_amount, contract_expiration FROM player_attributes WHERE player_id = ?', (player_id,)).fetchone()
     if team_id == g.user_team_id:
-        g.db.execute('SELECT COUNT(*) FROM %s_team_stats WHERE team_id = %s AND season = %s AND is_playoffs = 0', (g.league_id, g.user_team_id, g.season))
+        g.db.execute('SELECT COUNT(*) FROM team_stats WHERE team_id = %s AND season = %s AND is_playoffs = 0', (g.user_team_id, g.season))
         n_games_remaining, = g.db.fetchone()
     else:
         n_games_remaining = 0  # Dummy value because only players on the user's team can be bought out
 
     if view_season == g.season:
         # Show players even if they don't have any stats
-        g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, pa.contract_amount / 1000 as contract_amount, pa.contract_expiration, AVG(ps.minutes) as minutes, AVG(ps.points) as points, AVG(ps.offensive_rebounds + ps.defensive_rebounds) as rebounds, AVG(ps.assists) as assists, ((1 + pa.contract_expiration - %s) * pa.contract_amount - %s / 82 * pa.contract_amount) / 1000 AS cash_owed FROM %s_player_attributes as pa LEFT OUTER JOIN %s_player_ratings as pr ON pa.player_id = pr.player_id LEFT OUTER JOIN %s_player_stats as ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE pa.team_id = %s GROUP BY pa.player_id ORDER BY pr.roster_position ASC', (view_season, g.season, n_games_remaining, g.league_id, g.league_id, g.league_id, view_season, team_id))
+        g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, pa.contract_amount / 1000 as contract_amount, pa.contract_expiration, AVG(ps.minutes) as minutes, AVG(ps.points) as points, AVG(ps.offensive_rebounds + ps.defensive_rebounds) as rebounds, AVG(ps.assists) as assists, ((1 + pa.contract_expiration - %s) * pa.contract_amount - %s / 82 * pa.contract_amount) / 1000 AS cash_owed FROM player_attributes as pa LEFT OUTER JOIN player_ratings as pr ON pa.player_id = pr.player_id LEFT OUTER JOIN player_stats as ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE pa.team_id = %s GROUP BY pa.player_id ORDER BY pr.roster_position ASC', (view_season, g.season, n_games_remaining, view_season, team_id))
     else:
         # Only show players with stats, as that's where the team history is recorded
-        g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, pa.contract_amount / 1000 as contract_amount,  pa.contract_expiration, AVG(ps.minutes) as minutes, AVG(ps.points) as points, AVG(ps.offensive_rebounds + ps.defensive_rebounds) as rebounds, AVG(ps.assists) as assists FROM %s_player_attributes as pa LEFT OUTER JOIN %s_player_ratings as pr ON pa.player_id = pr.player_id LEFT OUTER JOIN %s_player_stats as ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE ps.team_id = %s GROUP BY pa.player_id ORDER BY pr.roster_position ASC', (view_season, g.league_id, g.league_id, g.league_id, view_season, team_id))
+        g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, pa.contract_amount / 1000 as contract_amount,  pa.contract_expiration, AVG(ps.minutes) as minutes, AVG(ps.points) as points, AVG(ps.offensive_rebounds + ps.defensive_rebounds) as rebounds, AVG(ps.assists) as assists FROM player_attributes as pa LEFT OUTER JOIN player_ratings as pr ON pa.player_id = pr.player_id LEFT OUTER JOIN player_stats as ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE ps.team_id = %s GROUP BY pa.player_id ORDER BY pr.roster_position ASC', (view_season, view_season, team_id))
     players = g.dbd.fetchall()
 
-    g.dbd.execute('SELECT team_id, abbreviation, region, name FROM %s_team_attributes WHERE season = %s ORDER BY team_id ASC', (g.league_id, view_season))
+    g.dbd.execute('SELECT team_id, abbreviation, region, name FROM team_attributes WHERE season = %s ORDER BY team_id ASC', (view_season))
     teams = g.dbd.fetchall()
 
-    g.db.execute('SELECT CONCAT(region, " ", name), cash / 1000000 FROM %s_team_attributes WHERE team_id = %s AND season = %s', (g.league_id, team_id, view_season))
+    g.db.execute('SELECT CONCAT(region, " ", name), cash / 1000000 FROM team_attributes WHERE team_id = %s AND season = %s', (team_id, view_season))
     team_name, cash = g.db.fetchone()
 
     return render_all_or_json('roster.html', {'players': players, 'num_roster_spots': 15-len(players), 'teams': teams, 'team_id': team_id, 'team_name': team_name, 'cash': cash, 'view_season': view_season, 'seasons': seasons})
@@ -351,11 +351,11 @@ def game_log(view_season=None, abbreviation=None):
     view_season = validate_season(view_season)
     team_id, abbreviation = validate_abbreviation(abbreviation)
 
-    g.dbd.execute('SELECT team_id, abbreviation, region, name FROM %s_team_attributes WHERE season = %s ORDER BY team_id ASC', (g.league_id, view_season))
+    g.dbd.execute('SELECT team_id, abbreviation, region, name FROM team_attributes WHERE season = %s ORDER BY team_id ASC', (view_season))
     teams = g.dbd.fetchall()
 
     seasons = []
-    g.db.execute('SELECT season FROM %s_team_attributes GROUP BY season ORDER BY season DESC', (g.league_id))
+    g.db.execute('SELECT season FROM team_attributes GROUP BY season ORDER BY season DESC', (g.league_id))
     for season, in g.db.fetchall():
         seasons.append(season)
 
@@ -365,19 +365,19 @@ def game_log(view_season=None, abbreviation=None):
 @league_crap
 def player_(player_id):
     # Info
-    g.dbd.execute('SELECT name, position, (SELECT CONCAT(region, " ", name) FROM %s_team_attributes as ta WHERE pa.team_id = ta.team_id AND ta.season = %s) as team, height, weight, %s - born_date as age, born_date, born_location, college, draft_year, draft_round, draft_pick, (SELECT CONCAT(region, " ", name) FROM %s_team_attributes as ta WHERE ta.team_id = pa.draft_team_id AND ta.season = %s) as draft_team, contract_amount, contract_expiration FROM %s_player_attributes as pa WHERE player_id = %s', (g.league_id, g.season, g.season, g.league_id, g.season, g.league_id, player_id))
+    g.dbd.execute('SELECT name, position, (SELECT CONCAT(region, " ", name) FROM team_attributes as ta WHERE pa.team_id = ta.team_id AND ta.season = %s) as team, height, weight, %s - born_date as age, born_date, born_location, college, draft_year, draft_round, draft_pick, (SELECT CONCAT(region, " ", name) FROM team_attributes as ta WHERE ta.team_id = pa.draft_team_id AND ta.season = %s) as draft_team, contract_amount, contract_expiration FROM player_attributes as pa WHERE player_id = %s', (g.season, g.season, g.season, player_id))
     info = g.dbd.fetchone()
     print 'INFO', info
     info['height'] = '%d\'%d"' % (info['height'] // 12, info['height'] % 12);
     info['contract_amount'] = '$%.2fM' % (info['contract_amount'] / 1000.0)
 
     # Ratings
-    g.dbd.execute('SELECT overall, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, passing, rebounding, potential FROM %s_player_ratings WHERE player_id = %s', (g.league_id, player_id))
+    g.dbd.execute('SELECT overall, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, passing, rebounding, potential FROM player_ratings WHERE player_id = %s', (player_id))
     ratings = g.dbd.fetchone()
 
     # Season stats
-#    g.dbd.execute('SELECT ps.season, ta.abbreviation, SUM(ps.minutes>0) AS games_played, SUM(ps.starter) AS games_started, AVG(ps.minutes) AS minutes, AVG(ps.field_goals_made) AS field_goals_made, AVG(ps.field_goals_attempted) AS field_goals_attempted, 100*AVG(ps.field_goals_made/ps.field_goals_attempted) AS field_goal_percentage, AVG(ps.three_pointers_made) AS three_pointers_made, AVG(ps.three_pointers_attempted) AS three_pointers_attempted, 100*AVG(ps.three_pointers_made/ps.three_pointers_attempted) AS three_point_percentage, AVG(ps.free_throws_made) AS free_throws_made, AVG(ps.free_throws_attempted) AS free_throws_attempted, 100*AVG(ps.free_throws_made/ps.free_throws_attempted) AS free_throw_percentage, AVG(ps.offensive_rebounds) AS offensive_rebounds, AVG(ps.defensive_rebounds) AS defensive_rebounds, AVG(ps.offensive_rebounds+ps.defensive_rebounds) AS rebounds, AVG(ps.assists) AS assists, AVG(ps.turnovers) AS turnovers, AVG(ps.steals) AS steals, AVG(ps.blocks) AS blocks, AVG(ps.personal_fouls) AS personal_fouls, AVG(ps.points) AS points FROM %s_player_attributes as pa, %s_player_stats as ps, %s_team_attributes as ta WHERE pa.player_id = ps.player_id AND pa.player_id = %s AND ps.is_playoffs = 0 AND ta.team_id = pa.team_id AND ta.season = ps.season GROUP BY ps.season ORDER BY ps.season ASC', (g.league_id, g.league_id, g.league_id, player_id))
-    g.dbd.execute('SELECT ps.season, ta.abbreviation, SUM(ps.minutes>0) AS games_played, SUM(ps.starter) AS games_started, AVG(ps.minutes) AS minutes, AVG(ps.field_goals_made) AS field_goals_made, AVG(ps.field_goals_attempted) AS field_goals_attempted, 100*AVG(ps.field_goals_made/ps.field_goals_attempted) AS field_goal_percentage, AVG(ps.three_pointers_made) AS three_pointers_made, AVG(ps.three_pointers_attempted) AS three_pointers_attempted, 100*AVG(ps.three_pointers_made/ps.three_pointers_attempted) AS three_point_percentage, AVG(ps.free_throws_made) AS free_throws_made, AVG(ps.free_throws_attempted) AS free_throws_attempted, 100*AVG(ps.free_throws_made/ps.free_throws_attempted) AS free_throw_percentage, AVG(ps.offensive_rebounds) AS offensive_rebounds, AVG(ps.defensive_rebounds) AS defensive_rebounds, AVG(ps.offensive_rebounds+ps.defensive_rebounds) AS rebounds, AVG(ps.assists) AS assists, AVG(ps.turnovers) AS turnovers, AVG(ps.steals) AS steals, AVG(ps.blocks) AS blocks, AVG(ps.personal_fouls) AS personal_fouls, AVG(ps.points) AS points FROM %s_player_attributes as pa LEFT JOIN %s_player_stats as ps ON pa.player_id = ps.player_id LEFT OUTER JOIN %s_team_attributes as ta ON pa.team_id = ta.team_id AND ta.season = ps.season WHERE pa.player_id = %s AND ps.is_playoffs = 0 GROUP BY ps.season ORDER BY ps.season ASC', (g.league_id, g.league_id, g.league_id, player_id))
+#    g.dbd.execute('SELECT ps.season, ta.abbreviation, SUM(ps.minutes>0) AS games_played, SUM(ps.starter) AS games_started, AVG(ps.minutes) AS minutes, AVG(ps.field_goals_made) AS field_goals_made, AVG(ps.field_goals_attempted) AS field_goals_attempted, 100*AVG(ps.field_goals_made/ps.field_goals_attempted) AS field_goal_percentage, AVG(ps.three_pointers_made) AS three_pointers_made, AVG(ps.three_pointers_attempted) AS three_pointers_attempted, 100*AVG(ps.three_pointers_made/ps.three_pointers_attempted) AS three_point_percentage, AVG(ps.free_throws_made) AS free_throws_made, AVG(ps.free_throws_attempted) AS free_throws_attempted, 100*AVG(ps.free_throws_made/ps.free_throws_attempted) AS free_throw_percentage, AVG(ps.offensive_rebounds) AS offensive_rebounds, AVG(ps.defensive_rebounds) AS defensive_rebounds, AVG(ps.offensive_rebounds+ps.defensive_rebounds) AS rebounds, AVG(ps.assists) AS assists, AVG(ps.turnovers) AS turnovers, AVG(ps.steals) AS steals, AVG(ps.blocks) AS blocks, AVG(ps.personal_fouls) AS personal_fouls, AVG(ps.points) AS points FROM player_attributes as pa, player_stats as ps, team_attributes as ta WHERE pa.player_id = ps.player_id AND pa.player_id = %s AND ps.is_playoffs = 0 AND ta.team_id = pa.team_id AND ta.season = ps.season GROUP BY ps.season ORDER BY ps.season ASC', (player_id))
+    g.dbd.execute('SELECT ps.season, ta.abbreviation, SUM(ps.minutes>0) AS games_played, SUM(ps.starter) AS games_started, AVG(ps.minutes) AS minutes, AVG(ps.field_goals_made) AS field_goals_made, AVG(ps.field_goals_attempted) AS field_goals_attempted, 100*AVG(ps.field_goals_made/ps.field_goals_attempted) AS field_goal_percentage, AVG(ps.three_pointers_made) AS three_pointers_made, AVG(ps.three_pointers_attempted) AS three_pointers_attempted, 100*AVG(ps.three_pointers_made/ps.three_pointers_attempted) AS three_point_percentage, AVG(ps.free_throws_made) AS free_throws_made, AVG(ps.free_throws_attempted) AS free_throws_attempted, 100*AVG(ps.free_throws_made/ps.free_throws_attempted) AS free_throw_percentage, AVG(ps.offensive_rebounds) AS offensive_rebounds, AVG(ps.defensive_rebounds) AS defensive_rebounds, AVG(ps.offensive_rebounds+ps.defensive_rebounds) AS rebounds, AVG(ps.assists) AS assists, AVG(ps.turnovers) AS turnovers, AVG(ps.steals) AS steals, AVG(ps.blocks) AS blocks, AVG(ps.personal_fouls) AS personal_fouls, AVG(ps.points) AS points FROM player_attributes as pa LEFT JOIN player_stats as ps ON pa.player_id = ps.player_id LEFT OUTER JOIN team_attributes as ta ON pa.team_id = ta.team_id AND ta.season = ps.season WHERE pa.player_id = %s AND ps.is_playoffs = 0 GROUP BY ps.season ORDER BY ps.season ASC', (player_id))
 
     seasons = g.dbd.fetchall()
 
@@ -387,7 +387,7 @@ def player_(player_id):
 @league_crap
 def negotiation_list(player_id=None):
     # If there is only one active negotiation with a free agent, go to it
-    g.db.execute('SELECT player_id FROM %s_negotiation WHERE resigning = 0', (g.league_id,))
+    g.db.execute('SELECT player_id FROM negotiation WHERE resigning = 0')
     if g.db.rowcount == 1:
         player_id, = g.db.fetchone()
         return redirect_or_json('negotiation', {'player_id': player_id})
@@ -396,7 +396,7 @@ def negotiation_list(player_id=None):
         error = "Something bad happened."
         return render_all_or_json('league_error.html', {'error': error})
 
-    g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, AVG(ps.minutes) as minutes, AVG(ps.points) as points, AVG(ps.offensive_rebounds + ps.defensive_rebounds) as rebounds, AVG(ps.assists) as assists, pa.contract_amount/1000.0*(1+pa.free_agent_times_asked/10) as contract_amount, pa.contract_expiration FROM %s_player_attributes as pa LEFT OUTER JOIN %s_negotiation as n ON pa.player_id = n.player_id LEFT OUTER JOIN %s_player_ratings as pr ON pa.player_id = pr.player_id LEFT OUTER JOIN %s_player_stats as ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE pa.team_id = -1 AND n.resigning = 1 GROUP BY pa.player_id', (g.season, g.league_id, g.league_id, g.league_id, g.league_id, g.season))
+    g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, AVG(ps.minutes) as minutes, AVG(ps.points) as points, AVG(ps.offensive_rebounds + ps.defensive_rebounds) as rebounds, AVG(ps.assists) as assists, pa.contract_amount/1000.0*(1+pa.free_agent_times_asked/10) as contract_amount, pa.contract_expiration FROM player_attributes as pa LEFT OUTER JOIN negotiation as n ON pa.player_id = n.player_id LEFT OUTER JOIN player_ratings as pr ON pa.player_id = pr.player_id LEFT OUTER JOIN player_stats as ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE pa.team_id = -1 AND n.resigning = 1 GROUP BY pa.player_id', (g.season, g.season))
 
     players = g.dbd.fetchall()
 
@@ -421,13 +421,13 @@ def negotiation(player_id):
             contract_negotiation.offer(player_id, team_amount_new, team_years_new)
     else:
         # If there is no active negotiation with this player_id, create it
-        g.db.execute('SELECT 1 FROM %s_negotiation WHERE player_id = %s', (g.league_id, player_id))
+        g.db.execute('SELECT 1 FROM negotiation WHERE player_id = %s', (player_id))
         if not g.db.rowcount:
             error = contract_negotiation.new(player_id)
             if error:
                 return render_all_or_json('league_error.html', {'error': error})
 
-    g.db.execute('SELECT team_amount, team_years, player_amount, player_years, resigning FROM %s_negotiation WHERE player_id = %s', (g.league_id, player_id))
+    g.db.execute('SELECT team_amount, team_years, player_amount, player_years, resigning FROM negotiation WHERE player_id = %s', (player_id))
     team_amount, team_years, player_amount, player_years, resigning = g.db.fetchone()
 
     player_amount /= 1000.0
@@ -437,11 +437,11 @@ def negotiation(player_id):
     if g.phase <= 2:
         player_expiration -= 1
 
-    g.dbd.execute('SELECT pa.player_id, pa.name, pr.overall, pr.potential FROM %s_player_attributes as pa, %s_player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.player_id = %s', (g.league_id, g.league_id, player_id))
+    g.dbd.execute('SELECT pa.player_id, pa.name, pr.overall, pr.potential FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.player_id = %s', (player_id))
     player = g.dbd.fetchone()
 
     salary_cap = g.salary_cap / 1000.0
-    g.db.execute('SELECT CONCAT(region, " ", name) FROM %s_team_attributes WHERE team_id = %s AND season = %s', (g.league_id, g.user_team_id, g.season))
+    g.db.execute('SELECT CONCAT(region, " ", name) FROM team_attributes WHERE team_id = %s AND season = %s', (g.user_team_id, g.season))
     team_name, = g.db.fetchone()
 
     payroll = get_payroll(g.user_team_id)
@@ -456,14 +456,14 @@ def negotiation(player_id):
 @league_crap_ajax
 def box_score(game_id=0):
     teams = []
-    g.dbd.execute('SELECT * FROM %s_team_stats WHERE game_id = %s', (g.league_id, game_id))
+    g.dbd.execute('SELECT * FROM team_stats WHERE game_id = %s', (game_id))
     for row in g.dbd.fetchall():
         teams.append(row)
 
-        g.db.execute('SELECT region, name, abbreviation FROM %s_team_attributes WHERE team_id = %s', (g.league_id, teams[-1]['team_id']))
+        g.db.execute('SELECT region, name, abbreviation FROM team_attributes WHERE team_id = %s', (teams[-1]['team_id']))
         teams[-1]['region'], teams[-1]['name'], teams[-1]['abbreviation'] = g.db.fetchone()
 
-        g.dbd.execute('SELECT pa.player_id, name, position, minutes, field_goals_made, field_goals_attempted, three_pointers_made, three_pointers_attempted, free_throws_made, free_throws_attempted, offensive_rebounds, defensive_rebounds, offensive_rebounds + defensive_rebounds AS rebounds, assists, turnovers, steals, blocks, personal_fouls, points FROM %s_player_attributes as pa, %s_player_stats as ps WHERE pa.player_id = ps.player_id AND ps.game_id = %s AND pa.team_id = %s ORDER BY starter DESC, minutes DESC', (g.league_id, g.league_id, game_id, teams[-1]['team_id']))
+        g.dbd.execute('SELECT pa.player_id, name, position, minutes, field_goals_made, field_goals_attempted, three_pointers_made, three_pointers_attempted, free_throws_made, free_throws_attempted, offensive_rebounds, defensive_rebounds, offensive_rebounds + defensive_rebounds AS rebounds, assists, turnovers, steals, blocks, personal_fouls, points FROM player_attributes as pa, player_stats as ps WHERE pa.player_id = ps.player_id AND ps.game_id = %s AND pa.team_id = %s ORDER BY starter DESC, minutes DESC', (game_id, teams[-1]['team_id']))
         teams[-1]['players'] = g.dbd.fetchall()
 
         # Total rebounds
@@ -486,7 +486,7 @@ def game_log_list():
     season = validate_season(season)
     team_id, abbreviation = validate_abbreviation(abbreviation)
 
-    g.dbd.execute('SELECT game_id, home, (SELECT abbreviation FROM %s_team_attributes WHERE team_id = opponent_team_id AND season = %s) as opponent_abbreviation, won, points, opponent_points FROM %s_team_stats WHERE team_id = %s AND season = %s', (g.league_id, season, g.league_id, team_id, season))
+    g.dbd.execute('SELECT game_id, home, (SELECT abbreviation FROM team_attributes WHERE team_id = opponent_team_id AND season = %s) as opponent_abbreviation, won, points, opponent_points FROM team_stats WHERE team_id = %s AND season = %s', (season, team_id, season))
     games = g.dbd.fetchall()
 
     return render_template('game_log_list.html', games=games)
@@ -529,10 +529,10 @@ def roster_reorder():
     roster_position = 1
     for player_id in request.form.getlist('roster[]'):
         player_id = int(player_id)
-        g.db.execute('SELECT team_id FROM %s_player_attributes WHERE player_id = %s', (g.league_id, player_id))
+        g.db.execute('SELECT team_id FROM player_attributes WHERE player_id = %s', (player_id))
         team_id, = g.db.fetchone()
         if team_id == g.user_team_id:  # Don't let the user update CPU-controlled rosters
-            g.db.execute('UPDATE %s_player_ratings SET roster_position = %s WHERE player_id = %s', (g.league_id, roster_position, player_id))
+            g.db.execute('UPDATE player_ratings SET roster_position = %s WHERE player_id = %s', (roster_position, player_id))
             roster_position += 1
 
     return 'fuck'
@@ -542,13 +542,13 @@ def roster_reorder():
 def roster_release():
     error = None
 
-    g.db.execute('SELECT COUNT(*) FROM %s_player_attributes WHERE team_id = %s', (g.league_id, g.user_team_id))
+    g.db.execute('SELECT COUNT(*) FROM player_attributes WHERE team_id = %s', (g.user_team_id))
     num_players_on_roster, = g.db.fetchone()
     if num_players_on_roster <= 5:
         error = 'You must keep at least 5 players on your roster.'
     else:
         player_id = int(request.form['player_id'])
-        g.db.execute('SELECT team_id FROM %s_player_attributes WHERE player_id = %s', (g.league_id, player_id))
+        g.db.execute('SELECT team_id FROM player_attributes WHERE player_id = %s', (player_id))
         team_id, = g.db.fetchone()
         if team_id == g.user_team_id:  # Don't let the user update CPU-controlled rosters
             p = player.Player()
@@ -564,24 +564,24 @@ def roster_release():
 def roster_buy_out():
     error = None
 
-    g.db.execute('SELECT COUNT(*) FROM %s_player_attributes WHERE team_id = %s', (g.league_id, g.user_team_id))
+    g.db.execute('SELECT COUNT(*) FROM player_attributes WHERE team_id = %s', (g.user_team_id))
     num_players_on_roster, = g.db.fetchone()
     if num_players_on_roster <= 5:
         error = 'You must keep at least 5 players on your roster.'
     else:
         player_id = int(request.form['player_id'])
-        g.db.execute('SELECT team_id FROM %s_player_attributes WHERE player_id = %s', (g.league_id, player_id))
+        g.db.execute('SELECT team_id FROM player_attributes WHERE player_id = %s', (player_id))
         team_id, = g.db.fetchone()
         if team_id == g.user_team_id:  # Don't let the user update CPU-controlled rosters
-            g.db.execute('SELECT cash / 1000000 FROM %s_team_attributes WHERE team_id = %s AND season = %s', (g.league_id, g.user_team_id, g.season))
+            g.db.execute('SELECT cash / 1000000 FROM team_attributes WHERE team_id = %s AND season = %s', (g.user_team_id, g.season))
             cash, = g.db.fetchone()
-            g.db.execute('SELECT COUNT(*) FROM %s_team_stats WHERE team_id = %s AND season = %s AND is_playoffs = 0', (g.league_id, g.user_team_id, g.season))
+            g.db.execute('SELECT COUNT(*) FROM team_stats WHERE team_id = %s AND season = %s AND is_playoffs = 0', (g.user_team_id, g.season))
             n_games_remaining, = g.db.fetchone()
-            g.db.execute('SELECT ((1 + pa.contract_expiration - %s) * pa.contract_amount - %s / 82 * pa.contract_amount) / 1000 FROM %s_player_attributes AS pa WHERE player_id = %s', (g.season, n_games_remaining, g.league_id, player_id))
+            g.db.execute('SELECT ((1 + pa.contract_expiration - %s) * pa.contract_amount - %s / 82 * pa.contract_amount) / 1000 FROM player_attributes AS pa WHERE player_id = %s', (g.season, n_games_remaining, player_id))
             cash_owed, = g.db.fetchone()
             if cash_owed < cash:
                 # Pay the cash
-                g.db.execute('UPDATE %s_team_attributes SET cash = cash - %s WHERE team_id = %s AND season = %s', (g.league_id, cash_owed*1000000, g.user_team_id, g.season))
+                g.db.execute('UPDATE team_attributes SET cash = cash - %s WHERE team_id = %s AND season = %s', (cash_owed*1000000, g.user_team_id, g.season))
                 # Set to FA in database
                 p = player.Player()
                 p.load(player_id)
@@ -615,14 +615,14 @@ def validate_abbreviation(abbreviation):
 
     # Try to use the supplied abbreviation
     if abbreviation:
-        g.db.execute('SELECT team_id FROM %s_team_attributes WHERE season = %s AND abbreviation = %s', (g.league_id, g.season, abbreviation))
+        g.db.execute('SELECT team_id FROM team_attributes WHERE season = %s AND abbreviation = %s', (g.season, abbreviation))
         if g.db.rowcount == 1:
             team_id, = g.db.fetchone()
 
     # If no valid abbreviation was given, default to the user's team
     if not team_id:
         team_id = g.user_team_id
-        g.db.execute('SELECT abbreviation FROM %s_team_attributes WHERE season = %s AND team_id = %s', (g.league_id, g.season, team_id))
+        g.db.execute('SELECT abbreviation FROM team_attributes WHERE season = %s AND team_id = %s', (g.season, team_id))
         abbreviation, = g.db.fetchone()
 
     return team_id, abbreviation

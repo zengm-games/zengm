@@ -28,13 +28,13 @@ def new(player_id, resigning=False):
 
     if (g.phase >= 2 and g.phase <= 6) and not resigning:
         return "You're not allowed to sign free agents now."
-    g.db.execute('SELECT COUNT(*) FROM %s_player_attributes WHERE team_id = %s', (g.league_id, g.user_team_id))
+    g.db.execute('SELECT COUNT(*) FROM player_attributes WHERE team_id = %s', (g.user_team_id))
     num_players_on_roster, = g.db.fetchone()
     if num_players_on_roster >= 15 and not resigning:
         return "Your roster is full. Before you can sign a free agent, you'll have to buy out or release one of your current players.";
     if not lock.can_start_negotiation():
         return "You cannot initiate a new negotiaion while game simulation is in progress, a previous contract negotiation is in process, or a trade is in progress."
-    g.db.execute('SELECT team_id FROM %s_player_attributes WHERE player_id = %s', (g.league_id, player_id))
+    g.db.execute('SELECT team_id FROM player_attributes WHERE player_id = %s', (player_id))
     if g.db.rowcount:
         team_id, = g.db.fetchone()
         if team_id != -1:
@@ -43,7 +43,7 @@ def new(player_id, resigning=False):
         return "Player %d does not exist." % (player_id,)
 
     # Initial player proposal
-    g.db.execute('SELECT contract_amount*(1+free_agent_times_asked/10), contract_expiration FROM %s_player_attributes WHERE player_id = %s', (g.league_id, player_id))
+    g.db.execute('SELECT contract_amount*(1+free_agent_times_asked/10), contract_expiration FROM player_attributes WHERE player_id = %s', (player_id))
     player_amount, expiration = g.db.fetchone()
     player_years = expiration - g.season
     # Adjust to account for in-season signings
@@ -52,14 +52,14 @@ def new(player_id, resigning=False):
 
     max_offers = random.randint(1, 5)
 
-    g.db.execute('INSERT INTO %s_negotiation (player_id, team_amount, team_years, player_amount, player_years, num_offers_made, max_offers, resigning) VALUES (%s, %s, %s, %s, %s, 0, %s, %s)', (g.league_id, player_id, player_amount, player_years, player_amount, player_years, max_offers, resigning))
+    g.db.execute('INSERT INTO negotiation (player_id, team_amount, team_years, player_amount, player_years, num_offers_made, max_offers, resigning) VALUES (%s, %s, %s, %s, %s, 0, %s, %s)', (player_id, player_amount, player_years, player_amount, player_years, max_offers, resigning))
     lock.set_negotiation_in_progress(True)
     play_menu.set_status('Contract negotiation in progress')
     play_menu.refresh_options()
 
     # Keep track of how many times negotiations happen with a player
     if not resigning:
-        g.db.execute('UPDATE %s_player_attributes SET free_agent_times_asked = free_agent_times_asked + 1 WHERE player_id = %s', (g.league_id, player_id))
+        g.db.execute('UPDATE player_attributes SET free_agent_times_asked = free_agent_times_asked + 1 WHERE player_id = %s', (player_id))
 
     return False
 
@@ -79,7 +79,7 @@ def offer(player_id, team_amount, team_years):
     if team_years < 1:
         team_years = 1
 
-    g.db.execute('SELECT player_amount, player_years, num_offers_made, max_offers FROM %s_negotiation WHERE player_id = %s', (g.league_id, player_id))
+    g.db.execute('SELECT player_amount, player_years, num_offers_made, max_offers FROM negotiation WHERE player_id = %s', (player_id,))
     player_amount, player_years, num_offers_made, max_offers = g.db.fetchone()
 
     num_offers_made += 1
@@ -104,7 +104,7 @@ def offer(player_id, team_amount, team_years):
     if player_years > 5:
         player_years = 5
 
-    g.db.execute('UPDATE %s_negotiation SET team_amount = %s, team_years = %s, player_amount = %s, player_years = %s, num_offers_made = %s WHERE player_id = %s', (g.league_id, team_amount, team_years, player_amount, player_years, num_offers_made, player_id))
+    g.db.execute('UPDATE negotiation SET team_amount = %s, team_years = %s, player_amount = %s, player_years = %s, num_offers_made = %s WHERE player_id = %s', (team_amount, team_years, player_amount, player_years, num_offers_made, player_id))
 
 def accept(player_id):
     """Accept the player's offer.
@@ -116,7 +116,7 @@ def accept(player_id):
     """
     app.logger.debug('User accepted contract proposal from %d' % (player_id))
 
-    g.db.execute('SELECT player_amount, player_years, resigning FROM %s_negotiation WHERE player_id = %s', (g.league_id, player_id))
+    g.db.execute('SELECT player_amount, player_years, resigning FROM negotiation WHERE player_id = %s', (player_id))
     player_amount, player_years, resigning = g.db.fetchone()
 
     # If this contract brings team over the salary cap, it's not a minimum
@@ -129,9 +129,9 @@ def accept(player_id):
     if g.phase <= 2:
         player_years -= 1
 
-    g.db.execute('UPDATE %s_player_attributes SET team_id = %s, contract_amount = %s, contract_expiration = %s WHERE player_id = %s', (g.league_id, g.user_team_id, player_amount, g.season + player_years, player_id))
+    g.db.execute('UPDATE player_attributes SET team_id = %s, contract_amount = %s, contract_expiration = %s WHERE player_id = %s', (g.user_team_id, player_amount, g.season + player_years, player_id))
 
-    g.db.execute('DELETE FROM %s_negotiation WHERE player_id = %s', (g.league_id, player_id))
+    g.db.execute('DELETE FROM negotiation WHERE player_id = %s', (player_id,))
     lock.set_negotiation_in_progress(False)
     play_menu.set_status('Idle')
     play_menu.refresh_options()
@@ -146,10 +146,10 @@ def cancel(player_id):
     app.logger.debug('User canceled contract negotiations with %d' % (player_id))
 
     # Delete negotiation
-    g.db.execute('DELETE FROM %s_negotiation WHERE player_id = %s', (g.league_id, player_id))
+    g.db.execute('DELETE FROM negotiation WHERE player_id = %s', (player_id,))
 
     # If no negotiations are in progress, update status
-    g.db.execute('SELECT 1 FROM %s_negotiation', (g.league_id,))
+    g.db.execute('SELECT 1 FROM negotiation')
     if g.db.rowcount == 0:
         lock.set_negotiation_in_progress(False)
         play_menu.set_status('Idle')

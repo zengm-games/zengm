@@ -36,7 +36,7 @@ def check_permissions(f, ajax=False):
 def global_game_attributes(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        g.db.execute('SELECT team_id, season, phase, version FROM %s_game_attributes LIMIT 1', (g.league_id,))
+        g.db.execute('SELECT team_id, season, phase, version FROM game_attributes LIMIT 1')
         g.user_team_id, g.season, g.phase, g.version = g.db.fetchone()
         return f(*args, **kwargs)
     return decorated_function

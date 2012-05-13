@@ -13,15 +13,15 @@ class Player:
     def load(self, player_id):
         self.id = player_id
 
-        g.dbd.execute('SELECT * FROM %s_player_ratings WHERE player_id = %s', (g.league_id, self.id))
+        g.dbd.execute('SELECT * FROM player_ratings WHERE player_id = %s', (self.id,))
         self.rating = g.dbd.fetchone()
-        g.dbd.execute('SELECT * FROM %s_player_attributes WHERE player_id = %s', (g.league_id, self.id))
+        g.dbd.execute('SELECT * FROM player_attributes WHERE player_id = %s', (self.id,))
         self.attribute = g.dbd.fetchone()
 
     def save(self):
         self.rating['overall'] = self.overall_rating()
-        query = 'UPDATE %s_player_ratings SET overall = %s, height = %s, strength = %s, speed = %s, jumping = %s, endurance = %s, shooting_inside = %s, shooting_layups = %s, shooting_free_throws = %s, shooting_two_pointers = %s, shooting_three_pointers = %s, blocks = %s, steals = %s, dribbling = %s, passing = %s, rebounding = %s, potential = %s WHERE player_id = %s'
-        g.db.execute(query, (g.league_id, self.rating['overall'], self.rating['height'], self.rating['strength'], self.rating['speed'], self.rating['jumping'], self.rating['endurance'], self.rating['shooting_inside'], self.rating['shooting_layups'], self.rating['shooting_free_throws'], self.rating['shooting_two_pointers'], self.rating['shooting_three_pointers'], self.rating['blocks'], self.rating['steals'], self.rating['dribbling'], self.rating['passing'], self.rating['rebounding'], self.rating['potential'], self.id))
+        query = 'UPDATE player_ratings SET overall = %s, height = %s, strength = %s, speed = %s, jumping = %s, endurance = %s, shooting_inside = %s, shooting_layups = %s, shooting_free_throws = %s, shooting_two_pointers = %s, shooting_three_pointers = %s, blocks = %s, steals = %s, dribbling = %s, passing = %s, rebounding = %s, potential = %s WHERE player_id = %s'
+        g.db.execute(query, (self.rating['overall'], self.rating['height'], self.rating['strength'], self.rating['speed'], self.rating['jumping'], self.rating['endurance'], self.rating['shooting_inside'], self.rating['shooting_layups'], self.rating['shooting_free_throws'], self.rating['shooting_two_pointers'], self.rating['shooting_three_pointers'], self.rating['blocks'], self.rating['steals'], self.rating['dribbling'], self.rating['passing'], self.rating['rebounding'], self.rating['potential'], self.id))
 
     def develop(self, years=1):
         # Make sure age is always defined
@@ -132,8 +132,8 @@ class Player:
         if g.phase > 2:
             expiration += 1
 
-        g.db.execute('UPDATE %s_player_attributes SET team_id = -1, contract_amount = %s, contract_expiration = %s,'
-                     ' free_agent_times_asked = 0 WHERE player_id = %s', (g.league_id, amount, expiration, self.id))
+        g.db.execute('UPDATE player_attributes SET team_id = -1, contract_amount = %s, contract_expiration = %s,'
+                     ' free_agent_times_asked = 0 WHERE player_id = %s', (amount, expiration, self.id))
 
     def release(self):
         """Release player.
@@ -143,9 +143,9 @@ class Player:
         """
 
         # Keep track of player salary even when he's off the team
-        g.db.execute('SELECT contract_amount, contract_expiration, team_id FROM %s_player_attributes WHERE player_id = %s', (g.league_id, self.id))
+        g.db.execute('SELECT contract_amount, contract_expiration, team_id FROM player_attributes WHERE player_id = %s', (self.id,))
         contract_amount, contract_expiration, team_id = g.db.fetchone()
-        g.db.execute('INSERT INTO %s_released_players_salaries (player_id, team_id, contract_amount, contract_expiration) VALUES (%s, %s, %s, %s)', (g.league_id, self.id, team_id, contract_amount, contract_expiration))
+        g.db.execute('INSERT INTO released_players_salaries (player_id, team_id, contract_amount, contract_expiration) VALUES (%s, %s, %s, %s)', (self.id, team_id, contract_amount, contract_expiration))
 
         self.add_to_free_agents()
 
@@ -344,10 +344,10 @@ class GeneratePlayer(Player):
 
         return position
 
-    def sql_insert(self, league_id):
+    def sql_insert(self):
         self.rating['overall'] = self.overall_rating()
-        sql = 'INSERT INTO %d_player_ratings (%s) VALUES (%s);\nINSERT INTO %d_player_attributes (%s) VALUES (%s);\n'
-        return sql % (league_id, ', '.join(map(str, self.rating.keys())), ', '.join(map(self._sql_prep, self.rating.values())), league_id, ', '.join(map(str, self.attribute.keys())), ', '.join(map(self._sql_prep, self.attribute.values())))
+        sql = 'INSERT INTO player_ratings (%s) VALUES (%s);\nINSERT INTO %d_player_attributes (%s) VALUES (%s);\n'
+        return sql % (', '.join(map(str, self.rating.keys())), ', '.join(map(self._sql_prep, self.rating.values())), league_id, ', '.join(map(str, self.attribute.keys())), ', '.join(map(self._sql_prep, self.attribute.values())))
 
     def _sql_prep(self, value):
         value = str(value)

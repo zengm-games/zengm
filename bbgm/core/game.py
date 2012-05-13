@@ -21,7 +21,7 @@ class Game:
         self.home = [True, False]
 
         # What is the attendance of the game?
-        g.db.execute('SELECT won+lost, 1.0*won/(won + lost) FROM %s_team_attributes WHERE season = %s AND (team_id = %s OR team_id = %s)', (g.league_id, g.season, self.team[0]['id'], self.team[1]['id']))
+        g.db.execute('SELECT won+lost, 1.0*won/(won + lost) FROM team_attributes WHERE season = %s AND (team_id = %s OR team_id = %s)', (g.season, self.team[0]['id'], self.team[1]['id']))
         games_played, winp = g.db.fetchone()
         if games_played < 5:
             self.attendance = fast_random.gauss(22000 + games_played * 1000, 1000)
@@ -38,7 +38,7 @@ class Game:
         conference_id = [-1, -1]
         division_id = [-1, -1]
         for t in range(2):
-            g.db.execute('SELECT ld.conference_id, ta.division_id FROM %s_team_attributes as ta, %s_league_divisions as ld WHERE ta.team_id = %s AND ta.season = %s AND ta.division_id = ld.division_id', (g.league_id, g.league_id, self.team[t]['id'], g.season))
+            g.db.execute('SELECT ld.conference_id, ta.division_id FROM team_attributes as ta, league_divisions as ld WHERE ta.team_id = %s AND ta.season = %s AND ta.division_id = ld.division_id', (self.team[t]['id'], g.season))
             row = g.db.fetchone()
             conference_id[t] = row[0]
             division_id[t] = row[1]
@@ -50,7 +50,7 @@ class Game:
     def write_stats(self):
         # Record who the starters are
         for t in range(2):
-            g.db.execute('SELECT pa.player_id FROM %s_player_attributes as pa, %s_player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s ORDER BY pr.roster_position ASC LIMIT 5', (g.league_id, g.league_id, self.team[t]['id']))
+            g.db.execute('SELECT pa.player_id FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s ORDER BY pr.roster_position ASC LIMIT 5', (self.team[t]['id'],))
             for starter_id, in g.db.fetchall():
                 for p in xrange(len(self.team[t]['player'])):
                     if self.team[t]['player'][p]['id'] == starter_id:
@@ -63,10 +63,10 @@ class Game:
                 self.write_player_stats(t, p)
 
     def write_player_stats(self, t, p):
-        query = 'INSERT INTO %s_player_stats \
+        query = 'INSERT INTO player_stats \
                  (player_id, team_id, game_id, season, is_playoffs, starter, minutes, field_goals_made, field_goals_attempted, three_pointers_made, three_pointers_attempted, free_throws_made, free_throws_attempted, offensive_rebounds, defensive_rebounds, assists, turnovers, steals, blocks, personal_fouls, points) \
                  VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
-        g.db.execute(query, (g.league_id, self.team[t]['player'][p]['id'], self.team[t]['id'], self.id, g.season, self.is_playoffs, self.team[t]['player'][p]['stat']['starter'], int(round(self.team[t]['player'][p]['stat']['minutes'])), self.team[t]['player'][p]['stat']['field_goals_made'], self.team[t]['player'][p]['stat']['field_goals_attempted'], self.team[t]['player'][p]['stat']['three_pointers_made'], self.team[t]['player'][p]['stat']['three_pointers_attempted'], self.team[t]['player'][p]['stat']['free_throws_made'], self.team[t]['player'][p]['stat']['free_throws_attempted'], self.team[t]['player'][p]['stat']['offensive_rebounds'], self.team[t]['player'][p]['stat']['defensive_rebounds'], self.team[t]['player'][p]['stat']['assists'], self.team[t]['player'][p]['stat']['turnovers'], self.team[t]['player'][p]['stat']['steals'], self.team[t]['player'][p]['stat']['blocks'], self.team[t]['player'][p]['stat']['personal_fouls'], self.team[t]['player'][p]['stat']['points']))
+        g.db.execute(query, (self.team[t]['player'][p]['id'], self.team[t]['id'], self.id, g.season, self.is_playoffs, self.team[t]['player'][p]['stat']['starter'], int(round(self.team[t]['player'][p]['stat']['minutes'])), self.team[t]['player'][p]['stat']['field_goals_made'], self.team[t]['player'][p]['stat']['field_goals_attempted'], self.team[t]['player'][p]['stat']['three_pointers_made'], self.team[t]['player'][p]['stat']['three_pointers_attempted'], self.team[t]['player'][p]['stat']['free_throws_made'], self.team[t]['player'][p]['stat']['free_throws_attempted'], self.team[t]['player'][p]['stat']['offensive_rebounds'], self.team[t]['player'][p]['stat']['defensive_rebounds'], self.team[t]['player'][p]['stat']['assists'], self.team[t]['player'][p]['stat']['turnovers'], self.team[t]['player'][p]['stat']['steals'], self.team[t]['player'][p]['stat']['blocks'], self.team[t]['player'][p]['stat']['personal_fouls'], self.team[t]['player'][p]['stat']['points']))
 
     def write_team_stats(self, t):
         if t == 0:
@@ -76,40 +76,40 @@ class Game:
         if self.team[t]['stat']['points'] > self.team[t2]['stat']['points']:
             won = True
             if self.is_playoffs and t == 0:
-                g.db.execute('UPDATE %s_active_playoff_series SET won_home = won_home + 1 WHERE team_id_home = %s AND team_id_away = %s', (g.league_id, self.team[t]['id'], self.team[t2]['id']))
+                g.db.execute('UPDATE active_playoff_series SET won_home = won_home + 1 WHERE team_id_home = %s AND team_id_away = %s', (self.team[t]['id'], self.team[t2]['id']))
             elif self.is_playoffs:
-                g.db.execute('UPDATE %s_active_playoff_series SET won_away = won_away + 1 WHERE team_id_home = %s AND team_id_away = %s', (g.league_id, self.team[t2]['id'], self.team[t]['id']))
+                g.db.execute('UPDATE active_playoff_series SET won_away = won_away + 1 WHERE team_id_home = %s AND team_id_away = %s', (self.team[t2]['id'], self.team[t]['id']))
         else:
             won = False
 
         # Only pay player salaries for regular season games.
         if not self.is_playoffs:
-            g.db.execute('SELECT SUM(contract_amount) * 1000 / 82 FROM %s_released_players_salaries WHERE team_id = %s', (g.league_id, self.team[t]['id']))
+            g.db.execute('SELECT SUM(contract_amount) * 1000 / 82 FROM released_players_salaries WHERE team_id = %s', (self.team[t]['id'],))
             cost_released, = g.db.fetchone()
-            g.db.execute('SELECT SUM(contract_amount) * 1000 / 82 FROM %s_player_attributes WHERE team_id = %s', (g.league_id, self.team[t]['id']))
+            g.db.execute('SELECT SUM(contract_amount) * 1000 / 82 FROM player_attributes WHERE team_id = %s', (self.team[t]['id'],))
             cost, = g.db.fetchone()
             if cost_released:
                 cost += cost_released
         else:
             cost = 0
-        g.db.execute('UPDATE %s_team_attributes SET cash = cash + %s - %s WHERE season = %s AND team_id = %s', (g.league_id, g.ticket_price * self.attendance, cost, g.season, self.team[t]['id']))
+        g.db.execute('UPDATE team_attributes SET cash = cash + %s - %s WHERE season = %s AND team_id = %s', (g.ticket_price * self.attendance, cost, g.season, self.team[t]['id']))
 
-        query = 'INSERT INTO %s_team_stats \
+        query = 'INSERT INTO team_stats \
                  (team_id, opponent_team_id, game_id, season, is_playoffs, won, home, minutes, field_goals_made, field_goals_attempted, three_pointers_made, three_pointers_attempted, free_throws_made, free_throws_attempted, offensive_rebounds, defensive_rebounds, assists, turnovers, steals, blocks, personal_fouls, points, opponent_points, attendance, cost) \
                  VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
-        g.db.execute(query, (g.league_id, self.team[t]['id'], self.team[t2]['id'], self.id, g.season, self.is_playoffs, won, self.home[t], int(round(self.team[t]['stat']['minutes'])), self.team[t]['stat']['field_goals_made'], self.team[t]['stat']['field_goals_attempted'], self.team[t]['stat']['three_pointers_made'], self.team[t]['stat']['three_pointers_attempted'], self.team[t]['stat']['free_throws_made'], self.team[t]['stat']['free_throws_attempted'], self.team[t]['stat']['offensive_rebounds'], self.team[t]['stat']['defensive_rebounds'], self.team[t]['stat']['assists'], self.team[t]['stat']['turnovers'], self.team[t]['stat']['steals'], self.team[t]['stat']['blocks'], self.team[t]['stat']['personal_fouls'], self.team[t]['stat']['points'], self.team[t2]['stat']['points'], self.attendance, cost))
+        g.db.execute(query, (self.team[t]['id'], self.team[t2]['id'], self.id, g.season, self.is_playoffs, won, self.home[t], int(round(self.team[t]['stat']['minutes'])), self.team[t]['stat']['field_goals_made'], self.team[t]['stat']['field_goals_attempted'], self.team[t]['stat']['three_pointers_made'], self.team[t]['stat']['three_pointers_attempted'], self.team[t]['stat']['free_throws_made'], self.team[t]['stat']['free_throws_attempted'], self.team[t]['stat']['offensive_rebounds'], self.team[t]['stat']['defensive_rebounds'], self.team[t]['stat']['assists'], self.team[t]['stat']['turnovers'], self.team[t]['stat']['steals'], self.team[t]['stat']['blocks'], self.team[t]['stat']['personal_fouls'], self.team[t]['stat']['points'], self.team[t2]['stat']['points'], self.attendance, cost))
         if won and not self.is_playoffs:
-            g.db.execute('UPDATE %s_team_attributes SET won = won + 1 WHERE team_id = %s AND season = %s', (g.league_id, self.team[t]['id'], g.season))
+            g.db.execute('UPDATE team_attributes SET won = won + 1 WHERE team_id = %s AND season = %s', (self.team[t]['id'], g.season))
             if self.same_division:
-                g.db.execute('UPDATE %s_team_attributes SET won_div = won_div + 1, won_conf = won_conf + 1 WHERE team_id = %s AND season = %s', (g.league_id, self.team[t]['id'], g.season))
+                g.db.execute('UPDATE team_attributes SET won_div = won_div + 1, won_conf = won_conf + 1 WHERE team_id = %s AND season = %s', (self.team[t]['id'], g.season))
             elif self.same_conference:
-                g.db.execute('UPDATE %s_team_attributes SET won_conf = won_conf + 1 WHERE team_id = %s AND season = %s', (g.league_id, self.team[t]['id'], g.season))
+                g.db.execute('UPDATE team_attributes SET won_conf = won_conf + 1 WHERE team_id = %s AND season = %s', (self.team[t]['id'], g.season))
         elif not self.is_playoffs:
-            g.db.execute('UPDATE %s_team_attributes SET lost = lost + 1 WHERE team_id = %s AND season = %s', (g.league_id, self.team[t]['id'], g.season))
+            g.db.execute('UPDATE team_attributes SET lost = lost + 1 WHERE team_id = %s AND season = %s', (self.team[t]['id'], g.season))
             if self.same_division:
-                g.db.execute('UPDATE %s_team_attributes SET lost_div = lost_div + 1, lost_conf = lost_conf + 1 WHERE team_id = %s AND season = %s', (g.league_id, self.team[t]['id'], g.season))
+                g.db.execute('UPDATE team_attributes SET lost_div = lost_div + 1, lost_conf = lost_conf + 1 WHERE team_id = %s AND season = %s', (self.team[t]['id'], g.season))
             elif self.same_conference:
-                g.db.execute('UPDATE %s_team_attributes SET lost_conf = lost_conf + 1 WHERE team_id = %s AND season = %s', (g.league_id, self.team[t]['id'], g.season))
+                g.db.execute('UPDATE team_attributes SET lost_conf = lost_conf + 1 WHERE team_id = %s AND season = %s', (self.team[t]['id'], g.season))
 
 
 def team(team_id):
@@ -118,9 +118,9 @@ def team(team_id):
     """
     t = {'id': team_id, 'defense': 0, 'pace': 0, 'stat': {}, 'player': []}
 
-    g.db.execute('SELECT pa.player_id FROM %s_player_attributes as pa, %s_player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s ORDER BY pr.roster_position ASC', (g.league_id, g.league_id, team_id))
+    g.db.execute('SELECT pa.player_id FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s ORDER BY pr.roster_position ASC', (team_id,))
     for row in g.db.fetchall():
-        t['player'].append(player(row[0], g.league_id, g.dbd))
+        t['player'].append(player(row[0], g.dbd))
 
     # Number of players to factor into pace and defense rating calculation
     n_players = len(t['player'])
@@ -143,7 +143,7 @@ def team(team_id):
     return t
 
 
-def player(player_id, league_id, dbd):
+def player(player_id, dbd):
     """Returns a dict containing the minimal information about a player needed
     to simulate a game.
     """
@@ -151,7 +151,7 @@ def player(player_id, league_id, dbd):
 
     dbd.execute('SELECT overall, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, '
             'shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, '
-            'passing, rebounding FROM %s_player_ratings WHERE player_id = %s', (league_id, p['id']))
+            'passing, rebounding FROM player_ratings WHERE player_id = %s', (p['id']))
     rating = dbd.fetchone()
 
     p['overall_rating'] = rating['overall']
@@ -215,13 +215,13 @@ def _composite(minval, maxval, rating, components, inverse=False, random=True):
 
 def save_results(results, is_playoffs):
     """Convenience function to save game stats."""
-    g.db.execute('SELECT in_progress_timestamp FROM %s_schedule WHERE game_id = %s', (g.league_id, results['game_id']))
+    g.db.execute('SELECT in_progress_timestamp FROM schedule WHERE game_id = %s', (results['game_id'],))
     in_progress_timestamp, = g.db.fetchone()
     if in_progress_timestamp > 0:
         game = Game()
         game.load(results, is_playoffs)
         game.write_stats()
-        g.db.execute('DELETE FROM %s_schedule WHERE game_id = %s', (g.league_id, results['game_id']))
+        g.db.execute('DELETE FROM schedule WHERE game_id = %s', (results['game_id'],))
         app.logger.debug('Saved results for game %d' % (results['game_id'],))
     else:
         app.logger.debug('Ignored stale results for game %d' % (results['game_id'],))
@@ -248,10 +248,10 @@ def play(num_days, start=False):
 
     if num_days > 0:
         # If the user wants to stop the simulation, then stop the simulation
-        g.db.execute('SELECT stop_games FROM %s_game_attributes WHERE season = %s', (g.league_id, g.season))
+        g.db.execute('SELECT stop_games FROM game_attributes WHERE season = %s', (g.season,))
         stop_games, = g.db.fetchone()
         if stop_games:
-            g.db.execute('UPDATE %s_game_attributes SET stop_games = 0 WHERE season = %s', (g.league_id, g.season))
+            g.db.execute('UPDATE game_attributes SET stop_games = 0 WHERE season = %s', (g.season,))
 
         # If we didn't just stop games, let's play
         # Or, if we are starting games (and already passed the lock above),
@@ -277,7 +277,7 @@ def play(num_days, start=False):
             schedule = season.get_schedule(num_active_teams / 2)
             team_ids_today = []
             for game in schedule:
-                g.db.execute('UPDATE %s_schedule SET in_progress_timestamp = %s WHERE game_id = %s', (g.league_id, int(time.time()), game['game_id']))
+                g.db.execute('UPDATE schedule SET in_progress_timestamp = %s WHERE game_id = %s', (int(time.time()), game['game_id']))
                 team_ids_today.append(game['home_team_id'])
                 team_ids_today.append(game['away_team_id'])
 #                team_ids_today = list(set(team_ids_today))  # Unique list
@@ -296,7 +296,7 @@ def play(num_days, start=False):
         lock.set_games_in_progress(False)
         play_menu.refresh_options()
         # Check to see if the season is over
-        g.db.execute('SELECT game_id FROM %s_schedule LIMIT 1', (g.league_id,))
+        g.db.execute('SELECT game_id FROM schedule LIMIT 1')
         if g.db.rowcount == 0 and g.phase < 3:
             season.new_phase(3)  # Start playoffs
             url = url_for('history', league_id=g.league_id)

@@ -37,7 +37,7 @@ def roster_auto_sort(team_id):
     """
     # Get roster
     players = []
-    g.db.execute('SELECT pa.player_id, pr.overall, pr.endurance FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s', (team_id))
+    g.db.execute('SELECT pa.player_id, pr.overall, pr.endurance FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s AND pr.season = %s', (team_id, g.season))
     for row in g.db.fetchall():
         players.append([int(i) for i in list(row)])
 
@@ -47,7 +47,7 @@ def roster_auto_sort(team_id):
     # Update positions
     roster_position = 1
     for player in players:
-        g.db.execute('UPDATE player_ratings SET roster_position = %s WHERE player_id = %s', (roster_position, player[0]))
+        g.db.execute('UPDATE player_ratings SET roster_position = %s WHERE player_id = %s AND season = %s', (roster_position, player[0], g.season))
         roster_position += 1
 
 def free_agents_auto_sign():
@@ -56,7 +56,7 @@ def free_agents_auto_sign():
     g.db.execute('SELECT COUNT(*)/30 FROM team_stats WHERE season = %s', (g.season,))
     num_days_played, = g.db.fetchone()
     free_agents = []
-    g.db.execute('SELECT pa.player_id, pa.contract_amount, pa.contract_expiration FROM player_attributes as pa, player_ratings as pr WHERE pa.team_id = -1 AND pa.player_id = pr.player_id ORDER BY pr.overall + 2*pr.potential DESC')
+    g.db.execute('SELECT pa.player_id, pa.contract_amount, pa.contract_expiration FROM player_attributes as pa, player_ratings as pr WHERE pa.team_id = -1 AND pa.player_id = pr.player_id AND pr.season = %s ORDER BY pr.overall + 2*pr.potential DESC', (g.season,))
     for player_id, amount, expiration in g.db.fetchall():
         free_agents.append([player_id, amount, expiration, False])
 

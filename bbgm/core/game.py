@@ -50,7 +50,7 @@ class Game:
     def write_stats(self):
         # Record who the starters are
         for t in range(2):
-            g.db.execute('SELECT pa.player_id FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s ORDER BY pr.roster_position ASC LIMIT 5', (self.team[t]['id'],))
+            g.db.execute('SELECT pa.player_id FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s AND pr.season = %s ORDER BY pr.roster_position ASC LIMIT 5', (self.team[t]['id'], g.season))
             for starter_id, in g.db.fetchall():
                 for p in xrange(len(self.team[t]['player'])):
                     if self.team[t]['player'][p]['id'] == starter_id:
@@ -118,7 +118,7 @@ def team(team_id):
     """
     t = {'id': team_id, 'defense': 0, 'pace': 0, 'stat': {}, 'player': []}
 
-    g.db.execute('SELECT pa.player_id FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s ORDER BY pr.roster_position ASC', (team_id,))
+    g.db.execute('SELECT pa.player_id FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s AND pr.season = %s ORDER BY pr.roster_position ASC', (team_id, g.season))
     for row in g.db.fetchall():
         t['player'].append(player(row[0], g.dbd))
 
@@ -151,7 +151,7 @@ def player(player_id, dbd):
 
     dbd.execute('SELECT overall, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, '
             'shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, '
-            'passing, rebounding FROM player_ratings WHERE player_id = %s', (p['id']))
+            'passing, rebounding FROM player_ratings WHERE player_id = %s AND season = %s', (p['id'], g.season))
     rating = dbd.fetchone()
 
     p['overall_rating'] = rating['overall']

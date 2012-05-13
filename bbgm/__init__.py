@@ -62,9 +62,9 @@ def bulk_execute(sql, db=None):
         db = app.config['DB']
     process = subprocess.Popen('mysql %s -u%s -p%s' % (db, app.config['DB_USERNAME'], app.config['DB_PASSWORD']), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     stdoutdata, stderrdata = process.communicate(sql)
-#    print sql
-#    print stdoutdata
-#    print stderrdata
+    print sql
+    print stdoutdata
+    print stderrdata
 
 def init_db():
     g.db_conn = connect_db()

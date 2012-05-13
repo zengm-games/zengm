@@ -68,7 +68,7 @@ def new(team_id):
             amount, expiration = gp.contract(randomize_expiration=randomize_expiration)
             gp.attribute['contract_amount'], gp.attribute['contract_expiration'] = amount, expiration
 
-            sql += gp.sql_insert(g.league_id)
+            sql += gp.sql_insert()
 
             player_id += 1
 

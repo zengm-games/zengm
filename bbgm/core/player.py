@@ -13,15 +13,15 @@ class Player:
     def load(self, player_id):
         self.id = player_id
 
-        g.dbd.execute('SELECT * FROM player_ratings WHERE player_id = %s', (self.id,))
+        g.dbd.execute('SELECT * FROM player_ratings WHERE player_id = %s AND season = %s', (self.id, g.season))
         self.rating = g.dbd.fetchone()
         g.dbd.execute('SELECT * FROM player_attributes WHERE player_id = %s', (self.id,))
         self.attribute = g.dbd.fetchone()
 
     def save(self):
         self.rating['overall'] = self.overall_rating()
-        query = 'UPDATE player_ratings SET overall = %s, height = %s, strength = %s, speed = %s, jumping = %s, endurance = %s, shooting_inside = %s, shooting_layups = %s, shooting_free_throws = %s, shooting_two_pointers = %s, shooting_three_pointers = %s, blocks = %s, steals = %s, dribbling = %s, passing = %s, rebounding = %s, potential = %s WHERE player_id = %s'
-        g.db.execute(query, (self.rating['overall'], self.rating['height'], self.rating['strength'], self.rating['speed'], self.rating['jumping'], self.rating['endurance'], self.rating['shooting_inside'], self.rating['shooting_layups'], self.rating['shooting_free_throws'], self.rating['shooting_two_pointers'], self.rating['shooting_three_pointers'], self.rating['blocks'], self.rating['steals'], self.rating['dribbling'], self.rating['passing'], self.rating['rebounding'], self.rating['potential'], self.id))
+        query = 'UPDATE player_ratings SET overall = %s, height = %s, strength = %s, speed = %s, jumping = %s, endurance = %s, shooting_inside = %s, shooting_layups = %s, shooting_free_throws = %s, shooting_two_pointers = %s, shooting_three_pointers = %s, blocks = %s, steals = %s, dribbling = %s, passing = %s, rebounding = %s, potential = %s WHERE player_id = %s AND season = %s'
+        g.db.execute(query, (self.rating['overall'], self.rating['height'], self.rating['strength'], self.rating['speed'], self.rating['jumping'], self.rating['endurance'], self.rating['shooting_inside'], self.rating['shooting_layups'], self.rating['shooting_free_throws'], self.rating['shooting_two_pointers'], self.rating['shooting_three_pointers'], self.rating['blocks'], self.rating['steals'], self.rating['dribbling'], self.rating['passing'], self.rating['rebounding'], self.rating['potential'], self.id, g.season))
 
     def develop(self, years=1):
         # Make sure age is always defined
@@ -29,7 +29,6 @@ class Player:
 
         for i in range(years):
             age += 1
-
             potential = fast_random.gauss(self.rating['potential'], 5)
             overall = self.overall_rating()
 
@@ -116,7 +115,7 @@ class Player:
 
         return amount, expiration
 
-    def add_to_free_agents(self):
+    def add_to_free_agents(self, phase=None):
         """Adds a player to the free agents list.
 
         This should be THE ONLY way that players are added to the free agents
@@ -124,6 +123,9 @@ class Player:
         currently, the free agents generated at the beginning of the game don't
         use this function.
         """
+        if phase == None:
+            phase = g.phase
+
         # Player's desired contract
         amount, expiration = self.contract()
 
@@ -345,9 +347,14 @@ class GeneratePlayer(Player):
         return position
 
     def sql_insert(self):
+        if not hasattr(g, 'season'):
+            season = g.starting_season
+        else:
+            season = g.season
+
         self.rating['overall'] = self.overall_rating()
-        sql = 'INSERT INTO player_ratings (%s) VALUES (%s);\nINSERT INTO %d_player_attributes (%s) VALUES (%s);\n'
-        return sql % (', '.join(map(str, self.rating.keys())), ', '.join(map(self._sql_prep, self.rating.values())), league_id, ', '.join(map(str, self.attribute.keys())), ', '.join(map(self._sql_prep, self.attribute.values())))
+        sql = 'INSERT INTO player_attributes (%s) VALUES (%s);\nINSERT INTO player_ratings (%s) VALUES (%s);\n'
+        return sql % (', '.join(map(str, self.attribute.keys())), ', '.join(map(self._sql_prep, self.attribute.values())), 'player_id, season, ' + ', '.join(map(str, self.rating.keys())), '(SELECT MAX(player_id) FROM player_attributes), ' + str(season) + ', ' + ', '.join(map(self._sql_prep, self.rating.values())))
 
     def _sql_prep(self, value):
         value = str(value)

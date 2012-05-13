@@ -1,18 +1,37 @@
 # To acquire parity with the GTK version and be good enough to share:
 
+On new season, don't update ratings for retired players
+- in player view for retired players, either don't show ratings, or show ratings from best year
+
+show ratings of old years in roster view
+
+create constants for numbers (phases, freeagent/retired/whatever)
+
+BUG: "contract negotiation in progress" status appears in offseason
+
 database crap
 - optimize
   - why is it so slow, and so disk thrashy?
+  - are my keys correct/optimal/uptodate? unique keys?
 - redo schema
   - separate dbs for leagues
     - grep -R --include="*.py" '%s_' .
     - what user permissions do i need, exactly? update README
   - new column names
-  - ratings added every year for active players
   - normalize (especially the drafted table)
+    - move roster_position to player_attributes
   - get rid of INSERTS in .sql file, instead have data elsewhere
   - get rid of weird tables, replace with a key-value store table
   - bbgm.core.league.delete
+
+player view
+- next, previous buttons (also active on left/right arrows)
+- "trade for" button
+- http://twitter.github.com/bootstrap/javascript.html#tabs
+  - tab for player ratings
+  - tab for playoff stats
+  - tab for game log
+- link to team roster
 
 get rid of subprocess in __init__.py, somehow?
 
@@ -94,15 +113,6 @@ play button requirements
   - green: move to new phase
   - blue: play games
   - red: other immediate action
-
-player view
-- next, previous buttons (also active on left/right arrows)
-- "trade for" button
-- http://twitter.github.com/bootstrap/javascript.html#tabs
-  - tab for playoff stats
-  - tab for game log
-  - tab for player ratings, eventually
-- link to team roster
 
 make validate_season work correctly
 

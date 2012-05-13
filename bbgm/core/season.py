@@ -44,9 +44,14 @@ def new_phase(phase):
 
         # Create new rows in team_attributes
         g.db.execute('SELECT team_id, division_id, region, name, abbreviation, cash FROM team_attributes WHERE season = %s', (g.season - 1,))
-        teams = g.db.fetchall()
-        for row in teams:
+        for row in g.db.fetchall():
             g.db.execute('INSERT INTO team_attributes (team_id, division_id, region, name, abbreviation, cash, season) VALUES (%s, %s, %s, %s, %s, %s, %s)', (row[0], row[1], row[2], row[3], row[4], row[5], g.season))
+
+        # Create new rows in player_ratings
+        g.db.execute('SELECT player_id, season + 1, roster_position, overall, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, passing, rebounding, potential FROM player_ratings WHERE season = %s', (g.season - 1,))
+        for row in g.db.fetchall():
+            g.db.execute('INSERT INTO player_ratings (player_id, season, roster_position, overall, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, passing, rebounding, potential) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', row)
+
         # Age players
         player_ids = []
         g.db.execute('SELECT player_id FROM player_attributes')
@@ -74,7 +79,7 @@ def new_phase(phase):
                     return 'Your team currently has more than the maximum number of players (15). You must release or buy out players (from the Roster page) before the season starts.'
                 else:
                     # Automatically drop lowest potential players until we reach 15
-                    g.db.execute('SELECT pa.player_id FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s ORDER BY pr.potential ASC LIMIT %s', (team_id, num_players_on_roster-15))
+                    g.db.execute('SELECT pa.player_id FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s AND pr.season = %s ORDER BY pr.potential ASC LIMIT %s', (team_id, num_players_on_roster-15, g.season))
                     for player_id, in g.db.fetchall():
                         # Release player.
                         p = player.Player()
@@ -173,7 +178,7 @@ def new_phase(phase):
         phase_text = '%s free agency' % (g.season,)
 
         # Delete all current negotiations to resign players
-        g.db.execute('DELETE FROM negotiation', (g.league_id))
+        g.db.execute('DELETE FROM negotiation')
         lock.set_negotiation_in_progress(False)
 
         # Reset contract demands of current free agents
@@ -357,9 +362,9 @@ def awards():
     g.db.execute('CREATE TEMPORARY TABLE awards_avg (player_id INTEGER PRIMARY KEY, name VARCHAR(255), team_id INTEGER, abbreviation VARCHAR(3), draft_year INTEGER, games_played INTEGER, games_started INTEGER, mpg FLOAT, ppg FLOAT, rpg FLOAT, apg FLOAT, bpg FLOAT, spg FLOAT)')
     g.db.execute('INSERT INTO awards_avg (player_id, name, team_id, abbreviation, draft_year, games_played, games_started, mpg, ppg, rpg, apg, bpg, spg) (SELECT pa.player_id, pa.name, pa.team_id, ta.abbreviation, pa.draft_year, SUM(ps.minutes>0) AS games_played, SUM(ps.starter) AS games_started, AVG(ps.minutes) AS mpg, AVG(ps.points) AS ppg, AVG(ps.offensive_rebounds+ps.defensive_rebounds) AS rpg, AVG(ps.assists) AS apg, AVG(ps.blocks) AS bpg, AVG(ps.steals) AS spg FROM player_attributes as pa, player_stats as ps, team_attributes as ta WHERE pa.player_id = ps.player_id AND ps.season = %s AND ps.is_playoffs = 0 AND ta.team_id = pa.team_id AND ta.season = ps.season GROUP BY ps.player_id)', (g.season))
 
-    g.db.execute('SELECT team_id, abbreviation, region, name, won, lost FROM team_attributes AS ta WHERE season = %s AND (SELECT conference_id FROM league_divisions AS ld WHERE ld.division_id = ta.division_id) = 0 ORDER BY 1.0*won/(won + lost) DESC', (g.season, g.league_id))
+    g.db.execute('SELECT team_id, abbreviation, region, name, won, lost FROM team_attributes AS ta WHERE season = %s AND (SELECT conference_id FROM league_divisions AS ld WHERE ld.division_id = ta.division_id) = 0 ORDER BY 1.0*won/(won + lost) DESC', (g.season,))
     bre = g.db.fetchone()
-    g.db.execute('SELECT team_id, abbreviation, region, name, won, lost FROM team_attributes AS ta WHERE season = %s AND (SELECT conference_id FROM league_divisions AS ld WHERE ld.division_id = ta.division_id) = 1 ORDER BY 1.0*won/(won + lost) DESC', (g.season, g.league_id))
+    g.db.execute('SELECT team_id, abbreviation, region, name, won, lost FROM team_attributes AS ta WHERE season = %s AND (SELECT conference_id FROM league_divisions AS ld WHERE ld.division_id = ta.division_id) = 1 ORDER BY 1.0*won/(won + lost) DESC', (g.season,))
     brw = g.db.fetchone()
 
     g.db.execute('SELECT player_id, name, team_id, abbreviation, ppg, rpg, apg FROM awards_avg ORDER BY (0.75 * ppg) + apg + rpg DESC')
@@ -371,10 +376,10 @@ def awards():
     g.db.execute('SELECT player_id, name, team_id, abbreviation, ppg, rpg, apg FROM awards_avg WHERE draft_year = %s - 1 ORDER BY (0.75 * ppg) + apg + rpg DESC', (g.season,))
     roy = g.db.fetchone()
 
-    g.db.execute('INSERT INTO awards (season, bre_team_id, bre_abbreviation, bre_region, bre_name, bre_won, bre_lost, brw_team_id, brw_abbreviation, brw_region, brw_name, brw_won, brw_lost, mvp_player_id, mvp_name, mvp_team_id, mvp_abbreviation, mvp_ppg, mvp_rpg, mvp_apg, dpoy_player_id, dpoy_name, dpoy_team_id, dpoy_abbreviation, dpoy_rpg, dpoy_bpg, dpoy_spg, smoy_player_id, smoy_name, smoy_team_id, smoy_abbreviation, smoy_ppg, smoy_rpg, smoy_apg, roy_player_id, roy_name, roy_team_id, roy_abbreviation, roy_ppg, roy_rpg, roy_apg) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (g.season) + bre + brw + mvp + dpoy + smoy + roy)
+    g.db.execute('INSERT INTO awards (season, bre_team_id, bre_abbreviation, bre_region, bre_name, bre_won, bre_lost, brw_team_id, brw_abbreviation, brw_region, brw_name, brw_won, brw_lost, mvp_player_id, mvp_name, mvp_team_id, mvp_abbreviation, mvp_ppg, mvp_rpg, mvp_apg, dpoy_player_id, dpoy_name, dpoy_team_id, dpoy_abbreviation, dpoy_rpg, dpoy_bpg, dpoy_spg, smoy_player_id, smoy_name, smoy_team_id, smoy_abbreviation, smoy_ppg, smoy_rpg, smoy_apg, roy_player_id, roy_name, roy_team_id, roy_abbreviation, roy_ppg, roy_rpg, roy_apg) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (g.season,) + bre + brw + mvp + dpoy + smoy + roy)
 
-    g.db.execute('INSERT INTO awards_all_league (season, team_type, player_id, name, abbreviation, ppg, rpg, apg, bpg, spg) (SELECT %s, \'league\', player_id, name, abbreviation, ppg, rpg, apg, bpg, spg FROM awards_avg ORDER BY (0.75 * ppg) + apg + rpg DESC LIMIT 15)', (g.season, g.league_id))
-    g.db.execute('INSERT INTO awards_all_league (season, team_type, player_id, name, abbreviation, ppg, rpg, apg, bpg, spg) (SELECT %s, \'defensive\', player_id, name, abbreviation, ppg, rpg, apg, bpg, spg FROM awards_avg ORDER BY rpg + 5 * bpg + 5 * spg DESC LIMIT 15)', (g.season, g.league_id))
+    g.db.execute('INSERT INTO awards_all_league (season, team_type, player_id, name, abbreviation, ppg, rpg, apg, bpg, spg) (SELECT %s, \'league\', player_id, name, abbreviation, ppg, rpg, apg, bpg, spg FROM awards_avg ORDER BY (0.75 * ppg) + apg + rpg DESC LIMIT 15)', (g.season,))
+    g.db.execute('INSERT INTO awards_all_league (season, team_type, player_id, name, abbreviation, ppg, rpg, apg, bpg, spg) (SELECT %s, \'defensive\', player_id, name, abbreviation, ppg, rpg, apg, bpg, spg FROM awards_avg ORDER BY rpg + 5 * bpg + 5 * spg DESC LIMIT 15)', (g.season,))
 
     g.db.execute('DROP TABLE awards_avg')
 

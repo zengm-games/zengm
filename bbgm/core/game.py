@@ -50,7 +50,7 @@ class Game:
     def write_stats(self):
         # Record who the starters are
         for t in range(2):
-            g.db.execute('SELECT pa.player_id FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s AND pr.season = %s ORDER BY pr.roster_position ASC LIMIT 5', (self.team[t]['id'], g.season))
+            g.db.execute('SELECT player_id FROM player_attributes WHERE team_id = %s ORDER BY roster_position ASC LIMIT 5', (self.team[t]['id'],))
             for starter_id, in g.db.fetchall():
                 for p in xrange(len(self.team[t]['player'])):
                     if self.team[t]['player'][p]['id'] == starter_id:
@@ -118,7 +118,7 @@ def team(team_id):
     """
     t = {'id': team_id, 'defense': 0, 'pace': 0, 'stat': {}, 'player': []}
 
-    g.db.execute('SELECT pa.player_id FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s AND pr.season = %s ORDER BY pr.roster_position ASC', (team_id, g.season))
+    g.db.execute('SELECT player_id FROM player_attributes WHERE team_id = %s ORDER BY roster_position ASC', (team_id,))
     for row in g.db.fetchall():
         t['player'].append(player(row[0], g.dbd))
 

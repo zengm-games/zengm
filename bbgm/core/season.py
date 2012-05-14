@@ -49,9 +49,9 @@ def new_phase(phase):
             g.db.execute('INSERT INTO team_attributes (team_id, division_id, region, name, abbreviation, cash, season) VALUES (%s, %s, %s, %s, %s, %s, %s)', (row[0], row[1], row[2], row[3], row[4], row[5], g.season))
 
         # Create new rows in player_ratings, only for active players
-        g.db.execute('SELECT pr.player_id, season + 1, roster_position, overall, pr.height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, passing, rebounding, potential FROM player_ratings AS pr, player_attributes AS pa WHERE pa.player_id = pr.player_id AND pr.season = %s AND pa.team_id != %s', (g.season - 1, c.PLAYER_RETIRED))
+        g.db.execute('SELECT pr.player_id, season + 1, overall, pr.height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, passing, rebounding, potential FROM player_ratings AS pr, player_attributes AS pa WHERE pa.player_id = pr.player_id AND pr.season = %s AND pa.team_id != %s', (g.season - 1, c.PLAYER_RETIRED))
         for row in g.db.fetchall():
-            g.db.execute('INSERT INTO player_ratings (player_id, season, roster_position, overall, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, passing, rebounding, potential) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', row)
+            g.db.execute('INSERT INTO player_ratings (player_id, season, overall, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, passing, rebounding, potential) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', row)
 
         # Age players
         player_ids = []

@@ -10,7 +10,6 @@ database crap
   - separate dbs for leagues: what user permissions do i need, exactly? update README
   - new column names
   - normalize (especially the drafted table)
-    - move roster_position to player_attributes
   - get rid of INSERTS in .sql file, instead have data elsewhere
   - get rid of weird tables, replace with a key-value store table
   - bbgm.core.league.delete

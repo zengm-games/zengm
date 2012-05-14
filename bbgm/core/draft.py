@@ -39,7 +39,7 @@ def generate_players():
     roster_position = 1
     g.db.execute('SELECT pr.player_id FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s AND pr.season = %s ORDER BY pr.overall + 2*pr.potential DESC', (c.PLAYER_UNDRAFTED, g.season))
     for player_id, in g.db.fetchall():
-        g.db.execute('UPDATE player_ratings SET roster_position = %s WHERE player_id = %s AND season = %s', (roster_position, player_id, g.season))
+        g.db.execute('UPDATE player_attributes SET roster_position = %s WHERE player_id = %s', (roster_position, player_id))
         roster_position += 1
 
 def set_order():
@@ -82,14 +82,13 @@ def pick_player(team_id, player_id):
         return
 
     # Draft player, update roster potision
-    g.db.execute('SELECT pa.name, pa.position, pa.born_date, pr.overall, pr.potential FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s AND pr.player_id = %s AND pr.season = %s', (c.PLAYER_UNDRAFTED, player_id, g.season))
+    g.db.execute('SELECT pa.name, pa.position, pa.born_date, pr.overall, pr.potential FROM player_attributes AS pa, player_ratings AS pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s AND pr.player_id = %s AND pr.season = %s', (c.PLAYER_UNDRAFTED, player_id, g.season))
     name, position, born_date, overall, potential = g.db.fetchone()
-    g.db.execute('SELECT MAX(pr.roster_position) + 1 FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s AND pr.season = %s', (team_id, g.season))
+    g.db.execute('SELECT MAX(roster_position) + 1 FROM player_attributes WHERE team_id = %s', (team_id,))
     roster_position, = g.db.fetchone()
 
-    g.db.execute('UPDATE player_attributes SET team_id = %s, draft_year = %s, draft_round = %s, draft_pick = %s, draft_team_id = %s WHERE player_id = %s', (team_id, g.season, draft_round, pick, team_id, player_id))
+    g.db.execute('UPDATE player_attributes SET team_id = %s, draft_year = %s, draft_round = %s, draft_pick = %s, draft_team_id = %s, roster_position = %s WHERE player_id = %s', (team_id, g.season, draft_round, pick, team_id, roster_position, player_id))
     g.db.execute('UPDATE draft_results SET player_id = %s, name = %s, position = %s, born_date = %s, overall = %s, potential = %s WHERE season = %s AND draft_round = %s AND pick = %s', (player_id, name, position, born_date, overall, potential, g.season, draft_round, pick))
-    g.db.execute('UPDATE player_ratings SET roster_position = %s WHERE player_id = %s AND season = %s', (roster_position, player_id, g.season))
 
     # Contract
     rookie_salaries = (5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500,

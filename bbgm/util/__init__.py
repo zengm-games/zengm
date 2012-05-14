@@ -48,7 +48,7 @@ def roster_auto_sort(team_id):
     # Update positions
     roster_position = 1
     for player in players:
-        g.db.execute('UPDATE player_ratings SET roster_position = %s WHERE player_id = %s AND season = %s', (roster_position, player[0], g.season))
+        g.db.execute('UPDATE player_attributes SET roster_position = %s WHERE player_id = %s', (roster_position, player[0]))
         roster_position += 1
 
 def free_agents_auto_sign():

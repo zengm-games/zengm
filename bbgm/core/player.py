@@ -185,9 +185,9 @@ class GeneratePlayer(Player):
 
         self.rating = {}
         self.rating['potential'] = potential
-        self.rating['roster_position'] = player_id
         self.attribute = {}
         self.attribute['team_id'] = team_id
+        self.attribute['roster_position'] = player_id
         self.attribute['draft_year'] = draft_year
         self.generate_ratings(profile, base_rating)
         self.generate_attributes(age, player_nat)

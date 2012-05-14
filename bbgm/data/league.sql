@@ -40,6 +40,7 @@ player_id INTEGER PRIMARY KEY AUTO_INCREMENT,
 name VARCHAR(255),
 team_id INTEGER,
 position VARCHAR(2),
+roster_position INTEGER,
 height INTEGER, -- inches
 weight INTEGER, -- pounds
 born_date INTEGER, -- YYYY for birth year
@@ -63,7 +64,6 @@ contract_expiration INTEGER);
 CREATE TABLE player_ratings (
 player_id INTEGER,
 season INTEGER,
-roster_position INTEGER,
 overall INTEGER,
 height INTEGER,
 strength INTEGER,

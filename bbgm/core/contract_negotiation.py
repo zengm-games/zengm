@@ -130,7 +130,10 @@ def accept(player_id):
     if g.phase <= c.PHASE_AFTER_TRADE_DEADLINE:
         player_years -= 1
 
-    g.db.execute('UPDATE player_attributes SET team_id = %s, contract_amount = %s, contract_expiration = %s WHERE player_id = %s', (g.user_team_id, player_amount, g.season + player_years, player_id))
+    g.db.execute('SELECT MAX(roster_position) + 1 FROM player_attributes WHERE team_id = %s', (g.user_team_id,))
+    roster_position, = g.db.fetchone()
+
+    g.db.execute('UPDATE player_attributes SET team_id = %s, contract_amount = %s, contract_expiration = %s, roster_position = %s WHERE player_id = %s', (g.user_team_id, player_amount, g.season + player_years, roster_position, player_id))
 
     g.db.execute('DELETE FROM negotiation WHERE player_id = %s', (player_id,))
     lock.set_negotiation_in_progress(False)

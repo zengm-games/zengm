@@ -29,10 +29,6 @@ def new(team_id):
     for line in f:
         sql += line
 
-#    sql = sql.replace('CREATE TABLE ', 'CREATE TABLE ' + str(g.league_id) + '_')
-#    sql = sql.replace('INSERT INTO ', 'INSERT INTO ' + str(g.league_id) + '_')
-#    sql = sql.replace(' ON ', ' ON ' + str(g.league_id) + '_')
-
     bbgm.bulk_execute(sql, 'bbgm_%s' % (g.league_id,))
 
     # Generate new players

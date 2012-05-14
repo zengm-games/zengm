@@ -31,7 +31,7 @@
         <strong><a href="{{ url_for('roster', league_id=g.league_id, abbreviation= champ.abbreviation, view_season=view_season) }}">{{  champ.region }} {{  champ.name }}</a></strong>
       {% endif %}
       </p>
-      <h4>Best record</h4>
+      <h4>Best Record</h4>
       <p>East: <a href="{{ url_for('roster', league_id=g.league_id, abbreviation=awards.bre_abbreviation, view_season=view_season) }}">{{ awards.bre_region }} {{ awards.bre_name }}</a> ({{ awards.bre_won }}-{{ awards.bre_lost }})<br>
       West: <a href="{{ url_for('roster', league_id=g.league_id, abbreviation=awards.brw_abbreviation, view_season=view_season) }}">{{ awards.brw_region }} {{ awards.brw_name }}</a> ({{ awards.brw_won }}-{{ awards.brw_lost }})<br></p>
       <h4>Most Valueable Player</h4>

@@ -179,8 +179,7 @@ def new_phase(phase):
         phase_text = '%s free agency' % (g.season,)
 
         # Delete all current negotiations to resign players
-        g.db.execute('DELETE FROM negotiation')
-        lock.set_negotiation_in_progress(False)
+        contract_negotiation.cancel_all()
 
         # Reset contract demands of current free agents
         g.db.execute('SELECT player_id FROM player_attributes WHERE team_id = %s', (c.PLAYER_FREE_AGENT,))

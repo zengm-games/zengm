@@ -55,7 +55,7 @@ def new(player_id, resigning=False):
 
     g.db.execute('INSERT INTO negotiation (player_id, team_amount, team_years, player_amount, player_years, num_offers_made, max_offers, resigning) VALUES (%s, %s, %s, %s, %s, 0, %s, %s)', (player_id, player_amount, player_years, player_amount, player_years, max_offers, resigning))
     lock.set_negotiation_in_progress(True)
-    play_menu.set_status('Contract negotiation in progress')
+    play_menu.set_status('Contract negotiation in progress...')
     play_menu.refresh_options()
 
     # Keep track of how many times negotiations happen with a player
@@ -155,3 +155,16 @@ def cancel(player_id):
         lock.set_negotiation_in_progress(False)
         play_menu.set_status('Idle')
         play_menu.refresh_options()
+
+def cancel_all():
+    """Cancel all ongoing contract negotiations.
+    As of the time that I'm writing this, the only time there should be multiple
+    ongoing negotiations in the first place is when a user is resigning players
+    at the end of the season, although that should probably change eventually.
+    """
+    app.logger.debug('Canceling all ongoing contract negotiations...')
+
+    # If no negotiations are in progress, update status
+    g.db.execute('SELECT player_id FROM negotiation')
+    for player_id, in g.db.fetchall():
+        cancel(player_id)

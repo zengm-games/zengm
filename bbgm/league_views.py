@@ -154,6 +154,7 @@ def play(amount):
     elif amount == 'until_free_agency':
         if g.phase == c.PHASE_RESIGN_PLAYERS:
             season.new_phase(c.PHASE_FREE_AGENCY)
+            play_menu.set_status('Idle')
         url = url_for('free_agents', league_id=g.league_id)
     elif amount == 'until_preseason':
         if g.phase == c.PHASE_FREE_AGENCY:
@@ -509,11 +510,13 @@ def push_play_menu():
 @app.route('/<int:league_id>/draft/until_user_or_end', methods=['POST'])
 @league_crap_ajax
 def draft_until_user_or_end():
+    play_menu.set_status('Draft in progress...')
     player_ids = draft.until_user_or_end()
 
     done = False
     if g.phase == c.PHASE_AFTER_DRAFT:
         done = True
+        play_menu.set_status('Idle')
 
     return jsonify(player_ids=player_ids, done=done)
 

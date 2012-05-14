@@ -39,17 +39,17 @@ def leaders(view_season=None):
 
     categories = []
     categories.append({'name': 'Points', 'stat': 'Pts',
-                       'title': 'Points per game', 'data': []})
+                       'title': 'Points Per Game', 'data': []})
     categories.append({'name': 'Rebounds', 'stat': 'Reb',
-                       'title': 'Rebounds per game', 'data': []})
+                       'title': 'Rebounds Per Game', 'data': []})
     categories.append({'name': 'Assists', 'stat': 'Ast',
-                       'title': 'Assists per game', 'data': []})
-    categories.append({'name': 'Field goal percentage', 'stat': 'FG%',
-                       'title': 'Field goal percentage', 'data': []})
+                       'title': 'Assists Per Game', 'data': []})
+    categories.append({'name': 'Field Goal Percentage', 'stat': 'FG%',
+                       'title': 'Field Goal Percentage', 'data': []})
     categories.append({'name': 'Blocks', 'stat': 'Blk',
-                       'title': 'Blocks per game', 'data': []})
+                       'title': 'Blocks Per Game', 'data': []})
     categories.append({'name': 'Steals', 'stat': 'Stl',
-                       'title': 'Steals per game', 'data': []})
+                       'title': 'Steals Per Game', 'data': []})
 
     cols = ['ps.points', 'ps.offensive_rebounds+ps.defensive_rebounds',
             'ps.assists', '100*ps.field_goals_made/ps.field_goals_attempted',

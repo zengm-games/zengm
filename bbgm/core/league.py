@@ -93,5 +93,5 @@ def new(team_id):
     return g.league_id
 
 def delete(league_id):
-    pass
-
+    g.db.execute('DROP DATABASE bbgm_%s' % (league_id,))
+    g.db.execute('DELETE FROM leagues WHERE league_id = %s', (league_id,))

@@ -12,7 +12,6 @@ database crap
   - normalize (especially the drafted table)
   - get rid of INSERTS in .sql file, instead have data elsewhere
   - get rid of weird tables, replace with a key-value store table
-  - bbgm.core.league.delete
 
 player view
 - next, previous buttons (also active on left/right arrows)

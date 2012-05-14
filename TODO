@@ -104,7 +104,6 @@ grep for # links: grep -R --include="*.html" '<a href="#">' .
 
 how to start/manage all these services?
 - supervisor
-  - https://github.com/ask/celery/tree/master/contrib/supervisord/
 
 security
 - password hashing
@@ -123,7 +122,6 @@ pep8
 
 logging
 - should be more ubiquitous
-- doesn't get saved to file inside celery task, but they do show up on the celeryd screen
 
 next redirect like http://flask.pocoo.org/docs/reqcontext/?highlight=url#diving-into-context-locals
 - http://flask.pocoo.org/snippets/62/
@@ -131,8 +129,6 @@ next redirect like http://flask.pocoo.org/docs/reqcontext/?highlight=url#diving-
 playoffs
 - on playoffs start, automatically switch to playoffs view
 - before playoffs, show current playoff seedings
-
-http://flask.pocoo.org/snippets/11/
 
 add years dropdown to all relevant views
 - playoffs, eventually

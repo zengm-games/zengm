@@ -80,12 +80,12 @@ def new_phase(phase):
                     return 'Your team currently has more than the maximum number of players (15). You must release or buy out players (from the Roster page) before the season starts.'
                 else:
                     # Automatically drop lowest potential players until we reach 15
-                    g.db.execute('SELECT pa.player_id FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s AND pr.season = %s ORDER BY pr.potential ASC LIMIT %s', (team_id, num_players_on_roster-15, g.season))
+                    g.db.execute('SELECT pa.player_id FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s AND pr.season = %s ORDER BY pr.potential ASC LIMIT %s', (team_id, g.season, num_players_on_roster-15))
                     for player_id, in g.db.fetchall():
                         # Release player.
                         p = player.Player()
                         p.load(player_id)
-                        p.release(phase)
+                        p.release()
             elif num_players_on_roster < 5:
                 if team_id == g.user_team_id:
                     return 'Your team currently has less than the minimum number of players (5). You must add players (through free agency or trades) before the season starts.'

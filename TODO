@@ -1,7 +1,5 @@
 # To acquire parity with the GTK version and be good enough to share:
 
-BUG: "contract negotiation in progress" status appears in offseason
-
 database crap
 - optimize
   - why is it so slow, and so disk thrashy?

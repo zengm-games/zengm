@@ -34,9 +34,9 @@ def new(team_id):
     # Generate new players
     profiles = ['Point', 'Wing', 'Big', '']
     gp = player.GeneratePlayer()
-    sql = ''
     player_id = 1
-    players = []
+    sql_insert_attributes = []
+    sql_insert_ratings = []
     for t in range(-1, 30):
         good_neutral_bad = random.randrange(-1, 2)  # Determines if this will be a good team or not
 
@@ -66,12 +66,13 @@ def new(team_id):
             amount, expiration = gp.contract(randomize_expiration=randomize_expiration)
             gp.attribute['contract_amount'], gp.attribute['contract_expiration'] = amount, expiration
 
-            sql += gp.sql_insert()
-#            players.append(gp.sql_insert2())
+            sql_insert_ratings.append(gp.sql_insert_ratings())
+            sql_insert_attributes.append(gp.sql_insert_attributes())
 
             player_id += 1
 
-    bbgm.bulk_execute(sql, 'bbgm_%s' % (g.league_id,))
+    g.db.executemany(gp.sql_insert_attributes_query(), sql_insert_attributes)
+    g.db.executemany(gp.sql_insert_ratings_query(), sql_insert_ratings)
 
     # Set and get global game attributes
     g.db.execute('UPDATE game_attributes SET team_id = %s', (team_id,))

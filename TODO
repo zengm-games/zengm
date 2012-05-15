@@ -5,7 +5,6 @@ BUG: "contract negotiation in progress" status appears in offseason
 database crap
 - optimize
   - why is it so slow, and so disk thrashy?
-    - 38-39s new league
   - are my keys correct/optimal/uptodate? unique keys?
 - redo schema
   - separate dbs for leagues: what user permissions do i need, exactly? update README

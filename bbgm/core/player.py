@@ -347,19 +347,22 @@ class GeneratePlayer(Player):
 
         return position
 
-    def sql_insert(self):
+    # In the following 4 methods, everything is sorted by the keys to ensure they align
+    def sql_insert_attributes_query(self):
+        sql = 'INSERT INTO player_attributes (%s) VALUES (%s)'
+        return sql % ('player_id, ' + ', '.join(map(str, sorted(self.attribute.keys()))), ', '.join(['%s' for i in xrange(len(self.attribute.keys()) + 1)]))
+
+    def sql_insert_attributes(self):
+        return [self.id,] + [self.attribute[i] for i in sorted(self.attribute.keys())]
+
+    def sql_insert_ratings_query(self):
+        sql = 'INSERT INTO player_ratings (%s) VALUES (%s)'
+        return sql % ('player_id, season, ' + ', '.join(map(str, sorted(self.rating.keys()))), ', '.join(['%s' for i in xrange(len(self.rating.keys()) + 2)]))
+
+    def sql_insert_ratings(self):
         if not hasattr(g, 'season'):
             season = g.starting_season
         else:
             season = g.season
-
         self.rating['overall'] = self.overall_rating()
-        sql = 'INSERT INTO player_attributes (%s) VALUES (%s);\nINSERT INTO player_ratings (%s) VALUES (%s);\n'
-        return sql % ('player_id, ' + ', '.join(map(str, self.attribute.keys())), str(self.id) + ', ' + ', '.join(map(self._sql_prep, self.attribute.values())), 'player_id, season, ' + ', '.join(map(str, self.rating.keys())), str(self.id) + ', ' + str(season) + ', ' + ', '.join(map(self._sql_prep, self.rating.values())))
-
-    def _sql_prep(self, value):
-        value = str(value)
-        if value.isdigit():
-            return value
-        else:
-            return "'%s'" % value
+        return [self.id, season] + [self.rating[i] for i in sorted(self.rating.keys())]

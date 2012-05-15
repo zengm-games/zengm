@@ -70,7 +70,6 @@ def new(team_id):
             sql_insert_attributes.append(gp.sql_insert_attributes())
 
             player_id += 1
-
     g.db.executemany(gp.sql_insert_attributes_query(), sql_insert_attributes)
     g.db.executemany(gp.sql_insert_ratings_query(), sql_insert_ratings)
 

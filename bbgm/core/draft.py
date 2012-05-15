@@ -10,9 +10,10 @@ import bbgm.util.const as c
 def generate_players():
     profiles = ['Point', 'Wing', 'Big', 'Big', '']
     gp = player.GeneratePlayer()
-    sql = ''
     g.db.execute('SELECT MAX(player_id) + 1 FROM player_attributes')
     player_id, = g.db.fetchone()
+    sql_insert_attributes = []
+    sql_insert_ratings = []
     for p in xrange(70):
         base_rating = random.randrange(0, 20)
         potential = int(random.gauss(45, 20))
@@ -30,10 +31,12 @@ def generate_players():
         gp.new(player_id, c.PLAYER_UNDRAFTED, 19, profile, base_rating, potential, draft_year)
         gp.develop(aging_years)
 
-        sql += gp.sql_insert()
+        sql_insert_ratings.append(gp.sql_insert_ratings())
+        sql_insert_attributes.append(gp.sql_insert_attributes())
 
         player_id += 1
-    bbgm.bulk_execute(sql, 'bbgm_%d' % (g.league_id,))
+    g.db.executemany(gp.sql_insert_attributes_query(), sql_insert_attributes)
+    g.db.executemany(gp.sql_insert_ratings_query(), sql_insert_ratings)
 
     # Update roster positions (so next/prev buttons work in player dialog)
     roster_position = 1

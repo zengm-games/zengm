@@ -197,6 +197,10 @@ $(document).ready(function() {
         if ($(this).parent().parent().parent().hasClass('dataTables_paginate')) {
             exception = true;
         }
+        // Bootstrap tabs
+        else if ($(this).parent().parent().data('tabs') === 'tabs') {
+            exception = true;
+        }
 
         // If they are the same, do AJAX page load
         if (league_id_2 > 0 && league_root_url_1 == league_root_url_2 && !exception) {

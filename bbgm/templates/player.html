@@ -4,6 +4,15 @@
 {% block title %}{{ info.name }} - League {{ g.league_id }} - Basketball GM{% endblock %}
 
 {% block league_content %}
+  <script type="text/javascript">
+$(document).ready(function() {
+/*    $('#player_tabs a').click(function (e) {
+        e.preventDefault();
+        $(this).tab('show');
+    });*/
+    $('#player_tabs').tab();
+});
+  </script>
   <div class="row-fluid">
     <div class="span6">
       <h1>{{ info.name }}</h1>
@@ -46,20 +55,33 @@
       </div>
     </div>
   </div>
+  <p></p>
 
-  <hr>
+  <ul id="player_tabs" class="nav nav-tabs" data-tabs="tabs">
+      <li class="active"><a href="#career_stats" data-toggle="tab">Career Stats</a></li>
+      <li><a href="#game_log" data-toggle="tab">Game Log</a></li>
+      <li><a href="#ratings_history" data-toggle="tab">Ratings History</a></li>
+  </ul>
+  <div id="my-tab-content" class="tab-content">
+    <div class="tab-pane active" id="career_stats">
+      <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="player_stats">
+      <thead>
+        <tr><th colspan="5"></th><th colspan="3" style="text-align: center" title="Field Goals">FG</th><th colspan="3" style="text-align: center" title="Three-Pointers">3PT</th><th colspan="3" style="text-align: center" title="Free Throws">FT</th><th colspan="3" style="text-align: center" title="Rebounds">Reb</th><th colspan="6"></th></tr>
+        <tr><th>Year</th><th>Team</th><th title="Games Played">GP</th><th title="Games Started">GS</th><th title="Minutes">Min</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Offensive">Off</th><th title="Defensive">Def</th><th title="Total">Tot</th><th title="Assists">Ast</th><th title="Turnovers">TO</th><th title="Steals">Stl</th><th title="Blocks">Blk</th><th title="Personal Fouls">PF</th><th title="Points">PPG</th></tr>
+      </thead>
+      <tbody>
+      {% for season in seasons %}
+        <tr><td><a href="#">{{ season.season }}</a></td><td><a href="{{ url_for('roster', league_id=g.league_id, abbreviation=season.abbreviation, view_season=season.season) }}">{{ season.abbreviation }}</a></td><td>{{ season.games_played }}</td><td>{{ season.games_started }}</td><td>{{ season.minutes|float|round(1) }}</td><td>{{ season.field_goals_made|float|round(1) }}</td><td>{{ season.field_goals_attempted|float|round(1) }}</td><td>{{ season.field_goal_percentage|float|round(1) }}</td><td>{{ season.three_pointers_made|float|round(1) }}</td><td>{{ season.three_pointers_attempted|float|round(1) }}</td><td>{{ season.three_point_percentage|float|round(1) }}</td><td>{{ season.free_throws_made|float|round(1) }}</td><td>{{ season.free_throws_attempted|float|round(1) }}</td><td>{{ season.free_throw_percentage|float|round(1) }}</td><td>{{ season.offensive_rebounds|float|round(1) }}</td><td>{{ season.defensive_rebounds|float|round(1) }}</td><td>{{ season.rebounds|float|round(1) }}</td><td>{{ season.assists|float|round(1) }}</td><td>{{ season.turnovers|float|round(1) }}</td><td>{{ season.steals|float|round(1) }}</td><td>{{ season.blocks|float|round(1) }}</td><td>{{ season.personal_fouls|float|round(1) }}</td><td>{{ season.points|float|round(1) }}</td></tr>
+      {% endfor %}
+      </tbody>
+      </table>
+    </div>
+    <div class="tab-pane" id="game_log">
+      Not implemented yet
+    </div>
+    <div class="tab-pane" id="ratings_history">
+      Not implemented yet
+    </div>
+  </div>
 
-  <h3>Player Stats</h3>
-
-  <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="player_stats">
-  <thead>
-    <tr><th colspan="5"></th><th colspan="3" style="text-align: center" title="Field Goals">FG</th><th colspan="3" style="text-align: center" title="Three-Pointers">3PT</th><th colspan="3" style="text-align: center" title="Free Throws">FT</th><th colspan="3" style="text-align: center" title="Rebounds">Reb</th><th colspan="6"></th></tr>
-    <tr><th>Year</th><th>Team</th><th title="Games Played">GP</th><th title="Games Started">GS</th><th title="Minutes">Min</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Offensive">Off</th><th title="Defensive">Def</th><th title="Total">Tot</th><th title="Assists">Ast</th><th title="Turnovers">TO</th><th title="Steals">Stl</th><th title="Blocks">Blk</th><th title="Personal Fouls">PF</th><th title="Points">PPG</th></tr>
-  </thead>
-  <tbody>
-  {% for season in seasons %}
-    <tr><td><a href="#">{{ season.season }}</a></td><td><a href="{{ url_for('roster', league_id=g.league_id, abbreviation=season.abbreviation, view_season=season.season) }}">{{ season.abbreviation }}</a></td><td>{{ season.games_played }}</td><td>{{ season.games_started }}</td><td>{{ season.minutes|float|round(1) }}</td><td>{{ season.field_goals_made|float|round(1) }}</td><td>{{ season.field_goals_attempted|float|round(1) }}</td><td>{{ season.field_goal_percentage|float|round(1) }}</td><td>{{ season.three_pointers_made|float|round(1) }}</td><td>{{ season.three_pointers_attempted|float|round(1) }}</td><td>{{ season.three_point_percentage|float|round(1) }}</td><td>{{ season.free_throws_made|float|round(1) }}</td><td>{{ season.free_throws_attempted|float|round(1) }}</td><td>{{ season.free_throw_percentage|float|round(1) }}</td><td>{{ season.offensive_rebounds|float|round(1) }}</td><td>{{ season.defensive_rebounds|float|round(1) }}</td><td>{{ season.rebounds|float|round(1) }}</td><td>{{ season.assists|float|round(1) }}</td><td>{{ season.turnovers|float|round(1) }}</td><td>{{ season.steals|float|round(1) }}</td><td>{{ season.blocks|float|round(1) }}</td><td>{{ season.personal_fouls|float|round(1) }}</td><td>{{ season.points|float|round(1) }}</td></tr>
-  {% endfor %}
-  </tbody>
-  </table>
 {% endblock %}

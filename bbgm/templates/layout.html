@@ -19,16 +19,18 @@
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
-    {% assets filter='closure_js', output='gen/packed.js', 'js/jquery.js', 'js/jquery-ui.js', 'js/bootstrap-dropdown.js', 'js/jquery.dataTables.min.js', 'js/DT_bootstrap.js', 'js/bbgm.js', 'js/juggernaut.js', 'js/game_sim.js' %}
+    {% assets filter='closure_js', output='gen/packed.js', 'js/jquery.js', 'js/jquery-ui.js', 'js/bootstrap-dropdown.js', 'js/bootstrap-tab.js', 'js/jquery.dataTables.min.js', 'js/DT_bootstrap.js', 'js/bbgm.js', 'js/juggernaut.js', 'js/game_sim.js' %}
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
     {% endassets %}
 <!--    <script src="/static/js/jquery.js"></script>
     <script src="/static/js/jquery-ui.js"></script>
     <script src="/static/js/bootstrap-dropdown.js"></script>
+    <script src="/static/js/bootstrap-tab.js"></script>
     <script src="/static/js/jquery.dataTables.min.js"></script>
     <script src="/static/js/DT_bootstrap.js"></script>
     <script src="/static/js/bbgm.js"></script>
-    <script src="/static/js/juggernaut.js"></script>-->
+    <script src="/static/js/juggernaut.js"></script>
+    <script src="/static/js/game_sim.js"></script>-->
 
     <link rel="shortcut icon" href="{{ url_for('static', filename='ico/favicon.ico') }}">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ url_for('static', filename='ico/apple-touch-icon-114-precomposed.png') }}">

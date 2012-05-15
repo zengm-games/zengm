@@ -18,7 +18,6 @@ player view
 - next, previous buttons (also active on left/right arrows)
 - "trade for" button
 - http://twitter.github.com/bootstrap/javascript.html#tabs
-  - tab for player ratings
   - tab for game log
 - link to team roster
 - for retired players, either don't show ratings, or show ratings from best year

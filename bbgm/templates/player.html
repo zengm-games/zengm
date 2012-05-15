@@ -66,12 +66,12 @@ $(document).ready(function() {
     <div class="tab-pane active" id="career_stats">
       <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="player_stats">
       <thead>
-        <tr><th colspan="5"></th><th colspan="3" style="text-align: center" title="Field Goals">FG</th><th colspan="3" style="text-align: center" title="Three-Pointers">3PT</th><th colspan="3" style="text-align: center" title="Free Throws">FT</th><th colspan="3" style="text-align: center" title="Rebounds">Reb</th><th colspan="6"></th></tr>
-        <tr><th>Year</th><th>Team</th><th title="Games Played">GP</th><th title="Games Started">GS</th><th title="Minutes">Min</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Offensive">Off</th><th title="Defensive">Def</th><th title="Total">Tot</th><th title="Assists">Ast</th><th title="Turnovers">TO</th><th title="Steals">Stl</th><th title="Blocks">Blk</th><th title="Personal Fouls">PF</th><th title="Points">PPG</th></tr>
+        <tr><th colspan="6"></th><th colspan="3" style="text-align: center" title="Field Goals">FG</th><th colspan="3" style="text-align: center" title="Three-Pointers">3PT</th><th colspan="3" style="text-align: center" title="Free Throws">FT</th><th colspan="3" style="text-align: center" title="Rebounds">Reb</th><th colspan="6"></th></tr>
+        <tr><th>Year</th><th>Team</th><th>Age</th><th title="Games Played">GP</th><th title="Games Started">GS</th><th title="Minutes">Min</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Offensive">Off</th><th title="Defensive">Def</th><th title="Total">Tot</th><th title="Assists">Ast</th><th title="Turnovers">TO</th><th title="Steals">Stl</th><th title="Blocks">Blk</th><th title="Personal Fouls">PF</th><th title="Points">PPG</th></tr>
       </thead>
       <tbody>
       {% for season in seasons %}
-        <tr><td><a href="#">{{ season.season }}</a></td><td><a href="{{ url_for('roster', league_id=g.league_id, abbreviation=season.abbreviation, view_season=season.season) }}">{{ season.abbreviation }}</a></td><td>{{ season.games_played }}</td><td>{{ season.games_started }}</td><td>{{ season.minutes|float|round(1) }}</td><td>{{ season.field_goals_made|float|round(1) }}</td><td>{{ season.field_goals_attempted|float|round(1) }}</td><td>{{ season.field_goal_percentage|float|round(1) }}</td><td>{{ season.three_pointers_made|float|round(1) }}</td><td>{{ season.three_pointers_attempted|float|round(1) }}</td><td>{{ season.three_point_percentage|float|round(1) }}</td><td>{{ season.free_throws_made|float|round(1) }}</td><td>{{ season.free_throws_attempted|float|round(1) }}</td><td>{{ season.free_throw_percentage|float|round(1) }}</td><td>{{ season.offensive_rebounds|float|round(1) }}</td><td>{{ season.defensive_rebounds|float|round(1) }}</td><td>{{ season.rebounds|float|round(1) }}</td><td>{{ season.assists|float|round(1) }}</td><td>{{ season.turnovers|float|round(1) }}</td><td>{{ season.steals|float|round(1) }}</td><td>{{ season.blocks|float|round(1) }}</td><td>{{ season.personal_fouls|float|round(1) }}</td><td>{{ season.points|float|round(1) }}</td></tr>
+        <tr><td><a href="#">{{ season.season }}</a></td><td><a href="{{ url_for('roster', league_id=g.league_id, abbreviation=season.abbreviation, view_season=season.season) }}">{{ season.abbreviation }}</a></td><td>{{ season.age }}</td><td>{{ season.games_played }}</td><td>{{ season.games_started }}</td><td>{{ season.minutes|float|round(1) }}</td><td>{{ season.field_goals_made|float|round(1) }}</td><td>{{ season.field_goals_attempted|float|round(1) }}</td><td>{{ season.field_goal_percentage|float|round(1) }}</td><td>{{ season.three_pointers_made|float|round(1) }}</td><td>{{ season.three_pointers_attempted|float|round(1) }}</td><td>{{ season.three_point_percentage|float|round(1) }}</td><td>{{ season.free_throws_made|float|round(1) }}</td><td>{{ season.free_throws_attempted|float|round(1) }}</td><td>{{ season.free_throw_percentage|float|round(1) }}</td><td>{{ season.offensive_rebounds|float|round(1) }}</td><td>{{ season.defensive_rebounds|float|round(1) }}</td><td>{{ season.rebounds|float|round(1) }}</td><td>{{ season.assists|float|round(1) }}</td><td>{{ season.turnovers|float|round(1) }}</td><td>{{ season.steals|float|round(1) }}</td><td>{{ season.blocks|float|round(1) }}</td><td>{{ season.personal_fouls|float|round(1) }}</td><td>{{ season.points|float|round(1) }}</td></tr>
       {% endfor %}
       </tbody>
       </table>
@@ -80,7 +80,16 @@ $(document).ready(function() {
       Not implemented yet
     </div>
     <div class="tab-pane" id="ratings_history">
-      Not implemented yet
+      <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="player_ratings">
+      <thead>
+        <tr><th>Year</th><th>Team</th><th>Age</th><th title="Overall">Ovr</th><th title="Potential">Pot</th><th title="Height">Hgt</th><th title="Strength">Str</th><th title="Speed">Spd</th><th title="Jumping">Jmp</th><th title="Endurance">End</th><th title="Inside Scoring">Ins</th><th title="Dunks/Layups">Dnk</th><th title="Free Throw Shooting">FT</th><th title="Two-Point Shooting">2Pt</th><th title="Three-Point Shooting">3Pt</th><th title="Blocks">Blk</th><th title="Steals">Stl</th><th title="Dribbling">Drb</th><th title="Passing">Pss</th><th title="Rebounding">Reb</th></tr>
+      </thead>
+      <tbody>
+        {% for season in seasons %}
+		      <tr><td><a href="#">{{ season.season }}</a></td><td><a href="{{ url_for('roster', league_id=g.league_id, abbreviation=season.abbreviation) }}">{{ season.abbreviation }}</a></td><td>{{ season.age }}</td><td>{{ season.overall }}</td><td>{{ season.potential }}</td><td>{{ season.height }}</td><td>{{ season.strength }}</td><td>{{ season.speed }}</td><td>{{ season.jumping }}</td><td>{{ season.endurance }}</td><td>{{ season.shooting_inside }}</td><td>{{ season.shooting_layups }}</td><td>{{ season.shooting_free_throws }}</td><td>{{ season.shooting_two_pointers }}</td><td>{{ season.shooting_three_pointers }}</td><td>{{ season.rating_blocks }}</td><td>{{ season.rating_steals }}</td><td>{{ season.dribbling }}</td><td>{{ season.passing }}</td><td>{{ season.rebounding }}</td></tr>
+        {% endfor %}
+      </tbody>
+      </table>
     </div>
   </div>
 

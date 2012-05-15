@@ -1,4 +1,3 @@
-DROP TABLE if EXISTS users;
 CREATE TABLE users (
     user_id INTEGER PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(255) UNIQUE,
@@ -6,14 +5,12 @@ CREATE TABLE users (
 );
 INSERT INTO users (username, password) VALUES ('test', 'test');
 
-DROP TABLE if EXISTS leagues;
 CREATE TABLE leagues (
     league_id INTEGER PRIMARY KEY AUTO_INCREMENT,
     user_id INTEGER,
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
-DROP TABLE if EXISTS teams;
 CREATE TABLE teams (
     team_id INTEGER PRIMARY KEY,
     division_id INTEGER,

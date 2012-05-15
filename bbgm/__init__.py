@@ -4,7 +4,6 @@ from flask import Flask, g
 from flask.ext.assets import Environment, Bundle
 import logging
 import MySQLdb
-import subprocess
 from contextlib import closing
 #from gevent.event import Event
 
@@ -50,21 +49,23 @@ def connect_db():
     return MySQLdb.connect('localhost', app.config['DB_USERNAME'], app.config['DB_PASSWORD'])
 
 
-def bulk_execute(sql, db=None):
+def bulk_execute(f):
     """Executes a series of SQL queries, even if split across multiple lines.
 
-    This emulates the functionality of executescript from sqlite3.
+    This emulates the functionality of executescript from sqlite3. It won't work
+    if either you have SQL queries that don't end in a semicolon followed by a
+    newline ;\n or you have a semicolon followed by a newline that is not at the
+    end of an SQL query.
 
     Args:
-        sql: A string containing SQL queries to be executed.
+        f: An iterable (such as a file handle) containing lines of SQL queries
     """
-    if not db:
-        db = app.config['DB']
-    process = subprocess.Popen('mysql %s -u%s -p%s' % (db, app.config['DB_USERNAME'], app.config['DB_PASSWORD']), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-    stdoutdata, stderrdata = process.communicate(sql)
-    print sql
-    print stdoutdata
-    print stderrdata
+    sql = ''
+    for line in f:
+        sql += line
+        if line.endswith(';\n'):
+            g.db.execute(sql)
+            sql = ''
 
 def init_db():
     g.db_conn = connect_db()
@@ -76,6 +77,8 @@ def init_db():
         app.logger.debug('Dropping database %s' % (database,))
         g.db.execute('DROP DATABASE %s' % (database,))
 
+    app.logger.debug('Creating new bbgm database and tables')
+
     # Create new database
     g.db.execute('CREATE DATABASE bbgm')
     g.db.execute('GRANT ALL ON bbgm.* TO %s@localhost IDENTIFIED BY \'%s\'' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
@@ -83,10 +86,7 @@ def init_db():
 
     # Create new tables
     f = app.open_resource('data/core.sql')
-    sql = ''
-    for line in f:
-        sql += line
-    bulk_execute(sql)
+    bulk_execute(f)
 
 @app.before_request
 def before_request():

@@ -25,11 +25,7 @@ def new(team_id):
 
     # Create other new tables
     f = app.open_resource('data/league.sql')
-    sql = ''
-    for line in f:
-        sql += line
-
-    bbgm.bulk_execute(sql, 'bbgm_%s' % (g.league_id,))
+    bbgm.bulk_execute(f)
 
     # Generate new players
     profiles = ['Point', 'Wing', 'Big', '']

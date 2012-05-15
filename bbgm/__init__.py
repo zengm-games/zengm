@@ -24,9 +24,9 @@ app.config.from_object(__name__)
 class ContextFilter(logging.Filter):
     """This filter injects the league ID, if available into the log."""
     def filter(self, record):
-        try:
+        if hasattr(g, 'league_id'):
             record.league_id = g.league_id
-        except RuntimeError:
+        else:
             record.league_id = '?'
         return True
 fh = logging.FileHandler('debug.log')
@@ -73,8 +73,7 @@ def init_db():
     # Delete any current bbgm databases
     g.db.execute("SHOW DATABASES LIKE 'bbgm%'")
     for database, in g.db.fetchall():
-        print database
-#        g.db.execute('DROP DATABASE %s', (database,))
+        app.logger.debug('Dropping database %s' % (database,))
         g.db.execute('DROP DATABASE %s' % (database,))
 
     # Create new database

@@ -116,6 +116,9 @@ def before_request():
 def teardown_request(exception):
     if hasattr(g, 'db'):
         g.db.execute('COMMIT')
+        g.db.close()
+    if hasattr(g, 'dbd'):
+        g.dbd.close()
     if hasattr(g, 'db_conn'):
         g.db_conn.close()
 

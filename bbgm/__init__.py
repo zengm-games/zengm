@@ -1,11 +1,8 @@
-#from gevent import monkey
-#monkey.patch_all()
 from flask import Flask, g
 from flask.ext.assets import Environment, Bundle
 import logging
 import MySQLdb
 from contextlib import closing
-#from gevent.event import Event
 
 BBGM_VERSION = '2.0.0alpha'
 DEBUG = True
@@ -17,7 +14,7 @@ TRY_NUMPY = True
 
 app = Flask(__name__)
 app.config.from_object(__name__)
-#app.event = Event()
+
 
 # Logging
 class ContextFilter(logging.Filter):
@@ -45,6 +42,7 @@ assets = Environment(app)
 import bbgm.views
 import bbgm.league_views
 
+
 def connect_db():
     return MySQLdb.connect('localhost', app.config['DB_USERNAME'], app.config['DB_PASSWORD'])
 
@@ -67,6 +65,7 @@ def bulk_execute(f):
             g.db.execute(sql)
             sql = ''
 
+
 def init_db():
     g.db_conn = connect_db()
     g.db = g.db_conn.cursor()
@@ -87,6 +86,7 @@ def init_db():
     # Create new tables
     f = app.open_resource('data/core.sql')
     bulk_execute(f)
+
 
 @app.before_request
 def before_request():
@@ -111,6 +111,7 @@ def before_request():
     g.num_teams = 30
     g.season_length = 82
 
+
 @app.teardown_request
 def teardown_request(exception):
     if hasattr(g, 'db'):
@@ -120,6 +121,7 @@ def teardown_request(exception):
         g.dbd.close()
     if hasattr(g, 'db_conn'):
         g.db_conn.close()
+
 
 @app.template_filter()
 def number_format(value, tsep=',', dsep='.'):
@@ -137,7 +139,7 @@ def number_format(value, tsep=',', dsep='.'):
     else:
         cnt = s.rfind(dsep)
     if cnt > 0:
-        rhs = dsep + s[cnt+1:]
+        rhs = dsep + s[cnt + 1:]
         s = s[:cnt]
     else:
         rhs = ''

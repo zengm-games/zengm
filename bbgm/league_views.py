@@ -14,8 +14,6 @@ import bbgm.util.const as c
 
 # All the views in here are for within a league.
 
-# Automatically handle league ID
-
 
 @app.url_defaults
 def add_league_id(endpoint, values):

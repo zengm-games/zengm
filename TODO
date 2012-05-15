@@ -20,8 +20,6 @@ player view
 - link to team roster
 - for retired players, either don't show ratings, or show ratings from best year
 
-get rid of subprocess in __init__.py, somehow?
-
 roster
 - "release" only sensitive with more than 5 players
 - "buy out" only sensitive when there's enough money
@@ -117,9 +115,6 @@ security
 pep8
 - https://github.com/hhatto/autopep8
 
-logging
-- should be more ubiquitous
-
 next redirect like http://flask.pocoo.org/docs/reqcontext/?highlight=url#diving-into-context-locals
 - http://flask.pocoo.org/snippets/62/
 
@@ -150,6 +145,9 @@ abstract opposing team AI: make it a class with various methods to determine act
 
 game log
 - pushstate for individual box scores as well as teams and seasons, somehow?
+
+logging
+- should be more ubiquitous
 
 # BELOW IS OLD STUFF
 

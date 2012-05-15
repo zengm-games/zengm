@@ -99,7 +99,7 @@ def before_request():
         g.db.execute('USE bbgm_%s', (g.league_id,))
         app.logger.debug('Using database bbgm_%d' % (g.league_id,))
     else:
-        g.db.execute('USE bbgm');
+        g.db.execute('USE bbgm')
         app.logger.debug('Using database bbgm')
 
     # Non-database crap - should probably be stored elsewhere. Also, changing

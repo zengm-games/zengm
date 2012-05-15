@@ -15,20 +15,26 @@ import bbgm.util.const as c
 # All the views in here are for within a league.
 
 # Automatically handle league ID
+
+
 @app.url_defaults
 def add_league_id(endpoint, values):
     if 'league_id' in values or not g.league_id:
         return
     if app.url_map.is_endpoint_expecting(endpoint, 'league_id'):
         values['league_id'] = g.league_id
+
+
 @app.url_value_preprocessor
 def pull_league_id(endpoint, values):
     g.league_id = values.pop('league_id', None)
+
 
 @app.route('/<int:league_id>')
 @league_crap
 def league_dashboard():
     return render_all_or_json('league_dashboard.html')
+
 
 @app.route('/<int:league_id>/leaders')
 @app.route('/<int:league_id>/leaders/<int:view_season>')
@@ -66,6 +72,7 @@ def leaders(view_season=None):
 
     return render_all_or_json('leaders.html', {'categories': categories, 'user_abbreviation': user_abbreviation, 'seasons': seasons, 'view_season': view_season})
 
+
 @app.route('/<int:league_id>/player_ratings')
 @app.route('/<int:league_id>/player_ratings/<int:view_season>')
 @league_crap
@@ -77,6 +84,7 @@ def player_ratings(view_season=None):
     players = g.dbd.fetchall()
 
     return render_all_or_json('player_ratings.html', {'players': players, 'seasons': seasons, 'view_season': view_season})
+
 
 @app.route('/<int:league_id>/player_stats')
 @app.route('/<int:league_id>/player_stats/<int:view_season>')
@@ -95,6 +103,7 @@ def player_stats(view_season=None):
                 players[i][key] = 0
 
     return render_all_or_json('player_stats.html', {'players': players, 'seasons': seasons, 'view_season': view_season})
+
 
 @app.route('/<int:league_id>/play/<amount>', methods=['POST'])
 @league_crap_ajax
@@ -165,6 +174,7 @@ def play(amount):
 
     return jsonify(url=url, error=error, num_days=num_days, schedule=schedule, teams=teams, playoffs_continue=playoffs_continue)
 
+
 @app.route('/<int:league_id>/save_results', methods=['POST'])
 @league_crap_ajax
 def save_results():
@@ -173,6 +183,7 @@ def save_results():
     for result in results:
         game.save_results(result, g.phase == c.PHASE_PLAYOFFS)
     return 'fuck'
+
 
 @app.route('/<int:league_id>/schedule')
 @league_crap
@@ -190,6 +201,7 @@ def schedule():
                 games[-1].append(row)
 
     return render_all_or_json('schedule.html', {'games': games})
+
 
 @app.route('/<int:league_id>/standings')
 @app.route('/<int:league_id>/standings/<int:view_season>')
@@ -213,15 +225,17 @@ def standings(view_season=None):
 
     return render_all_or_json('standings.html', {'conferences': conferences, 'seasons': seasons, 'view_season': view_season})
 
+
 @app.route('/<int:league_id>/playoffs')
 @league_crap
 def playoffs():
     g.dbd.execute('SELECT series_id, series_round, (SELECT name FROM team_attributes WHERE team_id = aps.team_id_home AND season = %s) as name_home, (SELECT name FROM team_attributes WHERE team_id = aps.team_id_away AND season = %s) as name_away, seed_home, seed_away, won_home, won_away FROM active_playoff_series as aps ORDER BY series_round, series_id ASC', (g.season, g.season))
-    series = [[], [], [], []] # First round, second round, third round, fourth round
+    series = [[], [], [], []]  # First round, second round, third round, fourth round
     for s in g.dbd.fetchall():
-        series[s['series_round']-1].append(s)
+        series[s['series_round'] - 1].append(s)
 
     return render_all_or_json('playoffs.html', {'series': series})
+
 
 @app.route('/<int:league_id>/finances')
 @league_crap
@@ -230,7 +244,8 @@ def finances():
 
     teams = g.dbd.fetchall()
 
-    return render_all_or_json('finances.html', {'salary_cap': g.salary_cap/1000, 'teams': teams})
+    return render_all_or_json('finances.html', {'salary_cap': g.salary_cap / 1000, 'teams': teams})
+
 
 @app.route('/<int:league_id>/free_agents')
 @league_crap
@@ -244,6 +259,7 @@ def free_agents():
     players = g.dbd.fetchall()
 
     return render_all_or_json('free_agents.html', {'players': players})
+
 
 @app.route('/<int:league_id>/draft')
 @app.route('/<int:league_id>/draft/<int:view_season>')
@@ -278,6 +294,7 @@ def draft_(view_season=None):
     players = g.dbd.fetchall()
     return render_all_or_json('draft_summary.html', {'players': players, 'seasons': seasons, 'view_season': view_season})
 
+
 @app.route('/<int:league_id>/history')
 @app.route('/<int:league_id>/history/<int:view_season>')
 @league_crap
@@ -309,6 +326,7 @@ def history(view_season=None):
 
     return render_all_or_json('history.html', {'awards': awards, 'all_league': all_league, 'all_defensive': all_defensive, 'champ': champ, 'seasons': seasons, 'view_season': view_season})
 
+
 @app.route('/<int:league_id>/roster')
 @app.route('/<int:league_id>/roster/<abbreviation>')
 @app.route('/<int:league_id>/roster/<abbreviation>/<int:view_season>')
@@ -338,7 +356,8 @@ def roster(abbreviation=None, view_season=None):
     g.db.execute('SELECT CONCAT(region, " ", name), cash / 1000000 FROM team_attributes WHERE team_id = %s AND season = %s', (team_id, view_season))
     team_name, cash = g.db.fetchone()
 
-    return render_all_or_json('roster.html', {'players': players, 'num_roster_spots': 15-len(players), 'teams': teams, 'team_id': team_id, 'team_name': team_name, 'cash': cash, 'view_season': view_season, 'seasons': seasons})
+    return render_all_or_json('roster.html', {'players': players, 'num_roster_spots': 15 - len(players), 'teams': teams, 'team_id': team_id, 'team_name': team_name, 'cash': cash, 'view_season': view_season, 'seasons': seasons})
+
 
 @app.route('/<int:league_id>/roster/auto_sort', methods=['POST'])
 @league_crap
@@ -346,6 +365,7 @@ def auto_sort_roster(abbreviation=None):
     roster_auto_sort(g.user_team_id)
 
     return redirect_or_json('roster')
+
 
 @app.route('/<int:league_id>/game_log')
 @app.route('/<int:league_id>/game_log/<int:view_season>')
@@ -365,13 +385,14 @@ def game_log(view_season=None, abbreviation=None):
 
     return render_all_or_json('game_log.html', {'abbreviation': abbreviation, 'teams': teams, 'team_id': team_id, 'seasons': seasons, 'view_season': view_season})
 
+
 @app.route('/<int:league_id>/player/<int:player_id>')
 @league_crap
 def player_(player_id):
     # Info
     g.dbd.execute('SELECT name, position, (SELECT CONCAT(region, " ", name) FROM team_attributes as ta WHERE pa.team_id = ta.team_id AND ta.season = %s) as team, height, weight, %s - born_date as age, born_date, born_location, college, draft_year, draft_round, draft_pick, (SELECT CONCAT(region, " ", name) FROM team_attributes as ta WHERE ta.team_id = pa.draft_team_id AND ta.season = %s) as draft_team, contract_amount, contract_expiration FROM player_attributes as pa WHERE player_id = %s', (g.season, g.season, g.season, player_id))
     info = g.dbd.fetchone()
-    info['height'] = '%d\'%d"' % (info['height'] // 12, info['height'] % 12);
+    info['height'] = '%d\'%d"' % (info['height'] // 12, info['height'] % 12)
     info['contract_amount'] = '$%.2fM' % (info['contract_amount'] / 1000.0)
 
     # Current ratings
@@ -383,6 +404,7 @@ def player_(player_id):
     seasons = g.dbd.fetchall()
 
     return render_all_or_json('player.html', {'info': info, 'ratings': ratings, 'seasons': seasons})
+
 
 @app.route('/<int:league_id>/negotiation')
 @league_crap
@@ -417,7 +439,7 @@ def negotiation(player_id):
                 return render_all_or_json('league_error.html', {'error': error})
             return redirect_or_json('roster')
         else:
-            team_amount_new = int(float(request.form['team_amount'])*1000)
+            team_amount_new = int(float(request.form['team_amount']) * 1000)
             team_years_new = int(request.form['team_years'])
             contract_negotiation.offer(player_id, team_amount_new, team_years_new)
     else:
@@ -452,6 +474,7 @@ def negotiation(player_id):
 
 # Utility views
 
+
 @app.route('/<int:league_id>/box_score')
 @app.route('/<int:league_id>/box_score/<int:game_id>')
 @league_crap_ajax
@@ -478,6 +501,7 @@ def box_score(game_id=0):
 
     return render_template('box_score.html', teams=teams, view_season=teams[0]['season'], **won_lost)
 
+
 @app.route('/<int:league_id>/game_log_list')
 @league_crap_ajax
 def game_log_list():
@@ -492,6 +516,7 @@ def game_log_list():
 
     return render_template('game_log_list.html', games=games)
 
+
 @app.route('/<int:league_id>/push_play_menu')
 @league_crap_ajax
 def push_play_menu():
@@ -504,6 +529,7 @@ def push_play_menu():
     play_menu.refresh_options()
 
     return 'fuck'
+
 
 @app.route('/<int:league_id>/draft/until_user_or_end', methods=['POST'])
 @league_crap_ajax
@@ -518,6 +544,7 @@ def draft_until_user_or_end():
 
     return jsonify(player_ids=player_ids, done=done)
 
+
 @app.route('/<int:league_id>/draft/user', methods=['POST'])
 @league_crap_ajax
 def draft_user():
@@ -525,6 +552,7 @@ def draft_user():
     player_id = draft.pick_player(g.user_team_id, player_id)
 
     return jsonify(player_ids=[player_id])
+
 
 @app.route('/<int:league_id>/roster/reorder', methods=['POST'])
 @league_crap_ajax
@@ -539,6 +567,7 @@ def roster_reorder():
             roster_position += 1
 
     return 'fuck'
+
 
 @app.route('/<int:league_id>/roster/release', methods=['POST'])
 @league_crap_ajax
@@ -562,6 +591,7 @@ def roster_release():
 
     return jsonify(error=error)
 
+
 @app.route('/<int:league_id>/roster/buy_out', methods=['POST'])
 @league_crap_ajax
 def roster_buy_out():
@@ -584,7 +614,7 @@ def roster_buy_out():
             cash_owed, = g.db.fetchone()
             if cash_owed < cash:
                 # Pay the cash
-                g.db.execute('UPDATE team_attributes SET cash = cash - %s WHERE team_id = %s AND season = %s', (cash_owed*1000000, g.user_team_id, g.season))
+                g.db.execute('UPDATE team_attributes SET cash = cash - %s WHERE team_id = %s AND season = %s', (cash_owed * 1000000, g.user_team_id, g.season))
                 # Set to FA in database
                 p = player.Player()
                 p.load(player_id)
@@ -594,13 +624,7 @@ def roster_buy_out():
         else:
             error = 'You aren\'t allowed to do this.'
 
-
     return jsonify(error=error)
-
-
-
-
-
 
 
 def validate_abbreviation(abbreviation):
@@ -630,6 +654,7 @@ def validate_abbreviation(abbreviation):
 
     return team_id, abbreviation
 
+
 def validate_season(season):
     """Validate that the given season is valid.
 
@@ -650,6 +675,7 @@ def validate_season(season):
 
     return season
 
+
 def render_all_or_json(template_file, template_args={}):
     """Return rendered template, or JSON containing rendered blocks."""
     if request.args.get('json', 0, type=int) or request.form.get('json', 0, type=int):
@@ -663,6 +689,7 @@ def render_all_or_json(template_file, template_args={}):
         return jsonify(d)
     else:
         return render_template(template_file, **template_args)
+
 
 def redirect_or_json(f, args={}):
     """Redirect to function's URL, or return a JSON response containing rendered

@@ -4,9 +4,10 @@ from bbgm import app
 from bbgm.core import league
 from bbgm.util.decorators import login_required
 
+
 @app.route('/')
 def index():
-    if session.has_key('logged_in') and session['logged_in']:
+    if 'logged_in' in session and session['logged_in']:
         leagues = []
         g.db.execute('SELECT league_id FROM leagues WHERE user_id = %s ORDER BY league_id ASC', (session['user_id'],))
         for league_id, in g.db.fetchall():
@@ -19,9 +20,10 @@ def index():
     else:
         return render_template('hello.html')
 
+
 @app.route('/register', methods=['POST', 'GET'])
 def register():
-    if session.has_key('logged_in') and session['logged_in']:
+    if 'logged_in' in session and session['logged_in']:
         return redirect(url_for('index'))
 
     error = None
@@ -40,9 +42,10 @@ def register():
 
     return render_template('register.html', error=error, username=username)
 
+
 @app.route('/login', methods=['POST', 'GET'])
 def login():
-    if session.has_key('logged_in') and session['logged_in']:
+    if 'logged_in' in session and session['logged_in']:
         return redirect(url_for('index'))
 
     error = None
@@ -59,10 +62,12 @@ def login():
 
     return render_template('login.html', error=error)
 
+
 @app.route('/logout')
 def logout():
     session.pop('logged_in', None)  # Log user out, if user was logged in
     return redirect(url_for('index'))
+
 
 @app.route('/new_league', methods=['POST', 'GET'])
 @login_required
@@ -76,6 +81,7 @@ def new_league():
     g.dbd.execute('SELECT team_id, region, name FROM teams ORDER BY team_id ASC')
     teams = g.dbd.fetchall()
     return render_template('new_league.html', teams=teams)
+
 
 @app.route('/delete_league', methods=['POST'])
 @login_required
@@ -91,4 +97,3 @@ def delete_league():
     league.delete(league_id)
 
     return redirect(url_for('index'))
-

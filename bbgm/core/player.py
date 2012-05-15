@@ -26,7 +26,10 @@ class Player:
 
     def develop(self, years=1):
         # Make sure age is always defined
-        age = g.starting_season - self.attribute['born_date']
+        if not hasattr(g, 'season'):
+            age = g.starting_season - self.attribute['born_date']
+        else:
+            age = g.season - self.attribute['born_date']
 
         for i in range(years):
             age += 1
@@ -103,10 +106,11 @@ class Player:
         if randomize_expiration:
             years = random.randrange(1, years+1)
 
-        try:
-            expiration = g.season + years - 1
-        except AttributeError:
+
+        if not hasattr(g, 'season'):
             expiration = g.starting_season + years - 1
+        else:
+            expiration = g.season + years - 1
         if amount < min_amount:
             amount = min_amount
         elif amount > max_amount:
@@ -199,8 +203,12 @@ class GeneratePlayer(Player):
         years to the player's born_date.
         """
         Player.develop(self, years)
-        age = g.starting_season - self.attribute['born_date'] + years
-        self.attribute['born_date'] = g.starting_season - age
+        if not hasattr(g, 'season'):
+            age = g.starting_season - self.attribute['born_date'] + years
+            self.attribute['born_date'] = g.starting_season - age
+        else:
+            age = g.season - self.attribute['born_date'] + years
+            self.attribute['born_date'] = g.season - age
 
     def generate_ratings(self, profile, base_rating):
         if profile == 'Point':
@@ -242,7 +250,10 @@ class GeneratePlayer(Player):
         self.attribute['position'] = self._position()  # Position (PG, SG, SF, PF, C, G, GF, FC)
         self.attribute['height'] = int(fast_random.gauss(1, 0.02) * (self.rating['height'] * (max_height - min_height) / 100 + min_height))  # Height in inches (from min_height to max_height)
         self.attribute['weight'] = int(fast_random.gauss(1, 0.02) * ((self.rating['height'] + 0.5 * self.rating['strength']) * (max_weight - min_weight) / 150 + min_weight))  # Weight in points (from min_weight to max_weight)
-        self.attribute['born_date'] = g.starting_season - age
+        if not hasattr(g, 'season'):
+            self.attribute['born_date'] = g.starting_season - age
+        else:
+            self.attribute['born_date'] = g.season - age
 
         #If the nationality isn't given, randomly choose one.	
         if player_nat == "":

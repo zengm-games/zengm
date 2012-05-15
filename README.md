@@ -36,16 +36,16 @@ hopefully that will change relatively soon.
 #### Non-Python packages
 
 * mysql-server
-* python-mysqldb
 * redis-server
 * nodejs
 * juggernaut
 
 You can install these packages on Ubuntu 12.04 with these commands (this will
 also install python-pip and npm to make installing the other dependencies
-easier):
+easier, as well as python-dev and libmysqlclient-dev which are required for
+the MySQLdb Python package):
 
-    sudo apt-get install mysql-server python-mysqldb redis-server nodejs npm python-pip
+    sudo apt-get install mysql-server redis-server nodejs npm python-pip python-dev
     sudo npm install -g juggernaut
 
 #### Python packages

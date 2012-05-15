@@ -1,5 +1,6 @@
 Flask
 Flask-Assets
+mysql-python
 closure
 juggernaut
 yuicompressor

@@ -6,7 +6,8 @@ database crap
 - optimize
   - why is it so slow, and so disk thrashy?
     - get rid of bulk_execute, which is currently only used to run the .sql file for the league schema in bbgm.core.league.new()
-  - are my keys correct/optimal/uptodate? unique keys?
+  - are my keys correct/optimal/uptodate? unique keys? foreign keys?
+  - MyISAM or InnoDB? test
 - redo schema
   - separate dbs for leagues: what user permissions do i need, exactly? update README
   - new column names

@@ -36,6 +36,7 @@ def new(team_id):
     gp = player.GeneratePlayer()
     sql = ''
     player_id = 1
+    players = []
     for t in range(-1, 30):
         good_neutral_bad = random.randrange(-1, 2)  # Determines if this will be a good team or not
 
@@ -66,6 +67,7 @@ def new(team_id):
             gp.attribute['contract_amount'], gp.attribute['contract_expiration'] = amount, expiration
 
             sql += gp.sql_insert()
+#            players.append(gp.sql_insert2())
 
             player_id += 1
 

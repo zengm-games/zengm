@@ -355,7 +355,7 @@ class GeneratePlayer(Player):
 
         self.rating['overall'] = self.overall_rating()
         sql = 'INSERT INTO player_attributes (%s) VALUES (%s);\nINSERT INTO player_ratings (%s) VALUES (%s);\n'
-        return sql % (', '.join(map(str, self.attribute.keys())), ', '.join(map(self._sql_prep, self.attribute.values())), 'player_id, season, ' + ', '.join(map(str, self.rating.keys())), '(SELECT MAX(player_id) FROM player_attributes), ' + str(season) + ', ' + ', '.join(map(self._sql_prep, self.rating.values())))
+        return sql % ('player_id, ' + ', '.join(map(str, self.attribute.keys())), str(self.id) + ', ' + ', '.join(map(self._sql_prep, self.attribute.values())), 'player_id, season, ' + ', '.join(map(str, self.rating.keys())), str(self.id) + ', ' + str(season) + ', ' + ', '.join(map(self._sql_prep, self.rating.values())))
 
     def _sql_prep(self, value):
         value = str(value)

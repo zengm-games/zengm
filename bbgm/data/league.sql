@@ -166,7 +166,8 @@ max_offers INTEGER,
 resigning BOOLEAN DEFAULT 0);
 
 CREATE TABLE trade (
-placeholder INTEGER);
+trade_id INTEGER PRIMARY KEY AUTO_INCREMENT,
+data TEXT);
 
 CREATE TABLE awards (
 season INTEGER PRIMARY KEY,

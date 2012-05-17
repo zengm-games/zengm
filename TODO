@@ -1,13 +1,19 @@
 # To acquire parity with the GTK version and be good enough to share:
 
+trades
+- on init of Trade, either create new trade with new td, or load one from the database http://stackoverflow.com/a/6384228/786644
+- store everything in trade_data td
+- refactor to be more like contract_negotiation
+
 database crap
 - optimize
   - why is it so slow, and so disk thrashy?
   - are my keys correct/optimal/uptodate? unique keys? foreign keys?
-  - MyISAM or InnoDB? test
+  - MyISAM or InnoDB? barracuda? test
 - redo schema
   - separate dbs for leagues: what user permissions do i need, exactly? update README
   - new column names
+  - negotiation table should be negotiations
   - normalize (especially the drafted table)
   - get rid of INSERTS in .sql file, instead have data elsewhere
   - get rid of weird tables, replace with a key-value store table
@@ -25,8 +31,6 @@ roster
 - "buy out" only sensitive when there's enough money
 - highlight handle on hover, like button
 - "Trade for" button in other teams' view
-
-trades
 
 datatables
 - default to sort descending when column is clicked

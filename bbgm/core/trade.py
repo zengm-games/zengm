@@ -1,4 +1,27 @@
+import cPickle as pickle
+
 from bbgm.util import roster_auto_sort
+
+def new(team_id=None, player_id=None):
+    """Start a new trade with a team.
+
+    One of team_id or player_id must be set. If both are set, then team_id is
+    ignored.
+
+    Args: 
+        team_id: An optional integer representing the team ID of the team the
+            user wants to trade with.
+        player+id: An optional integer representing the ID of a player to be
+            automatically added to the trade. Then, a trade will be initiated
+            with that player's team, regardless of what team_id is set to.
+
+    Returns:
+        False if the new trade is started successfully. Otherwise, it returns a
+        string containing an error message to be sent to the user.
+    """
+    pass
+
+
 
 class Trade:
     """All non-GUI parts of a trade.
@@ -6,35 +29,49 @@ class Trade:
     Currently, it only works for trading between the user's team and a CPU
     team.
     """
-
-    # In all of these variables, the first element represents the user's team
-    # and the second element represents the CPU team.
-    offer = [{}, {}]
-    payroll_after_trade = [0, 0]
-    total = [0, 0]  # Total contract amount for players in trade
-    value = [0, 0]
-    over_cap = [False, False]
-    over_roster_limit = [False, False]
-    ratios = [0, 0]
-    team_names = ['', '']
-
-    def __init__(self, team_id):
-        """Inits Trade with team ID.
+    def __init__(self, team_id=None):
+        """Creates a new trade or loads an active trade.
 
         Args:
-            team_id: Team the player is trading with.
+            team_id: Team the player is trading with. This argument is optional.
+                If set, then a row for this trade is INSERTed into the database.
+                If not set, then the currently active trade is loaded from the
+                database.
+            
+            td: Trade data dict, typically loaded from the database in
+                Trade.load.
         """
-        self.team_id = team_id
+        if team_id is not None:
+            # In all of these variables, the first element represents the user's
+            # team and the second element represents the CPU team.
+            self.td['team_id'] = [g.user_team_id, team_id]
+            self.td['offer'] = [{}, {}]
+            self.td['payroll_after_trade'] = [0, 0]
+            self.td['total'] = [0, 0]  # Total contract amount for players in trade
+            self.td['value'] = [0, 0]
+            self.td['over_cap'] = [False, False]
+            self.td['over_roster_limit'] = [False, False]
+            self.td['ratios'] = [0, 0]
+            self.td['team_names'] = ['', '']
+            g.db.execute('INSERT INTO trade (data) VALUES '')
+        else:
+            g.db.execute('SELECT data FROM trade LIMIT 1')
+            data, = g.db.fetchone()
+            self.td=pickle.loads(data.encode('ascii')))
+
+    def save(self):
+        """Saves the active trade to the database."""
+        g.db.execute('UPDATE trade SET data = %s', (pickle.dumps(self.td),))
 
     def update(self):
-        """Update all the class attributes.
+        """Update all the trade attributes.
 
         This should be called by the view after any change is made and before
         the UI updates. It isn't called automatically because there is already
         some UI function that's tracking updates, and it's just easier to call
         this from there.
         """
-        for team_id in [common.PLAYER_TEAM_ID, self.team_id]:
+        for team_id in [common.PLAYER_TEAM_ID, self.td['team_id'][1]]:
             if team_id == common.PLAYER_TEAM_ID:
                 i = 0
                 j = 1
@@ -83,7 +120,7 @@ class Trade:
 
     def new_team(self, team_id):
         """Switch to a new trading partner."""
-        self.team_id = team_id
+        self.td['team_id'][1] = team_id
         self.offer[1] = {}  # Empty player list
 
     def add_player(self, i, player_id, team_id, player_name, age, rating, potential, contract_amount):
@@ -125,10 +162,10 @@ class Trade:
         new teams.
         """
         # Trade players
-        for team_id in [common.PLAYER_TEAM_ID, self.team_id]:
+        for team_id in [common.PLAYER_TEAM_ID, self.td['team_id'][1]]:
             if team_id == common.PLAYER_TEAM_ID:
                 i = 0
-                new_team_id = self.team_id
+                new_team_id = self.td['team_id'][1]
             else:
                 i = 1
                 new_team_id = common.PLAYER_TEAM_ID
@@ -136,4 +173,4 @@ class Trade:
                 common.DB_CON.execute('UPDATE player_attributes SET team_id = ? WHERE player_id = ?', (new_team_id, player_id))
 
         # Auto-sort CPU team roster
-        roster_auto_sort(self.team_id)
+        roster_auto_sort(self.td['team_id'][1])

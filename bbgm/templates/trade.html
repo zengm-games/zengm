@@ -1,0 +1,49 @@
+{% extends "league_layout.html" %}
+{% set active_page = "trade" %}
+
+{% block title %}Trade - League {{ g.league_id }} - Basketball GM{% endblock %}
+
+{% block league_content %}
+  <h1>Trade</h1>
+
+  <div class="row-fluid">
+    <div class="span6">
+      <h2>User Team Name</h2>
+Table like roster
+      <h2>Other Team Name</h2>
+Table like roster
+    </div>
+    <div class="span6">
+      <h3>Trade Summary</h3>
+      <div class="row-fluid">
+        <div class="span6">
+          <h4>User Team Name</h4>
+          <h5>Trade:</h5>
+          <ul>
+            <li></li>
+          </ul>
+          <h5>Receive:</h5>
+          <ul>
+            <li></li>
+          </ul>
+          <h5>Payroll after trade:</h5>
+          <h5>Salary cap:</h5>
+        </div>
+        <div class="span6">
+          <h4>Other Team Name</h4>
+          <h5>Trade:</h5>
+          <ul>
+            <li></li>
+          </ul>
+          <h5>Receive:</h5>
+          <ul>
+            <li></li>
+          </ul>
+          <h5>Payroll after trade:</h5>
+          <h5>Salary cap:</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

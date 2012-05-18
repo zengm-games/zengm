@@ -2,16 +2,16 @@ import cPickle as pickle
 
 from bbgm.util import roster_auto_sort
 
-def new(team_id=None, player_id=None):
+def new(team_id=0, player_id=None):
     """Start a new trade with a team.
 
-    One of team_id or player_id must be set. If both are set, then team_id is
-    ignored.
+    One of team_id or player_id can be set. If both are set, then team_id is
+    ignored. If neither are set, a team_id of 0 is used.
 
     Args: 
         team_id: An optional integer representing the team ID of the team the
             user wants to trade with.
-        player+id: An optional integer representing the ID of a player to be
+        player_id: An optional integer representing the ID of a player to be
             automatically added to the trade. Then, a trade will be initiated
             with that player's team, regardless of what team_id is set to.
 
@@ -19,9 +19,14 @@ def new(team_id=None, player_id=None):
         False if the new trade is started successfully. Otherwise, it returns a
         string containing an error message to be sent to the user.
     """
+    # Check permissions as in contract_negotiation.new
+
+    # Convert player_id to team_id
+
+    # Make sure team_id is set
+
+    # Start a new trade with team_id and, if set, player_id
     pass
-
-
 
 class Trade:
     """All non-GUI parts of a trade.

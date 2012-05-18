@@ -259,6 +259,33 @@ def free_agents():
     return render_all_or_json('free_agents.html', {'players': players})
 
 
+@app.route('/<int:league_id>/trade', methods=['GET', 'POST'])
+@league_crap
+def trade_():
+    player_id = request.form.get('player_id', None, type=int)
+    team_id = request.form.get('team_id', None, type=int)
+    if request.method == 'POST':
+        if 'cancel' in request.form:
+            trade.cancel()
+            return redirect_or_json('league_dashboard')
+        elif 'new' in request.form:
+            error = trade.new(team_id=team_id, player_id=player_id)
+            if error:
+                return render_all_or_json('league_error.html', {'error': error})
+        elif 'propose_trade' in request.form:
+            team_amount_new = int(float(request.form['team_amount']) * 1000)
+            team_years_new = int(request.form['team_years'])
+            accepted, message = trade.offer(player_id, team_amount_new, team_years_new)
+            if accepted:
+                pass
+
+    # Validate that player IDs correspond with team IDs
+
+    # Load info needed to display trade
+
+    return render_all_or_json('trade.html')
+
+
 @app.route('/<int:league_id>/draft')
 @app.route('/<int:league_id>/draft/<int:view_season>')
 @league_crap

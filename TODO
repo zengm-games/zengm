@@ -1,9 +1,13 @@
 # To acquire parity with the GTK version and be good enough to share:
 
 trades
-- on init of Trade, either create new trade with new td, or load one from the database http://stackoverflow.com/a/6384228/786644
-- store everything in trade_data td
-- refactor to be more like contract_negotiation
+- Always have a trade row in the DB. Always load from this on GET, then throw out invalid IDs before rendering
+- On dropdown team change, submit form ('new') to delete the other team's players. FULL PAGE RELOAD
+- On checkbox click, submit form ('change_players') of checkboxes. ONLY RELOAD STATUS
+- In both cases, return enough info to display warnings
+- In both cases, gray out the "Propose Trade" button while AJAXing (effectively, until page reloads)
+- On Cancel/Propose click, gray out checkboxes
+- Copy pretty closely to GTK version
 
 database crap
 - optimize
@@ -65,6 +69,7 @@ configuration in text file?
 
 contract negotiation view
 - bring back to either free agent view or resigning view after either accept or cancel
+- should require POST to start, like trade?
 
 dashboard: a bunch of boxes showing..
 - record

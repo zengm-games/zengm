@@ -45,13 +45,18 @@ def can_start_games():
     if games_in_progress:
         return False
 
-    g.db.execute('SELECT 1 FROM trade')
-    if trade_in_progress or g.db.rowcount:
+#    g.db.execute('SELECT 1 FROM trade')
+#    if trade_in_progress or g.db.rowcount:
+#        return False
+
+    print games_in_progress, trade_in_progress, negotiation_in_progress
+
+    g.db.execute('SELECT COUNT(*) FROM negotiation WHERE resigning = 0')
+    n_negotiations, = g.db.fetchone()
+    if negotiation_in_progress or n_negotiations > 0:
         return False
 
-    g.db.execute('SELECT 1 FROM negotiation WHERE resigning = 0')
-    if negotiation_in_progress or g.db.rowcount:
-        return False
+    print games_in_progress, trade_in_progress, negotiation_in_progress
 
     return True
 

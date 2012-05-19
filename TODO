@@ -8,6 +8,7 @@ trades
 - In both cases, gray out the "Propose Trade" button while AJAXing (effectively, until page reloads)
 - On Cancel/Propose click, gray out checkboxes
 - Copy pretty closely to GTK version
+- so, can start other shti with trade in progress? update text, if so.
 
 database crap
 - optimize
@@ -15,6 +16,7 @@ database crap
   - are my keys correct/optimal/uptodate? unique keys? foreign keys?
   - MyISAM or InnoDB? barracuda? test
   - executemany to save game data?
+  - executemany to upgrade player ratings?
 - redo schema
   - separate dbs for leagues: what user permissions do i need, exactly? update README
   - new column names

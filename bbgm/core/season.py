@@ -72,7 +72,7 @@ def new_phase(phase):
         phase_text = '%s regular season' % (g.season,)
         # First, make sure teams are all within the roster limits
         # CPU teams
-        g.db.execute('SELECT ta.team_id, COUNT(*) FROM team_attributes as ta, player_attributes as pa WHERE ta.team_id = pa.team_id AND ta.season = %s GROUP BY pa.team_id', (g.season))
+        g.db.execute('SELECT ta.team_id, COUNT(*) FROM team_attributes as ta, player_attributes as pa WHERE ta.team_id = pa.team_id AND ta.season = %s GROUP BY pa.team_id', (g.season,))
         teams = g.db.fetchall()
         for team_id, num_players_on_roster in teams:
             if num_players_on_roster > 15:
@@ -211,7 +211,7 @@ def new_schedule():
     conference matchup distributions.
     """
     teams = []
-    g.db.execute('SELECT team_id, division_id, (SELECT conference_id FROM league_divisions as ld WHERE ld.division_id = ta.division_id) FROM team_attributes as ta WHERE season = %s', (g.season))
+    g.db.execute('SELECT team_id, division_id, (SELECT conference_id FROM league_divisions as ld WHERE ld.division_id = ta.division_id) FROM team_attributes as ta WHERE season = %s', (g.season,))
     for row in g.db.fetchall():
         teams.append({'team_id': row[0], 'division_id': row[1], 'conference_id': row[2], 'home_games': 0,
                       'away_games': 0})
@@ -360,7 +360,7 @@ def awards():
     """Computes the awards at the end of a season."""
     # Cache averages
     g.db.execute('CREATE TEMPORARY TABLE awards_avg (player_id INTEGER PRIMARY KEY, name VARCHAR(255), team_id INTEGER, abbreviation VARCHAR(3), draft_year INTEGER, games_played INTEGER, games_started INTEGER, mpg FLOAT, ppg FLOAT, rpg FLOAT, apg FLOAT, bpg FLOAT, spg FLOAT)')
-    g.db.execute('INSERT INTO awards_avg (player_id, name, team_id, abbreviation, draft_year, games_played, games_started, mpg, ppg, rpg, apg, bpg, spg) (SELECT pa.player_id, pa.name, pa.team_id, ta.abbreviation, pa.draft_year, SUM(ps.minutes>0) AS games_played, SUM(ps.starter) AS games_started, AVG(ps.minutes) AS mpg, AVG(ps.points) AS ppg, AVG(ps.offensive_rebounds+ps.defensive_rebounds) AS rpg, AVG(ps.assists) AS apg, AVG(ps.blocks) AS bpg, AVG(ps.steals) AS spg FROM player_attributes as pa, player_stats as ps, team_attributes as ta WHERE pa.player_id = ps.player_id AND ps.season = %s AND ps.is_playoffs = 0 AND ta.team_id = pa.team_id AND ta.season = ps.season GROUP BY ps.player_id)', (g.season))
+    g.db.execute('INSERT INTO awards_avg (player_id, name, team_id, abbreviation, draft_year, games_played, games_started, mpg, ppg, rpg, apg, bpg, spg) (SELECT pa.player_id, pa.name, pa.team_id, ta.abbreviation, pa.draft_year, SUM(ps.minutes>0) AS games_played, SUM(ps.starter) AS games_started, AVG(ps.minutes) AS mpg, AVG(ps.points) AS ppg, AVG(ps.offensive_rebounds+ps.defensive_rebounds) AS rpg, AVG(ps.assists) AS apg, AVG(ps.blocks) AS bpg, AVG(ps.steals) AS spg FROM player_attributes as pa, player_stats as ps, team_attributes as ta WHERE pa.player_id = ps.player_id AND ps.season = %s AND ps.is_playoffs = 0 AND ta.team_id = pa.team_id AND ta.season = ps.season GROUP BY ps.player_id)', (g.season,))
 
     g.db.execute('SELECT team_id, abbreviation, region, name, won, lost FROM team_attributes AS ta WHERE season = %s AND (SELECT conference_id FROM league_divisions AS ld WHERE ld.division_id = ta.division_id) = 0 ORDER BY 1.0*won/(won + lost) DESC', (g.season,))
     bre = g.db.fetchone()

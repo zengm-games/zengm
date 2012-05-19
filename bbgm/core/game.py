@@ -239,12 +239,13 @@ def play(num_days, start=False):
     # If this is a request to start a new simulation... are we allowed to do
     # that? If so, set the lock and update the play menu
     if start:
+        print 'hi', lock.can_start_games()
         if lock.can_start_games():
             lock.set_games_in_progress(True)
             play_menu.refresh_options()
         else:
             # If not allowed to start games, don't
-            return teams, schedule
+            return teams, schedule, playoffs_continue, url
 
     if num_days > 0:
         # If the user wants to stop the simulation, then stop the simulation
@@ -288,7 +289,6 @@ def play(num_days, start=False):
                     teams.append(team(team_id))
                 else:
                     teams.append({'id': team_id})
-
 
     # If this is the last day, update play menu
     if num_days == 0 or (len(schedule) == 0 and not playoffs_continue):

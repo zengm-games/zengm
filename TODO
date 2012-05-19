@@ -14,6 +14,7 @@ database crap
   - why is it so slow, and so disk thrashy?
   - are my keys correct/optimal/uptodate? unique keys? foreign keys?
   - MyISAM or InnoDB? barracuda? test
+  - executemany to save game data?
 - redo schema
   - separate dbs for leagues: what user permissions do i need, exactly? update README
   - new column names

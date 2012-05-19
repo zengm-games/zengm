@@ -1,13 +1,15 @@
 CREATE TABLE league_conferences (
-conference_id INTEGER PRIMARY KEY,
-name VARCHAR(255));
+conference_id INTEGER,
+name VARCHAR(255),
+PRIMARY KEY (conference_id));
 INSERT INTO league_conferences (conference_id,name) VALUES(0,'Eastern Conference');
 INSERT INTO league_conferences (conference_id,name) VALUES(1,'Western Conference');
 
 CREATE TABLE league_divisions (
-division_id INTEGER PRIMARY KEY,
+division_id INTEGER,
 conference_id INTEGER,
-name VARCHAR(255));
+name VARCHAR(255),
+PRIMARY KEY (division_id));
 INSERT INTO league_divisions (division_id,conference_id,name) VALUES(0,0,'Atlantic');
 INSERT INTO league_divisions (division_id,conference_id,name) VALUES(1,0,'Central');
 INSERT INTO league_divisions (division_id,conference_id,name) VALUES(2,0,'Southeast');
@@ -30,13 +32,14 @@ version VARCHAR(255));
 INSERT INTO game_attributes (team_id, season, phase, version) VALUES(3, 2012, 0, '2.0.0alpha');
 
 CREATE TABLE schedule (
-game_id INTEGER PRIMARY KEY AUTO_INCREMENT,
+game_id INTEGER AUTO_INCREMENT,
 home_team_id INTEGER,
 away_team_id INTEGER,
-in_progress_timestamp INTEGER DEFAULT 0);
+in_progress_timestamp INTEGER DEFAULT 0,
+PRIMARY KEY (game_id));
 
 CREATE TABLE player_attributes (
-player_id INTEGER PRIMARY KEY AUTO_INCREMENT,
+player_id INTEGER AUTO_INCREMENT,
 name VARCHAR(255),
 team_id INTEGER,
 position VARCHAR(2),
@@ -53,10 +56,11 @@ draft_team_id INTEGER,
 contract_amount INTEGER,
 contract_expiration INTEGER,
 free_agent_times_asked FLOAT DEFAULT 0.0,
-years_free_agent INTEGER DEFAULT 0);
+years_free_agent INTEGER DEFAULT 0,
+PRIMARY KEY (player_id));
 
 CREATE TABLE released_players_salaries (
-player_id INTEGER PRIMARY KEY,
+player_id INTEGER,
 team_id INTEGER,
 contract_amount INTEGER,
 contract_expiration INTEGER);
@@ -80,7 +84,8 @@ steals INTEGER,
 dribbling INTEGER,
 passing INTEGER,
 rebounding INTEGER,
-potential INTEGER);
+potential INTEGER,
+PRIMARY KEY (player_id, season));
 
 CREATE TABLE player_stats (
 player_id INTEGER,
@@ -103,7 +108,8 @@ turnovers INTEGER,
 steals INTEGER,
 blocks INTEGER,
 personal_fouls INTEGER,
-points INTEGER);
+points INTEGER,
+PRIMARY KEY (player_id, season));
 
 CREATE TABLE team_stats (
 team_id INTEGER,
@@ -130,7 +136,8 @@ personal_fouls INTEGER,
 points INTEGER,
 opponent_points INTEGER,
 attendance INTEGER,
-cost INTEGER);
+cost INTEGER,
+PRIMARY KEY (team_id, game_id));
 
 CREATE TABLE active_playoff_series (
 series_id INTEGER,
@@ -140,7 +147,8 @@ team_id_away INTEGER,
 seed_home INTEGER,
 seed_away INTEGER,
 won_home INTEGER,
-won_away INTEGER);
+won_away INTEGER,
+PRIMARY KEY (series_id));
 
 CREATE TABLE draft_results (
 season INTEGER,
@@ -153,17 +161,19 @@ name VARCHAR(255),
 position VARCHAR(2),
 born_date INTEGER, -- YYYY for birth year
 overall INTEGER,
-potential INTEGER);
+potential INTEGER,
+PRIMARY KEY (season, draft_round, pick));
 
 CREATE TABLE negotiation (
-player_id INTEGER PRIMARY KEY,
+player_id INTEGER,
 team_amount INTEGER,
 team_years INTEGER,
 player_amount INTEGER,
 player_years INTEGER,
 num_offers_made INTEGER,
 max_offers INTEGER,
-resigning BOOLEAN DEFAULT 0);
+resigning BOOLEAN DEFAULT 0,
+PRIMARY KEY (player_id));
 
 CREATE TABLE trade (
 team_id INTEGER,
@@ -171,7 +181,7 @@ user_player_ids TEXT,
 other_player_ids TEXT);
 
 CREATE TABLE awards (
-season INTEGER PRIMARY KEY,
+season INTEGER,
 bre_team_id INTEGER,
 bre_abbreviation VARCHAR(3),
 bre_region VARCHAR(255),
@@ -211,12 +221,13 @@ roy_team_id INTEGER,
 roy_abbreviation VARCHAR(3),
 roy_ppg FLOAT,
 roy_rpg FLOAT,
-roy_apg FLOAT);
+roy_apg FLOAT,
+PRIMARY KEY (season));
 
 CREATE TABLE awards_all_league(
 season INTEGER,
 team_type VARCHAR(9),
-player_rank INTEGER PRIMARY KEY AUTO_INCREMENT,
+player_rank INTEGER AUTO_INCREMENT,
 player_id INTEGER,
 name VARCHAR(255),
 abbreviation VARCHAR(3),
@@ -224,7 +235,8 @@ ppg FLOAT,
 rpg FLOAT,
 apg FLOAT,
 bpg FLOAT,
-spg FLOAT);
+spg FLOAT,
+PRIMARY KEY (player_rank));
 
 CREATE INDEX a ON team_attributes(team_id, season, division_id, region);
 CREATE INDEX b ON player_stats(player_id, season, is_playoffs);

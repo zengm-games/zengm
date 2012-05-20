@@ -4,7 +4,7 @@ from flask import session, g
 
 from bbgm.util import roster_auto_sort
 
-def new(team_id=0, player_id=None):
+def new(team_id=None, player_id=None):
     """Start a new trade with a team.
 
     One of team_id or player_id can be set. If both are set, then team_id is
@@ -21,14 +21,22 @@ def new(team_id=0, player_id=None):
         False if the new trade is started successfully. Otherwise, it returns a
         string containing an error message to be sent to the user.
     """
-    # Check permissions as in contract_negotiation.new
+    # Check permissions as in contract_negotiation.new - is this necessary?
 
     # Convert player_id to team_id
+    if player_id is None:
+        player_ids_other = []
+    else:
+        player_ids_other = [int(player_id)]
 
-    # Make sure team_id is set
+    # Make sure team_id is set and corresponds to player_id, if set
+    if team_id is None or player_id is not None:
+        g.db.execute('SELECT team_id FROM player_attributes WHERE player_id = %s', (player_id,))
+        team_id, = g.db.fetchone()
 
     # Start a new trade with team_id and, if set, player_id
-    pass
+    g.db.execute('UPDATE trade SET team_id = %s, player_ids_other = %s', (team_id, pickle.dumps(player_ids_other)))
+
 
 def update_players(player_ids_user, player_ids_other):
     """Validates that players are allowed to be traded and then updates the
@@ -62,6 +70,12 @@ def update_players(player_ids_user, player_ids_other):
     g.db.execute('UPDATE trade SET player_ids_user = %s, player_ids_other = %s', (pickle.dumps(player_ids_user), pickle.dumps(player_ids_other)))
 
     return (player_ids_user, player_ids_other)
+
+
+def get_players():
+    g.db.execute('SELECT player_ids_user, player_ids_other FROM trade')
+    return map(pickle.loads, g.db.fetchone())
+
 
 class Trade:
     """All non-GUI parts of a trade.

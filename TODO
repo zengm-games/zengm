@@ -9,6 +9,7 @@ trades
 - On cancel/propose click, gray out the "Propose Trade" button and checkboxes while AJAXing (effectively, until page reloads)
 - Copy pretty closely to GTK version
 - so, can start game sim (etc) with trade in progress? update text, if so.
+- TODO: validation in trade.new - is it necessary?
 
 database crap
 - optimize

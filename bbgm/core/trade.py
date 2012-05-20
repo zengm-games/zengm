@@ -2,7 +2,7 @@ import cPickle as pickle
 
 from flask import session, g
 
-from bbgm.util import roster_auto_sort
+from bbgm.util import get_payroll, roster_auto_sort
 
 def new(team_id=None, player_id=None):
     """Start a new trade with a team.
@@ -73,8 +73,38 @@ def update_players(player_ids_user, player_ids_other):
 
 
 def get_players():
+    """Return two lists of integers, representing the player IDs who are added
+    to the trade for the user's team and the other team, respectively.
+    """
     g.db.execute('SELECT player_ids_user, player_ids_other FROM trade')
     return map(pickle.loads, g.db.fetchone())
+
+
+def summary(team_id_other, player_ids_user, player_ids_other):
+    """Return all the content needed to summarize the trade."""
+    trade_user = []
+    total_user = 0
+
+    trade_other = []
+    total_other = 0
+
+    if len(player_ids_user) > 0:
+        player_ids = ', '.join([str(player_id) for player_id in player_ids_user])
+        g.dbd.execute('SELECT player_id, name, contract_amount / 1000 AS contract_amount FROM player_attributes WHERE player_id IN (%s)' % (player_ids,))
+        trade_user = g.dbd.fetchall()
+        g.db.execute('SELECT SUM(contract_amount / 1000) FROM player_attributes WHERE player_id IN (%s)' % (player_ids,))
+        total_user, = g.db.fetchone()
+    payroll_after_trade_user = float(get_payroll(g.user_team_id)) / 1000 + float(total_user)
+
+    if len(player_ids_other) > 0:
+        player_ids = ', '.join([str(player_id) for player_id in player_ids_other])
+        g.dbd.execute('SELECT player_id, name, contract_amount / 1000 AS contract_amount FROM player_attributes WHERE player_id IN (%s)' % (player_ids,))
+        trade_other = g.dbd.fetchall()
+        g.db.execute('SELECT SUM(contract_amount / 1000) FROM player_attributes WHERE player_id IN (%s)' % (player_ids,))
+        total_other, = g.db.fetchone()
+    payroll_after_trade_other = float(get_payroll(team_id_other)) / 1000 + float(total_other)
+
+    return trade_user, trade_other, total_user, total_other, payroll_after_trade_user, payroll_after_trade_other
 
 
 class Trade:
@@ -83,40 +113,6 @@ class Trade:
     Currently, it only works for trading between the user's team and a CPU
     team.
     """
-    def __init__(self, team_id=None):
-        """Creates a new trade or loads an active trade.
-
-        Args:
-            team_id: Team the player is trading with. This argument is optional.
-                If set, then a row for this trade is INSERTed into the database.
-                If not set, then the currently active trade is loaded from the
-                database.
-            
-            td: Trade data dict, typically loaded from the database in
-                Trade.load.
-        """
-        if team_id is not None:
-            # In all of these variables, the first element represents the user's
-            # team and the second element represents the CPU team.
-            self.td['team_id'] = [g.user_team_id, team_id]
-            self.td['offer'] = [{}, {}]
-            self.td['payroll_after_trade'] = [0, 0]
-            self.td['total'] = [0, 0]  # Total contract amount for players in trade
-            self.td['value'] = [0, 0]
-            self.td['over_cap'] = [False, False]
-            self.td['over_roster_limit'] = [False, False]
-            self.td['ratios'] = [0, 0]
-            self.td['team_names'] = ['', '']
-            g.db.execute('INSERT INTO trade (data) VALUES ')
-        else:
-            g.db.execute('SELECT data FROM trade LIMIT 1')
-            data, = g.db.fetchone()
-            self.td=pickle.loads(data.encode('ascii'))
-
-    def save(self):
-        """Saves the active trade to the database."""
-        g.db.execute('UPDATE trade SET data = %s', (pickle.dumps(self.td),))
-
     def update(self):
         """Update all the trade attributes.
 

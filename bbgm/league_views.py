@@ -296,15 +296,22 @@ def trade_():
     team_id_other, = g.db.fetchone()
 
     # Load info needed to display trade
-    g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, pa.contract_amount / 1000 as contract_amount, pa.contract_expiration, AVG(ps.minutes) AS min, AVG(ps.points) AS pts, AVG(ps.offensive_rebounds + ps.defensive_rebounds) AS reb, AVG(ps.assists) AS ast FROM player_attributes AS pa LEFT OUTER JOIN player_ratings AS pr ON pr.season = %s AND pa.player_id = pr.player_id LEFT OUTER JOIN player_stats AS ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE pa.team_id = %s GROUP BY pa.player_id ORDER BY pa.roster_position ASC', (g.season, g.season, g.season, g.user_team_id))
+    g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, pa.contract_amount / 1000 AS contract_amount, pa.contract_expiration, AVG(ps.minutes) AS min, AVG(ps.points) AS pts, AVG(ps.offensive_rebounds + ps.defensive_rebounds) AS reb, AVG(ps.assists) AS ast FROM player_attributes AS pa LEFT OUTER JOIN player_ratings AS pr ON pr.season = %s AND pa.player_id = pr.player_id LEFT OUTER JOIN player_stats AS ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE pa.team_id = %s GROUP BY pa.player_id ORDER BY pa.roster_position ASC', (g.season, g.season, g.season, g.user_team_id))
     roster_user = g.dbd.fetchall()
-    g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, pa.contract_amount / 1000 as contract_amount, pa.contract_expiration, AVG(ps.minutes) AS min, AVG(ps.points) AS pts, AVG(ps.offensive_rebounds + ps.defensive_rebounds) AS reb, AVG(ps.assists) AS ast FROM player_attributes AS pa LEFT OUTER JOIN player_ratings AS pr ON pr.season = %s AND pa.player_id = pr.player_id LEFT OUTER JOIN player_stats AS ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE pa.team_id = %s GROUP BY pa.player_id ORDER BY pa.roster_position ASC', (g.season, g.season, g.season, team_id_other))
+
+    g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, pa.contract_amount / 1000 AS contract_amount, pa.contract_expiration, AVG(ps.minutes) AS min, AVG(ps.points) AS pts, AVG(ps.offensive_rebounds + ps.defensive_rebounds) AS reb, AVG(ps.assists) AS ast FROM player_attributes AS pa LEFT OUTER JOIN player_ratings AS pr ON pr.season = %s AND pa.player_id = pr.player_id LEFT OUTER JOIN player_stats AS ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE pa.team_id = %s GROUP BY pa.player_id ORDER BY pa.roster_position ASC', (g.season, g.season, g.season, team_id_other))
     roster_other = g.dbd.fetchall()
+
+    g.dbd.execute('SELECT player_id, name, contract_amount / 1000 AS contract_amount FROM player_attributes WHERE player_id IN (%s)' % (', '.join([str(player_id) for player_id in player_ids_user]),))
+    trade_user = g.dbd.fetchall()
+
+    g.dbd.execute('SELECT player_id, name, contract_amount / 1000 AS contract_amount FROM player_attributes WHERE player_id IN (%s)' % (', '.join([str(player_id) for player_id in player_ids_other]),))
+    trade_other = g.dbd.fetchall()
 
     g.dbd.execute('SELECT team_id, abbreviation, region, name FROM team_attributes WHERE season = %s AND team_id != %s ORDER BY team_id ASC', (g.season, g.user_team_id))
     teams = g.dbd.fetchall()
 
-    return render_all_or_json('trade.html', {'roster_user': roster_user, 'roster_other': roster_other, 'player_ids_user': player_ids_user, 'player_ids_other': player_ids_other, 'teams': teams, 'team_id_other': team_id_other})
+    return render_all_or_json('trade.html', {'roster_user': roster_user, 'roster_other': roster_other, 'player_ids_user': player_ids_user, 'player_ids_other': player_ids_other, 'trade_user': trade_user, 'trade_other': trade_other, 'teams': teams, 'team_id_other': team_id_other})
 
 
 @app.route('/<int:league_id>/draft')

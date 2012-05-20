@@ -2,28 +2,47 @@
 <div class="row-fluid">
   <div class="span6">
     <h4>User Team Name</h4>
-    <h5>Trade:</h5>
+    <h5>Trade Away:</h5>
     <ul>
-      <li></li>
+      {% for player in trade_user %}
+        <li><a href="{{ url_for('player_', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a> (${{ player.contract_amount|float|round(1) }}M)</li>
+      {% endfor %}
+      <li>$XM Total</li>
     </ul>
     <h5>Receive:</h5>
     <ul>
-      <li></li>
+      {% for player in trade_other %}
+        <li><a href="{{ url_for('player_', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a> (${{ player.contract_amount|float|round(1) }}M)</li>
+      {% endfor %}
+      <li>$XM Total</li>
     </ul>
     <h5>Payroll after trade:</h5>
     <h5>Salary cap:</h5>
   </div>
   <div class="span6">
     <h4>Other Team Name</h4>
-    <h5>Trade:</h5>
+    <h5>Trade Away:</h5>
     <ul>
-      <li></li>
+      {% for player in trade_other %}
+        <li><a href="{{ url_for('player_', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a> (${{ player.contract_amount|float|round(1) }}M)</li>
+      {% endfor %}
+      <li>$XM Total</li>
     </ul>
     <h5>Receive:</h5>
     <ul>
-      <li></li>
+      {% for player in trade_user %}
+        <li><a href="{{ url_for('player_', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a> (${{ player.contract_amount|float|round(1) }}M)</li>
+      {% endfor %}
+      <li>$XM Total</li>
     </ul>
     <h5>Payroll after trade:</h5>
     <h5>Salary cap:</h5>
   </div>
 </div>
+
+<br><br>
+
+<center>
+<button type="submit" class="btn btn-large btn-primary">Propose Trade</button>
+<button type="submit" class="btn">Clear Trade</button>
+</center>

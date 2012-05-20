@@ -81,6 +81,13 @@ def new(team_id):
     # Auto sort player's roster (other teams will be done in season.new_phase(c.PHASE_REGULAR_SEASON))
     roster_auto_sort(g.user_team_id)
 
+    # Default trade settings
+    if g.user_team_id == 0:
+        trade_team_id = 1
+    else:
+        trade_team_id = 0
+    g.db.execute('INSERT INTO trade (team_id) VALUES (%s)', (trade_team_id,))
+
     # Switch back to the default non-league database
     g.db.execute('USE bbgm')
 

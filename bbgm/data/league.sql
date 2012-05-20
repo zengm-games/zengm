@@ -177,8 +177,8 @@ PRIMARY KEY (player_id));
 
 CREATE TABLE trade (
 team_id INTEGER,
-user_player_ids TEXT,
-other_player_ids TEXT);
+player_ids_user TEXT,
+player_ids_other TEXT);
 
 CREATE TABLE awards (
 season INTEGER,

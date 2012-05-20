@@ -7,7 +7,7 @@ from flask import jsonify, render_template, url_for, request, session, redirect,
 from flask.globals import _request_ctx_stack
 
 from bbgm import app
-from bbgm.core import draft, game, contract_negotiation, play_menu, player, season
+from bbgm.core import draft, game, contract_negotiation, play_menu, player, season, trade
 from bbgm.util import get_payroll, get_seasons, lock, roster_auto_sort
 from bbgm.util.decorators import league_crap, league_crap_ajax
 import bbgm.util.const as c
@@ -287,8 +287,10 @@ def trade_():
     # Validate that player IDs correspond with team IDs
 
     # Load info needed to display trade
+    g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, pa.contract_amount / 1000 as contract_amount, pa.contract_expiration, AVG(ps.minutes) AS min, AVG(ps.points) AS pts, AVG(ps.offensive_rebounds + ps.defensive_rebounds) AS reb, AVG(ps.assists) AS ast FROM player_attributes AS pa LEFT OUTER JOIN player_ratings AS pr ON pr.season = %s AND pa.player_id = pr.player_id LEFT OUTER JOIN player_stats AS ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE pa.team_id = %s GROUP BY pa.player_id ORDER BY pa.roster_position ASC', (g.season, g.season, g.season, g.user_team_id))
+    players_user = g.dbd.fetchall()
 
-    return render_all_or_json('trade.html')
+    return render_all_or_json('trade.html', {'players_user': players_user})
 
 
 @app.route('/<int:league_id>/draft')
@@ -502,8 +504,8 @@ def negotiation(player_id):
 
     return render_all_or_json('negotiation.html', {'team_amount': team_amount, 'team_years': team_years, 'player_amount': player_amount, 'player_years': player_years, 'player_expiration': player_expiration, 'resigning': resigning, 'player': player, 'salary_cap': salary_cap, 'team_name': team_name, 'payroll': payroll})
 
-# Utility views
 
+# Utility views
 
 @app.route('/<int:league_id>/box_score')
 @app.route('/<int:league_id>/box_score/<int:game_id>')
@@ -559,6 +561,18 @@ def push_play_menu():
     play_menu.refresh_options()
 
     return 'fuck'
+
+
+@app.route('/<int:league_id>/trade/update', methods=['POST'])
+@league_crap_ajax
+def trade_update():
+    player_ids_user = map(int, request.form.getlist('player_ids_user'))
+    player_ids_other = map(int, request.form.getlist('player_ids_other'))
+    player_ids_user, player_ids_other = trade.update_players(player_ids_user, player_ids_other)
+    print player_ids_user, player_ids_other
+    return jsonify(summary='FUCK', player_ids_user=player_ids_user, player_ids_other=player_ids_other)
+    trade_summary = render_template('trade_summary.html')
+    return jsonify(summary=trade_summary, player_ids_user=player_ids_user, player_ids_other=player_ids_other)
 
 
 @app.route('/<int:league_id>/draft/until_user_or_end', methods=['POST'])

@@ -1,5 +1,7 @@
 import cPickle as pickle
 
+from flask import session, g
+
 from bbgm.util import roster_auto_sort
 
 def new(team_id=0, player_id=None):
@@ -27,6 +29,39 @@ def new(team_id=0, player_id=None):
 
     # Start a new trade with team_id and, if set, player_id
     pass
+
+def update_players(player_ids_user, player_ids_other):
+    """Validates that players are allowed to be traded and then updates the
+    trade in the database.
+
+    If any of the player IDs submitted do not correspond with the two teams that
+    are trading, they will be ignored.
+
+    Args:
+        player_ids_user: A list of integer player IDs from the user's team that
+            are in the trade.
+        player_ids_other: Same as player_ids_user but for the other team.
+
+    Returns:
+        A tuple containing the same lists as in the input, but with any invalid
+        IDs removed.
+    """
+    player_ids = [player_ids_user, player_ids_other]
+
+    # Ignore any invalid player IDs    
+    g.db.execute('SELECT team_id FROM trade')
+    team_id_other, = g.db.fetchone()
+    team_ids = (g.user_team_id, team_id_other)
+    for i in xrange(len(team_ids)):
+        g.db.execute('SELECT player_id FROM player_attributes WHERE team_id = %s', (team_ids[i],))
+        all_player_ids = [player_id for player_id, in g.db.fetchall()]
+        player_ids[i] = [player_id for player_id in player_ids[i] if player_id in all_player_ids]
+
+    # Save to database
+    player_ids_user, player_ids_other = player_ids
+    g.db.execute('UPDATE trade SET player_ids_user = %s, player_ids_other = %s', (pickle.dumps(player_ids_user), pickle.dumps(player_ids_other)))
+
+    return (player_ids_user, player_ids_other)
 
 class Trade:
     """All non-GUI parts of a trade.
@@ -58,11 +93,11 @@ class Trade:
             self.td['over_roster_limit'] = [False, False]
             self.td['ratios'] = [0, 0]
             self.td['team_names'] = ['', '']
-            g.db.execute('INSERT INTO trade (data) VALUES '')
+            g.db.execute('INSERT INTO trade (data) VALUES ')
         else:
             g.db.execute('SELECT data FROM trade LIMIT 1')
             data, = g.db.fetchone()
-            self.td=pickle.loads(data.encode('ascii')))
+            self.td=pickle.loads(data.encode('ascii'))
 
     def save(self):
         """Saves the active trade to the database."""

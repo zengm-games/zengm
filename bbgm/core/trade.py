@@ -16,13 +16,7 @@ def new(team_id=None, player_id=None):
         player_id: An optional integer representing the ID of a player to be
             automatically added to the trade. Then, a trade will be initiated
             with that player's team, regardless of what team_id is set to.
-
-    Returns:
-        False if the new trade is started successfully. Otherwise, it returns a
-        string containing an error message to be sent to the user.
     """
-    # Check permissions as in contract_negotiation.new - is this necessary?
-
     # Convert player_id to team_id
     if player_id is None:
         player_ids_other = []

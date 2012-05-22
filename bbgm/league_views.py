@@ -273,21 +273,28 @@ def trade_():
         new_team_id_other, abbreviation = validate_abbreviation(abbreviation)
     else:
         new_team_id_other = None
-    if request.method == 'POST':
-        if 'clear' in request.form:
-            trade.clear()
-        elif 'propose' in request.form:
-            accepted, message = trade.propose()
-            if accepted:
-                pass
-        elif new_team_id_other is not None or player_id is not None:
-            error = trade.new(team_id=new_team_id_other, player_id=player_id)
-            if error:
-                return render_all_or_json('league_error.html', {'error': error})
 
-    # Validate that player IDs correspond with team IDs
-    player_ids_user, player_ids_other = trade.get_players()
-    player_ids_user, player_ids_other = trade.update_players(player_ids_user, player_ids_other)
+    # Clear trade
+    if request.method == 'POST' and 'clear' in request.form:
+        trade.clear()
+        player_ids_user, player_ids_other = trade.get_players()
+    # Propose trade
+    elif request.method == 'POST' and 'propose' in request.form:
+        # Validate that player IDs correspond with team IDs
+        player_ids_user, player_ids_other = trade.get_players()
+        player_ids_user, player_ids_other = trade.update_players(player_ids_user, player_ids_other)
+
+        accepted, message = trade.propose()
+        if accepted:
+            pass
+    else:
+        # Start new trade with team or for player
+        if request.method == 'POST' and (new_team_id_other is not None or player_id is not None):
+            trade.new(team_id=new_team_id_other, player_id=player_id)
+
+        # Validate that player IDs correspond with team IDs
+        player_ids_user, player_ids_other = trade.get_players()
+        player_ids_user, player_ids_other = trade.update_players(player_ids_user, player_ids_other)
 
     g.db.execute('SELECT team_id FROM trade')
     team_id_other, = g.db.fetchone()

@@ -1,48 +1,49 @@
 <h3>Trade Summary</h3>
 <div class="row-fluid">
   <div class="span6">
-    <h4>User Team Name</h4>
+    <h4>{{ summary.team_names[0] }}</h4>
     <h5>Trade Away:</h5>
     <ul>
-      {% for player in trade_user %}
+      {% for player in summary.trade[0] %}
         <li><a href="{{ url_for('player_', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a> (${{ player.contract_amount|float|round(1) }}M)</li>
       {% endfor %}
-      <li>${{ total_user|float|round(1) }}M Total</li>
+      <li>${{ summary.total[0]|float|round(1) }}M Total</li>
     </ul>
     <h5>Receive:</h5>
     <ul>
-      {% for player in trade_other %}
+      {% for player in summary.trade[1] %}
         <li><a href="{{ url_for('player_', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a> (${{ player.contract_amount|float|round(1) }}M)</li>
       {% endfor %}
-      <li>${{ total_other|float|round(1) }}M Total</li>
+      <li>${{ summary.total[1]|float|round(1) }}M Total</li>
     </ul>
-    <h5>Payroll after trade: ${{ payroll_after_trade_user|float|round(1) }}M</h5>
+    <h5>Payroll after trade: ${{ summary.payroll_after_trade[0]|float|round(1) }}M</h5>
     <h5>Salary cap: ${{ (g.salary_cap / 1000)|float|round(1) }}M</h5>
   </div>
   <div class="span6">
-    <h4>Other Team Name</h4>
+    <h4>{{ summary.team_names[1] }}</h4>
     <h5>Trade Away:</h5>
     <ul>
-      {% for player in trade_other %}
+      {% for player in summary.trade[1] %}
         <li><a href="{{ url_for('player_', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a> (${{ player.contract_amount|float|round(1) }}M)</li>
       {% endfor %}
-      <li>${{ total_other|float|round(1) }}M Total</li>
+      <li>${{ summary.total[1]|float|round(1) }}M Total</li>
     </ul>
     <h5>Receive:</h5>
     <ul>
-      {% for player in trade_user %}
+      {% for player in summary.trade[0] %}
         <li><a href="{{ url_for('player_', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a> (${{ player.contract_amount|float|round(1) }}M)</li>
       {% endfor %}
-      <li>${{ total_user|float|round(1) }}M Total</li>
+      <li>${{ summary.total[0]|float|round(1) }}M Total</li>
     </ul>
-    <h5>Payroll after trade: ${{ payroll_after_trade_other|float|round(1) }}M</h5>
+    <h5>Payroll after trade: ${{ summary.payroll_after_trade[1]|float|round(1) }}M</h5>
     <h5>Salary cap: ${{ (g.salary_cap / 1000)|float|round(1) }}M</h5>
   </div>
 </div>
 
-<br><br>
+<br>
+{% if summary.warning|length > 0 %}<p class="alert alert-error"><strong>Warning!</strong> {{ summary.warning }}</p>{% else %}<br>{% endif %}
 
 <center>
-<button type="submit" class="btn btn-large btn-primary">Propose Trade</button>
+<button type="submit" class="btn btn-large btn-primary"{% if summary.warning|length > 0 %} disabled="disabled"{% endif %}>Propose Trade</button>
 <button type="submit" class="btn">Clear Trade</button>
 </center>

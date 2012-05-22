@@ -82,29 +82,70 @@ def get_players():
 
 def summary(team_id_other, player_ids_user, player_ids_other):
     """Return all the content needed to summarize the trade."""
-    trade_user = []
-    total_user = 0
 
-    trade_other = []
-    total_other = 0
+    team_ids = [g.user_team_id, team_id_other]
+    player_ids = [player_ids_user, player_ids_other]
 
-    if len(player_ids_user) > 0:
-        player_ids = ', '.join([str(player_id) for player_id in player_ids_user])
-        g.dbd.execute('SELECT player_id, name, contract_amount / 1000 AS contract_amount FROM player_attributes WHERE player_id IN (%s)' % (player_ids,))
-        trade_user = g.dbd.fetchall()
-        g.db.execute('SELECT SUM(contract_amount / 1000) FROM player_attributes WHERE player_id IN (%s)' % (player_ids,))
-        total_user, = g.db.fetchone()
-    payroll_after_trade_user = float(get_payroll(g.user_team_id)) / 1000 + float(total_user)
+    s = {'trade': [[], []], 'total': [0, 0], 'payroll_after_trade': [0, 0], 'team_names': ['', ''], 'warning': ''}
 
-    if len(player_ids_other) > 0:
-        player_ids = ', '.join([str(player_id) for player_id in player_ids_other])
-        g.dbd.execute('SELECT player_id, name, contract_amount / 1000 AS contract_amount FROM player_attributes WHERE player_id IN (%s)' % (player_ids,))
-        trade_other = g.dbd.fetchall()
-        g.db.execute('SELECT SUM(contract_amount / 1000) FROM player_attributes WHERE player_id IN (%s)' % (player_ids,))
-        total_other, = g.db.fetchone()
-    payroll_after_trade_other = float(get_payroll(team_id_other)) / 1000 + float(total_other)
+    # Calculate properties of the trade
+    for i in xrange(2):
+        if len(player_ids[i]) > 0:
+            player_ids_sql = ', '.join([str(player_id) for player_id in player_ids[i]])
+            g.dbd.execute('SELECT player_id, name, contract_amount / 1000 AS contract_amount FROM player_attributes WHERE player_id IN (%s)' % (player_ids_sql,))
+            s['trade'][i] = g.dbd.fetchall()
+            g.db.execute('SELECT SUM(contract_amount / 1000) FROM player_attributes WHERE player_id IN (%s)' % (player_ids_sql,))
+            s['total'][i], = g.db.fetchone()
 
-    return trade_user, trade_other, total_user, total_other, payroll_after_trade_user, payroll_after_trade_other
+    # Test if any warnings need to be displayed
+    over_cap = [False, False]
+    over_roster_limit = [False, False]
+    ratios = [0.0, 0.0]
+
+    for i in xrange(2):
+        if i == 0:
+            j = 1
+        elif i == 1:
+            j = 0
+
+        s['payroll_after_trade'][i] = float(get_payroll(team_ids[i])) / 1000 + float(s['total'][j]) - float(s['total'][i])
+
+        g.db.execute('SELECT CONCAT(region, " ", name) FROM team_attributes WHERE team_id = %s AND season = %s', (team_ids[i], g.season))
+        s['team_names'][i], = g.db.fetchone()
+        g.db.execute('SELECT COUNT(*) FROM player_attributes WHERE team_id = %s', (team_ids[i],))
+        num_players_on_roster, = g.db.fetchone() 
+
+        if s['payroll_after_trade'][i] > float(g.salary_cap) / 1000:
+            over_cap[i] = True
+        if num_players_on_roster - len(player_ids[i]) + len(player_ids[j]) > 15:
+            over_roster_limit[i] = True
+        if s['total'][i] > 0:
+            ratios[i] = int((100.0 * float(s['total'][j])) / float(s['total'][i]))
+        elif s['total'][j] > 0:
+            ratios[i] = float('inf')
+        else:
+            ratios[i] = 1
+
+    if True in over_roster_limit:
+#        self.button_trade_propose.set_sensitive(False)
+        # Which team is at fault?
+        if over_roster_limit[0] == True:
+            team_name = s['team_names'][0]
+        else:
+            team_name = s['team_names'][1]
+        s['warning'] = 'This trade would put the %s over the maximum roster size limit of 15 players.' % (team_name,)
+    elif (ratios[0] > 125 and over_cap[0] == True) or (ratios[1] > 125 and over_cap[1] == True):
+#        self.button_trade_propose.set_sensitive(False)
+        # Which team is at fault?
+        if ratios[0] > 125:
+            team_name = s['team_names'][0]
+            ratio = ratios[0]
+        else:
+            team_name = s['team_names'][1]
+            ratio = ratios[1]
+        s['warning'] = 'The %s are over the salary cap, so the players it receives must have a combined salary less than 125%% of the players it trades.  Currently, that value is %s%%.' % (team_name, ratio)
+
+    return s
 
 
 class Trade:
@@ -113,84 +154,6 @@ class Trade:
     Currently, it only works for trading between the user's team and a CPU
     team.
     """
-    def update(self):
-        """Update all the trade attributes.
-
-        This should be called by the view after any change is made and before
-        the UI updates. It isn't called automatically because there is already
-        some UI function that's tracking updates, and it's just easier to call
-        this from there.
-        """
-        for team_id in [common.PLAYER_TEAM_ID, self.td['team_id'][1]]:
-            if team_id == common.PLAYER_TEAM_ID:
-                i = 0
-                j = 1
-            else:
-                i = 1
-                j = 0
-            team_name, payroll = common.DB_CON.execute('SELECT ta.region || " " || ta.name, SUM(pa.contract_amount) + (SELECT TOTAL(contract_amount) FROM released_players_salaries WHERE released_players_salaries.team_id = ta.team_id) FROM team_attributes as ta, player_attributes as pa WHERE pa.team_id = ta.team_id AND ta.team_id = ? AND pa.contract_expiration >= ? AND ta.season = ?', (team_id, common.SEASON, common.SEASON,)).fetchone()
-            self.team_names[i] = team_name
-            num_players_on_roster, = common.DB_CON.execute('SELECT COUNT(*) FROM player_attributes WHERE team_id = ?', (team_id,)).fetchone()
-
-            self.total[i] = 0
-            self.value[i] = 0.0
-            for player_id, team_id, player_name, age, rating, potential, contract_amount in self.offer[i].values():
-                self.total[i] += contract_amount
-                self.value[i] += 10 ** (potential / 10.0 + rating / 20.0 - age / 10.0 - contract_amount / 100000.0)
-#            if self.value[i] > 0:
-#                self.value[i] = math.log10(self.value[i])
-
-            self.total[j] = 0
-#            self.value[j] = 0
-            for player_id, team_id, team_name, age, rating, potential, contract_amount in self.offer[j].values():
-                self.total[j] += contract_amount
-#                self.value[j] += 10 ** (potential / 10.0 + rating / 20.0 - age / 10.0 - contract_amount / 10000.0)  # Set in 2 places!!
-#            if self.value[j] > 0:
-#                self.value[j] = math.log(self.value[j])
-            self.payroll_after_trade[i] = payroll - self.total[i] + self.total[j]
-
-            if self.payroll_after_trade[i] > common.SALARY_CAP:
-                self.over_cap[i] = True
-            else:
-                self.over_cap[i] = False
-            if num_players_on_roster - len(self.offer[i]) + len(self.offer[j]) > 15:
-                self.over_roster_limit[i] = True
-            else:
-                self.over_roster_limit[i] = False
-            if self.total[i] > 0:
-                self.ratios[i] = int((100.0 * self.total[j]) / self.total[i])
-            elif self.total[j] > 0:
-                self.ratios[i] = float('inf')
-            else:
-                self.ratios[i] = 1
-
-    def clear_offer(self):
-        """Clear the current offer, but leave the teams alone."""
-        self.offer = [{}, {}]
-
-    def new_team(self, team_id):
-        """Switch to a new trading partner."""
-        self.td['team_id'][1] = team_id
-        self.offer[1] = {}  # Empty player list
-
-    def add_player(self, i, player_id, team_id, player_name, age, rating, potential, contract_amount):
-        """Adds a player to the deal.
-
-        Args:
-            i: 0 for the user's team, 1 for the CPU team.
-            player_id: player_id of the player to add.
-            ...
-        """
-        self.offer[i][player_id] = [player_id, team_id, player_name, age, rating, potential, contract_amount]
-
-    def remove_player(self, i, player_id):
-        """Removes a player from the deal.
-
-        Args:
-            i: 0 for the user's team, 1 for the CPU team.
-            player_id: player_id of the player to remove.
-        """
-        del self.offer[i][player_id]
 
     def propose(self):
         """Propose the trade to the other team. Is it accepted?

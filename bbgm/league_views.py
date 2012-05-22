@@ -302,12 +302,12 @@ def trade_():
     g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, pa.contract_amount / 1000 AS contract_amount, pa.contract_expiration, AVG(ps.minutes) AS min, AVG(ps.points) AS pts, AVG(ps.offensive_rebounds + ps.defensive_rebounds) AS reb, AVG(ps.assists) AS ast FROM player_attributes AS pa LEFT OUTER JOIN player_ratings AS pr ON pr.season = %s AND pa.player_id = pr.player_id LEFT OUTER JOIN player_stats AS ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE pa.team_id = %s GROUP BY pa.player_id ORDER BY pa.roster_position ASC', (g.season, g.season, g.season, team_id_other))
     roster_other = g.dbd.fetchall()
 
-    trade_user, trade_other, total_user, total_other, payroll_after_trade_user, payroll_after_trade_other = trade.summary(team_id_other, player_ids_user, player_ids_other)
+    summary = trade.summary(team_id_other, player_ids_user, player_ids_other)
 
     g.dbd.execute('SELECT team_id, abbreviation, region, name FROM team_attributes WHERE season = %s AND team_id != %s ORDER BY team_id ASC', (g.season, g.user_team_id))
     teams = g.dbd.fetchall()
 
-    return render_all_or_json('trade.html', {'roster_user': roster_user, 'roster_other': roster_other, 'player_ids_user': player_ids_user, 'player_ids_other': player_ids_other, 'trade_user': trade_user, 'trade_other': trade_other, 'total_user': total_user, 'total_other': total_other, 'payroll_after_trade_user': payroll_after_trade_user, 'payroll_after_trade_other': payroll_after_trade_other, 'teams': teams, 'team_id_other': team_id_other})
+    return render_all_or_json('trade.html', {'roster_user': roster_user, 'roster_other': roster_other, 'player_ids_user': player_ids_user, 'player_ids_other': player_ids_other, 'summary': summary, 'teams': teams, 'team_id_other': team_id_other})
 
 
 @app.route('/<int:league_id>/draft')
@@ -587,8 +587,11 @@ def trade_update():
     player_ids_other = map(int, request.form.getlist('player_ids_other'))
     player_ids_user, player_ids_other = trade.update_players(player_ids_user, player_ids_other)
     print player_ids_user, player_ids_other
-    return jsonify(summary='FUCK', player_ids_user=player_ids_user, player_ids_other=player_ids_other)
-    trade_summary = render_template('trade_summary.html')
+#    return jsonify(summary='FUCK', player_ids_user=player_ids_user, player_ids_other=player_ids_other)
+    g.db.execute('SELECT team_id FROM trade')
+    team_id_other, = g.db.fetchone()
+    summary = trade.summary(team_id_other, player_ids_user, player_ids_other)
+    trade_summary = render_template('trade_summary.html', summary=summary)
     return jsonify(summary=trade_summary, player_ids_user=player_ids_user, player_ids_other=player_ids_other)
 
 

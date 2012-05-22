@@ -274,13 +274,10 @@ def trade_():
     else:
         new_team_id_other = None
     if request.method == 'POST':
-        if 'cancel' in request.form:
-            trade.cancel()
-            return redirect_or_json('league_dashboard')
-        elif 'propose_trade' in request.form:
-            team_amount_new = int(float(request.form['team_amount']) * 1000)
-            team_years_new = int(request.form['team_years'])
-            accepted, message = trade.offer(player_id, team_amount_new, team_years_new)
+        if 'clear' in request.form:
+            trade.clear()
+        elif 'propose' in request.form:
+            accepted, message = trade.propose()
             if accepted:
                 pass
         elif new_team_id_other is not None or player_id is not None:
@@ -587,7 +584,6 @@ def trade_update():
     player_ids_other = map(int, request.form.getlist('player_ids_other'))
     player_ids_user, player_ids_other = trade.update_players(player_ids_user, player_ids_other)
     print player_ids_user, player_ids_other
-#    return jsonify(summary='FUCK', player_ids_user=player_ids_user, player_ids_other=player_ids_other)
     g.db.execute('SELECT team_id FROM trade')
     team_id_other, = g.db.fetchone()
     summary = trade.summary(team_id_other, player_ids_user, player_ids_other)

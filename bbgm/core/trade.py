@@ -148,6 +148,15 @@ def summary(team_id_other, player_ids_user, player_ids_other):
     return s
 
 
+def clear():
+    """Removes all players currently added to the trade."""
+    g.db.execute('UPDATE trade SET player_ids_user = %s, player_ids_other = %s', (pickle.dumps([]), pickle.dumps([])))
+
+
+def propose():
+    pass
+
+
 class Trade:
     """All non-GUI parts of a trade.
 

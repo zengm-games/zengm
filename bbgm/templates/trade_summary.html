@@ -44,6 +44,13 @@
 {% if summary.warning|length > 0 %}<p class="alert alert-error"><strong>Warning!</strong> {{ summary.warning }}</p>{% else %}<br>{% endif %}
 
 <center>
-<button type="submit" class="btn btn-large btn-primary"{% if summary.warning|length > 0 %} disabled="disabled"{% endif %}>Propose Trade</button>
-<button type="submit" class="btn">Clear Trade</button>
+  <form action="{{ url_for('trade_', league_id=g.league_id) }}" method="POST">
+    <input type="hidden" name="propose" value="1">
+    <button type="submit" class="btn btn-large btn-primary"{% if summary.warning|length > 0 %} disabled="disabled"{% endif %}>Propose Trade</button>
+  </form>
+
+  <form action="{{ url_for('trade_', league_id=g.league_id) }}" method="POST">
+    <input type="hidden" name="clear" value="1">
+    <button type="submit" class="btn">Clear Trade</button>
+  </form>
 </center>

@@ -179,6 +179,7 @@ def propose(team_id_other, player_ids_user, player_ids_other):
                 value[i] += 10 ** (float(p['potential']) / 10.0 + float(p['overall']) / 20.0 - float(p['age']) / 10.0 - float(p['contract_amount']) / 100000.0)
 
     if value[0] > value[1] * 0.9:
+        # Trade players
         for i in xrange(2):
             if i == 0:
                 j = 1
@@ -187,29 +188,11 @@ def propose(team_id_other, player_ids_user, player_ids_other):
             for player_id in player_ids[i]:
                 g.db.execute('UPDATE player_attributes SET team_id = %s WHERE player_id = %s', (team_ids[j], player_id))
 
+        # Auto-sort CPU team roster
+        roster_auto_sort(team_ids[1])
+
         clear()
 
         return (True, 'Trade accepted! "Nice doing business with you!"')
     else:
         return (False, 'Trade rejected! "What, are you crazy?"')
-
-class Trade:
-    def process(self):
-        """Process the proposed trade.
-
-        This is called after the trade is accepted, to assign players to their
-        new teams.
-        """
-        # Trade players
-        for team_id in [common.PLAYER_TEAM_ID, self.td['team_id'][1]]:
-            if team_id == common.PLAYER_TEAM_ID:
-                i = 0
-                new_team_id = self.td['team_id'][1]
-            else:
-                i = 1
-                new_team_id = common.PLAYER_TEAM_ID
-            for player_id, team_id, name, age, rating, potential, contract_amount in self.offer[i].values():
-                common.DB_CON.execute('UPDATE player_attributes SET team_id = ? WHERE player_id = ?', (new_team_id, player_id))
-
-        # Auto-sort CPU team roster
-        roster_auto_sort(self.td['team_id'][1])

@@ -4,7 +4,9 @@ trades
 - so, can start game sim (etc) with trade in progress? update text, if so.
 - allow trades that go over roster limit, but require players to be cut or traded to meet limit before game simulation continues
 
-old teams in player view stats page are not correct
+BUG: old teams in player view stats page are not correct
+
+BUG: game simulation doesn't save anything after the first game
 
 database crap
 - optimize

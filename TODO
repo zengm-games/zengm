@@ -1,11 +1,8 @@
 # To acquire parity with the GTK version and be good enough to share:
 
 trades
-- On checkbox click, gray out the "Propose Trade" button
-- On cancel/propose click, gray out the "Propose Trade" button and checkboxes while AJAXing (effectively, until page reloads)
 - so, can start game sim (etc) with trade in progress? update text, if so.
 - allow trades that go over roster limit, but require players to be cut or traded to meet limit before game simulation continues
-- disable propose button when no players are in trade
 
 old teams in player view stats page are not correct
 

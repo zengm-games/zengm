@@ -3,6 +3,7 @@ import cPickle as pickle
 from flask import session, g
 
 from bbgm.util import get_payroll, roster_auto_sort
+import bbgm.util.const as c
 
 def new(team_id=None, player_id=None):
     """Start a new trade with a team.
@@ -76,7 +77,6 @@ def get_players():
 
 def summary(team_id_other, player_ids_user, player_ids_other):
     """Return all the content needed to summarize the trade."""
-
     team_ids = [g.user_team_id, team_id_other]
     player_ids = [player_ids_user, player_ids_other]
 
@@ -147,30 +147,53 @@ def clear():
     g.db.execute('UPDATE trade SET player_ids_user = %s, player_ids_other = %s', (pickle.dumps([]), pickle.dumps([])))
 
 
-def propose():
-    pass
+def propose(team_id_other, player_ids_user, player_ids_other):
+    """Proposes the current trade in the database.
 
+    Returns:
+        A tuple containing a boolean representing whether the trade was accepted
+        (True) or not (False), and a string containing a message to be pushed to
+        the user.
+    """
+    team_ids = [g.user_team_id, team_id_other]
+    player_ids = [player_ids_user, player_ids_other]
+
+    if g.phase >= c.PHASE_AFTER_TRADE_DEADLINE and g.phase <= c.PLAYOFFS:
+        return (False, "Error! You're not allowed to make trades now.")
+
+    # The summary will return a warning if there is a problem. In that case,
+    # that warning will already be pushed to the user so there is no need to
+    # return a redundant message here.
+    g.db.execute('SELECT team_id FROM trade')
+    team_id_other, = g.db.fetchone()
+    s = summary(team_id_other, player_ids_user, player_ids_other)
+    if len(s['warning']) > 0:
+        return (False, '')
+
+    value = [0.0, 0.0]  # "Value" of the players offered by each team
+    for i in xrange(2):
+        if len(player_ids[i]) > 0:
+            player_ids_sql = ', '.join([str(player_id) for player_id in player_ids[i]])
+            g.dbd.execute('SELECT pa.player_id, pa.contract_amount / 1000 AS contract_amount, %s - pa.born_date AS age, pr.overall, pr.potential FROM player_attributes AS pa, player_ratings AS pr WHERE pa.player_id IN (%s) AND pr.player_id = pa.player_id AND pr.season = %s' % (g.season, player_ids_sql, g.season))
+            for p in g.dbd.fetchall():
+                value[i] += 10 ** (float(p['potential']) / 10.0 + float(p['overall']) / 20.0 - float(p['age']) / 10.0 - float(p['contract_amount']) / 100000.0)
+
+    if value[0] > value[1] * 0.9:
+        for i in xrange(2):
+            if i == 0:
+                j = 1
+            elif i == 1:
+                j = 0
+            for player_id in player_ids[i]:
+                g.db.execute('UPDATE player_attributes SET team_id = %s WHERE player_id = %s', (team_ids[j], player_id))
+
+        clear()
+
+        return (True, 'Trade accepted! "Nice doing business with you!"')
+    else:
+        return (False, 'Trade rejected! "What, are you crazy?"')
 
 class Trade:
-    """All non-GUI parts of a trade.
-
-    Currently, it only works for trading between the user's team and a CPU
-    team.
-    """
-
-    def propose(self):
-        """Propose the trade to the other team. Is it accepted?
-
-        Returns:
-            A list containing two elements: 1. a boolean indicating if the
-            trade was accepted (True) or not (False); 2. a string containing
-            the response from the CPU team.
-        """
-        if self.value[0] > self.value[1] * 0.9:
-            return [True, 'Nice doing business with you!']
-        else:
-            return [False, 'What, are you crazy?']
-
     def process(self):
         """Process the proposed trade.
 

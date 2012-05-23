@@ -267,6 +267,12 @@ def free_agents():
 @app.route('/<int:league_id>/trade', methods=['GET', 'POST'])
 @league_crap
 def trade_():
+    if g.phase >= c.PHASE_AFTER_TRADE_DEADLINE and g.phase <= c.PLAYOFFS:
+        error = "You're not allowed to make trades now."
+        return render_all_or_json('league_error.html', {'error': error})
+
+    extra_json = {}
+
     player_id = request.form.get('player_id', None, type=int)
     abbreviation = request.form.get('abbreviation', None)
     if abbreviation is not None:
@@ -284,9 +290,12 @@ def trade_():
         player_ids_user, player_ids_other = trade.get_players()
         player_ids_user, player_ids_other = trade.update_players(player_ids_user, player_ids_other)
 
-        accepted, message = trade.propose()
-        if accepted:
-            pass
+        g.db.execute('SELECT team_id FROM trade')
+        team_id_other, = g.db.fetchone()
+
+        accepted, message = trade.propose(team_id_other, player_ids_user, player_ids_other)
+        extra_json = {'message': message}
+        player_ids_user, player_ids_other = trade.get_players()
     else:
         # Start new trade with team or for player
         if request.method == 'POST' and (new_team_id_other is not None or player_id is not None):
@@ -300,10 +309,10 @@ def trade_():
     team_id_other, = g.db.fetchone()
 
     # Load info needed to display trade
-    g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, pa.contract_amount / 1000 AS contract_amount, pa.contract_expiration, AVG(ps.minutes) AS min, AVG(ps.points) AS pts, AVG(ps.offensive_rebounds + ps.defensive_rebounds) AS reb, AVG(ps.assists) AS ast FROM player_attributes AS pa LEFT OUTER JOIN player_ratings AS pr ON pr.season = %s AND pa.player_id = pr.player_id LEFT OUTER JOIN player_stats AS ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE pa.team_id = %s GROUP BY pa.player_id ORDER BY pa.roster_position ASC', (g.season, g.season, g.season, g.user_team_id))
+    g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date AS age, pr.overall, pr.potential, pa.contract_amount / 1000 AS contract_amount, pa.contract_expiration, AVG(ps.minutes) AS min, AVG(ps.points) AS pts, AVG(ps.offensive_rebounds + ps.defensive_rebounds) AS reb, AVG(ps.assists) AS ast FROM player_attributes AS pa LEFT OUTER JOIN player_ratings AS pr ON pr.season = %s AND pa.player_id = pr.player_id LEFT OUTER JOIN player_stats AS ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE pa.team_id = %s GROUP BY pa.player_id ORDER BY pa.roster_position ASC', (g.season, g.season, g.season, g.user_team_id))
     roster_user = g.dbd.fetchall()
 
-    g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date as age, pr.overall, pr.potential, pa.contract_amount / 1000 AS contract_amount, pa.contract_expiration, AVG(ps.minutes) AS min, AVG(ps.points) AS pts, AVG(ps.offensive_rebounds + ps.defensive_rebounds) AS reb, AVG(ps.assists) AS ast FROM player_attributes AS pa LEFT OUTER JOIN player_ratings AS pr ON pr.season = %s AND pa.player_id = pr.player_id LEFT OUTER JOIN player_stats AS ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE pa.team_id = %s GROUP BY pa.player_id ORDER BY pa.roster_position ASC', (g.season, g.season, g.season, team_id_other))
+    g.dbd.execute('SELECT pa.player_id, pa.name, pa.position, %s - pa.born_date AS age, pr.overall, pr.potential, pa.contract_amount / 1000 AS contract_amount, pa.contract_expiration, AVG(ps.minutes) AS min, AVG(ps.points) AS pts, AVG(ps.offensive_rebounds + ps.defensive_rebounds) AS reb, AVG(ps.assists) AS ast FROM player_attributes AS pa LEFT OUTER JOIN player_ratings AS pr ON pr.season = %s AND pa.player_id = pr.player_id LEFT OUTER JOIN player_stats AS ps ON ps.season = %s AND ps.is_playoffs = 0 AND pa.player_id = ps.player_id WHERE pa.team_id = %s GROUP BY pa.player_id ORDER BY pa.roster_position ASC', (g.season, g.season, g.season, team_id_other))
     roster_other = g.dbd.fetchall()
 
     summary = trade.summary(team_id_other, player_ids_user, player_ids_other)
@@ -311,7 +320,7 @@ def trade_():
     g.dbd.execute('SELECT team_id, abbreviation, region, name FROM team_attributes WHERE season = %s AND team_id != %s ORDER BY team_id ASC', (g.season, g.user_team_id))
     teams = g.dbd.fetchall()
 
-    return render_all_or_json('trade.html', {'roster_user': roster_user, 'roster_other': roster_other, 'player_ids_user': player_ids_user, 'player_ids_other': player_ids_other, 'summary': summary, 'teams': teams, 'team_id_other': team_id_other})
+    return render_all_or_json('trade.html', {'roster_user': roster_user, 'roster_other': roster_other, 'player_ids_user': player_ids_user, 'player_ids_other': player_ids_other, 'summary': summary, 'teams': teams, 'team_id_other': team_id_other}, extra_json)
 
 
 @app.route('/<int:league_id>/draft')
@@ -743,8 +752,12 @@ def validate_season(season):
     return season
 
 
-def render_all_or_json(template_file, template_args={}):
-    """Return rendered template, or JSON containing rendered blocks."""
+def render_all_or_json(template_file, template_args={}, extra_json={}):
+    """Return rendered template, or JSON containing rendered blocks.
+    
+    Anything passed to extra_json will be sent to the client along with the
+    template blocks.
+    """
     if request.args.get('json', 0, type=int) or request.form.get('json', 0, type=int):
         ctx = _request_ctx_stack.top  # Not sure what this does
         ctx.app.update_template_context(template_args)  # Not sure what this does
@@ -753,6 +766,8 @@ def render_all_or_json(template_file, template_args={}):
         d = {}
         for key, blockfun in template.blocks.iteritems():
             d[key] = concat(blockfun(context))
+        if len(extra_json) > 0:
+            d = dict(d.items() + extra_json.items())
         return jsonify(d)
     else:
         return render_template(template_file, **template_args)

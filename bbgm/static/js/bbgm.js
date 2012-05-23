@@ -51,10 +51,14 @@ function play_button(url) {
 
 // For AJAX updating pages
 function ajax_update(data, url) {
+    console.log(data)
     $('title').text(data['title']);
     $('#league_content').html(data['league_content']);
     if (arguments.length == 2) { // Only if a url is passed
         history.pushState(data, '', url);
+    }
+    if (data.hasOwnProperty('message')) {
+        alert(data['message']);
     }
 }
 

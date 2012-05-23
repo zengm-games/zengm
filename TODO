@@ -1,18 +1,13 @@
 # To acquire parity with the GTK version and be good enough to share:
 
 trades
-- Always have a trade row in the DB. Always load from this on GET, then throw out invalid IDs before rendering
-- On dropdown team change, submit form ('new') to delete the other team's players. FULL PAGE RELOAD
-- On checkbox click, submit form ('change_players') of ALL checkboxes. ONLY RELOAD SUMMARY
-  - abstract out a function to do the summary reload
 - On checkbox click, gray out the "Propose Trade" button
 - On cancel/propose click, gray out the "Propose Trade" button and checkboxes while AJAXing (effectively, until page reloads)
-- Copy pretty closely to GTK version
 - so, can start game sim (etc) with trade in progress? update text, if so.
-- propose trade button
-  - validate - maybe factor out code from trade.summary into common function?
-- validation in trade.new - is it necessary?
 - allow trades that go over roster limit, but require players to be cut or traded to meet limit before game simulation continues
+- disable propose button when no players are in trade
+
+old teams in player view stats page are not correct
 
 database crap
 - optimize

@@ -71,8 +71,17 @@ def get_players():
     """Return two lists of integers, representing the player IDs who are added
     to the trade for the user's team and the other team, respectively.
     """
+    player_ids_user = []
+    player_ids_other = []
+
     g.db.execute('SELECT player_ids_user, player_ids_other FROM trade')
-    return map(pickle.loads, g.db.fetchone())
+    row = g.db.fetchone()
+
+    if row[0] is not None:
+        player_ids_user = pickle.loads(row[0])
+    if row[1] is not None:
+        player_ids_other = pickle.loads(row[0])
+    return (player_ids_user, player_ids_other)
 
 
 def summary(team_id_other, player_ids_user, player_ids_other):

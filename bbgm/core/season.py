@@ -123,11 +123,11 @@ def new_phase(phase):
                 if team_id == g.user_team_id:
                     g.db.execute('UPDATE team_attributes SET playoffs = 1 WHERE season = %s AND team_id = %s', (g.season, g.user_team_id))
 
-            query = ('INSERT INTO active_playoff_series (series_id, series_round, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away) VALUES (%s, 1, %s, %s, %s, %s, 0, 0)')
-            g.db.execute(query, (conference_id * 4 + 1, teams[0], teams[7], 1, 8))
-            g.db.execute(query, (conference_id * 4 + 2, teams[3], teams[4], 4, 5))
-            g.db.execute(query, (conference_id * 4 + 3, teams[2], teams[5], 3, 6))
-            g.db.execute(query, (conference_id * 4 + 4, teams[1], teams[6], 2, 7))
+            query = ('INSERT INTO active_playoff_series (series_round, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away) VALUES (1, %s, %s, %s, %s, 0, 0)')
+            g.db.execute(query, (teams[0], teams[7], 1, 8))
+            g.db.execute(query, (teams[3], teams[4], 4, 5))
+            g.db.execute(query, (teams[2], teams[5], 3, 6))
+            g.db.execute(query, (teams[1], teams[6], 2, 7))
 
     # Offseason, before draft
     elif phase == c.PHASE_BEFORE_DRAFT:
@@ -340,19 +340,18 @@ def new_schedule_playoffs_day():
             new_phase(c.PHASE_BEFORE_DRAFT)
 
         # Add a new round to the database
-        series_id = 1
         current_round += 1
-        query = ('INSERT INTO active_playoff_series (series_id, series_round, team_id_home, team_id_away,'
-                 'seed_home, seed_away, won_home, won_away) VALUES (%s, %s, %s, %s, %s, %s, 0, 0)')
-        for i in range(1, len(winners), 2):  # Go through winners by 2
+        query = ('INSERT INTO active_playoff_series (series_round, team_id_home, team_id_away,'
+                 'seed_home, seed_away, won_home, won_away) VALUES (%s, %s, %s, %s, %s, 0, 0)')
+        series_ids = winners.keys()
+        for i in range(min(series_ids), max(series_ids), 2):  # Go through winners by 2
             if winners[i][1] < winners[i + 1][1]:  # Which team is the home team?
-                new_series = (series_id, current_round, winners[i][0], winners[i + 1][0], winners[i][1],
+                new_series = (current_round, winners[i][0], winners[i + 1][0], winners[i][1],
                               winners[i + 1][1])
             else:
-                new_series = (series_id, current_round, winners[i + 1][0], winners[i][0], winners[i + 1][1],
+                new_series = (current_round, winners[i + 1][0], winners[i][0], winners[i + 1][1],
                               winners[i][1])
             g.db.execute(query, new_series)
-            series_id += 1
 
     return num_active_teams
 

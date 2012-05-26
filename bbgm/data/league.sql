@@ -139,7 +139,7 @@ cost INTEGER,
 PRIMARY KEY (team_id, game_id));
 
 CREATE TABLE active_playoff_series (
-series_id INTEGER,
+series_id INTEGER AUTO_INCREMENT,
 series_round INTEGER,
 team_id_home INTEGER,
 team_id_away INTEGER,

@@ -267,7 +267,7 @@ def free_agents():
 @app.route('/<int:league_id>/trade', methods=['GET', 'POST'])
 @league_crap
 def trade_():
-    if g.phase >= c.PHASE_AFTER_TRADE_DEADLINE and g.phase <= c.PLAYOFFS:
+    if g.phase >= c.PHASE_AFTER_TRADE_DEADLINE and g.phase <= c.PHASE_PLAYOFFS:
         error = "You're not allowed to make trades now."
         return render_all_or_json('league_error.html', {'error': error})
 

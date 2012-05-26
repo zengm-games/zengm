@@ -217,7 +217,7 @@ def standings(view_season=None):
 
         g.db.execute('SELECT ld.division_id FROM league_divisions as ld WHERE ld.conference_id = %s', (conference_id,))
         divisions = ', '.join([str(division) for division, in g.db.fetchall()])
-        g.dbd.execute('SELECT * FROM team_attributes as ta WHERE ta.division_id IN (%s) AND season = %s ORDER BY won/(won+lost) DESC', (divisions, view_season))
+        g.dbd.execute('SELECT * FROM team_attributes as ta WHERE ta.division_id IN (%s) AND season = %s ORDER BY won/(won+lost) DESC' % (divisions, view_season))
         conferences[-1]['teams'] = g.dbd.fetchall()
 
         g.db.execute('SELECT division_id, name FROM league_divisions WHERE conference_id = %s ORDER BY name ASC', (conference_id,))

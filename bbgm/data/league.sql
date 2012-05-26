@@ -109,7 +109,7 @@ steals INTEGER,
 blocks INTEGER,
 personal_fouls INTEGER,
 points INTEGER,
-PRIMARY KEY (player_id, season));
+PRIMARY KEY (player_id, game_id));
 
 CREATE TABLE team_stats (
 team_id INTEGER,

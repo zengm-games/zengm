@@ -6,8 +6,6 @@ trades
 
 BUG: old teams in player view stats page are not correct
 
-BUG: game simulation doesn't save anything after the first game
-
 database crap
 - optimize
   - why is it so slow, and so disk thrashy?

@@ -1,5 +1,7 @@
 # To acquire parity with the GTK version and be good enough to share:
 
+fix commented lines in bbgm.core.season
+
 database crap
 - optimize
   - why is it so slow, and so disk thrashy?
@@ -74,8 +76,6 @@ dashboard: a bunch of boxes showing..
 - top free agents
 - league leaders
 - team leaders
-
-fix commented lines in bbgm.core.season
 
 play menu
 - just send everything over one juggernaut connection per league?

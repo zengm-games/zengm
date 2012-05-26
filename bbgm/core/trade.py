@@ -130,7 +130,6 @@ def summary(team_id_other, player_ids_user, player_ids_other):
             ratios[i] = 1
 
     if True in over_roster_limit:
-#        self.button_trade_propose.set_sensitive(False)
         # Which team is at fault?
         if over_roster_limit[0] == True:
             team_name = s['team_names'][0]
@@ -138,7 +137,6 @@ def summary(team_id_other, player_ids_user, player_ids_other):
             team_name = s['team_names'][1]
         s['warning'] = 'This trade would put the %s over the maximum roster size limit of 15 players.' % (team_name,)
     elif (ratios[0] > 125 and over_cap[0] == True) or (ratios[1] > 125 and over_cap[1] == True):
-#        self.button_trade_propose.set_sensitive(False)
         # Which team is at fault?
         if ratios[0] > 125:
             team_name = s['team_names'][0]

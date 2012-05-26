@@ -366,6 +366,21 @@ class GeneratePlayer(Player):
     def sql_insert_attributes(self):
         return [self.id,] + [self.attribute[i] for i in sorted(self.attribute.keys())]
 
+    def get_attributes(self):
+        d = self.attribute
+        d['player_id'] = self.id
+        return d
+
+    def get_ratings(self):
+        d = self.rating
+        if not hasattr(g, 'season'):
+            d['season'] = g.starting_season
+        else:
+            d['season'] = g.season
+        d['overall'] = self.overall_rating()
+        d['player_id'] = self.id
+        return d
+
     def sql_insert_ratings_query(self):
         sql = 'INSERT INTO player_ratings (%s) VALUES (%s)'
         return sql % ('player_id, season, ' + ', '.join(map(str, sorted(self.rating.keys()))), ', '.join(['%s' for i in xrange(len(self.rating.keys()) + 2)]))

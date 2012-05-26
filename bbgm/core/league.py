@@ -10,7 +10,7 @@ import bbgm.util.const as c
 
 def new(team_id):
     # Add to main record
-    g.dbex('INSERT INTO leagues (user_id) VALUES (:user_id)' user_id=session['user_id'])
+    g.dbex('INSERT INTO leagues (user_id) VALUES (:user_id)', user_id=session['user_id'])
 
     r = g.dbex('SELECT league_id FROM leagues WHERE user_id = :user_id ORDER BY league_id DESC LIMIT 1', user_id=session['user_id'])
     g.league_id, = r.fetchone()
@@ -33,6 +33,8 @@ def new(team_id):
     player_id = 1
     sql_insert_attributes = []
     sql_insert_ratings = []
+    player_attributes = []
+    player_ratings = []
     for t in range(-1, 30):
         good_neutral_bad = random.randrange(-1, 2)  # Determines if this will be a good team or not
 
@@ -64,10 +66,12 @@ def new(team_id):
 
             sql_insert_ratings.append(gp.sql_insert_ratings())
             sql_insert_attributes.append(gp.sql_insert_attributes())
+            player_attributes.append(gp.get_attributes())
+            player_ratings.append(gp.get_ratings())
 
             player_id += 1
-    g.dbexmany(gp.sql_insert_attributes_query(), sql_insert_attributes)
-    g.dbexmany(gp.sql_insert_ratings_query(), sql_insert_ratings)
+    g.dbexmany('INSERT INTO player_attributes (%s) VALUES (%s)' % (', '.join(player_attributes[0].keys()), ', '.join([':' + key for key in player_attributes[0].keys()])), player_attributes)
+    g.dbexmany('INSERT INTO player_ratings (%s) VALUES (%s)' % (', '.join(player_ratings[0].keys()), ', '.join([':' + key for key in player_ratings[0].keys()])), player_ratings)
 
     # Set and get global game attributes
     g.dbex('UPDATE game_attributes SET team_id = :team_id', team_id=team_id)

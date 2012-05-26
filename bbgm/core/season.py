@@ -46,7 +46,7 @@ def new_phase(phase):
         # Create new rows in team_attributes
         r = g.dbex('SELECT team_id, division_id, region, name, abbreviation, cash FROM team_attributes WHERE season = :season', season=g.season - 1)
         for row in r.fetchall():
-            g.dbex('INSERT INTO team_attributes (team_id, division_id, region, name, abbreviation, cash, season) VALUES (:team_id, :division_id, :region, :name, :abbreviation, :cash, :season)', **row, season=g.season) # team_id=row[0], division_id=row[1], region=row[2], name=row[3], abbreviation=row[4], cash=row[5], season=g.season)
+            g.dbex('INSERT INTO team_attributes (team_id, division_id, region, name, abbreviation, cash, season) VALUES (:team_id, :division_id, :region, :name, :abbreviation, :cash, :season)', season=g.season, **row) # team_id=row[0], division_id=row[1], region=row[2], name=row[3], abbreviation=row[4], cash=row[5], season=g.season)
 
         # Create new rows in player_ratings, only for active players
         r = g.dbex('SELECT pr.player_id, season + 1, overall, pr.height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, passing, rebounding, potential FROM player_ratings AS pr, player_attributes AS pa WHERE pa.player_id = pr.player_id AND pr.season = :season AND pa.team_id != :team_id', season=g.season - 1, team_id=c.PLAYER_RETIRED)

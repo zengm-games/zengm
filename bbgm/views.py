@@ -79,8 +79,8 @@ def new_league():
             league_id = league.new(team_id)
             return redirect(url_for('league_dashboard', league_id=league_id))
 
-    g.dbd.execute('SELECT team_id, region, name FROM teams ORDER BY team_id ASC')
-    teams = g.dbd.fetchall()
+    r = g.dbex('SELECT team_id, region, name FROM teams ORDER BY team_id ASC')
+    teams = r.fetchall()
     return render_template('new_league.html', teams=teams)
 
 
@@ -90,8 +90,8 @@ def delete_league():
     league_id = int(request.form['league_id'])
 
     # Check permissions (this is the same as bbgm.util.decorators.check_permissions)
-    g.db.execute('SELECT user_id FROM leagues WHERE league_id = %s', (league_id,))
-    user_id, = g.db.fetchone()
+    r = g.dbex('SELECT user_id FROM leagues WHERE league_id = :league_id', league_id=league_id)
+    user_id, = r.fetchone()
     if session['user_id'] != user_id:
         return redirect(url_for('index'))
 

@@ -2,6 +2,7 @@ from flask import Flask, g
 from flask.ext.assets import Environment, Bundle
 import logging
 from sqlalchemy import create_engine, MetaData, text
+from sqlalchemy.orm import sessionmaker
 
 BBGM_VERSION = '2.0.0alpha'
 DEBUG = True
@@ -45,6 +46,8 @@ import bbgm.league_views
 def connect_db():
     engine = create_engine('mysql+mysqldb://%s:%s@localhost' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD']), pool_recycle=3600)
     metadata = MetaData(bind=engine)
+#    Session = sessionmaker(bind=engine)
+#    session = Session()
     con = engine.connect()
     return con
 
@@ -53,10 +56,18 @@ def db_execute(query, **kwargs):
     """Convenience function so I don't need to be doing "from sqlalchemy import
     text" everywhere.
     """
-    if len(kwargs):
-        return g.db.execute(text(query), **kwargs)
-    else:
-        return g.db.execute(query)
+#    if len(kwargs):
+#        return g.db.execute(text(query), **kwargs)
+#    else:
+#        return g.db.execute(query)
+    return g.db.execute(text(query).execution_options(autocommit=False), **kwargs)
+
+
+def db_executemany(query, params):
+    """Convenience function so I don't need to be doing "from sqlalchemy import
+    text" everywhere.
+    """
+    return g.db.execute(text(query).execution_options(autocommit=False), params)
 
 
 def bulk_execute(f):
@@ -105,6 +116,7 @@ def before_request():
     # Database crap
     g.db = connect_db()
     g.dbex = db_execute
+    g.dbexmany = db_executemany
 
     if g.league_id >= 0:
         g.dbex('USE bbgm_%d' % (g.league_id,))

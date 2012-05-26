@@ -37,26 +37,26 @@ def new_phase(phase):
     # Preseason
     if phase == c.PHASE_PRESEASON:
         g.season += 1
-        g.db.execute('UPDATE game_attributes SET season = season + 1')
+        g.dbex('UPDATE game_attributes SET season = season + 1')
         phase_text = '%s preseason' % (g.season,)
 
         # Get rid of old playoffs
-        g.db.execute('DELETE FROM active_playoff_series')
+        g.dbex('DELETE FROM active_playoff_series')
 
         # Create new rows in team_attributes
-        g.db.execute('SELECT team_id, division_id, region, name, abbreviation, cash FROM team_attributes WHERE season = %s', (g.season - 1,))
-        for row in g.db.fetchall():
-            g.db.execute('INSERT INTO team_attributes (team_id, division_id, region, name, abbreviation, cash, season) VALUES (%s, %s, %s, %s, %s, %s, %s)', (row[0], row[1], row[2], row[3], row[4], row[5], g.season))
+        r = g.dbex('SELECT team_id, division_id, region, name, abbreviation, cash FROM team_attributes WHERE season = :season', season=g.season - 1)
+        for row in r.fetchall():
+            g.dbex('INSERT INTO team_attributes (team_id, division_id, region, name, abbreviation, cash, season) VALUES (:team_id, :division_id, :region, :name, :abbreviation, :cash, :season)', **row, season=g.season) # team_id=row[0], division_id=row[1], region=row[2], name=row[3], abbreviation=row[4], cash=row[5], season=g.season)
 
         # Create new rows in player_ratings, only for active players
-        g.db.execute('SELECT pr.player_id, season + 1, overall, pr.height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, passing, rebounding, potential FROM player_ratings AS pr, player_attributes AS pa WHERE pa.player_id = pr.player_id AND pr.season = %s AND pa.team_id != %s', (g.season - 1, c.PLAYER_RETIRED))
-        for row in g.db.fetchall():
-            g.db.execute('INSERT INTO player_ratings (player_id, season, overall, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, passing, rebounding, potential) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', row)
+        r = g.dbex('SELECT pr.player_id, season + 1, overall, pr.height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, passing, rebounding, potential FROM player_ratings AS pr, player_attributes AS pa WHERE pa.player_id = pr.player_id AND pr.season = :season AND pa.team_id != :team_id', season=g.season - 1, team_id=c.PLAYER_RETIRED)
+        for row in r.fetchall():
+            g.dbex('INSERT INTO player_ratings (player_id, season, overall, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, passing, rebounding, potential) VALUES (:player_id, :season, :overall, :height, :strength, :speed, :jumping, :endurance, :shooting_inside, :shooting_layups, :shooting_free_throws, :shooting_two_pointers, :shooting_three_pointers, :blocks, :steals, :dribbling, :passing, :rebounding, :potential)', **row) # player_id=row[0], season=row[1], overall=row[2], height=row[3], strength=row[4], speed=row[5], jumping=row[6], endurance=row[7], shooting_inside=row[8], shooting_layups=row[9], shooting_free_throws=row[10], shooting_two_pointers=row[11], shooting_three_pointers=row[12], blocks=row[13], steals=row[14], dribbling=row[15], passing=row[16], rebounding=row[17], potential=row[18])
 
         # Age players
         player_ids = []
-        g.db.execute('SELECT player_id FROM player_attributes WHERE team_id != %s', (c.PLAYER_RETIRED,))
-        for player_id, in g.db.fetchall():
+        r = g.dbex('SELECT player_id FROM player_attributes WHERE team_id != :team_id', team_id=c.PLAYER_RETIRED)
+        for player_id, in r.fetchall():
             player_ids.append(player_id)
         up = player.Player()
         for player_id in player_ids:
@@ -72,16 +72,16 @@ def new_phase(phase):
         phase_text = '%s regular season' % (g.season,)
         # First, make sure teams are all within the roster limits
         # CPU teams
-        g.db.execute('SELECT ta.team_id, COUNT(*) FROM team_attributes as ta, player_attributes as pa WHERE ta.team_id = pa.team_id AND ta.season = %s GROUP BY pa.team_id', (g.season,))
-        teams = g.db.fetchall()
+        r = g.dbex('SELECT ta.team_id, COUNT(*) FROM team_attributes as ta, player_attributes as pa WHERE ta.team_id = pa.team_id AND ta.season = :season GROUP BY pa.team_id', season=g.season)
+        teams = r.fetchall()
         for team_id, num_players_on_roster in teams:
             if num_players_on_roster > 15:
                 if team_id == g.user_team_id:
                     return 'Your team currently has more than the maximum number of players (15). You must release or buy out players (from the Roster page) before the season starts.'
                 else:
                     # Automatically drop lowest potential players until we reach 15
-                    g.db.execute('SELECT pa.player_id FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = %s AND pr.season = %s ORDER BY pr.potential ASC LIMIT %s', (team_id, g.season, num_players_on_roster-15))
-                    for player_id, in g.db.fetchall():
+                    r = g.dbex('SELECT pa.player_id FROM player_attributes as pa, player_ratings as pr WHERE pa.player_id = pr.player_id AND pa.team_id = :team_id AND pr.season = :season ORDER BY pr.potential ASC LIMIT :n_excess_players', team_id=team_id, season=g.season, n_excess_players=num_players_on_roster-15)
+                    for player_id, in r.fetchall():
                         # Release player.
                         p = player.Player()
                         p.load(player_id)
@@ -115,28 +115,28 @@ def new_phase(phase):
         # Set playoff matchups
         for conference_id in range(2):
             teams = []
-            g.db.execute('SELECT ta.team_id FROM team_attributes as ta, league_divisions as ld WHERE ld.division_id = ta.division_id AND ld.conference_id = %s AND ta.season = %s ORDER BY 1.0*ta.won/(ta.won + ta.lost) DESC LIMIT 8', (conference_id, g.season))
-            team_ids = g.db.fetchall()
+            r = g.dbex('SELECT ta.team_id FROM team_attributes as ta, league_divisions as ld WHERE ld.division_id = ta.division_id AND ld.conference_id = :conference_id AND ta.season = :season ORDER BY 1.0*ta.won/(ta.won + ta.lost) DESC LIMIT 8', conference_id=conference_id, season=g.season)
+            team_ids = r.fetchall()
             for team_id, in team_ids:
                 teams.append(team_id)
                 # Record playoff appearance for player's team
                 if team_id == g.user_team_id:
-                    g.db.execute('UPDATE team_attributes SET playoffs = 1 WHERE season = %s AND team_id = %s', (g.season, g.user_team_id))
+                    g.dbex('UPDATE team_attributes SET playoffs = 1 WHERE season = :season AND team_id = :team_id', season=g.season, team_id=g.user_team_id)
 
-            query = ('INSERT INTO active_playoff_series (series_round, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away) VALUES (1, %s, %s, %s, %s, 0, 0)')
-            g.db.execute(query, (teams[0], teams[7], 1, 8))
-            g.db.execute(query, (teams[3], teams[4], 4, 5))
-            g.db.execute(query, (teams[2], teams[5], 3, 6))
-            g.db.execute(query, (teams[1], teams[6], 2, 7))
+            query = ('INSERT INTO active_playoff_series (series_round, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away) VALUES (1, :team_id_home, :team_id_away, :seed_home, :seed_away, 0, 0)')
+            g.dbex(query, team_id_home=teams[0], team_id_away=teams[7], seed_home=1, seed_away=8)
+            g.dbex(query, team_id_home=teams[3], team_id_away=teams[4], seed_home=4, seed_away=5)
+            g.dbex(query, team_id_home=teams[2], team_id_away=teams[5], seed_home=3, seed_away=6)
+            g.dbex(query, team_id_home=teams[1], team_id_away=teams[6], seed_home=2, seed_away=7)
 
     # Offseason, before draft
     elif phase == c.PHASE_BEFORE_DRAFT:
         phase_text = '%s before draft' % (g.season,)
         # Remove released players' salaries from payrolls
-        g.db.execute('DELETE FROM released_players_salaries WHERE contract_expiration <= %s', (g.season,))
+        g.dbex('DELETE FROM released_players_salaries WHERE contract_expiration <= :season', season=g.season)
 
         # Add a year to the free agents
-        g.db.execute('UPDATE player_attributes SET contract_expiration = contract_expiration + 1 WHERE team_id = %s', (c.PLAYER_FREE_AGENT,))
+        g.dbex('UPDATE player_attributes SET contract_expiration = contract_expiration + 1 WHERE team_id = :team_id', team_id=c.PLAYER_FREE_AGENT)
 
     # Draft
     elif phase == c.PHASE_DRAFT:
@@ -157,8 +157,8 @@ def new_phase(phase):
 #        rpw.retired_players_window.destroy()
 
         # Resign players
-        g.db.execute('SELECT player_id, team_id, name FROM player_attributes WHERE contract_expiration = %s AND team_id >= 0', (g.season,))
-        for player_id, team_id, name in g.db.fetchall():
+        r = g.dbex('SELECT player_id, team_id, name FROM player_attributes WHERE contract_expiration = :season AND team_id >= 0', season=g.season)
+        for player_id, team_id, name in r.fetchall():
             if team_id != g.user_team_id:
                 # Automatically negotiate with teams
 #                self.player_contract_expire(player_id)
@@ -182,16 +182,16 @@ def new_phase(phase):
         contract_negotiation.cancel_all()
 
         # Reset contract demands of current free agents
-        g.db.execute('SELECT player_id FROM player_attributes WHERE team_id = %s', (c.PLAYER_FREE_AGENT,))
-        for player_id, in g.db.fetchall():
+        r = g.dbex('SELECT player_id FROM player_attributes WHERE team_id = :team_id', team_id=c.PLAYER_FREE_AGENT)
+        for player_id, in r.fetchall():
             p = player.Player()
             p.load(player_id)
             p.add_to_free_agents(phase)
 
         # Move undrafted players to free agent pool
-        g.db.execute('SELECT player_id FROM player_attributes WHERE team_id = %s', (c.PLAYER_UNDRAFTED,))
-        for player_id, in g.db.fetchall():
-            g.db.execute('UPDATE player_attributes SET draft_year = -1, draft_round = -1, draft_pick = -1, draft_team_id = -1 WHERE player_id = %s', (player_id,))
+        r = g.dbex('SELECT player_id FROM player_attributes WHERE team_id = :team_id', team_id=c.PLAYER_UNDRAFTED)
+        for player_id, in r.fetchall():
+            g.dbex('UPDATE player_attributes SET draft_year = -1, draft_round = -1, draft_pick = -1, draft_team_id = -1 WHERE player_id = :player_id', player_id=player_id)
             p = player.Player()
             p.load(player_id)
             p.add_to_free_agents(phase)
@@ -199,7 +199,7 @@ def new_phase(phase):
     old_phase = g.phase
     g.phase = phase
 
-    g.db.execute('UPDATE game_attributes SET phase = %s', (g.phase,))
+    g.dbex('UPDATE game_attributes SET phase = :phase', phase=g.phase)
 
     play_menu.set_phase(phase_text)
     play_menu.refresh_options()
@@ -211,10 +211,9 @@ def new_schedule():
     conference matchup distributions.
     """
     teams = []
-    g.db.execute('SELECT team_id, division_id, (SELECT conference_id FROM league_divisions as ld WHERE ld.division_id = ta.division_id) FROM team_attributes as ta WHERE season = %s', (g.season,))
-    for row in g.db.fetchall():
-        teams.append({'team_id': row[0], 'division_id': row[1], 'conference_id': row[2], 'home_games': 0,
-                      'away_games': 0})
+    r = g.dbex('SELECT team_id, division_id, (SELECT conference_id FROM league_divisions as ld WHERE ld.division_id = ta.division_id) FROM team_attributes as ta WHERE season = :season', season=g.season)
+    for row in r.fetchall():
+        teams.append({'team_id': row[0], 'division_id': row[1], 'conference_id': row[2], 'home_games': 0, 'away_games': 0})
     team_ids = []  # team_id_home, team_id_away
 
     for i in range(len(teams)):
@@ -303,11 +302,11 @@ def new_schedule_playoffs_day():
     team_ids = []
     active_series = False
     # Round: 1, 2, 3, or 4
-    g.db.execute('SELECT MAX(series_round) FROM active_playoff_series')
-    current_round, = g.db.fetchone()
+    r = g.dbex('SELECT MAX(series_round) FROM active_playoff_series')
+    current_round, = r.fetchone()
 
-    g.db.execute('SELECT team_id_home, team_id_away FROM active_playoff_series WHERE won_home < 4 AND won_away < 4 AND series_round = %s', (current_round,))
-    for team_id_home, team_id_away in g.db.fetchall():
+    r = g.dbex('SELECT team_id_home, team_id_away FROM active_playoff_series WHERE won_home < 4 AND won_away < 4 AND series_round = :series_round', series_round=current_round)
+    for team_id_home, team_id_away in r.fetchall():
         team_ids.append([team_id_home, team_id_away])
         active_series = True
         num_active_teams += 2
@@ -318,10 +317,8 @@ def new_schedule_playoffs_day():
 
         # Who won?
         winners = {}
-        g.db.execute('SELECT series_id, team_id_home, team_id_away, seed_home, '
-                     'seed_away, won_home, won_away FROM active_playoff_series WHERE '
-                     'series_round = %s ORDER BY series_id ASC', (current_round,))
-        for row in g.db.fetchall():
+        r = g.dbex('SELECT series_id, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away FROM active_playoff_series WHERE series_round = :series_round ORDER BY series_id ASC', series_round=current_round)
+        for row in r.fetchall():
             series_id, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away = row
             if won_home == 4:
                 winners[series_id] = [team_id_home, seed_home]
@@ -329,11 +326,9 @@ def new_schedule_playoffs_day():
                 winners[series_id] = [team_id_away, seed_away]
             # Record user's team as conference and league champion
             if current_round == 3:
-                g.db.execute('UPDATE team_attributes SET won_conference = 1 WHERE season = %s AND '
-                             'team_id = %s', (g.season, winners[series_id][0]))
+                g.dbex('UPDATE team_attributes SET won_conference = 1 WHERE season = :season AND team_id = :team_id', season=g.season, team_id=winners[series_id][0])
             elif current_round == 4:
-                g.db.execute('UPDATE team_attributes SET won_championship = 1 WHERE season = %s AND '
-                             'team_id = %s', (g.season, winners[series_id][0]))
+                g.dbex('UPDATE team_attributes SET won_championship = 1 WHERE season = :season AND team_id = :team_id', season=g.season, team_id=winners[series_id][0])
 
         # Are the whole playoffs over?
         if current_round == 4:
@@ -341,46 +336,42 @@ def new_schedule_playoffs_day():
 
         # Add a new round to the database
         current_round += 1
-        query = ('INSERT INTO active_playoff_series (series_round, team_id_home, team_id_away,'
-                 'seed_home, seed_away, won_home, won_away) VALUES (%s, %s, %s, %s, %s, 0, 0)')
+        query = ('INSERT INTO active_playoff_series (series_round, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away) VALUES (:series_round, :team_id_home, :team_id_away, :seed_home, :seed_away, 0, 0)')
         series_ids = winners.keys()
         for i in range(min(series_ids), max(series_ids), 2):  # Go through winners by 2
             if winners[i][1] < winners[i + 1][1]:  # Which team is the home team?
-                new_series = (current_round, winners[i][0], winners[i + 1][0], winners[i][1],
-                              winners[i + 1][1])
+                g.dbex(query, series_round=current_round, team_id_home=winners[i][0], team_id_away=winners[i + 1][0], seed_home=winners[i][1], seed_away=winners[i + 1][1])
             else:
-                new_series = (current_round, winners[i + 1][0], winners[i][0], winners[i + 1][1],
-                              winners[i][1])
-            g.db.execute(query, new_series)
+                g.dbex(query, series_round=current_round, team_id_home=winners[i + 1][0], team_id_away=winners[i][0], seed_home=winners[i + 1][1], seed_away=winners[i][1])
 
     return num_active_teams
 
 def awards():
     """Computes the awards at the end of a season."""
     # Cache averages
-    g.db.execute('CREATE TEMPORARY TABLE awards_avg (player_id INTEGER PRIMARY KEY, name VARCHAR(255), team_id INTEGER, abbreviation VARCHAR(3), draft_year INTEGER, games_played INTEGER, games_started INTEGER, mpg FLOAT, ppg FLOAT, rpg FLOAT, apg FLOAT, bpg FLOAT, spg FLOAT)')
-    g.db.execute('INSERT INTO awards_avg (player_id, name, team_id, abbreviation, draft_year, games_played, games_started, mpg, ppg, rpg, apg, bpg, spg) (SELECT pa.player_id, pa.name, pa.team_id, ta.abbreviation, pa.draft_year, SUM(ps.minutes>0) AS games_played, SUM(ps.starter) AS games_started, AVG(ps.minutes) AS mpg, AVG(ps.points) AS ppg, AVG(ps.offensive_rebounds+ps.defensive_rebounds) AS rpg, AVG(ps.assists) AS apg, AVG(ps.blocks) AS bpg, AVG(ps.steals) AS spg FROM player_attributes as pa, player_stats as ps, team_attributes as ta WHERE pa.player_id = ps.player_id AND ps.season = %s AND ps.is_playoffs = 0 AND ta.team_id = pa.team_id AND ta.season = ps.season GROUP BY ps.player_id)', (g.season,))
+    g.dbex('CREATE TEMPORARY TABLE awards_avg (player_id INTEGER PRIMARY KEY, name VARCHAR(255), team_id INTEGER, abbreviation VARCHAR(3), draft_year INTEGER, games_played INTEGER, games_started INTEGER, mpg FLOAT, ppg FLOAT, rpg FLOAT, apg FLOAT, bpg FLOAT, spg FLOAT)')
+    g.dbex('INSERT INTO awards_avg (player_id, name, team_id, abbreviation, draft_year, games_played, games_started, mpg, ppg, rpg, apg, bpg, spg) (SELECT pa.player_id, pa.name, pa.team_id, ta.abbreviation, pa.draft_year, SUM(ps.minutes>0) AS games_played, SUM(ps.starter) AS games_started, AVG(ps.minutes) AS mpg, AVG(ps.points) AS ppg, AVG(ps.offensive_rebounds+ps.defensive_rebounds) AS rpg, AVG(ps.assists) AS apg, AVG(ps.blocks) AS bpg, AVG(ps.steals) AS spg FROM player_attributes as pa, player_stats as ps, team_attributes as ta WHERE pa.player_id = ps.player_id AND ps.season = :season AND ps.is_playoffs = 0 AND ta.team_id = pa.team_id AND ta.season = ps.season GROUP BY ps.player_id)', season=g.season)
 
-    g.db.execute('SELECT team_id, abbreviation, region, name, won, lost FROM team_attributes AS ta WHERE season = %s AND (SELECT conference_id FROM league_divisions AS ld WHERE ld.division_id = ta.division_id) = 0 ORDER BY 1.0*won/(won + lost) DESC', (g.season,))
-    bre = g.db.fetchone()
-    g.db.execute('SELECT team_id, abbreviation, region, name, won, lost FROM team_attributes AS ta WHERE season = %s AND (SELECT conference_id FROM league_divisions AS ld WHERE ld.division_id = ta.division_id) = 1 ORDER BY 1.0*won/(won + lost) DESC', (g.season,))
-    brw = g.db.fetchone()
+    r = g.dbex('SELECT team_id, abbreviation, region, name, won, lost FROM team_attributes AS ta WHERE season = :season AND (SELECT conference_id FROM league_divisions AS ld WHERE ld.division_id = ta.division_id) = 0 ORDER BY 1.0*won/(won + lost) DESC', season=g.season)
+    bre = r.fetchone()
+    r = g.dbex('SELECT team_id, abbreviation, region, name, won, lost FROM team_attributes AS ta WHERE season = :season AND (SELECT conference_id FROM league_divisions AS ld WHERE ld.division_id = ta.division_id) = 1 ORDER BY 1.0*won/(won + lost) DESC', season=g.season)
+    brw = r.fetchone()
 
-    g.db.execute('SELECT player_id, name, team_id, abbreviation, ppg, rpg, apg FROM awards_avg ORDER BY (0.75 * ppg) + apg + rpg DESC')
-    mvp =  g.db.fetchone()
-    g.db.execute('SELECT player_id, name, team_id, abbreviation, rpg, bpg, spg FROM awards_avg ORDER BY rpg + 5 * bpg + 5 * spg DESC')
-    dpoy = g.db.fetchone()
-    g.db.execute('SELECT player_id, name, team_id, abbreviation, ppg, rpg, apg FROM awards_avg WHERE games_played/(games_started+1) > 2 ORDER BY (0.75 * ppg) + apg + rpg DESC')
-    smoy = g.db.fetchone()
-    g.db.execute('SELECT player_id, name, team_id, abbreviation, ppg, rpg, apg FROM awards_avg WHERE draft_year = %s - 1 ORDER BY (0.75 * ppg) + apg + rpg DESC', (g.season,))
-    roy = g.db.fetchone()
+    r = g.dbex('SELECT player_id, name, team_id, abbreviation, ppg, rpg, apg FROM awards_avg ORDER BY (0.75 * ppg) + apg + rpg DESC')
+    mvp =  r.fetchone()
+    r = g.dbex('SELECT player_id, name, team_id, abbreviation, rpg, bpg, spg FROM awards_avg ORDER BY rpg + 5 * bpg + 5 * spg DESC')
+    dpoy = r.fetchone()
+    r = g.dbex('SELECT player_id, name, team_id, abbreviation, ppg, rpg, apg FROM awards_avg WHERE games_played/(games_started+1) > 2 ORDER BY (0.75 * ppg) + apg + rpg DESC')
+    smoy = r.fetchone()
+    r = g.dbex('SELECT player_id, name, team_id, abbreviation, ppg, rpg, apg FROM awards_avg WHERE draft_year = :season - 1 ORDER BY (0.75 * ppg) + apg + rpg DESC', season=g.season)
+    roy = r.fetchone()
 
-    g.db.execute('INSERT INTO awards (season, bre_team_id, bre_abbreviation, bre_region, bre_name, bre_won, bre_lost, brw_team_id, brw_abbreviation, brw_region, brw_name, brw_won, brw_lost, mvp_player_id, mvp_name, mvp_team_id, mvp_abbreviation, mvp_ppg, mvp_rpg, mvp_apg, dpoy_player_id, dpoy_name, dpoy_team_id, dpoy_abbreviation, dpoy_rpg, dpoy_bpg, dpoy_spg, smoy_player_id, smoy_name, smoy_team_id, smoy_abbreviation, smoy_ppg, smoy_rpg, smoy_apg, roy_player_id, roy_name, roy_team_id, roy_abbreviation, roy_ppg, roy_rpg, roy_apg) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (g.season,) + bre + brw + mvp + dpoy + smoy + roy)
+    g.dbex('INSERT INTO awards (season, bre_team_id, bre_abbreviation, bre_region, bre_name, bre_won, bre_lost, brw_team_id, brw_abbreviation, brw_region, brw_name, brw_won, brw_lost, mvp_player_id, mvp_name, mvp_team_id, mvp_abbreviation, mvp_ppg, mvp_rpg, mvp_apg, dpoy_player_id, dpoy_name, dpoy_team_id, dpoy_abbreviation, dpoy_rpg, dpoy_bpg, dpoy_spg, smoy_player_id, smoy_name, smoy_team_id, smoy_abbreviation, smoy_ppg, smoy_rpg, smoy_apg, roy_player_id, roy_name, roy_team_id, roy_abbreviation, roy_ppg, roy_rpg, roy_apg) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (g.season,) + bre + brw + mvp + dpoy + smoy + roy)
 
-    g.db.execute('INSERT INTO awards_all_league (season, team_type, player_id, name, abbreviation, ppg, rpg, apg, bpg, spg) (SELECT %s, \'league\', player_id, name, abbreviation, ppg, rpg, apg, bpg, spg FROM awards_avg ORDER BY (0.75 * ppg) + apg + rpg DESC LIMIT 15)', (g.season,))
-    g.db.execute('INSERT INTO awards_all_league (season, team_type, player_id, name, abbreviation, ppg, rpg, apg, bpg, spg) (SELECT %s, \'defensive\', player_id, name, abbreviation, ppg, rpg, apg, bpg, spg FROM awards_avg ORDER BY rpg + 5 * bpg + 5 * spg DESC LIMIT 15)', (g.season,))
+    g.dbex('INSERT INTO awards_all_league (season, team_type, player_id, name, abbreviation, ppg, rpg, apg, bpg, spg) (SELECT :season, \'league\', player_id, name, abbreviation, ppg, rpg, apg, bpg, spg FROM awards_avg ORDER BY (0.75 * ppg) + apg + rpg DESC LIMIT 15)', season=g.season)
+    g.dbex('INSERT INTO awards_all_league (season, team_type, player_id, name, abbreviation, ppg, rpg, apg, bpg, spg) (SELECT :season, \'defensive\', player_id, name, abbreviation, ppg, rpg, apg, bpg, spg FROM awards_avg ORDER BY rpg + 5 * bpg + 5 * spg DESC LIMIT 15)', season=g.season)
 
-    g.db.execute('DROP TABLE awards_avg')
+    g.dbex('DROP TABLE awards_avg')
 
 def set_schedule(team_ids):
     """Save the schedule to the database, overwriting what's currently there.

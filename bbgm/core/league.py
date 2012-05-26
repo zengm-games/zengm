@@ -10,18 +10,18 @@ import bbgm.util.const as c
 
 def new(team_id):
     # Add to main record
-    g.db.execute('INSERT INTO leagues (user_id) VALUES (%s)', (session['user_id'],))
+    g.dbex('INSERT INTO leagues (user_id) VALUES (:user_id)' user_id=session['user_id'])
 
-    g.db.execute('SELECT league_id FROM leagues WHERE user_id = %s ORDER BY league_id DESC LIMIT 1', (session['user_id'],))
-    g.league_id, = g.db.fetchone()
+    r = g.dbex('SELECT league_id FROM leagues WHERE user_id = :user_id ORDER BY league_id DESC LIMIT 1', user_id=session['user_id'])
+    g.league_id, = r.fetchone()
 
     # Create new database
-    g.db.execute('CREATE DATABASE bbgm_%s', (g.league_id,))
-    g.db.execute('GRANT ALL ON bbgm_%s.* TO %s@localhost IDENTIFIED BY \'%s\'' % (g.league_id, app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
-    g.db.execute('USE bbgm_%s', (g.league_id,))
+    g.dbex('CREATE DATABASE bbgm_%s' % (g.league_id,))
+    g.dbex('GRANT ALL ON bbgm_%s.* TO %s@localhost IDENTIFIED BY \'%s\'' % (g.league_id, app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
+    g.dbex('USE bbgm_%s' % (g.league_id,))
 
     # Copy team attributes table
-    g.db.execute('CREATE TABLE team_attributes SELECT * FROM bbgm.teams')
+    g.dbex('CREATE TABLE team_attributes SELECT * FROM bbgm.teams')
 
     # Create other new tables
     f = app.open_resource('data/league.sql')
@@ -66,13 +66,13 @@ def new(team_id):
             sql_insert_attributes.append(gp.sql_insert_attributes())
 
             player_id += 1
-    g.db.executemany(gp.sql_insert_attributes_query(), sql_insert_attributes)
-    g.db.executemany(gp.sql_insert_ratings_query(), sql_insert_ratings)
+    g.dbexmany(gp.sql_insert_attributes_query(), sql_insert_attributes)
+    g.dbexmany(gp.sql_insert_ratings_query(), sql_insert_ratings)
 
     # Set and get global game attributes
-    g.db.execute('UPDATE game_attributes SET team_id = %s', (team_id,))
-    g.db.execute('SELECT team_id, season, phase, version FROM game_attributes LIMIT 1')
-    g.user_team_id, g.season, g.phase, g.version = g.db.fetchone()
+    g.dbex('UPDATE game_attributes SET team_id = :team_id', team_id=team_id)
+    r = g.dbex('SELECT team_id, season, phase, version FROM game_attributes LIMIT 1')
+    g.user_team_id, g.season, g.phase, g.version = r.fetchone()
 
     # Make schedule, start season
     season.new_phase(c.PHASE_REGULAR_SEASON)
@@ -86,13 +86,13 @@ def new(team_id):
         trade_team_id = 1
     else:
         trade_team_id = 0
-    g.db.execute('INSERT INTO trade (team_id) VALUES (%s)', (trade_team_id,))
+    g.dbex('INSERT INTO trade (team_id) VALUES (:team_id)', team_id=trade_team_id)
 
     # Switch back to the default non-league database
-    g.db.execute('USE bbgm')
+    g.dbex('USE bbgm')
 
     return g.league_id
 
 def delete(league_id):
-    g.db.execute('DROP DATABASE bbgm_%s' % (league_id,))
-    g.db.execute('DELETE FROM leagues WHERE league_id = %s', (league_id,))
+    g.dbex('DROP DATABASE bbgm_%s' % (league_id,))
+    g.dbex('DELETE FROM leagues WHERE league_id = :league_id', league_id=league_id)

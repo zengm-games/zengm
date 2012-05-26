@@ -385,11 +385,12 @@ def set_schedule(team_ids):
         g.dbex('INSERT INTO schedule (home_team_id, away_team_id) VALUES (:home_team_id, :away_team_id)', home_team_id=home_team_id, away_team_id=away_team_id)
 
 def get_schedule(n_games=0):
-    """Returns a tuple of n_games games, or all games in the schedule if n_games
-    is 0 (default).
+    """Returns a list of n_games games, or all games in the schedule if n_games
+    is 0 (default). Each element in the list is a dict with keys 'game_id',
+    'home_team_id', and 'away_team_id'.
     """
     if n_games > 0:
         r = g.dbex('SELECT game_id, home_team_id, away_team_id FROM schedule ORDER BY game_id ASC LIMIT :n_games', n_games=n_games)
     else:
         r = g.dbex('SELECT game_id, home_team_id, away_team_id FROM schedule ORDER BY game_id ASC')
-    return r.fetchall()
+    return [dict(row) for row in r.fetchall()]

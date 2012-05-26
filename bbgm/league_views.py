@@ -12,8 +12,8 @@ from bbgm.util import get_payroll, get_seasons, lock, roster_auto_sort
 from bbgm.util.decorators import league_crap, league_crap_ajax
 import bbgm.util.const as c
 
-# All the views in here are for within a league.
 
+# All the views in here are for within a league.
 
 @app.url_defaults
 def add_league_id(endpoint, values):
@@ -196,7 +196,7 @@ def schedule():
         if g.user_team_id in team_ids:
             games.append([])
             for team_id in team_ids:
-                r = g.dbe('SELECT team_id, abbreviation, region, name FROM team_attributes WHERE team_id = :team_id', team_id=team_id)
+                r = g.dbex('SELECT team_id, abbreviation, region, name FROM team_attributes WHERE team_id = :team_id', team_id=team_id)
                 row = r.fetchone()
                 games[-1].append(row)
 

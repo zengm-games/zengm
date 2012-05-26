@@ -10,6 +10,7 @@ sqlalchemy
 - REPLACE ALL g.db.execute WITH r = g.dbex
   grep -R --include="*.py" 'g\.db.*\.execute' . | wc -l
   grep -R --include="*.py" 'g\.db.*\.fetch' . | wc -l
+  grep -R --include="*.py" 'g\.db.*\.rowcount' . | wc -l
 
 database crap
 - optimize

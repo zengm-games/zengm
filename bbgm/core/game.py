@@ -296,7 +296,7 @@ def play(num_days, start=False):
         play_menu.refresh_options()
         # Check to see if the season is over
         r = g.dbex('SELECT game_id FROM schedule LIMIT 1')
-        if g.db.rowcount == 0 and g.phase < c.PHASE_PLAYOFFS:
+        if r.rowcount == 0 and g.phase < c.PHASE_PLAYOFFS:
             season.new_phase(c.PHASE_PLAYOFFS)  # Start playoffs
             url = url_for('history', league_id=g.league_id)
 

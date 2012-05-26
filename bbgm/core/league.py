@@ -31,8 +31,6 @@ def new(team_id):
     profiles = ['Point', 'Wing', 'Big', '']
     gp = player.GeneratePlayer()
     player_id = 1
-    sql_insert_attributes = []
-    sql_insert_ratings = []
     player_attributes = []
     player_ratings = []
     for t in range(-1, 30):
@@ -64,8 +62,6 @@ def new(team_id):
             amount, expiration = gp.contract(randomize_expiration=randomize_expiration)
             gp.attribute['contract_amount'], gp.attribute['contract_expiration'] = amount, expiration
 
-            sql_insert_ratings.append(gp.sql_insert_ratings())
-            sql_insert_attributes.append(gp.sql_insert_attributes())
             player_attributes.append(gp.get_attributes())
             player_ratings.append(gp.get_ratings())
 

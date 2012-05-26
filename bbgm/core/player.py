@@ -14,15 +14,14 @@ class Player:
     def load(self, player_id):
         self.id = player_id
 
-        g.dbd.execute('SELECT * FROM player_ratings WHERE player_id = %s AND season = %s', (self.id, g.season))
-        self.rating = g.dbd.fetchone()
-        g.dbd.execute('SELECT * FROM player_attributes WHERE player_id = %s', (self.id,))
-        self.attribute = g.dbd.fetchone()
+        r = g.dbex('SELECT * FROM player_ratings WHERE player_id = :player_id AND season = :season', player_id=player_id, season=g.season)
+        self.rating = dict(r.fetchone())
+        r = g.dbex('SELECT * FROM player_attributes WHERE player_id = :player_id', player_id=player_id)
+        self.attribute = dict(r.fetchone())
 
     def save(self):
-        self.rating['overall'] = self.overall_rating()
-        query = 'UPDATE player_ratings SET overall = %s, height = %s, strength = %s, speed = %s, jumping = %s, endurance = %s, shooting_inside = %s, shooting_layups = %s, shooting_free_throws = %s, shooting_two_pointers = %s, shooting_three_pointers = %s, blocks = %s, steals = %s, dribbling = %s, passing = %s, rebounding = %s, potential = %s WHERE player_id = %s AND season = %s'
-        g.db.execute(query, (self.rating['overall'], self.rating['height'], self.rating['strength'], self.rating['speed'], self.rating['jumping'], self.rating['endurance'], self.rating['shooting_inside'], self.rating['shooting_layups'], self.rating['shooting_free_throws'], self.rating['shooting_two_pointers'], self.rating['shooting_three_pointers'], self.rating['blocks'], self.rating['steals'], self.rating['dribbling'], self.rating['passing'], self.rating['rebounding'], self.rating['potential'], self.id, g.season))
+        query = 'UPDATE player_ratings SET overall = :overall, height = :height, strength = :strength, speed = :speed, jumping = :jumping, endurance = :endurance, shooting_inside = :shooting_inside, shooting_layups = :shooting_layups, shooting_free_throws = :shooting_free_throws, shooting_two_pointers = :shooting_two_pointers, shooting_three_pointers = :shooting_three_pointers, blocks = :blocks, steals = :steals, dribbling = :dribbling, passing = :passing, rebounding = :rebounding, potential = :potential WHERE player_id = :player_id AND season = :season'
+        g.dbex(query, overall=self.overall_rating(), height=self.rating['height'], strength=self.rating['strength'], speed=self.rating['speed'], jumping=self.rating['jumping'], endurance=self.rating['endurance'], shooting_inside=self.rating['shooting_inside'], shooting_layups=self.rating['shooting_layups'], shooting_free_throws=self.rating['shooting_free_throws'], shooting_two_pointers=self.rating['shooting_two_pointers'], shooting_three_pointers=self.rating['shooting_three_pointers'], blocks=self.rating['blocks'], steals=self.rating['steals'], dribbling=self.rating['dribbling'], passing=self.rating['passing'], rebounding=self.rating['rebounding'], potential=self.rating['potential'], player_id=self.id, season=g.season)
 
     def develop(self, years=1):
         # Make sure age is always defined
@@ -82,15 +81,15 @@ class Player:
         min_amount = 500
         max_amount = 20000
 
-        self.rating['overall'] = self.overall_rating()
+        overall = self.overall_rating()
         # Scale amount from 500k to 15mil, proportional to (overall*2 + potential)*0.5 120-210
-        amount = ((2.0 * self.rating['overall'] + self.rating['potential']) * 0.85 - 120) / (210 - 120)  # Scale from 0 to 1 (approx)
+        amount = ((2.0 * overall + self.rating['potential']) * 0.85 - 120) / (210 - 120)  # Scale from 0 to 1 (approx)
         amount = amount * (max_amount - min_amount) + min_amount  # Scale from 500k to 15mil
         amount *= fast_random.gauss(1, 0.1)  # Randomize
 
         # Expiration
         # Players with high potentials want short contracts
-        potential_difference = round((self.rating['potential'] - self.rating['overall']) / 4.0)
+        potential_difference = round((self.rating['potential'] - overall) / 4.0)
         years = 5 - potential_difference
         if years < 2:
             years = 2
@@ -139,8 +138,7 @@ class Player:
         if g.phase > c.PHASE_AFTER_TRADE_DEADLINE:
             expiration += 1
 
-        g.db.execute('UPDATE player_attributes SET team_id = %s, contract_amount = %s, contract_expiration = %s,'
-                     ' free_agent_times_asked = 0 WHERE player_id = %s', (c.PLAYER_FREE_AGENT, amount, expiration, self.id))
+        g.dbex('UPDATE player_attributes SET team_id = :team_id, contract_amount = :contract_amount, contract_expiration = :contract_expiration, free_agent_times_asked = 0 WHERE player_id = :player_id', team_id=c.PLAYER_FREE_AGENT, contract_amount=amount, contract_expiration=expiration, player_id=self.id)
 
     def release(self):
         """Release player.
@@ -150,9 +148,9 @@ class Player:
         """
 
         # Keep track of player salary even when he's off the team
-        g.db.execute('SELECT contract_amount, contract_expiration, team_id FROM player_attributes WHERE player_id = %s', (self.id,))
-        contract_amount, contract_expiration, team_id = g.db.fetchone()
-        g.db.execute('INSERT INTO released_players_salaries (player_id, team_id, contract_amount, contract_expiration) VALUES (%s, %s, %s, %s)', (self.id, team_id, contract_amount, contract_expiration))
+        r = g.dbex('SELECT contract_amount, contract_expiration, team_id FROM player_attributes WHERE player_id = :player_id', player_id=self.id)
+        contract_amount, contract_expiration, team_id = r.fetchone()
+        g.dbex('INSERT INTO released_players_salaries (player_id, team_id, contract_amount, contract_expiration) VALUES (:player_id, :team_id, :contract_amount, :contract_expiration)', player_id=self.id, team_id=team_id, contract_amount=contract_amount, contract_expiration=contract_expiration)
 
         self.add_to_free_agents()
 
@@ -358,14 +356,6 @@ class GeneratePlayer(Player):
 
         return position
 
-    # In the following 4 methods, everything is sorted by the keys to ensure they align
-    def sql_insert_attributes_query(self):
-        sql = 'INSERT INTO player_attributes (%s) VALUES (%s)'
-        return sql % ('player_id, ' + ', '.join(map(str, sorted(self.attribute.keys()))), ', '.join(['%s' for i in xrange(len(self.attribute.keys()) + 1)]))
-
-    def sql_insert_attributes(self):
-        return [self.id,] + [self.attribute[i] for i in sorted(self.attribute.keys())]
-
     def get_attributes(self):
         d = self.attribute
         d['player_id'] = self.id
@@ -380,15 +370,3 @@ class GeneratePlayer(Player):
         d['overall'] = self.overall_rating()
         d['player_id'] = self.id
         return d
-
-    def sql_insert_ratings_query(self):
-        sql = 'INSERT INTO player_ratings (%s) VALUES (%s)'
-        return sql % ('player_id, season, ' + ', '.join(map(str, sorted(self.rating.keys()))), ', '.join(['%s' for i in xrange(len(self.rating.keys()) + 2)]))
-
-    def sql_insert_ratings(self):
-        if not hasattr(g, 'season'):
-            season = g.starting_season
-        else:
-            season = g.season
-        self.rating['overall'] = self.overall_rating()
-        return [self.id, season] + [self.rating[i] for i in sorted(self.rating.keys())]

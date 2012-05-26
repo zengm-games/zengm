@@ -94,8 +94,8 @@ def init_db():
     g.db = g.db_conn.cursor()
 
     # Delete any current bbgm databases
-    g.dbex("SHOW DATABASES LIKE 'bbgm%'")
-    for database, in g.db.fetchall():
+    r = g.dbex("SHOW DATABASES LIKE 'bbgm%'")
+    for database, in r.fetchall():
         app.logger.debug('Dropping database %s' % (database,))
         g.dbex('DROP DATABASE %s' % (database,))
 

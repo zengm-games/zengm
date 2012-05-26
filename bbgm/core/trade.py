@@ -26,11 +26,11 @@ def new(team_id=None, player_id=None):
 
     # Make sure team_id is set and corresponds to player_id, if set
     if team_id is None or player_id is not None:
-        g.db.execute('SELECT team_id FROM player_attributes WHERE player_id = %s', (player_id,))
-        team_id, = g.db.fetchone()
+        r = g.dbex('SELECT team_id FROM player_attributes WHERE player_id = :player_id', player_id=player_id)
+        team_id, = r.fetchone()
 
     # Start a new trade with team_id and, if set, player_id
-    g.db.execute('UPDATE trade SET team_id = %s, player_ids_other = %s', (team_id, pickle.dumps(player_ids_other)))
+    g.dbex('UPDATE trade SET team_id = :team_id, player_ids_other = :player_ids_other', team_id=team_id, player_ids_other=pickle.dumps(player_ids_other))
 
 
 def update_players(player_ids_user, player_ids_other):
@@ -52,17 +52,17 @@ def update_players(player_ids_user, player_ids_other):
     player_ids = [player_ids_user, player_ids_other]
 
     # Ignore any invalid player IDs    
-    g.db.execute('SELECT team_id FROM trade')
-    team_id_other, = g.db.fetchone()
+    r = g.dbex('SELECT team_id FROM trade')
+    team_id_other, = r.fetchone()
     team_ids = (g.user_team_id, team_id_other)
     for i in xrange(len(team_ids)):
-        g.db.execute('SELECT player_id FROM player_attributes WHERE team_id = %s', (team_ids[i],))
-        all_player_ids = [player_id for player_id, in g.db.fetchall()]
+        r = g.dbex('SELECT player_id FROM player_attributes WHERE team_id = :team_id', team_id=team_ids[i])
+        all_player_ids = [player_id for player_id, in r.fetchall()]
         player_ids[i] = [player_id for player_id in player_ids[i] if player_id in all_player_ids]
 
     # Save to database
     player_ids_user, player_ids_other = player_ids
-    g.db.execute('UPDATE trade SET player_ids_user = %s, player_ids_other = %s', (pickle.dumps(player_ids_user), pickle.dumps(player_ids_other)))
+    g.dbex('UPDATE trade SET player_ids_user = :player_ids_user, player_ids_other = :player_ids_other', player_ids_user=pickle.dumps(player_ids_user), player_ids_other=pickle.dumps(player_ids_other))
 
     return (player_ids_user, player_ids_other)
 
@@ -74,8 +74,8 @@ def get_players():
     player_ids_user = []
     player_ids_other = []
 
-    g.db.execute('SELECT player_ids_user, player_ids_other FROM trade')
-    row = g.db.fetchone()
+    r = g.dbex('SELECT player_ids_user, player_ids_other FROM trade')
+    row = r.fetchone()
 
     if row[0] is not None:
         player_ids_user = pickle.loads(row[0])
@@ -95,10 +95,10 @@ def summary(team_id_other, player_ids_user, player_ids_other):
     for i in xrange(2):
         if len(player_ids[i]) > 0:
             player_ids_sql = ', '.join([str(player_id) for player_id in player_ids[i]])
-            g.dbd.execute('SELECT player_id, name, contract_amount / 1000 AS contract_amount FROM player_attributes WHERE player_id IN (%s)' % (player_ids_sql,))
-            s['trade'][i] = g.dbd.fetchall()
-            g.db.execute('SELECT SUM(contract_amount / 1000) FROM player_attributes WHERE player_id IN (%s)' % (player_ids_sql,))
-            s['total'][i], = g.db.fetchone()
+            r = g.dbex('SELECT player_id, name, contract_amount / 1000 AS contract_amount FROM player_attributes WHERE player_id IN (%s)' % (player_ids_sql,))
+            s['trade'][i] = r.fetchall()
+            r = g.dbex('SELECT SUM(contract_amount / 1000) FROM player_attributes WHERE player_id IN (%s)' % (player_ids_sql,))
+            s['total'][i], = r.fetchone()
 
     # Test if any warnings need to be displayed
     over_cap = [False, False]
@@ -113,10 +113,10 @@ def summary(team_id_other, player_ids_user, player_ids_other):
 
         s['payroll_after_trade'][i] = float(get_payroll(team_ids[i])) / 1000 + float(s['total'][j]) - float(s['total'][i])
 
-        g.db.execute('SELECT CONCAT(region, " ", name) FROM team_attributes WHERE team_id = %s AND season = %s', (team_ids[i], g.season))
-        s['team_names'][i], = g.db.fetchone()
-        g.db.execute('SELECT COUNT(*) FROM player_attributes WHERE team_id = %s', (team_ids[i],))
-        num_players_on_roster, = g.db.fetchone() 
+        r = g.dbex('SELECT CONCAT(region, " ", name) FROM team_attributes WHERE team_id = :team_id AND season = :season', team_id=team_ids[i], season=g.season)
+        s['team_names'][i], = r.fetchone()
+        r = g.dbex('SELECT COUNT(*) FROM player_attributes WHERE team_id = :team_id', team_id=team_ids[i])
+        num_players_on_roster, = r.fetchone() 
 
         if s['payroll_after_trade'][i] > float(g.salary_cap) / 1000:
             over_cap[i] = True
@@ -151,7 +151,7 @@ def summary(team_id_other, player_ids_user, player_ids_other):
 
 def clear():
     """Removes all players currently added to the trade."""
-    g.db.execute('UPDATE trade SET player_ids_user = %s, player_ids_other = %s', (pickle.dumps([]), pickle.dumps([])))
+    g.dbex('UPDATE trade SET player_ids_user = :player_ids_user, player_ids_other = :player_ids_other', player_ids_user=pickle.dumps([]), other=pickle.dumps([]))
 
 
 def propose(team_id_other, player_ids_user, player_ids_other):
@@ -171,8 +171,8 @@ def propose(team_id_other, player_ids_user, player_ids_other):
     # The summary will return a warning if there is a problem. In that case,
     # that warning will already be pushed to the user so there is no need to
     # return a redundant message here.
-    g.db.execute('SELECT team_id FROM trade')
-    team_id_other, = g.db.fetchone()
+    r = g.dbex('SELECT team_id FROM trade')
+    team_id_other, = r.fetchone()
     s = summary(team_id_other, player_ids_user, player_ids_other)
     if len(s['warning']) > 0:
         return (False, '')
@@ -181,8 +181,8 @@ def propose(team_id_other, player_ids_user, player_ids_other):
     for i in xrange(2):
         if len(player_ids[i]) > 0:
             player_ids_sql = ', '.join([str(player_id) for player_id in player_ids[i]])
-            g.dbd.execute('SELECT pa.player_id, pa.contract_amount / 1000 AS contract_amount, %s - pa.born_date AS age, pr.overall, pr.potential FROM player_attributes AS pa, player_ratings AS pr WHERE pa.player_id IN (%s) AND pr.player_id = pa.player_id AND pr.season = %s' % (g.season, player_ids_sql, g.season))
-            for p in g.dbd.fetchall():
+            r = g.dbex('SELECT pa.player_id, pa.contract_amount / 1000 AS contract_amount, :season - pa.born_date AS age, pr.overall, pr.potential FROM player_attributes AS pa, player_ratings AS pr WHERE pa.player_id IN (%s) AND pr.player_id = pa.player_id AND pr.season = :season' % (player_ids_sql,), season=g.season)
+            for p in r.fetchall():
                 value[i] += 10 ** (float(p['potential']) / 10.0 + float(p['overall']) / 20.0 - float(p['age']) / 10.0 - float(p['contract_amount']) / 100000.0)
 
     if value[0] > value[1] * 0.9:
@@ -193,7 +193,7 @@ def propose(team_id_other, player_ids_user, player_ids_other):
             elif i == 1:
                 j = 0
             for player_id in player_ids[i]:
-                g.db.execute('UPDATE player_attributes SET team_id = %s WHERE player_id = %s', (team_ids[j], player_id))
+                g.dbex('UPDATE player_attributes SET team_id = :team_id WHERE player_id = :player_id', team_id=team_ids[j], player_id=player_id)
 
         # Auto-sort CPU team roster
         roster_auto_sort(team_ids[1])

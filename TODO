@@ -1,16 +1,12 @@
 # To acquire parity with the GTK version and be good enough to share:
 
+BUG: wrong payrolls shown in trade view
+
 fix commented lines in bbgm.core.season
 
 sqlalchemy
-- just as DB abstraction layer
 - support mysqldb, oursql, sqlite, and postgres
-- bind parameters for any dialect: http://docs.sqlalchemy.org/en/rel_0_7/core/expression_api.html#sqlalchemy.sql.expression.text
-- autocommit, transactions
-- REPLACE ALL g.db.execute WITH r = g.dbex
-  grep -R --include="*.py" 'g\.db.*\.execute' . | wc -l
-  grep -R --include="*.py" 'g\.db.*\.fetch' . | wc -l
-  grep -R --include="*.py" 'g\.db.*\.rowcount' . | wc -l
+- slow game simulation?
 
 database crap
 - optimize

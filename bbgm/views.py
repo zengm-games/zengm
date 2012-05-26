@@ -32,12 +32,12 @@ def register():
         if not request.form['username'] or not request.form['password']:
             error = 'Enter a username and password'
         else:
-            g.db.execute('SELECT 1 FROM users WHERE username = %s', (request.form['username'],))
-            if g.db.rowcount > 0:
+            r = g.dbex('SELECT 1 FROM users WHERE username = :username', username=request.form['username'])
+            if r.rowcount > 0:
                 username = request.form['username']
                 error = 'Username already taken'
             else:
-                g.db.execute('INSERT INTO users (username, password) VALUES (%s, %s)', (request.form['username'], request.form['password']))
+                g.dbex('INSERT INTO users (username, password) VALUES (:username, :password)', username=request.form['username'], password=request.form['password'])
                 return redirect(url_for('login'))
 
     return render_template('register.html', error=error, username=username)

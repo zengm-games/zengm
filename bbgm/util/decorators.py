@@ -23,8 +23,8 @@ def check_permissions(f, ajax=False):
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        g.db.execute('SELECT user_id FROM bbgm.leagues WHERE league_id = %s', (g.league_id,))
-        user_id, = g.db.fetchone()
+        r = g.dbex('SELECT user_id FROM bbgm.leagues WHERE league_id = :league_id', league_id=g.league_id)
+        user_id, = r.fetchone()
         if session['user_id'] != user_id:
             if ajax:
                 return 'Permission denied'
@@ -36,8 +36,8 @@ def check_permissions(f, ajax=False):
 def global_game_attributes(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        g.db.execute('SELECT team_id, season, phase, version FROM game_attributes LIMIT 1')
-        g.user_team_id, g.season, g.phase, g.version = g.db.fetchone()
+        r = g.dbex('SELECT team_id, season, phase, version FROM game_attributes LIMIT 1')
+        g.user_team_id, g.season, g.phase, g.version = r.fetchone()
         return f(*args, **kwargs)
     return decorated_function
 

@@ -17,12 +17,12 @@ $(document).ready(function() {
     <div class="span6">
       <h1>{{ info.name }}</h1>
       <strong>{{ info.team }}</strong><br />
-      Height: {{ info.height }}<br />
+      Height: {{ (info.height / 12)|int }}'{{ info.height - 12*((info.height / 12)|int) }}"<br />
       Weight: {{ info.weight }}<br />
       Age: {{ info.age }}<br />
       Born: {{ info.born_date }} - {{ info.born_location }}<br />
       Draft: {{ info.draft_year }} - Round {{ info.draft_round }} (Pick {{ info.draft_pick }}) by the {{ info.draft_team }}<br />
-      Contract: {{ info.contract_amount }} per year through {{ info.contract_expiration }}<br />
+      Contract: ${{ info.contract_amount|float|round(1) }}M per year through {{ info.contract_expiration }}<br />
     </div>
     <div class="span6">
       <h2 class="pull-left">Overall Rating: {{ ratings.overall }}</h2>

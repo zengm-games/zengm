@@ -9,13 +9,13 @@ from bbgm.util.decorators import login_required
 def index():
     if 'logged_in' in session and session['logged_in']:
         leagues = []
-        g.db.execute('SELECT league_id FROM leagues WHERE user_id = %s ORDER BY league_id ASC', (session['user_id'],))
-        for league_id, in g.db.fetchall():
-            g.db.execute('SELECT team_id, season, pm_phase FROM bbgm_' + str(league_id) + '.game_attributes ORDER BY season DESC LIMIT 1')
-            user_team_id, season, pm_phase = g.db.fetchone()
+        r = g.dbex('SELECT league_id FROM leagues WHERE user_id = :user_id ORDER BY league_id ASC', user_id=session['user_id'])
+        for league_id, in r.fetchall():
+            r = g.dbex('SELECT team_id, season, pm_phase FROM bbgm_' + str(league_id) + '.game_attributes ORDER BY season DESC LIMIT 1')
+            user_team_id, season, pm_phase = r.fetchone()
             print user_team_id, season, pm_phase
-            g.db.execute('SELECT CONCAT(region, " ", name) FROM bbgm_' + str(league_id) + '.team_attributes WHERE team_id = %s AND season = %s', (user_team_id, season))
-            team, = g.db.fetchone()
+            r = g.dbex('SELECT CONCAT(region, " ", name) FROM bbgm_' + str(league_id) + '.team_attributes WHERE team_id = :team_id AND season = :season', team_id=user_team_id, season=season)
+            team, = r.fetchone()
             leagues.append({'league_id': league_id, 'pm_phase': pm_phase, 'team': team})
         return render_template('dashboard.html', leagues=leagues)
     else:
@@ -51,12 +51,12 @@ def login():
 
     error = None
     if request.method == 'POST':
-        g.dbd.execute('SELECT user_id FROM users WHERE username = %s AND password = %s', (request.form['username'], request.form['password']))
-        if g.dbd.rowcount > 0:
-            user = g.dbd.fetchone()
+        r = g.dbex('SELECT user_id FROM users WHERE username = :username AND password = :password', username=request.form['username'], password=request.form['password'])
+        if r.rowcount > 0:
+            user_id, = r.fetchone()
             session['logged_in'] = True
             session['username'] = request.form['username']
-            session['user_id'] = user['user_id']
+            session['user_id'] = user_id
             return redirect(url_for('index'))
         else:
             error = 'Invalid username/password'

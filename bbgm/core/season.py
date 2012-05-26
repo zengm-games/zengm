@@ -389,16 +389,16 @@ def set_schedule(team_ids):
         team_ids: A list of lists, each containing the team IDs of the home and
             away teams, respectively, for every game in the season.
     """
-    g.db.execute('DELETE FROM schedule')
+    g.dbex('DELETE FROM schedule')
     for home_team_id, away_team_id in team_ids:
-        g.db.execute('INSERT INTO schedule (home_team_id, away_team_id) VALUES (%s, %s)', (home_team_id, away_team_id))
+        g.dbex('INSERT INTO schedule (home_team_id, away_team_id) VALUES (:home_team_id, :away_team_id)', home_team_id=home_team_id, away_team_id=away_team_id)
 
 def get_schedule(n_games=0):
     """Returns a tuple of n_games games, or all games in the schedule if n_games
     is 0 (default).
     """
     if n_games > 0:
-        g.dbd.execute('SELECT game_id, home_team_id, away_team_id FROM schedule ORDER BY game_id ASC LIMIT %s', (n_games,))
+        r = g.dbex('SELECT game_id, home_team_id, away_team_id FROM schedule ORDER BY game_id ASC LIMIT :n_games', n_games=n_games)
     else:
-        g.dbd.execute('SELECT game_id, home_team_id, away_team_id FROM schedule ORDER BY game_id ASC')
-    return g.dbd.fetchall()
+        r = g.dbex('SELECT game_id, home_team_id, away_team_id FROM schedule ORDER BY game_id ASC')
+    return r.fetchall()

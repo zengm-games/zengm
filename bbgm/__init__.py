@@ -1,7 +1,7 @@
 from flask import Flask, g
 from flask.ext.assets import Environment, Bundle
 import logging
-from contextlib import closing
+from sqlalchemy import create_engine, MetaData, text
 
 BBGM_VERSION = '2.0.0alpha'
 DEBUG = True
@@ -10,12 +10,6 @@ DB = 'bbgm'
 DB_USERNAME = 'testuser'
 DB_PASSWORD = 'test623'
 TRY_NUMPY = True
-OURSQL = False
-
-if OURSQL:
-    import oursql
-else:
-    import MySQLdb
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -49,10 +43,20 @@ import bbgm.league_views
 
 
 def connect_db():
-    if app.config['OURSQL']:
-        return oursql.connect(host='localhost', user=app.config['DB_USERNAME'], passwd=app.config['DB_PASSWORD'], charset=None)
+    engine = create_engine('mysql+mysqldb://%s:%s@localhost' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD']), pool_recycle=3600)
+    metadata = MetaData(bind=engine)
+    con = engine.connect()
+    return con
+
+
+def db_execute(query, **kwargs):
+    """Convenience function so I don't need to be doing "from sqlalchemy import
+    text" everywhere.
+    """
+    if len(kwargs):
+        return g.db.execute(text(query), **kwargs)
     else:
-        return MySQLdb.connect('localhost', app.config['DB_USERNAME'], app.config['DB_PASSWORD'])
+        return g.db.execute(query)
 
 
 def bulk_execute(f):
@@ -70,7 +74,7 @@ def bulk_execute(f):
     for line in f:
         sql += line
         if line.endswith(';\n'):
-            g.db.execute(sql)
+            g.dbex(sql)
             sql = ''
 
 
@@ -79,59 +83,34 @@ def init_db():
     g.db = g.db_conn.cursor()
 
     # Delete any current bbgm databases
-    g.db.execute("SHOW DATABASES LIKE 'bbgm%'")
+    g.dbex("SHOW DATABASES LIKE 'bbgm%'")
     for database, in g.db.fetchall():
         app.logger.debug('Dropping database %s' % (database,))
-        g.db.execute('DROP DATABASE %s' % (database,))
+        g.dbex('DROP DATABASE %s' % (database,))
 
     app.logger.debug('Creating new bbgm database and tables')
 
     # Create new database
-    g.db.execute('CREATE DATABASE bbgm')
-    g.db.execute('GRANT ALL ON bbgm.* TO %s@localhost IDENTIFIED BY \'%s\'' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
-    g.db.execute('USE bbgm')
+    g.dbex('CREATE DATABASE bbgm')
+    g.dbex('GRANT ALL ON bbgm.* TO %s@localhost IDENTIFIED BY \'%s\'' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
+    g.dbex('USE bbgm')
 
     # Create new tables
     f = app.open_resource('data/core.sql')
     bulk_execute(f)
 
-# These cursors allow oursql to use MySQLdb-style parametrization
-if app.config['OURSQL']:
-    class MyCursor(oursql.Cursor):
-        def execute(self, query, params=(), plain_query=False):
-            try:
-                self.nextset()
-            except:
-                pass
-            return oursql.Cursor.execute(self, query.replace('%s', '?'), params, plain_query)
-
-
-    class MyDictCursor(oursql.DictCursor):
-        def execute(self, query, params=(), plain_query=False):
-            try:
-                self.nextset()
-            except:
-                pass
-            return oursql.DictCursor.execute(self, query.replace('%s', '?'), params, plain_query)
-
 
 @app.before_request
 def before_request():
     # Database crap
-    if app.config['OURSQL']:
-        g.db_conn = connect_db()
-        g.db = g.db_conn.cursor(MyCursor)  # Return a tuple
-        g.dbd = g.db_conn.cursor(MyDictCursor)  # Return a dict
-    else:
-        g.db_conn = connect_db()
-        g.db = g.db_conn.cursor()  # Return a tuple
-        g.dbd = g.db_conn.cursor(MySQLdb.cursors.DictCursor)  # Return a dict
+    g.db = connect_db()
+    g.dbex = db_execute
 
     if g.league_id >= 0:
-        g.db.execute('USE bbgm_%d' % (g.league_id,))
+        g.dbex('USE bbgm_%d' % (g.league_id,))
         app.logger.debug('Using database bbgm_%d' % (g.league_id,))
     else:
-        g.db.execute('USE bbgm')
+        g.dbex('USE bbgm')
         app.logger.debug('Using database bbgm')
 
     # Non-database crap - should probably be stored elsewhere. Also, changing
@@ -147,7 +126,7 @@ def before_request():
 @app.teardown_request
 def teardown_request(exception):
     if hasattr(g, 'db'):
-        g.db.execute('COMMIT')
+        g.dbex('COMMIT')
         g.db.close()
     if hasattr(g, 'dbd'):
         g.dbd.close()

@@ -93,14 +93,14 @@ def set_status(status=None):
         status: A string containing the current status message to be pushed to
             the client.
     """
-    g.db.execute('SELECT pm_status FROM game_attributes WHERE season = %s', (g.season,))
-    old_status, = g.db.fetchone()
+    r = g.dbex('SELECT pm_status FROM game_attributes WHERE season = :season', season=g.season)
+    old_status, = r.fetchone()
 
     if not status:
         status = old_status
         jug.publish('%d_status' % (g.league_id,), status)
     if status != old_status:
-        g.db.execute('UPDATE game_attributes SET pm_status = %s WHERE season = %s', (status, g.season))
+        g.dbex('UPDATE game_attributes SET pm_status = :pm_status WHERE season = :season', pm_status=status, season=g.season)
         jug.publish('%d_status' % (g.league_id,), status)
         app.logger.debug('Set status: %s' % (status,))
 
@@ -114,14 +114,14 @@ def set_phase(phase_text=None):
         phase_text: A string containing the current phase text to be pushed to
             the client.
     """
-    g.db.execute('SELECT pm_phase FROM game_attributes WHERE season = %s', (g.season,))
-    old_phase_text, = g.db.fetchone()
+    r = g.dbex('SELECT pm_phase FROM game_attributes WHERE season = :season', season=g.season)
+    old_phase_text, = r.fetchone()
 
     if not phase_text:
         phase_text = old_phase_text
         jug.publish('%d_phase' % (g.league_id,), phase_text)
     if phase_text != old_phase_text:
-        g.db.execute('UPDATE game_attributes SET pm_phase = %s WHERE season = %s', (phase_text, g.season))
+        g.dbex('UPDATE game_attributes SET pm_phase = :pm_phase WHERE season = :season', pm_phase=phase_text, season=g.season)
         jug.publish('%d_phase' % (g.league_id,), phase_text)
         app.logger.debug('Set phase: %s' % (phase_text,))
 

@@ -13,7 +13,6 @@ def index():
         for league_id, in r.fetchall():
             r = g.dbex('SELECT team_id, season, pm_phase FROM bbgm_' + str(league_id) + '.game_attributes ORDER BY season DESC LIMIT 1')
             user_team_id, season, pm_phase = r.fetchone()
-            print user_team_id, season, pm_phase
             r = g.dbex('SELECT CONCAT(region, " ", name) FROM bbgm_' + str(league_id) + '.team_attributes WHERE team_id = :team_id AND season = :season', team_id=user_team_id, season=season)
             team, = r.fetchone()
             leagues.append({'league_id': league_id, 'pm_phase': pm_phase, 'team': team})

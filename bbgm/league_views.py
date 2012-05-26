@@ -596,7 +596,7 @@ def trade_update():
     player_ids_user = map(int, request.form.getlist('player_ids_user'))
     player_ids_other = map(int, request.form.getlist('player_ids_other'))
     player_ids_user, player_ids_other = trade.update_players(player_ids_user, player_ids_other)
-    print player_ids_user, player_ids_other
+
     r = g.dbex('SELECT team_id FROM trade')
     team_id_other, = r.fetchone()
     summary = trade.summary(team_id_other, player_ids_user, player_ids_other)

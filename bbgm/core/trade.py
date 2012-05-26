@@ -80,7 +80,7 @@ def get_players():
     if row[0] is not None:
         player_ids_user = pickle.loads(row[0])
     if row[1] is not None:
-        player_ids_other = pickle.loads(row[0])
+        player_ids_other = pickle.loads(row[1])
     return (player_ids_user, player_ids_other)
 
 
@@ -167,7 +167,7 @@ def propose(team_id_other, player_ids_user, player_ids_other):
     team_ids = [g.user_team_id, team_id_other]
     player_ids = [player_ids_user, player_ids_other]
 
-    if g.phase >= c.PHASE_AFTER_TRADE_DEADLINE and g.phase <= c.PLAYOFFS:
+    if g.phase >= c.PHASE_AFTER_TRADE_DEADLINE and g.phase <= c.PHASE_PLAYOFFS:
         return (False, "Error! You're not allowed to make trades now.")
 
     # The summary will return a warning if there is a problem. In that case,

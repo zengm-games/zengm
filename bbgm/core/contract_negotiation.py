@@ -34,7 +34,7 @@ def new(player_id, resigning=False):
     if num_players_on_roster >= 15 and not resigning:
         return "Your roster is full. Before you can sign a free agent, you'll have to buy out or release one of your current players.";
     if not lock.can_start_negotiation():
-        return "You cannot initiate a new negotiaion while game simulation is in progress, a previous contract negotiation is in process, or a trade is in progress."
+        return "You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process."
     g.db.execute('SELECT team_id FROM player_attributes WHERE player_id = %s', (player_id,))
     if g.db.rowcount:
         team_id, = g.db.fetchone()

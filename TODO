@@ -1,9 +1,5 @@
 # To acquire parity with the GTK version and be good enough to share:
 
-trades
-- so, can start game sim (etc) with trade in progress? update text, if so.
-- allow trades that go over roster limit, but require players to be cut or traded to meet limit before game simulation continues
-
 BUG: old teams in player view stats page are not correct
 
 database crap
@@ -134,6 +130,9 @@ add years dropdown to all relevant views
 - playoffs, eventually
 
 # Then
+
+trades
+- allow trades that go over roster limit, but require players to be cut or traded to meet limit before game simulation continues
 
 unit tests like https://github.com/mitsuhiko/flask/blob/master/examples/minitwit/minitwit_tests.py
 

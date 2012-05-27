@@ -235,12 +235,24 @@ def standings(view_season=None):
 def playoffs(view_season=None):
     view_season = validate_season(view_season)
     seasons = get_seasons()
+
+    series = [[], [], [], []]  # First round, second round, third round, fourth round
+
+    # In the current season, before playoffs start, display projected matchups
     if view_season == g.season and g.phase < c.PHASE_PLAYOFFS:
-        # In the current season, before playoffs start, display projected matchups
-        series = []
+        for conference_id in range(2):
+            teams = []
+            r = g.dbex('SELECT ta.name FROM team_attributes as ta, league_divisions as ld WHERE ld.division_id = ta.division_id AND ld.conference_id = :conference_id AND ta.season = :season ORDER BY 1.0*ta.won/(ta.won + ta.lost) DESC LIMIT 8', conference_id=conference_id, season=g.season)
+            for team_name, in r.fetchall():
+                teams.append(team_name)
+            series[0].append({'seed_home': 1, 'seed_away': 8, 'name_home': teams[0], 'name_away': teams[7]})
+            series[0].append({'seed_home': 2, 'seed_away': 7, 'name_home': teams[1], 'name_away': teams[6]})
+            series[0].append({'seed_home': 3, 'seed_away': 6, 'name_home': teams[2], 'name_away': teams[5]})
+            series[0].append({'seed_home': 4, 'seed_away': 5, 'name_home': teams[3], 'name_away': teams[4]})
+
+    # Display the current or archived playoffs
     else:
         r = g.dbex('SELECT series_id, series_round, (SELECT name FROM team_attributes WHERE team_id = aps.team_id_home AND season = :season) as name_home, (SELECT name FROM team_attributes WHERE team_id = aps.team_id_away AND season = :season) as name_away, seed_home, seed_away, won_home, won_away FROM playoff_series as aps WHERE season = :season ORDER BY series_round, series_id ASC', season=view_season)
-        series = [[], [], [], []]  # First round, second round, third round, fourth round
         for s in r.fetchall():
             series[s['series_round'] - 1].append(s)
 

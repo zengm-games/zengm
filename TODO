@@ -1,10 +1,5 @@
 # To acquire parity with the GTK version and be good enough to share:
 
-playoffs
-- on playoffs start, automatically switch to playoffs view
-- before playoffs, show current playoff seedings
-- link to team rosters
-
 BUG: wrong payrolls shown in trade view
 
 fix commented lines in bbgm.core.season
@@ -128,6 +123,10 @@ security
 
 pep8
 - https://github.com/hhatto/autopep8
+
+playoffs
+- on playoffs start, automatically switch to playoffs view
+- link to team rosters... or better to link to a summary of the series?
 
 # Then
 

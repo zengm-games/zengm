@@ -154,8 +154,14 @@ def new_phase(phase):
         for player_id, team_id, name in r.fetchall():
             if team_id != g.user_team_id:
                 # Automatically negotiate with teams
-#                self.player_contract_expire(player_id)
-                pass
+                resign = random.choice([True, False])
+                p = player.Player()
+                p.load(player_id)
+                if resign:
+                    amount, expiration = p.contract()
+                    g.dbex('UPDATE player_attributes SET contract_amount = :contract_amount, contract_expiration = :contract_expiration WHERE player_id = :player_id', contract_amount=amount, contract_expiration=expiration, player_id=player_id)
+                else:
+                    p.add_to_free_agents(phase)
             else:
                 # Add to free agents first, to generate a contract demand
                 p = player.Player()

@@ -118,6 +118,7 @@ def init_db():
     g.dbex('CREATE DATABASE bbgm')
     if not app.config['DB_POSTGRES']:
         g.dbex('GRANT ALL ON bbgm.* TO %s@localhost IDENTIFIED BY \'%s\'' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
+    g.dbex('COMMIT')
     g.db.close()
     g.db = connect_db('bbgm')
 

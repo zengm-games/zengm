@@ -23,7 +23,7 @@ database crap
   - sql queries with IN and "join" can use a list directly as bind parameter - doesn't work with mysqldb for lists with 1 element
   - postgresql
     - packages: postgresql, postgresql-server-dev-9.1, pip psycopg2
-    - define tables using SQLalchemy? only for creating them. would allow for unified syntax
+    - define tables using SQLalchemy? only for creating them. would allow for unified syntax http://docs.sqlalchemy.org/en/rel_0_7/core/schema.html
 
 player view
 - next, previous buttons (also active on left/right arrows)

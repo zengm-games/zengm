@@ -1,6 +1,7 @@
 # To acquire parity with the GTK version and be good enough to share:
 
 BUG: wrong payrolls shown in trade view
+- retired players - when to display notification?
 
 fix commented lines in bbgm.core.season
 

@@ -1,7 +1,7 @@
 {% extends "league_layout.html" %}
 {% set active_page = "playoffs" %}
 
-{% block title %}Playoffs - League {{ g.league_id }} - Basketball GM{% endblock %}
+{% block title %}{{ view_season }} Playoffs - League {{ g.league_id }} - Basketball GM{% endblock %}
 
 
 {% block league_content %}
@@ -9,11 +9,26 @@
     {% if s.won_home == 4 %}<strong>{% endif %}{{ s.seed_home }}. {{ s.name_home }} {{ s.won_home }}{% if s.won_home == 4 %}</strong>{% endif %}<br />
     {% if s.won_away == 4 %}<strong>{% endif %}{{ s.seed_away }}. {{ s.name_away }} {{ s.won_away }}{% if s.won_away == 4 %}</strong>{% endif %}
   {%- endmacro %}
+  <script type="text/javascript">
+$(document).ready(function() {
+    dropdown($('#playoffs_select_season'));
+});
+  </script>
 
-  <h1>Playoffs</h1>
-  {% if g.phase < 3 %}<p>This is what the playoff matchups would be if the season ended right now.</p>{% endif %}
+  <form action="{{ url_for('playoffs', league_id=g.league_id) }}" method="GET" class="form-inline pull-right">
+    <select id="playoffs_select_season" name="season" class="season">
+      {% for season in seasons %}
+        <option value="{{ season }}"{% if season == view_season %} selected="selected"{% endif %}>{{ season }} season</option>
+      {% endfor %}
+    </select>
+  </form>
 
-  {% if g.phase >= 3 %}
+  <h1>{{ view_season }} Playoffs</h1>
+
+  {% if view_season == g.season and g.phase < 3 %}<p>This is what the playoff matchups would be if the season ended right now.</p>{% endif %}
+
+  {% if view_season != g.season or g.phase >= 3 %}
+  <p>
   <table cellpadding="0" cellspacing="0" border="0" class="table-condensed" width="100%">
   <tbody>
     <tr>
@@ -85,5 +100,6 @@
     </tr>
   </tbody>
   </table>
+  </p>
   {% endif %}
 {% endblock %}

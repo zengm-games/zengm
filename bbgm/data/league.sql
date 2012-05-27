@@ -138,9 +138,10 @@ attendance INTEGER,
 cost INTEGER,
 PRIMARY KEY (team_id, game_id));
 
-CREATE TABLE active_playoff_series (
+CREATE TABLE playoff_series (
 series_id INTEGER AUTO_INCREMENT,
 series_round INTEGER,
+season INTEGER,
 team_id_home INTEGER,
 team_id_away INTEGER,
 seed_home INTEGER,
@@ -246,7 +247,7 @@ CREATE INDEX f ON team_stats(game_id, team_id);
 CREATE INDEX g ON player_ratings(player_id, overall);
 CREATE INDEX h ON player_attributes(player_id, team_id);
 CREATE INDEX i ON league_divisions(conference_id);
-CREATE INDEX j ON active_playoff_series(series_id, series_round);
+CREATE INDEX j ON playoff_series(series_id, series_round);
 CREATE INDEX k ON released_players_salaries(team_id);
 CREATE INDEX l ON player_ratings(player_id, season);
 

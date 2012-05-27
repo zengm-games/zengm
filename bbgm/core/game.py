@@ -73,9 +73,9 @@ class Game:
         if self.team[t]['stat']['points'] > self.team[t2]['stat']['points']:
             won = True
             if self.is_playoffs and t == 0:
-                g.dbex('UPDATE active_playoff_series SET won_home = won_home + 1 WHERE team_id_home = :team_id_home AND team_id_away = :team_id_away', team_id_home=self.team[t]['id'], team_id_away=self.team[t2]['id'])
+                g.dbex('UPDATE playoff_series SET won_home = won_home + 1 WHERE team_id_home = :team_id_home AND team_id_away = :team_id_away AND season = :season', team_id_home=self.team[t]['id'], team_id_away=self.team[t2]['id'], season=g.season)
             elif self.is_playoffs:
-                g.dbex('UPDATE active_playoff_series SET won_away = won_away + 1 WHERE team_id_home = :team_id_home AND team_id_away = :team_id_away', team_id_home=self.team[t2]['id'], team_id_away=self.team[t]['id'])
+                g.dbex('UPDATE playoff_series SET won_away = won_away + 1 WHERE team_id_home = :team_id_home AND team_id_away = :team_id_away AND season = :season', team_id_home=self.team[t2]['id'], team_id_away=self.team[t]['id'], season=g.season)
         else:
             won = False
 

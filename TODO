@@ -1,5 +1,10 @@
 # To acquire parity with the GTK version and be good enough to share:
 
+playoffs
+- on playoffs start, automatically switch to playoffs view
+- before playoffs, show current playoff seedings
+- link to team rosters
+
 BUG: wrong payrolls shown in trade view
 
 fix commented lines in bbgm.core.season
@@ -9,8 +14,10 @@ database crap
   - why is it so slow, and so disk thrashy?
   - are my keys correct/optimal/uptodate? unique keys? foreign keys?
   - MyISAM or InnoDB? barracuda? test
-  - executemany to upgrade player ratings?
-  - executemany for schedule
+  - executemany
+    - upgrade player ratings
+    - executemany for schedule
+    - create playoff series
 - redo schema
   - separate dbs for leagues: what user permissions do i need, exactly? update README
   - new column names
@@ -121,11 +128,6 @@ security
 
 pep8
 - https://github.com/hhatto/autopep8
-
-playoffs
-- on playoffs start, automatically switch to playoffs view
-- before playoffs, show current playoff seedings
-- add years dropdown. now that series have unique series_ids, should be able to just keep them all in the database easily. just add a "season" column and remove "active" from the table name
 
 # Then
 

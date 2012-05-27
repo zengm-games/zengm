@@ -230,14 +230,21 @@ def standings(view_season=None):
 
 
 @app.route('/<int:league_id>/playoffs')
+@app.route('/<int:league_id>/playoffs/<int:view_season>')
 @league_crap
-def playoffs():
-    r = g.dbex('SELECT series_id, series_round, (SELECT name FROM team_attributes WHERE team_id = aps.team_id_home AND season = :season) as name_home, (SELECT name FROM team_attributes WHERE team_id = aps.team_id_away AND season = :season) as name_away, seed_home, seed_away, won_home, won_away FROM active_playoff_series as aps ORDER BY series_round, series_id ASC', season=g.season)
-    series = [[], [], [], []]  # First round, second round, third round, fourth round
-    for s in r.fetchall():
-        series[s['series_round'] - 1].append(s)
+def playoffs(view_season=None):
+    view_season = validate_season(view_season)
+    seasons = get_seasons()
+    if view_season == g.season and g.phase < c.PHASE_PLAYOFFS:
+        # In the current season, before playoffs start, display projected matchups
+        series = []
+    else:
+        r = g.dbex('SELECT series_id, series_round, (SELECT name FROM team_attributes WHERE team_id = aps.team_id_home AND season = :season) as name_home, (SELECT name FROM team_attributes WHERE team_id = aps.team_id_away AND season = :season) as name_away, seed_home, seed_away, won_home, won_away FROM playoff_series as aps WHERE season = :season ORDER BY series_round, series_id ASC', season=view_season)
+        series = [[], [], [], []]  # First round, second round, third round, fourth round
+        for s in r.fetchall():
+            series[s['series_round'] - 1].append(s)
 
-    return render_all_or_json('playoffs.html', {'series': series})
+    return render_all_or_json('playoffs.html', {'series': series, 'seasons': seasons, 'view_season': view_season})
 
 
 @app.route('/<int:league_id>/finances')

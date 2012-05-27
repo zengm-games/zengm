@@ -26,6 +26,7 @@ player view
 - "trade for" button
 - http://twitter.github.com/bootstrap/javascript.html#tabs
   - tab for game log
+  - tab for playoff stats
 - link to team roster
 - for retired players, either don't show ratings, or show ratings from best year
 
@@ -51,7 +52,7 @@ Client-side game simulation
     - If no response after timeout expires, delete timeout, then unset lock and update play menu
 - 2.5: fix javascript
   - http://bonsaiden.github.com/JavaScript-Garden/
-    - Namespaces "/A common problem of having only one global namespace" "In order to protect code against a possible overwritten undefined variable, a common technique used is to add an additional parameter to an anonymous wrapper that gets no argument passed to it."
+    - Namespaces "A common problem of having only one global namespace" "In order to protect code against a possible overwritten undefined variable, a common technique used is to add an additional parameter to an anonymous wrapper that gets no argument passed to it."
       - just copy what jquery does
     - "For the best performance, it is recommended to always use the plain for loop and cache the length property. The use of for in on an array is a sign of badly written code that is prone to bugs and bad performance."
     - It is highly recommended to only use the strict equality (===) operator.
@@ -60,7 +61,7 @@ Client-side game simulation
 - Robustness of javascript code
   - g.phase == 3 in league_views might introduce race condition
   - validate data from client?
-  - make sure play menu doesn't ever get stuck
+  - make sure play menu doesn't ever get stuck - some kind of timeout
 
 configuration in text file?
 - http://flask.pocoo.org/docs/patterns/fabric/#the-configuration-file
@@ -124,9 +125,7 @@ pep8
 playoffs
 - on playoffs start, automatically switch to playoffs view
 - before playoffs, show current playoff seedings
-
-add years dropdown to all relevant views
-- playoffs, eventually
+- add years dropdown. now that series have unique series_ids, should be able to just keep them all in the database easily. just add a "season" column and remove "active" from the table name
 
 # Then
 

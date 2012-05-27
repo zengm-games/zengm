@@ -44,10 +44,10 @@ import bbgm.league_views
 
 
 def connect_db():
-    engine = create_engine('mysql+mysqldb://%s:%s@localhost' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD']), pool_recycle=3600)
+    engine = create_engine('mysql+mysqldb://%s:%s@localhost/' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
+#    engine = create_engine('mysql+pymysql://%s:%s@localhost/' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
+#    engine = create_engine('mysql+oursql://%s:%s@localhost/?default_charset=1' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
     metadata = MetaData(bind=engine)
-#    Session = sessionmaker(bind=engine)
-#    session = Session()
     con = engine.connect()
     return con
 
@@ -90,8 +90,8 @@ def bulk_execute(f):
 
 
 def init_db():
-    g.db_conn = connect_db()
-    g.db = g.db_conn.cursor()
+    g.db = connect_db()
+    g.dbex = db_execute
 
     # Delete any current bbgm databases
     r = g.dbex("SHOW DATABASES LIKE 'bbgm%'")

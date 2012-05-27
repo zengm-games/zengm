@@ -8,7 +8,7 @@ import time
 from flask import g, url_for
 
 from bbgm import app
-from bbgm.core import game_sim, season, play_menu
+from bbgm.core import play_menu, season
 from bbgm.util import free_agents_auto_sign, free_agents_decrease_demands, lock, fast_random, request_context_globals
 import bbgm.util.const as c
 

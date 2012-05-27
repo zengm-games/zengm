@@ -5,8 +5,7 @@ BUG: wrong payrolls shown in trade view
 fix commented lines in bbgm.core.season
 
 sqlalchemy
-- support mysqldb, oursql, sqlite, and postgres
-- slow game simulation?
+- game simulation progresses at about half the speed as when it was using straight mysqldb. but maybe it's still worth it for flexibility with connection pooling, switching to postgresql, etc
 
 database crap
 - optimize

@@ -4,15 +4,11 @@ BUG: wrong payrolls shown in trade view
 
 fix commented lines in bbgm.core.season
 
-sqlalchemy
-- game simulation progresses at about half the speed as when it was using straight mysqldb. but maybe it's still worth it for flexibility with connection pooling, switching to postgresql, etc
-
 database crap
 - optimize
   - why is it so slow, and so disk thrashy?
   - are my keys correct/optimal/uptodate? unique keys? foreign keys?
   - MyISAM or InnoDB? barracuda? test
-  - executemany to save game data?
   - executemany to upgrade player ratings?
   - executemany for schedule
 - redo schema
@@ -22,6 +18,8 @@ database crap
   - normalize (especially the drafted table)
   - get rid of INSERTS in .sql file, instead have data elsewhere
   - get rid of weird tables, replace with a key-value store table
+- sqlalchemy
+  - game simulation progresses at about half the speed as when it was using straight mysqldb. but maybe it's still worth it for flexibility with connection pooling, switching to postgresql, etc
 
 player view
 - next, previous buttons (also active on left/right arrows)
@@ -123,9 +121,6 @@ security
 pep8
 - https://github.com/hhatto/autopep8
 
-next redirect like http://flask.pocoo.org/docs/reqcontext/?highlight=url#diving-into-context-locals
-- http://flask.pocoo.org/snippets/62/
-
 playoffs
 - on playoffs start, automatically switch to playoffs view
 - before playoffs, show current playoff seedings
@@ -159,6 +154,9 @@ game log
 
 logging
 - should be more ubiquitous
+
+next redirect like http://flask.pocoo.org/docs/reqcontext/?highlight=url#diving-into-context-locals
+- http://flask.pocoo.org/snippets/62/
 
 # BELOW IS OLD STUFF
 

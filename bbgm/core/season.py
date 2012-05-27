@@ -46,12 +46,12 @@ def new_phase(phase):
         # Create new rows in team_attributes
         r = g.dbex('SELECT team_id, division_id, region, name, abbreviation, cash FROM team_attributes WHERE season = :season', season=g.season - 1)
         for row in r.fetchall():
-            g.dbex('INSERT INTO team_attributes (team_id, division_id, region, name, abbreviation, cash, season) VALUES (:team_id, :division_id, :region, :name, :abbreviation, :cash, :season)', season=g.season, **row) # team_id=row[0], division_id=row[1], region=row[2], name=row[3], abbreviation=row[4], cash=row[5], season=g.season)
+            g.dbex('INSERT INTO team_attributes (team_id, division_id, region, name, abbreviation, cash, season) VALUES (:team_id, :division_id, :region, :name, :abbreviation, :cash, :season)', season=g.season, **row)
 
         # Create new rows in player_ratings, only for active players
         r = g.dbex('SELECT pr.player_id, season + 1 AS season, overall, pr.height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, passing, rebounding, potential FROM player_ratings AS pr, player_attributes AS pa WHERE pa.player_id = pr.player_id AND pr.season = :season AND pa.team_id != :team_id', season=g.season - 1, team_id=c.PLAYER_RETIRED)
         for row in r.fetchall():
-            g.dbex('INSERT INTO player_ratings (player_id, season, overall, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, passing, rebounding, potential) VALUES (:player_id, :season, :overall, :height, :strength, :speed, :jumping, :endurance, :shooting_inside, :shooting_layups, :shooting_free_throws, :shooting_two_pointers, :shooting_three_pointers, :blocks, :steals, :dribbling, :passing, :rebounding, :potential)', **row) # player_id=row[0], season=row[1], overall=row[2], height=row[3], strength=row[4], speed=row[5], jumping=row[6], endurance=row[7], shooting_inside=row[8], shooting_layups=row[9], shooting_free_throws=row[10], shooting_two_pointers=row[11], shooting_three_pointers=row[12], blocks=row[13], steals=row[14], dribbling=row[15], passing=row[16], rebounding=row[17], potential=row[18])
+            g.dbex('INSERT INTO player_ratings (player_id, season, overall, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, passing, rebounding, potential) VALUES (:player_id, :season, :overall, :height, :strength, :speed, :jumping, :endurance, :shooting_inside, :shooting_layups, :shooting_free_throws, :shooting_two_pointers, :shooting_three_pointers, :blocks, :steals, :dribbling, :passing, :rebounding, :potential)', **row)
 
         # Age players
         player_ids = []

@@ -23,7 +23,7 @@ Coding style
 
 http://www.python.org/dev/peps/pep-0008/ with the following exceptions:
 
-* Don't worry too mucuh about line length, for now.
+* Don't worry too much about line length, for now.
 
 * Use Google-style comments, because I like them better
   http://google-styleguide.googlecode.com/svn/trunk/pyguide.html#Comments

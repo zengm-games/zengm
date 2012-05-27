@@ -15,10 +15,11 @@ def new(team_id):
     r = g.dbex('SELECT league_id FROM leagues WHERE user_id = :user_id ORDER BY league_id DESC LIMIT 1', user_id=session['user_id'])
     g.league_id, = r.fetchone()
 
-    # Create new database
+    # Create and connect to new database
     g.dbex('CREATE DATABASE bbgm_%s' % (g.league_id,))
     g.dbex('GRANT ALL ON bbgm_%s.* TO %s@localhost IDENTIFIED BY \'%s\'' % (g.league_id, app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
-    g.dbex('USE bbgm_%s' % (g.league_id,))
+    g.db.close()
+    g.db = bbgm.connect_db('bbgm_%d' % (g.league_id,))
 
     # Copy team attributes table
     g.dbex('CREATE TABLE team_attributes SELECT * FROM bbgm.teams')
@@ -89,7 +90,8 @@ def new(team_id):
     g.dbex('INSERT INTO trade (team_id) VALUES (:team_id)', team_id=trade_team_id)
 
     # Switch back to the default non-league database
-    g.dbex('USE bbgm')
+    g.db.close()
+    g.db = bbgm.connect_db('bbgm')
 
     return g.league_id
 

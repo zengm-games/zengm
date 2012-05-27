@@ -10,7 +10,10 @@ SECRET_KEY = 'A0Zr98j/gry43 etwN]LWX/,?RT'
 DB = 'bbgm'
 DB_USERNAME = 'testuser'
 DB_PASSWORD = 'test623'
+DB_POSTGRES = False
 TRY_NUMPY = True
+if DB_POSTGRES:
+    DB_USERNAME = 'jdscheff'
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -43,10 +46,14 @@ import bbgm.views
 import bbgm.league_views
 
 
-def connect_db():
-    engine = create_engine('mysql+mysqldb://%s:%s@localhost/' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
-#    engine = create_engine('mysql+pymysql://%s:%s@localhost/' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
-#    engine = create_engine('mysql+oursql://%s:%s@localhost/?default_charset=1' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
+def connect_db(database=''):
+    app.logger.debug('Connecting to database \'%s\'' % (database,))
+    if app.config['DB_POSTGRES']:
+        engine = create_engine('postgresql+psycopg2://%s:%s@localhost/%s' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD'], database))
+    else:
+        engine = create_engine('mysql+mysqldb://%s:%s@localhost/%s' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD'], database))
+#        engine = create_engine('mysql+pymysql://%s:%s@localhost/' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
+#        engine = create_engine('mysql+oursql://%s:%s@localhost/?default_charset=1' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
     metadata = MetaData(bind=engine)
     con = engine.connect()
     return con
@@ -93,8 +100,14 @@ def init_db():
     g.db = connect_db()
     g.dbex = db_execute
 
+    if app.config['DB_POSTGRES']:
+        g.db.connection.connection.set_isolation_level(0)
+
     # Delete any current bbgm databases
-    r = g.dbex("SHOW DATABASES LIKE 'bbgm%'")
+    if app.config['DB_POSTGRES']:
+        r = g.dbex("SELECT datname FROM pg_database WHERE datname LIKE 'bbgm%'")
+    else:
+        r = g.dbex("SHOW DATABASES LIKE 'bbgm%'")
     for database, in r.fetchall():
         app.logger.debug('Dropping database %s' % (database,))
         g.dbex('DROP DATABASE %s' % (database,))
@@ -103,27 +116,28 @@ def init_db():
 
     # Create new database
     g.dbex('CREATE DATABASE bbgm')
-    g.dbex('GRANT ALL ON bbgm.* TO %s@localhost IDENTIFIED BY \'%s\'' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
-    g.dbex('USE bbgm')
+    if not app.config['DB_POSTGRES']:
+        g.dbex('GRANT ALL ON bbgm.* TO %s@localhost IDENTIFIED BY \'%s\'' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
+    g.db.close()
+    g.db = connect_db('bbgm')
 
     # Create new tables
     f = app.open_resource('data/core.sql')
     bulk_execute(f)
 
+    if app.config['DB_POSTGRES']:
+        g.db.connection.connection.set_isolation_level(1)
+
 
 @app.before_request
 def before_request():
     # Database crap
-    g.db = connect_db()
+    if g.league_id >= 0:
+        g.db = connect_db('bbgm_%d' % (g.league_id,))
+    else:
+        g.db = connect_db('bbgm')
     g.dbex = db_execute
     g.dbexmany = db_executemany
-
-    if g.league_id >= 0:
-        g.dbex('USE bbgm_%d' % (g.league_id,))
-        app.logger.debug('Using database bbgm_%d' % (g.league_id,))
-    else:
-        g.dbex('USE bbgm')
-        app.logger.debug('Using database bbgm')
 
     # Non-database crap - should probably be stored elsewhere. Also, changing
     # some of these might break stuff.
@@ -140,10 +154,6 @@ def teardown_request(exception):
     if hasattr(g, 'db'):
         g.dbex('COMMIT')
         g.db.close()
-    if hasattr(g, 'dbd'):
-        g.dbd.close()
-    if hasattr(g, 'db_conn'):
-        g.db_conn.close()
 
 
 @app.template_filter()

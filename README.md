@@ -23,11 +23,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ## Warning
 
-This is a (currently) very incomplete port of Basketball GM from PyGObject
-(GTK+) to web-based technologies. Ultimately, this may or may not be a good
-idea. Due to all the missing features still, I haven't put a lot of time into
-making it easy to use. It's basically only of interest to developers now, but
-hopefully that will change relatively soon.
+This is an incomplete port of Basketball GM from PyGObject (GTK+) to web-based
+technologies. Ultimately, this may or may not be a good idea. Due to all the
+missing features still, I haven't put a lot of time into making it easy to use.
+It's basically only of interest to developers now, but hopefully that will
+change soon.
 
 ## Dependencies
 

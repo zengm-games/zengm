@@ -11,8 +11,6 @@ database crap
   - MyISAM or InnoDB? barracuda? test
   - executemany
     - upgrade player ratings
-    - executemany for schedule
-    - create playoff series
 - redo schema
   - separate dbs for leagues: what user permissions do i need, exactly? update README
   - new column names
@@ -21,7 +19,8 @@ database crap
   - get rid of INSERTS in .sql file, instead have data elsewhere
   - get rid of weird tables, replace with a key-value store table
 - sqlalchemy
-  - game simulation progresses at about half the speed as when it was using straight mysqldb. but maybe it's still worth it for flexibility with connection pooling, switching to postgresql, etc
+  - game simulation progresses at about half the speed as when it was using straight mysqldb (although this has been somewhat ameliorated, it's only like 50% now). but maybe it's still worth it for flexibility with connection pooling, switching to postgresql, etc
+  - sql queries with IN and "join" can use a list directly as bind parameter - doesn't work with mysqldb for lists with 1 element
 
 player view
 - next, previous buttons (also active on left/right arrows)

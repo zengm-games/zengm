@@ -113,18 +113,14 @@ def new_phase(phase):
         for conference_id in range(2):
             teams = []
             r = g.dbex('SELECT ta.team_id FROM team_attributes as ta, league_divisions as ld WHERE ld.division_id = ta.division_id AND ld.conference_id = :conference_id AND ta.season = :season ORDER BY 1.0*ta.won/(ta.won + ta.lost) DESC LIMIT 8', conference_id=conference_id, season=g.season)
-            team_ids = r.fetchall()
-            for team_id, in team_ids:
-                teams.append(team_id)
-                # Record playoff appearance for player's team
-                if team_id == g.user_team_id:
-                    g.dbex('UPDATE team_attributes SET playoffs = 1 WHERE season = :season AND team_id = :team_id', season=g.season, team_id=g.user_team_id)
+            team_ids = [team_id for team_id, in r.fetchall()]
+            g.dbex('UPDATE team_attributes SET playoffs = 1 WHERE season = :season AND team_id IN :team_ids', season=g.season, team_ids=team_ids)
 
-            query = ('INSERT INTO playoff_series (series_round, season, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away) VALUES (1, :season, :team_id_home, :team_id_away, :seed_home, :seed_away, 0, 0)')
-            g.dbex(query, season=g.season, team_id_home=teams[0], team_id_away=teams[7], seed_home=1, seed_away=8)
-            g.dbex(query, season=g.season, team_id_home=teams[3], team_id_away=teams[4], seed_home=4, seed_away=5)
-            g.dbex(query, season=g.season, team_id_home=teams[2], team_id_away=teams[5], seed_home=3, seed_away=6)
-            g.dbex(query, season=g.season, team_id_home=teams[1], team_id_away=teams[6], seed_home=2, seed_away=7)
+            params = [dict(season=g.season, team_id_home=team_ids[0], team_id_away=team_ids[7], seed_home=1, seed_away=8),
+                      dict(season=g.season, team_id_home=team_ids[3], team_id_away=team_ids[4], seed_home=4, seed_away=5),
+                      dict(season=g.season, team_id_home=team_ids[2], team_id_away=team_ids[5], seed_home=3, seed_away=6),
+                      dict(season=g.season, team_id_home=team_ids[1], team_id_away=team_ids[6], seed_home=2, seed_away=7)]
+            g.dbexmany('INSERT INTO playoff_series (series_round, season, team_id_home, team_id_away, seed_home, seed_away, won_home, won_away) VALUES (1, :season, :team_id_home, :team_id_away, :seed_home, :seed_away, 0, 0)', params)
 
     # Offseason, before draft
     elif phase == c.PHASE_BEFORE_DRAFT:
@@ -378,8 +374,10 @@ def set_schedule(team_ids):
             away teams, respectively, for every game in the season.
     """
     g.dbex('DELETE FROM schedule')
+    params = []
     for home_team_id, away_team_id in team_ids:
-        g.dbex('INSERT INTO schedule (home_team_id, away_team_id) VALUES (:home_team_id, :away_team_id)', home_team_id=home_team_id, away_team_id=away_team_id)
+        params.append({'home_team_id': home_team_id, 'away_team_id': away_team_id})
+    g.dbexmany('INSERT INTO schedule (home_team_id, away_team_id) VALUES (:home_team_id, :away_team_id)', params)
 
 def get_schedule(n_games=0):
     """Returns a list of n_games games, or all games in the schedule if n_games

@@ -45,7 +45,7 @@ also install python-pip and npm to make installing the other dependencies
 easier, as well as python-dev and libmysqlclient-dev which are required for
 the MySQLdb Python package):
 
-    sudo apt-get install mysql-server redis-server nodejs npm python-pip python-dev
+    sudo apt-get install mysql-server redis-server nodejs npm python-pip python-dev libmysqlclient-dev
     sudo npm install -g juggernaut
 
 #### Python packages

@@ -146,7 +146,7 @@ def player(pid):
     """
     p = {'id': pid, 'overall_rating': 0, 'stat': {}, 'composite_rating': {}}
 
-    r = g.dbex('SELECT overall, height, strength, spd, jmp, end, ins, dnk, '
+    r = g.dbex('SELECT overall, hgt, stre, spd, jmp, end, ins, dnk, '
             'ft, fg, tp, blk, stl, drb, '
             'pss, reb FROM player_ratings WHERE pid = :pid AND season = :season', pid=p['id'], season=g.season)
     rating = r.fetchone()
@@ -161,18 +161,18 @@ def player(pid):
     p['composite_rating']['assist_ratio'] = _composite(0, 0.5, rating, ['drb', 'pss', 'spd'])
     p['composite_rating']['turnover_ratio'] = _composite(0, 0.5, rating, ['drb', 'pss', 'spd'],
                                                               inverse=True)
-    p['composite_rating']['field_goal_percentage'] = _composite(0.38, 0.68, rating, ['height', 'jmp',
+    p['composite_rating']['field_goal_percentage'] = _composite(0.38, 0.68, rating, ['hgt', 'jmp',
                                                                      'ins', 'dnk',
                                                                      'fg',
                                                                      'tp'])
     p['composite_rating']['free_throw_percentage'] = _composite(0.65, 0.9, rating, ['ft'])
     p['composite_rating']['three_pointer_percentage'] = _composite(0, 0.45, rating, ['tp'])
-    p['composite_rating']['rebound_ratio'] = _composite(0, 0.5, rating, ['height', 'strength', 'jmp',
+    p['composite_rating']['rebound_ratio'] = _composite(0, 0.5, rating, ['hgt', 'stre', 'jmp',
                                                              'reb'])
     p['composite_rating']['steal_ratio'] = _composite(0, 0.5, rating, ['spd', 'stl'])
-    p['composite_rating']['block_ratio'] = _composite(0, 0.5, rating, ['height', 'jmp', 'blk'])
+    p['composite_rating']['block_ratio'] = _composite(0, 0.5, rating, ['hgt', 'jmp', 'blk'])
     p['composite_rating']['foul_ratio'] = _composite(0, 0.5, rating, ['spd'], inverse=True)
-    p['composite_rating']['defense'] = _composite(0, 0.5, rating, ['strength', 'spd'])
+    p['composite_rating']['defense'] = _composite(0, 0.5, rating, ['stre', 'spd'])
 
     p['stat'] = dict(gs=0, min=0, fg=0, fga=0,
                      tp=0, tpa=0,

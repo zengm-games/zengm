@@ -43,7 +43,7 @@ name VARCHAR(255),
 tid INTEGER,
 pos VARCHAR(2),
 roster_order INTEGER,
-height INTEGER, -- inches
+hgt INTEGER, -- inches
 weight INTEGER, -- pounds
 born_year INTEGER, -- YYYY for birth year
 born_location VARCHAR(255), -- City, State/Country
@@ -68,8 +68,8 @@ CREATE TABLE player_ratings (
 pid INTEGER,
 season INTEGER,
 overall INTEGER,
-height INTEGER,
-strength INTEGER,
+hgt INTEGER,
+stre INTEGER,
 spd INTEGER,
 jmp INTEGER,
 end INTEGER,

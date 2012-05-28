@@ -80,7 +80,7 @@ def player_ratings(view_season=None):
     view_season = validate_season(view_season)
     seasons = get_seasons()
 
-    r = g.dbex('SELECT pa.pid, pa.tid, pa.name, (SELECT abbrev FROM team_attributes WHERE tid = pa.tid AND season = :season) as abbrev, pa.pos, :season - pa.born_year as age, pr.overall, pr.potential, pr.height, pr.strength, pr.spd, pr.jmp, pr.end, pr.ins, pr.dnk, pr.ft, pr.fg, pr.tp, pr.blk, pr.stl, pr.drb, pr.pss, pr.reb FROM player_attributes as pa, player_ratings as pr WHERE pa.pid = pr.pid AND pr.season = :season', season=view_season)
+    r = g.dbex('SELECT pa.pid, pa.tid, pa.name, (SELECT abbrev FROM team_attributes WHERE tid = pa.tid AND season = :season) as abbrev, pa.pos, :season - pa.born_year as age, pr.overall, pr.potential, pr.hgt, pr.stre, pr.spd, pr.jmp, pr.end, pr.ins, pr.dnk, pr.ft, pr.fg, pr.tp, pr.blk, pr.stl, pr.drb, pr.pss, pr.reb FROM player_attributes as pa, player_ratings as pr WHERE pa.pid = pr.pid AND pr.season = :season', season=view_season)
     players = r.fetchall()
 
     return render_all_or_json('player_ratings.html', {'players': players, 'seasons': seasons, 'view_season': view_season})
@@ -470,15 +470,15 @@ def game_log(view_season=None, abbrev=None):
 @league_crap
 def player_(pid):
     # Info
-    r = g.dbex('SELECT name, pos, (SELECT CONCAT(region, " ", name) FROM team_attributes AS ta WHERE pa.tid = ta.tid AND ta.season = :season) as team, height, weight, :season - born_year as age, born_year, born_location, college, draft_year, draft_round, draft_pick, (SELECT CONCAT(region, " ", name) FROM team_attributes as ta WHERE ta.tid = pa.draft_tid AND ta.season = :season) AS draft_team, contract_amount / 1000 AS contract_amount, contract_expiration FROM player_attributes AS pa WHERE pid = :pid', season=g.season, pid=pid)
+    r = g.dbex('SELECT name, pos, (SELECT CONCAT(region, " ", name) FROM team_attributes AS ta WHERE pa.tid = ta.tid AND ta.season = :season) as team, hgt, weight, :season - born_year as age, born_year, born_location, college, draft_year, draft_round, draft_pick, (SELECT CONCAT(region, " ", name) FROM team_attributes as ta WHERE ta.tid = pa.draft_tid AND ta.season = :season) AS draft_team, contract_amount / 1000 AS contract_amount, contract_expiration FROM player_attributes AS pa WHERE pid = :pid', season=g.season, pid=pid)
     info = r.fetchone()
 
     # Current ratings
-    r = g.dbex('SELECT overall, height, strength, spd, jmp, end, ins, dnk, ft, fg, tp, blk, stl, drb, pss, reb, potential FROM player_ratings WHERE season = :season AND pid = :pid', season=g.season, pid=pid)
+    r = g.dbex('SELECT overall, hgt, stre, spd, jmp, end, ins, dnk, ft, fg, tp, blk, stl, drb, pss, reb, potential FROM player_ratings WHERE season = :season AND pid = :pid', season=g.season, pid=pid)
     ratings = r.fetchone()
 
     # Season stats and ratings
-    r = g.dbex('SELECT pr.season, ta.abbrev, SUM(ps.min>0) AS games_played, SUM(ps.gs) AS games_started, AVG(ps.min) AS min, AVG(ps.fg) AS fg, AVG(ps.fga) AS fga, 100*AVG(ps.fg/ps.fga) AS field_goal_percentage, AVG(ps.tp) AS tp, AVG(ps.tpa) AS tpa, 100*AVG(ps.tp/ps.tpa) AS three_point_percentage, AVG(ps.ft) AS ft, AVG(ps.fta) AS fta, 100*AVG(ps.ft/ps.fta) AS free_throw_percentage, AVG(ps.orb) AS orb, AVG(ps.drb) AS drb, AVG(ps.orb+ps.drb) AS rebounds, AVG(ps.ast) AS ast, AVG(ps.tov) AS tov, AVG(ps.stl) AS stl, AVG(ps.blk) AS blk, AVG(ps.pf) AS pf, AVG(ps.pts) AS pts, ps.season - pa.born_year AS age, pr.overall AS r_overall, pr.potential AS r_potential, pr.height AS r_height, pr.strength AS r_strength, pr.spd AS r_spd, pr.jmp AS r_jmp, pr.end AS r_end, pr.ins AS r_ins, pr.dnk AS r_dnk, pr.ft AS r_ft, pr.fg AS r_fg, pr.tp AS r_tp, pr.blk AS r_blk, pr.stl AS r_stl, pr.drb AS r_drb, pr.pss AS r_pss, pr.reb AS r_reb FROM player_attributes AS pa LEFT OUTER JOIN player_ratings AS pr ON pr.pid = pa.pid LEFT JOIN player_stats as ps ON pa.pid = ps.pid AND pr.season = ps.season LEFT OUTER JOIN team_attributes AS ta ON ps.tid = ta.tid AND ta.season = ps.season AND ta.season = pr.season WHERE pa.pid = :pid AND ps.playoffs = 0 GROUP BY pr.season ORDER BY pr.season ASC', pid=pid)
+    r = g.dbex('SELECT pr.season, ta.abbrev, SUM(ps.min>0) AS games_played, SUM(ps.gs) AS games_started, AVG(ps.min) AS min, AVG(ps.fg) AS fg, AVG(ps.fga) AS fga, 100*AVG(ps.fg/ps.fga) AS field_goal_percentage, AVG(ps.tp) AS tp, AVG(ps.tpa) AS tpa, 100*AVG(ps.tp/ps.tpa) AS three_point_percentage, AVG(ps.ft) AS ft, AVG(ps.fta) AS fta, 100*AVG(ps.ft/ps.fta) AS free_throw_percentage, AVG(ps.orb) AS orb, AVG(ps.drb) AS drb, AVG(ps.orb+ps.drb) AS rebounds, AVG(ps.ast) AS ast, AVG(ps.tov) AS tov, AVG(ps.stl) AS stl, AVG(ps.blk) AS blk, AVG(ps.pf) AS pf, AVG(ps.pts) AS pts, ps.season - pa.born_year AS age, pr.overall AS r_overall, pr.potential AS r_potential, pr.hgt AS r_hgt, pr.stre AS r_stre, pr.spd AS r_spd, pr.jmp AS r_jmp, pr.end AS r_end, pr.ins AS r_ins, pr.dnk AS r_dnk, pr.ft AS r_ft, pr.fg AS r_fg, pr.tp AS r_tp, pr.blk AS r_blk, pr.stl AS r_stl, pr.drb AS r_drb, pr.pss AS r_pss, pr.reb AS r_reb FROM player_attributes AS pa LEFT OUTER JOIN player_ratings AS pr ON pr.pid = pa.pid LEFT JOIN player_stats as ps ON pa.pid = ps.pid AND pr.season = ps.season LEFT OUTER JOIN team_attributes AS ta ON ps.tid = ta.tid AND ta.season = ps.season AND ta.season = pr.season WHERE pa.pid = :pid AND ps.playoffs = 0 GROUP BY pr.season ORDER BY pr.season ASC', pid=pid)
     seasons = r.fetchall()
 
     return render_all_or_json('player.html', {'info': info, 'ratings': ratings, 'seasons': seasons})

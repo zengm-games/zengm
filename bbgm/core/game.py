@@ -61,8 +61,8 @@ class Game:
             self.write_team_stats(t)
             params = []
             for p in xrange(len(self.team[t]['player'])):
-                params.append({'pid': self.team[t]['player'][p]['id'], 'tid': self.team[t]['id'], 'gid': self.id, 'season': g.season, 'is_playoffs': self.is_playoffs, 'starter': self.team[t]['player'][p]['stat']['starter'], 'minutes': int(round(self.team[t]['player'][p]['stat']['minutes'])), 'fg': self.team[t]['player'][p]['stat']['fg'], 'fga': self.team[t]['player'][p]['stat']['fga'], 'tp': self.team[t]['player'][p]['stat']['tp'], 'tpa': self.team[t]['player'][p]['stat']['tpa'], 'ft': self.team[t]['player'][p]['stat']['ft'], 'fta': self.team[t]['player'][p]['stat']['fta'], 'orb': self.team[t]['player'][p]['stat']['orb'], 'drb': self.team[t]['player'][p]['stat']['drb'], 'assists': self.team[t]['player'][p]['stat']['assists'], 'turnovers': self.team[t]['player'][p]['stat']['turnovers'], 'steals': self.team[t]['player'][p]['stat']['steals'], 'blocks': self.team[t]['player'][p]['stat']['blocks'], 'pf': self.team[t]['player'][p]['stat']['pf'], 'points': self.team[t]['player'][p]['stat']['points']})
-            query = 'INSERT INTO player_stats (pid, tid, gid, season, is_playoffs, starter, minutes, fg, fga, tp, tpa, ft, fta, orb, drb, assists, turnovers, steals, blocks, pf, points) VALUES(:pid, :tid, :gid, :season, :is_playoffs, :starter, :minutes, :fg, :fga, :tp, :tpa, :ft, :fta, :orb, :drb, :assists, :turnovers, :steals, :blocks, :pf, :points)'
+                params.append({'pid': self.team[t]['player'][p]['id'], 'tid': self.team[t]['id'], 'gid': self.id, 'season': g.season, 'is_playoffs': self.is_playoffs, 'starter': self.team[t]['player'][p]['stat']['starter'], 'minutes': int(round(self.team[t]['player'][p]['stat']['minutes'])), 'fg': self.team[t]['player'][p]['stat']['fg'], 'fga': self.team[t]['player'][p]['stat']['fga'], 'tp': self.team[t]['player'][p]['stat']['tp'], 'tpa': self.team[t]['player'][p]['stat']['tpa'], 'ft': self.team[t]['player'][p]['stat']['ft'], 'fta': self.team[t]['player'][p]['stat']['fta'], 'orb': self.team[t]['player'][p]['stat']['orb'], 'drb': self.team[t]['player'][p]['stat']['drb'], 'ast': self.team[t]['player'][p]['stat']['ast'], 'tov': self.team[t]['player'][p]['stat']['tov'], 'steals': self.team[t]['player'][p]['stat']['steals'], 'blocks': self.team[t]['player'][p]['stat']['blocks'], 'pf': self.team[t]['player'][p]['stat']['pf'], 'points': self.team[t]['player'][p]['stat']['points']})
+            query = 'INSERT INTO player_stats (pid, tid, gid, season, is_playoffs, starter, minutes, fg, fga, tp, tpa, ft, fta, orb, drb, ast, tov, steals, blocks, pf, points) VALUES(:pid, :tid, :gid, :season, :is_playoffs, :starter, :minutes, :fg, :fga, :tp, :tpa, :ft, :fta, :orb, :drb, :ast, :tov, :steals, :blocks, :pf, :points)'
             g.dbexmany(query, params)
 
     def write_team_stats(self, t):
@@ -91,8 +91,8 @@ class Game:
             cost = 0
         g.dbex('UPDATE team_attributes SET cash = cash + :revenue - :cost WHERE season = :season AND tid = :tid', revenue=g.ticket_price * self.attendance, cost=cost, season=g.season, tid=self.team[t]['id'])
 
-        query = 'INSERT INTO team_stats (tid, opp_tid, gid, season, is_playoffs, won, home, minutes, fg, fga, tp, tpa, ft, fta, orb, drb, assists, turnovers, steals, blocks, pf, points, opp_pts, attendance, cost) VALUES (:tid, :opp_tid, :gid, :season, :is_playoffs, :won, :home, :minutes, :fg, :fga, :tp, :tpa, :ft, :fta, :orb, :drb, :assists, :turnovers, :steals, :blocks, :pf, :points, :opp_pts, :attendance, :cost)'
-        params = {'tid': self.team[t]['id'], 'opp_tid': self.team[t2]['id'], 'gid': self.id, 'season': g.season, 'is_playoffs': self.is_playoffs, 'won': won, 'home': self.home[t], 'minutes': int(round(self.team[t]['stat']['minutes'])), 'fg': self.team[t]['stat']['fg'], 'fga': self.team[t]['stat']['fga'], 'tp': self.team[t]['stat']['tp'], 'tpa': self.team[t]['stat']['tpa'], 'ft': self.team[t]['stat']['ft'], 'fta': self.team[t]['stat']['fta'], 'orb': self.team[t]['stat']['orb'], 'drb': self.team[t]['stat']['drb'], 'assists': self.team[t]['stat']['assists'], 'turnovers': self.team[t]['stat']['turnovers'], 'steals': self.team[t]['stat']['steals'], 'blocks': self.team[t]['stat']['blocks'], 'pf': self.team[t]['stat']['pf'], 'points': self.team[t]['stat']['points'], 'opp_pts': self.team[t2]['stat']['points'], 'attendance': self.attendance, 'cost': cost}
+        query = 'INSERT INTO team_stats (tid, opp_tid, gid, season, is_playoffs, won, home, minutes, fg, fga, tp, tpa, ft, fta, orb, drb, ast, tov, steals, blocks, pf, points, opp_pts, attendance, cost) VALUES (:tid, :opp_tid, :gid, :season, :is_playoffs, :won, :home, :minutes, :fg, :fga, :tp, :tpa, :ft, :fta, :orb, :drb, :ast, :tov, :steals, :blocks, :pf, :points, :opp_pts, :attendance, :cost)'
+        params = {'tid': self.team[t]['id'], 'opp_tid': self.team[t2]['id'], 'gid': self.id, 'season': g.season, 'is_playoffs': self.is_playoffs, 'won': won, 'home': self.home[t], 'minutes': int(round(self.team[t]['stat']['minutes'])), 'fg': self.team[t]['stat']['fg'], 'fga': self.team[t]['stat']['fga'], 'tp': self.team[t]['stat']['tp'], 'tpa': self.team[t]['stat']['tpa'], 'ft': self.team[t]['stat']['ft'], 'fta': self.team[t]['stat']['fta'], 'orb': self.team[t]['stat']['orb'], 'drb': self.team[t]['stat']['drb'], 'ast': self.team[t]['stat']['ast'], 'tov': self.team[t]['stat']['tov'], 'steals': self.team[t]['stat']['steals'], 'blocks': self.team[t]['stat']['blocks'], 'pf': self.team[t]['stat']['pf'], 'points': self.team[t]['stat']['points'], 'opp_pts': self.team[t2]['stat']['points'], 'attendance': self.attendance, 'cost': cost}
         g.dbex(query, **params)
 
         if won and not self.is_playoffs:
@@ -133,8 +133,8 @@ def team(tid):
     t['stat'] = dict(minutes=0, fg=0, fga=0,
                 tp=0, tpa=0,
                 ft=0, fta=0,
-                orb=0, drb=0, assists=0,
-                turnovers=0, steals=0, blocks=0, pf=0,
+                orb=0, drb=0, ast=0,
+                tov=0, steals=0, blocks=0, pf=0,
                 points=0)
 
     return t
@@ -177,8 +177,8 @@ def player(pid):
     p['stat'] = dict(starter=0, minutes=0, fg=0, fga=0,
                      tp=0, tpa=0,
                      ft=0, fta=0,
-                     orb=0, drb=0, assists=0,
-                     turnovers=0, steals=0, blocks=0, pf=0,
+                     orb=0, drb=0, ast=0,
+                     tov=0, steals=0, blocks=0, pf=0,
                      points=0, court_time=0, bench_time=0, energy=1)
 
     return p

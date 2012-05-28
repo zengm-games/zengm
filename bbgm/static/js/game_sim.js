@@ -276,7 +276,7 @@ GameSim.prototype.is_assist = function() {
 GameSim.prototype.do_turnover = function() {
     var ratios = this.rating_array('turnover_ratio', this.o);
     var p = this.players_on_court[this.o][this.pick_player(ratios)];
-    this.record_stat(this.o, p, 'turnovers');
+    this.record_stat(this.o, p, 'tov');
     this.is_steal();
 };
 
@@ -328,7 +328,7 @@ GameSim.prototype.do_made_shot = function(shooter, type) {
     if (this.is_assist()) {
         var ratios = this.rating_array('assist_ratio', this.o);
         var p = this.players_on_court[this.o][this.pick_player(ratios, shooter)];
-        this.record_stat(this.o, p, 'assists');
+        this.record_stat(this.o, p, 'ast');
     }
     var p = this.players_on_court[this.o][shooter];
     this.record_stat(this.o, p, 'fg');

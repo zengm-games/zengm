@@ -41,8 +41,8 @@ CREATE TABLE player_attributes (
 pid INTEGER AUTO_INCREMENT,
 name VARCHAR(255),
 tid INTEGER,
-position VARCHAR(2),
-roster_position INTEGER,
+pos VARCHAR(2),
+roster_pos INTEGER,
 height INTEGER, -- inches
 weight INTEGER, -- pounds
 born_year INTEGER, -- YYYY for birth year
@@ -158,7 +158,7 @@ tid INTEGER,
 abbreviation VARCHAR(3),
 pid INTEGER,
 name VARCHAR(255),
-position VARCHAR(2),
+pos VARCHAR(2),
 born_year INTEGER, -- YYYY for birth year
 overall INTEGER,
 potential INTEGER,

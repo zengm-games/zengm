@@ -45,11 +45,11 @@ def roster_auto_sort(tid):
     # Sort by rating
     players.sort(cmp=lambda x, y: y[1] - x[1])
 
-    # Update positions
-    roster_position = 1
+    # Update poss
+    roster_pos = 1
     for player in players:
-        g.dbex('UPDATE player_attributes SET roster_position = :roster_position WHERE pid = :pid', roster_position=roster_position, pid=player[0])
-        roster_position += 1
+        g.dbex('UPDATE player_attributes SET roster_pos = :roster_pos WHERE pid = :pid', roster_pos=roster_pos, pid=player[0])
+        roster_pos += 1
 
 def free_agents_auto_sign():
     """AI teams sign free agents."""

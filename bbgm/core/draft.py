@@ -39,11 +39,11 @@ def generate_players():
     g.dbexmany('INSERT INTO player_ratings (%s) VALUES (%s)' % (', '.join(player_ratings[0].keys()), ', '.join([':' + key for key in player_ratings[0].keys()])), player_ratings)
 
     # Update roster positions (so next/prev buttons work in player dialog)
-    roster_position = 1
+    roster_pos = 1
     r = g.dbex('SELECT pr.pid FROM player_attributes as pa, player_ratings as pr WHERE pa.pid = pr.pid AND pa.tid = :tid AND pr.season = :season ORDER BY pr.overall + 2*pr.potential DESC', tid=c.PLAYER_UNDRAFTED, season=g.season)
     for pid, in r.fetchall():
-        g.dbex('UPDATE player_attributes SET roster_position = :roster_position WHERE pid = :pid', roster_position=roster_position, pid=pid)
-        roster_position += 1
+        g.dbex('UPDATE player_attributes SET roster_pos = :roster_pos WHERE pid = :pid', roster_pos=roster_pos, pid=pid)
+        roster_pos += 1
 
 def set_order():
     """Sets draft order based on winning percentage (no lottery)."""
@@ -51,7 +51,7 @@ def set_order():
         pick = 1
         r = g.dbex('SELECT tid, abbreviation FROM team_attributes WHERE season = :season ORDER BY 1.0*won/(won + lost) ASC', season=g.season)
         for tid, abbreviation in r.fetchall():
-            g.dbex('INSERT INTO draft_results (season, draft_round, pick, tid, abbreviation, pid, name, position) VALUES (:season, :draft_round, :pick, :tid, :abbreviation, 0, \'\', \'\')', season=g.season, draft_round=draft_round, pick=pick, tid=tid, abbreviation=abbreviation)
+            g.dbex('INSERT INTO draft_results (season, draft_round, pick, tid, abbreviation, pid, name, pos) VALUES (:season, :draft_round, :pick, :tid, :abbreviation, 0, \'\', \'\')', season=g.season, draft_round=draft_round, pick=pick, tid=tid, abbreviation=abbreviation)
             pick += 1
 
 def until_user_or_end():
@@ -85,13 +85,13 @@ def pick_player(tid, pid):
         return
 
     # Draft player, update roster potision
-    r = g.dbex('SELECT pa.name, pa.position, pa.born_year, pr.overall, pr.potential FROM player_attributes AS pa, player_ratings AS pr WHERE pa.pid = pr.pid AND pa.tid = :tid AND pr.pid = :pid AND pr.season = :season', tid=c.PLAYER_UNDRAFTED, pid=pid, season=g.season)
-    name, position, born_year, overall, potential = r.fetchone()
-    r = g.dbex('SELECT MAX(roster_position) + 1 FROM player_attributes WHERE tid = :tid', tid=tid)
-    roster_position, = r.fetchone()
+    r = g.dbex('SELECT pa.name, pa.pos, pa.born_year, pr.overall, pr.potential FROM player_attributes AS pa, player_ratings AS pr WHERE pa.pid = pr.pid AND pa.tid = :tid AND pr.pid = :pid AND pr.season = :season', tid=c.PLAYER_UNDRAFTED, pid=pid, season=g.season)
+    name, pos, born_year, overall, potential = r.fetchone()
+    r = g.dbex('SELECT MAX(roster_pos) + 1 FROM player_attributes WHERE tid = :tid', tid=tid)
+    roster_pos, = r.fetchone()
 
-    g.dbex('UPDATE player_attributes SET tid = :tid, draft_year = :draft_year, draft_round = :draft_round, draft_pick = :draft_pick, draft_tid = :tid, roster_position = :roster_position WHERE pid = :pid', tid=tid, draft_year=g.season, draft_round=draft_round, draft_pick=pick, draft_tid=tid, roster_position=roster_position, pid=pid)
-    g.dbex('UPDATE draft_results SET pid = :pid, name = :name, position = :position, born_year = :born_year, overall = :overall, potential = :potential WHERE season = :season AND draft_round = :draft_round AND pick = :pick', pid=pid, name=name, position=position, born_year=born_year, overall=overall, potential=potential, season=g.season, draft_round=draft_round, pick=pick)
+    g.dbex('UPDATE player_attributes SET tid = :tid, draft_year = :draft_year, draft_round = :draft_round, draft_pick = :draft_pick, draft_tid = :tid, roster_pos = :roster_pos WHERE pid = :pid', tid=tid, draft_year=g.season, draft_round=draft_round, draft_pick=pick, draft_tid=tid, roster_pos=roster_pos, pid=pid)
+    g.dbex('UPDATE draft_results SET pid = :pid, name = :name, pos = :pos, born_year = :born_year, overall = :overall, potential = :potential WHERE season = :season AND draft_round = :draft_round AND pick = :pick', pid=pid, name=name, pos=pos, born_year=born_year, overall=overall, potential=potential, season=g.season, draft_round=draft_round, pick=pick)
 
     # Contract
     rookie_salaries = (5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500,

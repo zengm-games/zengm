@@ -189,7 +189,7 @@ class GeneratePlayer(Player):
         self.rating['potential'] = potential
         self.attribute = {}
         self.attribute['tid'] = tid
-        self.attribute['roster_position'] = pid
+        self.attribute['roster_pos'] = pid
         self.attribute['draft_year'] = draft_year
         self.generate_ratings(profile, base_rating)
         self.generate_attributes(age, player_nat)
@@ -245,7 +245,7 @@ class GeneratePlayer(Player):
         min_weight = 150
         max_weight = 290
 
-        self.attribute['position'] = self._position()  # Position (PG, SG, SF, PF, C, G, GF, FC)
+        self.attribute['pos'] = self._pos()  # Position (PG, SG, SF, PF, C, G, GF, FC)
         self.attribute['height'] = int(fast_random.gauss(1, 0.02) * (self.rating['height'] * (max_height - min_height) / 100 + min_height))  # Height in inches (from min_height to max_height)
         self.attribute['weight'] = int(fast_random.gauss(1, 0.02) * ((self.rating['height'] + 0.5 * self.rating['strength']) * (max_weight - min_weight) / 150 + min_weight))  # Weight in pounds (from min_weight to max_weight)
         if not hasattr(g, 'season'):
@@ -302,7 +302,7 @@ class GeneratePlayer(Player):
 
         return '%s %s' % (fn, ln)
 
-    def _position(self):
+    def _pos(self):
         '''
         Assign a position (PG, SG, SF, PF, C, G, GF, FC) based on ratings
         '''
@@ -315,9 +315,9 @@ class GeneratePlayer(Player):
 
         # Default position
         if self.rating['dribbling'] >= 50:
-            position = 'GF'
+            pos = 'GF'
         else:
-            position = 'F'
+            pos = 'F'
 
         if self.rating['height'] <= 30 or self.rating['speed'] >= 85:
             g = True
@@ -333,28 +333,28 @@ class GeneratePlayer(Player):
             c = True
 
         if pg and not sg and not sf and not pf and not c:
-            position = 'PG'
+            pos = 'PG'
         elif not pg and (g or sg) and not sf and not pf and not c:
-            position = 'SG'
+            pos = 'SG'
         elif not pg and not sg and sf and not pf and not c:
-            position = 'SF'
+            pos = 'SF'
         elif not pg and not sg and not sf and pf and not c:
-            position = 'PF'
+            pos = 'PF'
         elif not pg and not sg and not sf and not pf and c:
-            position = 'C'
+            pos = 'C'
 
-        # Multiple positions
+        # Multiple poss
         if (pf or sf) and g:
             positon = 'GF'
         elif c and (pf or sf):
-            position = 'FC'
+            pos = 'FC'
         elif pg and sg:
-            position = 'G'
+            pos = 'G'
 
-        if position is 'F' and self.rating['dribbling'] <= 20:
-            position = 'PF'
+        if pos is 'F' and self.rating['dribbling'] <= 20:
+            pos = 'PF'
 
-        return position
+        return pos
 
     def get_attributes(self):
         d = self.attribute

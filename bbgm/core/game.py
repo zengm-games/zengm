@@ -50,7 +50,7 @@ class Game:
     def write_stats(self):
         # Record who the starters are
         for t in range(2):
-            r = g.dbex('SELECT pid FROM player_attributes WHERE tid = :tid ORDER BY roster_position ASC LIMIT 5', tid=self.team[t]['id'])
+            r = g.dbex('SELECT pid FROM player_attributes WHERE tid = :tid ORDER BY roster_pos ASC LIMIT 5', tid=self.team[t]['id'])
             for starter_id, in r.fetchall():
                 for p in xrange(len(self.team[t]['player'])):
                     if self.team[t]['player'][p]['id'] == starter_id:
@@ -115,7 +115,7 @@ def team(tid):
     """
     t = {'id': tid, 'defense': 0, 'pace': 0, 'stat': {}, 'player': []}
 
-    r = g.dbex('SELECT pid FROM player_attributes WHERE tid = :tid ORDER BY roster_position ASC', tid=tid)
+    r = g.dbex('SELECT pid FROM player_attributes WHERE tid = :tid ORDER BY roster_pos ASC', tid=tid)
     for row in r.fetchall():
         t['player'].append(player(row[0]))
 

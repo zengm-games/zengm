@@ -371,7 +371,7 @@ def draft_(view_season=None):
         return render_all_or_json('draft.html', {'undrafted': undrafted, 'drafted': drafted})
 
     # Show a summary of an old draft
-    r = g.dbex('SELECT dr.draft_round, dr.pick, dr.abbrev, dr.pid, dr.name, :view_season - dr.born_year AS age, dr.pos, dr.overall, dr.potential, ta.abbrev AS current_abbrev, :season - dr.born_year AS current_age, pr.overall AS current_overall, pr.potential AS current_potential, SUM(ps.min>0) AS gp, AVG(ps.min) as mpg, AVG(ps.pts) AS ppg, AVG(ps.orb + ps.drb) AS rpg, AVG(ps.ast) AS apg FROM draft_results AS dr LEFT OUTER JOIN player_ratings AS pr ON pr.season = :season AND dr.pid = pr.pid LEFT OUTER JOIN player_stats AS ps ON ps.playoffs = 0 AND dr.pid = ps.pid LEFT OUTER JOIN player_attributes AS pa ON dr.pid = pa.pid LEFT OUTER JOIN team_attributes AS ta ON pa.tid = ta.tid AND ta.season = :season WHERE dr.season = :view_season GROUP BY dr.pid', view_season=view_season, season=g.season)
+    r = g.dbex('SELECT dr.draft_round, dr.pick, dr.abbrev, dr.pid, dr.name, :view_season - dr.born_year AS age, dr.pos, dr.overall, dr.potential, ta.abbrev AS current_abbrev, :season - dr.born_year AS current_age, pr.overall AS current_overall, pr.potential AS current_potential, SUM(ps.min>0) AS gp, AVG(ps.min) as min, AVG(ps.pts) AS pts, AVG(ps.orb + ps.drb) AS trb, AVG(ps.ast) AS ast FROM draft_results AS dr LEFT OUTER JOIN player_ratings AS pr ON pr.season = :season AND dr.pid = pr.pid LEFT OUTER JOIN player_stats AS ps ON ps.playoffs = 0 AND dr.pid = ps.pid LEFT OUTER JOIN player_attributes AS pa ON dr.pid = pa.pid LEFT OUTER JOIN team_attributes AS ta ON pa.tid = ta.tid AND ta.season = :season WHERE dr.season = :view_season GROUP BY dr.pid', view_season=view_season, season=g.season)
     players = r.fetchall()
     return render_all_or_json('draft_summary.html', {'players': players, 'seasons': seasons, 'view_season': view_season})
 
@@ -390,16 +390,16 @@ def history(view_season=None):
             view_season -= 1
         seasons.remove(g.season)  # Don't show this season as an option
 
-    r = g.dbex('SELECT bre_tid, bre_abbrev, bre_region, bre_name, bre_won, bre_lost, brw_tid, brw_abbrev, brw_region, brw_name, brw_won, brw_lost, mvp_pid, mvp_name, mvp_tid, mvp_abbrev, mvp_ppg, mvp_rpg, mvp_apg, dpoy_pid, dpoy_name, dpoy_tid, dpoy_abbrev, dpoy_rpg, dpoy_bpg, dpoy_spg, smoy_pid, smoy_name, smoy_tid, smoy_abbrev, smoy_ppg, smoy_rpg, smoy_apg, roy_pid, roy_name, roy_tid, roy_abbrev, roy_ppg, roy_rpg, roy_apg FROM awards WHERE season = :season', season=view_season)
+    r = g.dbex('SELECT bre_tid, bre_abbrev, bre_region, bre_name, bre_won, bre_lost, brw_tid, brw_abbrev, brw_region, brw_name, brw_won, brw_lost, mvp_pid, mvp_name, mvp_tid, mvp_abbrev, mvp_pts, mvp_trb, mvp_ast, dpoy_pid, dpoy_name, dpoy_tid, dpoy_abbrev, dpoy_trb, dpoy_blk, dpoy_stl, smoy_pid, smoy_name, smoy_tid, smoy_abbrev, smoy_pts, smoy_trb, smoy_ast, roy_pid, roy_name, roy_tid, roy_abbrev, roy_pts, roy_trb, roy_ast FROM awards WHERE season = :season', season=view_season)
     if r.rowcount == 0:
         error = "You have to play through a season before there is any league history to view."
         return render_all_or_json('league_error.html', {'error': error})
     awards = r.fetchone()
 
-    r = g.dbex('SELECT pid, name, abbrev, ppg, rpg, apg, bpg, spg FROM awards_all_league WHERE season = :season AND team_type = \'league\' ORDER BY player_rank', season=view_season)
+    r = g.dbex('SELECT pid, name, abbrev, pts, trb, ast, blk, stl FROM awards_all_league WHERE season = :season AND team_type = \'league\' ORDER BY player_rank', season=view_season)
     all_league = r.fetchall()
 
-    r = g.dbex('SELECT pid, name, abbrev, ppg, rpg, apg, bpg, spg FROM awards_all_league WHERE season = :season AND team_type = \'defensive\' ORDER BY player_rank', season=view_season)
+    r = g.dbex('SELECT pid, name, abbrev, pts, trb, ast, blk, stl FROM awards_all_league WHERE season = :season AND team_type = \'defensive\' ORDER BY player_rank', season=view_season)
     all_defensive = r.fetchall()
 
     r = g.dbex('SELECT abbrev, region, name FROM team_attributes WHERE won_championship = 1 AND season = :season', season=view_season)

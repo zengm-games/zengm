@@ -8,7 +8,7 @@
     $(document).ready(function() {
       bbgm_datatable_singlepage($('#finances'), 5, [
         {% for team in teams %}
-		  [ '<a href="{{ url_for('roster', league_id=g.league_id, abbreviation=team.abbreviation) }}">{{ team.region }} {{ team.name }}</a>', '{{ team.attendance|int|number_format }}', '${{ team.revenue|float|round(1) }}M', '${{ team.profit|float|round(1) }}M', '${{ team.cash|float|round(1) }}M', '${{ team.payroll|float|round(1) }}M' ],
+		  [ '<a href="{{ url_for('roster', league_id=g.league_id, abbreviation=team.abbreviation) }}">{{ team.region }} {{ team.name }}</a>', '{{ team.att|int|number_format }}', '${{ team.revenue|float|round(1) }}M', '${{ team.profit|float|round(1) }}M', '${{ team.cash|float|round(1) }}M', '${{ team.payroll|float|round(1) }}M' ],
         {% endfor %}
       ]);
     } );

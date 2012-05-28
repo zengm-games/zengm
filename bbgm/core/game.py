@@ -13,10 +13,10 @@ from bbgm.util import free_agents_auto_sign, free_agents_decrease_demands, lock,
 import bbgm.util.const as c
 
 class Game:
-    def load(self, results, is_playoffs):
+    def load(self, results, playoffs):
         # Retrieve stats
         self.team = results['team']
-        self.is_playoffs = is_playoffs
+        self.playoffs = playoffs
         self.id = results['gid']
         self.home = [True, False]
 
@@ -24,13 +24,13 @@ class Game:
         r = g.dbex('SELECT won+lost, 1.0*won/(won + lost) FROM team_attributes WHERE season = :season AND (tid = :tid_home OR tid = :tid_away)', season=g.season, tid_home=self.team[0]['id'], tid_away=self.team[1]['id'])
         games_played, winp = r.fetchone()
         if games_played < 5:
-            self.attendance = fast_random.gauss(22000 + games_played * 1000, 1000)
+            self.att = fast_random.gauss(22000 + games_played * 1000, 1000)
         else:
-            self.attendance = fast_random.gauss(winp * 36000, 1000)
-        if self.attendance > 25000:
-            self.attendance = 25000
-        elif self.attendance < 10000:
-            self.attendance = 10000
+            self.att = fast_random.gauss(winp * 36000, 1000)
+        if self.att > 25000:
+            self.att = 25000
+        elif self.att < 10000:
+            self.att = 10000
 
         # Are the teams in the same conference/division?
         self.same_conference = False
@@ -61,8 +61,8 @@ class Game:
             self.write_team_stats(t)
             params = []
             for p in xrange(len(self.team[t]['player'])):
-                params.append({'pid': self.team[t]['player'][p]['id'], 'tid': self.team[t]['id'], 'gid': self.id, 'season': g.season, 'is_playoffs': self.is_playoffs, 'starter': self.team[t]['player'][p]['stat']['starter'], 'min': int(round(self.team[t]['player'][p]['stat']['min'])), 'fg': self.team[t]['player'][p]['stat']['fg'], 'fga': self.team[t]['player'][p]['stat']['fga'], 'tp': self.team[t]['player'][p]['stat']['tp'], 'tpa': self.team[t]['player'][p]['stat']['tpa'], 'ft': self.team[t]['player'][p]['stat']['ft'], 'fta': self.team[t]['player'][p]['stat']['fta'], 'orb': self.team[t]['player'][p]['stat']['orb'], 'drb': self.team[t]['player'][p]['stat']['drb'], 'ast': self.team[t]['player'][p]['stat']['ast'], 'tov': self.team[t]['player'][p]['stat']['tov'], 'stl': self.team[t]['player'][p]['stat']['stl'], 'blk': self.team[t]['player'][p]['stat']['blk'], 'pf': self.team[t]['player'][p]['stat']['pf'], 'pts': self.team[t]['player'][p]['stat']['pts']})
-            query = 'INSERT INTO player_stats (pid, tid, gid, season, is_playoffs, starter, min, fg, fga, tp, tpa, ft, fta, orb, drb, ast, tov, stl, blk, pf, pts) VALUES(:pid, :tid, :gid, :season, :is_playoffs, :starter, :min, :fg, :fga, :tp, :tpa, :ft, :fta, :orb, :drb, :ast, :tov, :stl, :blk, :pf, :pts)'
+                params.append({'pid': self.team[t]['player'][p]['id'], 'tid': self.team[t]['id'], 'gid': self.id, 'season': g.season, 'playoffs': self.playoffs, 'starter': self.team[t]['player'][p]['stat']['starter'], 'min': int(round(self.team[t]['player'][p]['stat']['min'])), 'fg': self.team[t]['player'][p]['stat']['fg'], 'fga': self.team[t]['player'][p]['stat']['fga'], 'tp': self.team[t]['player'][p]['stat']['tp'], 'tpa': self.team[t]['player'][p]['stat']['tpa'], 'ft': self.team[t]['player'][p]['stat']['ft'], 'fta': self.team[t]['player'][p]['stat']['fta'], 'orb': self.team[t]['player'][p]['stat']['orb'], 'drb': self.team[t]['player'][p]['stat']['drb'], 'ast': self.team[t]['player'][p]['stat']['ast'], 'tov': self.team[t]['player'][p]['stat']['tov'], 'stl': self.team[t]['player'][p]['stat']['stl'], 'blk': self.team[t]['player'][p]['stat']['blk'], 'pf': self.team[t]['player'][p]['stat']['pf'], 'pts': self.team[t]['player'][p]['stat']['pts']})
+            query = 'INSERT INTO player_stats (pid, tid, gid, season, playoffs, starter, min, fg, fga, tp, tpa, ft, fta, orb, drb, ast, tov, stl, blk, pf, pts) VALUES(:pid, :tid, :gid, :season, :playoffs, :starter, :min, :fg, :fga, :tp, :tpa, :ft, :fta, :orb, :drb, :ast, :tov, :stl, :blk, :pf, :pts)'
             g.dbexmany(query, params)
 
     def write_team_stats(self, t):
@@ -72,15 +72,15 @@ class Game:
             t2 = 0
         if self.team[t]['stat']['pts'] > self.team[t2]['stat']['pts']:
             won = True
-            if self.is_playoffs and t == 0:
+            if self.playoffs and t == 0:
                 g.dbex('UPDATE playoff_series SET won_home = won_home + 1 WHERE tid_home = :tid_home AND tid_away = :tid_away AND season = :season', tid_home=self.team[t]['id'], tid_away=self.team[t2]['id'], season=g.season)
-            elif self.is_playoffs:
+            elif self.playoffs:
                 g.dbex('UPDATE playoff_series SET won_away = won_away + 1 WHERE tid_home = :tid_home AND tid_away = :tid_away AND season = :season', tid_home=self.team[t2]['id'], tid_away=self.team[t]['id'], season=g.season)
         else:
             won = False
 
         # Only pay player salaries for regular season games.
-        if not self.is_playoffs:
+        if not self.playoffs:
             r = g.dbex('SELECT SUM(contract_amount) * 1000 / 82 FROM released_players_salaries WHERE tid = :tid', tid=self.team[t]['id'])
             cost_released, = r.fetchone()
             r = g.dbex('SELECT SUM(contract_amount) * 1000 / 82 FROM player_attributes WHERE tid = :tid', tid=self.team[t]['id'])
@@ -89,19 +89,19 @@ class Game:
                 cost += cost_released
         else:
             cost = 0
-        g.dbex('UPDATE team_attributes SET cash = cash + :revenue - :cost WHERE season = :season AND tid = :tid', revenue=g.ticket_price * self.attendance, cost=cost, season=g.season, tid=self.team[t]['id'])
+        g.dbex('UPDATE team_attributes SET cash = cash + :revenue - :cost WHERE season = :season AND tid = :tid', revenue=g.ticket_price * self.att, cost=cost, season=g.season, tid=self.team[t]['id'])
 
-        query = 'INSERT INTO team_stats (tid, opp_tid, gid, season, is_playoffs, won, home, min, fg, fga, tp, tpa, ft, fta, orb, drb, ast, tov, stl, blk, pf, pts, opp_pts, attendance, cost) VALUES (:tid, :opp_tid, :gid, :season, :is_playoffs, :won, :home, :min, :fg, :fga, :tp, :tpa, :ft, :fta, :orb, :drb, :ast, :tov, :stl, :blk, :pf, :pts, :opp_pts, :attendance, :cost)'
-        params = {'tid': self.team[t]['id'], 'opp_tid': self.team[t2]['id'], 'gid': self.id, 'season': g.season, 'is_playoffs': self.is_playoffs, 'won': won, 'home': self.home[t], 'min': int(round(self.team[t]['stat']['min'])), 'fg': self.team[t]['stat']['fg'], 'fga': self.team[t]['stat']['fga'], 'tp': self.team[t]['stat']['tp'], 'tpa': self.team[t]['stat']['tpa'], 'ft': self.team[t]['stat']['ft'], 'fta': self.team[t]['stat']['fta'], 'orb': self.team[t]['stat']['orb'], 'drb': self.team[t]['stat']['drb'], 'ast': self.team[t]['stat']['ast'], 'tov': self.team[t]['stat']['tov'], 'stl': self.team[t]['stat']['stl'], 'blk': self.team[t]['stat']['blk'], 'pf': self.team[t]['stat']['pf'], 'pts': self.team[t]['stat']['pts'], 'opp_pts': self.team[t2]['stat']['pts'], 'attendance': self.attendance, 'cost': cost}
+        query = 'INSERT INTO team_stats (tid, opp_tid, gid, season, playoffs, won, home, min, fg, fga, tp, tpa, ft, fta, orb, drb, ast, tov, stl, blk, pf, pts, opp_pts, att, cost) VALUES (:tid, :opp_tid, :gid, :season, :playoffs, :won, :home, :min, :fg, :fga, :tp, :tpa, :ft, :fta, :orb, :drb, :ast, :tov, :stl, :blk, :pf, :pts, :opp_pts, :att, :cost)'
+        params = {'tid': self.team[t]['id'], 'opp_tid': self.team[t2]['id'], 'gid': self.id, 'season': g.season, 'playoffs': self.playoffs, 'won': won, 'home': self.home[t], 'min': int(round(self.team[t]['stat']['min'])), 'fg': self.team[t]['stat']['fg'], 'fga': self.team[t]['stat']['fga'], 'tp': self.team[t]['stat']['tp'], 'tpa': self.team[t]['stat']['tpa'], 'ft': self.team[t]['stat']['ft'], 'fta': self.team[t]['stat']['fta'], 'orb': self.team[t]['stat']['orb'], 'drb': self.team[t]['stat']['drb'], 'ast': self.team[t]['stat']['ast'], 'tov': self.team[t]['stat']['tov'], 'stl': self.team[t]['stat']['stl'], 'blk': self.team[t]['stat']['blk'], 'pf': self.team[t]['stat']['pf'], 'pts': self.team[t]['stat']['pts'], 'opp_pts': self.team[t2]['stat']['pts'], 'att': self.att, 'cost': cost}
         g.dbex(query, **params)
 
-        if won and not self.is_playoffs:
+        if won and not self.playoffs:
             g.dbex('UPDATE team_attributes SET won = won + 1 WHERE tid = :tid AND season = :season', tid=self.team[t]['id'], season=g.season)
             if self.same_division:
                 g.dbex('UPDATE team_attributes SET won_div = won_div + 1, won_conf = won_conf + 1 WHERE tid = :tid AND season = :season', tid=self.team[t]['id'], season=g.season)
             elif self.same_conference:
                 g.dbex('UPDATE team_attributes SET won_conf = won_conf + 1 WHERE tid = :tid AND season = :season', tid=self.team[t]['id'], season=g.season)
-        elif not self.is_playoffs:
+        elif not self.playoffs:
             g.dbex('UPDATE team_attributes SET lost = lost + 1 WHERE tid = :tid AND season = :season', tid=self.team[t]['id'], season=g.season)
             if self.same_division:
                 g.dbex('UPDATE team_attributes SET lost_div = lost_div + 1, lost_conf = lost_conf + 1 WHERE tid = :tid AND season = :season', tid=self.team[t]['id'], season=g.season)
@@ -210,13 +210,13 @@ def _composite(minval, maxval, rating, components, inverse=False, random=True):
         r = fast_random.gauss(1, 0.1) * r
     return r
 
-def save_results(results, is_playoffs):
+def save_results(results, playoffs):
     """Convenience function to save game stats."""
     r = g.dbex('SELECT in_progress_timestamp FROM schedule WHERE gid = :gid', gid=results['gid'])
     in_progress_timestamp, = r.fetchone()
     if in_progress_timestamp > 0:
         game = Game()
-        game.load(results, is_playoffs)
+        game.load(results, playoffs)
         game.write_stats()
         g.dbex('DELETE FROM schedule WHERE gid = :gid', gid=results['gid'])
         app.logger.debug('Saved results for game %d' % (results['gid'],))

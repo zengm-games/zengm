@@ -211,16 +211,16 @@ def standings(view_season=None):
     seasons = get_seasons()
 
     conferences = []
-    r = g.dbex('SELECT cid, name FROM league_conferences ORDER BY cid ASC')
+    r = g.dbex('SELECT cid, name FROM conferences ORDER BY cid ASC')
     for cid, conference_name in r.fetchall():
         conferences.append({'id': cid, 'name': conference_name, 'divisions': [], 'standings': ''})
 
-        r = g.dbex('SELECT ld.did FROM league_divisions as ld WHERE ld.cid = :cid', cid=cid)
+        r = g.dbex('SELECT ld.did FROM divisions as ld WHERE ld.cid = :cid', cid=cid)
         divisions = ', '.join([str(division) for division, in r.fetchall()])
         r = g.dbex('SELECT * FROM team_attributes as ta WHERE ta.did IN (%s) AND season = :season ORDER BY won/(won+lost) DESC' % (divisions,), season=view_season)
         conferences[-1]['teams'] = r.fetchall()
 
-        r = g.dbex('SELECT did, name FROM league_divisions WHERE cid = :cid ORDER BY name ASC', cid=cid)
+        r = g.dbex('SELECT did, name FROM divisions WHERE cid = :cid ORDER BY name ASC', cid=cid)
         for did, division_name in r.fetchall():
             r = g.dbex('SELECT * FROM team_attributes WHERE did = :did AND season = :season ORDER BY won/(won+lost) DESC', did=did, season=view_season)
             conferences[-1]['divisions'].append({'name': division_name})
@@ -242,7 +242,7 @@ def playoffs(view_season=None):
     if view_season == g.season and g.phase < c.PHASE_PLAYOFFS:
         for cid in range(2):
             teams = []
-            r = g.dbex('SELECT ta.name FROM team_attributes as ta, league_divisions as ld WHERE ld.did = ta.did AND ld.cid = :cid AND ta.season = :season ORDER BY 1.0*ta.won/(ta.won + ta.lost) DESC LIMIT 8', cid=cid, season=g.season)
+            r = g.dbex('SELECT ta.name FROM team_attributes as ta, divisions as ld WHERE ld.did = ta.did AND ld.cid = :cid AND ta.season = :season ORDER BY 1.0*ta.won/(ta.won + ta.lost) DESC LIMIT 8', cid=cid, season=g.season)
             for team_name, in r.fetchall():
                 teams.append(team_name)
             series[0].append({'seed_home': 1, 'seed_away': 8, 'name_home': teams[0], 'name_away': teams[7]})

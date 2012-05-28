@@ -1,21 +1,21 @@
-CREATE TABLE league_conferences (
+CREATE TABLE conferences (
 cid INTEGER,
 name VARCHAR(255),
 PRIMARY KEY (cid));
-INSERT INTO league_conferences (cid,name) VALUES(0,'Eastern Conference');
-INSERT INTO league_conferences (cid,name) VALUES(1,'Western Conference');
+INSERT INTO conferences (cid,name) VALUES(0,'Eastern Conference');
+INSERT INTO conferences (cid,name) VALUES(1,'Western Conference');
 
-CREATE TABLE league_divisions (
+CREATE TABLE divisions (
 did INTEGER,
 cid INTEGER,
 name VARCHAR(255),
 PRIMARY KEY (did));
-INSERT INTO league_divisions (did,cid,name) VALUES(0,0,'Atlantic');
-INSERT INTO league_divisions (did,cid,name) VALUES(1,0,'Central');
-INSERT INTO league_divisions (did,cid,name) VALUES(2,0,'Southeast');
-INSERT INTO league_divisions (did,cid,name) VALUES(3,1,'Southwest');
-INSERT INTO league_divisions (did,cid,name) VALUES(4,1,'Northwest');
-INSERT INTO league_divisions (did,cid,name) VALUES(5,1,'Pacific');
+INSERT INTO divisions (did,cid,name) VALUES(0,0,'Atlantic');
+INSERT INTO divisions (did,cid,name) VALUES(1,0,'Central');
+INSERT INTO divisions (did,cid,name) VALUES(2,0,'Southeast');
+INSERT INTO divisions (did,cid,name) VALUES(3,1,'Southwest');
+INSERT INTO divisions (did,cid,name) VALUES(4,1,'Northwest');
+INSERT INTO divisions (did,cid,name) VALUES(5,1,'Pacific');
 
 CREATE TABLE game_attributes (
 tid INTEGER,
@@ -246,7 +246,7 @@ CREATE INDEX e ON team_stats(tid, season);
 CREATE INDEX f ON team_stats(gid, tid);
 CREATE INDEX g ON player_ratings(pid, overall);
 CREATE INDEX h ON player_attributes(pid, tid);
-CREATE INDEX i ON league_divisions(cid);
+CREATE INDEX i ON divisions(cid);
 CREATE INDEX j ON playoff_series(sid, series_round);
 CREATE INDEX k ON released_players_salaries(tid);
 CREATE INDEX l ON player_ratings(pid, season);

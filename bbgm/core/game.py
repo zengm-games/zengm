@@ -38,7 +38,7 @@ class Game:
         cid = [-1, -1]
         did = [-1, -1]
         for t in range(2):
-            r = g.dbex('SELECT ld.cid, ta.did FROM team_attributes as ta, league_divisions as ld WHERE ta.tid = :tid AND ta.season = :season AND ta.did = ld.did', tid=self.team[t]['id'], season=g.season)
+            r = g.dbex('SELECT ld.cid, ta.did FROM team_attributes as ta, divisions as ld WHERE ta.tid = :tid AND ta.season = :season AND ta.did = ld.did', tid=self.team[t]['id'], season=g.season)
             row = r.fetchone()
             cid[t] = row[0]
             did[t] = row[1]

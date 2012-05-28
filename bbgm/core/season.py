@@ -112,7 +112,7 @@ def new_phase(phase):
         # Set playoff matchups
         for cid in range(2):
             teams = []
-            r = g.dbex('SELECT ta.tid FROM team_attributes as ta, league_divisions as ld WHERE ld.did = ta.did AND ld.cid = :cid AND ta.season = :season ORDER BY 1.0*ta.won/(ta.won + ta.lost) DESC LIMIT 8', cid=cid, season=g.season)
+            r = g.dbex('SELECT ta.tid FROM team_attributes as ta, divisions as ld WHERE ld.did = ta.did AND ld.cid = :cid AND ta.season = :season ORDER BY 1.0*ta.won/(ta.won + ta.lost) DESC LIMIT 8', cid=cid, season=g.season)
             tids = [tid for tid, in r.fetchall()]
             g.dbex('UPDATE team_attributes SET playoffs = 1 WHERE season = :season AND tid IN :tids', season=g.season, tids=tids)
 
@@ -210,7 +210,7 @@ def new_schedule():
     conference matchup distributions.
     """
     teams = []
-    r = g.dbex('SELECT tid, did, (SELECT cid FROM league_divisions as ld WHERE ld.did = ta.did) FROM team_attributes as ta WHERE season = :season', season=g.season)
+    r = g.dbex('SELECT tid, did, (SELECT cid FROM divisions as ld WHERE ld.did = ta.did) FROM team_attributes as ta WHERE season = :season', season=g.season)
     for row in r.fetchall():
         teams.append({'tid': row[0], 'did': row[1], 'cid': row[2], 'home_games': 0, 'away_games': 0})
     tids = []  # tid_home, tid_away
@@ -351,9 +351,9 @@ def awards():
     g.dbex('CREATE TEMPORARY TABLE awards_avg (pid INTEGER PRIMARY KEY, name VARCHAR(255), tid INTEGER, abbreviation VARCHAR(3), draft_year INTEGER, games_played INTEGER, games_started INTEGER, mpg FLOAT, ppg FLOAT, rpg FLOAT, apg FLOAT, bpg FLOAT, spg FLOAT)')
     g.dbex('INSERT INTO awards_avg (pid, name, tid, abbreviation, draft_year, games_played, games_started, mpg, ppg, rpg, apg, bpg, spg) (SELECT pa.pid, pa.name, pa.tid, ta.abbreviation, pa.draft_year, SUM(ps.min>0) AS games_played, SUM(ps.gs) AS games_started, AVG(ps.min) AS mpg, AVG(ps.pts) AS ppg, AVG(ps.orb+ps.drb) AS rpg, AVG(ps.ast) AS apg, AVG(ps.blk) AS bpg, AVG(ps.stl) AS spg FROM player_attributes as pa, player_stats as ps, team_attributes as ta WHERE pa.pid = ps.pid AND ps.season = :season AND ps.playoffs = 0 AND ta.tid = pa.tid AND ta.season = ps.season GROUP BY ps.pid)', season=g.season)
 
-    r = g.dbex('SELECT tid, abbreviation, region, name, won, lost FROM team_attributes AS ta WHERE season = :season AND (SELECT cid FROM league_divisions AS ld WHERE ld.did = ta.did) = 0 ORDER BY 1.0*won/(won + lost) DESC', season=g.season)
+    r = g.dbex('SELECT tid, abbreviation, region, name, won, lost FROM team_attributes AS ta WHERE season = :season AND (SELECT cid FROM divisions AS ld WHERE ld.did = ta.did) = 0 ORDER BY 1.0*won/(won + lost) DESC', season=g.season)
     bre = r.fetchone()
-    r = g.dbex('SELECT tid, abbreviation, region, name, won, lost FROM team_attributes AS ta WHERE season = :season AND (SELECT cid FROM league_divisions AS ld WHERE ld.did = ta.did) = 1 ORDER BY 1.0*won/(won + lost) DESC', season=g.season)
+    r = g.dbex('SELECT tid, abbreviation, region, name, won, lost FROM team_attributes AS ta WHERE season = :season AND (SELECT cid FROM divisions AS ld WHERE ld.did = ta.did) = 1 ORDER BY 1.0*won/(won + lost) DESC', season=g.season)
     brw = r.fetchone()
 
     r = g.dbex('SELECT pid, name, tid, abbreviation, ppg, rpg, apg FROM awards_avg ORDER BY (0.75 * ppg) + apg + rpg DESC')

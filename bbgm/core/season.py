@@ -316,18 +316,18 @@ def new_schedule_playoffs_day():
 
         # Who won?
         winners = {}
-        r = g.dbex('SELECT series_id, tid_home, tid_away, seed_home, seed_away, won_home, won_away FROM playoff_series WHERE series_round = :series_round AND season = :season ORDER BY series_id ASC', series_round=current_round, season=g.season)
+        r = g.dbex('SELECT sid, tid_home, tid_away, seed_home, seed_away, won_home, won_away FROM playoff_series WHERE series_round = :series_round AND season = :season ORDER BY sid ASC', series_round=current_round, season=g.season)
         for row in r.fetchall():
-            series_id, tid_home, tid_away, seed_home, seed_away, won_home, won_away = row
+            sid, tid_home, tid_away, seed_home, seed_away, won_home, won_away = row
             if won_home == 4:
-                winners[series_id] = [tid_home, seed_home]
+                winners[sid] = [tid_home, seed_home]
             else:
-                winners[series_id] = [tid_away, seed_away]
+                winners[sid] = [tid_away, seed_away]
             # Record user's team as conference and league champion
             if current_round == 3:
-                g.dbex('UPDATE team_attributes SET won_conference = 1 WHERE season = :season AND tid = :tid', season=g.season, tid=winners[series_id][0])
+                g.dbex('UPDATE team_attributes SET won_conference = 1 WHERE season = :season AND tid = :tid', season=g.season, tid=winners[sid][0])
             elif current_round == 4:
-                g.dbex('UPDATE team_attributes SET won_championship = 1 WHERE season = :season AND tid = :tid', season=g.season, tid=winners[series_id][0])
+                g.dbex('UPDATE team_attributes SET won_championship = 1 WHERE season = :season AND tid = :tid', season=g.season, tid=winners[sid][0])
 
         # Are the whole playoffs over?
         if current_round == 4:
@@ -336,8 +336,8 @@ def new_schedule_playoffs_day():
         # Add a new round to the database
         current_round += 1
         query = ('INSERT INTO playoff_series (series_round, season, tid_home, tid_away, seed_home, seed_away, won_home, won_away) VALUES (:series_round, :season, :tid_home, :tid_away, :seed_home, :seed_away, 0, 0)')
-        series_ids = winners.keys()
-        for i in range(min(series_ids), max(series_ids), 2):  # Go through winners by 2
+        sids = winners.keys()
+        for i in range(min(sids), max(sids), 2):  # Go through winners by 2
             if winners[i][1] < winners[i + 1][1]:  # Which team is the home team?
                 g.dbex(query, series_round=current_round, season=g.season, tid_home=winners[i][0], tid_away=winners[i + 1][0], seed_home=winners[i][1], seed_away=winners[i + 1][1])
             else:
@@ -349,7 +349,7 @@ def awards():
     """Computes the awards at the end of a season."""
     # Cache averages
     g.dbex('CREATE TEMPORARY TABLE awards_avg (pid INTEGER PRIMARY KEY, name VARCHAR(255), tid INTEGER, abbreviation VARCHAR(3), draft_year INTEGER, games_played INTEGER, games_started INTEGER, mpg FLOAT, ppg FLOAT, rpg FLOAT, apg FLOAT, bpg FLOAT, spg FLOAT)')
-    g.dbex('INSERT INTO awards_avg (pid, name, tid, abbreviation, draft_year, games_played, games_started, mpg, ppg, rpg, apg, bpg, spg) (SELECT pa.pid, pa.name, pa.tid, ta.abbreviation, pa.draft_year, SUM(ps.min>0) AS games_played, SUM(ps.starter) AS games_started, AVG(ps.min) AS mpg, AVG(ps.pts) AS ppg, AVG(ps.orb+ps.drb) AS rpg, AVG(ps.ast) AS apg, AVG(ps.blk) AS bpg, AVG(ps.stl) AS spg FROM player_attributes as pa, player_stats as ps, team_attributes as ta WHERE pa.pid = ps.pid AND ps.season = :season AND ps.playoffs = 0 AND ta.tid = pa.tid AND ta.season = ps.season GROUP BY ps.pid)', season=g.season)
+    g.dbex('INSERT INTO awards_avg (pid, name, tid, abbreviation, draft_year, games_played, games_started, mpg, ppg, rpg, apg, bpg, spg) (SELECT pa.pid, pa.name, pa.tid, ta.abbreviation, pa.draft_year, SUM(ps.min>0) AS games_played, SUM(ps.gs) AS games_started, AVG(ps.min) AS mpg, AVG(ps.pts) AS ppg, AVG(ps.orb+ps.drb) AS rpg, AVG(ps.ast) AS apg, AVG(ps.blk) AS bpg, AVG(ps.stl) AS spg FROM player_attributes as pa, player_stats as ps, team_attributes as ta WHERE pa.pid = ps.pid AND ps.season = :season AND ps.playoffs = 0 AND ta.tid = pa.tid AND ta.season = ps.season GROUP BY ps.pid)', season=g.season)
 
     r = g.dbex('SELECT tid, abbreviation, region, name, won, lost FROM team_attributes AS ta WHERE season = :season AND (SELECT cid FROM league_divisions AS ld WHERE ld.did = ta.did) = 0 ORDER BY 1.0*won/(won + lost) DESC', season=g.season)
     bre = r.fetchone()

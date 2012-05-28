@@ -105,7 +105,7 @@ $(document).ready(function() {
 
   {% if tid == g.user_tid and view_season == g.season %}
     <p>You currently have {% if num_roster_spots == 1 %}1 empty roster spot{% else %}{{ num_roster_spots }} empty roster spots{% endif %}.</p>
-    <p>Drag and drop row handles to move players between the starting lineup (<span class="roster_starter">&#9632;</span>) and the bench (<span class="roster_bench">&#9632;</span>).</p>
+    <p>Drag and drop row handles to move players between the starting lineup (<span class="roster_gs">&#9632;</span>) and the bench (<span class="roster_bench">&#9632;</span>).</p>
     <p><button class="btn" id="auto_sort_roster">Auto sort roster</button></p>
   {% endif %}
   <p>
@@ -115,7 +115,7 @@ $(document).ready(function() {
   </thead>
   <tbody>
     {% for player in players %}
-      <tr id="roster_{{ player.pid }}">{% if tid == g.user_tid and view_season == g.season %}<td class="{% if loop.index <= 5 %}btn-primary starter{% else %}btn-info bench{% endif %}"></td>{% endif %}<td><a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a></td><td>{{ player.position }}</td><td>{{ player.age }}</td><td>{{ player.overall }}</td><td>{{ player.potential }}</td>{% if view_season == g.season %}<td>${{ player.contract_amount|float|round(1) }}M through {{ player.contract_expiration }}</td>{% endif %}<td>{{ player.min|float|round(1) }}</td><td>{{ player.pts|float|round(1) }}</td><td>{{ player.rebounds|float|round(1) }}</td><td>{{ player.ast|float|round(1) }}</td>{% if tid == g.user_tid and view_season == g.season %}<td><button class="btn btn-mini" data-action="release" data-player-id="{{ player.pid }}" data-player-name="{{ player.name }}" data-contract-expiration="{{ player.contract_expiration }}">Release</button></td><td><button class="btn btn-mini" data-action="buy_out" data-player-id="{{ player.pid }}" data-player-name="{{ player.name }}" data-cash-owed="{{ player.cash_owed|float|round(1) }}">Buy out</button></td>{% elif view_season == g.season %}<td><button class="btn btn-mini" data-action="trade_for" data-player-id="{{ player.pid }}">Trade for</button></td>{% endif %}</tr>
+      <tr id="roster_{{ player.pid }}">{% if tid == g.user_tid and view_season == g.season %}<td class="{% if loop.index <= 5 %}btn-primary gs{% else %}btn-info bench{% endif %}"></td>{% endif %}<td><a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a></td><td>{{ player.position }}</td><td>{{ player.age }}</td><td>{{ player.overall }}</td><td>{{ player.potential }}</td>{% if view_season == g.season %}<td>${{ player.contract_amount|float|round(1) }}M through {{ player.contract_expiration }}</td>{% endif %}<td>{{ player.min|float|round(1) }}</td><td>{{ player.pts|float|round(1) }}</td><td>{{ player.rebounds|float|round(1) }}</td><td>{{ player.ast|float|round(1) }}</td>{% if tid == g.user_tid and view_season == g.season %}<td><button class="btn btn-mini" data-action="release" data-player-id="{{ player.pid }}" data-player-name="{{ player.name }}" data-contract-expiration="{{ player.contract_expiration }}">Release</button></td><td><button class="btn btn-mini" data-action="buy_out" data-player-id="{{ player.pid }}" data-player-name="{{ player.name }}" data-cash-owed="{{ player.cash_owed|float|round(1) }}">Buy out</button></td>{% elif view_season == g.season %}<td><button class="btn btn-mini" data-action="trade_for" data-player-id="{{ player.pid }}">Trade for</button></td>{% endif %}</tr>
     {% endfor %}
   </tbody>
   </table>

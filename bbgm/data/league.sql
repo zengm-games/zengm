@@ -92,7 +92,7 @@ tid INTEGER,
 gid INTEGER,
 season INTEGER,
 playoffs BOOLEAN,
-starter INTEGER,
+gs INTEGER,
 min INTEGER,
 fg INTEGER,
 fga INTEGER,
@@ -139,7 +139,7 @@ cost INTEGER,
 PRIMARY KEY (tid, gid));
 
 CREATE TABLE playoff_series (
-series_id INTEGER AUTO_INCREMENT,
+sid INTEGER AUTO_INCREMENT,
 series_round INTEGER,
 season INTEGER,
 tid_home INTEGER,
@@ -148,7 +148,7 @@ seed_home INTEGER,
 seed_away INTEGER,
 won_home INTEGER,
 won_away INTEGER,
-PRIMARY KEY (series_id));
+PRIMARY KEY (sid));
 
 CREATE TABLE draft_results (
 season INTEGER,
@@ -241,13 +241,13 @@ PRIMARY KEY (player_rank));
 CREATE INDEX a ON team_attributes(tid, season, did, region);
 CREATE INDEX b ON player_stats(pid, season, playoffs);
 CREATE INDEX c ON team_attributes(season, did, won, lost);
-CREATE INDEX d ON player_stats(pid, gid, tid, starter, min);
+CREATE INDEX d ON player_stats(pid, gid, tid, gs, min);
 CREATE INDEX e ON team_stats(tid, season);
 CREATE INDEX f ON team_stats(gid, tid);
 CREATE INDEX g ON player_ratings(pid, overall);
 CREATE INDEX h ON player_attributes(pid, tid);
 CREATE INDEX i ON league_divisions(cid);
-CREATE INDEX j ON playoff_series(series_id, series_round);
+CREATE INDEX j ON playoff_series(sid, series_round);
 CREATE INDEX k ON released_players_salaries(tid);
 CREATE INDEX l ON player_ratings(pid, season);
 

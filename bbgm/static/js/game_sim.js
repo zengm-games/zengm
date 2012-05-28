@@ -412,7 +412,7 @@ GameSim.prototype.pick_player = function(ratios, exempt) {
 GameSim.prototype.record_stat = function(t, p, s, amount) {
     amount = typeof amount !== 'undefined' ? amount : 1;
     this.team[t]['player'][p]['stat'][s] = this.team[t]['player'][p]['stat'][s] + amount;
-    if (s != 'starter' && s != 'court_time' && s != 'bench_time' && s != 'energy') {
+    if (s != 'gs' && s != 'court_time' && s != 'bench_time' && s != 'energy') {
         this.team[t]['stat'][s] = this.team[t]['stat'][s] + amount;
     }
 };

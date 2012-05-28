@@ -39,11 +39,11 @@ def generate_players():
     g.dbexmany('INSERT INTO player_ratings (%s) VALUES (%s)' % (', '.join(player_ratings[0].keys()), ', '.join([':' + key for key in player_ratings[0].keys()])), player_ratings)
 
     # Update roster positions (so next/prev buttons work in player dialog)
-    roster_pos = 1
+    roster_order = 1
     r = g.dbex('SELECT pr.pid FROM player_attributes as pa, player_ratings as pr WHERE pa.pid = pr.pid AND pa.tid = :tid AND pr.season = :season ORDER BY pr.overall + 2*pr.potential DESC', tid=c.PLAYER_UNDRAFTED, season=g.season)
     for pid, in r.fetchall():
-        g.dbex('UPDATE player_attributes SET roster_pos = :roster_pos WHERE pid = :pid', roster_pos=roster_pos, pid=pid)
-        roster_pos += 1
+        g.dbex('UPDATE player_attributes SET roster_order = :roster_order WHERE pid = :pid', roster_order=roster_order, pid=pid)
+        roster_order += 1
 
 def set_order():
     """Sets draft order based on winning percentage (no lottery)."""
@@ -87,10 +87,10 @@ def pick_player(tid, pid):
     # Draft player, update roster potision
     r = g.dbex('SELECT pa.name, pa.pos, pa.born_year, pr.overall, pr.potential FROM player_attributes AS pa, player_ratings AS pr WHERE pa.pid = pr.pid AND pa.tid = :tid AND pr.pid = :pid AND pr.season = :season', tid=c.PLAYER_UNDRAFTED, pid=pid, season=g.season)
     name, pos, born_year, overall, potential = r.fetchone()
-    r = g.dbex('SELECT MAX(roster_pos) + 1 FROM player_attributes WHERE tid = :tid', tid=tid)
-    roster_pos, = r.fetchone()
+    r = g.dbex('SELECT MAX(roster_order) + 1 FROM player_attributes WHERE tid = :tid', tid=tid)
+    roster_order, = r.fetchone()
 
-    g.dbex('UPDATE player_attributes SET tid = :tid, draft_year = :draft_year, draft_round = :draft_round, draft_pick = :draft_pick, draft_tid = :tid, roster_pos = :roster_pos WHERE pid = :pid', tid=tid, draft_year=g.season, draft_round=draft_round, draft_pick=pick, draft_tid=tid, roster_pos=roster_pos, pid=pid)
+    g.dbex('UPDATE player_attributes SET tid = :tid, draft_year = :draft_year, draft_round = :draft_round, draft_pick = :draft_pick, draft_tid = :tid, roster_order = :roster_order WHERE pid = :pid', tid=tid, draft_year=g.season, draft_round=draft_round, draft_pick=pick, draft_tid=tid, roster_order=roster_order, pid=pid)
     g.dbex('UPDATE draft_results SET pid = :pid, name = :name, pos = :pos, born_year = :born_year, overall = :overall, potential = :potential WHERE season = :season AND draft_round = :draft_round AND pick = :pick', pid=pid, name=name, pos=pos, born_year=born_year, overall=overall, potential=potential, season=g.season, draft_round=draft_round, pick=pick)
 
     # Contract

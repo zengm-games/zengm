@@ -46,9 +46,9 @@ def new_phase(phase):
             g.dbex('INSERT INTO team_attributes (tid, did, region, name, abbrev, cash, season) VALUES (:tid, :did, :region, :name, :abbrev, :cash, :season)', season=g.season, **row)
 
         # Create new rows in player_ratings, only for active players
-        r = g.dbex('SELECT pr.pid, season + 1 AS season, overall, pr.height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blk, stl, dribbling, passing, rebounding, potential FROM player_ratings AS pr, player_attributes AS pa WHERE pa.pid = pr.pid AND pr.season = :season AND pa.tid != :tid', season=g.season - 1, tid=c.PLAYER_RETIRED)
+        r = g.dbex('SELECT pr.pid, season + 1 AS season, overall, pr.height, strength, speed, jumping, end, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blk, stl, dribbling, passing, rebounding, potential FROM player_ratings AS pr, player_attributes AS pa WHERE pa.pid = pr.pid AND pr.season = :season AND pa.tid != :tid', season=g.season - 1, tid=c.PLAYER_RETIRED)
         for row in r.fetchall():
-            g.dbex('INSERT INTO player_ratings (pid, season, overall, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blk, stl, dribbling, passing, rebounding, potential) VALUES (:pid, :season, :overall, :height, :strength, :speed, :jumping, :endurance, :shooting_inside, :shooting_layups, :shooting_free_throws, :shooting_two_pointers, :shooting_three_pointers, :blk, :stl, :dribbling, :passing, :rebounding, :potential)', **row)
+            g.dbex('INSERT INTO player_ratings (pid, season, overall, height, strength, speed, jumping, end, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blk, stl, dribbling, passing, rebounding, potential) VALUES (:pid, :season, :overall, :height, :strength, :speed, :jumping, :end, :shooting_inside, :shooting_layups, :shooting_free_throws, :shooting_two_pointers, :shooting_three_pointers, :blk, :stl, :dribbling, :passing, :rebounding, :potential)', **row)
 
         # Age players
         pids = []

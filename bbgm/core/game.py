@@ -50,7 +50,7 @@ class Game:
     def write_stats(self):
         # Record who the starters are
         for t in range(2):
-            r = g.dbex('SELECT pid FROM player_attributes WHERE tid = :tid ORDER BY roster_pos ASC LIMIT 5', tid=self.team[t]['id'])
+            r = g.dbex('SELECT pid FROM player_attributes WHERE tid = :tid ORDER BY roster_order ASC LIMIT 5', tid=self.team[t]['id'])
             for starter_id, in r.fetchall():
                 for p in xrange(len(self.team[t]['player'])):
                     if self.team[t]['player'][p]['id'] == starter_id:
@@ -115,7 +115,7 @@ def team(tid):
     """
     t = {'id': tid, 'defense': 0, 'pace': 0, 'stat': {}, 'player': []}
 
-    r = g.dbex('SELECT pid FROM player_attributes WHERE tid = :tid ORDER BY roster_pos ASC', tid=tid)
+    r = g.dbex('SELECT pid FROM player_attributes WHERE tid = :tid ORDER BY roster_order ASC', tid=tid)
     for row in r.fetchall():
         t['player'].append(player(row[0]))
 
@@ -124,7 +124,7 @@ def team(tid):
     if n_players > 7:
         n_players = 7
 
-    # Would be better if these were scaled by average min played and endurance
+    # Would be better if these were scaled by average min played and end
     t['pace'] = sum([t['player'][i]['composite_rating']['pace'] for i in xrange(n_players)]) / 7
     t['defense'] = sum([t['player'][i]['composite_rating']['defense'] for i in xrange(n_players)]) / 7 # 0 to 0.5
     t['defense'] /= 4 # This gives the percentage pts subtracted from the other team's normal FG%
@@ -146,7 +146,7 @@ def player(pid):
     """
     p = {'id': pid, 'overall_rating': 0, 'stat': {}, 'composite_rating': {}}
 
-    r = g.dbex('SELECT overall, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, '
+    r = g.dbex('SELECT overall, height, strength, speed, jumping, end, shooting_inside, shooting_layups, '
             'shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blk, stl, dribbling, '
             'passing, rebounding FROM player_ratings WHERE pid = :pid AND season = :season', pid=p['id'], season=g.season)
     rating = r.fetchone()

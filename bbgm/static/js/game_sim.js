@@ -28,7 +28,7 @@
  *         float containing the team's pace, which is the mean number of
  *         possessions they like to have in a game), stat (a dict for
  *         storing team stats), and player (a list of dicts, one for each
- *         player on the team, ordered by roster_pos). Each player's
+ *         player on the team, ordered by roster_order). Each player's
  *         dict contains another four elements: id (player's unique ID
  *         number), overall_rating (overall rating, as stored in the DB),
  *         stat (a dict for storing player stats, similar to the one for
@@ -57,7 +57,7 @@ console.log(team1);
     this.team = [deepCopy(team1), deepCopy(team2)];
     this.num_possessions = parseInt(Math.round((this.team[0]['pace'] + this.team[1]['pace']) / 2 * gauss_random(1, 0.03)), 10);
 
-    // Starting lineups, which works because players are ordered by their roster_pos
+    // Starting lineups, which works because players are ordered by their roster_order
     this.players_on_court = [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]];
 
     this.subs_every_n = 5;  // How many possessions to wait before doing subs

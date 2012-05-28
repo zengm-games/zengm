@@ -42,7 +42,7 @@ pid INTEGER AUTO_INCREMENT,
 name VARCHAR(255),
 tid INTEGER,
 pos VARCHAR(2),
-roster_pos INTEGER,
+roster_order INTEGER,
 height INTEGER, -- inches
 weight INTEGER, -- pounds
 born_year INTEGER, -- YYYY for birth year
@@ -72,7 +72,7 @@ height INTEGER,
 strength INTEGER,
 speed INTEGER,
 jumping INTEGER,
-endurance INTEGER,
+end INTEGER,
 shooting_inside INTEGER,
 shooting_layups INTEGER,
 shooting_free_throws INTEGER,

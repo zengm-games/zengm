@@ -38,7 +38,7 @@ def roster_auto_sort(tid):
     """
     # Get roster
     players = []
-    r = g.dbex('SELECT pa.pid, pr.overall, pr.endurance FROM player_attributes as pa, player_ratings as pr WHERE pa.pid = pr.pid AND pa.tid = :tid AND pr.season = :season', tid=tid, season=g.season)
+    r = g.dbex('SELECT pa.pid, pr.overall, pr.end FROM player_attributes as pa, player_ratings as pr WHERE pa.pid = pr.pid AND pa.tid = :tid AND pr.season = :season', tid=tid, season=g.season)
     for row in r.fetchall():
         players.append([int(i) for i in list(row)])
 
@@ -46,10 +46,10 @@ def roster_auto_sort(tid):
     players.sort(cmp=lambda x, y: y[1] - x[1])
 
     # Update poss
-    roster_pos = 1
+    roster_order = 1
     for player in players:
-        g.dbex('UPDATE player_attributes SET roster_pos = :roster_pos WHERE pid = :pid', roster_pos=roster_pos, pid=player[0])
-        roster_pos += 1
+        g.dbex('UPDATE player_attributes SET roster_order = :roster_order WHERE pid = :pid', roster_order=roster_order, pid=player[0])
+        roster_order += 1
 
 def free_agents_auto_sign():
     """AI teams sign free agents."""

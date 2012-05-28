@@ -130,10 +130,10 @@ def accept(pid):
     if g.phase <= c.PHASE_AFTER_TRADE_DEADLINE:
         player_years -= 1
 
-    r = g.dbex('SELECT MAX(roster_pos) + 1 FROM player_attributes WHERE tid = :tid', tid = g.user_tid)
-    roster_pos, = r.fetchone()
+    r = g.dbex('SELECT MAX(roster_order) + 1 FROM player_attributes WHERE tid = :tid', tid = g.user_tid)
+    roster_order, = r.fetchone()
 
-    g.dbex('UPDATE player_attributes SET tid = :tid, contract_amount = :contract_amount, contract_expiration = :contract_expiration, roster_pos = :roster_pos WHERE pid = :pid', tid=g.user_tid, contract_amount=player_amount, contract_expiration=g.season + player_years, roster_pos=roster_pos, pid=pid)
+    g.dbex('UPDATE player_attributes SET tid = :tid, contract_amount = :contract_amount, contract_expiration = :contract_expiration, roster_order = :roster_order WHERE pid = :pid', tid=g.user_tid, contract_amount=player_amount, contract_expiration=g.season + player_years, roster_order=roster_order, pid=pid)
 
     g.dbex('DELETE FROM negotiation WHERE pid = :pid', pid = pid)
     lock.set_negotiation_in_progress(False)

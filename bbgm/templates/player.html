@@ -34,7 +34,7 @@ $(document).ready(function() {
           Strength: {{ ratings.strength }}<br />
           Speed: {{ ratings.speed }}<br />
           Jumping: {{ ratings.jumping }}<br />
-          Endurance: {{ ratings.endurance }}
+          Endurance: {{ ratings.end }}
         </div>
         <div class="span4">
           <strong>Shooting</strong><br/ >
@@ -90,7 +90,7 @@ $(document).ready(function() {
       </thead>
       <tbody>
         {% for season in seasons %}
-          <tr><td><a href="#">{{ season.season }}</a></td><td><a href="{{ url_for('roster', league_id=g.league_id, abbrev=season.abbrev) }}">{{ season.abbrev }}</a></td><td>{{ season.age }}</td><td>{{ season.overall }}</td><td>{{ season.potential }}</td><td>{{ season.height }}</td><td>{{ season.strength }}</td><td>{{ season.speed }}</td><td>{{ season.jumping }}</td><td>{{ season.endurance }}</td><td>{{ season.shooting_inside }}</td><td>{{ season.shooting_layups }}</td><td>{{ season.shooting_free_throws }}</td><td>{{ season.shooting_two_pointers }}</td><td>{{ season.shooting_three_pointers }}</td><td>{{ season.rating_blk }}</td><td>{{ season.rating_stl }}</td><td>{{ season.dribbling }}</td><td>{{ season.passing }}</td><td>{{ season.rebounding }}</td></tr>
+          <tr><td><a href="#">{{ season.season }}</a></td><td><a href="{{ url_for('roster', league_id=g.league_id, abbrev=season.abbrev) }}">{{ season.abbrev }}</a></td><td>{{ season.age }}</td><td>{{ season.overall }}</td><td>{{ season.potential }}</td><td>{{ season.height }}</td><td>{{ season.strength }}</td><td>{{ season.speed }}</td><td>{{ season.jumping }}</td><td>{{ season.end }}</td><td>{{ season.shooting_inside }}</td><td>{{ season.shooting_layups }}</td><td>{{ season.shooting_free_throws }}</td><td>{{ season.shooting_two_pointers }}</td><td>{{ season.shooting_three_pointers }}</td><td>{{ season.rating_blk }}</td><td>{{ season.rating_stl }}</td><td>{{ season.dribbling }}</td><td>{{ season.passing }}</td><td>{{ season.rebounding }}</td></tr>
         {% endfor %}
       </tbody>
       </table>

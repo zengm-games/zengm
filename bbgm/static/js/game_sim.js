@@ -438,7 +438,7 @@ if (typeof exports !== 'undefined') {
 }
 
 /**
- * Clones an object. Otherwise, passing the team objects and modifying them in
+ * Clones an object. Otherwise, pss the team objects and modifying them in
  * here will fuck up future simulations of the same team if a team plays more
  * than one game in a day. Taken from http://stackoverflow.com/a/3284324/786644
  */

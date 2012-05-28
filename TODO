@@ -14,7 +14,7 @@ database crap
     - upgrade player ratings
 - redo schema
   - separate dbs for leagues: what user permissions do i need, exactly? update README
-  - new column names
+  - new (shorter) column names
   - negotiation table should be negotiations
   - normalize (especially the drafted table)
   - get rid of INSERTS in .sql file, instead have data elsewhere

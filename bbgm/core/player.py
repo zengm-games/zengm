@@ -20,8 +20,8 @@ class Player:
         self.attribute = dict(r.fetchone())
 
     def save(self):
-        query = 'UPDATE player_ratings SET overall = :overall, height = :height, strength = :strength, speed = :speed, jumping = :jumping, end = :end, ins = :ins, dnk = :dnk, ft = :ft, fg = :fg, tp = :tp, blk = :blk, stl = :stl, dribbling = :dribbling, passing = :passing, rebounding = :rebounding, potential = :potential WHERE pid = :pid AND season = :season'
-        g.dbex(query, overall=self.overall_rating(), height=self.rating['height'], strength=self.rating['strength'], speed=self.rating['speed'], jumping=self.rating['jumping'], end=self.rating['end'], ins=self.rating['ins'], dnk=self.rating['dnk'], ft=self.rating['ft'], fg=self.rating['fg'], tp=self.rating['tp'], blk=self.rating['blk'], stl=self.rating['stl'], dribbling=self.rating['dribbling'], passing=self.rating['passing'], rebounding=self.rating['rebounding'], potential=self.rating['potential'], pid=self.id, season=g.season)
+        query = 'UPDATE player_ratings SET overall = :overall, height = :height, strength = :strength, spd = :spd, jmp = :jmp, end = :end, ins = :ins, dnk = :dnk, ft = :ft, fg = :fg, tp = :tp, blk = :blk, stl = :stl, drb = :drb, pss = :pss, reb = :reb, potential = :potential WHERE pid = :pid AND season = :season'
+        g.dbex(query, overall=self.overall_rating(), height=self.rating['height'], strength=self.rating['strength'], spd=self.rating['spd'], jmp=self.rating['jmp'], end=self.rating['end'], ins=self.rating['ins'], dnk=self.rating['dnk'], ft=self.rating['ft'], fg=self.rating['fg'], tp=self.rating['tp'], blk=self.rating['blk'], stl=self.rating['stl'], drb=self.rating['drb'], pss=self.rating['pss'], reb=self.rating['reb'], potential=self.rating['potential'], pid=self.id, season=g.season)
 
     def develop(self, years=1):
         # Make sure age is always defined
@@ -35,7 +35,7 @@ class Player:
             potential = fast_random.gauss(self.rating['potential'], 5)
             overall = self.overall_rating()
 
-            for key in ('strength', 'speed', 'jumping', 'end', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'dribbling', 'passing', 'rebounding'):
+            for key in ('strength', 'spd', 'jmp', 'end', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb'):
                 plus_minus = 28 - age
                 if plus_minus > 0:
                     if potential > overall:
@@ -62,7 +62,7 @@ class Player:
     def bonus(self, amount):
         """Add or subtract from all ratings"""
 
-        for key in ('strength', 'speed', 'jumping', 'end', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'dribbling', 'passing', 'rebounding', 'potential'):
+        for key in ('strength', 'spd', 'jmp', 'end', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb', 'potential'):
             self.rating[key] = self._limit_rating(self.rating[key] + amount)
 
     def _limit_rating(self, rating):
@@ -74,7 +74,7 @@ class Player:
             return int(rating)
 
     def overall_rating(self):
-        return (self.rating['height'] + self.rating['strength'] + self.rating['speed'] + self.rating['jumping'] + self.rating['end'] + self.rating['ins'] + self.rating['dnk'] + self.rating['ft'] + self.rating['fg'] + self.rating['tp'] + self.rating['blk'] + self.rating['stl'] + self.rating['dribbling'] + self.rating['passing'] + self.rating['rebounding']) / 15
+        return (self.rating['height'] + self.rating['strength'] + self.rating['spd'] + self.rating['jmp'] + self.rating['end'] + self.rating['ins'] + self.rating['dnk'] + self.rating['ft'] + self.rating['fg'] + self.rating['tp'] + self.rating['blk'] + self.rating['stl'] + self.rating['drb'] + self.rating['pss'] + self.rating['reb']) / 15
 
     def contract(self, randomize_expiration = False):
         # Limits on yearly contract amount, in $1000's
@@ -234,7 +234,7 @@ class GeneratePlayer(Player):
         ratings = map(self._limit_rating, ratings)
 
         i = 0
-        for key in ('height', 'strength', 'speed', 'jumping', 'end', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'dribbling', 'passing', 'rebounding'):
+        for key in ('height', 'strength', 'spd', 'jmp', 'end', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb'):
             self.rating[key] = ratings[i]
             i += 1
 
@@ -314,18 +314,18 @@ class GeneratePlayer(Player):
         c = False
 
         # Default position
-        if self.rating['dribbling'] >= 50:
+        if self.rating['drb'] >= 50:
             pos = 'GF'
         else:
             pos = 'F'
 
-        if self.rating['height'] <= 30 or self.rating['speed'] >= 85:
+        if self.rating['height'] <= 30 or self.rating['spd'] >= 85:
             g = True
-            if (self.rating['passing'] + self.rating['dribbling']) >= 100:
+            if (self.rating['pss'] + self.rating['drb']) >= 100:
                 pg = True
             if self.rating['height'] >= 30:
                 sg = True
-        if self.rating['height'] >= 50 and self.rating['height'] <= 65 and self.rating['speed'] >= 40:
+        if self.rating['height'] >= 50 and self.rating['height'] <= 65 and self.rating['spd'] >= 40:
             sf = True
         if self.rating['height'] >= 70:
             pf = True
@@ -351,7 +351,7 @@ class GeneratePlayer(Player):
         elif pg and sg:
             pos = 'G'
 
-        if pos is 'F' and self.rating['dribbling'] <= 20:
+        if pos is 'F' and self.rating['drb'] <= 20:
             pos = 'PF'
 
         return pos

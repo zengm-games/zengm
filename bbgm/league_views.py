@@ -507,6 +507,8 @@ def negotiation_list(player_id=None):
 @app.route('/<int:league_id>/negotiation/<int:player_id>', methods=['GET', 'POST'])
 @league_crap
 def negotiation(player_id):
+    # Any action requires a POST. GET will just view the status of the
+    # negotiation, if it exists
     if request.method == 'POST':
         if 'cancel' in request.form:
             contract_negotiation.cancel(player_id)
@@ -516,19 +518,22 @@ def negotiation(player_id):
             if error:
                 return render_all_or_json('league_error.html', {'error': error})
             return redirect_or_json('roster')
+        elif 'new' in request.form:
+            # If there is no active negotiation with this player_id, create it
+            r = g.dbex('SELECT 1 FROM negotiation WHERE player_id = :player_id', player_id=player_id)
+            if not r.rowcount:
+                error = contract_negotiation.new(player_id)
+                if error:
+                    return render_all_or_json('league_error.html', {'error': error})
         else:
+            # Make an offer to the player
             team_amount_new = int(float(request.form['team_amount']) * 1000)
             team_years_new = int(request.form['team_years'])
             contract_negotiation.offer(player_id, team_amount_new, team_years_new)
-    else:
-        # If there is no active negotiation with this player_id, create it
-        r = g.dbex('SELECT 1 FROM negotiation WHERE player_id = :player_id', player_id=player_id)
-        if not r.rowcount:
-            error = contract_negotiation.new(player_id)
-            if error:
-                return render_all_or_json('league_error.html', {'error': error})
 
     r = g.dbex('SELECT team_amount, team_years, player_amount, player_years, resigning FROM negotiation WHERE player_id = :player_id', player_id=player_id)
+    if r.rowcount == 0:
+        return render_all_or_json('league_error.html', {'error': 'No negotiation with player %d in progress.' % (player_id,)})
     team_amount, team_years, player_amount, player_years, resigning = r.fetchone()
 
     player_amount /= 1000.0

@@ -74,7 +74,6 @@ configuration in text file?
 
 contract negotiation view
 - bring back to either free agent view or resigning view after either accept or cancel
-- should require POST to start, like trade?
 
 dashboard: a bunch of boxes showing..
 - record

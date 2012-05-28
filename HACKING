@@ -27,3 +27,11 @@ http://www.python.org/dev/peps/pep-0008/ with the following exceptions:
 
 * Use Google-style comments, because I like them better
   http://google-styleguide.googlecode.com/svn/trunk/pyguide.html#Comments
+
+
+Basketball stuff
+----------------
+
+Abbreviations of stats should be done like basketball-reference.com stat pages.
+For instance, "defensive rebounds" is "drb". This might not be currently done
+consistently everywhere, but it should be in the future.

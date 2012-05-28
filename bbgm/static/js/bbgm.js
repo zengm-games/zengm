@@ -32,7 +32,7 @@ function play_button(url) {
 
             var results = [];
             for (var i=0; i<schedule.length; i++) {
-                gs = new GameSim(schedule[i]['game_id'], teams[schedule[i]['home_team_id']], teams[schedule[i]['away_team_id']]);
+                gs = new GameSim(schedule[i]['gid'], teams[schedule[i]['home_tid']], teams[schedule[i]['away_tid']]);
                 results.push(gs.run());
             }
             var result = parse_league_url(document.URL);

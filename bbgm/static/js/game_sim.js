@@ -51,8 +51,9 @@
  *             }
  *     team2: Same as team1, but for the away team.
  */
-function GameSim(game_id, team1, team2) {
-    this.id = game_id
+function GameSim(gid, team1, team2) {
+console.log(team1);
+    this.id = gid;
     this.team = [deepCopy(team1), deepCopy(team2)];
     this.num_possessions = parseInt(Math.round((this.team[0]['pace'] + this.team[1]['pace']) / 2 * gauss_random(1, 0.03)), 10);
 
@@ -73,7 +74,7 @@ function GameSim(game_id, team1, team2) {
  *     and the extraneous data (defense, pace, overall_rating,
  *     composite_rating) removed. In other words...
  *         {
- *             'game_id': 0,
+ *             'id': 0,
  *             'team': [
  *                 {
  *                     "id": 0,
@@ -123,7 +124,7 @@ GameSim.prototype.run = function() {
         }
     }
 
-    return {'game_id': this.id, 'team': this.team};
+    return {'gid': this.id, 'team': this.team};
 };
 
 
@@ -234,10 +235,10 @@ GameSim.prototype.is_free_throw = function(shooter) {
 
 GameSim.prototype.is_made_shot = function(shooter) {
     var p = this.players_on_court[this.o][shooter];
-    this.record_stat(this.o, p, 'field_goals_attempted');
+    this.record_stat(this.o, p, 'fga');
     // Three pointer or two pointer
     if (this.team[this.o]['player'][p]['composite_rating']['three_pointer_percentage'] > 0.25 && Math.random() < (0.5 * this.team[this.o]['player'][p]['composite_rating']['three_pointer_percentage'])) {
-        this.record_stat(this.o, p, 'three_pointers_attempted');
+        this.record_stat(this.o, p, 'tpa');
         var type = 3;
         var stat = 'three_pointer_percentage';
     }
@@ -301,9 +302,9 @@ GameSim.prototype.do_free_throw = function(shooter, amount) {
     this.do_foul(shooter);
     var p = this.players_on_court[this.o][shooter];
     for (var i = 0; i < amount; i++) {
-        this.record_stat(this.o, p, 'free_throws_attempted');
+        this.record_stat(this.o, p, 'fta');
         if (Math.random() < this.team[this.o]['player'][p]['composite_rating']['free_throw_percentage']) {
-            this.record_stat(this.o, p, 'free_throws_made');
+            this.record_stat(this.o, p, 'ft');
             this.record_stat(this.o, p, 'points');
         }
     }
@@ -316,9 +317,9 @@ GameSim.prototype.do_free_throw = function(shooter, amount) {
 GameSim.prototype.do_foul = function(shooter) {
     var ratios = this.rating_array('foul_ratio', this.d);
     var p = this.players_on_court[this.d][this.pick_player(ratios)];
-    this.record_stat(this.d, p, 'personal_fouls');
+    this.record_stat(this.d, p, 'pf');
     // Foul out
-    //if this.team[this.d]['player'][p]['stat']['personal_fouls'] >= 6 {
+    //if this.team[this.d]['player'][p]['stat']['pf'] >= 6 {
 };
 
 
@@ -330,10 +331,10 @@ GameSim.prototype.do_made_shot = function(shooter, type) {
         this.record_stat(this.o, p, 'assists');
     }
     var p = this.players_on_court[this.o][shooter];
-    this.record_stat(this.o, p, 'field_goals_made');
+    this.record_stat(this.o, p, 'fg');
     this.record_stat(this.o, p, 'points', 2);  // 2 points for 2's
     if (type == 3) {
-        this.record_stat(this.o, p, 'three_pointers_made');  // Extra point for 3's
+        this.record_stat(this.o, p, 'tp');  // Extra point for 3's
         this.record_stat(this.o, p, 'points');
     }
 };
@@ -344,12 +345,12 @@ GameSim.prototype.do_rebound = function() {
     if (Math.random() < 0.8) {
         var ratios = this.rating_array('rebound_ratio', this.d);
         var p = this.players_on_court[this.d][this.pick_player(ratios)];
-        this.record_stat(this.d, p, 'defensive_rebounds');
+        this.record_stat(this.d, p, 'drb');
     }
     else {
         var ratios = this.rating_array('rebound_ratio', this.o);
         var p = this.players_on_court[this.o][this.pick_player(ratios)];
-        this.record_stat(this.o, p, 'offensive_rebounds');
+        this.record_stat(this.o, p, 'orb');
     }
 };
 

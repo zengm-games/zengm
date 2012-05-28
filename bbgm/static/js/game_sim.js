@@ -305,7 +305,7 @@ GameSim.prototype.do_free_throw = function(shooter, amount) {
         this.record_stat(this.o, p, 'fta');
         if (Math.random() < this.team[this.o]['player'][p]['composite_rating']['free_throw_percentage']) {
             this.record_stat(this.o, p, 'ft');
-            this.record_stat(this.o, p, 'points');
+            this.record_stat(this.o, p, 'pts');
         }
     }
 };
@@ -332,10 +332,10 @@ GameSim.prototype.do_made_shot = function(shooter, type) {
     }
     var p = this.players_on_court[this.o][shooter];
     this.record_stat(this.o, p, 'fg');
-    this.record_stat(this.o, p, 'points', 2);  // 2 points for 2's
+    this.record_stat(this.o, p, 'pts', 2);  // 2 points for 2's
     if (type == 3) {
         this.record_stat(this.o, p, 'tp');  // Extra point for 3's
-        this.record_stat(this.o, p, 'points');
+        this.record_stat(this.o, p, 'pts');
     }
 };
 

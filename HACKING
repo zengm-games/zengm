@@ -34,4 +34,7 @@ Basketball stuff
 
 Abbreviations of stats should be done like basketball-reference.com stat pages.
 For instance, "defensive rebounds" is "drb". This might not be currently done
-consistently everywhere, but it should be in the future.
+consistently everywhere, but it should be in the future. This command is useful
+for renaming things (although USE WITH CARE!):
+
+    grep -rl --include={*.py,*.html,*.sql,game_sim.js} '' . | xargs sed -i 's/old/new/g'

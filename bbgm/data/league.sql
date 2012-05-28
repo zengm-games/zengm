@@ -45,7 +45,7 @@ position VARCHAR(2),
 roster_position INTEGER,
 height INTEGER, -- inches
 weight INTEGER, -- pounds
-born_date INTEGER, -- YYYY for birth year
+born_year INTEGER, -- YYYY for birth year
 born_location VARCHAR(255), -- City, State/Country
 college VARCHAR(255), -- or HS or country, if applicable
 draft_year INTEGER,
@@ -107,7 +107,7 @@ tov INTEGER,
 stl INTEGER,
 blk INTEGER,
 pf INTEGER,
-points INTEGER,
+pts INTEGER,
 PRIMARY KEY (pid, gid));
 
 CREATE TABLE team_stats (
@@ -132,7 +132,7 @@ tov INTEGER,
 stl INTEGER,
 blk INTEGER,
 pf INTEGER,
-points INTEGER,
+pts INTEGER,
 opp_pts INTEGER,
 attendance INTEGER,
 cost INTEGER,
@@ -159,7 +159,7 @@ abbreviation VARCHAR(3),
 pid INTEGER,
 name VARCHAR(255),
 position VARCHAR(2),
-born_date INTEGER, -- YYYY for birth year
+born_year INTEGER, -- YYYY for birth year
 overall INTEGER,
 potential INTEGER,
 PRIMARY KEY (season, draft_round, pick));

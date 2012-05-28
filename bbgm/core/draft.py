@@ -85,13 +85,13 @@ def pick_player(tid, pid):
         return
 
     # Draft player, update roster potision
-    r = g.dbex('SELECT pa.name, pa.position, pa.born_date, pr.overall, pr.potential FROM player_attributes AS pa, player_ratings AS pr WHERE pa.pid = pr.pid AND pa.tid = :tid AND pr.pid = :pid AND pr.season = :season', tid=c.PLAYER_UNDRAFTED, pid=pid, season=g.season)
-    name, position, born_date, overall, potential = r.fetchone()
+    r = g.dbex('SELECT pa.name, pa.position, pa.born_year, pr.overall, pr.potential FROM player_attributes AS pa, player_ratings AS pr WHERE pa.pid = pr.pid AND pa.tid = :tid AND pr.pid = :pid AND pr.season = :season', tid=c.PLAYER_UNDRAFTED, pid=pid, season=g.season)
+    name, position, born_year, overall, potential = r.fetchone()
     r = g.dbex('SELECT MAX(roster_position) + 1 FROM player_attributes WHERE tid = :tid', tid=tid)
     roster_position, = r.fetchone()
 
     g.dbex('UPDATE player_attributes SET tid = :tid, draft_year = :draft_year, draft_round = :draft_round, draft_pick = :draft_pick, draft_tid = :tid, roster_position = :roster_position WHERE pid = :pid', tid=tid, draft_year=g.season, draft_round=draft_round, draft_pick=pick, draft_tid=tid, roster_position=roster_position, pid=pid)
-    g.dbex('UPDATE draft_results SET pid = :pid, name = :name, position = :position, born_date = :born_date, overall = :overall, potential = :potential WHERE season = :season AND draft_round = :draft_round AND pick = :pick', pid=pid, name=name, position=position, born_date=born_date, overall=overall, potential=potential, season=g.season, draft_round=draft_round, pick=pick)
+    g.dbex('UPDATE draft_results SET pid = :pid, name = :name, position = :position, born_year = :born_year, overall = :overall, potential = :potential WHERE season = :season AND draft_round = :draft_round AND pick = :pick', pid=pid, name=name, position=position, born_year=born_year, overall=overall, potential=potential, season=g.season, draft_round=draft_round, pick=pick)
 
     # Contract
     rookie_salaries = (5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500,

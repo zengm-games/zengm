@@ -8,7 +8,7 @@
   </thead>
   <tbody>
   {% for player in team.players %}
-    <tr{% if loop.index == 5 %} class="separator"{% endif %}><td><a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a></td><td>{{ player.position }}</td><td>{{ player.minutes|round|int }}</td><td>{{ player.fg }}-{{ player.fga}}</td><td>{{ player.tp }}-{{ player.tpa }}</td><td>{{ player.ft }}-{{ player.fta}}</td><td>{{ player.orb }}</td><td>{{ player.rebounds }}</td><td> {{player.ast }}</td><td>{{ player.tov }}</td><td>{{ player.stl }}</td><td>{{ player.blk }}</td><td>{{ player.pf }}</td><td>{{ player.points }}</td></tr>
+    <tr{% if loop.index == 5 %} class="separator"{% endif %}><td><a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a></td><td>{{ player.position }}</td><td>{{ player.min|round|int }}</td><td>{{ player.fg }}-{{ player.fga}}</td><td>{{ player.tp }}-{{ player.tpa }}</td><td>{{ player.ft }}-{{ player.fta}}</td><td>{{ player.orb }}</td><td>{{ player.rebounds }}</td><td> {{player.ast }}</td><td>{{ player.tov }}</td><td>{{ player.stl }}</td><td>{{ player.blk }}</td><td>{{ player.pf }}</td><td>{{ player.points }}</td></tr>
   {% endfor %}
   </tbody>
   <tfoot>

@@ -93,7 +93,7 @@ gid INTEGER,
 season INTEGER,
 is_playoffs BOOLEAN,
 starter INTEGER,
-minutes INTEGER,
+min INTEGER,
 fg INTEGER,
 fga INTEGER,
 tp INTEGER,
@@ -118,7 +118,7 @@ season INTEGER,
 is_playoffs BOOLEAN,
 won BOOLEAN,
 home BOOLEAN,
-minutes INTEGER,
+min INTEGER,
 fg INTEGER,
 fga INTEGER,
 tp INTEGER,
@@ -241,7 +241,7 @@ PRIMARY KEY (player_rank));
 CREATE INDEX a ON team_attributes(tid, season, did, region);
 CREATE INDEX b ON player_stats(pid, season, is_playoffs);
 CREATE INDEX c ON team_attributes(season, did, won, lost);
-CREATE INDEX d ON player_stats(pid, gid, tid, starter, minutes);
+CREATE INDEX d ON player_stats(pid, gid, tid, starter, min);
 CREATE INDEX e ON team_stats(tid, season);
 CREATE INDEX f ON team_stats(gid, tid);
 CREATE INDEX g ON player_ratings(pid, overall);

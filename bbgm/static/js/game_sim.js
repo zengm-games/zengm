@@ -165,7 +165,7 @@ GameSim.prototype.update_players_on_court = function() {
         // Update minutes (overall, court, and bench)
         for (var p = 0; p < this.team[t]['player'].length; p++) {
             if (this.players_on_court[t].indexOf(p) >= 0) {
-                this.record_stat(t, p, 'minutes', dt);
+                this.record_stat(t, p, 'min', dt);
                 this.record_stat(t, p, 'court_time', dt);
                 this.record_stat(t, p, 'energy', -dt * 0.01);
                 if (this.team[t]['player'][p]['stat']['energy'] < 0) {

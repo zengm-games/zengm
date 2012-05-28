@@ -5,14 +5,14 @@
     <h5>Trade Away:</h5>
     <ul>
       {% for player in summary.trade[0] %}
-        <li><a href="{{ url_for('player_', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a> (${{ player.contract_amount|float|round(1) }}M)</li>
+        <li><a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a> (${{ player.contract_amount|float|round(1) }}M)</li>
       {% endfor %}
       <li>${{ summary.total[0]|float|round(1) }}M Total</li>
     </ul>
     <h5>Receive:</h5>
     <ul>
       {% for player in summary.trade[1] %}
-        <li><a href="{{ url_for('player_', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a> (${{ player.contract_amount|float|round(1) }}M)</li>
+        <li><a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a> (${{ player.contract_amount|float|round(1) }}M)</li>
       {% endfor %}
       <li>${{ summary.total[1]|float|round(1) }}M Total</li>
     </ul>
@@ -24,14 +24,14 @@
     <h5>Trade Away:</h5>
     <ul>
       {% for player in summary.trade[1] %}
-        <li><a href="{{ url_for('player_', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a> (${{ player.contract_amount|float|round(1) }}M)</li>
+        <li><a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a> (${{ player.contract_amount|float|round(1) }}M)</li>
       {% endfor %}
       <li>${{ summary.total[1]|float|round(1) }}M Total</li>
     </ul>
     <h5>Receive:</h5>
     <ul>
       {% for player in summary.trade[0] %}
-        <li><a href="{{ url_for('player_', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a> (${{ player.contract_amount|float|round(1) }}M)</li>
+        <li><a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a> (${{ player.contract_amount|float|round(1) }}M)</li>
       {% endfor %}
       <li>${{ summary.total[0]|float|round(1) }}M Total</li>
     </ul>

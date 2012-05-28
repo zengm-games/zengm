@@ -21,13 +21,13 @@ $(document).ready(function() {
 
   bbgm_datatable_singlepage($('#roster_user'), 5, [
     {% for player in roster_user %}
-      [ '<input name="player_ids_user" type="checkbox" value="{{ player.player_id }}"{% if player.player_id in player_ids_user %} checked="checked"{% endif %}>', '<a href="{{ url_for('player_', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a>', '{{ player.position }}', '{{ player.age }}', '{{ player.overall }}', '{{ player.potential }}', '${{ player.contract_amount|float|round(1) }}M through {{ player.contract_expiration }}', '{{ player.min|float|round(1) }}', '{{ player.pts|float|round(1) }}', '{{ player.reb|float|round(1) }}', '{{ player.ast|float|round(1) }}' ],
+      [ '<input name="pids_user" type="checkbox" value="{{ player.pid }}"{% if player.pid in pids_user %} checked="checked"{% endif %}>', '<a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a>', '{{ player.position }}', '{{ player.age }}', '{{ player.overall }}', '{{ player.potential }}', '${{ player.contract_amount|float|round(1) }}M through {{ player.contract_expiration }}', '{{ player.min|float|round(1) }}', '{{ player.pts|float|round(1) }}', '{{ player.reb|float|round(1) }}', '{{ player.ast|float|round(1) }}' ],
     {% endfor %}
   ]);
 
   bbgm_datatable_singlepage($('#roster_other'), 5, [
     {% for player in roster_other %}
-      [ '<input name="player_ids_other" type="checkbox" value="{{ player.player_id }}"{% if player.player_id in player_ids_other %} checked="checked"{% endif %}>', '<a href="{{ url_for('player_', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a>', '{{ player.position }}', '{{ player.age }}', '{{ player.overall }}', '{{ player.potential }}', '${{ player.contract_amount|float|round(1) }}M through {{ player.contract_expiration }}', '{{ player.min|float|round(1) }}', '{{ player.pts|float|round(1) }}', '{{ player.reb|float|round(1) }}', '{{ player.ast|float|round(1) }}' ],
+      [ '<input name="pids_other" type="checkbox" value="{{ player.pid }}"{% if player.pid in pids_other %} checked="checked"{% endif %}>', '<a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a>', '{{ player.position }}', '{{ player.age }}', '{{ player.overall }}', '{{ player.potential }}', '${{ player.contract_amount|float|round(1) }}M through {{ player.contract_expiration }}', '{{ player.min|float|round(1) }}', '{{ player.pts|float|round(1) }}', '{{ player.reb|float|round(1) }}', '{{ player.ast|float|round(1) }}' ],
     {% endfor %}
   ]);
 
@@ -39,8 +39,8 @@ $(document).ready(function() {
       $('#trade_summary').html(data['summary']);
       for (var i=0; i<roster_checkboxes_user.length; i++) {
         var found = false;
-        for (var j=0; j<data['player_ids_user'].length; j++) {
-          if (roster_checkboxes_user[i].value == data['player_ids_user'][j]) {
+        for (var j=0; j<data['pids_user'].length; j++) {
+          if (roster_checkboxes_user[i].value == data['pids_user'][j]) {
             roster_checkboxes_user[i].checked = true;
             found = true;
             break;
@@ -66,7 +66,7 @@ $(document).ready(function() {
       <form id="rosters">
         <p><select id="trade_select_team" name="team" class="team form-inline">
         {% for team in teams %}
-          <option value="{{ team.abbreviation }}"{% if team.team_id == team_id_other %} selected="selected"{% endif %}>{{ team.region }} {{ team.name }}</option>
+          <option value="{{ team.abbreviation }}"{% if team.tid == tid_other %} selected="selected"{% endif %}>{{ team.region }} {{ team.name }}</option>
         {% endfor %}
         </select>
         <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="roster_other">

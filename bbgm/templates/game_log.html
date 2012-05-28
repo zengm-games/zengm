@@ -61,7 +61,7 @@
   <form action="{{ url_for('game_log', league_id=g.league_id) }}" method="GET" class="form-inline pull-right">
     <select id="game_log_select_abbreviation" name="team" class="team">
       {% for team in teams %}
-        <option value="{{ team.abbreviation }}"{% if team.team_id == team_id %} selected="selected"{% endif %}>{{ team.region }} {{ team.name }}</option>
+        <option value="{{ team.abbreviation }}"{% if team.tid == tid %} selected="selected"{% endif %}>{{ team.region }} {{ team.name }}</option>
       {% endfor %}
     </select>
     <select id="game_log_select_season" name="season" class="season">

@@ -11,17 +11,17 @@ from bbgm.util import fast_random
 import bbgm.util.const as c
 
 class Player:
-    def load(self, player_id):
-        self.id = player_id
+    def load(self, pid):
+        self.id = pid
 
-        r = g.dbex('SELECT * FROM player_ratings WHERE player_id = :player_id AND season = :season', player_id=player_id, season=g.season)
+        r = g.dbex('SELECT * FROM player_ratings WHERE pid = :pid AND season = :season', pid=pid, season=g.season)
         self.rating = dict(r.fetchone())
-        r = g.dbex('SELECT * FROM player_attributes WHERE player_id = :player_id', player_id=player_id)
+        r = g.dbex('SELECT * FROM player_attributes WHERE pid = :pid', pid=pid)
         self.attribute = dict(r.fetchone())
 
     def save(self):
-        query = 'UPDATE player_ratings SET overall = :overall, height = :height, strength = :strength, speed = :speed, jumping = :jumping, endurance = :endurance, shooting_inside = :shooting_inside, shooting_layups = :shooting_layups, shooting_free_throws = :shooting_free_throws, shooting_two_pointers = :shooting_two_pointers, shooting_three_pointers = :shooting_three_pointers, blocks = :blocks, steals = :steals, dribbling = :dribbling, passing = :passing, rebounding = :rebounding, potential = :potential WHERE player_id = :player_id AND season = :season'
-        g.dbex(query, overall=self.overall_rating(), height=self.rating['height'], strength=self.rating['strength'], speed=self.rating['speed'], jumping=self.rating['jumping'], endurance=self.rating['endurance'], shooting_inside=self.rating['shooting_inside'], shooting_layups=self.rating['shooting_layups'], shooting_free_throws=self.rating['shooting_free_throws'], shooting_two_pointers=self.rating['shooting_two_pointers'], shooting_three_pointers=self.rating['shooting_three_pointers'], blocks=self.rating['blocks'], steals=self.rating['steals'], dribbling=self.rating['dribbling'], passing=self.rating['passing'], rebounding=self.rating['rebounding'], potential=self.rating['potential'], player_id=self.id, season=g.season)
+        query = 'UPDATE player_ratings SET overall = :overall, height = :height, strength = :strength, speed = :speed, jumping = :jumping, endurance = :endurance, shooting_inside = :shooting_inside, shooting_layups = :shooting_layups, shooting_free_throws = :shooting_free_throws, shooting_two_pointers = :shooting_two_pointers, shooting_three_pointers = :shooting_three_pointers, blocks = :blocks, steals = :steals, dribbling = :dribbling, passing = :passing, rebounding = :rebounding, potential = :potential WHERE pid = :pid AND season = :season'
+        g.dbex(query, overall=self.overall_rating(), height=self.rating['height'], strength=self.rating['strength'], speed=self.rating['speed'], jumping=self.rating['jumping'], endurance=self.rating['endurance'], shooting_inside=self.rating['shooting_inside'], shooting_layups=self.rating['shooting_layups'], shooting_free_throws=self.rating['shooting_free_throws'], shooting_two_pointers=self.rating['shooting_two_pointers'], shooting_three_pointers=self.rating['shooting_three_pointers'], blocks=self.rating['blocks'], steals=self.rating['steals'], dribbling=self.rating['dribbling'], passing=self.rating['passing'], rebounding=self.rating['rebounding'], potential=self.rating['potential'], pid=self.id, season=g.season)
 
     def develop(self, years=1):
         # Make sure age is always defined
@@ -138,7 +138,7 @@ class Player:
         if g.phase > c.PHASE_AFTER_TRADE_DEADLINE:
             expiration += 1
 
-        g.dbex('UPDATE player_attributes SET team_id = :team_id, contract_amount = :contract_amount, contract_expiration = :contract_expiration, free_agent_times_asked = 0 WHERE player_id = :player_id', team_id=c.PLAYER_FREE_AGENT, contract_amount=amount, contract_expiration=expiration, player_id=self.id)
+        g.dbex('UPDATE player_attributes SET tid = :tid, contract_amount = :contract_amount, contract_expiration = :contract_expiration, free_agent_times_asked = 0 WHERE pid = :pid', tid=c.PLAYER_FREE_AGENT, contract_amount=amount, contract_expiration=expiration, pid=self.id)
 
     def release(self):
         """Release player.
@@ -148,9 +148,9 @@ class Player:
         """
 
         # Keep track of player salary even when he's off the team
-        r = g.dbex('SELECT contract_amount, contract_expiration, team_id FROM player_attributes WHERE player_id = :player_id', player_id=self.id)
-        contract_amount, contract_expiration, team_id = r.fetchone()
-        g.dbex('INSERT INTO released_players_salaries (player_id, team_id, contract_amount, contract_expiration) VALUES (:player_id, :team_id, :contract_amount, :contract_expiration)', player_id=self.id, team_id=team_id, contract_amount=contract_amount, contract_expiration=contract_expiration)
+        r = g.dbex('SELECT contract_amount, contract_expiration, tid FROM player_attributes WHERE pid = :pid', pid=self.id)
+        contract_amount, contract_expiration, tid = r.fetchone()
+        g.dbex('INSERT INTO released_players_salaries (pid, tid, contract_amount, contract_expiration) VALUES (:pid, :tid, :contract_amount, :contract_expiration)', pid=self.id, tid=tid, contract_amount=contract_amount, contract_expiration=contract_expiration)
 
         self.add_to_free_agents()
 
@@ -182,14 +182,14 @@ class GeneratePlayer(Player):
             self.nat_data.append(row)
         self.nat_max = 100
 
-    def new(self, player_id, team_id, age, profile, base_rating, potential, draft_year, player_nat=""):
-        self.id = player_id
+    def new(self, pid, tid, age, profile, base_rating, potential, draft_year, player_nat=""):
+        self.id = pid
 
         self.rating = {}
         self.rating['potential'] = potential
         self.attribute = {}
-        self.attribute['team_id'] = team_id
-        self.attribute['roster_position'] = player_id
+        self.attribute['tid'] = tid
+        self.attribute['roster_position'] = pid
         self.attribute['draft_year'] = draft_year
         self.generate_ratings(profile, base_rating)
         self.generate_attributes(age, player_nat)
@@ -276,7 +276,7 @@ class GeneratePlayer(Player):
         self.attribute['college'] = 0
         self.attribute['draft_round'] = 0
         self.attribute['draft_pick'] = 0
-        self.attribute['draft_team_id'] = 0
+        self.attribute['draft_tid'] = 0
         self.attribute['contract_amount'], self.attribute['contract_expiration'] = self.contract()
 
     def _name(self, nationality):
@@ -358,7 +358,7 @@ class GeneratePlayer(Player):
 
     def get_attributes(self):
         d = self.attribute
-        d['player_id'] = self.id
+        d['pid'] = self.id
         return d
 
     def get_ratings(self):
@@ -368,5 +368,5 @@ class GeneratePlayer(Player):
         else:
             d['season'] = g.season
         d['overall'] = self.overall_rating()
-        d['player_id'] = self.id
+        d['pid'] = self.id
         return d

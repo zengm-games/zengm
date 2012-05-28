@@ -8,7 +8,7 @@ from bbgm.core import play_menu, player, season
 from bbgm.util import roster_auto_sort
 import bbgm.util.const as c
 
-def new(team_id):
+def new(tid):
     # Add to main record
     g.dbex('INSERT INTO leagues (user_id) VALUES (:user_id)', user_id=session['user_id'])
 
@@ -32,7 +32,7 @@ def new(team_id):
     # Generate new players
     profiles = ['Point', 'Wing', 'Big', '']
     gp = player.GeneratePlayer()
-    player_id = 1
+    pid = 1
     player_attributes = []
     player_ratings = []
     for t in range(-1, 30):
@@ -49,7 +49,7 @@ def new(team_id):
 
             draft_year = g.starting_season - 1 - aging_years
 
-            gp.new(player_id, t, 19, profile, base_ratings[p], potentials[p], draft_year)
+            gp.new(pid, t, 19, profile, base_ratings[p], potentials[p], draft_year)
             gp.develop(aging_years)
             if p < 5:
                 gp.bonus(good_neutral_bad * random.randint(0, 20))
@@ -67,28 +67,28 @@ def new(team_id):
             player_attributes.append(gp.get_attributes())
             player_ratings.append(gp.get_ratings())
 
-            player_id += 1
+            pid += 1
     g.dbexmany('INSERT INTO player_attributes (%s) VALUES (%s)' % (', '.join(player_attributes[0].keys()), ', '.join([':' + key for key in player_attributes[0].keys()])), player_attributes)
     g.dbexmany('INSERT INTO player_ratings (%s) VALUES (%s)' % (', '.join(player_ratings[0].keys()), ', '.join([':' + key for key in player_ratings[0].keys()])), player_ratings)
 
     # Set and get global game attributes
-    g.dbex('UPDATE game_attributes SET team_id = :team_id', team_id=team_id)
-    r = g.dbex('SELECT team_id, season, phase, version FROM game_attributes LIMIT 1')
-    g.user_team_id, g.season, g.phase, g.version = r.fetchone()
+    g.dbex('UPDATE game_attributes SET tid = :tid', tid=tid)
+    r = g.dbex('SELECT tid, season, phase, version FROM game_attributes LIMIT 1')
+    g.user_tid, g.season, g.phase, g.version = r.fetchone()
 
     # Make schedule, start season
     season.new_phase(c.PHASE_REGULAR_SEASON)
     play_menu.set_status('Idle')
 
     # Auto sort player's roster (other teams will be done in season.new_phase(c.PHASE_REGULAR_SEASON))
-    roster_auto_sort(g.user_team_id)
+    roster_auto_sort(g.user_tid)
 
     # Default trade settings
-    if g.user_team_id == 0:
-        trade_team_id = 1
+    if g.user_tid == 0:
+        trade_tid = 1
     else:
-        trade_team_id = 0
-    g.dbex('INSERT INTO trade (team_id) VALUES (:team_id)', team_id=trade_team_id)
+        trade_tid = 0
+    g.dbex('INSERT INTO trade (tid) VALUES (:tid)', tid=trade_tid)
 
     # Switch back to the default non-league database
     g.dbex('COMMIT')

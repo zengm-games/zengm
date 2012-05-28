@@ -11,9 +11,9 @@ def index():
         leagues = []
         r = g.dbex('SELECT league_id FROM leagues WHERE user_id = :user_id ORDER BY league_id ASC', user_id=session['user_id'])
         for league_id, in r.fetchall():
-            r = g.dbex('SELECT team_id, season, pm_phase FROM bbgm_' + str(league_id) + '.game_attributes ORDER BY season DESC LIMIT 1')
-            user_team_id, season, pm_phase = r.fetchone()
-            r = g.dbex('SELECT CONCAT(region, " ", name) FROM bbgm_' + str(league_id) + '.team_attributes WHERE team_id = :team_id AND season = :season', team_id=user_team_id, season=season)
+            r = g.dbex('SELECT tid, season, pm_phase FROM bbgm_' + str(league_id) + '.game_attributes ORDER BY season DESC LIMIT 1')
+            user_tid, season, pm_phase = r.fetchone()
+            r = g.dbex('SELECT CONCAT(region, " ", name) FROM bbgm_' + str(league_id) + '.team_attributes WHERE tid = :tid AND season = :season', tid=user_tid, season=season)
             team, = r.fetchone()
             leagues.append({'league_id': league_id, 'pm_phase': pm_phase, 'team': team})
         return render_template('dashboard.html', leagues=leagues)
@@ -73,12 +73,12 @@ def logout():
 @login_required
 def new_league():
     if request.method == 'POST':
-        team_id = int(request.form['team_id'])
-        if team_id >= 0 and team_id <= 29:
-            league_id = league.new(team_id)
+        tid = int(request.form['tid'])
+        if tid >= 0 and tid <= 29:
+            league_id = league.new(tid)
             return redirect(url_for('league_dashboard', league_id=league_id))
 
-    r = g.dbex('SELECT team_id, region, name FROM teams ORDER BY team_id ASC')
+    r = g.dbex('SELECT tid, region, name FROM teams ORDER BY tid ASC')
     teams = r.fetchall()
     return render_template('new_league.html', teams=teams)
 

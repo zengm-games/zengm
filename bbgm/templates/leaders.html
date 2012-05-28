@@ -35,7 +35,7 @@
         </thead>
         <tbody>
           {% for player in category.data %}
-            <tr{% if player.abbreviation == user_abbreviation %} class="alert-info"{% endif %}><td>{{ loop.index }}. <a href="{{ url_for('player_', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a>, <a href="{{ url_for('roster', league_id=g.league_id, abbreviation=player.abbreviation) }}">{{ player.abbreviation }}</a></td><td>{{ player.stat|float|round(1) }}</tr>
+            <tr{% if player.abbreviation == user_abbreviation %} class="alert-info"{% endif %}><td>{{ loop.index }}. <a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a>, <a href="{{ url_for('roster', league_id=g.league_id, abbreviation=player.abbreviation) }}">{{ player.abbreviation }}</a></td><td>{{ player.stat|float|round(1) }}</tr>
           {% endfor %}
         </tbody>
         </table>

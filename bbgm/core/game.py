@@ -17,11 +17,11 @@ class Game:
         # Retrieve stats
         self.team = results['team']
         self.is_playoffs = is_playoffs
-        self.id = results['game_id']
+        self.id = results['gid']
         self.home = [True, False]
 
         # What is the attendance of the game?
-        r = g.dbex('SELECT won+lost, 1.0*won/(won + lost) FROM team_attributes WHERE season = :season AND (team_id = :team_id_home OR team_id = :team_id_away)', season=g.season, team_id_home=self.team[0]['id'], team_id_away=self.team[1]['id'])
+        r = g.dbex('SELECT won+lost, 1.0*won/(won + lost) FROM team_attributes WHERE season = :season AND (tid = :tid_home OR tid = :tid_away)', season=g.season, tid_home=self.team[0]['id'], tid_away=self.team[1]['id'])
         games_played, winp = r.fetchone()
         if games_played < 5:
             self.attendance = fast_random.gauss(22000 + games_played * 1000, 1000)
@@ -35,22 +35,22 @@ class Game:
         # Are the teams in the same conference/division?
         self.same_conference = False
         self.same_division = False
-        conference_id = [-1, -1]
-        division_id = [-1, -1]
+        cid = [-1, -1]
+        did = [-1, -1]
         for t in range(2):
-            r = g.dbex('SELECT ld.conference_id, ta.division_id FROM team_attributes as ta, league_divisions as ld WHERE ta.team_id = :team_id AND ta.season = :season AND ta.division_id = ld.division_id', team_id=self.team[t]['id'], season=g.season)
+            r = g.dbex('SELECT ld.cid, ta.did FROM team_attributes as ta, league_divisions as ld WHERE ta.tid = :tid AND ta.season = :season AND ta.did = ld.did', tid=self.team[t]['id'], season=g.season)
             row = r.fetchone()
-            conference_id[t] = row[0]
-            division_id[t] = row[1]
-        if conference_id[0] == conference_id[1]:
+            cid[t] = row[0]
+            did[t] = row[1]
+        if cid[0] == cid[1]:
             self.same_conference = True
-        if division_id[0] == division_id[1]:
+        if did[0] == did[1]:
             self.same_division = True
 
     def write_stats(self):
         # Record who the starters are
         for t in range(2):
-            r = g.dbex('SELECT player_id FROM player_attributes WHERE team_id = :team_id ORDER BY roster_position ASC LIMIT 5', team_id=self.team[t]['id'])
+            r = g.dbex('SELECT pid FROM player_attributes WHERE tid = :tid ORDER BY roster_position ASC LIMIT 5', tid=self.team[t]['id'])
             for starter_id, in r.fetchall():
                 for p in xrange(len(self.team[t]['player'])):
                     if self.team[t]['player'][p]['id'] == starter_id:
@@ -61,8 +61,8 @@ class Game:
             self.write_team_stats(t)
             params = []
             for p in xrange(len(self.team[t]['player'])):
-                params.append({'player_id': self.team[t]['player'][p]['id'], 'team_id': self.team[t]['id'], 'game_id': self.id, 'season': g.season, 'is_playoffs': self.is_playoffs, 'starter': self.team[t]['player'][p]['stat']['starter'], 'minutes': int(round(self.team[t]['player'][p]['stat']['minutes'])), 'field_goals_made': self.team[t]['player'][p]['stat']['field_goals_made'], 'field_goals_attempted': self.team[t]['player'][p]['stat']['field_goals_attempted'], 'three_pointers_made': self.team[t]['player'][p]['stat']['three_pointers_made'], 'three_pointers_attempted': self.team[t]['player'][p]['stat']['three_pointers_attempted'], 'free_throws_made': self.team[t]['player'][p]['stat']['free_throws_made'], 'free_throws_attempted': self.team[t]['player'][p]['stat']['free_throws_attempted'], 'offensive_rebounds': self.team[t]['player'][p]['stat']['offensive_rebounds'], 'defensive_rebounds': self.team[t]['player'][p]['stat']['defensive_rebounds'], 'assists': self.team[t]['player'][p]['stat']['assists'], 'turnovers': self.team[t]['player'][p]['stat']['turnovers'], 'steals': self.team[t]['player'][p]['stat']['steals'], 'blocks': self.team[t]['player'][p]['stat']['blocks'], 'personal_fouls': self.team[t]['player'][p]['stat']['personal_fouls'], 'points': self.team[t]['player'][p]['stat']['points']})
-            query = 'INSERT INTO player_stats (player_id, team_id, game_id, season, is_playoffs, starter, minutes, field_goals_made, field_goals_attempted, three_pointers_made, three_pointers_attempted, free_throws_made, free_throws_attempted, offensive_rebounds, defensive_rebounds, assists, turnovers, steals, blocks, personal_fouls, points) VALUES(:player_id, :team_id, :game_id, :season, :is_playoffs, :starter, :minutes, :field_goals_made, :field_goals_attempted, :three_pointers_made, :three_pointers_attempted, :free_throws_made, :free_throws_attempted, :offensive_rebounds, :defensive_rebounds, :assists, :turnovers, :steals, :blocks, :personal_fouls, :points)'
+                params.append({'pid': self.team[t]['player'][p]['id'], 'tid': self.team[t]['id'], 'gid': self.id, 'season': g.season, 'is_playoffs': self.is_playoffs, 'starter': self.team[t]['player'][p]['stat']['starter'], 'minutes': int(round(self.team[t]['player'][p]['stat']['minutes'])), 'field_goals_made': self.team[t]['player'][p]['stat']['field_goals_made'], 'field_goals_attempted': self.team[t]['player'][p]['stat']['field_goals_attempted'], 'three_pointers_made': self.team[t]['player'][p]['stat']['three_pointers_made'], 'three_pointers_attempted': self.team[t]['player'][p]['stat']['three_pointers_attempted'], 'free_throws_made': self.team[t]['player'][p]['stat']['free_throws_made'], 'free_throws_attempted': self.team[t]['player'][p]['stat']['free_throws_attempted'], 'offensive_rebounds': self.team[t]['player'][p]['stat']['offensive_rebounds'], 'defensive_rebounds': self.team[t]['player'][p]['stat']['defensive_rebounds'], 'assists': self.team[t]['player'][p]['stat']['assists'], 'turnovers': self.team[t]['player'][p]['stat']['turnovers'], 'steals': self.team[t]['player'][p]['stat']['steals'], 'blocks': self.team[t]['player'][p]['stat']['blocks'], 'personal_fouls': self.team[t]['player'][p]['stat']['personal_fouls'], 'points': self.team[t]['player'][p]['stat']['points']})
+            query = 'INSERT INTO player_stats (pid, tid, gid, season, is_playoffs, starter, minutes, field_goals_made, field_goals_attempted, three_pointers_made, three_pointers_attempted, free_throws_made, free_throws_attempted, offensive_rebounds, defensive_rebounds, assists, turnovers, steals, blocks, personal_fouls, points) VALUES(:pid, :tid, :gid, :season, :is_playoffs, :starter, :minutes, :field_goals_made, :field_goals_attempted, :three_pointers_made, :three_pointers_attempted, :free_throws_made, :free_throws_attempted, :offensive_rebounds, :defensive_rebounds, :assists, :turnovers, :steals, :blocks, :personal_fouls, :points)'
             g.dbexmany(query, params)
 
     def write_team_stats(self, t):
@@ -73,49 +73,49 @@ class Game:
         if self.team[t]['stat']['points'] > self.team[t2]['stat']['points']:
             won = True
             if self.is_playoffs and t == 0:
-                g.dbex('UPDATE playoff_series SET won_home = won_home + 1 WHERE team_id_home = :team_id_home AND team_id_away = :team_id_away AND season = :season', team_id_home=self.team[t]['id'], team_id_away=self.team[t2]['id'], season=g.season)
+                g.dbex('UPDATE playoff_series SET won_home = won_home + 1 WHERE tid_home = :tid_home AND tid_away = :tid_away AND season = :season', tid_home=self.team[t]['id'], tid_away=self.team[t2]['id'], season=g.season)
             elif self.is_playoffs:
-                g.dbex('UPDATE playoff_series SET won_away = won_away + 1 WHERE team_id_home = :team_id_home AND team_id_away = :team_id_away AND season = :season', team_id_home=self.team[t2]['id'], team_id_away=self.team[t]['id'], season=g.season)
+                g.dbex('UPDATE playoff_series SET won_away = won_away + 1 WHERE tid_home = :tid_home AND tid_away = :tid_away AND season = :season', tid_home=self.team[t2]['id'], tid_away=self.team[t]['id'], season=g.season)
         else:
             won = False
 
         # Only pay player salaries for regular season games.
         if not self.is_playoffs:
-            r = g.dbex('SELECT SUM(contract_amount) * 1000 / 82 FROM released_players_salaries WHERE team_id = :team_id', team_id=self.team[t]['id'])
+            r = g.dbex('SELECT SUM(contract_amount) * 1000 / 82 FROM released_players_salaries WHERE tid = :tid', tid=self.team[t]['id'])
             cost_released, = r.fetchone()
-            r = g.dbex('SELECT SUM(contract_amount) * 1000 / 82 FROM player_attributes WHERE team_id = :team_id', team_id=self.team[t]['id'])
+            r = g.dbex('SELECT SUM(contract_amount) * 1000 / 82 FROM player_attributes WHERE tid = :tid', tid=self.team[t]['id'])
             cost, = r.fetchone()
             if cost_released:
                 cost += cost_released
         else:
             cost = 0
-        g.dbex('UPDATE team_attributes SET cash = cash + :revenue - :cost WHERE season = :season AND team_id = :team_id', revenue=g.ticket_price * self.attendance, cost=cost, season=g.season, team_id=self.team[t]['id'])
+        g.dbex('UPDATE team_attributes SET cash = cash + :revenue - :cost WHERE season = :season AND tid = :tid', revenue=g.ticket_price * self.attendance, cost=cost, season=g.season, tid=self.team[t]['id'])
 
-        query = 'INSERT INTO team_stats (team_id, opponent_team_id, game_id, season, is_playoffs, won, home, minutes, field_goals_made, field_goals_attempted, three_pointers_made, three_pointers_attempted, free_throws_made, free_throws_attempted, offensive_rebounds, defensive_rebounds, assists, turnovers, steals, blocks, personal_fouls, points, opponent_points, attendance, cost) VALUES (:team_id, :opponent_team_id, :game_id, :season, :is_playoffs, :won, :home, :minutes, :field_goals_made, :field_goals_attempted, :three_pointers_made, :three_pointers_attempted, :free_throws_made, :free_throws_attempted, :offensive_rebounds, :defensive_rebounds, :assists, :turnovers, :steals, :blocks, :personal_fouls, :points, :opponent_points, :attendance, :cost)'
-        params = {'team_id': self.team[t]['id'], 'opponent_team_id': self.team[t2]['id'], 'game_id': self.id, 'season': g.season, 'is_playoffs': self.is_playoffs, 'won': won, 'home': self.home[t], 'minutes': int(round(self.team[t]['stat']['minutes'])), 'field_goals_made': self.team[t]['stat']['field_goals_made'], 'field_goals_attempted': self.team[t]['stat']['field_goals_attempted'], 'three_pointers_made': self.team[t]['stat']['three_pointers_made'], 'three_pointers_attempted': self.team[t]['stat']['three_pointers_attempted'], 'free_throws_made': self.team[t]['stat']['free_throws_made'], 'free_throws_attempted': self.team[t]['stat']['free_throws_attempted'], 'offensive_rebounds': self.team[t]['stat']['offensive_rebounds'], 'defensive_rebounds': self.team[t]['stat']['defensive_rebounds'], 'assists': self.team[t]['stat']['assists'], 'turnovers': self.team[t]['stat']['turnovers'], 'steals': self.team[t]['stat']['steals'], 'blocks': self.team[t]['stat']['blocks'], 'personal_fouls': self.team[t]['stat']['personal_fouls'], 'points': self.team[t]['stat']['points'], 'opponent_points': self.team[t2]['stat']['points'], 'attendance': self.attendance, 'cost': cost}
+        query = 'INSERT INTO team_stats (tid, opponent_tid, gid, season, is_playoffs, won, home, minutes, field_goals_made, field_goals_attempted, three_pointers_made, three_pointers_attempted, free_throws_made, free_throws_attempted, offensive_rebounds, defensive_rebounds, assists, turnovers, steals, blocks, personal_fouls, points, opponent_points, attendance, cost) VALUES (:tid, :opponent_tid, :gid, :season, :is_playoffs, :won, :home, :minutes, :field_goals_made, :field_goals_attempted, :three_pointers_made, :three_pointers_attempted, :free_throws_made, :free_throws_attempted, :offensive_rebounds, :defensive_rebounds, :assists, :turnovers, :steals, :blocks, :personal_fouls, :points, :opponent_points, :attendance, :cost)'
+        params = {'tid': self.team[t]['id'], 'opponent_tid': self.team[t2]['id'], 'gid': self.id, 'season': g.season, 'is_playoffs': self.is_playoffs, 'won': won, 'home': self.home[t], 'minutes': int(round(self.team[t]['stat']['minutes'])), 'field_goals_made': self.team[t]['stat']['field_goals_made'], 'field_goals_attempted': self.team[t]['stat']['field_goals_attempted'], 'three_pointers_made': self.team[t]['stat']['three_pointers_made'], 'three_pointers_attempted': self.team[t]['stat']['three_pointers_attempted'], 'free_throws_made': self.team[t]['stat']['free_throws_made'], 'free_throws_attempted': self.team[t]['stat']['free_throws_attempted'], 'offensive_rebounds': self.team[t]['stat']['offensive_rebounds'], 'defensive_rebounds': self.team[t]['stat']['defensive_rebounds'], 'assists': self.team[t]['stat']['assists'], 'turnovers': self.team[t]['stat']['turnovers'], 'steals': self.team[t]['stat']['steals'], 'blocks': self.team[t]['stat']['blocks'], 'personal_fouls': self.team[t]['stat']['personal_fouls'], 'points': self.team[t]['stat']['points'], 'opponent_points': self.team[t2]['stat']['points'], 'attendance': self.attendance, 'cost': cost}
         g.dbex(query, **params)
 
         if won and not self.is_playoffs:
-            g.dbex('UPDATE team_attributes SET won = won + 1 WHERE team_id = :team_id AND season = :season', team_id=self.team[t]['id'], season=g.season)
+            g.dbex('UPDATE team_attributes SET won = won + 1 WHERE tid = :tid AND season = :season', tid=self.team[t]['id'], season=g.season)
             if self.same_division:
-                g.dbex('UPDATE team_attributes SET won_div = won_div + 1, won_conf = won_conf + 1 WHERE team_id = :team_id AND season = :season', team_id=self.team[t]['id'], season=g.season)
+                g.dbex('UPDATE team_attributes SET won_div = won_div + 1, won_conf = won_conf + 1 WHERE tid = :tid AND season = :season', tid=self.team[t]['id'], season=g.season)
             elif self.same_conference:
-                g.dbex('UPDATE team_attributes SET won_conf = won_conf + 1 WHERE team_id = :team_id AND season = :season', team_id=self.team[t]['id'], season=g.season)
+                g.dbex('UPDATE team_attributes SET won_conf = won_conf + 1 WHERE tid = :tid AND season = :season', tid=self.team[t]['id'], season=g.season)
         elif not self.is_playoffs:
-            g.dbex('UPDATE team_attributes SET lost = lost + 1 WHERE team_id = :team_id AND season = :season', team_id=self.team[t]['id'], season=g.season)
+            g.dbex('UPDATE team_attributes SET lost = lost + 1 WHERE tid = :tid AND season = :season', tid=self.team[t]['id'], season=g.season)
             if self.same_division:
-                g.dbex('UPDATE team_attributes SET lost_div = lost_div + 1, lost_conf = lost_conf + 1 WHERE team_id = :team_id AND season = :season', team_id=self.team[t]['id'], season=g.season)
+                g.dbex('UPDATE team_attributes SET lost_div = lost_div + 1, lost_conf = lost_conf + 1 WHERE tid = :tid AND season = :season', tid=self.team[t]['id'], season=g.season)
             elif self.same_conference:
-                g.dbex('UPDATE team_attributes SET lost_conf = lost_conf + 1 WHERE team_id = :team_id AND season = :season', team_id=self.team[t]['id'], season=g.season)
+                g.dbex('UPDATE team_attributes SET lost_conf = lost_conf + 1 WHERE tid = :tid AND season = :season', tid=self.team[t]['id'], season=g.season)
 
 
-def team(team_id):
+def team(tid):
     """Returns a dict containing the minimal information about a team needed to
     simulate a game.
     """
-    t = {'id': team_id, 'defense': 0, 'pace': 0, 'stat': {}, 'player': []}
+    t = {'id': tid, 'defense': 0, 'pace': 0, 'stat': {}, 'player': []}
 
-    r = g.dbex('SELECT player_id FROM player_attributes WHERE team_id = :team_id ORDER BY roster_position ASC', team_id=team_id)
+    r = g.dbex('SELECT pid FROM player_attributes WHERE tid = :tid ORDER BY roster_position ASC', tid=tid)
     for row in r.fetchall():
         t['player'].append(player(row[0]))
 
@@ -140,15 +140,15 @@ def team(team_id):
     return t
 
 
-def player(player_id):
+def player(pid):
     """Returns a dict containing the minimal information about a player needed
     to simulate a game.
     """
-    p = {'id': player_id, 'overall_rating': 0, 'stat': {}, 'composite_rating': {}}
+    p = {'id': pid, 'overall_rating': 0, 'stat': {}, 'composite_rating': {}}
 
     r = g.dbex('SELECT overall, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, '
             'shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, '
-            'passing, rebounding FROM player_ratings WHERE player_id = :player_id AND season = :season', player_id=p['id'], season=g.season)
+            'passing, rebounding FROM player_ratings WHERE pid = :pid AND season = :season', pid=p['id'], season=g.season)
     rating = r.fetchone()
 
     p['overall_rating'] = rating['overall']
@@ -212,16 +212,16 @@ def _composite(minval, maxval, rating, components, inverse=False, random=True):
 
 def save_results(results, is_playoffs):
     """Convenience function to save game stats."""
-    r = g.dbex('SELECT in_progress_timestamp FROM schedule WHERE game_id = :game_id', game_id=results['game_id'])
+    r = g.dbex('SELECT in_progress_timestamp FROM schedule WHERE gid = :gid', gid=results['gid'])
     in_progress_timestamp, = r.fetchone()
     if in_progress_timestamp > 0:
         game = Game()
         game.load(results, is_playoffs)
         game.write_stats()
-        g.dbex('DELETE FROM schedule WHERE game_id = :game_id', game_id=results['game_id'])
-        app.logger.debug('Saved results for game %d' % (results['game_id'],))
+        g.dbex('DELETE FROM schedule WHERE gid = :gid', gid=results['gid'])
+        app.logger.debug('Saved results for game %d' % (results['gid'],))
     else:
-        app.logger.debug('Ignored stale results for game %d' % (results['game_id'],))
+        app.logger.debug('Ignored stale results for game %d' % (results['gid'],))
 
 def play(num_days, start=False):
     """Play num_days days worth of games. If start is True, then this is
@@ -273,19 +273,19 @@ def play(num_days, start=False):
             play_menu.set_status('Playing games (%d days remaining)...' % (num_days,))
             # Create schedule and team lists for today, to be sent to the client
             schedule = season.get_schedule(num_active_teams / 2)
-            team_ids_today = []
+            tids_today = []
             for game in schedule:
-                g.dbex('UPDATE schedule SET in_progress_timestamp = :in_progress_timestamp WHERE game_id = :game_id', in_progress_timestamp=int(time.time()), game_id=game['game_id'])
-                team_ids_today.append(game['home_team_id'])
-                team_ids_today.append(game['away_team_id'])
-#                team_ids_today = list(set(team_ids_today))  # Unique list
+                g.dbex('UPDATE schedule SET in_progress_timestamp = :in_progress_timestamp WHERE gid = :gid', in_progress_timestamp=int(time.time()), gid=game['gid'])
+                tids_today.append(game['home_tid'])
+                tids_today.append(game['away_tid'])
+#                tids_today = list(set(tids_today))  # Unique list
             teams = []
-            for team_id in xrange(30):
+            for tid in xrange(30):
                 # Only send team data for today's active teams
-                if team_id in team_ids_today:
-                    teams.append(team(team_id))
+                if tid in tids_today:
+                    teams.append(team(tid))
                 else:
-                    teams.append({'id': team_id})
+                    teams.append({'id': tid})
 
     # If this is the last day, update play menu
     if num_days == 0 or (len(schedule) == 0 and not playoffs_continue):
@@ -293,7 +293,7 @@ def play(num_days, start=False):
         lock.set_games_in_progress(False)
         play_menu.refresh_options()
         # Check to see if the season is over
-        r = g.dbex('SELECT game_id FROM schedule LIMIT 1')
+        r = g.dbex('SELECT gid FROM schedule LIMIT 1')
         if r.rowcount == 0 and g.phase < c.PHASE_PLAYOFFS:
             season.new_phase(c.PHASE_PLAYOFFS)  # Start playoffs
             url = url_for('history', league_id=g.league_id)

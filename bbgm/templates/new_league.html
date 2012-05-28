@@ -6,9 +6,9 @@
   <h1>Create New League</h1>
   <form action="{{ url_for('new_league') }}" method="POST">
     <label>Which team do you want to manage?
-    <select name="team_id">
+    <select name="tid">
       {% for team in teams %}
-        <option value="{{ team.team_id }}">{{ team.region }} {{ team.name }}</option>
+        <option value="{{ team.tid }}">{{ team.region }} {{ team.name }}</option>
       {% endfor %}
     </select></label>
     <button type="submit" class="btn">Create New League</button>  

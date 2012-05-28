@@ -8,7 +8,7 @@
     $(document).ready(function() {
       bbgm_datatable($('#negotiation_list'), 4, [
         {% for player in players %}
-			    [ '<a href="#"><a href="{{ url_for('player_', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a></a>', '{{ player.position }}', '{{ player.age }}', '{{ player.overall }}', '{{ player.potential }}', '{% if player.minutes %} {{ player.minutes|float|round(1) }} {% endif %}', '{% if player.points %} {{ player.points|float|round(1) }} {% endif %}', '{% if player.rebounds %} {{ player.rebounds|float|round(1) }} {% endif %}', '{% if player.assists %} {{ player.assists|float|round(1) }} {% endif %}', '${{ player.contract_amount|float|round(3) }}M through {{ player.contract_expiration }}', '<a href="{{ url_for('negotiation', league_id=g.league_id, player_id=player.player_id) }}" class="btn btn-mini btn-primary">Negotiate</a>' ],
+			    [ '<a href="#"><a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a></a>', '{{ player.position }}', '{{ player.age }}', '{{ player.overall }}', '{{ player.potential }}', '{% if player.minutes %} {{ player.minutes|float|round(1) }} {% endif %}', '{% if player.points %} {{ player.points|float|round(1) }} {% endif %}', '{% if player.rebounds %} {{ player.rebounds|float|round(1) }} {% endif %}', '{% if player.assists %} {{ player.assists|float|round(1) }} {% endif %}', '${{ player.contract_amount|float|round(3) }}M through {{ player.contract_expiration }}', '<a href="{{ url_for('negotiation', league_id=g.league_id, pid=player.pid) }}" class="btn btn-mini btn-primary">Negotiate</a>' ],
         {% endfor %}
 		  ]);
     } );

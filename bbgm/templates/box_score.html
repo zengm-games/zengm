@@ -8,7 +8,7 @@
   </thead>
   <tbody>
   {% for player in team.players %}
-    <tr{% if loop.index == 5 %} class="separator"{% endif %}><td><a href="{{ url_for('player_', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a></td><td>{{ player.position }}</td><td>{{ player.minutes|round|int }}</td><td>{{ player.field_goals_made }}-{{ player.field_goals_attempted}}</td><td>{{ player.three_pointers_made }}-{{ player.three_pointers_attempted }}</td><td>{{ player.free_throws_made }}-{{ player.free_throws_attempted}}</td><td>{{ player.offensive_rebounds }}</td><td>{{ player.rebounds }}</td><td> {{player.assists }}</td><td>{{ player.turnovers }}</td><td>{{ player.steals }}</td><td>{{ player.blocks }}</td><td>{{ player.personal_fouls }}</td><td>{{ player.points }}</td></tr>
+    <tr{% if loop.index == 5 %} class="separator"{% endif %}><td><a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a></td><td>{{ player.position }}</td><td>{{ player.minutes|round|int }}</td><td>{{ player.field_goals_made }}-{{ player.field_goals_attempted}}</td><td>{{ player.three_pointers_made }}-{{ player.three_pointers_attempted }}</td><td>{{ player.free_throws_made }}-{{ player.free_throws_attempted}}</td><td>{{ player.offensive_rebounds }}</td><td>{{ player.rebounds }}</td><td> {{player.assists }}</td><td>{{ player.turnovers }}</td><td>{{ player.steals }}</td><td>{{ player.blocks }}</td><td>{{ player.personal_fouls }}</td><td>{{ player.points }}</td></tr>
   {% endfor %}
   </tbody>
   <tfoot>

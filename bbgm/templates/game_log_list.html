@@ -4,7 +4,7 @@
 </thead>
 <tbody>
   {% for game in games %}
-    <tr id="{{ game.game_id }}"><td>{% if not game.home %}@{% endif %}{{ game.opponent_abbreviation }}</td><td>{% if game.won %}W{% else %}L{% endif %}</td><td>{{ game.points }}-{{ game.opponent_points }}</td></tr>
+    <tr id="{{ game.gid }}"><td>{% if not game.home %}@{% endif %}{{ game.opponent_abbreviation }}</td><td>{% if game.won %}W{% else %}L{% endif %}</td><td>{{ game.points }}-{{ game.opponent_points }}</td></tr>
   {% endfor %}
 </tbody>
 </table>

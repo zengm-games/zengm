@@ -35,23 +35,23 @@
       <p>East: <a href="{{ url_for('roster', league_id=g.league_id, abbreviation=awards.bre_abbreviation, view_season=view_season) }}">{{ awards.bre_region }} {{ awards.bre_name }}</a> ({{ awards.bre_won }}-{{ awards.bre_lost }})<br>
       West: <a href="{{ url_for('roster', league_id=g.league_id, abbreviation=awards.brw_abbreviation, view_season=view_season) }}">{{ awards.brw_region }} {{ awards.brw_name }}</a> ({{ awards.brw_won }}-{{ awards.brw_lost }})<br></p>
       <h4>Most Valueable Player</h4>
-      <p><strong><a href="{{ url_for('player_', league_id=g.league_id, player_id=awards.mvp_player_id) }}">{{ awards.mvp_name }}</a></strong> (<a href="{{ url_for('roster', league_id=g.league_id, abbreviation=awards.mvp_abbreviation, view_season=view_season) }}">{{ awards.mvp_abbreviation }}</a>)<br>
+      <p><strong><a href="{{ url_for('player_', league_id=g.league_id, pid=awards.mvp_pid) }}">{{ awards.mvp_name }}</a></strong> (<a href="{{ url_for('roster', league_id=g.league_id, abbreviation=awards.mvp_abbreviation, view_season=view_season) }}">{{ awards.mvp_abbreviation }}</a>)<br>
       {{ awards.mvp_ppg|round(1) }} pts, {{ awards.mvp_rpg|round(1) }} reb, {{ awards.mvp_apg|round(1) }} ast</p>
       <h4>Defensive Player of the Year</h4>
-      <p><strong><a href="{{ url_for('player_', league_id=g.league_id, player_id=awards.dpoy_player_id) }}">{{ awards.dpoy_name }}</a></strong> (<a href="{{ url_for('roster', league_id=g.league_id, abbreviation=awards.dpoy_abbreviation, view_season=view_season) }}">{{ awards.dpoy_abbreviation }}</a>)<br>
+      <p><strong><a href="{{ url_for('player_', league_id=g.league_id, pid=awards.dpoy_pid) }}">{{ awards.dpoy_name }}</a></strong> (<a href="{{ url_for('roster', league_id=g.league_id, abbreviation=awards.dpoy_abbreviation, view_season=view_season) }}">{{ awards.dpoy_abbreviation }}</a>)<br>
       {{ awards.dpoy_rpg|round(1) }} reb, {{ awards.dpoy_bpg|round(1) }} blk, {{ awards.dpoy_spg|round(1) }} stl</p>
       <h4>Sixth Man of the Year</h4>
-      <p><strong><a href="{{ url_for('player_', league_id=g.league_id, player_id=awards.smoy_player_id) }}">{{ awards.smoy_name }}</a></strong> (<a href="{{ url_for('roster', league_id=g.league_id, abbreviation=awards.smoy_abbreviation, view_season=view_season) }}">{{ awards.smoy_abbreviation }}</a>)<br>
+      <p><strong><a href="{{ url_for('player_', league_id=g.league_id, pid=awards.smoy_pid) }}">{{ awards.smoy_name }}</a></strong> (<a href="{{ url_for('roster', league_id=g.league_id, abbreviation=awards.smoy_abbreviation, view_season=view_season) }}">{{ awards.smoy_abbreviation }}</a>)<br>
       {{ awards.smoy_ppg|round(1) }} pts, {{ awards.smoy_rpg|round(1) }} reb, {{ awards.smoy_apg|round(1) }} ast</p>
       <h4>Rookie of the Year</h4>
-      <p><strong><a href="{{ url_for('player_', league_id=g.league_id, player_id=awards.roy_player_id) }}">{{ awards.roy_name }}</a></strong> (<a href="{{ url_for('roster', league_id=g.league_id, abbreviation=awards.roy_abbreviation, view_season=view_season) }}">{{ awards.roy_abbreviation }}</a>)<br>
+      <p><strong><a href="{{ url_for('player_', league_id=g.league_id, pid=awards.roy_pid) }}">{{ awards.roy_name }}</a></strong> (<a href="{{ url_for('roster', league_id=g.league_id, abbreviation=awards.roy_abbreviation, view_season=view_season) }}">{{ awards.roy_abbreviation }}</a>)<br>
       {{ awards.roy_ppg|round(1) }} pts, {{ awards.roy_rpg|round(1) }} reb, {{ awards.roy_apg|round(1) }} ast</p>
     </div>
     <div class="span4">
       <h4>All-League Teams</h4>
       <h5>First Team</h5>
       {% for player in all_league %}
-        <a href="{{ url_for('player_', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a> (<a href="{{ url_for('roster', league_id=g.league_id, abbreviation=player.abbreviation, view_season=view_season) }}">{{ player.abbreviation }}</a>)<br>
+        <a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a> (<a href="{{ url_for('roster', league_id=g.league_id, abbreviation=player.abbreviation, view_season=view_season) }}">{{ player.abbreviation }}</a>)<br>
         <!--{{ player.ppg|round(1) }} pts, {{ player.rpg|round(1) }} reb, {{ player.apg|round(1) }} ast<br>-->
         {% if loop.index == 5 %}
           <br>
@@ -66,7 +66,7 @@
       <h4>All-Defensive Teams</h4>
       <h5>First Team</h5>
       {% for player in all_defensive %}
-        <a href="{{ url_for('player_', league_id=g.league_id, player_id=player.player_id) }}">{{ player.name }}</a> (<a href="{{ url_for('roster', league_id=g.league_id, abbreviation=player.abbreviation, view_season=view_season) }}">{{ player.abbreviation }}</a>)<br>
+        <a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a> (<a href="{{ url_for('roster', league_id=g.league_id, abbreviation=player.abbreviation, view_season=view_season) }}">{{ player.abbreviation }}</a>)<br>
         <!--{{ player.rpg|round(1) }} reb, {{ player.bpg|round(1) }} blk, {{ player.spg|round(1) }} stl<br>-->
         {% if loop.index == 5 %}
           <br>

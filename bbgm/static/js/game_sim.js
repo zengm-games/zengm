@@ -285,7 +285,7 @@ GameSim.prototype.do_turnover = function() {
 GameSim.prototype.do_steal = function() {
     var ratios = this.rating_array('steal_ratio', this.d);
     var p = this.players_on_court[this.d][this.pick_player(ratios)];
-    this.record_stat(this.d, p, 'steals');
+    this.record_stat(this.d, p, 'stl');
 };
 
 
@@ -293,7 +293,7 @@ GameSim.prototype.do_steal = function() {
 GameSim.prototype.do_block = function() {
     var ratios = this.rating_array('block_ratio', this.d);
     var p = this.players_on_court[this.d][this.pick_player(ratios)];
-    this.record_stat(this.d, p, 'blocks');
+    this.record_stat(this.d, p, 'blk');
 };
 
 

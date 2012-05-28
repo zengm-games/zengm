@@ -59,7 +59,7 @@ def leaders(view_season=None):
 
     cols = ['ps.points', 'ps.orb+ps.drb',
             'ps.ast', '100*ps.fg/ps.fga',
-            'ps.blocks', 'ps.steals']
+            'ps.blk', 'ps.stl']
     for i in xrange(len(cols)):
         # I have to insert the cateogry using string formatting because
         # otherwise it mangles the syntax. But it's okay, cols is defined just a
@@ -80,7 +80,7 @@ def player_ratings(view_season=None):
     view_season = validate_season(view_season)
     seasons = get_seasons()
 
-    r = g.dbex('SELECT pa.pid, pa.tid, pa.name, (SELECT abbreviation FROM team_attributes WHERE tid = pa.tid AND season = :season) as abbreviation, pa.position, :season - pa.born_date as age, pr.overall, pr.potential, pr.height, pr.strength, pr.speed, pr.jumping, pr.endurance, pr.shooting_inside, pr.shooting_layups, pr.shooting_free_throws, pr.shooting_two_pointers, pr.shooting_three_pointers, pr.blocks, pr.steals, pr.dribbling, pr.passing, pr.rebounding FROM player_attributes as pa, player_ratings as pr WHERE pa.pid = pr.pid AND pr.season = :season', season=view_season)
+    r = g.dbex('SELECT pa.pid, pa.tid, pa.name, (SELECT abbreviation FROM team_attributes WHERE tid = pa.tid AND season = :season) as abbreviation, pa.position, :season - pa.born_date as age, pr.overall, pr.potential, pr.height, pr.strength, pr.speed, pr.jumping, pr.endurance, pr.shooting_inside, pr.shooting_layups, pr.shooting_free_throws, pr.shooting_two_pointers, pr.shooting_three_pointers, pr.blk, pr.stl, pr.dribbling, pr.passing, pr.rebounding FROM player_attributes as pa, player_ratings as pr WHERE pa.pid = pr.pid AND pr.season = :season', season=view_season)
     players = r.fetchall()
 
     return render_all_or_json('player_ratings.html', {'players': players, 'seasons': seasons, 'view_season': view_season})
@@ -93,7 +93,7 @@ def player_stats(view_season=None):
     view_season = validate_season(view_season)
     seasons = get_seasons()
 
-    r = g.dbex('SELECT pa.pid, pa.tid, pa.name, ta.abbreviation, pa.position, SUM(ps.minutes>0) AS games_played, SUM(ps.starter) AS games_started, AVG(ps.minutes) AS minutes, AVG(ps.fg) AS fg, AVG(ps.fga) AS fga, 100*AVG(ps.fg/ps.fga) AS field_goal_percentage, AVG(ps.tp) AS tp, AVG(ps.tpa) AS tpa, 100*AVG(ps.tp/ps.tpa) AS three_point_percentage, AVG(ps.ft) AS ft, AVG(ps.fta) AS fta, 100*AVG(ps.ft/ps.fta) AS free_throw_percentage, AVG(ps.orb) AS orb, AVG(ps.drb) AS drb, AVG(ps.orb+ps.drb) AS rebounds, AVG(ps.ast) AS ast, AVG(ps.tov) AS tov, AVG(ps.steals) AS steals, AVG(ps.blocks) AS blocks, AVG(ps.pf) AS pf, AVG(ps.points) AS points FROM player_attributes as pa, player_stats as ps, team_attributes as ta WHERE pa.pid = ps.pid AND ps.season = :season AND ps.is_playoffs = 0 AND ta.tid = ps.tid AND ta.season = ps.season GROUP BY ps.pid', season=view_season)
+    r = g.dbex('SELECT pa.pid, pa.tid, pa.name, ta.abbreviation, pa.position, SUM(ps.minutes>0) AS games_played, SUM(ps.starter) AS games_started, AVG(ps.minutes) AS minutes, AVG(ps.fg) AS fg, AVG(ps.fga) AS fga, 100*AVG(ps.fg/ps.fga) AS field_goal_percentage, AVG(ps.tp) AS tp, AVG(ps.tpa) AS tpa, 100*AVG(ps.tp/ps.tpa) AS three_point_percentage, AVG(ps.ft) AS ft, AVG(ps.fta) AS fta, 100*AVG(ps.ft/ps.fta) AS free_throw_percentage, AVG(ps.orb) AS orb, AVG(ps.drb) AS drb, AVG(ps.orb+ps.drb) AS rebounds, AVG(ps.ast) AS ast, AVG(ps.tov) AS tov, AVG(ps.stl) AS stl, AVG(ps.blk) AS blk, AVG(ps.pf) AS pf, AVG(ps.points) AS points FROM player_attributes as pa, player_stats as ps, team_attributes as ta WHERE pa.pid = ps.pid AND ps.season = :season AND ps.is_playoffs = 0 AND ta.tid = ps.tid AND ta.season = ps.season GROUP BY ps.pid', season=view_season)
     players = r.fetchall()
 
     # Don't pass blank values where floats are expected by the template
@@ -474,11 +474,11 @@ def player_(pid):
     info = r.fetchone()
 
     # Current ratings
-    r = g.dbex('SELECT overall, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, passing, rebounding, potential FROM player_ratings WHERE season = :season AND pid = :pid', season=g.season, pid=pid)
+    r = g.dbex('SELECT overall, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blk, stl, dribbling, passing, rebounding, potential FROM player_ratings WHERE season = :season AND pid = :pid', season=g.season, pid=pid)
     ratings = r.fetchone()
 
     # Season stats and ratings
-    r = g.dbex('SELECT ps.season, ta.abbreviation, SUM(ps.minutes>0) AS games_played, SUM(ps.starter) AS games_started, AVG(ps.minutes) AS minutes, AVG(ps.fg) AS fg, AVG(ps.fga) AS fga, 100*AVG(ps.fg/ps.fga) AS field_goal_percentage, AVG(ps.tp) AS tp, AVG(ps.tpa) AS tpa, 100*AVG(ps.tp/ps.tpa) AS three_point_percentage, AVG(ps.ft) AS ft, AVG(ps.fta) AS fta, 100*AVG(ps.ft/ps.fta) AS free_throw_percentage, AVG(ps.orb) AS orb, AVG(ps.drb) AS drb, AVG(ps.orb+ps.drb) AS rebounds, AVG(ps.ast) AS ast, AVG(ps.tov) AS tov, AVG(ps.steals) AS steals, AVG(ps.blocks) AS blocks, AVG(ps.pf) AS pf, AVG(ps.points) AS points, ps.season - pa.born_date AS age, pr.overall, pr.potential, pr.height, pr.strength, pr.speed, pr.jumping, pr.endurance, pr.shooting_inside, pr.shooting_layups, pr.shooting_free_throws, pr.shooting_two_pointers, pr.shooting_three_pointers, pr.blocks AS rating_blocks, pr.steals AS rating_steals, pr.dribbling, pr.passing, pr.rebounding FROM player_attributes AS pa LEFT JOIN player_stats as ps ON pa.pid = ps.pid LEFT JOIN player_ratings AS pr ON pr.pid = pa.pid AND pr.season = ps.season LEFT OUTER JOIN team_attributes AS ta ON ps.tid = ta.tid AND ta.season = ps.season AND ta.season = pr.season WHERE pa.pid = :pid AND ps.is_playoffs = 0 GROUP BY ps.season ORDER BY ps.season ASC', pid=pid)
+    r = g.dbex('SELECT ps.season, ta.abbreviation, SUM(ps.minutes>0) AS games_played, SUM(ps.starter) AS games_started, AVG(ps.minutes) AS minutes, AVG(ps.fg) AS fg, AVG(ps.fga) AS fga, 100*AVG(ps.fg/ps.fga) AS field_goal_percentage, AVG(ps.tp) AS tp, AVG(ps.tpa) AS tpa, 100*AVG(ps.tp/ps.tpa) AS three_point_percentage, AVG(ps.ft) AS ft, AVG(ps.fta) AS fta, 100*AVG(ps.ft/ps.fta) AS free_throw_percentage, AVG(ps.orb) AS orb, AVG(ps.drb) AS drb, AVG(ps.orb+ps.drb) AS rebounds, AVG(ps.ast) AS ast, AVG(ps.tov) AS tov, AVG(ps.stl) AS stl, AVG(ps.blk) AS blk, AVG(ps.pf) AS pf, AVG(ps.points) AS points, ps.season - pa.born_date AS age, pr.overall, pr.potential, pr.height, pr.strength, pr.speed, pr.jumping, pr.endurance, pr.shooting_inside, pr.shooting_layups, pr.shooting_free_throws, pr.shooting_two_pointers, pr.shooting_three_pointers, pr.blk AS rating_blk, pr.stl AS rating_stl, pr.dribbling, pr.passing, pr.rebounding FROM player_attributes AS pa LEFT JOIN player_stats as ps ON pa.pid = ps.pid LEFT JOIN player_ratings AS pr ON pr.pid = pa.pid AND pr.season = ps.season LEFT OUTER JOIN team_attributes AS ta ON ps.tid = ta.tid AND ta.season = ps.season AND ta.season = pr.season WHERE pa.pid = :pid AND ps.is_playoffs = 0 GROUP BY ps.season ORDER BY ps.season ASC', pid=pid)
     seasons = r.fetchall()
 
     return render_all_or_json('player.html', {'info': info, 'ratings': ratings, 'seasons': seasons})
@@ -570,7 +570,7 @@ def box_score(gid=0):
         r = g.dbex('SELECT region, name, abbreviation FROM team_attributes WHERE tid = :tid', tid=teams[-1]['tid'])
         teams[-1]['region'], teams[-1]['name'], teams[-1]['abbreviation'] = r.fetchone()
 
-        r = g.dbex('SELECT pa.pid, name, position, minutes, fg, fga, tp, tpa, ft, fta, orb, drb, orb + drb AS rebounds, ast, tov, steals, blocks, pf, points FROM player_attributes as pa, player_stats as ps WHERE pa.pid = ps.pid AND ps.gid = :gid AND pa.tid = :tid ORDER BY starter DESC, minutes DESC', gid=gid, tid=teams[-1]['tid'])
+        r = g.dbex('SELECT pa.pid, name, position, minutes, fg, fga, tp, tpa, ft, fta, orb, drb, orb + drb AS rebounds, ast, tov, stl, blk, pf, points FROM player_attributes as pa, player_stats as ps WHERE pa.pid = ps.pid AND ps.gid = :gid AND pa.tid = :tid ORDER BY starter DESC, minutes DESC', gid=gid, tid=teams[-1]['tid'])
         teams[-1]['players'] = r.fetchall()
 
         # Total rebounds
@@ -774,10 +774,10 @@ def validate_season(season):
 
 
 def render_all_or_json(template_file, template_args={}, extra_json={}):
-    """Return rendered template, or JSON containing rendered blocks.
+    """Return rendered template, or JSON containing rendered blk.
     
     Anything passed to extra_json will be sent to the client along with the
-    template blocks.
+    template blk.
     """
     if request.args.get('json', 0, type=int) or request.form.get('json', 0, type=int):
         ctx = _request_ctx_stack.top  # Not sure what this does
@@ -796,7 +796,7 @@ def render_all_or_json(template_file, template_args={}, extra_json={}):
 
 def redirect_or_json(f, args={}):
     """Redirect to function's URL, or return a JSON response containing rendered
-    blocks from a function's template.
+    blk from a function's template.
 
     This kind of sucks because it currently doesn't pass the URL, so there's no
     way to update it with pushState on the client side.

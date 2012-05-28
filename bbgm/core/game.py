@@ -61,8 +61,8 @@ class Game:
             self.write_team_stats(t)
             params = []
             for p in xrange(len(self.team[t]['player'])):
-                params.append({'pid': self.team[t]['player'][p]['id'], 'tid': self.team[t]['id'], 'gid': self.id, 'season': g.season, 'is_playoffs': self.is_playoffs, 'starter': self.team[t]['player'][p]['stat']['starter'], 'minutes': int(round(self.team[t]['player'][p]['stat']['minutes'])), 'fg': self.team[t]['player'][p]['stat']['fg'], 'fga': self.team[t]['player'][p]['stat']['fga'], 'tp': self.team[t]['player'][p]['stat']['tp'], 'tpa': self.team[t]['player'][p]['stat']['tpa'], 'ft': self.team[t]['player'][p]['stat']['ft'], 'fta': self.team[t]['player'][p]['stat']['fta'], 'orb': self.team[t]['player'][p]['stat']['orb'], 'drb': self.team[t]['player'][p]['stat']['drb'], 'ast': self.team[t]['player'][p]['stat']['ast'], 'tov': self.team[t]['player'][p]['stat']['tov'], 'steals': self.team[t]['player'][p]['stat']['steals'], 'blocks': self.team[t]['player'][p]['stat']['blocks'], 'pf': self.team[t]['player'][p]['stat']['pf'], 'points': self.team[t]['player'][p]['stat']['points']})
-            query = 'INSERT INTO player_stats (pid, tid, gid, season, is_playoffs, starter, minutes, fg, fga, tp, tpa, ft, fta, orb, drb, ast, tov, steals, blocks, pf, points) VALUES(:pid, :tid, :gid, :season, :is_playoffs, :starter, :minutes, :fg, :fga, :tp, :tpa, :ft, :fta, :orb, :drb, :ast, :tov, :steals, :blocks, :pf, :points)'
+                params.append({'pid': self.team[t]['player'][p]['id'], 'tid': self.team[t]['id'], 'gid': self.id, 'season': g.season, 'is_playoffs': self.is_playoffs, 'starter': self.team[t]['player'][p]['stat']['starter'], 'minutes': int(round(self.team[t]['player'][p]['stat']['minutes'])), 'fg': self.team[t]['player'][p]['stat']['fg'], 'fga': self.team[t]['player'][p]['stat']['fga'], 'tp': self.team[t]['player'][p]['stat']['tp'], 'tpa': self.team[t]['player'][p]['stat']['tpa'], 'ft': self.team[t]['player'][p]['stat']['ft'], 'fta': self.team[t]['player'][p]['stat']['fta'], 'orb': self.team[t]['player'][p]['stat']['orb'], 'drb': self.team[t]['player'][p]['stat']['drb'], 'ast': self.team[t]['player'][p]['stat']['ast'], 'tov': self.team[t]['player'][p]['stat']['tov'], 'stl': self.team[t]['player'][p]['stat']['stl'], 'blk': self.team[t]['player'][p]['stat']['blk'], 'pf': self.team[t]['player'][p]['stat']['pf'], 'points': self.team[t]['player'][p]['stat']['points']})
+            query = 'INSERT INTO player_stats (pid, tid, gid, season, is_playoffs, starter, minutes, fg, fga, tp, tpa, ft, fta, orb, drb, ast, tov, stl, blk, pf, points) VALUES(:pid, :tid, :gid, :season, :is_playoffs, :starter, :minutes, :fg, :fga, :tp, :tpa, :ft, :fta, :orb, :drb, :ast, :tov, :stl, :blk, :pf, :points)'
             g.dbexmany(query, params)
 
     def write_team_stats(self, t):
@@ -91,8 +91,8 @@ class Game:
             cost = 0
         g.dbex('UPDATE team_attributes SET cash = cash + :revenue - :cost WHERE season = :season AND tid = :tid', revenue=g.ticket_price * self.attendance, cost=cost, season=g.season, tid=self.team[t]['id'])
 
-        query = 'INSERT INTO team_stats (tid, opp_tid, gid, season, is_playoffs, won, home, minutes, fg, fga, tp, tpa, ft, fta, orb, drb, ast, tov, steals, blocks, pf, points, opp_pts, attendance, cost) VALUES (:tid, :opp_tid, :gid, :season, :is_playoffs, :won, :home, :minutes, :fg, :fga, :tp, :tpa, :ft, :fta, :orb, :drb, :ast, :tov, :steals, :blocks, :pf, :points, :opp_pts, :attendance, :cost)'
-        params = {'tid': self.team[t]['id'], 'opp_tid': self.team[t2]['id'], 'gid': self.id, 'season': g.season, 'is_playoffs': self.is_playoffs, 'won': won, 'home': self.home[t], 'minutes': int(round(self.team[t]['stat']['minutes'])), 'fg': self.team[t]['stat']['fg'], 'fga': self.team[t]['stat']['fga'], 'tp': self.team[t]['stat']['tp'], 'tpa': self.team[t]['stat']['tpa'], 'ft': self.team[t]['stat']['ft'], 'fta': self.team[t]['stat']['fta'], 'orb': self.team[t]['stat']['orb'], 'drb': self.team[t]['stat']['drb'], 'ast': self.team[t]['stat']['ast'], 'tov': self.team[t]['stat']['tov'], 'steals': self.team[t]['stat']['steals'], 'blocks': self.team[t]['stat']['blocks'], 'pf': self.team[t]['stat']['pf'], 'points': self.team[t]['stat']['points'], 'opp_pts': self.team[t2]['stat']['points'], 'attendance': self.attendance, 'cost': cost}
+        query = 'INSERT INTO team_stats (tid, opp_tid, gid, season, is_playoffs, won, home, minutes, fg, fga, tp, tpa, ft, fta, orb, drb, ast, tov, stl, blk, pf, points, opp_pts, attendance, cost) VALUES (:tid, :opp_tid, :gid, :season, :is_playoffs, :won, :home, :minutes, :fg, :fga, :tp, :tpa, :ft, :fta, :orb, :drb, :ast, :tov, :stl, :blk, :pf, :points, :opp_pts, :attendance, :cost)'
+        params = {'tid': self.team[t]['id'], 'opp_tid': self.team[t2]['id'], 'gid': self.id, 'season': g.season, 'is_playoffs': self.is_playoffs, 'won': won, 'home': self.home[t], 'minutes': int(round(self.team[t]['stat']['minutes'])), 'fg': self.team[t]['stat']['fg'], 'fga': self.team[t]['stat']['fga'], 'tp': self.team[t]['stat']['tp'], 'tpa': self.team[t]['stat']['tpa'], 'ft': self.team[t]['stat']['ft'], 'fta': self.team[t]['stat']['fta'], 'orb': self.team[t]['stat']['orb'], 'drb': self.team[t]['stat']['drb'], 'ast': self.team[t]['stat']['ast'], 'tov': self.team[t]['stat']['tov'], 'stl': self.team[t]['stat']['stl'], 'blk': self.team[t]['stat']['blk'], 'pf': self.team[t]['stat']['pf'], 'points': self.team[t]['stat']['points'], 'opp_pts': self.team[t2]['stat']['points'], 'attendance': self.attendance, 'cost': cost}
         g.dbex(query, **params)
 
         if won and not self.is_playoffs:
@@ -134,7 +134,7 @@ def team(tid):
                 tp=0, tpa=0,
                 ft=0, fta=0,
                 orb=0, drb=0, ast=0,
-                tov=0, steals=0, blocks=0, pf=0,
+                tov=0, stl=0, blk=0, pf=0,
                 points=0)
 
     return t
@@ -147,14 +147,14 @@ def player(pid):
     p = {'id': pid, 'overall_rating': 0, 'stat': {}, 'composite_rating': {}}
 
     r = g.dbex('SELECT overall, height, strength, speed, jumping, endurance, shooting_inside, shooting_layups, '
-            'shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blocks, steals, dribbling, '
+            'shooting_free_throws, shooting_two_pointers, shooting_three_pointers, blk, stl, dribbling, '
             'passing, rebounding FROM player_ratings WHERE pid = :pid AND season = :season', pid=p['id'], season=g.season)
     rating = r.fetchone()
 
     p['overall_rating'] = rating['overall']
 
     p['composite_rating']['pace'] = _composite(90, 140, rating, ['speed', 'jumping', 'shooting_layups',
-                                                    'shooting_three_pointers', 'steals', 'dribbling',
+                                                    'shooting_three_pointers', 'stl', 'dribbling',
                                                     'passing'], random=False)
     p['composite_rating']['shot_ratio'] = _composite(0, 0.5, rating, ['shooting_inside', 'shooting_layups',
                                                           'shooting_two_pointers', 'shooting_three_pointers'])
@@ -169,8 +169,8 @@ def player(pid):
     p['composite_rating']['three_pointer_percentage'] = _composite(0, 0.45, rating, ['shooting_three_pointers'])
     p['composite_rating']['rebound_ratio'] = _composite(0, 0.5, rating, ['height', 'strength', 'jumping',
                                                              'rebounding'])
-    p['composite_rating']['steal_ratio'] = _composite(0, 0.5, rating, ['speed', 'steals'])
-    p['composite_rating']['block_ratio'] = _composite(0, 0.5, rating, ['height', 'jumping', 'blocks'])
+    p['composite_rating']['steal_ratio'] = _composite(0, 0.5, rating, ['speed', 'stl'])
+    p['composite_rating']['block_ratio'] = _composite(0, 0.5, rating, ['height', 'jumping', 'blk'])
     p['composite_rating']['foul_ratio'] = _composite(0, 0.5, rating, ['speed'], inverse=True)
     p['composite_rating']['defense'] = _composite(0, 0.5, rating, ['strength', 'speed'])
 
@@ -178,7 +178,7 @@ def player(pid):
                      tp=0, tpa=0,
                      ft=0, fta=0,
                      orb=0, drb=0, ast=0,
-                     tov=0, steals=0, blocks=0, pf=0,
+                     tov=0, stl=0, blk=0, pf=0,
                      points=0, court_time=0, bench_time=0, energy=1)
 
     return p

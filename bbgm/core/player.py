@@ -20,8 +20,8 @@ class Player:
         self.attribute = dict(r.fetchone())
 
     def save(self):
-        query = 'UPDATE player_ratings SET overall = :overall, height = :height, strength = :strength, speed = :speed, jumping = :jumping, endurance = :endurance, shooting_inside = :shooting_inside, shooting_layups = :shooting_layups, shooting_free_throws = :shooting_free_throws, shooting_two_pointers = :shooting_two_pointers, shooting_three_pointers = :shooting_three_pointers, blocks = :blocks, steals = :steals, dribbling = :dribbling, passing = :passing, rebounding = :rebounding, potential = :potential WHERE pid = :pid AND season = :season'
-        g.dbex(query, overall=self.overall_rating(), height=self.rating['height'], strength=self.rating['strength'], speed=self.rating['speed'], jumping=self.rating['jumping'], endurance=self.rating['endurance'], shooting_inside=self.rating['shooting_inside'], shooting_layups=self.rating['shooting_layups'], shooting_free_throws=self.rating['shooting_free_throws'], shooting_two_pointers=self.rating['shooting_two_pointers'], shooting_three_pointers=self.rating['shooting_three_pointers'], blocks=self.rating['blocks'], steals=self.rating['steals'], dribbling=self.rating['dribbling'], passing=self.rating['passing'], rebounding=self.rating['rebounding'], potential=self.rating['potential'], pid=self.id, season=g.season)
+        query = 'UPDATE player_ratings SET overall = :overall, height = :height, strength = :strength, speed = :speed, jumping = :jumping, endurance = :endurance, shooting_inside = :shooting_inside, shooting_layups = :shooting_layups, shooting_free_throws = :shooting_free_throws, shooting_two_pointers = :shooting_two_pointers, shooting_three_pointers = :shooting_three_pointers, blk = :blk, stl = :stl, dribbling = :dribbling, passing = :passing, rebounding = :rebounding, potential = :potential WHERE pid = :pid AND season = :season'
+        g.dbex(query, overall=self.overall_rating(), height=self.rating['height'], strength=self.rating['strength'], speed=self.rating['speed'], jumping=self.rating['jumping'], endurance=self.rating['endurance'], shooting_inside=self.rating['shooting_inside'], shooting_layups=self.rating['shooting_layups'], shooting_free_throws=self.rating['shooting_free_throws'], shooting_two_pointers=self.rating['shooting_two_pointers'], shooting_three_pointers=self.rating['shooting_three_pointers'], blk=self.rating['blk'], stl=self.rating['stl'], dribbling=self.rating['dribbling'], passing=self.rating['passing'], rebounding=self.rating['rebounding'], potential=self.rating['potential'], pid=self.id, season=g.season)
 
     def develop(self, years=1):
         # Make sure age is always defined
@@ -35,7 +35,7 @@ class Player:
             potential = fast_random.gauss(self.rating['potential'], 5)
             overall = self.overall_rating()
 
-            for key in ('strength', 'speed', 'jumping', 'endurance', 'shooting_inside', 'shooting_layups', 'shooting_free_throws', 'shooting_two_pointers', 'shooting_three_pointers', 'blocks', 'steals', 'dribbling', 'passing', 'rebounding'):
+            for key in ('strength', 'speed', 'jumping', 'endurance', 'shooting_inside', 'shooting_layups', 'shooting_free_throws', 'shooting_two_pointers', 'shooting_three_pointers', 'blk', 'stl', 'dribbling', 'passing', 'rebounding'):
                 plus_minus = 28 - age
                 if plus_minus > 0:
                     if potential > overall:
@@ -62,7 +62,7 @@ class Player:
     def bonus(self, amount):
         """Add or subtract from all ratings"""
 
-        for key in ('strength', 'speed', 'jumping', 'endurance', 'shooting_inside', 'shooting_layups', 'shooting_free_throws', 'shooting_two_pointers', 'shooting_three_pointers', 'blocks', 'steals', 'dribbling', 'passing', 'rebounding', 'potential'):
+        for key in ('strength', 'speed', 'jumping', 'endurance', 'shooting_inside', 'shooting_layups', 'shooting_free_throws', 'shooting_two_pointers', 'shooting_three_pointers', 'blk', 'stl', 'dribbling', 'passing', 'rebounding', 'potential'):
             self.rating[key] = self._limit_rating(self.rating[key] + amount)
 
     def _limit_rating(self, rating):
@@ -74,7 +74,7 @@ class Player:
             return int(rating)
 
     def overall_rating(self):
-        return (self.rating['height'] + self.rating['strength'] + self.rating['speed'] + self.rating['jumping'] + self.rating['endurance'] + self.rating['shooting_inside'] + self.rating['shooting_layups'] + self.rating['shooting_free_throws'] + self.rating['shooting_two_pointers'] + self.rating['shooting_three_pointers'] + self.rating['blocks'] + self.rating['steals'] + self.rating['dribbling'] + self.rating['passing'] + self.rating['rebounding']) / 15
+        return (self.rating['height'] + self.rating['strength'] + self.rating['speed'] + self.rating['jumping'] + self.rating['endurance'] + self.rating['shooting_inside'] + self.rating['shooting_layups'] + self.rating['shooting_free_throws'] + self.rating['shooting_two_pointers'] + self.rating['shooting_three_pointers'] + self.rating['blk'] + self.rating['stl'] + self.rating['dribbling'] + self.rating['passing'] + self.rating['rebounding']) / 15
 
     def contract(self, randomize_expiration = False):
         # Limits on yearly contract amount, in $1000's
@@ -234,7 +234,7 @@ class GeneratePlayer(Player):
         ratings = map(self._limit_rating, ratings)
 
         i = 0
-        for key in ('height', 'strength', 'speed', 'jumping', 'endurance', 'shooting_inside', 'shooting_layups', 'shooting_free_throws', 'shooting_two_pointers', 'shooting_three_pointers', 'blocks', 'steals', 'dribbling', 'passing', 'rebounding'):
+        for key in ('height', 'strength', 'speed', 'jumping', 'endurance', 'shooting_inside', 'shooting_layups', 'shooting_free_throws', 'shooting_two_pointers', 'shooting_three_pointers', 'blk', 'stl', 'dribbling', 'passing', 'rebounding'):
             self.rating[key] = ratings[i]
             i += 1
 

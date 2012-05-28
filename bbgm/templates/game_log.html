@@ -7,11 +7,11 @@
   <script type="text/javascript">
     // Load game log list table and activate form
     $(document).ready(function() {
-      function load_game_log_list(season, abbreviation, first_time) {
+      function load_game_log_list(season, abbrev, first_time) {
         $.ajax({
           type: 'GET',
           url: '{{ url_for('game_log_list', league_id=g.league_id) }}',
-          data: {season: season, abbreviation: abbreviation},
+          data: {season: season, abbrev: abbrev},
           success: function(msg) {
             // Display the list of games
             $('#game_log_list').html(msg);
@@ -22,18 +22,18 @@
             }
             else {
               // Update URL
-//              history.pushState({'league_content': $('#league_content').html()}, '', '{{ url_for('game_log', league_id=g.league_id) }}' + '/' + season + '/' + abbreviation);
+//              history.pushState({'league_content': $('#league_content').html()}, '', '{{ url_for('game_log', league_id=g.league_id) }}' + '/' + season + '/' + abbrev);
             }
           }
         });
       }
 
       $game_log_select_season = $('#game_log_select_season')
-      $game_log_select_season.change(function(event) { load_game_log_list($game_log_select_season.val(), $game_log_select_abbreviation.val()); });
-      $game_log_select_abbreviation = $('#game_log_select_abbreviation')
-      $game_log_select_abbreviation.change(function(event) { load_game_log_list($game_log_select_season.val(), $game_log_select_abbreviation.val()); });
-      if ($game_log_select_season.length && $game_log_select_abbreviation.length) {
-        load_game_log_list($game_log_select_season.val(), $game_log_select_abbreviation.val(), true);
+      $game_log_select_season.change(function(event) { load_game_log_list($game_log_select_season.val(), $game_log_select_abbrev.val()); });
+      $game_log_select_abbrev = $('#game_log_select_abbrev')
+      $game_log_select_abbrev.change(function(event) { load_game_log_list($game_log_select_season.val(), $game_log_select_abbrev.val()); });
+      if ($game_log_select_season.length && $game_log_select_abbrev.length) {
+        load_game_log_list($game_log_select_season.val(), $game_log_select_abbrev.val(), true);
       }
 
       // Clickable rows for game log list table
@@ -59,9 +59,9 @@
   </script>
 
   <form action="{{ url_for('game_log', league_id=g.league_id) }}" method="GET" class="form-inline pull-right">
-    <select id="game_log_select_abbreviation" name="team" class="team">
+    <select id="game_log_select_abbrev" name="team" class="team">
       {% for team in teams %}
-        <option value="{{ team.abbreviation }}"{% if team.tid == tid %} selected="selected"{% endif %}>{{ team.region }} {{ team.name }}</option>
+        <option value="{{ team.abbrev }}"{% if team.tid == tid %} selected="selected"{% endif %}>{{ team.region }} {{ team.name }}</option>
       {% endfor %}
     </select>
     <select id="game_log_select_season" name="season" class="season">

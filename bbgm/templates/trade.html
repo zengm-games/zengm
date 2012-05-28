@@ -11,7 +11,7 @@ $(document).ready(function() {
     $.ajax({
       type: 'POST',
       url: '{{ url_for('trade_', league_id=g.league_id) }}',
-      data: {'json': 1, 'abbreviation': $('#trade_select_team').val()},
+      data: {'json': 1, 'abbrev': $('#trade_select_team').val()},
       success: function (data) {
         ajax_update(data);
       },
@@ -66,7 +66,7 @@ $(document).ready(function() {
       <form id="rosters">
         <p><select id="trade_select_team" name="team" class="team form-inline">
         {% for team in teams %}
-          <option value="{{ team.abbreviation }}"{% if team.tid == tid_other %} selected="selected"{% endif %}>{{ team.region }} {{ team.name }}</option>
+          <option value="{{ team.abbrev }}"{% if team.tid == tid_other %} selected="selected"{% endif %}>{{ team.region }} {{ team.name }}</option>
         {% endfor %}
         </select>
         <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="roster_other">

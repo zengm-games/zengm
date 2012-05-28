@@ -1,7 +1,7 @@
-<h2><a href="{{ url_for('roster', league_id=g.league_id, abbreviation=won_abbreviation, view_season=view_season) }}">{{ won_region }} {{ won_name }}</a> {{ won_pts }}, <a href="{{ url_for('roster', league_id=g.league_id, abbreviation=lost_abbreviation, view_season=view_season) }}">{{ lost_region }} {{ lost_name }}</a> {{ lost_pts }}</h2>
+<h2><a href="{{ url_for('roster', league_id=g.league_id, abbrev=won_abbrev, view_season=view_season) }}">{{ won_region }} {{ won_name }}</a> {{ won_pts }}, <a href="{{ url_for('roster', league_id=g.league_id, abbrev=lost_abbrev, view_season=view_season) }}">{{ lost_region }} {{ lost_name }}</a> {{ lost_pts }}</h2>
 
 {% for team in teams %}
-  <h3><a href="{{ url_for('roster', league_id=g.league_id, abbreviation=team.abbreviation, view_season=view_season) }}">{{ team.region }} {{ team.name }}</a></h2>
+  <h3><a href="{{ url_for('roster', league_id=g.league_id, abbrev=team.abbrev, view_season=view_season) }}">{{ team.region }} {{ team.name }}</a></h2>
   <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed">
   <thead>
     <tr><th>Name</th><th>Pos</th><th>Min</th><th>FG</th><th>3Pt</th><th>FT</th><th>Off</th><th>Reb</th><th>Ast</th><th>TO</th><th>Stl</th><th>Blk</th><th>PF</th><th>Pts</th></tr>

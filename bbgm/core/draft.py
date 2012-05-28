@@ -49,9 +49,9 @@ def set_order():
     """Sets draft order based on winning percentage (no lottery)."""
     for draft_round in xrange(1, 3):
         pick = 1
-        r = g.dbex('SELECT tid, abbreviation FROM team_attributes WHERE season = :season ORDER BY 1.0*won/(won + lost) ASC', season=g.season)
-        for tid, abbreviation in r.fetchall():
-            g.dbex('INSERT INTO draft_results (season, draft_round, pick, tid, abbreviation, pid, name, pos) VALUES (:season, :draft_round, :pick, :tid, :abbreviation, 0, \'\', \'\')', season=g.season, draft_round=draft_round, pick=pick, tid=tid, abbreviation=abbreviation)
+        r = g.dbex('SELECT tid, abbrev FROM team_attributes WHERE season = :season ORDER BY 1.0*won/(won + lost) ASC', season=g.season)
+        for tid, abbrev in r.fetchall():
+            g.dbex('INSERT INTO draft_results (season, draft_round, pick, tid, abbrev, pid, name, pos) VALUES (:season, :draft_round, :pick, :tid, :abbrev, 0, \'\', \'\')', season=g.season, draft_round=draft_round, pick=pick, tid=tid, abbrev=abbrev)
             pick += 1
 
 def until_user_or_end():

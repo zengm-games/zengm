@@ -181,9 +181,9 @@ def propose(tid_other, pids_user, pids_other):
     for i in xrange(2):
         if len(pids[i]) > 0:
             pids_sql = ', '.join([str(pid) for pid in pids[i]])
-            r = g.dbex('SELECT pa.pid, pa.contract_amount / 1000 AS contract_amount, :season - pa.born_year AS age, pr.overall, pr.potential FROM player_attributes AS pa, player_ratings AS pr WHERE pa.pid IN (%s) AND pr.pid = pa.pid AND pr.season = :season' % (pids_sql,), season=g.season)
+            r = g.dbex('SELECT pa.pid, pa.contract_amount / 1000 AS contract_amount, :season - pa.born_year AS age, pr.overall, pr.pot FROM player_attributes AS pa, player_ratings AS pr WHERE pa.pid IN (%s) AND pr.pid = pa.pid AND pr.season = :season' % (pids_sql,), season=g.season)
             for p in r.fetchall():
-                value[i] += 10 ** (float(p['potential']) / 10.0 + float(p['overall']) / 20.0 - float(p['age']) / 10.0 - float(p['contract_amount']) / 100000.0)
+                value[i] += 10 ** (float(p['pot']) / 10.0 + float(p['overall']) / 20.0 - float(p['age']) / 10.0 - float(p['contract_amount']) / 100000.0)
 
     if value[0] > value[1] * 0.9:
         # Trade players

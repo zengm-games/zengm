@@ -83,7 +83,7 @@ stl INTEGER,
 drb INTEGER,
 pss INTEGER,
 reb INTEGER,
-potential INTEGER,
+pot INTEGER,
 PRIMARY KEY (pid, season));
 
 CREATE TABLE player_stats (
@@ -161,7 +161,7 @@ name VARCHAR(255),
 pos VARCHAR(2),
 born_year INTEGER, -- YYYY for birth year
 overall INTEGER,
-potential INTEGER,
+pot INTEGER,
 PRIMARY KEY (season, draft_round, pick));
 
 CREATE TABLE negotiation (

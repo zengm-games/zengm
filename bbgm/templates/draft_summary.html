@@ -10,7 +10,7 @@ $(document).ready(function() {
 
     bbgm_datatable_singlepage($('#draft_results'), 0, [
       {% for player in players %}
-	    [ '{{ player.draft_round }}-{{ "%02d"|format(player.pick) }}', '<a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a>', '{{ player.pos }}', '<a href="{{ url_for('roster', league_id=g.league_id, abbrev=player.abbrev) }}">{{ player.abbrev }}</a>', '{{ player.age }}', '{{ player.overall }}', '{{ player.potential }}', '<a href="{{ url_for('roster', league_id=g.league_id, abbrev=player.current_abbrev) }}">{{ player.current_abbrev }}</a>', '{{ player.current_age }}', '{{ player.current_overall }}', '{{ player.current_potential }}', '{{ player.gp|int }}', '{{ player.min|float|round(1) }}', '{{ player.pts|float|round(1) }}', '{{ player.trb|float|round(1) }}', '{{ player.ast|float|round(1) }}' ],
+	    [ '{{ player.draft_round }}-{{ "%02d"|format(player.pick) }}', '<a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a>', '{{ player.pos }}', '<a href="{{ url_for('roster', league_id=g.league_id, abbrev=player.abbrev) }}">{{ player.abbrev }}</a>', '{{ player.age }}', '{{ player.overall }}', '{{ player.pot }}', '<a href="{{ url_for('roster', league_id=g.league_id, abbrev=player.current_abbrev) }}">{{ player.current_abbrev }}</a>', '{{ player.current_age }}', '{{ player.current_overall }}', '{{ player.current_pot }}', '{{ player.gp|int }}', '{{ player.min|float|round(1) }}', '{{ player.pts|float|round(1) }}', '{{ player.trb|float|round(1) }}', '{{ player.ast|float|round(1) }}' ],
       {% endfor %}
     ]);
 });

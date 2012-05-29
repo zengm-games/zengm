@@ -20,8 +20,8 @@ class Player:
         self.attribute = dict(r.fetchone())
 
     def save(self):
-        query = 'UPDATE player_ratings SET overall = :overall, hgt = :hgt, stre = :stre, spd = :spd, jmp = :jmp, end = :end, ins = :ins, dnk = :dnk, ft = :ft, fg = :fg, tp = :tp, blk = :blk, stl = :stl, drb = :drb, pss = :pss, reb = :reb, potential = :potential WHERE pid = :pid AND season = :season'
-        g.dbex(query, overall=self.overall_rating(), hgt=self.rating['hgt'], stre=self.rating['stre'], spd=self.rating['spd'], jmp=self.rating['jmp'], end=self.rating['end'], ins=self.rating['ins'], dnk=self.rating['dnk'], ft=self.rating['ft'], fg=self.rating['fg'], tp=self.rating['tp'], blk=self.rating['blk'], stl=self.rating['stl'], drb=self.rating['drb'], pss=self.rating['pss'], reb=self.rating['reb'], potential=self.rating['potential'], pid=self.id, season=g.season)
+        query = 'UPDATE player_ratings SET overall = :overall, hgt = :hgt, stre = :stre, spd = :spd, jmp = :jmp, end = :end, ins = :ins, dnk = :dnk, ft = :ft, fg = :fg, tp = :tp, blk = :blk, stl = :stl, drb = :drb, pss = :pss, reb = :reb, pot = :pot WHERE pid = :pid AND season = :season'
+        g.dbex(query, overall=self.overall_rating(), hgt=self.rating['hgt'], stre=self.rating['stre'], spd=self.rating['spd'], jmp=self.rating['jmp'], end=self.rating['end'], ins=self.rating['ins'], dnk=self.rating['dnk'], ft=self.rating['ft'], fg=self.rating['fg'], tp=self.rating['tp'], blk=self.rating['blk'], stl=self.rating['stl'], drb=self.rating['drb'], pss=self.rating['pss'], reb=self.rating['reb'], pot=self.rating['pot'], pid=self.id, season=g.season)
 
     def develop(self, years=1):
         # Make sure age is always defined
@@ -32,22 +32,22 @@ class Player:
 
         for i in range(years):
             age += 1
-            potential = fast_random.gauss(self.rating['potential'], 5)
+            pot = fast_random.gauss(self.rating['pot'], 5)
             overall = self.overall_rating()
 
             for key in ('stre', 'spd', 'jmp', 'end', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb'):
                 plus_minus = 28 - age
                 if plus_minus > 0:
-                    if potential > overall:
+                    if pot > overall:
                         # Cap potential growth
-                        if potential - overall < 20:
-                            plus_minus *= (potential - overall) / 20.0 + 0.5
+                        if pot - overall < 20:
+                            plus_minus *= (pot - overall) / 20.0 + 0.5
                         else:
                             plus_minus *= 1.5
                     else:
                         plus_minus *= 0.5
                 else:
-                    plus_minus *= 30.0 / potential
+                    plus_minus *= 30.0 / pot
                 increase = fast_random.gauss(1, 2) * plus_minus
                 #increase = plus_minus
                 self.rating[key] += increase
@@ -55,14 +55,14 @@ class Player:
 
             # Update potential
             overall = self.overall_rating()
-            self.rating['potential'] += -2 + int(fast_random.gauss(0, 2))
-            if overall > self.rating['potential'] or age > 28:
-                self.rating['potential'] = overall
+            self.rating['pot'] += -2 + int(fast_random.gauss(0, 2))
+            if overall > self.rating['pot'] or age > 28:
+                self.rating['pot'] = overall
 
     def bonus(self, amount):
         """Add or subtract from all ratings"""
 
-        for key in ('stre', 'spd', 'jmp', 'end', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb', 'potential'):
+        for key in ('stre', 'spd', 'jmp', 'end', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb', 'pot'):
             self.rating[key] = self._limit_rating(self.rating[key] + amount)
 
     def _limit_rating(self, rating):
@@ -82,23 +82,23 @@ class Player:
         max_amount = 20000
 
         overall = self.overall_rating()
-        # Scale amount from 500k to 15mil, proportional to (overall*2 + potential)*0.5 120-210
-        amount = ((2.0 * overall + self.rating['potential']) * 0.85 - 120) / (210 - 120)  # Scale from 0 to 1 (approx)
+        # Scale amount from 500k to 15mil, proportional to (overall*2 + pot)*0.5 120-210
+        amount = ((2.0 * overall + self.rating['pot']) * 0.85 - 120) / (210 - 120)  # Scale from 0 to 1 (approx)
         amount = amount * (max_amount - min_amount) + min_amount  # Scale from 500k to 15mil
         amount *= fast_random.gauss(1, 0.1)  # Randomize
 
         # Expiration
         # Players with high potentials want short contracts
-        potential_difference = round((self.rating['potential'] - overall) / 4.0)
+        potential_difference = round((self.rating['pot'] - overall) / 4.0)
         years = 5 - potential_difference
         if years < 2:
             years = 2
         # Bad players can only ask for short deals
-        if self.rating['potential'] < 40:
+        if self.rating['pot'] < 40:
             years = 1
-        elif self.rating['potential'] < 50:
+        elif self.rating['pot'] < 50:
             years = 2
-        elif self.rating['potential'] < 60:
+        elif self.rating['pot'] < 60:
             years = 3
 
         # Randomize expiration for contracts generated at beginning of new game
@@ -182,11 +182,11 @@ class GeneratePlayer(Player):
             self.nat_data.append(row)
         self.nat_max = 100
 
-    def new(self, pid, tid, age, profile, base_rating, potential, draft_year, player_nat=""):
+    def new(self, pid, tid, age, profile, base_rating, pot, draft_year, player_nat=""):
         self.id = pid
 
         self.rating = {}
-        self.rating['potential'] = potential
+        self.rating['pot'] = pot
         self.attribute = {}
         self.attribute['tid'] = tid
         self.attribute['roster_order'] = pid

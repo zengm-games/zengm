@@ -39,8 +39,8 @@ def new(tid):
         good_neutral_bad = random.randrange(-1, 2)  # Determines if this will be a good team or not
 
         base_ratings = [30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 19, 19]
-        potentials = [70, 60, 50, 50, 55, 45, 65, 35, 50, 45, 55, 55, 40, 40]
-        random.shuffle(potentials)
+        pots = [70, 60, 50, 50, 55, 45, 65, 35, 50, 45, 55, 55, 40, 40]
+        random.shuffle(pots)
         for p in range(14):
             i = random.randrange(len(profiles))
             profile = profiles[i]
@@ -49,7 +49,7 @@ def new(tid):
 
             draft_year = g.starting_season - 1 - aging_years
 
-            gp.new(pid, t, 19, profile, base_ratings[p], potentials[p], draft_year)
+            gp.new(pid, t, 19, profile, base_ratings[p], pots[p], draft_year)
             gp.develop(aging_years)
             if p < 5:
                 gp.bonus(good_neutral_bad * random.randint(0, 20))

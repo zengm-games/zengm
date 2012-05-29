@@ -35,7 +35,7 @@
     <div class="span6">
       <h2><a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a></h2>
       <p>Overal: {{ player.overall }}</p>
-      <p>Potential: {{ player.potential }}</p>
+      <p>Potential: {{ player.pot }}</p>
       <h2>Player Proposal</h2>
       <p>{{ player_years }} year{% if player_years > 1 %}s{% endif %} (through {{ player_expiration }})</p>
       <p>${{ player_amount|round(3) }}M per year</p>

@@ -224,9 +224,9 @@ roy_ast FLOAT,
 PRIMARY KEY (season));
 
 CREATE TABLE awards_all_league(
+rank INTEGER AUTO_INCREMENT,
 season INTEGER,
 team_type VARCHAR(9),
-player_rank INTEGER AUTO_INCREMENT,
 pid INTEGER,
 name VARCHAR(255),
 abbrev VARCHAR(3),
@@ -235,7 +235,7 @@ trb FLOAT,
 ast FLOAT,
 blk FLOAT,
 stl FLOAT,
-PRIMARY KEY (player_rank));
+PRIMARY KEY (rank));
 
 CREATE INDEX a ON team_attributes(tid, season, did, region);
 CREATE INDEX b ON player_stats(pid, season, playoffs);

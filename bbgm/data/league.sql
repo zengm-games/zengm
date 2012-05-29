@@ -26,7 +26,6 @@ negotiation_in_progress BOOLEAN DEFAULT 0,
 stop_games BOOLEAN DEFAULT 0,
 pm_status VARCHAR(255),
 pm_phase VARCHAR(255),
-pm_options TEXT,
 version VARCHAR(255));
 INSERT INTO game_attributes (tid, season, phase, version) VALUES(3, 2012, 0, '2.0.0alpha');
 

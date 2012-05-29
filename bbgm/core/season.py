@@ -120,7 +120,7 @@ def new_phase(phase):
                       dict(season=g.season, tid_home=tids[3], tid_away=tids[4], seed_home=4, seed_away=5),
                       dict(season=g.season, tid_home=tids[2], tid_away=tids[5], seed_home=3, seed_away=6),
                       dict(season=g.season, tid_home=tids[1], tid_away=tids[6], seed_home=2, seed_away=7)]
-            g.dbexmany('INSERT INTO playoff_series (series_round, season, tid_home, tid_away, seed_home, seed_away, won_home, won_away) VALUES (1, :season, :tid_home, :tid_away, :seed_home, :seed_away, 0, 0)', params)
+            g.dbexmany('INSERT INTO playoff_series (round, season, tid_home, tid_away, seed_home, seed_away, won_home, won_away) VALUES (1, :season, :tid_home, :tid_away, :seed_home, :seed_away, 0, 0)', params)
 
     # Offseason, before draft
     elif phase == c.PHASE_BEFORE_DRAFT:
@@ -190,7 +190,7 @@ def new_phase(phase):
         # Move undrafted players to free agent pool
         r = g.dbex('SELECT pid FROM player_attributes WHERE tid = :tid', tid=c.PLAYER_UNDRAFTED)
         for pid, in r.fetchall():
-            g.dbex('UPDATE player_attributes SET draft_year = -1, draft_round = -1, draft_pick = -1, draft_tid = -1 WHERE pid = :pid', pid=pid)
+            g.dbex('UPDATE player_attributes SET draft_year = -1, round = -1, draft_pick = -1, draft_tid = -1 WHERE pid = :pid', pid=pid)
             p = player.Player()
             p.load(pid)
             p.add_to_free_agents(phase)
@@ -301,10 +301,10 @@ def new_schedule_playoffs_day():
     tids = []
     active_series = False
     # Round: 1, 2, 3, or 4
-    r = g.dbex('SELECT MAX(series_round) FROM playoff_series WHERE season = :season', season=g.season)
+    r = g.dbex('SELECT MAX(round) FROM playoff_series WHERE season = :season', season=g.season)
     current_round, = r.fetchone()
 
-    r = g.dbex('SELECT tid_home, tid_away FROM playoff_series WHERE won_home < 4 AND won_away < 4 AND series_round = :series_round AND season = :season', series_round=current_round, season=g.season)
+    r = g.dbex('SELECT tid_home, tid_away FROM playoff_series WHERE won_home < 4 AND won_away < 4 AND round = :round AND season = :season', round=current_round, season=g.season)
     for tid_home, tid_away in r.fetchall():
         tids.append([tid_home, tid_away])
         active_series = True
@@ -316,7 +316,7 @@ def new_schedule_playoffs_day():
 
         # Who won?
         winners = {}
-        r = g.dbex('SELECT sid, tid_home, tid_away, seed_home, seed_away, won_home, won_away FROM playoff_series WHERE series_round = :series_round AND season = :season ORDER BY sid ASC', series_round=current_round, season=g.season)
+        r = g.dbex('SELECT sid, tid_home, tid_away, seed_home, seed_away, won_home, won_away FROM playoff_series WHERE round = :round AND season = :season ORDER BY sid ASC', round=current_round, season=g.season)
         for row in r.fetchall():
             sid, tid_home, tid_away, seed_home, seed_away, won_home, won_away = row
             if won_home == 4:
@@ -335,13 +335,13 @@ def new_schedule_playoffs_day():
 
         # Add a new round to the database
         current_round += 1
-        query = ('INSERT INTO playoff_series (series_round, season, tid_home, tid_away, seed_home, seed_away, won_home, won_away) VALUES (:series_round, :season, :tid_home, :tid_away, :seed_home, :seed_away, 0, 0)')
+        query = ('INSERT INTO playoff_series (round, season, tid_home, tid_away, seed_home, seed_away, won_home, won_away) VALUES (:round, :season, :tid_home, :tid_away, :seed_home, :seed_away, 0, 0)')
         sids = winners.keys()
         for i in range(min(sids), max(sids), 2):  # Go through winners by 2
             if winners[i][1] < winners[i + 1][1]:  # Which team is the home team?
-                g.dbex(query, series_round=current_round, season=g.season, tid_home=winners[i][0], tid_away=winners[i + 1][0], seed_home=winners[i][1], seed_away=winners[i + 1][1])
+                g.dbex(query, round=current_round, season=g.season, tid_home=winners[i][0], tid_away=winners[i + 1][0], seed_home=winners[i][1], seed_away=winners[i + 1][1])
             else:
-                g.dbex(query, series_round=current_round, season=g.season, tid_home=winners[i + 1][0], tid_away=winners[i][0], seed_home=winners[i + 1][1], seed_away=winners[i][1])
+                g.dbex(query, round=current_round, season=g.season, tid_home=winners[i + 1][0], tid_away=winners[i][0], seed_home=winners[i + 1][1], seed_away=winners[i][1])
 
     return num_active_teams
 

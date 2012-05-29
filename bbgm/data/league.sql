@@ -48,7 +48,7 @@ born_year INTEGER, -- YYYY for birth year
 born_location VARCHAR(255), -- City, State/Country
 college VARCHAR(255), -- or HS or country, if applicable
 draft_year INTEGER,
-draft_round INTEGER,
+round INTEGER,
 draft_pick INTEGER,
 draft_tid INTEGER,
 contract_amount INTEGER,
@@ -139,7 +139,7 @@ PRIMARY KEY (tid, gid));
 
 CREATE TABLE playoff_series (
 sid INTEGER AUTO_INCREMENT,
-series_round INTEGER,
+round INTEGER,
 season INTEGER,
 tid_home INTEGER,
 tid_away INTEGER,
@@ -151,7 +151,7 @@ PRIMARY KEY (sid));
 
 CREATE TABLE draft_results (
 season INTEGER,
-draft_round INTEGER,
+round INTEGER,
 pick INTEGER,
 tid INTEGER,
 abbrev VARCHAR(3),
@@ -161,7 +161,7 @@ pos VARCHAR(2),
 born_year INTEGER, -- YYYY for birth year
 ovr INTEGER,
 pot INTEGER,
-PRIMARY KEY (season, draft_round, pick));
+PRIMARY KEY (season, round, pick));
 
 CREATE TABLE negotiation (
 pid INTEGER,
@@ -246,7 +246,7 @@ CREATE INDEX f ON team_stats(gid, tid);
 CREATE INDEX g ON player_ratings(pid, ovr);
 CREATE INDEX h ON player_attributes(pid, tid);
 CREATE INDEX i ON divisions(cid);
-CREATE INDEX j ON playoff_series(sid, series_round);
+CREATE INDEX j ON playoff_series(sid, round);
 CREATE INDEX k ON released_players_salaries(tid);
 CREATE INDEX l ON player_ratings(pid, season);
 

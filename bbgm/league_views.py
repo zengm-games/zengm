@@ -252,9 +252,9 @@ def playoffs(view_season=None):
 
     # Display the current or archived playoffs
     else:
-        r = g.dbex('SELECT sid, series_round, (SELECT name FROM team_attributes WHERE tid = aps.tid_home AND season = :season) as name_home, (SELECT name FROM team_attributes WHERE tid = aps.tid_away AND season = :season) as name_away, seed_home, seed_away, won_home, won_away FROM playoff_series as aps WHERE season = :season ORDER BY series_round, sid ASC', season=view_season)
+        r = g.dbex('SELECT sid, round, (SELECT name FROM team_attributes WHERE tid = aps.tid_home AND season = :season) as name_home, (SELECT name FROM team_attributes WHERE tid = aps.tid_away AND season = :season) as name_away, seed_home, seed_away, won_home, won_away FROM playoff_series as aps WHERE season = :season ORDER BY round, sid ASC', season=view_season)
         for s in r.fetchall():
-            series[s['series_round'] - 1].append(s)
+            series[s['round'] - 1].append(s)
 
     return render_all_or_json('playoffs.html', {'series': series, 'seasons': seasons, 'view_season': view_season})
 
@@ -365,13 +365,13 @@ def draft_(view_season=None):
         r = g.dbex('SELECT pa.pid, pa.pos, pa.name, :season - pa.born_year as age, pr.ovr, pr.pot FROM player_attributes as pa, player_ratings as pr WHERE pa.pid = pr.pid AND pa.tid = :tid AND pr.season = :season ORDER BY pr.ovr + 2*pr.pot DESC', season=g.season, tid=c.PLAYER_UNDRAFTED)
         undrafted = r.fetchall()
 
-        r = g.dbex('SELECT draft_round, pick, abbrev, pid, name, :season - born_year as age, pos, ovr, pot FROM draft_results WHERE season = :season ORDER BY draft_round, pick ASC', season=g.season)
+        r = g.dbex('SELECT round, pick, abbrev, pid, name, :season - born_year as age, pos, ovr, pot FROM draft_results WHERE season = :season ORDER BY round, pick ASC', season=g.season)
         drafted = r.fetchall()
 
         return render_all_or_json('draft.html', {'undrafted': undrafted, 'drafted': drafted})
 
     # Show a summary of an old draft
-    r = g.dbex('SELECT dr.draft_round, dr.pick, dr.abbrev, dr.pid, dr.name, :view_season - dr.born_year AS age, dr.pos, dr.ovr, dr.pot, ta.abbrev AS current_abbrev, :season - dr.born_year AS current_age, pr.ovr AS current_ovr, pr.pot AS current_pot, SUM(ps.min>0) AS gp, AVG(ps.min) as min, AVG(ps.pts) AS pts, AVG(ps.orb + ps.drb) AS trb, AVG(ps.ast) AS ast FROM draft_results AS dr LEFT OUTER JOIN player_ratings AS pr ON pr.season = :season AND dr.pid = pr.pid LEFT OUTER JOIN player_stats AS ps ON ps.playoffs = 0 AND dr.pid = ps.pid LEFT OUTER JOIN player_attributes AS pa ON dr.pid = pa.pid LEFT OUTER JOIN team_attributes AS ta ON pa.tid = ta.tid AND ta.season = :season WHERE dr.season = :view_season GROUP BY dr.pid', view_season=view_season, season=g.season)
+    r = g.dbex('SELECT dr.round, dr.pick, dr.abbrev, dr.pid, dr.name, :view_season - dr.born_year AS age, dr.pos, dr.ovr, dr.pot, ta.abbrev AS current_abbrev, :season - dr.born_year AS current_age, pr.ovr AS current_ovr, pr.pot AS current_pot, SUM(ps.min>0) AS gp, AVG(ps.min) as min, AVG(ps.pts) AS pts, AVG(ps.orb + ps.drb) AS trb, AVG(ps.ast) AS ast FROM draft_results AS dr LEFT OUTER JOIN player_ratings AS pr ON pr.season = :season AND dr.pid = pr.pid LEFT OUTER JOIN player_stats AS ps ON ps.playoffs = 0 AND dr.pid = ps.pid LEFT OUTER JOIN player_attributes AS pa ON dr.pid = pa.pid LEFT OUTER JOIN team_attributes AS ta ON pa.tid = ta.tid AND ta.season = :season WHERE dr.season = :view_season GROUP BY dr.pid', view_season=view_season, season=g.season)
     players = r.fetchall()
     return render_all_or_json('draft_summary.html', {'players': players, 'seasons': seasons, 'view_season': view_season})
 
@@ -470,7 +470,7 @@ def game_log(view_season=None, abbrev=None):
 @league_crap
 def player_(pid):
     # Info
-    r = g.dbex('SELECT name, pos, (SELECT CONCAT(region, " ", name) FROM team_attributes AS ta WHERE pa.tid = ta.tid AND ta.season = :season) as team, hgt, weight, :season - born_year as age, born_year, born_location, college, draft_year, draft_round, draft_pick, (SELECT CONCAT(region, " ", name) FROM team_attributes as ta WHERE ta.tid = pa.draft_tid AND ta.season = :season) AS draft_team, contract_amount / 1000 AS contract_amount, contract_expiration FROM player_attributes AS pa WHERE pid = :pid', season=g.season, pid=pid)
+    r = g.dbex('SELECT name, pos, (SELECT CONCAT(region, " ", name) FROM team_attributes AS ta WHERE pa.tid = ta.tid AND ta.season = :season) as team, hgt, weight, :season - born_year as age, born_year, born_location, college, draft_year, round, draft_pick, (SELECT CONCAT(region, " ", name) FROM team_attributes as ta WHERE ta.tid = pa.draft_tid AND ta.season = :season) AS draft_team, contract_amount / 1000 AS contract_amount, contract_expiration FROM player_attributes AS pa WHERE pid = :pid', season=g.season, pid=pid)
     info = r.fetchone()
 
     # Current ratings

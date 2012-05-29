@@ -47,11 +47,11 @@ def generate_players():
 
 def set_order():
     """Sets draft order based on winning percentage (no lottery)."""
-    for draft_round in xrange(1, 3):
+    for round in xrange(1, 3):
         pick = 1
         r = g.dbex('SELECT tid, abbrev FROM team_attributes WHERE season = :season ORDER BY 1.0*won/(won + lost) ASC', season=g.season)
         for tid, abbrev in r.fetchall():
-            g.dbex('INSERT INTO draft_results (season, draft_round, pick, tid, abbrev, pid, name, pos) VALUES (:season, :draft_round, :pick, :tid, :abbrev, 0, \'\', \'\')', season=g.season, draft_round=draft_round, pick=pick, tid=tid, abbrev=abbrev)
+            g.dbex('INSERT INTO draft_results (season, round, pick, tid, abbrev, pid, name, pos) VALUES (:season, :round, :pick, :tid, :abbrev, 0, \'\', \'\')', season=g.season, round=round, pick=pick, tid=tid, abbrev=abbrev)
             pick += 1
 
 def until_user_or_end():
@@ -62,8 +62,8 @@ def until_user_or_end():
     """
     pids = []
 
-    r = g.dbex('SELECT tid, draft_round, pick FROM draft_results WHERE season = :season AND pid = 0 ORDER BY draft_round, pick ASC', season=g.season)
-    for tid, draft_round, pick in r.fetchall():
+    r = g.dbex('SELECT tid, round, pick FROM draft_results WHERE season = :season AND pid = 0 ORDER BY round, pick ASC', season=g.season)
+    for tid, round, pick in r.fetchall():
         if tid == g.user_tid:
             return pids
         team_pick = abs(int(random.gauss(0, 3)))  # 0=best prospect, 1=next best prospect, etc.
@@ -77,8 +77,8 @@ def until_user_or_end():
 
 def pick_player(tid, pid):
     # Validate that tid should be picking now
-    r = g.dbex('SELECT tid, draft_round, pick FROM draft_results WHERE season = :season AND pid = 0 ORDER BY draft_round, pick ASC LIMIT 1', season=g.season)
-    tid_next, draft_round, pick = r.fetchone()
+    r = g.dbex('SELECT tid, round, pick FROM draft_results WHERE season = :season AND pid = 0 ORDER BY round, pick ASC LIMIT 1', season=g.season)
+    tid_next, round, pick = r.fetchone()
 
     if tid_next != tid:
         app.logger.debug('WARNING: Team %d tried to draft out of order' % (tid,))
@@ -90,17 +90,17 @@ def pick_player(tid, pid):
     r = g.dbex('SELECT MAX(roster_order) + 1 FROM player_attributes WHERE tid = :tid', tid=tid)
     roster_order, = r.fetchone()
 
-    g.dbex('UPDATE player_attributes SET tid = :tid, draft_year = :draft_year, draft_round = :draft_round, draft_pick = :draft_pick, draft_tid = :tid, roster_order = :roster_order WHERE pid = :pid', tid=tid, draft_year=g.season, draft_round=draft_round, draft_pick=pick, draft_tid=tid, roster_order=roster_order, pid=pid)
-    g.dbex('UPDATE draft_results SET pid = :pid, name = :name, pos = :pos, born_year = :born_year, ovr = :ovr, pot = :pot WHERE season = :season AND draft_round = :draft_round AND pick = :pick', pid=pid, name=name, pos=pos, born_year=born_year, ovr=ovr, pot=pot, season=g.season, draft_round=draft_round, pick=pick)
+    g.dbex('UPDATE player_attributes SET tid = :tid, draft_year = :draft_year, round = :round, draft_pick = :draft_pick, draft_tid = :tid, roster_order = :roster_order WHERE pid = :pid', tid=tid, draft_year=g.season, round=round, draft_pick=pick, draft_tid=tid, roster_order=roster_order, pid=pid)
+    g.dbex('UPDATE draft_results SET pid = :pid, name = :name, pos = :pos, born_year = :born_year, ovr = :ovr, pot = :pot WHERE season = :season AND round = :round AND pick = :pick', pid=pid, name=name, pos=pos, born_year=born_year, ovr=ovr, pot=pot, season=g.season, round=round, pick=pick)
 
     # Contract
     rookie_salaries = (5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500,
                        1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000,
                        1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500,
                        500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500)
-    i = pick - 1 + 30 * (draft_round - 1)
+    i = pick - 1 + 30 * (round - 1)
     contract_amount = rookie_salaries[i]
-    years = 4 - draft_round  # 2 years for 2nd round, 3 years for 1st round
+    years = 4 - round  # 2 years for 2nd round, 3 years for 1st round
     contract_expiration = g.season + years
     g.dbex('UPDATE player_attributes SET contract_amount = :contract_amount, contract_expiration = :contract_expiration WHERE pid = :pid', contract_amount=contract_amount, contract_expiration=contract_expiration, pid=pid)
 

@@ -83,7 +83,7 @@ $(document).ready(function() {
       </thead>
       <tbody>
         {% for player in drafted %}
-          <tr><td>{{ player.draft_round }}-{{ player.pick }}</td><td><a href="{{ url_for('roster', league_id=g.league_id, abbrev=player.abbrev) }}">{{ player.abbrev }}</a></td><td><a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a></td><td>{{ player.pos }}</td><td>{{ player.age }}<td>{{ player.ovr }}</td><td>{{ player.pot }}</td></tr>
+          <tr><td>{{ player.round }}-{{ player.pick }}</td><td><a href="{{ url_for('roster', league_id=g.league_id, abbrev=player.abbrev) }}">{{ player.abbrev }}</a></td><td><a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a></td><td>{{ player.pos }}</td><td>{{ player.age }}<td>{{ player.ovr }}</td><td>{{ player.pot }}</td></tr>
         {% endfor %}
       </tbody>
       </table>

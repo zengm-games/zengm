@@ -274,7 +274,7 @@ class GeneratePlayer(Player):
         self.attribute['name'] = self._name(nationality)        
 
         self.attribute['college'] = 0
-        self.attribute['draft_round'] = 0
+        self.attribute['round'] = 0
         self.attribute['draft_pick'] = 0
         self.attribute['draft_tid'] = 0
         self.attribute['contract_amount'], self.attribute['contract_expiration'] = self.contract()

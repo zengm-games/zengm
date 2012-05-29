@@ -67,7 +67,7 @@ contract_expiration INTEGER);
 CREATE TABLE player_ratings (
 pid INTEGER,
 season INTEGER,
-overall INTEGER,
+ovr INTEGER,
 hgt INTEGER,
 stre INTEGER,
 spd INTEGER,
@@ -160,7 +160,7 @@ pid INTEGER,
 name VARCHAR(255),
 pos VARCHAR(2),
 born_year INTEGER, -- YYYY for birth year
-overall INTEGER,
+ovr INTEGER,
 pot INTEGER,
 PRIMARY KEY (season, draft_round, pick));
 
@@ -244,7 +244,7 @@ CREATE INDEX c ON team_attributes(season, did, won, lost);
 CREATE INDEX d ON player_stats(pid, gid, tid, gs, min);
 CREATE INDEX e ON team_stats(tid, season);
 CREATE INDEX f ON team_stats(gid, tid);
-CREATE INDEX g ON player_ratings(pid, overall);
+CREATE INDEX g ON player_ratings(pid, ovr);
 CREATE INDEX h ON player_attributes(pid, tid);
 CREATE INDEX i ON divisions(cid);
 CREATE INDEX j ON playoff_series(sid, series_round);

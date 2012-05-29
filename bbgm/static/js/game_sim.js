@@ -30,7 +30,7 @@
  *         storing team stats), and player (a list of dicts, one for each
  *         player on the team, ordered by roster_order). Each player's
  *         dict contains another four elements: id (player's unique ID
- *         number), overall_rating (overall rating, as stored in the DB),
+ *         number), ovr (overall rating, as stored in the DB),
  *         stat (a dict for storing player stats, similar to the one for
  *         team stats), and composite_ratings (a dict containing various
  *         ratings used in the game simulation). In other words...
@@ -42,7 +42,7 @@
  *                 "player": [
  *                     {
  *                         "id": 0,
- *                         "overall_rating": 0,
+ *                         "ovr": 0,
  *                         "stat": {},
  *                         "composite_rating": {}
  *                     },
@@ -71,7 +71,7 @@ console.log(team1);
  * Returns:
  *     A list of dicts, one for each team, similar to the inputs to
  *     __init__, but with both the team and player "stat" dicts filled in
- *     and the extraneous data (defense, pace, overall_rating,
+ *     and the extraneous data (defense, pace, ovr,
  *     composite_rating) removed. In other words...
  *         {
  *             'id': 0,
@@ -119,7 +119,7 @@ GameSim.prototype.run = function() {
         delete this.team[t]['defense'];
         delete this.team[t]['pace'];
         for (var p=0; p < this.team[t]['player'].length; p++) {
-            delete this.team[t]['player'][p]['overall_rating'];
+            delete this.team[t]['player'][p]['ovr'];
             delete this.team[t]['player'][p]['composite_rating'];
         }
     }
@@ -138,9 +138,9 @@ GameSim.prototype.update_players_on_court = function() {
 
     for (var t = 0; t < 2; t++) {
         // Overall ratings scaled by fatigue
-    	var overalls = [];
+    	var ovrs = [];
         for (var i = 0; i < this.team[t]['player'].length; i++) {
-            overalls.push(this.team[t]['player'][i]['overall_rating'] * this.team[t]['player'][i]['stat']['energy'] * gauss_random(1, .04));
+            ovrs.push(this.team[t]['player'][i]['ovr'] * this.team[t]['player'][i]['stat']['energy'] * gauss_random(1, .04));
         }
 
         // Loop through players on court (in inverse order of current roster position)
@@ -150,7 +150,7 @@ GameSim.prototype.update_players_on_court = function() {
             this.players_on_court[t][i] = p;
             // Loop through bench players (in order of current roster position) to see if any should be subbed in)
             for (var b = 0; b < this.team[t]['player'].length; b++) {
-                if (this.players_on_court[t].indexOf(b) == -1 && this.team[t]['player'][p]['stat']['court_time'] > 3 && this.team[t]['player'][b]['stat']['bench_time'] > 3 && overalls[b] > overalls[p]) {
+                if (this.players_on_court[t].indexOf(b) == -1 && this.team[t]['player'][p]['stat']['court_time'] > 3 && this.team[t]['player'][b]['stat']['bench_time'] > 3 && ovrs[b] > ovrs[p]) {
                     // Substitute player
                     this.players_on_court[t][i] = b;
                     this.team[t]['player'][b]['stat']['court_time'] = gauss_random(0, 2);
@@ -162,7 +162,7 @@ GameSim.prototype.update_players_on_court = function() {
             i += 1;
         }
 
-        // Update minutes (overall, court, and bench)
+        // Update minutes (ovr, court, and bench)
         for (var p = 0; p < this.team[t]['player'].length; p++) {
             if (this.players_on_court[t].indexOf(p) >= 0) {
                 this.record_stat(t, p, 'min', dt);

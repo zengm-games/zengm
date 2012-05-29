@@ -38,7 +38,7 @@ def roster_auto_sort(tid):
     """
     # Get roster
     players = []
-    r = g.dbex('SELECT pa.pid, pr.overall, pr.end FROM player_attributes as pa, player_ratings as pr WHERE pa.pid = pr.pid AND pa.tid = :tid AND pr.season = :season', tid=tid, season=g.season)
+    r = g.dbex('SELECT pa.pid, pr.ovr, pr.end FROM player_attributes as pa, player_ratings as pr WHERE pa.pid = pr.pid AND pa.tid = :tid AND pr.season = :season', tid=tid, season=g.season)
     for row in r.fetchall():
         players.append([int(i) for i in list(row)])
 
@@ -57,7 +57,7 @@ def free_agents_auto_sign():
     r = g.dbex('SELECT COUNT(*)/30 FROM team_stats WHERE season = :season', season=g.season)
     num_days_played, = r.fetchone()
     free_agents = []
-    r = g.dbex('SELECT pa.pid, pa.contract_amount, pa.contract_expiration FROM player_attributes as pa, player_ratings as pr WHERE pa.tid = :tid AND pa.pid = pr.pid AND pr.season = :season ORDER BY pr.overall + 2*pr.pot DESC', tid=c.PLAYER_FREE_AGENT, season=g.season)
+    r = g.dbex('SELECT pa.pid, pa.contract_amount, pa.contract_expiration FROM player_attributes as pa, player_ratings as pr WHERE pa.tid = :tid AND pa.pid = pr.pid AND pr.season = :season ORDER BY pr.ovr + 2*pr.pot DESC', tid=c.PLAYER_FREE_AGENT, season=g.season)
     for pid, amount, expiration in r.fetchall():
         free_agents.append([pid, amount, expiration, False])
 

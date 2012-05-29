@@ -46,9 +46,9 @@ def new_phase(phase):
             g.dbex('INSERT INTO team_attributes (tid, did, region, name, abbrev, cash, season) VALUES (:tid, :did, :region, :name, :abbrev, :cash, :season)', season=g.season, **row)
 
         # Create new rows in player_ratings, only for active players
-        r = g.dbex('SELECT pr.pid, season + 1 AS season, overall, pr.hgt, stre, spd, jmp, end, ins, dnk, ft, fg, tp, blk, stl, drb, pss, reb, pot FROM player_ratings AS pr, player_attributes AS pa WHERE pa.pid = pr.pid AND pr.season = :season AND pa.tid != :tid', season=g.season - 1, tid=c.PLAYER_RETIRED)
+        r = g.dbex('SELECT pr.pid, season + 1 AS season, ovr, pr.hgt, stre, spd, jmp, end, ins, dnk, ft, fg, tp, blk, stl, drb, pss, reb, pot FROM player_ratings AS pr, player_attributes AS pa WHERE pa.pid = pr.pid AND pr.season = :season AND pa.tid != :tid', season=g.season - 1, tid=c.PLAYER_RETIRED)
         for row in r.fetchall():
-            g.dbex('INSERT INTO player_ratings (pid, season, overall, hgt, stre, spd, jmp, end, ins, dnk, ft, fg, tp, blk, stl, drb, pss, reb, pot) VALUES (:pid, :season, :overall, :hgt, :stre, :spd, :jmp, :end, :ins, :dnk, :ft, :fg, :tp, :blk, :stl, :drb, :pss, :reb, :pot)', **row)
+            g.dbex('INSERT INTO player_ratings (pid, season, ovr, hgt, stre, spd, jmp, end, ins, dnk, ft, fg, tp, blk, stl, drb, pss, reb, pot) VALUES (:pid, :season, :ovr, :hgt, :stre, :spd, :jmp, :end, :ins, :dnk, :ft, :fg, :tp, :blk, :stl, :drb, :pss, :reb, :pot)', **row)
 
         # Age players
         pids = []

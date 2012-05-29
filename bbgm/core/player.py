@@ -20,8 +20,8 @@ class Player:
         self.attribute = dict(r.fetchone())
 
     def save(self):
-        query = 'UPDATE player_ratings SET overall = :overall, hgt = :hgt, stre = :stre, spd = :spd, jmp = :jmp, end = :end, ins = :ins, dnk = :dnk, ft = :ft, fg = :fg, tp = :tp, blk = :blk, stl = :stl, drb = :drb, pss = :pss, reb = :reb, pot = :pot WHERE pid = :pid AND season = :season'
-        g.dbex(query, overall=self.overall_rating(), hgt=self.rating['hgt'], stre=self.rating['stre'], spd=self.rating['spd'], jmp=self.rating['jmp'], end=self.rating['end'], ins=self.rating['ins'], dnk=self.rating['dnk'], ft=self.rating['ft'], fg=self.rating['fg'], tp=self.rating['tp'], blk=self.rating['blk'], stl=self.rating['stl'], drb=self.rating['drb'], pss=self.rating['pss'], reb=self.rating['reb'], pot=self.rating['pot'], pid=self.id, season=g.season)
+        query = 'UPDATE player_ratings SET ovr = :ovr, hgt = :hgt, stre = :stre, spd = :spd, jmp = :jmp, end = :end, ins = :ins, dnk = :dnk, ft = :ft, fg = :fg, tp = :tp, blk = :blk, stl = :stl, drb = :drb, pss = :pss, reb = :reb, pot = :pot WHERE pid = :pid AND season = :season'
+        g.dbex(query, ovr=self.ovr(), hgt=self.rating['hgt'], stre=self.rating['stre'], spd=self.rating['spd'], jmp=self.rating['jmp'], end=self.rating['end'], ins=self.rating['ins'], dnk=self.rating['dnk'], ft=self.rating['ft'], fg=self.rating['fg'], tp=self.rating['tp'], blk=self.rating['blk'], stl=self.rating['stl'], drb=self.rating['drb'], pss=self.rating['pss'], reb=self.rating['reb'], pot=self.rating['pot'], pid=self.id, season=g.season)
 
     def develop(self, years=1):
         # Make sure age is always defined
@@ -33,15 +33,15 @@ class Player:
         for i in range(years):
             age += 1
             pot = fast_random.gauss(self.rating['pot'], 5)
-            overall = self.overall_rating()
+            ovr = self.ovr()
 
             for key in ('stre', 'spd', 'jmp', 'end', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb'):
                 plus_minus = 28 - age
                 if plus_minus > 0:
-                    if pot > overall:
+                    if pot > ovr:
                         # Cap potential growth
-                        if pot - overall < 20:
-                            plus_minus *= (pot - overall) / 20.0 + 0.5
+                        if pot - ovr < 20:
+                            plus_minus *= (pot - ovr) / 20.0 + 0.5
                         else:
                             plus_minus *= 1.5
                     else:
@@ -54,10 +54,10 @@ class Player:
                 self.rating[key] = self._limit_rating(self.rating[key])
 
             # Update potential
-            overall = self.overall_rating()
+            ovr = self.ovr()
             self.rating['pot'] += -2 + int(fast_random.gauss(0, 2))
-            if overall > self.rating['pot'] or age > 28:
-                self.rating['pot'] = overall
+            if ovr > self.rating['pot'] or age > 28:
+                self.rating['pot'] = ovr
 
     def bonus(self, amount):
         """Add or subtract from all ratings"""
@@ -73,7 +73,7 @@ class Player:
         else:
             return int(rating)
 
-    def overall_rating(self):
+    def ovr(self):
         return (self.rating['hgt'] + self.rating['stre'] + self.rating['spd'] + self.rating['jmp'] + self.rating['end'] + self.rating['ins'] + self.rating['dnk'] + self.rating['ft'] + self.rating['fg'] + self.rating['tp'] + self.rating['blk'] + self.rating['stl'] + self.rating['drb'] + self.rating['pss'] + self.rating['reb']) / 15
 
     def contract(self, randomize_expiration = False):
@@ -81,15 +81,15 @@ class Player:
         min_amount = 500
         max_amount = 20000
 
-        overall = self.overall_rating()
-        # Scale amount from 500k to 15mil, proportional to (overall*2 + pot)*0.5 120-210
-        amount = ((2.0 * overall + self.rating['pot']) * 0.85 - 120) / (210 - 120)  # Scale from 0 to 1 (approx)
+        ovr = self.ovr()
+        # Scale amount from 500k to 15mil, proportional to (ovr*2 + pot)*0.5 120-210
+        amount = ((2.0 * ovr + self.rating['pot']) * 0.85 - 120) / (210 - 120)  # Scale from 0 to 1 (approx)
         amount = amount * (max_amount - min_amount) + min_amount  # Scale from 500k to 15mil
         amount *= fast_random.gauss(1, 0.1)  # Randomize
 
         # Expiration
         # Players with high potentials want short contracts
-        potential_difference = round((self.rating['pot'] - overall) / 4.0)
+        potential_difference = round((self.rating['pot'] - ovr) / 4.0)
         years = 5 - potential_difference
         if years < 2:
             years = 2
@@ -367,6 +367,6 @@ class GeneratePlayer(Player):
             d['season'] = g.starting_season
         else:
             d['season'] = g.season
-        d['overall'] = self.overall_rating()
+        d['ovr'] = self.ovr()
         d['pid'] = self.id
         return d

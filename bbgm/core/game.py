@@ -144,14 +144,14 @@ def player(pid):
     """Returns a dict containing the minimal information about a player needed
     to simulate a game.
     """
-    p = {'id': pid, 'overall_rating': 0, 'stat': {}, 'composite_rating': {}}
+    p = {'id': pid, 'ovr': 0, 'stat': {}, 'composite_rating': {}}
 
-    r = g.dbex('SELECT overall, hgt, stre, spd, jmp, end, ins, dnk, '
+    r = g.dbex('SELECT ovr, hgt, stre, spd, jmp, end, ins, dnk, '
             'ft, fg, tp, blk, stl, drb, '
             'pss, reb FROM player_ratings WHERE pid = :pid AND season = :season', pid=p['id'], season=g.season)
     rating = r.fetchone()
 
-    p['overall_rating'] = rating['overall']
+    p['ovr'] = rating['ovr']
 
     p['composite_rating']['pace'] = _composite(90, 140, rating, ['spd', 'jmp', 'dnk',
                                                     'tp', 'stl', 'drb',

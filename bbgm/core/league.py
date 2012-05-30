@@ -2,8 +2,7 @@ import random
 
 from flask import session, g
 
-import bbgm
-from bbgm import app
+from bbgm import app, db
 from bbgm.core import play_menu, player, season
 from bbgm.util import roster_auto_sort
 import bbgm.util.const as c
@@ -20,14 +19,14 @@ def new(tid):
     g.dbex('GRANT ALL ON bbgm_%s.* TO %s@localhost IDENTIFIED BY \'%s\'' % (g.league_id, app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
     g.dbex('COMMIT')
     g.db.close()
-    g.db = bbgm.connect_db('bbgm_%d' % (g.league_id,))
+    g.db = db.connect('bbgm_%d' % (g.league_id,))
 
     # Copy team attributes table
     g.dbex('CREATE TABLE team_attributes SELECT * FROM bbgm.teams')
 
     # Create other new tables
     f = app.open_resource('data/league.sql')
-    bbgm.bulk_execute(f)
+    db.bulk_execute(f)
 
     # Generate new players
     profiles = ['Point', 'Wing', 'Big', '']
@@ -93,7 +92,7 @@ def new(tid):
     # Switch back to the default non-league database
     g.dbex('COMMIT')
     g.db.close()
-    g.db = bbgm.connect_db('bbgm')
+    g.db = db.connect('bbgm')
 
     return g.league_id
 

@@ -1,8 +1,6 @@
 from flask import Flask, g
 from flask.ext.assets import Environment, Bundle
 import logging
-from sqlalchemy import create_engine, MetaData, text
-from sqlalchemy.orm import sessionmaker
 
 BBGM_VERSION = '2.0.0alpha'
 DEBUG = True
@@ -41,64 +39,15 @@ app.logger.debug('Started')
 # Assets
 assets = Environment(app)
 
-# Views
+# Internal imports
 import bbgm.views
 import bbgm.league_views
-
-
-def connect_db(database=''):
-    app.logger.debug('Connecting to database \'%s\'' % (database,))
-    if app.config['DB_POSTGRES']:
-        engine = create_engine('postgresql+psycopg2://%s:%s@localhost/%s' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD'], database))
-    else:
-        engine = create_engine('mysql+mysqldb://%s:%s@localhost/%s' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD'], database))
-#        engine = create_engine('mysql+pymysql://%s:%s@localhost/' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
-#        engine = create_engine('mysql+oursql://%s:%s@localhost/?default_charset=1' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
-    metadata = MetaData(bind=engine)
-    con = engine.connect()
-    return con
-
-
-def db_execute(query, **kwargs):
-    """Convenience function so I don't need to be doing "from sqlalchemy import
-    text" everywhere.
-    """
-#    if len(kwargs):
-#        return g.db.execute(text(query), **kwargs)
-#    else:
-#        return g.db.execute(query)
-    return g.db.execute(text(query).execution_options(autocommit=False), **kwargs)
-
-
-def db_executemany(query, params):
-    """Convenience function so I don't need to be doing "from sqlalchemy import
-    text" everywhere.
-    """
-    return g.db.execute(text(query).execution_options(autocommit=False), params)
-
-
-def bulk_execute(f):
-    """Executes a series of SQL queries, even if split across multiple lines.
-
-    This emulates the functionality of executescript from sqlite3. It won't work
-    if either you have SQL queries that don't end in a semicolon followed by a
-    newline ;\n or you have a semicolon followed by a newline that is not at the
-    end of an SQL query.
-
-    Args:
-        f: An iterable (such as a file handle) containing lines of SQL queries
-    """
-    sql = ''
-    for line in f:
-        sql += line
-        if line.endswith(';\n'):
-            g.dbex(sql)
-            sql = ''
+from bbgm import db
 
 
 def init_db():
-    g.db = connect_db()
-    g.dbex = db_execute
+    g.db = db.connect()
+    g.dbex = db.execute
 
     if app.config['DB_POSTGRES']:
         g.db.connection.connection.set_isolation_level(0)
@@ -120,11 +69,11 @@ def init_db():
         g.dbex('GRANT ALL ON bbgm.* TO %s@localhost IDENTIFIED BY \'%s\'' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
     g.dbex('COMMIT')
     g.db.close()
-    g.db = connect_db('bbgm')
+    g.db = db.connect('bbgm')
 
     # Create new tables
     f = app.open_resource('data/core.sql')
-    bulk_execute(f)
+    db.bulk_execute(f)
 
     if app.config['DB_POSTGRES']:
         g.db.connection.connection.set_isolation_level(1)
@@ -134,11 +83,11 @@ def init_db():
 def before_request():
     # Database crap
     if g.league_id >= 0:
-        g.db = connect_db('bbgm_%d' % (g.league_id,))
+        g.db = db.connect('bbgm_%d' % (g.league_id,))
     else:
-        g.db = connect_db('bbgm')
-    g.dbex = db_execute
-    g.dbexmany = db_executemany
+        g.db = db.connect('bbgm')
+    g.dbex = db.execute
+    g.dbexmany = db.executemany
 
     # Non-database crap - should probably be stored elsewhere. Also, changing
     # some of these might break stuff.

@@ -402,7 +402,7 @@ def history(view_season=None):
     r = g.dbex('SELECT pid, name, abbrev, pts, trb, ast, blk, stl FROM awards_all_league WHERE season = :season AND team_type = \'defensive\' ORDER BY rank', season=view_season)
     all_defensive = r.fetchall()
 
-    r = g.dbex('SELECT abbrev, region, name FROM team_attributes WHERE won_championship = 1 AND season = :season', season=view_season)
+    r = g.dbex('SELECT abbrev, region, name FROM team_attributes WHERE league_champs = 1 AND season = :season', season=view_season)
     champ = r.fetchone()
 
     return render_all_or_json('history.html', {'awards': awards, 'all_league': all_league, 'all_defensive': all_defensive, 'champ': champ, 'seasons': seasons, 'view_season': view_season})

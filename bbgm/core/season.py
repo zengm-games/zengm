@@ -325,9 +325,9 @@ def new_schedule_playoffs_day():
                 winners[sid] = [tid_away, seed_away]
             # Record user's team as conference and league champion
             if current_round == 3:
-                g.dbex('UPDATE team_attributes SET won_conference = 1 WHERE season = :season AND tid = :tid', season=g.season, tid=winners[sid][0])
+                g.dbex('UPDATE team_attributes SET conf_champs = 1 WHERE season = :season AND tid = :tid', season=g.season, tid=winners[sid][0])
             elif current_round == 4:
-                g.dbex('UPDATE team_attributes SET won_championship = 1 WHERE season = :season AND tid = :tid', season=g.season, tid=winners[sid][0])
+                g.dbex('UPDATE team_attributes SET league_champs = 1 WHERE season = :season AND tid = :tid', season=g.season, tid=winners[sid][0])
 
         # Are the whole playoffs over?
         if current_round == 4:

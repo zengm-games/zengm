@@ -5,10 +5,10 @@ from flask import g
 from bbgm import app
 import const as c
 
-def request_context_globals(league_id):
+def request_context_globals(lid):
     """Call this within an app.test_request_context() to set other globals."""
     app.preprocess_request()  # So that g is available
-    g.league_id = league_id
+    g.lid = lid
     # The following two lines are copied from bbgm.util.decorators.global_game_attributes
     r = g.dbex('SELECT tid, season, phase, version FROM game_attributes LIMIT 1')
     g.user_tid, g.season, g.phase, g.version = r.fetchone()

@@ -5,14 +5,14 @@
     <h5>Trade Away:</h5>
     <ul>
       {% for player in summary.trade[0] %}
-        <li><a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a> (${{ player.contract_amount|float|round(1) }}M)</li>
+        <li><a href="{{ url_for('player_', lid=g.lid, pid=player.pid) }}">{{ player.name }}</a> (${{ player.contract_amount|float|round(1) }}M)</li>
       {% endfor %}
       <li>${{ summary.total[0]|float|round(1) }}M Total</li>
     </ul>
     <h5>Receive:</h5>
     <ul>
       {% for player in summary.trade[1] %}
-        <li><a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a> (${{ player.contract_amount|float|round(1) }}M)</li>
+        <li><a href="{{ url_for('player_', lid=g.lid, pid=player.pid) }}">{{ player.name }}</a> (${{ player.contract_amount|float|round(1) }}M)</li>
       {% endfor %}
       <li>${{ summary.total[1]|float|round(1) }}M Total</li>
     </ul>
@@ -24,14 +24,14 @@
     <h5>Trade Away:</h5>
     <ul>
       {% for player in summary.trade[1] %}
-        <li><a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a> (${{ player.contract_amount|float|round(1) }}M)</li>
+        <li><a href="{{ url_for('player_', lid=g.lid, pid=player.pid) }}">{{ player.name }}</a> (${{ player.contract_amount|float|round(1) }}M)</li>
       {% endfor %}
       <li>${{ summary.total[1]|float|round(1) }}M Total</li>
     </ul>
     <h5>Receive:</h5>
     <ul>
       {% for player in summary.trade[0] %}
-        <li><a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a> (${{ player.contract_amount|float|round(1) }}M)</li>
+        <li><a href="{{ url_for('player_', lid=g.lid, pid=player.pid) }}">{{ player.name }}</a> (${{ player.contract_amount|float|round(1) }}M)</li>
       {% endfor %}
       <li>${{ summary.total[0]|float|round(1) }}M Total</li>
     </ul>
@@ -44,12 +44,12 @@
 {% if summary.warning|length > 0 %}<p class="alert alert-error"><strong>Warning!</strong> {{ summary.warning }}</p>{% else %}<br>{% endif %}
 
 <center>
-  <form action="{{ url_for('trade_', league_id=g.league_id) }}" method="POST" id="propose_trade">
+  <form action="{{ url_for('trade_', lid=g.lid) }}" method="POST" id="propose_trade">
     <input type="hidden" name="propose" value="1">
     <button type="submit" class="btn btn-large btn-primary"{% if summary.warning|length > 0 or (summary.trade[0]|length == 0 and summary.trade[1]|length == 0) %} disabled="disabled"{% endif %}>Propose Trade</button>
   </form>
 
-  <form action="{{ url_for('trade_', league_id=g.league_id) }}" method="POST" id="clear_trade">
+  <form action="{{ url_for('trade_', lid=g.lid) }}" method="POST" id="clear_trade">
     <input type="hidden" name="clear" value="1">
     <button type="submit" class="btn">Clear Trade</button>
   </form>

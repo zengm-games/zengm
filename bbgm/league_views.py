@@ -16,28 +16,28 @@ import bbgm.util.const as c
 # All the views in here are for within a league.
 
 @app.url_defaults
-def add_league_id(endpoint, values):
-    if 'league_id' in values or not g.league_id:
+def add_lid(endpoint, values):
+    if 'lid' in values or not g.lid:
         return
-    if app.url_map.is_endpoint_expecting(endpoint, 'league_id'):
-        values['league_id'] = g.league_id
+    if app.url_map.is_endpoint_expecting(endpoint, 'lid'):
+        values['lid'] = g.lid
 
 
 @app.url_value_preprocessor
-def pull_league_id(endpoint, values):
-    g.league_id = values.pop('league_id', None)
-    if g.league_id is not None:
-        g.league_id = int(g.league_id)
+def pull_lid(endpoint, values):
+    g.lid = values.pop('lid', None)
+    if g.lid is not None:
+        g.lid = int(g.lid)
 
 
-@app.route('/<int:league_id>')
+@app.route('/<int:lid>')
 @league_crap
 def league_dashboard():
     return render_all_or_json('league_dashboard.html')
 
 
-@app.route('/<int:league_id>/leaders')
-@app.route('/<int:league_id>/leaders/<int:view_season>')
+@app.route('/<int:lid>/leaders')
+@app.route('/<int:lid>/leaders/<int:view_season>')
 @league_crap
 def leaders(view_season=None):
     view_season = validate_season(view_season)
@@ -73,8 +73,8 @@ def leaders(view_season=None):
     return render_all_or_json('leaders.html', {'categories': categories, 'user_abbrev': user_abbrev, 'seasons': seasons, 'view_season': view_season})
 
 
-@app.route('/<int:league_id>/player_ratings')
-@app.route('/<int:league_id>/player_ratings/<int:view_season>')
+@app.route('/<int:lid>/player_ratings')
+@app.route('/<int:lid>/player_ratings/<int:view_season>')
 @league_crap
 def player_ratings(view_season=None):
     view_season = validate_season(view_season)
@@ -86,8 +86,8 @@ def player_ratings(view_season=None):
     return render_all_or_json('player_ratings.html', {'players': players, 'seasons': seasons, 'view_season': view_season})
 
 
-@app.route('/<int:league_id>/player_stats')
-@app.route('/<int:league_id>/player_stats/<int:view_season>')
+@app.route('/<int:lid>/player_stats')
+@app.route('/<int:lid>/player_stats/<int:view_season>')
 @league_crap
 def player_stats(view_season=None):
     view_season = validate_season(view_season)
@@ -105,7 +105,7 @@ def player_stats(view_season=None):
     return render_all_or_json('player_stats.html', {'players': players, 'seasons': seasons, 'view_season': view_season})
 
 
-@app.route('/<int:league_id>/play/<amount>', methods=['POST'])
+@app.route('/<int:lid>/play/<amount>', methods=['POST'])
 @league_crap_ajax
 def play(amount):
     """This is kind of a hodgepodge that handles every request from the play
@@ -155,16 +155,16 @@ def play(amount):
             season.new_phase(c.PHASE_DRAFT)
             draft.generate_players()
             draft.set_order()
-        url = url_for('draft_', league_id=g.league_id)
+        url = url_for('draft_', lid=g.lid)
     elif amount == 'until_resign_players':
         if g.phase == c.PHASE_AFTER_DRAFT:
             season.new_phase(c.PHASE_RESIGN_PLAYERS)
-        url = url_for('negotiation_list', league_id=g.league_id)
+        url = url_for('negotiation_list', lid=g.lid)
     elif amount == 'until_free_agency':
         if g.phase == c.PHASE_RESIGN_PLAYERS:
             season.new_phase(c.PHASE_FREE_AGENCY)
             play_menu.set_status('Idle')
-        url = url_for('free_agents', league_id=g.league_id)
+        url = url_for('free_agents', lid=g.lid)
     elif amount == 'until_preseason':
         if g.phase == c.PHASE_FREE_AGENCY:
             season.new_phase(c.PHASE_PRESEASON)
@@ -175,7 +175,7 @@ def play(amount):
     return jsonify(url=url, error=error, num_days=num_days, schedule=schedule, teams=teams, playoffs_continue=playoffs_continue)
 
 
-@app.route('/<int:league_id>/save_results', methods=['POST'])
+@app.route('/<int:lid>/save_results', methods=['POST'])
 @league_crap_ajax
 def save_results():
     """Record a day's game simulations."""
@@ -185,7 +185,7 @@ def save_results():
     return 'fuck'
 
 
-@app.route('/<int:league_id>/schedule')
+@app.route('/<int:lid>/schedule')
 @league_crap
 def schedule():
     schedule_ = season.get_schedule()
@@ -203,8 +203,8 @@ def schedule():
     return render_all_or_json('schedule.html', {'games': games})
 
 
-@app.route('/<int:league_id>/standings')
-@app.route('/<int:league_id>/standings/<int:view_season>')
+@app.route('/<int:lid>/standings')
+@app.route('/<int:lid>/standings/<int:view_season>')
 @league_crap
 def standings(view_season=None):
     view_season = validate_season(view_season)
@@ -229,8 +229,8 @@ def standings(view_season=None):
     return render_all_or_json('standings.html', {'conferences': conferences, 'seasons': seasons, 'view_season': view_season})
 
 
-@app.route('/<int:league_id>/playoffs')
-@app.route('/<int:league_id>/playoffs/<int:view_season>')
+@app.route('/<int:lid>/playoffs')
+@app.route('/<int:lid>/playoffs/<int:view_season>')
 @league_crap
 def playoffs(view_season=None):
     view_season = validate_season(view_season)
@@ -259,7 +259,7 @@ def playoffs(view_season=None):
     return render_all_or_json('playoffs.html', {'series': series, 'seasons': seasons, 'view_season': view_season})
 
 
-@app.route('/<int:league_id>/finances')
+@app.route('/<int:lid>/finances')
 @league_crap
 def finances():
     r = g.dbex('SELECT ta.tid, ta.region, ta.name, ta.abbrev, AVG(ts.att) AS att, SUM(ts.att)*:ticket_price / 1000000 AS revenue, (SUM(ts.att)*:ticket_price - SUM(ts.cost)) / 1000000 AS profit, ta.cash / 1000000 as cash, ((SELECT SUM(contract_amount) FROM player_attributes as pa WHERE pa.tid = ta.tid) + (SELECT IFNULL(SUM(contract_amount),0) FROM released_players_salaries as rps WHERE rps.tid = ta.tid)) / 1000 AS payroll FROM team_attributes as ta LEFT OUTER JOIN team_stats as ts ON ta.season = ts.season AND ta.tid = ts.tid WHERE ta.season = :season GROUP BY ta.tid', ticket_price=g.ticket_price, season=g.season)
@@ -269,7 +269,7 @@ def finances():
     return render_all_or_json('finances.html', {'salary_cap': g.salary_cap / 1000, 'teams': teams})
 
 
-@app.route('/<int:league_id>/free_agents')
+@app.route('/<int:lid>/free_agents')
 @league_crap
 def free_agents():
     if g.phase >= c.PHASE_AFTER_TRADE_DEADLINE and g.phase <= c.PHASE_RESIGN_PLAYERS:
@@ -283,7 +283,7 @@ def free_agents():
     return render_all_or_json('free_agents.html', {'players': players})
 
 
-@app.route('/<int:league_id>/trade', methods=['GET', 'POST'])
+@app.route('/<int:lid>/trade', methods=['GET', 'POST'])
 @league_crap
 def trade_():
     if g.phase >= c.PHASE_AFTER_TRADE_DEADLINE and g.phase <= c.PHASE_PLAYOFFS:
@@ -342,8 +342,8 @@ def trade_():
     return render_all_or_json('trade.html', {'roster_user': roster_user, 'roster_other': roster_other, 'pids_user': pids_user, 'pids_other': pids_other, 'summary': summary, 'teams': teams, 'tid_other': tid_other}, extra_json)
 
 
-@app.route('/<int:league_id>/draft')
-@app.route('/<int:league_id>/draft/<int:view_season>')
+@app.route('/<int:lid>/draft')
+@app.route('/<int:lid>/draft/<int:view_season>')
 @league_crap
 def draft_(view_season=None):
     view_season = validate_season(view_season)
@@ -376,8 +376,8 @@ def draft_(view_season=None):
     return render_all_or_json('draft_summary.html', {'players': players, 'seasons': seasons, 'view_season': view_season})
 
 
-@app.route('/<int:league_id>/history')
-@app.route('/<int:league_id>/history/<int:view_season>')
+@app.route('/<int:lid>/history')
+@app.route('/<int:lid>/history/<int:view_season>')
 @league_crap
 def history(view_season=None):
     view_season = validate_season(view_season)
@@ -408,9 +408,9 @@ def history(view_season=None):
     return render_all_or_json('history.html', {'awards': awards, 'all_league': all_league, 'all_defensive': all_defensive, 'champ': champ, 'seasons': seasons, 'view_season': view_season})
 
 
-@app.route('/<int:league_id>/roster')
-@app.route('/<int:league_id>/roster/<abbrev>')
-@app.route('/<int:league_id>/roster/<abbrev>/<int:view_season>')
+@app.route('/<int:lid>/roster')
+@app.route('/<int:lid>/roster/<abbrev>')
+@app.route('/<int:lid>/roster/<abbrev>/<int:view_season>')
 @league_crap
 def roster(abbrev=None, view_season=None):
     tid, abbrev = validate_abbrev(abbrev)
@@ -439,7 +439,7 @@ def roster(abbrev=None, view_season=None):
     return render_all_or_json('roster.html', {'players': players, 'num_roster_spots': 15 - len(players), 'teams': teams, 'tid': tid, 'team_name': team_name, 'cash': cash, 'view_season': view_season, 'seasons': seasons})
 
 
-@app.route('/<int:league_id>/roster/auto_sort', methods=['POST'])
+@app.route('/<int:lid>/roster/auto_sort', methods=['POST'])
 @league_crap
 def auto_sort_roster():
     roster_auto_sort(g.user_tid)
@@ -447,9 +447,9 @@ def auto_sort_roster():
     return redirect_or_json('roster')
 
 
-@app.route('/<int:league_id>/game_log')
-@app.route('/<int:league_id>/game_log/<int:view_season>')
-@app.route('/<int:league_id>/game_log/<int:view_season>/<abbrev>')
+@app.route('/<int:lid>/game_log')
+@app.route('/<int:lid>/game_log/<int:view_season>')
+@app.route('/<int:lid>/game_log/<int:view_season>/<abbrev>')
 @league_crap
 def game_log(view_season=None, abbrev=None):
     view_season = validate_season(view_season)
@@ -466,7 +466,7 @@ def game_log(view_season=None, abbrev=None):
     return render_all_or_json('game_log.html', {'abbrev': abbrev, 'teams': teams, 'tid': tid, 'seasons': seasons, 'view_season': view_season})
 
 
-@app.route('/<int:league_id>/player/<int:pid>')
+@app.route('/<int:lid>/player/<int:pid>')
 @league_crap
 def player_(pid):
     # Info
@@ -484,7 +484,7 @@ def player_(pid):
     return render_all_or_json('player.html', {'info': info, 'ratings': ratings, 'seasons': seasons})
 
 
-@app.route('/<int:league_id>/negotiation')
+@app.route('/<int:lid>/negotiation')
 @league_crap
 def negotiation_list(pid=None):
     # If there is only one active negotiation with a free agent, go to it
@@ -504,7 +504,7 @@ def negotiation_list(pid=None):
     return render_all_or_json('negotiation_list.html', {'players': players})
 
 
-@app.route('/<int:league_id>/negotiation/<int:pid>', methods=['GET', 'POST'])
+@app.route('/<int:lid>/negotiation/<int:pid>', methods=['GET', 'POST'])
 @league_crap
 def negotiation(pid):
     # Any action requires a POST. GET will just view the status of the
@@ -558,8 +558,8 @@ def negotiation(pid):
 
 # Utility views
 
-@app.route('/<int:league_id>/box_score')
-@app.route('/<int:league_id>/box_score/<int:gid>')
+@app.route('/<int:lid>/box_score')
+@app.route('/<int:lid>/box_score/<int:gid>')
 @league_crap_ajax
 def box_score(gid=0):
     teams = []
@@ -585,7 +585,7 @@ def box_score(gid=0):
     return render_template('box_score.html', teams=teams, view_season=teams[0]['season'], **won_lost)
 
 
-@app.route('/<int:league_id>/game_log_list')
+@app.route('/<int:lid>/game_log_list')
 @league_crap_ajax
 def game_log_list():
     season = request.args.get('season', None, type=int)
@@ -600,7 +600,7 @@ def game_log_list():
     return render_template('game_log_list.html', games=games)
 
 
-@app.route('/<int:league_id>/push_play_menu')
+@app.route('/<int:lid>/push_play_menu')
 @league_crap_ajax
 def push_play_menu():
     """This should only be called on initial page load. Further updates are
@@ -614,7 +614,7 @@ def push_play_menu():
     return 'fuck'
 
 
-@app.route('/<int:league_id>/trade/update', methods=['POST'])
+@app.route('/<int:lid>/trade/update', methods=['POST'])
 @league_crap_ajax
 def trade_update():
     pids_user = map(int, request.form.getlist('pids_user'))
@@ -628,7 +628,7 @@ def trade_update():
     return jsonify(summary=trade_summary, pids_user=pids_user, pids_other=pids_other)
 
 
-@app.route('/<int:league_id>/draft/until_user_or_end', methods=['POST'])
+@app.route('/<int:lid>/draft/until_user_or_end', methods=['POST'])
 @league_crap_ajax
 def draft_until_user_or_end():
     play_menu.set_status('Draft in progress...')
@@ -642,7 +642,7 @@ def draft_until_user_or_end():
     return jsonify(pids=pids, done=done)
 
 
-@app.route('/<int:league_id>/draft/user', methods=['POST'])
+@app.route('/<int:lid>/draft/user', methods=['POST'])
 @league_crap_ajax
 def draft_user():
     pid = int(request.form['pid'])
@@ -651,7 +651,7 @@ def draft_user():
     return jsonify(pids=[pid])
 
 
-@app.route('/<int:league_id>/roster/reorder', methods=['POST'])
+@app.route('/<int:lid>/roster/reorder', methods=['POST'])
 @league_crap_ajax
 def roster_reorder():
     roster_order = 1
@@ -666,7 +666,7 @@ def roster_reorder():
     return 'fuck'
 
 
-@app.route('/<int:league_id>/roster/release', methods=['POST'])
+@app.route('/<int:lid>/roster/release', methods=['POST'])
 @league_crap_ajax
 def roster_release():
     error = None
@@ -689,7 +689,7 @@ def roster_release():
     return jsonify(error=error)
 
 
-@app.route('/<int:league_id>/roster/buy_out', methods=['POST'])
+@app.route('/<int:lid>/roster/buy_out', methods=['POST'])
 @league_crap_ajax
 def roster_buy_out():
     error = None
@@ -804,5 +804,5 @@ def redirect_or_json(f, args={}):
     if request.args.get('json', 0, type=int) or request.form.get('json', 0, type=int):
         return globals()[f](**args)
     else:
-        args['league_id'] = g.league_id
+        args['lid'] = g.lid
         return redirect(url_for(f, **args))

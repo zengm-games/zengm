@@ -1,7 +1,7 @@
 {% extends "league_layout.html" %}
 {% set active_page = "game_log" %}
 
-{% block title %}Game Log - League {{ g.league_id }} - Basketball GM{% endblock %}
+{% block title %}Game Log - League {{ g.lid }} - Basketball GM{% endblock %}
 
 {% block league_content %}
   <script type="text/javascript">
@@ -10,7 +10,7 @@
       function load_game_log_list(season, abbrev, first_time) {
         $.ajax({
           type: 'GET',
-          url: '{{ url_for('game_log_list', league_id=g.league_id) }}',
+          url: '{{ url_for('game_log_list', lid=g.lid) }}',
           data: {season: season, abbrev: abbrev},
           success: function(msg) {
             // Display the list of games
@@ -22,7 +22,7 @@
             }
             else {
               // Update URL
-//              history.pushState({'league_content': $('#league_content').html()}, '', '{{ url_for('game_log', league_id=g.league_id) }}' + '/' + season + '/' + abbrev);
+//              history.pushState({'league_content': $('#league_content').html()}, '', '{{ url_for('game_log', lid=g.lid) }}' + '/' + season + '/' + abbrev);
             }
           }
         });
@@ -39,7 +39,7 @@
       // Clickable rows for game log list table
       $(document).on('click', '#game_log_list tbody tr', function(event) {
         $clicked_tr = $(this);
-        $.get('{{ url_for('box_score', league_id=g.league_id) }}/' + $clicked_tr.attr('id'), function(data) {
+        $.get('{{ url_for('box_score', lid=g.lid) }}/' + $clicked_tr.attr('id'), function(data) {
           // Update boxscore
           $('#game_log_box_score').html(data);
 
@@ -52,13 +52,13 @@
           // Update URL
 //          data['title'] = document.title;
 //          data['league_content'] =  $('#league_content').html();
-//          history.pushState(data, '', '{{ url_for('game_log', league_id=g.league_id) }}/' + $clicked_tr.attr('id'));
+//          history.pushState(data, '', '{{ url_for('game_log', lid=g.lid) }}/' + $clicked_tr.attr('id'));
         });
       });
     });
   </script>
 
-  <form action="{{ url_for('game_log', league_id=g.league_id) }}" method="GET" class="form-inline pull-right">
+  <form action="{{ url_for('game_log', lid=g.lid) }}" method="GET" class="form-inline pull-right">
     <select id="game_log_select_abbrev" name="team" class="team">
       {% for team in teams %}
         <option value="{{ team.abbrev }}"{% if team.tid == tid %} selected="selected"{% endif %}>{{ team.region }} {{ team.name }}</option>

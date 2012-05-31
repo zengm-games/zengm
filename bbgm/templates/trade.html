@@ -1,7 +1,7 @@
 {% extends "league_layout.html" %}
 {% set active_page = "trade" %}
 
-{% block title %}Trade - League {{ g.league_id }} - Basketball GM{% endblock %}
+{% block title %}Trade - League {{ g.lid }} - Basketball GM{% endblock %}
 
 {% block league_content %}
   <script type="text/javascript">
@@ -10,7 +10,7 @@ $(document).ready(function() {
   $('#trade_select_team').change(function(event) {
     $.ajax({
       type: 'POST',
-      url: '{{ url_for('trade_', league_id=g.league_id) }}',
+      url: '{{ url_for('trade_', lid=g.lid) }}',
       data: {'json': 1, 'abbrev': $('#trade_select_team').val()},
       success: function (data) {
         ajax_update(data);
@@ -21,13 +21,13 @@ $(document).ready(function() {
 
   bbgm_datatable_singlepage($('#roster_user'), 5, [
     {% for player in roster_user %}
-      [ '<input name="pids_user" type="checkbox" value="{{ player.pid }}"{% if player.pid in pids_user %} checked="checked"{% endif %}>', '<a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a>', '{{ player.pos }}', '{{ player.age }}', '{{ player.ovr }}', '{{ player.pot }}', '${{ player.contract_amount|float|round(1) }}M through {{ player.contract_expiration }}', '{{ player.min|float|round(1) }}', '{{ player.pts|float|round(1) }}', '{{ player.reb|float|round(1) }}', '{{ player.ast|float|round(1) }}' ],
+      [ '<input name="pids_user" type="checkbox" value="{{ player.pid }}"{% if player.pid in pids_user %} checked="checked"{% endif %}>', '<a href="{{ url_for('player_', lid=g.lid, pid=player.pid) }}">{{ player.name }}</a>', '{{ player.pos }}', '{{ player.age }}', '{{ player.ovr }}', '{{ player.pot }}', '${{ player.contract_amount|float|round(1) }}M through {{ player.contract_expiration }}', '{{ player.min|float|round(1) }}', '{{ player.pts|float|round(1) }}', '{{ player.reb|float|round(1) }}', '{{ player.ast|float|round(1) }}' ],
     {% endfor %}
   ]);
 
   bbgm_datatable_singlepage($('#roster_other'), 5, [
     {% for player in roster_other %}
-      [ '<input name="pids_other" type="checkbox" value="{{ player.pid }}"{% if player.pid in pids_other %} checked="checked"{% endif %}>', '<a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a>', '{{ player.pos }}', '{{ player.age }}', '{{ player.ovr }}', '{{ player.pot }}', '${{ player.contract_amount|float|round(1) }}M through {{ player.contract_expiration }}', '{{ player.min|float|round(1) }}', '{{ player.pts|float|round(1) }}', '{{ player.reb|float|round(1) }}', '{{ player.ast|float|round(1) }}' ],
+      [ '<input name="pids_other" type="checkbox" value="{{ player.pid }}"{% if player.pid in pids_other %} checked="checked"{% endif %}>', '<a href="{{ url_for('player_', lid=g.lid, pid=player.pid) }}">{{ player.name }}</a>', '{{ player.pos }}', '{{ player.age }}', '{{ player.ovr }}', '{{ player.pot }}', '${{ player.contract_amount|float|round(1) }}M through {{ player.contract_expiration }}', '{{ player.min|float|round(1) }}', '{{ player.pts|float|round(1) }}', '{{ player.reb|float|round(1) }}', '{{ player.ast|float|round(1) }}' ],
     {% endfor %}
   ]);
 
@@ -35,7 +35,7 @@ $(document).ready(function() {
   var roster_checkboxes_other = $('#roster_user input')
   $('#rosters input[type="checkbox"]').click(function(event) {
     $('#propose_trade button').attr('disabled', 'disabled'); // Will be reenabled, if appropriate, when the summary is loaded
-    $.post('{{ url_for('trade_update', league_id=g.league_id) }}', $('#rosters').serialize(), function (data) {
+    $.post('{{ url_for('trade_update', lid=g.lid) }}', $('#rosters').serialize(), function (data) {
       $('#trade_summary').html(data['summary']);
       for (var i=0; i<roster_checkboxes_user.length; i++) {
         var found = false;

@@ -9,13 +9,13 @@ from bbgm.util.decorators import login_required
 def index():
     if 'logged_in' in session and session['logged_in']:
         leagues = []
-        r = g.dbex('SELECT league_id FROM leagues WHERE user_id = :user_id ORDER BY league_id ASC', user_id=session['user_id'])
-        for league_id, in r.fetchall():
-            r = g.dbex('SELECT tid, season, pm_phase FROM bbgm_' + str(league_id) + '.game_attributes ORDER BY season DESC LIMIT 1')
+        r = g.dbex('SELECT lid FROM leagues WHERE uid = :uid ORDER BY lid ASC', uid=session['uid'])
+        for lid, in r.fetchall():
+            r = g.dbex('SELECT tid, season, pm_phase FROM bbgm_' + str(lid) + '.game_attributes ORDER BY season DESC LIMIT 1')
             user_tid, season, pm_phase = r.fetchone()
-            r = g.dbex('SELECT CONCAT(region, " ", name) FROM bbgm_' + str(league_id) + '.team_attributes WHERE tid = :tid AND season = :season', tid=user_tid, season=season)
+            r = g.dbex('SELECT CONCAT(region, " ", name) FROM bbgm_' + str(lid) + '.team_attributes WHERE tid = :tid AND season = :season', tid=user_tid, season=season)
             team, = r.fetchone()
-            leagues.append({'league_id': league_id, 'pm_phase': pm_phase, 'team': team})
+            leagues.append({'lid': lid, 'pm_phase': pm_phase, 'team': team})
         return render_template('dashboard.html', leagues=leagues)
     else:
         return render_template('hello.html')
@@ -50,12 +50,12 @@ def login():
 
     error = None
     if request.method == 'POST':
-        r = g.dbex('SELECT user_id FROM users WHERE username = :username AND password = :password', username=request.form['username'], password=request.form['password'])
+        r = g.dbex('SELECT uid FROM users WHERE username = :username AND password = :password', username=request.form['username'], password=request.form['password'])
         if r.rowcount > 0:
-            user_id, = r.fetchone()
+            uid, = r.fetchone()
             session['logged_in'] = True
             session['username'] = request.form['username']
-            session['user_id'] = user_id
+            session['uid'] = uid
             return redirect(url_for('index'))
         else:
             error = 'Invalid username/password'
@@ -75,8 +75,8 @@ def new_league():
     if request.method == 'POST':
         tid = int(request.form['tid'])
         if tid >= 0 and tid <= 29:
-            league_id = league.new(tid)
-            return redirect(url_for('league_dashboard', league_id=league_id))
+            lid = league.new(tid)
+            return redirect(url_for('league_dashboard', lid=lid))
 
     r = g.dbex('SELECT tid, region, name FROM teams ORDER BY tid ASC')
     teams = r.fetchall()
@@ -86,14 +86,14 @@ def new_league():
 @app.route('/delete_league', methods=['POST'])
 @login_required
 def delete_league():
-    league_id = int(request.form['league_id'])
+    lid = int(request.form['lid'])
 
     # Check permissions (this is the same as bbgm.util.decorators.check_permissions)
-    r = g.dbex('SELECT user_id FROM leagues WHERE league_id = :league_id', league_id=league_id)
-    user_id, = r.fetchone()
-    if session['user_id'] != user_id:
+    r = g.dbex('SELECT uid FROM leagues WHERE lid = :lid', lid=lid)
+    uid, = r.fetchone()
+    if session['uid'] != uid:
         return redirect(url_for('index'))
 
-    league.delete(league_id)
+    league.delete(lid)
 
     return redirect(url_for('index'))

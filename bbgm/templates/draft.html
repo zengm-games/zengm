@@ -1,7 +1,7 @@
 {% extends "league_layout.html" %}
 {% set active_page = "draft" %}
 
-{% block title %}Draft - League {{ g.league_id }} - Basketball GM{% endblock %}
+{% block title %}Draft - League {{ g.lid }} - Basketball GM{% endblock %}
 
 {% block league_content %}
   <script type="text/javascript">
@@ -32,7 +32,7 @@ $(document).ready(function() {
     }
 
     function draft_until_user_or_end() {
-        $.post('{{ url_for('draft_until_user_or_end', league_id=g.league_id) }}', function (data) {
+        $.post('{{ url_for('draft_until_user_or_end', lid=g.lid) }}', function (data) {
             update_draft_tables(data['pids']);
             if (!data['done']) {
                 $('#undrafted button').removeAttr('disabled');
@@ -47,7 +47,7 @@ $(document).ready(function() {
 
     $('#undrafted button').click(function(event) {
         $('#undrafted button').attr('disabled', 'disabled');
-        $.post('{{ url_for('draft_user', league_id=g.league_id) }}', {'pid': this.getAttribute('data-player-id')}, function (data) {
+        $.post('{{ url_for('draft_user', lid=g.lid) }}', {'pid': this.getAttribute('data-player-id')}, function (data) {
             update_draft_tables(data['pids']);
             draft_until_user_or_end();
         }, 'json');
@@ -70,7 +70,7 @@ $(document).ready(function() {
       </thead>
       <tbody>
         {% for player in undrafted %}
-          <tr id="undrafted_{{ player.pid }}"><td><a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a></td><td>{{ player.pos }}</td><td>{{ player.age }}<td>{{ player.ovr }}</td><td>{{ player.pot }}</td><td><button class="btn btn-mini btn-primary" data-player-id="{{ player.pid }}"{% if drafted[0].pid == 0 %} disabled="disabled"{% endif %}>Draft</button></td></tr>
+          <tr id="undrafted_{{ player.pid }}"><td><a href="{{ url_for('player_', lid=g.lid, pid=player.pid) }}">{{ player.name }}</a></td><td>{{ player.pos }}</td><td>{{ player.age }}<td>{{ player.ovr }}</td><td>{{ player.pot }}</td><td><button class="btn btn-mini btn-primary" data-player-id="{{ player.pid }}"{% if drafted[0].pid == 0 %} disabled="disabled"{% endif %}>Draft</button></td></tr>
         {% endfor %}
       </tbody>
       </table>
@@ -83,7 +83,7 @@ $(document).ready(function() {
       </thead>
       <tbody>
         {% for player in drafted %}
-          <tr><td>{{ player.round }}-{{ player.pick }}</td><td><a href="{{ url_for('roster', league_id=g.league_id, abbrev=player.abbrev) }}">{{ player.abbrev }}</a></td><td><a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a></td><td>{{ player.pos }}</td><td>{{ player.age }}<td>{{ player.ovr }}</td><td>{{ player.pot }}</td></tr>
+          <tr><td>{{ player.round }}-{{ player.pick }}</td><td><a href="{{ url_for('roster', lid=g.lid, abbrev=player.abbrev) }}">{{ player.abbrev }}</a></td><td><a href="{{ url_for('player_', lid=g.lid, pid=player.pid) }}">{{ player.name }}</a></td><td>{{ player.pos }}</td><td>{{ player.age }}<td>{{ player.ovr }}</td><td>{{ player.pot }}</td></tr>
         {% endfor %}
       </tbody>
       </table>

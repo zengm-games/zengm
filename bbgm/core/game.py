@@ -296,6 +296,6 @@ def play(num_days, start=False):
         r = g.dbex('SELECT gid FROM schedule LIMIT 1')
         if r.rowcount == 0 and g.phase < c.PHASE_PLAYOFFS:
             season.new_phase(c.PHASE_PLAYOFFS)  # Start playoffs
-            url = url_for('history', league_id=g.league_id)
+            url = url_for('history', lid=g.lid)
 
     return teams, schedule, playoffs_continue, url

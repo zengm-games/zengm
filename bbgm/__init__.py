@@ -21,14 +21,14 @@ app.config.from_object(__name__)
 class ContextFilter(logging.Filter):
     """This filter injects the league ID, if available into the log."""
     def filter(self, record):
-        if hasattr(g, 'league_id'):
-            record.league_id = g.league_id
+        if hasattr(g, 'lid'):
+            record.lid = g.lid
         else:
-            record.league_id = '?'
+            record.lid = '?'
         return True
 fh = logging.FileHandler('debug.log')
 fh.setLevel(logging.DEBUG)
-formatter = logging.Formatter('%(asctime)s %(levelname)s: League %(league_id)s: %(message)s [in %(pathname)s:%(lineno)d]')
+formatter = logging.Formatter('%(asctime)s %(levelname)s: League %(lid)s: %(message)s [in %(pathname)s:%(lineno)d]')
 fh.setFormatter(formatter)
 f = ContextFilter()
 app.logger.addFilter(f)
@@ -82,8 +82,8 @@ def init_db():
 @app.before_request
 def before_request():
     # Database crap
-    if g.league_id >= 0:
-        g.db = db.connect('bbgm_%d' % (g.league_id,))
+    if g.lid >= 0:
+        g.db = db.connect('bbgm_%d' % (g.lid,))
     else:
         g.db = db.connect('bbgm')
     g.dbex = db.execute

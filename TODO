@@ -27,6 +27,7 @@ database crap
   - postgresql
     - packages: postgresql, postgresql-server-dev-9.1, pip psycopg2
     - define tables using SQLalchemy? only for creating them. would allow for unified syntax http://docs.sqlalchemy.org/en/rel_0_7/core/schema.html
+  - connection pooling?
 
 player view
 - next, previous buttons (also active on left/right arrows)

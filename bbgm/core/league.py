@@ -9,17 +9,17 @@ import bbgm.util.const as c
 
 def new(tid):
     # Add to main record
-    g.dbex('INSERT INTO leagues (user_id) VALUES (:user_id)', user_id=session['user_id'])
+    g.dbex('INSERT INTO leagues (uid) VALUES (:uid)', uid=session['uid'])
 
-    r = g.dbex('SELECT league_id FROM leagues WHERE user_id = :user_id ORDER BY league_id DESC LIMIT 1', user_id=session['user_id'])
-    g.league_id, = r.fetchone()
+    r = g.dbex('SELECT lid FROM leagues WHERE uid = :uid ORDER BY lid DESC LIMIT 1', uid=session['uid'])
+    g.lid, = r.fetchone()
 
     # Create and connect to new database
-    g.dbex('CREATE DATABASE bbgm_%s' % (g.league_id,))
-    g.dbex('GRANT ALL ON bbgm_%s.* TO %s@localhost IDENTIFIED BY \'%s\'' % (g.league_id, app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
+    g.dbex('CREATE DATABASE bbgm_%s' % (g.lid,))
+    g.dbex('GRANT ALL ON bbgm_%s.* TO %s@localhost IDENTIFIED BY \'%s\'' % (g.lid, app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
     g.dbex('COMMIT')
     g.db.close()
-    g.db = db.connect('bbgm_%d' % (g.league_id,))
+    g.db = db.connect('bbgm_%d' % (g.lid,))
 
     # Copy team attributes table
     g.dbex('CREATE TABLE team_attributes SELECT * FROM bbgm.teams')
@@ -94,8 +94,8 @@ def new(tid):
     g.db.close()
     g.db = db.connect('bbgm')
 
-    return g.league_id
+    return g.lid
 
-def delete(league_id):
-    g.dbex('DROP DATABASE bbgm_%s' % (league_id,))
-    g.dbex('DELETE FROM leagues WHERE league_id = :league_id', league_id=league_id)
+def delete(lid):
+    g.dbex('DROP DATABASE bbgm_%s' % (lid,))
+    g.dbex('DELETE FROM leagues WHERE lid = :lid', lid=lid)

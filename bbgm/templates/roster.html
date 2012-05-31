@@ -1,7 +1,7 @@
 {% extends "league_layout.html" %}
 {% set active_page = "roster" %}
 
-{% block title %}Roster - League {{ g.league_id }} - Basketball GM{% endblock %}
+{% block title %}Roster - League {{ g.lid }} - Basketball GM{% endblock %}
 
 {% block league_content %}
   <script type="text/javascript">
@@ -52,7 +52,7 @@ $(document).ready(function() {
             if (this.dataset.action == 'release') {
                 if (window.confirm('Are you sure you want to release ' + this.dataset.playerName + '?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in ' + this.dataset.contractExpiration + '.')) {
                     var tr = this.parentNode.parentNode;
-                    $.post('{{ url_for('roster_release', league_id=g.league_id) }}', {'pid': this.dataset.playerId}, function (data) {
+                    $.post('{{ url_for('roster_release', lid=g.lid) }}', {'pid': this.dataset.playerId}, function (data) {
                         if (data['error']) {
                             alert('Error: ' + data['error']);
                         }
@@ -66,7 +66,7 @@ $(document).ready(function() {
                 if ({{ cash }} > this.dataset.cashOwed) {
                     if (window.confirm('Are you sure you want to buy out ' + this.dataset.playerName + '? You will have to pay him the $' + this.dataset.cashOwed + 'M remaining on his contract from your current cash reserves of ${{ cash|float|round(1) }}M. He will then become a free agent and his contract will no longer count towards your salary cap.')) {
                         var tr = this.parentNode.parentNode;
-                        $.post('{{ url_for('roster_buy_out', league_id=g.league_id) }}', {'pid': this.dataset.playerId}, function (data) {
+                        $.post('{{ url_for('roster_buy_out', lid=g.lid) }}', {'pid': this.dataset.playerId}, function (data) {
                             if (data['error']) {
                                 alert('Error: ' + data['error']);
                             }
@@ -88,7 +88,7 @@ $(document).ready(function() {
 });
   </script>
 
-  <form action="{{ url_for('roster', league_id=g.league_id) }}" method="GET" class="form-inline pull-right">
+  <form action="{{ url_for('roster', lid=g.lid) }}" method="GET" class="form-inline pull-right">
     <select id="roster_select_team" name="team" class="team">
       {% for team in teams %}
         <option value="{{ team.abbrev }}"{% if team.tid == tid %} selected="selected"{% endif %}>{{ team.region }} {{ team.name }}</option>
@@ -115,7 +115,7 @@ $(document).ready(function() {
   </thead>
   <tbody>
     {% for player in players %}
-      <tr id="roster_{{ player.pid }}">{% if tid == g.user_tid and view_season == g.season %}<td class="{% if loop.index <= 5 %}btn-primary gs{% else %}btn-info bench{% endif %}"></td>{% endif %}<td><a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a></td><td>{{ player.pos }}</td><td>{{ player.age }}</td><td>{{ player.ovr }}</td><td>{{ player.pot }}</td>{% if view_season == g.season %}<td>${{ player.contract_amount|float|round(1) }}M through {{ player.contract_expiration }}</td>{% endif %}<td>{{ player.min|float|round(1) }}</td><td>{{ player.pts|float|round(1) }}</td><td>{{ player.rebounds|float|round(1) }}</td><td>{{ player.ast|float|round(1) }}</td>{% if tid == g.user_tid and view_season == g.season %}<td><button class="btn btn-mini" data-action="release" data-player-id="{{ player.pid }}" data-player-name="{{ player.name }}" data-contract-expiration="{{ player.contract_expiration }}">Release</button></td><td><button class="btn btn-mini" data-action="buy_out" data-player-id="{{ player.pid }}" data-player-name="{{ player.name }}" data-cash-owed="{{ player.cash_owed|float|round(1) }}">Buy out</button></td>{% elif view_season == g.season %}<td><button class="btn btn-mini" data-action="trade_for" data-player-id="{{ player.pid }}">Trade for</button></td>{% endif %}</tr>
+      <tr id="roster_{{ player.pid }}">{% if tid == g.user_tid and view_season == g.season %}<td class="{% if loop.index <= 5 %}btn-primary gs{% else %}btn-info bench{% endif %}"></td>{% endif %}<td><a href="{{ url_for('player_', lid=g.lid, pid=player.pid) }}">{{ player.name }}</a></td><td>{{ player.pos }}</td><td>{{ player.age }}</td><td>{{ player.ovr }}</td><td>{{ player.pot }}</td>{% if view_season == g.season %}<td>${{ player.contract_amount|float|round(1) }}M through {{ player.contract_expiration }}</td>{% endif %}<td>{{ player.min|float|round(1) }}</td><td>{{ player.pts|float|round(1) }}</td><td>{{ player.rebounds|float|round(1) }}</td><td>{{ player.ast|float|round(1) }}</td>{% if tid == g.user_tid and view_season == g.season %}<td><button class="btn btn-mini" data-action="release" data-player-id="{{ player.pid }}" data-player-name="{{ player.name }}" data-contract-expiration="{{ player.contract_expiration }}">Release</button></td><td><button class="btn btn-mini" data-action="buy_out" data-player-id="{{ player.pid }}" data-player-name="{{ player.name }}" data-cash-owed="{{ player.cash_owed|float|round(1) }}">Buy out</button></td>{% elif view_season == g.season %}<td><button class="btn btn-mini" data-action="trade_for" data-player-id="{{ player.pid }}">Trade for</button></td>{% endif %}</tr>
     {% endfor %}
   </tbody>
   </table>

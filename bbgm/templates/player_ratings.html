@@ -1,7 +1,7 @@
 {% extends "league_layout.html" %}
 {% set active_page = "player_ratings" %}
 
-{% block title %}Player Ratings - League {{ g.league_id }} - Basketball GM{% endblock %}
+{% block title %}Player Ratings - League {{ g.lid }} - Basketball GM{% endblock %}
 
 {% block league_content %}
   <script type="text/javascript">
@@ -10,13 +10,13 @@
 
       bbgm_datatable($('#player_ratings'), 4, [
         {% for player in players %}
-		  [ '<a href="#"><a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a></a>', '{{ player.pos }}', '<a href="{{ url_for('roster', league_id=g.league_id, abbrev=player.abbrev) }}">{{ player.abbrev }}</a>', '{{ player.age }}', '{{ player.ovr }}', '{{ player.pot }}', '{{ player.hgt }}', '{{ player.stre }}', '{{ player.spd }}', '{{ player.jmp }}', '{{ player.end }}', '{{ player.ins }}', '{{ player.dnk }}', '{{ player.ft }}', '{{ player.fg }}', '{{ player.tp }}', '{{ player.blk }}', '{{ player.stl }}', '{{ player.drb }}', '{{ player.pss }}', '{{ player.reb }}' ],
+		  [ '<a href="#"><a href="{{ url_for('player_', lid=g.lid, pid=player.pid) }}">{{ player.name }}</a></a>', '{{ player.pos }}', '<a href="{{ url_for('roster', lid=g.lid, abbrev=player.abbrev) }}">{{ player.abbrev }}</a>', '{{ player.age }}', '{{ player.ovr }}', '{{ player.pot }}', '{{ player.hgt }}', '{{ player.stre }}', '{{ player.spd }}', '{{ player.jmp }}', '{{ player.end }}', '{{ player.ins }}', '{{ player.dnk }}', '{{ player.ft }}', '{{ player.fg }}', '{{ player.tp }}', '{{ player.blk }}', '{{ player.stl }}', '{{ player.drb }}', '{{ player.pss }}', '{{ player.reb }}' ],
         {% endfor %}
       ]);
     } );
   </script>
 
-  <form action="{{ url_for('player_ratings', league_id=g.league_id) }}" method="GET" class="form-inline pull-right">
+  <form action="{{ url_for('player_ratings', lid=g.lid) }}" method="GET" class="form-inline pull-right">
     <select id="player_ratings_select_season" name="season" class="season">
       {% for season in seasons %}
         <option value="{{ season }}"{% if season == view_season %} selected="selected"{% endif %}>{{ season }} season</option>

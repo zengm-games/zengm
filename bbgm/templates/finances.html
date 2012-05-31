@@ -1,14 +1,14 @@
 {% extends "league_layout.html" %}
 {% set active_page = "finances" %}
 
-{% block title %}Finances - League {{ g.league_id }} - Basketball GM{% endblock %}
+{% block title %}Finances - League {{ g.lid }} - Basketball GM{% endblock %}
 
 {% block league_content %}
   <script type="text/javascript">
     $(document).ready(function() {
       bbgm_datatable_singlepage($('#finances'), 5, [
         {% for team in teams %}
-		  [ '<a href="{{ url_for('roster', league_id=g.league_id, abbrev=team.abbrev) }}">{{ team.region }} {{ team.name }}</a>', '{{ team.att|int|number_format }}', '${{ team.revenue|float|round(1) }}M', '${{ team.profit|float|round(1) }}M', '${{ team.cash|float|round(1) }}M', '${{ team.payroll|float|round(1) }}M' ],
+		  [ '<a href="{{ url_for('roster', lid=g.lid, abbrev=team.abbrev) }}">{{ team.region }} {{ team.name }}</a>', '{{ team.att|int|number_format }}', '${{ team.revenue|float|round(1) }}M', '${{ team.profit|float|round(1) }}M', '${{ team.cash|float|round(1) }}M', '${{ team.payroll|float|round(1) }}M' ],
         {% endfor %}
       ]);
     } );

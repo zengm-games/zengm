@@ -1,15 +1,15 @@
 {% extends "league_layout.html" %}
 {% set active_page = "negotiate" %}
 
-{% block title %}{{ player.name }} - Contract Negotiation - League {{ g.league_id }} - Basketball GM{% endblock %}
+{% block title %}{{ player.name }} - Contract Negotiation - League {{ g.lid }} - Basketball GM{% endblock %}
 
 {% block league_content %}
   <h1>Contract negotiation</h1>
 
   {% if resigning %}
-    <p>You are allowed to go over the salary cap to make this deal because you are resigning <a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a> to a contract extension. <strong>If you do not come to an agreement here, <a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a> will become a free agent.</strong> He will then be able to sign with any team, and you won't be able to go over the salary cap to sign him.</p>
+    <p>You are allowed to go over the salary cap to make this deal because you are resigning <a href="{{ url_for('player_', lid=g.lid, pid=player.pid) }}">{{ player.name }}</a> to a contract extension. <strong>If you do not come to an agreement here, <a href="{{ url_for('player_', lid=g.lid, pid=player.pid) }}">{{ player.name }}</a> will become a free agent.</strong> He will then be able to sign with any team, and you won't be able to go over the salary cap to sign him.</p>
   {% else %}
-    <p>You are not allowed to go over the salary cap to make this deal because <a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a> is a free agent.</p>
+    <p>You are not allowed to go over the salary cap to make this deal because <a href="{{ url_for('player_', lid=g.lid, pid=player.pid) }}">{{ player.name }}</a> is a free agent.</p>
   {% endif %}
 
   <div class="row-fluid">
@@ -18,7 +18,7 @@
       <p>Current Payroll: ${{ payroll|round(1) }}M</p>
       <p>Salary Cap: ${{ salary_cap|round(1) }}M</p>
       <h2>Your Proposal</h2>
-      <form action="{{ url_for('negotiation', league_id=g.league_id, pid=player.pid) }}" class="form-horizontal" method="POST">
+      <form action="{{ url_for('negotiation', lid=g.lid, pid=player.pid) }}" class="form-horizontal" method="POST">
         <input type="text" name="team_years" id="team_years" class="span1" value="{{ team_years }}"> years
         <p><div class="input-prepend input-append">
           <span class="add-on">$</span><input type="text" name="team_amount" id="team_amount" class="span1" value="{{ team_amount }}"><span class="add-on">M</span> per year
@@ -26,20 +26,20 @@
         <button type="submit" class="btn btn-large btn-primary">Submit Proposal</button>  
       </form>
 
-      <form action="{{ url_for('negotiation', league_id=g.league_id, pid=player.pid) }}" class="form-horizontal" method="POST">
+      <form action="{{ url_for('negotiation', lid=g.lid, pid=player.pid) }}" class="form-horizontal" method="POST">
         <input type="hidden" name="cancel" value="1">
         <button type="submit" class="btn btn-danger">Can't reach a deal? End negotiation</button>
       </form>
 
     </div>
     <div class="span6">
-      <h2><a href="{{ url_for('player_', league_id=g.league_id, pid=player.pid) }}">{{ player.name }}</a></h2>
+      <h2><a href="{{ url_for('player_', lid=g.lid, pid=player.pid) }}">{{ player.name }}</a></h2>
       <p>Overal: {{ player.ovr }}</p>
       <p>Potential: {{ player.pot }}</p>
       <h2>Player Proposal</h2>
       <p>{{ player_years }} year{% if player_years > 1 %}s{% endif %} (through {{ player_expiration }})</p>
       <p>${{ player_amount|round(3) }}M per year</p>
-      <form action="{{ url_for('negotiation', league_id=g.league_id, pid=player.pid) }}" class="form-horizontal" method="POST">
+      <form action="{{ url_for('negotiation', lid=g.lid, pid=player.pid) }}" class="form-horizontal" method="POST">
         <input type="hidden" name="accept" value="1">
         <button type="submit" class="btn btn-large btn-primary" id="accept">Accept Player Proposal</button>
       </form>

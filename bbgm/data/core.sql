@@ -1,14 +1,14 @@
 CREATE TABLE users (
-    user_id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    uid INTEGER PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(255) UNIQUE,
     password VARCHAR(255)
 );
 INSERT INTO users (username, password) VALUES ('test', 'test');
 
 CREATE TABLE leagues (
-    league_id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    user_id INTEGER,
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    lid INTEGER PRIMARY KEY AUTO_INCREMENT,
+    uid INTEGER,
+    FOREIGN KEY (uid) REFERENCES users(uid)
 );
 
 CREATE TABLE teams (

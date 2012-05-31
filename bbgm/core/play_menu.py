@@ -20,20 +20,20 @@ def options(keys=None):
         A list of dicts, each dict containing the properties needed to build the
         play button.
     """
-    all_options = [{'id': 'stop', 'url': url_for('play', league_id=g.league_id, amount='stop'), 'label': 'Stop', 'normal_link': False},
-                   {'id': 'day', 'url': url_for('play', league_id=g.league_id, amount='day'), 'label': 'One day', 'normal_link': False},
-                   {'id': 'week', 'url': url_for('play', league_id=g.league_id, amount='week'), 'label': 'One week', 'normal_link': False},
-                   {'id': 'month', 'url': url_for('play', league_id=g.league_id, amount='month'), 'label': 'One month', 'normal_link': False},
-                   {'id': 'until_playoffs', 'url': url_for('play', league_id=g.league_id, amount='until_playoffs'), 'label': 'Until playoffs', 'normal_link': False},
-                   {'id': 'through_playoffs', 'url': url_for('play', league_id=g.league_id, amount='through_playoffs'), 'label': 'Through playoffs', 'normal_link': False},
-                   {'id': 'until_draft', 'url': url_for('play', league_id=g.league_id, amount='until_draft'), 'label': 'Until draft', 'normal_link': False},
+    all_options = [{'id': 'stop', 'url': url_for('play', lid=g.lid, amount='stop'), 'label': 'Stop', 'normal_link': False},
+                   {'id': 'day', 'url': url_for('play', lid=g.lid, amount='day'), 'label': 'One day', 'normal_link': False},
+                   {'id': 'week', 'url': url_for('play', lid=g.lid, amount='week'), 'label': 'One week', 'normal_link': False},
+                   {'id': 'month', 'url': url_for('play', lid=g.lid, amount='month'), 'label': 'One month', 'normal_link': False},
+                   {'id': 'until_playoffs', 'url': url_for('play', lid=g.lid, amount='until_playoffs'), 'label': 'Until playoffs', 'normal_link': False},
+                   {'id': 'through_playoffs', 'url': url_for('play', lid=g.lid, amount='through_playoffs'), 'label': 'Through playoffs', 'normal_link': False},
+                   {'id': 'until_draft', 'url': url_for('play', lid=g.lid, amount='until_draft'), 'label': 'Until draft', 'normal_link': False},
                    {'id': 'view_draft', 'url': url_for('draft_'), 'label': 'View draft', 'normal_link': True},
-                   {'id': 'until_resign_players', 'url': url_for('play', league_id=g.league_id, amount='until_resign_players'), 'label': 'Resign players with expiring contracts', 'normal_link': False},
-                   {'id': 'until_free_agency', 'url': url_for('play', league_id=g.league_id, amount='until_free_agency'), 'label': 'Until free agency', 'normal_link': False},
-                   {'id': 'until_preseason', 'url': url_for('play', league_id=g.league_id, amount='until_preseason'), 'label': 'Until preseason', 'normal_link': False},
-                   {'id': 'until_regular_season', 'url': url_for('play', league_id=g.league_id, amount='until_regular_season'), 'label': 'Until regular season', 'normal_link': False},
-                   {'id': 'contract_negotiation', 'url': url_for('negotiation_list', league_id=g.league_id), 'label': 'Continue contract negotiation', 'normal_link': True},
-                   {'id': 'contract_negotiation_list', 'url': url_for('negotiation_list', league_id=g.league_id), 'label': 'Continue resigning players', 'normal_link': True}]
+                   {'id': 'until_resign_players', 'url': url_for('play', lid=g.lid, amount='until_resign_players'), 'label': 'Resign players with expiring contracts', 'normal_link': False},
+                   {'id': 'until_free_agency', 'url': url_for('play', lid=g.lid, amount='until_free_agency'), 'label': 'Until free agency', 'normal_link': False},
+                   {'id': 'until_preseason', 'url': url_for('play', lid=g.lid, amount='until_preseason'), 'label': 'Until preseason', 'normal_link': False},
+                   {'id': 'until_regular_season', 'url': url_for('play', lid=g.lid, amount='until_regular_season'), 'label': 'Until regular season', 'normal_link': False},
+                   {'id': 'contract_negotiation', 'url': url_for('negotiation_list', lid=g.lid), 'label': 'Continue contract negotiation', 'normal_link': True},
+                   {'id': 'contract_negotiation_list', 'url': url_for('negotiation_list', lid=g.lid), 'label': 'Continue resigning players', 'normal_link': True}]
 
     if not keys:
         # Preseason
@@ -98,10 +98,10 @@ def set_status(status=None):
 
     if not status:
         status = old_status
-        jug.publish('%d_status' % (g.league_id,), status)
+        jug.publish('%d_status' % (g.lid,), status)
     if status != old_status:
         g.dbex('UPDATE game_attributes SET pm_status = :pm_status WHERE season = :season', pm_status=status, season=g.season)
-        jug.publish('%d_status' % (g.league_id,), status)
+        jug.publish('%d_status' % (g.lid,), status)
         app.logger.debug('Set status: %s' % (status,))
 
 def set_phase(phase_text=None):
@@ -119,16 +119,16 @@ def set_phase(phase_text=None):
 
     if not phase_text:
         phase_text = old_phase_text
-        jug.publish('%d_phase' % (g.league_id,), phase_text)
+        jug.publish('%d_phase' % (g.lid,), phase_text)
     if phase_text != old_phase_text:
         g.dbex('UPDATE game_attributes SET pm_phase = :pm_phase WHERE season = :season', pm_phase=phase_text, season=g.season)
-        jug.publish('%d_phase' % (g.league_id,), phase_text)
+        jug.publish('%d_phase' % (g.lid,), phase_text)
         app.logger.debug('Set phase: %s' % (phase_text,))
 
 def refresh_options():
     """Get current options based on game state and push rendered play button
     to client.
     """
-    button = render_template('play_button.html', league_id=g.league_id, options=options())
-    jug.publish('%d_button' % (g.league_id,), button)
+    button = render_template('play_button.html', lid=g.lid, options=options())
+    jug.publish('%d_button' % (g.lid,), button)
 

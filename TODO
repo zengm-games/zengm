@@ -44,6 +44,7 @@ roster
 - "buy out" only sensitive when there's enough money
 - highlight handle on hover, like button
 - "Trade for" button in other teams' view
+- "trade for" only sensitive when trades are allowed
 
 datatables
 - default to sort descending when column is clicked

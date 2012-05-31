@@ -55,7 +55,12 @@ $(document).ready(function() {
       </div>
     </div>
   </div>
+
   <p></p>
+
+  {% if info.tid != g.user_tid %}
+    <form action="{{ url_for('trade_', lid=g.lid) }}" method="POST"><input type="hidden" name="pid" value="{{ info.pid }}"><button type="submit" class="btn btn-small">Trade For</button></form>
+  {% endif %}
 
   <ul id="player_tabs" class="nav nav-tabs" data-tabs="tabs">
       <li class="active"><a href="#career_stats" data-toggle="tab">Career Stats</a></li>

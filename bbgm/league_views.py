@@ -470,7 +470,7 @@ def game_log(view_season=None, abbrev=None):
 @league_crap
 def player_(pid):
     # Info
-    r = g.dbex('SELECT name, pos, (SELECT CONCAT(region, " ", name) FROM team_attributes AS ta WHERE pa.tid = ta.tid AND ta.season = :season) as team, hgt, weight, :season - born_year as age, born_year, born_loc, college, draft_year, round, draft_pick, (SELECT CONCAT(region, " ", name) FROM team_attributes as ta WHERE ta.tid = pa.draft_tid AND ta.season = :season) AS draft_team, contract_amount / 1000 AS contract_amount, contract_exp FROM player_attributes AS pa WHERE pid = :pid', season=g.season, pid=pid)
+    r = g.dbex('SELECT pid, tid, name, pos, (SELECT CONCAT(region, " ", name) FROM team_attributes AS ta WHERE pa.tid = ta.tid AND ta.season = :season) as team, hgt, weight, :season - born_year as age, born_year, born_loc, college, draft_year, round, draft_pick, (SELECT CONCAT(region, " ", name) FROM team_attributes as ta WHERE ta.tid = pa.draft_tid AND ta.season = :season) AS draft_team, contract_amount / 1000 AS contract_amount, contract_exp FROM player_attributes AS pa WHERE pid = :pid', season=g.season, pid=pid)
     info = r.fetchone()
 
     # Current ratings

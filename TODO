@@ -32,7 +32,6 @@ database crap
 
 player view
 - next, previous buttons (also active on left/right arrows)
-- "trade for" button
 - http://twitter.github.com/bootstrap/javascript.html#tabs
   - tab for game log
   - tab for playoff stats
@@ -43,7 +42,6 @@ roster
 - "release" only sensitive with more than 5 players
 - "buy out" only sensitive when there's enough money
 - highlight handle on hover, like button
-- "Trade for" button in other teams' view
 - "trade for" only sensitive when trades are allowed
 
 datatables

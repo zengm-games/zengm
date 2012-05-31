@@ -25,6 +25,7 @@ database crap
     - packages: postgresql, postgresql-server-dev-9.1, pip psycopg2
     - define tables using SQLalchemy? only for creating them
       - would allow for unified syntax http://docs.sqlalchemy.org/en/rel_0_7/core/schema.html
+      - PROBLEM: defaults aren't being set at all
       - explicitly set autoincrement=False for primary keys when appropriate
       - get rid of INSERTS in .sql file, instead have data elsewhere
       - then get rid of bulk_execute

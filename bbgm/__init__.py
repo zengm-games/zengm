@@ -43,6 +43,7 @@ assets = Environment(app)
 import bbgm.views
 import bbgm.league_views
 from bbgm import db
+from bbgm import schema
 
 
 def init_db():
@@ -69,6 +70,7 @@ def init_db():
     db.connect('bbgm')
 
     # Create new tables
+    schema.create_core_tables()
     f = app.open_resource('data/core.sql')
     db.bulk_execute(f)
 

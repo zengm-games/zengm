@@ -1,34 +1,5 @@
-CREATE TABLE users (
-    uid INTEGER PRIMARY KEY AUTO_INCREMENT,
-    username VARCHAR(255) UNIQUE,
-    password VARCHAR(255)
-);
 INSERT INTO users (username, password) VALUES ('test', 'test');
 
-CREATE TABLE leagues (
-    lid INTEGER PRIMARY KEY AUTO_INCREMENT,
-    uid INTEGER,
-    FOREIGN KEY (uid) REFERENCES users(uid)
-);
-
-CREATE TABLE teams (
-    tid INTEGER PRIMARY KEY,
-    did INTEGER,
-    region VARCHAR(255),
-    name VARCHAR(255),
-    abbrev VARCHAR(3),
-    season INTEGER,
-    won INTEGER DEFAULT 0,
-    lost INTEGER DEFAULT 0,
-    won_div INTEGER DEFAULT 0,
-    lost_div INTEGER DEFAULT 0,
-    won_conf INTEGER DEFAULT 0,
-    lost_conf INTEGER DEFAULT 0,
-    cash INTEGER DEFAULT 0,
-    playoffs BOOLEAN DEFAULT 0,
-    won_conference BOOLEAN DEFAULT 0,
-    won_championship BOOLEAN DEFAULT 0
-);
 INSERT INTO teams (tid,did,region,name,abbrev,season,won,lost,cash) VALUES(0,2,'Atlanta','Herons','ATL',2012,0.0,0.0,10000000);
 INSERT INTO teams (tid,did,region,name,abbrev,season,won,lost,cash) VALUES(1,0,'Boston','Clovers','BOS',2012,0.0,0.0,10000000);
 INSERT INTO teams (tid,did,region,name,abbrev,season,won,lost,cash) VALUES(2,2,'Charlotte','Bay Cats','CHA',2012,0.0,0.0,10000000);

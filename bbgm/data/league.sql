@@ -163,7 +163,7 @@ ovr INTEGER,
 pot INTEGER,
 PRIMARY KEY (season, round, pick));
 
-CREATE TABLE negotiation (
+CREATE TABLE negotiations (
 pid INTEGER,
 team_amount INTEGER,
 team_years INTEGER,

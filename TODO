@@ -14,8 +14,6 @@ database crap
     - upgrade player ratings
 - redo schema
   - separate dbs for leagues: what user permissions do i need, exactly? update README
-  - new (shorter) column names
-  - negotiation table should be negotiations
   - normalize (especially the drafted table)
   - get rid of INSERTS in .sql file, instead have data elsewhere
   - get rid of weird tables, replace with a key-value store table
@@ -27,6 +25,7 @@ database crap
   - postgresql
     - packages: postgresql, postgresql-server-dev-9.1, pip psycopg2
     - define tables using SQLalchemy? only for creating them. would allow for unified syntax http://docs.sqlalchemy.org/en/rel_0_7/core/schema.html
+      - then get rid of bulk_execute
   - connection pooling?
 
 player view

@@ -36,7 +36,7 @@ def can_start_games():
     if games_in_progress:
         return False
 
-    r = g.dbex('SELECT COUNT(*) FROM negotiation WHERE resigning = 0')
+    r = g.dbex('SELECT COUNT(*) FROM negotiations WHERE resigning = 0')
     n_negotiations, = r.fetchone()
     if negotiation_in_progress or n_negotiations > 0:
         return False
@@ -51,7 +51,7 @@ def can_start_negotiation():
         return False
 
     # Allow multiple parallel negotiations (ignore negotiation_in_progress) only for resigning players
-    r = g.dbex('SELECT 1 FROM negotiation WHERE resigning = 0')
+    r = g.dbex('SELECT 1 FROM negotiations WHERE resigning = 0')
     if r.rowcount:
         return False
 

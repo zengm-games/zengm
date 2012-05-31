@@ -53,7 +53,7 @@ def new(pid, resigning=False):
 
     max_offers = random.randint(1, 5)
 
-    g.dbex('INSERT INTO negotiation (pid, team_amount, team_years, player_amount, player_years, num_offers_made, max_offers, resigning) VALUES (:pid, :player_amount, :player_years, :player_amount, :player_years, 0, :max_offers, :resigning)', pid=pid, player_amount=player_amount, player_years=player_years, max_offers=max_offers, resigning=resigning)
+    g.dbex('INSERT INTO negotiations (pid, team_amount, team_years, player_amount, player_years, num_offers_made, max_offers, resigning) VALUES (:pid, :player_amount, :player_years, :player_amount, :player_years, 0, :max_offers, :resigning)', pid=pid, player_amount=player_amount, player_years=player_years, max_offers=max_offers, resigning=resigning)
     lock.set_negotiation_in_progress(True)
     play_menu.set_status('Contract negotiation in progress...')
     play_menu.refresh_options()
@@ -80,7 +80,7 @@ def offer(pid, team_amount, team_years):
     if team_years < 1:
         team_years = 1
 
-    r = g.dbex('SELECT player_amount, player_years, num_offers_made, max_offers FROM negotiation WHERE pid = :pid', pid = pid)
+    r = g.dbex('SELECT player_amount, player_years, num_offers_made, max_offers FROM negotiations WHERE pid = :pid', pid = pid)
     player_amount, player_years, num_offers_made, max_offers = r.fetchone()
 
     num_offers_made += 1
@@ -105,7 +105,7 @@ def offer(pid, team_amount, team_years):
     if player_years > 5:
         player_years = 5
 
-    g.dbex('UPDATE negotiation SET team_amount = :team_amount, team_years = :team_years, player_amount = :player_amount, player_years = :player_years, num_offers_made = :num_offers_made WHERE pid = :pid', team_amount=team_amount, team_years=team_years, player_amount=player_amount, player_years=player_years, num_offers_made=num_offers_made, pid=pid)
+    g.dbex('UPDATE negotiations SET team_amount = :team_amount, team_years = :team_years, player_amount = :player_amount, player_years = :player_years, num_offers_made = :num_offers_made WHERE pid = :pid', team_amount=team_amount, team_years=team_years, player_amount=player_amount, player_years=player_years, num_offers_made=num_offers_made, pid=pid)
 
 def accept(pid):
     """Accept the player's offer.
@@ -117,7 +117,7 @@ def accept(pid):
     """
     app.logger.debug('User accepted contract proposal from %d' % (pid,))
 
-    r = g.dbex('SELECT player_amount, player_years, resigning FROM negotiation WHERE pid = :pid', pid = pid)
+    r = g.dbex('SELECT player_amount, player_years, resigning FROM negotiations WHERE pid = :pid', pid = pid)
     player_amount, player_years, resigning = r.fetchone()
 
     # If this contract brings team over the salary cap, it's not a minimum
@@ -135,7 +135,7 @@ def accept(pid):
 
     g.dbex('UPDATE player_attributes SET tid = :tid, contract_amount = :contract_amount, contract_exp = :contract_exp, roster_order = :roster_order WHERE pid = :pid', tid=g.user_tid, contract_amount=player_amount, contract_exp=g.season + player_years, roster_order=roster_order, pid=pid)
 
-    g.dbex('DELETE FROM negotiation WHERE pid = :pid', pid = pid)
+    g.dbex('DELETE FROM negotiations WHERE pid = :pid', pid = pid)
     lock.set_negotiation_in_progress(False)
     play_menu.set_status('Idle')
     play_menu.refresh_options()
@@ -150,10 +150,10 @@ def cancel(pid):
     app.logger.debug('User canceled contract negotiations with %d' % (pid,))
 
     # Delete negotiation
-    g.dbex('DELETE FROM negotiation WHERE pid = :pid', pid = pid)
+    g.dbex('DELETE FROM negotiations WHERE pid = :pid', pid = pid)
 
     # If no negotiations are in progress, update status
-    r = g.dbex('SELECT 1 FROM negotiation')
+    r = g.dbex('SELECT 1 FROM negotiations')
     if r.rowcount == 0:
         lock.set_negotiation_in_progress(False)
         play_menu.set_status('Idle')
@@ -168,6 +168,6 @@ def cancel_all():
     app.logger.debug('Canceling all ongoing contract negotiations...')
 
     # If no negotiations are in progress, update status
-    r = g.dbex('SELECT pid FROM negotiation')
+    r = g.dbex('SELECT pid FROM negotiations')
     for pid, in r.fetchall():
         cancel(pid)

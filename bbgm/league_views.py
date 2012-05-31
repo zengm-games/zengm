@@ -488,7 +488,7 @@ def player_(pid):
 @league_crap
 def negotiation_list(pid=None):
     # If there is only one active negotiation with a free agent, go to it
-    r = g.dbex('SELECT pid FROM negotiation WHERE resigning = 0')
+    r = g.dbex('SELECT pid FROM negotiations WHERE resigning = 0')
     if r.rowcount == 1:
         pid, = r.fetchone()
         return redirect_or_json('negotiation', {'pid': pid})
@@ -497,7 +497,7 @@ def negotiation_list(pid=None):
         error = "Something bad happened."
         return render_all_or_json('league_error.html', {'error': error})
 
-    r = g.dbex('SELECT pa.pid, pa.name, pa.pos, :season - pa.born_year as age, pr.ovr, pr.pot, AVG(ps.min) as min, AVG(ps.pts) as pts, AVG(ps.orb + ps.drb) as rebounds, AVG(ps.ast) as ast, pa.contract_amount/1000.0*(1+pa.free_agent_times_asked/10) as contract_amount, pa.contract_exp FROM player_attributes as pa LEFT OUTER JOIN negotiation as n ON pa.pid = n.pid LEFT OUTER JOIN player_ratings as pr ON pr.season = :season AND pa.pid = pr.pid LEFT OUTER JOIN player_stats as ps ON ps.season = :season AND ps.playoffs = 0 AND pa.pid = ps.pid WHERE pa.tid = :tid AND n.resigning = 1 GROUP BY pa.pid', season=g.season, tid=c.PLAYER_FREE_AGENT)
+    r = g.dbex('SELECT pa.pid, pa.name, pa.pos, :season - pa.born_year as age, pr.ovr, pr.pot, AVG(ps.min) as min, AVG(ps.pts) as pts, AVG(ps.orb + ps.drb) as rebounds, AVG(ps.ast) as ast, pa.contract_amount/1000.0*(1+pa.free_agent_times_asked/10) as contract_amount, pa.contract_exp FROM player_attributes as pa LEFT OUTER JOIN negotiations as n ON pa.pid = n.pid LEFT OUTER JOIN player_ratings as pr ON pr.season = :season AND pa.pid = pr.pid LEFT OUTER JOIN player_stats as ps ON ps.season = :season AND ps.playoffs = 0 AND pa.pid = ps.pid WHERE pa.tid = :tid AND n.resigning = 1 GROUP BY pa.pid', season=g.season, tid=c.PLAYER_FREE_AGENT)
 
     players = r.fetchall()
 
@@ -520,7 +520,7 @@ def negotiation(pid):
             return redirect_or_json('roster')
         elif 'new' in request.form:
             # If there is no active negotiation with this pid, create it
-            r = g.dbex('SELECT 1 FROM negotiation WHERE pid = :pid', pid=pid)
+            r = g.dbex('SELECT 1 FROM negotiations WHERE pid = :pid', pid=pid)
             if not r.rowcount:
                 error = contract_negotiation.new(pid)
                 if error:
@@ -531,7 +531,7 @@ def negotiation(pid):
             team_years_new = int(request.form['team_years'])
             contract_negotiation.offer(pid, team_amount_new, team_years_new)
 
-    r = g.dbex('SELECT team_amount, team_years, player_amount, player_years, resigning FROM negotiation WHERE pid = :pid', pid=pid)
+    r = g.dbex('SELECT team_amount, team_years, player_amount, player_years, resigning FROM negotiations WHERE pid = :pid', pid=pid)
     if r.rowcount == 0:
         return render_all_or_json('league_error.html', {'error': 'No negotiation with player %d in progress.' % (pid,)})
     team_amount, team_years, player_amount, player_years, resigning = r.fetchone()

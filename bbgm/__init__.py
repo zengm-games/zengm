@@ -46,8 +46,7 @@ from bbgm import db
 
 
 def init_db():
-    g.db = db.connect()
-    g.dbex = db.execute
+    db.connect()
 
     if app.config['DB_POSTGRES']:
         g.db.connection.connection.set_isolation_level(0)
@@ -67,9 +66,7 @@ def init_db():
     g.dbex('CREATE DATABASE bbgm')
     if not app.config['DB_POSTGRES']:
         g.dbex('GRANT ALL ON bbgm.* TO %s@localhost IDENTIFIED BY \'%s\'' % (app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
-    g.dbex('COMMIT')
-    g.db.close()
-    g.db = db.connect('bbgm')
+    db.connect('bbgm')
 
     # Create new tables
     f = app.open_resource('data/core.sql')
@@ -78,16 +75,15 @@ def init_db():
     if app.config['DB_POSTGRES']:
         g.db.connection.connection.set_isolation_level(1)
 
+    g.dbex('COMMIT')  # Because bbgm.teardown_request will not be called
 
 @app.before_request
 def before_request():
     # Database crap
     if g.lid >= 0:
-        g.db = db.connect('bbgm_%d' % (g.lid,))
+        db.connect('bbgm_%d' % (g.lid,))
     else:
-        g.db = db.connect('bbgm')
-    g.dbex = db.execute
-    g.dbexmany = db.executemany
+        db.connect('bbgm')
 
     # Non-database crap - should probably be stored elsewhere. Also, changing
     # some of these might break stuff.

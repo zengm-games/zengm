@@ -17,9 +17,7 @@ def new(tid):
     # Create and connect to new database
     g.dbex('CREATE DATABASE bbgm_%s' % (g.lid,))
     g.dbex('GRANT ALL ON bbgm_%s.* TO %s@localhost IDENTIFIED BY \'%s\'' % (g.lid, app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
-    g.dbex('COMMIT')
-    g.db.close()
-    g.db = db.connect('bbgm_%d' % (g.lid,))
+    db.connect('bbgm_%d' % (g.lid,))
 
     # Copy team attributes table
     g.dbex('CREATE TABLE team_attributes SELECT * FROM bbgm.teams')
@@ -90,9 +88,7 @@ def new(tid):
     g.dbex('INSERT INTO trade (tid) VALUES (:tid)', tid=trade_tid)
 
     # Switch back to the default non-league database
-    g.dbex('COMMIT')
-    g.db.close()
-    g.db = db.connect('bbgm')
+    db.connect('bbgm')
 
     return g.lid
 

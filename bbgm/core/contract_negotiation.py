@@ -44,7 +44,7 @@ def new(pid, resigning=False):
         return "Player %d does not exist." % (pid,)
 
     # Initial player proposal
-    r = g.dbex('SELECT contract_amount*(1+free_agent_times_asked/10), contract_expiration FROM player_attributes WHERE pid = :pid', pid = pid)
+    r = g.dbex('SELECT contract_amount*(1+free_agent_times_asked/10), contract_exp FROM player_attributes WHERE pid = :pid', pid = pid)
     player_amount, expiration = r.fetchone()
     player_years = expiration - g.season
     # Adjust to account for in-season signings
@@ -133,7 +133,7 @@ def accept(pid):
     r = g.dbex('SELECT MAX(roster_order) + 1 FROM player_attributes WHERE tid = :tid', tid = g.user_tid)
     roster_order, = r.fetchone()
 
-    g.dbex('UPDATE player_attributes SET tid = :tid, contract_amount = :contract_amount, contract_expiration = :contract_expiration, roster_order = :roster_order WHERE pid = :pid', tid=g.user_tid, contract_amount=player_amount, contract_expiration=g.season + player_years, roster_order=roster_order, pid=pid)
+    g.dbex('UPDATE player_attributes SET tid = :tid, contract_amount = :contract_amount, contract_exp = :contract_exp, roster_order = :roster_order WHERE pid = :pid', tid=g.user_tid, contract_amount=player_amount, contract_exp=g.season + player_years, roster_order=roster_order, pid=pid)
 
     g.dbex('DELETE FROM negotiation WHERE pid = :pid', pid = pid)
     lock.set_negotiation_in_progress(False)

@@ -20,9 +20,9 @@ $(document).ready(function() {
       Height: {{ (info.hgt / 12)|int }}'{{ info.hgt - 12*((info.hgt / 12)|int) }}"<br />
       Weight: {{ info.weight }}<br />
       Age: {{ info.age }}<br />
-      Born: {{ info.born_year }} - {{ info.born_location }}<br />
+      Born: {{ info.born_year }} - {{ info.born_loc }}<br />
       Draft: {{ info.draft_year }} - Round {{ info.round }} (Pick {{ info.draft_pick }}) by the {{ info.draft_team }}<br />
-      Contract: ${{ info.contract_amount|float|round(1) }}M per year through {{ info.contract_expiration }}<br />
+      Contract: ${{ info.contract_amount|float|round(1) }}M per year through {{ info.contract_exp }}<br />
     </div>
     <div class="span6">
       <h2 class="pull-left">Overall Rating: {{ ratings.ovr }}</h2>

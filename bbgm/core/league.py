@@ -61,7 +61,7 @@ def new(tid):
             else:
                 randomize_expiration = False
             amount, expiration = gp.contract(randomize_expiration=randomize_expiration)
-            gp.attribute['contract_amount'], gp.attribute['contract_expiration'] = amount, expiration
+            gp.attribute['contract_amount'], gp.attribute['contract_exp'] = amount, expiration
 
             player_attributes.append(gp.get_attributes())
             player_ratings.append(gp.get_ratings())

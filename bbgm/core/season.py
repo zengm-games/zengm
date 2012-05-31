@@ -126,10 +126,10 @@ def new_phase(phase):
     elif phase == c.PHASE_BEFORE_DRAFT:
         phase_text = '%s before draft' % (g.season,)
         # Remove released players' salaries from payrolls
-        g.dbex('DELETE FROM released_players_salaries WHERE contract_expiration <= :season', season=g.season)
+        g.dbex('DELETE FROM released_players_salaries WHERE contract_exp <= :season', season=g.season)
 
         # Add a year to the free agents
-        g.dbex('UPDATE player_attributes SET contract_expiration = contract_expiration + 1 WHERE tid = :tid', tid=c.PLAYER_FREE_AGENT)
+        g.dbex('UPDATE player_attributes SET contract_exp = contract_exp + 1 WHERE tid = :tid', tid=c.PLAYER_FREE_AGENT)
 
     # Draft
     elif phase == c.PHASE_DRAFT:
@@ -150,7 +150,7 @@ def new_phase(phase):
 #        rpw.retired_players_window.destroy()
 
         # Resign players
-        r = g.dbex('SELECT pid, tid, name FROM player_attributes WHERE contract_expiration = :season AND tid >= 0', season=g.season)
+        r = g.dbex('SELECT pid, tid, name FROM player_attributes WHERE contract_exp = :season AND tid >= 0', season=g.season)
         for pid, tid, name in r.fetchall():
             if tid != g.user_tid:
                 # Automatically negotiate with teams
@@ -159,7 +159,7 @@ def new_phase(phase):
                 p.load(pid)
                 if resign:
                     amount, expiration = p.contract()
-                    g.dbex('UPDATE player_attributes SET contract_amount = :contract_amount, contract_expiration = :contract_expiration WHERE pid = :pid', contract_amount=amount, contract_expiration=expiration, pid=pid)
+                    g.dbex('UPDATE player_attributes SET contract_amount = :contract_amount, contract_exp = :contract_exp WHERE pid = :pid', contract_amount=amount, contract_exp=expiration, pid=pid)
                 else:
                     p.add_to_free_agents(phase)
             else:

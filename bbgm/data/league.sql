@@ -45,14 +45,14 @@ roster_order INTEGER,
 hgt INTEGER, -- inches
 weight INTEGER, -- pounds
 born_year INTEGER, -- YYYY for birth year
-born_location VARCHAR(255), -- City, State/Country
+born_loc VARCHAR(255), -- City, State/Country
 college VARCHAR(255), -- or HS or country, if applicable
 draft_year INTEGER,
 round INTEGER,
 draft_pick INTEGER,
 draft_tid INTEGER,
 contract_amount INTEGER,
-contract_expiration INTEGER,
+contract_exp INTEGER,
 free_agent_times_asked FLOAT DEFAULT 0.0,
 years_free_agent INTEGER DEFAULT 0,
 PRIMARY KEY (pid));
@@ -61,7 +61,7 @@ CREATE TABLE released_players_salaries (
 pid INTEGER,
 tid INTEGER,
 contract_amount INTEGER,
-contract_expiration INTEGER);
+contract_exp INTEGER);
 
 CREATE TABLE player_ratings (
 pid INTEGER,

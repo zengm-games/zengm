@@ -21,7 +21,7 @@ def get_payroll(tid):
 
     Returns an integer containing the payroll in thousands of dollars.
     """
-    r = g.dbex('SELECT SUM(contract_amount) FROM player_attributes WHERE tid = :tid AND contract_expiration >= :contract_expiration', tid=tid, contract_expiration=g.season)
+    r = g.dbex('SELECT SUM(contract_amount) FROM player_attributes WHERE tid = :tid AND contract_exp >= :contract_exp', tid=tid, contract_exp=g.season)
     payroll, = r.fetchone()
 
     r = g.dbex('SELECT SUM(contract_amount) FROM released_players_salaries WHERE tid = :tid', tid=tid)
@@ -57,7 +57,7 @@ def free_agents_auto_sign():
     r = g.dbex('SELECT COUNT(*)/30 FROM team_stats WHERE season = :season', season=g.season)
     num_days_played, = r.fetchone()
     free_agents = []
-    r = g.dbex('SELECT pa.pid, pa.contract_amount, pa.contract_expiration FROM player_attributes as pa, player_ratings as pr WHERE pa.tid = :tid AND pa.pid = pr.pid AND pr.season = :season ORDER BY pr.ovr + 2*pr.pot DESC', tid=c.PLAYER_FREE_AGENT, season=g.season)
+    r = g.dbex('SELECT pa.pid, pa.contract_amount, pa.contract_exp FROM player_attributes as pa, player_ratings as pr WHERE pa.tid = :tid AND pa.pid = pr.pid AND pr.season = :season ORDER BY pr.ovr + 2*pr.pot DESC', tid=c.PLAYER_FREE_AGENT, season=g.season)
     for pid, amount, expiration in r.fetchall():
         free_agents.append([pid, amount, expiration, False])
 
@@ -78,7 +78,7 @@ def free_agents_auto_sign():
             new_player = False
             for pid, amount, expiration, signed in free_agents:
                 if amount + payroll <= g.salary_cap and not signed and num_players < 15:
-                    g.dbex('UPDATE player_attributes SET tid = :tid, contract_amount = :contract_amount, contract_expiration = :contract_expiration WHERE pid = :pid', tid=tid, contract_amount=amount, contract_expiration=expiration, pid=pid)
+                    g.dbex('UPDATE player_attributes SET tid = :tid, contract_amount = :contract_amount, contract_exp = :contract_exp WHERE pid = :pid', tid=tid, contract_amount=amount, contract_exp=expiration, pid=pid)
                     free_agents[j][-1] = True  # Mark player signed
                     new_player = True
                     num_players += 1
@@ -90,7 +90,7 @@ def free_agents_auto_sign():
 
 def free_agents_decrease_demands():
     # Decrease free agent demands
-    r = g.dbex('SELECT pid, contract_amount, contract_expiration FROM player_attributes WHERE tid = :tid AND contract_amount > 500', tid=c.PLAYER_FREE_AGENT)
+    r = g.dbex('SELECT pid, contract_amount, contract_exp FROM player_attributes WHERE tid = :tid AND contract_amount > 500', tid=c.PLAYER_FREE_AGENT)
     for pid, amount, expiration in r.fetchall():
         amount -= 50
         if amount < 500:
@@ -99,7 +99,7 @@ def free_agents_decrease_demands():
             expiration = g.season + 1
         if amount < 1000:
             expiration = g.season
-        g.dbex('UPDATE player_attributes SET contract_amount = :contract_amount, contract_expiration = :contract_expiration WHERE pid = :pid', contract_amount=amount, contract_expiration=expiration, pid=pid)
+        g.dbex('UPDATE player_attributes SET contract_amount = :contract_amount, contract_exp = :contract_exp WHERE pid = :pid', contract_amount=amount, contract_exp=expiration, pid=pid)
 
     # Free agents' resistance to previous signing attempts by player decays
     # Decay by 0.1 per game, for 82 games in the regular season

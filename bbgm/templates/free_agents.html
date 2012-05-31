@@ -8,7 +8,7 @@
     $(document).ready(function() {
       bbgm_datatable($('#free_agents'), 4, [
         {% for player in players %}
-			    [ '<a href="#"><a href="{{ url_for('player_', lid=g.lid, pid=player.pid) }}">{{ player.name }}</a></a>', '{{ player.pos }}', '{{ player.age }}', '{{ player.ovr }}', '{{ player.pot }}', '{% if player.min %} {{ player.min|float|round(1) }} {% endif %}', '{% if player.pts %} {{ player.pts|float|round(1) }} {% endif %}', '{% if player.rebounds %} {{ player.rebounds|float|round(1) }} {% endif %}', '{% if player.ast %} {{ player.ast|float|round(1) }} {% endif %}', '${{ player.contract_amount|float|round(3) }}M through {{ player.contract_expiration }}', '<form action="{{ url_for('negotiation', lid=g.lid, pid=player.pid) }}" method="POST" style="margin: 0"><input type="hidden" name="new" value="1"><button type="submit" class="btn btn-mini btn-primary">Negotiate</button></form>' ],
+			    [ '<a href="#"><a href="{{ url_for('player_', lid=g.lid, pid=player.pid) }}">{{ player.name }}</a></a>', '{{ player.pos }}', '{{ player.age }}', '{{ player.ovr }}', '{{ player.pot }}', '{% if player.min %} {{ player.min|float|round(1) }} {% endif %}', '{% if player.pts %} {{ player.pts|float|round(1) }} {% endif %}', '{% if player.rebounds %} {{ player.rebounds|float|round(1) }} {% endif %}', '{% if player.ast %} {{ player.ast|float|round(1) }} {% endif %}', '${{ player.contract_amount|float|round(3) }}M through {{ player.contract_exp }}', '<form action="{{ url_for('negotiation', lid=g.lid, pid=player.pid) }}" method="POST" style="margin: 0"><input type="hidden" name="new" value="1"><button type="submit" class="btn btn-mini btn-primary">Negotiate</button></form>' ],
         {% endfor %}
 		  ]);
     } );

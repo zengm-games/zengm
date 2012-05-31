@@ -138,7 +138,7 @@ class Player:
         if g.phase > c.PHASE_AFTER_TRADE_DEADLINE:
             expiration += 1
 
-        g.dbex('UPDATE player_attributes SET tid = :tid, contract_amount = :contract_amount, contract_expiration = :contract_expiration, free_agent_times_asked = 0 WHERE pid = :pid', tid=c.PLAYER_FREE_AGENT, contract_amount=amount, contract_expiration=expiration, pid=self.id)
+        g.dbex('UPDATE player_attributes SET tid = :tid, contract_amount = :contract_amount, contract_exp = :contract_exp, free_agent_times_asked = 0 WHERE pid = :pid', tid=c.PLAYER_FREE_AGENT, contract_amount=amount, contract_exp=expiration, pid=self.id)
 
     def release(self):
         """Release player.
@@ -148,9 +148,9 @@ class Player:
         """
 
         # Keep track of player salary even when he's off the team
-        r = g.dbex('SELECT contract_amount, contract_expiration, tid FROM player_attributes WHERE pid = :pid', pid=self.id)
-        contract_amount, contract_expiration, tid = r.fetchone()
-        g.dbex('INSERT INTO released_players_salaries (pid, tid, contract_amount, contract_expiration) VALUES (:pid, :tid, :contract_amount, :contract_expiration)', pid=self.id, tid=tid, contract_amount=contract_amount, contract_expiration=contract_expiration)
+        r = g.dbex('SELECT contract_amount, contract_exp, tid FROM player_attributes WHERE pid = :pid', pid=self.id)
+        contract_amount, contract_exp, tid = r.fetchone()
+        g.dbex('INSERT INTO released_players_salaries (pid, tid, contract_amount, contract_exp) VALUES (:pid, :tid, :contract_amount, :contract_exp)', pid=self.id, tid=tid, contract_amount=contract_amount, contract_exp=contract_exp)
 
         self.add_to_free_agents()
 
@@ -270,14 +270,14 @@ class GeneratePlayer(Player):
             self.fn_max = float(row[4])
             self.ln_max = float(row[5])
 
-        self.attribute['born_location'] = nationality
+        self.attribute['born_loc'] = nationality
         self.attribute['name'] = self._name(nationality)        
 
         self.attribute['college'] = 0
         self.attribute['round'] = 0
         self.attribute['draft_pick'] = 0
         self.attribute['draft_tid'] = 0
-        self.attribute['contract_amount'], self.attribute['contract_expiration'] = self.contract()
+        self.attribute['contract_amount'], self.attribute['contract_exp'] = self.contract()
 
     def _name(self, nationality):
         # First name

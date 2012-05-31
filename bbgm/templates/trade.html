@@ -21,13 +21,13 @@ $(document).ready(function() {
 
   bbgm_datatable_singlepage($('#roster_user'), 5, [
     {% for player in roster_user %}
-      [ '<input name="pids_user" type="checkbox" value="{{ player.pid }}"{% if player.pid in pids_user %} checked="checked"{% endif %}>', '<a href="{{ url_for('player_', lid=g.lid, pid=player.pid) }}">{{ player.name }}</a>', '{{ player.pos }}', '{{ player.age }}', '{{ player.ovr }}', '{{ player.pot }}', '${{ player.contract_amount|float|round(1) }}M through {{ player.contract_expiration }}', '{{ player.min|float|round(1) }}', '{{ player.pts|float|round(1) }}', '{{ player.reb|float|round(1) }}', '{{ player.ast|float|round(1) }}' ],
+      [ '<input name="pids_user" type="checkbox" value="{{ player.pid }}"{% if player.pid in pids_user %} checked="checked"{% endif %}>', '<a href="{{ url_for('player_', lid=g.lid, pid=player.pid) }}">{{ player.name }}</a>', '{{ player.pos }}', '{{ player.age }}', '{{ player.ovr }}', '{{ player.pot }}', '${{ player.contract_amount|float|round(1) }}M through {{ player.contract_exp }}', '{{ player.min|float|round(1) }}', '{{ player.pts|float|round(1) }}', '{{ player.reb|float|round(1) }}', '{{ player.ast|float|round(1) }}' ],
     {% endfor %}
   ]);
 
   bbgm_datatable_singlepage($('#roster_other'), 5, [
     {% for player in roster_other %}
-      [ '<input name="pids_other" type="checkbox" value="{{ player.pid }}"{% if player.pid in pids_other %} checked="checked"{% endif %}>', '<a href="{{ url_for('player_', lid=g.lid, pid=player.pid) }}">{{ player.name }}</a>', '{{ player.pos }}', '{{ player.age }}', '{{ player.ovr }}', '{{ player.pot }}', '${{ player.contract_amount|float|round(1) }}M through {{ player.contract_expiration }}', '{{ player.min|float|round(1) }}', '{{ player.pts|float|round(1) }}', '{{ player.reb|float|round(1) }}', '{{ player.ast|float|round(1) }}' ],
+      [ '<input name="pids_other" type="checkbox" value="{{ player.pid }}"{% if player.pid in pids_other %} checked="checked"{% endif %}>', '<a href="{{ url_for('player_', lid=g.lid, pid=player.pid) }}">{{ player.name }}</a>', '{{ player.pos }}', '{{ player.age }}', '{{ player.ovr }}', '{{ player.pot }}', '${{ player.contract_amount|float|round(1) }}M through {{ player.contract_exp }}', '{{ player.min|float|round(1) }}', '{{ player.pts|float|round(1) }}', '{{ player.reb|float|round(1) }}', '{{ player.ast|float|round(1) }}' ],
     {% endfor %}
   ]);
 

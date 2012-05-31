@@ -101,8 +101,8 @@ def pick_player(tid, pid):
     i = pick - 1 + 30 * (round - 1)
     contract_amount = rookie_salaries[i]
     years = 4 - round  # 2 years for 2nd round, 3 years for 1st round
-    contract_expiration = g.season + years
-    g.dbex('UPDATE player_attributes SET contract_amount = :contract_amount, contract_expiration = :contract_expiration WHERE pid = :pid', contract_amount=contract_amount, contract_expiration=contract_expiration, pid=pid)
+    contract_exp = g.season + years
+    g.dbex('UPDATE player_attributes SET contract_amount = :contract_amount, contract_exp = :contract_exp WHERE pid = :pid', contract_amount=contract_amount, contract_exp=contract_exp, pid=pid)
 
     # Is draft over?
     r = g.dbex('SELECT 1 FROM draft_results WHERE season = :season AND pid = 0', season=g.season)

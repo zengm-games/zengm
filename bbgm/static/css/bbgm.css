@@ -139,6 +139,10 @@ select.season {
   margin: 9px 0 0 0;
 }
 
+#trade_summary {
+  background-color: #fff;
+}
+
 
 /* From bootstrap-responsive.css, force big size */
   .row {

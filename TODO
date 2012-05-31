@@ -15,7 +15,6 @@ database crap
 - redo schema
   - separate dbs for leagues: what user permissions do i need, exactly? update README
   - normalize (especially the drafted table)
-  - get rid of INSERTS in .sql file, instead have data elsewhere
   - get rid of weird tables, replace with a key-value store table
   - get rid of "_attribute"
   - is negotiation_in_progress really needed? games_in_progress too, just check timestamp
@@ -24,8 +23,10 @@ database crap
   - sql queries with IN and "join" can use a list directly as bind parameter - doesn't work with mysqldb for lists with 1 element
   - postgresql
     - packages: postgresql, postgresql-server-dev-9.1, pip psycopg2
-    - define tables using SQLalchemy? only for creating them. would allow for unified syntax http://docs.sqlalchemy.org/en/rel_0_7/core/schema.html
+    - define tables using SQLalchemy? only for creating them
+      - would allow for unified syntax http://docs.sqlalchemy.org/en/rel_0_7/core/schema.html
       - explicitly set autoincrement=False for primary keys when appropriate
+      - get rid of INSERTS in .sql file, instead have data elsewhere
       - then get rid of bulk_execute
   - connection pooling?
 

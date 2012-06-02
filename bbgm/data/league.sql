@@ -1,15 +1,6 @@
-CREATE TABLE conferences (
-cid INTEGER,
-name VARCHAR(255),
-PRIMARY KEY (cid));
 INSERT INTO conferences (cid,name) VALUES(0,'Eastern Conference');
 INSERT INTO conferences (cid,name) VALUES(1,'Western Conference');
 
-CREATE TABLE divisions (
-did INTEGER,
-cid INTEGER,
-name VARCHAR(255),
-PRIMARY KEY (did));
 INSERT INTO divisions (did,cid,name) VALUES(0,0,'Atlantic');
 INSERT INTO divisions (did,cid,name) VALUES(1,0,'Central');
 INSERT INTO divisions (did,cid,name) VALUES(2,0,'Southeast');
@@ -17,15 +8,6 @@ INSERT INTO divisions (did,cid,name) VALUES(3,1,'Southwest');
 INSERT INTO divisions (did,cid,name) VALUES(4,1,'Northwest');
 INSERT INTO divisions (did,cid,name) VALUES(5,1,'Pacific');
 
-CREATE TABLE game_attributes (
-tid INTEGER,
-season INTEGER,
-phase INTEGER,
-games_in_progress BOOLEAN DEFAULT 0,
-stop_games BOOLEAN DEFAULT 0,
-pm_status VARCHAR(255),
-pm_phase VARCHAR(255),
-version VARCHAR(255));
 INSERT INTO game_attributes (tid, season, phase, version) VALUES(3, 2012, 0, '2.0.0alpha');
 
 CREATE TABLE schedule (

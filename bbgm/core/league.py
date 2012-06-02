@@ -2,7 +2,7 @@ import random
 
 from flask import session, g
 
-from bbgm import app, db
+from bbgm import app, db, schema
 from bbgm.core import play_menu, player, season
 from bbgm.util import roster_auto_sort
 import bbgm.util.const as c
@@ -23,6 +23,7 @@ def new(tid):
     g.dbex('CREATE TABLE team_attributes SELECT * FROM bbgm.teams')
 
     # Create other new tables
+    schema.create_league_tables()
     f = app.open_resource('data/league.sql')
     db.bulk_execute(f)
 

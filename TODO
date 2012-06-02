@@ -18,15 +18,13 @@ database crap
   - get rid of weird tables, replace with a key-value store table
   - get rid of "_attribute"
   - is games_in_progress really needed? just check timestamp
+  - don't do this weird copy thing with the teams table
 - sqlalchemy
   - game simulation progresses at about half the speed as when it was using straight mysqldb (although this has been somewhat ameliorated, it's only like 50% now). but maybe it's still worth it for flexibility with connection pooling, switching to postgresql, etc
   - sql queries with IN and "join" can use a list directly as bind parameter - doesn't work with mysqldb for lists with 1 element
   - postgresql
     - packages: postgresql, postgresql-server-dev-9.1, pip psycopg2
-    - define tables using SQLalchemy? only for creating them
-      - would allow for unified syntax http://docs.sqlalchemy.org/en/rel_0_7/core/schema.html
-      - explicitly set autoincrement=False for primary keys when appropriate
-      - get rid of INSERTS in .sql file, instead have data elsewhere
+    - get rid of INSERTS in .sql file, instead have data elsewhere
       - then get rid of bulk_execute
   - connection pooling?
 

@@ -14,9 +14,13 @@ def new(tid):
     r = g.dbex('SELECT lid FROM leagues WHERE uid = :uid ORDER BY lid DESC LIMIT 1', uid=session['uid'])
     g.lid, = r.fetchone()
 
+    if app.config['DB_POSTGRES']:
+        g.db.connection.connection.set_isolation_level(0)
+
     # Create and connect to new database
     g.dbex('CREATE DATABASE bbgm_%s' % (g.lid,))
-    g.dbex('GRANT ALL ON bbgm_%s.* TO %s@localhost IDENTIFIED BY \'%s\'' % (g.lid, app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
+    if not app.config['DB_POSTGRES']:
+        g.dbex('GRANT ALL ON bbgm_%s.* TO %s@localhost IDENTIFIED BY \'%s\'' % (g.lid, app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
     db.connect('bbgm_%d' % (g.lid,))
 
     # Copy team attributes table
@@ -26,6 +30,9 @@ def new(tid):
     schema.create_league_tables()
     f = app.open_resource('data/league.sql')
     db.bulk_execute(f)
+
+    if app.config['DB_POSTGRES']:
+        g.db.connection.connection.set_isolation_level(1)
 
     # Generate new players
     profiles = ['Point', 'Wing', 'Big', '']

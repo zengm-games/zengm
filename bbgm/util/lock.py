@@ -16,36 +16,35 @@ from flask import g
 def set_games_in_progress(status):
     g.dbex('UPDATE game_attributes SET games_in_progress = :games_in_progress', games_in_progress=status)
 
-def set_negotiation_in_progress(status):
-    g.dbex('UPDATE game_attributes SET negotiation_in_progress = :negotiation_in_progress', negotiation_in_progress=status)
-
 def games_in_progress():
     r = g.dbex('SELECT games_in_progress FROM game_attributes')
     in_progress, = r.fetchone()
     return in_progress
 
 def negotiation_in_progress():
-    r = g.dbex('SELECT negotiation_in_progress FROM game_attributes')
-    in_progress, = r.fetchone()
-    return in_progress
+    """Returns True or False depending on whether the negotiations table is
+    empty or not."""
+    r = g.dbex('SELECT 1 FROM negotiations')
+    if r.rowcount:
+        return True
+    else:
+        return False
 
 def can_start_games():
-    r = g.dbex('SELECT games_in_progress, negotiation_in_progress FROM game_attributes')
-    games_in_progress, negotiation_in_progress = r.fetchone()
+    """Returns a boolean. Games can be started only when there is no contract
+    negotiation in progress and there is no other game simulation in progress.
+    """
+    r = g.dbex('SELECT games_in_progress FROM game_attributes')
+    games_in_progress, = r.fetchone()
 
-    if games_in_progress:
+    if games_in_progress or negotiation_in_progress():
         return False
-
-    r = g.dbex('SELECT COUNT(*) FROM negotiations WHERE resigning = 0')
-    n_negotiations, = r.fetchone()
-    if negotiation_in_progress or n_negotiations > 0:
-        return False
-
-    return True
+    else:
+        return True
 
 def can_start_negotiation():
-    r = g.dbex('SELECT games_in_progress, negotiation_in_progress FROM game_attributes')
-    games_in_progress, negotiation_in_progress = r.fetchone()
+    r = g.dbex('SELECT games_in_progress FROM game_attributes')
+    games_in_progress, = r.fetchone()
 
     if games_in_progress:
         return False

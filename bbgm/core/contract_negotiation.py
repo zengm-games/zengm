@@ -54,7 +54,6 @@ def new(pid, resigning=False):
     max_offers = random.randint(1, 5)
 
     g.dbex('INSERT INTO negotiations (pid, team_amount, team_years, player_amount, player_years, num_offers_made, max_offers, resigning) VALUES (:pid, :player_amount, :player_years, :player_amount, :player_years, 0, :max_offers, :resigning)', pid=pid, player_amount=player_amount, player_years=player_years, max_offers=max_offers, resigning=resigning)
-    lock.set_negotiation_in_progress(True)
     play_menu.set_status('Contract negotiation in progress...')
     play_menu.refresh_options()
 
@@ -136,7 +135,6 @@ def accept(pid):
     g.dbex('UPDATE player_attributes SET tid = :tid, contract_amount = :contract_amount, contract_exp = :contract_exp, roster_order = :roster_order WHERE pid = :pid', tid=g.user_tid, contract_amount=player_amount, contract_exp=g.season + player_years, roster_order=roster_order, pid=pid)
 
     g.dbex('DELETE FROM negotiations WHERE pid = :pid', pid = pid)
-    lock.set_negotiation_in_progress(False)
     play_menu.set_status('Idle')
     play_menu.refresh_options()
 
@@ -153,9 +151,7 @@ def cancel(pid):
     g.dbex('DELETE FROM negotiations WHERE pid = :pid', pid = pid)
 
     # If no negotiations are in progress, update status
-    r = g.dbex('SELECT 1 FROM negotiations')
-    if r.rowcount == 0:
-        lock.set_negotiation_in_progress(False)
+    if not lock.negotiation_in_progress():
         play_menu.set_status('Idle')
         play_menu.refresh_options()
 

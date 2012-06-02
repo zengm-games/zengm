@@ -1,9 +1,9 @@
 # To acquire parity with the GTK version and be good enough to share:
 
-BUG: wrong payrolls shown in trade view
-- retired players - when to display notification?
+BUG: wrong payrolls shown in trade view - can i reproduce this?
 
 fix commented lines in bbgm.core.season
+- retired players - when to display notification?
 
 database crap
 - optimize
@@ -17,7 +17,7 @@ database crap
   - normalize (especially the drafted table)
   - get rid of weird tables, replace with a key-value store table
   - get rid of "_attribute"
-  - is negotiation_in_progress really needed? games_in_progress too, just check timestamp
+  - is games_in_progress really needed? just check timestamp
 - sqlalchemy
   - game simulation progresses at about half the speed as when it was using straight mysqldb (although this has been somewhat ameliorated, it's only like 50% now). but maybe it's still worth it for flexibility with connection pooling, switching to postgresql, etc
   - sql queries with IN and "join" can use a list directly as bind parameter - doesn't work with mysqldb for lists with 1 element

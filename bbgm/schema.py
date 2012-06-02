@@ -25,16 +25,16 @@ def create_core_tables():
         Column('region', String(255)),
         Column('abbrev', String(3)),
         Column('season', Integer),
-        Column('won', Integer, default=0),
-        Column('lost', Integer, default=0),
-        Column('won_div', Integer, default=0),
-        Column('lost_div', Integer, default=0),
-        Column('won_conf', Integer, default=0),
-        Column('lost_conf', Integer, default=0),
-        Column('cash', Integer, default=0),
-        Column('playoffs', Boolean, default=False),
-        Column('conf_champs', Boolean, default=False),
-        Column('league_champs', Boolean, default=False)
+        Column('won', Integer, server_default='0'),
+        Column('lost', Integer, server_default='0'),
+        Column('won_div', Integer, server_default='0'),
+        Column('lost_div', Integer, server_default='0'),
+        Column('won_conf', Integer, server_default='0'),
+        Column('lost_conf', Integer, server_default='0'),
+        Column('cash', Integer, server_default='0'),
+        Column('playoffs', Boolean, server_default='0'), # Default False
+        Column('conf_champs', Boolean, server_default='0'), # Default False
+        Column('league_champs', Boolean, server_default='0') # Default False
     )
 
     metadata.create_all(g.db_engine)

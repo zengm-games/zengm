@@ -49,7 +49,7 @@ def set_order():
     """Sets draft order based on winning percentage (no lottery)."""
     for round in xrange(1, 3):
         pick = 1
-        r = g.dbex('SELECT tid, abbrev FROM team_attributes WHERE season = :season ORDER BY 1.0*won/(won + lost) ASC', season=g.season)
+        r = g.dbex('SELECT tid, abbrev FROM team_attributes WHERE season = :season ORDER BY CASE won + lost WHEN 0 THEN 0 ELSE won / (won + lost) END ASC', season=g.season)
         for tid, abbrev in r.fetchall():
             g.dbex('INSERT INTO draft_results (season, round, pick, tid, abbrev, pid, name, pos) VALUES (:season, :round, :pick, :tid, :abbrev, 0, \'\', \'\')', season=g.season, round=round, pick=pick, tid=tid, abbrev=abbrev)
             pick += 1

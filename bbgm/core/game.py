@@ -21,7 +21,7 @@ class Game:
         self.home = [True, False]
 
         # What is the attendance of the game?
-        r = g.dbex('SELECT won+lost, 1.0*won/(won + lost) FROM team_attributes WHERE season = :season AND (tid = :tid_home OR tid = :tid_away)', season=g.season, tid_home=self.team[0]['id'], tid_away=self.team[1]['id'])
+        r = g.dbex('SELECT won + lost, CASE won + lost WHEN 0 THEN 0 ELSE won / (won + lost) END FROM team_attributes WHERE season = :season AND (tid = :tid_home OR tid = :tid_away)', season=g.season, tid_home=self.team[0]['id'], tid_away=self.team[1]['id'])
         games_played, winp = r.fetchone()
         if games_played < 5:
             self.att = fast_random.gauss(22000 + games_played * 1000, 1000)

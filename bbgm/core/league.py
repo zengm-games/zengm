@@ -14,6 +14,9 @@ def new(tid):
     r = g.dbex('SELECT lid FROM leagues WHERE uid = :uid ORDER BY lid DESC LIMIT 1', uid=session['uid'])
     g.lid, = r.fetchone()
 
+    r = g.dbex('SELECT tid, did, region, name, abbrev FROM teams')
+    teams = r.fetchall()
+
     if app.config['DB_POSTGRES']:
         g.db.connection.connection.set_isolation_level(0)
 
@@ -23,13 +26,13 @@ def new(tid):
         g.dbex('GRANT ALL ON bbgm_%s.* TO %s@localhost IDENTIFIED BY \'%s\'' % (g.lid, app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
     db.connect('bbgm_%d' % (g.lid,))
 
-    # Copy team attributes table
-    g.dbex('CREATE TABLE team_attributes SELECT * FROM bbgm.teams')
-
     # Create other new tables
     schema.create_league_tables()
     f = app.open_resource('data/league.sql')
     db.bulk_execute(f)
+
+    # Copy in teams
+    g.dbexmany('INSERT INTO team_attributes (tid, did, name, region, abbrev, season) VALUES (:tid, :did, :name, :region, :abbrev, %d)' % (int(g.starting_season),), teams)
 
     if app.config['DB_POSTGRES']:
         g.db.connection.connection.set_isolation_level(1)

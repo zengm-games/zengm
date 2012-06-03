@@ -24,18 +24,7 @@ def create_core_tables():
         Column('did', Integer),
         Column('name', String(255)),
         Column('region', String(255)),
-        Column('abbrev', String(3)),
-        Column('season', Integer),
-        Column('won', Integer, server_default='0'),
-        Column('lost', Integer, server_default='0'),
-        Column('won_div', Integer, server_default='0'),
-        Column('lost_div', Integer, server_default='0'),
-        Column('won_conf', Integer, server_default='0'),
-        Column('lost_conf', Integer, server_default='0'),
-        Column('cash', Integer, server_default='0'),
-        Column('playoffs', Boolean, server_default='0'),
-        Column('conf_champs', Boolean, server_default='0'),
-        Column('league_champs', Boolean, server_default='0')
+        Column('abbrev', String(3))
     )
 
     metadata.create_all(g.db_engine)
@@ -66,6 +55,25 @@ def create_league_tables():
         Column('pm_status', String(255)),
         Column('pm_phase', String(255)),
         Column('version', String(255))
+    )
+
+    Table('team_attributes', metadata,
+        Column('tid', Integer, autoincrement=False, primary_key=True),
+        Column('did', Integer),
+        Column('name', String(255)),
+        Column('region', String(255)),
+        Column('abbrev', String(3)),
+        Column('season', Integer),
+        Column('won', Integer, server_default='0'),
+        Column('lost', Integer, server_default='0'),
+        Column('won_div', Integer, server_default='0'),
+        Column('lost_div', Integer, server_default='0'),
+        Column('won_conf', Integer, server_default='0'),
+        Column('lost_conf', Integer, server_default='0'),
+        Column('cash', Integer, server_default='10000000'),
+        Column('playoffs', Boolean, server_default='0'),
+        Column('conf_champs', Boolean, server_default='0'),
+        Column('league_champs', Boolean, server_default='0')
     )
 
     Table('schedule', metadata,

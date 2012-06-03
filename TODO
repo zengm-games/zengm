@@ -23,6 +23,8 @@ database crap
   - sql queries with IN and "join" can use a list directly as bind parameter - doesn't work with mysqldb for lists with 1 element
   - postgresql
     - packages: postgresql, postgresql-server-dev-9.1, pip psycopg2
+    - fix GROUP BY: include primary key of all non-aggregate-only tables - only in league_views.py
+    - get rid of CONCAT
   - connection pooling?
 - get rid of INSERTS in .sql file, instead have data elsewhere
   - then get rid of bulk_execute

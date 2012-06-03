@@ -16,12 +16,12 @@ $(document).ready(function() {
   <div class="row-fluid">
     <div class="span6">
       <h1>{{ info.name }}</h1>
-      <strong>{{ info.team }}</strong><br />
+      <strong>{{ info.team_region }} {{ info.team_name }}</strong><br />
       Height: {{ (info.hgt / 12)|int }}'{{ info.hgt - 12*((info.hgt / 12)|int) }}"<br />
       Weight: {{ info.weight }}<br />
       Age: {{ info.age }}<br />
       Born: {{ info.born_year }} - {{ info.born_loc }}<br />
-      Draft: {{ info.draft_year }} - Round {{ info.round }} (Pick {{ info.draft_pick }}) by the {{ info.draft_team }}<br />
+      Draft: {{ info.draft_year }} - Round {{ info.round }} (Pick {{ info.draft_pick }}) by the {{ info.draft_team_region }} {{ info.draft_team_name }}<br />
       Contract: ${{ info.contract_amount|float|round(1) }}M per year through {{ info.contract_exp }}<br />
     </div>
     <div class="span6">

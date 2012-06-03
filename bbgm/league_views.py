@@ -427,7 +427,7 @@ def roster(abbrev=None, view_season=None):
         r = g.dbex('SELECT pa.pid, pa.name, pa.pos, :season - pa.born_year as age, pr.ovr, pr.pot, pa.contract_amount / 1000 as contract_amount, pa.contract_exp, AVG(ps.min) as min, AVG(ps.pts) as pts, AVG(ps.orb + ps.drb) as rebounds, AVG(ps.ast) as ast, ((1 + pa.contract_exp - :season) * pa.contract_amount - :n_games_remaining / 82 * pa.contract_amount) / 1000 AS cash_owed FROM player_attributes as pa LEFT OUTER JOIN player_ratings as pr ON pr.season = :season AND pa.pid = pr.pid LEFT OUTER JOIN player_stats as ps ON ps.season = :season AND ps.playoffs = FALSE AND pa.pid = ps.pid WHERE pa.tid = :tid GROUP BY pa.pid, pr.pid, pr.season ORDER BY pa.roster_order ASC', season=view_season, n_games_remaining=n_games_remaining, tid=tid)
     else:
         # Only show players with stats, as that's where the team history is recorded
-        r = g.dbex('SELECT pa.pid, pa.name, pa.pos, :season - pa.born_year as age, pr.ovr, pr.pot, pa.contract_amount / 1000 as contract_amount,  pa.contract_exp, AVG(ps.min) as min, AVG(ps.pts) as pts, AVG(ps.orb + ps.drb) as rebounds, AVG(ps.ast) as ast FROM player_attributes as pa LEFT OUTER JOIN player_ratings as pr ON pr.season = :season AND pa.pid = pr.pid LEFT OUTER JOIN player_stats as ps ON ps.season = :season AND ps.playoffs = FALSE AND pa.pid = ps.pid WHERE ps.tid = :tid GROUP BY pa.pid ORDER BY pa.roster_order ASC', season=view_season, tid=tid)
+        r = g.dbex('SELECT pa.pid, pa.name, pa.pos, :season - pa.born_year as age, pr.ovr, pr.pot, pa.contract_amount / 1000 as contract_amount,  pa.contract_exp, AVG(ps.min) as min, AVG(ps.pts) as pts, AVG(ps.orb + ps.drb) as rebounds, AVG(ps.ast) as ast FROM player_attributes as pa LEFT OUTER JOIN player_ratings as pr ON pr.season = :season AND pa.pid = pr.pid LEFT OUTER JOIN player_stats as ps ON ps.season = :season AND ps.playoffs = FALSE AND pa.pid = ps.pid WHERE ps.tid = :tid GROUP BY pa.pid, pr.pid, pr.season ORDER BY pa.roster_order ASC', season=view_season, tid=tid)
     players = r.fetchall()
 
     r = g.dbex('SELECT tid, abbrev, region, name FROM team_attributes WHERE season = :season ORDER BY tid ASC', season=view_season)
@@ -470,7 +470,7 @@ def game_log(view_season=None, abbrev=None):
 @league_crap
 def player_(pid):
     # Info
-    r = g.dbex('SELECT pid, tid, name, pos, (SELECT CONCAT(region, " ", name) FROM team_attributes AS ta WHERE pa.tid = ta.tid AND ta.season = :season) as team, hgt, weight, :season - born_year as age, born_year, born_loc, college, draft_year, round, draft_pick, (SELECT CONCAT(region, " ", name) FROM team_attributes as ta WHERE ta.tid = pa.draft_tid AND ta.season = :season) AS draft_team, contract_amount / 1000 AS contract_amount, contract_exp FROM player_attributes AS pa WHERE pid = :pid', season=g.season, pid=pid)
+    r = g.dbex('SELECT pid, pa.tid, pa.name, pos, ta.region AS team_region, ta.name AS team_name, hgt, weight, :season - born_year as age, born_year, born_loc, college, draft_year, round, draft_pick, dta.region AS draft_team_region, dta.name AS draft_team_name, contract_amount / 1000 AS contract_amount, contract_exp FROM player_attributes AS pa, team_attributes AS ta, team_attributes as dta WHERE pid = :pid AND pa.tid = ta.tid AND ta.season = :season AND dta.tid = pa.draft_tid AND dta.season = :season', season=g.season, pid=pid)
     info = r.fetchone()
 
     # Current ratings
@@ -547,13 +547,13 @@ def negotiation(pid):
     player = r.fetchone()
 
     salary_cap = g.salary_cap / 1000.0
-    r = g.dbex('SELECT CONCAT(region, " ", name) FROM team_attributes WHERE tid = :tid AND season = :season', tid=g.user_tid, season=g.season)
-    team_name, = r.fetchone()
+    r = g.dbex('SELECT region, name FROM team_attributes WHERE tid = :tid AND season = :season', tid=g.user_tid, season=g.season)
+    team = r.fetchone()
 
     payroll = get_payroll(g.user_tid)
     payroll /= 1000.0
 
-    return render_all_or_json('negotiation.html', {'team_amount': team_amount, 'team_years': team_years, 'player_amount': player_amount, 'player_years': player_years, 'player_expiration': player_expiration, 'resigning': resigning, 'player': player, 'salary_cap': salary_cap, 'team_name': team_name, 'payroll': payroll})
+    return render_all_or_json('negotiation.html', {'team_amount': team_amount, 'team_years': team_years, 'player_amount': player_amount, 'player_years': player_years, 'player_expiration': player_expiration, 'resigning': resigning, 'player': player, 'salary_cap': salary_cap, 'team': team, 'payroll': payroll})
 
 
 # Utility views

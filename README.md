@@ -62,6 +62,17 @@ You can install them all with this command:
 This speeds up some things a bit, but now that game simulation is done in
 JavaScript it doesn't really matter much.
 
+* postgresql
+
+There is semi-working PostgreSQL support. However, it's currently slower than
+the MySQL version, it doesn't offer any compelling advantages, and as I said
+it's only semi-working. To use it, run these two commands:
+
+    sudo apt-get install postgresql postgresql-server-dev-9.1
+    pip install psycopg2
+
+Then, set DB_POSTGRES to True in bbgm/\_\_init\_\_.py
+
 ## Installing
 
 Create a new MySQL database called bbgm. To do this, from the command line run
@@ -71,7 +82,7 @@ something like:
     CREATE DATABASE bbgm;
     GRANT ALL ON bbgm.* TO testuser@localhost IDENTIFIED BY 'test623';
 
-Make sure your database settings in bbgm/__init__.py match the user and
+Make sure your database settings in bbgm/\_\_init\_\_.py match the user and
 database you just created. Then, to create the database tables, run the
 following command (WARNING: make sure you use a new database, as this will
 delete everything else in the database):

@@ -8,7 +8,7 @@ SECRET_KEY = 'A0Zr98j/gry43 etwN]LWX/,?RT'
 DB = 'bbgm'
 DB_USERNAME = 'testuser'
 DB_PASSWORD = 'test623'
-DB_POSTGRES = True
+DB_POSTGRES = False
 TRY_NUMPY = True
 if DB_POSTGRES:
     DB_USERNAME = 'jdscheff'

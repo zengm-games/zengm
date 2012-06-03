@@ -50,7 +50,7 @@ def can_start_negotiation():
         return False
 
     # Allow multiple parallel negotiations (ignore negotiation_in_progress) only for resigning players
-    r = g.dbex('SELECT 1 FROM negotiations WHERE resigning = 0')
+    r = g.dbex('SELECT 1 FROM negotiations WHERE resigning = FALSE')
     if r.rowcount:
         return False
 

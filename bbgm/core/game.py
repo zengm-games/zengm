@@ -249,7 +249,7 @@ def play(num_days, start=False):
         r = g.dbex('SELECT stop_games FROM game_attributes WHERE season = :season', season=g.season)
         stop_games, = r.fetchone()
         if stop_games:
-            g.dbex('UPDATE game_attributes SET stop_games = 0 WHERE season = :season', season=g.season)
+            g.dbex('UPDATE game_attributes SET stop_games = FALSE WHERE season = :season', season=g.season)
 
         # If we didn't just stop games, let's play
         # Or, if we are starting games (and already passed the lock above),

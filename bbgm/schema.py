@@ -20,7 +20,7 @@ def create_core_tables():
     )
 
     Table('teams', metadata,
-        Column('tid', Integer, autoincrement=False, primary_key=True),
+        Column('tid', Integer, primary_key=True, autoincrement=False),
         Column('did', Integer),
         Column('name', String(255)),
         Column('region', String(255)),
@@ -58,12 +58,12 @@ def create_league_tables():
     )
 
     Table('team_attributes', metadata,
-        Column('tid', Integer, autoincrement=False, primary_key=True),
+        Column('tid', Integer, primary_key=True, autoincrement=False),
         Column('did', Integer),
         Column('name', String(255)),
         Column('region', String(255)),
         Column('abbrev', String(3)),
-        Column('season', Integer),
+        Column('season', Integer, primary_key=True, autoincrement=False),
         Column('won', Integer, server_default='0'),
         Column('lost', Integer, server_default='0'),
         Column('won_div', Integer, server_default='0'),
@@ -112,8 +112,8 @@ def create_league_tables():
     )
 
     Table('player_ratings', metadata,
-        Column('pid', Integer, autoincrement=False, primary_key=True),
-        Column('season', Integer, autoincrement=False, primary_key=True),
+        Column('pid', Integer, primary_key=True, autoincrement=False),
+        Column('season', Integer, primary_key=True, autoincrement=False),
         Column('ovr', Integer),
         Column('hgt', Integer),
         Column('stre', Integer),
@@ -134,9 +134,9 @@ def create_league_tables():
     )
 
     Table('player_stats', metadata,
-        Column('pid', Integer, autoincrement=False, primary_key=True),
+        Column('pid', Integer, primary_key=True, autoincrement=False),
         Column('tid', Integer),
-        Column('gid', Integer, autoincrement=False, primary_key=True),
+        Column('gid', Integer, primary_key=True, autoincrement=False),
         Column('season', Integer),
         Column('playoffs', Boolean),
         Column('gs', Integer),
@@ -158,9 +158,9 @@ def create_league_tables():
     )
 
     Table('team_stats', metadata,
-        Column('tid', Integer, autoincrement=False, primary_key=True),
+        Column('tid', Integer, primary_key=True, autoincrement=False),
         Column('opp_tid', Integer),
-        Column('gid', Integer, autoincrement=False, primary_key=True),
+        Column('gid', Integer, primary_key=True, autoincrement=False),
         Column('season', Integer),
         Column('playoffs', Boolean),
         Column('won', Boolean),
@@ -198,9 +198,9 @@ def create_league_tables():
     )
 
     Table('draft_results', metadata,
-        Column('season', Integer, autoincrement=False, primary_key=True),
-        Column('round', Integer, autoincrement=False, primary_key=True),
-        Column('pick', Integer, autoincrement=False, primary_key=True),
+        Column('season', Integer, primary_key=True, autoincrement=False),
+        Column('round', Integer, primary_key=True, autoincrement=False),
+        Column('pick', Integer, primary_key=True, autoincrement=False),
         Column('tid', Integer),
         Column('abbrev', String(3)),
         Column('pid', Integer),
@@ -212,7 +212,7 @@ def create_league_tables():
     )
 
     Table('negotiations', metadata,
-        Column('pid', Integer, autoincrement=False, primary_key=True),
+        Column('pid', Integer, primary_key=True, autoincrement=False),
         Column('team_amount', Integer),
         Column('team_years', Integer),
         Column('player_amount', Integer),
@@ -229,7 +229,7 @@ def create_league_tables():
     )
 
     Table('awards', metadata,
-        Column('season', Integer, autoincrement=False, primary_key=True),
+        Column('season', Integer, primary_key=True, autoincrement=False),
         Column('bre_tid', Integer),
         Column('bre_abbrev', String(3)),
         Column('bre_region', String(255)),

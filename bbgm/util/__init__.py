@@ -38,7 +38,7 @@ def roster_auto_sort(tid):
     """
     # Get roster
     players = []
-    r = g.dbex('SELECT pa.pid, pr.ovr, pr.end FROM player_attributes as pa, player_ratings as pr WHERE pa.pid = pr.pid AND pa.tid = :tid AND pr.season = :season', tid=tid, season=g.season)
+    r = g.dbex('SELECT pa.pid, pr.ovr, pr.endu FROM player_attributes as pa, player_ratings as pr WHERE pa.pid = pr.pid AND pa.tid = :tid AND pr.season = :season', tid=tid, season=g.season)
     for row in r.fetchall():
         players.append([int(i) for i in list(row)])
 

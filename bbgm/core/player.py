@@ -20,8 +20,8 @@ class Player:
         self.attribute = dict(r.fetchone())
 
     def save(self):
-        query = 'UPDATE player_ratings SET ovr = :ovr, hgt = :hgt, stre = :stre, spd = :spd, jmp = :jmp, end = :end, ins = :ins, dnk = :dnk, ft = :ft, fg = :fg, tp = :tp, blk = :blk, stl = :stl, drb = :drb, pss = :pss, reb = :reb, pot = :pot WHERE pid = :pid AND season = :season'
-        g.dbex(query, ovr=self.ovr(), hgt=self.rating['hgt'], stre=self.rating['stre'], spd=self.rating['spd'], jmp=self.rating['jmp'], end=self.rating['end'], ins=self.rating['ins'], dnk=self.rating['dnk'], ft=self.rating['ft'], fg=self.rating['fg'], tp=self.rating['tp'], blk=self.rating['blk'], stl=self.rating['stl'], drb=self.rating['drb'], pss=self.rating['pss'], reb=self.rating['reb'], pot=self.rating['pot'], pid=self.id, season=g.season)
+        query = 'UPDATE player_ratings SET ovr = :ovr, hgt = :hgt, stre = :stre, spd = :spd, jmp = :jmp, endu = :endu, ins = :ins, dnk = :dnk, ft = :ft, fg = :fg, tp = :tp, blk = :blk, stl = :stl, drb = :drb, pss = :pss, reb = :reb, pot = :pot WHERE pid = :pid AND season = :season'
+        g.dbex(query, ovr=self.ovr(), hgt=self.rating['hgt'], stre=self.rating['stre'], spd=self.rating['spd'], jmp=self.rating['jmp'], endu=self.rating['endu'], ins=self.rating['ins'], dnk=self.rating['dnk'], ft=self.rating['ft'], fg=self.rating['fg'], tp=self.rating['tp'], blk=self.rating['blk'], stl=self.rating['stl'], drb=self.rating['drb'], pss=self.rating['pss'], reb=self.rating['reb'], pot=self.rating['pot'], pid=self.id, season=g.season)
 
     def develop(self, years=1):
         # Make sure age is always defined
@@ -35,7 +35,7 @@ class Player:
             pot = fast_random.gauss(self.rating['pot'], 5)
             ovr = self.ovr()
 
-            for key in ('stre', 'spd', 'jmp', 'end', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb'):
+            for key in ('stre', 'spd', 'jmp', 'endu', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb'):
                 plus_minus = 28 - age
                 if plus_minus > 0:
                     if pot > ovr:
@@ -62,7 +62,7 @@ class Player:
     def bonus(self, amount):
         """Add or subtract from all ratings"""
 
-        for key in ('stre', 'spd', 'jmp', 'end', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb', 'pot'):
+        for key in ('stre', 'spd', 'jmp', 'endu', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb', 'pot'):
             self.rating[key] = self._limit_rating(self.rating[key] + amount)
 
     def _limit_rating(self, rating):
@@ -74,7 +74,7 @@ class Player:
             return int(rating)
 
     def ovr(self):
-        return (self.rating['hgt'] + self.rating['stre'] + self.rating['spd'] + self.rating['jmp'] + self.rating['end'] + self.rating['ins'] + self.rating['dnk'] + self.rating['ft'] + self.rating['fg'] + self.rating['tp'] + self.rating['blk'] + self.rating['stl'] + self.rating['drb'] + self.rating['pss'] + self.rating['reb']) / 15
+        return (self.rating['hgt'] + self.rating['stre'] + self.rating['spd'] + self.rating['jmp'] + self.rating['endu'] + self.rating['ins'] + self.rating['dnk'] + self.rating['ft'] + self.rating['fg'] + self.rating['tp'] + self.rating['blk'] + self.rating['stl'] + self.rating['drb'] + self.rating['pss'] + self.rating['reb']) / 15
 
     def contract(self, randomize_expiration = False):
         # Limits on yearly contract amount, in $1000's
@@ -234,7 +234,7 @@ class GeneratePlayer(Player):
         ratings = map(self._limit_rating, ratings)
 
         i = 0
-        for key in ('hgt', 'stre', 'spd', 'jmp', 'end', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb'):
+        for key in ('hgt', 'stre', 'spd', 'jmp', 'endu', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb'):
             self.rating[key] = ratings[i]
             i += 1
 

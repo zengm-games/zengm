@@ -31,8 +31,8 @@ $(document).ready(function() {
         }
     }
 
-    function draft_until_user_or_end() {
-        $.post('{{ url_for('draft_until_user_or_end', lid=g.lid) }}', function (data) {
+    function draft_until_user_or_endu() {
+        $.post('{{ url_for('draft_until_user_or_endu', lid=g.lid) }}', function (data) {
             update_draft_tables(data['pids']);
             if (!data['done']) {
                 $('#undrafted button').removeAttr('disabled');
@@ -42,14 +42,14 @@ $(document).ready(function() {
 
     $('#start_draft').click(function(event) {
         $($('#start_draft').parent()).hide()
-        draft_until_user_or_end();
+        draft_until_user_or_endu();
     });
 
     $('#undrafted button').click(function(event) {
         $('#undrafted button').attr('disabled', 'disabled');
         $.post('{{ url_for('draft_user', lid=g.lid) }}', {'pid': this.getAttribute('data-player-id')}, function (data) {
             update_draft_tables(data['pids']);
-            draft_until_user_or_end();
+            draft_until_user_or_endu();
         }, 'json');
     });
 });

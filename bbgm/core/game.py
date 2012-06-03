@@ -146,7 +146,7 @@ def player(pid):
     """
     p = {'id': pid, 'ovr': 0, 'stat': {}, 'composite_rating': {}}
 
-    r = g.dbex('SELECT ovr, hgt, stre, spd, jmp, end, ins, dnk, '
+    r = g.dbex('SELECT ovr, hgt, stre, spd, jmp, endu, ins, dnk, '
             'ft, fg, tp, blk, stl, drb, '
             'pss, reb FROM player_ratings WHERE pid = :pid AND season = :season', pid=p['id'], season=g.season)
     rating = r.fetchone()

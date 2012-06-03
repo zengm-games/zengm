@@ -119,7 +119,7 @@ def create_league_tables():
         Column('stre', Integer),
         Column('spd', Integer),
         Column('jmp', Integer),
-        Column('end', Integer),
+        Column('endu', Integer),
         Column('ins', Integer),
         Column('dnk', Integer),
         Column('ft', Integer),

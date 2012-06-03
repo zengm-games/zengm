@@ -34,7 +34,7 @@ $(document).ready(function() {
           Strength: {{ ratings.stre }}<br />
           Speed: {{ ratings.spd }}<br />
           Jumping: {{ ratings.jmp }}<br />
-          Endurance: {{ ratings.end }}
+          Endurance: {{ ratings.endu }}
         </div>
         <div class="span4">
           <strong>Shooting</strong><br/ >
@@ -95,7 +95,7 @@ $(document).ready(function() {
       </thead>
       <tbody>
         {% for season in seasons %}
-          <tr><td><a href="#">{{ season.season }}</a></td><td><a href="{{ url_for('roster', lid=g.lid, abbrev=season.abbrev) }}">{{ season.abbrev }}</a></td><td>{{ season.age }}</td><td>{{ season.r_ovr }}</td><td>{{ season.r_pot }}</td><td>{{ season.r_hgt }}</td><td>{{ season.r_stre }}</td><td>{{ season.r_spd }}</td><td>{{ season.r_jmp }}</td><td>{{ season.r_end }}</td><td>{{ season.r_ins }}</td><td>{{ season.r_dnk }}</td><td>{{ season.r_ft }}</td><td>{{ season.r_fg }}</td><td>{{ season.r_tp }}</td><td>{{ season.r_blk }}</td><td>{{ season.r_stl }}</td><td>{{ season.r_drb }}</td><td>{{ season.r_pss }}</td><td>{{ season.r_reb }}</td></tr>
+          <tr><td><a href="#">{{ season.season }}</a></td><td><a href="{{ url_for('roster', lid=g.lid, abbrev=season.abbrev) }}">{{ season.abbrev }}</a></td><td>{{ season.age }}</td><td>{{ season.r_ovr }}</td><td>{{ season.r_pot }}</td><td>{{ season.r_hgt }}</td><td>{{ season.r_stre }}</td><td>{{ season.r_spd }}</td><td>{{ season.r_jmp }}</td><td>{{ season.r_endu }}</td><td>{{ season.r_ins }}</td><td>{{ season.r_dnk }}</td><td>{{ season.r_ft }}</td><td>{{ season.r_fg }}</td><td>{{ season.r_tp }}</td><td>{{ season.r_blk }}</td><td>{{ season.r_stl }}</td><td>{{ season.r_drb }}</td><td>{{ season.r_pss }}</td><td>{{ season.r_reb }}</td></tr>
         {% endfor %}
       </tbody>
       </table>

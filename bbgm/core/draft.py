@@ -54,7 +54,7 @@ def set_order():
             g.dbex('INSERT INTO draft_results (season, round, pick, tid, abbrev, pid, name, pos) VALUES (:season, :round, :pick, :tid, :abbrev, 0, \'\', \'\')', season=g.season, round=round, pick=pick, tid=tid, abbrev=abbrev)
             pick += 1
 
-def until_user_or_end():
+def until_user_or_endu():
     """Simulate draft picks until it's the user's turn or the draft is over.
 
     Returns:

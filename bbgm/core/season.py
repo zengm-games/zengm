@@ -69,7 +69,7 @@ def new_phase(phase):
         phase_text = '%s regular season' % (g.season,)
         # First, make sure teams are all within the roster limits
         # CPU teams
-        r = g.dbex('SELECT ta.tid, COUNT(*) FROM team_attributes as ta, player_attributes as pa WHERE ta.tid = pa.tid AND ta.season = :season GROUP BY pa.tid', season=g.season)
+        r = g.dbex('SELECT pa.tid, COUNT(*) FROM team_attributes as ta, player_attributes as pa WHERE ta.tid = pa.tid AND ta.season = :season GROUP BY pa.tid', season=g.season)
         teams = r.fetchall()
         for tid, num_players_on_roster in teams:
             if num_players_on_roster > 15:

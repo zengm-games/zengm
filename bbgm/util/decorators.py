@@ -23,7 +23,7 @@ def check_permissions(f, ajax=False):
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        r = g.dbex('SELECT uid FROM bbgm.leagues WHERE lid = :lid', lid=g.lid)
+        r = g.dbex('SELECT uid FROM game_attributes')
         uid, = r.fetchone()
         if session['uid'] != uid:
             if ajax:

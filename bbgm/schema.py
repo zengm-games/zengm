@@ -47,6 +47,7 @@ def create_league_tables():
     )
 
     Table('game_attributes', metadata,
+        Column('uid', Integer),  # Denormalized so the UID is accessible from the league database and not just bbgm.leagues
         Column('tid', Integer),
         Column('season', Integer),
         Column('phase', Integer),

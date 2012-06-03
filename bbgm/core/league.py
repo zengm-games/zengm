@@ -30,6 +30,7 @@ def new(tid):
     schema.create_league_tables()
     f = app.open_resource('data/league.sql')
     db.bulk_execute(f)
+    g.dbex('UPDATE game_attributes SET uid = :uid', uid=session['uid'])
 
     # Copy in teams
     g.dbexmany('INSERT INTO team_attributes (tid, did, name, region, abbrev, season) VALUES (:tid, :did, :name, :region, :abbrev, %d)' % (int(g.starting_season),), teams)

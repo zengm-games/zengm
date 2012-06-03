@@ -2,6 +2,8 @@
 
 BUG: wrong payrolls shown in trade view - can i reproduce this?
 
+BUG: player view for free agents doesn't work
+
 fix commented lines in bbgm.core.season
 - retired players - when to display notification?
 
@@ -25,6 +27,7 @@ database crap
     - packages: postgresql, postgresql-server-dev-9.1, pip psycopg2
     - fix GROUP BY: include primary key of all non-aggregate-only tables - only in league_views.py
     - get rid of CONCAT
+    - IFNULL
   - connection pooling?
 - get rid of INSERTS in .sql file, instead have data elsewhere
   - then get rid of bulk_execute

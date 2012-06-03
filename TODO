@@ -23,10 +23,9 @@ database crap
   - sql queries with IN and "join" can use a list directly as bind parameter - doesn't work with mysqldb for lists with 1 element
   - postgresql
     - packages: postgresql, postgresql-server-dev-9.1, pip psycopg2
-    - get rid of INSERTS in .sql file, instead have data elsewhere
-      - then get rid of bulk_execute
-    - end -> endu
   - connection pooling?
+- get rid of INSERTS in .sql file, instead have data elsewhere
+  - then get rid of bulk_execute
 
 player view
 - next, previous buttons (also active on left/right arrows)

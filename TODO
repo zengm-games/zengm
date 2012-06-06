@@ -1,5 +1,5 @@
 MAIN PLAN:
-build init_db equivalent with indexeddb
+build init_db equivalent with web sql
 port enough code over to create a new league. is it ridiculously slow?
 if not, port enough code over to simulate games. is it ridiculously slow?
 

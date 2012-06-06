@@ -21,22 +21,11 @@ var views = {
         var data = {'title': 'Dashboard'};
         var url = '/';
 
-        var leagues = [];
-        var leaguesStore = db_bbgm.transaction("leagues").objectStore("leagues");
-        leaguesStore.openCursor().onsuccess = function(event) {
-            var cursor = event.target.result;
-            if (cursor) {
-                leagues.push(cursor.value);
-                cursor.continue();
-            }
-            else {
-                template = Handlebars.templates['dashboard'];
-                context = {'leagues': leagues};
-                data['content'] = template(context);
+        template = Handlebars.templates['dashboard'];
+        context = {'leagues': leagues};
+        data['content'] = template(context);
 
-                ajax_update(data, url);
-            }
-        };
+        ajax_update(data, url);
     },
 
     new_league: function(req) {
@@ -44,22 +33,11 @@ var views = {
         var url = '/new_league';
 
         if (req.method === "get") {
-            var teams = [];
-            var teamsStore = db_bbgm.transaction("teams").objectStore("teams");
-            teamsStore.openCursor().onsuccess = function(event) {
-                var cursor = event.target.result;
-                if (cursor) {
-                    teams.push(cursor.value);
-                    cursor.continue();
-                }
-                else {
-                    template = Handlebars.templates['new_league'];
-                    context = {'teams': teams};
-                    data['content'] = template(context);
+            template = Handlebars.templates['new_league'];
+            context = {'teams': teams};
+            data['content'] = template(context);
 
-                    ajax_update(data, url);
-                }
-            };
+            ajax_update(data, url);
         }
         else if (req.method === "post") {
             tid = parseInt(req.params['tid'], 10);

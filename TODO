@@ -1,4 +1,15 @@
+MAIN PLAN:
 build init_db equivalent with indexeddb
+port enough code over to create a new league. is it ridiculously slow?
+if not, port enough code over to simulate games. is it ridiculously slow?
+
+IF NOT, THEN:
+refactor, blah blah blah
+other feature porting
+
+
+
+
 
 handlebars templates -f js/templates.js
 

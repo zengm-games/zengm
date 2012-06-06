@@ -1,5 +1,6 @@
 console.log('yo');
 
+
 var db_bbgm;
 var indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
 var request = indexedDB.open("bbgm", 1);
@@ -66,15 +67,21 @@ request.onsuccess = function(event) {
         console.log("BBGM database error: " + event.target.errorCode);
     };
 
-    crossroads.addRoute(/^\/([0-9]+)/, function(lid){
-      console.log(lid);
+    var app = Davis(function () {
+        this.get('/l/:lid', function (req) {
+            $('body').append('<h1>Hello there, ' + req.params['lid'] + '!</h1>');
+        });
+        this.get('/init_db', views.init_db);
+        this.get('/', views.dashboard);
+        this.get('/new_league', views.new_league);
+        this.post('/new_league', views.new_league);
     });
-    crossroads.addRoute('/init_db', views.init_db);
-    crossroads.addRoute('/', views.dashboard);
-    crossroads.addRoute('/new_league', views.new_league);
 
     $(document).ready(function() {
-        crossroads.parse(window.location.pathname);
+        app.start();
+
+        // Load appropriate view based on location bar
+        Davis.location.assign(new Davis.Request(window.location.pathname));
     });
 };
 console.log('yo');

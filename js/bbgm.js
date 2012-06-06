@@ -184,7 +184,7 @@ $(document).ready(function() {
     var league_root_url = result[1];
     var league_page = result[2];
     highlight_nav(league_page);
-
+/*
     // Handle league internal URLs
     $(document).on('click', 'a', function(event) {
         linked_url = this.href;
@@ -215,9 +215,9 @@ $(document).ready(function() {
 
         // If they are the same, do AJAX page load
         if (league_id_2 > 0 && league_root_url_1 == league_root_url_2 && !exception) {
-/*            $.getJSON(linked_url, {'json': 1}, function (data) {
-                ajax_update(data, linked_url);
-            });*/
+//            $.getJSON(linked_url, {'json': 1}, function (data) {
+//                ajax_update(data, linked_url);
+//            });
 
             //Highlight active page in sidebar
             highlight_nav(league_page_2);
@@ -225,7 +225,7 @@ $(document).ready(function() {
             // If we made it this far, cancel normal page load
             return false;
         }
-    });
+    });*/
 
     // Handle league internal forms
     $(document).on('submit', 'form', function(event) {

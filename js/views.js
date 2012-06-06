@@ -39,25 +39,35 @@ var views = {
         };
     },
 
-    new_league: function() {
+    new_league: function(req) {
         var data = {'title': 'Create New League'};
         var url = '/new_league';
 
-        var teams = [];
-        var teamsStore = db_bbgm.transaction("teams").objectStore("teams");
-        teamsStore.openCursor().onsuccess = function(event) {
-            var cursor = event.target.result;
-            if (cursor) {
-                teams.push(cursor.value);
-                cursor.continue();
-            }
-            else {
-                template = Handlebars.templates['new_league'];
-                context = {'teams': teams};
-                data['content'] = template(context);
+        if (req.method === "get") {
+            var teams = [];
+            var teamsStore = db_bbgm.transaction("teams").objectStore("teams");
+            teamsStore.openCursor().onsuccess = function(event) {
+                var cursor = event.target.result;
+                if (cursor) {
+                    teams.push(cursor.value);
+                    cursor.continue();
+                }
+                else {
+                    template = Handlebars.templates['new_league'];
+                    context = {'teams': teams};
+                    data['content'] = template(context);
 
-                ajax_update(data, url);
+                    ajax_update(data, url);
+                }
+            };
+        }
+        else if (req.method === "post") {
+            tid = parseInt(req.params['tid'], 10);
+console.log(tid);
+            if (tid >= 0 && tid <= 29) {
+//                lid = league.new(tid);
+                req.redirect('/');
             }
-        };
+        }
     }
 };

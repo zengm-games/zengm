@@ -5,6 +5,7 @@ var league = {
         var request = leaguesStore.add(l);
         request.onsuccess = function(event) {
             lid = event.target.result;
+            t = event.target.transaction;
 /*        # Add to main record
         r = g.dbex('SELECT tid, did, region, name, abbrev FROM teams')
         teams = r.fetchall()

@@ -10,8 +10,8 @@ var db = {
 
             db_meta = event.target.result;
 
-            var leaguesStore = db_meta.createObjectStore("leagues", {keyPath: "lid", autoIncrement: true});
-            var teamsStore = db_meta.createObjectStore("teams", {keyPath: "tid"});
+            var leagueStore = db_meta.createObjectStore("leagues", {keyPath: "lid", autoIncrement: true});
+            var teamStore = db_meta.createObjectStore("teams", {keyPath: "tid"});
 
             var teams = [
                 {'tid': 0, 'did': 2, 'region': 'Atlanta', 'name': 'Herons', 'abbrev': 'ATL'},
@@ -46,9 +46,24 @@ var db = {
                 {'tid': 29, 'did': 2, 'region': 'Washington', 'name': 'Witches', 'abbrev': 'WAS'}
             ];
             for (i in teams) {
-                teamsStore.add(teams[i]);
+                teamStore.add(teams[i]);
             }
         }
         return request;
+    },
+
+    getAll: function (db, obj, cb) {
+        var objects = [];
+        var objectStore = db.transaction(obj).objectStore(obj);
+        objectStore.openCursor().onsuccess = function(event) {
+            var cursor = event.target.result;
+            if (cursor) {
+                objects.push(cursor.value);
+                cursor.continue();
+            }
+            else {
+                cb(objects);
+            }
+        };
     }
 };

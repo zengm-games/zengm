@@ -11,7 +11,8 @@ other feature porting
 
 
 
-https://github.com/WebReflection/Database
+update: http://www.javasscrypt.com/html5/web-sql-db-vs-indexeddb/
+tranasctions: http://blog.nparashuram.com/2011/11/indexeddb-apis-javascriptnext.html        http://stackoverflow.com/questions/10484965/how-can-i-put-several-requests-in-one-transaction-in-indexeddb
 
 handlebars templates -f js/templates.js
 

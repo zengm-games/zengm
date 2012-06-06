@@ -4,7 +4,7 @@ port enough code over to create a new league. is it ridiculously slow?
 if not, port enough code over to simulate games. is it ridiculously slow?
 
 IF NOT, THEN:
-refactor, blah blah blah
+abstract out all references to database into a library, to allow porting to indexeddb painlessly
 other feature porting
 
 

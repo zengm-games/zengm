@@ -1,8 +1,28 @@
 console.log('yo');
+
+
+var db_bbgm;
+var indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
+var request = indexedDB.open("bbgm", 1);
+request.onerror = function(event) {
+    console.log("Connection error");
+};
+request.onblocked = function() { db_bbgm.close(); };
+request.onupgradeneeded = function(event) {
+    console.log('Upgrading database');
+
+    db_bbgm = event.target.result;
+
+    var leaguesStore = db_bbgm.createObjectStore("leagues", { keyPath: "lid" });
+    var teamsStore = db_bbgm.createObjectStore("teams", { keyPath: "tid" });
+
     var leagues = [{'lid': 1, 'team': 'Team 1', 'pm_phase': 'Phase 1'},
        {'lid': 2, 'team': 'Team 2', 'pm_phase': 'Phase 2'},
        {'lid': 3, 'team': 'Team 3', 'pm_phase': 'Phase 443'}
     ];
+    for (i in leagues) {
+        leaguesStore.add(leagues[i]);
+    }
 
     var teams = [
         {'tid': 0, 'did': 2, 'region': 'Atlanta', 'name': 'Herons', 'abbrev': 'ATL'},
@@ -36,20 +56,32 @@ console.log('yo');
         {'tid': 28, 'did': 4, 'region': 'Utah', 'name': 'Jugglers', 'abbrev': 'UTA'},
         {'tid': 29, 'did': 2, 'region': 'Washington', 'name': 'Witches', 'abbrev': 'WAS'}
     ];
+    for (i in teams) {
+        teamsStore.add(teams[i]);
+    }
+}
+request.onsuccess = function(event) {
+    console.log('success');
+    db_bbgm = request.result;
+    db_bbgm.onerror = function(event) {
+        console.log("BBGM database error: " + event.target.errorCode);
+    };
+
+    var app = Davis(function () {
+        this.get('/l/:lid', function (req) {
+            $('body').append('<h1>Hello there, ' + req.params['lid'] + '!</h1>');
+        });
+        this.get('/init_db', views.init_db);
+        this.get('/', views.dashboard);
+        this.get('/new_league', views.new_league);
+        this.post('/new_league', views.new_league);
+    });
 
     $(document).ready(function() {
-      var app = Davis(function () {
-          this.get('/l/:lid', function (req) {
-              $('body').append('<h1>Hello there, ' + req.params['lid'] + '!</h1>');
-          });
-          this.get('/init_db', views.init_db);
-          this.get('/', views.dashboard);
-          this.get('/new_league', views.new_league);
-          this.post('/new_league', views.new_league);
-      });
         app.start();
 
         // Load appropriate view based on location bar
         Davis.location.assign(new Davis.Request(window.location.pathname));
     });
+};
 console.log('yo');

@@ -12,6 +12,11 @@ app = web.application(urls, globals())
 
 class static:
     def GET(self, filename):
+        if filename.endswith('.css'):
+            web.header('Content-type', 'text/css')
+        elif filename.endswith('.js'):
+            web.header('Content-type', 'text/javascript')
+
         f = open(filename)
         return f.read()
 

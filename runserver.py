@@ -15,7 +15,7 @@ class static:
         f = open(filename)
         return f.read()
 
-class index:        
+class index:
     def GET(self):
         f = open('index.html')
         return f.read()

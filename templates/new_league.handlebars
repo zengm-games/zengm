@@ -1,0 +1,10 @@
+<h1>Create New League</h1>
+<form action="/new_league" method="POST">
+  <label>Which team do you want to manage?
+  <select name="tid">
+    {{#teams}}
+      <option value="{{tid}}">{{region}} {{name}}</option>
+    {{/teams}}
+  </select></label>
+  <button type="submit" class="btn">Create New League</button>  
+</form>

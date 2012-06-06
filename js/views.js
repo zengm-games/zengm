@@ -6,14 +6,14 @@ var views = {
         data["content"] = "Resetting databases..."
 
         // Delete any current meta databases
-        db_meta.close();
+        dbm.close();
         indexedDB.deleteDatabase("meta");
 
         // Create new meta database
         request = db.connect_meta();
         request.onsuccess = function(event) {
-            db_meta = request.result;
-            db_meta.onerror = function(event) {
+            dbm = request.result;
+            dbm.onerror = function(event) {
                 console.log("Meta database error: " + event.target.errorCode);
             };
         };
@@ -25,7 +25,7 @@ var views = {
         var data = {"title": "Dashboard"};
         var url = "/";
 
-        db.getAll(db_meta, "leagues", function (leagues) {
+        db.getAll(dbm, "leagues", function (leagues) {
             template = Handlebars.templates['dashboard'];
             context = {"leagues": leagues};
             data["content"] = template(context);
@@ -39,7 +39,7 @@ var views = {
         var url = "/new_league";
 
         if (req.method === "get") {
-            db.getAll(db_meta, "teams", function (teams) {
+            db.getAll(dbm, "teams", function (teams) {
                 template = Handlebars.templates['new_league'];
                 context = {"teams": teams};
                 data["content"] = template(context);

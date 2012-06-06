@@ -1,17 +1,18 @@
 var league = {
     new: function (tid) {
         l = {'tid': '4', 'season': 2012, 'phase': 0, 'games_in_progress': false, 'stop_game': false, 'pm_status': '', 'pm_phase': 'Phase 1'}
-        var leaguesStore = db_meta.transaction(["leagues"], IDBTransaction.READ_WRITE).objectStore("leagues");
+        var leaguesStore = dbm.transaction(["leagues"], IDBTransaction.READ_WRITE).objectStore("leagues");
         leaguesStore.add(l).onsuccess = function (event) {
             lid = event.target.result;
             t = event.target.transaction;
-            db.getAll(db_meta, "teams", function (teams) {
+            db.getAll(dbm, "teams", function (teams) {
                 console.log(teams);
                 request.onsuccess = function (event) {
                     dbl = request.result;
                     dbl.onerror = function (event) {
                         console.log("League database error: " + event.target.errorCode);
                     };
+                }
 /*        # Add to main record
         # Create and connect to new database
         g.dbex('CREATE DATABASE bbgm_%s' % (g.lid,))
@@ -97,7 +98,7 @@ var league = {
 
 
     delete: function (lid) {
-        var leaguesStore = db_meta.transaction(["leagues"], IDBTransaction.READ_WRITE).objectStore("leagues").delete(lid);
+        var leaguesStore = dbm.transaction(["leagues"], IDBTransaction.READ_WRITE).objectStore("leagues").delete(lid);
 //        g.dbex('DROP DATABASE bbgm_%s' % (lid,))
 //        g.dbex('DELETE FROM leagues WHERE lid = :lid', lid=lid)
     }

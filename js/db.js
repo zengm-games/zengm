@@ -4,14 +4,14 @@ var db = {
         request.onerror = function(event) {
             console.log("Connection error");
         };
-        request.onblocked = function() { db_meta.close(); };
+        request.onblocked = function() { dbm.close(); };
         request.onupgradeneeded = function(event) {
             console.log('Upgrading database');
 
-            db_meta = event.target.result;
+            dbm = event.target.result;
 
-            var leagueStore = db_meta.createObjectStore("leagues", {keyPath: "lid", autoIncrement: true});
-            var teamStore = db_meta.createObjectStore("teams", {keyPath: "tid"});
+            var leagueStore = dbm.createObjectStore("leagues", {keyPath: "lid", autoIncrement: true});
+            var teamStore = dbm.createObjectStore("teams", {keyPath: "tid"});
 
             var teams = [
                 {'tid': 0, 'did': 2, 'region': 'Atlanta', 'name': 'Herons', 'abbrev': 'ATL'},
@@ -57,14 +57,14 @@ var db = {
         request.onerror = function(event) {
             console.log("Connection error");
         };
-        request.onblocked = function() { db_meta.close(); };
+        request.onblocked = function() { dbm.close(); };
         request.onupgradeneeded = function(event) {
             console.log('Upgrading database');
 
-            db_meta = event.target.result;
+            dbm = event.target.result;
 
-            var leagueStore = db_meta.createObjectStore("leagues", {keyPath: "lid", autoIncrement: true});
-            var teamStore = db_meta.createObjectStore("teams", {keyPath: "tid"});
+            var leagueStore = dbm.createObjectStore("leagues", {keyPath: "lid", autoIncrement: true});
+            var teamStore = dbm.createObjectStore("teams", {keyPath: "tid"});
 
             var teams = [
                 {'tid': 0, 'did': 2, 'region': 'Atlanta', 'name': 'Herons', 'abbrev': 'ATL'},

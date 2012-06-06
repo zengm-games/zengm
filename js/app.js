@@ -1,12 +1,12 @@
 console.log('yo');
 
 
-var db_meta;
+var dbm;
 var indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
 request = db.connect_meta();
 request.onsuccess = function(event) {
-    db_meta = request.result;
-    db_meta.onerror = function(event) {
+    dbm = request.result;
+    dbm.onerror = function(event) {
         console.log("Meta database error: " + event.target.errorCode);
     };
 

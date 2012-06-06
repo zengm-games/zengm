@@ -7,7 +7,7 @@ templates['dashboard'] = template(function (Handlebars,depth0,helpers,partials,d
 function program1(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n    <li>\n      <a href=\"/";
+  buffer += "\n    <li>\n      <a href=\"/l/";
   foundHelper = helpers.lid;
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }

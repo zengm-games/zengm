@@ -1,5 +1,5 @@
 MAIN PLAN:
-build init_db equivalent with web sql
+build init_db equivalent with http://aaronpowell.github.com/db.js/
 port enough code over to create a new league. is it ridiculously slow?
 if not, port enough code over to simulate games. is it ridiculously slow?
 
@@ -25,3 +25,4 @@ On page load:
 TODO:
 only pushstate in ajax_update if this is a new URL (not the current URL)
 only need handlebars.runtime.js
+merge game_attributes into league table of meta database

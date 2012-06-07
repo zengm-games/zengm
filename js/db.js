@@ -75,10 +75,12 @@ var db = {
             playerStore.createIndex("ratings.season", "ratings.season", {unique: false});
             playerStore.createIndex("stats.tid", "stats.tid", {unique: false});
             playerStore.createIndex("stats.season", "stats.season", {unique: false});
+            playerStore.createIndex("stats.playoffs", "stats.playoffs", {unique: false});
             teamStore.createIndex("tid", "tid", {unique: false});
             teamStore.createIndex("cid", "cid", {unique: false});
             teamStore.createIndex("did", "did", {unique: false});
             teamStore.createIndex("season", "season", {unique: false});
+            teamStore.createIndex("stats.playoffs", "stats.playoffs", {unique: false});
             gameStore.createIndex("tid", "tid", {unique: false});
             gameStore.createIndex("season", "season", {unique: false});
         }

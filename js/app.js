@@ -1,7 +1,5 @@
-console.log('yo');
-
-
-var dbm;
+var dbm; // Meta database
+var dbl; // League-specific database
 var indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
 request = db.connect_meta();
 request.onsuccess = function(event) {
@@ -28,4 +26,5 @@ request.onsuccess = function(event) {
         Davis.location.assign(new Davis.Request(window.location.pathname));
     });
 };
+
 console.log('yo');

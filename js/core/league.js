@@ -1,12 +1,14 @@
 var league = {
     new: function (tid) {
-        l = {'tid': '4', 'season': 2012, 'phase': 0, 'games_in_progress': false, 'stop_game': false, 'pm_status': '', 'pm_phase': 'Phase 1'}
+        l = {'tid': tid, 'season': 2012, 'phase': 0, 'games_in_progress': false, 'stop_game': false, 'pm_status': '', 'pm_phase': 'Phase 1'}
         var leaguesStore = dbm.transaction(["leagues"], IDBTransaction.READ_WRITE).objectStore("leagues");
         leaguesStore.add(l).onsuccess = function (event) {
             lid = event.target.result;
             t = event.target.transaction;
             db.getAll(dbm, "teams", function (teams) {
-                console.log(teams);
+console.log(teams);
+                // Create new league database
+                request = db.connect_league(lid);
                 request.onsuccess = function (event) {
                     dbl = request.result;
                     dbl.onerror = function (event) {
@@ -14,12 +16,6 @@ var league = {
                     };
                 }
 /*        # Add to main record
-        # Create and connect to new database
-        g.dbex('CREATE DATABASE bbgm_%s' % (g.lid,))
-        if not app.config['DB_POSTGRES']:
-            g.dbex('GRANT ALL ON bbgm_%s.* TO %s@localhost IDENTIFIED BY \'%s\'' % (g.lid, app.config['DB_USERNAME'], app.config['DB_PASSWORD']))
-        db.connect('bbgm_%d' % (g.lid,))
-
         # Create other new tables
         schema.create_league_tables()
         f = app.open_resource('data/league.sql')

@@ -7,9 +7,51 @@ IF NOT, THEN:
 abstract out all references to database into a library, to allow porting to indexeddb painlessly
 other feature porting
 
+---
 
+League schema: teamStats and playerStats refer to totals that will be divided by numGames to get averages
 
+players = {playerAttributes}
+Index: pid
 
+playerRatings = {playerRatings}
+Index: pid, tid, season
+
+playerStats = {numGames, playerStats}
+Index: pid, tid, season
+
+teams = {teamAttributes}
+Index: tid, season
+
+teamStats = {numGames, teamStats}
+Index: tid, season
+
+schedule = {schedule}
+
+gameResults =  {gid, season, teamStatsForIndividualGames, playerStatsForIndividualGame]}
+Index: gid, tid, season
+
+conferences, divisions = simple global data structures
+
+Working wiith multiple indexes: https://github.com/philikon/queryIndexedDB
+Try that first, as it looks simple. If it doesn't work, try: http://linq2indexeddb.codeplex.com/ http://www.kristofdegrave.be/2012/05/using-linq-to-indexed-db.html
+CAN EITHER OF THESE HANDLE JOINS? Intersection and Union in the first, what about second?
+
+var teamStore = dbm.transaction("teams").objectStore("teams");
+request = Index('did').eq(2).getAll(teamStore)
+request.onsuccess = function (event) {
+    console.log(request.result);
+}
+
+var dbConfig = {};
+dbConfig.version = 1;
+var db = window.linq2indexedDB("meta", dbConfig, true);
+db.linq.from("leagues").select().then(function(data){
+	console.log("Selected " + data.length + " items");
+	console.log(data);
+});
+
+---
 
 update: http://www.javasscrypt.com/html5/web-sql-db-vs-indexeddb/
 tranasctions: http://blog.nparashuram.com/2011/11/indexeddb-apis-javascriptnext.html        http://stackoverflow.com/questions/10484965/how-can-i-put-several-requests-in-one-transaction-in-indexeddb
@@ -28,3 +70,4 @@ TODO:
 only pushstate in ajax_update if this is a new URL (not the current URL)
 only need handlebars.runtime.js
 merge game_attributes into league table of meta database
+race contition on "Create New League" button?

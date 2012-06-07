@@ -5,11 +5,24 @@ var views = {
 
         data["content"] = "Resetting databases..."
 
-        // Delete any current meta databases
+        // Delete any current league databases
+        console.log("Delete any current league databases...");
+        if (dbl !== undefined) {
+            dbl.close();
+        }
+        db.getAll(dbm, "leagues", function (leagues) {
+            for (i in leagues) {
+                indexedDB.deleteDatabase("l" + leagues[i]["lid"]);
+            }
+        });
+
+        // Delete any current meta database
+        console.log("Delete any current meta database...");
         dbm.close();
         indexedDB.deleteDatabase("meta");
 
         // Create new meta database
+        console.log("Create new meta database...");
         request = db.connect_meta();
         request.onsuccess = function(event) {
             dbm = request.result;

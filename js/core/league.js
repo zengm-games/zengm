@@ -1,6 +1,6 @@
 var league = {
     new: function (tid) {
-        l = {'tid': tid, 'season': 2012, 'phase': 0, 'games_in_progress': false, 'stop_game': false, 'pm_status': '', 'pm_phase': 'Phase 1'}
+        l = {'tid': tid, 'season': startingSeason, 'phase': 0, 'games_in_progress': false, 'stop_game': false, 'pm_status': '', 'pm_phase': 'Phase 1'}
         var leaguesStore = dbm.transaction(["leagues"], IDBTransaction.READ_WRITE).objectStore("leagues");
         leaguesStore.add(l).onsuccess = function (event) {
             lid = event.target.result;
@@ -14,14 +14,31 @@ console.log(teams);
                     dbl.onerror = function (event) {
                         console.log("League database error: " + event.target.errorCode);
                     };
-                }
-/*        # Add to main record
-        # Create other new tables
-        schema.create_league_tables()
-        f = app.open_resource('data/league.sql')
-        db.bulk_execute(f)
-        g.dbex('UPDATE game_attributes SET uid = :uid', uid=session['uid'])
 
+                    // teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league.
+                    for (i in teams) {
+                        dbl.transaction(["teams"], IDBTransaction.READ_WRITE).objectStore("teams").add({
+//                            rid: teams[i]['tid'], // This shouldn't be necessary if autoincrement is working on this store http://www.raymondcamden.com/index.cfm/2012/4/26/Sample-of-IndexedDB-with-Autogenerating-Keys
+                            tid: teams[i]['tid'],
+                            cid: teams[i]['cid'],
+                            did: teams[i]['did'],
+                            region: teams[i]['region'],
+                            name: teams[i]['name'],
+                            abbrev: teams[i]['abbrev'],
+                            season: startingSeason,
+                            won: 0,
+                            lost: 0,
+                            won_div: 0,
+                            lost_div: 0,
+                            won_conf: 0,
+                            lost_conf: 0,
+                            cash: 10000000,
+                            playoffs: false,
+                            conf_champs: false,
+                            league_champs: false
+                        });
+                    }
+/*        # Add to main record
         # Copy in teams
         g.dbexmany('INSERT INTO team_attributes (tid, did, name, region, abbrev, season) VALUES (:tid, :did, :name, :region, :abbrev, %d)' % (int(g.starting_season),), teams)
 
@@ -86,6 +103,7 @@ console.log(teams);
             trade_tid = 0
         g.dbex('INSERT INTO trade (tid) VALUES (:tid)', tid=trade_tid)
 */
+                }
             });
 
             Davis.location.assign(new Davis.Request('/l/' + lid));
@@ -95,6 +113,7 @@ console.log(teams);
 
     delete: function (lid) {
         var leaguesStore = dbm.transaction(["leagues"], IDBTransaction.READ_WRITE).objectStore("leagues").delete(lid);
+        indexedDB.deleteDatabase("league" + lid);
 //        g.dbex('DROP DATABASE bbgm_%s' % (lid,))
 //        g.dbex('DELETE FROM leagues WHERE lid = :lid', lid=lid)
     }

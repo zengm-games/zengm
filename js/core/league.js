@@ -42,10 +42,7 @@ console.log(teams);
                             league_champs: false
                         });
                     }
-/*        # Add to main record
-        # Copy in teams
-        g.dbexmany('INSERT INTO team_attributes (tid, did, name, region, abbrev, season) VALUES (:tid, :did, :name, :region, :abbrev, %d)' % (int(g.starting_season),), teams)
-
+/*
         # Generate new players
         profiles = ['Point', 'Wing', 'Big', '']
         gp = player.GeneratePlayer()

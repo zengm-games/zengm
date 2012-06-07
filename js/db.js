@@ -58,7 +58,7 @@ var db = {
         request.onerror = function(event) {
             console.log("Connection error");
         };
-        request.onblocked = function() { dbm.close(); };
+        request.onblocked = function() { dbl.close(); };
         request.onupgradeneeded = function(event) {
             console.log("Upgrading league" + lid + " database");
 

@@ -9,6 +9,8 @@ other feature porting
 
 ---
 
+test deep index stats.tid, stats.season: {pid, stats: {tid, season, pts, reb, ...}}
+
 League schema: teamStats and playerStats refer to totals that will be divided by numGames to get averages
 
 players = {playerAttributes}

@@ -31,6 +31,8 @@ var views = {
             };
         };
 
+        console.log("Done!");
+
         ajax_update(data, url);
     },
 

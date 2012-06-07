@@ -15,9 +15,13 @@ console.log(teams);
                         console.log("League database error: " + event.target.errorCode);
                     };
 
+                    // Probably is fastest to use this transaction for everything done to create a new league
+                    var transaction = dbl.transaction(["teams"], IDBTransaction.READ_WRITE);
+
                     // teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league.
+                    var teamStore = transaction.objectStore("teams")
                     for (i in teams) {
-                        dbl.transaction(["teams"], IDBTransaction.READ_WRITE).objectStore("teams").add({
+                        teamStore.add({
 //                            rid: teams[i]['tid'], // This shouldn't be necessary if autoincrement is working on this store http://www.raymondcamden.com/index.cfm/2012/4/26/Sample-of-IndexedDB-with-Autogenerating-Keys
                             tid: teams[i]['tid'],
                             cid: teams[i]['cid'],

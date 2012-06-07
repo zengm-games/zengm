@@ -33,7 +33,7 @@ Index: gid, tid, season
 
 conferences, divisions = simple global data structures
 
-Working wiith multiple indexes: https://github.com/philikon/queryIndexedDB
+Querying based on multiple indexes: https://github.com/philikon/queryIndexedDB
 Try that first, as it looks simple. If it doesn't work, try: http://linq2indexeddb.codeplex.com/ http://www.kristofdegrave.be/2012/05/using-linq-to-indexed-db.html
 CAN EITHER OF THESE HANDLE JOINS? Intersection and Union in the first, what about second?
 

@@ -12,7 +12,7 @@ var views = {
         }
         db.getAll(dbm, "leagues", function (leagues) {
             for (i in leagues) {
-                indexedDB.deleteDatabase("l" + leagues[i]["lid"]);
+                indexedDB.deleteDatabase("league" + leagues[i]["lid"]);
             }
         });
 

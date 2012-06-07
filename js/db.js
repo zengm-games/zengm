@@ -13,7 +13,6 @@ var db = {
             var leagueStore = dbm.createObjectStore("leagues", {keyPath: "lid", autoIncrement: true});
             var teamStore = dbm.createObjectStore("teams", {keyPath: "tid"});
             teamStore.createIndex("did", "did", {unique: false});
-            teamStore.createIndex("abbrev", "abbrev", {unique: true});
 
             var teams = [
                 {"tid": 0, "did": 2, "region": "Atlanta", "name": "Herons", "abbrev": "ATL"},
@@ -55,19 +54,39 @@ var db = {
     },
 
     connect_league: function (lid) {
-        var request = indexedDB.open("l" + lid, 1);
+        var request = indexedDB.open("league" + lid, 1);
         request.onerror = function(event) {
             console.log("Connection error");
         };
         request.onblocked = function() { dbm.close(); };
         request.onupgradeneeded = function(event) {
-            console.log("Upgrading l" + lid + " database");
+            console.log("Upgrading league" + lid + " database");
 
             dbl = event.target.result;
 
-            var leagueStore = dbl.createObjectStore("leagues", {keyPath: "lid", autoIncrement: true});
-            var teamStore = dbl.createObjectStore("teams", {keyPath: "tid"});
+            // rid ("row id") is used as the keyPath for objects without an innate unique identifier
+            var playerStore = dbl.createObjectStore("players", {keyPath: "pid", autoIncrement: true});
+            var playerRatingStore = dbl.createObjectStore("playerRatings", {keyPath: "rid"});
+            var playerStatStore = dbl.createObjectStore("playerStats", {keyPath: "rid"});
+            var teamStore = dbl.createObjectStore("teams", {keyPath: "rid"});
+            var teamStatStore = dbl.createObjectStore("teamStats", {keyPath: "rid"});
+            var gameResultStore = dbl.createObjectStore("gameResults", {keyPath: "gid"});
+            // ... other stores go here later
 
+            playerStore.createIndex("tid", "tid", {unique: false});
+            playerRatingStore.createIndex("pid", "pid", {unique: false});
+            playerRatingStore.createIndex("season", "season", {unique: false});
+            playerStatStore.createIndex("pid", "pid", {unique: false});
+            playerStatStore.createIndex("tid", "tid", {unique: false});
+            playerStatStore.createIndex("season", "season", {unique: false});
+            teamStore.createIndex("tid", "tid", {unique: false});
+            teamStore.createIndex("cid", "cid", {unique: false});
+            teamStore.createIndex("did", "did", {unique: false});
+            teamStore.createIndex("season", "season", {unique: false});
+            teamStatStore.createIndex("tid", "tid", {unique: false});
+            teamStatStore.createIndex("season", "season", {unique: false});
+            gameResultStore.createIndex("tid", "tid", {unique: false});
+            gameResultStore.createIndex("season", "season", {unique: false});
         }
         return request;
     },

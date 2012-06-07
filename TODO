@@ -12,16 +12,16 @@ other feature porting
 League schema: teamStats and playerStats refer to totals that will be divided by numGames to get averages
 
 players = {playerAttributes}
-Index: pid
+Index: pid, tid
 
 playerRatings = {playerRatings}
-Index: pid, tid, season
+Index: pid, season
 
 playerStats = {numGames, playerStats}
 Index: pid, tid, season
 
 teams = {teamAttributes}
-Index: tid, season
+Index: tid, cid, did, season
 
 teamStats = {numGames, teamStats}
 Index: tid, season
@@ -55,7 +55,7 @@ db.linq.from("leagues").select().then(function(data){
 
 update: http://www.javasscrypt.com/html5/web-sql-db-vs-indexeddb/
 tranasctions: http://blog.nparashuram.com/2011/11/indexeddb-apis-javascriptnext.html        http://stackoverflow.com/questions/10484965/how-can-i-put-several-requests-in-one-transaction-in-indexeddb
-joins: http://blog.oharagroup.net/post/16394604653/a-performance-comparison-websql-vs-indexeddb
+joins: http://blog.oharagroup.net/post/16394604653/a-performance-comparison-websql-vs-indexeddb        http://hacks.mozilla.org/2010/06/comparing-indexeddb-and-webdatabase/
 
 handlebars templates -f js/templates.js
 

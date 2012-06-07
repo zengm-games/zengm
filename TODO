@@ -13,25 +13,16 @@ test deep index stats.tid, stats.season: {pid, stats: {tid, season, pts, reb, ..
 
 League schema: teamStats and playerStats refer to totals that will be divided by numGames to get averages
 
-players = {playerAttributes}
-Index: pid, tid
+players = {playerAttributes, ratings: {playerRatings}, stats: {numGames, playerStats}}
+Index: *pid, tid, ratings.season, stats.tid, stats.season
 
-playerRatings = {playerRatings}
-Index: pid, season
-
-playerStats = {numGames, playerStats}
-Index: pid, tid, season
-
-teams = {teamAttributes}
+teams = {teamAttributes, numGames, teamStats}
 Index: tid, cid, did, season
 
-teamStats = {numGames, teamStats}
-Index: tid, season
+games =  {gid, season, teamStatsForIndividualGame, playerStatsForIndividualGam}
+Index: *gid, tid, season
 
 schedule = {schedule}
-
-gameResults =  {gid, season, teamStatsForIndividualGames, playerStatsForIndividualGame]}
-Index: gid, tid, season
 
 conferences, divisions = simple global data structures
 

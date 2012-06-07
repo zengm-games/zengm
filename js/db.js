@@ -12,6 +12,7 @@ var db = {
 
             var leagueStore = dbm.createObjectStore("leagues", {keyPath: "lid", autoIncrement: true});
             var teamStore = dbm.createObjectStore("teams", {keyPath: "tid"});
+            teamStore.createIndex("cid", "cid", {unique: false});
             teamStore.createIndex("did", "did", {unique: false});
 
             var teams = [
@@ -66,27 +67,20 @@ var db = {
 
             // rid ("row id") is used as the keyPath for objects without an innate unique identifier
             var playerStore = dbl.createObjectStore("players", {keyPath: "pid", autoIncrement: true});
-            var playerRatingStore = dbl.createObjectStore("playerRatings", {keyPath: "rid", autoIncrement: true});
-            var playerStatStore = dbl.createObjectStore("playerStats", {keyPath: "rid", autoIncrement: true});
             var teamStore = dbl.createObjectStore("teams", {keyPath: "rid", autoIncrement: true});
-            var teamStatStore = dbl.createObjectStore("teamStats", {keyPath: "rid", autoIncrement: true});
-            var gameResultStore = dbl.createObjectStore("gameResults", {keyPath: "gid"});
+            var gameStore = dbl.createObjectStore("games", {keyPath: "gid"});
             // ... other stores go here later
 
             playerStore.createIndex("tid", "tid", {unique: false});
-            playerRatingStore.createIndex("pid", "pid", {unique: false});
-            playerRatingStore.createIndex("season", "season", {unique: false});
-            playerStatStore.createIndex("pid", "pid", {unique: false});
-            playerStatStore.createIndex("tid", "tid", {unique: false});
-            playerStatStore.createIndex("season", "season", {unique: false});
+            playerStore.createIndex("ratings.season", "ratings.season", {unique: false});
+            playerStore.createIndex("stats.tid", "stats.tid", {unique: false});
+            playerStore.createIndex("stats.season", "stats.season", {unique: false});
             teamStore.createIndex("tid", "tid", {unique: false});
             teamStore.createIndex("cid", "cid", {unique: false});
             teamStore.createIndex("did", "did", {unique: false});
             teamStore.createIndex("season", "season", {unique: false});
-            teamStatStore.createIndex("tid", "tid", {unique: false});
-            teamStatStore.createIndex("season", "season", {unique: false});
-            gameResultStore.createIndex("tid", "tid", {unique: false});
-            gameResultStore.createIndex("season", "season", {unique: false});
+            gameStore.createIndex("tid", "tid", {unique: false});
+            gameStore.createIndex("season", "season", {unique: false});
         }
         return request;
     },

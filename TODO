@@ -9,6 +9,14 @@ other feature porting
 
 ---
 
+player.js
+
+can i make Player.save save both ratings for updated players, and ratings+attributes for new players?
+
+merge Player.develop and GeneratePlayer.develop
+
+---
+
 test deep index stats.tid, stats.season: {pid, stats: {tid, season, pts, reb, ...}}
 
 League schema: teamStats and playerStats refer to totals that will be divided by numGames to get averages

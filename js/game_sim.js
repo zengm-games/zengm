@@ -1,11 +1,4 @@
 /**
- * This is a port of bbgm.core.game_sim from Python to JavaScript, based on
- * https://developer.mozilla.org/en/Introduction_to_Object-Oriented_JavaScript
- */
-
-
-
-/**
  * Single game simulation.
  * 
  * When an instance of this class is created, information about the two teams
@@ -52,7 +45,6 @@
  *     team2: Same as team1, but for the away team.
  */
 function GameSim(gid, team1, team2) {
-console.log(team1);
     this.id = gid;
     this.team = [deepCopy(team1), deepCopy(team2)];
     this.num_possessions = parseInt(Math.round((this.team[0]['pace'] + this.team[1]['pace']) / 2 * gauss_random(1, 0.03)), 10);

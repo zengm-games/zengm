@@ -62,9 +62,9 @@ console.log(teams);
 
                 draftYear = g.startingSeason - 1 - agingYears;
 
-                player = new Player();
-                player.generate(pid, t, 19, profile, base_ratings[p], pots[p], draftYear);
-                player.develop(agingYears);
+                player = new Player(pid);
+                player.generate(t, 19, profile, base_ratings[p], pots[p], draftYear);
+                player.develop(agingYears, true);
                 if (p < 5) {
                     gp.bonus(goodNeutralBad * random.randInt(0, 20));
                 }

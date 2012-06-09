@@ -14,21 +14,34 @@ request.onsuccess = function(event) {
     };
 
     var app = Davis(function () {
-        this.get('/l/:lid', function (req) {
-            $('body').append('<h1>Hello there, ' + req.params['lid'] + '!</h1>');
+        this.configure(function () {
+            this.generateRequestOnPageLoad = true;
         });
+
+        // Non-league views
         this.get('/init_db', views.init_db);
         this.get('/', views.dashboard);
         this.get('/new_league', views.new_league);
         this.post('/new_league', views.new_league);
         this.post('/delete_league', views.delete_league);
+
+        // League views
+        this.before('/l/:lid', function (req) {
+            // Make sure league exists
+
+            // Connect to league database
+
+            // Make sure league template is showing
+
+            console.log('League URL detected!');
+        })
+        this.get('/l/:lid', function (req) {
+            $('body').append('<h1>Hello there, ' + req.params['lid'] + '!</h1>');
+        });
     });
 
     $(document).ready(function() {
         app.start();
-
-        // Load appropriate view based on location bar
-        Davis.location.assign(new Davis.Request(window.location.pathname));
     });
 };
 

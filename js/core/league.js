@@ -16,10 +16,10 @@ console.log(teams);
                     };
 
                     // Probably is fastest to use this transaction for everything done to create a new league
-                    var transaction = dbl.transaction(["teams"], IDBTransaction.READ_WRITE);
+                    var transaction = dbl.transaction(["players", "teams"], IDBTransaction.READ_WRITE);
 
                     // teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league.
-                    var teamStore = transaction.objectStore("teams")
+                    var teamStore = transaction.objectStore("teams");
                     for (var i=0; i<teams.length; i++) {
                         teamStore.add({
 //                            rid: teams[i]['tid'], // This shouldn't be necessary if autoincrement is working on this store http://www.raymondcamden.com/index.cfm/2012/4/26/Sample-of-IndexedDB-with-Autogenerating-Keys
@@ -44,6 +44,7 @@ console.log(teams);
                     }
 
                     // Generate new players
+                    var playerStore = transaction.objectStore("players");
                     var profiles = ['Point', 'Wing', 'Big', ''];
                     var pid = 1;
                     var playerAttributes = [];
@@ -80,14 +81,20 @@ console.log('t: ' + t + ', p: ' + p);
                             gp.attribute["contractAmount"] = contract.amount;
                             gp.attribute["contractExp"] = contract.exp;
 
-                            playerAttributes.push(gp.attribute);
-                            playerRatings.push(gp.rating);
+                            var entry = gp.attribute;
+console.log(entry);
+                            entry.ratings = gp.rating;
+                            entry.ratings.season = g.startingSeason;
+                            entry.stats = {"season": g.starting_season, "playoffs": false, "numGames": 0};
+                            playerStore.add(entry);
+//                            playerAttributes.push(gp.attribute);
+//                            playerRatings.push(gp.rating);
 
                             pid += 1
                         }
                     }
-                    console.log(playerAttributes[4]);
-                    console.log(playerRatings[4]);
+//                    console.log(playerAttributes[4]);
+//                    console.log(playerRatings[4]);
 /*
         g.dbexmany('INSERT INTO player_attributes (%s) VALUES (%s)' % (', '.join(player_attributes[0].keys()), ', '.join([':' + key for key in player_attributes[0].keys()])), player_attributes)
         g.dbexmany('INSERT INTO player_ratings (%s) VALUES (%s)' % (', '.join(player_ratings[0].keys()), ', '.join([':' + key for key in player_ratings[0].keys()])), player_ratings)

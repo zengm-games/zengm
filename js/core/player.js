@@ -275,16 +275,19 @@ Player.prototype.generateAttributes = function (age, player_nat) {
     }
 
     // Randomly choose nationality	
-    nationality = 'USA'
+    nationality = 'USA';
 
-    this.attribute['bornLoc'] = nationality
-    this.attribute['name'] = this._name(nationality)        
+    this.attribute['bornLoc'] = nationality;
+    this.attribute['name'] = this._name(nationality)   ;     
 
-    this.attribute['college'] = 0
-    this.attribute['round'] = 0
-    this.attribute['draftPick'] = 0
-    this.attribute['draftTid'] = 0
-    this.attribute['contractAmount'], this.attribute['contractExp'] = this.contract()
+    this.attribute['college'] = 0;
+    this.attribute['round'] = 0;
+    this.attribute['draftPick'] = 0;
+    this.attribute['draftTid'] = 0;
+    this.attribute['contractAmount'], this.attribute['contractExp'] = this.contract();
+
+    this.attribute['freeAgentTimesAsked'] = 0;
+    this.attribute['yearsFreeAgent'] = 0;
 }
 
 Player.prototype._name = function (nationality) {

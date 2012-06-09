@@ -10,5 +10,22 @@ var random = {
      */
     randInt: function (randMin, randMax) {
         return Math.floor(Math.random()*(1 + randMax - randMin)) + randMin;
+    },
+
+    /**
+     * Shuffles a list in place, returning nothing.
+     * @param {array} list List to be shuffled in place.
+     */
+    shuffle: function (list) {
+        var i, j, t;
+        var l = list.length;
+        for (i = 1; i < l; i++) {
+            j = random.randInt(0, i);
+            if (j != i) {
+                t = list[i];  // swap list[i] and list[j]
+                list[i] = list[j];
+                list[j] = t;
+            }
+        }
     }
 };

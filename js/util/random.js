@@ -3,13 +3,13 @@
  */
 var random = {
     /**
-     * Choose a random integer from [randMin, randMax]
-     * @param {number} randMin Minimum integer that can be returned.
-     * @param {number} randMax Maximum integer that can be returned.
-     * @return {number} Random integer between randMin and randMax.
+     * Choose a random integer from [a, b]
+     * @param {number} a Minimum integer that can be returned.
+     * @param {number} b Maximum integer that can be returned.
+     * @return {number} Random integer between a and b.
      */
-    randInt: function (randMin, randMax) {
-        return Math.floor(Math.random()*(1 + randMax - randMin)) + randMin;
+    randInt: function (a, b) {
+        return Math.floor(Math.random()*(1 + b - a)) + a;
     },
 
     /**
@@ -27,5 +27,28 @@ var random = {
                 list[j] = t;
             }
         }
+    },
+
+    /**
+     * Returns a random number from an approximately Gaussian distribution.
+     * See: http://www.protonfish.com/random.shtml
+     * @param {number} mu Mean (default: 0).
+     * @param {number} sigma Standard deviation (default: 1).
+     * @return {number} Random number from Gaussian distribution.
+     */
+    gauss: function (mu, sigma) {
+        mu = typeof mu !== "undefined" ? mu : 0;
+        sigma = typeof sigma !== "undefined" ? sigma : 1;
+        return ((Math.random()*2-1)+(Math.random()*2-1)+(Math.random()*2-1))*sigma + mu;
+    },
+
+    /**
+     * Get a random number selected from a uniform distribution.
+     * @param {number} a Minimum number that can be returned.
+     * @param {number} b Maximum number that can be returned.
+     * @return {number} Random number from uniform distribution.
+     */
+    uniform: function (a, b) {
+        return math.Random()*(b - a) + a;
     }
 };

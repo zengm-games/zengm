@@ -20,7 +20,7 @@ console.log(teams);
 
                     // teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league.
                     var teamStore = transaction.objectStore("teams")
-                    for (i in teams) {
+                    for (var i=0; i<teams.length; i++) {
                         teamStore.add({
 //                            rid: teams[i]['tid'], // This shouldn't be necessary if autoincrement is working on this store http://www.raymondcamden.com/index.cfm/2012/4/26/Sample-of-IndexedDB-with-Autogenerating-Keys
                             tid: teams[i]['tid'],
@@ -43,51 +43,51 @@ console.log(teams);
                         });
                     }
 
-        // Generate new players
-        profiles = ['Point', 'Wing', 'Big', ''];
-        pid = 1;
-        playerAttributes = [];
-        playerRatings = [];
-        for (t=-1; t<30; t++) {
-            goodNeutralBad = random.randInt(-1, 1);  // determines if this will be a good team or not
+                    // Generate new players
+                    var profiles = ['Point', 'Wing', 'Big', ''];
+                    var pid = 1;
+                    var playerAttributes = [];
+                    var playerRatings = [];
+                    var baseRatings = [30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 19, 19];
+                    var pots = [70, 60, 50, 50, 55, 45, 65, 35, 50, 45, 55, 55, 40, 40];
+                    for (t=-1; t<30; t++) {
+console.log('t: ' + t);
+                        var goodNeutralBad = random.randInt(-1, 1);  // determines if this will be a good team or not
+                        random.shuffle(pots);
+                        for (p=0; p<14; p++) {
+console.log('t: ' + t + ', p: ' + p);
+                            var agingYears = random.randInt(0, 13);
+                            var draftYear = g.startingSeason - 1 - agingYears;
 
-            base_ratings = [30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 19, 19];
-            pots = [70, 60, 50, 50, 55, 45, 65, 35, 50, 45, 55, 55, 40, 40];
-            random.shuffle(pots);
-            for (p=0; p<14; p++) {
-                i = random.randInt(profiles.length);
-                profile = profiles[i];
+                            var gp = new Player(pid);
+                            gp.generate(t, 19, profiles[random.randInt(profiles.length)], baseRatings[p], pots[p], draftYear);
+                            gp.develop(agingYears, true);
+                            if (p < 5) {
+                                gp.bonus(goodNeutralBad * random.randInt(0, 20));
+                            }
+                            if (t == -1) {  // Free agents
+                                gp.bonus(-15);
+                            }
 
-                agingYears = random.randInt(0, 16);
+                            // Update contract based on development
+                            if (t >= 0) {
+                                var randomizeExpiration = true;  // Players on teams already get randomized contracts
+                            }
+                            else {
+                                var randomizeExpiration = false;
+                            }
+                            contract = gp.contract(randomizeExpiration=randomizeExpiration);
+                            gp.attribute["contractAmount"] = contract.amount;
+                            gp.attribute["contractExp"] = contract.exp;
 
-                draftYear = g.startingSeason - 1 - agingYears;
+                            playerAttributes.push(gp.attribute);
+                            playerRatings.push(gp.rating);
 
-                player = new Player(pid);
-                player.generate(t, 19, profile, base_ratings[p], pots[p], draftYear);
-                player.develop(agingYears, true);
-                if (p < 5) {
-                    gp.bonus(goodNeutralBad * random.randInt(0, 20));
-                }
-                if (t == -1) {  // Free agents
-                    gp.bonus(-15);
-                }
-
-                // Update contract based on development
-                if (t >= 0) {
-                    randomizeExpiration = true;  // Players on teams already get randomized contracts
-                }
-                else {
-                    randomizeExpiration = false;
-                }
-                amount, expiration = gp.contract(randomizeExpiration=randomizeExpiration);
-                player.attribute['contractAmount'], player.attribute['contractExp'] = amount, expiration;
-
-                playerAttributes.push(player.get_attributes());
-                playerRatings.push(player.get_ratings());
-
-                pid += 1
-            }
-        }
+                            pid += 1
+                        }
+                    }
+                    console.log(playerAttributes[4]);
+                    console.log(playerRatings[4]);
 /*
         g.dbexmany('INSERT INTO player_attributes (%s) VALUES (%s)' % (', '.join(player_attributes[0].keys()), ', '.join([':' + key for key in player_attributes[0].keys()])), player_attributes)
         g.dbexmany('INSERT INTO player_ratings (%s) VALUES (%s)' % (', '.join(player_ratings[0].keys()), ', '.join([':' + key for key in player_ratings[0].keys()])), player_ratings)
@@ -111,10 +111,10 @@ console.log(teams);
             trade_tid = 0
         g.dbex('INSERT INTO trade (tid) VALUES (:tid)', tid=trade_tid)
 */
+
+                    Davis.location.assign(new Davis.Request('/l/' + lid));
                 }
             });
-
-            Davis.location.assign(new Davis.Request('/l/' + lid));
         };
     },
 

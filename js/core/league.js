@@ -1,6 +1,6 @@
 var league = {
     new: function (tid) {
-        l = {'tid': tid, 'season': startingSeason, 'phase': 0, 'games_in_progress': false, 'stop_game': false, 'pm_status': '', 'pm_phase': 'Phase 1'}
+        l = {'tid': tid, 'season': g.startingSeason, 'phase': 0, 'games_in_progress': false, 'stop_game': false, 'pm_status': '', 'pm_phase': 'Phase 1'}
         var leaguesStore = dbm.transaction(["leagues"], IDBTransaction.READ_WRITE).objectStore("leagues");
         leaguesStore.add(l).onsuccess = function (event) {
             lid = event.target.result;
@@ -29,7 +29,7 @@ console.log(teams);
                             region: teams[i]['region'],
                             name: teams[i]['name'],
                             abbrev: teams[i]['abbrev'],
-                            season: startingSeason,
+                            season: g.startingSeason,
                             won: 0,
                             lost: 0,
                             won_div: 0,
@@ -42,46 +42,53 @@ console.log(teams);
                             league_champs: false
                         });
                     }
-/*
-        # Generate new players
-        profiles = ['Point', 'Wing', 'Big', '']
-        gp = player.GeneratePlayer()
-        pid = 1
-        player_attributes = []
-        player_ratings = []
-        for t in range(-1, 30):
-            good_neutral_bad = random.randrange(-1, 2)  # Determines if this will be a good team or not
 
-            base_ratings = [30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 19, 19]
-            pots = [70, 60, 50, 50, 55, 45, 65, 35, 50, 45, 55, 55, 40, 40]
-            random.shuffle(pots)
-            for p in range(14):
-                i = random.randrange(len(profiles))
-                profile = profiles[i]
+        // Generate new players
+        profiles = ['Point', 'Wing', 'Big', ''];
+        pid = 1;
+        playerAttributes = [];
+        playerRatings = [];
+        for (t=-1; t<30; t++) {
+            goodNeutralBad = random.randInt(-1, 1);  // determines if this will be a good team or not
 
-                aging_years = random.randint(0, 16)
+            base_ratings = [30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 19, 19];
+            pots = [70, 60, 50, 50, 55, 45, 65, 35, 50, 45, 55, 55, 40, 40];
+            random.shuffle(pots);
+            for (p=0; p<14; p++) {
+                i = random.randInt(profiles.length);
+                profile = profiles[i];
 
-                draft_year = g.starting_season - 1 - aging_years
+                agingYears = random.randInt(0, 16);
 
-                gp.new(pid, t, 19, profile, base_ratings[p], pots[p], draft_year)
-                gp.develop(aging_years)
-                if p < 5:
-                    gp.bonus(good_neutral_bad * random.randint(0, 20))
-                if t == -1:  # Free agents
-                    gp.bonus(-15)
+                draftYear = g.startingSeason - 1 - agingYears;
 
-                # Update contract based on development
-                if t >= 0:
-                    randomize_expiration = True  # Players on teams already get randomized contracts
-                else:
-                    randomize_expiration = False
-                amount, expiration = gp.contract(randomize_expiration=randomize_expiration)
-                gp.attribute['contract_amount'], gp.attribute['contract_exp'] = amount, expiration
+                player = new Player();
+                player.generate(pid, t, 19, profile, base_ratings[p], pots[p], draftYear);
+                player.develop(agingYears);
+                if (p < 5) {
+                    gp.bonus(goodNeutralBad * random.randInt(0, 20));
+                }
+                if (t == -1) {  // Free agents
+                    gp.bonus(-15);
+                }
 
-                player_attributes.append(gp.get_attributes())
-                player_ratings.append(gp.get_ratings())
+                // Update contract based on development
+                if (t >= 0) {
+                    randomizeExpiration = true;  // Players on teams already get randomized contracts
+                }
+                else {
+                    randomizeExpiration = false;
+                }
+                amount, expiration = gp.contract(randomizeExpiration=randomizeExpiration);
+                player.attribute['contractAmount'], player.attribute['contractExp'] = amount, expiration;
+
+                playerAttributes.push(player.get_attributes());
+                playerRatings.push(player.get_ratings());
 
                 pid += 1
+            }
+        }
+/*
         g.dbexmany('INSERT INTO player_attributes (%s) VALUES (%s)' % (', '.join(player_attributes[0].keys()), ', '.join([':' + key for key in player_attributes[0].keys()])), player_attributes)
         g.dbexmany('INSERT INTO player_ratings (%s) VALUES (%s)' % (', '.join(player_ratings[0].keys()), ', '.join([':' + key for key in player_ratings[0].keys()])), player_ratings)
 

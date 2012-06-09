@@ -21,6 +21,7 @@ Index: tid, cid, did, season, stats.playoffs
 
 games =  {gid, season, teamStatsForIndividualGame, playerStatsForIndividualGam}
 Index: *gid, tid, season
+- can tid be an array so that gid can be unique? can i index on an array?
 
 schedule = {schedule}
 

@@ -1,5 +1,5 @@
 /**
- * Module to emulate some of Python's random library.
+ * @fileoverview Module to emulate some of Python's random library.
  */
 var random = {
     /**

@@ -77,10 +77,10 @@ console.log("New tid: " + tid);
 
     "league_dashboard": function (req) {
         var data = {"title": "Dashboard - League " + g.lid};
-        var url = "/" + g.lid;
+        var url = "/l/" + g.lid;
 
         template = Handlebars.templates['league_dashboard'];
-        data["content"] = template({"g": g});
+        data["league_content"] = template({"g": g});
 
         ajax_update(data, url);
     }

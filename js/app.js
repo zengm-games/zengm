@@ -18,11 +18,6 @@ request.onsuccess = function(event) {
             this.generateRequestOnPageLoad = true;
         });
 
-        // Error handling
-        this.bind('routeNotFound', function (req) {
-            alert('Route Not Found');
-        });
-
         // Non-league views
         this.get('/init_db', views.init_db);
         this.get('/', views.dashboard);

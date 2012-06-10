@@ -260,7 +260,7 @@ t['defense'] = 0.25;
             }
             else {
                 // If not allowed to start games, don't
-                return teams, schedule, playoffs_continue, url;
+                return {teams: teams, schedule: schedule, playoffs_continue: playoffs_continue, url: url};
             }
         }
 
@@ -290,13 +290,14 @@ t['defense'] = 0.25;
                     num_active_teams = g.num_teams;
 
                     // Decrease free agent demands and let AI teams sign them
-                    free_agents_decrease_demands();
-                    free_agents_auto_sign();
+//                    free_agents_decrease_demands();
+//                    free_agents_auto_sign();
                 }
 
                 playMenu.setStatus("Playing games (" + num_days + " days remaining)...")
                 // Create schedule and team lists for today, to be sent to the client
-                schedule = season.get_schedule(num_active_teams / 2);
+//                schedule = season.get_schedule(num_active_teams / 2);
+schedule = {gid: 6235, home_tid: 1, away_tid: 0};
                 tids_today = [];
                 for (var j=0; j<schedule.length; j++) {
                     game = schedule[j];
@@ -331,6 +332,6 @@ t['defense'] = 0.25;
             }
         }
 
-        return teams, schedule, playoffs_continue, url;
+        return {teams: teams, schedule: schedule, playoffs_continue: playoffs_continue, url: url};
     }
 }

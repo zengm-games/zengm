@@ -47,7 +47,7 @@
 function GameSim(gid, team1, team2) {
     this.id = gid;
     this.team = [deepCopy(team1), deepCopy(team2)];
-    this.num_possessions = parseInt(Math.round((this.team[0]['pace'] + this.team[1]['pace']) / 2 * gauss_random(1, 0.03)), 10);
+    this.num_possessions = parseInt(Math.round((this.team[0]['pace'] + this.team[1]['pace']) / 2 * random.gauss(1, 0.03)), 10);
 
     // Starting lineups, which works because players are ordered by their roster_order
     this.players_on_court = [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]];
@@ -132,7 +132,7 @@ GameSim.prototype.update_players_on_court = function() {
         // Overall ratings scaled by fatigue
     	var ovrs = [];
         for (var i = 0; i < this.team[t]['player'].length; i++) {
-            ovrs.push(this.team[t]['player'][i]['ovr'] * this.team[t]['player'][i]['stat']['energy'] * gauss_random(1, .04));
+            ovrs.push(this.team[t]['player'][i]['ovr'] * this.team[t]['player'][i]['stat']['energy'] * random.gauss(1, .04));
         }
 
         // Loop through players on court (in inverse order of current roster position)
@@ -145,10 +145,10 @@ GameSim.prototype.update_players_on_court = function() {
                 if (this.players_on_court[t].indexOf(b) == -1 && this.team[t]['player'][p]['stat']['court_time'] > 3 && this.team[t]['player'][b]['stat']['bench_time'] > 3 && ovrs[b] > ovrs[p]) {
                     // Substitute player
                     this.players_on_court[t][i] = b;
-                    this.team[t]['player'][b]['stat']['court_time'] = gauss_random(0, 2);
-                    this.team[t]['player'][b]['stat']['bench_time'] = gauss_random(0, 2);
-                    this.team[t]['player'][p]['stat']['court_time'] = gauss_random(0, 2);
-                    this.team[t]['player'][p]['stat']['bench_time'] = gauss_random(0, 2);
+                    this.team[t]['player'][b]['stat']['court_time'] = random.gauss(0, 2);
+                    this.team[t]['player'][b]['stat']['bench_time'] = random.gauss(0, 2);
+                    this.team[t]['player'][p]['stat']['court_time'] = random.gauss(0, 2);
+                    this.team[t]['player'][p]['stat']['bench_time'] = random.gauss(0, 2);
                 }
             }
             i += 1;
@@ -417,7 +417,7 @@ if (typeof exports !== 'undefined') {
 }
 
 /**
- * Clones an object. Otherwise, pss the team objects and modifying them in
+ * Clones an object. Otherwise, passing the team objects and modifying them in
  * here will fuck up future simulations of the same team if a team plays more
  * than one game in a day. Taken from http://stackoverflow.com/a/3284324/786644
  */

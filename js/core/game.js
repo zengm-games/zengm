@@ -133,9 +133,45 @@ var game = {
     simulate a game.
     */
     team: function (tid) {
-        t = {id: tid, defense: 0, pace: 0, stat: {}, player: []}
+        var t = {id: tid, defense: 0, pace: 0, stat: {}, player: []}
 
-        dbl.transaction(["players"]).objectStore("players").index('tid').get(tid).onsuccess = function(event) { console.log(event.target.result) };
+        dbl.transaction(["players"]).objectStore("players").index('tid').getAll(tid).onsuccess = function(event) {
+            console.log('HOW DO I PUT THIS IN teams?');
+
+            var players = event.target.result;
+
+            for (var i=0; i<players.length; i++) {
+                var player = players[i];
+                var p = {id: player.pid, ovr: 0, stat: {}, composite_rating: {}};
+
+                for (var j=0; j<player.ratings.length; j++) {
+                    if (player.ratings[j]['season'] == g.season) {
+                        var rating = player.ratings[j];
+                        break;
+                    }
+                }
+
+                p['ovr'] = rating['ovr'];
+
+                p['composite_rating']['pace'] = game._composite(90, 140, rating, ['spd', 'jmp', 'dnk', 'tp', 'stl', 'drb', 'pss'], undefined, false);
+                p['composite_rating']['shot_ratio'] = game._composite(0, 0.5, rating, ['ins', 'dnk', 'fg', 'tp']);
+                p['composite_rating']['assist_ratio'] = game._composite(0, 0.5, rating, ['drb', 'pss', 'spd']);
+                p['composite_rating']['turnover_ratio'] = game._composite(0, 0.5, rating, ['drb', 'pss', 'spd'], true);
+                p['composite_rating']['field_goal_percentage'] = game._composite(0.38, 0.68, rating, ['hgt', 'jmp', 'ins', 'dnk', 'fg', 'tp']);
+                p['composite_rating']['free_throw_percentage'] = game._composite(0.65, 0.9, rating, ['ft']);
+                p['composite_rating']['three_pointer_percentage'] = game._composite(0, 0.45, rating, ['tp']);
+                p['composite_rating']['rebound_ratio'] = game._composite(0, 0.5, rating, ['hgt', 'stre', 'jmp', 'reb']);
+                p['composite_rating']['steal_ratio'] = game._composite(0, 0.5, rating, ['spd', 'stl']);
+                p['composite_rating']['block_ratio'] = game._composite(0, 0.5, rating, ['hgt', 'jmp', 'blk']);
+                p['composite_rating']['foul_ratio'] = game._composite(0, 0.5, rating, ['spd'], true);
+                p['composite_rating']['defense'] = game._composite(0, 0.5, rating, ['stre', 'spd']);
+
+                p['stat'] = {gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, court_time: 0, bench_time: 0, energy: 1};
+
+                t['player'].push(p);
+            }
+console.log(t);
+        };
 /*        r = g.dbex('SELECT pid FROM player_attributes WHERE tid = :tid ORDER BY roster_order ASC', tid=tid)
         for row in r.fetchall():
             t['player'].push(player(row[0]))*/
@@ -157,36 +193,6 @@ t['defense'] = 0.25;
         t['stat'] = {min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0};
 
         return t;
-    },
-
-
-    /*Returns a dict containing the minimal information about a player needed
-    to simulate a game.
-    */
-    player: function (pid) {
-        p = {id: pid, ovr: 0, stat: {}, composite_rating: {}};
-
-        r = g.dbex('SELECT ovr, hgt, stre, spd, jmp, endu, ins, dnk, ft, fg, tp, blk, stl, drb, pss, reb FROM player_ratings WHERE pid = :pid AND season = :season', pid=p['id'], season=g.season)
-        rating = r.fetchone()
-
-        p['ovr'] = rating['ovr'];
-
-        p['composite_rating']['pace'] = _composite(90, 140, rating, ['spd', 'jmp', 'dnk', 'tp', 'stl', 'drb', 'pss'], undefined, false);
-        p['composite_rating']['shot_ratio'] = _composite(0, 0.5, rating, ['ins', 'dnk', 'fg', 'tp']);
-        p['composite_rating']['assist_ratio'] = _composite(0, 0.5, rating, ['drb', 'pss', 'spd']);
-        p['composite_rating']['turnover_ratio'] = _composite(0, 0.5, rating, ['drb', 'pss', 'spd'], true);
-        p['composite_rating']['field_goal_percentage'] = _composite(0.38, 0.68, rating, ['hgt', 'jmp', 'ins', 'dnk', 'fg', 'tp']);
-        p['composite_rating']['free_throw_percentage'] = _composite(0.65, 0.9, rating, ['ft']);
-        p['composite_rating']['three_pointer_percentage'] = _composite(0, 0.45, rating, ['tp']);
-        p['composite_rating']['rebound_ratio'] = _composite(0, 0.5, rating, ['hgt', 'stre', 'jmp', 'reb']);
-        p['composite_rating']['steal_ratio'] = _composite(0, 0.5, rating, ['spd', 'stl']);
-        p['composite_rating']['block_ratio'] = _composite(0, 0.5, rating, ['hgt', 'jmp', 'blk']);
-        p['composite_rating']['foul_ratio'] = _composite(0, 0.5, rating, ['spd'], true);
-        p['composite_rating']['defense'] = _composite(0, 0.5, rating, ['stre', 'spd']);
-
-        p['stat'] = {gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, court_time: 0, bench_time: 0, energy: 1};
-
-        return p;
     },
 
     _composite: function (minval, maxval, rating, components, inverse, rand) {
@@ -215,8 +221,8 @@ t['defense'] = 0.25;
             rmax = rmax + sign * (add + 100);
         }
         // Scale from minval to maxval
-        r = r / (100.0 * len(components));  // 0-1
-    //    r = r / (rmax * len(components))  // 0-1
+        r = r / (100.0 * components.length);  // 0-1
+    //    r = r / (rmax * components.length)  // 0-1
         r = r * (maxval - minval) + minval;  // Min-Max
         // Randomize: Mulitply by a random number from N(1,0.1)
         if (rand) {
@@ -297,20 +303,22 @@ t['defense'] = 0.25;
                 playMenu.setStatus("Playing games (" + num_days + " days remaining)...")
                 // Create schedule and team lists for today, to be sent to the client
 //                schedule = season.get_schedule(num_active_teams / 2);
-schedule = {gid: 6235, home_tid: 1, away_tid: 0};
+schedule = [{gid: 6235, home_tid: 15, away_tid: 2}];
                 tids_today = [];
                 for (var j=0; j<schedule.length; j++) {
-                    game = schedule[j];
-                    g.dbex('UPDATE schedule SET in_progress_timestamp = :in_progress_timestamp WHERE gid = :gid', in_progress_timestamp=int(time.time()), gid=game['gid'])
-                    tids_today.push(game['home_tid']);
-                    tids_today.push(game['away_tid']);
+                    matchup = schedule[j];
+//                    g.dbex('UPDATE schedule SET in_progress_timestamp = :in_progress_timestamp WHERE gid = :gid', in_progress_timestamp=int(time.time()), gid=game['gid'])
+                    tids_today.push(matchup['home_tid']);
+                    tids_today.push(matchup['away_tid']);
         //                tids_today = list(set(tids_today))  // Unique list
                 }
+console.log(tids_today);
                 teams = [];
                 for (var tid=0; tid<30; tid++) {
                     // Only send team data for today's active teams
                     if (tids_today.indexOf(tid) >= 0) {
-                        teams.push(team(tid))
+console.log(tid);
+                        teams.push(game.team(tid))
                     }
                     else {
                         teams.push({'id': tid})
@@ -330,6 +338,16 @@ schedule = {gid: 6235, home_tid: 1, away_tid: 0};
                 season.new_phase(c.PHASE_PLAYOFFS);  // Start playoffs
                 url = "/l/" + g.lid + "/history";
             }
+        }
+
+        if ((schedule && schedule.length > 0) || playoffs_continue) {
+            var results = [];
+            for (var i=0; i<schedule.length; i++) {
+                gs = new GameSim(schedule[i]['gid'], teams[schedule[i]['home_tid']], teams[schedule[i]['away_tid']]);
+                results.push(gs.run());
+            }
+            console.log(results);
+            num_days = num_days - 1;
         }
 
         return {teams: teams, schedule: schedule, playoffs_continue: playoffs_continue, url: url};

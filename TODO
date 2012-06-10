@@ -3,9 +3,14 @@ build init_db equivalent with indexeddb
 port enough code over to create a new league. is it ridiculously slow? NO!
 if not, port enough code over to simulate games. is it ridiculously slow?
 - port over game.py and make it work more like it used to (just call a function and have it loop through the days, rather than this weird callback thing)
+- Get teams list with all of the teams playing today
+- Callback to simulate a day's games
+- Callback to do bookkeeping
 
 IF NOT, THEN:
 refactor and make sure i'm doing things correct as far as modules, namespaces, documentation, style, etc.
+async shit is confusing. how to avoid race conditions while maintaining modular code?
+- dead simple example: I have a function somewhere that connects to a database. Later, somewhere else in the code, I want to use the database. How do I know if there's a connection? What do I do if there isn't one, do I wait? How?
 port over other features
 auto translate python to js?
 coffeescript?

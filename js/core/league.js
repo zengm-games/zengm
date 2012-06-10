@@ -83,9 +83,9 @@ console.log('t: ' + t + ', p: ' + p);
 
                             var entry = gp.attribute;
 console.log(entry);
-                            entry.ratings = gp.rating;
-                            entry.ratings.season = g.startingSeason;
-                            entry.stats = {"season": g.starting_season, "playoffs": false, "numGames": 0};
+                            entry.ratings = [gp.rating];
+                            entry.ratings[0].season = g.startingSeason;
+                            entry.stats = {"season": g.startingSeason, "playoffs": false, "numGames": 0};
                             playerStore.add(entry);
 
                             pid += 1

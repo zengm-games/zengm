@@ -7,6 +7,7 @@ function play_button(url) {
         var teams = data['teams'];
         var num_days = data['num_days'];
         var playoffs_continue = data['playoffs_continue'];
+        var js = data['js'];
         if (error) {
             alert(error);
         }

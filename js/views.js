@@ -77,10 +77,18 @@ console.log("New tid: " + tid);
 
     "before_league": function (req) {
         g.lid = parseInt(req.params.lid.split('/')[0], 10);
+g.season = 2012;
 
         // Make sure league exists
 
         // Connect to league database
+        request = db.connect_league(g.lid);
+        request.onsuccess = function (event) {
+            dbl = request.result;
+            dbl.onerror = function (event) {
+                console.log("League database error: " + event.target.errorCode);
+            };
+        }
 
         // Make sure league template FOR THE CURRENT LEAGUE is showing
         var leagueMenu = document.getElementById("league_menu");

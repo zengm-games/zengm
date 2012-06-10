@@ -65,7 +65,7 @@ ul.dashboard_league li.dashboard_league_new a:hover {
   margin-left: -100%;
 }
 
-#play_phase, #play_status {
+#playPhase, #playStatus {
   color: #dddddd;
 }
 
@@ -73,7 +73,7 @@ table {
   white-space: nowrap;
 }
 
-div#play_button ul.btn {
+div#playButton ul.btn {
   -webkit-border-top-right-radius: 0;
   -moz-border-radius-topright: 0;
   border-top-right-radius: 0;
@@ -91,14 +91,14 @@ div#play_button ul.btn {
   padding: 0;
   text-align: left;
 }
-div#play_button ul li a {
+div#playButton ul li a {
   text-shadow: none;
 }
-div#play_button ul li a.dropdown-toggle {
+div#playButton ul li a.dropdown-toggle {
   color: #FFFFFF;
   text-shadow: none;
 }
-div#play_button ul li a.dropdown-toggle:hover {
+div#playButton ul li a.dropdown-toggle:hover {
   color: #FFFFFF;
   text-shadow: none;
 }

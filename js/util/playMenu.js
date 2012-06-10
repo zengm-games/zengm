@@ -142,7 +142,8 @@ old_phase_text = 'phuck';
     */
     refreshOptions: function () {
 //        button = render_template("play_button.html", lid=g.lid, options=options());
-button = 'buck';
+        template = Handlebars.templates['playButton'];
+        button = template({options: playMenu.options()});
         document.getElementById("playButton").innerHTML = button;
     }
 }

@@ -211,7 +211,7 @@ $(document).ready(function() {
             play_status.html(data);
 
             // Refresh page, as appropriate - maybe this isn't the best place for this
-/            var refresh_pages = ['standings', 'playoffs', 'schedule']
+//            var refresh_pages = ['standings', 'playoffs', 'schedule']
 //            var result = parse_league_url(document.URL);
 //            var league_page = result[2];
 //            if (jQuery.inArray(league_page, refresh_pages) > -1) {

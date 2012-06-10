@@ -26,22 +26,7 @@ request.onsuccess = function(event) {
         this.post('/delete_league', views.delete_league);
 
         // League views
-        this.before('/l/*lid', function (req) {
-            g.lid = parseInt(req.params.lid.split('/')[0], 10);
-
-            // Make sure league exists
-
-            // Connect to league database
-
-            // Make sure league template FOR THE CURRENT LEAGUE is showing
-            var leagueMenu = document.getElementById("league_menu");
-            if (leagueMenu === null || leagueMenu.dataset["lid"] != g.lid) {
-                data = {};
-                template = Handlebars.templates['league_layout'];
-                data["content"] = template({"g": g});
-                ajax_update(data);
-            }
-        })
+        this.before('/l/*lid', views.before_league)
         this.get('/l/:lid', views.league_dashboard);
     });
 

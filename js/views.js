@@ -75,6 +75,28 @@ console.log("New tid: " + tid);
         req.redirect('/');
     },
 
+    "before_league": function (req) {
+        g.lid = parseInt(req.params.lid.split('/')[0], 10);
+
+        // Make sure league exists
+
+        // Connect to league database
+
+        // Make sure league template FOR THE CURRENT LEAGUE is showing
+        var leagueMenu = document.getElementById("league_menu");
+        if (leagueMenu === null || leagueMenu.dataset["lid"] != g.lid) {
+            data = {};
+            template = Handlebars.templates['league_layout'];
+            data["content"] = template({"g": g});
+            ajax_update(data);
+
+            // Update play menu
+            playMenu.setStatus()
+            playMenu.setPhase()
+            playMenu.refreshOptions()
+        }
+    },
+
     "league_dashboard": function (req) {
         var data = {"title": "Dashboard - League " + g.lid};
         var url = "/l/" + g.lid;

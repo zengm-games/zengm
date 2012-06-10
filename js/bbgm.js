@@ -52,7 +52,9 @@ function play_button(url) {
 // For AJAX updating pages
 function ajax_update(data, url) {
     $('title').text(data['title'] + ' - Basketball GM');
-    $('#league_content').html(data['league_content']);
+    if (data.hasOwnProperty('league_content')) {
+        $('#league_content').html(data['league_content']);
+    }
     if (data.hasOwnProperty('content')) {
         $('#content').html(data['content']);
     }

@@ -87,8 +87,6 @@ console.log(entry);
                             entry.ratings.season = g.startingSeason;
                             entry.stats = {"season": g.starting_season, "playoffs": false, "numGames": 0};
                             playerStore.add(entry);
-//                            playerAttributes.push(gp.attribute);
-//                            playerRatings.push(gp.rating);
 
                             pid += 1
                         }
@@ -96,9 +94,6 @@ console.log(entry);
 //                    console.log(playerAttributes[4]);
 //                    console.log(playerRatings[4]);
 /*
-        g.dbexmany('INSERT INTO player_attributes (%s) VALUES (%s)' % (', '.join(player_attributes[0].keys()), ', '.join([':' + key for key in player_attributes[0].keys()])), player_attributes)
-        g.dbexmany('INSERT INTO player_ratings (%s) VALUES (%s)' % (', '.join(player_ratings[0].keys()), ', '.join([':' + key for key in player_ratings[0].keys()])), player_ratings)
-
         # Set and get global game attributes
         g.dbex('UPDATE game_attributes SET tid = :tid', tid=tid)
         r = g.dbex('SELECT tid, season, phase, version FROM game_attributes LIMIT 1')

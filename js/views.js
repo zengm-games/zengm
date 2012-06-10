@@ -1,5 +1,5 @@
 var views = {
-    init_db: function () {
+    "init_db": function () {
         var data = {"title": "Initialize Database"};
         var url = "/init_db";
 
@@ -36,28 +36,26 @@ var views = {
         ajax_update(data, url);
     },
 
-    dashboard: function () {
+    "dashboard": function () {
         var data = {"title": "Dashboard"};
         var url = "/";
 
         db.getAll(dbm, "leagues", function (leagues) {
             template = Handlebars.templates['dashboard'];
-            context = {"leagues": leagues};
-            data["content"] = template(context);
+            data["content"] = template({"leagues": leagues});
 
             ajax_update(data, url);
         });
     },
 
-    new_league: function (req) {
+    "new_league": function (req) {
         var data = {"title": "Create New League"};
         var url = "/new_league";
 
         if (req.method === "get") {
             db.getAll(dbm, "teams", function (teams) {
                 template = Handlebars.templates['new_league'];
-                context = {"teams": teams};
-                data["content"] = template(context);
+                data["content"] = template({"teams": teams});
 
                 ajax_update(data, url);
             });
@@ -71,9 +69,21 @@ console.log("New tid: " + tid);
         }
     },
 
-    delete_league: function (req) {
+    "delete_league": function (req) {
         lid = parseInt(req.params['lid'], 10);
         league.delete(lid)
         req.redirect('/');
+    },
+
+    "league_dashboard": function (req) {
+        var data = {"title": "Dashboard - League " + g.lid};
+        var url = "/" + g.lid;
+
+        template = Handlebars.templates['league_dashboard'];
+        data["content"] = template({"g": g});
+
+        ajax_update(data, url);
     }
+
+
 };

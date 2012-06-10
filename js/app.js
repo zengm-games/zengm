@@ -26,18 +26,18 @@ request.onsuccess = function(event) {
         this.post('/delete_league', views.delete_league);
 
         // League views
-        this.before('/l/:lid', function (req) {
+        this.before('/l/*lid', function (req) {
+            g.lid = parseInt(req.params.lid.split('/')[0], 10);
+
             // Make sure league exists
 
             // Connect to league database
 
             // Make sure league template is showing
 
-            console.log('League URL detected!');
+            console.log('League URL detected!' + g.lid);
         })
-        this.get('/l/:lid', function (req) {
-            $('body').append('<h1>Hello there, ' + req.params['lid'] + '!</h1>');
-        });
+        this.get('/l/:lid', views.league_dashboard);
     });
 
     $(document).ready(function() {

@@ -34,8 +34,8 @@ request.onsuccess = function(event) {
             // Connect to league database
 
             // Make sure league template FOR THE CURRENT LEAGUE is showing
-            var $leagueMenu = $('#league_menu');
-            if ($leagueMenu.length === 0 || $leagueMenu.data('lid') != g.lid) {
+            var leagueMenu = document.getElementById("league_menu");
+            if (leagueMenu === null || leagueMenu.dataset["lid"] != g.lid) {
                 data = {};
                 template = Handlebars.templates['league_layout'];
                 data["content"] = template({"g": g});

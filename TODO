@@ -2,6 +2,7 @@ MAIN PLAN:
 build init_db equivalent with indexeddb
 port enough code over to create a new league. is it ridiculously slow? NO!
 if not, port enough code over to simulate games. is it ridiculously slow?
+- port over game.py and 
 
 IF NOT, THEN:
 refactor and make sure i'm doing things correct as far as modules, namespaces, documentation, style, etc.

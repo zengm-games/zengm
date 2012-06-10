@@ -1,11 +1,11 @@
 MAIN PLAN:
-build init_db equivalent with http://aaronpowell.github.com/db.js/
-port enough code over to create a new league. is it ridiculously slow?
+build init_db equivalent with indexeddb
+port enough code over to create a new league. is it ridiculously slow? NO!
 if not, port enough code over to simulate games. is it ridiculously slow?
 
 IF NOT, THEN:
-abstract out all references to database into a library, to allow porting to indexeddb painlessly
-other feature porting
+refactor and make sure i'm doing things correct as far as modules, namespaces, documentation, style, etc.
+port over other features
 
 ---
 

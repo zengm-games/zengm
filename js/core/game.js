@@ -45,7 +45,7 @@ Game.prototype.load = function(results, playoffs) {
 
 Game.prototype.writeStats = function() {
     // Record who the starters are
-    for (t=0; t<2; t++) {
+/*    for (t=0; t<2; t++) {
         r = g.dbex('SELECT pid FROM player_attributes WHERE tid = :tid ORDER BY roster_order ASC LIMIT 5', tid=this.team[t]['id'])
         for starter_id, in r.fetchall() {
             for (p=0; p<this.team[t]['player'].length; p++) {
@@ -54,7 +54,7 @@ Game.prototype.writeStats = function() {
                 }
             }
         }
-    }
+    }*/
 
     // Player stats and team stats
     for (t=0; t<2; t++) {
@@ -79,6 +79,7 @@ Game.prototype.writeTeamStats = function(t) {
         won = true;
         if (this.playoffs && t == 0) {
             g.dbex('UPDATE playoff_series SET won_home = won_home + 1 WHERE tid_home = :tid_home AND tid_away = :tid_away AND season = :season', tid_home=this.team[t]['id'], tid_away=this.team[t2]['id'], season=g.season)
+        }
         else if (this.playoffs) {
             g.dbex('UPDATE playoff_series SET won_away = won_away + 1 WHERE tid_home = :tid_home AND tid_away = :tid_away AND season = :season', tid_home=this.team[t2]['id'], tid_away=this.team[t]['id'], season=g.season)
         }
@@ -88,7 +89,7 @@ Game.prototype.writeTeamStats = function(t) {
     }
 
     // Only pay player salaries for regular season games.
-    if (!this.playoffs) {
+/*    if (!this.playoffs) {
         r = g.dbex('SELECT SUM(contract_amount) * 1000 / 82 FROM released_players_salaries WHERE tid = :tid', tid=this.team[t]['id'])
         cost_released, = r.fetchone()
         r = g.dbex('SELECT SUM(contract_amount) * 1000 / 82 FROM player_attributes WHERE tid = :tid', tid=this.team[t]['id'])
@@ -97,9 +98,9 @@ Game.prototype.writeTeamStats = function(t) {
             cost += cost_released;
         }
     }
-    else {
+    else {*/
         cost = 0
-    }
+//    }
     g.dbex('UPDATE team_attributes SET cash = cash + :revenue - :cost WHERE season = :season AND tid = :tid', revenue=g.ticket_price * this.att, cost=cost, season=g.season, tid=this.team[t]['id'])
 
     query = 'INSERT INTO team_stats (tid, opp_tid, gid, season, playoffs, won, home, min, fg, fga, tp, tpa, ft, fta, orb, drb, ast, tov, stl, blk, pf, pts, opp_pts, att, cost) VALUES (:tid, :opp_tid, :gid, :season, :playoffs, :won, :home, :min, :fg, :fga, :tp, :tpa, :ft, :fta, :orb, :drb, :ast, :tov, :stl, :blk, :pf, :pts, :opp_pts, :att, :cost)'
@@ -134,18 +135,22 @@ var game = {
     team: function (tid) {
         t = {id: tid, defense: 0, pace: 0, stat: {}, player: []}
 
-        r = g.dbex('SELECT pid FROM player_attributes WHERE tid = :tid ORDER BY roster_order ASC', tid=tid)
+        dbl.transaction(["players"]).objectStore("players").index('tid').get(tid).onsuccess = function(event) { console.log(event.target.result) };
+/*        r = g.dbex('SELECT pid FROM player_attributes WHERE tid = :tid ORDER BY roster_order ASC', tid=tid)
         for row in r.fetchall():
-            t['player'].push(player(row[0]))
+            t['player'].push(player(row[0]))*/
 
         // Number of players to factor into pace and defense rating calculation
         n_players = t['player'].length;
         if (n_players > 7) {
             n_players = 7;
+        }
 
         // Would be better if these were scaled by average min played and end
-        t['pace'] = sum([t['player'][i]['composite_rating']['pace'] for i in xrange(n_players)]) / 7
-        t['defense'] = sum([t['player'][i]['composite_rating']['defense'] for i in xrange(n_players)]) / 7 // 0 to 0.5
+//        t['pace'] = sum([t['player'][i]['composite_rating']['pace'] for i in xrange(n_players)]) / 7
+//        t['defense'] = sum([t['player'][i]['composite_rating']['defense'] for i in xrange(n_players)]) / 7 // 0 to 0.5
+t['pace'] = 100;
+t['defense'] = 0.25;
         t['defense'] /= 4; // This gives the percentage pts subtracted from the other team's normal FG%
 
 
@@ -161,9 +166,7 @@ var game = {
     player: function (pid) {
         p = {id: pid, ovr: 0, stat: {}, composite_rating: {}};
 
-        r = g.dbex('SELECT ovr, hgt, stre, spd, jmp, endu, ins, dnk, '
-                'ft, fg, tp, blk, stl, drb, '
-                'pss, reb FROM player_ratings WHERE pid = :pid AND season = :season', pid=p['id'], season=g.season)
+        r = g.dbex('SELECT ovr, hgt, stre, spd, jmp, endu, ins, dnk, ft, fg, tp, blk, stl, drb, pss, reb FROM player_ratings WHERE pid = :pid AND season = :season', pid=p['id'], season=g.season)
         rating = r.fetchone()
 
         p['ovr'] = rating['ovr'];
@@ -224,18 +227,18 @@ var game = {
 
     /*Convenience function to save game stats.*/
     save_results: function (results, playoffs) {
-        r = g.dbex('SELECT in_progress_timestamp FROM schedule WHERE gid = :gid', gid=results['gid'])
-        in_progress_timestamp, = r.fetchone()
-        if (in_progress_timestamp > 0) {
+//        r = g.dbex('SELECT in_progress_timestamp FROM schedule WHERE gid = :gid', gid=results['gid'])
+//        in_progress_timestamp, = r.fetchone()
+//        if (in_progress_timestamp > 0) {
             game = Game()
             game.load(results, playoffs)
             game.writeStats()
             g.dbex('DELETE FROM schedule WHERE gid = :gid', gid=results['gid'])
             console.log("Saved results for game " + results['gid']);
-        else {
-            console.log("Ignored stale results for game " + results['gid']);
-        }
-    }
+//        else {
+//            console.log("Ignored stale results for game " + results['gid']);
+//        }
+    },
 
     /*Play num_days days worth of games. If start is true, then this is
     starting a new series of games. If not, then it's continuing a simulation.
@@ -262,17 +265,17 @@ var game = {
         }
 
         if (num_days > 0) {
-            // If the user wants to stop the simulation, then stop the simulation
+/*            // If the user wants to stop the simulation, then stop the simulation
             r = g.dbex('SELECT stop_games FROM game_attributes WHERE season = :season', season=g.season)
             stop_games, = r.fetchone()
             if (stop_games) {
                 g.dbex('UPDATE game_attributes SET stop_games = false WHERE season = :season', season=g.season)
-            }
+            }*/
 
             // If we didn't just stop games, let's play
             // Or, if we are starting games (and already passed the lock above),
             // continue even if stop_games was just seen
-            if (start || !stop_games) {
+//            if (start || !stop_games) {
                 // Check if it's the playoffs and do some special stuff if it is or isn't
                 if (g.phase == c.PHASE_PLAYOFFS) {
                     num_active_teams = season.new_schedule_playoffs_day();
@@ -312,7 +315,7 @@ var game = {
                         teams.push({'id': tid})
                     }
                 }
-            }
+//            }
         }
 
         // If this is the last day, update play menu
@@ -326,6 +329,7 @@ var game = {
                 season.new_phase(c.PHASE_PLAYOFFS);  // Start playoffs
                 url = "/l/" + g.lid + "/history";
             }
+        }
 
         return teams, schedule, playoffs_continue, url;
     }

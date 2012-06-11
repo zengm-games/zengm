@@ -5,7 +5,7 @@ if not, port enough code over to simulate games. is it ridiculously slow?
 - port over game.py and make it work more like it used to (just call a function and have it loop through the days, rather than this weird callback thing)
 - Get teams list with all of the teams playing today
 - Callback to simulate a day's games
-- Callback to do bookkeeping
+- Callback to do daily bookkeeping
 
 IF NOT, THEN:
 refactor and make sure i'm doing things correct as far as modules, namespaces, documentation, style, etc.

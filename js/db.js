@@ -1,5 +1,6 @@
 var db = {
     connect_meta: function () {
+        console.log('Connecting to database "meta"');
         var request = indexedDB.open("meta", 1);
         request.onerror = function(event) {
             console.log("Connection error");
@@ -55,6 +56,7 @@ var db = {
     },
 
     connect_league: function (lid) {
+        console.log('Connecting to database "league' + lid + '"');
         var request = indexedDB.open("league" + lid, 1);
         request.onerror = function(event) {
             console.log("Connection error");

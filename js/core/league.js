@@ -37,9 +37,30 @@ console.log(teams);
                             won_conf: 0,
                             lost_conf: 0,
                             cash: 10000000,
-                            playoffs: false,
+                            made_playoffs: false,
                             conf_champs: false,
-                            league_champs: false
+                            league_champs: false,
+                            stats: {
+                                playoffs: false,
+                                gp: 0,
+                                min: 0,
+                                fg: 0,
+                                fga: 0,
+                                tp: 0,
+                                tpa: 0,
+                                ft: 0,
+                                fta: 0,
+                                orb: 0,
+                                drb: 0,
+                                ast: 0,
+                                tov: 0,
+                                stl: 0,
+                                blk: 0,
+                                pf: 0,
+                                pts: 0,
+                                opp_pts: 0,
+                                att: 0
+                            }
                         });
                     }
 

@@ -19,6 +19,12 @@ How should I handle in-league database? One big transaction?
 
 ---
 
+PORTING NOTES:
+
+team_attributes.playoffs is now team.made_playoffs
+
+---
+
 player.js
 
 can i make Player.save save both ratings for updated players, and ratings+attributes for new players?

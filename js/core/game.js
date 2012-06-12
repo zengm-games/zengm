@@ -11,7 +11,7 @@ console.log(this.team);
 
     // What is the attendance of the game?
     winp = 0;
-    gp = this.team[0].won + this.team[0].lost + this.team[1].won + this.team[1].lost;
+    gp = this.team[0].gp + this.team[1].gp;
     if (gp > 0) {
         winp = (this.team[0].won + this.team[1].won) / gp;
     }
@@ -127,13 +127,6 @@ Game.prototype.writeTeamStats = function(t) {
 
 
 var game = {
-    /*Returns a dict containing the minimal information about a team needed to
-    simulate a game.
-    */
-    team: function (tid) {
-
-    },
-
     _composite: function (minval, maxval, rating, components, inverse, rand) {
         inverse = typeof inverse !== "undefined" ? inverse : false;
         rand = typeof rand !== "undefined" ? rand : true;

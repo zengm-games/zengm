@@ -15,6 +15,10 @@ coffeescript?
 
 ---
 
+BUG: game.play(1) seems to go with different team RIDs every time?
+
+---
+
 How should I handle in-league database? One big transaction?
 
 ---
@@ -32,7 +36,7 @@ can i make Player.save save both ratings for updated players, and ratings+attrib
 merge Player.develop and GeneratePlayer.develop
 
 dbl.transaction(["players"]).objectStore("players").get(1).onsuccess = function(event) { console.log(event.target.result) };
-
+dbl.transaction(["teams"]).objectStore("teams").get(20).onsuccess = function(event) { console.log(event.target.result.won) };
 ---
 
 test deep index stats.tid, stats.season: {pid, stats: {tid, season, pts, reb, ...}}

@@ -42,6 +42,7 @@ console.log(this.team);
 }
 
 Game.prototype.writeStats = function() {
+    var transaction = dbl.transaction(["players", "teams"], IDBTransaction.READ_WRITE);
     // Record who the starters are
 /*    for (t=0; t<2; t++) {
         r = g.dbex('SELECT pid FROM player_attributes WHERE tid = :tid ORDER BY roster_order ASC LIMIT 5', tid=this.team[t]['id'])
@@ -57,16 +58,27 @@ Game.prototype.writeStats = function() {
     // Player stats and team stats
     for (t=0; t<2; t++) {
         this.writeTeamStats(t);
-        params = [];
+/*        params = [];
         for (p=0; p<this.team[t]['player'].length; p++) {
             params.push({'pid': this.team[t]['player'][p]['id'], 'tid': this.team[t]['id'], 'gid': this.id, 'season': g.season, 'playoffs': this.playoffs, 'gs': this.team[t]['player'][p]['stat']['gs'], 'min': int(round(this.team[t]['player'][p]['stat']['min'])), 'fg': this.team[t]['player'][p]['stat']['fg'], 'fga': this.team[t]['player'][p]['stat']['fga'], 'tp': this.team[t]['player'][p]['stat']['tp'], 'tpa': this.team[t]['player'][p]['stat']['tpa'], 'ft': this.team[t]['player'][p]['stat']['ft'], 'fta': this.team[t]['player'][p]['stat']['fta'], 'orb': this.team[t]['player'][p]['stat']['orb'], 'drb': this.team[t]['player'][p]['stat']['drb'], 'ast': this.team[t]['player'][p]['stat']['ast'], 'tov': this.team[t]['player'][p]['stat']['tov'], 'stl': this.team[t]['player'][p]['stat']['stl'], 'blk': this.team[t]['player'][p]['stat']['blk'], 'pf': this.team[t]['player'][p]['stat']['pf'], 'pts': this.team[t]['player'][p]['stat']['pts']})
         query = 'INSERT INTO player_stats (pid, tid, gid, season, playoffs, gs, min, fg, fga, tp, tpa, ft, fta, orb, drb, ast, tov, stl, blk, pf, pts) VALUES(:pid, :tid, :gid, :season, :playoffs, :gs, :min, :fg, :fga, :tp, :tpa, :ft, :fta, :orb, :drb, :ast, :tov, :stl, :blk, :pf, :pts)'
         }
-        g.dbexmany(query, params)
+        g.dbexmany(query, params)*/
     }
 }
 
 Game.prototype.writeTeamStats = function(t) {
+    dbl.transaction(["teams"], IDBTransaction.READ_WRITE).objectStore("teams").index('tid').openCursor(IDBKeyRange.only(this.team[t]['id'])).onsuccess = function(event) {
+        var cursor = event.target.result;
+        teamSeason = cursor.value;
+        if (teamSeason.season != g.season) {
+            cursor.continue();
+        }
+console.log('won ' + teamSeason.won);
+        teamSeason.won = 666;
+console.log('rid ' + teamSeason.rid);
+        cursor.update(teamSeason);
+    }
     if (t == 0) {
         t2 = 1;
     }

@@ -313,19 +313,6 @@ console.log(tids_today);
                         teams.push(t);
                         teams_loaded += 1;
                         if (teams_loaded == 30) {
-                            // If this is the last day, update play menu
-                            if (num_days == 0 || (schedule.length == 0 && !playoffs_continue)) {
-                                playMenu.setStatus('Idle');
-                                lock.set_games_in_progress(false);
-                                playMenu.refreshOptions();
-                                // Check to see if the season is over
-                                r = g.dbex('SELECT gid FROM schedule LIMIT 1')
-                                if (r.rowcount == 0 && g.phase < c.PHASE_PLAYOFFS) {
-                                    season.new_phase(c.PHASE_PLAYOFFS);  // Start playoffs
-                                    url = "/l/" + g.lid + "/history";
-                                }
-                            }
-
                             // Play games
                             if ((schedule && schedule.length > 0) || playoffs_continue) {
                                 for (var i=0; i<schedule.length; i++) {
@@ -350,7 +337,18 @@ console.log(tid);
                 }
 //            }
         }
-
+        // If this is the last day, update play menu
+        else if (num_days == 0 || (schedule.length == 0 && !playoffs_continue)) {
+            playMenu.setStatus('Idle');
+            lock.set_games_in_progress(false);
+            playMenu.refreshOptions();
+            // Check to see if the season is over
+/*            r = g.dbex('SELECT gid FROM schedule LIMIT 1')
+            if (r.rowcount == 0 && g.phase < c.PHASE_PLAYOFFS) {
+                season.new_phase(c.PHASE_PLAYOFFS);  // Start playoffs
+                url = "/l/" + g.lid + "/history";
+            }*/
+        }
 //        return {teams: teams, schedule: schedule, playoffs_continue: playoffs_continue, url: url};
     }
 }

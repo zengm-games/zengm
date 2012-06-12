@@ -1,5 +1,5 @@
 var views = {
-    "init_db": function () {
+    init_db: function () {
         var data = {"title": "Initialize Database"};
         var url = "/init_db";
 
@@ -36,7 +36,7 @@ var views = {
         ajax_update(data, url);
     },
 
-    "dashboard": function () {
+    dashboard: function () {
         var data = {"title": "Dashboard"};
         var url = "/";
 
@@ -48,7 +48,7 @@ var views = {
         });
     },
 
-    "new_league": function (req) {
+    new_league: function (req) {
         var data = {"title": "Create New League"};
         var url = "/new_league";
 
@@ -69,13 +69,13 @@ console.log("New tid: " + tid);
         }
     },
 
-    "delete_league": function (req) {
+    delete_league: function (req) {
         lid = parseInt(req.params['lid'], 10);
         league.delete(lid)
         req.redirect('/');
     },
 
-    "before_league": function (req) {
+    before_league: function (req) {
         g.lid = parseInt(req.params.lid.split('/')[0], 10);
 g.season = 2012;
 
@@ -105,7 +105,7 @@ g.season = 2012;
         }
     },
 
-    "league_dashboard": function (req) {
+    league_dashboard: function (req) {
         var data = {"title": "Dashboard - League " + g.lid};
         var url = "/l/" + g.lid;
 

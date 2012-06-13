@@ -120,22 +120,11 @@ console.log(that);
 
         teamSeason.cash = teamSeason.cash + g.ticketPrice * that.att - cost;
 
+        keys = ['min', 'fg', 'fga', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
+        for (var i=0; i<keys.length; i++) {
+            teamStats[keys[i]] += that.team[t].stat[keys[i]];
+        }
         teamStats.gp += 1;
-        teamStats.min += that.team[t].stat.min;
-        teamStats.fg += that.team[t].stat.fg;
-        teamStats.fga += that.team[t].stat.fga;
-        teamStats.tp += that.team[t].stat.tp;
-        teamStats.tpa += that.team[t].stat.tpa;
-        teamStats.ft += that.team[t].stat.ft;
-        teamStats.fta += that.team[t].stat.fta;
-        teamStats.orb += that.team[t].stat.orb;
-        teamStats.drb += that.team[t].stat.drb;
-        teamStats.ast += that.team[t].stat.ast;
-        teamStats.tov += that.team[t].stat.tov;
-        teamStats.stl += that.team[t].stat.stl;
-        teamStats.blk += that.team[t].stat.blk;
-        teamStats.pf += that.team[t].stat.pf;
-        teamStats.pts += that.team[t].stat.pts;
         teamStats.oppPts += that.team[t2].stat.pts;
         teamStats.att += that.att;
 

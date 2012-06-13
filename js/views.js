@@ -87,6 +87,7 @@ g.season = 2012;
             dbl = request.result;
             dbl.onerror = function (event) {
                 console.log("League database error: " + event.target.errorCode);
+console.log(event);
             };
         }
 

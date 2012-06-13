@@ -68,7 +68,8 @@ Game.prototype.writeStats = function() {
 }
 
 Game.prototype.writeTeamStats = function(t) {
-    dbl.transaction(["teams"], IDBTransaction.READ_WRITE).objectStore("teams").index('tid').openCursor(IDBKeyRange.only(this.team[t]['id'])).onsuccess = function(event) {
+    var team = this.team[t];
+    dbl.transaction(["teams"], IDBTransaction.READ_WRITE).objectStore("teams").index('tid').openCursor(IDBKeyRange.only(team.id)).onsuccess = function(event) {
         var cursor = event.target.result;
         teamSeason = cursor.value;
         if (teamSeason.season != g.season) {
@@ -76,6 +77,7 @@ Game.prototype.writeTeamStats = function(t) {
         }
 console.log('won ' + teamSeason.won);
         teamSeason.won = 666;
+console.log(team.id + ' ' + teamSeason.tid);
 console.log('rid ' + teamSeason.rid);
         cursor.update(teamSeason);
     }
@@ -325,9 +327,12 @@ console.log(tids_today);
 
                             t['stat'] = {min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0};
     //console.log(t);
+//                            teams[tid] = t;
                             teams.push(t);
                             teams_loaded += 1;
                             if (teams_loaded == 30) {
+                                teams.sort(function(a, b) {  return a.id - b.id; }); // Order teams by tid
+
                                 // Play games
                                 if ((schedule && schedule.length > 0) || playoffs_continue) {
                                     for (var i=0; i<schedule.length; i++) {

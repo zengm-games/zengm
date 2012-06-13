@@ -15,10 +15,6 @@ coffeescript?
 
 ---
 
-BUG: game.play(1) seems to go with different team RIDs every time?
-
----
-
 How should I handle in-league database? One big transaction?
 
 ---

@@ -32,15 +32,15 @@ console.log(teams);
                             season: g.startingSeason,
                             won: 0,
                             lost: 0,
-                            won_div: 0,
-                            lost_div: 0,
-                            won_conf: 0,
-                            lost_conf: 0,
+                            wonDiv: 0,
+                            lostDiv: 0,
+                            wonConf: 0,
+                            lostConf: 0,
                             cash: 10000000,
-                            made_playoffs: false,
-                            conf_champs: false,
-                            league_champs: false,
-                            stats: {
+                            madePlayoffs: false,
+                            confChamps: false,
+                            leagueChamps: false,
+                            stats: [{
                                 playoffs: false,
                                 gp: 0,
                                 min: 0,
@@ -58,9 +58,9 @@ console.log(teams);
                                 blk: 0,
                                 pf: 0,
                                 pts: 0,
-                                opp_pts: 0,
+                                oppPts: 0,
                                 att: 0
-                            }
+                            }]
                         });
                     }
 

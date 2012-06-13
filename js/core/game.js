@@ -68,74 +68,97 @@ Game.prototype.writeStats = function() {
 }
 
 Game.prototype.writeTeamStats = function(t) {
-    var team = this.team[t];
-    dbl.transaction(["teams"], IDBTransaction.READ_WRITE).objectStore("teams").index('tid').openCursor(IDBKeyRange.only(team.id)).onsuccess = function(event) {
-        var cursor = event.target.result;
-        teamSeason = cursor.value;
-        if (teamSeason.season != g.season) {
-            cursor.continue();
-        }
-console.log('won ' + teamSeason.won);
-        teamSeason.won = 666;
-console.log(team.id + ' ' + teamSeason.tid);
-console.log('rid ' + teamSeason.rid);
-        cursor.update(teamSeason);
-    }
     if (t == 0) {
         t2 = 1;
     }
     else {
         t2 = 0;
     }
-    if (this.team[t]['stat']['pts'] > this.team[t2]['stat']['pts']) {
-        won = true;
-        if (this.playoffs && t == 0) {
-            g.dbex('UPDATE playoff_series SET won_home = won_home + 1 WHERE tid_home = :tid_home AND tid_away = :tid_away AND season = :season', tid_home=this.team[t]['id'], tid_away=this.team[t2]['id'], season=g.season)
+    var that = this;
+    dbl.transaction(["teams"], IDBTransaction.READ_WRITE).objectStore("teams").index('tid').openCursor(IDBKeyRange.only(that.team[t].id)).onsuccess = function(event) {
+        var cursor = event.target.result;
+        teamSeason = cursor.value;
+        if (teamSeason.season != g.season) {
+            cursor.continue();
         }
-        else if (this.playoffs) {
-            g.dbex('UPDATE playoff_series SET won_away = won_away + 1 WHERE tid_home = :tid_home AND tid_away = :tid_away AND season = :season', tid_home=this.team[t2]['id'], tid_away=this.team[t]['id'], season=g.season)
-        }
-    }
-    else {
-        won = false;
-    }
+console.log('won ' + teamSeason.won);
+console.log(teamSeason.stats);
 
-    // Only pay player salaries for regular season games.
-/*    if (!this.playoffs) {
-        r = g.dbex('SELECT SUM(contract_amount) * 1000 / 82 FROM released_players_salaries WHERE tid = :tid', tid=this.team[t]['id'])
-        cost_released, = r.fetchone()
-        r = g.dbex('SELECT SUM(contract_amount) * 1000 / 82 FROM player_attributes WHERE tid = :tid', tid=this.team[t]['id'])
-        cost, = r.fetchone()
-        if (cost_released) {
-            cost += cost_released;
+        teamStats = teamSeason.stats[0];
+console.log(teamStats);
+        if (teamStats.playoffs != that.playoffs) {
+            teamStats = teamSeason.stats[1];
         }
-    }
-    else {*/
-        cost = 0
-//    }
-    g.dbex('UPDATE team_attributes SET cash = cash + :revenue - :cost WHERE season = :season AND tid = :tid', revenue=g.ticket_price * this.att, cost=cost, season=g.season, tid=this.team[t]['id'])
+console.log(that);
 
-    query = 'INSERT INTO team_stats (tid, opp_tid, gid, season, playoffs, won, home, min, fg, fga, tp, tpa, ft, fta, orb, drb, ast, tov, stl, blk, pf, pts, opp_pts, att, cost) VALUES (:tid, :opp_tid, :gid, :season, :playoffs, :won, :home, :min, :fg, :fga, :tp, :tpa, :ft, :fta, :orb, :drb, :ast, :tov, :stl, :blk, :pf, :pts, :opp_pts, :att, :cost)'
-    params = {'tid': this.team[t]['id'], 'opp_tid': this.team[t2]['id'], 'gid': this.id, 'season': g.season, 'playoffs': this.playoffs, 'won': won, 'home': this.home[t], 'min': int(round(this.team[t]['stat']['min'])), 'fg': this.team[t]['stat']['fg'], 'fga': this.team[t]['stat']['fga'], 'tp': this.team[t]['stat']['tp'], 'tpa': this.team[t]['stat']['tpa'], 'ft': this.team[t]['stat']['ft'], 'fta': this.team[t]['stat']['fta'], 'orb': this.team[t]['stat']['orb'], 'drb': this.team[t]['stat']['drb'], 'ast': this.team[t]['stat']['ast'], 'tov': this.team[t]['stat']['tov'], 'stl': this.team[t]['stat']['stl'], 'blk': this.team[t]['stat']['blk'], 'pf': this.team[t]['stat']['pf'], 'pts': this.team[t]['stat']['pts'], 'opp_pts': this.team[t2]['stat']['pts'], 'att': this.att, 'cost': cost}
-    g.dbex(query, **params)
+        if (that.team[t]['stat']['pts'] > that.team[t2]['stat']['pts']) {
+            won = true;
+/*            if (this.playoffs && t == 0) {
+                g.dbex('UPDATE playoff_series SET won_home = won_home + 1 WHERE tid_home = :tid_home AND tid_away = :tid_away AND season = :season', tid_home=this.team[t]['id'], tid_away=this.team[t2]['id'], season=g.season)
+            }
+            else if (this.playoffs) {
+                g.dbex('UPDATE playoff_series SET won_away = won_away + 1 WHERE tid_home = :tid_home AND tid_away = :tid_away AND season = :season', tid_home=this.team[t2]['id'], tid_away=this.team[t]['id'], season=g.season)
+            }*/
+        }
+        else {
+            won = false;
+        }
 
-    if (won && !this.playoffs) {
-        g.dbex('UPDATE team_attributes SET won = won + 1 WHERE tid = :tid AND season = :season', tid=this.team[t]['id'], season=g.season)
-        if (this.same_division) {
-            g.dbex('UPDATE team_attributes SET won_div = won_div + 1, won_conf = won_conf + 1 WHERE tid = :tid AND season = :season', tid=this.team[t]['id'], season=g.season)
+        // Only pay player salaries for regular season games.
+    /*    if (!this.playoffs) {
+            r = g.dbex('SELECT SUM(contract_amount) * 1000 / 82 FROM released_players_salaries WHERE tid = :tid', tid=this.team[t]['id'])
+            cost_released, = r.fetchone()
+            r = g.dbex('SELECT SUM(contract_amount) * 1000 / 82 FROM player_attributes WHERE tid = :tid', tid=this.team[t]['id'])
+            cost, = r.fetchone()
+            if (cost_released) {
+                cost += cost_released;
+            }
         }
-        else if (this.same_conference) {
-            g.dbex('UPDATE team_attributes SET won_conf = won_conf + 1 WHERE tid = :tid AND season = :season', tid=this.team[t]['id'], season=g.season)
+        else {*/
+            cost = 0
+    //    }
+
+        teamSeason.cash = teamSeason.cash + g.ticketPrice * that.att - cost;
+
+        teamStats.gp += 1;
+        teamStats.min += that.team[t].stat.min;
+        teamStats.fg += that.team[t].stat.fg;
+        teamStats.fga += that.team[t].stat.fga;
+        teamStats.tp += that.team[t].stat.tp;
+        teamStats.tpa += that.team[t].stat.tpa;
+        teamStats.ft += that.team[t].stat.ft;
+        teamStats.fta += that.team[t].stat.fta;
+        teamStats.orb += that.team[t].stat.orb;
+        teamStats.drb += that.team[t].stat.drb;
+        teamStats.ast += that.team[t].stat.ast;
+        teamStats.tov += that.team[t].stat.tov;
+        teamStats.stl += that.team[t].stat.stl;
+        teamStats.blk += that.team[t].stat.blk;
+        teamStats.pf += that.team[t].stat.pf;
+        teamStats.pts += that.team[t].stat.pts;
+        teamStats.oppPts += that.team[t2].stat.pts;
+        teamStats.att += that.att;
+
+        if (won && !this.playoffs) {
+            teamSeason.won += 1;
+            if (this.same_division) {
+                teamSeason.wonDiv += 1;
+            }
+            if (this.same_conference) {
+                teamSeason.wonConf += 1;
+            }
         }
-    }
-    else if (!this.playoffs) {
-        g.dbex('UPDATE team_attributes SET lost = lost + 1 WHERE tid = :tid AND season = :season', tid=this.team[t]['id'], season=g.season)
-        if (this.same_division) {
-            g.dbex('UPDATE team_attributes SET lost_div = lost_div + 1, lost_conf = lost_conf + 1 WHERE tid = :tid AND season = :season', tid=this.team[t]['id'], season=g.season)
+        else if (!this.playoffs) {
+            teamSeason.lost += 1;
+            if (this.same_division) {
+                teamSeason.lostDiv += 1;
+            }
+            if (this.same_conference) {
+                teamSeason.lostConf += 1;
+            }
         }
-        else if (this.same_conference) {
-            g.dbex('UPDATE team_attributes SET lost_conf = lost_conf + 1 WHERE tid = :tid AND season = :season', tid=this.team[t]['id'], season=g.season)
-        }
+
+        cursor.update(teamSeason);
     }
 }
 

@@ -1,7 +1,3 @@
-requirejs.config({
-    baseUrl: 'js'
-});
-
 var g = {
     startingSeason: 2012,
     ticketPrice: 45,

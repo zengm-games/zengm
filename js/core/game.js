@@ -1,4 +1,4 @@
-define(["core/gameSim", "util/playMenu"], function(gameSim, playMenu) {
+define(["core/gameSim", "util/lock", "util/playMenu", "util/random"], function(gameSim, lock, playMenu, random) {
     function Game() {
     }
 

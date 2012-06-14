@@ -1,4 +1,4 @@
-define([], function() {
+define(["util/lock"], function(lock) {
     /*Set the options to be shown in the play button.
 
     Arguments:

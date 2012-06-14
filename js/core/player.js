@@ -1,4 +1,4 @@
-define([], function() {
+define(["util/random"], function(random) {
     function Player(pid) {
         this.id = pid
     }

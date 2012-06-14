@@ -409,11 +409,15 @@ schedule = [{gid: 6235, home_tid: 15, away_tid: 2},
 
                                 // Play games
                                 if ((schedule && schedule.length > 0) || playoffs_continue) {
+                                    var gamesRemaining = schedule.length;
                                     for (var i=0; i<schedule.length; i++) {
                                         gs = new GameSim(schedule[i]['gid'], teams[schedule[i]['home_tid']], teams[schedule[i]['away_tid']]);
                                         var results = gs.run();
                                         game.saveResults(results, g.phase == c.PHASE_PLAYOFFS, function() {
-                                            game.play(num_days - 1);
+                                            gamesRemaining -= 1;
+                                            if (gamesRemaining == 0) {
+                                                game.play(num_days - 1);
+                                            }
                                         });
                                     }
                                 }

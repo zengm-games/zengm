@@ -1,4 +1,4 @@
-define(["g", "db", "core/game", "core/league", "util/playMenu"], function(g, db, game, league, playMenu) {
+define(["db", "core/game", "core/league", "util/playMenu"], function(db, game, league, playMenu) {
 console.log(game);
     /*Validate that the given abbreviation corresponds to a valid team.
 

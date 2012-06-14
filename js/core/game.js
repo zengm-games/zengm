@@ -1,4 +1,4 @@
-define(["g", "core/gameSim", "util/playMenu"], function(g, gameSim, playMenu) {
+define(["core/gameSim", "util/playMenu"], function(gameSim, playMenu) {
     function Game() {
     }
 

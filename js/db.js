@@ -1,4 +1,4 @@
-define(["g"], function(g) {
+define([], function() {
     return {
         connect_meta: function () {
             console.log('Connecting to database "meta"');

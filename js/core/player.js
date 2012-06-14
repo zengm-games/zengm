@@ -1,4 +1,4 @@
-define(["g"], function(g) {
+define([], function() {
     function Player(pid) {
         this.id = pid
     }

@@ -1,4 +1,4 @@
-define(["g", "db", "core/player"], function(g, db, player) {
+define(["db", "core/player"], function(db, player) {
     function new_(tid) {
         l = {'tid': tid, 'season': g.startingSeason, 'phase': 0, 'games_in_progress': false, 'stop_game': false, 'pm_status': '', 'pm_phase': 'Phase 1'}
         var leaguesStore = g.dbm.transaction(["leagues"], IDBTransaction.READ_WRITE).objectStore("leagues");

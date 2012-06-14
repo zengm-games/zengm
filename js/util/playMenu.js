@@ -1,4 +1,4 @@
-define(["g"], function(g) {
+define([], function() {
     /*Set the options to be shown in the play button.
 
     Arguments:

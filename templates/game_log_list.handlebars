@@ -4,7 +4,7 @@
 </thead>
 <tbody>
   {{#games}}
-    <tr id="{{gid}}"><td>{{#if home}}Q{{else}}@{{/if}}{{oppAbbrev}}</td><td>{{#if won}}W{{else}}L{{/if}}</td><td>{{pts}}-{{oppPts}}</td></tr>
+    <tr id="{{gid}}"><td>{{#unless home}}@{{/unless}}{{oppAbbrev}}</td><td>{{#if won}}W{{else}}L{{/if}}</td><td>{{pts}}-{{oppPts}}</td></tr>
   {{/games}}
 </tbody>
 </table>

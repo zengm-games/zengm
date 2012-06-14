@@ -14,10 +14,6 @@
               // Click the first one to show its boxscore by default
               $('#game_log_list tbody tr').first().click();
             }
-            else {
-              // Update URL
-//              history.pushState({'league_content': $('#league_content').html()}, '', '/l/{{g.lid}}/game_log/' + season + '/' + abbrev);
-            }
           }
         });
       }
@@ -42,11 +38,6 @@
             $(this).removeClass('alert-info');
           });
           $clicked_tr.addClass('alert-info');
-
-          // Update URL
-//          data['title'] = document.title;
-//          data['league_content'] =  $('#league_content').html();
-//          history.pushState(data, '', '/l/{{g.lid}}/game_log"/' + $clicked_tr.attr('id'));
         });
       });
     });

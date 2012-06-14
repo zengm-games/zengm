@@ -148,7 +148,7 @@ console.log(event);
                     teams.push({tid: team.tid, abbrev: team.abbrev, region: team.region, name: team.name, selected: selected});
                 }
                 var template = Handlebars.templates['game_log'];
-                data["league_content"] = template({g: g, viewAbbrev: viewAbbrev, teams: teams, viewTid: viewTid, seasons: seasons, viewSeason: viewSeason});
+                data["league_content"] = template({g: g, teams: teams, seasons: seasons});
 
                 ajax_update(data, url);
             };

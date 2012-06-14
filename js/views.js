@@ -78,7 +78,7 @@ console.log("New tid: " + tid);
     before_league: function (req, cb) {
         g.lid = parseInt(req.params.lid, 10);
 g.season = 2012;
-g.userTid = 0;
+g.userTid = 4;
 
         // Make sure league exists
 
@@ -131,15 +131,21 @@ console.log(event);
             var data = {"title": "Game Log - League " + g.lid};
             var url = "/l/" + g.lid + "/game_log";
 
-            var seasons = [2012, 2013, 2014];
-    /*        r = g.dbex('SELECT tid, abbrev, region, name FROM team_attributes WHERE season = :season ORDER BY tid ASC', season=view_season)
-            teams = r.fetchall()*/
+            var seasons = [{season: 2012, selected: true}, {season: 2013, selected: false}, {season: 2014, selected: false}];
             dbl.transaction(["teams"]).objectStore("teams").index("season").getAll(viewSeason).onsuccess = function(event) {
                 var teamsAll = event.target.result;
                 var teams = [];
                 for (var i=0; i<teamsAll.length; i++) {
                     var team = teamsAll[i];
-                    teams.push({tid: team.tid, abbrev: team.abbrev, region: team.region, name: team.name})
+
+                    if (team.tid == viewTid) {
+                        var selected = true;
+                    }
+                    else {
+                        var selected = false;
+                    }
+
+                    teams.push({tid: team.tid, abbrev: team.abbrev, region: team.region, name: team.name, selected: selected});
                 }
                 var template = Handlebars.templates['game_log'];
                 data["league_content"] = template({g: g, viewAbbrev: viewAbbrev, teams: teams, viewTid: viewTid, seasons: seasons, viewSeason: viewSeason});

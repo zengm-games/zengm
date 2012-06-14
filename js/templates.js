@@ -47,6 +47,12 @@ function program1(depth0,data) {
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n\n  <li class=\"dashboard_league_new\"><a href=\"/new_league\"><h2>Create new league</h2></a></li>\n</ul>\n";
   return buffer;});
+templates['box_score'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  helpers = helpers || Handlebars.helpers;
+  var buffer = "", foundHelper, self=this;
+
+
+  return buffer;});
 templates['league_dashboard'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;
   var buffer = "", stack1, foundHelper, self=this, functionType="function", helperMissing=helpers.helperMissing, undef=void 0, escapeExpression=this.escapeExpression;
@@ -256,5 +262,206 @@ templates['league_layout'] = template(function (Handlebars,depth0,helpers,partia
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
   buffer += escapeExpression(stack1) + "/player_stats\">Player Stats</a></li>\n      <li id=\"nav_team_stats\"><a href=\"#\">Team Stats</a></li>\n    </ul>\n  </div>\n</div>\n";
+  return buffer;});
+templates['game_log'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  helpers = helpers || Handlebars.helpers;
+  var buffer = "", stack1, foundHelper, tmp1, self=this, functionType="function", helperMissing=helpers.helperMissing, undef=void 0, escapeExpression=this.escapeExpression, blockHelperMissing=helpers.blockHelperMissing;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, stack2;
+  buffer += "\n        <option value=\"";
+  foundHelper = helpers.abbrev;
+  stack1 = foundHelper || depth0.abbrev;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "abbrev", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\"";
+  foundHelper = helpers.selected;
+  stack1 = foundHelper || depth0.selected;
+  stack2 = helpers['if'];
+  tmp1 = self.program(2, program2, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += ">";
+  foundHelper = helpers.region;
+  stack1 = foundHelper || depth0.region;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "region", { hash: {} }); }
+  buffer += escapeExpression(stack1) + " ";
+  foundHelper = helpers.name;
+  stack1 = foundHelper || depth0.name;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "name", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</option>\n      ";
+  return buffer;}
+function program2(depth0,data) {
+  
+  
+  return " selected=\"selected\"";}
+
+function program4(depth0,data) {
+  
+  var buffer = "", stack1, stack2;
+  buffer += "\n        <option value=\"";
+  foundHelper = helpers.season;
+  stack1 = foundHelper || depth0.season;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "season", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\"";
+  foundHelper = helpers.selected;
+  stack1 = foundHelper || depth0.selected;
+  stack2 = helpers['if'];
+  tmp1 = self.program(5, program5, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += ">";
+  foundHelper = helpers.season;
+  stack1 = foundHelper || depth0.season;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "season", { hash: {} }); }
+  buffer += escapeExpression(stack1) + " season</option>\n      ";
+  return buffer;}
+function program5(depth0,data) {
+  
+  
+  return " selected=\"selected\"";}
+
+  buffer += "  <script type=\"text/javascript\">\n    // Load game log list table and activate form\n    $(document).ready(function() {\n      function load_game_log_list(season, abbrev, first_time) {\n        $.ajax({\n          type: 'GET',\n          url: '/l/";
+  foundHelper = helpers['g'];
+  stack1 = foundHelper || depth0['g'];
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/game_log_list',\n          data: {season: season, abbrev: abbrev},\n          success: function(msg) {\n            // Display the list of games\n            $('#game_log_list').html(msg);\n\n            if (first_time) {\n              // Click the first one to show its boxscore by default\n              $('#game_log_list tbody tr').first().click();\n            }\n            else {\n              // Update URL\n//              history.pushState({'league_content': $('#league_content').html()}, '', '/l/";
+  foundHelper = helpers['g'];
+  stack1 = foundHelper || depth0['g'];
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/game_log/' + season + '/' + abbrev);\n            }\n          }\n        });\n      }\n\n      $game_log_select_season = $('#game_log_select_season')\n      $game_log_select_season.change(function(event) { load_game_log_list($game_log_select_season.val(), $game_log_select_abbrev.val()); });\n      $game_log_select_abbrev = $('#game_log_select_abbrev')\n      $game_log_select_abbrev.change(function(event) { load_game_log_list($game_log_select_season.val(), $game_log_select_abbrev.val()); });\n      if ($game_log_select_season.length && $game_log_select_abbrev.length) {\n        load_game_log_list($game_log_select_season.val(), $game_log_select_abbrev.val(), true);\n      }\n\n      // Clickable rows for game log list table\n      $(document).on('click', '#game_log_list tbody tr', function(event) {\n        $clicked_tr = $(this);\n        $.get('/l/";
+  foundHelper = helpers['g'];
+  stack1 = foundHelper || depth0['g'];
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/box_score/' + $clicked_tr.attr('id'), function(data) {\n          // Update boxscore\n          $('#game_log_box_score').html(data);\n\n          // Update gamelist highlighting\n          $clicked_tr.parent().children().each(function() {\n            $(this).removeClass('alert-info');\n          });\n          $clicked_tr.addClass('alert-info');\n\n          // Update URL\n//          data['title'] = document.title;\n//          data['league_content'] =  $('#league_content').html();\n//          history.pushState(data, '', '/l/";
+  foundHelper = helpers['g'];
+  stack1 = foundHelper || depth0['g'];
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/game_log\"/' + $clicked_tr.attr('id'));\n        });\n      });\n    });\n  </script>\n\n  <form action=\"/l/";
+  foundHelper = helpers['g'];
+  stack1 = foundHelper || depth0['g'];
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/game_log\" method=\"GET\" class=\"form-inline pull-right\">\n    <select id=\"game_log_select_abbrev\" name=\"team\" class=\"team\">\n      ";
+  foundHelper = helpers.teams;
+  stack1 = foundHelper || depth0.teams;
+  tmp1 = self.program(1, program1, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
+  else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n    </select>\n    <select id=\"game_log_select_season\" name=\"season\" class=\"season\">\n      ";
+  foundHelper = helpers.seasons;
+  stack1 = foundHelper || depth0.seasons;
+  tmp1 = self.program(4, program4, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
+  else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n    </select>\n  </form>\n\n  <h1>Game Log</h1>\n\n  <p>\n    <div class=\"row-fluid\">\n      <div class=\"span9\">\n        <div id=\"game_log_box_score\">\n          <p>Select a game from the menu on the right to view a box score.</p>\n        </div>\n      </div>\n\n      <div class=\"span3\" id=\"game_log_list\">\n      </div>\n    </div>\n  </p>\n";
+  return buffer;});
+templates['game_log_list'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  helpers = helpers || Handlebars.helpers;
+  var buffer = "", stack1, foundHelper, tmp1, self=this, functionType="function", helperMissing=helpers.helperMissing, undef=void 0, escapeExpression=this.escapeExpression, blockHelperMissing=helpers.blockHelperMissing;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, stack2;
+  buffer += "\n    <tr id=\"";
+  foundHelper = helpers.gid;
+  stack1 = foundHelper || depth0.gid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "gid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\"><td>";
+  foundHelper = helpers.home;
+  stack1 = foundHelper || depth0.home;
+  stack2 = helpers['if'];
+  tmp1 = self.program(2, program2, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.program(4, program4, data);
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  foundHelper = helpers.oppAbbrev;
+  stack1 = foundHelper || depth0.oppAbbrev;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "oppAbbrev", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</td><td>";
+  foundHelper = helpers.won;
+  stack1 = foundHelper || depth0.won;
+  stack2 = helpers['if'];
+  tmp1 = self.program(6, program6, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.program(8, program8, data);
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "</td><td>";
+  foundHelper = helpers.pts;
+  stack1 = foundHelper || depth0.pts;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "pts", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "-";
+  foundHelper = helpers.oppPts;
+  stack1 = foundHelper || depth0.oppPts;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "oppPts", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</td></tr>\n  ";
+  return buffer;}
+function program2(depth0,data) {
+  
+  
+  return "Q";}
+
+function program4(depth0,data) {
+  
+  
+  return "@";}
+
+function program6(depth0,data) {
+  
+  
+  return "W";}
+
+function program8(depth0,data) {
+  
+  
+  return "L";}
+
+  buffer += "<table id=\"game_log_list\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\">\n<thead>\n  <tr><th>Opp</th><th>W/L</th><th>Score</th></tr>\n</thead>\n<tbody>\n  ";
+  foundHelper = helpers.games;
+  stack1 = foundHelper || depth0.games;
+  tmp1 = self.program(1, program1, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
+  else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n</tbody>\n</table>\n";
   return buffer;});
 })();

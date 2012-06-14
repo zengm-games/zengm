@@ -55,13 +55,13 @@
   <form action="/l/{{g.lid}}/game_log" method="GET" class="form-inline pull-right">
     <select id="game_log_select_abbrev" name="team" class="team">
       {{#teams}}
-        <option value="{{abbrev}}"{{#if tid == viewTid}} selected="selected"{{/if}}}>{{region}} {{name}}</option>
+        <option value="{{abbrev}}"{{#if selected}} selected="selected"{{/if}}}>{{region}} {{name}}</option>
       {{/teams}}
     </select>
     <select id="game_log_select_season" name="season" class="season">
-      {% for season in seasons %}
-        <option value="{{season}}"{{#if season == viewSeason}} selected="selected"{{/if}}>{{season}} season</option>
-      {% endfor %}
+      {{#seasons}}
+        <option value="{{season}}"{{#if selected}} selected="selected"{{/if}}>{{season}} season</option>
+      {{/seasons}}
     </select>
   </form>
 

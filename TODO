@@ -3,7 +3,7 @@ build init_db equivalent with indexeddb
 port enough code over to create a new league. is it ridiculously slow? NO!
 if not, port enough code over to simulate games. is it ridiculously slow?
 - port over game.py
-  - saving games to indexeddb and box score viewer
+  - callback to play next round of games gets fired per game. should be fired per day. keep a sum of the completed games and check against the total. closure?
 
 IF NOT, THEN:
 refactor and make sure i'm doing things correct as far as modules, namespaces, documentation, style, etc.

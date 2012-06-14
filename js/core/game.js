@@ -7,7 +7,7 @@ Game.prototype.load = function(results, playoffs) {
     this.playoffs = playoffs;
     this.id = results['gid'];
     this.home = [true, false];
-console.log(this.team);
+//console.log(this.team);
 
     // What is the attendance of the game?
     winp = 0;
@@ -41,10 +41,14 @@ console.log(this.team);
     }
 }
 
-Game.prototype.writeStats = function() {
+Game.prototype.writeStats = function(callback) {
+    this.teamsRemaining = 2;
+    this.playersRemaining = this.team[0].player.length + this.team[1].player.length;
+    this.callback = callback;
+
     var transaction = dbl.transaction(["players", "teams"], IDBTransaction.READ_WRITE);
     // Record who the starters are
-/*    for (t=0; t<2; t++) {
+/*    for (var t=0; t<2; t++) {
         r = g.dbex('SELECT pid FROM player_attributes WHERE tid = :tid ORDER BY roster_order ASC LIMIT 5', tid=this.team[t]['id'])
         for starter_id, in r.fetchall() {
             for (p=0; p<this.team[t]['player'].length; p++) {
@@ -56,14 +60,53 @@ Game.prototype.writeStats = function() {
     }*/
 
     // Player stats and team stats
-    for (t=0; t<2; t++) {
+    var that = this;
+    var playerStore = dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
+    for (var t=0; t<2; t++) {
         this.writeTeamStats(t);
-/*        params = [];
-        for (p=0; p<this.team[t]['player'].length; p++) {
-            params.push({'pid': this.team[t]['player'][p]['id'], 'tid': this.team[t]['id'], 'gid': this.id, 'season': g.season, 'playoffs': this.playoffs, 'gs': this.team[t]['player'][p]['stat']['gs'], 'min': int(round(this.team[t]['player'][p]['stat']['min'])), 'fg': this.team[t]['player'][p]['stat']['fg'], 'fga': this.team[t]['player'][p]['stat']['fga'], 'tp': this.team[t]['player'][p]['stat']['tp'], 'tpa': this.team[t]['player'][p]['stat']['tpa'], 'ft': this.team[t]['player'][p]['stat']['ft'], 'fta': this.team[t]['player'][p]['stat']['fta'], 'orb': this.team[t]['player'][p]['stat']['orb'], 'drb': this.team[t]['player'][p]['stat']['drb'], 'ast': this.team[t]['player'][p]['stat']['ast'], 'tov': this.team[t]['player'][p]['stat']['tov'], 'stl': this.team[t]['player'][p]['stat']['stl'], 'blk': this.team[t]['player'][p]['stat']['blk'], 'pf': this.team[t]['player'][p]['stat']['pf'], 'pts': this.team[t]['player'][p]['stat']['pts']})
-        query = 'INSERT INTO player_stats (pid, tid, gid, season, playoffs, gs, min, fg, fga, tp, tpa, ft, fta, orb, drb, ast, tov, stl, blk, pf, pts) VALUES(:pid, :tid, :gid, :season, :playoffs, :gs, :min, :fg, :fga, :tp, :tpa, :ft, :fta, :orb, :drb, :ast, :tov, :stl, :blk, :pf, :pts)'
+        for (var p=0; p<this.team[t].player.length; p++) {
+            playerStore.openCursor(IDBKeyRange.only(this.team[t].player[p].id)).onsuccess = function(event) {
+                var cursor = event.target.result;
+                player = cursor.value;
+
+                // Find the correct row of stats
+                for (var i=0; i<player.stats.length; i++) {
+                    if (player.stats[i].season == g.season && player.stats[i].playoffs == that.playoffs) {
+                        playerStats = player.stats[i];
+                        break;
+                    }
+                }
+
+                // Which team is this, again?
+                if (player.tid == that.team[0].id) {
+                    var t = 0;
+                }
+                else {
+                    var t = 1;
+                }
+
+                // Which player is this, again?
+                for (var p=0; p<that.team[t].player.length; p++) {
+                    if (player.pid == that.team[t].player[p].id) {
+                        break;
+                    }
+                }
+
+                // Update stats
+                keys = ['min', 'fg', 'fga', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
+                for (var i=0; i<keys.length; i++) {
+                    playerStats[keys[i]] += that.team[t].player[p].stat[keys[i]];
+                }
+                playerStats.gp += 1;
+
+                cursor.update(player);
+
+                that.playersRemaining -= 1;
+                if (that.playersRemaining == 0 && that.teamsRemaining == 0) {
+                    that.callback();
+                }
+            }
         }
-        g.dbexmany(query, params)*/
     }
 }
 
@@ -75,21 +118,21 @@ Game.prototype.writeTeamStats = function(t) {
         t2 = 0;
     }
     var that = this;
-    dbl.transaction(["teams"], IDBTransaction.READ_WRITE).objectStore("teams").index('tid').openCursor(IDBKeyRange.only(that.team[t].id)).onsuccess = function(event) {
+    dbl.transaction(["teams"], IDBTransaction.READ_WRITE).objectStore("teams").index("tid").openCursor(IDBKeyRange.only(that.team[t].id)).onsuccess = function(event) {
         var cursor = event.target.result;
         teamSeason = cursor.value;
         if (teamSeason.season != g.season) {
             cursor.continue();
         }
-console.log('won ' + teamSeason.won);
-console.log(teamSeason.stats);
+//console.log('won ' + teamSeason.won);
+//console.log(teamSeason.stats);
 
         teamStats = teamSeason.stats[0];
-console.log(teamStats);
+//console.log(teamStats);
         if (teamStats.playoffs != that.playoffs) {
             teamStats = teamSeason.stats[1];
         }
-console.log(that);
+//console.log(that);
 
         if (that.team[t]['stat']['pts'] > that.team[t2]['stat']['pts']) {
             won = true;
@@ -148,6 +191,11 @@ console.log(that);
         }
 
         cursor.update(teamSeason);
+
+        that.teamsRemaining -= 1;
+        if (that.playersRemaining == 0 && that.teamsRemaining == 0) {
+            that.callback();
+        }
     }
 }
 
@@ -190,13 +238,13 @@ var game = {
     },
 
     /*Convenience function to save game stats.*/
-    saveResults: function (results, playoffs) {
+    saveResults: function (results, playoffs, callback) {
 //        r = g.dbex('SELECT in_progress_timestamp FROM schedule WHERE gid = :gid', gid=results['gid'])
 //        in_progress_timestamp, = r.fetchone()
 //        if (in_progress_timestamp > 0) {
             gm = new Game();
             gm.load(results, playoffs);
-            gm.writeStats();
+            gm.writeStats(callback);
 //            g.dbex('DELETE FROM schedule WHERE gid = :gid', gid=results['gid'])
             console.log("Saved results for game " + results['gid']);
 //        else {
@@ -261,7 +309,21 @@ var game = {
                 playMenu.setStatus("Playing games (" + num_days + " days remaining)...")
                 // Create schedule and team lists for today, to be sent to the client
 //                schedule = season.get_schedule(num_active_teams / 2);
-schedule = [{gid: 6235, home_tid: 15, away_tid: 2}];
+schedule = [{gid: 6235, home_tid: 15, away_tid: 2},
+            {gid: 6235, home_tid: 15, away_tid: 2},
+            {gid: 6235, home_tid: 4, away_tid: 2},
+            {gid: 6235, home_tid: 15, away_tid: 2},
+            {gid: 6235, home_tid: 15, away_tid: 2},
+            {gid: 6235, home_tid: 6, away_tid: 2},
+            {gid: 6235, home_tid: 15, away_tid: 2},
+            {gid: 6235, home_tid: 15, away_tid: 2},
+            {gid: 6235, home_tid: 2, away_tid: 2},
+            {gid: 6235, home_tid: 15, away_tid: 2},
+            {gid: 6235, home_tid: 15, away_tid: 2},
+            {gid: 6235, home_tid: 15, away_tid: 2},
+            {gid: 6235, home_tid: 15, away_tid: 2},
+            {gid: 6235, home_tid: 15, away_tid: 2},
+            {gid: 6235, home_tid: 15, away_tid: 2}];
                 tids_today = [];
                 for (var j=0; j<schedule.length; j++) {
                     matchup = schedule[j];
@@ -270,7 +332,7 @@ schedule = [{gid: 6235, home_tid: 15, away_tid: 2}];
                     tids_today.push(matchup['away_tid']);
         //                tids_today = list(set(tids_today))  // Unique list
                 }
-console.log(tids_today);
+
                 teams = [];
                 var teams_loaded = 0;
                 // Load all teams, for now. Would be more efficient to load only some of them, I suppose.
@@ -350,9 +412,10 @@ console.log(tids_today);
                                     for (var i=0; i<schedule.length; i++) {
                                         gs = new GameSim(schedule[i]['gid'], teams[schedule[i]['home_tid']], teams[schedule[i]['away_tid']]);
                                         var results = gs.run();
-                                        game.saveResults(results, g.phase == c.PHASE_PLAYOFFS)
+                                        game.saveResults(results, g.phase == c.PHASE_PLAYOFFS, function() {
+                                            game.play(num_days - 1);
+                                        });
                                     }
-                                    game.play(num_days - 1);
                                 }
                             }
                         };

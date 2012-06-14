@@ -1,5 +1,9 @@
 build box score viewer to make sure things are being saved correctly
 refactor and make sure i'm doing things correct as far as modules, namespaces, documentation, style, etc.
+- What will replace the AJAX calls? Maybe some other file like views.js to handle them?
+require.js
+- const and g -> globals.js. no requires.js
+- lock, random
 async shit is confusing. how to avoid race conditions while maintaining modular code?
 - dead simple example: I have a function somewhere that connects to a database. Later, somewhere else in the code, I want to use the database. How do I know if there's a connection? What do I do if there isn't one, do I wait? How?
 port over other features

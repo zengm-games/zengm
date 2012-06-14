@@ -1,22 +1,22 @@
-var league = {
-    new: function (tid) {
+define(["g", "db", "core/player"], function(g, db, player) {
+    function new_(tid) {
         l = {'tid': tid, 'season': g.startingSeason, 'phase': 0, 'games_in_progress': false, 'stop_game': false, 'pm_status': '', 'pm_phase': 'Phase 1'}
-        var leaguesStore = dbm.transaction(["leagues"], IDBTransaction.READ_WRITE).objectStore("leagues");
+        var leaguesStore = g.dbm.transaction(["leagues"], IDBTransaction.READ_WRITE).objectStore("leagues");
         leaguesStore.add(l).onsuccess = function (event) {
             lid = event.target.result;
             t = event.target.transaction;
-            db.getAll(dbm, "teams", function (teams) {
+            db.getAll(g.dbm, "teams", function (teams) {
 console.log(teams);
                 // Create new league database
                 request = db.connect_league(lid);
                 request.onsuccess = function (event) {
-                    dbl = request.result;
-                    dbl.onerror = function (event) {
+                    g.dbl = request.result;
+                    g.dbl.onerror = function (event) {
                         console.log("League database error: " + event.target.errorCode);
                     };
 
                     // Probably is fastest to use this transaction for everything done to create a new league
-                    var transaction = dbl.transaction(["players", "teams"], IDBTransaction.READ_WRITE);
+                    var transaction = g.dbl.transaction(["players", "teams"], IDBTransaction.READ_WRITE);
 
                     // teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league.
                     var teamStore = transaction.objectStore("teams");
@@ -81,7 +81,7 @@ console.log('t: ' + t + ', p: ' + p);
                             var agingYears = random.randInt(0, 13);
                             var draftYear = g.startingSeason - 1 - agingYears;
 
-                            var gp = new Player(pid);
+                            var gp = new player.Player(pid);
                             gp.generate(t, 19, profiles[random.randInt(profiles.length)], baseRatings[p], pots[p], draftYear);
                             gp.develop(agingYears, true);
                             if (p < 5) {
@@ -139,13 +139,18 @@ console.log(entry);
                 }
             });
         };
-    },
+    }
 
 
-    delete: function (lid) {
-        var leaguesStore = dbm.transaction(["leagues"], IDBTransaction.READ_WRITE).objectStore("leagues").delete(lid);
+    function delete_(lid) {
+        var leaguesStore = g.dbm.transaction(["leagues"], IDBTransaction.READ_WRITE).objectStore("leagues").delete(lid);
         indexedDB.deleteDatabase("league" + lid);
 //        g.dbex('DROP DATABASE bbgm_%s' % (lid,))
 //        g.dbex('DELETE FROM leagues WHERE lid = :lid', lid=lid)
     }
-}
+
+    return {
+        new: new_,
+        delete: delete_
+    };
+});

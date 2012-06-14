@@ -1,4 +1,4 @@
-define(["g", "db", "util/playMenu"], function(g, db, playMenu) {
+define(["g", "db", "core/league", "util/playMenu"], function(g, db, league, playMenu) {
 console.log(g);
 console.log(playMenu);
     /*Validate that the given abbreviation corresponds to a valid team.
@@ -27,7 +27,7 @@ console.log(playMenu);
 //        r = g.dbex('SELECT abbrev FROM team_attributes WHERE season = :season AND tid = :tid', season=g.season, tid=tid)
 //        abbrev, = r.fetchone()
         }
-    abbrev = 'ATL';
+abbrev = 'ATL';
         return [tid, abbrev];
     }
 

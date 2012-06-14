@@ -1,0 +1,81 @@
+  <script type="text/javascript">
+    // Load game log list table and activate form
+    $(document).ready(function() {
+      function load_game_log_list(season, abbrev, first_time) {
+        $.ajax({
+          type: 'GET',
+          url: '/l/{{g.lid}}/game_log_list',
+          data: {season: season, abbrev: abbrev},
+          success: function(msg) {
+            // Display the list of games
+            $('#game_log_list').html(msg);
+
+            if (first_time) {
+              // Click the first one to show its boxscore by default
+              $('#game_log_list tbody tr').first().click();
+            }
+            else {
+              // Update URL
+//              history.pushState({'league_content': $('#league_content').html()}, '', '/l/{{g.lid}}/game_log/' + season + '/' + abbrev);
+            }
+          }
+        });
+      }
+
+      $game_log_select_season = $('#game_log_select_season')
+      $game_log_select_season.change(function(event) { load_game_log_list($game_log_select_season.val(), $game_log_select_abbrev.val()); });
+      $game_log_select_abbrev = $('#game_log_select_abbrev')
+      $game_log_select_abbrev.change(function(event) { load_game_log_list($game_log_select_season.val(), $game_log_select_abbrev.val()); });
+      if ($game_log_select_season.length && $game_log_select_abbrev.length) {
+        load_game_log_list($game_log_select_season.val(), $game_log_select_abbrev.val(), true);
+      }
+
+      // Clickable rows for game log list table
+      $(document).on('click', '#game_log_list tbody tr', function(event) {
+        $clicked_tr = $(this);
+        $.get('/l/{{g.lid}}/box_score/' + $clicked_tr.attr('id'), function(data) {
+          // Update boxscore
+          $('#game_log_box_score').html(data);
+
+          // Update gamelist highlighting
+          $clicked_tr.parent().children().each(function() {
+            $(this).removeClass('alert-info');
+          });
+          $clicked_tr.addClass('alert-info');
+
+          // Update URL
+//          data['title'] = document.title;
+//          data['league_content'] =  $('#league_content').html();
+//          history.pushState(data, '', '/l/{{g.lid}}/game_log"/' + $clicked_tr.attr('id'));
+        });
+      });
+    });
+  </script>
+
+  <form action="/l/{{g.lid}}/game_log" method="GET" class="form-inline pull-right">
+    <select id="game_log_select_abbrev" name="team" class="team">
+      {{#teams}}
+        <option value="{{abbrev}}"{{#if tid == viewTid}} selected="selected"{{/if}}}>{{region}} {{name}}</option>
+      {{/teams}}
+    </select>
+    <select id="game_log_select_season" name="season" class="season">
+      {% for season in seasons %}
+        <option value="{{season}}"{{#if season == viewSeason}} selected="selected"{{/if}}>{{season}} season</option>
+      {% endfor %}
+    </select>
+  </form>
+
+  <h1>Game Log</h1>
+
+  <p>
+    <div class="row-fluid">
+      <div class="span9">
+        <div id="game_log_box_score">
+          <p>Select a game from the menu on the right to view a box score.</p>
+        </div>
+      </div>
+
+      <div class="span3" id="game_log_list">
+      </div>
+    </div>
+  </p>

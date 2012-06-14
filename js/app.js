@@ -27,8 +27,10 @@ request.onsuccess = function(event) {
         this.post('/delete_league', views.delete_league);
 
         // League views
-        this.before('/l/*lid', views.before_league)
         this.get('/l/:lid', views.league_dashboard);
+        this.get('/l/:lid/game_log', views.game_log);
+        this.get('/l/:lid/game_log/:viewSeason', views.game_log);
+        this.get('/l/:lid/game_log/:viewSeason/:viewAbbrev', views.game_log);
     });
 
     $(document).ready(function() {

@@ -1,6 +1,5 @@
-define(["g", "db", "core/league", "util/playMenu"], function(g, db, league, playMenu) {
-console.log(g);
-console.log(playMenu);
+define(["g", "db", "core/game", "core/league", "util/playMenu"], function(g, db, game, league, playMenu) {
+console.log(game);
     /*Validate that the given abbreviation corresponds to a valid team.
 
     If an invalid abbreviation is passed, the user's team will be used.

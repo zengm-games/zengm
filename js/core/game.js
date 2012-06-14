@@ -1,53 +1,54 @@
-function Game() {
-}
+define(["g", "core/gameSim", "util/playMenu"], function(g, gameSim, playMenu) {
+    function Game() {
+    }
 
-Game.prototype.load = function(results, playoffs) {
-    // Retrieve stats
-    this.team = results['team'];
-    this.playoffs = playoffs;
-    this.id = results['gid'];
-    this.home = [true, false];
+    Game.prototype.load = function(results, playoffs) {
+        // Retrieve stats
+        this.team = results['team'];
+        this.playoffs = playoffs;
+        this.id = results['gid'];
+        this.home = [true, false];
 //console.log(this.team);
 
-    // What is the attendance of the game?
-    winp = 0;
-    gp = this.team[0].gp + this.team[1].gp;
-    if (gp > 0) {
-        winp = (this.team[0].won + this.team[1].won) / gp;
-    }
-    if (gp < 5) {
-        this.att = random.gauss(22000 + gp * 1000, 1000);
-    }
-    else {
-        this.att = random.gauss(winp * 36000, 1000);
-    }
-    if (this.att > 25000) {
-        this.att = 25000;
-    }
-    else if (this.att < 10000) {
-        this.att = 10000;
+        // What is the attendance of the game?
+        winp = 0;
+        gp = this.team[0].gp + this.team[1].gp;
+        if (gp > 0) {
+            winp = (this.team[0].won + this.team[1].won) / gp;
+        }
+        if (gp < 5) {
+            this.att = random.gauss(22000 + gp * 1000, 1000);
+        }
+        else {
+            this.att = random.gauss(winp * 36000, 1000);
+        }
+        if (this.att > 25000) {
+            this.att = 25000;
+        }
+        else if (this.att < 10000) {
+            this.att = 10000;
+        }
+
+        // Are the teams in the same conference/division?
+        this.same_conference = false;
+        this.same_division = false;
+        cid = [-1, -1];
+        did = [-1, -1];
+        if (this.team[0].cid == this.team[1].cid) {
+            this.same_conference = true;
+        }
+        if (this.team[0].did == this.team[1].did) {
+            this.same_division = true;
+        }
     }
 
-    // Are the teams in the same conference/division?
-    this.same_conference = false;
-    this.same_division = false;
-    cid = [-1, -1];
-    did = [-1, -1];
-    if (this.team[0].cid == this.team[1].cid) {
-        this.same_conference = true;
-    }
-    if (this.team[0].did == this.team[1].did) {
-        this.same_division = true;
-    }
-}
+    Game.prototype.writeStats = function(callback) {
+        this.teamsRemaining = 2;
+        this.playersRemaining = this.team[0].player.length + this.team[1].player.length;
+        this.callback = callback;
 
-Game.prototype.writeStats = function(callback) {
-    this.teamsRemaining = 2;
-    this.playersRemaining = this.team[0].player.length + this.team[1].player.length;
-    this.callback = callback;
-
-    var transaction = dbl.transaction(["players", "teams"], IDBTransaction.READ_WRITE);
-    // Record who the starters are
+        var transaction = g.dbl.transaction(["players", "teams"], IDBTransaction.READ_WRITE);
+        // Record who the starters are
 /*    for (var t=0; t<2; t++) {
         r = g.dbex('SELECT pid FROM player_attributes WHERE tid = :tid ORDER BY roster_order ASC LIMIT 5', tid=this.team[t]['id'])
         for starter_id, in r.fetchall() {
@@ -59,149 +60,147 @@ Game.prototype.writeStats = function(callback) {
         }
     }*/
 
-    // Player stats and team stats
-    var that = this;
-    var playerStore = dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
-    for (var t=0; t<2; t++) {
-        this.writeTeamStats(t);
-        for (var p=0; p<this.team[t].player.length; p++) {
-            playerStore.openCursor(IDBKeyRange.only(this.team[t].player[p].id)).onsuccess = function(event) {
-                var cursor = event.target.result;
-                player = cursor.value;
+        // Player stats and team stats
+        var that = this;
+        var playerStore = g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
+        for (var t=0; t<2; t++) {
+            this.writeTeamStats(t);
+            for (var p=0; p<this.team[t].player.length; p++) {
+                playerStore.openCursor(IDBKeyRange.only(this.team[t].player[p].id)).onsuccess = function(event) {
+                    var cursor = event.target.result;
+                    player = cursor.value;
 
-                // Find the correct row of stats
-                for (var i=0; i<player.stats.length; i++) {
-                    if (player.stats[i].season == g.season && player.stats[i].playoffs == that.playoffs) {
-                        playerStats = player.stats[i];
-                        break;
+                    // Find the correct row of stats
+                    for (var i=0; i<player.stats.length; i++) {
+                        if (player.stats[i].season == g.season && player.stats[i].playoffs == that.playoffs) {
+                            playerStats = player.stats[i];
+                            break;
+                        }
                     }
-                }
 
-                // Which team is this, again?
-                if (player.tid == that.team[0].id) {
-                    var t = 0;
-                }
-                else {
-                    var t = 1;
-                }
-
-                // Which player is this, again?
-                for (var p=0; p<that.team[t].player.length; p++) {
-                    if (player.pid == that.team[t].player[p].id) {
-                        break;
+                    // Which team is this, again?
+                    if (player.tid == that.team[0].id) {
+                        var t = 0;
                     }
-                }
+                    else {
+                        var t = 1;
+                    }
 
-                // Update stats
-                keys = ['min', 'fg', 'fga', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
-                for (var i=0; i<keys.length; i++) {
-                    playerStats[keys[i]] += that.team[t].player[p].stat[keys[i]];
-                }
-                playerStats.gp += 1;
+                    // Which player is this, again?
+                    for (var p=0; p<that.team[t].player.length; p++) {
+                        if (player.pid == that.team[t].player[p].id) {
+                            break;
+                        }
+                    }
 
-                cursor.update(player);
+                    // Update stats
+                    keys = ['min', 'fg', 'fga', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
+                    for (var i=0; i<keys.length; i++) {
+                        playerStats[keys[i]] += that.team[t].player[p].stat[keys[i]];
+                    }
+                    playerStats.gp += 1;
 
-                that.playersRemaining -= 1;
-                if (that.playersRemaining == 0 && that.teamsRemaining == 0) {
-                    that.callback();
+                    cursor.update(player);
+
+                    that.playersRemaining -= 1;
+                    if (that.playersRemaining == 0 && that.teamsRemaining == 0) {
+                        that.callback();
+                    }
                 }
             }
         }
     }
-}
 
-Game.prototype.writeTeamStats = function(t) {
-    if (t == 0) {
-        t2 = 1;
-    }
-    else {
-        t2 = 0;
-    }
-    var that = this;
-    dbl.transaction(["teams"], IDBTransaction.READ_WRITE).objectStore("teams").index("tid").openCursor(IDBKeyRange.only(that.team[t].id)).onsuccess = function(event) {
-        var cursor = event.target.result;
-        teamSeason = cursor.value;
-        if (teamSeason.season != g.season) {
-            cursor.continue();
+    Game.prototype.writeTeamStats = function(t) {
+        if (t == 0) {
+            t2 = 1;
         }
+        else {
+            t2 = 0;
+        }
+        var that = this;
+        g.dbl.transaction(["teams"], IDBTransaction.READ_WRITE).objectStore("teams").index("tid").openCursor(IDBKeyRange.only(that.team[t].id)).onsuccess = function(event) {
+            var cursor = event.target.result;
+            teamSeason = cursor.value;
+            if (teamSeason.season != g.season) {
+                cursor.continue();
+            }
 //console.log('won ' + teamSeason.won);
 //console.log(teamSeason.stats);
 
-        teamStats = teamSeason.stats[0];
+            teamStats = teamSeason.stats[0];
 //console.log(teamStats);
-        if (teamStats.playoffs != that.playoffs) {
-            teamStats = teamSeason.stats[1];
-        }
+            if (teamStats.playoffs != that.playoffs) {
+                teamStats = teamSeason.stats[1];
+            }
 //console.log(that);
 
-        if (that.team[t]['stat']['pts'] > that.team[t2]['stat']['pts']) {
-            won = true;
+            if (that.team[t]['stat']['pts'] > that.team[t2]['stat']['pts']) {
+                won = true;
 /*            if (this.playoffs && t == 0) {
                 g.dbex('UPDATE playoff_series SET won_home = won_home + 1 WHERE tid_home = :tid_home AND tid_away = :tid_away AND season = :season', tid_home=this.team[t]['id'], tid_away=this.team[t2]['id'], season=g.season)
             }
             else if (this.playoffs) {
                 g.dbex('UPDATE playoff_series SET won_away = won_away + 1 WHERE tid_home = :tid_home AND tid_away = :tid_away AND season = :season', tid_home=this.team[t2]['id'], tid_away=this.team[t]['id'], season=g.season)
             }*/
-        }
-        else {
-            won = false;
-        }
-
-        // Only pay player salaries for regular season games.
-    /*    if (!this.playoffs) {
-            r = g.dbex('SELECT SUM(contract_amount) * 1000 / 82 FROM released_players_salaries WHERE tid = :tid', tid=this.team[t]['id'])
-            cost_released, = r.fetchone()
-            r = g.dbex('SELECT SUM(contract_amount) * 1000 / 82 FROM player_attributes WHERE tid = :tid', tid=this.team[t]['id'])
-            cost, = r.fetchone()
-            if (cost_released) {
-                cost += cost_released;
             }
-        }
-        else {*/
-            cost = 0
-    //    }
-
-        teamSeason.cash = teamSeason.cash + g.ticketPrice * that.att - cost;
-
-        keys = ['min', 'fg', 'fga', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
-        for (var i=0; i<keys.length; i++) {
-            teamStats[keys[i]] += that.team[t].stat[keys[i]];
-        }
-        teamStats.gp += 1;
-        teamStats.oppPts += that.team[t2].stat.pts;
-        teamStats.att += that.att;
-
-        if (won && !this.playoffs) {
-            teamSeason.won += 1;
-            if (this.same_division) {
-                teamSeason.wonDiv += 1;
+            else {
+                won = false;
             }
-            if (this.same_conference) {
-                teamSeason.wonConf += 1;
-            }
-        }
-        else if (!this.playoffs) {
-            teamSeason.lost += 1;
-            if (this.same_division) {
-                teamSeason.lostDiv += 1;
-            }
-            if (this.same_conference) {
-                teamSeason.lostConf += 1;
-            }
-        }
 
-        cursor.update(teamSeason);
-
-        that.teamsRemaining -= 1;
-        if (that.playersRemaining == 0 && that.teamsRemaining == 0) {
-            that.callback();
+            // Only pay player salaries for regular season games.
+/*    if (!this.playoffs) {
+        r = g.dbex('SELECT SUM(contract_amount) * 1000 / 82 FROM released_players_salaries WHERE tid = :tid', tid=this.team[t]['id'])
+        cost_released, = r.fetchone()
+        r = g.dbex('SELECT SUM(contract_amount) * 1000 / 82 FROM player_attributes WHERE tid = :tid', tid=this.team[t]['id'])
+        cost, = r.fetchone()
+        if (cost_released) {
+            cost += cost_released;
         }
     }
-}
+    else {*/
+                cost = 0
+//    }
 
+            teamSeason.cash = teamSeason.cash + g.ticketPrice * that.att - cost;
 
-var game = {
-    _composite: function (minval, maxval, rating, components, inverse, rand) {
+            keys = ['min', 'fg', 'fga', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
+            for (var i=0; i<keys.length; i++) {
+                teamStats[keys[i]] += that.team[t].stat[keys[i]];
+            }
+            teamStats.gp += 1;
+            teamStats.oppPts += that.team[t2].stat.pts;
+            teamStats.att += that.att;
+
+            if (won && !this.playoffs) {
+                teamSeason.won += 1;
+                if (this.same_division) {
+                    teamSeason.wonDiv += 1;
+                }
+                if (this.same_conference) {
+                    teamSeason.wonConf += 1;
+                }
+            }
+            else if (!this.playoffs) {
+                teamSeason.lost += 1;
+                if (this.same_division) {
+                    teamSeason.lostDiv += 1;
+                }
+                if (this.same_conference) {
+                    teamSeason.lostConf += 1;
+                }
+            }
+
+            cursor.update(teamSeason);
+
+            that.teamsRemaining -= 1;
+            if (that.playersRemaining == 0 && that.teamsRemaining == 0) {
+                that.callback();
+            }
+        }
+    }
+
+    function _composite(minval, maxval, rating, components, inverse, rand) {
         inverse = typeof inverse !== "undefined" ? inverse : false;
         rand = typeof rand !== "undefined" ? rand : true;
 
@@ -235,10 +234,10 @@ var game = {
             r = random.gauss(1, 0.1) * r;
         }
         return r;
-    },
+    }
 
     /*Convenience function to save game stats.*/
-    saveResults: function (results, playoffs, callback) {
+    function saveResults(results, playoffs, callback) {
 //        r = g.dbex('SELECT in_progress_timestamp FROM schedule WHERE gid = :gid', gid=results['gid'])
 //        in_progress_timestamp, = r.fetchone()
 //        if (in_progress_timestamp > 0) {
@@ -250,12 +249,12 @@ var game = {
 //        else {
 //            console.log("Ignored stale results for game " + results['gid']);
 //        }
-    },
+    }
 
     /*Play num_days days worth of games. If start is true, then this is
     starting a new series of games. If not, then it's continuing a simulation.
     */
-    play: function (num_days, start) {
+    function play(num_days, start) {
         start = typeof start !== "undefined" ? start : false;
 
         teams = [];
@@ -337,11 +336,11 @@ schedule = [{gid: 6235, home_tid: 15, away_tid: 2},
                 var teams_loaded = 0;
                 // Load all teams, for now. Would be more efficient to load only some of them, I suppose.
                 for (var tid=0; tid<30; tid++) {
-                    dbl.transaction(["players"]).objectStore("players").index('tid').getAll(tid).onsuccess = function(event) {
+                    g.dbl.transaction(["players"]).objectStore("players").index('tid').getAll(tid).onsuccess = function(event) {
                         var players = event.target.result;
                         var realTid = players[0].tid;
                         var t = {id: realTid, defense: 0, pace: 0, won: 0, lost: 0, cid: 0, did: 0, stat: {}, player: []}
-                        dbl.transaction(["teams"]).objectStore("teams").index('tid').getAll(realTid).onsuccess = function(event) {
+                        g.dbl.transaction(["teams"]).objectStore("teams").index('tid').getAll(realTid).onsuccess = function(event) {
                             var teamSeasons = event.target.result;
                             for (var j=0; j<teamSeasons.length; j++) {
                                 if (teamSeasons[j]['season'] == g.season) {
@@ -367,18 +366,18 @@ schedule = [{gid: 6235, home_tid: 15, away_tid: 2},
 
                                 p['ovr'] = rating['ovr'];
 
-                                p['composite_rating']['pace'] = game._composite(90, 140, rating, ['spd', 'jmp', 'dnk', 'tp', 'stl', 'drb', 'pss'], undefined, false);
-                                p['composite_rating']['shot_ratio'] = game._composite(0, 0.5, rating, ['ins', 'dnk', 'fg', 'tp']);
-                                p['composite_rating']['assist_ratio'] = game._composite(0, 0.5, rating, ['drb', 'pss', 'spd']);
-                                p['composite_rating']['turnover_ratio'] = game._composite(0, 0.5, rating, ['drb', 'pss', 'spd'], true);
-                                p['composite_rating']['field_goal_percentage'] = game._composite(0.38, 0.68, rating, ['hgt', 'jmp', 'ins', 'dnk', 'fg', 'tp']);
-                                p['composite_rating']['free_throw_percentage'] = game._composite(0.65, 0.9, rating, ['ft']);
-                                p['composite_rating']['three_pointer_percentage'] = game._composite(0, 0.45, rating, ['tp']);
-                                p['composite_rating']['rebound_ratio'] = game._composite(0, 0.5, rating, ['hgt', 'stre', 'jmp', 'reb']);
-                                p['composite_rating']['steal_ratio'] = game._composite(0, 0.5, rating, ['spd', 'stl']);
-                                p['composite_rating']['block_ratio'] = game._composite(0, 0.5, rating, ['hgt', 'jmp', 'blk']);
-                                p['composite_rating']['foul_ratio'] = game._composite(0, 0.5, rating, ['spd'], true);
-                                p['composite_rating']['defense'] = game._composite(0, 0.5, rating, ['stre', 'spd']);
+                                p['composite_rating']['pace'] = _composite(90, 140, rating, ['spd', 'jmp', 'dnk', 'tp', 'stl', 'drb', 'pss'], undefined, false);
+                                p['composite_rating']['shot_ratio'] = _composite(0, 0.5, rating, ['ins', 'dnk', 'fg', 'tp']);
+                                p['composite_rating']['assist_ratio'] = _composite(0, 0.5, rating, ['drb', 'pss', 'spd']);
+                                p['composite_rating']['turnover_ratio'] = _composite(0, 0.5, rating, ['drb', 'pss', 'spd'], true);
+                                p['composite_rating']['field_goal_percentage'] = _composite(0.38, 0.68, rating, ['hgt', 'jmp', 'ins', 'dnk', 'fg', 'tp']);
+                                p['composite_rating']['free_throw_percentage'] = _composite(0.65, 0.9, rating, ['ft']);
+                                p['composite_rating']['three_pointer_percentage'] = _composite(0, 0.45, rating, ['tp']);
+                                p['composite_rating']['rebound_ratio'] = _composite(0, 0.5, rating, ['hgt', 'stre', 'jmp', 'reb']);
+                                p['composite_rating']['steal_ratio'] = _composite(0, 0.5, rating, ['spd', 'stl']);
+                                p['composite_rating']['block_ratio'] = _composite(0, 0.5, rating, ['hgt', 'jmp', 'blk']);
+                                p['composite_rating']['foul_ratio'] = _composite(0, 0.5, rating, ['spd'], true);
+                                p['composite_rating']['defense'] = _composite(0, 0.5, rating, ['stre', 'spd']);
 
                                 p['stat'] = {gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, court_time: 0, bench_time: 0, energy: 1};
 
@@ -411,12 +410,12 @@ schedule = [{gid: 6235, home_tid: 15, away_tid: 2},
                                 if ((schedule && schedule.length > 0) || playoffs_continue) {
                                     var gamesRemaining = schedule.length;
                                     for (var i=0; i<schedule.length; i++) {
-                                        gs = new GameSim(schedule[i]['gid'], teams[schedule[i]['home_tid']], teams[schedule[i]['away_tid']]);
+                                        gs = new gameSim.GameSim(schedule[i]['gid'], teams[schedule[i]['home_tid']], teams[schedule[i]['away_tid']]);
                                         var results = gs.run();
-                                        game.saveResults(results, g.phase == c.PHASE_PLAYOFFS, function() {
+                                        saveResults(results, g.phase == c.PHASE_PLAYOFFS, function() {
                                             gamesRemaining -= 1;
                                             if (gamesRemaining == 0) {
-                                                game.play(num_days - 1);
+                                                play(num_days - 1);
                                             }
                                         });
                                     }
@@ -428,7 +427,7 @@ schedule = [{gid: 6235, home_tid: 15, away_tid: 2},
                     // Only send team data for today's active teams
 /*                    if (tids_today.indexOf(tid) >= 0) {
 console.log(tid);
-                        teams.push(game.team(tid))
+                        teams.push(team(tid))
                     }
                     else {
                         teams.push({'id': tid})
@@ -450,4 +449,8 @@ console.log(tid);
         }
 //        return {teams: teams, schedule: schedule, playoffs_continue: playoffs_continue, url: url};
     }
-}
+
+    return {
+        play: play
+    }
+});

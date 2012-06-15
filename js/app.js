@@ -5,9 +5,12 @@ var g = {
     divs: [{did: 0, cid: 0, name: "Atlantic"}, {did: 1, cid: 0, name: "Central"}, {did: 2, cid: 0, name: "Southeast"}, {did: 3, cid: 1, name: "Southwest"}, {did: 4, cid: 1, name: "Northwest"}, {did: 5, cid: 1, name: "Pacific"}],
 }
 
-requirejs(['db', 'views', 'bbgm'],
-function (db, views, bbgm) {
+requirejs(['db', 'views', 'bbgm', "api"],
+function (db, views, bbgm, api) {
 console.log(g);
+
+    window.api = api;
+
     g.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
     request = db.connect_meta();
     request.onsuccess = function(event) {
@@ -42,3 +45,4 @@ console.log(g);
 
     console.log('yo');
 });
+

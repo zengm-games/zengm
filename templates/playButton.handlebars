@@ -6,7 +6,7 @@
         {{#normal_link}}
           <li><a href="{{url}}">{{label}}</a></li>
         {{^}}
-          <li><a onclick="javascript:play_button('{{url}}');" href="javascript:void(0);">{{label}}</a></li>
+          <li><a onclick="{{url}}" href="javascript:void(0);">{{label}}</a></li>
         {{/normal_link}}
       {{/options}}
     </ul>

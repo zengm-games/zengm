@@ -391,12 +391,12 @@ function program2(depth0,data) {
 function program4(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n          <li><a onclick=\"javascript:play_button('";
+  buffer += "\n          <li><a onclick=\"";
   foundHelper = helpers.url;
   stack1 = foundHelper || depth0.url;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "url", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "');\" href=\"javascript:void(0);\">";
+  buffer += escapeExpression(stack1) + "\" href=\"javascript:void(0);\">";
   foundHelper = helpers.label;
   stack1 = foundHelper || depth0.label;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -625,25 +625,13 @@ function program5(depth0,data) {
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/game_log_list',\n          data: {season: season, abbrev: abbrev},\n          success: function(msg) {\n            // Display the list of games\n            $('#game_log_list').html(msg);\n\n            if (first_time) {\n              // Click the first one to show its boxscore by default\n              $('#game_log_list tbody tr').first().click();\n            }\n            else {\n              // Update URL\n//              history.pushState({'league_content': $('#league_content').html()}, '', '/l/";
+  buffer += escapeExpression(stack1) + "/game_log_list',\n          data: {season: season, abbrev: abbrev},\n          success: function(msg) {\n            // Display the list of games\n            $('#game_log_list').html(msg);\n\n            if (first_time) {\n              // Click the first one to show its boxscore by default\n              $('#game_log_list tbody tr').first().click();\n            }\n          }\n        });\n      }\n\n      $game_log_select_season = $('#game_log_select_season')\n      $game_log_select_season.change(function(event) { load_game_log_list($game_log_select_season.val(), $game_log_select_abbrev.val()); });\n      $game_log_select_abbrev = $('#game_log_select_abbrev')\n      $game_log_select_abbrev.change(function(event) { load_game_log_list($game_log_select_season.val(), $game_log_select_abbrev.val()); });\n      if ($game_log_select_season.length && $game_log_select_abbrev.length) {\n        load_game_log_list($game_log_select_season.val(), $game_log_select_abbrev.val(), true);\n      }\n\n      // Clickable rows for game log list table\n      $(document).on('click', '#game_log_list tbody tr', function(event) {\n        $clicked_tr = $(this);\n        $.get('/l/";
   foundHelper = helpers['g'];
   stack1 = foundHelper || depth0['g'];
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/game_log/' + season + '/' + abbrev);\n            }\n          }\n        });\n      }\n\n      $game_log_select_season = $('#game_log_select_season')\n      $game_log_select_season.change(function(event) { load_game_log_list($game_log_select_season.val(), $game_log_select_abbrev.val()); });\n      $game_log_select_abbrev = $('#game_log_select_abbrev')\n      $game_log_select_abbrev.change(function(event) { load_game_log_list($game_log_select_season.val(), $game_log_select_abbrev.val()); });\n      if ($game_log_select_season.length && $game_log_select_abbrev.length) {\n        load_game_log_list($game_log_select_season.val(), $game_log_select_abbrev.val(), true);\n      }\n\n      // Clickable rows for game log list table\n      $(document).on('click', '#game_log_list tbody tr', function(event) {\n        $clicked_tr = $(this);\n        $.get('/l/";
-  foundHelper = helpers['g'];
-  stack1 = foundHelper || depth0['g'];
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/box_score/' + $clicked_tr.attr('id'), function(data) {\n          // Update boxscore\n          $('#game_log_box_score').html(data);\n\n          // Update gamelist highlighting\n          $clicked_tr.parent().children().each(function() {\n            $(this).removeClass('alert-info');\n          });\n          $clicked_tr.addClass('alert-info');\n\n          // Update URL\n//          data['title'] = document.title;\n//          data['league_content'] =  $('#league_content').html();\n//          history.pushState(data, '', '/l/";
-  foundHelper = helpers['g'];
-  stack1 = foundHelper || depth0['g'];
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/game_log\"/' + $clicked_tr.attr('id'));\n        });\n      });\n    });\n  </script>\n\n  <form action=\"/l/";
+  buffer += escapeExpression(stack1) + "/box_score/' + $clicked_tr.attr('id'), function(data) {\n          // Update boxscore\n          $('#game_log_box_score').html(data);\n\n          // Update gamelist highlighting\n          $clicked_tr.parent().children().each(function() {\n            $(this).removeClass('alert-info');\n          });\n          $clicked_tr.addClass('alert-info');\n        });\n      });\n    });\n  </script>\n\n  <form action=\"/l/";
   foundHelper = helpers['g'];
   stack1 = foundHelper || depth0['g'];
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
@@ -686,11 +674,11 @@ function program1(depth0,data) {
   buffer += escapeExpression(stack1) + "\"><td>";
   foundHelper = helpers.home;
   stack1 = foundHelper || depth0.home;
-  stack2 = helpers['if'];
+  stack2 = helpers.unless;
   tmp1 = self.program(2, program2, data);
   tmp1.hash = {};
   tmp1.fn = tmp1;
-  tmp1.inverse = self.program(4, program4, data);
+  tmp1.inverse = self.noop;
   stack1 = stack2.call(depth0, stack1, tmp1);
   if(stack1 || stack1 === 0) { buffer += stack1; }
   foundHelper = helpers.oppAbbrev;
@@ -701,10 +689,10 @@ function program1(depth0,data) {
   foundHelper = helpers.won;
   stack1 = foundHelper || depth0.won;
   stack2 = helpers['if'];
-  tmp1 = self.program(6, program6, data);
+  tmp1 = self.program(4, program4, data);
   tmp1.hash = {};
   tmp1.fn = tmp1;
-  tmp1.inverse = self.program(8, program8, data);
+  tmp1.inverse = self.program(6, program6, data);
   stack1 = stack2.call(depth0, stack1, tmp1);
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "</td><td>";
@@ -722,19 +710,14 @@ function program1(depth0,data) {
 function program2(depth0,data) {
   
   
-  return "Q";}
+  return "@";}
 
 function program4(depth0,data) {
   
   
-  return "@";}
-
-function program6(depth0,data) {
-  
-  
   return "W";}
 
-function program8(depth0,data) {
+function program6(depth0,data) {
   
   
   return "L";}

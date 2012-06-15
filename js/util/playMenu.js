@@ -1,4 +1,4 @@
-define(["api", "util/lock"], function(api, lock) {
+define(["util/lock"], function(lock) {
     /*Set the options to be shown in the play button.
 
     Arguments:
@@ -10,18 +10,18 @@ define(["api", "util/lock"], function(api, lock) {
         play button.
      */
     function options(keys) {
-        all_options = [{id: "stop", url: "/l/" + g.lid + "/play/stop", label: "Stop", normal_link: false},
-                       {id: "day", url: "/l/" + g.lid + "/play/day", label: "One day", normal_link: false},
-                       {id: "week", url: "/l/" + g.lid + "/play/week", label: "One week", normal_link: false},
-                       {id: "month", url: "/l/" + g.lid + "/play/month", label: "One month", normal_link: false},
-                       {id: "until_playoffs", url: "/l/" + g.lid + "/play/until_playoffs", label: "Until playoffs", normal_link: false},
-                       {id: "through_playoffs", url: "/l/" + g.lid + "/play/through_playoffs", label: "Through playoffs", normal_link: false},
-                       {id: "until_draft", url: "/l/" + g.lid + "/play/until_draft", label: "Until draft", normal_link: false},
+        all_options = [{id: "stop", url: 'javascript:api.play("stop");', label: "Stop", normal_link: false},
+                       {id: "day", url: 'javascript:api.play("day");', label: "One day", normal_link: false},
+                       {id: "week", url: 'javascript:api.play("week");', label: "One week", normal_link: false},
+                       {id: "month", url: 'javascript:api.play("month");', label: "One month", normal_link: false},
+                       {id: "until_playoffs", url: 'javascript:api.play("until_playoffs");', label: "Until playoffs", normal_link: false},
+                       {id: "through_playoffs", url: 'javascript:api.play("through_playoffs");', label: "Through playoffs", normal_link: false},
+                       {id: "until_draft", url: 'javascript:api.play("");', label: "Until draft", normal_link: false},
                        {id: "view_draft", url: "/l/" + g.lid + "/draft", label: "View draft", normal_link: true},
-                       {id: "until_resign_players", url: "/l/" + g.lid + "/play/until_resign_players", label: "Resign players with expiring contracts", normal_link: false},
-                       {id: "until_free_agency", url: "/l/" + g.lid + "/play/until_free_agency", label: "Until free agency", normal_link: false},
-                       {id: "until_preseason", url: "/l/" + g.lid + "/play/until_preseason", label: "Until preseason", normal_link: false},
-                       {id: "until_regular_season", url: "/l/" + g.lid + "/play/until_regular_season", label: "Until regular season", normal_link: false},
+                       {id: "until_resign_players", url: 'javascript:api.play("until_resign_players");', label: "Resign players with expiring contracts", normal_link: false},
+                       {id: "until_free_agency", url: 'javascript:api.play("until_free_agency");', label: "Until free agency", normal_link: false},
+                       {id: "until_preseason", url: 'javascript:api.play("until_preseason");', label: "Until preseason", normal_link: false},
+                       {id: "until_regular_season", url: 'javascript:api.play("until_regular_season");', label: "Until regular season", normal_link: false},
                        {id: "contract_negotiation", url: "/l/" + g.lid + "/negotiation_list", label: "Continue contract negotiation", normal_link: true},
                        {id: "contract_negotiation_list", url: "/l/" + g.lid + "/negotiation_list", label: "Continue resigning players", normal_link: true}]
 /*

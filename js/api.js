@@ -1,6 +1,7 @@
 /*Anything that can be called by the user clicking something that doesn't act as a traditional view should go here*/
 
 define(["db", "core/game", "util/lock", "util/playMenu"], function(db, game, lock, playMenu) {
+console.log(game);
     /*This is kind of a hodgepodge that handles every request from the play
     button and returns the appropriate response in JSON.
     */

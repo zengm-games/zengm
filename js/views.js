@@ -1,5 +1,4 @@
-define(["db", "core/game", "core/league", "util/playMenu"], function(db, game, league, playMenu) {
-console.log(game);
+define(["bbgm", "db", "core/game", "core/league", "util/playMenu"], function(bbgm, db, game, league, playMenu) {
     /*Validate that the given abbreviation corresponds to a valid team.
 
     If an invalid abbreviation is passed, the user's team will be used.
@@ -78,7 +77,7 @@ console.log(event);
             data = {};
             var template = Handlebars.templates['league_layout'];
             data["content"] = template({g: g});
-            ajax_update(data);
+            bbgm.ajaxUpdate(data);
 
             // Update play menu
             playMenu.setStatus()
@@ -122,7 +121,7 @@ console.log(event);
 
             console.log("Done!");
 
-            ajax_update(data, url);
+            bbgm.ajaxUpdate(data, url);
         },
 
         dashboard: function () {
@@ -133,7 +132,7 @@ console.log(event);
                 var template = Handlebars.templates['dashboard'];
                 data["content"] = template({leagues: leagues});
 
-                ajax_update(data, url);
+                bbgm.ajaxUpdate(data, url);
             });
         },
 
@@ -146,7 +145,7 @@ console.log(event);
                     var template = Handlebars.templates['new_league'];
                     data["content"] = template({teams: teams});
 
-                    ajax_update(data, url);
+                    bbgm.ajaxUpdate(data, url);
                 });
             }
             else if (req.method === "post") {
@@ -173,7 +172,7 @@ console.log(this);
                 var template = Handlebars.templates['league_dashboard'];
                 data["league_content"] = template({g: g});
 
-                ajax_update(data, url);
+                bbgm.ajaxUpdate(data, url);
             });
         },
 
@@ -206,7 +205,7 @@ console.log(this);
                     var template = Handlebars.templates['game_log'];
                     data["league_content"] = template({g: g, teams: teams, seasons: seasons});
 
-                    ajax_update(data, url);
+                    bbgm.ajaxUpdate(data, url);
                 };
 
             });

@@ -1,4 +1,4 @@
-define(["util/lock"], function(lock) {
+define(["api", "util/lock"], function(api, lock) {
     /*Set the options to be shown in the play button.
 
     Arguments:

@@ -86,7 +86,7 @@ function program5(depth0,data,depth2) {
   return buffer;}
 function program6(depth0,data,depth3) {
   
-  var buffer = "", stack1;
+  var buffer = "", stack1, stack2;
   buffer += "\n            <tr><td><a href=\"/l/";
   foundHelper = helpers['g'];
   stack1 = foundHelper || depth3['g'];
@@ -121,8 +121,11 @@ function program6(depth0,data,depth3) {
   buffer += escapeExpression(stack1) + "</td><td>";
   foundHelper = helpers.winp;
   stack1 = foundHelper || depth0.winp;
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "winp", { hash: {} }); }
+  foundHelper = helpers.roundWinp;
+  stack2 = foundHelper || depth0.roundWinp;
+  if(typeof stack2 === functionType) { stack1 = stack2.call(depth0, stack1, { hash: {} }); }
+  else if(stack2=== undef) { stack1 = helperMissing.call(depth0, "roundWinp", stack1, { hash: {} }); }
+  else { stack1 = stack2; }
   buffer += escapeExpression(stack1) + "</td><td>GB</td><td>";
   foundHelper = helpers.wonHome;
   stack1 = foundHelper || depth0.wonHome;

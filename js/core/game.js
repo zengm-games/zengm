@@ -214,11 +214,12 @@ define(["core/gameSim", "util/lock", "util/playMenu", "util/random"], function(g
             gameStats.teams[t]["trb"] = this.team[t].stat["orb"] + this.team[t].stat["drb"];
 
             for (var p=0; p<this.team[t].player.length; p++) {
-                gameStats.teams[t].players[p] = {name: "NAME"};
+                gameStats.teams[t].players[p] = {name: "NAME", pos: "POS"};
                 for (var i=0; i<keys.length; i++) {
                     gameStats.teams[t].players[p][keys[i]] = this.team[t].player[p].stat[keys[i]];
                 }
                 gameStats.teams[t].players[p]["trb"] = this.team[t].player[p].stat["orb"] + this.team[t].player[p].stat["drb"];
+                gameStats.teams[t].players[p]["pid"] = this.team[t].player[p].id;
             }
         }
 

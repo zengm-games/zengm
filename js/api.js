@@ -97,8 +97,6 @@ define(["db", "core/game", "util/helpers", "util/lock", "util/playMenu"], functi
             var cursor = event.target.result;
             if (cursor) {
                 var game = cursor.value;
-console.log(tid + ' TID ' + game.teams[0].tid + ' TID ' + game.teams[1].tid);
-console.log(game);
 
                 // Check tid
                 var tidMatch = false;
@@ -107,12 +105,14 @@ console.log(game);
                     var home = true;
                     var pts = game.teams[0].teamStats.pts;
                     var oppPts = game.teams[1].teamStats.pts;
+                    var opp = helpers.validateTid(game.teams[1].tid);
                 }
                 else if (game.teams[1].tid === tid) {
                     tidMatch = true;
                     var home = false;
                     var pts = game.teams[1].teamStats.pts;
                     var oppPts = game.teams[0].teamStats.pts;
+                    var opp = helpers.validateTid(game.teams[0].tid);
                 }
 
                 if (tidMatch) {
@@ -122,14 +122,12 @@ console.log(game);
                     else {
                         var won = false;
                     }
-                    games.push({gid: game.gid, home: home, oppAbbrev: "OPP", won: won, pts: pts, oppPts: oppPts});
+                    games.push({gid: game.gid, home: home, oppAbbrev: opp[1], won: won, pts: pts, oppPts: oppPts});
                 }
 
                 cursor.continue();
             }
             else {
-                console.log(games);
-
                 var template = Handlebars.templates["gameLogList"];
                 $('#game_log_list').html(template({games: games}));
 

@@ -21,6 +21,19 @@ define([], function() {
         return [tid, abbrev];
     }
 
+    /* Same as validateAbbrev, but for tid. */
+    function validateTid(tid) {
+        var abbrevs = ["ATL", "BOS", "CHA", "CHI", "CLE", "DAL", "DEN", "DET", "GSW", "HOU", "IND", "LAC", "LAL", "MEM", "MIA", "MIL", "MIN", "NJN", "NOR", "NYK", "ORL", "PHI", "PHO", "POR", "SAC", "SAS", "SEA", "TOR", "UTA", "WAS"];
+        var tid = parseInt(tid, 10);
+
+        if (tid < 0 || tid >= abbrevs.length) {
+            tid = g.userTid;
+        }
+        abbrev = abbrevs[tid];
+        
+        return [tid, abbrev];
+    }
+
     /*Validate that the given season is valid.
 
     A valid season is the current season or one of the past seasons. If an
@@ -46,6 +59,7 @@ define([], function() {
 
     return {
         validateAbbrev: validateAbbrev,
+        validateTid: validateTid,
         validateSeason: validateSeason
     }
 });

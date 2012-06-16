@@ -137,29 +137,6 @@ define(["db", "core/game", "util/helpers", "util/lock", "util/playMenu"], functi
 
         g.dbl.transaction(["games"]).objectStore("games").get(gid).onsuccess = function(event) {
             var game = event.target.result;
-console.log(game);
-/*
-        teams = []
-        r = g.dbex('SELECT * FROM team_stats WHERE gid = :gid', gid=gid)
-        for row in r.fetchall():
-            teams.append(dict(row))
-
-            r = g.dbex('SELECT region, name, abbrev FROM team_attributes WHERE tid = :tid', tid=teams[-1]['tid'])
-            teams[-1]['region'], teams[-1]['name'], teams[-1]['abbrev'] = r.fetchone()
-
-            r = g.dbex('SELECT pa.pid, name, pos, min, fg, fga, tp, tpa, ft, fta, orb, drb, orb + drb AS rebounds, ast, tov, stl, blk, pf, pts FROM player_attributes as pa, player_stats as ps WHERE pa.pid = ps.pid AND ps.gid = :gid AND pa.tid = :tid ORDER BY gs DESC, min DESC', gid=gid, tid=teams[-1]['tid'])
-            teams[-1]['players'] = r.fetchall()
-
-            # Total rebounds
-            teams[-1]['trb'] = teams[-1]['orb'] + teams[-1]['drb']
-
-        # Who won?
-        if teams[0]['pts'] > teams[1]['pts']:
-            won_lost = {'won_pts': teams[0]['pts'], 'won_region': teams[0]['region'], 'won_name': teams[0]['name'], 'won_abbrev': teams[0]['abbrev'], 'lost_pts': teams[1]['pts'], 'lost_region': teams[1]['region'], 'lost_name': teams[1]['name'], 'lost_abbrev': teams[1]['abbrev']}
-        else:
-            won_lost = {'won_pts': teams[1]['pts'], 'won_region': teams[1]['region'], 'won_name': teams[1]['name'], 'won_abbrev': teams[1]['abbrev'], 'lost_pts': teams[0]['pts'], 'lost_region': teams[0]['region'], 'lost_name': teams[0]['name'], 'lost_abbrev': teams[0]['abbrev']}
-
-        return render_template('box_score.html', teams=teams, view_season=teams[0]['season'], **won_lost)*/
 
             var template = Handlebars.templates["box_score"];
             html = template({g: g, game: game});

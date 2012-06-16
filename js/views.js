@@ -1,57 +1,4 @@
-define(["bbgm", "db", "core/game", "core/league", "util/playMenu"], function(bbgm, db, game, league, playMenu) {
-    /*Validate that the given abbreviation corresponds to a valid team.
-
-    If an invalid abbreviation is passed, the user's team will be used.
-
-    Args:
-        abbrev: Three-letter all-caps string containing a team's
-            abbreviation.
-    Returns:
-        A two element list of the validated team ID and abbreviation.
-    */
-    function validateAbbrev(abbrev) {
-        var tid = null;
-
-        // Try to use the supplied abbrev
-        if (abbrev) {
-//        r = g.dbex('SELECT tid FROM team_attributes WHERE season = :season AND abbrev = :abbrev', season=g.season, abbrev=abbrev)
-//        if r.rowcount == 1:
-//            tid, = r.fetchone()
-        }
-
-        // If no valid abbrev was given, default to the user's team
-        if (!tid) {
-            tid = g.userTid;
-//        r = g.dbex('SELECT abbrev FROM team_attributes WHERE season = :season AND tid = :tid', season=g.season, tid=tid)
-//        abbrev, = r.fetchone()
-        }
-abbrev = 'ATL';
-        return [tid, abbrev];
-    }
-
-    /*Validate that the given season is valid.
-
-    A valid season is the current season or one of the past seasons. If an
-    invalid season is passed, the current will be used.
-
-    Args:
-        season: An integer containing the year of the season.
-    Returns:
-        An integer containing the argument, if valid, or the year of the current
-        season.
-    */
-    function validateSeason(season) {
-        if (!season) {
-            season = g.season
-        }
-        else {
-            // Make sure there is an entry for the supplied season in the DB somewhere
-            season = parseInt(season, 10);
-        }
-
-        return season;
-    }
-
+define(["bbgm", "db", "core/game", "core/league", "util/helpers", "util/playMenu"], function(bbgm, db, game, league, helpers, playMenu) {
     function beforeLeague(req, cb) {
         g.lid = parseInt(req.params.lid, 10);
 g.season = 2012;
@@ -179,9 +126,9 @@ console.log(this);
         game_log: function(req) {
             beforeLeague(req, function() {
                 var viewSeason = typeof req.params.viewSeason !== "undefined" ? req.params.viewSeason : undefined;
-                viewSeason = validateSeason(viewSeason);
+                viewSeason = helpers.validateSeason(viewSeason);
                 var viewAbbrev = typeof req.params.viewAbbrev !== "undefined" ? req.params.viewAbbrev : undefined;
-                [viewTid, viewAbbrev] = validateAbbrev(viewAbbrev)
+                [viewTid, viewAbbrev] = helpers.validateAbbrev(viewAbbrev)
 
                 var data = {"title": "Game Log - League " + g.lid};
                 var url = "/l/" + g.lid + "/game_log";

@@ -1,7 +1,6 @@
-/*Anything that can be called by the user clicking something that doesn't act as a traditional view should go here*/
+/*These are functions that do not return full pages (either JS objects or partial blocks of HTML) and are called from the client.*/
 
-define(["db", "core/game", "util/lock", "util/playMenu"], function(db, game, lock, playMenu) {
-console.log(game);
+define(["db", "core/game", "util/helpers", "util/lock", "util/playMenu"], function(db, game, helpers, lock, playMenu) {
     /*This is kind of a hodgepodge that handles every request from the play
     button and returns the appropriate response in JSON.
     */
@@ -86,7 +85,23 @@ console.log(game);
 //        return {url: url};
     }
 
+    function gameLogList(abbrev, season) {
+        var season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
+        season = helpers.validateSeason(season);
+        var abbrev = typeof req.params.abbrev !== "undefined" ? req.params.abbrev : undefined;
+        [tid, abbrev] = helpers.validateAbbrev(abbrev)
+
+        g.dbl.transaction(["games"]).objectStore("games").index("tid").get(tid).onsuccess = function(event) { console.log(event.target.result) };
+
+//        r = g.dbex('SELECT gid, home, (SELECT abbrev FROM team_attributes WHERE tid = opp_tid AND season = :season) as opponent_abbrev, won, pts, opp_pts FROM team_stats WHERE tid = :tid AND season = :season', season=season, tid=tid)
+//        games = r.fetchall()
+
+        var template = Handlebars.templates["gameLogList"];
+//        return template({games: games});
+    }
+
     return {
-        play: play
+        play: play,
+        gameLogList: gameLogList
     };
 });

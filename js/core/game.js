@@ -47,7 +47,7 @@ define(["core/gameSim", "util/lock", "util/playMenu", "util/random"], function(g
         this.playersRemaining = this.team[0].player.length + this.team[1].player.length;
         this.callback = callback;
 
-        var transaction = g.dbl.transaction(["players", "teams"], IDBTransaction.READ_WRITE);
+        this.transaction = g.dbl.transaction(["games", "players", "teams"], IDBTransaction.READ_WRITE);
         // Record who the starters are
 /*    for (var t=0; t<2; t++) {
         r = g.dbex('SELECT pid FROM player_attributes WHERE tid = :tid ORDER BY roster_order ASC LIMIT 5', tid=this.team[t]['id'])
@@ -62,7 +62,7 @@ define(["core/gameSim", "util/lock", "util/playMenu", "util/random"], function(g
 
         // Player stats and team stats
         var that = this;
-        var playerStore = g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
+        var playerStore = this.transaction.objectStore("players");
         for (var t=0; t<2; t++) {
             this.writeTeamStats(t);
             for (var p=0; p<this.team[t].player.length; p++) {
@@ -119,7 +119,7 @@ define(["core/gameSim", "util/lock", "util/playMenu", "util/random"], function(g
             t2 = 0;
         }
         var that = this;
-        g.dbl.transaction(["teams"], IDBTransaction.READ_WRITE).objectStore("teams").index("tid").openCursor(IDBKeyRange.only(that.team[t].id)).onsuccess = function(event) {
+        this.transaction.objectStore("teams").index("tid").openCursor(IDBKeyRange.only(that.team[t].id)).onsuccess = function(event) {
             var cursor = event.target.result;
             teamSeason = cursor.value;
             if (teamSeason.season != g.season) {

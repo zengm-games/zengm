@@ -91,7 +91,7 @@ define(["db", "core/game", "util/helpers", "util/lock", "util/playMenu"], functi
         var abbrev = typeof req.params.abbrev !== "undefined" ? req.params.abbrev : undefined;
         [tid, abbrev] = helpers.validateAbbrev(abbrev)
 
-        g.dbl.transaction(["games"]).objectStore("games").index("tid").get(tid).onsuccess = function(event) { console.log(event.target.result) };
+        g.dbl.transaction(["games"]).objectStore("games").getAll().onsuccess = function(event) { console.log(event.target.result) };
 
 //        r = g.dbex('SELECT gid, home, (SELECT abbrev FROM team_attributes WHERE tid = opp_tid AND season = :season) as opponent_abbrev, won, pts, opp_pts FROM team_stats WHERE tid = :tid AND season = :season', season=season, tid=tid)
 //        games = r.fetchall()

@@ -63,6 +63,7 @@ define(["core/gameSim", "util/lock", "util/playMenu", "util/random"], function(g
         // Player stats and team stats
         var that = this;
         var playerStore = this.transaction.objectStore("players");
+        var gameStore = this.transaction.objectStore("players");
         for (var t=0; t<2; t++) {
             this.writeTeamStats(t);
             for (var p=0; p<this.team[t].player.length; p++) {
@@ -109,6 +110,7 @@ define(["core/gameSim", "util/lock", "util/playMenu", "util/random"], function(g
                 }
             }
         }
+        that.writeGameStats();
     }
 
     Game.prototype.writeTeamStats = function(t) {
@@ -198,6 +200,23 @@ define(["core/gameSim", "util/lock", "util/playMenu", "util/random"], function(g
                 that.callback();
             }
         }
+    }
+
+    Game.prototype.writeGameStats = function () {
+        var gameStats = {gid: this.id, season: g.season, playoffs: this.playoffs, teams: [{teamStats: {}, playerStats: []}, {teamStats: {}, playerStats: []}]};
+        for (var t=0; t<2; t++) {
+            keys = ['min', 'fg', 'fga', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
+            for (var i=0; i<keys.length; i++) {
+                gameStats.teams[t].teamStats[keys[i]] = this.team[t].stat[keys[i]];
+            }
+            for (var p=0; p<this.team[t].player.length; p++) {
+                gameStats.teams[t].playerStats[p] = {};
+                for (var i=0; i<keys.length; i++) {
+                    gameStats.teams[t].playerStats[p][keys[i]] = this.team[t].player[p].stat[keys[i]];
+                }
+            }
+        }
+        this.transaction.objectStore("games").add(gameStats);
     }
 
     function _composite(minval, maxval, rating, components, inverse, rand) {
@@ -308,21 +327,21 @@ define(["core/gameSim", "util/lock", "util/playMenu", "util/random"], function(g
                 playMenu.setStatus("Playing games (" + num_days + " days remaining)...")
                 // Create schedule and team lists for today, to be sent to the client
 //                schedule = season.get_schedule(num_active_teams / 2);
-schedule = [{gid: 6235, home_tid: 15, away_tid: 2},
-            {gid: 6235, home_tid: 15, away_tid: 2},
-            {gid: 6235, home_tid: 4, away_tid: 2},
-            {gid: 6235, home_tid: 15, away_tid: 2},
-            {gid: 6235, home_tid: 15, away_tid: 2},
-            {gid: 6235, home_tid: 6, away_tid: 2},
-            {gid: 6235, home_tid: 15, away_tid: 2},
-            {gid: 6235, home_tid: 15, away_tid: 2},
-            {gid: 6235, home_tid: 2, away_tid: 2},
-            {gid: 6235, home_tid: 15, away_tid: 2},
-            {gid: 6235, home_tid: 15, away_tid: 2},
-            {gid: 6235, home_tid: 15, away_tid: 2},
-            {gid: 6235, home_tid: 15, away_tid: 2},
-            {gid: 6235, home_tid: 15, away_tid: 2},
-            {gid: 6235, home_tid: 15, away_tid: 2}];
+schedule = [{gid: 1, home_tid: 15, away_tid: 2},
+            {gid: 2, home_tid: 15, away_tid: 2},
+            {gid: 3, home_tid: 4, away_tid: 2},
+            {gid: 4, home_tid: 15, away_tid: 2},
+            {gid: 5, home_tid: 15, away_tid: 2},
+            {gid: 6, home_tid: 6, away_tid: 2},
+            {gid: 7, home_tid: 15, away_tid: 2},
+            {gid: 8, home_tid: 15, away_tid: 2},
+            {gid: 9, home_tid: 2, away_tid: 2},
+            {gid: 10, home_tid: 15, away_tid: 2},
+            {gid: 11, home_tid: 15, away_tid: 2},
+            {gid: 12, home_tid: 15, away_tid: 2},
+            {gid: 13, home_tid: 15, away_tid: 2},
+            {gid: 14, home_tid: 15, away_tid: 2},
+            {gid: 15, home_tid: 15, away_tid: 2}];
                 tids_today = [];
                 for (var j=0; j<schedule.length; j++) {
                     matchup = schedule[j];

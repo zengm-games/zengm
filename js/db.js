@@ -84,7 +84,7 @@ define([], function() {
                 teamStore.createIndex("did", "did", {unique: false});
                 teamStore.createIndex("season", "season", {unique: false});
                 teamStore.createIndex("stats.playoffs", "stats.playoffs", {unique: false});
-                gameStore.createIndex("tid", "tid", {unique: false});
+//                gameStore.createIndex("tid", "tid", {unique: false}); // Not used because it's useless without oppTid checking too
                 gameStore.createIndex("season", "season", {unique: false});
             }
             return request;

@@ -1,29 +1,13 @@
   <script type="text/javascript">
     // Load game log list table and activate form
     $(document).ready(function() {
-      function load_game_log_list(season, abbrev, first_time) {
-        $.ajax({
-          type: 'GET',
-          url: '/l/{{g.lid}}/game_log_list',
-          data: {season: season, abbrev: abbrev},
-          success: function(msg) {
-            // Display the list of games
-            $('#game_log_list').html(msg);
-
-            if (first_time) {
-              // Click the first one to show its boxscore by default
-              $('#game_log_list tbody tr').first().click();
-            }
-          }
-        });
-      }
 
       $game_log_select_season = $('#game_log_select_season')
-      $game_log_select_season.change(function(event) { load_game_log_list($game_log_select_season.val(), $game_log_select_abbrev.val()); });
+      $game_log_select_season.change(function(event) { api.gameLogList($game_log_select_abbrev.val(), $game_log_select_season.val()); });
       $game_log_select_abbrev = $('#game_log_select_abbrev')
-      $game_log_select_abbrev.change(function(event) { load_game_log_list($game_log_select_season.val(), $game_log_select_abbrev.val()); });
+      $game_log_select_abbrev.change(function(event) { api.gameLogList($game_log_select_abbrev.val(), $game_log_select_season.val()); });
       if ($game_log_select_season.length && $game_log_select_abbrev.length) {
-        load_game_log_list($game_log_select_season.val(), $game_log_select_abbrev.val(), true);
+        api.gameLogList($game_log_select_abbrev.val(), $game_log_select_season.val(), true);
       }
 
       // Clickable rows for game log list table

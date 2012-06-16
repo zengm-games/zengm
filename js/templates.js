@@ -619,13 +619,7 @@ function program5(depth0,data) {
   
   return " selected=\"selected\"";}
 
-  buffer += "  <script type=\"text/javascript\">\n    // Load game log list table and activate form\n    $(document).ready(function() {\n      function load_game_log_list(season, abbrev, first_time) {\n        $.ajax({\n          type: 'GET',\n          url: '/l/";
-  foundHelper = helpers['g'];
-  stack1 = foundHelper || depth0['g'];
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/game_log_list',\n          data: {season: season, abbrev: abbrev},\n          success: function(msg) {\n            // Display the list of games\n            $('#game_log_list').html(msg);\n\n            if (first_time) {\n              // Click the first one to show its boxscore by default\n              $('#game_log_list tbody tr').first().click();\n            }\n          }\n        });\n      }\n\n      $game_log_select_season = $('#game_log_select_season')\n      $game_log_select_season.change(function(event) { load_game_log_list($game_log_select_season.val(), $game_log_select_abbrev.val()); });\n      $game_log_select_abbrev = $('#game_log_select_abbrev')\n      $game_log_select_abbrev.change(function(event) { load_game_log_list($game_log_select_season.val(), $game_log_select_abbrev.val()); });\n      if ($game_log_select_season.length && $game_log_select_abbrev.length) {\n        load_game_log_list($game_log_select_season.val(), $game_log_select_abbrev.val(), true);\n      }\n\n      // Clickable rows for game log list table\n      $(document).on('click', '#game_log_list tbody tr', function(event) {\n        $clicked_tr = $(this);\n        $.get('/l/";
+  buffer += "  <script type=\"text/javascript\">\n    // Load game log list table and activate form\n    $(document).ready(function() {\n\n      $game_log_select_season = $('#game_log_select_season')\n      $game_log_select_season.change(function(event) { api.gameLogList($game_log_select_abbrev.val(), $game_log_select_season.val()); });\n      $game_log_select_abbrev = $('#game_log_select_abbrev')\n      $game_log_select_abbrev.change(function(event) { api.gameLogList($game_log_select_abbrev.val(), $game_log_select_season.val()); });\n      if ($game_log_select_season.length && $game_log_select_abbrev.length) {\n        api.gameLogList($game_log_select_abbrev.val(), $game_log_select_season.val(), true);\n      }\n\n      // Clickable rows for game log list table\n      $(document).on('click', '#game_log_list tbody tr', function(event) {\n        $clicked_tr = $(this);\n        $.get('/l/";
   foundHelper = helpers['g'];
   stack1 = foundHelper || depth0['g'];
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
@@ -659,7 +653,7 @@ function program5(depth0,data) {
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n    </select>\n  </form>\n\n  <h1>Game Log</h1>\n\n  <p>\n    <div class=\"row-fluid\">\n      <div class=\"span9\">\n        <div id=\"game_log_box_score\">\n          <p>Select a game from the menu on the right to view a box score.</p>\n        </div>\n      </div>\n\n      <div class=\"span3\" id=\"game_log_list\">\n      </div>\n    </div>\n  </p>\n";
   return buffer;});
-templates['game_log_list'] = template(function (Handlebars,depth0,helpers,partials,data) {
+templates['gameLogList'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;
   var buffer = "", stack1, foundHelper, tmp1, self=this, functionType="function", helperMissing=helpers.helperMissing, undef=void 0, escapeExpression=this.escapeExpression, blockHelperMissing=helpers.blockHelperMissing;
 

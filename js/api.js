@@ -85,11 +85,12 @@ define(["db", "core/game", "util/helpers", "util/lock", "util/playMenu"], functi
 //        return {url: url};
     }
 
-    function gameLogList(abbrev, season) {
-        var abbrev = typeof abbrev !== "undefined" ? abbrev : undefined;
+    function gameLogList(abbrev, season, firstTime) {
+        abbrev = typeof abbrev !== "undefined" ? abbrev : undefined;
         [tid, abbrev] = helpers.validateAbbrev(abbrev);
-        var season = typeof season !== "undefined" ? season : undefined;
+        season = typeof season !== "undefined" ? season : undefined;
         season = helpers.validateSeason(season);
+        firstTime = typeof season !== "undefined" ? firstTime : false;
 
         var games = [];
         g.dbl.transaction(["games"]).objectStore("games").index("season").openCursor(IDBKeyRange.only(g.season)).onsuccess = function(event) {
@@ -114,7 +115,6 @@ console.log(game);
                     var oppPts = game.teams[0].teamStats.pts;
                 }
 
-
                 if (tidMatch) {
                     if (pts > oppPts) {
                         var won = true;
@@ -129,14 +129,17 @@ console.log(game);
             }
             else {
                 console.log(games);
+
+                var template = Handlebars.templates["gameLogList"];
+                $('#game_log_list').html(template({games: games}));
+
+                if (firstTime) {
+                    // Click the first one to show its boxscore by default
+                    $('#game_log_list tbody tr').first().click();
+                }
             }
         };
 
-//        r = g.dbex('SELECT gid, home, (SELECT abbrev FROM team_attributes WHERE tid = opp_tid AND season = :season) as opponent_abbrev, won, pts, opp_pts FROM team_stats WHERE tid = :tid AND season = :season', season=season, tid=tid)
-//        games = r.fetchall()
-
-        var template = Handlebars.templates["gameLogList"];
-//        return template({games: games});
     }
 
     return {

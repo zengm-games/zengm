@@ -9,7 +9,11 @@ Handlebars.registerHelper("roundWinp", function(value) {
 
     // Delete leading 0
     if (output[0] == "0") {
-      output = output.slice(1, output.length);
+        output = output.slice(1, output.length);
+    }
+    // Delete trailing digit if no leading 0
+    else {
+        output = output.slice(0, output.length-1);
     }
 
     return output;

@@ -116,10 +116,10 @@ define(["core/gameSim", "core/season", "util/lock", "util/playMenu", "util/rando
 
     Game.prototype.writeTeamStats = function(t) {
         if (t == 0) {
-            t2 = 1;
+            var t2 = 1;
         }
         else {
-            t2 = 0;
+            var t2 = 0;
         }
         var that = this;
         this.transaction.objectStore("teams").index("tid").openCursor(IDBKeyRange.only(that.team[t].id)).onsuccess = function(event) {

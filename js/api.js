@@ -88,8 +88,6 @@ define(["db", "core/game", "util/helpers", "util/lock", "util/playMenu"], functi
     function gameLogList(abbrev, season, firstTime, cb) {
         [tid, abbrev] = helpers.validateAbbrev(abbrev);
         season = helpers.validateSeason(season);
-console.log(season);
-console.log(cb);
 
         var games = [];
         g.dbl.transaction(["games"]).objectStore("games").index("season").openCursor(IDBKeyRange.only(g.season)).onsuccess = function(event) {
@@ -157,6 +155,8 @@ console.log(cb);
             won_lost = {'won_pts': teams[1]['pts'], 'won_region': teams[1]['region'], 'won_name': teams[1]['name'], 'won_abbrev': teams[1]['abbrev'], 'lost_pts': teams[0]['pts'], 'lost_region': teams[0]['region'], 'lost_name': teams[0]['name'], 'lost_abbrev': teams[0]['abbrev']}
 
         return render_template('box_score.html', teams=teams, view_season=teams[0]['season'], **won_lost)*/
+
+        cb('AAAAA');
     }
 
     return {

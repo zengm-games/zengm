@@ -5,6 +5,7 @@
         abbrev = typeof abbrev !== "undefined" ? abbrev : undefined;
         season = typeof season !== "undefined" ? season : undefined;
         firstTime = typeof season !== "undefined" ? firstTime : false;
+
         api.gameLogList(abbrev, season, firstTime, function (html) {
             $('#game_log_list').html(html);
 
@@ -26,9 +27,9 @@
       // Clickable rows for game log list table
       $(document).on('click', '#game_log_list tbody tr', function(event) {
         $clicked_tr = $(this);
-        $.get('/l/{{g.lid}}/box_score/' + $clicked_tr.attr('id'), function(data) {
+        api.boxScore($clicked_tr.attr('id'), function(html) {
           // Update boxscore
-          $('#game_log_box_score').html(data);
+          $('#game_log_box_score').html(html);
 
           // Update gamelist highlighting
           $clicked_tr.parent().children().each(function() {

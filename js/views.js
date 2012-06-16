@@ -12,7 +12,6 @@ g.userTid = 4;
             g.dbl = request.result;
             g.dbl.onerror = function (event) {
                 console.log("League database error: " + event.target.errorCode);
-console.log(event);
             };
 
             cb();
@@ -125,10 +124,10 @@ console.log(this);
 
         game_log: function(req) {
             beforeLeague(req, function() {
+                var viewAbbrev = typeof req.params.viewAbbrev !== "undefined" ? req.params.viewAbbrev : undefined;
+                [viewTid, viewAbbrev] = helpers.validateAbbrev(viewAbbrev);
                 var viewSeason = typeof req.params.viewSeason !== "undefined" ? req.params.viewSeason : undefined;
                 viewSeason = helpers.validateSeason(viewSeason);
-                var viewAbbrev = typeof req.params.viewAbbrev !== "undefined" ? req.params.viewAbbrev : undefined;
-                [viewTid, viewAbbrev] = helpers.validateAbbrev(viewAbbrev)
 
                 var data = {"title": "Game Log - League " + g.lid};
                 var url = "/l/" + g.lid + "/game_log";

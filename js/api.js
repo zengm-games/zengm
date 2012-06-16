@@ -86,12 +86,51 @@ define(["db", "core/game", "util/helpers", "util/lock", "util/playMenu"], functi
     }
 
     function gameLogList(abbrev, season) {
-        var season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
+        var abbrev = typeof abbrev !== "undefined" ? abbrev : undefined;
+        [tid, abbrev] = helpers.validateAbbrev(abbrev);
+        var season = typeof season !== "undefined" ? season : undefined;
         season = helpers.validateSeason(season);
-        var abbrev = typeof req.params.abbrev !== "undefined" ? req.params.abbrev : undefined;
-        [tid, abbrev] = helpers.validateAbbrev(abbrev)
 
-        g.dbl.transaction(["games"]).objectStore("games").getAll().onsuccess = function(event) { console.log(event.target.result) };
+        var games = [];
+        g.dbl.transaction(["games"]).objectStore("games").index("season").openCursor(IDBKeyRange.only(g.season)).onsuccess = function(event) {
+            var cursor = event.target.result;
+            if (cursor) {
+                var game = cursor.value;
+console.log(tid + ' TID ' + game.teams[0].tid + ' TID ' + game.teams[1].tid);
+console.log(game);
+
+                // Check tid
+                var tidMatch = false;
+                if (game.teams[0].tid === tid) {
+                    tidMatch = true;
+                    var home = true;
+                    var pts = game.teams[0].teamStats.pts;
+                    var oppPts = game.teams[1].teamStats.pts;
+                }
+                else if (game.teams[1].tid === tid) {
+                    tidMatch = true;
+                    var home = false;
+                    var pts = game.teams[1].teamStats.pts;
+                    var oppPts = game.teams[0].teamStats.pts;
+                }
+
+
+                if (tidMatch) {
+                    if (pts > oppPts) {
+                        var won = true;
+                    }
+                    else {
+                        var won = false;
+                    }
+                    games.push({gid: game.gid, home: home, oppAbbrev: "OPP", won: won, pts: pts, oppPts: oppPts});
+                }
+
+                cursor.continue();
+            }
+            else {
+                console.log(games);
+            }
+        };
 
 //        r = g.dbex('SELECT gid, home, (SELECT abbrev FROM team_attributes WHERE tid = opp_tid AND season = :season) as opponent_abbrev, won, pts, opp_pts FROM team_stats WHERE tid = :tid AND season = :season', season=season, tid=tid)
 //        games = r.fetchall()

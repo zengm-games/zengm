@@ -203,7 +203,7 @@ define(["core/gameSim", "util/lock", "util/playMenu", "util/random"], function(g
     }
 
     Game.prototype.writeGameStats = function () {
-        var gameStats = {gid: this.id, season: g.season, playoffs: this.playoffs, teams: [{teamStats: {}, playerStats: []}, {teamStats: {}, playerStats: []}]};
+        var gameStats = {gid: this.id, season: g.season, playoffs: this.playoffs, teams: [{tid: this.team[0].id, teamStats: {}, playerStats: []}, {tid: this.team[1].id, teamStats: {}, playerStats: []}]};
         for (var t=0; t<2; t++) {
             keys = ['min', 'fg', 'fga', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
             for (var i=0; i<keys.length; i++) {

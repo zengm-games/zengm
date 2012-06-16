@@ -452,7 +452,7 @@ console.log(schedule.length);
                                 teams.push(t);
                                 teams_loaded += 1;
                                 if (teams_loaded == 30) {
-                                    teams.sort(function(a, b) {  return a.id - b.id; }); // Order teams by tid
+                                    teams.sort(function (a, b) {  return a.id - b.id; }); // Order teams by tid
 
                                     // Play games
                                     if ((schedule && schedule.length > 0) || playoffs_continue) {

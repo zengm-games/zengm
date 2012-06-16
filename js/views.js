@@ -120,17 +120,54 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
 
             var season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
             season = helpers.validateSeason(season);
-            var seasons = helpers.getSeasons(season)
+            var seasons = helpers.getSeasons(season);
 
-            var confs = []
-            for (var i=0; i<g.confs.length; i++) {
-                confs.push({name: g.confs[i].name, divs: [], teams: []});
-                for (var j=0; j<g.divs.length; j++) {
-                    if (g.divs[j].cid == g.confs[i].cid) {
-                        confs[i].divs.push({name: g.divs[j].name, teams: []});
+            g.dbl.transaction(["teams"]).objectStore("teams").index("season").getAll(season).onsuccess = function(event) {
+                var teamsAll = event.target.result;
+                var teams = [];
+                var keys = ["tid", "cid", "did", "abbrev", "region", "name", "won", "lost", "wonDiv", "lostDiv", "wonConf", "lostConf"];  // Attributes to keep from teamStore
+                for (var i=0; i<teamsAll.length; i++) {
+                    teams[i] = {};
+                    for (var j=0; j<keys.length; j++) {
+                        teams[i][keys[j]] = teamsAll[i][keys[j]];
+                    }
+                    teams[i].winp = 0
+                    if (teams[i].won + teams[i].lost > 0) {
+                        teams[i].winp = teams[i].won / (teams[i].won + teams[i].lost);
                     }
                 }
-            }
+                teams.sort(function (a, b) {  return b.winp - a.winp; }); // Sort by winning percentage
+
+                var confs = []
+                for (var i=0; i<g.confs.length; i++) {
+                    var confTeams = [];
+                    for (var k=0; k<teams.length; k++) {
+                        if (g.confs[i].cid == teams[k].cid) {
+                            confTeams.push(teams[k]);
+                        }
+                    }
+
+                    confs.push({name: g.confs[i].name, divs: [], teams: confTeams});
+
+                    for (var j=0; j<g.divs.length; j++) {
+                        if (g.divs[j].cid == g.confs[i].cid) {
+                            var divTeams = [];
+                            for (var k=0; k<teams.length; k++) {
+                                if (g.divs[j].did == teams[k].did) {
+                                    divTeams.push(teams[k]);
+                                }
+                            }
+
+                            confs[i].divs.push({name: g.divs[j].name, teams: divTeams});
+                        }
+                    }
+                }
+
+                var template = Handlebars.templates["standings"];
+                data["league_content"] = template({g: g, confs: confs, seasons: seasons, season: season});
+
+                bbgm.ajaxUpdate(data);
+            };
 
 /*        r = g.dbex('SELECT * FROM team_attributes as ta WHERE ta.did IN (%s) AND season = :season ORDER BY CASE won + lost WHEN 0 THEN 0 ELSE won / (won + lost) END DESC' % (divisions,), season=view_season)
         confs[-1]['teams'] = r.fetchall()
@@ -141,10 +178,6 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
             confs[-1]['divisions'].append({'name': division_name})
             confs[-1]['divisions'][-1]['teams'] = r.fetchall()*/
 
-            var template = Handlebars.templates["standings"];
-            data["league_content"] = template({g: g, confs: confs, seasons: seasons, season: season});
-
-            bbgm.ajaxUpdate(data);
         });
 
     }

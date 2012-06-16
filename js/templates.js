@@ -118,7 +118,12 @@ function program6(depth0,data,depth3) {
   stack1 = foundHelper || depth0.lost;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lost", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "</td><td>%</td><td>GB</td><td>";
+  buffer += escapeExpression(stack1) + "</td><td>";
+  foundHelper = helpers.winp;
+  stack1 = foundHelper || depth0.winp;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "winp", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</td><td>GB</td><td>";
   foundHelper = helpers.wonHome;
   stack1 = foundHelper || depth0.wonHome;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }

@@ -44,7 +44,7 @@ define([], function() {
     }
 
     // For AJAX updating pages
-    function ajaxUpdate(data, url) {
+    function ajaxUpdate(data) {
         if (data.hasOwnProperty('title')) {
             $('title').text(data['title'] + ' - Basketball GM');
         }
@@ -53,9 +53,6 @@ define([], function() {
         }
         if (data.hasOwnProperty('content')) {
             $('#content').html(data['content']);
-        }
-        if (arguments.length == 2) { // Only if a url is passed
-            history.pushState(data, '', url);
         }
         if (data.hasOwnProperty('message')) {
             alert(data['message']);
@@ -224,6 +221,7 @@ define([], function() {
     });
 
     return {
-        ajaxUpdate: ajaxUpdate
+        ajaxUpdate: ajaxUpdate,
+        dropdown: dropdown
     };
 });

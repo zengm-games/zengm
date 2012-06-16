@@ -33,7 +33,6 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
 
     function init_db(req) {
         var data = {"title": "Initialize Database"};
-        var url = "/init_db";
 
         data["content"] = "Resetting databases..."
 
@@ -65,31 +64,29 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
 
         console.log("Done!");
 
-        bbgm.ajaxUpdate(data, url);
+        bbgm.ajaxUpdate(data);
     }
 
     function dashboard(req) {
         var data = {"title": "Dashboard"};
-        var url = "/";
 
         db.getAll(g.dbm, "leagues", function (leagues) {
             var template = Handlebars.templates['dashboard'];
             data["content"] = template({leagues: leagues});
 
-            bbgm.ajaxUpdate(data, url);
+            bbgm.ajaxUpdate(data);
         });
     }
 
     function new_league(req) {
         var data = {"title": "Create New League"};
-        var url = "/new_league";
 
         if (req.method === "get") {
             db.getAll(g.dbm, "teams", function (teams) {
                 var template = Handlebars.templates['new_league'];
                 data["content"] = template({teams: teams});
 
-                bbgm.ajaxUpdate(data, url);
+                bbgm.ajaxUpdate(data);
             });
         }
         else if (req.method === "post") {
@@ -109,23 +106,29 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
     function league_dashboard(req) {
         beforeLeague(req, function() {
             var data = {"title": "Dashboard - League " + g.lid};
-            var url = "/l/" + g.lid;
 
-            var template = Handlebars.templates['league_dashboard'];
+            var template = Handlebars.templates["league_dashboard"];
             data["league_content"] = template({g: g});
 
-            bbgm.ajaxUpdate(data, url);
+            bbgm.ajaxUpdate(data);
         });
     }
 
     function standings(req) {
+        beforeLeague(req, function() {
+            var data = {"title": "Standings - League " + g.lid};
+
+            var template = Handlebars.templates["standings"];
+            data["league_content"] = template({g: g});
+
+            bbgm.ajaxUpdate(data);
+        });
 
     }
 
     function schedule(req) {
         beforeLeague(req, function() {
             var data = {"title": "Schedule - League " + g.lid};
-            var url = "/l/" + g.lid + "/schedule";
 
             season.getSchedule(0, function (schedule_) {
                 games = [];
@@ -147,7 +150,7 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
 
                 var template = Handlebars.templates["schedule"];
                 data["league_content"] = template({g: g, games: games});
-                bbgm.ajaxUpdate(data, url);
+                bbgm.ajaxUpdate(data);
             });
 
         });
@@ -161,7 +164,6 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
             viewSeason = helpers.validateSeason(viewSeason);
 
             var data = {"title": "Game Log - League " + g.lid};
-            var url = "/l/" + g.lid + "/game_log";
 
             var seasons = [{season: 2012, selected: true}, {season: 2013, selected: false}, {season: 2014, selected: false}];
             g.dbl.transaction(["teams"]).objectStore("teams").index("season").getAll(viewSeason).onsuccess = function(event) {
@@ -182,7 +184,7 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
                 var template = Handlebars.templates['game_log'];
                 data["league_content"] = template({g: g, teams: teams, seasons: seasons});
 
-                bbgm.ajaxUpdate(data, url);
+                bbgm.ajaxUpdate(data);
             };
 
         });

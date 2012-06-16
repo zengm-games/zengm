@@ -6,11 +6,9 @@ var g = {
     numTeams: 30
 }
 
-requirejs(['db', 'views', 'bbgm', "api"],
-function (db, views, bbgm, api) {
-console.log(g);
-
+requirejs(["db", "views", "bbgm", "api"], function (db, views, bbgm, api) {
     window.api = api;
+    window.bbgm = bbgm;
 
     g.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
     request = db.connect_meta();
@@ -34,6 +32,7 @@ console.log(g);
 
             // League views
             this.get('/l/:lid', views.league_dashboard);
+            this.get('/l/:lid/standings', views.standings);
             this.get('/l/:lid/schedule', views.schedule);
             this.get('/l/:lid/game_log', views.game_log);
             this.get('/l/:lid/game_log/:viewSeason', views.game_log);

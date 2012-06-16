@@ -85,12 +85,11 @@ define(["db", "core/game", "util/helpers", "util/lock", "util/playMenu"], functi
 //        return {url: url};
     }
 
-    function gameLogList(abbrev, season, firstTime) {
-        abbrev = typeof abbrev !== "undefined" ? abbrev : undefined;
+    function gameLogList(abbrev, season, firstTime, cb) {
         [tid, abbrev] = helpers.validateAbbrev(abbrev);
-        season = typeof season !== "undefined" ? season : undefined;
         season = helpers.validateSeason(season);
-        firstTime = typeof season !== "undefined" ? firstTime : false;
+console.log(season);
+console.log(cb);
 
         var games = [];
         g.dbl.transaction(["games"]).objectStore("games").index("season").openCursor(IDBKeyRange.only(g.season)).onsuccess = function(event) {
@@ -129,19 +128,40 @@ define(["db", "core/game", "util/helpers", "util/lock", "util/playMenu"], functi
             }
             else {
                 var template = Handlebars.templates["gameLogList"];
-                $('#game_log_list').html(template({games: games}));
-
-                if (firstTime) {
-                    // Click the first one to show its boxscore by default
-                    $('#game_log_list tbody tr').first().click();
-                }
+                html = template({games: games});
+                cb(html);
             }
         };
+    }
 
+    function boxScore(gid, cb) {
+/*        gid = parseInt(gid, 10);
+        teams = []
+        r = g.dbex('SELECT * FROM team_stats WHERE gid = :gid', gid=gid)
+        for row in r.fetchall():
+            teams.append(dict(row))
+
+            r = g.dbex('SELECT region, name, abbrev FROM team_attributes WHERE tid = :tid', tid=teams[-1]['tid'])
+            teams[-1]['region'], teams[-1]['name'], teams[-1]['abbrev'] = r.fetchone()
+
+            r = g.dbex('SELECT pa.pid, name, pos, min, fg, fga, tp, tpa, ft, fta, orb, drb, orb + drb AS rebounds, ast, tov, stl, blk, pf, pts FROM player_attributes as pa, player_stats as ps WHERE pa.pid = ps.pid AND ps.gid = :gid AND pa.tid = :tid ORDER BY gs DESC, min DESC', gid=gid, tid=teams[-1]['tid'])
+            teams[-1]['players'] = r.fetchall()
+
+            # Total rebounds
+            teams[-1]['rebounds'] = teams[-1]['orb'] + teams[-1]['drb']
+
+        # Who won?
+        if teams[0]['pts'] > teams[1]['pts']:
+            won_lost = {'won_pts': teams[0]['pts'], 'won_region': teams[0]['region'], 'won_name': teams[0]['name'], 'won_abbrev': teams[0]['abbrev'], 'lost_pts': teams[1]['pts'], 'lost_region': teams[1]['region'], 'lost_name': teams[1]['name'], 'lost_abbrev': teams[1]['abbrev']}
+        else:
+            won_lost = {'won_pts': teams[1]['pts'], 'won_region': teams[1]['region'], 'won_name': teams[1]['name'], 'won_abbrev': teams[1]['abbrev'], 'lost_pts': teams[0]['pts'], 'lost_region': teams[0]['region'], 'lost_name': teams[0]['name'], 'lost_abbrev': teams[0]['abbrev']}
+
+        return render_template('box_score.html', teams=teams, view_season=teams[0]['season'], **won_lost)*/
     }
 
     return {
         play: play,
-        gameLogList: gameLogList
+        gameLogList: gameLogList,
+        boxScore: boxScore
     };
 });

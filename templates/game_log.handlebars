@@ -1,13 +1,26 @@
   <script type="text/javascript">
     // Load game log list table and activate form
-    $(document).ready(function() {
+    $(document).ready(function () {
+      function loadGameLogList(abbrev, season, firstTime) {
+        abbrev = typeof abbrev !== "undefined" ? abbrev : undefined;
+        season = typeof season !== "undefined" ? season : undefined;
+        firstTime = typeof season !== "undefined" ? firstTime : false;
+        api.gameLogList(abbrev, season, firstTime, function (html) {
+            $('#game_log_list').html(html);
+
+            if (firstTime) {
+                // Click the first one to show its boxscore by default
+                $('#game_log_list tbody tr').first().click();
+            }
+        });
+      }
 
       $game_log_select_season = $('#game_log_select_season')
-      $game_log_select_season.change(function(event) { api.gameLogList($game_log_select_abbrev.val(), $game_log_select_season.val()); });
+      $game_log_select_season.change(function(event) { loadGameLogList($game_log_select_abbrev.val(), $game_log_select_season.val()); });
       $game_log_select_abbrev = $('#game_log_select_abbrev')
-      $game_log_select_abbrev.change(function(event) { api.gameLogList($game_log_select_abbrev.val(), $game_log_select_season.val()); });
+      $game_log_select_abbrev.change(function(event) { loadGameLogList($game_log_select_abbrev.val(), $game_log_select_season.val()); });
       if ($game_log_select_season.length && $game_log_select_abbrev.length) {
-        api.gameLogList($game_log_select_abbrev.val(), $game_log_select_season.val(), true);
+        loadGameLogList($game_log_select_abbrev.val(), $game_log_select_season.val(), true);
       }
 
       // Clickable rows for game log list table

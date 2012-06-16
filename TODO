@@ -22,6 +22,7 @@ template loop count - how?
 - class="separator"
   - box score (top 5)
   - standings (top 8)
+view_season can be made just season because of handelbars' scoping
 
 ---
 

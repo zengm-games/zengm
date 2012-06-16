@@ -38,14 +38,13 @@ function program4(depth0,data,depth1) {
   
   var buffer = "", stack1;
   buffer += "\n  <h2>";
-  foundHelper = helpers.conference;
-  stack1 = foundHelper || depth0.conference;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.name);
+  foundHelper = helpers.name;
+  stack1 = foundHelper || depth0.name;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "conference.name", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "name", { hash: {} }); }
   buffer += escapeExpression(stack1) + "</h2>\n  <div class=\"row-fluid\">\n    <div class=\"span9\">\n      ";
-  foundHelper = helpers.divisions;
-  stack1 = foundHelper || depth0.divisions;
+  foundHelper = helpers.divs;
+  stack1 = foundHelper || depth0.divs;
   tmp1 = self.programWithDepth(program5, data, depth1);
   tmp1.hash = {};
   tmp1.fn = tmp1;
@@ -120,45 +119,45 @@ function program6(depth0,data,depth3) {
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lost", { hash: {} }); }
   buffer += escapeExpression(stack1) + "</td><td>%</td><td>GB</td><td>";
-  foundHelper = helpers.won_home;
-  stack1 = foundHelper || depth0.won_home;
+  foundHelper = helpers.wonHome;
+  stack1 = foundHelper || depth0.wonHome;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "won_home", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "wonHome", { hash: {} }); }
   buffer += escapeExpression(stack1) + "-";
-  foundHelper = helpers.lost_home;
-  stack1 = foundHelper || depth0.lost_home;
+  foundHelper = helpers.lostHome;
+  stack1 = foundHelper || depth0.lostHome;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lost_home", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lostHome", { hash: {} }); }
   buffer += escapeExpression(stack1) + "</td><td>";
-  foundHelper = helpers.won_road;
-  stack1 = foundHelper || depth0.won_road;
+  foundHelper = helpers.wonRoad;
+  stack1 = foundHelper || depth0.wonRoad;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "won_road", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "wonRoad", { hash: {} }); }
   buffer += escapeExpression(stack1) + "-";
-  foundHelper = helpers.lost_road;
-  stack1 = foundHelper || depth0.lost_road;
+  foundHelper = helpers.lostRoad;
+  stack1 = foundHelper || depth0.lostRoad;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lost_road", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lostRoad", { hash: {} }); }
   buffer += escapeExpression(stack1) + "</td><td>";
-  foundHelper = helpers.won_div;
-  stack1 = foundHelper || depth0.won_div;
+  foundHelper = helpers.wonDiv;
+  stack1 = foundHelper || depth0.wonDiv;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "won_div", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "wonDiv", { hash: {} }); }
   buffer += escapeExpression(stack1) + "-";
-  foundHelper = helpers.lost_div;
-  stack1 = foundHelper || depth0.lost_div;
+  foundHelper = helpers.lostDiv;
+  stack1 = foundHelper || depth0.lostDiv;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lost_div", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lostDiv", { hash: {} }); }
   buffer += escapeExpression(stack1) + "</td><td>";
-  foundHelper = helpers.won_conf;
-  stack1 = foundHelper || depth0.won_conf;
+  foundHelper = helpers.wonConf;
+  stack1 = foundHelper || depth0.wonConf;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "won_conf", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "wonConf", { hash: {} }); }
   buffer += escapeExpression(stack1) + "-";
-  foundHelper = helpers.lost_conf;
-  stack1 = foundHelper || depth0.lost_conf;
+  foundHelper = helpers.lostConf;
+  stack1 = foundHelper || depth0.lostConf;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lost_conf", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lostConf", { hash: {} }); }
   buffer += escapeExpression(stack1) + "</td><td>Streak</td><td>L10</td></tr>\n          ";
   return buffer;}
 
@@ -184,7 +183,7 @@ function program8(depth0,data,depth2) {
   buffer += escapeExpression(stack1) + "</a></td><td align=\"right\">GB</td></tr>\n      ";
   return buffer;}
 
-  buffer += "<script type=\"text/javascript\">\n  $(document).ready(function() {\n      bbgm.dropdown($('#standings_select_season'));\n  });\n</script>\n\n<form action=\"/l/";
+  buffer += "<script type=\"text/javascript\">\n  $(document).ready(function() {\n      dropdown($('#standings_select_season'));\n  });\n</script>\n\n<form action=\"/l/";
   foundHelper = helpers['g'];
   stack1 = foundHelper || depth0['g'];
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
@@ -201,8 +200,8 @@ function program8(depth0,data,depth2) {
   else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n  </select>\n</form>\n\n<h1>Standings</h1>\n\n";
-  foundHelper = helpers.conferences;
-  stack1 = foundHelper || depth0.conferences;
+  foundHelper = helpers.confs;
+  stack1 = foundHelper || depth0.confs;
   tmp1 = self.programWithDepth(program4, data, depth0);
   tmp1.hash = {};
   tmp1.fn = tmp1;

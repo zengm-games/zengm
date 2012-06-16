@@ -439,7 +439,7 @@ console.log(tids.length);
     'home_tid', and 'away_tid'.
     */
     function getSchedule(numGames, cb) {
-        var numGames = typeof numGames !== "undefined" ? parseInt(numGames, 10) : 0;
+        numGames = typeof numGames !== "undefined" ? parseInt(numGames, 10) : 0;
         g.dbl.transaction(["schedule"]).objectStore("schedule").getAll().onsuccess = function(event) {
             var schedule = event.target.result;
             if (numGames > 0) {

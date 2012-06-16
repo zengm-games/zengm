@@ -1,4 +1,4 @@
-define([], function() {
+define(["util/playMenu", "util/random"], function(playMenu, random) {
     /*Set a new phase of the game.
 
     This function is called to do all the crap that must be done during
@@ -19,7 +19,8 @@ define([], function() {
         to be sent to the client.
     */
     function newPhase(phase) {
-        // Prevent code running twice
+        newSchedule(function () {});
+/*        // Prevent code running twice
         if (phase == g.phase) {
             return
 
@@ -43,7 +44,7 @@ define([], function() {
             pids = []
             r = g.dbex('SELECT pid FROM player_attributes WHERE tid != :tid', tid=c.PLAYER_RETIRED)
             for pid, in r.fetchall()) {
-                pids.append(pid)
+                pids.push(pid)
             up = player.Player()
             for pid in pids) {
                 up.load(pid)
@@ -79,7 +80,7 @@ define([], function() {
                         // Should auto-add players
                         pass
 
-            new_schedule()
+            newSchedule()
 
             // Auto sort rosters (except player's team)
             for t in range(30)) {
@@ -189,104 +190,136 @@ define([], function() {
 
         g.dbex('UPDATE game_attributes SET phase = :phase', phase=g.phase)
 
-        play_menu.set_phase(phase_text)
-        play_menu.refresh_options()
+        playMenu.setPhase(phase_text);
+        playMenu.refreshOptions();
 
-        return false
+        return false*/
     }
 
     /*Creates a new regular season schedule with appropriate division and
     conference matchup distributions.
     */
-    function newSchedule() {
-        teams = []
-        r = g.dbex('SELECT tid, did, (SELECT cid FROM divisions as ld WHERE ld.did = ta.did) FROM team_attributes as ta WHERE season = :season', season=g.season)
+    function newSchedule(cb) {
+        var teams = [];
+/*        r = g.dbex('SELECT tid, did, (SELECT cid FROM divisions as ld WHERE ld.did = ta.did) FROM team_attributes as ta WHERE season = :season', season=g.season)
         for row in r.fetchall()) {
-            teams.append({'tid': row[0], 'did': row[1], 'cid': row[2], 'home_games': 0, 'away_games': 0})
-        tids = []  // tid_home, tid_away
+            teams.push({'tid': row[0], 'did': row[1], 'cid': row[2], 'home_games': 0, 'away_games': 0})*/
+        var tids = [];  // tid_home, tid_away
 
-        for i in range(len(teams))) {
-            for j in range(len(teams))) {
-                if (teams[i]['tid'] != teams[j]['tid']) {
-                    game = [teams[i]['tid'], teams[j]['tid']]
+        g.dbl.transaction(["teams"]).objectStore("teams").index("season").getAll(g.season).onsuccess = function(event) {
+            // Collect info needed for scheduling
+            for (var i=0; i<event.target.result.length; i++) {
+                var team = event.target.result[i];
+                teams.push({tid: team.tid, cid: team.cid, did: team.did, homeGames: 0, awayGames: 0});
+            }
+console.log('newSchedule');
+console.log(teams);
+            for (var i=0; i<teams.length; i++) {
+                for (var j=0; j<teams.length; j++) {
+                    if (teams[i].tid != teams[j].tid) {
+                        game = [teams[i].tid, teams[j].tid];
 
-                    // Constraint: 1 home game vs. each team in other conference
-                    if (teams[i]['cid'] != teams[j]['cid']) {
-                        tids.append(game)
-                        teams[i]['home_games'] += 1
-                        teams[j]['away_games'] += 1
+                        // Constraint: 1 home game vs. each team in other conference
+                        if (teams[i].cid != teams[j].cid) {
+                            tids.push(game);
+                            teams[i].homeGames += 1;
+                            teams[j].awayGames += 1;
+                        }
 
-                    // Constraint: 2 home schedule vs. each team in same division
-                    if (teams[i]['did'] == teams[j]['did']) {
-                        tids.append(game)
-                        tids.append(game)
-                        teams[i]['home_games'] += 2
-                        teams[j]['away_games'] += 2
+                        // Constraint: 2 home schedule vs. each team in same division
+                        if (teams[i].did == teams[j].did) {
+                            tids.push(game);
+                            tids.push(game);
+                            teams[i].homeGames += 2;
+                            teams[j].awayGames += 2;
+                        }
 
-                    // Constraint: 1-2 home schedule vs. each team in same conference and different division
-                    // Only do 1 now
-                    if ((teams[i]['cid'] == teams[j]['cid'] and
-                        teams[i]['did'] != teams[j]['did'])) {
-                        tids.append(game)
-                        teams[i]['home_games'] += 1
-                        teams[j]['away_games'] += 1
+                        // Constraint: 1-2 home schedule vs. each team in same conference and different division
+                        // Only do 1 now
+                        if (teams[i].cid == teams[j].cid && teams[i].did != teams[j].did) {
+                            tids.push(game);
+                            teams[i].homeGames += 1;
+                            teams[j].awayGames += 1;
+                        }
+                    }
+                }
+            }
 
-        // Constraint: 1-2 home schedule vs. each team in same conference and different division
-        // Constraint: We need 8 more of these games per home team!
-        tids_by_conference = [[], []]
-        dids = [[], []]
-        for i in range(len(teams))) {
-            tids_by_conference[teams[i]['cid']].append(i)
-            dids[teams[i]['cid']].append(teams[i]['did'])
-        for d in range(2)) {
-            matchups = []
-            matchups.append(range(15))
-            games = 0
-            while games < 8) {
-                new_matchup = []
-                n = 0
-                while n <= 14:  // 14 = num teams in conference - 1
-                    iters = 0
-                    while true) {
-                        try_n = random.randint(0, 14)
-                        // Pick try_n such that it is in a different division than n and has not been picked before
-                        if (dids[d][try_n] != dids[d][n] and try_n not in new_matchup) {
-                            good = true
-                            // Check for duplicate games
-                            for matchup in matchups) {
-                                if (matchup[n] == try_n) {
-                                    good = false
-                                    break
-                            if (good) {
-                                new_matchup.append(try_n)
-                                break
-                        iters += 1
-                        // Sometimes this gets stuck (for example, first 14 teams in fine but 15th team must play itself)
-                        // So, catch these situations and reset the new_matchup
-                        if (iters > 50) {
-                            new_matchup = []
-                            n = -1
-                            break
-                    n += 1
-                matchups.append(new_matchup)
-                games += 1
-            matchups.pop(0)  // Remove the first row in matchups
-            for matchup in matchups) {
-                for t in matchup) {
-                    i = tids_by_conference[d][t]
-                    j = tids_by_conference[d][matchup[t]]
-                    game = [teams[i]['tid'], teams[j]['tid']]
-                    tids.append(game)
-                    teams[i]['home_games'] += 1
-                    teams[j]['away_games'] += 1
+            // Constraint: 1-2 home schedule vs. each team in same conference and different division
+            // Constraint: We need 8 more of these games per home team!
+            tidsByConf = [[], []];
+            dids = [[], []];
+            for (var i=0; i<teams.length; i++) {
+                tidsByConf[teams[i].cid].push(i);
+                dids[teams[i].cid].push(teams[i].did);
+            }
 
-        random.shuffle(tids)
-        set_schedule(tids)
+            for (var cid=0; cid<2; cid++) {
+                matchups = [];
+                matchups.push([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]);
+                games = 0
+                while (games < 8) {
+                    newMatchup = [];
+                    n = 0;
+                    while (n <= 14) {  // 14 = num teams in conference - 1
+                        iters = 0;
+                        while (true) {
+                            tryNum = random.randInt(0, 14);
+                            // Pick tryNum such that it is in a different division than n and has not been picked before
+                            if (dids[cid][tryNum] != dids[cid][n] && newMatchup.indexOf(tryNum) < 0) {
+                                good = true;
+                                // Check for duplicate games
+                                for (var j=0; j<matchups.length; j++) {
+                                    matchup = matchups[j];
+                                    if (matchup[n] == tryNum) {
+                                        good = false;
+                                        break;
+                                    }
+                                }
+                                if (good) {
+                                    newMatchup.push(tryNum);
+                                    break;
+                                }
+                            }
+                            iters += 1;
+                            // Sometimes this gets stuck (for example, first 14 teams in fine but 15th team must play itself)
+                            // So, catch these situations and reset the newMatchup
+                            if (iters > 50) {
+                                newMatchup = [];
+                                n = -1;
+                                break;
+                            }
+                        }
+                        n += 1;
+                    }
+                    matchups.push(newMatchup);
+                    games += 1;
+                }
+                matchups.shift()  // Remove the first row in matchups
+                for (var j=0; j<matchups.length; j++) {
+                    matchup = matchups[j];
+                    for (var k=0; k<matchup.length; k++) {
+                        t = matchup[k];
+                        ii = tidsByConf[cid][t];
+                        jj = tidsByConf[cid][matchup[t]];
+                        game = [teams[ii].tid, teams[jj].tid];
+                        tids.push(game);
+                        teams[ii].homeGames += 1;
+                        teams[jj].awayGames += 1;
+                    }
+                }
+            }
+
+console.log('TIDS');
+console.log(tids.length);
+            random.shuffle(tids);
+            setSchedule(tids, cb);
+        }
     }
 
     /*Creates a single day's schedule for an in-progress playoffs.*/
     function newSchedulePlayoffsDay() {
-        num_active_teams = 0
+/*        num_active_teams = 0
 
         // Make today's  playoff schedule
         tids = []
@@ -297,7 +330,7 @@ define([], function() {
 
         r = g.dbex('SELECT tid_home, tid_away FROM playoff_series WHERE won_home < 4 AND won_away < 4 AND round = :round AND season = :season', round=current_round, season=g.season)
         for tid_home, tid_away in r.fetchall()) {
-            tids.append([tid_home, tid_away])
+            tids.push([tid_home, tid_away])
             active_series = true
             num_active_teams += 2
         if (len(tids) > 0) {
@@ -334,12 +367,12 @@ define([], function() {
                 else {
                     g.dbex(query, round=current_round, season=g.season, tid_home=winners[i + 1][0], tid_away=winners[i][0], seed_home=winners[i + 1][1], seed_away=winners[i][1])
 
-        return num_active_teams;
+        return num_active_teams;*/
     }
 
     /*Computes the awards at the end of a season.*/
     function awards() {
-        // Cache averages
+/*        // Cache averages
         g.dbex('CREATE TEMPORARY TABLE awards_avg (pid INTEGER PRIMARY KEY, name VARCHAR(255), tid INTEGER, abbrev VARCHAR(3), draft_year INTEGER, games_played INTEGER, games_started INTEGER, min FLOAT, pts FLOAT, trb FLOAT, ast FLOAT, blk FLOAT, stl FLOAT)')
         g.dbex('INSERT INTO awards_avg (pid, name, tid, abbrev, draft_year, games_played, games_started, min, pts, trb, ast, blk, stl) (SELECT pa.pid, pa.name, pa.tid, ta.abbrev, pa.draft_year, SUM(CASE WHEN ps.min > 0 THEN 1 ELSE 0 END) AS games_played, SUM(ps.gs) AS games_started, AVG(ps.min) AS min, AVG(ps.pts) AS pts, AVG(ps.orb+ps.drb) AS trb, AVG(ps.ast) AS ast, AVG(ps.blk) AS blk, AVG(ps.stl) AS stl FROM player_attributes as pa, player_stats as ps, team_attributes as ta WHERE pa.pid = ps.pid AND ps.season = :season AND ps.playoffs = FALSE AND ta.tid = pa.tid AND ta.season = ps.season GROUP BY ps.pid)', season=g.season)
 
@@ -362,7 +395,7 @@ define([], function() {
         g.dbex('INSERT INTO awards_all_league (season, team_type, pid, name, abbrev, pts, trb, ast, blk, stl) (SELECT :season, \'league\', pid, name, abbrev, pts, trb, ast, blk, stl FROM awards_avg ORDER BY (0.75 * pts) + ast + trb DESC LIMIT 15)', season=g.season)
         g.dbex('INSERT INTO awards_all_league (season, team_type, pid, name, abbrev, pts, trb, ast, blk, stl) (SELECT :season, \'defensive\', pid, name, abbrev, pts, trb, ast, blk, stl FROM awards_avg ORDER BY trb + 5 * blk + 5 * stl DESC LIMIT 15)', season=g.season)
 
-        g.dbex('DROP TABLE awards_avg')
+        g.dbex('DROP TABLE awards_avg')*/
     }
 
     /*Save the schedule to the database, overwriting what's currently there.
@@ -373,7 +406,6 @@ define([], function() {
     */
     function setSchedule(tids, cb) {
         schedule = []
-        for home_tid, away_tid in tids) {
         for (var i=0; i<tids.length; i++) {
             schedule.push({homeTid: tids[i][0], awayTid: tids[i][1]});
         }

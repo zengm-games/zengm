@@ -1,4 +1,4 @@
-define(["bbgm", "db", "core/game", "core/league", "util/helpers", "util/playMenu"], function(bbgm, db, game, league, helpers, playMenu) {
+define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers", "util/playMenu"], function(bbgm, db, game, league, season, helpers, playMenu) {
     function beforeLeague(req, cb) {
         g.lid = parseInt(req.params.lid, 10);
         helpers.loadGameAttributes();
@@ -32,7 +32,7 @@ define(["bbgm", "db", "core/game", "core/league", "util/helpers", "util/playMenu
     }
 
     return {
-        init_db: function () {
+        init_db: function (req) {
             var data = {"title": "Initialize Database"};
             var url = "/init_db";
 
@@ -69,7 +69,7 @@ define(["bbgm", "db", "core/game", "core/league", "util/helpers", "util/playMenu
             bbgm.ajaxUpdate(data, url);
         },
 
-        dashboard: function () {
+        dashboard: function (req) {
             var data = {"title": "Dashboard"};
             var url = "/";
 
@@ -95,7 +95,6 @@ define(["bbgm", "db", "core/game", "core/league", "util/helpers", "util/playMenu
             }
             else if (req.method === "post") {
                 tid = parseInt(req.params["tid"], 10);
-console.log("New tid: " + tid);
                 if (tid >= 0 && tid <= 29) {
                     league.new(tid);
                 }
@@ -109,7 +108,6 @@ console.log("New tid: " + tid);
         },
 
         league_dashboard: function (req) {
-console.log(this);
             beforeLeague(req, function() {
                 var data = {"title": "Dashboard - League " + g.lid};
                 var url = "/l/" + g.lid;
@@ -154,8 +152,8 @@ console.log(this);
                 };
 
             });
-        }
+        },
 
-
+        schedule: schedule
     };
 });

@@ -27,7 +27,7 @@ define([], function() {
                     {"tid": 6, "cid": 1, "did": 4, "region": "Denver", "name": "Ninjas", "abbrev": "DEN"},
                     {"tid": 7, "cid": 0, "did": 1, "region": "Detroit", "name": "Pumps", "abbrev": "DET"},
                     {"tid": 8, "cid": 1, "did": 5, "region": "Golden State", "name": "War Machine", "abbrev": "GSW"},
-                    {"tid": 9, "cid": 0, "did": 3, "region": "Houston", "name": "Rock Throwers", "abbrev": "HOU"},
+                    {"tid": 9, "cid": 1, "did": 3, "region": "Houston", "name": "Rock Throwers", "abbrev": "HOU"},
                     {"tid": 10, "cid": 0, "did": 1, "region": "Indiana", "name": "Passers", "abbrev": "IND"},
                     {"tid": 11, "cid": 1, "did": 5, "region": "Los Angeles", "name": "Cutters", "abbrev": "LAC"},
                     {"tid": 12, "cid": 1, "did": 5, "region": "Los Angeles", "name": "Lagoons", "abbrev": "LAL"},

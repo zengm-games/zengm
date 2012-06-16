@@ -1,4 +1,4 @@
-define(["db", "core/player", "util/helpers", "util/random"], function(db, player, helpers, random) {
+define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "util/random"], function(db, player, season, helpers, playMenu, random) {
     function new_(tid) {
         l = {'tid': tid, 'season': g.startingSeason, 'phase': 0, 'games_in_progress': false, 'stop_game': false, 'pm_status': '', 'pm_phase': 'Phase 1'}
         var leaguesStore = g.dbm.transaction(["leagues"], IDBTransaction.READ_WRITE).objectStore("leagues");
@@ -6,7 +6,6 @@ define(["db", "core/player", "util/helpers", "util/random"], function(db, player
             lid = event.target.result;
             t = event.target.transaction;
             db.getAll(g.dbm, "teams", function (teams) {
-console.log(teams);
                 // Create new league database
                 request = db.connect_league(lid);
                 request.onsuccess = function (event) {
@@ -112,20 +111,15 @@ console.log(teams);
 
                     gameAttributes = {userTid: tid, season: g.startingSeason, phase: 0, gamesInProgress: false, stopGames: false, pmStatus: '', pmPhase: ''};
                     helpers.setGameAttributes(gameAttributes);
+
+                    // Make schedule, start season
+                    season.newPhase(c.PHASE_REGULAR_SEASON)
+                    playMenu.setStatus('Idle')
 /*
-        # Set and get global game attributes
-        g.dbex('UPDATE game_attributes SET tid = :tid', tid=tid)
-        r = g.dbex('SELECT tid, season, phase, version FROM game_attributes LIMIT 1')
-        g.user_tid, g.season, g.phase, g.version = r.fetchone()
-
-        # Make schedule, start season
-        season.new_phase(c.PHASE_REGULAR_SEASON)
-        play_menu.set_status('Idle')
-
-        # Auto sort player's roster (other teams will be done in season.new_phase(c.PHASE_REGULAR_SEASON))
+        // Auto sort player's roster (other teams will be done in season.new_phase(c.PHASE_REGULAR_SEASON))
         roster_auto_sort(g.user_tid)
 
-        # Default trade settings
+        // Default trade settings
         if g.user_tid == 0:
             trade_tid = 1
         else:

@@ -307,7 +307,6 @@ define(["core/gameSim", "core/season", "util/lock", "util/playMenu", "util/rando
             gm = new Game();
             gm.load(results, playoffs);
             gm.writeStats(callback);
-//            g.dbex('DELETE FROM schedule WHERE gid = :gid', gid=results['gid'])
             console.log("Saved results for game " + results['gid']);
 //        else {
 //            console.log("Ignored stale results for game " + results['gid']);
@@ -458,15 +457,19 @@ console.log(schedule.length);
                                     // Play games
                                     if ((schedule && schedule.length > 0) || playoffs_continue) {
                                         var gamesRemaining = schedule.length;
-                                        for (var i=0; i<schedule.length; i++) {
-                                            gs = new gameSim.GameSim(schedule[i]['gid'], teams[schedule[i].homeTid], teams[schedule[i].awayTid]);
-                                            var results = gs.run();
-                                            saveResults(results, g.phase == c.PHASE_PLAYOFFS, function() {
+                                        function doSaveResults(results, playoffs) {
+                                            saveResults(results, playoffs, function() {
                                                 gamesRemaining -= 1;
                                                 if (gamesRemaining == 0) {
                                                     play(num_days - 1);
                                                 }
+                                                g.dbl.transaction(["schedule"], IDBTransaction.READ_WRITE).objectStore("schedule").delete(results.gid);
                                             });
+                                        }
+                                        for (var i=0; i<schedule.length; i++) {
+                                            gs = new gameSim.GameSim(schedule[i].gid, teams[schedule[i].homeTid], teams[schedule[i].awayTid]);
+                                            var results = gs.run();
+                                            doSaveResults(results, g.phase == c.PHASE_PLAYOFFS);
                                         }
                                     }
                                 }

@@ -100,6 +100,7 @@ define(["core/gameSim", "util/lock", "util/playMenu", "util/random"], function(g
                         playerStats[keys[i]] += that.team[t].player[p].stat[keys[i]];
                     }
                     playerStats.gp += 1;
+                    playerStats.trb += that.team[t].player[p].stat['orb'] + that.team[t].player[p].stat['drb'];
 
                     cursor.update(player);
 
@@ -171,6 +172,7 @@ define(["core/gameSim", "util/lock", "util/playMenu", "util/random"], function(g
                 teamStats[keys[i]] += that.team[t].stat[keys[i]];
             }
             teamStats.gp += 1;
+            teamStats.trb += that.team[t].stat['orb'] + that.team[t].stat['drb'];
             teamStats.oppPts += that.team[t2].stat.pts;
             teamStats.att += that.att;
 
@@ -203,17 +205,19 @@ define(["core/gameSim", "util/lock", "util/playMenu", "util/random"], function(g
     }
 
     Game.prototype.writeGameStats = function () {
-        var gameStats = {gid: this.id, season: g.season, playoffs: this.playoffs, teams: [{tid: this.team[0].id, teamStats: {}, playerStats: []}, {tid: this.team[1].id, teamStats: {}, playerStats: []}]};
+        var gameStats = {gid: this.id, season: g.season, playoffs: this.playoffs, teams: [{tid: this.team[0].id, players: []}, {tid: this.team[1].id, players: []}]};
         for (var t=0; t<2; t++) {
             keys = ['min', 'fg', 'fga', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
             for (var i=0; i<keys.length; i++) {
-                gameStats.teams[t].teamStats[keys[i]] = this.team[t].stat[keys[i]];
+                gameStats.teams[t][keys[i]] = this.team[t].stat[keys[i]];
             }
+            gameStats.teams[t]["trb"] = this.team[t].stat["orb"] + this.team[t].stat["drb"];
             for (var p=0; p<this.team[t].player.length; p++) {
-                gameStats.teams[t].playerStats[p] = {};
+                gameStats.teams[t].players[p] = {name: "NAME"};
                 for (var i=0; i<keys.length; i++) {
-                    gameStats.teams[t].playerStats[p][keys[i]] = this.team[t].player[p].stat[keys[i]];
+                    gameStats.teams[t].players[p][keys[i]] = this.team[t].player[p].stat[keys[i]];
                 }
+                gameStats.teams[t].players[p]["trb"] = this.team[t].player[p].stat["orb"] + this.team[t].player[p].stat["drb"];
             }
         }
         this.transaction.objectStore("games").add(gameStats);

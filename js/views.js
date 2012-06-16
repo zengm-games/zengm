@@ -46,14 +46,14 @@ g.userTid = 4;
             }
             db.getAll(g.dbm, "leagues", function (leagues) {
                 for (var i=0; i<leagues.length; i++) {
-                    indexedDB.deleteDatabase("league" + leagues[i]["lid"]);
+                    g.indexedDB.deleteDatabase("league" + leagues[i]["lid"]);
                 }
             });
 
             // Delete any current meta database
             console.log("Delete any current meta database...");
             g.dbm.close();
-            indexedDB.deleteDatabase("meta");
+            g.indexedDB.deleteDatabase("meta");
 
             // Create new meta database
             console.log("Create new meta database...");

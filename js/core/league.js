@@ -73,11 +73,9 @@ console.log(teams);
                     var baseRatings = [30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 19, 19];
                     var pots = [70, 60, 50, 50, 55, 45, 65, 35, 50, 45, 55, 55, 40, 40];
                     for (t=-1; t<30; t++) {
-console.log('t: ' + t);
                         var goodNeutralBad = random.randInt(-1, 1);  // determines if this will be a good team or not
                         random.shuffle(pots);
                         for (p=0; p<14; p++) {
-console.log('t: ' + t + ', p: ' + p);
                             var agingYears = random.randInt(0, 13);
                             var draftYear = g.startingSeason - 1 - agingYears;
 
@@ -103,7 +101,6 @@ console.log('t: ' + t + ', p: ' + p);
                             gp.attribute["contractExp"] = contract.exp;
 
                             var entry = gp.attribute;
-console.log(entry);
                             entry.ratings = [gp.rating];
                             entry.ratings[0].season = g.startingSeason;
                             entry.stats = [{season: g.startingSeason, playoffs: false, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0}];

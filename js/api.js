@@ -100,15 +100,15 @@ define(["db", "core/game", "util/helpers", "util/lock", "util/playMenu"], functi
                 if (game.teams[0].tid === tid) {
                     tidMatch = true;
                     var home = true;
-                    var pts = game.teams[0].teamStats.pts;
-                    var oppPts = game.teams[1].teamStats.pts;
+                    var pts = game.teams[0].pts;
+                    var oppPts = game.teams[1].pts;
                     var opp = helpers.validateTid(game.teams[1].tid);
                 }
                 else if (game.teams[1].tid === tid) {
                     tidMatch = true;
                     var home = false;
-                    var pts = game.teams[1].teamStats.pts;
-                    var oppPts = game.teams[0].teamStats.pts;
+                    var pts = game.teams[1].pts;
+                    var oppPts = game.teams[0].pts;
                     var opp = helpers.validateTid(game.teams[0].tid);
                 }
 
@@ -133,7 +133,12 @@ define(["db", "core/game", "util/helpers", "util/lock", "util/playMenu"], functi
     }
 
     function boxScore(gid, cb) {
-/*        gid = parseInt(gid, 10);
+        gid = parseInt(gid, 10);
+
+        g.dbl.transaction(["games"]).objectStore("games").get(gid).onsuccess = function(event) {
+            var game = event.target.result;
+console.log(game);
+/*
         teams = []
         r = g.dbex('SELECT * FROM team_stats WHERE gid = :gid', gid=gid)
         for row in r.fetchall():
@@ -146,7 +151,7 @@ define(["db", "core/game", "util/helpers", "util/lock", "util/playMenu"], functi
             teams[-1]['players'] = r.fetchall()
 
             # Total rebounds
-            teams[-1]['rebounds'] = teams[-1]['orb'] + teams[-1]['drb']
+            teams[-1]['trb'] = teams[-1]['orb'] + teams[-1]['drb']
 
         # Who won?
         if teams[0]['pts'] > teams[1]['pts']:
@@ -156,7 +161,10 @@ define(["db", "core/game", "util/helpers", "util/lock", "util/playMenu"], functi
 
         return render_template('box_score.html', teams=teams, view_season=teams[0]['season'], **won_lost)*/
 
-        cb('AAAAA');
+            var template = Handlebars.templates["box_score"];
+            html = template({game: game});
+            cb(html);
+        };
     }
 
     return {

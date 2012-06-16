@@ -459,11 +459,11 @@ console.log(schedule.length);
                                         var gamesRemaining = schedule.length;
                                         function doSaveResults(results, playoffs) {
                                             saveResults(results, playoffs, function() {
+                                                g.dbl.transaction(["schedule"], IDBTransaction.READ_WRITE).objectStore("schedule").delete(results.gid);
                                                 gamesRemaining -= 1;
                                                 if (gamesRemaining == 0) {
                                                     play(num_days - 1);
                                                 }
-                                                g.dbl.transaction(["schedule"], IDBTransaction.READ_WRITE).objectStore("schedule").delete(results.gid);
                                             });
                                         }
                                         for (var i=0; i<schedule.length; i++) {

@@ -31,6 +31,31 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
         }
     }
 
+    function schedule(req) {
+        beforeLeague(req, function() {
+            var data = {"title": "Schedule - League " + g.lid};
+            var url = "/l/" + g.lid;
+
+            season.getSchedule(0, function (schedule_) {
+                games = [];
+                for (var i=0; i<schedule_.length; i++) {
+                    game = schedule_[i];
+                    tids = [game.homeTid, game.awayTid]
+                    if (tids.indexOf(g.userTid) >= 0) {
+                        var team = {tid: 0, abbrev: 'a', region: 'a', name: 'a'};
+                        row = {teams: [team, team], vsat: 'at'};
+                        games.push(row);
+                    }
+                }
+
+                var template = Handlebars.templates["schedule"];
+                data["league_content"] = template({games: games});
+                bbgm.ajaxUpdate(data, url);
+            });
+
+        });
+    }
+
     return {
         init_db: function (req) {
             var data = {"title": "Initialize Database"};

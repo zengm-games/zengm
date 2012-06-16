@@ -183,7 +183,7 @@ function program8(depth0,data,depth2) {
   buffer += escapeExpression(stack1) + "</a></td><td align=\"right\">GB</td></tr>\n      ";
   return buffer;}
 
-  buffer += "<script type=\"text/javascript\">\n  $(document).ready(function() {\n      dropdown($('#standings_select_season'));\n  });\n</script>\n\n<form action=\"/l/";
+  buffer += "<script type=\"text/javascript\">\n  $(document).ready(function() {\n      bbgm.dropdown($('#standings_select_season'));\n  });\n</script>\n\n<form action=\"/l/";
   foundHelper = helpers['g'];
   stack1 = foundHelper || depth0['g'];
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);

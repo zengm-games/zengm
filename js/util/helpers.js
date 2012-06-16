@@ -57,6 +57,16 @@ define([], function() {
         return season;
     }
 
+    /*Returns a list of all the seasons, past and present.*/
+    function getSeasons(selectedSeason) {
+        selectedSeason = parseInt(selectedSeason, 10);
+        var seasons = [];
+        for (var season=g.startingSeason; season<=g.season; season++) {
+            seasons.push({season: season, selected: selectedSeason===season});
+        }
+        return seasons;
+    }
+
     /*Injects the game attributes stored in localStorage into the g object.*/
     function loadGameAttributes() {
         gameAttributes = JSON.parse(localStorage.getItem("league" + g.lid + "GameAttributes"));
@@ -86,6 +96,7 @@ define([], function() {
         validateAbbrev: validateAbbrev,
         validateTid: validateTid,
         validateSeason: validateSeason,
+        getSeasons: getSeasons,
         loadGameAttributes: loadGameAttributes,
         setGameAttributes: setGameAttributes
     }

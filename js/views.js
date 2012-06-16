@@ -120,28 +120,27 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
 
             var season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
             season = helpers.validateSeason(season);
+            var seasons = helpers.getSeasons(season)
 
+            var confs = []
+            for (var i=0; i<g.confs.length; i++) {
+                confs.push({name: g.confs[i].name, divs: [], teams: []});
+                for (var j=0; j<g.divs.length; j++) {
+                    if (g.divs[j].cid == g.confs[i].cid) {
+                        confs[i].divs.push({name: g.divs[j].name, teams: []});
+                    }
+                }
+            }
 
-    view_season = validate_season(view_season)
-    seasons = get_seasons()
-
-    confs = []
-    r = g.dbex('SELECT cid, name FROM conferences ORDER BY cid ASC')
-    for cid, conference_name in r.fetchall():
-        confs.append({'id': cid, 'name': conference_name, 'divisions': [], 'standings': ''})
-
-        r = g.dbex('SELECT ld.did FROM divisions as ld WHERE ld.cid = :cid', cid=cid)
-        divisions = ', '.join([str(division) for division, in r.fetchall()])
-        r = g.dbex('SELECT * FROM team_attributes as ta WHERE ta.did IN (%s) AND season = :season ORDER BY CASE won + lost WHEN 0 THEN 0 ELSE won / (won + lost) END DESC' % (divisions,), season=view_season)
+/*        r = g.dbex('SELECT * FROM team_attributes as ta WHERE ta.did IN (%s) AND season = :season ORDER BY CASE won + lost WHEN 0 THEN 0 ELSE won / (won + lost) END DESC' % (divisions,), season=view_season)
         confs[-1]['teams'] = r.fetchall()
 
         r = g.dbex('SELECT did, name FROM divisions WHERE cid = :cid ORDER BY name ASC', cid=cid)
         for did, division_name in r.fetchall():
             r = g.dbex('SELECT * FROM team_attributes WHERE did = :did AND season = :season ORDER BY CASE won + lost WHEN 0 THEN 0 ELSE won / (won + lost) END DESC', did=did, season=view_season)
             confs[-1]['divisions'].append({'name': division_name})
-            confs[-1]['divisions'][-1]['teams'] = r.fetchall()
+            confs[-1]['divisions'][-1]['teams'] = r.fetchall()*/
 
-//    return render_all_or_json('standings.html', {'conferences': conferences, 'seasons': seasons, 'view_season': view_season})
             var template = Handlebars.templates["standings"];
             data["league_content"] = template({g: g, confs: confs, seasons: seasons, season: season});
 
@@ -188,8 +187,8 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
             [viewTid, viewAbbrev] = helpers.validateAbbrev(viewAbbrev);
             var viewSeason = typeof req.params.viewSeason !== "undefined" ? req.params.viewSeason : undefined;
             viewSeason = helpers.validateSeason(viewSeason);
+            var seasons = helpers.getSeasons(viewSeason);
 
-            var seasons = [{season: 2012, selected: true}, {season: 2013, selected: false}, {season: 2014, selected: false}];
             g.dbl.transaction(["teams"]).objectStore("teams").index("season").getAll(viewSeason).onsuccess = function(event) {
                 var teamsAll = event.target.result;
                 var teams = [];

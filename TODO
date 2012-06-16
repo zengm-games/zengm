@@ -23,6 +23,7 @@ template loop count - how?
   - box score (top 5)
   - standings (top 8)
 view_season can be made just season because of handelbars' scoping
+startingSeason should be stored so later years can have different values
 
 ---
 

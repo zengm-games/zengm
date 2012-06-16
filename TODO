@@ -1,5 +1,6 @@
-is localStorage fast enough for game_attributes and schedule, and possibly other stuff?
-
+schedule porting
+- indexeddb, callback then loading
+is localStorage fast enough for game_attributes, and possibly other stuff?
 refactor and make sure i'm doing things correct as far as modules, namespaces, documentation, style, etc.
 - What will replace the AJAX calls? Just call api.whatever function directly and have it do the jQuery crap
 require.js

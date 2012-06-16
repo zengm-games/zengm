@@ -67,10 +67,26 @@ define([], function() {
         }
     }
 
+    /*Takes an object and stores the properties (updating or inserting) in gameAttributes and g.*/
+    function setGameAttributes(gameAttributes) {
+        gameAttributesOld = JSON.parse(localStorage.getItem("league" + g.lid + "GameAttributes"));
+        if (gameAttributesOld === null) {
+            gameAttributesOld = {};
+        }
+        for (var prop in gameAttributes) {
+            if (gameAttributes.hasOwnProperty(prop)) {
+                gameAttributesOld[prop] = gameAttributes[prop];
+                g[prop] = gameAttributes[prop];
+            }
+        }
+        localStorage.setItem("league" + lid + "GameAttributes", JSON.stringify(gameAttributesOld));
+    }
+
     return {
         validateAbbrev: validateAbbrev,
         validateTid: validateTid,
         validateSeason: validateSeason,
-        loadGameAttributes: loadGameAttributes
+        loadGameAttributes: loadGameAttributes,
+        setGameAttributes: setGameAttributes
     }
 });

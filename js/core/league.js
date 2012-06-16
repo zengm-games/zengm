@@ -111,10 +111,7 @@ console.log(teams);
                     }
 
                     gameAttributes = {userTid: tid, season: g.startingSeason, phase: 0, gamesInProgress: false, stopGames: false, pmStatus: '', pmPhase: ''};
-                    localStorage.setItem("league" + lid + "GameAttributes", JSON.stringify(gameAttributes));
-console.log(g);
-                    helpers.loadGameAttributes();
-console.log(g);
+                    helpers.setGameAttributes(gameAttributes);
 /*
         # Set and get global game attributes
         g.dbex('UPDATE game_attributes SET tid = :tid', tid=tid)

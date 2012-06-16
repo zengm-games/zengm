@@ -85,15 +85,6 @@ joins: http://blog.oharagroup.net/post/16394604653/a-performance-comparison-webs
 
 handlebars templates -f js/templates.js
 
-On page load:
-- load main wrapper template and display
-- load league internal wrapper but don't display
-- if within league and internal league wrapper not displayed, display it
-- display content from view (title, content, league_content)
-  - do this within the view functions. have a function they call, passing a hash with keys matching blocks, and then have that function update the page
-
 TODO:
-only pushstate in ajax_update if this is a new URL (not the current URL)
 only need handlebars.runtime.js
 merge game_attributes into league table of meta database
-race contition on "Create New League" button?

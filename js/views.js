@@ -1,8 +1,7 @@
 define(["bbgm", "db", "core/game", "core/league", "util/helpers", "util/playMenu"], function(bbgm, db, game, league, helpers, playMenu) {
     function beforeLeague(req, cb) {
         g.lid = parseInt(req.params.lid, 10);
-g.season = 2012;
-g.userTid = 4;
+        helpers.loadGameAttributes();
 
         // Make sure league exists
 

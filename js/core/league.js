@@ -1,4 +1,4 @@
-define(["db", "core/player", "util/random"], function(db, player, random) {
+define(["db", "core/player", "util/helpers", "util/random"], function(db, player, helpers, random) {
     function new_(tid) {
         l = {'tid': tid, 'season': g.startingSeason, 'phase': 0, 'games_in_progress': false, 'stop_game': false, 'pm_status': '', 'pm_phase': 'Phase 1'}
         var leaguesStore = g.dbm.transaction(["leagues"], IDBTransaction.READ_WRITE).objectStore("leagues");
@@ -109,8 +109,12 @@ console.log(teams);
                             pid += 1
                         }
                     }
-//                    console.log(playerAttributes[4]);
-//                    console.log(playerRatings[4]);
+
+                    gameAttributes = {userTid: tid, season: g.startingSeason, phase: 0, gamesInProgress: false, stopGames: false, pmStatus: '', pmPhase: ''};
+                    localStorage.setItem("league" + lid + "GameAttributes", JSON.stringify(gameAttributes));
+console.log(g);
+                    helpers.loadGameAttributes();
+console.log(g);
 /*
         # Set and get global game attributes
         g.dbex('UPDATE game_attributes SET tid = :tid', tid=tid)

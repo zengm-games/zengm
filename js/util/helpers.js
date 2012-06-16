@@ -57,9 +57,20 @@ define([], function() {
         return season;
     }
 
+    /*Injects the game attributes stored in localStorage into the g object.*/
+    function loadGameAttributes() {
+        gameAttributes = JSON.parse(localStorage.getItem("league" + g.lid + "GameAttributes"));
+        for (var prop in gameAttributes) {
+            if (gameAttributes.hasOwnProperty(prop)) {
+                g[prop] = gameAttributes[prop];
+            }
+        }
+    }
+
     return {
         validateAbbrev: validateAbbrev,
         validateTid: validateTid,
-        validateSeason: validateSeason
+        validateSeason: validateSeason,
+        loadGameAttributes: loadGameAttributes
     }
 });

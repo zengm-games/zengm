@@ -1,5 +1,5 @@
-build box score viewer to make sure things are being saved correctly
-- store everything needed for box score in "games" store
+is localStorage fast enough for game_attributes and schedule, and possibly other stuff?
+
 refactor and make sure i'm doing things correct as far as modules, namespaces, documentation, style, etc.
 - What will replace the AJAX calls? Just call api.whatever function directly and have it do the jQuery crap
 require.js

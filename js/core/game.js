@@ -214,7 +214,7 @@ define(["core/gameSim", "util/lock", "util/playMenu", "util/random"], function(g
             gameStats.teams[t]["trb"] = this.team[t].stat["orb"] + this.team[t].stat["drb"];
 
             for (var p=0; p<this.team[t].player.length; p++) {
-                gameStats.teams[t].players[p] = {name: "NAME", pos: "POS"};
+                gameStats.teams[t].players[p] = {name: this.team[t].player[p].name, pos: this.team[t].player[p].pos};
                 for (var i=0; i<keys.length; i++) {
                     gameStats.teams[t].players[p][keys[i]] = this.team[t].player[p].stat[keys[i]];
                 }
@@ -418,7 +418,7 @@ schedule = [{gid: 1, home_tid: 15, away_tid: 2},
 
                             for (var i=0; i<players.length; i++) {
                                 var player = players[i];
-                                var p = {id: player.pid, ovr: 0, stat: {}, composite_rating: {}};
+                                var p = {id: player.pid, name: player.name, pos: player.pos, ovr: 0, stat: {}, composite_rating: {}};
 
                                 for (var j=0; j<player.ratings.length; j++) {
                                     if (player.ratings[j]['season'] == g.season) {

@@ -162,7 +162,7 @@ console.log(game);
         return render_template('box_score.html', teams=teams, view_season=teams[0]['season'], **won_lost)*/
 
             var template = Handlebars.templates["box_score"];
-            html = template({game: game});
+            html = template({g: g, game: game});
             cb(html);
         };
     }

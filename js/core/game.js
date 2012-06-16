@@ -242,11 +242,18 @@ define(["core/gameSim", "util/lock", "util/playMenu", "util/random"], function(g
                     gameStats.won.abbrev = team.abbrev;
                     gameStats.won.region = team.region;
                     gameStats.won.name = team.name;
+                    gameStats.teams[tw].abbrev = team.abbrev;
+                    gameStats.teams[tw].region = team.region;
+                    gameStats.teams[tw].name = team.name;
+
                 }
                 else if (team.tid == that.team[tl].id) {
                     gameStats.lost.abbrev = team.abbrev;
                     gameStats.lost.region = team.region;
                     gameStats.lost.name = team.name;
+                    gameStats.teams[tl].abbrev = team.abbrev;
+                    gameStats.teams[tl].region = team.region;
+                    gameStats.teams[tl].name = team.name;
                 }
                 gameStats.won.pts = that.team[tw].stat["pts"];
                 gameStats.lost.pts = that.team[tl].stat["pts"];

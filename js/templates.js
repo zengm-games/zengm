@@ -51,15 +51,15 @@ templates['box_score'] = template(function (Handlebars,depth0,helpers,partials,d
   helpers = helpers || Handlebars.helpers;
   var buffer = "", stack1, foundHelper, tmp1, self=this, functionType="function", helperMissing=helpers.helperMissing, undef=void 0, escapeExpression=this.escapeExpression, blockHelperMissing=helpers.blockHelperMissing;
 
-function program1(depth0,data) {
+function program1(depth0,data,depth1) {
   
   var buffer = "", stack1;
   buffer += "\n  <h3><a href=\"/l/";
   foundHelper = helpers['g'];
-  stack1 = foundHelper || depth0['g'];
+  stack1 = foundHelper || depth1['g'];
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "...g.lid", { hash: {} }); }
   buffer += escapeExpression(stack1) + "/roster/";
   foundHelper = helpers.abbrev;
   stack1 = foundHelper || depth0.abbrev;
@@ -84,7 +84,7 @@ function program1(depth0,data) {
   buffer += escapeExpression(stack1) + "</a></h2>\n  <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\">\n  <thead>\n    <tr><th>Name</th><th>Pos</th><th>Min</th><th>FG</th><th>3Pt</th><th>FT</th><th>Off</th><th>Reb</th><th>Ast</th><th>TO</th><th>Stl</th><th>Blk</th><th>PF</th><th>Pts</th></tr>\n  </thead>\n  <tbody>\n  ";
   foundHelper = helpers.players;
   stack1 = foundHelper || depth0.players;
-  tmp1 = self.program(2, program2, data);
+  tmp1 = self.programWithDepth(program2, data, depth1);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;
@@ -168,15 +168,15 @@ function program1(depth0,data) {
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "pts", { hash: {} }); }
   buffer += escapeExpression(stack1) + "</td></tr>\n  </tfoot>\n  </table>\n";
   return buffer;}
-function program2(depth0,data) {
+function program2(depth0,data,depth2) {
   
   var buffer = "", stack1;
   buffer += "\n    <tr class=\"separator\"><td><a href=\"/l/";
   foundHelper = helpers['g'];
-  stack1 = foundHelper || depth0['g'];
+  stack1 = foundHelper || depth2['g'];
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "......g.lid", { hash: {} }); }
   buffer += escapeExpression(stack1) + "/player/";
   foundHelper = helpers.pid;
   stack1 = foundHelper || depth0.pid;
@@ -350,11 +350,11 @@ function program2(depth0,data) {
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.pts);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "game.lost.pts", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "</h2>\n\n";
+  buffer += escapeExpression(stack1) + "</h2>\n";
   foundHelper = helpers.game;
   stack1 = foundHelper || depth0.game;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.teams);
-  tmp1 = self.program(1, program1, data);
+  tmp1 = self.programWithDepth(program1, data, depth0);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;

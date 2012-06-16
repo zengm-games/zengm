@@ -2,8 +2,8 @@
 
 <ol>
 {{#games}}
-  <li><a href="#">{{teams.0.region}} {{teams.0.name}}</a>
+  <li><a href="/l/{{../g.lid}}/roster/{{teams.0.abbrev}}">{{teams.0.region}} {{teams.0.name}}</a>
   {{vsat}}
-  <a href="#">{{teams.1.region}} {{teams.1.name}}</a>
+  <a href="/l/{{../g.lid}}/roster/{{teams.1.abbrev}}">{{teams.1.region}} {{teams.1.name}}</a>
 {{/games}}
 </ol>

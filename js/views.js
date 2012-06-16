@@ -34,22 +34,28 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
     function schedule(req) {
         beforeLeague(req, function() {
             var data = {"title": "Schedule - League " + g.lid};
-            var url = "/l/" + g.lid;
+            var url = "/l/" + g.lid + "/schedule";
 
             season.getSchedule(0, function (schedule_) {
                 games = [];
                 for (var i=0; i<schedule_.length; i++) {
                     game = schedule_[i];
-                    tids = [game.homeTid, game.awayTid]
-                    if (tids.indexOf(g.userTid) >= 0) {
-                        var team = {tid: 0, abbrev: 'a', region: 'a', name: 'a'};
-                        row = {teams: [team, team], vsat: 'at'};
+                    if (g.userTid == game.homeTid || g.userTid == game.awayTid) {
+                        var team0 = {tid: game.homeTid, abbrev: game.homeAbbrev, region: game.homeRegion, name: game.homeName};
+                        var team1 = {tid: game.awayTid, abbrev: game.awayAbbrev, region: game.awayRegion, name: game.awayName};
+                        if (g.userTid == game.homeTid) {
+                            var vsat = "vs";
+                        }
+                        else {
+                            var vsat = "at";
+                        }
+                        row = {teams: [team0, team1], vsat: vsat};
                         games.push(row);
                     }
                 }
 
                 var template = Handlebars.templates["schedule"];
-                data["league_content"] = template({games: games});
+                data["league_content"] = template({g: g, games: games});
                 bbgm.ajaxUpdate(data, url);
             });
 

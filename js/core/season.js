@@ -405,22 +405,32 @@ console.log(tids.length);
             away teams, respectively, for every game in the season.
     */
     function setSchedule(tids, cb) {
-        schedule = []
-        for (var i=0; i<tids.length; i++) {
-            schedule.push({homeTid: tids[i][0], awayTid: tids[i][1]});
-        }
-        scheduleStore = g.dbl.transaction(["schedule"], IDBTransaction.READ_WRITE).objectStore("schedule");
-        scheduleStore.getAll().onsuccess = function(event) {
-            var currentSchedule = event.target.result;
-            for (var i=0; i<currentSchedule.length; i++) {
-                scheduleStore.delete(currentSchedule.gid)
+        g.dbl.transaction(["teams"]).objectStore("teams").index("season").getAll(g.season).onsuccess = function(event) {
+            var teams = event.target.result;
+            var schedule = [];
+            for (var i=0; i<tids.length; i++) {
+                row = {homeTid: tids[i][0], awayTid: tids[i][1]};
+                row.homeAbbrev = teams[row.homeTid].abbrev;
+                row.homeRegion = teams[row.homeTid].region;
+                row.homeName = teams[row.homeTid].name;
+                row.awayAbbrev = teams[row.awayTid].abbrev;
+                row.awayRegion = teams[row.awayTid].region;
+                row.awayName = teams[row.awayTid].name;
+                schedule.push(row);
             }
+            scheduleStore = g.dbl.transaction(["schedule"], IDBTransaction.READ_WRITE).objectStore("schedule");
+            scheduleStore.getAll().onsuccess = function(event) {
+                var currentSchedule = event.target.result;
+                for (var i=0; i<currentSchedule.length; i++) {
+                    scheduleStore.delete(currentSchedule.gid)
+                }
 
-            for (var i=0; i<schedule.length; i++) {
-                scheduleStore.add(schedule[i]);
+                for (var i=0; i<schedule.length; i++) {
+                    scheduleStore.add(schedule[i]);
+                }
+
+                cb();
             }
-
-            cb();
         }
     }
 

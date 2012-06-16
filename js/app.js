@@ -44,7 +44,4 @@ console.log(g);
             app.start();
         });
     };
-
-    console.log('yo');
 });
-

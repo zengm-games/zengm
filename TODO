@@ -6,7 +6,7 @@ refactor and make sure i'm doing things correct as far as modules, namespaces, d
 require.js
 - const and g -> globals.js. no requires.js
 port over other features
-auto translate python to js?
+speed things up by combining transactions
 
 ---
 
@@ -17,6 +17,11 @@ How should I handle in-league database? One big transaction?
 PORTING NOTES:
 
 team_attributes.playoffs is now team.made_playoffs
+template loop count - how?
+- conf rankings in standings
+- class="separator"
+  - box score (top 5)
+  - standings (top 8)
 
 ---
 

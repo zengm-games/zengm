@@ -62,56 +62,71 @@ define(["core/gameSim", "util/lock", "util/playMenu", "util/random"], function(g
 
         // Player stats and team stats
         var that = this;
-        var playerStore = this.transaction.objectStore("players");
-        var gameStore = this.transaction.objectStore("players");
-        for (var t=0; t<2; t++) {
-            this.writeTeamStats(t);
-            for (var p=0; p<this.team[t].player.length; p++) {
-                playerStore.openCursor(IDBKeyRange.only(this.team[t].player[p].id)).onsuccess = function(event) {
-                    var cursor = event.target.result;
-                    player = cursor.value;
 
-                    // Find the correct row of stats
-                    for (var i=0; i<player.stats.length; i++) {
-                        if (player.stats[i].season == g.season && player.stats[i].playoffs == that.playoffs) {
-                            playerStats = player.stats[i];
-                            break;
-                        }
-                    }
-
-                    // Which team is this, again?
-                    if (player.tid == that.team[0].id) {
-                        var t = 0;
-                    }
-                    else {
-                        var t = 1;
-                    }
-
-                    // Which player is this, again?
-                    for (var p=0; p<that.team[t].player.length; p++) {
-                        if (player.pid == that.team[t].player[p].id) {
-                            break;
-                        }
-                    }
-
-                    // Update stats
-                    keys = ['min', 'fg', 'fga', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
-                    for (var i=0; i<keys.length; i++) {
-                        playerStats[keys[i]] += that.team[t].player[p].stat[keys[i]];
-                    }
-                    playerStats.gp += 1;
-                    playerStats.trb += that.team[t].player[p].stat['orb'] + that.team[t].player[p].stat['drb'];
-
-                    cursor.update(player);
-
-                    that.playersRemaining -= 1;
-                    if (that.playersRemaining == 0 && that.teamsRemaining == 0) {
-                        that.callback();
+        this.transaction.objectStore("teams").index("season").getAll(g.season).onsuccess = function (event) {
+            var teams = event.target.result;
+            for (var i=0; i<teams.length; i++) {
+                var team = teams[i];
+                for (var t=0; t<2; t++) {
+                    if (team.tid == that.team[t].id) {
+                        that.team[t].abbrev = team.abbrev;
+                        that.team[t].region = team.region;
+                        that.team[t].name = team.name;
                     }
                 }
             }
+
+            var playerStore = that.transaction.objectStore("players");
+            var gameStore = that.transaction.objectStore("players");
+            for (var t=0; t<2; t++) {
+                that.writeTeamStats(t);
+                for (var p=0; p<that.team[t].player.length; p++) {
+                    playerStore.openCursor(IDBKeyRange.only(that.team[t].player[p].id)).onsuccess = function(event) {
+                        var cursor = event.target.result;
+                        player = cursor.value;
+
+                        // Find the correct row of stats
+                        for (var i=0; i<player.stats.length; i++) {
+                            if (player.stats[i].season == g.season && player.stats[i].playoffs == that.playoffs) {
+                                playerStats = player.stats[i];
+                                break;
+                            }
+                        }
+
+                        // Which team is this, again?
+                        if (player.tid == that.team[0].id) {
+                            var t = 0;
+                        }
+                        else {
+                            var t = 1;
+                        }
+
+                        // Which player is this, again?
+                        for (var p=0; p<that.team[t].player.length; p++) {
+                            if (player.pid == that.team[t].player[p].id) {
+                                break;
+                            }
+                        }
+
+                        // Update stats
+                        keys = ['min', 'fg', 'fga', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
+                        for (var i=0; i<keys.length; i++) {
+                            playerStats[keys[i]] += that.team[t].player[p].stat[keys[i]];
+                        }
+                        playerStats.gp += 1;
+                        playerStats.trb += that.team[t].player[p].stat['orb'] + that.team[t].player[p].stat['drb'];
+
+                        cursor.update(player);
+
+                        that.playersRemaining -= 1;
+                        if (that.playersRemaining == 0 && that.teamsRemaining == 0) {
+                            that.callback();
+                        }
+                    }
+                }
+            }
+            that.writeGameStats();
         }
-        that.writeGameStats();
     }
 
     Game.prototype.writeTeamStats = function(t) {
@@ -233,30 +248,17 @@ define(["core/gameSim", "util/lock", "util/playMenu", "util/random"], function(g
             var tl = 0;
         }
 
-        var that = this;
-        this.transaction.objectStore("teams").index("season").getAll(g.season).onsuccess = function (event) {
-            var teams = event.target.result;
-            for (var i=0; i<teams.length; i++) {
-                var team = teams[i];
-                if (team.tid == that.team[tw].id) {
-                    gameStats.won.abbrev = team.abbrev;
-                    gameStats.won.region = team.region;
-                    gameStats.won.name = team.name;
-                }
-                else if (team.tid == that.team[tl].id) {
-                    gameStats.lost.abbrev = team.abbrev;
-                    gameStats.lost.region = team.region;
-                    gameStats.lost.name = team.name;
-                }
-                gameStats.won.pts = that.team[tw].stat["pts"];
-                gameStats.lost.pts = that.team[tl].stat["pts"];
-            }
-            this.transaction.objectStore("games").add(gameStats);
-        } 
-// won.abbrev, won.region, won.name, won.pts
-// same for lost
-        gameStats.won
+        gameStats.won.abbrev = this.team[tw].abbrev;
+        gameStats.won.region = this.team[tw].region;
+        gameStats.won.name = this.team[tw].name;
+        gameStats.won.pts = this.team[tw].stat["pts"];
 
+        gameStats.lost.abbrev = this.team[tl].abbrev;
+        gameStats.lost.region = this.team[tl].region;
+        gameStats.lost.name = this.team[tl].name;
+        gameStats.lost.pts = this.team[tl].stat["pts"];
+
+        this.transaction.objectStore("games").add(gameStats);
     }
 
     function _composite(minval, maxval, rating, components, inverse, rand) {

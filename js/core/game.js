@@ -205,13 +205,14 @@ define(["core/gameSim", "util/lock", "util/playMenu", "util/random"], function(g
     }
 
     Game.prototype.writeGameStats = function () {
-        var gameStats = {gid: this.id, season: g.season, playoffs: this.playoffs, teams: [{tid: this.team[0].id, players: []}, {tid: this.team[1].id, players: []}]};
+        var gameStats = {gid: this.id, season: g.season, playoffs: this.playoffs, won: {}, lost: {}, teams: [{tid: this.team[0].id, players: []}, {tid: this.team[1].id, players: []}]};
         for (var t=0; t<2; t++) {
             keys = ['min', 'fg', 'fga', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
             for (var i=0; i<keys.length; i++) {
                 gameStats.teams[t][keys[i]] = this.team[t].stat[keys[i]];
             }
             gameStats.teams[t]["trb"] = this.team[t].stat["orb"] + this.team[t].stat["drb"];
+
             for (var p=0; p<this.team[t].player.length; p++) {
                 gameStats.teams[t].players[p] = {name: "NAME"};
                 for (var i=0; i<keys.length; i++) {
@@ -220,7 +221,42 @@ define(["core/gameSim", "util/lock", "util/playMenu", "util/random"], function(g
                 gameStats.teams[t].players[p]["trb"] = this.team[t].player[p].stat["orb"] + this.team[t].player[p].stat["drb"];
             }
         }
-        this.transaction.objectStore("games").add(gameStats);
+
+
+        // Store some extra junk to make box scores easy
+        if (this.team[0]['stat']['pts'] > this.team[1]['stat']['pts']) {
+            var tw = 0;
+            var tl = 1;
+        }
+        else {
+            var tw = 1;
+            var tl = 0;
+        }
+
+        var that = this;
+        this.transaction.objectStore("teams").index("season").getAll(g.season).onsuccess = function (event) {
+            var teams = event.target.result;
+            for (var i=0; i<teams.length; i++) {
+                var team = teams[i];
+                if (team.tid == that.team[tw].id) {
+                    gameStats.won.abbrev = team.abbrev;
+                    gameStats.won.region = team.region;
+                    gameStats.won.name = team.name;
+                }
+                else if (team.tid == that.team[tl].id) {
+                    gameStats.lost.abbrev = team.abbrev;
+                    gameStats.lost.region = team.region;
+                    gameStats.lost.name = team.name;
+                }
+                gameStats.won.pts = that.team[tw].stat["pts"];
+                gameStats.lost.pts = that.team[tl].stat["pts"];
+            }
+            this.transaction.objectStore("games").add(gameStats);
+        } 
+// won.abbrev, won.region, won.name, won.pts
+// same for lost
+        gameStats.won
+
     }
 
     function _composite(minval, maxval, rating, components, inverse, rand) {

@@ -1,4 +1,4 @@
-<h2><a href="/l/{{g.lid}}/roster/{{wonAbbrev}}/{{game.season}}">{{wonRegion}} {{wonName}}</a> {{wonPts}}, <a href="/l/{{g.lid}}/roster/{{lostAbbrev}}/{{game.season}}">{{lostRegion}} {{lostName}}</a> {{lostPts}}</h2>
+<h2><a href="/l/{{g.lid}}/roster/{{game.won.abbrev}}/{{game.season}}">{{game.won.region}} {{game.won.name}}</a> {{game.won.pts}}, <a href="/l/{{g.lid}}/roster/{{game.lost.abbrev}}/{{game.season}}">{{game.lost.region}} {{game.lost.name}}</a> {{game.lost.pts}}</h2>
 
 {{#game.teams}}
   <h3><a href="/l/{{g.lid}}/roster/{{abbrev}}/{{game.season}}">{{region}} {{name}}</a></h2>

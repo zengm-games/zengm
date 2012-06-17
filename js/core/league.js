@@ -136,9 +136,8 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
 
     function delete_(lid) {
         var leaguesStore = g.dbm.transaction(["leagues"], IDBTransaction.READ_WRITE).objectStore("leagues").delete(lid);
-        indexedDB.deleteDatabase("league" + lid);
-//        g.dbex('DROP DATABASE bbgm_%s' % (lid,))
-//        g.dbex('DELETE FROM leagues WHERE lid = :lid', lid=lid)
+        g.indexedDB.deleteDatabase("league" + lid);
+        localStorage.removeItem("league" + g.lid + "GameAttributes")
     }
 
     return {

@@ -52,6 +52,7 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
         db.getAll(g.dbm, "leagues", function (leagues) {
             for (var i=0; i<leagues.length; i++) {
                 g.indexedDB.deleteDatabase("league" + leagues[i]["lid"]);
+                localStorage.removeItem("league" + g.lid + "GameAttributes")
             }
         });
 
@@ -110,8 +111,11 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
     }
 
     function delete_league(req) {
+console.log('a');
         lid = parseInt(req.params['lid'], 10);
+console.log('b');
         league.delete(lid);
+console.log('c');
         req.redirect('/');
     }
 

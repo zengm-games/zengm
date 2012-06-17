@@ -10,16 +10,19 @@ action in progress, currently one of these things:
 There are also functions to check if it is permissible to start one of those
 actions.
 */
-define([], function() {
+define(["util/helpers"], function(helpers) {
     function setGamesInProgress(status) {
-//        g.dbex('UPDATE game_attributes SET games_in_progress = :games_in_progress', games_in_progress=status)
+        if (status) {
+            status = true;
+        }
+        else {
+            status = false;
+        }
+        helpers.setGameAttributes({gamesInProgress: status});
     }
 
     function gamesInProgress() {
-//        r = g.dbex('SELECT games_in_progress FROM game_attributes')
-//        in_progress, = r.fetchone()
-//        return in_progress
-return false;
+        return g.gamesInProgress;
     }
 
     /*Returns true or false depending on whether the negotiations table is

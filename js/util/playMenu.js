@@ -24,8 +24,8 @@ define(["util/helpers", "util/lock"], function(helpers, lock) {
                        {id: "until_regular_season", url: 'javascript:api.play("until_regular_season");', label: "Until regular season", normal_link: false},
                        {id: "contract_negotiation", url: "/l/" + g.lid + "/negotiation_list", label: "Continue contract negotiation", normal_link: true},
                        {id: "contract_negotiation_list", url: "/l/" + g.lid + "/negotiation_list", label: "Continue resigning players", normal_link: true}]
-/*
-        if (keys === undefined) {
+
+        if (typeof keys === "undefined") {
             // Preseason
             if (g.phase == c.PHASE_PRESEASON) {
                 keys = ["until_regular_season"];
@@ -66,24 +66,28 @@ define(["util/helpers", "util/lock"], function(helpers, lock) {
             if (lock.games_in_progress()) {
                 keys = ["stop"];
             }
-            if (lock.negotiation_in_progress() and g.phase != c.PHASE_RESIGN_PLAYERS) {
+            if (lock.negotiation_in_progress() && g.phase != c.PHASE_RESIGN_PLAYERS) {
                 keys = ["contract_negotiation"];
             }
         }
 
         // This code is very ugly. Basically I just want to filter all_options into
         // some_options based on if the ID matches one of the keys.
-        ids = [o[id] for o in all_options]
-        some_options = []
-        for key in keys:
-            i = 0
-            for id_ in ids:
-                if id_ == key:
-                    some_options.append(all_options[i])
-                    break
-                i += 1
-*/
-        some_options = all_options;
+        ids = [];
+        for (var i=0; i<all_options.length; i++) {
+            ids.push(all_options[i].id);
+        }
+        some_options = [];
+        for (var i=0; i<keys.length; i++) {
+            for (var j=0; j<ids.length; j++) {
+                if (ids[j] == keys[i]) {
+                    some_options.push(all_options[j]);
+                    break;
+                }
+            }
+        }
+
+//        some_options = all_options;
         return some_options;
     }
 

@@ -7,13 +7,13 @@ define(["db", "core/game", "util/helpers", "util/lock", "util/playMenu"], functi
     function play(amount) {
         var error = null;
         var url = null;
-        var numDays = parseInt(amount, 10)  // Will be NaN is amount is not an integer
+/*        var numDays = parseInt(amount, 10)  // Will be NaN is amount is not an integer
 
         if (numDays >= 0) {
             // Continue playing games
             game.play(numDays)
         }
-        else if (['day', 'week', 'month', 'until_playoffs', 'through_playoffs'].indexOf(amount) >= 0) {
+        else */if (['day', 'week', 'month', 'until_playoffs', 'through_playoffs'].indexOf(amount) >= 0) {
             // Start playing games
             start = true
 
@@ -38,12 +38,12 @@ define(["db", "core/game", "util/helpers", "util/lock", "util/playMenu"], functi
             game.play(numDays, start)
         }
         else if (amount == 'stop') {
-//            g.dbex('UPDATE game_attributes SET stop_games = TRUE WHERE season = :season', season=g.season)
+            helpers.setGameAttributes({stopGames: true});
 //            g.dbex('UPDATE schedule SET in_progress_timestamp = 0')
 
             // This is needed because we can't be sure if (bbgm.core.game.play will be called again
             playMenu.setStatus('Idle');
-            lock.setGamesInProgress(false);
+            lock.set_games_in_progress(false);
             playMenu.refreshOptions();
         }
         else if (amount == 'until_draft') {

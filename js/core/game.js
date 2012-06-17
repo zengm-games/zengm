@@ -1,4 +1,4 @@
-define(["core/gameSim", "core/season", "util/lock", "util/playMenu", "util/random"], function(gameSim, season, lock, playMenu, random) {
+define(["core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMenu", "util/random"], function(gameSim, season, helpers, lock, playMenu, random) {
     function Game() {
     }
 
@@ -338,17 +338,13 @@ define(["core/gameSim", "core/season", "util/lock", "util/playMenu", "util/rando
         }
 
         if (num_days > 0) {
-/*            // If the user wants to stop the simulation, then stop the simulation
-            r = g.dbex('SELECT stop_games FROM game_attributes WHERE season = :season', season=g.season)
-            stop_games, = r.fetchone()
-            if (stop_games) {
-                g.dbex('UPDATE game_attributes SET stop_games = false WHERE season = :season', season=g.season)
-            }*/
-
             // If we didn't just stop games, let's play
             // Or, if we are starting games (and already passed the lock above),
             // continue even if stop_games was just seen
-//            if (start || !stop_games) {
+            if (start || !g.stopGames) {
+                if (g.stopGames) {
+                    helpers.setGameAttributes({stopGames: false});
+                }
                 // Check if it's the playoffs and do some special stuff if it is or isn't
                 if (g.phase == c.PHASE_PLAYOFFS) {
                     num_active_teams = season.new_schedule_playoffs_day();
@@ -370,14 +366,13 @@ define(["core/gameSim", "core/season", "util/lock", "util/playMenu", "util/rando
                 playMenu.setStatus("Playing games (" + num_days + " days remaining)...")
                 // Create schedule and team lists for today, to be sent to the client
                 season.getSchedule(num_active_teams / 2, function(schedule) {
-console.log(schedule.length);
-                    tids_today = [];
+//                    tids_today = [];
                     for (var j=0; j<schedule.length; j++) {
                         matchup = schedule[j];
-    //                    g.dbex('UPDATE schedule SET in_progress_timestamp = :in_progress_timestamp WHERE gid = :gid', in_progress_timestamp=int(time.time()), gid=game['gid'])
-                        tids_today.push(matchup.homeTid);
-                        tids_today.push(matchup.awayTid);
-            //                tids_today = list(set(tids_today))  // Unique list
+//                        g.dbex('UPDATE schedule SET in_progress_timestamp = :in_progress_timestamp WHERE gid = :gid', in_progress_timestamp=int(time.time()), gid=game['gid'])
+//                        tids_today.push(matchup.homeTid);
+//                        tids_today.push(matchup.awayTid);
+//                        tids_today = list(set(tids_today))  // Unique list
                     }
 
                     teams = [];
@@ -491,10 +486,10 @@ t['defense'] = 0.25;
                         }*/
                     }
                 });
-//            }
+            }
         }
         // If this is the last day, update play menu
-        else if (num_days == 0 || (schedule.length == 0 && !playoffs_continue)) {
+        if (num_days == 0 || (schedule.length == 0 && !playoffs_continue)) {
             playMenu.setStatus('Idle');
             lock.set_games_in_progress(false);
             playMenu.refreshOptions();

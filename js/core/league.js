@@ -39,27 +39,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                             madePlayoffs: false,
                             confChamps: false,
                             leagueChamps: false,
-                            stats: [{
-                                playoffs: false,
-                                gp: 0,
-                                min: 0,
-                                fg: 0,
-                                fga: 0,
-                                tp: 0,
-                                tpa: 0,
-                                ft: 0,
-                                fta: 0,
-                                orb: 0,
-                                drb: 0,
-                                ast: 0,
-                                tov: 0,
-                                stl: 0,
-                                blk: 0,
-                                pf: 0,
-                                pts: 0,
-                                oppPts: 0,
-                                att: 0
-                            }]
+                            stats: [{playoffs: false, gp: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, oppPts: 0, att: 0}]
                         });
                     }
 
@@ -102,7 +82,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                             var entry = gp.attribute;
                             entry.ratings = [gp.rating];
                             entry.ratings[0].season = g.startingSeason;
-                            entry.stats = [{season: g.startingSeason, playoffs: false, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0}];
+                            entry.stats = [{season: g.startingSeason, playoffs: false, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0}];
                             playerStore.add(entry);
 
                             pid += 1

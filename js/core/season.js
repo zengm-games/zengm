@@ -130,12 +130,16 @@ define(["util/helpers", "util/playMenu", "util/random"], function(helpers, playM
                     delete teams[i].winp;
                 }
 
+                var tidPlayoffs = [];
                 var series = [[], [], [], []];  // First round, second round, third round, fourth round
                 for (var cid=0; cid<2; cid++) {
-                    teamsConf = []
+                    var teamsConf = []
                     for (var i=0; i<teams.length; i++) {
                         if (teams[i].cid == cid) {
-                            teamsConf.push(teams[i]);
+                            if (teamsConf.length < 8) {
+                                teamsConf.push(teams[i]);
+                                tidPlayoffs.push(teams[i].tid);
+                            }
                         }
                     }
                     series[0][0+cid*4] = {home: teamsConf[0], away: teamsConf[7]};
@@ -153,10 +157,30 @@ define(["util/helpers", "util/playMenu", "util/random"], function(helpers, playM
                 }
 
                 row = {season: g.season, currentRound: 0, series: series};
-console.log(row);
                 g.dbl.transaction(["playoffSeries"], IDBTransaction.READ_WRITE).objectStore("playoffSeries").add(row);
 
-                cb(phase, phaseText);
+                // Add row to team stats
+                g.dbl.transaction(["teams"], IDBTransaction.READ_WRITE).objectStore("teams").index("season").openCursor(IDBKeyRange.only(g.season)).onsuccess = function(event) {
+                    var cursor = event.target.result;
+                    if (cursor) {
+                        teamSeason = cursor.value;
+                        if (tidPlayoffs.indexOf(teamSeason.tid) >= 0) {
+                            var playoffStats = {}
+                            for (var key in teamSeason.stats[0]) {
+                                if (teamSeason.stats[0].hasOwnProperty(key)) {
+                                    playoffStats[key] = 0;
+                                }
+                            }
+                            playoffStats.playoffs = true;
+                            teamSeason.stats.push(playoffStats);
+                            cursor.update(teamSeason);
+                        }
+                        cursor.continue();
+                    }
+                    else {
+                        cb(phase, phaseText);
+                    }
+                }
             }
 //                g.dbex('UPDATE team_attributes SET playoffs = TRUE WHERE season = :season AND tid IN :tids', season=g.season, tids=tids)
         }

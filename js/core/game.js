@@ -439,10 +439,10 @@ console.log(schedule.length);
                                 }
 
                                 // Would be better if these were scaled by average min played and end
-                        //        t['pace'] = sum([t['player'][i]['composite_rating']['pace'] for i in xrange(n_players)]) / 7
-                        //        t['defense'] = sum([t['player'][i]['composite_rating']['defense'] for i in xrange(n_players)]) / 7 // 0 to 0.5
-                        t['pace'] = 100;
-                        t['defense'] = 0.25;
+//                                t['pace'] = sum([t['player'][i]['composite_rating']['pace'] for i in xrange(n_players)]) / 7
+//                                t['defense'] = sum([t['player'][i]['composite_rating']['defense'] for i in xrange(n_players)]) / 7 // 0 to 0.5
+t['pace'] = 100;
+t['defense'] = 0.25;
                                 t['defense'] /= 4; // This gives the percentage pts subtracted from the other team's normal FG%
 
 
@@ -457,11 +457,16 @@ console.log(schedule.length);
                                     // Play games
                                     if ((schedule && schedule.length > 0) || playoffs_continue) {
                                         var gamesRemaining = schedule.length;
+                                        var gidsFinished = [];
                                         function doSaveResults(results, playoffs) {
                                             saveResults(results, playoffs, function() {
-                                                g.dbl.transaction(["schedule"], IDBTransaction.READ_WRITE).objectStore("schedule").delete(results.gid);
                                                 gamesRemaining -= 1;
+                                                gidsFinished.push(results.gid);
                                                 if (gamesRemaining == 0) {
+                                                    var scheduleStore = g.dbl.transaction(["schedule"], IDBTransaction.READ_WRITE).objectStore("schedule");
+                                                    for (var i=0; i<gidsFinished.length; i++) {
+                                                        scheduleStore.delete(gidsFinished[i]);
+                                                    }
                                                     play(num_days - 1);
                                                 }
                                             });

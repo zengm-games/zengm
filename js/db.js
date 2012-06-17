@@ -73,6 +73,7 @@ define([], function() {
                 var teamStore = g.dbl.createObjectStore("teams", {keyPath: "rid", autoIncrement: true});
                 var gameStore = g.dbl.createObjectStore("games", {keyPath: "gid"});
                 var scheduleStore = g.dbl.createObjectStore("schedule", {keyPath: "gid", autoIncrement: true});
+                var playoffSeriesStore = g.dbl.createObjectStore("playoffSeries", {keyPath: "season"});
                 // ... other stores go here later
 
                 playerStore.createIndex("tid", "tid", {unique: false});

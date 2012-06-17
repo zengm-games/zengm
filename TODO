@@ -57,6 +57,9 @@ games =  {gid, season, teamStatsForIndividualGame, playerStatsForIndividualGam}
 Index: *gid, tid, season
 - can tid be an array so that gid can be unique? can i index on an array?
 
+playoffSeries = {season, currentRound, series: [[{}, ...], ...]}
+- first row is for round, second row is for series, just like the series object in views.playoffs
+
 schedule = {schedule}
 
 conferences, divisions = simple global data structures

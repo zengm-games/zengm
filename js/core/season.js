@@ -158,17 +158,7 @@ console.log(row);
 
                 cb(phase, phaseText);
             }
-/*            for cid in range(2)) {
-                teams = []
-                r = g.dbex('SELECT ta.tid FROM team_attributes as ta, divisions as ld WHERE ld.did = ta.did AND ld.cid = :cid AND ta.season = :season ORDER BY CASE won + lost WHEN 0 THEN 0 ELSE won / (won + lost) END DESC LIMIT 8', cid=cid, season=g.season)
-                tids = [tid for tid, in r.fetchall()]
-                g.dbex('UPDATE team_attributes SET playoffs = TRUE WHERE season = :season AND tid IN :tids', season=g.season, tids=tids)
-
-                params = [dict(season=g.season, tid_home=tids[0], tid_away=tids[7], seed_home=1, seed_away=8),
-                          dict(season=g.season, tid_home=tids[3], tid_away=tids[4], seed_home=4, seed_away=5),
-                          dict(season=g.season, tid_home=tids[2], tid_away=tids[5], seed_home=3, seed_away=6),
-                          dict(season=g.season, tid_home=tids[1], tid_away=tids[6], seed_home=2, seed_away=7)]
-                g.dbexmany('INSERT INTO playoff_series (round, season, tid_home, tid_away, seed_home, seed_away, won_home, won_away) VALUES (1, :season, :tid_home, :tid_away, :seed_home, :seed_away, 0, 0)', params)*/
+//                g.dbex('UPDATE team_attributes SET playoffs = TRUE WHERE season = :season AND tid IN :tids', season=g.season, tids=tids)
         }
         // Offseason, before draft
         else if (phase == c.PHASE_BEFORE_DRAFT) {

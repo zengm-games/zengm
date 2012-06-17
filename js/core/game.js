@@ -328,15 +328,17 @@ define(["core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMe
                 season.getSchedule(0, function(schedule) {
                     if (schedule.length == 0) {
                         season.newPhase(c.PHASE_PLAYOFFS);
+// MOVE THIS TO newPhase(c.PHASE_PLAYOFFS)
+//                url = "/l/" + g.lid + "/history";
                     }
                 });
             }
         }
 
-        teams = [];
-        schedule = [];
-        playoffs_continue = false;
-        url = null;
+        var teams = [];
+        var schedule = [];
+        var playoffsContinue = false;
+        var url = null;
 
         // If this is a request to start a new simulation... are we allowed to do
         // that? If so, set the lock and update the play menu
@@ -347,7 +349,7 @@ define(["core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMe
             }
             else {
                 // If not allowed to start games, don't
-                return {teams: teams, schedule: schedule, playoffs_continue: playoffs_continue, url: url};
+                return;
             }
         }
 
@@ -361,16 +363,16 @@ define(["core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMe
                 }
                 // Check if it's the playoffs and do some special stuff if it is or isn't
                 if (g.phase == c.PHASE_PLAYOFFS) {
-                    num_active_teams = season.new_schedule_playoffs_day();
+                    var num_active_teams = season.newSchedulePlayoffsDay();
 
-                    // If season.new_schedule_playoffs_day didn't move the phase to 4, then
+                    // If season.newSchedulePlayoffsDay didn't move the phase to 4, then
                     // the playoffs are still happening.
                     if (g.phase == c.PHASE_PLAYOFFS) {
-                        playoffs_continue = true;
+                        playoffsContinue = true;
                     }
                 }
                 else {
-                    num_active_teams = g.numTeams;
+                    var num_active_teams = g.numTeams;
 
                     // Decrease free agent demands and let AI teams sign them
 //                    free_agents_decrease_demands();
@@ -382,14 +384,14 @@ define(["core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMe
                 season.getSchedule(num_active_teams / 2, function(schedule) {
 //                    tids_today = [];
                     for (var j=0; j<schedule.length; j++) {
-                        matchup = schedule[j];
+                        var matchup = schedule[j];
 //                        g.dbex('UPDATE schedule SET in_progress_timestamp = :in_progress_timestamp WHERE gid = :gid', in_progress_timestamp=int(time.time()), gid=game['gid'])
 //                        tids_today.push(matchup.homeTid);
 //                        tids_today.push(matchup.awayTid);
 //                        tids_today = list(set(tids_today))  // Unique list
                     }
 
-                    teams = [];
+                    var teams = [];
                     var teams_loaded = 0;
                     // Load all teams, for now. Would be more efficient to load only some of them, I suppose.
                     for (var tid=0; tid<30; tid++) {
@@ -464,7 +466,7 @@ t['defense'] = 0.25;
                                     teams.sort(function (a, b) {  return a.id - b.id; }); // Order teams by tid
 
                                     // Play games
-                                    if ((schedule && schedule.length > 0) || playoffs_continue) {
+                                    if ((schedule && schedule.length > 0) || playoffsContinue) {
                                         var gamesRemaining = schedule.length;
                                         var gidsFinished = [];
                                         function doSaveResults(results, playoffs) {
@@ -499,7 +501,7 @@ t['defense'] = 0.25;
                             teams.push({'id': tid})
                         }*/
                     }
-                    if (schedule.length == 0 && !playoffs_continue) {
+                    if (schedule.length == 0 && !playoffsContinue) {
                         cbNoGames();
                     }
                 });
@@ -508,10 +510,7 @@ t['defense'] = 0.25;
         // If this is the last day, update play menu
         if (num_days == 0) {
             cbNoGames();
-// MOVE THIS TO newPhase(c.PHASE_PLAYOFFS)
-//                url = "/l/" + g.lid + "/history";
         }
-//        return {teams: teams, schedule: schedule, playoffs_continue: playoffs_continue, url: url};
     }
 
     return {

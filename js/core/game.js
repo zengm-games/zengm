@@ -122,13 +122,53 @@ define(["core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMe
             var t2 = 0;
         }
         var that = this;
-        this.transaction.objectStore("playoffSeries").get(g.season).onsuccess = function(event) {
-console.log(event.target.result);
+
+        // Record progress of playoff series, if appropriate
+        if (this.playoffs && t == 0) {
+            this.transaction.objectStore("playoffSeries").openCursor(IDBKeyRange.only(g.season)).onsuccess = function(event) {
+                var cursor = event.target.result;
+                var playoffSeries = cursor.value;
+console.log(playoffSeries);
+                var playoffRound = playoffSeries.series[playoffSeries.currentRound];
+console.log(playoffRound);
+
+                // Did the home (true) or away (false) team win this game? Here, "home" refers to this game, not the team which has homecourt advnatage in the playoffs, which is what series.home refers to below.
+                if (that.team[t]['stat']['pts'] > that.team[t2]['stat']['pts']) {
+                    var won0 = true;
+                }
+                else {
+                    var won0 = false;
+                }
+
+                for (var i=0; i<playoffRound.length; i++) {
+                    var series = playoffRound[i];
+                    
+                    if (series.home.tid == that.team[t].id) {
+                        if (won0) {
+                            series.home.won += 1;
+                        }
+                        else {
+                            series.away.won += 1;
+                        }
+                    }
+                    else if (series.away.tid == that.team[t].id) {
+                        if (won0) {
+                            series.away.won += 1;
+                        }
+                        else {
+                            series.home.won += 1;
+                        }
+                    }
+                }
+
+                cursor.update(playoffSeries);
+            }
         }
+
+        // Team stats
         this.transaction.objectStore("teams").index("tid").openCursor(IDBKeyRange.only(that.team[t].id)).onsuccess = function(event) {
-console.log('AFTER');
             var cursor = event.target.result;
-            teamSeason = cursor.value;
+            var teamSeason = cursor.value;
             if (teamSeason.season != g.season) {
                 cursor.continue();
             }
@@ -144,19 +184,13 @@ console.log('AFTER');
 
             if (that.team[t]['stat']['pts'] > that.team[t2]['stat']['pts']) {
                 won = true;
-/*            if (this.playoffs && t == 0) {
-                g.dbex('UPDATE playoff_series SET won_home = won_home + 1 WHERE tid_home = :tid_home AND tid_away = :tid_away AND season = :season', tid_home=this.team[t]['id'], tid_away=this.team[t2]['id'], season=g.season)
-            }
-            else if (this.playoffs) {
-                g.dbex('UPDATE playoff_series SET won_away = won_away + 1 WHERE tid_home = :tid_home AND tid_away = :tid_away AND season = :season', tid_home=this.team[t2]['id'], tid_away=this.team[t]['id'], season=g.season)
-            }*/
             }
             else {
                 won = false;
             }
 
             // Only pay player salaries for regular season games.
-/*    if (!this.playoffs) {
+/*    if (!that.playoffs) {
         r = g.dbex('SELECT SUM(contract_amount) * 1000 / 82 FROM released_players_salaries WHERE tid = :tid', tid=this.team[t]['id'])
         cost_released, = r.fetchone()
         r = g.dbex('SELECT SUM(contract_amount) * 1000 / 82 FROM player_attributes WHERE tid = :tid', tid=this.team[t]['id'])

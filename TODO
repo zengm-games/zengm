@@ -1,5 +1,5 @@
 playoffs view and playoff simulation
-- special stuff when storing results of playoff game
+- handle the transition from one round to the next, in season.newSchedulePlayoffsDay
 new season
 - add rows to stats in DB as is done for playoffs
 is localStorage fast enough for game_attributes, and possibly other stuff?

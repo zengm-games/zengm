@@ -1,5 +1,5 @@
 playoffs view and playoff simulation
-- real playoffs view: store the "series" variable directly in database? think about it
+- playoff schedule and game simulation next
 is localStorage fast enough for game_attributes, and possibly other stuff?
 refactor and make sure i'm doing things correct as far as modules, namespaces, documentation, style, etc.
 - What will replace the AJAX calls? Just call api.whatever function directly and have it do the jQuery crap
@@ -17,6 +17,8 @@ How should I handle in-league database? One big transaction?
 BUGS
 
 game simulation is weird. no subs.
+"Idle" status being sent prematurely in game simulations
+database error message at end of season, when setting playoff series. why?
 
 ---
 

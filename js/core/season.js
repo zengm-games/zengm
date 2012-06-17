@@ -103,11 +103,62 @@ define(["util/helpers", "util/playMenu", "util/random"], function(helpers, playM
         else if (phase == c.PHASE_PLAYOFFS) {
             phaseText = g.season + " playoffs";
 
-/*            // Select winners of the season's awards
-            awards()
+            // Select winners of the season's awards
+//            awards()
 
             // Set playoff matchups
-            for cid in range(2)) {
+            g.dbl.transaction(["teams"]).objectStore("teams").index("season").getAll(g.season).onsuccess = function (event) {
+                var teamsAll = event.target.result;
+                var teams = [];
+                var keys = ["tid", "abbrev", "name", "cid", "won", "lost"];  // Attributes to keep from teamStore
+                for (var i=0; i<teamsAll.length; i++) {
+                    teams[i] = {};
+                    for (var j=0; j<keys.length; j++) {
+                        teams[i][keys[j]] = teamsAll[i][keys[j]];
+                    }
+                    teams[i].winp = 0
+                    if (teams[i].won + teams[i].lost > 0) {
+                        teams[i].winp = teams[i].won / (teams[i].won + teams[i].lost);
+                    }
+                }
+                teams.sort(function (a, b) {  return b.winp - a.winp; }); // Sort by winning percentage
+
+                // Remove stuff that was just for sorting
+                for (var i=0; i<teamsAll.length; i++) {
+                    delete teams[i].won;
+                    delete teams[i].lost;
+                    delete teams[i].winp;
+                }
+
+                var series = [[], [], [], []];  // First round, second round, third round, fourth round
+                for (var cid=0; cid<2; cid++) {
+                    teamsConf = []
+                    for (var i=0; i<teams.length; i++) {
+                        if (teams[i].cid == cid) {
+                            teamsConf.push(teams[i]);
+                        }
+                    }
+                    series[0][0+cid*4] = {home: teamsConf[0], away: teamsConf[7]};
+                    series[0][0+cid*4].home.seed = 1;
+                    series[0][0+cid*4].away.seed = 8;
+                    series[0][1+cid*4] = {home: teamsConf[1], away: teamsConf[6]};
+                    series[0][1+cid*4].home.seed = 2;
+                    series[0][1+cid*4].away.seed = 7;
+                    series[0][2+cid*4] = {home: teamsConf[2], away: teamsConf[5]};
+                    series[0][2+cid*4].home.seed = 3;
+                    series[0][2+cid*4].away.seed = 6;
+                    series[0][3+cid*4] = {home: teamsConf[3], away: teamsConf[4]};
+                    series[0][3+cid*4].home.seed = 4;
+                    series[0][3+cid*4].away.seed = 5;
+                }
+
+                row = {season: g.season, currentRound: 0, series: series};
+console.log(row);
+                g.dbl.transaction(["playoffSeries"], IDBTransaction.READ_WRITE).objectStore("playoffSeries").add(row);
+
+                cb(phase, phaseText);
+            }
+/*            for cid in range(2)) {
                 teams = []
                 r = g.dbex('SELECT ta.tid FROM team_attributes as ta, divisions as ld WHERE ld.did = ta.did AND ld.cid = :cid AND ta.season = :season ORDER BY CASE won + lost WHEN 0 THEN 0 ELSE won / (won + lost) END DESC LIMIT 8', cid=cid, season=g.season)
                 tids = [tid for tid, in r.fetchall()]
@@ -118,7 +169,6 @@ define(["util/helpers", "util/playMenu", "util/random"], function(helpers, playM
                           dict(season=g.season, tid_home=tids[2], tid_away=tids[5], seed_home=3, seed_away=6),
                           dict(season=g.season, tid_home=tids[1], tid_away=tids[6], seed_home=2, seed_away=7)]
                 g.dbexmany('INSERT INTO playoff_series (round, season, tid_home, tid_away, seed_home, seed_away, won_home, won_away) VALUES (1, :season, :tid_home, :tid_away, :seed_home, :seed_away, 0, 0)', params)*/
-            cb(phase, phaseText)
         }
         // Offseason, before draft
         else if (phase == c.PHASE_BEFORE_DRAFT) {

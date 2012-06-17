@@ -519,7 +519,7 @@ console.log(series[rnd]);
             scheduleStore.getAll().onsuccess = function(event) {
                 var currentSchedule = event.target.result;
                 for (var i=0; i<currentSchedule.length; i++) {
-                    scheduleStore.delete(currentSchedule.gid)
+                    scheduleStore.delete(currentSchedule[i].gid);
                 }
 
                 for (var i=0; i<schedule.length; i++) {

@@ -47,7 +47,7 @@ define(["core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMe
         this.playersRemaining = this.team[0].player.length + this.team[1].player.length;
         this.callback = callback;
 
-        this.transaction = g.dbl.transaction(["games", "players", "teams"], IDBTransaction.READ_WRITE);
+        this.transaction = g.dbl.transaction(["games", "players", "playoffSeries", "teams"], IDBTransaction.READ_WRITE);
         // Record who the starters are
 /*    for (var t=0; t<2; t++) {
         r = g.dbex('SELECT pid FROM player_attributes WHERE tid = :tid ORDER BY roster_order ASC LIMIT 5', tid=this.team[t]['id'])
@@ -122,7 +122,11 @@ define(["core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMe
             var t2 = 0;
         }
         var that = this;
+        this.transaction.objectStore("playoffSeries").get(g.season).onsuccess = function(event) {
+console.log(event.target.result);
+        }
         this.transaction.objectStore("teams").index("tid").openCursor(IDBKeyRange.only(that.team[t].id)).onsuccess = function(event) {
+console.log('AFTER');
             var cursor = event.target.result;
             teamSeason = cursor.value;
             if (teamSeason.season != g.season) {

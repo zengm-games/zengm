@@ -1,4 +1,4 @@
-define(["util/playMenu", "util/random"], function(playMenu, random) {
+define(["util/helpers", "util/playMenu", "util/random"], function(helpers, playMenu, random) {
     /*Set a new phase of the game.
 
     This function is called to do all the crap that must be done during
@@ -19,16 +19,15 @@ define(["util/playMenu", "util/random"], function(playMenu, random) {
         to be sent to the client.
     */
     function newPhase(phase) {
-        newSchedule(function () {});
-/*        // Prevent code running twice
+        // Prevent code running twice
         if (phase == g.phase) {
-            return
+            return;
+        }
 
         // Preseason
         if (phase == c.PHASE_PRESEASON) {
-            g.season += 1
-            g.dbex('UPDATE game_attributes SET season = season + 1')
-            phase_text = '%s preseason' % (g.season,)
+            helpers.setGameAttributes({season: g.season + 1});
+/*            phaseText = g.season + " preseason";
 
             // Create new rows in team_attributes
             r = g.dbex('SELECT tid, did, region, name, abbrev, cash FROM team_attributes WHERE season = :season', season=g.season - 1)
@@ -52,19 +51,19 @@ define(["util/playMenu", "util/random"], function(playMenu, random) {
                 up.save()
 
             // AI teams sign free agents
-            free_agents_auto_sign()
-
+            free_agents_auto_sign()*/
+        }
         // Regular season, before trade deadline
-        elif phase == c.PHASE_REGULAR_SEASON) {
-            phase_text = '%s regular season' % (g.season,)
-            // First, make sure teams are all within the roster limits
+        else if (phase == c.PHASE_REGULAR_SEASON) {
+            phaseText = g.season + " regular season";
+/*            // First, make sure teams are all within the roster limits
             // CPU teams
             r = g.dbex('SELECT pa.tid, COUNT(*) FROM team_attributes as ta, player_attributes as pa WHERE ta.tid = pa.tid AND ta.season = :season GROUP BY pa.tid', season=g.season)
             teams = r.fetchall()
             for tid, num_players_on_roster in teams) {
                 if (num_players_on_roster > 15) {
                     if (tid == g.user_tid) {
-                        return 'Your team currently has more than the maximum number of players (15). You must release or buy out players (from the Roster page) before the season starts.'
+                        alert("Your team currently has more than the maximum number of players (15). You must release or buy out players (from the Roster page) before the season starts.");
                     else {
                         // Automatically drop lowest pot players until we reach 15
                         r = g.dbex('SELECT pa.pid FROM player_attributes as pa, player_ratings as pr WHERE pa.pid = pr.pid AND pa.tid = :tid AND pr.season = :season ORDER BY pr.pot ASC LIMIT :n_excess_players', tid=tid, season=g.season, n_excess_players=num_players_on_roster-15)
@@ -73,30 +72,29 @@ define(["util/playMenu", "util/random"], function(playMenu, random) {
                             p = player.Player()
                             p.load(pid)
                             p.release()
-                elif num_players_on_roster < 5) {
+                else if (num_players_on_roster < 5) {
                     if (tid == g.user_tid) {
-                        return 'Your team currently has less than the minimum number of players (5). You must add players (through free agency or trades) before the season starts.'
+                        alert("Your team currently has less than the minimum number of players (5). You must add players (through free agency or trades) before the season starts.");
                     else {
                         // Should auto-add players
-                        pass
+                        pass*/
 
-            newSchedule()
+            newSchedule(function () {});
 
-            // Auto sort rosters (except player's team)
+/*            // Auto sort rosters (except player's team)
             for t in range(30)) {
                 if (t != g.user_tid) {
-                    roster_auto_sort(t)
-
+                    roster_auto_sort(t)*/
+        }
         // Regular season, after trade deadline
-        elif phase == c.PHASE_AFTER_TRADE_DEADLINE) {
-            phase_text = '%s regular season, after trade deadline' % (g.season,)
-            pass
-
+        else if (phase == c.PHASE_AFTER_TRADE_DEADLINE) {
+            phaseText = g.season + " regular season, after trade deadline";
+        }
         // Playoffs
-        elif phase == c.PHASE_PLAYOFFS) {
-            phase_text = '%s playoffs' % (g.season,)
+        else if (phase == c.PHASE_PLAYOFFS) {
+            phaseText = g.season + " playoffs";
 
-            // Select winners of the season's awards
+/*            // Select winners of the season's awards
             awards()
 
             // Set playoff matchups
@@ -110,28 +108,28 @@ define(["util/playMenu", "util/random"], function(playMenu, random) {
                           dict(season=g.season, tid_home=tids[3], tid_away=tids[4], seed_home=4, seed_away=5),
                           dict(season=g.season, tid_home=tids[2], tid_away=tids[5], seed_home=3, seed_away=6),
                           dict(season=g.season, tid_home=tids[1], tid_away=tids[6], seed_home=2, seed_away=7)]
-                g.dbexmany('INSERT INTO playoff_series (round, season, tid_home, tid_away, seed_home, seed_away, won_home, won_away) VALUES (1, :season, :tid_home, :tid_away, :seed_home, :seed_away, 0, 0)', params)
-
+                g.dbexmany('INSERT INTO playoff_series (round, season, tid_home, tid_away, seed_home, seed_away, won_home, won_away) VALUES (1, :season, :tid_home, :tid_away, :seed_home, :seed_away, 0, 0)', params)*/
+        }
         // Offseason, before draft
-        elif phase == c.PHASE_BEFORE_DRAFT) {
-            phase_text = '%s before draft' % (g.season,)
+        else if (phase == c.PHASE_BEFORE_DRAFT) {
+            phaseText = g.season + " before draft";
             // Remove released players' salaries from payrolls
             g.dbex('DELETE FROM released_players_salaries WHERE contract_exp <= :season', season=g.season)
 
             // Add a year to the free agents
             g.dbex('UPDATE player_attributes SET contract_exp = contract_exp + 1 WHERE tid = :tid', tid=c.PLAYER_FREE_AGENT)
-
+        }
         // Draft
-        elif phase == c.PHASE_DRAFT) {
-            phase_text = '%s draft' % (g.season,)
-
+        else if (phase == c.PHASE_DRAFT) {
+            phaseText = g.season + " draft";
+        }
         // Offseason, after draft
-        elif phase == c.PHASE_AFTER_DRAFT) {
-            phase_text = '%s after draft' % (g.season,)
-
-        // Offseason, resign players
-        elif phase == c.PHASE_RESIGN_PLAYERS) {
-            phase_text = '%s resign players' % (g.season,)
+        else if (phase == c.PHASE_AFTER_DRAFT) {
+            phaseText = g.season + " after draft";
+        }
+/*        // Offseason, resign players
+        else if (phase == c.PHASE_RESIGN_PLAYERS) {
+            phaseText = g.season + " resign players";
 
             // Check for retiring players
             // Call the contructor each season because that's where the code to check for retirement is
@@ -162,10 +160,10 @@ define(["util/playMenu", "util/random"], function(playMenu, random) {
                     error = contract_negotiation.new(pid, resigning=true)
                     if (error) {
                         app.logger.debug(error)
-
+        }
         // Offseason, free agency
-        elif phase == c.PHASE_FREE_AGENCY) {
-            phase_text = '%s free agency' % (g.season,)
+        else if (phase == c.PHASE_FREE_AGENCY) {
+            phaseText = g.season + " free agency";
 
             // Delete all current negotiations to resign players
             contract_negotiation.cancel_all()
@@ -184,16 +182,12 @@ define(["util/playMenu", "util/random"], function(playMenu, random) {
                 p = player.Player()
                 p.load(pid)
                 p.add_to_free_agents(phase)
+        }*/
 
-        old_phase = g.phase
-        g.phase = phase
-
-        g.dbex('UPDATE game_attributes SET phase = :phase', phase=g.phase)
-
-        playMenu.setPhase(phase_text);
+// THIS STUFF SHOULD BE RUN IN A CALLBACK of whatever is accessing the database above in this function
+        helpers.setGameAttributes({phase: phase});
+        playMenu.setPhase(phaseText);
         playMenu.refreshOptions();
-
-        return false*/
     }
 
     /*Creates a new regular season schedule with appropriate division and
@@ -350,7 +344,7 @@ console.log(tids.length);
                 // Record user's team as conference and league champion
                 if (current_round == 3) {
                     g.dbex('UPDATE team_attributes SET conf_champs = TRUE WHERE season = :season AND tid = :tid', season=g.season, tid=winners[sid][0])
-                elif current_round == 4) {
+                else if (current_round == 4) {
                     g.dbex('UPDATE team_attributes SET league_champs = TRUE WHERE season = :season AND tid = :tid', season=g.season, tid=winners[sid][0])
 
             // Are the whole playoffs over?

@@ -89,7 +89,7 @@ define([], function() {
                 g[prop] = gameAttributes[prop];
             }
         }
-        localStorage.setItem("league" + lid + "GameAttributes", JSON.stringify(gameAttributesOld));
+        localStorage.setItem("league" + g.lid + "GameAttributes", JSON.stringify(gameAttributesOld));
     }
 
     return {

@@ -1,4 +1,5 @@
 playoffs view and playoff simulation
+- real playoffs view: store the "series" variable directly in database? think about it
 is localStorage fast enough for game_attributes, and possibly other stuff?
 refactor and make sure i'm doing things correct as far as modules, namespaces, documentation, style, etc.
 - What will replace the AJAX calls? Just call api.whatever function directly and have it do the jQuery crap

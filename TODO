@@ -1,6 +1,8 @@
 playoffs view and playoff simulation
 - playoff schedule and game simulation next
 - Where are player stats being stored? Need anothe row in DB like for teams?
+new season
+- add rows to stats in DB as is done for playoffs
 is localStorage fast enough for game_attributes, and possibly other stuff?
 refactor and make sure i'm doing things correct as far as modules, namespaces, documentation, style, etc.
 - What will replace the AJAX calls? Just call api.whatever function directly and have it do the jQuery crap

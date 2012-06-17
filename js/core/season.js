@@ -163,9 +163,10 @@ define(["util/helpers", "util/playMenu", "util/random"], function(helpers, playM
                 g.dbl.transaction(["teams"], IDBTransaction.READ_WRITE).objectStore("teams").index("season").openCursor(IDBKeyRange.only(g.season)).onsuccess = function(event) {
                     var cursor = event.target.result;
                     if (cursor) {
-                        teamSeason = cursor.value;
+                        var teamSeason = cursor.value;
+console.log(teamSeason);
                         if (tidPlayoffs.indexOf(teamSeason.tid) >= 0) {
-                            var playoffStats = {}
+                            var playoffStats = {};
                             for (var key in teamSeason.stats[0]) {
                                 if (teamSeason.stats[0].hasOwnProperty(key)) {
                                     playoffStats[key] = 0;
@@ -174,8 +175,36 @@ define(["util/helpers", "util/playMenu", "util/random"], function(helpers, playM
                             playoffStats.playoffs = true;
                             teamSeason.stats.push(playoffStats);
                             cursor.update(teamSeason);
+
+                            // Add row to player stats
+                            g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players").index("tid").openCursor(IDBKeyRange.only(teamSeason.tid)).onsuccess = function(event) {
+                                var cursorP = event.target.result;
+                                if (cursorP) {
+                                    var player = cursorP.value;
+console.log(player);
+                                    var playerPlayoffStats = {};
+console.log(player.stats.length);
+                                    for (var key in player.stats[0]) {
+                                        if (player.stats[0].hasOwnProperty(key)) {
+                                            playerPlayoffStats[key] = 0;
+                                        }
+                                    }
+                                    playerPlayoffStats.playoffs = true;
+                                    playerPlayoffStats.season = g.season;
+                                    player.stats.push(playoffStats);
+console.log(player.stats.length);
+                                    cursorP.update(player);
+                                    cursorP.continue();
+                                }
+/*                                else {
+                                    cursor.continue();
+                                }*/
+                            }
                         }
-                        cursor.continue();
+//                        else {
+// RACE CONDITION: Should only run after the players update above finishes
+                            cursor.continue();
+//                        }
                     }
                     else {
                         cb(phase, phaseText);

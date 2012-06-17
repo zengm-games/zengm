@@ -111,11 +111,8 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
     }
 
     function delete_league(req) {
-console.log('a');
         lid = parseInt(req.params['lid'], 10);
-console.log('b');
         league.delete(lid);
-console.log('c');
         req.redirect('/');
     }
 

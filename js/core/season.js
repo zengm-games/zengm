@@ -429,7 +429,7 @@ define(["util/helpers", "util/playMenu", "util/random"], function(helpers, playM
     'home_tid', and 'away_tid'.
     */
     function getSchedule(numGames, cb) {
-        numGames = typeof numGames !== "undefined" ? parseInt(numGames, 10) : 0;
+        numGames = parseInt(numGames, 10);
         g.dbl.transaction(["schedule"]).objectStore("schedule").getAll().onsuccess = function(event) {
             var schedule = event.target.result;
             if (numGames > 0) {

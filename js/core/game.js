@@ -494,11 +494,15 @@ t['defense'] = 0.25;
             lock.set_games_in_progress(false);
             playMenu.refreshOptions();
             // Check to see if the season is over
-/*            r = g.dbex('SELECT gid FROM schedule LIMIT 1')
-            if (r.rowcount == 0 && g.phase < c.PHASE_PLAYOFFS) {
-                season.new_phase(c.PHASE_PLAYOFFS);  // Start playoffs
-                url = "/l/" + g.lid + "/history";
-            }*/
+            if (g.phase < c.PHASE_PLAYOFFS) {
+                season.getSchedule(0, function(schedule) {
+                    if (schedule.length == 0) {
+                        season.newPhase(c.PHASE_PLAYOFFS);
+                    }
+                });
+            }
+// MOVE THIS TO newPhase(c.PHASE_PLAYOFFS)
+//                url = "/l/" + g.lid + "/history";
         }
 //        return {teams: teams, schedule: schedule, playoffs_continue: playoffs_continue, url: url};
     }

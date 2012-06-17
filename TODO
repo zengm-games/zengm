@@ -1,6 +1,5 @@
 playoffs view and playoff simulation
-- playoff schedule and game simulation next
-- Where are player stats being stored? Need anothe row in DB like for teams?
+- special stuff when storing results of playoff game
 new season
 - add rows to stats in DB as is done for playoffs
 is localStorage fast enough for game_attributes, and possibly other stuff?

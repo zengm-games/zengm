@@ -307,7 +307,7 @@ define(["core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMe
             gm = new Game();
             gm.load(results, playoffs);
             gm.writeStats(callback);
-            console.log("Saved results for game " + results['gid']);
+            console.log("Saved results for game " + results.gid);
 //        else {
 //            console.log("Ignored stale results for game " + results['gid']);
 //        }
@@ -379,11 +379,11 @@ define(["core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMe
                     var teams_loaded = 0;
                     // Load all teams, for now. Would be more efficient to load only some of them, I suppose.
                     for (var tid=0; tid<30; tid++) {
-                        g.dbl.transaction(["players"]).objectStore("players").index('tid').getAll(tid).onsuccess = function(event) {
+                        g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(tid).onsuccess = function(event) {
                             var players = event.target.result;
                             var realTid = players[0].tid;
                             var t = {id: realTid, defense: 0, pace: 0, won: 0, lost: 0, cid: 0, did: 0, stat: {}, player: []}
-                            g.dbl.transaction(["teams"]).objectStore("teams").index('tid').getAll(realTid).onsuccess = function(event) {
+                            g.dbl.transaction(["teams"]).objectStore("teams").index("tid").getAll(realTid).onsuccess = function(event) {
                                 var teamSeasons = event.target.result;
                                 for (var j=0; j<teamSeasons.length; j++) {
                                     if (teamSeasons[j]['season'] == g.season) {

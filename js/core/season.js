@@ -24,6 +24,13 @@ define(["util/helpers", "util/playMenu", "util/random"], function(helpers, playM
             return;
         }
 
+        // This should be called after the phase-specific stuff runs. It needs to be a separate function like this to play nice with async stuff.
+        function cb(phase, phaseText) {      
+            helpers.setGameAttributes({phase: phase});
+            playMenu.setPhase(phaseText);
+            playMenu.refreshOptions();
+        }
+
         // Preseason
         if (phase == c.PHASE_PRESEASON) {
             helpers.setGameAttributes({season: g.season + 1});
@@ -52,6 +59,7 @@ define(["util/helpers", "util/playMenu", "util/random"], function(helpers, playM
 
             // AI teams sign free agents
             free_agents_auto_sign()*/
+            cb(phase, phaseText);
         }
         // Regular season, before trade deadline
         else if (phase == c.PHASE_REGULAR_SEASON) {
@@ -79,7 +87,7 @@ define(["util/helpers", "util/playMenu", "util/random"], function(helpers, playM
                         // Should auto-add players
                         pass*/
 
-            newSchedule(function () {});
+            newSchedule(function () { cb(phase, phaseText); });
 
 /*            // Auto sort rosters (except player's team)
             for t in range(30)) {
@@ -89,6 +97,7 @@ define(["util/helpers", "util/playMenu", "util/random"], function(helpers, playM
         // Regular season, after trade deadline
         else if (phase == c.PHASE_AFTER_TRADE_DEADLINE) {
             phaseText = g.season + " regular season, after trade deadline";
+            cb(phase, phaseText);
         }
         // Playoffs
         else if (phase == c.PHASE_PLAYOFFS) {
@@ -109,6 +118,7 @@ define(["util/helpers", "util/playMenu", "util/random"], function(helpers, playM
                           dict(season=g.season, tid_home=tids[2], tid_away=tids[5], seed_home=3, seed_away=6),
                           dict(season=g.season, tid_home=tids[1], tid_away=tids[6], seed_home=2, seed_away=7)]
                 g.dbexmany('INSERT INTO playoff_series (round, season, tid_home, tid_away, seed_home, seed_away, won_home, won_away) VALUES (1, :season, :tid_home, :tid_away, :seed_home, :seed_away, 0, 0)', params)*/
+            cb(phase, phaseText)
         }
         // Offseason, before draft
         else if (phase == c.PHASE_BEFORE_DRAFT) {
@@ -118,14 +128,18 @@ define(["util/helpers", "util/playMenu", "util/random"], function(helpers, playM
 
             // Add a year to the free agents
             g.dbex('UPDATE player_attributes SET contract_exp = contract_exp + 1 WHERE tid = :tid', tid=c.PLAYER_FREE_AGENT)
+
+            cb(phase, phaseText);
         }
         // Draft
         else if (phase == c.PHASE_DRAFT) {
             phaseText = g.season + " draft";
+            cb(phase, phaseText);
         }
         // Offseason, after draft
         else if (phase == c.PHASE_AFTER_DRAFT) {
             phaseText = g.season + " after draft";
+            cb(phase, phaseText);
         }
 /*        // Offseason, resign players
         else if (phase == c.PHASE_RESIGN_PLAYERS) {
@@ -160,6 +174,7 @@ define(["util/helpers", "util/playMenu", "util/random"], function(helpers, playM
                     error = contract_negotiation.new(pid, resigning=true)
                     if (error) {
                         app.logger.debug(error)
+            cb(phase, phaseText);
         }
         // Offseason, free agency
         else if (phase == c.PHASE_FREE_AGENCY) {
@@ -182,12 +197,8 @@ define(["util/helpers", "util/playMenu", "util/random"], function(helpers, playM
                 p = player.Player()
                 p.load(pid)
                 p.add_to_free_agents(phase)
+            cb(phase, phaseText);
         }*/
-
-// THIS STUFF SHOULD BE RUN IN A CALLBACK of whatever is accessing the database above in this function
-        helpers.setGameAttributes({phase: phase});
-        playMenu.setPhase(phaseText);
-        playMenu.refreshOptions();
     }
 
     /*Creates a new regular season schedule with appropriate division and

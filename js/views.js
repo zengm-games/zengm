@@ -31,8 +31,16 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
         }
     }
 
+    function beforeNonLeague() {
+        document.getElementById("playButton").innerHTML = '';
+        document.getElementById("playPhase").innerHTML = '';
+        document.getElementById("playStatus").innerHTML = '';
+    }
+
     function init_db(req) {
         var data = {"title": "Initialize Database"};
+
+        beforeNonLeague();
 
         data["content"] = "Resetting databases..."
 
@@ -70,6 +78,8 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
     function dashboard(req) {
         var data = {"title": "Dashboard"};
 
+        beforeNonLeague();
+
         db.getAll(g.dbm, "leagues", function (leagues) {
             var template = Handlebars.templates['dashboard'];
             data["content"] = template({leagues: leagues});
@@ -80,6 +90,8 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
 
     function new_league(req) {
         var data = {"title": "Create New League"};
+
+        beforeNonLeague();
 
         if (req.method === "get") {
             db.getAll(g.dbm, "teams", function (teams) {
@@ -99,7 +111,7 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
 
     function delete_league(req) {
         lid = parseInt(req.params['lid'], 10);
-        league.delete(lid)
+        league.delete(lid);
         req.redirect('/');
     }
 

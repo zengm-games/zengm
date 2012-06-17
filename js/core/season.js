@@ -206,8 +206,6 @@ define(["util/helpers", "util/playMenu", "util/random"], function(helpers, playM
                 var team = event.target.result[i];
                 teams.push({tid: team.tid, cid: team.cid, did: team.did, homeGames: 0, awayGames: 0});
             }
-console.log('newSchedule');
-console.log(teams);
             for (var i=0; i<teams.length; i++) {
                 for (var j=0; j<teams.length; j++) {
                     if (teams[i].tid != teams[j].tid) {
@@ -304,8 +302,6 @@ console.log(teams);
                 }
             }
 
-console.log('TIDS');
-console.log(tids.length);
             random.shuffle(tids);
             setSchedule(tids, cb);
         }

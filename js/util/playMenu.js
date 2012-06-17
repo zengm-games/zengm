@@ -1,4 +1,4 @@
-define(["util/lock"], function(lock) {
+define(["util/helpers", "util/lock"], function(helpers, lock) {
     /*Set the options to be shown in the play button.
 
     Arguments:
@@ -97,16 +97,14 @@ define(["util/lock"], function(lock) {
             the client.
     */
     function setStatus(status) {
-//        r = g.dbex("SELECT pm_status FROM game_attributes WHERE season = :season", season=g.season)
-//        old_status, = r.fetchone()
-old_status = 'fuck';
+        old_status = g.pmStatus
 
-        if (status === undefined) {
+        if (typeof status === "undefined") {
             status = old_status;
             document.getElementById("playStatus").innerHTML = status;
         }
         if (status != old_status) {
-//            g.dbex("UPDATE game_attributes SET pm_status = :pm_status WHERE season = :season", pm_status=status, season=g.season)
+            helpers.setGameAttributes({pmStatus: status});
             document.getElementById("playStatus").innerHTML = status;
             console.log("Set status: " + status);
         }
@@ -122,16 +120,14 @@ old_status = 'fuck';
             the client.
     */
     function setPhase(phase_text) {
-//        r = g.dbex("SELECT pm_phase FROM game_attributes WHERE season = :season", season=g.season)
-//        old_phase_text, = r.fetchone()
-old_phase_text = 'phuck';
+        old_phase_text = g.pmPhase
 
-        if (phase_text === undefined) {
+        if (typeof phase_text === "undefined") {
             phase_text = old_phase_text;
             document.getElementById("playPhase").innerHTML = phase_text;
         }
         if (phase_text != old_phase_text) {
-//            g.dbex("UPDATE game_attributes SET pm_phase = :pm_phase WHERE season = :season", pm_phase=phase_text, season=g.season)
+            helpers.setGameAttributes({pmPhase: phase_text});
             document.getElementById("playPhase").innerHTML = phase_text;
             console.log("Set phase: " + phase_text);
         }

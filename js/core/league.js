@@ -3,11 +3,11 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
         l = {'tid': tid, 'season': g.startingSeason, 'phase': 0, 'games_in_progress': false, 'stop_game': false, 'pm_status': '', 'pm_phase': 'Phase 1'}
         var leaguesStore = g.dbm.transaction(["leagues"], IDBTransaction.READ_WRITE).objectStore("leagues");
         leaguesStore.add(l).onsuccess = function (event) {
-            lid = event.target.result;
+            g.lid = event.target.result;
             t = event.target.transaction;
             db.getAll(g.dbm, "teams", function (teams) {
                 // Create new league database
-                request = db.connect_league(lid);
+                request = db.connect_league(g.lid);
                 request.onsuccess = function (event) {
                     g.dbl = request.result;
                     g.dbl.onerror = function (event) {
@@ -109,7 +109,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                         }
                     }
 
-                    gameAttributes = {userTid: tid, season: g.startingSeason, phase: 0, gamesInProgress: false, stopGames: false, pmStatus: '', pmPhase: ''};
+                    gameAttributes = {userTid: tid, season: g.startingSeason, phase: 0, gamesInProgress: false, stopGames: false};
                     helpers.setGameAttributes(gameAttributes);
 
                     // Make schedule, start season
@@ -127,7 +127,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
         g.dbex('INSERT INTO trade (tid) VALUES (:tid)', tid=trade_tid)
 */
 
-                    Davis.location.assign(new Davis.Request('/l/' + lid));
+                    Davis.location.assign(new Davis.Request('/l/' + g.lid));
                 }
             });
         };

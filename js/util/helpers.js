@@ -92,12 +92,31 @@ define([], function() {
         localStorage.setItem("league" + g.lid + "GameAttributes", JSON.stringify(gameAttributesOld));
     }
 
+
+    /**
+     * Clones an object. Otherwise, passing the team objects and modifying them in
+     * here will fuck up future simulations of the same team if a team plays more
+     * than one game in a day. Taken from http://stackoverflow.com/a/3284324/786644
+     */
+    function deepCopy(obj) {
+        if (typeof obj !== "object") return obj;
+        if (obj.constructor === RegExp) return obj;
+
+        var retVal = new obj.constructor();
+        for (var key in obj) {
+            if (!obj.hasOwnProperty(key)) continue;
+            retVal[key] = deepCopy(obj[key]);
+        }
+        return retVal;
+    }
+
     return {
         validateAbbrev: validateAbbrev,
         validateTid: validateTid,
         validateSeason: validateSeason,
         getSeasons: getSeasons,
         loadGameAttributes: loadGameAttributes,
-        setGameAttributes: setGameAttributes
+        setGameAttributes: setGameAttributes,
+        deepCopy: deepCopy
     }
 });

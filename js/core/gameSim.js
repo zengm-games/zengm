@@ -47,7 +47,7 @@ define(["util/helpers", "util/random"], function(helpers, random) {
      */
     function GameSim(gid, team1, team2) {
         this.id = gid;
-        this.team = [deepCopy(team1), deepCopy(team2)];
+        this.team = [helpers.deepCopy(team1), helpers.deepCopy(team2)];
         this.num_possessions = parseInt(Math.round((this.team[0]['pace'] + this.team[1]['pace']) / 2 * random.gauss(1, 0.03)), 10);
 
         // Starting lineups, which works because players are ordered by their roster_order

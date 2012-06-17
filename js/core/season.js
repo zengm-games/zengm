@@ -442,21 +442,22 @@ console.log(series[rnd]);
                     for (var i=0; i<series[rnd].length; i+=2) {
                         var matchup = {home: {}, away: {}};
                         if (series[rnd][i].home.won == 4) {
-                            matchup.home = series[rnd][i].home;
+                            matchup.home = helpers.deepCopy(series[rnd][i].home);
                         }
                         else {
-                            matchup.home = series[rnd][i].away;
+                            matchup.home = helpers.deepCopy(series[rnd][i].away);
                         }
                         if (series[rnd][i+1].home.won == 4) {
-                            matchup.away = series[rnd][i+1].home;
+                            matchup.away = helpers.deepCopy(series[rnd][i+1].home);
                         }
                         else {
-                            matchup.away = series[rnd][i+1].away;
+                            matchup.away = helpers.deepCopy(series[rnd][i+1].away);
                         }
                         matchup.home.won = 0;
                         matchup.away.won = 0;
                         series[rnd+1][i/2] = matchup;
                     }
+                    rnd += 1;
 console.log(playoffSeries);
                     cursor.update(playoffSeries);
                 }

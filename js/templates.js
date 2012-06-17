@@ -1,5 +1,197 @@
 (function() {
   var template = Handlebars.template, templates = Handlebars.templates = Handlebars.templates || {};
+templates['playoffs'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  helpers = helpers || Handlebars.helpers;
+  var buffer = "", stack1, stack2, stack3, foundHelper, tmp1, self=this, functionType="function", helperMissing=helpers.helperMissing, undef=void 0, escapeExpression=this.escapeExpression, blockHelperMissing=helpers.blockHelperMissing;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, stack2;
+  buffer += "\n      <option value=\"";
+  foundHelper = helpers.season;
+  stack1 = foundHelper || depth0.season;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "season", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\"";
+  foundHelper = helpers.selected;
+  stack1 = foundHelper || depth0.selected;
+  stack2 = helpers['if'];
+  tmp1 = self.program(2, program2, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += ">";
+  foundHelper = helpers.season;
+  stack1 = foundHelper || depth0.season;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "season", { hash: {} }); }
+  buffer += escapeExpression(stack1) + " season</option>\n    ";
+  return buffer;}
+function program2(depth0,data) {
+  
+  
+  return " selected=\"selected\"";}
+
+function program4(depth0,data) {
+  
+  
+  return "<p>This is what the playoff matchups would be if the season ended right now.</p>";}
+
+  buffer += "<script type=\"text/javascript\">\n$(document).ready(function() {\n  bbgm.dropdown($('#playoffs_select_season'));\n});\n</script>\n\n<form action=\"/l/";
+  foundHelper = helpers['g'];
+  stack1 = foundHelper || depth0['g'];
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/playoffs\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"playoffs_select_season\" name=\"season\" class=\"season\">\n    ";
+  foundHelper = helpers.seasons;
+  stack1 = foundHelper || depth0.seasons;
+  tmp1 = self.program(1, program1, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
+  else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n  </select>\n</form>\n\n<h1>";
+  foundHelper = helpers.season;
+  stack1 = foundHelper || depth0.season;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "season", { hash: {} }); }
+  buffer += escapeExpression(stack1) + " Playoffs</h1>\n\n";
+  foundHelper = helpers.finalMatchups;
+  stack1 = foundHelper || depth0.finalMatchups;
+  stack2 = helpers.unless;
+  tmp1 = self.program(4, program4, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n\n<p>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table-condensed\" width=\"100%\">\n<tbody>\n  <tr>\n    <td width=\"14.28%\">\n      ";
+  stack1 = 0;
+  stack2 = 0;
+  foundHelper = helpers.matchup;
+  stack3 = foundHelper || depth0.matchup;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "matchup", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
+  buffer += escapeExpression(stack1) + "\n    </td>\n    <td rowspan=\"2\" width=\"14.28%\">\n      ";
+  stack1 = 0;
+  stack2 = 1;
+  foundHelper = helpers.matchup;
+  stack3 = foundHelper || depth0.matchup;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "matchup", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
+  buffer += escapeExpression(stack1) + "\n    </td>\n    <td rowspan=\"4\" width=\"14.28%\">\n      ";
+  stack1 = 0;
+  stack2 = 2;
+  foundHelper = helpers.matchup;
+  stack3 = foundHelper || depth0.matchup;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "matchup", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
+  buffer += escapeExpression(stack1) + "\n    </td>\n    <td rowspan=\"4\" width=\"14.28%\">\n      ";
+  stack1 = 0;
+  stack2 = 3;
+  foundHelper = helpers.matchup;
+  stack3 = foundHelper || depth0.matchup;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "matchup", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
+  buffer += escapeExpression(stack1) + "\n    </td>\n    <td rowspan=\"4\" width=\"14.28%\">\n      ";
+  stack1 = 1;
+  stack2 = 2;
+  foundHelper = helpers.matchup;
+  stack3 = foundHelper || depth0.matchup;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "matchup", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
+  buffer += escapeExpression(stack1) + "\n    </td>\n    <td rowspan=\"2\" width=\"14.28%\">\n      ";
+  stack1 = 2;
+  stack2 = 1;
+  foundHelper = helpers.matchup;
+  stack3 = foundHelper || depth0.matchup;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "matchup", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
+  buffer += escapeExpression(stack1) + "\n    </td>\n    <td width=\"14.28%\">\n      ";
+  stack1 = 4;
+  stack2 = 0;
+  foundHelper = helpers.matchup;
+  stack3 = foundHelper || depth0.matchup;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "matchup", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
+  buffer += escapeExpression(stack1) + "\n    </td>\n  </tr>\n  <tr>\n    <td>\n      ";
+  stack1 = 1;
+  stack2 = 0;
+  foundHelper = helpers.matchup;
+  stack3 = foundHelper || depth0.matchup;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "matchup", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
+  buffer += escapeExpression(stack1) + "\n    </td>\n    <td>\n      ";
+  stack1 = 5;
+  stack2 = 0;
+  foundHelper = helpers.matchup;
+  stack3 = foundHelper || depth0.matchup;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "matchup", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
+  buffer += escapeExpression(stack1) + "\n    </td>\n  </tr>\n  <tr>\n    <td>\n      ";
+  stack1 = 2;
+  stack2 = 0;
+  foundHelper = helpers.matchup;
+  stack3 = foundHelper || depth0.matchup;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "matchup", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
+  buffer += escapeExpression(stack1) + "\n    </td>\n    <td rowspan=\"2\">\n      ";
+  stack1 = 1;
+  stack2 = 1;
+  foundHelper = helpers.matchup;
+  stack3 = foundHelper || depth0.matchup;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "matchup", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
+  buffer += escapeExpression(stack1) + "\n    </td>\n    <td rowspan=\"2\">\n      ";
+  stack1 = 3;
+  stack2 = 1;
+  foundHelper = helpers.matchup;
+  stack3 = foundHelper || depth0.matchup;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "matchup", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
+  buffer += escapeExpression(stack1) + "\n    </td>\n    <td>\n      ";
+  stack1 = 6;
+  stack2 = 0;
+  foundHelper = helpers.matchup;
+  stack3 = foundHelper || depth0.matchup;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "matchup", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
+  buffer += escapeExpression(stack1) + "\n    </td>\n  </tr>\n  <tr>\n    <td>\n      ";
+  stack1 = 3;
+  stack2 = 0;
+  foundHelper = helpers.matchup;
+  stack3 = foundHelper || depth0.matchup;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "matchup", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
+  buffer += escapeExpression(stack1) + "\n    </td>\n    <td>\n      ";
+  stack1 = 7;
+  stack2 = 0;
+  foundHelper = helpers.matchup;
+  stack3 = foundHelper || depth0.matchup;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "matchup", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
+  buffer += escapeExpression(stack1) + "\n    </td>\n  </tr>\n</tbody>\n</table>\n</p>\n";
+  return buffer;});
 templates['standings'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;
   var buffer = "", stack1, foundHelper, tmp1, self=this, functionType="function", helperMissing=helpers.helperMissing, undef=void 0, escapeExpression=this.escapeExpression, blockHelperMissing=helpers.blockHelperMissing;

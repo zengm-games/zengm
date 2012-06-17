@@ -18,3 +18,14 @@ Handlebars.registerHelper("roundWinp", function(value) {
 
     return output;
 });
+
+Handlebars.registerHelper("matchup", function(i, j) {
+    series = this.series[i][j];
+
+    source = "{{#if series.home.name}}" +
+             "  {{#if series.home.wonSeries}}<strong>{{/if}}{{series.home.seed}}. {{series.home.name}} {{series.home.won}}{{#if series.home.wonSeries}}</strong>{{/if}}<br>" +
+             "  {{#if series.away.wonSeries}}<strong>{{/if}}{{series.away.seed}}. {{series.away.name}} {{series.away.won}}{{#if series.away.wonSeries}}</strong>{{/if}}" +
+             "{{/if}}";
+    var template = Handlebars.compile(source);
+    return new Handlebars.SafeString(template({series: series}));
+});

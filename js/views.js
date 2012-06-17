@@ -185,7 +185,7 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
             g.dbl.transaction(["teams"]).objectStore("teams").index("season").getAll(season).onsuccess = function (event) {
                 var teamsAll = event.target.result;
                 var teams = [];
-                var keys = ["abbrev", "name", "cid"];  // Attributes to keep from teamStore
+                var keys = ["name", "cid", "won", "lost"];  // Attributes to keep from teamStore
                 for (var i=0; i<teamsAll.length; i++) {
                     teams[i] = {};
                     for (var j=0; j<keys.length; j++) {
@@ -198,8 +198,16 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
                 }
                 teams.sort(function (a, b) {  return b.winp - a.winp; }); // Sort by winning percentage
 
+                // Remove stuff that was just for sorting
+                for (var i=0; i<teamsAll.length; i++) {
+                    delete teams[i].won;
+                    delete teams[i].lost;
+                    delete teams[i].winp;
+                }
+
                 // In the current season, before playoffs start, display projected matchups
                 if (season == g.season && g.phase < c.PHASE_PLAYOFFS) {
+                    finalMatchups = false;
                     for (var cid=0; cid<2; cid++) {
                         teamsConf = []
                         for (var i=0; i<teams.length; i++) {
@@ -207,24 +215,36 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
                                 teamsConf.push(teams[i]);
                             }
                         }
-                        series[0].push({'seedHome': 1, 'seedAway': 8, 'nameHome': teamsConf[0], 'nameAway': teamsConf[7]});
-                        series[0].push({'seedHome': 2, 'seedAway': 7, 'nameHome': teamsConf[1], 'nameAway': teamsConf[6]});
-                        series[0].push({'seedHome': 3, 'seedAway': 6, 'nameHome': teamsConf[2], 'nameAway': teamsConf[5]});
-                        series[0].push({'seedHome': 4, 'seedAway': 5, 'nameHome': teamsConf[3], 'nameAway': teamsConf[4]});
+                        series[0][0+cid*4] = {home: teamsConf[0], away: teamsConf[7]};
+                        series[0][0+cid*4].home.seed = 1;
+                        series[0][0+cid*4].away.seed = 8;
+                        series[0][1+cid*4] = {home: teamsConf[1], away: teamsConf[6]};
+                        series[0][1+cid*4].home.seed = 2;
+                        series[0][1+cid*4].away.seed = 7;
+                        series[0][2+cid*4] = {home: teamsConf[2], away: teamsConf[5]};
+                        series[0][2+cid*4].home.seed = 3;
+                        series[0][2+cid*4].away.seed = 6;
+                        series[0][3+cid*4] = {home: teamsConf[3], away: teamsConf[4]};
+                        series[0][3+cid*4].home.seed = 4;
+                        series[0][3+cid*4].away.seed = 5;
+//                        series[0].push({'seedHome': 1, 'seedAway': 8, 'nameHome': teamsConf[0], 'nameAway': teamsConf[7]});
+//                        series[0].push({'seedHome': 2, 'seedAway': 7, 'nameHome': teamsConf[1], 'nameAway': teamsConf[6]});
+//                        series[0].push({'seedHome': 3, 'seedAway': 6, 'nameHome': teamsConf[2], 'nameAway': teamsConf[5]});
+//                        series[0].push({'seedHome': 4, 'seedAway': 5, 'nameHome': teamsConf[3], 'nameAway': teamsConf[4]});
                     }
                 }
-console.log(series);
+                // Display the current or archived playoffs
+                else {
+                    finalMatchups = true;
+/*                    r = g.dbex('SELECT sid, round, (SELECT name FROM team_attributes WHERE tid = aps.tid_home AND season = :season) as name_home, (SELECT name FROM team_attributes WHERE tid = aps.tid_away AND season = :season) as name_away, seed_home, seed_away, won_home, won_away FROM playoff_series as aps WHERE season = :season ORDER BY round, sid ASC', season=view_season)
+                    for s in r.fetchall():
+                        series[s['round'] - 1].push(s)*/
+                }
 
                 var template = Handlebars.templates["playoffs"];
-                data["league_content"] = template({g: g, series: series, seasons: seasons, season: season});
+                data["league_content"] = template({g: g, finalMatchups: finalMatchups, series: series, seasons: seasons, season: season});
 
                 bbgm.ajaxUpdate(data);
-                // Display the current or archived playoffs
-    /*            else {
-                    r = g.dbex('SELECT sid, round, (SELECT name FROM team_attributes WHERE tid = aps.tid_home AND season = :season) as name_home, (SELECT name FROM team_attributes WHERE tid = aps.tid_away AND season = :season) as name_away, seed_home, seed_away, won_home, won_away FROM playoff_series as aps WHERE season = :season ORDER BY round, sid ASC', season=view_season)
-                    for s in r.fetchall():
-                        series[s['round'] - 1].push(s)
-                }*/
             };
         });
     }

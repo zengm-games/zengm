@@ -181,9 +181,9 @@ console.log(teamSeason);
                                 var cursorP = event.target.result;
                                 if (cursorP) {
                                     var player = cursorP.value;
-console.log(player);
+//console.log(player);
                                     var playerPlayoffStats = {};
-console.log(player.stats.length);
+//console.log(player.stats.length);
                                     for (var key in player.stats[0]) {
                                         if (player.stats[0].hasOwnProperty(key)) {
                                             playerPlayoffStats[key] = 0;
@@ -191,8 +191,8 @@ console.log(player.stats.length);
                                     }
                                     playerPlayoffStats.playoffs = true;
                                     playerPlayoffStats.season = g.season;
-                                    player.stats.push(playoffStats);
-console.log(player.stats.length);
+                                    player.stats.push(playerPlayoffStats);
+console.log(player.stats[1].season);
                                     cursorP.update(player);
                                     cursorP.continue();
                                 }
@@ -411,8 +411,9 @@ console.log(player.stats.length);
     /*Creates a single day's schedule for an in-progress playoffs.*/
     function newSchedulePlayoffsDay(cb) {
         // Make today's  playoff schedule
-        g.dbl.transaction(["playoffSeries"]).objectStore("playoffSeries").get(g.season).onsuccess = function (event) {
-            var playoffSeries = event.target.result;
+        g.dbl.transaction(["playoffSeries"], IDBTransaction.READ_WRITE).objectStore("playoffSeries").openCursor(IDBKeyRange.only(g.season)).onsuccess = function (event) {
+            var cursor = event.target.result;
+            var playoffSeries = cursor.value;
 console.log(playoffSeries);
             var series = playoffSeries.series;
             var rnd = playoffSeries.currentRound;
@@ -430,8 +431,35 @@ console.log(series[rnd]);
             if (num_active_teams > 0) {
                 setSchedule(tids, function () { cb(num_active_teams); });
             }
+            // The previous round is over. Either make a new round or go to the next phase.
             else {
-                // The previous round is over
+                // Are the whole playoffs over?
+                if (rnd == 4) {
+                    newPhase(c.PHASE_BEFORE_DRAFT);
+                }
+                else {
+                    var nextRound = [];
+                    for (var i=0; i<series[rnd].length; i+=2) {
+                        var matchup = {home: {}, away: {}};
+                        if (series[rnd][i].home.won == 4) {
+                            matchup.home = series[rnd][i].home;
+                        }
+                        else {
+                            matchup.home = series[rnd][i].away;
+                        }
+                        if (series[rnd][i+1].home.won == 4) {
+                            matchup.away = series[rnd][i+1].home;
+                        }
+                        else {
+                            matchup.away = series[rnd][i+1].away;
+                        }
+                        matchup.home.won = 0;
+                        matchup.away.won = 0;
+                        series[rnd+1][i/2] = matchup;
+                    }
+console.log(playoffSeries);
+                    cursor.update(playoffSeries);
+                }
 /*
                 // Who won?
                 winners = {}
@@ -446,14 +474,10 @@ console.log(series[rnd]);
                     if (current_round == 3) {
                         g.dbex('UPDATE team_attributes SET conf_champs = TRUE WHERE season = :season AND tid = :tid', season=g.season, tid=winners[sid][0])
                     else if (current_round == 4) {
-                        g.dbex('UPDATE team_attributes SET league_champs = TRUE WHERE season = :season AND tid = :tid', season=g.season, tid=winners[sid][0])
-
-                // Are the whole playoffs over?
-                if (current_round == 4) {
-                    newPhase(c.PHASE_BEFORE_DRAFT)
+                        g.dbex('UPDATE team_attributes SET league_champs = TRUE WHERE season = :season AND tid = :tid', season=g.season, tid=winners[sid][0])*/
 
                 // Add a new round to the database
-                current_round += 1
+/*                current_round += 1
                 query = ('INSERT INTO playoff_series (round, season, tid_home, tid_away, seed_home, seed_away, won_home, won_away) VALUES (:round, :season, :tid_home, :tid_away, :seed_home, :seed_away, 0, 0)')
                 sids = winners.keys()
                 for i in range(min(sids), max(sids), 2):  // Go through winners by 2

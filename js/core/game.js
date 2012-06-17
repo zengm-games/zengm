@@ -73,8 +73,10 @@ define(["core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMe
 
                     // Find the correct row of stats
                     for (var i=0; i<player.stats.length; i++) {
+//console.log(i);
+//console.log(player.stats);
                         if (player.stats[i].season == g.season && player.stats[i].playoffs == that.playoffs) {
-                            playerStats = player.stats[i];
+                            var playerStats = player.stats[i];
                             break;
                         }
                     }

@@ -1,5 +1,6 @@
 playoffs view and playoff simulation
-- handle the transition from one round to the next, in season.newSchedulePlayoffsDay
+- deep copy to matchup.home and .away in season.js
+  - take function from gameSim and put it in util/helpers
 new season
 - add rows to stats in DB as is done for playoffs
 is localStorage fast enough for game_attributes, and possibly other stuff?

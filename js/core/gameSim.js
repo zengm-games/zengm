@@ -1,4 +1,4 @@
-define(["util/random"], function(random) {
+define(["util/helpers", "util/random"], function(helpers, random) {
     /**
      * Single game simulation.
      * 
@@ -409,23 +409,6 @@ define(["util/random"], function(random) {
             this.team[t]['stat'][s] = this.team[t]['stat'][s] + amount;
         }
     };
-
-    /**
-     * Clones an object. Otherwise, passing the team objects and modifying them in
-     * here will fuck up future simulations of the same team if a team plays more
-     * than one game in a day. Taken from http://stackoverflow.com/a/3284324/786644
-     */
-    function deepCopy(obj) {
-        if (typeof obj !== "object") return obj;
-        if (obj.constructor === RegExp) return obj;
-
-        var retVal = new obj.constructor();
-        for (var key in obj) {
-            if (!obj.hasOwnProperty(key)) continue;
-            retVal[key] = deepCopy(obj[key]);
-        }
-        return retVal;
-    }
 
     return {
         GameSim: GameSim

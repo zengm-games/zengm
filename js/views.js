@@ -122,7 +122,7 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
             season = helpers.validateSeason(season);
             var seasons = helpers.getSeasons(season);
 
-            g.dbl.transaction(["teams"]).objectStore("teams").index("season").getAll(season).onsuccess = function(event) {
+            g.dbl.transaction(["teams"]).objectStore("teams").index("season").getAll(season).onsuccess = function (event) {
                 var teamsAll = event.target.result;
                 var teams = [];
                 var keys = ["tid", "cid", "did", "abbrev", "region", "name", "won", "lost", "wonDiv", "lostDiv", "wonConf", "lostConf"];  // Attributes to keep from teamStore
@@ -168,18 +168,65 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
 
                 bbgm.ajaxUpdate(data);
             };
-
-/*        r = g.dbex('SELECT * FROM team_attributes as ta WHERE ta.did IN (%s) AND season = :season ORDER BY CASE won + lost WHEN 0 THEN 0 ELSE won / (won + lost) END DESC' % (divisions,), season=view_season)
-        confs[-1]['teams'] = r.fetchall()
-
-        r = g.dbex('SELECT did, name FROM divisions WHERE cid = :cid ORDER BY name ASC', cid=cid)
-        for did, division_name in r.fetchall():
-            r = g.dbex('SELECT * FROM team_attributes WHERE did = :did AND season = :season ORDER BY CASE won + lost WHEN 0 THEN 0 ELSE won / (won + lost) END DESC', did=did, season=view_season)
-            confs[-1]['divisions'].append({'name': division_name})
-            confs[-1]['divisions'][-1]['teams'] = r.fetchall()*/
-
         });
+    }
 
+    function playoffs(req) {
+        beforeLeague(req, function() {
+            var data = {"title": "Playoffs - League " + g.lid};
+
+            var season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
+            season = helpers.validateSeason(season);
+            var seasons = helpers.getSeasons(season);
+
+            var series = [[], [], [], []];  // First round, second round, third round, fourth round
+
+
+            g.dbl.transaction(["teams"]).objectStore("teams").index("season").getAll(season).onsuccess = function (event) {
+                var teamsAll = event.target.result;
+                var teams = [];
+                var keys = ["abbrev", "name", "cid"];  // Attributes to keep from teamStore
+                for (var i=0; i<teamsAll.length; i++) {
+                    teams[i] = {};
+                    for (var j=0; j<keys.length; j++) {
+                        teams[i][keys[j]] = teamsAll[i][keys[j]];
+                    }
+                    teams[i].winp = 0
+                    if (teams[i].won + teams[i].lost > 0) {
+                        teams[i].winp = teams[i].won / (teams[i].won + teams[i].lost);
+                    }
+                }
+                teams.sort(function (a, b) {  return b.winp - a.winp; }); // Sort by winning percentage
+
+                // In the current season, before playoffs start, display projected matchups
+                if (season == g.season && g.phase < c.PHASE_PLAYOFFS) {
+                    for (var cid=0; cid<2; cid++) {
+                        teamsConf = []
+                        for (var i=0; i<teams.length; i++) {
+                            if (teams[i].cid == cid) {
+                                teamsConf.push(teams[i]);
+                            }
+                        }
+                        series[0].push({'seedHome': 1, 'seedAway': 8, 'nameHome': teamsConf[0], 'nameAway': teamsConf[7]});
+                        series[0].push({'seedHome': 2, 'seedAway': 7, 'nameHome': teamsConf[1], 'nameAway': teamsConf[6]});
+                        series[0].push({'seedHome': 3, 'seedAway': 6, 'nameHome': teamsConf[2], 'nameAway': teamsConf[5]});
+                        series[0].push({'seedHome': 4, 'seedAway': 5, 'nameHome': teamsConf[3], 'nameAway': teamsConf[4]});
+                    }
+                }
+console.log(series);
+
+                var template = Handlebars.templates["playoffs"];
+                data["league_content"] = template({g: g, series: series, seasons: seasons, season: season});
+
+                bbgm.ajaxUpdate(data);
+                // Display the current or archived playoffs
+    /*            else {
+                    r = g.dbex('SELECT sid, round, (SELECT name FROM team_attributes WHERE tid = aps.tid_home AND season = :season) as name_home, (SELECT name FROM team_attributes WHERE tid = aps.tid_away AND season = :season) as name_away, seed_home, seed_away, won_home, won_away FROM playoff_series as aps WHERE season = :season ORDER BY round, sid ASC', season=view_season)
+                    for s in r.fetchall():
+                        series[s['round'] - 1].push(s)
+                }*/
+            };
+        });
     }
 
     function schedule(req) {
@@ -222,7 +269,7 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
             viewSeason = helpers.validateSeason(viewSeason);
             var seasons = helpers.getSeasons(viewSeason);
 
-            g.dbl.transaction(["teams"]).objectStore("teams").index("season").getAll(viewSeason).onsuccess = function(event) {
+            g.dbl.transaction(["teams"]).objectStore("teams").index("season").getAll(viewSeason).onsuccess = function (event) {
                 var teamsAll = event.target.result;
                 var teams = [];
                 for (var i=0; i<teamsAll.length; i++) {
@@ -255,6 +302,7 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
 
         league_dashboard: league_dashboard,
         standings: standings,
+        playoffs: playoffs,
         schedule: schedule,
         game_log: game_log
     };

@@ -34,6 +34,8 @@ requirejs(["db", "views", "bbgm", "api"], function (db, views, bbgm, api) {
             this.get('/l/:lid', views.league_dashboard);
             this.get('/l/:lid/standings', views.standings);
             this.get('/l/:lid/standings/:season', views.standings);
+            this.get('/l/:lid/playoffs', views.playoffs);
+            this.get('/l/:lid/playoffs/:season', views.playoffs);
             this.get('/l/:lid/schedule', views.schedule);
             this.get('/l/:lid/game_log', views.game_log);
             this.get('/l/:lid/game_log/:viewSeason', views.game_log);

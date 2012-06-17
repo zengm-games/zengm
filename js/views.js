@@ -262,6 +262,8 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
 console.log(playoffSeries);
                     var series = playoffSeries.series;
 
+// Loop through and set wonSeries based on number of wins
+
                     cb(finalMatchups, series);
                 };
             }

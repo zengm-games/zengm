@@ -125,7 +125,7 @@ define(["util/helpers", "util/playMenu", "util/random"], function(helpers, playM
 
                 // Remove stuff that was just for sorting
                 for (var i=0; i<teamsAll.length; i++) {
-                    delete teams[i].won;
+                    teams[i].won = 0;  // Store the games won in the series, not the games won in the regular season
                     delete teams[i].lost;
                     delete teams[i].winp;
                 }
@@ -246,9 +246,6 @@ console.log(row);
     */
     function newSchedule(cb) {
         var teams = [];
-/*        r = g.dbex('SELECT tid, did, (SELECT cid FROM divisions as ld WHERE ld.did = ta.did) FROM team_attributes as ta WHERE season = :season', season=g.season)
-        for row in r.fetchall()) {
-            teams.push({'tid': row[0], 'did': row[1], 'cid': row[2], 'home_games': 0, 'away_games': 0})*/
         var tids = [];  // tid_home, tid_away
 
         g.dbl.transaction(["teams"]).objectStore("teams").index("season").getAll(g.season).onsuccess = function(event) {
@@ -359,56 +356,62 @@ console.log(row);
     }
 
     /*Creates a single day's schedule for an in-progress playoffs.*/
-    function newSchedulePlayoffsDay() {
-/*        num_active_teams = 0
-
+    function newSchedulePlayoffsDay(cb) {
         // Make today's  playoff schedule
-        tids = []
-        active_series = false
-        // Round: 1, 2, 3, or 4
-        r = g.dbex('SELECT MAX(round) FROM playoff_series WHERE season = :season', season=g.season)
-        current_round, = r.fetchone()
+        g.dbl.transaction(["playoffSeries"]).objectStore("playoffSeries").get(g.season).onsuccess = function (event) {
+            var playoffSeries = event.target.result;
+console.log(playoffSeries);
+            var series = playoffSeries.series;
+            var rnd = playoffSeries.currentRound;
+            var tids = [];
+//            var active_series = false;
+            var num_active_teams = 0;
+console.log(series[rnd]);
+            for (var i=0; i<series[rnd].length; i++) {
+                if (series[rnd][i].home.won < 4 && series[rnd][i].away.won < 4) {
+                    tids.push([series[rnd][i].home.tid, series[rnd][i].away.tid]);
+//                    active_series = true;
+                    num_active_teams += 2;
+                }
+            }
+            if (num_active_teams > 0) {
+                setSchedule(tids, function () { cb(num_active_teams); });
+            }
+            else {
+                // The previous round is over
+/*
+                // Who won?
+                winners = {}
+                r = g.dbex('SELECT sid, tid_home, tid_away, seed_home, seed_away, won_home, won_away FROM playoff_series WHERE round = :round AND season = :season ORDER BY sid ASC', round=current_round, season=g.season)
+                for row in r.fetchall()) {
+                    sid, tid_home, tid_away, seed_home, seed_away, won_home, won_away = row
+                    if (won_home == 4) {
+                        winners[sid] = [tid_home, seed_home]
+                    else {
+                        winners[sid] = [tid_away, seed_away]
+                    // Record user's team as conference and league champion
+                    if (current_round == 3) {
+                        g.dbex('UPDATE team_attributes SET conf_champs = TRUE WHERE season = :season AND tid = :tid', season=g.season, tid=winners[sid][0])
+                    else if (current_round == 4) {
+                        g.dbex('UPDATE team_attributes SET league_champs = TRUE WHERE season = :season AND tid = :tid', season=g.season, tid=winners[sid][0])
 
-        r = g.dbex('SELECT tid_home, tid_away FROM playoff_series WHERE won_home < 4 AND won_away < 4 AND round = :round AND season = :season', round=current_round, season=g.season)
-        for tid_home, tid_away in r.fetchall()) {
-            tids.push([tid_home, tid_away])
-            active_series = true
-            num_active_teams += 2
-        if (len(tids) > 0) {
-            set_schedule(tids)
-        if (not active_series) {
-            // The previous round is over
+                // Are the whole playoffs over?
+                if (current_round == 4) {
+                    newPhase(c.PHASE_BEFORE_DRAFT)
 
-            // Who won?
-            winners = {}
-            r = g.dbex('SELECT sid, tid_home, tid_away, seed_home, seed_away, won_home, won_away FROM playoff_series WHERE round = :round AND season = :season ORDER BY sid ASC', round=current_round, season=g.season)
-            for row in r.fetchall()) {
-                sid, tid_home, tid_away, seed_home, seed_away, won_home, won_away = row
-                if (won_home == 4) {
-                    winners[sid] = [tid_home, seed_home]
-                else {
-                    winners[sid] = [tid_away, seed_away]
-                // Record user's team as conference and league champion
-                if (current_round == 3) {
-                    g.dbex('UPDATE team_attributes SET conf_champs = TRUE WHERE season = :season AND tid = :tid', season=g.season, tid=winners[sid][0])
-                else if (current_round == 4) {
-                    g.dbex('UPDATE team_attributes SET league_champs = TRUE WHERE season = :season AND tid = :tid', season=g.season, tid=winners[sid][0])
+                // Add a new round to the database
+                current_round += 1
+                query = ('INSERT INTO playoff_series (round, season, tid_home, tid_away, seed_home, seed_away, won_home, won_away) VALUES (:round, :season, :tid_home, :tid_away, :seed_home, :seed_away, 0, 0)')
+                sids = winners.keys()
+                for i in range(min(sids), max(sids), 2):  // Go through winners by 2
+                    if (winners[i][1] < winners[i + 1][1]:  // Which team is the home team?
+                        g.dbex(query, round=current_round, season=g.season, tid_home=winners[i][0], tid_away=winners[i + 1][0], seed_home=winners[i][1], seed_away=winners[i + 1][1])
+                    else {
+                        g.dbex(query, round=current_round, season=g.season, tid_home=winners[i + 1][0], tid_away=winners[i][0], seed_home=winners[i + 1][1], seed_away=winners[i][1])*/
 
-            // Are the whole playoffs over?
-            if (current_round == 4) {
-                new_phase(c.PHASE_BEFORE_DRAFT)
-
-            // Add a new round to the database
-            current_round += 1
-            query = ('INSERT INTO playoff_series (round, season, tid_home, tid_away, seed_home, seed_away, won_home, won_away) VALUES (:round, :season, :tid_home, :tid_away, :seed_home, :seed_away, 0, 0)')
-            sids = winners.keys()
-            for i in range(min(sids), max(sids), 2):  // Go through winners by 2
-                if (winners[i][1] < winners[i + 1][1]:  // Which team is the home team?
-                    g.dbex(query, round=current_round, season=g.season, tid_home=winners[i][0], tid_away=winners[i + 1][0], seed_home=winners[i][1], seed_away=winners[i + 1][1])
-                else {
-                    g.dbex(query, round=current_round, season=g.season, tid_home=winners[i + 1][0], tid_away=winners[i][0], seed_home=winners[i + 1][1], seed_away=winners[i][1])
-
-        return num_active_teams;*/
+                cb(num_active_teams);
+            }
+        };
     }
 
     /*Computes the awards at the end of a season.*/

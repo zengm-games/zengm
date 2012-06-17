@@ -319,6 +319,20 @@ define(["core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMe
     function play(num_days, start) {
         start = typeof start !== "undefined" ? start : false;
 
+        function cbNoGames() {
+            playMenu.setStatus('Idle');
+            lock.set_games_in_progress(false);
+            playMenu.refreshOptions();
+            // Check to see if the season is over
+            if (g.phase < c.PHASE_PLAYOFFS) {
+                season.getSchedule(0, function(schedule) {
+                    if (schedule.length == 0) {
+                        season.newPhase(c.PHASE_PLAYOFFS);
+                    }
+                });
+            }
+        }
+
         teams = [];
         schedule = [];
         playoffs_continue = false;
@@ -485,22 +499,15 @@ t['defense'] = 0.25;
                             teams.push({'id': tid})
                         }*/
                     }
+                    if (schedule.length == 0 && !playoffs_continue) {
+                        cbNoGames();
+                    }
                 });
             }
         }
         // If this is the last day, update play menu
-        if (num_days == 0 || (schedule.length == 0 && !playoffs_continue)) {
-            playMenu.setStatus('Idle');
-            lock.set_games_in_progress(false);
-            playMenu.refreshOptions();
-            // Check to see if the season is over
-            if (g.phase < c.PHASE_PLAYOFFS) {
-                season.getSchedule(0, function(schedule) {
-                    if (schedule.length == 0) {
-                        season.newPhase(c.PHASE_PLAYOFFS);
-                    }
-                });
-            }
+        if (num_days == 0) {
+            cbNoGames();
 // MOVE THIS TO newPhase(c.PHASE_PLAYOFFS)
 //                url = "/l/" + g.lid + "/history";
         }

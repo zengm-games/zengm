@@ -1,22 +1,21 @@
 /*These are functions that do not return full pages (either JS objects or partial blocks of HTML) and are called from the client.*/
 
-define(["db", "core/game", "util/helpers", "util/lock", "util/playMenu"], function(db, game, helpers, lock, playMenu) {
+define(["db", "core/game", "core/season", "util/helpers", "util/lock", "util/playMenu"], function(db, game, season, helpers, lock, playMenu) {
     /*This is kind of a hodgepodge that handles every request from the play
     button and returns the appropriate response in JSON.
     */
     function play(amount) {
         var error = null;
         var url = null;
+        var numDays;
 /*        var numDays = parseInt(amount, 10)  // Will be NaN is amount is not an integer
 
         if (numDays >= 0) {
             // Continue playing games
             game.play(numDays)
         }
-        else */if (['day', 'week', 'month', 'until_playoffs', 'through_playoffs'].indexOf(amount) >= 0) {
+        else */if (['day', 'week', 'month', 'through_playoffs'].indexOf(amount) >= 0) {
             // Start playing games
-            start = true
-
             if (amount == 'day') {
                 numDays = 1
             }
@@ -26,16 +25,19 @@ define(["db", "core/game", "util/helpers", "util/lock", "util/playMenu"], functi
             else if (amount == 'month') {
                 numDays = 30
             }
-            else if (amount == 'until_playoffs') {
-                r = g.dbex('SELECT COUNT(*)/:num_teams FROM team_stats WHERE season = :season', num_teams=g.num_teams, season=g.season)
-                row = r.fetchone()
-                numDays = int(g.season_length - row[0])  // Number of days remaining
-            }
             else if (amount == 'through_playoffs') {
                 numDays = 100  // There aren't 100 days in the playoffs, so 100 will cover all the games and the sim stops when the playoffs end
             }
 
-            game.play(numDays, start)
+            game.play(numDays, true)
+        }
+        else if (amount == 'until_playoffs') {
+            if (g.phase < c.PHASE_PLAYOFFS) {
+                season.getSchedule(0, function(schedule) {
+                    numDays = Math.floor(2 * schedule.length / (g.numTeams));
+                    game.play(numDays, true);
+                });
+            }
         }
         else if (amount == 'stop') {
             helpers.setGameAttributes({stopGames: true});
@@ -78,9 +80,9 @@ define(["db", "core/game", "util/helpers", "util/lock", "util/playMenu"], functi
             }
         }
 
-        if (error) {
+/*        if (error) {
             alert(error);
-        }
+        }*/
 
 //        return {url: url};
     }

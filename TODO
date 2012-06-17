@@ -17,7 +17,6 @@ How should I handle in-league database? One big transaction?
 BUGS
 
 game simulation is weird. no subs.
-"Idle" status being sent prematurely in game simulations
 database error message at end of season, when setting playoff series. why?
 
 ---

@@ -349,28 +349,12 @@ console.log(playoffSeries);
             var season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
             season = helpers.validateSeason(season);
             var seasons = helpers.getSeasons(season);
+            var teams = helpers.getTeams(tid);
 
-            g.dbl.transaction(["teams"]).objectStore("teams").index("season").getAll(season).onsuccess = function (event) {
-                var teamsAll = event.target.result;
-                var teams = [];
-                for (var i=0; i<teamsAll.length; i++) {
-                    var team = teamsAll[i];
+            var template = Handlebars.templates['game_log'];
+            data["league_content"] = template({g: g, teams: teams, seasons: seasons});
 
-                    if (team.tid == tid) {
-                        var selected = true;
-                    }
-                    else {
-                        var selected = false;
-                    }
-
-                    teams.push({tid: team.tid, abbrev: team.abbrev, region: team.region, name: team.name, selected: selected});
-                }
-                var template = Handlebars.templates['game_log'];
-                data["league_content"] = template({g: g, teams: teams, seasons: seasons});
-
-                bbgm.ajaxUpdate(data);
-            };
-
+            bbgm.ajaxUpdate(data);
         });
     }
 

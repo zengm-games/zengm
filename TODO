@@ -3,8 +3,13 @@ refactor and make sure i'm doing things correct as far as modules, namespaces, d
 - What will replace the AJAX calls? Just call api.whatever function directly and have it do the jQuery crap
 port over other features
 - roster view
-  - this season: go based on players.tid
+  - finish view for current season
   - past season: go based on players.stats.tid
+  - auto sort button
+  - make sure teams dropdown works
+  - trade for button
+  - release button
+  - buy out button
 - draft
 - free agents view
 - contract negotiation

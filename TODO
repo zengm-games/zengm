@@ -9,6 +9,8 @@ port over other features
 - resigning old players
 - new season
   - add rows to stats in DB as is done for playoffs
+- make sure all the existing views work with multiple seasons, as they used to
+- other views
 speed things up by combining transactions
 
 ---

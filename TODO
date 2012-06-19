@@ -1,4 +1,4 @@
-is localStorage fast enough for game_attributes, and possibly other stuff?
+is localStorage fast enough for game_attributes, and possibly other stuff, like trades and contract negotiation?
 refactor and make sure i'm doing things correct as far as modules, namespaces, documentation, style, etc.
 - What will replace the AJAX calls? Just call api.whatever function directly and have it do the jQuery crap
 port over other features

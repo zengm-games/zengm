@@ -279,36 +279,44 @@ console.log(playoffSeries);
 
             var sortable = false;
 
+            // Run after players are loaded
+            function cb() {
+                g.dbl.transaction(["teams"]).objectStore("teams").index("tid").getAll(tid).onsuccess = function(event) {
+                    var teamSeasons = event.target.result;
+                    for (var j=0; j<teamSeasons.length; j++) {
+                        if (teamSeasons[j]['season'] == g.season) {
+                            var teamAll = teamSeasons[j];
+                            break;
+                        }
+                    }
+                    var team = {region: teamAll.region, name: teamAll.name, cash: teamAll.cash / 1000000};
+                    var template = Handlebars.templates["roster"];
+                    data["league_content"] = template({g: g, teams: teams, seasons: seasons, sortable: sortable, currentSeason: currentSeason, players: players, numRosterSpots: 15 - players.length, team: team});
+
+                    bbgm.ajaxUpdate(data);
+                }
+            }
+
 /*    if (season == g.season) {
         var currentSeason = true;
-        # Show players even if they don't have any stats
-        if tid == g.user_tid:
+        // Show players even if they don't have any stats
+        if (tid == g.userTid) {
             var sortable = true;
             r = g.dbex('SELECT COUNT(*) FROM team_stats WHERE tid = :tid AND season = :season AND playoffs = FALSE', tid=g.user_tid, season=g.season)
-            n_games_remaining, = r.fetchone()
-        else:
-            n_games_remaining = 0  # Dummy value because only players on the user's team can be bought out
-        r = g.dbex('SELECT pa.pid, pa.name, pa.pos, :season - pa.born_year as age, pr.ovr, pr.pot, pa.contract_amount / 1000 as contract_amount, pa.contract_exp, AVG(ps.min) as min, AVG(ps.pts) as pts, AVG(ps.orb + ps.drb) as rebounds, AVG(ps.ast) as ast, ((1 + pa.contract_exp - :season) * pa.contract_amount - :n_games_remaining / 82 * pa.contract_amount) / 1000 AS cash_owed FROM player_attributes as pa LEFT OUTER JOIN player_ratings as pr ON pr.season = :season AND pa.pid = pr.pid LEFT OUTER JOIN player_stats as ps ON ps.season = :season AND ps.playoffs = FALSE AND pa.pid = ps.pid WHERE pa.tid = :tid GROUP BY pa.pid, pr.pid, pr.season ORDER BY pa.roster_order ASC', season=view_season, n_games_remaining=n_games_remaining, tid=tid)
+            numGamesRemaining, = r.fetchone()
+        }
+        else {
+            numGamesRemaining = 0  # Dummy value because only players on the user's team can be bought out
+        r = g.dbex('SELECT pa.pid, pa.name, pa.pos, :season - pa.born_year as age, pr.ovr, pr.pot, pa.contract_amount / 1000 as contract_amount, pa.contract_exp, AVG(ps.min) as min, AVG(ps.pts) as pts, AVG(ps.orb + ps.drb) as rebounds, AVG(ps.ast) as ast, ((1 + pa.contract_exp - :season) * pa.contract_amount - :numGamesRemaining / 82 * pa.contract_amount) / 1000 AS cash_owed FROM player_attributes as pa LEFT OUTER JOIN player_ratings as pr ON pr.season = :season AND pa.pid = pr.pid LEFT OUTER JOIN player_stats as ps ON ps.season = :season AND ps.playoffs = FALSE AND pa.pid = ps.pid WHERE pa.tid = :tid GROUP BY pa.pid, pr.pid, pr.season ORDER BY pa.roster_order ASC', season=view_season, numGamesRemaining=numGamesRemaining, tid=tid)
+        }
     }
     else {
         var currentSeason = false;
-        # Only show players with stats, as that's where the team history is recorded
+        // Only show players with stats, as that's where the team history is recorded
         r = g.dbex('SELECT pa.pid, pa.name, pa.pos, :season - pa.born_year as age, pr.ovr, pr.pot, pa.contract_amount / 1000 as contract_amount,  pa.contract_exp, AVG(ps.min) as min, AVG(ps.pts) as pts, AVG(ps.orb + ps.drb) as rebounds, AVG(ps.ast) as ast FROM player_attributes as pa LEFT OUTER JOIN player_ratings as pr ON pr.season = :season AND pa.pid = pr.pid LEFT OUTER JOIN player_stats as ps ON ps.season = :season AND ps.playoffs = FALSE AND pa.pid = ps.pid WHERE ps.tid = :tid GROUP BY pa.pid, pr.pid, pr.season ORDER BY pa.roster_order ASC', season=view_season, tid=tid)
     }
     players = r.fetchall()
-
-    r = g.dbex('SELECT tid, abbrev, region, name FROM team_attributes WHERE season = :season ORDER BY tid ASC', season=view_season)
-    teams = r.fetchall()
-
-    r = g.dbex('SELECT region, name, cash / 1000000 AS cash FROM team_attributes WHERE tid = :tid AND season = :season', tid=tid, season=view_season)
-    team = r.fetchone()
-
-    return render_all_or_json('roster.html', {'players': players, 'num_roster_spots': 15 - len(players), 'teams': teams, 'tid': tid, 'team': team, 'view_season': view_season, 'seasons': seasons})*/
-
-            var template = Handlebars.templates["roster"];
-            data["league_content"] = template({g: g, teams: teams, seasons: seasons, sortable: sortable, currentSeason: currentSeason});
-
-            bbgm.ajaxUpdate(data);
+*/
         });
     }
 

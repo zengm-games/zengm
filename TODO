@@ -1,11 +1,14 @@
-new season
-- add rows to stats in DB as is done for playoffs
 is localStorage fast enough for game_attributes, and possibly other stuff?
 refactor and make sure i'm doing things correct as far as modules, namespaces, documentation, style, etc.
 - What will replace the AJAX calls? Just call api.whatever function directly and have it do the jQuery crap
-require.js
-- const and g -> globals.js. no requires.js
 port over other features
+- roster view
+- draft
+- free agents view
+- contract negotiation
+- resigning old players
+- new season
+  - add rows to stats in DB as is done for playoffs
 speed things up by combining transactions
 
 ---

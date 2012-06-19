@@ -14,6 +14,10 @@ define(["util/helpers", "util/playMenu", "util/random"], function(helpers, playM
         7: Offseason, resign players
         8: Offseason, free agency
 
+    The phase update may happen asynchronously if the database must be accessed,
+    so do not rely on g.phase being updated immediately after this function is
+    called.
+
     Returns:
         false if everything went well, or a string containing an error message
         to be sent to the client.
@@ -419,14 +423,12 @@ console.log(playoffSeries);
             var series = playoffSeries.series;
             var rnd = playoffSeries.currentRound;
             var tids = [];
-//            var active_series = false;
             var num_active_teams = 0;
             var playoffsOver = false;
 console.log(series[rnd]);
             for (var i=0; i<series[rnd].length; i++) {
                 if (series[rnd][i].home.won < 4 && series[rnd][i].away.won < 4) {
                     tids.push([series[rnd][i].home.tid, series[rnd][i].away.tid]);
-//                    active_series = true;
                     num_active_teams += 2;
                 }
             }

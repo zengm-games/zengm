@@ -245,10 +245,6 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
                         series[0][3+cid*4] = {home: teamsConf[3], away: teamsConf[4]};
                         series[0][3+cid*4].home.seed = 4;
                         series[0][3+cid*4].away.seed = 5;
-//                        series[0].push({'seedHome': 1, 'seedAway': 8, 'nameHome': teamsConf[0], 'nameAway': teamsConf[7]});
-//                        series[0].push({'seedHome': 2, 'seedAway': 7, 'nameHome': teamsConf[1], 'nameAway': teamsConf[6]});
-//                        series[0].push({'seedHome': 3, 'seedAway': 6, 'nameHome': teamsConf[2], 'nameAway': teamsConf[5]});
-//                        series[0].push({'seedHome': 4, 'seedAway': 5, 'nameHome': teamsConf[3], 'nameAway': teamsConf[4]});
                     }
 
                     cb(finalMatchups, series);
@@ -274,8 +270,41 @@ console.log(playoffSeries);
         beforeLeague(req, function() {
             var data = {"title": "Roster - League " + g.lid};
 
+            var abbrev = typeof req.params.abbrev !== "undefined" ? req.params.abbrev : undefined;
+            [tid, abbrev] = helpers.validateAbbrev(abbrev);
+            var season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
+            season = helpers.validateSeason(season);
+            var seasons = helpers.getSeasons(season);
+            var teams = helpers.getTeams(tid);
+
+            var sortable = false;
+
+/*    if (season == g.season) {
+        # Show players even if they don't have any stats
+        if tid == g.user_tid:
+            var sortable = true;
+            r = g.dbex('SELECT COUNT(*) FROM team_stats WHERE tid = :tid AND season = :season AND playoffs = FALSE', tid=g.user_tid, season=g.season)
+            n_games_remaining, = r.fetchone()
+        else:
+            n_games_remaining = 0  # Dummy value because only players on the user's team can be bought out
+        r = g.dbex('SELECT pa.pid, pa.name, pa.pos, :season - pa.born_year as age, pr.ovr, pr.pot, pa.contract_amount / 1000 as contract_amount, pa.contract_exp, AVG(ps.min) as min, AVG(ps.pts) as pts, AVG(ps.orb + ps.drb) as rebounds, AVG(ps.ast) as ast, ((1 + pa.contract_exp - :season) * pa.contract_amount - :n_games_remaining / 82 * pa.contract_amount) / 1000 AS cash_owed FROM player_attributes as pa LEFT OUTER JOIN player_ratings as pr ON pr.season = :season AND pa.pid = pr.pid LEFT OUTER JOIN player_stats as ps ON ps.season = :season AND ps.playoffs = FALSE AND pa.pid = ps.pid WHERE pa.tid = :tid GROUP BY pa.pid, pr.pid, pr.season ORDER BY pa.roster_order ASC', season=view_season, n_games_remaining=n_games_remaining, tid=tid)
+    }
+    else {
+        # Only show players with stats, as that's where the team history is recorded
+        r = g.dbex('SELECT pa.pid, pa.name, pa.pos, :season - pa.born_year as age, pr.ovr, pr.pot, pa.contract_amount / 1000 as contract_amount,  pa.contract_exp, AVG(ps.min) as min, AVG(ps.pts) as pts, AVG(ps.orb + ps.drb) as rebounds, AVG(ps.ast) as ast FROM player_attributes as pa LEFT OUTER JOIN player_ratings as pr ON pr.season = :season AND pa.pid = pr.pid LEFT OUTER JOIN player_stats as ps ON ps.season = :season AND ps.playoffs = FALSE AND pa.pid = ps.pid WHERE ps.tid = :tid GROUP BY pa.pid, pr.pid, pr.season ORDER BY pa.roster_order ASC', season=view_season, tid=tid)
+    }
+    players = r.fetchall()
+
+    r = g.dbex('SELECT tid, abbrev, region, name FROM team_attributes WHERE season = :season ORDER BY tid ASC', season=view_season)
+    teams = r.fetchall()
+
+    r = g.dbex('SELECT region, name, cash / 1000000 AS cash FROM team_attributes WHERE tid = :tid AND season = :season', tid=tid, season=view_season)
+    team = r.fetchone()
+
+    return render_all_or_json('roster.html', {'players': players, 'num_roster_spots': 15 - len(players), 'teams': teams, 'tid': tid, 'team': team, 'view_season': view_season, 'seasons': seasons})*/
+
             var template = Handlebars.templates["roster"];
-            data["league_content"] = template({g: g});
+            data["league_content"] = template({g: g, teams: teams, seasons: seasons, sortable: sortable});
 
             bbgm.ajaxUpdate(data);
         });
@@ -355,6 +384,7 @@ console.log(playoffSeries);
         league_dashboard: league_dashboard,
         standings: standings,
         playoffs: playoffs,
+        roster: roster,
         schedule: schedule,
         game_log: game_log
     };

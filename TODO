@@ -3,6 +3,8 @@ refactor and make sure i'm doing things correct as far as modules, namespaces, d
 - What will replace the AJAX calls? Just call api.whatever function directly and have it do the jQuery crap
 port over other features
 - roster view
+  - this season: go based on players.tid
+  - past season: go based on players.stats.tid
 - draft
 - free agents view
 - contract negotiation
@@ -11,6 +13,7 @@ port over other features
   - add rows to stats in DB as is done for playoffs
 - make sure all the existing views work with multiple seasons, as they used to
 - other views
+- reassess how money is stored (ones, thousands, millions?)
 speed things up by combining transactions
 
 ---
@@ -22,7 +25,6 @@ How should I handle in-league database? One big transaction?
 BUGS
 
 game simulation is weird. no subs.
-database error message at end of season, when setting playoff series. why?
 
 ---
 

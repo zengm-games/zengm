@@ -28,10 +28,13 @@ requirejs(["db", "views", "bbgm", "api"], function (db, views, bbgm, api) {
             this.get('/l/:lid/standings/:season', views.standings);
             this.get('/l/:lid/playoffs', views.playoffs);
             this.get('/l/:lid/playoffs/:season', views.playoffs);
+            this.get('/l/:lid/roster', views.roster);
+            this.get('/l/:lid/roster/:abbrev', views.roster);
+            this.get('/l/:lid/roster/:abbrev/:season', views.roster);
             this.get('/l/:lid/schedule', views.schedule);
             this.get('/l/:lid/game_log', views.game_log);
-            this.get('/l/:lid/game_log/:viewSeason', views.game_log);
-            this.get('/l/:lid/game_log/:viewSeason/:viewAbbrev', views.game_log);
+            this.get('/l/:lid/game_log/:viewAbbrev', views.game_log);
+            this.get('/l/:lid/game_log/:viewAbbrev/:viewSeason', views.game_log);
         });
 
         $(document).ready(function() {

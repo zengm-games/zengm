@@ -270,6 +270,17 @@ console.log(playoffSeries);
         });
     }
 
+    function roster(req) {
+        beforeLeague(req, function() {
+            var data = {"title": "Roster - League " + g.lid};
+
+            var template = Handlebars.templates["roster"];
+            data["league_content"] = template({g: g});
+
+            bbgm.ajaxUpdate(data);
+        });
+    }
+
     function schedule(req) {
         beforeLeague(req, function() {
             var data = {"title": "Schedule - League " + g.lid};

@@ -216,11 +216,12 @@ console.log(player.stats[1].season);
         // Offseason, before draft
         else if (phase == c.PHASE_BEFORE_DRAFT) {
             phaseText = g.season + " before draft";
+console.log('whatup');
             // Remove released players' salaries from payrolls
-            g.dbex('DELETE FROM released_players_salaries WHERE contract_exp <= :season', season=g.season)
+//            g.dbex('DELETE FROM released_players_salaries WHERE contract_exp <= :season', season=g.season)
 
             // Add a year to the free agents
-            g.dbex('UPDATE player_attributes SET contract_exp = contract_exp + 1 WHERE tid = :tid', tid=c.PLAYER_FREE_AGENT)
+//            g.dbex('UPDATE player_attributes SET contract_exp = contract_exp + 1 WHERE tid = :tid', tid=c.PLAYER_FREE_AGENT)
 
             cb(phase, phaseText);
         }
@@ -420,6 +421,7 @@ console.log(playoffSeries);
             var tids = [];
 //            var active_series = false;
             var num_active_teams = 0;
+            var playoffsOver = false;
 console.log(series[rnd]);
             for (var i=0; i<series[rnd].length; i++) {
                 if (series[rnd][i].home.won < 4 && series[rnd][i].away.won < 4) {
@@ -433,9 +435,11 @@ console.log(series[rnd]);
             }
             // The previous round is over. Either make a new round or go to the next phase.
             else {
+console.log('rnd ' + rnd);
                 // Are the whole playoffs over?
-                if (rnd == 4) {
+                if (rnd == 3) {
                     newPhase(c.PHASE_BEFORE_DRAFT);
+                    playoffsOver = true;
                 }
                 else {
                     var nextRound = [];
@@ -459,7 +463,7 @@ console.log(series[rnd]);
                     }
                     playoffSeries.currentRound += 1;
 console.log(playoffSeries);
-                    cursor.update(playoffSeries);
+                    cursor.update(playoffSeries, playoffsOver);
                 }
 /*
                 // Who won?

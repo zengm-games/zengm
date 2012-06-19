@@ -545,10 +545,10 @@ console.log(tid);
                     cbPlayGames();
                 }
                 else {
-                    season.newSchedulePlayoffsDay(function (num_active_teams) {
+                    season.newSchedulePlayoffsDay(function (num_active_teams, playoffsOver) {
                         // If season.newSchedulePlayoffsDay didn't move the phase to 4, then
                         // the playoffs are still happening.
-                        if (g.phase == c.PHASE_PLAYOFFS) {
+                        if (!playoffsOver) {
                             playoffsContinue = true;
                         }
                         cbPlayGames();

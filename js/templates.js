@@ -931,6 +931,457 @@ function program4(depth0,data) {
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n    </ul>\n  </li>\n</ul>\n";
   return buffer;});
+templates['roster'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  helpers = helpers || Handlebars.helpers;
+  var buffer = "", stack1, stack2, foundHelper, tmp1, self=this, functionType="function", helperMissing=helpers.helperMissing, undef=void 0, escapeExpression=this.escapeExpression, blockHelperMissing=helpers.blockHelperMissing;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, stack2;
+  buffer += "\n      var result = parse_league_url(document.URL);\n      var league_root_url = result[1];\n\n      // Roster reordering\n      var fixHelper = function(e, ui) {\n          // Return helper which preserves the width of table cells being reordered\n          ui.children().each(function() {\n            $(this).width($(this).width());\n          });\n          return ui;\n      };\n      $('#roster tbody').sortable({\n          helper: fixHelper,\n          cursor: 'move',\n          update: function(e, ui) {\n              sorted = $(this).sortable('serialize');\n              $.post(league_root_url + '/roster/reorder', sorted, function(msg) {\n                  var i = 1;\n                  $('#roster tbody').children().each(function() {\n                      if (i <= 5) {\n                          $(this).find('td:first').removeClass('btn-info');\n                          $(this).find('td:first').addClass('btn-primary');\n                      }\n                      else {\n                          $(this).find('td:first').removeClass('btn-primary');\n                          $(this).find('td:first').addClass('btn-info');\n                      }\n                      i++;\n                  });\n              });\n          }\n      }).disableSelection();\n      $('#auto_sort_roster').click(function(event) {\n          $.post(league_root_url + '/roster/auto_sort', {'json': 1}, function (data) {\n              ajax_update(data);\n          }, 'json');\n      });\n\n      // Release player\n      $('#roster button').click(function(event) {\n          if (this.dataset.action == 'release') {\n              if (window.confirm('Are you sure you want to release ' + this.dataset.playerName + '?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in ' + this.dataset.contractExpiration + '.')) {\n                  var tr = this.parentNode.parentNode;\n                  $.post('/l/";
+  foundHelper = helpers['g'];
+  stack1 = foundHelper || depth0['g'];
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/roster_release', {'pid': this.dataset.playerId}, function (data) {\n                      if (data['error']) {\n                          alert('Error: ' + data['error']);\n                      }\n                      else {\n                          tr.parentNode.removeChild(tr);\n                      }\n                  }, 'json');\n              }\n          }\n          else if (this.dataset.action == 'buy_out') {\n              if (";
+  foundHelper = helpers.team;
+  stack1 = foundHelper || depth0.team;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.cash);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "team.cash", { hash: {} }); }
+  buffer += escapeExpression(stack1) + " > this.dataset.cashOwed) {\n                  if (window.confirm('Are you sure you want to buy out ' + this.dataset.playerName + '? You will have to pay him the $' + this.dataset.cashOwed + 'M remaining on his contract from your current cash reserves of $";
+  stack1 = 1;
+  foundHelper = helpers.team;
+  stack2 = foundHelper || depth0.team;
+  stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.cash);
+  if(typeof stack2 === functionType) { stack1 = stack2.call(depth0, stack1, { hash: {} }); }
+  else if(stack2=== undef) { stack1 = helperMissing.call(depth0, "team.cash", stack1, { hash: {} }); }
+  else { stack1 = stack2; }
+  buffer += escapeExpression(stack1) + "M. He will then become a free agent and his contract will no longer count towards your salary cap.')) {\n                      var tr = this.parentNode.parentNode;\n                      $.post('/l/";
+  foundHelper = helpers['g'];
+  stack1 = foundHelper || depth0['g'];
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/roster_buy_out', {'pid': this.dataset.playerId}, function (data) {\n                          if (data['error']) {\n                              alert('Error: ' + data['error']);\n                          }\n                          else {\n                              tr.parentNode.removeChild(tr);\n                          }\n                      }, 'json');\n                  }\n              }\n              else {\n                  alert('You only have $";
+  stack1 = 1;
+  foundHelper = helpers.team;
+  stack2 = foundHelper || depth0.team;
+  stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.cash);
+  if(typeof stack2 === functionType) { stack1 = stack2.call(depth0, stack1, { hash: {} }); }
+  else if(stack2=== undef) { stack1 = helperMissing.call(depth0, "team.cash", stack1, { hash: {} }); }
+  else { stack1 = stack2; }
+  buffer += escapeExpression(stack1) + "M in cash, but it would take $' + this.dataset.cashOwed + 'M to buy out ' + this.dataset.playerName + '.');\n              }\n          }\n          else if (this.dataset.action == 'trade_for') {\n\n          }\n      });\n  ";
+  return buffer;}
+
+function program3(depth0,data) {
+  
+  var buffer = "", stack1, stack2;
+  buffer += "\n      <option value=\"";
+  foundHelper = helpers.abbrev;
+  stack1 = foundHelper || depth0.abbrev;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "abbrev", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\"";
+  foundHelper = helpers.selected;
+  stack1 = foundHelper || depth0.selected;
+  stack2 = helpers['if'];
+  tmp1 = self.program(4, program4, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += ">";
+  foundHelper = helpers.region;
+  stack1 = foundHelper || depth0.region;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "region", { hash: {} }); }
+  buffer += escapeExpression(stack1) + " ";
+  foundHelper = helpers.name;
+  stack1 = foundHelper || depth0.name;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "name", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</option>\n    ";
+  return buffer;}
+function program4(depth0,data) {
+  
+  
+  return " selected=\"selected\"";}
+
+function program6(depth0,data) {
+  
+  var buffer = "", stack1, stack2;
+  buffer += "\n      <option value=\"";
+  foundHelper = helpers.season;
+  stack1 = foundHelper || depth0.season;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "season", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\"";
+  foundHelper = helpers.selected;
+  stack1 = foundHelper || depth0.selected;
+  stack2 = helpers['if'];
+  tmp1 = self.program(7, program7, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += ">";
+  foundHelper = helpers.season;
+  stack1 = foundHelper || depth0.season;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "season", { hash: {} }); }
+  buffer += escapeExpression(stack1) + " season</option>\n    ";
+  return buffer;}
+function program7(depth0,data) {
+  
+  
+  return " selected=\"selected\"";}
+
+function program9(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n  <p>You currently have ";
+  foundHelper = helpers.num_roster_spots;
+  stack1 = foundHelper || depth0.num_roster_spots;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "num_roster_spots", { hash: {} }); }
+  buffer += escapeExpression(stack1) + " empty roster spots.</p>\n  <p>Drag and drop row handles to move players between the starting lineup (<span class=\"roster_gs\">&#9632;</span>) and the bench (<span class=\"roster_bench\">&#9632;</span>).</p>\n  <p><button class=\"btn\" id=\"auto_sort_roster\">Auto sort roster</button></p>\n";
+  return buffer;}
+
+function program11(depth0,data) {
+  
+  
+  return "<th></th>";}
+
+function program13(depth0,data) {
+  
+  
+  return "<th>Contract</th>";}
+
+function program15(depth0,data) {
+  
+  var buffer = "", stack1, stack2;
+  buffer += "<th>Release</th><th>Buy out</th>{#else}";
+  foundHelper = helpers.currentSeason;
+  stack1 = foundHelper || depth0.currentSeason;
+  stack2 = helpers['if'];
+  tmp1 = self.program(16, program16, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  return buffer;}
+function program16(depth0,data) {
+  
+  
+  return "<th>Trade For</th>";}
+
+function program18(depth0,data) {
+  
+  var buffer = "", stack1, stack2, stack3;
+  buffer += "\n    <tr id=\"roster_";
+  foundHelper = helpers.pid;
+  stack1 = foundHelper || depth0.pid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "pid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\">";
+  foundHelper = helpers.sortable;
+  stack1 = foundHelper || depth0.sortable;
+  stack2 = helpers['if'];
+  tmp1 = self.program(19, program19, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "<td><a href=\"/l/";
+  foundHelper = helpers['g'];
+  stack1 = foundHelper || depth0['g'];
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/player/";
+  foundHelper = helpers.pid;
+  stack1 = foundHelper || depth0.pid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "pid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\">";
+  foundHelper = helpers.name;
+  stack1 = foundHelper || depth0.name;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "name", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</a></td><td>";
+  foundHelper = helpers.pos;
+  stack1 = foundHelper || depth0.pos;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "pos", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</td><td>";
+  foundHelper = helpers.age;
+  stack1 = foundHelper || depth0.age;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "age", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</td><td>";
+  foundHelper = helpers.ovr;
+  stack1 = foundHelper || depth0.ovr;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "ovr", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</td><td>";
+  foundHelper = helpers.pot;
+  stack1 = foundHelper || depth0.pot;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "pot", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</td>";
+  foundHelper = helpers.currentSeason;
+  stack1 = foundHelper || depth0.currentSeason;
+  stack2 = helpers['if'];
+  tmp1 = self.program(21, program21, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "<td>";
+  stack1 = 1;
+  foundHelper = helpers.min;
+  stack2 = foundHelper || depth0.min;
+  foundHelper = helpers.round;
+  stack3 = foundHelper || depth0.round;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
+  buffer += escapeExpression(stack1) + "</td><td>";
+  stack1 = 1;
+  foundHelper = helpers.pts;
+  stack2 = foundHelper || depth0.pts;
+  foundHelper = helpers.round;
+  stack3 = foundHelper || depth0.round;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
+  buffer += escapeExpression(stack1) + "</td><td>";
+  stack1 = 1;
+  foundHelper = helpers.rebounds;
+  stack2 = foundHelper || depth0.rebounds;
+  foundHelper = helpers.round;
+  stack3 = foundHelper || depth0.round;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
+  buffer += escapeExpression(stack1) + "</td><td>";
+  stack1 = 1;
+  foundHelper = helpers.ast;
+  stack2 = foundHelper || depth0.ast;
+  foundHelper = helpers.round;
+  stack3 = foundHelper || depth0.round;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
+  buffer += escapeExpression(stack1) + "</td>";
+  foundHelper = helpers.sortable;
+  stack1 = foundHelper || depth0.sortable;
+  stack2 = helpers['if'];
+  tmp1 = self.program(23, program23, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "</tr>\n  ";
+  return buffer;}
+function program19(depth0,data) {
+  
+  
+  return "<td class=\"roster_handle\"></td>";}
+
+function program21(depth0,data) {
+  
+  var buffer = "", stack1, stack2, stack3;
+  buffer += "<td>$";
+  stack1 = 1;
+  foundHelper = helpers.contract_amount;
+  stack2 = foundHelper || depth0.contract_amount;
+  foundHelper = helpers.round;
+  stack3 = foundHelper || depth0.round;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
+  buffer += escapeExpression(stack1) + "M through ";
+  foundHelper = helpers.contract_exp;
+  stack1 = foundHelper || depth0.contract_exp;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "contract_exp", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</td>";
+  return buffer;}
+
+function program23(depth0,data) {
+  
+  var buffer = "", stack1, stack2, stack3;
+  buffer += "<td><button class=\"btn btn-mini\" data-action=\"release\" data-player-id=\"";
+  foundHelper = helpers.pid;
+  stack1 = foundHelper || depth0.pid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "pid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\" data-player-name=\"";
+  foundHelper = helpers.name;
+  stack1 = foundHelper || depth0.name;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "name", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\" data-contract-expiration=\"";
+  foundHelper = helpers.contract_exp;
+  stack1 = foundHelper || depth0.contract_exp;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "contract_exp", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\">Release</button></td><td><button class=\"btn btn-mini\" data-action=\"buy_out\" data-player-id=\"";
+  foundHelper = helpers.pid;
+  stack1 = foundHelper || depth0.pid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "pid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\" data-player-name=\"";
+  foundHelper = helpers.name;
+  stack1 = foundHelper || depth0.name;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "name", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\" data-cash-owed=\"";
+  stack1 = 1;
+  foundHelper = helpers.cash_owed;
+  stack2 = foundHelper || depth0.cash_owed;
+  foundHelper = helpers.round;
+  stack3 = foundHelper || depth0.round;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
+  buffer += escapeExpression(stack1) + "\">Buy out</button></td>{#else}";
+  foundHelper = helpers.currentSeason;
+  stack1 = foundHelper || depth0.currentSeason;
+  stack2 = helpers['if'];
+  tmp1 = self.program(24, program24, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  return buffer;}
+function program24(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "<td><form action=\"/l/";
+  foundHelper = helpers['g'];
+  stack1 = foundHelper || depth0['g'];
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/trade\" method=\"POST\" style=\"margin: 0\"><input type=\"hidden\" name=\"pid\" value=\"";
+  foundHelper = helpers.pid;
+  stack1 = foundHelper || depth0.pid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "pid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\"><button type=\"submit\" class=\"btn btn-mini\">Trade For</button></form></td>";
+  return buffer;}
+
+  buffer += "<script type=\"text/javascript\">\n$(document).ready(function() {\n  dropdown($('#roster_select_team'), $('#roster_select_season'));\n\n  ";
+  foundHelper = helpers.sortable;
+  stack1 = foundHelper || depth0.sortable;
+  stack2 = helpers['if'];
+  tmp1 = self.program(1, program1, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n});\n</script>\n\n<form action=\"/l/";
+  foundHelper = helpers['g'];
+  stack1 = foundHelper || depth0['g'];
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/roster\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"roster_select_abbrev\" name=\"team\" class=\"team\">\n    ";
+  foundHelper = helpers.teams;
+  stack1 = foundHelper || depth0.teams;
+  tmp1 = self.program(3, program3, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
+  else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n  </select>\n  <select id=\"roster_select_season\" name=\"season\" class=\"season\">\n    ";
+  foundHelper = helpers.seasons;
+  stack1 = foundHelper || depth0.seasons;
+  tmp1 = self.program(6, program6, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
+  else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n  </select>\n</form>\n\n<h1>";
+  foundHelper = helpers.team;
+  stack1 = foundHelper || depth0.team;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.region);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "team.region", { hash: {} }); }
+  buffer += escapeExpression(stack1) + " ";
+  foundHelper = helpers.team;
+  stack1 = foundHelper || depth0.team;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.name);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "team.name", { hash: {} }); }
+  buffer += escapeExpression(stack1) + " Roster</h1>\n\n";
+  foundHelper = helpers.sortable;
+  stack1 = foundHelper || depth0.sortable;
+  stack2 = helpers['if'];
+  tmp1 = self.program(9, program9, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n<p>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"roster\">\n<thead>\n  <tr>";
+  foundHelper = helpers.sortable;
+  stack1 = foundHelper || depth0.sortable;
+  stack2 = helpers['if'];
+  tmp1 = self.program(11, program11, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "<th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall Rating\">Ovr</th><th title=\"Potential Rating\">Pot</th>";
+  foundHelper = helpers.currentSeason;
+  stack1 = foundHelper || depth0.currentSeason;
+  stack2 = helpers['if'];
+  tmp1 = self.program(13, program13, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "<th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th>";
+  foundHelper = helpers.sortable;
+  stack1 = foundHelper || depth0.sortable;
+  stack2 = helpers['if'];
+  tmp1 = self.program(15, program15, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "</tr>\n</thead>\n<tbody>\n  ";
+  foundHelper = helpers.players;
+  stack1 = foundHelper || depth0.players;
+  tmp1 = self.program(18, program18, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
+  else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n</tbody>\n</table>\n</p>\n";
+  return buffer;});
 templates['new_league'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;
   var buffer = "", stack1, foundHelper, tmp1, self=this, functionType="function", helperMissing=helpers.helperMissing, undef=void 0, escapeExpression=this.escapeExpression, blockHelperMissing=helpers.blockHelperMissing;
@@ -1072,7 +1523,7 @@ templates['game_log'] = template(function (Handlebars,depth0,helpers,partials,da
 function program1(depth0,data) {
   
   var buffer = "", stack1, stack2;
-  buffer += "\n        <option value=\"";
+  buffer += "\n      <option value=\"";
   foundHelper = helpers.abbrev;
   stack1 = foundHelper || depth0.abbrev;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -1097,7 +1548,7 @@ function program1(depth0,data) {
   stack1 = foundHelper || depth0.name;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "name", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "</option>\n      ";
+  buffer += escapeExpression(stack1) + "</option>\n    ";
   return buffer;}
 function program2(depth0,data) {
   
@@ -1107,7 +1558,7 @@ function program2(depth0,data) {
 function program4(depth0,data) {
   
   var buffer = "", stack1, stack2;
-  buffer += "\n        <option value=\"";
+  buffer += "\n      <option value=\"";
   foundHelper = helpers.season;
   stack1 = foundHelper || depth0.season;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -1127,20 +1578,20 @@ function program4(depth0,data) {
   stack1 = foundHelper || depth0.season;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "season", { hash: {} }); }
-  buffer += escapeExpression(stack1) + " season</option>\n      ";
+  buffer += escapeExpression(stack1) + " season</option>\n    ";
   return buffer;}
 function program5(depth0,data) {
   
   
   return " selected=\"selected\"";}
 
-  buffer += "  <script type=\"text/javascript\">\n    // Load game log list table and activate form\n    $(document).ready(function () {\n      function loadGameLogList(abbrev, season, firstTime) {\n        abbrev = typeof abbrev !== \"undefined\" ? abbrev : undefined;\n        season = typeof season !== \"undefined\" ? season : undefined;\n        firstTime = typeof season !== \"undefined\" ? firstTime : false;\n\n        api.gameLogList(abbrev, season, firstTime, function (html) {\n            $('#game_log_list').html(html);\n\n            if (firstTime) {\n                // Click the first one to show its boxscore by default\n                $('#game_log_list tbody tr').first().click();\n            }\n        });\n      }\n\n      $game_log_select_season = $('#game_log_select_season')\n      $game_log_select_season.change(function(event) { loadGameLogList($game_log_select_abbrev.val(), $game_log_select_season.val()); });\n      $game_log_select_abbrev = $('#game_log_select_abbrev')\n      $game_log_select_abbrev.change(function(event) { loadGameLogList($game_log_select_abbrev.val(), $game_log_select_season.val()); });\n      if ($game_log_select_season.length && $game_log_select_abbrev.length) {\n        loadGameLogList($game_log_select_abbrev.val(), $game_log_select_season.val(), true);\n      }\n\n      // Clickable rows for game log list table\n      $(document).on('click', '#game_log_list tbody tr', function(event) {\n        $clicked_tr = $(this);\n        api.boxScore($clicked_tr.attr('id'), function(html) {\n          // Update boxscore\n          $('#game_log_box_score').html(html);\n\n          // Update gamelist highlighting\n          $clicked_tr.parent().children().each(function() {\n            $(this).removeClass('alert-info');\n          });\n          $clicked_tr.addClass('alert-info');\n        });\n      });\n    });\n  </script>\n\n  <form action=\"/l/";
+  buffer += "<script type=\"text/javascript\">\n  // Load game log list table and activate form\n  $(document).ready(function () {\n    function loadGameLogList(abbrev, season, firstTime) {\n      abbrev = typeof abbrev !== \"undefined\" ? abbrev : undefined;\n      season = typeof season !== \"undefined\" ? season : undefined;\n      firstTime = typeof season !== \"undefined\" ? firstTime : false;\n\n      api.gameLogList(abbrev, season, firstTime, function (html) {\n          $('#game_log_list').html(html);\n\n          if (firstTime) {\n              // Click the first one to show its boxscore by default\n              $('#game_log_list tbody tr').first().click();\n          }\n      });\n    }\n\n    $game_log_select_season = $('#game_log_select_season')\n    $game_log_select_season.change(function(event) { loadGameLogList($game_log_select_abbrev.val(), $game_log_select_season.val()); });\n    $game_log_select_abbrev = $('#game_log_select_abbrev')\n    $game_log_select_abbrev.change(function(event) { loadGameLogList($game_log_select_abbrev.val(), $game_log_select_season.val()); });\n    if ($game_log_select_season.length && $game_log_select_abbrev.length) {\n      loadGameLogList($game_log_select_abbrev.val(), $game_log_select_season.val(), true);\n    }\n\n    // Clickable rows for game log list table\n    $(document).on('click', '#game_log_list tbody tr', function(event) {\n      $clicked_tr = $(this);\n      api.boxScore($clicked_tr.attr('id'), function(html) {\n        // Update boxscore\n        $('#game_log_box_score').html(html);\n\n        // Update gamelist highlighting\n        $clicked_tr.parent().children().each(function() {\n          $(this).removeClass('alert-info');\n        });\n        $clicked_tr.addClass('alert-info');\n      });\n    });\n  });\n</script>\n\n<form action=\"/l/";
   foundHelper = helpers['g'];
   stack1 = foundHelper || depth0['g'];
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/game_log\" method=\"GET\" class=\"form-inline pull-right\">\n    <select id=\"game_log_select_abbrev\" name=\"team\" class=\"team\">\n      ";
+  buffer += escapeExpression(stack1) + "/game_log\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"game_log_select_abbrev\" name=\"team\" class=\"team\">\n    ";
   foundHelper = helpers.teams;
   stack1 = foundHelper || depth0.teams;
   tmp1 = self.program(1, program1, data);
@@ -1150,7 +1601,7 @@ function program5(depth0,data) {
   if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
   else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n    </select>\n    <select id=\"game_log_select_season\" name=\"season\" class=\"season\">\n      ";
+  buffer += "\n  </select>\n  <select id=\"game_log_select_season\" name=\"season\" class=\"season\">\n    ";
   foundHelper = helpers.seasons;
   stack1 = foundHelper || depth0.seasons;
   tmp1 = self.program(4, program4, data);
@@ -1160,7 +1611,7 @@ function program5(depth0,data) {
   if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
   else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n    </select>\n  </form>\n\n  <h1>Game Log</h1>\n\n  <p>\n    <div class=\"row-fluid\">\n      <div class=\"span9\">\n        <div id=\"game_log_box_score\">\n          <p>Select a game from the menu on the right to view a box score.</p>\n        </div>\n      </div>\n\n      <div class=\"span3\" id=\"game_log_list\">\n      </div>\n    </div>\n  </p>\n";
+  buffer += "\n  </select>\n</form>\n\n<h1>Game Log</h1>\n\n<p>\n<div class=\"row-fluid\">\n  <div class=\"span9\">\n    <div id=\"game_log_box_score\">\n      <p>Select a game from the menu on the right to view a box score.</p>\n    </div>\n  </div>\n\n  <div class=\"span3\" id=\"game_log_list\">\n  </div>\n</div>\n</p>\n";
   return buffer;});
 templates['gameLogList'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;

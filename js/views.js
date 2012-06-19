@@ -315,19 +315,19 @@ console.log(playoffSeries);
         beforeLeague(req, function() {
             var data = {"title": "Game Log - League " + g.lid};
 
-            var viewAbbrev = typeof req.params.viewAbbrev !== "undefined" ? req.params.viewAbbrev : undefined;
-            [viewTid, viewAbbrev] = helpers.validateAbbrev(viewAbbrev);
-            var viewSeason = typeof req.params.viewSeason !== "undefined" ? req.params.viewSeason : undefined;
-            viewSeason = helpers.validateSeason(viewSeason);
-            var seasons = helpers.getSeasons(viewSeason);
+            var abbrev = typeof req.params.abbrev !== "undefined" ? req.params.abbrev : undefined;
+            [tid, abbrev] = helpers.validateAbbrev(abbrev);
+            var season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
+            season = helpers.validateSeason(season);
+            var seasons = helpers.getSeasons(season);
 
-            g.dbl.transaction(["teams"]).objectStore("teams").index("season").getAll(viewSeason).onsuccess = function (event) {
+            g.dbl.transaction(["teams"]).objectStore("teams").index("season").getAll(season).onsuccess = function (event) {
                 var teamsAll = event.target.result;
                 var teams = [];
                 for (var i=0; i<teamsAll.length; i++) {
                     var team = teamsAll[i];
 
-                    if (team.tid == viewTid) {
+                    if (team.tid == tid) {
                         var selected = true;
                     }
                     else {

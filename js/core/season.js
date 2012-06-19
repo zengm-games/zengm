@@ -457,7 +457,7 @@ console.log(series[rnd]);
                         matchup.away.won = 0;
                         series[rnd+1][i/2] = matchup;
                     }
-                    rnd += 1;
+                    playoffSeries.currentRound += 1;
 console.log(playoffSeries);
                     cursor.update(playoffSeries);
                 }

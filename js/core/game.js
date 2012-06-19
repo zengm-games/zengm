@@ -475,6 +475,7 @@ t['defense'] = 0.25;
                                                 for (var i=0; i<gidsFinished.length; i++) {
                                                     scheduleStore.delete(gidsFinished[i]);
                                                 }
+
                                                 play(num_days - 1);
                                             }
                                         });
@@ -483,6 +484,9 @@ t['defense'] = 0.25;
                                         gs = new gameSim.GameSim(schedule[i].gid, teams[schedule[i].homeTid], teams[schedule[i].awayTid]);
                                         var results = gs.run();
                                         doSaveResults(results, g.phase == c.PHASE_PLAYOFFS);
+                                    }
+                                    if (schedule.length == 0 && playoffsContinue) {
+                                        play(num_days - 1);
                                     }
                                 }
                             }

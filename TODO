@@ -1,5 +1,4 @@
 playoffs view and playoff simulation
-- second round game simulation doesn't work - see league 7
 new season
 - add rows to stats in DB as is done for playoffs
 is localStorage fast enough for game_attributes, and possibly other stuff?

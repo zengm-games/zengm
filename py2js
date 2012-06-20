@@ -7,8 +7,8 @@ sed -i 's/#/\/\//g' "$1"
 sed -i 's/"""$/*\//g' "$1"
 sed -i 's/"""/\/*/g' "$1"
 
-sed -i 's/):/) {/g' "$1"
-sed -i 's/:/) {/g' "$1"
+sed -i 's/):$/) {/g' "$1"
+sed -i 's/:$/) {/g' "$1"
 
 sed -i 's/if /if (/g' "$1"
 sed -i 's/else /else (/g' "$1"

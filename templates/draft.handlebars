@@ -1,50 +1,49 @@
 <script type="text/javascript">
 $(document).ready(function() {
-    function update_draft_tables(pids) {
+    function updateDraftTables(pids) {
         for (var i=0; i<pids.length; i++) {
-            var drafted_player = new Array(5);
+            var draftedPlayer = new Array(5);
             // Find row in undrafted players table, get metadata, delete row
-            undrafted_tds = $('#undrafted_' + pids[i] + ' td')
+            var undraftedTds = $('#undrafted_' + pids[i] + ' td')
             for (var j=0; j<5; j++) {
-                drafted_player[j] = undrafted_tds[j].innerHTML;
+                draftedPlayer[j] = undraftedTds[j].innerHTML;
             }
 
             // Find correct row (first blank row) in drafted players table, write metadata
-            drafted_rows = $('#drafted tbody tr');
-            for (var j=0; j<drafted_rows.length; j++) {
-                if (drafted_rows[j].children[3].innerHTML.length == 0) {
+            var draftedRows = $('#drafted tbody tr');
+            for (var j=0; j<draftedRows.length; j++) {
+                if (draftedRows[j].children[3].innerHTML.length == 0) {
                     $('#undrafted_' + pids[i]).remove();
-                    drafted_rows[j].children[2].innerHTML = drafted_player[0];
-                    drafted_rows[j].children[3].innerHTML = drafted_player[1];
-                    drafted_rows[j].children[4].innerHTML = drafted_player[2];
-                    drafted_rows[j].children[5].innerHTML = drafted_player[3];
-                    drafted_rows[j].children[6].innerHTML = drafted_player[4];
+                    draftedRows[j].children[2].innerHTML = draftedPlayer[0];
+                    draftedRows[j].children[3].innerHTML = draftedPlayer[1];
+                    draftedRows[j].children[4].innerHTML = draftedPlayer[2];
+                    draftedRows[j].children[5].innerHTML = draftedPlayer[3];
+                    draftedRows[j].children[6].innerHTML = draftedPlayer[4];
                     break;
                 }
             }
         }
     }
 
-    function draft_until_user_or_endu() {
-        $.post('/l/{{g.lid}}/draft_until_user_or_end', function (data) {
-            update_draft_tables(data['pids']);
-            if (!data['done']) {
-                $('#undrafted button').removeAttr('disabled');
-            }
-        }, 'json');
+    function draftUntilUserOrEnd() {
+        var pids, done;
+        [pids, done] = api.draftUntilUserOrEnd();
+        updateDraftTables(pids);
+        if (!done) {
+            $('#undrafted button').removeAttr('disabled');
+        }
     }
 
     $('#start_draft').click(function(event) {
         $($('#start_draft').parent()).hide()
-        draft_until_user_or_endu();
+        draftUntilUserOrEnd();
     });
 
     $('#undrafted button').click(function(event) {
         $('#undrafted button').attr('disabled', 'disabled');
-        $.post('/l/{{g.lid}}/draft_user', {'pid': this.getAttribute('data-player-id')}, function (data) {
-            update_draft_tables(data['pids']);
-            draft_until_user_or_endu();
-        }, 'json');
+        var pid = api.draftUser(this.getAttribute('data-player-id'));
+        update_draft_tables([pid]);
+        draftUntilUserOrEnd();
     });
 });
 </script>

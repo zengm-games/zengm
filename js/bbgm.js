@@ -127,16 +127,8 @@ define([], function() {
                 var result = parse_league_url(document.URL);
                 var league_root_url = result[1];
                 var league_page = result[2];
-                var url = league_root_url + '/' + league_page + '/' + select1.val();
-                $.ajax({
-                    type: 'GET',
-                    url: url,
-                    data: {'json': 1},
-                    success: function (data) {
-                        ajaxUpdate(data, url);
-                    },
-                    dataType: 'json'
-                });
+                var url = '/l/' + g.lid + '/' + league_page + '/' + select1.val();
+                Davis.location.assign(new Davis.Request(url));
             });
         }
         else if (arguments.length == 2) {

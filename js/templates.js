@@ -502,12 +502,7 @@ function program1(depth0,data,depth1) {
   if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
   else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  </tbody>\n  <tfoot>\n    <tr><td>Total</td><td></td><td>";
-  foundHelper = helpers.min;
-  stack1 = foundHelper || depth0.min;
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "min", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "</td><td>";
+  buffer += "\n  </tbody>\n  <tfoot>\n    <tr><td>Total</td><td></td><td>240</td><td>";
   foundHelper = helpers.fg;
   stack1 = foundHelper || depth0.fg;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -581,7 +576,7 @@ function program1(depth0,data,depth1) {
   return buffer;}
 function program2(depth0,data,depth2) {
   
-  var buffer = "", stack1;
+  var buffer = "", stack1, stack2, stack3;
   buffer += "\n    <tr><td><a href=\"/l/";
   foundHelper = helpers['g'];
   stack1 = foundHelper || depth2['g'];
@@ -604,10 +599,14 @@ function program2(depth0,data,depth2) {
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "pos", { hash: {} }); }
   buffer += escapeExpression(stack1) + "</td><td>";
+  stack1 = 1;
   foundHelper = helpers.min;
-  stack1 = foundHelper || depth0.min;
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "min", { hash: {} }); }
+  stack2 = foundHelper || depth0.min;
+  foundHelper = helpers.round;
+  stack3 = foundHelper || depth0.round;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
   buffer += escapeExpression(stack1) + "</td><td>";
   foundHelper = helpers.fg;
   stack1 = foundHelper || depth0.fg;

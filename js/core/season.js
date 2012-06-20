@@ -3,16 +3,8 @@ define(["util/helpers", "util/playMenu", "util/random"], function(helpers, playM
 
     This function is called to do all the crap that must be done during
     transitions between phases of the game, such as moving from the regular
-    season to the playoffs. Phases are defined as:
-        0: Preseason
-        1: Regular season, before trade deadline
-        2: Regular season, after trade deadline (NOTE: not implemented yet)
-        3: Playoffs
-        4: Offseason, before draft
-        5: Draft
-        6: Offseason, after draft
-        7: Offseason, resign players
-        8: Offseason, free agency
+    season to the playoffs. Phases are defined in the c.PHASE_* global
+    variables.
 
     The phase update may happen asynchronously if the database must be accessed,
     so do not rely on g.phase being updated immediately after this function is
@@ -220,7 +212,6 @@ console.log(player.stats[1].season);
         // Offseason, before draft
         else if (phase == c.PHASE_BEFORE_DRAFT) {
             phaseText = g.season + " before draft";
-console.log('whatup');
             // Remove released players' salaries from payrolls
 //            g.dbex('DELETE FROM released_players_salaries WHERE contract_exp <= :season', season=g.season)
 

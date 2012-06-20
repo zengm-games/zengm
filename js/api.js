@@ -50,9 +50,9 @@ define(["db", "core/game", "core/season", "util/helpers", "util/lock", "util/pla
         }
         else if (amount == 'until_draft') {
             if (g.phase == c.PHASE_BEFORE_DRAFT) {
-//                season.newPhase(c.PHASE_DRAFT)
-//                draft.generate_players()
-//                draft.set_order()
+                season.newPhase(c.PHASE_DRAFT)
+                draft.generate_players()
+                draft.set_order()
             }
 //            url = url_for('draft_', lid=g.lid)
         }

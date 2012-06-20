@@ -64,7 +64,7 @@ $(document).ready(function() {
     </thead>
     <tbody>
       {{#undrafted}}
-        <tr id="undrafted_{{pid}}"><td><a href="/l/{{g.lid}}/player/{{pid}}">{{name}}</a></td><td>{{pos}}</td><td>{{age}}<td>{{ovr}}</td><td>{{pot}}</td><td><button class="btn btn-mini btn-primary" data-player-id="{{pid}}"{{#if started}} disabled="disabled"{{/if}}>Draft</button></td></tr>
+        <tr id="undrafted_{{pid}}"><td><a href="/l/{{g.lid}}/player/{{pid}}">{{name}}</a></td><td>{{pos}}</td><td>{{age}}<td>{{ovr}}</td><td>{{pot}}</td><td><button class="btn btn-mini btn-primary" data-player-id="{{pid}}" disabled="disabled">Draft</button></td></tr>
       {{/undrafted}}
     </tbody>
     </table>

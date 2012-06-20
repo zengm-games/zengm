@@ -434,7 +434,7 @@ function program1(depth0,data) {
 
 function program3(depth0,data) {
   
-  var buffer = "", stack1, stack2;
+  var buffer = "", stack1;
   buffer += "\n        <tr id=\"undrafted_";
   foundHelper = helpers.pid;
   stack1 = foundHelper || depth0.pid;
@@ -481,24 +481,10 @@ function program3(depth0,data) {
   stack1 = foundHelper || depth0.pid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "pid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "\"";
-  foundHelper = helpers.started;
-  stack1 = foundHelper || depth0.started;
-  stack2 = helpers['if'];
-  tmp1 = self.program(4, program4, data);
-  tmp1.hash = {};
-  tmp1.fn = tmp1;
-  tmp1.inverse = self.noop;
-  stack1 = stack2.call(depth0, stack1, tmp1);
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">Draft</button></td></tr>\n      ";
+  buffer += escapeExpression(stack1) + "\" disabled=\"disabled\">Draft</button></td></tr>\n      ";
   return buffer;}
-function program4(depth0,data) {
-  
-  
-  return " disabled=\"disabled\"";}
 
-function program6(depth0,data) {
+function program5(depth0,data) {
   
   var buffer = "", stack1;
   buffer += "\n        <tr><td>";
@@ -601,7 +587,7 @@ function program6(depth0,data) {
   buffer += "\n    </tbody>\n    </table>\n  </div>\n  <div class=\"span6\">\n    <h2>Draft Results</h2>\n    <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"drafted\">\n    <thead>\n      <tr><th>Pick</th><th>Team</th><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall rating\">Ovr</th><th title=\"Potential rating\">Pot</th></tr>\n    </thead>\n    <tbody>\n      ";
   foundHelper = helpers.drafted;
   stack1 = foundHelper || depth0.drafted;
-  tmp1 = self.program(6, program6, data);
+  tmp1 = self.program(5, program5, data);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;

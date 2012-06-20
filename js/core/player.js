@@ -12,9 +12,13 @@ define(["util/random"], function(random) {
         this.attribute = dict(r.fetchone())
     }
 
-    Player.prototype.save = function() {
-        query = 'UPDATE player_ratings SET ovr = :ovr, hgt = :hgt, stre = :stre, spd = :spd, jmp = :jmp, endu = :endu, ins = :ins, dnk = :dnk, ft = :ft, fg = :fg, tp = :tp, blk = :blk, stl = :stl, drb = :drb, pss = :pss, reb = :reb, pot = :pot WHERE pid = :pid AND season = :season'
-        g.dbex(query, ovr=this.ovr(), hgt=this.rating['hgt'], stre=this.rating['stre'], spd=this.rating['spd'], jmp=this.rating['jmp'], endu=this.rating['endu'], ins=this.rating['ins'], dnk=this.rating['dnk'], ft=this.rating['ft'], fg=this.rating['fg'], tp=this.rating['tp'], blk=this.rating['blk'], stl=this.rating['stl'], drb=this.rating['drb'], pss=this.rating['pss'], reb=this.rating['reb'], pot=this.rating['pot'], pid=this.id, season=g.season)
+    Player.prototype.save = function(playerStore) {
+        var row = this.attribute;
+        row.ratings = [this.rating];
+        row.ratings[0].season = g.startingSeason;
+        row.ratings[0].ovr = this.ovr();
+        row.stats = [{season: g.startingSeason, playoffs: false, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0}];
+        playerStore.add(row);
     }
 
     /**

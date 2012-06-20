@@ -4,6 +4,7 @@ refactor and make sure i'm doing things correct as far as modules, namespaces, d
 port over other features
 - draft
   - first clean up new player generation code in league.new, then port to draft
+    - cleaner save function. allow updating too? just make sure everything is loaded in Player.load
 - free agents view
 - contract negotiation
 - resigning old players
@@ -51,16 +52,6 @@ roster view
 - release button
 - buy out button
 
----
-
-player.js
-
-can i make Player.save save both ratings for updated players, and ratings+attributes for new players?
-
-merge Player.develop and GeneratePlayer.develop
-
-dbl.transaction(["players"]).objectStore("players").get(1).onsuccess = function(event) { console.log(event.target.result) };
-dbl.transaction(["teams"]).objectStore("teams").get(20).onsuccess = function(event) { console.log(event.target.result.won) };
 ---
 
 test deep index stats.tid, stats.season: {pid, stats: {tid, season, pts, reb, ...}}

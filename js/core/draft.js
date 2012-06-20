@@ -72,14 +72,19 @@ define(["core/player", "core/season", "util/random"], function(player, season, r
                 playersAll.splice(selection, 1);  // Delete from the list of undrafted players
             }
 
+console.log('a');
             localStorage.setItem("league" + g.lid + "DraftOrder", JSON.stringify(draftOrder));
 
+console.log('b');
             // Is draft over?;
             if (draftOrder.length == 0) {
+console.log('c');
                 season.newPhase(c.PHASE_AFTER_DRAFT);
             }
+console.log('d');
 
             cb(pids);
+console.log('h');
         };
 //        return pids;
     }

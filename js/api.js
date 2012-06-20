@@ -136,15 +136,16 @@ console.log('hi');
         };
     }
 
-    function draftUntilUserOrEnd(cb) {
+    function draftUntilUserOrEnd(cb2) {
         playMenu.setStatus('Draft in progress...');
         var pids = draft.untilUserOrEnd(function (pids) {
             var done = true;
             if (g.phase == c.PHASE_AFTER_DRAFT) {
                 done = true;
-                playMenu.setStatus('Idle')
+                playMenu.setStatus('Idle');
             }
-            cb(pids, done);
+            cb2(pids, done);
+console.log('g');
         });
     }
 

@@ -7,6 +7,7 @@ port over other features
   - can i get rid of draftResults? have the order of picks saved in localstorage, everything else in players.
     - draftOvr, draftPot when player is created
     - player.round should be player.draftRound!!
+  - build UI to view drafted players of in progress draft
 - free agents view
 - contract negotiation
 - resigning old players

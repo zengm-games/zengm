@@ -1167,8 +1167,8 @@ function program19(depth0,data,depth1) {
   else { stack1 = stack3; }
   buffer += escapeExpression(stack1) + "</td><td>";
   stack1 = 1;
-  foundHelper = helpers.rebounds;
-  stack2 = foundHelper || depth0.rebounds;
+  foundHelper = helpers.trb;
+  stack2 = foundHelper || depth0.trb;
   foundHelper = helpers.round;
   stack3 = foundHelper || depth0.round;
   if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
@@ -1215,18 +1215,18 @@ function program22(depth0,data) {
   var buffer = "", stack1, stack2, stack3;
   buffer += "<td>$";
   stack1 = 1;
-  foundHelper = helpers.contract_amount;
-  stack2 = foundHelper || depth0.contract_amount;
+  foundHelper = helpers.contractAmount;
+  stack2 = foundHelper || depth0.contractAmount;
   foundHelper = helpers.round;
   stack3 = foundHelper || depth0.round;
   if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
   else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
   else { stack1 = stack3; }
   buffer += escapeExpression(stack1) + "M through ";
-  foundHelper = helpers.contract_exp;
-  stack1 = foundHelper || depth0.contract_exp;
+  foundHelper = helpers.contractExp;
+  stack1 = foundHelper || depth0.contractExp;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "contract_exp", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "contractExp", { hash: {} }); }
   buffer += escapeExpression(stack1) + "</td>";
   return buffer;}
 

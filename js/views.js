@@ -339,7 +339,6 @@ console.log(playersAll);
                             }
                             player.ovr = pr.ovr;
                             player.pot = pr.pot;
-console.log(pr);
 
                             // Stats
                             for (var j=0; j<pa.stats.length; j++) {
@@ -348,6 +347,19 @@ console.log(pr);
                                     break;
                                 }
                             }
+                            if (ps.gp > 0) {
+                                player.min = ps.min / ps.gp;
+                                player.pts = ps.pts / ps.gp;
+                                player.trb = ps.trb / ps.gp;
+                                player.ast = ps.ast / ps.gp;
+                            }
+                            else {
+                                player.min = 0;
+                                player.pts = 0;
+                                player.trb = 0;
+                                player.ast = 0;
+                            }
+console.log(ps);
 
                             players.push(player);
                         }

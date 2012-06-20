@@ -45,20 +45,19 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
 
                     // Generate new players
                     var playerStore = transaction.objectStore("players");
-                    var profiles = ['Point', 'Wing', 'Big', ''];
-                    var playerAttributes = [];
-                    var playerRatings = [];
+                    var profiles = ["Point", "Wing", "Big", ""];
                     var baseRatings = [30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 19, 19];
                     var pots = [70, 60, 50, 50, 55, 45, 65, 35, 50, 45, 55, 55, 40, 40];
                     for (t=-1; t<30; t++) {
                         var goodNeutralBad = random.randInt(-1, 1);  // determines if this will be a good team or not
                         random.shuffle(pots);
                         for (p=0; p<14; p++) {
+                            var profile = profiles[random.randInt(0, profiles.length - 1)];
                             var agingYears = random.randInt(0, 13);
                             var draftYear = g.startingSeason - 1 - agingYears;
 
                             var gp = new player.Player();
-                            gp.generate(t, 19, profiles[random.randInt(profiles.length)], baseRatings[p], pots[p], draftYear);
+                            gp.generate(t, 19, profile, baseRatings[p], pots[p], draftYear);
                             gp.develop(agingYears, true);
                             if (p < 5) {
                                 gp.bonus(goodNeutralBad * random.randInt(0, 20));

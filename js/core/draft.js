@@ -1,14 +1,10 @@
 define(["core/player", "core/season"], function(player, season) {
     function generatePlayers() {
-        profiles = ['Point', 'Wing', 'Big', 'Big', ''];
-        gp = player.GeneratePlayer();
-        r = g.dbex('SELECT MAX(pid) + 1 FROM playerAttributes');
-        pid, = r.fetchone();
-        playerAttributes = [];
-        playerRatings = [];
-        for p in xrange(70) {
-            baseRating = random.randrange(0, 20);
-            pot = int(random.gauss(45, 20));
+        var playerStore = .dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
+        var profiles = ["Point", "Wing", "Big", "Big", ""];
+        for (var i=0; i<70; i++) {
+            var baseRating = random.randrange(0, 20);
+            var pot = int(random.gauss(45, 20));
             if (pot < baseRating) {
                 pot = baseRating;
             }
@@ -16,28 +12,17 @@ define(["core/player", "core/season"], function(player, season) {
                 pot = 90;
             }
 
-            i = random.randrange(len(profiles));
-            profile = profiles[i];
+            var profile = profiles[random.randInt(0, profiles.length - 1)];
+            var agingYears = random.randrange(4);
+            var draftYear = g.season;
 
-            agingYears = random.randrange(4);
-            draftYear = g.season;
-
-            gp.new(pid, c.PLAYER_UNDRAFTED, 19, profile, baseRating, pot, draftYear);
+            var gp = new player.Player();
+            gp.generate(c.PLAYER_UNDRAFTED, 19, profile, baseRating, pot, draftYear);
             gp.develop(agingYears);
 
-            playerAttributes.push(gp.getAttributes());
-            playerRatings.push(gp.getRatings());
-
-            pid += 1;
-        g.dbexmany('INSERT INTO playerAttributes (%s) VALUES (%s)' % (', '.join(playerAttributes[0].keys()), ', '.join([') {' + key for key in playerAttributes[0].keys()])), playerAttributes);
-        g.dbexmany('INSERT INTO playerRatings (%s) VALUES (%s)' % (', '.join(playerRatings[0].keys()), ', '.join([') {' + key for key in playerRatings[0].keys()])), playerRatings);
-
-        // Update roster positions (so next/prev buttons work in player dialog);
-        rosterOrder = 1;
-        r = g.dbex('SELECT pr.pid FROM playerAttributes as pa, playerRatings as pr WHERE pa.pid = pr.pid AND pa.tid = ) {tid AND pr.season = ) {season ORDER BY pr.ovr + 2*pr.pot DESC', tid=c.PLAYER_UNDRAFTED, season=g.season);
-        for pid, in r.fetchall() {
-            g.dbex('UPDATE playerAttributes SET rosterOrder = ) {rosterOrder WHERE pid = ) {pid', rosterOrder=rosterOrder, pid=pid);
-            rosterOrder += 1;
+            gp.save(playerStore);
+        }
+    }
 
     /*Sets draft order based on winning percentage (no lottery).*/
     function setOrder() {
@@ -109,5 +94,6 @@ define(["core/player", "core/season"], function(player, season) {
 
     return {
         generatePlayers: generatePlayers,
+        setOrder: setOrder
     }
 });

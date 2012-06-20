@@ -3,8 +3,7 @@ refactor and make sure i'm doing things correct as far as modules, namespaces, d
 - What will replace the AJAX calls? Just call api.whatever function directly and have it do the jQuery crap
 port over other features
 - draft
-  - first clean up new player generation code in league.new, then port to draft
-    - cleaner save function. allow updating too? just make sure everything is loaded in Player.load
+  - can i get rid of draftResults? have the order of picks saved in localstorage.
 - free agents view
 - contract negotiation
 - resigning old players

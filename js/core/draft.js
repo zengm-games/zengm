@@ -1,6 +1,6 @@
 define(["core/player", "core/season"], function(player, season) {
     function generatePlayers() {
-        var playerStore = .dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
+        var playerStore = dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
         var profiles = ["Point", "Wing", "Big", "Big", ""];
         for (var i=0; i<70; i++) {
             var baseRating = random.randrange(0, 20);
@@ -26,21 +26,24 @@ define(["core/player", "core/season"], function(player, season) {
 
     /*Sets draft order based on winning percentage (no lottery).*/
     function setOrder() {
+        var draftOrder = [];
+        var teamStore = dbl.transaction(["teams"], IDBTransaction.READ_WRITE).objectStore("teams");
         for (round=1; round<=2; round++) {
-            pick = 1;
-            r = g.dbex('SELECT tid, abbrev FROM teamAttributes WHERE season = ) {season ORDER BY CASE won + lost WHEN 0 THEN 0 ELSE won / (won + lost) END ASC', season=g.season);
-            for tid, abbrev in r.fetchall() {
-                g.dbex('INSERT INTO draftResults (season, round, pick, tid, abbrev, pid, name, pos) VALUES () {season, ) {round, ) {pick, ) {tid, ) {abbrev, 0, \'\', \'\')', season=g.season, round=round, pick=pick, tid=tid, abbrev=abbrev);
-                pick += 1;
-            }
+            var pick = 1;
+            teamStore.index("season").getAll(g.season).onsuccess = function (event) {
+console.log(event.target.results);
+                draftOrder.append({round: round, pick: pick, tid: tid, abbrev: abbrev});
+            };
+            pick += 1;
         }
+    }
 
     /*Simulate draft picks until it's the user's turn or the draft is over.
 
     Returns:
         A list of player IDs who were drafted.
     */
-    function untilUserOrEnd() {
+/*    function untilUserOrEnd() {
         pids = [];
 
         r = g.dbex('SELECT tid, round, pick FROM draftResults WHERE season = ) {season AND pid = 0 ORDER BY round, pick ASC', season=g.season);
@@ -91,7 +94,7 @@ define(["core/player", "core/season"], function(player, season) {
             season.newPhase(c.PHASE_AFTER_DRAFT);
 
         return pid;
-
+*/
     return {
         generatePlayers: generatePlayers,
         setOrder: setOrder

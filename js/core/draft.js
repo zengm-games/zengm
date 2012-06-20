@@ -64,7 +64,7 @@ define(["core/player", "core/season", "util/random"], function(player, season, r
                     break;
                 }
 
-                var selection = abs(int(random.gauss(0, 3)));  // 0=best prospect, 1=next best prospect, etc.
+                var selection = Math.abs(Math.floor(random.gauss(0, 3)));  // 0=best prospect, 1=next best prospect, etc.
                 var pid = playersAll[selection].pid;
                 selectPlayer(pick, pid, playerStore);
 
@@ -87,7 +87,7 @@ define(["core/player", "core/season", "util/random"], function(player, season, r
     /* Callback is used when this is called to select a player for the user's team.*/
     function selectPlayer(pick, pid, playerStore, cb) {
         cb = typeof cb !== "undefined" ? cb : function (pid) {};
-console.log('selectPlayer: tid ' + tid + ' pid ' + pid);
+console.log('selectPlayer: tid ' + pick.tid + ' pid ' + pid);
 /*
         // Validate that tid should be picking now
         r = g.dbex('SELECT tid, round, pick FROM draftResults WHERE season = :season AND pid = 0 ORDER BY round, pick ASC LIMIT 1', season=g.season);
@@ -111,7 +111,7 @@ console.log('selectPlayer: tid ' + tid + ' pid ' + pid);
 
             // Contract
             rookieSalaries = [5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500];
-            i = pick - 1 + 30 * (round - 1);
+            i = pick.pick - 1 + 30 * (pick.round - 1);
             player.contractAmount = rookieSalaries[i];
             years = 4 - pick.round;  // 2 years for 2nd round, 3 years for 1st round;
             player.contractExp = g.season + years;

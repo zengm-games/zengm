@@ -136,7 +136,7 @@ console.log('hi');
         };
     }
 
-    function draftUntiUserOrEnd(cb) {
+    function draftUntilUserOrEnd(cb) {
         playMenu.setStatus('Draft in progress...');
         var pids = draft.untilUserOrEnd(function (pids) {
             var done = true;
@@ -168,7 +168,7 @@ console.log('hi');
 
     return {
         play: play,
-        draftUntiUserOrEnd: draftUntiUserOrEnd,
+        draftUntilUserOrEnd: draftUntilUserOrEnd,
         draftUser: draftUser,
         gameLogList: gameLogList,
         boxScore: boxScore

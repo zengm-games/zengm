@@ -25,25 +25,27 @@ $(document).ready(function() {
         }
     }
 
+    function cbDraftUntilUserOrEnd(pids, done) {
+        updateDraftTables(pids);
+        if (!done) {
+            $('#undrafted button').removeAttr('disabled');
+        }
+    }
+
     function draftUntilUserOrEnd() {
-        [pids, done] = api.draftUntilUserOrEnd(function (pids, done) {
-            updateDraftTables(pids);
-            if (!done) {
-                $('#undrafted button').removeAttr('disabled');
-            }
-        });
+        [pids, done] = api.draftUntilUserOrEnd(cbDraftUntilUserOrEnd);
     }
 
     $('#start_draft').click(function(event) {
         $($('#start_draft').parent()).hide()
-        draftUntilUserOrEnd();
+        draftUntilUserOrEnd(cbDraftUntilUserOrEnd);
     });
 
     $('#undrafted button').click(function(event) {
         $('#undrafted button').attr('disabled', 'disabled');
         var pid = api.draftUser(this.getAttribute('data-player-id'), function (pid) {
             update_draft_tables([pid]);
-            draftUntilUserOrEnd();
+            draftUntilUserOrEnd(cbDraftUntilUserOrEnd);
         });
     });
 });

@@ -1,104 +1,104 @@
 define(["core/player", "core/season"], function(player, season) {
     function generatePlayers() {
-        profiles = ['Point', 'Wing', 'Big', 'Big', '']
-        gp = player.GeneratePlayer()
-        r = g.dbex('SELECT MAX(pid) + 1 FROM player_attributes')
-        pid, = r.fetchone()
-        player_attributes = []
-        player_ratings = []
-        for p in xrange(70):
-            base_rating = random.randrange(0, 20)
-            pot = int(random.gauss(45, 20))
-            if pot < base_rating:
-                pot = base_rating
-            if pot > 90:
-                pot = 90
+        profiles = ['Point', 'Wing', 'Big', 'Big', ''];
+        gp = player.GeneratePlayer();
+        r = g.dbex('SELECT MAX(pid) + 1 FROM playerAttributes');
+        pid, = r.fetchone();
+        playerAttributes = [];
+        playerRatings = [];
+        for p in xrange(70) {
+            baseRating = random.randrange(0, 20);
+            pot = int(random.gauss(45, 20));
+            if (pot < baseRating) {
+                pot = baseRating;
+            if (pot > 90) {
+                pot = 90;
 
-            i = random.randrange(len(profiles))
-            profile = profiles[i]
+            i = random.randrange(len(profiles));
+            profile = profiles[i];
 
-            aging_years = random.randrange(4)
-            draft_year = g.season
+            agingYears = random.randrange(4);
+            draftYear = g.season;
 
-            gp.new(pid, c.PLAYER_UNDRAFTED, 19, profile, base_rating, pot, draft_year)
-            gp.develop(aging_years)
+            gp.new(pid, c.PLAYER_UNDRAFTED, 19, profile, baseRating, pot, draftYear);
+            gp.develop(agingYears);
 
-            player_attributes.append(gp.get_attributes())
-            player_ratings.append(gp.get_ratings())
+            playerAttributes.push(gp.getAttributes());
+            playerRatings.push(gp.getRatings());
 
-            pid += 1
-        g.dbexmany('INSERT INTO player_attributes (%s) VALUES (%s)' % (', '.join(player_attributes[0].keys()), ', '.join([':' + key for key in player_attributes[0].keys()])), player_attributes)
-        g.dbexmany('INSERT INTO player_ratings (%s) VALUES (%s)' % (', '.join(player_ratings[0].keys()), ', '.join([':' + key for key in player_ratings[0].keys()])), player_ratings)
+            pid += 1;
+        g.dbexmany('INSERT INTO playerAttributes (%s) VALUES (%s)' % (', '.join(playerAttributes[0].keys()), ', '.join([') {' + key for key in playerAttributes[0].keys()])), playerAttributes);
+        g.dbexmany('INSERT INTO playerRatings (%s) VALUES (%s)' % (', '.join(playerRatings[0].keys()), ', '.join([') {' + key for key in playerRatings[0].keys()])), playerRatings);
 
-        # Update roster positions (so next/prev buttons work in player dialog)
-        roster_order = 1
-        r = g.dbex('SELECT pr.pid FROM player_attributes as pa, player_ratings as pr WHERE pa.pid = pr.pid AND pa.tid = :tid AND pr.season = :season ORDER BY pr.ovr + 2*pr.pot DESC', tid=c.PLAYER_UNDRAFTED, season=g.season)
-        for pid, in r.fetchall():
-            g.dbex('UPDATE player_attributes SET roster_order = :roster_order WHERE pid = :pid', roster_order=roster_order, pid=pid)
-            roster_order += 1
+        // Update roster positions (so next/prev buttons work in player dialog);
+        rosterOrder = 1;
+        r = g.dbex('SELECT pr.pid FROM playerAttributes as pa, playerRatings as pr WHERE pa.pid = pr.pid AND pa.tid = ) {tid AND pr.season = ) {season ORDER BY pr.ovr + 2*pr.pot DESC', tid=c.PLAYER_UNDRAFTED, season=g.season);
+        for pid, in r.fetchall() {
+            g.dbex('UPDATE playerAttributes SET rosterOrder = ) {rosterOrder WHERE pid = ) {pid', rosterOrder=rosterOrder, pid=pid);
+            rosterOrder += 1;
 
     function setOrder() {
-    """Sets draft order based on winning percentage (no lottery)."""
-    for round in xrange(1, 3):
-        pick = 1
-        r = g.dbex('SELECT tid, abbrev FROM team_attributes WHERE season = :season ORDER BY CASE won + lost WHEN 0 THEN 0 ELSE won / (won + lost) END ASC', season=g.season)
-        for tid, abbrev in r.fetchall():
-            g.dbex('INSERT INTO draft_results (season, round, pick, tid, abbrev, pid, name, pos) VALUES (:season, :round, :pick, :tid, :abbrev, 0, \'\', \'\')', season=g.season, round=round, pick=pick, tid=tid, abbrev=abbrev)
-            pick += 1
+    /*Sets draft order based on winning percentage (no lottery).*/;
+    for round in xrange(1, 3) {
+        pick = 1;
+        r = g.dbex('SELECT tid, abbrev FROM teamAttributes WHERE season = ) {season ORDER BY CASE won + lost WHEN 0 THEN 0 ELSE won / (won + lost) END ASC', season=g.season);
+        for tid, abbrev in r.fetchall() {
+            g.dbex('INSERT INTO draftResults (season, round, pick, tid, abbrev, pid, name, pos) VALUES () {season, ) {round, ) {pick, ) {tid, ) {abbrev, 0, \'\', \'\')', season=g.season, round=round, pick=pick, tid=tid, abbrev=abbrev);
+            pick += 1;
 
-    function untilUserOrEnd():
-    """Simulate draft picks until it's the user's turn or the draft is over.
+    function untilUserOrEnd() {
+    /*Simulate draft picks until it's the user's turn or the draft is over.;
 
-    Returns:
-        A list of player IDs who were drafted.
-    """
-    pids = []
+    Returns) {
+        A list of player IDs who were drafted.;
+    */;
+    pids = [];
 
-    r = g.dbex('SELECT tid, round, pick FROM draft_results WHERE season = :season AND pid = 0 ORDER BY round, pick ASC', season=g.season)
-    for tid, round, pick in r.fetchall():
-        if tid == g.user_tid:
-            return pids
-        team_pick = abs(int(random.gauss(0, 3)))  # 0=best prospect, 1=next best prospect, etc.
-        r = g.dbex('SELECT pr.pid FROM player_attributes as pa, player_ratings as pr WHERE pa.pid = pr.pid AND pa.tid = :tid AND pr.season = :season ORDER BY pr.ovr + 2*pr.pot DESC LIMIT :pick, 1', tid=c.PLAYER_UNDRAFTED, season=g.season, pick=team_pick)
-        pid,= r.fetchone()
-        pick_player(tid, pid)
-        pids.append(pid)
+    r = g.dbex('SELECT tid, round, pick FROM draftResults WHERE season = ) {season AND pid = 0 ORDER BY round, pick ASC', season=g.season);
+    for tid, round, pick in r.fetchall() {
+        if (tid == g.userTid) {
+            return pids;
+        teamPick = abs(int(random.gauss(0, 3)))  // 0=best prospect, 1=next best prospect, etc.;
+        r = g.dbex('SELECT pr.pid FROM playerAttributes as pa, playerRatings as pr WHERE pa.pid = pr.pid AND pa.tid = ) {tid AND pr.season = ) {season ORDER BY pr.ovr + 2*pr.pot DESC LIMIT ) {pick, 1', tid=c.PLAYER_UNDRAFTED, season=g.season, pick=teamPick);
+        pid,= r.fetchone();
+        pickPlayer(tid, pid);
+        pids.push(pid);
 
-    return pids
+    return pids;
 
 
-def pick_player(tid, pid):
-    # Validate that tid should be picking now
-    r = g.dbex('SELECT tid, round, pick FROM draft_results WHERE season = :season AND pid = 0 ORDER BY round, pick ASC LIMIT 1', season=g.season)
-    tid_next, round, pick = r.fetchone()
+function pickPlayer(tid, pid) {
+    // Validate that tid should be picking now;
+    r = g.dbex('SELECT tid, round, pick FROM draftResults WHERE season = ) {season AND pid = 0 ORDER BY round, pick ASC LIMIT 1', season=g.season);
+    tidNext, round, pick = r.fetchone();
 
-    if tid_next != tid:
-        app.logger.debug('WARNING: Team %d tried to draft out of order' % (tid,))
-        return
+    if (tidNext != tid) {
+        app.logger.debug('WARNING) { Team %d tried to draft out of order' % (tid,));
+        return;
 
-    # Draft player, update roster potision
-    r = g.dbex('SELECT pa.name, pa.pos, pa.born_year, pr.ovr, pr.pot FROM player_attributes AS pa, player_ratings AS pr WHERE pa.pid = pr.pid AND pa.tid = :tid AND pr.pid = :pid AND pr.season = :season', tid=c.PLAYER_UNDRAFTED, pid=pid, season=g.season)
-    name, pos, born_year, ovr, pot = r.fetchone()
-    r = g.dbex('SELECT MAX(roster_order) + 1 FROM player_attributes WHERE tid = :tid', tid=tid)
-    roster_order, = r.fetchone()
+    // Draft player, update roster potision;
+    r = g.dbex('SELECT pa.name, pa.pos, pa.bornYear, pr.ovr, pr.pot FROM playerAttributes AS pa, playerRatings AS pr WHERE pa.pid = pr.pid AND pa.tid = ) {tid AND pr.pid = ) {pid AND pr.season = ) {season', tid=c.PLAYER_UNDRAFTED, pid=pid, season=g.season);
+    name, pos, bornYear, ovr, pot = r.fetchone();
+    r = g.dbex('SELECT MAX(rosterOrder) + 1 FROM playerAttributes WHERE tid = ) {tid', tid=tid);
+    rosterOrder, = r.fetchone();
 
-    g.dbex('UPDATE player_attributes SET tid = :tid, draft_year = :draft_year, round = :round, draft_pick = :draft_pick, draft_tid = :tid, roster_order = :roster_order WHERE pid = :pid', tid=tid, draft_year=g.season, round=round, draft_pick=pick, draft_tid=tid, roster_order=roster_order, pid=pid)
-    g.dbex('UPDATE draft_results SET pid = :pid, name = :name, pos = :pos, born_year = :born_year, ovr = :ovr, pot = :pot WHERE season = :season AND round = :round AND pick = :pick', pid=pid, name=name, pos=pos, born_year=born_year, ovr=ovr, pot=pot, season=g.season, round=round, pick=pick)
+    g.dbex('UPDATE playerAttributes SET tid = ) {tid, draftYear = ) {draftYear, round = ) {round, draftPick = ) {draftPick, draftTid = ) {tid, rosterOrder = ) {rosterOrder WHERE pid = ) {pid', tid=tid, draftYear=g.season, round=round, draftPick=pick, draftTid=tid, rosterOrder=rosterOrder, pid=pid);
+    g.dbex('UPDATE draftResults SET pid = ) {pid, name = ) {name, pos = ) {pos, bornYear = ) {bornYear, ovr = ) {ovr, pot = ) {pot WHERE season = ) {season AND round = ) {round AND pick = ) {pick', pid=pid, name=name, pos=pos, bornYear=bornYear, ovr=ovr, pot=pot, season=g.season, round=round, pick=pick);
 
-    # Contract
-    rookie_salaries = (5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500,
-                       1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000,
-                       1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500,
-                       500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500)
-    i = pick - 1 + 30 * (round - 1)
-    contract_amount = rookie_salaries[i]
-    years = 4 - round  # 2 years for 2nd round, 3 years for 1st round
-    contract_exp = g.season + years
-    g.dbex('UPDATE player_attributes SET contract_amount = :contract_amount, contract_exp = :contract_exp WHERE pid = :pid', contract_amount=contract_amount, contract_exp=contract_exp, pid=pid)
+    // Contract;
+    rookieSalaries = (5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500,;
+                       1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000,;
+                       1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500,;
+                       500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500);
+    i = pick - 1 + 30 * (round - 1);
+    contractAmount = rookieSalaries[i];
+    years = 4 - round  // 2 years for 2nd round, 3 years for 1st round;
+    contractExp = g.season + years;
+    g.dbex('UPDATE playerAttributes SET contractAmount = ) {contractAmount, contractExp = ) {contractExp WHERE pid = ) {pid', contractAmount=contractAmount, contractExp=contractExp, pid=pid);
 
-    # Is draft over?
-    r = g.dbex('SELECT 1 FROM draft_results WHERE season = :season AND pid = 0', season=g.season)
-    if r.rowcount == 0:
-        season.new_phase(c.PHASE_AFTER_DRAFT)
+    // Is draft over?;
+    r = g.dbex('SELECT 1 FROM draftResults WHERE season = ) {season AND pid = 0', season=g.season);
+    if (r.rowcount == 0) {
+        season.newPhase(c.PHASE_AFTER_DRAFT);
 
-    return pid
+    return pid;

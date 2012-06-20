@@ -261,6 +261,7 @@ console.log(playoffSeries);
             var data = {"title": "Roster - League " + g.lid};
 
             var abbrev = typeof req.params.abbrev !== "undefined" ? req.params.abbrev : undefined;
+            var tid;
             [tid, abbrev] = helpers.validateAbbrev(abbrev);
             var season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
             season = helpers.validateSeason(season);
@@ -435,7 +436,7 @@ console.log('FUCK');
                 g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(c.PLAYER_UNDRAFTED).onsuccess = function(event) {
                     var playersAll = event.target.result;
                     playersAll.sort(function (a, b) {  return b.ratings[0].ovr+2*b.ratings[0].pot - a.ratings[0].ovr+2*a.ratings[0].pot; });
-console.log(playersAll);
+//console.log(playersAll);
                     var undrafted = [];
                     for (var i=0; i<playersAll.length; i++) {
                         var pa = playersAll[i];
@@ -450,7 +451,7 @@ console.log(playersAll);
 
                         undrafted.push(player);
                     }
-console.log(undrafted);
+//console.log(undrafted);
 
 
                     var drafted = [];
@@ -460,13 +461,10 @@ console.log(undrafted);
                     data["league_content"] = template({g: g, undrafted: undrafted, drafted: drafted, started: drafted.length > 0});
                     bbgm.ajaxUpdate(data);
                 };
-
+                return;
 /*                r = g.dbex("SELECT round, pick, abbrev, pid, name, :season - bornYear as age, pos, ovr, pot FROM draftResults WHERE season = :season ORDER BY round, pick ASC", season=g.season);
-                drafted = r.fetchall();
-
-                return renderAllOrJson("draft.html", {"undrafted": undrafted, "drafted": drafted});*/
+                drafted = r.fetchall();*/
             }
-
             // Show a summary of an old draft
             data = {"title": g.season + " Draft Results - League " + g.lid};
 
@@ -482,6 +480,7 @@ console.log(undrafted);
             var data = {"title": "Game Log - League " + g.lid};
 
             var abbrev = typeof req.params.abbrev !== "undefined" ? req.params.abbrev : undefined;
+            var tid;
             [tid, abbrev] = helpers.validateAbbrev(abbrev);
             var season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
             season = helpers.validateSeason(season);

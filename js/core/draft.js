@@ -63,25 +63,26 @@ define(["core/player", "core/season", "util/random"], function(player, season, r
             pids.push(pid);
 
         return pids;
+    }
 
 
     function pickPlayer(tid, pid) {
         // Validate that tid should be picking now;
-        r = g.dbex('SELECT tid, round, pick FROM draftResults WHERE season = ) {season AND pid = 0 ORDER BY round, pick ASC LIMIT 1', season=g.season);
+        r = g.dbex('SELECT tid, round, pick FROM draftResults WHERE season = :season AND pid = 0 ORDER BY round, pick ASC LIMIT 1', season=g.season);
         tidNext, round, pick = r.fetchone();
 
         if (tidNext != tid) {
-            app.logger.debug('WARNING) { Team %d tried to draft out of order' % (tid,));
+            app.logger.debug('WARNING: Team %d tried to draft out of order' % (tid,));
             return;
 
         // Draft player, update roster potision;
-        r = g.dbex('SELECT pa.name, pa.pos, pa.bornYear, pr.ovr, pr.pot FROM playerAttributes AS pa, playerRatings AS pr WHERE pa.pid = pr.pid AND pa.tid = ) {tid AND pr.pid = ) {pid AND pr.season = ) {season', tid=c.PLAYER_UNDRAFTED, pid=pid, season=g.season);
+        r = g.dbex('SELECT pa.name, pa.pos, pa.bornYear, pr.ovr, pr.pot FROM playerAttributes AS pa, playerRatings AS pr WHERE pa.pid = pr.pid AND pa.tid = :tid AND pr.pid = :pid AND pr.season = :season', tid=c.PLAYER_UNDRAFTED, pid=pid, season=g.season);
         name, pos, bornYear, ovr, pot = r.fetchone();
-        r = g.dbex('SELECT MAX(rosterOrder) + 1 FROM playerAttributes WHERE tid = ) {tid', tid=tid);
+        r = g.dbex('SELECT MAX(rosterOrder) + 1 FROM playerAttributes WHERE tid = :tid', tid=tid);
         rosterOrder, = r.fetchone();
 
-        g.dbex('UPDATE playerAttributes SET tid = ) {tid, draftYear = ) {draftYear, round = ) {round, draftPick = ) {draftPick, draftTid = ) {tid, rosterOrder = ) {rosterOrder WHERE pid = ) {pid', tid=tid, draftYear=g.season, round=round, draftPick=pick, draftTid=tid, rosterOrder=rosterOrder, pid=pid);
-        g.dbex('UPDATE draftResults SET pid = ) {pid, name = ) {name, pos = ) {pos, bornYear = ) {bornYear, ovr = ) {ovr, pot = ) {pot WHERE season = ) {season AND round = ) {round AND pick = ) {pick', pid=pid, name=name, pos=pos, bornYear=bornYear, ovr=ovr, pot=pot, season=g.season, round=round, pick=pick);
+        g.dbex('UPDATE playerAttributes SET tid = :tid, draftYear = :draftYear, round = :round, draftPick = :draftPick, draftTid = :tid, rosterOrder = :rosterOrder WHERE pid = :pid', tid=tid, draftYear=g.season, round=round, draftPick=pick, draftTid=tid, rosterOrder=rosterOrder, pid=pid);
+        g.dbex('UPDATE draftResults SET pid = :pid, name = :name, pos = :pos, bornYear = :bornYear, ovr = :ovr, pot = :pot WHERE season = :season AND round = :round AND pick = :pick', pid=pid, name=name, pos=pos, bornYear=bornYear, ovr=ovr, pot=pot, season=g.season, round=round, pick=pick);
 
         // Contract;
         rookieSalaries = (5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500,;
@@ -92,14 +93,15 @@ define(["core/player", "core/season", "util/random"], function(player, season, r
         contractAmount = rookieSalaries[i];
         years = 4 - round  // 2 years for 2nd round, 3 years for 1st round;
         contractExp = g.season + years;
-        g.dbex('UPDATE playerAttributes SET contractAmount = ) {contractAmount, contractExp = ) {contractExp WHERE pid = ) {pid', contractAmount=contractAmount, contractExp=contractExp, pid=pid);
+        g.dbex('UPDATE playerAttributes SET contractAmount = :contractAmount, contractExp = :contractExp WHERE pid = :pid', contractAmount=contractAmount, contractExp=contractExp, pid=pid);
 
         // Is draft over?;
-        r = g.dbex('SELECT 1 FROM draftResults WHERE season = ) {season AND pid = 0', season=g.season);
+        r = g.dbex('SELECT 1 FROM draftResults WHERE season = :season AND pid = 0', season=g.season);
         if (r.rowcount == 0) {
             season.newPhase(c.PHASE_AFTER_DRAFT);
 
         return pid;
+    }
 */
     return {
         generatePlayers: generatePlayers,

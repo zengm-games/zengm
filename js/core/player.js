@@ -1,6 +1,5 @@
 define(["util/random"], function(random) {
-    function Player(pid) {
-        this.id = pid
+    function Player() {
     }
 
     /**
@@ -217,7 +216,7 @@ define(["util/random"], function(random) {
         this.rating['pot'] = pot;
         this.attribute = {};
         this.attribute['tid'] = tid;
-        this.attribute['rosterOrder'] = this.id;
+        this.attribute['rosterOrder'] = 666;  // Will be set later
         this.attribute['draftYear'] = draftYear;
         this.generateRatings(profile, baseRating);
         this.generateAttributes(age);

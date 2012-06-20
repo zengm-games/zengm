@@ -46,7 +46,6 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                     // Generate new players
                     var playerStore = transaction.objectStore("players");
                     var profiles = ['Point', 'Wing', 'Big', ''];
-                    var pid = 1;
                     var playerAttributes = [];
                     var playerRatings = [];
                     var baseRatings = [30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 19, 19];
@@ -58,7 +57,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                             var agingYears = random.randInt(0, 13);
                             var draftYear = g.startingSeason - 1 - agingYears;
 
-                            var gp = new player.Player(pid);
+                            var gp = new player.Player();
                             gp.generate(t, 19, profiles[random.randInt(profiles.length)], baseRatings[p], pots[p], draftYear);
                             gp.develop(agingYears, true);
                             if (p < 5) {
@@ -85,8 +84,6 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                             entry.ratings[0].ovr = gp.ovr();
                             entry.stats = [{season: g.startingSeason, playoffs: false, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0}];
                             playerStore.add(entry);
-
-                            pid += 1
                         }
                     }
 

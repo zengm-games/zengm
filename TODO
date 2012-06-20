@@ -3,7 +3,8 @@ refactor and make sure i'm doing things correct as far as modules, namespaces, d
 - What will replace the AJAX calls? Just call api.whatever function directly and have it do the jQuery crap
 port over other features
 - draft
-  - can i get rid of draftResults? have the order of picks saved in localstorage.
+  - make draft view
+  - can i get rid of draftResults? have the order of picks saved in localstorage, everything else in players.
 - free agents view
 - contract negotiation
 - resigning old players
@@ -23,6 +24,7 @@ How should I handle in-league database? One big transaction?
 BUGS
 
 ratings should all be integers before being saved
+playoff teams aren't being set in exactly the right order
 
 ---
 

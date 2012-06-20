@@ -16,7 +16,7 @@ define(["util/helpers", "util/lock"], function(helpers, lock) {
                        {id: "month", url: 'javascript:api.play("month");', label: "One month", normal_link: false},
                        {id: "until_playoffs", url: 'javascript:api.play("until_playoffs");', label: "Until playoffs", normal_link: false},
                        {id: "through_playoffs", url: 'javascript:api.play("through_playoffs");', label: "Through playoffs", normal_link: false},
-                       {id: "until_draft", url: 'javascript:api.play("");', label: "Until draft", normal_link: false},
+                       {id: "until_draft", url: 'javascript:api.play("until_draft");', label: "Until draft", normal_link: false},
                        {id: "view_draft", url: "/l/" + g.lid + "/draft", label: "View draft", normal_link: true},
                        {id: "until_resign_players", url: 'javascript:api.play("until_resign_players");', label: "Resign players with expiring contracts", normal_link: false},
                        {id: "until_free_agency", url: 'javascript:api.play("until_free_agency");', label: "Until free agency", normal_link: false},

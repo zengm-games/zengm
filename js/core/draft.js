@@ -1,10 +1,10 @@
-define(["core/player", "core/season"], function(player, season) {
+define(["core/player", "core/season", "util/random"], function(player, season, random) {
     function generatePlayers() {
-        var playerStore = dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
+        var playerStore = g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
         var profiles = ["Point", "Wing", "Big", "Big", ""];
         for (var i=0; i<70; i++) {
-            var baseRating = random.randrange(0, 20);
-            var pot = int(random.gauss(45, 20));
+            var baseRating = random.randInt(0, 19);
+            var pot = parseInt(random.gauss(45, 20), 10);
             if (pot < baseRating) {
                 pot = baseRating;
             }
@@ -13,7 +13,7 @@ define(["core/player", "core/season"], function(player, season) {
             }
 
             var profile = profiles[random.randInt(0, profiles.length - 1)];
-            var agingYears = random.randrange(4);
+            var agingYears = random.randInt(0, 3);
             var draftYear = g.season;
 
             var gp = new player.Player();
@@ -25,17 +25,23 @@ define(["core/player", "core/season"], function(player, season) {
     }
 
     /*Sets draft order based on winning percentage (no lottery).*/
-    function setOrder() {
-        var draftOrder = [];
-        var teamStore = dbl.transaction(["teams"], IDBTransaction.READ_WRITE).objectStore("teams");
-        for (round=1; round<=2; round++) {
-            var pick = 1;
-            teamStore.index("season").getAll(g.season).onsuccess = function (event) {
-console.log(event.target.results);
-                draftOrder.append({round: round, pick: pick, tid: tid, abbrev: abbrev});
-            };
-            pick += 1;
-        }
+    function setOrder(cb) {
+        var teamStore = g.dbl.transaction(["teams"], IDBTransaction.READ_WRITE).objectStore("teams");
+        teamStore.index("season").getAll(g.season).onsuccess = function (event) {
+            var teamsAll = event.target.result;
+            teamsAll.sort(function (a, b) {  return a.won/(a.won+a.lost) - b.won/(b.won+b.lost); }); // Sort by winning percentage, ascending
+            var draftOrder = [];
+
+            for (round=1; round<=2; round++) {
+                for (i=0; i<teamsAll.length; i++) {
+                    draftOrder.push({round: round, pick: i + 1, tid: teamsAll[i].tid, abbrev: teamsAll[i].abbrev});
+                }
+            }
+
+            localStorage.setItem("league" + g.lid + "DraftOrder", JSON.stringify(draftOrder));
+
+            cb();
+        };
     }
 
     /*Simulate draft picks until it's the user's turn or the draft is over.
@@ -46,7 +52,7 @@ console.log(event.target.results);
 /*    function untilUserOrEnd() {
         pids = [];
 
-        r = g.dbex('SELECT tid, round, pick FROM draftResults WHERE season = ) {season AND pid = 0 ORDER BY round, pick ASC', season=g.season);
+        r = g.dbex('SELECT tid, round, pick FROM draftResults WHERE season = :season AND pid = 0 ORDER BY round, pick ASC', season=g.season);
         for tid, round, pick in r.fetchall() {
             if (tid == g.userTid) {
                 return pids;

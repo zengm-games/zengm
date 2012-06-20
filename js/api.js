@@ -1,6 +1,6 @@
 /*These are functions that do not return full pages (either JS objects or partial blocks of HTML) and are called from the client.*/
 
-define(["db", "core/game", "core/season", "util/helpers", "util/lock", "util/playMenu"], function(db, game, season, helpers, lock, playMenu) {
+define(["db", "core/draft", "core/game", "core/season", "util/helpers", "util/lock", "util/playMenu"], function(db, draft, game, season, helpers, lock, playMenu) {
     /*This is kind of a hodgepodge that handles every request from the play
     button and returns the appropriate response in JSON.
     */
@@ -50,11 +50,13 @@ define(["db", "core/game", "core/season", "util/helpers", "util/lock", "util/pla
         }
         else if (amount == 'until_draft') {
             if (g.phase == c.PHASE_BEFORE_DRAFT) {
-                season.newPhase(c.PHASE_DRAFT)
-                draft.generatePlayers()
-                draft.setOrder()
+console.log('hi');
+                season.newPhase(c.PHASE_DRAFT);
+                draft.generatePlayers();
+                draft.setOrder(function () {
+                    Davis.location.assign(new Davis.Request("/l/" + g.lid + "/draft"));
+                });
             }
-//            url = url_for('draft_', lid=g.lid)
         }
         else if (amount == 'until_resign_players') {
             if (g.phase == c.PHASE_AFTER_DRAFT) {

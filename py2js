@@ -3,6 +3,8 @@
 sed -i 's/ def / function /g' "$1"
 sed -i 's/^def /function /g' "$1"
 
+sed -r -i 's/'\''/"/g' "$1"
+
 sed -i 's/#/\/\//g' "$1"
 sed -i 's/"""$/*\//g' "$1"
 sed -i 's/"""/\/*/g' "$1"

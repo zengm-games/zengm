@@ -52,7 +52,8 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
         db.getAll(g.dbm, "leagues", function (leagues) {
             for (var i=0; i<leagues.length; i++) {
                 g.indexedDB.deleteDatabase("league" + leagues[i]["lid"]);
-                localStorage.removeItem("league" + g.lid + "GameAttributes")
+                localStorage.removeItem("league" + g.lid + "GameAttributes");
+                localStorage.removeItem("league" + g.lid + "DraftOrder");
             }
         });
 
@@ -137,7 +138,7 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
 
             g.dbl.transaction(["teams"]).objectStore("teams").index("season").getAll(season).onsuccess = function (event) {
                 var teamsAll = event.target.result;
-                teamsAll.sort(function (a, b) {  return b.won/(b.won+b.lost) - a.won/(a.won+a.lost); }); // Sort by winning percentage
+                teamsAll.sort(function (a, b) {  return b.won/(b.won+b.lost) - a.won/(a.won+a.lost); }); // Sort by winning percentage, descending
                 var teams = [];
                 var keys = ["tid", "cid", "did", "abbrev", "region", "name", "won", "lost", "wonDiv", "lostDiv", "wonConf", "lostConf"];  // Attributes to keep from teamStore
                 for (var i=0; i<teamsAll.length; i++) {
@@ -204,7 +205,7 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
                 finalMatchups = false;
                 g.dbl.transaction(["teams"]).objectStore("teams").index("season").getAll(season).onsuccess = function (event) {
                     var teamsAll = event.target.result;
-                    teamsAll.sort(function (a, b) {  return b.won/(b.won+b.lost) - a.won/(a.won+a.lost); }); // Sort by winning percentage
+                    teamsAll.sort(function (a, b) {  return b.won/(b.won+b.lost) - a.won/(a.won+a.lost); }); // Sort by winning percentage, descending
                     var teams = [];
                     var keys = ["tid", "abbrev", "name", "cid"];  // Attributes to keep from teamStore
                     for (var i=0; i<teamsAll.length; i++) {

@@ -84,7 +84,7 @@ $(document).ready(function() {
 </script>
 
 <form action="/l/{{g.lid}}/roster" method="GET" class="form-inline pull-right">
-  <select id="roster_select_abbrev" name="team" class="team">
+  <select id="roster_select_team" name="team" class="team">
     {{#teams}}
       <option value="{{abbrev}}"{{#if selected}} selected="selected"{{/if}}}>{{region}} {{name}}</option>
     {{/teams}}

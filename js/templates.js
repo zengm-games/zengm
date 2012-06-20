@@ -1303,7 +1303,7 @@ function program26(depth0,data) {
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/roster\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"roster_select_abbrev\" name=\"team\" class=\"team\">\n    ";
+  buffer += escapeExpression(stack1) + "/roster\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"roster_select_team\" name=\"team\" class=\"team\">\n    ";
   foundHelper = helpers.teams;
   stack1 = foundHelper || depth0.teams;
   tmp1 = self.program(3, program3, data);

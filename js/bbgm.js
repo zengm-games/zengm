@@ -93,19 +93,19 @@ define([], function() {
         var league_root_url = '';
         var league_page = '';
 
-        split_url = url.split('/', 5);
+        split_url = url.split('/', 6);
 
-        // If there's a URL that starts http://domain.com/<int:league_id>,
+        // If there's a URL that starts http://domain.com/l/<int:league_id>,
         // split_url will have length 4 or 5, depending on if there is a page after
         // the league ID.
 
-        if (split_url.length >= 4) {
-            league_id = parseInt(split_url[3]);
-            league_root_url = split_url.slice(0, 4).join('/');
+        if (split_url.length >= 5) {
+            league_id = parseInt(split_url[4]);
+            league_root_url = split_url.slice(0, 5).join('/');
         }
-        if (split_url.length == 5) {
+        if (split_url.length == 6) {
             // Get rid of any trailing #
-            league_page = split_url[4].split('#')[0];
+            league_page = split_url[5].split('#')[0];
         }
 
         return [league_id, league_root_url, league_page];
@@ -144,31 +144,15 @@ define([], function() {
                 var result = parse_league_url(document.URL);
                 var league_root_url = result[1];
                 var league_page = result[2];
-                var url = league_root_url + '/' + league_page + '/' + select1.val() + '/' + select2.val();
-                $.ajax({
-                    type: 'GET',
-                    url: url,
-                    data: {'json': 1},
-                    success: function (data) {
-                        ajaxUpdate(data, url);
-                    },
-                    dataType: 'json'
-                });
+                var url = '/l/' + g.lid + '/' + league_page + '/' + select1.val() + '/' + select2.val();
+                Davis.location.assign(new Davis.Request(url));
             });
             select2.change(function(event) {
                 var result = parse_league_url(document.URL);
                 var league_root_url = result[1];
                 var league_page = result[2];
-                var url = league_root_url + '/' + league_page + '/' + select1.val() + '/' + select2.val();
-                $.ajax({
-                    type: 'GET',
-                    url: url,
-                    data: {'json': 1},
-                    success: function (data) {
-                        ajaxUpdate(data, url);
-                    },
-                    dataType: 'json'
-                });
+                var url = '/l/' + g.lid + '/' + league_page + '/' + select1.val() + '/' + select2.val();
+                Davis.location.assign(new Davis.Request(url));
             });
         }
     }

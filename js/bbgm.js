@@ -60,7 +60,7 @@ define([], function() {
     }
 
     // Data tables
-    function bbgm_datatable(table, sort_col, data) {
+    function datatable(table, sort_col, data) {
         table.dataTable( {
             "aaData": data,
             "aaSorting": [[ sort_col, "desc" ]],
@@ -74,7 +74,7 @@ define([], function() {
             }
         } );
     }
-    function bbgm_datatable_singlepage(table, sort_col, data) {
+    function datatableSinglePage(table, sort_col, data) {
         table.dataTable( {
             "aaData": data,
             "aaSorting": [[ sort_col, "desc" ]],
@@ -198,6 +198,8 @@ define([], function() {
 
     return {
         ajaxUpdate: ajaxUpdate,
+        datatable: datatable,
+        datatableSinglePage: datatableSinglePage,
         dropdown: dropdown
     };
 });

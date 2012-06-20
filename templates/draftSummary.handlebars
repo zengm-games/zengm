@@ -1,0 +1,29 @@
+<script type="text/javascript">
+$(document).ready(function() {
+    bbgm.dropdown($('#draft_select_season'));
+
+    bbgm.datatableSinglePage($('#draft_results'), 0, [
+        {{#players}}
+	          ['{{round}}-{{pick}}', '<a href="/l/{{g.lid}}/player/{{pid}}">{{name}}</a>', '{{pos}}', '<a href="/l/{{g.lid}}/roster/{{draftAbbrev}}">{{draftAbbrev}}</a>', '{{draftAge}}', '{{draftOvr}}', '{{draftPot}}', '<a href="/l/{{g.lid}}/roster/{{currentAbbrev}}">{{current_abbrev}}</a>', '{{currentAge}}', '{{currentOvr}}', '{{currentPot}}', '{{round gp 1}}', '{{round min 1}}', '{{round pts 1}}', '{{round trb 1}}', '{{round ast 1}}'],
+        {{/players}}
+    ]);
+});
+</script>
+
+<form action="/l/{{g.lid}}/draft" method="GET" class="form-inline pull-right">
+  <select id="draft_select_season" name="season" class="season">
+    {{#seasons}}
+      <option value="{{season}}"{{#if selected}} selected="selected"{{/if}}>{{season}} season</option>
+    {{/seasons}}
+  </select>
+</form>
+
+<h1>{{season}} Draft Results</h1>
+<p>
+  <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="draft_results">
+  <thead>
+    <tr><th colspan="3"></th><th colspan="4" style="text-align: center">At Draft</th><th colspan="4" style="text-align: center">Current</th><th colspan="5" style="text-align: center">Career Stats</th></tr>
+    <tr><th>Pick</th><th>Name</th><th title="Position">Pos</th><th>Team</th><th>Age</th><th title="Overall rating">Ovr</th><th title="Potential rating">Pot</th><th>Team</th><th>Age</th><th title="Overall rating">Ovr</th><th title="Potential rating">Pot</th><th title="Games Played">GP</th><th title="Minutes Per Game">Min</th><th title="Points Per Game">PPG</th><th title="Rebounds Per Game">Reb</th><th title="Assists Per Game">Ast</th></tr>
+  </thead>
+  </table>
+</p>

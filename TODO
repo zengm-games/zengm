@@ -4,6 +4,7 @@ refactor and make sure i'm doing things correct as far as modules, namespaces, d
 port over other features
 - draft
   - make draft view
+    - check started instead of drafted[0].pid
   - can i get rid of draftResults? have the order of picks saved in localstorage, everything else in players.
 - free agents view
 - contract negotiation

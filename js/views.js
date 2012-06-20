@@ -397,6 +397,54 @@ console.log(players);
         });
     }
 
+    function draft(req) {
+        beforeLeague(req, function() {
+            var data;
+
+            var season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
+            season = helpers.validateSeason(season);
+            var seasons;
+
+            // Draft hasn't happened yet this year
+            if (g.phase < c.PHASE_DRAFT) {
+                // View last season by default
+                if (season == g.season) {
+                    season -= 1;
+                }
+                seasons = helpers.getSeasons(season, g.season);  // Don't show this season as an option
+            }
+            else {
+                seasons = helpers.getSeasons(season, g.season);  // Show this season as an option
+            }
+
+            if (g.phase < c.PHASE_DRAFT && season < g.startingSeason) {
+                var data = {"title": "Error - League " + g.lid};
+                var error = "There is no draft history yet. Check back after the season.";
+                var template = Handlebars.templates["error"];
+                data["league_content"] = template({error: error});
+                bbgm.ajaxUpdate(data);
+                return;
+            }
+/*
+            // Active draft
+            if (g.phase == c.PHASE_DRAFT && season == g.season) {
+                r = g.dbex("SELECT pa.pid, pa.pos, pa.name, :season - pa.bornYear as age, pr.ovr, pr.pot FROM playerAttributes as pa, playerRatings as pr WHERE pa.pid = pr.pid AND pa.tid = :tid AND pr.season = :season ORDER BY pr.ovr + 2*pr.pot DESC", season=g.season, tid=c.PLAYER_UNDRAFTED);
+                undrafted = r.fetchall();
+
+                r = g.dbex("SELECT round, pick, abbrev, pid, name, :season - bornYear as age, pos, ovr, pot FROM draftResults WHERE season = :season ORDER BY round, pick ASC", season=g.season);
+                drafted = r.fetchall();
+
+                return renderAllOrJson("draft.html", {"undrafted": undrafted, "drafted": drafted});
+
+            // Show a summary of an old draft
+// title: g.season Draft Results
+            r = g.dbex("SELECT dr.round, dr.pick, dr.abbrev, dr.pid, dr.name, :viewSeason - dr.bornYear AS age, dr.pos, dr.ovr, dr.pot, ta.abbrev AS currentAbbrev, :season - dr.bornYear AS currentAge, pr.ovr AS currentOvr, pr.pot AS currentPot, SUM(CASE WHEN ps.min > 0 THEN 1 ELSE 0 END) AS gp, AVG(ps.min) as min, AVG(ps.pts) AS pts, AVG(ps.orb + ps.drb) AS trb, AVG(ps.ast) AS ast FROM draftResults AS dr LEFT OUTER JOIN playerRatings AS pr ON pr.season = :season AND dr.pid = pr.pid LEFT OUTER JOIN playerStats AS ps ON ps.playoffs = FALSE AND dr.pid = ps.pid LEFT OUTER JOIN playerAttributes AS pa ON dr.pid = pa.pid LEFT OUTER JOIN teamAttributes AS ta ON pa.tid = ta.tid AND ta.season = :season WHERE dr.season = :viewSeason GROUP BY dr.pid", viewSeason=viewSeason, season=g.season);
+            players = r.fetchall();
+            return renderAllOrJson("draftSummary.html", {"players": players, "seasons": seasons, "viewSeason": viewSeason});
+*/
+        });
+    }
+
     function game_log(req) {
         beforeLeague(req, function() {
             var data = {"title": "Game Log - League " + g.lid};
@@ -427,6 +475,7 @@ console.log(players);
         playoffs: playoffs,
         roster: roster,
         schedule: schedule,
+        draft: draft,
         game_log: game_log
     };
 });

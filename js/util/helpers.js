@@ -58,11 +58,15 @@ define([], function() {
     }
 
     /*Returns a list of all the seasons, past and present.*/
-    function getSeasons(selectedSeason) {
+    function getSeasons(selectedSeason, ignoredSeason) {
         selectedSeason = parseInt(selectedSeason, 10);
+        ignoredSeason = typeof ignoredSeason !== "undefined" ? parseInt(selectedSeason, 10) : null;
+
         var seasons = [];
         for (var season=g.startingSeason; season<=g.season; season++) {
-            seasons.push({season: season, selected: selectedSeason===season});
+            if (season != ignoredSeason) {
+                seasons.push({season: season, selected: selectedSeason===season});
+            }
         }
         return seasons;
     }

@@ -136,6 +136,24 @@ console.log('hi');
         };
     }
 
+    function draftUntiUserOrEnd(cb) {
+        playMenu.setStatus('Draft in progress...');
+        var pids = draft.untilUserOrEnd(function (pids) {
+            var done = true;
+            if (g.phase == c.PHASE_AFTER_DRAFT) {
+                done = true;
+                playMenu.setStatus('Idle')
+            }
+            cb(pids, done);
+        });
+    }
+
+    function draftUser(pid, cb) {
+        pid = parseInt(pid, 10);
+        var playerStore = g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
+        draft.selectPlayer(g.userTid, pid, playerStore, cb);
+    }
+
     function boxScore(gid, cb) {
         gid = parseInt(gid, 10);
 
@@ -150,6 +168,8 @@ console.log('hi');
 
     return {
         play: play,
+        draftUntiUserOrEnd: draftUntiUserOrEnd,
+        draftUser: draftUser,
         gameLogList: gameLogList,
         boxScore: boxScore
     };

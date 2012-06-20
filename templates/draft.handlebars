@@ -26,12 +26,12 @@ $(document).ready(function() {
     }
 
     function draftUntilUserOrEnd() {
-        var pids, done;
-        [pids, done] = api.draftUntilUserOrEnd();
-        updateDraftTables(pids);
-        if (!done) {
-            $('#undrafted button').removeAttr('disabled');
-        }
+        [pids, done] = api.draftUntilUserOrEnd(function (pids, done) {
+            updateDraftTables(pids);
+            if (!done) {
+                $('#undrafted button').removeAttr('disabled');
+            }
+        });
     }
 
     $('#start_draft').click(function(event) {
@@ -41,9 +41,10 @@ $(document).ready(function() {
 
     $('#undrafted button').click(function(event) {
         $('#undrafted button').attr('disabled', 'disabled');
-        var pid = api.draftUser(this.getAttribute('data-player-id'));
-        update_draft_tables([pid]);
-        draftUntilUserOrEnd();
+        var pid = api.draftUser(this.getAttribute('data-player-id'), function (pid) {
+            update_draft_tables([pid]);
+            draftUntilUserOrEnd();
+        });
     });
 });
 </script>

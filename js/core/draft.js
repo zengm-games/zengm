@@ -49,62 +49,83 @@ define(["core/player", "core/season", "util/random"], function(player, season, r
     Returns:
         A list of player IDs who were drafted.
     */
-/*    function untilUserOrEnd() {
-        pids = [];
+    function untilUserOrEnd(cb) {
+        var pids = [];
 
-        r = g.dbex('SELECT tid, round, pick FROM draftResults WHERE season = :season AND pid = 0 ORDER BY round, pick ASC', season=g.season);
-        for tid, round, pick in r.fetchall() {
-            if (tid == g.userTid) {
-                return pids;
-            teamPick = abs(int(random.gauss(0, 3)))  // 0=best prospect, 1=next best prospect, etc.;
-            r = g.dbex('SELECT pr.pid FROM playerAttributes as pa, playerRatings as pr WHERE pa.pid = pr.pid AND pa.tid = ) {tid AND pr.season = ) {season ORDER BY pr.ovr + 2*pr.pot DESC LIMIT ) {pick, 1', tid=c.PLAYER_UNDRAFTED, season=g.season, pick=teamPick);
-            pid,= r.fetchone();
-            pickPlayer(tid, pid);
-            pids.push(pid);
+        var playerStore = g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
+        playerStore.index("tid").getAll(c.PLAYER_UNDRAFTED).onsuccess = function(event) {
+            var playersAll = event.target.result;
+            playersAll.sort(function (a, b) {  return b.ratings[0].ovr+2*b.ratings[0].pot - a.ratings[0].ovr+2*a.ratings[0].pot; });
 
-        return pids;
+            var draftOrder = JSON.parse(localStorage.getItem("league" + g.lid + "DraftOrder"));
+            while (draftOrder.length > 0) {
+                var pick = draftOrder.shift()
+                if (pick.tid == g.userTid) {
+                    break;
+                }
+
+                var selection = abs(int(random.gauss(0, 3)));  // 0=best prospect, 1=next best prospect, etc.
+                var pid = playersAll[selection].pid;
+                selectPlayer(pick, pid, playerStore);
+
+                pids.push(pid);
+                playersAll.splice(selection, 1);  // Delete from the list of undrafted players
+            }
+
+            localStorage.setItem("league" + g.lid + "DraftOrder", JSON.stringify(draftOrder));
+
+            // Is draft over?;
+            if (draftOrder.length == 0) {
+                season.newPhase(c.PHASE_AFTER_DRAFT);
+            }
+
+            cb(pids);
+        };
+//        return pids;
     }
 
-
-    function pickPlayer(tid, pid) {
-        // Validate that tid should be picking now;
+    /* Callback is used when this is called to select a player for the user's team.*/
+    function selectPlayer(pick, pid, playerStore, cb) {
+        cb = typeof cb !== "undefined" ? cb : function (pid) {};
+console.log('selectPlayer: tid ' + tid + ' pid ' + pid);
+/*
+        // Validate that tid should be picking now
         r = g.dbex('SELECT tid, round, pick FROM draftResults WHERE season = :season AND pid = 0 ORDER BY round, pick ASC LIMIT 1', season=g.season);
         tidNext, round, pick = r.fetchone();
 
-        if (tidNext != tid) {
+        if (tidNext != pick.tid) {
             app.logger.debug('WARNING: Team %d tried to draft out of order' % (tid,));
             return;
-
-        // Draft player, update roster potision;
-        r = g.dbex('SELECT pa.name, pa.pos, pa.bornYear, pr.ovr, pr.pot FROM playerAttributes AS pa, playerRatings AS pr WHERE pa.pid = pr.pid AND pa.tid = :tid AND pr.pid = :pid AND pr.season = :season', tid=c.PLAYER_UNDRAFTED, pid=pid, season=g.season);
-        name, pos, bornYear, ovr, pot = r.fetchone();
-        r = g.dbex('SELECT MAX(rosterOrder) + 1 FROM playerAttributes WHERE tid = :tid', tid=tid);
-        rosterOrder, = r.fetchone();
-
-        g.dbex('UPDATE playerAttributes SET tid = :tid, draftYear = :draftYear, round = :round, draftPick = :draftPick, draftTid = :tid, rosterOrder = :rosterOrder WHERE pid = :pid', tid=tid, draftYear=g.season, round=round, draftPick=pick, draftTid=tid, rosterOrder=rosterOrder, pid=pid);
-        g.dbex('UPDATE draftResults SET pid = :pid, name = :name, pos = :pos, bornYear = :bornYear, ovr = :ovr, pot = :pot WHERE season = :season AND round = :round AND pick = :pick', pid=pid, name=name, pos=pos, bornYear=bornYear, ovr=ovr, pot=pot, season=g.season, round=round, pick=pick);
-
-        // Contract;
-        rookieSalaries = (5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500,;
-                           1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000,;
-                           1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500,;
-                           500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500);
-        i = pick - 1 + 30 * (round - 1);
-        contractAmount = rookieSalaries[i];
-        years = 4 - round  // 2 years for 2nd round, 3 years for 1st round;
-        contractExp = g.season + years;
-        g.dbex('UPDATE playerAttributes SET contractAmount = :contractAmount, contractExp = :contractExp WHERE pid = :pid', contractAmount=contractAmount, contractExp=contractExp, pid=pid);
-
-        // Is draft over?;
-        r = g.dbex('SELECT 1 FROM draftResults WHERE season = :season AND pid = 0', season=g.season);
-        if (r.rowcount == 0) {
-            season.newPhase(c.PHASE_AFTER_DRAFT);
-
-        return pid;
-    }
 */
+
+        playerStore.openCursor(IDBKeyRange.only(pid)).onsuccess = function(event) {
+            var cursor = event.target.result;
+            player = cursor.value;
+
+            // Draft player
+            player.tid = pick.tid;
+            player.draftYear = g.season;
+            player.draftRound = pick.round;
+            player.draftPick = pick.pick;
+            player.draftTid = pick.tid;
+
+            // Contract
+            rookieSalaries = [5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500];
+            i = pick - 1 + 30 * (round - 1);
+            player.contractAmount = rookieSalaries[i];
+            years = 4 - pick.round;  // 2 years for 2nd round, 3 years for 1st round;
+            player.contractExp = g.season + years;
+
+            cursor.update(player);
+
+            cb(pid);
+        };
+    }
+
     return {
         generatePlayers: generatePlayers,
-        setOrder: setOrder
+        setOrder: setOrder,
+        untilUserOrEnd: untilUserOrEnd,
+        selectPlayer: selectPlayer
     }
 });

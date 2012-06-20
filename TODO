@@ -3,9 +3,10 @@ refactor and make sure i'm doing things correct as far as modules, namespaces, d
 - What will replace the AJAX calls? Just call api.whatever function directly and have it do the jQuery crap
 port over other features
 - draft
-  - make draft view
-    - check started instead of drafted[0].pid
+  - draft crap all needs to be done through callbacks
   - can i get rid of draftResults? have the order of picks saved in localstorage, everything else in players.
+    - draftOvr, draftPot when player is created
+    - player.round should be player.draftRound!!
 - free agents view
 - contract negotiation
 - resigning old players

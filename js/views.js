@@ -313,12 +313,9 @@ console.log(playoffSeries);
                             numGamesRemaining += 1;
                         }
                     }
-console.log(numGamesRemaining);
-
-
 /*        pr.ovr, pr.pot
 
-        AVG(ps.min) as min, AVG(ps.pts) as pts, AVG(ps.orb + ps.drb) as rebounds, AVG(ps.ast) as ast
+        AVG(ps.min) as min, AVG(ps.pts) as pts, AVG(ps.orb + ps.drb) as trb, AVG(ps.ast) as ast
 
         FROM player_attributes as pa LEFT OUTER JOIN player_ratings as pr ON pr.season = :season AND pa.pid = pr.pid LEFT OUTER JOIN player_stats as ps ON ps.season = :season AND ps.playoffs = FALSE AND pa.pid = ps.pid WHERE pa.tid = :tid GROUP BY pa.pid, pr.pid, pr.season ORDER BY pa.roster_order ASC', season=view_season, numGamesRemaining=numGamesRemaining, tid=tid)
                 }*/
@@ -328,15 +325,29 @@ console.log(numGamesRemaining);
 console.log(playersAll);
                         var players = [];
                         for (var i=0; i<playersAll.length; i++) {
-                            var p = playersAll[i];
+                            var pa = playersAll[i];
 
                             // Attributes
-                            var player = {pid: p.pid, name: p.name, pos: p.pos, age: g.season - p.bornYear, contractAmount: p.contractAmount / 1000, contractExp: p.contractExp, cashOwed: ((1 + p.contractExp - g.season) * p.contractAmount - (1 - numGamesRemaining / 82) * p.contractAmount) / 1000}
+                            var player = {pid: pa.pid, name: pa.name, pos: pa.pos, age: g.season - pa.bornYear, contractAmount: pa.contractAmount / 1000, contractExp: pa.contractExp, cashOwed: ((1 + pa.contractExp - g.season) * pa.contractAmount - (1 - numGamesRemaining / 82) * pa.contractAmount) / 1000}
 
                             // Ratings
-
+                            for (var j=0; j<pa.ratings.length; j++) {
+                                if (pa.ratings[j].season == season) {
+                                    var pr = pa.ratings[j];
+                                    break;
+                                }
+                            }
+                            player.ovr = pr.ovr;
+                            player.pot = pr.pot;
+console.log(pr);
 
                             // Stats
+                            for (var j=0; j<pa.stats.length; j++) {
+                                if (pa.stats[j].season == season && pa.stats[j].playoffs == false) {
+                                    var ps = pa.stats[j];
+                                    break;
+                                }
+                            }
 
                             players.push(player);
                         }

@@ -30,6 +30,7 @@ How should I handle in-league database? One big transaction?
 BUGS
 
 game simulation is weird. no subs.
+ratings should all be integers before being saved
 
 ---
 

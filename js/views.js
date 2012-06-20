@@ -137,6 +137,7 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
 
             g.dbl.transaction(["teams"]).objectStore("teams").index("season").getAll(season).onsuccess = function (event) {
                 var teamsAll = event.target.result;
+                teamsAll.sort(function (a, b) {  return b.won/(b.won+b.lost) - a.won/(a.won+a.lost); }); // Sort by winning percentage
                 var teams = [];
                 var keys = ["tid", "cid", "did", "abbrev", "region", "name", "won", "lost", "wonDiv", "lostDiv", "wonConf", "lostConf"];  // Attributes to keep from teamStore
                 for (var i=0; i<teamsAll.length; i++) {
@@ -149,7 +150,6 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
                         teams[i].winp = teams[i].won / (teams[i].won + teams[i].lost);
                     }
                 }
-                teams.sort(function (a, b) {  return b.winp - a.winp; }); // Sort by winning percentage
 
                 var confs = []
                 for (var i=0; i<g.confs.length; i++) {
@@ -204,25 +204,14 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
                 finalMatchups = false;
                 g.dbl.transaction(["teams"]).objectStore("teams").index("season").getAll(season).onsuccess = function (event) {
                     var teamsAll = event.target.result;
+                    teamsAll.sort(function (a, b) {  return b.won/(b.won+b.lost) - a.won/(a.won+a.lost); }); // Sort by winning percentage
                     var teams = [];
-                    var keys = ["tid", "abbrev", "name", "cid", "won", "lost"];  // Attributes to keep from teamStore
+                    var keys = ["tid", "abbrev", "name", "cid"];  // Attributes to keep from teamStore
                     for (var i=0; i<teamsAll.length; i++) {
                         teams[i] = {};
                         for (var j=0; j<keys.length; j++) {
                             teams[i][keys[j]] = teamsAll[i][keys[j]];
                         }
-                        teams[i].winp = 0
-                        if (teams[i].won + teams[i].lost > 0) {
-                            teams[i].winp = teams[i].won / (teams[i].won + teams[i].lost);
-                        }
-                    }
-                    teams.sort(function (a, b) {  return b.winp - a.winp; }); // Sort by winning percentage
-
-                    // Remove stuff that was just for sorting
-                    for (var i=0; i<teamsAll.length; i++) {
-                        delete teams[i].won;
-                        delete teams[i].lost;
-                        delete teams[i].winp;
                     }
 
                     var series = [[], [], [], []];  // First round, second round, third round, fourth round

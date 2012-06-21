@@ -442,10 +442,10 @@ function program3(depth0,data,depth1) {
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "pid", { hash: {} }); }
   buffer += escapeExpression(stack1) + "\"><td><a href=\"/l/";
   foundHelper = helpers['g'];
-  stack1 = foundHelper || depth0['g'];
+  stack1 = foundHelper || depth1['g'];
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "...g.lid", { hash: {} }); }
   buffer += escapeExpression(stack1) + "/player/";
   foundHelper = helpers.pid;
   stack1 = foundHelper || depth0.pid;
@@ -498,7 +498,7 @@ function program4(depth0,data) {
   
   return " disabled=\"disabled\"";}
 
-function program6(depth0,data) {
+function program6(depth0,data,depth1) {
   
   var buffer = "", stack1;
   buffer += "\n        <tr><td>";
@@ -513,10 +513,10 @@ function program6(depth0,data) {
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "pick", { hash: {} }); }
   buffer += escapeExpression(stack1) + "</td><td><a href=\"/l/";
   foundHelper = helpers['g'];
-  stack1 = foundHelper || depth0['g'];
+  stack1 = foundHelper || depth1['g'];
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "...g.lid", { hash: {} }); }
   buffer += escapeExpression(stack1) + "/roster/";
   foundHelper = helpers.abbrev;
   stack1 = foundHelper || depth0.abbrev;
@@ -589,7 +589,7 @@ function program6(depth0,data) {
   buffer += "\n    </tbody>\n    </table>\n  </div>\n  <div class=\"span6\">\n    <h2>Draft Results</h2>\n    <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"drafted\">\n    <thead>\n      <tr><th>Pick</th><th>Team</th><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall rating\">Ovr</th><th title=\"Potential rating\">Pot</th></tr>\n    </thead>\n    <tbody>\n      ";
   foundHelper = helpers.drafted;
   stack1 = foundHelper || depth0.drafted;
-  tmp1 = self.program(6, program6, data);
+  tmp1 = self.programWithDepth(program6, data, depth0);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;

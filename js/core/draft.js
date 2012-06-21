@@ -59,8 +59,9 @@ define(["core/player", "core/season", "util/random"], function(player, season, r
 
             var draftOrder = JSON.parse(localStorage.getItem("league" + g.lid + "DraftOrder"));
             while (draftOrder.length > 0) {
-                var pick = draftOrder.shift()
+                var pick = draftOrder.shift();
                 if (pick.tid == g.userTid) {
+                    draftOrder.unshift(pick);
                     break;
                 }
 
@@ -81,7 +82,6 @@ define(["core/player", "core/season", "util/random"], function(player, season, r
 
             cb(pids);
         };
-//        return pids;
     }
 
     /* Callback is used when this is called to select a player for the user's team.*/

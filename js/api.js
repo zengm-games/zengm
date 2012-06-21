@@ -151,7 +151,16 @@ console.log('hi');
     function draftUser(pid, cb) {
         pid = parseInt(pid, 10);
         var playerStore = g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
-        draft.selectPlayer(g.userTid, pid, playerStore, cb);
+
+        var draftOrder = JSON.parse(localStorage.getItem("league" + g.lid + "DraftOrder"));
+        var pick = draftOrder.shift();
+        if (pick.tid == g.userTid) {
+            draft.selectPlayer(pick, pid, playerStore, cb);
+            localStorage.setItem("league" + g.lid + "DraftOrder", JSON.stringify(draftOrder));
+        }
+        else {
+            console.log("ERROR: User trying to draft out of turn.");
+        }
     }
 
     function boxScore(gid, cb) {

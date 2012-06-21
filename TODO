@@ -2,7 +2,7 @@ is localStorage fast enough for game_attributes, and possibly other stuff, like 
 refactor and make sure i'm doing things correct as far as modules, namespaces, documentation, style, etc.
 - What will replace the AJAX calls? Just call api.whatever function directly and have it do the jQuery crap
 port over other features
-- draft            season = require('core/season'); season.newPhase(c.PHASE_BEFORE_DRAFT);
+- draft
   - fix ordering of undrafted players
   - sometimes the drafted table is out of order. why?
 

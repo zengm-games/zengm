@@ -2,14 +2,9 @@ is localStorage fast enough for game_attributes, and possibly other stuff, like 
 refactor and make sure i'm doing things correct as far as modules, namespaces, documentation, style, etc.
 - What will replace the AJAX calls? Just call api.whatever function directly and have it do the jQuery crap
 port over other features
-- draft
-  - draft crap all needs to be done through callbacks
-  - can i get rid of draftResults? have the order of picks saved in localstorage, everything else in players.
-    - show draft order for teams that haven't picked yet
-  - build UI to view drafted players of in progress draft
-  - fix order of undrafted players
-season = require('core/season');
-season.newPhase(c.PHASE_BEFORE_DRAFT);
+- draft            season = require('core/season'); season.newPhase(c.PHASE_BEFORE_DRAFT);
+  - fix ordering of undrafted players
+  - sometimes the drafted table is out of order. why?
 
 
 - free agents view

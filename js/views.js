@@ -245,7 +245,6 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
                 finalMatchups = true;
                 g.dbl.transaction(["playoffSeries"]).objectStore("playoffSeries").get(season).onsuccess = function (event) {
                     var playoffSeries = event.target.result;
-console.log(playoffSeries);
                     var series = playoffSeries.series;
 
 // Loop through and set wonSeries based on number of wins
@@ -313,7 +312,6 @@ console.log(playoffSeries);
 
                     g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(tid).onsuccess = function(event) {
                         var playersAll = event.target.result;
-console.log(playersAll);
                         var players = [];
                         for (var i=0; i<playersAll.length; i++) {
                             var pa = playersAll[i];
@@ -350,11 +348,10 @@ console.log(playersAll);
                                 player.trb = 0;
                                 player.ast = 0;
                             }
-console.log(ps);
 
                             players.push(player);
                         }
-console.log(players);
+
                         cb(players);
                     };
                 };
@@ -427,7 +424,6 @@ console.log(players);
                 bbgm.ajaxUpdate(data);
                 return;
             }
-console.log('FUCK');
 
             // Active draft
             if (g.phase == c.PHASE_DRAFT && season == g.season) {
@@ -438,7 +434,6 @@ console.log('FUCK');
                     var playersAll = event.target.result;
                     playersAll.sort(function (a, b) {  return (b.ratings[0].ovr+2*b.ratings[0].pot) - (a.ratings[0].ovr+2*a.ratings[0].pot); });
 
-console.log(playersAll);
                     var undrafted = [];
                     for (var i=0; i<playersAll.length; i++) {
                         var pa = playersAll[i];
@@ -453,11 +448,10 @@ console.log(playersAll);
 
                         undrafted.push(player);
                     }
-//console.log(undrafted);
 
                     playerStore.index("draftYear").getAll(g.season).onsuccess = function(event) {
                         var playersAll = event.target.result;
-                        playersAll.sort(function (a, b) {  return g.numTeams*(a.draftRound-1)+a.draftPick - g.numTeams*(b.draftRound-1)+b.draftPick; });
+                        playersAll.sort(function (a, b) {  return (g.numTeams*(a.draftRound-1)+a.draftPick) - (g.numTeams*(b.draftRound-1)+b.draftPick); });
 
                         var drafted = [];
                         for (var i=0; i<playersAll.length; i++) {
@@ -487,7 +481,6 @@ console.log(playersAll);
                             var slot = draftOrder[i];
                             drafted.push({abbrev: slot.abbrev, rnd: slot.round, pick: slot.pick});
                         }
-console.log(drafted)
 
                         var template = Handlebars.templates["draft"];
                         data["league_content"] = template({g: g, undrafted: undrafted, drafted: drafted, started: started});

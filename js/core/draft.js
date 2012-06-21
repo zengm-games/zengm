@@ -72,19 +72,14 @@ define(["core/player", "core/season", "util/random"], function(player, season, r
                 playersAll.splice(selection, 1);  // Delete from the list of undrafted players
             }
 
-console.log('a');
             localStorage.setItem("league" + g.lid + "DraftOrder", JSON.stringify(draftOrder));
 
-console.log('b');
             // Is draft over?;
             if (draftOrder.length == 0) {
-console.log('c');
                 season.newPhase(c.PHASE_AFTER_DRAFT);
             }
-console.log('d');
 
             cb(pids);
-console.log('h');
         };
 //        return pids;
     }
@@ -92,7 +87,6 @@ console.log('h');
     /* Callback is used when this is called to select a player for the user's team.*/
     function selectPlayer(pick, pid, playerStore, cb) {
         cb = typeof cb !== "undefined" ? cb : function (pid) {};
-console.log('selectPlayer: tid ' + pick.tid + ' pid ' + pid);
 /*
         // Validate that tid should be picking now
         r = g.dbex('SELECT tid, round, pick FROM draftResults WHERE season = :season AND pid = 0 ORDER BY round, pick ASC LIMIT 1', season=g.season);

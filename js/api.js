@@ -145,7 +145,6 @@ console.log('hi');
                 playMenu.setStatus('Idle');
             }
             cb2(pids, done);
-console.log('g');
         });
     }
 

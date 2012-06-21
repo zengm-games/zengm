@@ -29,12 +29,10 @@ $(document).ready(function() {
 
     function draftUntilUserOrEnd() {
         api.draftUntilUserOrEnd(function (pids, done) {
-console.log('e done ' + done);
           updateDraftTables(pids);
           if (!done) {
               $('#undrafted button').removeAttr('disabled');
           }
-console.log('f');
       });
     }
 

@@ -436,7 +436,8 @@ console.log('FUCK');
                 var playerStore = g.dbl.transaction(["players"]).objectStore("players");
                 playerStore.index("tid").getAll(c.PLAYER_UNDRAFTED).onsuccess = function(event) {
                     var playersAll = event.target.result;
-                    playersAll.sort(function (a, b) {  return b.ratings[0].ovr+2*b.ratings[0].pot - a.ratings[0].ovr+2*a.ratings[0].pot; });
+                    playersAll.sort(function (a, b) {  return (b.ratings[0].ovr+2*b.ratings[0].pot) - (a.ratings[0].ovr+2*a.ratings[0].pot); });
+
 console.log(playersAll);
                     var undrafted = [];
                     for (var i=0; i<playersAll.length; i++) {
@@ -457,7 +458,7 @@ console.log(playersAll);
                     playerStore.index("draftYear").getAll(g.season).onsuccess = function(event) {
                         var playersAll = event.target.result;
                         playersAll.sort(function (a, b) {  return g.numTeams*(a.draftRound-1)+a.draftPick - g.numTeams*(b.draftRound-1)+b.draftPick; });
-console.log(playersAll);
+
                         var drafted = [];
                         for (var i=0; i<playersAll.length; i++) {
                             var pa = playersAll[i];
@@ -482,8 +483,6 @@ console.log(playersAll);
                         var started = drafted.length > 0;
 
                         var draftOrder = JSON.parse(localStorage.getItem("league" + g.lid + "DraftOrder"));
-console.log(draftOrder);
-console.log(drafted);
                         for (var i=0; i<draftOrder.length; i++) {
                             var slot = draftOrder[i];
                             drafted.push({abbrev: slot.abbrev, rnd: slot.round, pick: slot.pick});

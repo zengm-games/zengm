@@ -3,8 +3,7 @@ refactor and make sure i'm doing things correct as far as modules, namespaces, d
 - What will replace the AJAX calls? Just call api.whatever function directly and have it do the jQuery crap
 port over other features
 - draft
-  - fix ordering of undrafted players
-  - sometimes the drafted table is out of order. why?
+  - If you reload the page, the drafted table appears out of order
 
 
 - free agents view

@@ -55,7 +55,7 @@ define(["core/player", "core/season", "util/random"], function(player, season, r
         var playerStore = g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
         playerStore.index("tid").getAll(c.PLAYER_UNDRAFTED).onsuccess = function(event) {
             var playersAll = event.target.result;
-            playersAll.sort(function (a, b) {  return b.ratings[0].ovr+2*b.ratings[0].pot - a.ratings[0].ovr+2*a.ratings[0].pot; });
+            playersAll.sort(function (a, b) {  return (b.ratings[0].ovr+2*b.ratings[0].pot) - (a.ratings[0].ovr+2*a.ratings[0].pot); });
 
             var draftOrder = JSON.parse(localStorage.getItem("league" + g.lid + "DraftOrder"));
             while (draftOrder.length > 0) {

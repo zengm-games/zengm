@@ -29,7 +29,7 @@ $(document).ready(function() {
 
     function draftUntilUserOrEnd() {
         api.draftUntilUserOrEnd(function (pids, done) {
-console.log('e');
+console.log('e done ' + done);
           updateDraftTables(pids);
           if (!done) {
               $('#undrafted button').removeAttr('disabled');
@@ -45,8 +45,8 @@ console.log('f');
 
     $('#undrafted button').click(function(event) {
         $('#undrafted button').attr('disabled', 'disabled');
-        var pid = api.draftUser(this.getAttribute('data-player-id'), function (pid) {
-            update_draft_tables([pid]);
+        api.draftUser(this.getAttribute('data-player-id'), function (pid) {
+            updateDraftTables([pid]);
             draftUntilUserOrEnd();
         });
     });
@@ -68,7 +68,7 @@ console.log('f');
     </thead>
     <tbody>
       {{#undrafted}}
-        <tr id="undrafted_{{pid}}"><td><a href="/l/{{g.lid}}/player/{{pid}}">{{name}}</a></td><td>{{pos}}</td><td>{{age}}<td>{{ovr}}</td><td>{{pot}}</td><td><button class="btn btn-mini btn-primary" data-player-id="{{pid}}" disabled="disabled">Draft</button></td></tr>
+        <tr id="undrafted_{{pid}}"><td><a href="/l/{{g.lid}}/player/{{pid}}">{{name}}</a></td><td>{{pos}}</td><td>{{age}}<td>{{ovr}}</td><td>{{pot}}</td><td><button class="btn btn-mini btn-primary" data-player-id="{{pid}}"{{#unless ../started}} disabled="disabled"{{/unless}}>Draft</button></td></tr>
       {{/undrafted}}
     </tbody>
     </table>
@@ -81,7 +81,7 @@ console.log('f');
     </thead>
     <tbody>
       {{#drafted}}
-        <tr><td>{{round}}-{{pick}}</td><td><a href="/l/{{g.lid}}/roster/{{abbrev}}">{{abbrev}}</a></td><td><a href="/l/{{g.lid}}/player/{{pid}}">{{name}}</a></td><td>{{pos}}</td><td>{{age}}<td>{{ovr}}</td><td>{{pot}}</td></tr>
+        <tr><td>{{rnd}}-{{pick}}</td><td><a href="/l/{{g.lid}}/roster/{{abbrev}}">{{abbrev}}</a></td><td><a href="/l/{{g.lid}}/player/{{pid}}">{{name}}</a></td><td>{{pos}}</td><td>{{age}}<td>{{ovr}}</td><td>{{pot}}</td></tr>
       {{/drafted}}
     </tbody>
     </table>

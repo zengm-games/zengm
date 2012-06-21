@@ -139,7 +139,7 @@ console.log('hi');
     function draftUntilUserOrEnd(cb2) {
         playMenu.setStatus('Draft in progress...');
         var pids = draft.untilUserOrEnd(function (pids) {
-            var done = true;
+            var done = false;
             if (g.phase == c.PHASE_AFTER_DRAFT) {
                 done = true;
                 playMenu.setStatus('Idle');

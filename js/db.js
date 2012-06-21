@@ -46,6 +46,7 @@ define(["util/helpers"], function(helpers) {
                 // ... other stores go here later
 
                 playerStore.createIndex("tid", "tid", {unique: false});
+                playerStore.createIndex("draftYear", "draftYear", {unique: false});
                 playerStore.createIndex("ratings.season", "ratings.season", {unique: false});
                 playerStore.createIndex("stats.tid", "stats.tid", {unique: false});
                 playerStore.createIndex("stats.season", "stats.season", {unique: false});

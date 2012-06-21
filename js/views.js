@@ -433,16 +433,17 @@ console.log('FUCK');
             if (g.phase == c.PHASE_DRAFT && season == g.season) {
                 data = {"title": "Draft - League " + g.lid};
 
-                g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(c.PLAYER_UNDRAFTED).onsuccess = function(event) {
+                var playerStore = g.dbl.transaction(["players"]).objectStore("players");
+                playerStore.index("tid").getAll(c.PLAYER_UNDRAFTED).onsuccess = function(event) {
                     var playersAll = event.target.result;
                     playersAll.sort(function (a, b) {  return b.ratings[0].ovr+2*b.ratings[0].pot - a.ratings[0].ovr+2*a.ratings[0].pot; });
-//console.log(playersAll);
+console.log(playersAll);
                     var undrafted = [];
                     for (var i=0; i<playersAll.length; i++) {
                         var pa = playersAll[i];
 
                         // Attributes
-                        var player = {pid: pa.pid, name: pa.name, pos: pa.pos, age: g.season - pa.bornYear}
+                        var player = {pid: pa.pid, name: pa.name, pos: pa.pos, age: g.season - pa.bornYear};
 
                         // Ratings
                         var pr = pa.ratings[0];
@@ -453,13 +454,46 @@ console.log('FUCK');
                     }
 //console.log(undrafted);
 
+                    playerStore.index("draftYear").getAll(g.season).onsuccess = function(event) {
+                        var playersAll = event.target.result;
+                        playersAll.sort(function (a, b) {  return g.numTeams*(a.draftRound-1)+a.draftPick - g.numTeams*(b.draftRound-1)+b.draftPick; });
+console.log(playersAll);
+                        var drafted = [];
+                        for (var i=0; i<playersAll.length; i++) {
+                            var pa = playersAll[i];
 
-                    var drafted = [];
+                            if (pa.tid == c.PLAYER_UNDRAFTED) {
+                                continue;
+                            }
 
+                            // Attributes
+                            var draftTid, draftAbbrev;
+                            [draftTid, draftAbbrev] = helpers.validateTid(pa.draftTid);
+                            var player = {pid: pa.pid, name: pa.name, pos: pa.pos, age: g.season - pa.bornYear, abbrev: draftAbbrev, rnd: pa.draftRound, pick: pa.draftPick};
 
-                    var template = Handlebars.templates["draft"];
-                    data["league_content"] = template({g: g, undrafted: undrafted, drafted: drafted, started: drafted.length > 0});
-                    bbgm.ajaxUpdate(data);
+                            // Ratings
+                            var pr = pa.ratings[0];
+                            player.ovr = pr.ovr;
+                            player.pot = pr.pot;
+
+                            drafted.push(player);
+                        }
+
+                        var started = drafted.length > 0;
+
+                        var draftOrder = JSON.parse(localStorage.getItem("league" + g.lid + "DraftOrder"));
+console.log(draftOrder);
+console.log(drafted);
+                        for (var i=0; i<draftOrder.length; i++) {
+                            var slot = draftOrder[i];
+                            drafted.push({abbrev: slot.abbrev, rnd: slot.round, pick: slot.pick});
+                        }
+console.log(drafted)
+
+                        var template = Handlebars.templates["draft"];
+                        data["league_content"] = template({g: g, undrafted: undrafted, drafted: drafted, started: started});
+                        bbgm.ajaxUpdate(data);
+                    };
                 };
                 return;
 /*                r = g.dbex("SELECT round, pick, abbrev, pid, name, :season - bornYear as age, pos, ovr, pot FROM draftResults WHERE season = :season ORDER BY round, pick ASC", season=g.season);

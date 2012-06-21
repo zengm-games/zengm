@@ -5,9 +5,13 @@ port over other features
 - draft
   - draft crap all needs to be done through callbacks
   - can i get rid of draftResults? have the order of picks saved in localstorage, everything else in players.
-    - draftOvr, draftPot when player is created
-    - player.round should be player.draftRound!!
+    - show draft order for teams that haven't picked yet
   - build UI to view drafted players of in progress draft
+  - fix order of undrafted players
+season = require('core/season');
+season.newPhase(c.PHASE_BEFORE_DRAFT);
+
+
 - free agents view
 - contract negotiation
 - resigning old players
@@ -42,6 +46,7 @@ template loop count - how?
 view_season can be made just season because of handelbars' scoping
 startingSeason should be stored so later years can have different values
 at some point, go through the indexeddb code. factor out common patterns into a library. combine transactions where appropriate
+make sure all indexes are actually used. otherwise they're just making it slower for nothing
 
 ---
 

@@ -224,6 +224,8 @@ define(["util/random"], function(random) {
         this.attribute['draftYear'] = draftYear;
         this.generateRatings(profile, baseRating);
         this.generateAttributes(age);
+        this.attribute['draftPot'] = pot;
+        this.attribute['draftOvr'] = this.ovr();
     }
 
     Player.prototype.generateRatings = function (profile, baseRating) {
@@ -285,7 +287,7 @@ define(["util/random"], function(random) {
         this.attribute['name'] = this._name(nationality)   ;     
 
         this.attribute['college'] = 0;
-        this.attribute['round'] = 0;
+        this.attribute['draftRound'] = 0;
         this.attribute['draftPick'] = 0;
         this.attribute['draftTid'] = 0;
         this.attribute['contractAmount'], this.attribute['contractExp'] = this.contract();

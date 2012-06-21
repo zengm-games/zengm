@@ -119,7 +119,7 @@ define(["util/random"], function(random) {
      * @return {number} Overall rating.
      */
     Player.prototype.ovr = function () {
-        return (this.rating['hgt'] + this.rating['stre'] + this.rating['spd'] + this.rating['jmp'] + this.rating['endu'] + this.rating['ins'] + this.rating['dnk'] + this.rating['ft'] + this.rating['fg'] + this.rating['tp'] + this.rating['blk'] + this.rating['stl'] + this.rating['drb'] + this.rating['pss'] + this.rating['reb']) / 15
+        return parseInt((this.rating['hgt'] + this.rating['stre'] + this.rating['spd'] + this.rating['jmp'] + this.rating['endu'] + this.rating['ins'] + this.rating['dnk'] + this.rating['ft'] + this.rating['fg'] + this.rating['tp'] + this.rating['blk'] + this.rating['stl'] + this.rating['drb'] + this.rating['pss'] + this.rating['reb']) / 15, 10)
     }
 
     Player.prototype.contract = function (randomizeExp) {

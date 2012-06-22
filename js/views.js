@@ -317,7 +317,7 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
                             var pa = playersAll[i];
 
                             // Attributes
-                            var player = {pid: pa.pid, name: pa.name, pos: pa.pos, age: g.season - pa.bornYear, contractAmount: pa.contractAmount / 1000, contractExp: pa.contractExp, cashOwed: ((1 + pa.contractExp - g.season) * pa.contractAmount - (1 - numGamesRemaining / 82) * pa.contractAmount) / 1000}
+                            var player = {pid: pa.pid, name: pa.name, pos: pa.pos, age: g.season - pa.bornYear, contractAmount: pa.contractAmount / 1000, contractExp: pa.contractExp, cashOwed: ((1 + pa.contractExp - g.season) * pa.contractAmount - (1 - numGamesRemaining / 82) * pa.contractAmount) / 1000};
 
                             // Ratings
                             for (var j=0; j<pa.ratings.length; j++) {
@@ -391,7 +391,78 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
                 data["league_content"] = template({g: g, games: games});
                 bbgm.ajaxUpdate(data);
             });
+        });
+    }
 
+    function free_agents(req) {
+        beforeLeague(req, function() {
+            var data = {"title": "Free Agents - League " + g.lid};
+            if (g.phase >= c.PHASE_AFTER_TRADE_DEADLINE && g.phase <= c.PHASE_RESIGN_PLAYERS) {
+                data = {"title": "Error - League " + g.lid};
+
+                var error = "You're not allowed to sign free agents now.";
+                var template = Handlebars.templates["error"];
+                data["league_content"] = template({error: error});
+                bbgm.ajaxUpdate(data);
+                return;
+            }
+
+            g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(c.PLAYER_FREE_AGENT).onsuccess = function(event) {
+                var playersAll = event.target.result;
+                var players = [];
+                for (var i=0; i<playersAll.length; i++) {
+                    var pa = playersAll[i];
+
+                    // Attributes
+                    var player = {pid: pa.pid, name: pa.name, pos: pa.pos, age: g.season - pa.bornYear, contractAmount: pa.contractAmount / 1000, contractExp: pa.contractExp};
+
+                    // Ratings
+                    for (var j=0; j<pa.ratings.length; j++) {
+                        if (pa.ratings[j].season === g.season) {
+                            var pr = pa.ratings[j];
+                            break;
+                        }
+                    }
+                    player.ovr = pr.ovr;
+                    player.pot = pr.pot;
+
+                    // Stats
+                    var ps;
+                    for (var j=0; j<pa.stats.length; j++) {
+                        if (pa.stats[j].season === g.season && pa.stats[j].playoffs === false) {
+                            ps = pa.stats[j];
+                            break;
+                        }
+                    }
+                    // Load previous season if no stats this year
+                    if (typeof ps === "undefined") {
+                        for (var j=0; j<pa.stats.length; j++) {
+                            if (pa.stats[j].season === g.season-1 && pa.stats[j].playoffs === false) {
+                                var ps = pa.stats[j];
+                                break;
+                            }
+                        }
+                    }
+                    if (typeof ps !== "undefined" && ps.gp > 0) {
+                        player.min = ps.min / ps.gp;
+                        player.pts = ps.pts / ps.gp;
+                        player.trb = ps.trb / ps.gp;
+                        player.ast = ps.ast / ps.gp;
+                    }
+                    else {
+                        player.min = 0;
+                        player.pts = 0;
+                        player.trb = 0;
+                        player.ast = 0;
+                    }
+
+                    players.push(player);
+                }
+
+                var template = Handlebars.templates["freeAgents"];
+                data["league_content"] = template({g: g, players: players});
+                bbgm.ajaxUpdate(data);
+            };
         });
     }
 
@@ -530,6 +601,7 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
         playoffs: playoffs,
         roster: roster,
         schedule: schedule,
+        free_agents: free_agents,
         draft: draft,
         game_log: game_log
     };

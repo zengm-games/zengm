@@ -1797,8 +1797,8 @@ function program1(depth0,data,depth1) {
   else { stack1 = stack3; }
   buffer += escapeExpression(stack1) + "', '$";
   stack1 = 1;
-  foundHelper = helpers.contractAmt;
-  stack2 = foundHelper || depth0.contractAmt;
+  foundHelper = helpers.contractAmount;
+  stack2 = foundHelper || depth0.contractAmount;
   foundHelper = helpers.round;
   stack3 = foundHelper || depth0.round;
   if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
@@ -1823,7 +1823,7 @@ function program1(depth0,data,depth1) {
   buffer += escapeExpression(stack1) + "\" method=\"POST\" style=\"margin: 0\"><input type=\"hidden\" name=\"new\" value=\"1\"><button type=\"submit\" class=\"btn btn-mini btn-primary\">Negotiate</button></form>' ],\n    ";
   return buffer;}
 
-  buffer += "<script type=\"text/javascript\">\n$(document).ready(function() {\n  bbgm_datatable($('#free_agents'), 4, [\n    ";
+  buffer += "<script type=\"text/javascript\">\n$(document).ready(function() {\n  bbgm.datatable($('#free_agents'), 4, [\n    ";
   foundHelper = helpers.players;
   stack1 = foundHelper || depth0.players;
   tmp1 = self.programWithDepth(program1, data, depth0);

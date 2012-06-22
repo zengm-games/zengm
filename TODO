@@ -2,7 +2,6 @@ is localStorage fast enough for game_attributes, and possibly other stuff, like 
 refactor and make sure i'm doing things correct as far as modules, namespaces, documentation, style, etc.
 - What will replace the AJAX calls? Just call api.whatever function directly and have it do the jQuery crap
 port over other features
-- free agents view
 - contract negotiation
 - resigning old players
 - new season
@@ -37,6 +36,7 @@ view_season can be made just season because of handelbars' scoping
 startingSeason should be stored so later years can have different values
 at some point, go through the indexeddb code. factor out common patterns into a library. combine transactions where appropriate
 make sure all indexes are actually used. otherwise they're just making it slower for nothing
+== to ===
 
 ---
 

@@ -488,8 +488,6 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
                     };
                 };
                 return;
-/*                r = g.dbex("SELECT round, pick, abbrev, pid, name, :season - bornYear as age, pos, ovr, pot FROM draftResults WHERE season = :season ORDER BY round, pick ASC", season=g.season);
-                drafted = r.fetchall();*/
             }
             // Show a summary of an old draft
             data = {"title": g.season + " Draft Results - League " + g.lid};

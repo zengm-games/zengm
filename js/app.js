@@ -1,12 +1,14 @@
 requirejs(["db", "views", "bbgm", "api"], function (db, views, bbgm, api) {
+    "use strict";
+
     window.api = api;
     window.bbgm = bbgm;
 
     g.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
-    request = db.connect_meta();
-    request.onsuccess = function(event) {
+    var request = db.connect_meta();
+    request.onsuccess = function (event) {
         g.dbm = request.result;
-        g.dbm.onerror = function(event) {
+        g.dbm.onerror = function (event) {
             console.log("Meta database error: " + event.target.errorCode);
         };
 
@@ -41,7 +43,7 @@ requirejs(["db", "views", "bbgm", "api"], function (db, views, bbgm, api) {
             this.get('/l/:lid/draft/:season', views.draft);
         });
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             app.start();
         });
     };

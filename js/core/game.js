@@ -564,5 +564,5 @@ console.log(tid);
 
     return {
         play: play
-    }
+    };
 });

@@ -126,5 +126,5 @@ define(["core/player", "core/season", "util/random"], function(player, season, r
         setOrder: setOrder,
         untilUserOrEnd: untilUserOrEnd,
         selectPlayer: selectPlayer
-    }
+    };
 });

@@ -10,10 +10,11 @@ sed -i 's/"""$/*\//g' "$1"
 sed -i 's/"""/\/*/g' "$1"
 
 sed -i 's/):$/) {/g' "$1"
+sed -i 's/else:$/else {/g' "$1"
 sed -i 's/:$/) {/g' "$1"
 
 sed -i 's/if /if (/g' "$1"
-sed -i 's/else /else (/g' "$1"
+sed -i 's/elif /else if /g' "$1"
 
 sed -i 's/\.append/\.push/g' "$1"
 
@@ -23,6 +24,12 @@ sed -i 's/{;$/{/g' "$1"
 
 sed -r -i 's/_([a-z])/\U\1/g' "$1"
 
+sed -i 's/False/false/g' "$1"
+sed -i 's/True/true/g' "$1"
+
+sed -i 's/app\.logger\.debug/console\.log/g' "$1"
+
+sed -i 's/randint/randInt/g' "$1"
 
 # sed -i 's///g' "$1"
 

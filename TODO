@@ -1,6 +1,7 @@
 main todo
 - contract negotiation
-- jslint
+- jslint --plusplus --predef $ --predef Davis --predef requirejs --predef define --predef window --predef document --predef localStorage --predef IDBKeyRange --predef IDBTransaction --predef g --predef c js/core/draft.js
+  - http://stackoverflow.com/questions/7425147/jslint-error-somefunction-was-used-before-it-was-defined
 - resigning old players
 - new season
   - add rows to stats in DB as is done for playoffs

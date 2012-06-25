@@ -1,10 +1,14 @@
-define(["core/player", "core/season", "util/random"], function(player, season, random) {
+define(["core/player", "core/season", "util/random"], function (player, season, random) {
+    "use strict";
+
     function generatePlayers() {
-        var playerStore = g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
-        var profiles = ["Point", "Wing", "Big", "Big", ""];
-        for (var i=0; i<70; i++) {
-            var baseRating = random.randInt(0, 19);
-            var pot = parseInt(random.gauss(45, 20), 10);
+        var agingYears, baseRating, draftYear, gp, i, playerStore, pot, profile, profiles;
+
+        playerStore = g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
+        profiles = ["Point", "Wing", "Big", "Big", ""];
+        for (i = 0; i < 70; i++) {
+            baseRating = random.randInt(0, 19);
+            pot = parseInt(random.gauss(45, 20), 10);
             if (pot < baseRating) {
                 pot = baseRating;
             }
@@ -12,11 +16,11 @@ define(["core/player", "core/season", "util/random"], function(player, season, r
                 pot = 90;
             }
 
-            var profile = profiles[random.randInt(0, profiles.length - 1)];
-            var agingYears = random.randInt(0, 3);
-            var draftYear = g.season;
+            profile = profiles[random.randInt(0, profiles.length - 1)];
+            agingYears = random.randInt(0, 3);
+            draftYear = g.season;
 
-            var gp = new player.Player();
+            gp = new player.Player();
             gp.generate(c.PLAYER_UNDRAFTED, 19, profile, baseRating, pot, draftYear);
             gp.develop(agingYears);
 
@@ -26,14 +30,16 @@ define(["core/player", "core/season", "util/random"], function(player, season, r
 
     /*Sets draft order based on winning percentage (no lottery).*/
     function setOrder(cb) {
-        var teamStore = g.dbl.transaction(["teams"], IDBTransaction.READ_WRITE).objectStore("teams");
-        teamStore.index("season").getAll(g.season).onsuccess = function (event) {
-            var teamsAll = event.target.result;
-            teamsAll.sort(function (a, b) {  return a.won/(a.won+a.lost) - b.won/(b.won+b.lost); }); // Sort by winning percentage, ascending
-            var draftOrder = [];
+        var draftOrder, i, round, teamsAll, teamStore;
 
-            for (round=1; round<=2; round++) {
-                for (i=0; i<teamsAll.length; i++) {
+        teamStore = g.dbl.transaction(["teams"], IDBTransaction.READ_WRITE).objectStore("teams");
+        teamStore.index("season").getAll(g.season).onsuccess = function (event) {
+            teamsAll = event.target.result;
+            teamsAll.sort(function (a, b) {  return a.won / (a.won + a.lost) - b.won / (b.won + b.lost); }); // Sort by winning percentage, ascending
+            draftOrder = [];
+
+            for (round = 1; round <= 2; round++) {
+                for (i = 0; i < teamsAll.length; i++) {
                     draftOrder.push({round: round, pick: i + 1, tid: teamsAll[i].tid, abbrev: teamsAll[i].abbrev});
                 }
             }
@@ -50,23 +56,26 @@ define(["core/player", "core/season", "util/random"], function(player, season, r
         A list of player IDs who were drafted.
     */
     function untilUserOrEnd(cb) {
-        var pids = [];
+        var pids, playerStore;
 
-        var playerStore = g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
-        playerStore.index("tid").getAll(c.PLAYER_UNDRAFTED).onsuccess = function(event) {
-            var playersAll = event.target.result;
-            playersAll.sort(function (a, b) {  return (b.ratings[0].ovr+2*b.ratings[0].pot) - (a.ratings[0].ovr+2*a.ratings[0].pot); });
+        pids = [];
+        playerStore = g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
+        playerStore.index("tid").getAll(c.PLAYER_UNDRAFTED).onsuccess = function (event) {
+            var draftOrder, pick, pid, playersAll, selection;
 
-            var draftOrder = JSON.parse(localStorage.getItem("league" + g.lid + "DraftOrder"));
+            playersAll = event.target.result;
+            playersAll.sort(function (a, b) {  return (b.ratings[0].ovr + 2 * b.ratings[0].pot) - (a.ratings[0].ovr + 2 * a.ratings[0].pot); });
+
+            draftOrder = JSON.parse(localStorage.getItem("league" + g.lid + "DraftOrder"));
             while (draftOrder.length > 0) {
-                var pick = draftOrder.shift();
-                if (pick.tid == g.userTid) {
+                pick = draftOrder.shift();
+                if (pick.tid === g.userTid) {
                     draftOrder.unshift(pick);
                     break;
                 }
 
-                var selection = Math.abs(Math.floor(random.gauss(0, 3)));  // 0=best prospect, 1=next best prospect, etc.
-                var pid = playersAll[selection].pid;
+                selection = Math.abs(Math.floor(random.gauss(0, 3)));  // 0=best prospect, 1=next best prospect, etc.
+                pid = playersAll[selection].pid;
                 selectPlayer(pick, pid, playerStore);
 
                 pids.push(pid);
@@ -76,7 +85,7 @@ define(["core/player", "core/season", "util/random"], function(player, season, r
             localStorage.setItem("league" + g.lid + "DraftOrder", JSON.stringify(draftOrder));
 
             // Is draft over?;
-            if (draftOrder.length == 0) {
+            if (draftOrder.length === 0) {
                 season.newPhase(c.PHASE_AFTER_DRAFT);
             }
 
@@ -97,8 +106,10 @@ define(["core/player", "core/season", "util/random"], function(player, season, r
             return;
 */
 
-        playerStore.openCursor(IDBKeyRange.only(pid)).onsuccess = function(event) {
-            var cursor = event.target.result;
+        playerStore.openCursor(IDBKeyRange.only(pid)).onsuccess = function (event) {
+            var cursor, i, player, rookieSalaries, years;
+
+            cursor = event.target.result;
             player = cursor.value;
 
             // Draft player

@@ -1,4 +1,4 @@
-define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers", "util/playMenu"], function(bbgm, db, game, league, season, helpers, playMenu) {
+define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "core/season", "util/helpers", "util/playMenu"], function(bbgm, db, contractNegotiation, game, league, season, helpers, playMenu) {
     function beforeLeague(req, cb) {
         g.lid = parseInt(req.params.lid, 10);
         helpers.loadGameAttributes();
@@ -398,12 +398,7 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
         beforeLeague(req, function() {
             var data = {"title": "Free Agents - League " + g.lid};
             if (g.phase >= c.PHASE_AFTER_TRADE_DEADLINE && g.phase <= c.PHASE_RESIGN_PLAYERS) {
-                data = {"title": "Error - League " + g.lid};
-
-                var error = "You're not allowed to sign free agents now.";
-                var template = Handlebars.templates["error"];
-                data["league_content"] = template({error: error});
-                bbgm.ajaxUpdate(data);
+                helpers.leagueError("You're not allowed to sign free agents now.");
                 return;
             }
 
@@ -487,12 +482,7 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
             }
 
             if (g.phase < c.PHASE_DRAFT && season < g.startingSeason) {
-                data = {"title": "Error - League " + g.lid};
-
-                var error = "There is no draft history yet. Check back after the season.";
-                var template = Handlebars.templates["error"];
-                data["league_content"] = template({error: error});
-                bbgm.ajaxUpdate(data);
+                helpers.leagueError("There is no draft history yet. Check back after the season.");
                 return;
             }
 
@@ -589,6 +579,79 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
         });
     }
 
+    function negotiation(req) {
+        beforeLeague(req, function() {
+            var found, i, pid;
+
+            pid = parseInt(req.params.pid, 10);
+            // Any action requires a POST. GET will just view the status of the
+            // negotiation, if (it exists
+            if (req.method === "post") {
+                if (request.form.hasOwnProperty("cancel")) {
+                    contractNegotiation.cancel(pid);
+                    Davis.location.assign(new Davis.Request("/l/" + g.lid));
+                    return;
+                }
+                else if (request.form.hasOwnProperty("accept")) {
+                    error = contractNegotiation.accept(pid);
+                    if (error) {
+                        return renderAllOrJson("leagueError.html", {"error": error});
+                    }
+                    Davis.location.assign(new Davis.Request("/l/" + g.lid + "/roster"));
+                    return;
+                }
+                else if (request.form.hasOwnProperty("new")) {
+                    // If there is no active negotiation with this pid, create it;
+                    negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
+                    found = false;
+                    for (i = 0; i < negotiations.length; i++) {
+                        if (negotiations[i].pid === pid)
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        error = contractNegotiation.new(pid);
+                        if (error) {
+                            return renderAllOrJson("leagueError.html", {"error": error});
+                        }
+                    }
+                }
+                else {
+                    // Make an offer to the player;
+                    teamAmountNew = parseInt(req.params.teamAmount * 1000, 10);
+                    teamYearsNew = parseInt(req.params.teamYears, 10);
+                    contractNegotiation.offer(pid, teamAmountNew, teamYearsNew);
+                }
+            }
+
+            negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
+
+            r = g.dbex("SELECT teamAmount, teamYears, playerAmount, playerYears, resigning FROM negotiations WHERE pid = :pid", pid=pid);
+            if (r.rowcount == 0) {
+                return renderAllOrJson("leagueError.html", {"error": "No negotiation with player %d in progress." % (pid,)});
+            teamAmount, teamYears, playerAmount, playerYears, resigning = r.fetchone();
+
+            playerAmount /= 1000.0;
+            teamAmount /= 1000.0;
+            playerExpiration = playerYears + g.season;
+            // Adjust to account for in-season signings;
+            if (g.phase <= c.PHASE_AFTER_TRADE_DEADLINE) {
+                playerExpiration -= 1;
+            }
+
+            r = g.dbex("SELECT pa.pid, pa.name, pr.ovr, pr.pot FROM playerAttributes as pa, playerRatings as pr WHERE pa.pid = pr.pid AND pa.pid = :pid AND pr.season = :season", pid=pid, season=g.season);
+            player = r.fetchone();
+
+            salaryCap = g.salaryCap / 1000.0;
+            r = g.dbex("SELECT region, name FROM teamAttributes WHERE tid = :tid AND season = :season", tid=g.userTid, season=g.season);
+            team = r.fetchone();
+
+            payroll = getPayroll(g.userTid);
+            payroll /= 1000.0;
+
+            return renderAllOrJson("negotiation.html", {"teamAmount": teamAmount, "teamYears": teamYears, "playerAmount": playerAmount, "playerYears": playerYears, "playerExpiration": playerExpiration, "resigning": resigning, "player": player, "salaryCap": salaryCap, "team": team, "payroll": payroll});
+
     return {
         init_db: init_db,
 
@@ -603,6 +666,7 @@ define(["bbgm", "db", "core/game", "core/league", "core/season", "util/helpers",
         schedule: schedule,
         free_agents: free_agents,
         draft: draft,
-        game_log: game_log
+        game_log: game_log,
+        negotiation: negotiation
     };
 });

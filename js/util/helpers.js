@@ -160,6 +160,15 @@ define([], function() {
         return retVal;
     }
 
+    function leagueError(error) {
+        var data, template;
+
+        data = {"title": "Error - League " + g.lid};
+        template = Handlebars.templates["error"];
+        data["league_content"] = template({error: error});
+        bbgm.ajaxUpdate(data);
+    }
+
     return {
         validateAbbrev: validateAbbrev,
         validateTid: validateTid,
@@ -168,6 +177,7 @@ define([], function() {
         getTeams: getTeams,
         loadGameAttributes: loadGameAttributes,
         setGameAttributes: setGameAttributes,
-        deepCopy: deepCopy
+        deepCopy: deepCopy,
+        leagueError: leagueError
     }
 });

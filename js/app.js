@@ -41,6 +41,7 @@ requirejs(["db", "views", "bbgm", "api"], function (db, views, bbgm, api) {
             this.get('/l/:lid/free_agents', views.free_agents);
             this.get('/l/:lid/draft', views.draft);
             this.get('/l/:lid/draft/:season', views.draft);
+            this.get('/l/:lid/negotiation/:pid', views.negotiation);
         });
 
         $(document).ready(function () {

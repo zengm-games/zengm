@@ -1,11 +1,13 @@
 main todo
 - contract negotiation
+  - finish contractNegotiation. Implement callbacks to run the rest of the negotiation view, as necessary
 - jslint --plusplus --predef $ --predef Davis --predef requirejs --predef define --predef window --predef document --predef localStorage --predef IDBKeyRange --predef IDBTransaction --predef g --predef c js/core/draft.js
   - http://stackoverflow.com/questions/7425147/jslint-error-somefunction-was-used-before-it-was-defined
   - http://stackoverflow.com/questions/6744692/jslint-should-we-tolerate-misordered-definitions
     - http://javascript.crockford.com/code.html
   - http://stackoverflow.com/questions/806163/jslint-using-a-function-before-its-defined-error
 - resigning old players
+  - negotiationList
 - new season
   - add rows to stats in DB as is done for playoffs
 - make sure all the existing views work with multiple seasons, as they used to

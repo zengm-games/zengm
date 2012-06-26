@@ -24,7 +24,7 @@ define(["util/random"], function(random) {
         if (numPlayersOnRoster >= 15 && !resigning) {
             return "Your roster is full. Before you can sign a free agent, you'll have to buy out or release one of your current players.";
         }
-        if (not lock.canStartNegotiation() {
+        if (!lock.canStartNegotiation()) {
             return "You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process.";
         }
         r = g.dbex("SELECT tid FROM playerAttributes WHERE pid = :pid", pid = pid);
@@ -181,6 +181,10 @@ define(["util/random"], function(random) {
     }
 
     return {
-
+        new: new,
+        offer: offer,
+        accept: accept,
+        cancel: cancel,
+        cancelAll: cancelAll
     };
 }

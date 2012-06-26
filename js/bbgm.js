@@ -57,6 +57,10 @@ define([], function() {
         if (data.hasOwnProperty('message')) {
             alert(data['message']);
         }
+
+        var result = parse_league_url(document.URL);
+        var league_page = result[2];
+        highlight_nav(league_page);
     }
 
     // Data tables

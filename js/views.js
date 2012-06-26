@@ -104,7 +104,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             });
         }
         else if (req.method === "post") {
-            tid = parseInt(req.params["tid"], 10);
+            tid = parseInt(req.params.tid, 10);
             if (tid >= 0 && tid <= 29) {
                 league.new(tid);
             }
@@ -584,15 +584,54 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             var found, i, pid;
 
             pid = parseInt(req.params.pid, 10);
+
+            function cb() {
+                var found, negotiation, negotiations;
+
+                negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
+                negotiation = null;
+                for (i = 0; i < negotiations.length; i++) {
+                    if (negotiations[i].pid === pid) {
+                        negotiation = negotiations[i];
+                    }
+                }
+                if (negotiation === null) {
+                    helpers.leagueError("No negotiation with player " + pid + " in progress.");
+                    return;
+                }
+
+                negotiation.playerAmount /= 1000;
+                negotiation.teamAmount /= 1000;
+                negotiation.playerExpiration = playerYears + g.season;
+                // Adjust to account for in-season signings;
+                if (g.phase <= c.PHASE_AFTER_TRADE_DEADLINE) {
+                    negotiation.playerExpiration -= 1;
+                }
+
+/*
+                r = g.dbex("SELECT pa.pid, pa.name, pr.ovr, pr.pot FROM playerAttributes as pa, playerRatings as pr WHERE pa.pid = pr.pid AND pa.pid = :pid AND pr.season = :season", pid=pid, season=g.season);
+                player = r.fetchone();
+
+                salaryCap = g.salaryCap / 1000.0;
+                r = g.dbex("SELECT region, name FROM teamAttributes WHERE tid = :tid AND season = :season", tid=g.userTid, season=g.season);
+                team = r.fetchone();
+
+                payroll = getPayroll(g.userTid);
+                payroll /= 1000.0;
+
+                return renderAllOrJson("negotiation.html", {"teamAmount": teamAmount, "teamYears": teamYears, "playerAmount": playerAmount, "playerYears": playerYears, "playerExpiration": playerExpiration, "resigning": resigning, "player": player, "salaryCap": salaryCap, "team": team, "payroll": payroll});*/
+            }
+
             // Any action requires a POST. GET will just view the status of the
             // negotiation, if (it exists
             if (req.method === "post") {
-                if (request.form.hasOwnProperty("cancel")) {
+                if (req.params.hasOwnProperty("cancel")) {
                     contractNegotiation.cancel(pid);
                     Davis.location.assign(new Davis.Request("/l/" + g.lid));
                     return;
                 }
-                else if (request.form.hasOwnProperty("accept")) {
+                else if (req.params.hasOwnProperty("accept")) {
+// Move the other stuff after this to a callback for contractNegotiation.accept
                     error = contractNegotiation.accept(pid);
                     if (error) {
                         return renderAllOrJson("leagueError.html", {"error": error});
@@ -600,21 +639,18 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                     Davis.location.assign(new Davis.Request("/l/" + g.lid + "/roster"));
                     return;
                 }
-                else if (request.form.hasOwnProperty("new")) {
+                else if (req.params.hasOwnProperty("new")) {
                     // If there is no active negotiation with this pid, create it;
                     negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
                     found = false;
                     for (i = 0; i < negotiations.length; i++) {
-                        if (negotiations[i].pid === pid)
+                        if (negotiations[i].pid === pid) {
                             found = true;
                             break;
                         }
                     }
                     if (!found) {
-                        error = contractNegotiation.new(pid);
-                        if (error) {
-                            return renderAllOrJson("leagueError.html", {"error": error});
-                        }
+                        contractNegotiation.new(pid);
                     }
                 }
                 else {
@@ -624,33 +660,8 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                     contractNegotiation.offer(pid, teamAmountNew, teamYearsNew);
                 }
             }
-
-            negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
-
-            r = g.dbex("SELECT teamAmount, teamYears, playerAmount, playerYears, resigning FROM negotiations WHERE pid = :pid", pid=pid);
-            if (r.rowcount == 0) {
-                return renderAllOrJson("leagueError.html", {"error": "No negotiation with player %d in progress." % (pid,)});
-            teamAmount, teamYears, playerAmount, playerYears, resigning = r.fetchone();
-
-            playerAmount /= 1000.0;
-            teamAmount /= 1000.0;
-            playerExpiration = playerYears + g.season;
-            // Adjust to account for in-season signings;
-            if (g.phase <= c.PHASE_AFTER_TRADE_DEADLINE) {
-                playerExpiration -= 1;
-            }
-
-            r = g.dbex("SELECT pa.pid, pa.name, pr.ovr, pr.pot FROM playerAttributes as pa, playerRatings as pr WHERE pa.pid = pr.pid AND pa.pid = :pid AND pr.season = :season", pid=pid, season=g.season);
-            player = r.fetchone();
-
-            salaryCap = g.salaryCap / 1000.0;
-            r = g.dbex("SELECT region, name FROM teamAttributes WHERE tid = :tid AND season = :season", tid=g.userTid, season=g.season);
-            team = r.fetchone();
-
-            payroll = getPayroll(g.userTid);
-            payroll /= 1000.0;
-
-            return renderAllOrJson("negotiation.html", {"teamAmount": teamAmount, "teamYears": teamYears, "playerAmount": playerAmount, "playerYears": playerYears, "playerExpiration": playerExpiration, "resigning": resigning, "player": player, "salaryCap": salaryCap, "team": team, "payroll": payroll});
+        });
+    }
 
     return {
         init_db: init_db,

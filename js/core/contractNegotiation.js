@@ -1,71 +1,79 @@
-define(["util/random"], function(random) {
+define(["util/helpers", "util/lock", "util/playMenu", "util/random"], function(helpers, lock, playMenu, random) {
     /*Start a new contract negotiation with player.
 
     Args:
         pid: An integer that must correspond with a free agent.
         resigning: A boolean. True if (this is a negotiation for a contract
             extension with a current player who just became a free agent. False
-            otherwise.;
-
-    Returns:
-        False if (the new negotiation is started successfully. Otherwise, it
-        returns a string containing an error message to be sent to the user.
+            otherwise.
     */
-    function new(pid, resigning) {
-        console.log("Trying to start new contract negotiation with player %d" % (pid,));
+    function new_(pid, resigning) {
+        var playerStore;
+
+        console.log("Trying to start new contract negotiation with player " + pid);
 
         resigning = typeof resigning !== "undefined" ? resigning : false;
 
         if ((g.phase >= c.PHASE_AFTER_TRADE_DEADLINE && g.phase <= c.PHASE_AFTER_DRAFT) && !resigning) {
-            return "You're not allowed to sign free agents now.";
-        }
-        r = g.dbex("SELECT COUNT(*) FROM playerAttributes WHERE tid = :tid", tid=g.userTid);
-        numPlayersOnRoster, = r.fetchone();
-        if (numPlayersOnRoster >= 15 && !resigning) {
-            return "Your roster is full. Before you can sign a free agent, you'll have to buy out or release one of your current players.";
+            helpers.leagueError("You're not allowed to sign free agents now.");
+            return;
         }
         if (!lock.canStartNegotiation()) {
-            return "You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process.";
+            helpers.leagueError("You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process.");
+            return;
         }
-        r = g.dbex("SELECT tid FROM playerAttributes WHERE pid = :pid", pid = pid);
-        if (r.rowcount) {
-            tid, = r.fetchone();
-            if (tid !== c.PLAYER_FREE_AGENT) {
-                return "Player %d is not a free agent." % (pid,);
+
+        playerStore = g.dbl.transaction(["players"]).objectStore("players")
+        playerStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
+            var numPlayersOnRoster;
+
+            numPlayersOnRoster = event.target.result.length;
+            if (numPlayersOnRoster >= 15 && !resigning) {
+                helpers.leagueError("Your roster is full. Before you can sign a free agent, you'll have to buy out or release one of your current players.");
+                return;
             }
-        }
-        else {
-            return "Player %d does not exist." % (pid,);
-        }
 
-        // Initial player proposal;
-        r = g.dbex("SELECT contractAmount*(1+freeAgentTimesAsked/10), contractExp FROM playerAttributes WHERE pid = :pid", pid = pid);
-        playerAmount, expiration = r.fetchone();
-        playerYears = expiration - g.season;
-        // Adjust to account for in-season signings;
-        if (g.phase <= c.PHASE_AFTER_TRADE_DEADLINE) {
-            playerYears += 1;
-        }
+            playerStore.openCursor(IDBKeyRange.only(pid)).onsuccess = function (event) {
+                var cursor, maxOffers, negotiations, player, playerAmount, playerYears;
 
-        maxOffers = random.randInt(1, 5);
+                cursor = event.target.result;
+                player = cursor.value;
+                if (player.tid !== c.PLAYER_FREE_AGENT) {
+                    helpers.leagueError("Player " + pid + " is not a free agent.");
+                    return;
+                }
 
-        g.dbex("INSERT INTO negotiations (pid, teamAmount, teamYears, playerAmount, playerYears, numOffersMade, maxOffers, resigning) VALUES (:pid, :playerAmount, :playerYears, :playerAmount, :playerYears, 0, :maxOffers, :resigning)", pid=pid, playerAmount=playerAmount, playerYears=playerYears, maxOffers=maxOffers, resigning=resigning);
-        playMenu.setStatus("Contract negotiation in progress...");
-        playMenu.refreshOptions();
+                // Initial player proposal;
+                playerAmount = player.contractAmount*(1+player.freeAgentTimesAsked/10);
+                playerYears = player.contractExp - g.season;
+                // Adjust to account for in-season signings;
+                if (g.phase <= c.PHASE_AFTER_TRADE_DEADLINE) {
+                    playerYears += 1;
+                }
 
-        // Keep track of how many times negotiations happen with a player;
-        if (!resigning) {
-            g.dbex("UPDATE playerAttributes SET freeAgentTimesAsked = freeAgentTimesAsked + 1 WHERE pid = :pid", pid = pid);
-        }
+                maxOffers = random.randInt(1, 5);
 
-        return false;
+                negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
+                negotiations.push({pid: pid, teamAmount: playerAmount, teamYears: playerYears, playerAmount: playerAmount, PlayerYears: playerYears, numOffersMade: 0, maxOffers: maxOffers, resigning: resigning});
+                localStorage.setItem("league" + g.lid + "Negotiations", JSON.stringify(negotiations));
+                playMenu.setStatus("Contract negotiation in progress...");
+                playMenu.refreshOptions();
+
+                // Keep track of how many times negotiations happen with a player;
+                if (!resigning) {
+                    player.freeAgentTimesAsked += 1;
+                    cursor.update(player);
+                }
+            };
+        };
+    }
 
     /*Make an offer to a player.
 
     pid must correspond with an ongoing negotiation.
     */
     function offer(pid, teamAmount, teamYears) {
-        console.log("User made contract offer for %d over %d years to %d" % (teamAmount, teamYears, pid));
+/*        console.log("User made contract offer for %d over %d years to %d" % (teamAmount, teamYears, pid));
 
         if (teamAmount > 20000) {
             teamAmount = 20000;
@@ -89,7 +97,7 @@ define(["util/random"], function(random) {
                 playerYears += 1;
                 playerAmount *= 1.2;
             }
-            if (teamAmount < playerAmount and teamAmount > 0.7 * playerAmount) {
+            if (teamAmount < playerAmount && teamAmount > 0.7 * playerAmount) {
                 playerAmount = .75 * playerAmount + .25 * teamAmount;
             }
             else if (teamAmount < playerAmount) {
@@ -110,9 +118,10 @@ define(["util/random"], function(random) {
             playerYears = 5;
         }
 
-        g.dbex("UPDATE negotiations SET teamAmount = :teamAmount, teamYears = :teamYears, playerAmount = :playerAmount, playerYears = :playerYears, numOffersMade = :numOffersMade WHERE pid = :pid", teamAmount=teamAmount, teamYears=teamYears, playerAmount=playerAmount, playerYears=playerYears, numOffersMade=numOffersMade, pid=pid);
+        g.dbex("UPDATE negotiations SET teamAmount = :teamAmount, teamYears = :teamYears, playerAmount = :playerAmount, playerYears = :playerYears, numOffersMade = :numOffersMade WHERE pid = :pid", teamAmount=teamAmount, teamYears=teamYears, playerAmount=playerAmount, playerYears=playerYears, numOffersMade=numOffersMade, pid=pid);*/
+    }
 
-    /*Accept the player"s offer.
+    /*Accept the player's offer.
 
     pid must correspond with an ongoing negotiation.
 
@@ -120,15 +129,15 @@ define(["util/random"], function(random) {
     message (such as "over the salary cap") is returned.
     */
     function accept(pid) {
-        console.log("User accepted contract proposal from " + pid);
+/*        console.log("User accepted contract proposal from " + pid);
 
         r = g.dbex("SELECT playerAmount, playerYears, resigning FROM negotiations WHERE pid = :pid", pid = pid);
         playerAmount, playerYears, resigning = r.fetchone();
 
         // If this contract brings team over the salary cap, it"s not a minimum;
-        // contract, and it"s not resigning a current player, ERROR!;
+        // contract, and it's not resigning a current player, ERROR!;
         payroll = getPayroll(g.userTid);
-        if (!resigning && (payroll + playerAmount > g.salaryCap && playerAmount !== 500) {
+        if (!resigning && (payroll + playerAmount > g.salaryCap && playerAmount !== 500)) {
             return "This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract, buy out a player currently on your roster, or cancel the negotiation.";
         }
 
@@ -146,23 +155,32 @@ define(["util/random"], function(random) {
         playMenu.setStatus("Idle");
         playMenu.refreshOptions();
 
-        return false;
+        return false;*/
+    }
 
     /*Cancel contract negotiations with a player.
 
     pid must correspond with an ongoing negotiation.
     */
     function cancel(pid) {
+        var i, negotiations;
+
         console.log("User canceled contract negotiations with " + pid);
 
-        // Delete negotiation;
-        g.dbex("DELETE FROM negotiations WHERE pid = :pid", pid = pid);
+        negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
+        for (i = 0; i < negotiations.length; i++) {
+            // Delete negotiation
+            negotiations.splice(i, 1);
+        }
 
-        // If no negotiations are in progress, update status;
-        if (not lock.negotiationInProgress() {
+        // If no negotiations are in progress, update status
+        if (!lock.negotiationInProgress()) {
             playMenu.setStatus("Idle");
             playMenu.refreshOptions();
         }
+
+        localStorage.setItem("league" + g.lid + "Negotiations", JSON.stringify(negotiations));
+    }
 
     /*Cancel all ongoing contract negotiations.
 
@@ -171,20 +189,22 @@ define(["util/random"], function(random) {
     at the end of the season, although that should probably change eventually.
     */
     function cancelAll() {
+        var i, negotiations;
+
         console.log("Canceling all ongoing contract negotiations...");
 
-        // If no negotiations are in progress, update status;
-        r = g.dbex("SELECT pid FROM negotiations");
-        for pid, in r.fetchall() {
-            cancel(pid);
+        // If no negotiations are in progress, update status
+        negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
+        for (i = 0; i < negotiations.length; i++) {
+            cancel(negotiations[i].pid);
         }
     }
 
     return {
-        new: new,
+        new: new_,
         offer: offer,
         accept: accept,
         cancel: cancel,
         cancelAll: cancelAll
     };
-}
+});

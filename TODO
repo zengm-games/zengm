@@ -1,6 +1,7 @@
 main todo
 - contract negotiation
   - finish contractNegotiation. Implement callbacks to run the rest of the negotiation view, as necessary
+  - test all the error conditions and make sure callbacks are appropriately called (unit tests?)
 - jslint --plusplus --predef $ --predef Davis --predef requirejs --predef define --predef window --predef document --predef localStorage --predef IDBKeyRange --predef IDBTransaction --predef g --predef c js/core/draft.js
   - http://stackoverflow.com/questions/7425147/jslint-error-somefunction-was-used-before-it-was-defined
   - http://stackoverflow.com/questions/6744692/jslint-should-we-tolerate-misordered-definitions

@@ -28,12 +28,13 @@ define(["util/helpers"], function(helpers) {
     /*Returns true or false depending on whether the negotiations table is
     empty or not.*/
     function negotiationInProgress() {
-//        r = g.dbex('SELECT 1 FROM negotiations')
-//        if r.rowcount:
-//            return true;
-//        else {
+        negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
+        if (negotiations.length > 0) {
+            return true;
+        }
+        else {
             return false;
-//        }
+        }
     }
 
     /*Returns a boolean. Games can be started only when there is no contract
@@ -64,10 +65,27 @@ define(["util/helpers"], function(helpers) {
         return true
     }
 
+    function canStartNegotiation() {
+        if (g.gamesInProgress) {
+            return false;
+        }
+
+        // Allow multiple parallel negotiations (ignore negotiation_in_progress) only for resigning players
+        negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
+        for (i = 0; i < negotiations.length; i++) {
+            if (!negotiations[i].resigning) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     return {
         set_games_in_progress: setGamesInProgress,
         games_in_progress: gamesInProgress,
-        negotiation_in_progress: negotiationInProgress,
-        can_start_games: canStartGames
+        negotiationInProgress: negotiationInProgress,
+        can_start_games: canStartGames,
+        canStartNegotiation: canStartNegotiation
     };
 });

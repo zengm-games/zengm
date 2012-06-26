@@ -66,7 +66,7 @@ define(["util/helpers", "util/lock"], function(helpers, lock) {
             if (lock.games_in_progress()) {
                 keys = ["stop"];
             }
-            if (lock.negotiation_in_progress() && g.phase != c.PHASE_RESIGN_PLAYERS) {
+            if (lock.negotiationInProgress() && g.phase != c.PHASE_RESIGN_PLAYERS) {
                 keys = ["contract_negotiation"];
             }
         }

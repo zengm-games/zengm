@@ -1289,10 +1289,10 @@ function program19(depth0,data,depth1) {
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "<td><a href=\"/l/";
   foundHelper = helpers['g'];
-  stack1 = foundHelper || depth0['g'];
+  stack1 = foundHelper || depth1['g'];
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "...g.lid", { hash: {} }); }
   buffer += escapeExpression(stack1) + "/player/";
   foundHelper = helpers.pid;
   stack1 = foundHelper || depth0.pid;

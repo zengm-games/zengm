@@ -604,7 +604,6 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                     helpers.leagueError("No negotiation with player " + pid + " in progress.");
                     return;
                 }
-console.log(negotiation);
 
                 negotiation.playerAmount /= 1000;
                 negotiation.teamAmount /= 1000;
@@ -654,12 +653,9 @@ console.log(negotiation);
                 if (req.params.hasOwnProperty("cancel")) {
                     contractNegotiation.cancel(pid);
                     Davis.location.assign(new Davis.Request("/l/" + g.lid));
-                    return;
                 }
                 else if (req.params.hasOwnProperty("accept")) {
-// Move the other stuff after this to a callback for contractNegotiation.accept
                     contractNegotiation.accept(pid);
-                    return;
                 }
                 else if (req.params.hasOwnProperty("new")) {
                     // If there is no active negotiation with this pid, create it;
@@ -680,6 +676,7 @@ console.log(negotiation);
                     teamAmountNew = parseInt(req.params.teamAmount * 1000, 10);
                     teamYearsNew = parseInt(req.params.teamYears, 10);
                     contractNegotiation.offer(pid, teamAmountNew, teamYearsNew);
+                    cbDisplayNegotiation();
                 }
             }
             else {

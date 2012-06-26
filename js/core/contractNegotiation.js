@@ -73,52 +73,64 @@ define(["util/helpers", "util/lock", "util/playMenu", "util/random"], function(h
     pid must correspond with an ongoing negotiation.
     */
     function offer(pid, teamAmount, teamYears) {
-/*        console.log("User made contract offer for %d over %d years to %d" % (teamAmount, teamYears, pid));
+        var i, negotiation, negotiations;
+
+        console.log("User made contract offer for %d over %d years to %d" % (teamAmount, teamYears, pid));
 
         if (teamAmount > 20000) {
             teamAmount = 20000;
+        }
         if (teamYears > 5) {
             teamYears = 5;
+        }
         if (teamAmount < 500) {
             teamAmount = 500;
+        }
         if (teamYears < 1) {
             teamYears = 1;
+        }
 
-        r = g.dbex("SELECT playerAmount, playerYears, numOffersMade, maxOffers FROM negotiations WHERE pid = :pid", pid = pid);
-        playerAmount, playerYears, numOffersMade, maxOffers = r.fetchone();
+        negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
+        negotiation = null;
+        for (i = 0; i < negotiations.length; i++) {
+            if (negotiations[i].pid === pid) {
+                negotiation = negotiations[i];
+                break;
+            }
+        }
 
-        numOffersMade += 1;
-        if (numOffersMade <= maxOffers) {
-            if (teamYears < playerYears) {
-                playerYears -= 1;
-                playerAmount *= 1.2;
+        negotiation.numOffersMade += 1;
+        if (negotiation.numOffersMade <= negotiation.maxOffers) {
+            if (teamYears < negotiation.playerYears) {
+                negotiation.playerYears -= 1;
+                negotiation.playerAmount *= 1.2;
             }
-            else if (teamYears > playerYears) {
-                playerYears += 1;
-                playerAmount *= 1.2;
+            else if (teamYears > negotiation.playerYears) {
+                negotiation.playerYears += 1;
+                negotiation.playerAmount *= 1.2;
             }
-            if (teamAmount < playerAmount && teamAmount > 0.7 * playerAmount) {
-                playerAmount = .75 * playerAmount + .25 * teamAmount;
+            if (teamAmount < negotiation.playerAmount && teamAmount > 0.7 * negotiation.playerAmount) {
+                negotiation.playerAmount = .75 * negotiation.playerAmount + .25 * teamAmount;
             }
-            else if (teamAmount < playerAmount) {
-                playerAmount *= 1.1;
+            else if (teamAmount < negotiation.playerAmount) {
+                negotiation.playerAmount *= 1.1;
             }
-            if (teamAmount > playerAmount) {
-                playerAmount = teamAmount;
+            if (teamAmount > negotiation.playerAmount) {
+                negotiation.playerAmount = teamAmount;
             }
         }
         else {
-            playerAmount = 1.05 * playerAmount;
+            negotiation.playerAmount = 1.05 * negotiation.playerAmount;
         }
 
-        if (playerAmount > 20000) {
-            playerAmount = 20000;
+        if (negotiation.playerAmount > 20000) {
+            negotiation.playerAmount = 20000;
         }
-        if (playerYears > 5) {
-            playerYears = 5;
+        if (negotiation.playerYears > 5) {
+            negotiation.playerYears = 5;
         }
 
-        g.dbex("UPDATE negotiations SET teamAmount = :teamAmount, teamYears = :teamYears, playerAmount = :playerAmount, playerYears = :playerYears, numOffersMade = :numOffersMade WHERE pid = :pid", teamAmount=teamAmount, teamYears=teamYears, playerAmount=playerAmount, playerYears=playerYears, numOffersMade=numOffersMade, pid=pid);*/
+        localStorage.setItem("league" + g.lid + "Negotiations", JSON.stringify(negotiations));
     }
 
     /*Accept the player's offer.

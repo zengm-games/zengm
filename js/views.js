@@ -587,6 +587,11 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             function cbDisplayNegotiation() {
                 var found, negotiation, negotiations;
 
+                if (req.method === "post") {
+                    Davis.location.assign(new Davis.Request("/l/" + g.lid + "/negotiation/" + pid));
+                    return;
+                }
+
                 negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
                 negotiation = null;
                 for (i = 0; i < negotiations.length; i++) {
@@ -683,7 +688,7 @@ console.log(negotiation);
                 }
             }
             else {
-                cb();
+                cbDisplayNegotiation();
             }
         });
     }

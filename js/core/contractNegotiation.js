@@ -7,12 +7,10 @@ define(["util/helpers", "util/lock", "util/playMenu", "util/random"], function(h
             extension with a current player who just became a free agent. False
             otherwise.
     */
-    function new_(pid, resigning) {
+    function new_(pid, resigning, cb) {
         var playerStore;
 
         console.log("Trying to start new contract negotiation with player " + pid);
-
-        resigning = typeof resigning !== "undefined" ? resigning : false;
 
         if ((g.phase >= c.PHASE_AFTER_TRADE_DEADLINE && g.phase <= c.PHASE_AFTER_DRAFT) && !resigning) {
             helpers.leagueError("You're not allowed to sign free agents now.");
@@ -23,7 +21,7 @@ define(["util/helpers", "util/lock", "util/playMenu", "util/random"], function(h
             return;
         }
 
-        playerStore = g.dbl.transaction(["players"]).objectStore("players")
+        playerStore = g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players")
         playerStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
             var numPlayersOnRoster;
 
@@ -54,7 +52,7 @@ define(["util/helpers", "util/lock", "util/playMenu", "util/random"], function(h
                 maxOffers = random.randInt(1, 5);
 
                 negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
-                negotiations.push({pid: pid, teamAmount: playerAmount, teamYears: playerYears, playerAmount: playerAmount, PlayerYears: playerYears, numOffersMade: 0, maxOffers: maxOffers, resigning: resigning});
+                negotiations.push({pid: pid, teamAmount: playerAmount, teamYears: playerYears, playerAmount: playerAmount, playerYears: playerYears, numOffersMade: 0, maxOffers: maxOffers, resigning: resigning});
                 localStorage.setItem("league" + g.lid + "Negotiations", JSON.stringify(negotiations));
                 playMenu.setStatus("Contract negotiation in progress...");
                 playMenu.refreshOptions();
@@ -64,6 +62,8 @@ define(["util/helpers", "util/lock", "util/playMenu", "util/random"], function(h
                     player.freeAgentTimesAsked += 1;
                     cursor.update(player);
                 }
+
+                cb();
             };
         };
     }
@@ -172,14 +172,13 @@ define(["util/helpers", "util/lock", "util/playMenu", "util/random"], function(h
             // Delete negotiation
             negotiations.splice(i, 1);
         }
+        localStorage.setItem("league" + g.lid + "Negotiations", JSON.stringify(negotiations));
 
         // If no negotiations are in progress, update status
         if (!lock.negotiationInProgress()) {
             playMenu.setStatus("Idle");
             playMenu.refreshOptions();
         }
-
-        localStorage.setItem("league" + g.lid + "Negotiations", JSON.stringify(negotiations));
     }
 
     /*Cancel all ongoing contract negotiations.

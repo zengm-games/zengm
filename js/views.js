@@ -38,7 +38,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
     }
 
     function init_db(req) {
-        var data = {"title": "Initialize Database"};
+        var data = {title: "Initialize Database"};
 
         beforeNonLeague();
 
@@ -78,7 +78,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
     }
 
     function dashboard(req) {
-        var data = {"title": "Dashboard"};
+        var data = {title: "Dashboard"};
 
         beforeNonLeague();
 
@@ -91,7 +91,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
     }
 
     function new_league(req) {
-        var data = {"title": "Create New League"};
+        var data = {title: "Create New League"};
 
         beforeNonLeague();
 
@@ -119,10 +119,10 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
 
     function league_dashboard(req) {
         beforeLeague(req, function() {
-            var data = {"title": "Dashboard - League " + g.lid};
+            var data = {title: "Dashboard - League " + g.lid};
 
             var template = Handlebars.templates["league_dashboard"];
-            data["league_content"] = template({g: g});
+            data.league_content = template({g: g});
 
             bbgm.ajaxUpdate(data);
         });
@@ -130,7 +130,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
 
     function standings(req) {
         beforeLeague(req, function() {
-            var data = {"title": "Standings - League " + g.lid};
+            var data = {title: "Standings - League " + g.lid};
 
             var season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
             season = helpers.validateSeason(season);
@@ -178,7 +178,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 }
 
                 var template = Handlebars.templates["standings"];
-                data["league_content"] = template({g: g, confs: confs, seasons: seasons, season: season});
+                data.league_content = template({g: g, confs: confs, seasons: seasons, season: season});
 
                 bbgm.ajaxUpdate(data);
             };
@@ -187,7 +187,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
 
     function playoffs(req) {
         beforeLeague(req, function() {
-            var data = {"title": "Playoffs - League " + g.lid};
+            var data = {title: "Playoffs - League " + g.lid};
 
             var season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
             season = helpers.validateSeason(season);
@@ -195,7 +195,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
 
             function cb(finalMatchups, series) {
                 var template = Handlebars.templates["playoffs"];
-                data["league_content"] = template({g: g, finalMatchups: finalMatchups, series: series, seasons: seasons, season: season});
+                data.league_content = template({g: g, finalMatchups: finalMatchups, series: series, seasons: seasons, season: season});
 
                 bbgm.ajaxUpdate(data);
             }
@@ -257,7 +257,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
 
     function roster(req) {
         beforeLeague(req, function() {
-            var data = {"title": "Roster - League " + g.lid};
+            var data = {title: "Roster - League " + g.lid};
 
             var abbrev = typeof req.params.abbrev !== "undefined" ? req.params.abbrev : undefined;
             var tid;
@@ -281,7 +281,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                     }
                     var team = {region: teamAll.region, name: teamAll.name, cash: teamAll.cash / 1000000};
                     var template = Handlebars.templates["roster"];
-                    data["league_content"] = template({g: g, teams: teams, seasons: seasons, sortable: sortable, currentSeason: currentSeason, showTradeFor: currentSeason && tid != g.userTid, players: players, numRosterSpots: 15 - players.length, team: team});
+                    data.league_content = template({g: g, teams: teams, seasons: seasons, sortable: sortable, currentSeason: currentSeason, showTradeFor: currentSeason && tid != g.userTid, players: players, numRosterSpots: 15 - players.length, team: team});
 
                     bbgm.ajaxUpdate(data);
                 };
@@ -367,7 +367,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
 
     function schedule(req) {
         beforeLeague(req, function() {
-            var data = {"title": "Schedule - League " + g.lid};
+            var data = {title: "Schedule - League " + g.lid};
 
             season.getSchedule(0, function (schedule_) {
                 games = [];
@@ -388,7 +388,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 }
 
                 var template = Handlebars.templates["schedule"];
-                data["league_content"] = template({g: g, games: games});
+                data.league_content = template({g: g, games: games});
                 bbgm.ajaxUpdate(data);
             });
         });
@@ -396,7 +396,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
 
     function free_agents(req) {
         beforeLeague(req, function() {
-            var data = {"title": "Free Agents - League " + g.lid};
+            var data = {title: "Free Agents - League " + g.lid};
             if (g.phase >= c.PHASE_AFTER_TRADE_DEADLINE && g.phase <= c.PHASE_RESIGN_PLAYERS) {
                 helpers.leagueError("You're not allowed to sign free agents now.");
                 return;
@@ -455,7 +455,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 }
 
                 var template = Handlebars.templates["freeAgents"];
-                data["league_content"] = template({g: g, players: players});
+                data.league_content = template({g: g, players: players});
                 bbgm.ajaxUpdate(data);
             };
         });
@@ -488,7 +488,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
 
             // Active draft
             if (g.phase == c.PHASE_DRAFT && season == g.season) {
-                data = {"title": "Draft - League " + g.lid};
+                data = {title: "Draft - League " + g.lid};
 
                 var playerStore = g.dbl.transaction(["players"]).objectStore("players");
                 playerStore.index("tid").getAll(c.PLAYER_UNDRAFTED).onsuccess = function(event) {
@@ -544,14 +544,14 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                         }
 
                         var template = Handlebars.templates["draft"];
-                        data["league_content"] = template({g: g, undrafted: undrafted, drafted: drafted, started: started});
+                        data.league_content = template({g: g, undrafted: undrafted, drafted: drafted, started: started});
                         bbgm.ajaxUpdate(data);
                     };
                 };
                 return;
             }
             // Show a summary of an old draft
-            data = {"title": g.season + " Draft Results - League " + g.lid};
+            data = {title: g.season + " Draft Results - League " + g.lid};
 
             r = g.dbex("SELECT dr.round, dr.pick, dr.abbrev, dr.pid, dr.name, :viewSeason - dr.bornYear AS age, dr.pos, dr.ovr, dr.pot, ta.abbrev AS currentAbbrev, :season - dr.bornYear AS currentAge, pr.ovr AS currentOvr, pr.pot AS currentPot, SUM(CASE WHEN ps.min > 0 THEN 1 ELSE 0 END) AS gp, AVG(ps.min) as min, AVG(ps.pts) AS pts, AVG(ps.orb + ps.drb) AS trb, AVG(ps.ast) AS ast FROM draftResults AS dr LEFT OUTER JOIN playerRatings AS pr ON pr.season = :season AND dr.pid = pr.pid LEFT OUTER JOIN playerStats AS ps ON ps.playoffs = FALSE AND dr.pid = ps.pid LEFT OUTER JOIN playerAttributes AS pa ON dr.pid = pa.pid LEFT OUTER JOIN teamAttributes AS ta ON pa.tid = ta.tid AND ta.season = :season WHERE dr.season = :viewSeason GROUP BY dr.pid", viewSeason=viewSeason, season=g.season);
             players = r.fetchall();
@@ -562,7 +562,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
 
     function game_log(req) {
         beforeLeague(req, function() {
-            var data = {"title": "Game Log - League " + g.lid};
+            var data = {title: "Game Log - League " + g.lid};
 
             var abbrev = typeof req.params.abbrev !== "undefined" ? req.params.abbrev : undefined;
             var tid;
@@ -573,8 +573,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             var teams = helpers.getTeams(tid);
 
             var template = Handlebars.templates['game_log'];
-            data["league_content"] = template({g: g, teams: teams, seasons: seasons});
-
+            data.league_content = template({g: g, teams: teams, seasons: seasons});
             bbgm.ajaxUpdate(data);
         });
     }
@@ -585,7 +584,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
 
             pid = parseInt(req.params.pid, 10);
 
-            function cb() {
+            function cbDisplayNegotiation() {
                 var found, negotiation, negotiations;
 
                 negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
@@ -599,27 +598,50 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                     helpers.leagueError("No negotiation with player " + pid + " in progress.");
                     return;
                 }
+console.log(negotiation);
 
                 negotiation.playerAmount /= 1000;
                 negotiation.teamAmount /= 1000;
-                negotiation.playerExpiration = playerYears + g.season;
+                negotiation.playerExpiration = negotiation.playerYears + g.season;
                 // Adjust to account for in-season signings;
                 if (g.phase <= c.PHASE_AFTER_TRADE_DEADLINE) {
                     negotiation.playerExpiration -= 1;
                 }
 
-/*
-                r = g.dbex("SELECT pa.pid, pa.name, pr.ovr, pr.pot FROM playerAttributes as pa, playerRatings as pr WHERE pa.pid = pr.pid AND pa.pid = :pid AND pr.season = :season", pid=pid, season=g.season);
-                player = r.fetchone();
+                g.dbl.transaction(["players"]).objectStore("players").get(pid).onsuccess = function(event) {
+                    var data, pa, payroll, player, salaryCap, team, teams, template;
 
-                salaryCap = g.salaryCap / 1000.0;
-                r = g.dbex("SELECT region, name FROM teamAttributes WHERE tid = :tid AND season = :season", tid=g.userTid, season=g.season);
-                team = r.fetchone();
+                    pa = event.target.result;
 
-                payroll = getPayroll(g.userTid);
-                payroll /= 1000.0;
+                    // Attributes
+                    player = {pid: pid, name: pa.name};
 
-                return renderAllOrJson("negotiation.html", {"teamAmount": teamAmount, "teamYears": teamYears, "playerAmount": playerAmount, "playerYears": playerYears, "playerExpiration": playerExpiration, "resigning": resigning, "player": player, "salaryCap": salaryCap, "team": team, "payroll": payroll});*/
+                    // Ratings
+                    for (var j=0; j<pa.ratings.length; j++) {
+                        if (pa.ratings[j].season === g.season) {
+                            var pr = pa.ratings[j];
+                            break;
+                        }
+                    }
+                    player.ovr = pr.ovr;
+                    player.pot = pr.pot;
+
+                    salaryCap = g.salaryCap / 1000;
+
+                    teams = helpers.getTeams();
+                    team = {region: teams[g.userTid].region, name: teams[g.userTid].name};
+
+                    payroll = 666;
+
+/*                payroll = getPayroll(g.userTid);
+                payroll /= 1000.0;*/
+
+                    data = {title: player.name + " - Contract Negotiation - League " + g.lid};
+                    template = Handlebars.templates.negotiation;
+                    data.league_content = template({g: g, negotiation: negotiation, player: player, salaryCap: salaryCap, team: team, payroll: payroll});
+                    bbgm.ajaxUpdate(data);
+/*                return renderAllOrJson("negotiation.html", {"teamAmount": teamAmount, "teamYears": teamYears, "playerAmount": playerAmount, "playerYears": playerYears, "playerExpiration": playerExpiration, "resigning": resigning, "player": player, "salaryCap": salaryCap, "team": team, "payroll": payroll});*/
+                };
             }
 
             // Any action requires a POST. GET will just view the status of the
@@ -650,7 +672,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                         }
                     }
                     if (!found) {
-                        contractNegotiation.new(pid);
+                        contractNegotiation.new(pid, false, cbDisplayNegotiation);
                     }
                 }
                 else {
@@ -659,6 +681,9 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                     teamYearsNew = parseInt(req.params.teamYears, 10);
                     contractNegotiation.offer(pid, teamAmountNew, teamYearsNew);
                 }
+            }
+            else {
+                cb();
             }
         });
     }

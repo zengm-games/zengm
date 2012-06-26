@@ -124,38 +124,54 @@ define(["util/helpers", "util/lock", "util/playMenu", "util/random"], function(h
     /*Accept the player's offer.
 
     pid must correspond with an ongoing negotiation.
-
-    Returns False if (everything works. Otherwise, a string containing an error
-    message (such as "over the salary cap") is returned.
     */
     function accept(pid) {
-/*        console.log("User accepted contract proposal from " + pid);
+        var i, negotiation, negotiations;
 
-        r = g.dbex("SELECT playerAmount, playerYears, resigning FROM negotiations WHERE pid = :pid", pid = pid);
-        playerAmount, playerYears, resigning = r.fetchone();
+        negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
+        negotiation = null;
+        for (i = 0; i < negotiations.length; i++) {
+            if (negotiations[i].pid === pid) {
+                negotiation = negotiations[i];
+                break;
+            }
+        }
 
         // If this contract brings team over the salary cap, it"s not a minimum;
         // contract, and it's not resigning a current player, ERROR!;
-        payroll = getPayroll(g.userTid);
-        if (!resigning && (payroll + playerAmount > g.salaryCap && playerAmount !== 500)) {
-            return "This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract, buy out a player currently on your roster, or cancel the negotiation.";
-        }
+        helpers.getPayroll(g.userTid, function (payroll) {
+            if (!negotiation.resigning && (payroll + negotiation.playerAmount > g.salaryCap && negotiation.playerAmount !== 500)) {
+                helpers.leagueError("This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract, buy out a player currently on your roster, or cancel the negotiation.");
+                return;
+            }
 
-        // Adjust to account for in-season signings;
-        if (g.phase <= c.PHASE_AFTER_TRADE_DEADLINE) {
-            playerYears -= 1;
-        }
+            // Adjust to account for in-season signings;
+            if (g.phase <= c.PHASE_AFTER_TRADE_DEADLINE) {
+                negotiation.playerYears -= 1;
+            }
 
-        r = g.dbex("SELECT MAX(rosterOrder) + 1 FROM playerAttributes WHERE tid = :tid", tid = g.userTid);
-        rosterOrder, = r.fetchone();
+/*            r = g.dbex("SELECT MAX(rosterOrder) + 1 FROM playerAttributes WHERE tid = :tid", tid = g.userTid);
+            rosterOrder, = r.fetchone();*/
 
-        g.dbex("UPDATE playerAttributes SET tid = :tid, contractAmount = :contractAmount, contractExp = :contractExp, rosterOrder = :rosterOrder WHERE pid = :pid", tid=g.userTid, contractAmount=playerAmount, contractExp=g.season + playerYears, rosterOrder=rosterOrder, pid=pid);
+            g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players").openCursor(IDBKeyRange.only(pid)).onsuccess = function (event) {
+                var cursor, player;
 
-        g.dbex("DELETE FROM negotiations WHERE pid = :pid", pid = pid);
-        playMenu.setStatus("Idle");
-        playMenu.refreshOptions();
+                cursor = event.target.result;
+                player = cursor.value;
 
-        return false;*/
+                player.tid = g.userTid;
+                player.contractAmount = negotiation.playerAmount;
+                player.contractExp = g.season + negotiation.playerYears;
+
+                cursor.update(player);
+
+                cancel(pid);
+
+                console.log("User accepted contract proposal from " + pid);
+
+                Davis.location.assign(new Davis.Request("/l/" + g.lid + "/roster"));
+            };
+        });
     }
 
     /*Cancel contract negotiations with a player.

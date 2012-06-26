@@ -169,6 +169,35 @@ define([], function() {
         bbgm.ajaxUpdate(data);
     }
 
+    /*Get the total payroll for a team.
+
+    This includes players who have been released but are still owed money from
+    their old contracts.
+
+    Runs a callback function with a single argument representing the payroll in
+    thousands of dollars.*/
+    function getPayroll(tid, cb) {
+        g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(tid).onsuccess = function(event) {
+            var i, pa, payroll, playersAll, releasedPlayersSalaries;
+
+            payroll = 0;
+            playersAll = event.target.result;
+            for (i = 0; i < playersAll.length; i++) {
+                pa = playersAll[i];
+                payroll += pa.contractAmount;
+            }
+
+//        r = g.dbex('SELECT SUM(contract_amount) FROM released_players_salaries WHERE tid = :tid', tid=tid)
+//        releasedPlayersSalaries, = r.fetchone()
+
+            if (releasedPlayersSalaries) {
+                payroll += releasedPlayersSalaries;
+            }
+
+            cb(parseInt(payroll, 10));
+        };
+    }
+
     return {
         validateAbbrev: validateAbbrev,
         validateTid: validateTid,
@@ -178,6 +207,7 @@ define([], function() {
         loadGameAttributes: loadGameAttributes,
         setGameAttributes: setGameAttributes,
         deepCopy: deepCopy,
-        leagueError: leagueError
+        leagueError: leagueError,
+        getPayroll: getPayroll
     }
 });

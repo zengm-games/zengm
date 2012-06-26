@@ -597,6 +597,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 for (i = 0; i < negotiations.length; i++) {
                     if (negotiations[i].pid === pid) {
                         negotiation = negotiations[i];
+                        break;
                     }
                 }
                 if (negotiation === null) {
@@ -659,11 +660,7 @@ console.log(negotiation);
                 }
                 else if (req.params.hasOwnProperty("accept")) {
 // Move the other stuff after this to a callback for contractNegotiation.accept
-                    error = contractNegotiation.accept(pid);
-                    if (error) {
-                        return renderAllOrJson("leagueError.html", {"error": error});
-                    }
-                    Davis.location.assign(new Davis.Request("/l/" + g.lid + "/roster"));
+                    contractNegotiation.accept(pid);
                     return;
                 }
                 else if (req.params.hasOwnProperty("new")) {

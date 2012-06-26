@@ -1,4 +1,4 @@
-define(["util/helpers", "util/lock"], function(helpers, lock) {
+define(["util/helpers", "util/lock"], function (helpers, lock) {
     /*Set the options to be shown in the play button.
 
     Arguments:
@@ -22,51 +22,51 @@ define(["util/helpers", "util/lock"], function(helpers, lock) {
                        {id: "until_free_agency", url: 'javascript:api.play("until_free_agency");', label: "Until free agency", normal_link: false},
                        {id: "until_preseason", url: 'javascript:api.play("until_preseason");', label: "Until preseason", normal_link: false},
                        {id: "until_regular_season", url: 'javascript:api.play("until_regular_season");', label: "Until regular season", normal_link: false},
-                       {id: "contract_negotiation", url: "/l/" + g.lid + "/negotiation_list", label: "Continue contract negotiation", normal_link: true},
-                       {id: "contract_negotiation_list", url: "/l/" + g.lid + "/negotiation_list", label: "Continue resigning players", normal_link: true}]
+                       {id: "contract_negotiation", url: "/l/" + g.lid + "/negotiation", label: "Continue contract negotiation", normal_link: true},
+                       {id: "contract_negotiation_list", url: "/l/" + g.lid + "/negotiation", label: "Continue resigning players", normal_link: true}]
 
         if (typeof keys === "undefined") {
             // Preseason
-            if (g.phase == c.PHASE_PRESEASON) {
+            if (g.phase === c.PHASE_PRESEASON) {
                 keys = ["until_regular_season"];
             }
             // Regular season - pre trading deadline
-            else if (g.phase == c.PHASE_REGULAR_SEASON) {
+            else if (g.phase === c.PHASE_REGULAR_SEASON) {
                 keys = ["day", "week", "month", "until_playoffs"];
             // Regular season - post trading deadline
             }
-            else if (g.phase == c.PHASE_AFTER_TRADE_DEADLINE) {
+            else if (g.phase === c.PHASE_AFTER_TRADE_DEADLINE) {
                 keys = ["day", "week", "month", "until_playoffs"];
             }
             // Playoffs
-            else if (g.phase == c.PHASE_PLAYOFFS) {
+            else if (g.phase === c.PHASE_PLAYOFFS) {
                 keys = ["day", "week", "month", "through_playoffs"];
             }
             // Offseason - pre draft
-            else if (g.phase == c.PHASE_BEFORE_DRAFT) {
+            else if (g.phase === c.PHASE_BEFORE_DRAFT) {
                 keys = ["until_draft"];
             }
             // Draft
-            else if (g.phase == c.PHASE_DRAFT) {
+            else if (g.phase === c.PHASE_DRAFT) {
                 keys = ["view_draft"];
             }
             // Offseason - post draft
-            else if (g.phase == c.PHASE_AFTER_DRAFT) {
+            else if (g.phase === c.PHASE_AFTER_DRAFT) {
                 keys = ["until_resign_players"];
             }
             // Offseason - resign players
-            else if (g.phase == c.PHASE_RESIGN_PLAYERS) {
+            else if (g.phase === c.PHASE_RESIGN_PLAYERS) {
                 keys = ["contract_negotiation_list", "until_free_agency"];
             }
             // Offseason - free agency
-            else if (g.phase == c.PHASE_FREE_AGENCY) {
+            else if (g.phase === c.PHASE_FREE_AGENCY) {
                 keys = ["until_preseason"];
             }
 
             if (lock.games_in_progress()) {
                 keys = ["stop"];
             }
-            if (lock.negotiationInProgress() && g.phase != c.PHASE_RESIGN_PLAYERS) {
+            if (lock.negotiationInProgress() && g.phase !== c.PHASE_RESIGN_PLAYERS) {
                 keys = ["contract_negotiation"];
             }
         }
@@ -74,7 +74,7 @@ define(["util/helpers", "util/lock"], function(helpers, lock) {
         // This code is very ugly. Basically I just want to filter all_options into
         // some_options based on if the ID matches one of the keys.
         ids = [];
-        for (var i=0; i<all_options.length; i++) {
+        for (var i = 0; i < all_options.length; i++) {
             ids.push(all_options[i].id);
         }
         some_options = [];

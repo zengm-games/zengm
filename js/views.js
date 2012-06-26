@@ -1,5 +1,9 @@
-define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "core/season", "util/helpers", "util/playMenu"], function(bbgm, db, contractNegotiation, game, league, season, helpers, playMenu) {
+define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "core/season", "util/helpers", "util/playMenu"], function (bbgm, db, contractNegotiation, game, league, season, helpers, playMenu) {
+    "use strict";
+
     function beforeLeague(req, cb) {
+        var data, leagueMenu, request, template;
+
         g.lid = parseInt(req.params.lid, 10);
         helpers.loadGameAttributes();
 
@@ -14,20 +18,20 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             };
 
             cb();
-        }
+        };
 
         // Make sure league template FOR THE CURRENT LEAGUE is showing
-        var leagueMenu = document.getElementById("league_menu");
-        if (leagueMenu === null || leagueMenu.dataset["lid"] != g.lid) {
+        leagueMenu = document.getElementById("league_menu");
+        if (leagueMenu === null || leagueMenu.dataset.lid !== g.lid) {
             data = {};
-            var template = Handlebars.templates['league_layout'];
-            data["content"] = template({g: g});
+            template = Handlebars.templates.league_layout;
+            data.content = template({g: g});
             bbgm.ajaxUpdate(data);
 
             // Update play menu
-            playMenu.setStatus()
-            playMenu.setPhase()
-            playMenu.refreshOptions()
+            playMenu.setStatus();
+            playMenu.setPhase();
+            playMenu.refreshOptions();
         }
     }
 
@@ -42,7 +46,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
 
         beforeNonLeague();
 
-        data["content"] = "Resetting databases..."
+        data.content = "Resetting databases...";
 
         // Delete any current league databases
         console.log("Delete any current league databases...");
@@ -50,7 +54,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             g.dbl.close();
         }
         db.getAll(g.dbm, "leagues", function (leagues) {
-            for (var i=0; i<leagues.length; i++) {
+            for (var i = 0; i < leagues.length; i++) {
                 g.indexedDB.deleteDatabase("league" + leagues[i]["lid"]);
                 localStorage.removeItem("league" + g.lid + "GameAttributes");
                 localStorage.removeItem("league" + g.lid + "DraftOrder");
@@ -84,7 +88,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
 
         db.getAll(g.dbm, "leagues", function (leagues) {
             var template = Handlebars.templates['dashboard'];
-            data["content"] = template({leagues: leagues});
+            data.content = template({leagues: leagues});
 
             bbgm.ajaxUpdate(data);
         });
@@ -98,7 +102,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         if (req.method === "get") {
             db.getAll(g.dbm, "teams", function (teams) {
                 var template = Handlebars.templates['new_league'];
-                data["content"] = template({teams: teams});
+                data.content = template({teams: teams});
 
                 bbgm.ajaxUpdate(data);
             });
@@ -578,6 +582,26 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         });
     }
 
+    function negotiationList() {
+        // If there is only one active negotiation with a free agent, go to it;
+        negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
+        if (negotiations.length === 1) {
+            Davis.location.assign(new Davis.Request("/l/" + g.lid + "/negotiation/" + negotiations[0].pid));
+            return;
+        }
+
+/*        if (g.phase !== c.PHASE_RESIGN_PLAYERS) {
+            error = "Something bad happened.";
+            return renderAllOrJson("leagueError.html", {"error": error});
+        }
+
+        r = g.dbex("SELECT pa.pid, pa.name, pa.pos, :season - pa.bornYear as age, pr.ovr, pr.pot, AVG(ps.min) as min, AVG(ps.pts) as pts, AVG(ps.orb + ps.drb) as rebounds, AVG(ps.ast) as ast, pa.contractAmount/1000.0*(1+pa.freeAgentTimesAsked/10) as contractAmount, pa.contractExp FROM playerAttributes as pa LEFT OUTER JOIN negotiations as n ON pa.pid = n.pid LEFT OUTER JOIN playerRatings as pr ON pr.season = :season AND pa.pid = pr.pid LEFT OUTER JOIN playerStats as ps ON ps.season = :season AND ps.playoffs = FALSE AND pa.pid = ps.pid WHERE pa.tid = :tid AND n.resigning = 1 GROUP BY pa.pid", season=g.season, tid=c.PLAYER_FREE_AGENT);
+
+        players = r.fetchall();
+
+        return renderAllOrJson("negotiationList.html", {"players": players});*/
+    }
+
     function negotiation(req) {
         beforeLeague(req, function() {
             var found, i, pid;
@@ -700,6 +724,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         free_agents: free_agents,
         draft: draft,
         game_log: game_log,
+        negotiationList: negotiationList,
         negotiation: negotiation
     };
 });

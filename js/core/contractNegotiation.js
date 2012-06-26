@@ -1,4 +1,4 @@
-define(["util/helpers", "util/lock", "util/playMenu", "util/random"], function(helpers, lock, playMenu, random) {
+define(["util/helpers", "util/lock", "util/playMenu", "util/random"], function (helpers, lock, playMenu, random) {
     /*Start a new contract negotiation with player.
 
     Args:
@@ -7,6 +7,8 @@ define(["util/helpers", "util/lock", "util/playMenu", "util/random"], function(h
             extension with a current player who just became a free agent. False
             otherwise.
     */
+    "use strict";
+
     function new_(pid, resigning, cb) {
         var playerStore;
 
@@ -21,7 +23,7 @@ define(["util/helpers", "util/lock", "util/playMenu", "util/random"], function(h
             return;
         }
 
-        playerStore = g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players")
+        playerStore = g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
         playerStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
             var numPlayersOnRoster;
 
@@ -42,7 +44,7 @@ define(["util/helpers", "util/lock", "util/playMenu", "util/random"], function(h
                 }
 
                 // Initial player proposal;
-                playerAmount = player.contractAmount*(1+player.freeAgentTimesAsked/10);
+                playerAmount = player.contractAmount * (1 + player.freeAgentTimesAsked / 10);
                 playerYears = player.contractExp - g.season;
                 // Adjust to account for in-season signings;
                 if (g.phase <= c.PHASE_AFTER_TRADE_DEADLINE) {
@@ -75,7 +77,7 @@ define(["util/helpers", "util/lock", "util/playMenu", "util/random"], function(h
     function offer(pid, teamAmount, teamYears) {
         var i, negotiation, negotiations;
 
-        console.log("User made contract offer for %d over %d years to %d" % (teamAmount, teamYears, pid));
+        console.log("User made contract offer for " + teamAmount + " over " + teamYears + " years to " + pid);
 
         if (teamAmount > 20000) {
             teamAmount = 20000;
@@ -104,22 +106,19 @@ define(["util/helpers", "util/lock", "util/playMenu", "util/random"], function(h
             if (teamYears < negotiation.playerYears) {
                 negotiation.playerYears -= 1;
                 negotiation.playerAmount *= 1.2;
-            }
-            else if (teamYears > negotiation.playerYears) {
+            } else if (teamYears > negotiation.playerYears) {
                 negotiation.playerYears += 1;
                 negotiation.playerAmount *= 1.2;
             }
             if (teamAmount < negotiation.playerAmount && teamAmount > 0.7 * negotiation.playerAmount) {
-                negotiation.playerAmount = .75 * negotiation.playerAmount + .25 * teamAmount;
-            }
-            else if (teamAmount < negotiation.playerAmount) {
+                negotiation.playerAmount = 0.75 * negotiation.playerAmount + 0.25 * teamAmount;
+            } else if (teamAmount < negotiation.playerAmount) {
                 negotiation.playerAmount *= 1.1;
             }
             if (teamAmount > negotiation.playerAmount) {
                 negotiation.playerAmount = teamAmount;
             }
-        }
-        else {
+        } else {
             negotiation.playerAmount = 1.05 * negotiation.playerAmount;
         }
 
@@ -228,7 +227,7 @@ define(["util/helpers", "util/lock", "util/playMenu", "util/random"], function(h
     }
 
     return {
-        new: new_,
+        "new": new_,
         offer: offer,
         accept: accept,
         cancel: cancel,

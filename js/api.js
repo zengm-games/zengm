@@ -1,6 +1,6 @@
 /*These are functions that do not return full pages (either JS objects or partial blocks of HTML) and are called from the client.*/
 
-define(["db", "core/draft", "core/game", "core/season", "util/helpers", "util/lock", "util/playMenu"], function(db, draft, game, season, helpers, lock, playMenu) {
+define(["db", "core/draft", "core/game", "core/season", "util/helpers", "util/lock", "util/playMenu"], function (db, draft, game, season, helpers, lock, playMenu) {
     /*This is kind of a hodgepodge that handles every request from the play
     button and returns the appropriate response in JSON.
     */

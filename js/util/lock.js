@@ -70,7 +70,7 @@ define(["util/helpers"], function(helpers) {
             return false;
         }
 
-        // Allow multiple parallel negotiations (ignore negotiation_in_progress) only for resigning players
+        // Allow multiple parallel negotiations only for resigning players
         negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
         for (i = 0; i < negotiations.length; i++) {
             if (!negotiations[i].resigning) {

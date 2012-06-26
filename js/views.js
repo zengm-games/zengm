@@ -637,16 +637,14 @@ console.log(negotiation);
                     teams = helpers.getTeams();
                     team = {region: teams[g.userTid].region, name: teams[g.userTid].name};
 
-                    payroll = 666;
+                    helpers.getPayroll(g.userTid, function (payroll) {
+                        payroll /= 1000;
 
-/*                payroll = getPayroll(g.userTid);
-                payroll /= 1000.0;*/
-
-                    data = {title: player.name + " - Contract Negotiation - League " + g.lid};
-                    template = Handlebars.templates.negotiation;
-                    data.league_content = template({g: g, negotiation: negotiation, player: player, salaryCap: salaryCap, team: team, payroll: payroll});
-                    bbgm.ajaxUpdate(data);
-/*                return renderAllOrJson("negotiation.html", {"teamAmount": teamAmount, "teamYears": teamYears, "playerAmount": playerAmount, "playerYears": playerYears, "playerExpiration": playerExpiration, "resigning": resigning, "player": player, "salaryCap": salaryCap, "team": team, "payroll": payroll});*/
+                        data = {title: player.name + " - Contract Negotiation - League " + g.lid};
+                        template = Handlebars.templates.negotiation;
+                        data.league_content = template({g: g, negotiation: negotiation, player: player, salaryCap: salaryCap, team: team, payroll: payroll});
+                        bbgm.ajaxUpdate(data);
+                    });
                 };
             }
 

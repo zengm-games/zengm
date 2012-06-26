@@ -1,5 +1,5 @@
 define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "util/random"], function(db, player, season, helpers, playMenu, random) {
-    function new_(tid) {
+    function create(tid) {
         l = {'tid': tid, 'season': g.startingSeason, 'phase': 0, 'games_in_progress': false, 'stop_game': false, 'pm_status': '', 'pm_phase': 'Phase 1'}
         var leaguesStore = g.dbm.transaction(["leagues"], IDBTransaction.READ_WRITE).objectStore("leagues");
         leaguesStore.add(l).onsuccess = function (event) {
@@ -107,7 +107,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
         };
     }
 
-    function delete_(lid) {
+    function remove(lid) {
         var leaguesStore = g.dbm.transaction(["leagues"], IDBTransaction.READ_WRITE).objectStore("leagues").delete(lid);
         g.indexedDB.deleteDatabase("league" + lid);
         localStorage.removeItem("league" + g.lid + "GameAttributes")
@@ -115,7 +115,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
     }
 
     return {
-        new: new_,
-        delete: delete_
+        create: create,
+        remove: remove
     };
 });

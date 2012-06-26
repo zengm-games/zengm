@@ -42,11 +42,9 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
     }
 
     function init_db(req) {
-        var data = {title: "Initialize Database"};
+        var data, i, request;
 
         beforeNonLeague();
-
-        data.content = "Resetting databases...";
 
         // Delete any current league databases
         console.log("Delete any current league databases...");
@@ -54,8 +52,8 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             g.dbl.close();
         }
         db.getAll(g.dbm, "leagues", function (leagues) {
-            for (var i = 0; i < leagues.length; i++) {
-                g.indexedDB.deleteDatabase("league" + leagues[i]["lid"]);
+            for (i = 0; i < leagues.length; i++) {
+                g.indexedDB.deleteDatabase("league" + leagues[i].lid);
                 localStorage.removeItem("league" + g.lid + "GameAttributes");
                 localStorage.removeItem("league" + g.lid + "DraftOrder");
             }
@@ -69,25 +67,28 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         // Create new meta database
         console.log("Create new meta database...");
         request = db.connect_meta();
-        request.onsuccess = function(event) {
+        request.onsuccess = function (event) {
             g.dbm = request.result;
-            g.dbm.onerror = function(event) {
+            g.dbm.onerror = function (event) {
                 console.log("Meta database error: " + event.target.errorCode);
             };
         };
 
         console.log("Done!");
 
+        data = {title: "Initialize Database"};
+        data.content = "Resetting databases...";
         bbgm.ajaxUpdate(data);
     }
 
     function dashboard(req) {
-        var data = {title: "Dashboard"};
-
         beforeNonLeague();
 
         db.getAll(g.dbm, "leagues", function (leagues) {
-            var template = Handlebars.templates['dashboard'];
+            var data, template;
+
+            data = {title: "Dashboard"};
+            template = Handlebars.templates.dashboard;
             data.content = template({leagues: leagues});
 
             bbgm.ajaxUpdate(data);
@@ -95,37 +96,42 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
     }
 
     function new_league(req) {
-        var data = {title: "Create New League"};
+        var tid;
 
         beforeNonLeague();
 
         if (req.method === "get") {
             db.getAll(g.dbm, "teams", function (teams) {
-                var template = Handlebars.templates['new_league'];
+                var data, template;
+
+                data = {title: "Create New League"};
+                template = Handlebars.templates.newLeague;
                 data.content = template({teams: teams});
 
                 bbgm.ajaxUpdate(data);
             });
-        }
-        else if (req.method === "post") {
+        } else if (req.method === "post") {
             tid = parseInt(req.params.tid, 10);
             if (tid >= 0 && tid <= 29) {
-                league.new(tid);
+                league.create(tid);
             }
         }
     }
 
     function delete_league(req) {
-        lid = parseInt(req.params['lid'], 10);
-        league.delete(lid);
+        var lid;
+
+        lid = parseInt(req.params.lid, 10);
+        league.remove(lid);
         req.redirect('/');
     }
 
     function league_dashboard(req) {
-        beforeLeague(req, function() {
-            var data = {title: "Dashboard - League " + g.lid};
+        beforeLeague(req, function () {
+            var data, template;
 
-            var template = Handlebars.templates["league_dashboard"];
+            data = {title: "Dashboard - League " + g.lid};
+            template = Handlebars.templates.leagueDashboard;
             data.league_content = template({g: g});
 
             bbgm.ajaxUpdate(data);
@@ -133,7 +139,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
     }
 
     function standings(req) {
-        beforeLeague(req, function() {
+        beforeLeague(req, function () {
             var data = {title: "Standings - League " + g.lid};
 
             var season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
@@ -190,7 +196,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
     }
 
     function playoffs(req) {
-        beforeLeague(req, function() {
+        beforeLeague(req, function () {
             var data = {title: "Playoffs - League " + g.lid};
 
             var season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
@@ -260,7 +266,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
     }
 
     function roster(req) {
-        beforeLeague(req, function() {
+        beforeLeague(req, function () {
             var data = {title: "Roster - League " + g.lid};
 
             var abbrev = typeof req.params.abbrev !== "undefined" ? req.params.abbrev : undefined;
@@ -370,7 +376,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
     }
 
     function schedule(req) {
-        beforeLeague(req, function() {
+        beforeLeague(req, function () {
             var data = {title: "Schedule - League " + g.lid};
 
             season.getSchedule(0, function (schedule_) {
@@ -399,7 +405,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
     }
 
     function free_agents(req) {
-        beforeLeague(req, function() {
+        beforeLeague(req, function () {
             var data = {title: "Free Agents - League " + g.lid};
             if (g.phase >= c.PHASE_AFTER_TRADE_DEADLINE && g.phase <= c.PHASE_RESIGN_PLAYERS) {
                 helpers.leagueError("You're not allowed to sign free agents now.");
@@ -466,7 +472,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
     }
 
     function draft(req) {
-        beforeLeague(req, function() {
+        beforeLeague(req, function () {
             var data;
 
             var season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
@@ -565,7 +571,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
     }
 
     function game_log(req) {
-        beforeLeague(req, function() {
+        beforeLeague(req, function () {
             var data = {title: "Game Log - League " + g.lid};
 
             var abbrev = typeof req.params.abbrev !== "undefined" ? req.params.abbrev : undefined;
@@ -603,7 +609,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
     }
 
     function negotiation(req) {
-        beforeLeague(req, function() {
+        beforeLeague(req, function () {
             var found, i, pid;
 
             pid = parseInt(req.params.pid, 10);

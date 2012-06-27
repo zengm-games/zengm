@@ -1,33 +1,43 @@
-define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "util/random"], function(db, player, season, helpers, playMenu, random) {
+define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "util/random"], function (db, player, season, helpers, playMenu, random) {
+    "use strict";
+
     function create(tid) {
-        l = {'tid': tid, 'season': g.startingSeason, 'phase': 0, 'games_in_progress': false, 'stop_game': false, 'pm_status': '', 'pm_phase': 'Phase 1'}
-        var leaguesStore = g.dbm.transaction(["leagues"], IDBTransaction.READ_WRITE).objectStore("leagues");
-        leaguesStore.add(l).onsuccess = function (event) {
+        var l, leagueStore;
+
+        l = {tid: tid};
+        leagueStore = g.dbm.transaction(["leagues"], IDBTransaction.READ_WRITE).objectStore("leagues");
+        leagueStore.add(l).onsuccess = function (event) {
+            var t;
+
             g.lid = event.target.result;
             t = event.target.transaction;
             db.getAll(g.dbm, "teams", function (teams) {
+                var request;
+
                 // Create new league database
                 request = db.connect_league(g.lid);
                 request.onsuccess = function (event) {
+                    var agingYears, baseRatings, contract, draftYear, gameAttributes, goodNeutralBad, gp, i, p, playerStore, pots, profile, profiles, randomizeExpiration, t, teamStore, transaction;
+
                     g.dbl = request.result;
                     g.dbl.onerror = function (event) {
                         console.log("League database error: " + event.target.errorCode);
                     };
 
                     // Probably is fastest to use this transaction for everything done to create a new league
-                    var transaction = g.dbl.transaction(["players", "teams"], IDBTransaction.READ_WRITE);
+                    transaction = g.dbl.transaction(["players", "teams"], IDBTransaction.READ_WRITE);
 
                     // teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league.
-                    var teamStore = transaction.objectStore("teams");
-                    for (var i=0; i<teams.length; i++) {
+                    teamStore = transaction.objectStore("teams");
+                    for (i = 0; i < teams.length; i++) {
                         teamStore.add({
 //                            rid: teams[i]['tid'], // This shouldn't be necessary if autoincrement is working on this store http://www.raymondcamden.com/index.cfm/2012/4/26/Sample-of-IndexedDB-with-Autogenerating-Keys
-                            tid: teams[i]['tid'],
-                            cid: teams[i]['cid'],
-                            did: teams[i]['did'],
-                            region: teams[i]['region'],
-                            name: teams[i]['name'],
-                            abbrev: teams[i]['abbrev'],
+                            tid: teams[i].tid,
+                            cid: teams[i].cid,
+                            did: teams[i].did,
+                            region: teams[i].region,
+                            name: teams[i].name,
+                            abbrev: teams[i].abbrev,
                             season: g.startingSeason,
                             won: 0,
                             lost: 0,
@@ -44,36 +54,35 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                     }
 
                     // Generate new players
-                    var playerStore = transaction.objectStore("players");
-                    var profiles = ["Point", "Wing", "Big", ""];
-                    var baseRatings = [30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 19, 19];
-                    var pots = [70, 60, 50, 50, 55, 45, 65, 35, 50, 45, 55, 55, 40, 40];
-                    for (t=-1; t<30; t++) {
-                        var goodNeutralBad = random.randInt(-1, 1);  // determines if this will be a good team or not
+                    playerStore = transaction.objectStore("players");
+                    profiles = ["Point", "Wing", "Big", ""];
+                    baseRatings = [30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 19, 19];
+                    pots = [70, 60, 50, 50, 55, 45, 65, 35, 50, 45, 55, 55, 40, 40];
+                    for (t = -1; t < 30; t++) {
+                        goodNeutralBad = random.randInt(-1, 1);  // determines if this will be a good team or not
                         random.shuffle(pots);
-                        for (p=0; p<14; p++) {
-                            var profile = profiles[random.randInt(0, profiles.length - 1)];
-                            var agingYears = random.randInt(0, 13);
-                            var draftYear = g.startingSeason - 1 - agingYears;
+                        for (p = 0; p < 14; p++) {
+                            profile = profiles[random.randInt(0, profiles.length - 1)];
+                            agingYears = random.randInt(0, 13);
+                            draftYear = g.startingSeason - 1 - agingYears;
 
-                            var gp = new player.Player();
+                            gp = new player.Player();
                             gp.generate(t, 19, profile, baseRatings[p], pots[p], draftYear);
                             gp.develop(agingYears, true);
                             if (p < 5) {
                                 gp.bonus(goodNeutralBad * random.randInt(0, 20));
                             }
-                            if (t == -1) {  // Free agents
+                            if (t === -1) {  // Free agents
                                 gp.bonus(-15);
                             }
 
                             // Update contract based on development
                             if (t >= 0) {
-                                var randomizeExpiration = true;  // Players on teams already get randomized contracts
+                                randomizeExpiration = true;  // Players on teams already get randomized contracts
+                            } else {
+                                randomizeExpiration = false;
                             }
-                            else {
-                                var randomizeExpiration = false;
-                            }
-                            contract = gp.contract(randomizeExpiration=randomizeExpiration);
+                            contract = gp.contract(randomizeExpiration);
                             gp.attribute.contractAmount = contract.amount;
                             gp.attribute.contractExp = contract.exp;
 
@@ -87,8 +96,8 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                     localStorage.setItem("league" + g.lid + "Negotiations", JSON.stringify([]));
 
                     // Make schedule, start season
-                    season.newPhase(c.PHASE_REGULAR_SEASON)
-                    playMenu.setStatus('Idle')
+                    season.newPhase(c.PHASE_REGULAR_SEASON);
+                    playMenu.setStatus('Idle');
 /*
         // Auto sort player's roster (other teams will be done in season.new_phase(c.PHASE_REGULAR_SEASON))
         roster_auto_sort(g.user_tid)
@@ -102,16 +111,16 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
 */
 
                     Davis.location.assign(new Davis.Request('/l/' + g.lid));
-                }
+                };
             });
         };
     }
 
     function remove(lid) {
-        var leaguesStore = g.dbm.transaction(["leagues"], IDBTransaction.READ_WRITE).objectStore("leagues").delete(lid);
+        g.dbm.transaction(["leagues"], IDBTransaction.READ_WRITE).objectStore("leagues").delete(lid);
         g.indexedDB.deleteDatabase("league" + lid);
-        localStorage.removeItem("league" + g.lid + "GameAttributes")
-        localStorage.removeItem("league" + g.lid + "Negotiations")
+        localStorage.removeItem("league" + g.lid + "GameAttributes");
+        localStorage.removeItem("league" + g.lid + "Negotiations");
     }
 
     return {

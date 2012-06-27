@@ -9,8 +9,12 @@ define(["util/helpers", "util/lock"], function (helpers, lock) {
         A list of dicts, each dict containing the properties needed to build the
         play button.
      */
+    "use strict";
+
     function options(keys) {
-        all_options = [{id: "stop", url: 'javascript:api.play("stop");', label: "Stop", normal_link: false},
+        var allOptions, i, ids, j, someOptions;
+
+        allOptions = [{id: "stop", url: 'javascript:api.play("stop");', label: "Stop", normal_link: false},
                        {id: "day", url: 'javascript:api.play("day");', label: "One day", normal_link: false},
                        {id: "week", url: 'javascript:api.play("week");', label: "One week", normal_link: false},
                        {id: "month", url: 'javascript:api.play("month");', label: "One month", normal_link: false},
@@ -23,43 +27,35 @@ define(["util/helpers", "util/lock"], function (helpers, lock) {
                        {id: "until_preseason", url: 'javascript:api.play("until_preseason");', label: "Until preseason", normal_link: false},
                        {id: "until_regular_season", url: 'javascript:api.play("until_regular_season");', label: "Until regular season", normal_link: false},
                        {id: "contract_negotiation", url: "/l/" + g.lid + "/negotiation", label: "Continue contract negotiation", normal_link: true},
-                       {id: "contract_negotiation_list", url: "/l/" + g.lid + "/negotiation", label: "Continue resigning players", normal_link: true}]
+                       {id: "contract_negotiation_list", url: "/l/" + g.lid + "/negotiation", label: "Continue resigning players", normal_link: true}];
 
         if (typeof keys === "undefined") {
-            // Preseason
             if (g.phase === c.PHASE_PRESEASON) {
+                // Preseason
                 keys = ["until_regular_season"];
-            }
-            // Regular season - pre trading deadline
-            else if (g.phase === c.PHASE_REGULAR_SEASON) {
+            } else if (g.phase === c.PHASE_REGULAR_SEASON) {
+                // Regular season - pre trading deadline
                 keys = ["day", "week", "month", "until_playoffs"];
-            // Regular season - post trading deadline
-            }
-            else if (g.phase === c.PHASE_AFTER_TRADE_DEADLINE) {
+            } else if (g.phase === c.PHASE_AFTER_TRADE_DEADLINE) {
+                // Regular season - post trading deadline
                 keys = ["day", "week", "month", "until_playoffs"];
-            }
-            // Playoffs
-            else if (g.phase === c.PHASE_PLAYOFFS) {
+            } else if (g.phase === c.PHASE_PLAYOFFS) {
+                // Playoffs
                 keys = ["day", "week", "month", "through_playoffs"];
-            }
-            // Offseason - pre draft
-            else if (g.phase === c.PHASE_BEFORE_DRAFT) {
+            } else if (g.phase === c.PHASE_BEFORE_DRAFT) {
+                // Offseason - pre draft
                 keys = ["until_draft"];
-            }
-            // Draft
-            else if (g.phase === c.PHASE_DRAFT) {
+            } else if (g.phase === c.PHASE_DRAFT) {
+                // Draft
                 keys = ["view_draft"];
-            }
-            // Offseason - post draft
-            else if (g.phase === c.PHASE_AFTER_DRAFT) {
+            } else if (g.phase === c.PHASE_AFTER_DRAFT) {
+                // Offseason - post draft
                 keys = ["until_resign_players"];
-            }
-            // Offseason - resign players
-            else if (g.phase === c.PHASE_RESIGN_PLAYERS) {
+            } else if (g.phase === c.PHASE_RESIGN_PLAYERS) {
+                // Offseason - resign players
                 keys = ["contract_negotiation_list", "until_free_agency"];
-            }
-            // Offseason - free agency
-            else if (g.phase === c.PHASE_FREE_AGENCY) {
+            } else if (g.phase === c.PHASE_FREE_AGENCY) {
+                // Offseason - free agency
                 keys = ["until_preseason"];
             }
 
@@ -74,21 +70,21 @@ define(["util/helpers", "util/lock"], function (helpers, lock) {
         // This code is very ugly. Basically I just want to filter all_options into
         // some_options based on if the ID matches one of the keys.
         ids = [];
-        for (var i = 0; i < all_options.length; i++) {
-            ids.push(all_options[i].id);
+        for (i = 0; i < allOptions.length; i++) {
+            ids.push(allOptions[i].id);
         }
-        some_options = [];
-        for (var i=0; i<keys.length; i++) {
-            for (var j=0; j<ids.length; j++) {
-                if (ids[j] == keys[i]) {
-                    some_options.push(all_options[j]);
+        someOptions = [];
+        for (i = 0; i < keys.length; i++) {
+            for (j = 0; j < ids.length; j++) {
+                if (ids[j] === keys[i]) {
+                    someOptions.push(allOptions[j]);
                     break;
                 }
             }
         }
 
 //        some_options = all_options;
-        return some_options;
+        return someOptions;
     }
 
     /*Save status to database and push to client.
@@ -101,13 +97,14 @@ define(["util/helpers", "util/lock"], function (helpers, lock) {
             the client.
     */
     function setStatus(status) {
-        old_status = g.pmStatus
+        var oldStatus;
 
+        oldStatus = g.pmStatus;
         if (typeof status === "undefined") {
-            status = old_status;
+            status = oldStatus;
             document.getElementById("playStatus").innerHTML = status;
         }
-        if (status != old_status) {
+        if (status !== oldStatus) {
             helpers.setGameAttributes({pmStatus: status});
             document.getElementById("playStatus").innerHTML = status;
             console.log("Set status: " + status);
@@ -120,20 +117,21 @@ define(["util/helpers", "util/lock"], function (helpers, lock) {
     push that to the client.
 
     Args:
-        phase_text: A string containing the current phase text to be pushed to
+        phaseText: A string containing the current phase text to be pushed to
             the client.
     */
-    function setPhase(phase_text) {
-        old_phase_text = g.pmPhase
+    function setPhase(phaseText) {
+        var oldPhaseText;
 
-        if (typeof phase_text === "undefined") {
-            phase_text = old_phase_text;
-            document.getElementById("playPhase").innerHTML = phase_text;
+        oldPhaseText = g.pmPhase;
+        if (typeof phaseText === "undefined") {
+            phaseText = oldPhaseText;
+            document.getElementById("playPhase").innerHTML = phaseText;
         }
-        if (phase_text != old_phase_text) {
-            helpers.setGameAttributes({pmPhase: phase_text});
-            document.getElementById("playPhase").innerHTML = phase_text;
-            console.log("Set phase: " + phase_text);
+        if (phaseText !== oldPhaseText) {
+            helpers.setGameAttributes({pmPhase: phaseText});
+            document.getElementById("playPhase").innerHTML = phaseText;
+            console.log("Set phase: " + phaseText);
         }
     }
 
@@ -142,8 +140,9 @@ define(["util/helpers", "util/lock"], function (helpers, lock) {
     to client.
     */
     function refreshOptions() {
-//        button = render_template("play_button.html", lid=g.lid, options=options());
-        template = Handlebars.templates['playButton'];
+        var button, template;
+
+        template = Handlebars.templates.playButton;
         button = template({options: options()});
         document.getElementById("playButton").innerHTML = button;
     }

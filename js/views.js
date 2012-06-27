@@ -42,7 +42,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
     }
 
     function init_db(req) {
-        var data, i, request;
+        var data, request;
 
         beforeNonLeague();
 
@@ -51,13 +51,17 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         if (g.dbl !== undefined) {
             g.dbl.close();
         }
-        db.getAll(g.dbm, "leagues", function (leagues) {
+        g.dbm.transaction(["leagues"]).objectStore("leagues").getAll().onsuccess = function (event) {
+            var i, leagues;
+
+            leagues = event.target.result;
+
             for (i = 0; i < leagues.length; i++) {
                 g.indexedDB.deleteDatabase("league" + leagues[i].lid);
-                localStorage.removeItem("league" + g.lid + "GameAttributes");
-                localStorage.removeItem("league" + g.lid + "DraftOrder");
+                localStorage.removeItem("league" + leagues[i].lid + "GameAttributes");
+                localStorage.removeItem("league" + leagues[i].lid + "DraftOrder");
             }
-        });
+        };
 
         // Delete any current meta database
         console.log("Delete any current meta database...");
@@ -84,15 +88,17 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
     function dashboard(req) {
         beforeNonLeague();
 
-        db.getAll(g.dbm, "leagues", function (leagues) {
-            var data, template;
+        g.dbm.transaction(["leagues"]).objectStore("leagues").getAll().onsuccess = function (event) {
+            var data, leagues, template;
+
+            leagues = event.target.result;
 
             data = {title: "Dashboard"};
             template = Handlebars.templates.dashboard;
             data.content = template({leagues: leagues});
 
             bbgm.ajaxUpdate(data);
-        });
+        };
     }
 
     function new_league(req) {
@@ -101,15 +107,17 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         beforeNonLeague();
 
         if (req.method === "get") {
-            db.getAll(g.dbm, "teams", function (teams) {
-                var data, template;
+            g.dbm.transaction(["teams"]).objectStore("teams").getAll().onsuccess = function (event) {
+                var data, teams, template;
+
+                teams = event.target.result;
 
                 data = {title: "Create New League"};
                 template = Handlebars.templates.newLeague;
                 data.content = template({teams: teams});
 
                 bbgm.ajaxUpdate(data);
-            });
+            };
         } else if (req.method === "post") {
             tid = parseInt(req.params.tid, 10);
             if (tid >= 0 && tid <= 29) {

@@ -33,16 +33,17 @@ template loop count - how?
 - class="separator"
   - box score (top 5)
   - standings (top 8)
-view_season can be made just season because of handelbars' scoping
 startingSeason should be stored so later years can have different values
 at some point, go through the indexeddb code. factor out common patterns into a library. combine transactions where appropriate
 make sure all indexes are actually used. otherwise they're just making it slower for nothing
-== to ===
 
 ---
 
 POLISH FEATURES
 
+is dbm necessary?
+- teamStore replaced by helpers.getTeams
+- leagueStore replaced by localstorage of GameAttributes
 jslint --plusplus --predef $ --predef Davis --predef requirejs --predef define --predef window --predef document --predef localStorage --predef IDBKeyRange --predef IDBTransaction --predef g --predef c js/core/draft.js
 - http://stackoverflow.com/questions/7425147/jslint-error-somefunction-was-used-before-it-was-defined
 - http://stackoverflow.com/questions/6744692/jslint-should-we-tolerate-misordered-definitions

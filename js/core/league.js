@@ -11,8 +11,10 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
 
             g.lid = event.target.result;
             t = event.target.transaction;
-            db.getAll(g.dbm, "teams", function (teams) {
-                var request;
+            g.dbm.transaction(["teams"]).objectStore("teams").getAll().onsuccess = function (event) {
+                var request, teams;
+
+                teams = event.target.result;
 
                 // Create new league database
                 request = db.connect_league(g.lid);
@@ -112,7 +114,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
 
                     Davis.location.assign(new Davis.Request('/l/' + g.lid));
                 };
-            });
+            };
         };
     }
 

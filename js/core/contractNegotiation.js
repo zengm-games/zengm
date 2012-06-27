@@ -1,4 +1,6 @@
 define(["util/helpers", "util/lock", "util/playMenu", "util/random"], function (helpers, lock, playMenu, random) {
+    "use strict";
+
     /*Start a new contract negotiation with player.
 
     Args:
@@ -7,8 +9,6 @@ define(["util/helpers", "util/lock", "util/playMenu", "util/random"], function (
             extension with a current player who just became a free agent. False
             otherwise.
     */
-    "use strict";
-
     function create(pid, resigning, cb) {
         var playerStore;
 

@@ -62,7 +62,6 @@ draft
 contract negotiation
 - test all the error conditions and make sure callbacks are appropriately called (unit tests?)
 - add free agent to the end of roster
-is the league menu persisting over in-league page reloads?
 
 ---
 

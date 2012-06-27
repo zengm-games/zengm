@@ -9,20 +9,21 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
 
         // Make sure league exists
 
-        // Connect to league database
-        request = db.connect_league(g.lid);
-        request.onsuccess = function (event) {
-            g.dbl = request.result;
-            g.dbl.onerror = function (event) {
-                console.log("League database error: " + event.target.errorCode);
-            };
-
-            cb();
-        };
 
         // Make sure league template FOR THE CURRENT LEAGUE is showing
         leagueMenu = document.getElementById("league_menu");
-        if (leagueMenu === null || leagueMenu.dataset.lid !== g.lid) {
+        if (leagueMenu === null || parseInt(leagueMenu.dataset.lid, 10) !== g.lid) {
+            // Connect to league database
+            request = db.connect_league(g.lid);
+            request.onsuccess = function (event) {
+                g.dbl = request.result;
+                g.dbl.onerror = function (event) {
+                    console.log("League database error: " + event.target.errorCode);
+                };
+
+                cb();
+            };
+
             data = {};
             template = Handlebars.templates.league_layout;
             data.content = template({g: g});
@@ -32,6 +33,8 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             playMenu.setStatus();
             playMenu.setPhase();
             playMenu.refreshOptions();
+        } else {
+            cb();
         }
     }
 

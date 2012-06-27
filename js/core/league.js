@@ -100,8 +100,8 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                     // Make schedule, start season
                     season.newPhase(c.PHASE_REGULAR_SEASON);
                     playMenu.setStatus('Idle');
-/*
-        // Auto sort player's roster (other teams will be done in season.new_phase(c.PHASE_REGULAR_SEASON))
+
+/*        // Auto sort player's roster (other teams will be done in season.new_phase(c.PHASE_REGULAR_SEASON))
         roster_auto_sort(g.user_tid)
 
         // Default trade settings
@@ -109,8 +109,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
             trade_tid = 1
         else:
             trade_tid = 0
-        g.dbex('INSERT INTO trade (tid) VALUES (:tid)', tid=trade_tid)
-*/
+        g.dbex('INSERT INTO trade (tid) VALUES (:tid)', tid=trade_tid)*/
 
                     Davis.location.assign(new Davis.Request('/l/' + g.lid));
                 };

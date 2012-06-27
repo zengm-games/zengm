@@ -9,7 +9,7 @@ define(["util/helpers", "util/lock", "util/playMenu", "util/random"], function (
     */
     "use strict";
 
-    function new_(pid, resigning, cb) {
+    function create(pid, resigning, cb) {
         var playerStore;
 
         console.log("Trying to start new contract negotiation with player " + pid);
@@ -227,7 +227,7 @@ define(["util/helpers", "util/lock", "util/playMenu", "util/random"], function (
     }
 
     return {
-        "new": new_,
+        create: create,
         offer: offer,
         accept: accept,
         cancel: cancel,

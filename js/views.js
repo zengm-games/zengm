@@ -301,7 +301,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
 
                     teamSeasons = event.target.result;
                     for (j = 0; j < teamSeasons.length; j++) {
-                        if (teamSeasons[j].season === g.season) {
+                        if (teamSeasons[j].season === season) {
                             teamAll = teamSeasons[j];
                             break;
                         }

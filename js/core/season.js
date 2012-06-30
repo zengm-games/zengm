@@ -66,51 +66,30 @@ define(["util/helpers", "util/playMenu", "util/random"], function (helpers, play
                         }
                         teamNewSeason.stats[0].playoffs = false;
                         delete teamNewSeason.rid;
-console.log(teamNewSeason);
                         teamStore.add(teamNewSeason);
                     }
                     cursor.continue();
                 } else {
-                    // Add row to player stats if they are on a team
-                    transaction.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
-                        var cursorP, key, player, playerNewStats;
+                    // Loop through all non-retired players
+                    transaction.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) {
+                        var cursorP, key, player, playerNewRatings, playerNewStats, r;
 
                         cursorP = event.target.result;
                         if (cursorP) {
                             player = cursorP.value;
-console.log(player.pid);
-                            playerNewStats = {};
-                            for (key in player.stats[0]) {
-                                if (player.stats[0].hasOwnProperty(key)) {
-                                    playerNewStats[key] = 0;
+
+                            // Add row to player ratings
+                            playerNewRatings = {};
+                            r = player.ratings.length - 1; // Most recent ratings
+                            for (key in player.ratings[r]) {
+                                if (player.ratings[r].hasOwnProperty(key)) {
+                                    playerNewRatings[key] = 0;
                                 }
                             }
-                            playerNewStats.playoffs = false;
-                            playerNewStats.season = g.season;
-                            player.stats.push(playerNewStats);
+                            playerNewRatings.season = g.season;
+                            player.ratings.push(playerNewRatings);
 
-                            cursorP.update(player);
-/*console.log(player);*/
-                            cursorP.continue();
-                        } else {
-//RATINGS go here
-                        }
-                    };
-//                    cb(phase, phaseText);
-                }
-            };
-
-            // Create new rows in team_attributes
-/*            r = g.dbex('SELECT tid, did, region, name, abbrev, cash FROM team_attributes WHERE season = :season', season=g.season - 1)
-            for row in r.fetchall()) {
-                g.dbex('INSERT INTO team_attributes (tid, did, region, name, abbrev, cash, season) VALUES (:tid, :did, :region, :name, :abbrev, :cash, :season)', season=g.season, **row)
-
-            // Create new rows in player_ratings, only for active players
-            r = g.dbex('SELECT pr.pid, season + 1 AS season, ovr, pr.hgt, stre, spd, jmp, endu, ins, dnk, ft, fg, tp, blk, stl, drb, pss, reb, pot FROM player_ratings AS pr, player_attributes AS pa WHERE pa.pid = pr.pid AND pr.season = :season AND pa.tid !== :tid', season=g.season - 1, tid=c.PLAYER_RETIRED)
-            for row in r.fetchall()) {
-                g.dbex('INSERT INTO player_ratings (pid, season, ovr, hgt, stre, spd, jmp, endu, ins, dnk, ft, fg, tp, blk, stl, drb, pss, reb, pot) VALUES (:pid, :season, :ovr, :hgt, :stre, :spd, :jmp, :endu, :ins, :dnk, :ft, :fg, :tp, :blk, :stl, :drb, :pss, :reb, :pot)', **row)
-
-            // Age players
+/*            // Age players
             pids = []
             r = g.dbex('SELECT pid FROM player_attributes WHERE tid !== :tid', tid=c.PLAYER_RETIRED)
             for pid, in r.fetchall()) {
@@ -119,11 +98,30 @@ console.log(player.pid);
             for pid in pids) {
                 up.load(pid)
                 up.develop()
-                up.save()
+                up.save()*/
+                            // Add row to player stats if they are on a team
+                            if (player.tid >= 0) {
+                                playerNewStats = {};
+                                for (key in player.stats[0]) {
+                                    if (player.stats[0].hasOwnProperty(key)) {
+                                        playerNewStats[key] = 0;
+                                    }
+                                }
+                                playerNewStats.playoffs = false;
+                                playerNewStats.season = g.season;
+                                player.stats.push(playerNewStats);
+                            }
 
-            // AI teams sign free agents
-            free_agents_auto_sign()*/
-            cb(phase, phaseText);
+                            cursorP.update(player);
+                            cursorP.continue();
+                        } else {
+/*                            // AI teams sign free agents
+                            free_agents_auto_sign()*/
+                            cb(phase, phaseText);
+                        }
+                    };
+                }
+            };
         } else if (phase === c.PHASE_REGULAR_SEASON) {
             phaseText = g.season + " regular season";
 /*            // First, make sure teams are all within the roster limits

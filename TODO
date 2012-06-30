@@ -1,13 +1,9 @@
 main todo
-- new season
-  - add row to team stats
-  - add row to player stats if they're on a team
-  - update ratings for all non-retired players
+- make sure all the existing views work with multiple seasons, as they used to
 - free agents
   - don't add new row to stats if it's the offseason, but do during the season. Same for drafted players, only add stats row when they're put on a roster
 - resigning old players
   - negotiationList
-- make sure all the existing views work with multiple seasons, as they used to
 - other views
 - reassess how money is stored (ones, thousands, millions?)
 strategic issues
@@ -63,6 +59,9 @@ roster view
 - row handle is too skinny - why?
 draft
 - draft history view
+new season
+- player aging
+- auto free agent signing
 contract negotiation
 - test all the error conditions and make sure callbacks are appropriately called (unit tests?)
 - add free agent to the end of roster

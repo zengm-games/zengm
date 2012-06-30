@@ -87,10 +87,10 @@ console.log(player.pid);
                             }
                             playerNewStats.playoffs = false;
                             playerNewStats.season = g.season;
-/*                            player.stats.push(playerNewStats);
+                            player.stats.push(playerNewStats);
 
                             cursorP.update(player);
-console.log(player);*/
+/*console.log(player);*/
                             cursorP.continue();
                         } else {
 //RATINGS go here

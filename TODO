@@ -119,3 +119,7 @@ handlebars templates -f js/templates.js
 TODO:
 only need handlebars.runtime.js
 merge game_attributes into league table of meta database
+
+---
+
+g.dbl.transaction(["players"]).objectStore("players").get(476).onsuccess = function (event) { console.log(event.target.result); };

@@ -10,12 +10,13 @@ action in progress, currently one of these things:
 There are also functions to check if it is permissible to start one of those
 actions.
 */
-define(["util/helpers"], function(helpers) {
+define(["util/helpers"], function (helpers) {
+    "use strict";
+
     function setGamesInProgress(status) {
         if (status) {
             status = true;
-        }
-        else {
+        } else {
             status = false;
         }
         helpers.setGameAttributes({gamesInProgress: status});
@@ -28,13 +29,13 @@ define(["util/helpers"], function(helpers) {
     /*Returns true or false depending on whether the negotiations table is
     empty or not.*/
     function negotiationInProgress() {
+        var negotiations;
+
         negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
         if (negotiations.length > 0) {
             return true;
         }
-        else {
-            return false;
-        }
+        return false;
     }
 
     /*Returns a boolean. Games can be started only when there is no contract
@@ -62,10 +63,12 @@ define(["util/helpers"], function(helpers) {
         if r.rowcount:
             return false;*/
 
-        return true
+        return true;
     }
 
     function canStartNegotiation() {
+        var i, negotiations;
+
         if (g.gamesInProgress) {
             return false;
         }

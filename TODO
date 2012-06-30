@@ -1,8 +1,12 @@
 main todo
+- new season
+  - add row to team stats
+  - add row to player stats if they're on a team
+  - update ratings for all non-retired players
+- free agents
+  - don't add new row to stats if it's the offseason, but do during the season. Same for drafted players, only add stats row when they're put on a roster
 - resigning old players
   - negotiationList
-- new season
-  - add rows to stats in DB as is done for playoffs
 - make sure all the existing views work with multiple seasons, as they used to
 - other views
 - reassess how money is stored (ones, thousands, millions?)

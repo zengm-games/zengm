@@ -17,7 +17,7 @@ define(["util/helpers", "util/playMenu", "util/random"], function (helpers, play
         to be sent to the client.
     */
     function newPhase(phase) {
-        var phaseText;
+        var phaseText, teamStore, transaction;
 
         // Prevent code running twice
         if (phase === g.phase) {
@@ -34,6 +34,70 @@ define(["util/helpers", "util/playMenu", "util/random"], function (helpers, play
         if (phase === c.PHASE_PRESEASON) {
             helpers.setGameAttributes({season: g.season + 1});
             phaseText = g.season + " preseason";
+
+            transaction = g.dbl.transaction(["players", "teams"], IDBTransaction.READ_WRITE);
+            teamStore = transaction.objectStore("teams")
+
+            // Add row to team stats
+            teamStore.index("season").openCursor(IDBKeyRange.only(g.season - 1)).onsuccess = function (event) {
+                var cursor, key, teamNewSeason, teamSeason;
+
+                cursor = event.target.result;
+                if (cursor) {
+                    teamSeason = cursor.value;
+                    if (teamSeason.tid >= 0) { // Only players on rosters
+                        teamNewSeason = helpers.deepCopy(teamSeason);
+                        teamNewSeason.season = g.season;
+                        teamNewSeason.won = 0;
+                        teamNewSeason.lost = 0;
+                        teamNewSeason.wonDiv = 0;
+                        teamNewSeason.lostDiv = 0;
+                        teamNewSeason.wonConf = 0;
+                        teamNewSeason.lostConf = 0;
+                        teamNewSeason.madePlayoffs = false;
+                        teamNewSeason.confChamps = false;
+                        teamNewSeason.leagueChamps = false;
+                        //teamNewSeason.stats = [{playoffs: false, gp: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, oppPts: 0, att: 0}];
+                        teamNewSeason.stats = [{}];
+                        for (key in teamSeason.stats[0]) {
+                            if (teamSeason.stats[0].hasOwnProperty(key)) {
+                                teamNewSeason.stats[0][key] = 0;
+                            }
+                        }
+                        teamNewSeason.stats[0].playoffs = false;
+                        delete teamNewSeason.rid;
+console.log(teamNewSeason);
+                        teamStore.add(teamNewSeason);
+                    }
+                    cursor.continue();
+                } else {
+                    // Add row to player stats if they are on a team
+/*                    transaction.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
+                        var cursorP, key, player, playerPlayoffStats;
+
+                        cursorP = event.target.result;
+                        if (cursorP) {
+                            player = cursorP.value;
+                            playerPlayoffStats = {};
+                            for (key in player.stats[0]) {
+                                if (player.stats[0].hasOwnProperty(key)) {
+                                    playerPlayoffStats[key] = 0;
+                                }
+                            }
+                            playerPlayoffStats.playoffs = false;
+                            playerPlayoffStats.season = g.season;
+                            player.stats.push(playerPlayoffStats);
+
+                            cursorP.update(player);
+console.log(player);
+                            cursorP.continue();
+                        } else {
+//RATINGS go here
+                        }
+                    };*/
+//                    cb(phase, phaseText);
+                }
+            };
 
             // Create new rows in team_attributes
 /*            r = g.dbex('SELECT tid, did, region, name, abbrev, cash FROM team_attributes WHERE season = :season', season=g.season - 1)
@@ -200,7 +264,7 @@ define(["util/helpers", "util/playMenu", "util/random"], function (helpers, play
                             };
                         }
 //                        else {
-// RACE CONDITION: Should only run after the players update above finishes
+// RACE CONDITION: Should only run after the players update above finishes. won't be a race condition if they use the same transaction
                             cursor.continue();
 //                        }
                     } else {
@@ -224,16 +288,16 @@ define(["util/helpers", "util/playMenu", "util/random"], function (helpers, play
         } else if (phase === c.PHASE_AFTER_DRAFT) {
             phaseText = g.season + " after draft";
             cb(phase, phaseText);
-        }/* else if (phase === c.PHASE_RESIGN_PLAYERS) {
+        } else if (phase === c.PHASE_RESIGN_PLAYERS) {
             phaseText = g.season + " resign players";
 
             // Check for retiring players
             // Call the contructor each season because that's where the code to check for retirement is
-    //        rpw = retired_players_window.RetiredPlayersWindow(self)  // Do the retired player check
-    //        rpw.retired_players_window.run()
-    //        rpw.retired_players_window.destroy()
+//            rpw = retired_players_window.RetiredPlayersWindow(self)  // Do the retired player check
+//            rpw.retired_players_window.run()
+//            rpw.retired_players_window.destroy()
 
-            // Resign players
+/*            // Resign players
             r = g.dbex('SELECT pid, tid, name FROM player_attributes WHERE contract_exp = :season AND tid >= 0', season=g.season)
             for pid, tid, name in r.fetchall()) {
                 if (tid !== g.user_tid) {
@@ -255,12 +319,12 @@ define(["util/helpers", "util/playMenu", "util/random"], function (helpers, play
                     // Open negotiations with player
                     error = contract_negotiation.new(pid, resigning=true)
                     if (error) {
-                        app.logger.debug(error)
+                        app.logger.debug(error)*/
             cb(phase, phaseText);
         } else if (phase === c.PHASE_FREE_AGENCY) {
             phaseText = g.season + " free agency";
 
-            // Delete all current negotiations to resign players
+/*            // Delete all current negotiations to resign players
             contract_negotiation.cancel_all()
 
             // Reset contract demands of current free agents
@@ -276,9 +340,9 @@ define(["util/helpers", "util/playMenu", "util/random"], function (helpers, play
                 g.dbex('UPDATE player_attributes SET draft_year = -1, round = -1, draft_pick = -1, draft_tid = -1 WHERE pid = :pid', pid=pid)
                 p = player.Player()
                 p.load(pid)
-                p.add_to_free_agents(phase)
+                p.add_to_free_agents(phase)*/
             cb(phase, phaseText);
-        }*/
+        }
     }
 
     /*Creates a new regular season schedule with appropriate division and

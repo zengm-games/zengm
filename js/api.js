@@ -47,22 +47,22 @@ define(["db", "core/draft", "core/game", "core/season", "util/helpers", "util/lo
             }
         } else if (amount === "until_resign_players") {
             if (g.phase === c.PHASE_AFTER_DRAFT) {
-//                season.new_phase(c.PHASE_RESIGN_PLAYERS);
+                season.newPhase(c.PHASE_RESIGN_PLAYERS);
 //            url = url_for('negotiation_list', lid=g.lid)
             }
         } else if (amount === "until_free_agency") {
             if (g.phase === c.PHASE_RESIGN_PLAYERS) {
-//                season.new_phase(c.PHASE_FREE_AGENCY);
+                season.newPhase(c.PHASE_FREE_AGENCY);
                 playMenu.setStatus("Idle");
 //            url = url_for('free_agents', lid=g.lid)
             }
         } else if (amount === "until_preseason") {
             if (g.phase === c.PHASE_FREE_AGENCY) {
-//                season.new_phase(c.PHASE_PRESEASON);
+                season.newPhase(c.PHASE_PRESEASON);
             }
         } else if (amount === "until_regular_season") {
             if (g.phase === c.PHASE_PRESEASON) {
-//                error = season.new_phase(c.PHASE_REGULAR_SEASON);
+                season.newPhase(c.PHASE_REGULAR_SEASON);
             }
         }
 

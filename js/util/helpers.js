@@ -1,4 +1,6 @@
-define([], function() {
+define([], function () {
+    "use strict";
+
     /*Validate that the given abbreviation corresponds to a valid team.
 
     If an invalid abbreviation is passed, the user's team will be used.
@@ -10,8 +12,10 @@ define([], function() {
         A two element list of the validated team ID and abbreviation.
     */
     function validateAbbrev(abbrev) {
-        var abbrevs = ["ATL", "BOS", "CHA", "CHI", "CLE", "DAL", "DEN", "DET", "GSW", "HOU", "IND", "LAC", "LAL", "MEM", "MIA", "MIL", "MIN", "NJN", "NOR", "NYK", "ORL", "PHI", "PHO", "POR", "SAC", "SAS", "SEA", "TOR", "UTA", "WAS"];
-        var tid = abbrevs.indexOf(abbrev);
+        var abbrevs, tid;
+
+        abbrevs = ["ATL", "BOS", "CHA", "CHI", "CLE", "DAL", "DEN", "DET", "GSW", "HOU", "IND", "LAC", "LAL", "MEM", "MIA", "MIL", "MIN", "NJN", "NOR", "NYK", "ORL", "PHI", "PHO", "POR", "SAC", "SAS", "SEA", "TOR", "UTA", "WAS"];
+        tid = abbrevs.indexOf(abbrev);
 
         if (tid < 0) {
             tid = g.userTid;
@@ -23,14 +27,16 @@ define([], function() {
 
     /* Same as validateAbbrev, but for tid. */
     function validateTid(tid) {
-        var abbrevs = ["ATL", "BOS", "CHA", "CHI", "CLE", "DAL", "DEN", "DET", "GSW", "HOU", "IND", "LAC", "LAL", "MEM", "MIA", "MIL", "MIN", "NJN", "NOR", "NYK", "ORL", "PHI", "PHO", "POR", "SAC", "SAS", "SEA", "TOR", "UTA", "WAS"];
-        var tid = parseInt(tid, 10);
+        var abbrev, abbrevs;
+
+        abbrevs = ["ATL", "BOS", "CHA", "CHI", "CLE", "DAL", "DEN", "DET", "GSW", "HOU", "IND", "LAC", "LAL", "MEM", "MIA", "MIL", "MIN", "NJN", "NOR", "NYK", "ORL", "PHI", "PHO", "POR", "SAC", "SAS", "SEA", "TOR", "UTA", "WAS"];
+        tid = parseInt(tid, 10);
 
         if (tid < 0 || tid >= abbrevs.length) {
             tid = g.userTid;
         }
         abbrev = abbrevs[tid];
-        
+
         return [tid, abbrev];
     }
 
@@ -47,9 +53,8 @@ define([], function() {
     */
     function validateSeason(season) {
         if (!season) {
-            season = g.season
-        }
-        else {
+            season = g.season;
+        } else {
             // Make sure there is an entry for the supplied season in the DB somewhere
             season = parseInt(season, 10);
         }
@@ -59,13 +64,15 @@ define([], function() {
 
     /*Returns a list of all the seasons, past and present.*/
     function getSeasons(selectedSeason, ignoredSeason) {
+        var season, seasons;
+
         selectedSeason = parseInt(selectedSeason, 10);
         ignoredSeason = typeof ignoredSeason !== "undefined" ? parseInt(selectedSeason, 10) : null;
 
-        var seasons = [];
-        for (var season=g.startingSeason; season<=g.season; season++) {
-            if (season != ignoredSeason) {
-                seasons.push({season: season, selected: selectedSeason===season});
+        seasons = [];
+        for (season = g.startingSeason; season <= g.season; season++) {
+            if (season !== ignoredSeason) {
+                seasons.push({season: season, selected: selectedSeason === season});
             }
         }
         return seasons;
@@ -73,8 +80,10 @@ define([], function() {
 
     /*Returns a list of all the teams. If selectedTid is passed, then the "selected" property will be added to each team, true only for selectedTid and false otherwise.*/
     function getTeams(selectedTid) {
+        var i, teams;
+
         selectedTid = typeof selectedTid !== "undefined" ? parseInt(selectedTid, 10) : -1;
-        var teams = [
+        teams = [
             {tid: 0, cid: 0, did: 2, region: "Atlanta", name: "Herons", abbrev: "ATL"},
             {tid: 1, cid: 0, did: 0, region: "Boston", name: "Clovers", abbrev: "BOS"},
             {tid: 2, cid: 0, did: 2, region: "Charlotte", name: "Bay Cats", abbrev: "CHA"},
@@ -108,19 +117,21 @@ define([], function() {
         ];
 
         if (selectedTid >= 0) {
-            for (var i=0; i<teams.length; i++) {
+            for (i = 0; i < teams.length; i++) {
                 teams[i].selected = false;
             }
             teams[selectedTid].selected = true;
         }
-        
+
         return teams;
     }
 
     /*Injects the game attributes stored in localStorage into the g object.*/
     function loadGameAttributes() {
+        var gameAttributes, prop;
+
         gameAttributes = JSON.parse(localStorage.getItem("league" + g.lid + "GameAttributes"));
-        for (var prop in gameAttributes) {
+        for (prop in gameAttributes) {
             if (gameAttributes.hasOwnProperty(prop)) {
                 g[prop] = gameAttributes[prop];
             }
@@ -129,11 +140,13 @@ define([], function() {
 
     /*Takes an object and stores the properties (updating or inserting) in gameAttributes and g.*/
     function setGameAttributes(gameAttributes) {
+        var gameAttributesOld, prop;
+
         gameAttributesOld = JSON.parse(localStorage.getItem("league" + g.lid + "GameAttributes"));
         if (gameAttributesOld === null) {
             gameAttributesOld = {};
         }
-        for (var prop in gameAttributes) {
+        for (prop in gameAttributes) {
             if (gameAttributes.hasOwnProperty(prop)) {
                 gameAttributesOld[prop] = gameAttributes[prop];
                 g[prop] = gameAttributes[prop];
@@ -149,13 +162,16 @@ define([], function() {
      * than one game in a day. Taken from http://stackoverflow.com/a/3284324/786644
      */
     function deepCopy(obj) {
-        if (typeof obj !== "object") return obj;
-        if (obj.constructor === RegExp) return obj;
+        var key, retVal;
 
-        var retVal = new obj.constructor();
-        for (var key in obj) {
-            if (!obj.hasOwnProperty(key)) continue;
-            retVal[key] = deepCopy(obj[key]);
+        if (typeof obj !== "object") { return obj; }
+        if (obj.constructor === RegExp) { return obj; }
+
+        retVal = new obj.constructor();
+        for (key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                retVal[key] = deepCopy(obj[key]);
+            }
         }
         return retVal;
     }
@@ -164,8 +180,8 @@ define([], function() {
         var data, template;
 
         data = {"title": "Error - League " + g.lid};
-        template = Handlebars.templates["error"];
-        data["league_content"] = template({error: error});
+        template = Handlebars.templates.error;
+        data.league_content = template({error: error});
         bbgm.ajaxUpdate(data);
     }
 
@@ -177,7 +193,7 @@ define([], function() {
     Runs a callback function with a single argument representing the payroll in
     thousands of dollars.*/
     function getPayroll(tid, cb) {
-        g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(tid).onsuccess = function(event) {
+        g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
             var i, pa, payroll, playersAll, releasedPlayersSalaries;
 
             payroll = 0;
@@ -209,5 +225,5 @@ define([], function() {
         deepCopy: deepCopy,
         leagueError: leagueError,
         getPayroll: getPayroll
-    }
+    };
 });

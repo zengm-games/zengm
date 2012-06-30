@@ -72,29 +72,30 @@ console.log(teamNewSeason);
                     cursor.continue();
                 } else {
                     // Add row to player stats if they are on a team
-/*                    transaction.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
-                        var cursorP, key, player, playerPlayoffStats;
+                    transaction.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
+                        var cursorP, key, player, playerNewStats;
 
                         cursorP = event.target.result;
                         if (cursorP) {
                             player = cursorP.value;
-                            playerPlayoffStats = {};
+console.log(player.pid);
+                            playerNewStats = {};
                             for (key in player.stats[0]) {
                                 if (player.stats[0].hasOwnProperty(key)) {
-                                    playerPlayoffStats[key] = 0;
+                                    playerNewStats[key] = 0;
                                 }
                             }
-                            playerPlayoffStats.playoffs = false;
-                            playerPlayoffStats.season = g.season;
-                            player.stats.push(playerPlayoffStats);
+                            playerNewStats.playoffs = false;
+                            playerNewStats.season = g.season;
+/*                            player.stats.push(playerNewStats);
 
                             cursorP.update(player);
-console.log(player);
+console.log(player);*/
                             cursorP.continue();
                         } else {
 //RATINGS go here
                         }
-                    };*/
+                    };
 //                    cb(phase, phaseText);
                 }
             };

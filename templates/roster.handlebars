@@ -1,0 +1,118 @@
+<script type="text/javascript">
+$(document).ready(function() {
+    bbgm.dropdown($('#roster_select_team'), $('#roster_select_season'));
+
+    {{#if sortable}}
+        // Roster reordering
+        function highlightHandles() {
+            var i = 1;
+            $('#roster tbody').children().each(function() {
+                if (i <= 5) {
+                    $(this).find('td:first').removeClass('btn-info');
+                    $(this).find('td:first').addClass('btn-primary');
+                }
+                else {
+                    $(this).find('td:first').removeClass('btn-primary');
+                    $(this).find('td:first').addClass('btn-info');
+                }
+                i++;
+            });
+        }
+        highlightHandles();
+        var fixHelper = function(e, ui) {
+            // Return helper which preserves the width of table cells being reordered
+            ui.children().each(function() {
+              $(this).width($(this).width());
+            });
+            return ui;
+        };
+        $('#roster tbody').sortable({
+            helper: fixHelper,
+            cursor: 'move',
+            update: function(e, ui) {
+                sorted = $(this).sortable('serialize');
+                $.post('/l/{{g.lid}}/roster/reorder', sorted, function(msg) {
+                  highlightHandles();
+                });
+            }
+        }).disableSelection();
+        $('#auto_sort_roster').click(function(event) {
+            $.post('/l/{{g.lid}}/roster/auto_sort', {'json': 1}, function (data) {
+                ajax_update(data);
+            }, 'json');
+        });
+
+        // Release player
+        $('#roster button').click(function(event) {
+            if (this.dataset.action == 'release') {
+                if (window.confirm('Are you sure you want to release ' + this.dataset.playerName + '?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in ' + this.dataset.contractExpiration + '.')) {
+                    var tr = this.parentNode.parentNode;
+                    $.post('/l/{{g.lid}}/roster_release', {'pid': this.dataset.playerId}, function (data) {
+                        if (data['error']) {
+                            alert('Error: ' + data['error']);
+                        }
+                        else {
+                            tr.parentNode.removeChild(tr);
+                        }
+                    }, 'json');
+                }
+            }
+            else if (this.dataset.action == 'buy_out') {
+                if ({{team.cash}} > this.dataset.cashOwed) {
+                    if (window.confirm('Are you sure you want to buy out ' + this.dataset.playerName + '? You will have to pay him the $' + this.dataset.cashOwed + 'M remaining on his contract from your current cash reserves of ${{team.cash 1}}M. He will then become a free agent and his contract will no longer count towards your salary cap.')) {
+                        var tr = this.parentNode.parentNode;
+                        $.post('/l/{{g.lid}}/roster_buy_out', {'pid': this.dataset.playerId}, function (data) {
+                            if (data['error']) {
+                                alert('Error: ' + data['error']);
+                            }
+                            else {
+                                tr.parentNode.removeChild(tr);
+                            }
+                        }, 'json');
+                    }
+                }
+                else {
+                    alert('You only have ${{team.cash 1}}M in cash, but it would take $' + this.dataset.cashOwed + 'M to buy out ' + this.dataset.playerName + '.');
+                }
+            }
+            else if (this.dataset.action == 'trade_for') {
+
+            }
+        });
+    {{/if}}
+});
+</script>
+
+<form action="/l/{{g.lid}}/roster" method="GET" class="form-inline pull-right">
+  <select id="roster_select_team" name="team" class="team">
+    {{#teams}}
+      <option value="{{abbrev}}"{{#if selected}} selected="selected"{{/if}}}>{{region}} {{name}}</option>
+    {{/teams}}
+  </select>
+  <select id="roster_select_season" name="season" class="season">
+    {{#seasons}}
+      <option value="{{season}}"{{#if selected}} selected="selected"{{/if}}>{{season}} season</option>
+    {{/seasons}}
+  </select>
+</form>
+
+<h1>{{team.region}} {{team.name}} Roster</h1>
+
+{{#if sortable}}
+  <p>You currently have {{numRosterSpots}} empty roster spots.</p>
+  <p>Drag and drop row handles to move players between the starting lineup (<span class="roster_gs">&#9632;</span>) and the bench (<span class="roster_bench">&#9632;</span>).</p>
+  <p><button class="btn" id="auto_sort_roster">Auto sort roster</button></p>
+{{/if}}
+
+<p>
+<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="roster">
+<thead>
+  <tr>{{#if sortable}}<th></th>{{/if}}<th>Name</th><th title="Position">Pos</th><th>Age</th><th title="Overall Rating">Ovr</th><th title="Potential Rating">Pot</th>{{#if currentSeason}}<th>Contract</th>{{/if}}<th title="Minutes Per Game">Min</th><th title="Points Per Game">Pts</th><th title="Rebounds Per Game">Reb</th><th title="Assists Per Game">Ast</th>{{#if sortable}}<th>Release</th><th>Buy out</th>{{/if}}{{#if showTradeFor}}<th>Trade For</th>{{/if}}</tr>
+</thead>
+<tbody>
+  {{#players}}
+    <tr id="roster_{{pid}}">{{#if ../sortable}}<td class="roster_handle"></td>{{/if}}<td><a href="/l/{{../g.lid}}/player/{{pid}}">{{name}}</a></td><td>{{pos}}</td><td>{{age}}</td><td>{{ovr}}</td><td>{{pot}}</td>{{#if ../currentSeason}}<td>${{round contractAmount 1}}M through {{contractExp}}</td>{{/if}}<td>{{round min 1}}</td><td>{{round pts 1}}</td><td>{{round trb 1}}</td><td>{{round ast 1}}</td>{{#if ../sortable}}<td><button class="btn btn-mini" data-action="release" data-player-id="{{pid}}" data-player-name="{{name}}" data-contract-expiration="{{contract_exp}}">Release</button></td><td><button class="btn btn-mini" data-action="buy_out" data-player-id="{{pid}}" data-player-name="{{name}}" data-cash-owed="{{round cash_owed 1}}">Buy out</button></td>{{/if}} {{#if ../showTradeFor}}<td><form action="/l/{{g.lid}}/trade" method="POST" style="margin: 0"><input type="hidden" name="pid" value="{{pid}}"><button type="submit" class="btn btn-mini">Trade For</button></form></td>{{/if}}</tr>
+  {{/players}}
+</tbody>
+</table>
+</p>

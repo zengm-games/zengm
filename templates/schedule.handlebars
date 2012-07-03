@@ -1,0 +1,9 @@
+<h1>Upcoming Schedule</h1>
+
+<ol>
+{{#games}}
+  <li><a href="/l/{{../g.lid}}/roster/{{teams.0.abbrev}}">{{teams.0.region}} {{teams.0.name}}</a>
+  {{vsat}}
+  <a href="/l/{{../g.lid}}/roster/{{teams.1.abbrev}}">{{teams.1.region}} {{teams.1.name}}</a>
+{{/games}}
+</ol>

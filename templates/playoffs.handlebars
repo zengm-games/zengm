@@ -1,0 +1,77 @@
+<script type="text/javascript">
+$(document).ready(function() {
+  bbgm.dropdown($('#playoffs_select_season'));
+});
+</script>
+
+<form action="/l/{{g.lid}}/playoffs" method="GET" class="form-inline pull-right">
+  <select id="playoffs_select_season" name="season" class="season">
+    {{#seasons}}
+      <option value="{{season}}"{{#if selected}} selected="selected"{{/if}}>{{season}} season</option>
+    {{/seasons}}
+  </select>
+</form>
+
+<h1>{{season}} Playoffs</h1>
+
+{{#unless finalMatchups}}<p>This is what the playoff matchups would be if the season ended right now.</p>{{/unless}}
+
+<p>
+<table cellpadding="0" cellspacing="0" border="0" class="table-condensed" width="100%">
+<tbody>
+  <tr>
+    <td width="14.28%">
+      {{matchup 0 0}}
+    </td>
+    <td rowspan="2" width="14.28%">
+      {{matchup 1 0}}
+    </td>
+    <td rowspan="4" width="14.28%">
+      {{matchup 2 0}}
+    </td>
+    <td rowspan="4" width="14.28%">
+      {{matchup 3 0}}
+    </td>
+    <td rowspan="4" width="14.28%">
+      {{matchup 2 1}}
+    </td>
+    <td rowspan="2" width="14.28%">
+      {{matchup 1 2}}
+    </td>
+    <td width="14.28%">
+      {{matchup 0 4}}
+    </td>
+  </tr>
+  <tr>
+    <td>
+      {{matchup 0 1}}
+    </td>
+    <td>
+      {{matchup 0 5}}
+    </td>
+  </tr>
+  <tr>
+    <td>
+      {{matchup 0 2}}
+    </td>
+    <td rowspan="2">
+      {{matchup 1 1}}
+    </td>
+    <td rowspan="2">
+      {{matchup 1 3}}
+    </td>
+    <td>
+      {{matchup 0 6}}
+    </td>
+  </tr>
+  <tr>
+    <td>
+      {{matchup 0 3}}
+    </td>
+    <td>
+      {{matchup 0 7}}
+    </td>
+  </tr>
+</tbody>
+</table>
+</p>

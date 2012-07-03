@@ -1,12 +1,14 @@
-define(["core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMenu", "util/random"], function(gameSim, season, helpers, lock, playMenu, random) {
+define(["core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMenu", "util/random"], function (gameSim, season, helpers, lock, playMenu, random) {
     function Game() {
     }
 
-    Game.prototype.load = function(results, playoffs) {
+    Game.prototype.load = function (results, playoffs) {
+        var cid, did, gp, winp;
+
         // Retrieve stats
-        this.team = results['team'];
+        this.team = results.team;
         this.playoffs = playoffs;
-        this.id = results['gid'];
+        this.id = results.gid;
         this.home = [true, false];
 //console.log(this.team);
 
@@ -18,14 +20,12 @@ define(["core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMe
         }
         if (gp < 5) {
             this.att = random.gauss(22000 + gp * 1000, 1000);
-        }
-        else {
+        } else {
             this.att = random.gauss(winp * 36000, 1000);
         }
         if (this.att > 25000) {
             this.att = 25000;
-        }
-        else if (this.att < 10000) {
+        } else if (this.att < 10000) {
             this.att = 10000;
         }
 
@@ -34,22 +34,23 @@ define(["core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMe
         this.same_division = false;
         cid = [-1, -1];
         did = [-1, -1];
-        if (this.team[0].cid == this.team[1].cid) {
+        if (this.team[0].cid === this.team[1].cid) {
             this.same_conference = true;
         }
-        if (this.team[0].did == this.team[1].did) {
+        if (this.team[0].did === this.team[1].did) {
             this.same_division = true;
         }
-    }
+    };
 
-    Game.prototype.writeStats = function(callback) {
+    Game.prototype.writeStats = function (callback) {
+        var gameStore, i, p, playerStore, t, that;
         this.teamsRemaining = 2;
         this.playersRemaining = this.team[0].player.length + this.team[1].player.length;
         this.callback = callback;
 
         this.transaction = g.dbl.transaction(["games", "players", "playoffSeries", "teams"], IDBTransaction.READ_WRITE);
         // Record who the starters are
-/*    for (var t=0; t<2; t++) {
+/*    t = 0; t < 2; t++) {
         r = g.dbex('SELECT pid FROM player_attributes WHERE tid = :tid ORDER BY roster_order ASC LIMIT 5', tid=this.team[t]['id'])
         for starter_id, in r.fetchall() {
             for (p=0; p<this.team[t]['player'].length; p++) {
@@ -61,225 +62,219 @@ define(["core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMe
     }*/
 
         // Player stats and team stats
-        var that = this;
-        var playerStore = this.transaction.objectStore("players");
-        var gameStore = this.transaction.objectStore("players");
-        for (var t=0; t<2; t++) {
+        that = this;
+        playerStore = this.transaction.objectStore("players");
+        gameStore = this.transaction.objectStore("players");
+        for (t = 0; t < 2; t++) {
             this.writeTeamStats(t);
-            for (var p=0; p<this.team[t].player.length; p++) {
-                playerStore.openCursor(IDBKeyRange.only(this.team[t].player[p].id)).onsuccess = function(event) {
-                    var cursor = event.target.result;
+            for (p = 0; p < this.team[t].player.length; p++) {
+                playerStore.openCursor(IDBKeyRange.only(this.team[t].player[p].id)).onsuccess = function (event) {
+                    var cursor, keys, p, player, playerStats, t;
+                    cursor = event.target.result;
                     player = cursor.value;
 
                     // Find the correct row of stats
-                    for (var i=0; i<player.stats.length; i++) {
-//console.log(i);
-//console.log(player.stats);
-                        if (player.stats[i].season == g.season && player.stats[i].playoffs == that.playoffs) {
-                            var playerStats = player.stats[i];
+                    for (i = 0; i < player.stats.length; i++) {
+                        if (player.stats[i].season === g.season && player.stats[i].playoffs === that.playoffs) {
+                            playerStats = player.stats[i];
                             break;
                         }
                     }
 
                     // Which team is this, again?
-                    if (player.tid == that.team[0].id) {
-                        var t = 0;
-                    }
-                    else {
-                        var t = 1;
+                    if (player.tid === that.team[0].id) {
+                        t = 0;
+                    } else {
+                        t = 1;
                     }
 
                     // Which player is this, again?
-                    for (var p=0; p<that.team[t].player.length; p++) {
-                        if (player.pid == that.team[t].player[p].id) {
+                    for (p = 0; p < that.team[t].player.length; p++) {
+                        if (player.pid === that.team[t].player[p].id) {
                             break;
                         }
                     }
 
                     // Update stats
                     keys = ['min', 'fg', 'fga', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
-                    for (var i=0; i<keys.length; i++) {
+                    for (i = 0; i < keys.length; i++) {
                         playerStats[keys[i]] += that.team[t].player[p].stat[keys[i]];
                     }
                     playerStats.gp += 1;
-                    playerStats.trb += that.team[t].player[p].stat['orb'] + that.team[t].player[p].stat['drb'];
+                    playerStats.trb += that.team[t].player[p].stat.orb + that.team[t].player[p].stat.drb;
 
                     cursor.update(player);
 
                     that.playersRemaining -= 1;
-                    if (that.playersRemaining == 0 && that.teamsRemaining == 0) {
+                    if (that.playersRemaining === 0 && that.teamsRemaining === 0) {
                         that.callback();
                     }
-                }
+                };
             }
         }
         that.writeGameStats();
-    }
+    };
 
-    Game.prototype.writeTeamStats = function(t) {
-        if (t == 0) {
-            var t2 = 1;
+    Game.prototype.writeTeamStats = function (t) {
+        var t2, that;
+
+        if (t === 0) {
+            t2 = 1;
+        } else {
+            t2 = 0;
         }
-        else {
-            var t2 = 0;
-        }
-        var that = this;
+        that = this;
 
         // Record progress of playoff series, if appropriate
-        if (this.playoffs && t == 0) {
-            this.transaction.objectStore("playoffSeries").openCursor(IDBKeyRange.only(g.season)).onsuccess = function(event) {
-                var cursor = event.target.result;
-                var playoffSeries = cursor.value;
-console.log(playoffSeries);
-                var playoffRound = playoffSeries.series[playoffSeries.currentRound];
-console.log(playoffRound);
+        if (this.playoffs && t === 0) {
+            this.transaction.objectStore("playoffSeries").openCursor(IDBKeyRange.only(g.season)).onsuccess = function (event) {
+                var cursor, i, playoffRound, playoffSeries, series, won0;
+
+                cursor = event.target.result;
+                playoffSeries = cursor.value;
+                playoffRound = playoffSeries.series[playoffSeries.currentRound];
 
                 // Did the home (true) or away (false) team win this game? Here, "home" refers to this game, not the team which has homecourt advnatage in the playoffs, which is what series.home refers to below.
-                if (that.team[t]['stat']['pts'] > that.team[t2]['stat']['pts']) {
-                    var won0 = true;
-                }
-                else {
-                    var won0 = false;
+                if (that.team[t].stat.pts > that.team[t2].stat.pts) {
+                    won0 = true;
+                } else {
+                    won0 = false;
                 }
 
-                for (var i=0; i<playoffRound.length; i++) {
-                    var series = playoffRound[i];
-                    
-                    if (series.home.tid == that.team[t].id) {
+                for (i = 0; i < playoffRound.length; i++) {
+                    series = playoffRound[i];
+
+                    if (series.home.tid === that.team[t].id) {
                         if (won0) {
                             series.home.won += 1;
-                        }
-                        else {
+                        } else {
                             series.away.won += 1;
                         }
-                    }
-                    else if (series.away.tid == that.team[t].id) {
+                    } else if (series.away.tid === that.team[t].id) {
                         if (won0) {
                             series.away.won += 1;
-                        }
-                        else {
+                        } else {
                             series.home.won += 1;
                         }
                     }
                 }
 
                 cursor.update(playoffSeries);
-            }
+            };
         }
 
         // Team stats
-        this.transaction.objectStore("teams").index("tid").openCursor(IDBKeyRange.only(that.team[t].id)).onsuccess = function(event) {
-            var cursor = event.target.result;
-            var teamSeason = cursor.value;
-            if (teamSeason.season != g.season) {
+        this.transaction.objectStore("teams").index("tid").openCursor(IDBKeyRange.only(that.team[t].id)).onsuccess = function (event) {
+            var cost, cursor, i, keys, teamSeason, teamStats, won;
+
+            cursor = event.target.result;
+            teamSeason = cursor.value;
+            if (teamSeason.season === g.season) {
+                teamStats = teamSeason.stats[0];
+                if (teamStats.playoffs !== that.playoffs) {
+                    teamStats = teamSeason.stats[1];
+                }
+
+                if (that.team[t].stat.pts > that.team[t2].stat.pts) {
+                    won = true;
+                } else {
+                    won = false;
+                }
+
+                // Only pay player salaries for regular season games.
+    /*    if (!that.playoffs) {
+            r = g.dbex('SELECT SUM(contract_amount) * 1000 / 82 FROM released_players_salaries WHERE tid = :tid', tid=this.team[t]['id'])
+            cost_released, = r.fetchone()
+            r = g.dbex('SELECT SUM(contract_amount) * 1000 / 82 FROM player_attributes WHERE tid = :tid', tid=this.team[t]['id'])
+            cost, = r.fetchone()
+            if (cost_released) {
+                cost += cost_released;
+            }
+        }
+        else {*/
+                    cost = 0;
+    //    }
+
+                teamSeason.cash = teamSeason.cash + g.ticketPrice * that.att - cost;
+
+                keys = ['min', 'fg', 'fga', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
+                for (i = 0; i < keys.length; i++) {
+                    teamStats[keys[i]] += that.team[t].stat[keys[i]];
+                }
+                teamStats.gp += 1;
+                teamStats.trb += that.team[t].stat.orb + that.team[t].stat.drb;
+                teamStats.oppPts += that.team[t2].stat.pts;
+                teamStats.att += that.att;
+
+                if (won && !this.playoffs) {
+                    teamSeason.won += 1;
+                    if (this.same_division) {
+                        teamSeason.wonDiv += 1;
+                    }
+                    if (this.same_conference) {
+                        teamSeason.wonConf += 1;
+                    }
+                } else if (!this.playoffs) {
+                    teamSeason.lost += 1;
+                    if (this.same_division) {
+                        teamSeason.lostDiv += 1;
+                    }
+                    if (this.same_conference) {
+                        teamSeason.lostConf += 1;
+                    }
+                }
+
+                cursor.update(teamSeason);
+
+                that.teamsRemaining -= 1;
+                if (that.playersRemaining === 0 && that.teamsRemaining === 0) {
+                    that.callback();
+                }
+            } else {
                 cursor.continue();
             }
-//console.log('won ' + teamSeason.won);
-//console.log(teamSeason.stats);
-
-            teamStats = teamSeason.stats[0];
-//console.log(teamStats);
-            if (teamStats.playoffs != that.playoffs) {
-                teamStats = teamSeason.stats[1];
-            }
-//console.log(that);
-
-            if (that.team[t]['stat']['pts'] > that.team[t2]['stat']['pts']) {
-                won = true;
-            }
-            else {
-                won = false;
-            }
-
-            // Only pay player salaries for regular season games.
-/*    if (!that.playoffs) {
-        r = g.dbex('SELECT SUM(contract_amount) * 1000 / 82 FROM released_players_salaries WHERE tid = :tid', tid=this.team[t]['id'])
-        cost_released, = r.fetchone()
-        r = g.dbex('SELECT SUM(contract_amount) * 1000 / 82 FROM player_attributes WHERE tid = :tid', tid=this.team[t]['id'])
-        cost, = r.fetchone()
-        if (cost_released) {
-            cost += cost_released;
-        }
-    }
-    else {*/
-                cost = 0
-//    }
-
-            teamSeason.cash = teamSeason.cash + g.ticketPrice * that.att - cost;
-
-            keys = ['min', 'fg', 'fga', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
-            for (var i=0; i<keys.length; i++) {
-                teamStats[keys[i]] += that.team[t].stat[keys[i]];
-            }
-            teamStats.gp += 1;
-            teamStats.trb += that.team[t].stat['orb'] + that.team[t].stat['drb'];
-            teamStats.oppPts += that.team[t2].stat.pts;
-            teamStats.att += that.att;
-
-            if (won && !this.playoffs) {
-                teamSeason.won += 1;
-                if (this.same_division) {
-                    teamSeason.wonDiv += 1;
-                }
-                if (this.same_conference) {
-                    teamSeason.wonConf += 1;
-                }
-            }
-            else if (!this.playoffs) {
-                teamSeason.lost += 1;
-                if (this.same_division) {
-                    teamSeason.lostDiv += 1;
-                }
-                if (this.same_conference) {
-                    teamSeason.lostConf += 1;
-                }
-            }
-
-            cursor.update(teamSeason);
-
-            that.teamsRemaining -= 1;
-            if (that.playersRemaining == 0 && that.teamsRemaining == 0) {
-                that.callback();
-            }
-        }
-    }
+        };
+    };
 
     Game.prototype.writeGameStats = function () {
-        var gameStats = {gid: this.id, season: g.season, playoffs: this.playoffs, won: {}, lost: {}, teams: [{tid: this.team[0].id, players: []}, {tid: this.team[1].id, players: []}]};
-        for (var t=0; t<2; t++) {
+        var gameStats, i, keys, p, t, that, tl, tw;
+
+        gameStats = {gid: this.id, season: g.season, playoffs: this.playoffs, won: {}, lost: {}, teams: [{tid: this.team[0].id, players: []}, {tid: this.team[1].id, players: []}]};
+        for (t = 0; t < 2; t++) {
             keys = ['min', 'fg', 'fga', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
-            for (var i=0; i<keys.length; i++) {
+            for (i = 0; i < keys.length; i++) {
                 gameStats.teams[t][keys[i]] = this.team[t].stat[keys[i]];
             }
-            gameStats.teams[t]["trb"] = this.team[t].stat["orb"] + this.team[t].stat["drb"];
+            gameStats.teams[t].trb = this.team[t].stat.orb + this.team[t].stat.drb;
 
-            for (var p=0; p<this.team[t].player.length; p++) {
+            for (p = 0; p < this.team[t].player.length; p++) {
                 gameStats.teams[t].players[p] = {name: this.team[t].player[p].name, pos: this.team[t].player[p].pos};
-                for (var i=0; i<keys.length; i++) {
+                for (i = 0; i < keys.length; i++) {
                     gameStats.teams[t].players[p][keys[i]] = this.team[t].player[p].stat[keys[i]];
                 }
-                gameStats.teams[t].players[p]["trb"] = this.team[t].player[p].stat["orb"] + this.team[t].player[p].stat["drb"];
-                gameStats.teams[t].players[p]["pid"] = this.team[t].player[p].id;
+                gameStats.teams[t].players[p].trb = this.team[t].player[p].stat.orb + this.team[t].player[p].stat.drb;
+                gameStats.teams[t].players[p].pid = this.team[t].player[p].id;
             }
         }
 
 
         // Store some extra junk to make box scores easy
-        if (this.team[0]['stat']['pts'] > this.team[1]['stat']['pts']) {
-            var tw = 0;
-            var tl = 1;
-        }
-        else {
-            var tw = 1;
-            var tl = 0;
+        if (this.team[0].stat.pts > this.team[1].stat.pts) {
+            tw = 0;
+            tl = 1;
+        } else {
+            tw = 1;
+            tl = 0;
         }
 
-        var that = this;
+        that = this;
         this.transaction.objectStore("teams").index("season").getAll(g.season).onsuccess = function (event) {
-            var teams = event.target.result;
-            for (var i=0; i<teams.length; i++) {
-                var team = teams[i];
-                if (team.tid == that.team[tw].id) {
+            var i, team, teams;
+
+            teams = event.target.result;
+            for (i = 0; i < teams.length; i++) {
+                team = teams[i];
+                if (team.tid === that.team[tw].id) {
                     gameStats.won.abbrev = team.abbrev;
                     gameStats.won.region = team.region;
                     gameStats.won.name = team.name;
@@ -287,8 +282,7 @@ console.log(playoffRound);
                     gameStats.teams[tw].region = team.region;
                     gameStats.teams[tw].name = team.name;
 
-                }
-                else if (team.tid == that.team[tl].id) {
+                } else if (team.tid === that.team[tl].id) {
                     gameStats.lost.abbrev = team.abbrev;
                     gameStats.lost.region = team.region;
                     gameStats.lost.name = team.name;
@@ -296,14 +290,16 @@ console.log(playoffRound);
                     gameStats.teams[tl].region = team.region;
                     gameStats.teams[tl].name = team.name;
                 }
-                gameStats.won.pts = that.team[tw].stat["pts"];
-                gameStats.lost.pts = that.team[tl].stat["pts"];
+                gameStats.won.pts = that.team[tw].stat.pts;
+                gameStats.lost.pts = that.team[tl].stat.pts;
             }
             this.transaction.objectStore("games").add(gameStats);
-        }
-    }
+        };
+    };
 
     function _composite(minval, maxval, rating, components, inverse, rand) {
+        var add, component, i, r, rcomp, rmax, sign, y;
+
         inverse = typeof inverse !== "undefined" ? inverse : false;
         rand = typeof rand !== "undefined" ? rand : true;
 
@@ -312,12 +308,11 @@ console.log(playoffRound);
         if (inverse) {
             sign = -1;
             add = -100;
-        }
-        else {
+        } else {
             sign = 1;
             add = 0;
         }
-        for (var i=0; i<components.length; i++) {
+        for (i = 0; i < components.length; i++) {
             component = components[i];
             // Sigmoidal transformation
             y = (rating[component] - 70) / 10;
@@ -365,7 +360,7 @@ console.log(playoffRound);
             playMenu.refreshOptions();
             // Check to see if the season is over
             if (g.phase < c.PHASE_PLAYOFFS) {
-                season.getSchedule(0, function(schedule) {
+                season.getSchedule(0, function (schedule) {
                     if (schedule.length == 0) {
                         season.newPhase(c.PHASE_PLAYOFFS);
 // MOVE THIS TO newPhase(c.PHASE_PLAYOFFS)
@@ -378,7 +373,7 @@ console.log(playoffRound);
         function cbPlayGames() {
             playMenu.setStatus("Playing games (" + num_days + " days remaining)...")
             // Create schedule and team lists for today, to be sent to the client
-            season.getSchedule(num_active_teams / 2, function(schedule) {
+            season.getSchedule(num_active_teams / 2, function (schedule) {
 //                    tids_today = [];
                 for (var j=0; j<schedule.length; j++) {
                     var matchup = schedule[j];
@@ -392,11 +387,11 @@ console.log(playoffRound);
                 var teams_loaded = 0;
                 // Load all teams, for now. Would be more efficient to load only some of them, I suppose.
                 for (var tid=0; tid<30; tid++) {
-                    g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(tid).onsuccess = function(event) {
+                    g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
                         var players = event.target.result;
                         var realTid = players[0].tid;
                         var t = {id: realTid, defense: 0, pace: 0, won: 0, lost: 0, cid: 0, did: 0, stat: {}, player: []}
-                        g.dbl.transaction(["teams"]).objectStore("teams").index("tid").getAll(realTid).onsuccess = function(event) {
+                        g.dbl.transaction(["teams"]).objectStore("teams").index("tid").getAll(realTid).onsuccess = function (event) {
                             var teamSeasons = event.target.result;
                             for (var j=0; j<teamSeasons.length; j++) {
                                 if (teamSeasons[j]['season'] == g.season) {
@@ -409,7 +404,7 @@ console.log(playoffRound);
                             t.cid = team.cid;
                             t.did = team.did;
 
-                            for (var i=0; i<players.length; i++) {
+                            for (i = 0; i < players.length; i++) {
                                 var player = players[i];
                                 var p = {id: player.pid, name: player.name, pos: player.pos, ovr: 0, stat: {}, composite_rating: {}};
 
@@ -467,12 +462,12 @@ t['defense'] = 0.25;
                                     var gamesRemaining = schedule.length;
                                     var gidsFinished = [];
                                     function doSaveResults(results, playoffs) {
-                                        saveResults(results, playoffs, function() {
+                                        saveResults(results, playoffs, function () {
                                             gamesRemaining -= 1;
                                             gidsFinished.push(results.gid);
                                             if (gamesRemaining == 0) {
                                                 var scheduleStore = g.dbl.transaction(["schedule"], IDBTransaction.READ_WRITE).objectStore("schedule");
-                                                for (var i=0; i<gidsFinished.length; i++) {
+                                                for (i = 0; i < gidsFinished.length; i++) {
                                                     scheduleStore.delete(gidsFinished[i]);
                                                 }
 
@@ -480,7 +475,7 @@ t['defense'] = 0.25;
                                             }
                                         });
                                     }
-                                    for (var i=0; i<schedule.length; i++) {
+                                    for (i = 0; i < schedule.length; i++) {
                                         gs = new gameSim.GameSim(schedule[i].gid, teams[schedule[i].homeTid], teams[schedule[i].awayTid]);
                                         var results = gs.run();
                                         doSaveResults(results, g.phase == c.PHASE_PLAYOFFS);

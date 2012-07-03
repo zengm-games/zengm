@@ -1,4 +1,6 @@
 main todo
+- factor out db access from views
+  - generalized function to create players list. ask for what attributes, ratings, and stats are required, from what season. take a transaction too. then execute callback with players as input
 - make sure all the existing views work with multiple seasons, as they used to
   - set ratings on new season (currently 0)
 - free agents

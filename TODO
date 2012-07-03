@@ -15,10 +15,6 @@ strategic issues
 
 ---
 
-How should I handle in-league database? One big transaction?
-
----
-
 BUGS
 
 ratings should all be integers before being saved

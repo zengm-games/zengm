@@ -515,9 +515,9 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 return;
             }
 
+            playerStore = g.dbl.transaction(["players"]).objectStore("players");
             // Active draft
             if (g.phase === c.PHASE_DRAFT && season === g.season) {
-                playerStore = g.dbl.transaction(["players"]).objectStore("players");
                 playerStore.index("tid").getAll(c.PLAYER_UNDRAFTED).onsuccess = function (event) {
                     var i, pa, player, playersAll, pr, undrafted;
                     playersAll = event.target.result;
@@ -539,7 +539,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                     }
 
                     playerStore.index("draftYear").getAll(g.season).onsuccess = function (event) {
-                        var data, drafted, draftAbbrev, draftOrder, draftTid, pa, player, playersAll, pr, slot, started, template;
+                        var data, drafted, draftAbbrev, draftOrder, draftTid, i, pa, player, playersAll, pr, slot, started, template;
 
                         playersAll = event.target.result;
                         playersAll.sort(function (a, b) {  return (g.numTeams * (a.draftRound - 1) + a.draftPick) - (g.numTeams * (b.draftRound - 1) + b.draftPick); });
@@ -578,12 +578,64 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 };
                 return;
             }
-            // Show a summary of an old draft
-/*            data = {title: g.season + " Draft Results - League " + g.lid};
 
-            r = g.dbex("SELECT dr.round, dr.pick, dr.abbrev, dr.pid, dr.name, :viewSeason - dr.bornYear AS age, dr.pos, dr.ovr, dr.pot, ta.abbrev AS currentAbbrev, :season - dr.bornYear AS currentAge, pr.ovr AS currentOvr, pr.pot AS currentPot, SUM(CASE WHEN ps.min > 0 THEN 1 ELSE 0 END) AS gp, AVG(ps.min) as min, AVG(ps.pts) AS pts, AVG(ps.orb + ps.drb) AS trb, AVG(ps.ast) AS ast FROM draftResults AS dr LEFT OUTER JOIN playerRatings AS pr ON pr.season = :season AND dr.pid = pr.pid LEFT OUTER JOIN playerStats AS ps ON ps.playoffs = FALSE AND dr.pid = ps.pid LEFT OUTER JOIN playerAttributes AS pa ON dr.pid = pa.pid LEFT OUTER JOIN teamAttributes AS ta ON pa.tid = ta.tid AND ta.season = :season WHERE dr.season = :viewSeason GROUP BY dr.pid", viewSeason=viewSeason, season=g.season);
-            players = r.fetchall();
-            return renderAllOrJson("draftSummary.html", {"players": players, "seasons": seasons, "viewSeason": viewSeason});*/
+            // Show a summary of an old draft
+            playerStore.index("draftYear").getAll(season).onsuccess = function (event) {
+                var currentAbbrev, currentPr, currentTid, data, draftAbbrev, draftPr, draftTid, i, j, pa, player, players, playersAll, ps, template;
+
+                playersAll = event.target.result;
+
+                players = [];
+                for (i = 0; i < playersAll.length; i++) {
+                    pa = playersAll[i];
+
+                    if (pa.draftRound === 1 || pa.draftRound === 2) {
+                        // Attributes
+                        [currentTid, currentAbbrev] = helpers.validateTid(pa.tid);
+                        [draftTid, draftAbbrev] = helpers.validateTid(pa.draftTid);
+                        player = {pid: pa.pid, name: pa.name, pos: pa.pos, rnd: pa.draftRound, pick: pa.draftPick, draftAge: pa.draftYear - pa.bornYear, draftAbbrev: draftAbbrev, currentAge: g.season - pa.bornYear, currentAbbrev: currentAbbrev};
+
+                        // Ratings
+                        draftPr = pa.ratings[0];
+                        currentPr = pa.ratings[pa.ratings.length - 1];
+                        player.draftOvr = draftPr.ovr;
+                        player.draftPot = draftPr.pot;
+                        player.currentOvr = currentPr.ovr;
+                        player.currentPot = currentPr.pot;
+
+                        // Stats
+                        player.gp = 0;
+                        player.min = 0;
+                        player.pts = 0;
+                        player.trb = 0;
+                        player.ast = 0;
+                        for (j = 0; j < pa.stats.length; j++) {
+                            if (pa.stats[j].playoffs === false) {
+                                ps = pa.stats[j];
+                                player.gp += ps.gp;
+                                player.min += ps.min;
+                                player.pts += ps.pts;
+                                player.trb += ps.trb;
+                                player.ast += ps.ast;
+                            }
+                        }
+                        if (ps.gp > 0) {
+                            player.min = player.min / player.gp;
+                            player.pts = player.pts / player.gp;
+                            player.trb = player.trb / player.gp;
+                            player.ast = player.ast / player.gp;
+                        }
+
+
+                        players.push(player);
+                    }
+                }
+
+                data = {title: season + " Draft Results - League " + g.lid};
+                template = Handlebars.templates.draftSummary;
+                data.league_content = template({g: g, players: players, seasons: seasons});
+                bbgm.ajaxUpdate(data);
+            };
         });
     }
 

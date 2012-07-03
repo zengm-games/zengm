@@ -2143,14 +2143,14 @@ templates['draftSummary'] = template(function (Handlebars,depth0,helpers,partial
   helpers = helpers || Handlebars.helpers;
   var buffer = "", stack1, foundHelper, tmp1, self=this, functionType="function", helperMissing=helpers.helperMissing, undef=void 0, escapeExpression=this.escapeExpression, blockHelperMissing=helpers.blockHelperMissing;
 
-function program1(depth0,data) {
+function program1(depth0,data,depth1) {
   
   var buffer = "", stack1, stack2, stack3;
   buffer += "\n	          ['";
-  foundHelper = helpers.round;
-  stack1 = foundHelper || depth0.round;
+  foundHelper = helpers.rnd;
+  stack1 = foundHelper || depth0.rnd;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "round", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "rnd", { hash: {} }); }
   buffer += escapeExpression(stack1) + "-";
   foundHelper = helpers.pick;
   stack1 = foundHelper || depth0.pick;
@@ -2158,10 +2158,10 @@ function program1(depth0,data) {
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "pick", { hash: {} }); }
   buffer += escapeExpression(stack1) + "', '<a href=\"/l/";
   foundHelper = helpers['g'];
-  stack1 = foundHelper || depth0['g'];
+  stack1 = foundHelper || depth1['g'];
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "...g.lid", { hash: {} }); }
   buffer += escapeExpression(stack1) + "/player/";
   foundHelper = helpers.pid;
   stack1 = foundHelper || depth0.pid;
@@ -2179,10 +2179,10 @@ function program1(depth0,data) {
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "pos", { hash: {} }); }
   buffer += escapeExpression(stack1) + "', '<a href=\"/l/";
   foundHelper = helpers['g'];
-  stack1 = foundHelper || depth0['g'];
+  stack1 = foundHelper || depth1['g'];
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "...g.lid", { hash: {} }); }
   buffer += escapeExpression(stack1) + "/roster/";
   foundHelper = helpers.draftAbbrev;
   stack1 = foundHelper || depth0.draftAbbrev;
@@ -2210,20 +2210,20 @@ function program1(depth0,data) {
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "draftPot", { hash: {} }); }
   buffer += escapeExpression(stack1) + "', '<a href=\"/l/";
   foundHelper = helpers['g'];
-  stack1 = foundHelper || depth0['g'];
+  stack1 = foundHelper || depth1['g'];
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "...g.lid", { hash: {} }); }
   buffer += escapeExpression(stack1) + "/roster/";
   foundHelper = helpers.currentAbbrev;
   stack1 = foundHelper || depth0.currentAbbrev;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentAbbrev", { hash: {} }); }
   buffer += escapeExpression(stack1) + "\">";
-  foundHelper = helpers.current_abbrev;
-  stack1 = foundHelper || depth0.current_abbrev;
+  foundHelper = helpers.currentAbbrev;
+  stack1 = foundHelper || depth0.currentAbbrev;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "current_abbrev", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentAbbrev", { hash: {} }); }
   buffer += escapeExpression(stack1) + "</a>', '";
   foundHelper = helpers.currentAge;
   stack1 = foundHelper || depth0.currentAge;
@@ -2320,7 +2320,7 @@ function program4(depth0,data) {
   buffer += "<script type=\"text/javascript\">\n$(document).ready(function() {\n    bbgm.dropdown($('#draft_select_season'));\n\n    bbgm.datatableSinglePage($('#draft_results'), 0, [\n        ";
   foundHelper = helpers.players;
   stack1 = foundHelper || depth0.players;
-  tmp1 = self.program(1, program1, data);
+  tmp1 = self.programWithDepth(program1, data, depth0);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;

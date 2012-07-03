@@ -67,7 +67,7 @@ define([], function () {
         var season, seasons;
 
         selectedSeason = parseInt(selectedSeason, 10);
-        ignoredSeason = typeof ignoredSeason !== "undefined" ? parseInt(selectedSeason, 10) : null;
+        ignoredSeason = typeof ignoredSeason !== "undefined" ? parseInt(ignoredSeason, 10) : null;
 
         seasons = [];
         for (season = g.startingSeason; season <= g.season; season++) {

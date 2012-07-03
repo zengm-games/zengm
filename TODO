@@ -1,5 +1,6 @@
 main todo
 - make sure all the existing views work with multiple seasons, as they used to
+  - set ratings on new season (currently 0)
 - free agents
   - don't add new row to stats if it's the offseason, but do during the season. Same for drafted players, only add stats row when they're put on a roster
 - resigning old players

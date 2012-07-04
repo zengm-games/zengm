@@ -83,7 +83,7 @@ define(["util/helpers", "util/playMenu", "util/random"], function (helpers, play
                             r = player.ratings.length - 1; // Most recent ratings
                             for (key in player.ratings[r]) {
                                 if (player.ratings[r].hasOwnProperty(key)) {
-                                    playerNewRatings[key] = 0;
+                                    playerNewRatings[key] = player.ratings[r][key];
                                 }
                             }
                             playerNewRatings.season = g.season;
@@ -109,7 +109,10 @@ define(["util/helpers", "util/playMenu", "util/random"], function (helpers, play
                                 }
                                 playerNewStats.playoffs = false;
                                 playerNewStats.season = g.season;
+                                playerNewStats.tid = player.tid;
                                 player.stats.push(playerNewStats);
+                                player.statsTids.push(player.tid);
+                                player.statsTids = _.uniq(player.statsTids);
                             }
 
                             cursorP.update(player);

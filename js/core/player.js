@@ -1,4 +1,4 @@
-define(["util/random"], function(random) {
+define(["util/random"], function (random) {
     "use strict";
 
     function Player() {
@@ -7,21 +7,26 @@ define(["util/random"], function(random) {
     /**
      * Load existing player's current ratings and attributes from the database.
      */
-    Player.prototype.load = function() {
+    Player.prototype.load = function () {
 /*        r = g.dbex('SELECT * FROM player_ratings WHERE pid = :pid AND season = :season', pid=pid, season=g.season)
         this.rating = dict(r.fetchone())
         r = g.dbex('SELECT * FROM player_attributes WHERE pid = :pid', pid=pid)
         this.attribute = dict(r.fetchone())*/
     };
 
-    Player.prototype.save = function(playerStore) {
+    Player.prototype.save = function (playerStore) {
         var row;
 
         row = this.attribute;
         row.ratings = [this.rating];
         row.ratings[0].season = g.startingSeason;
         row.ratings[0].ovr = this.ovr();
-        row.stats = [{season: g.startingSeason, playoffs: false, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0}];
+        if (this.attribute.tid >= 0) {
+            row.stats = [{season: g.startingSeason, tid: this.attribute.tid, playoffs: false, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0}];
+        } else {
+            row.stats = [];
+        }
+
         playerStore.add(row);
     };
 
@@ -219,6 +224,11 @@ define(["util/random"], function(random) {
         this.rating.pot = pot;
         this.attribute = {};
         this.attribute.tid = tid;
+        if (tid >= 0) {
+            this.attribute.statsTids = [tid];
+        } else {
+            this.attribute.statsTids = [];
+        }
         this.attribute.rosterOrder = 666;  // Will be set later
         this.attribute.draftYear = draftYear;
         this.generateRatings(profile, baseRating);

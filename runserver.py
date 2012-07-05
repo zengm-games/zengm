@@ -11,6 +11,7 @@ urls = (
 )
 app = web.application(urls, globals())
 
+
 class static:
     def GET(self, filename):
         if filename.endswith('.css'):
@@ -21,16 +22,18 @@ class static:
         f = open(filename)
         return f.read()
 
+
 class index:
     def GET(self):
         f = open('index.html')
         return f.read()
+
 
 class test:
     def GET(self):
         f = open('test.html')
         return f.read()
 
+
 if __name__ == "__main__":
     app.run()
-

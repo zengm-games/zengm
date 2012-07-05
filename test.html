@@ -1,0 +1,44 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Mocha Tests</title>
+  <link rel="stylesheet" href="/css/mocha.css" />
+  <script src="/js/lib/chai.js"></script>
+  <script src="/js/lib/mocha.js"></script>
+  <script src="/js/lib/handlebars-1.0.0.beta.6.js"></script>
+  <script src="/templates/helpers.js"></script>
+  <script src="/js/templates.js"></script>
+  <script src="/js/lib/jquery.js"></script>
+  <script src="/js/lib/jquery-ui.js"></script>
+  <script src="/js/lib/underscore.js"></script>
+  <script src="/js/lib/davis.js"></script>
+  <script src="/js/lib/bootstrap-dropdown.js"></script>
+  <script src="/js/lib/bootstrap-tab.js"></script>
+  <script src="/js/lib/jquery.dataTables.min.js"></script>
+  <script src="/js/lib/DT_bootstrap.js"></script>
+<!--    <script src="/js/lib/Linq2IndexedDB.js"></script>-->
+<!--    <script src="/js/lib/query.js" type="application/javascript;version=1.7"></script>-->
+  <script src="/js/globals.js"></script>
+  <script data-main="/js/app.js" src="/js/lib/require.js"></script>
+  <script src="js/tests/views.js"></script>
+  <script>
+    $(function(){
+      mocha.setup({ui: "bdd", globals: ["test"]});
+
+      describe('Array', function(){
+        describe('#indexOf()', function(){
+          it('should return -1 when the value is not present', function(){
+            [1,2,3].indexOf(5).should.equal(-1);
+            [1,2,3].indexOf(0).should.equal(-1);
+          })
+        })
+      })
+
+      mocha.run();
+    })
+  </script>
+</head>
+<body>
+  <div id="mocha"></div>
+</body>
+</html>

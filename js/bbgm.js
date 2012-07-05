@@ -1,6 +1,8 @@
-define([], function() {
+define([], function () {
+    "use strict";
+
     // Play button
-    function play_button(url) {
+/*    function play_button(url) {
         $.post(url, function (data) {
             var url = data['url'];
 
@@ -41,61 +43,64 @@ define([], function() {
                 }
             }
         }, 'json');
-    }
+    }*/
 
     // For AJAX updating pages
     function ajaxUpdate(data) {
+        var league_page, result;
+
         if (data.hasOwnProperty('title')) {
-            $('title').text(data['title'] + ' - Basketball GM');
+            $('title').text(data.title + ' - Basketball GM');
         }
         if (data.hasOwnProperty('league_content')) {
-            $('#league_content').html(data['league_content']);
+            $('#league_content').html(data.league_content);
         }
         if (data.hasOwnProperty('content')) {
-            $('#content').html(data['content']);
+            $('#content').html(data.content);
         }
         if (data.hasOwnProperty('message')) {
-            alert(data['message']);
+            alert(data.message);
         }
 
-        var result = parse_league_url(document.URL);
-        var league_page = result[2];
+        result = parse_league_url(document.URL);
+        league_page = result[2];
         highlight_nav(league_page);
     }
 
     // Data tables
     function datatable(table, sort_col, data) {
-        table.dataTable( {
-            "aaData": data,
-            "aaSorting": [[ sort_col, "desc" ]],
-            "bDeferRender": true,
-            "sPaginationType": "bootstrap",
-            "oLanguage": {
-                "sLengthMenu": "_MENU_ players per page",
-                "sInfo": "Showing _START_ to _END_ of _TOTAL_ players",
-                "sInfoEmpty": "Showing 0 to 0 of 0 players",
-                "sInfoFiltered": "(filtered from _MAX_ total players)"
+        table.dataTable({
+            aaData: data,
+            aaSorting: [[ sort_col, "desc" ]],
+            bDeferRender: true,
+            sPaginationType: "bootstrap",
+            oLanguage: {
+                sLengthMenu: "_MENU_ players per page",
+                sInfo: "Showing _START_ to _END_ of _TOTAL_ players",
+                sInfoEmpty: "Showing 0 to 0 of 0 players",
+                sInfoFiltered: "(filtered from _MAX_ total players)"
             }
-        } );
+        });
     }
     function datatableSinglePage(table, sort_col, data) {
-        table.dataTable( {
-            "aaData": data,
-            "aaSorting": [[ sort_col, "desc" ]],
-            "bFilter": false,
-            "bInfo": false,
-            "bPaginate": false
-        } );
+        table.dataTable({
+            aaData: data,
+            aaSorting: [[ sort_col, "desc" ]],
+            bFilter: false,
+            bInfo: false,
+            bPaginate: false
+        });
     }
 
     function parse_league_url(url) {
+        var league_id, league_page, league_root_url, split_url;
         // Returns a list containing the integer league ID (0 if none), the
         // league root URL up to the league ID (empty string if none), and the
         // league page (first URL folder after the ID) (empty string if none).
 
-        var league_id = 0;
-        var league_root_url = '';
-        var league_page = '';
+        league_id = 0;
+        league_root_url = '';
+        league_page = '';
 
         split_url = url.split('/', 6);
 
@@ -104,10 +109,10 @@ define([], function() {
         // the league ID.
 
         if (split_url.length >= 5) {
-            league_id = parseInt(split_url[4]);
+            league_id = parseInt(split_url[4], 10);
             league_root_url = split_url.slice(0, 5).join('/');
         }
-        if (split_url.length == 6) {
+        if (split_url.length === 6) {
             // Get rid of any trailing #
             league_page = split_url[5].split('#')[0];
         }
@@ -116,7 +121,7 @@ define([], function() {
     }
 
     function highlight_nav(league_page) {
-        if (league_page == '') {
+        if (league_page === '') {
             league_page = 'league_dashboard';
         }
         $('#league_sidebar li').removeClass('active');
@@ -126,49 +131,56 @@ define([], function() {
     // For dropdown menus to change team/season/whatever
     // This should be cleaned up, but it works for now.
     function dropdown(select1, select2) {
-        if (arguments.length == 1) {
-            select1.change(function(event) {
-                var result = parse_league_url(document.URL);
-                var league_root_url = result[1];
-                var league_page = result[2];
-                var url = '/l/' + g.lid + '/' + league_page + '/' + select1.val();
+        if (arguments.length === 1) {
+            select1.change(function (event) {
+                var league_page, league_root_url, result, url;
+
+                result = parse_league_url(document.URL);
+                league_root_url = result[1];
+                league_page = result[2];
+                url = '/l/' + g.lid + '/' + league_page + '/' + select1.val();
                 Davis.location.assign(new Davis.Request(url));
             });
-        }
-        else if (arguments.length == 2) {
-            select1.change(function(event) {
-                var result = parse_league_url(document.URL);
-                var league_root_url = result[1];
-                var league_page = result[2];
-                var url = '/l/' + g.lid + '/' + league_page + '/' + select1.val() + '/' + select2.val();
+        } else if (arguments.length === 2) {
+            select1.change(function (event) {
+                var league_page, league_root_url, result, url;
+
+                result = parse_league_url(document.URL);
+                league_root_url = result[1];
+                league_page = result[2];
+                url = '/l/' + g.lid + '/' + league_page + '/' + select1.val() + '/' + select2.val();
                 Davis.location.assign(new Davis.Request(url));
             });
-            select2.change(function(event) {
-                var result = parse_league_url(document.URL);
-                var league_root_url = result[1];
-                var league_page = result[2];
-                var url = '/l/' + g.lid + '/' + league_page + '/' + select1.val() + '/' + select2.val();
+            select2.change(function (event) {
+                var league_page, league_root_url, result, url;
+
+                result = parse_league_url(document.URL);
+                league_root_url = result[1];
+                league_page = result[2];
+                url = '/l/' + g.lid + '/' + league_page + '/' + select1.val() + '/' + select2.val();
                 Davis.location.assign(new Davis.Request(url));
             });
         }
     }
 
-    $(document).ready(function() {
-        var result = parse_league_url(document.URL);
-        var league_id = result[0];
-        var league_root_url = result[1];
-        var league_page = result[2];
+    $(document).ready(function () {
+        var league_id, league_page, league_root_url, play_button, play_phase, play_status, result;
+
+        result = parse_league_url(document.URL);
+        league_id = result[0];
+        league_root_url = result[1];
+        league_page = result[2];
         highlight_nav(league_page);
 
-        window.onpopstate = function(event) {
+        window.onpopstate = function (event) {
             ajaxUpdate(event.state);
         };
 
         // Play menu
         if (league_id > 0) {
-            var play_status = $('#play_status');
-            var play_phase = $('#play_phase');
-            var play_button = $('#play_button');
+            play_status = $('#play_status');
+            play_phase = $('#play_phase');
+            play_button = $('#play_button');
     /*
             var jug = new Juggernaut;
 

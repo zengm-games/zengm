@@ -151,11 +151,9 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             season = helpers.validateSeason(season);
             seasons = helpers.getSeasons(season);
 
-            g.dbl.transaction(["teams"]).objectStore("teams").index("season").getAll(season).onsuccess = function (event) {
-                var confs, confTeams, data, divTeams, i, j, k, keys, teams, teamsAll, template;
+            db.getTeams(season, 'winp', function (teamsAll) {
+                var confs, confTeams, data, divTeams, i, j, k, keys, teams, template;
 
-                teamsAll = event.target.result;
-                teamsAll.sort(function (a, b) {  return (b.won / (b.won + b.lost)) - (a.won / (a.won + a.lost)); }); // Sort by winning percentage, descending
                 teams = [];
                 keys = ["tid", "cid", "did", "abbrev", "region", "name", "won", "lost", "wonDiv", "lostDiv", "wonConf", "lostConf"];  // Attributes to keep from teamStore
                 for (i = 0; i < teamsAll.length; i++) {
@@ -199,7 +197,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 data.league_content = template({g: g, confs: confs, seasons: seasons, season: season});
 
                 bbgm.ajaxUpdate(data);
-            };
+            });
         });
     }
 
@@ -223,10 +221,9 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             if (season === g.season && g.phase < c.PHASE_PLAYOFFS) {
                 // In the current season, before playoffs start, display projected matchups
                 finalMatchups = false;
-                g.dbl.transaction(["teams"]).objectStore("teams").index("season").getAll(season).onsuccess = function (event) {
-                    var cid, i, j, keys, series, teams, teamsAll, teamsConf;
-                    teamsAll = event.target.result;
-                    teamsAll.sort(function (a, b) {  return (b.won / (b.won + b.lost)) - (a.won / (a.won + a.lost)); }); // Sort by winning percentage, descending
+                db.getTeams(season, 'winp', function (teamsAll) {
+                    var cid, i, j, keys, series, teams, teamsConf;
+
                     teams = [];
                     keys = ["tid", "abbrev", "name", "cid"];  // Attributes to keep from teamStore
                     for (i = 0; i < teamsAll.length; i++) {
@@ -259,7 +256,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                     }
 
                     cb(finalMatchups, series);
-                };
+                });
             } else {
                 // Display the current or archived playoffs
                 finalMatchups = true;

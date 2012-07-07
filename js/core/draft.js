@@ -1,4 +1,4 @@
-define(["core/player", "core/season", "util/random"], function (player, season, random) {
+define(["db", "core/player", "core/season", "util/random"], function (db, player, season, random) {
     "use strict";
 
     function generatePlayers() {
@@ -30,12 +30,9 @@ define(["core/player", "core/season", "util/random"], function (player, season, 
 
     /*Sets draft order based on winning percentage (no lottery).*/
     function setOrder(cb) {
-        var draftOrder, i, round, teamsAll, teamStore;
+        var draftOrder, i, round;
 
-        teamStore = g.dbl.transaction(["teams"], IDBTransaction.READ_WRITE).objectStore("teams");
-        teamStore.index("season").getAll(g.season).onsuccess = function (event) {
-            teamsAll = event.target.result;
-            teamsAll.sort(function (a, b) {  return a.won / (a.won + a.lost) - b.won / (b.won + b.lost); }); // Sort by winning percentage, ascending
+        db.getTeams(g.season, 'winpAsc', function (teamsAll) {
             draftOrder = [];
 
             for (round = 1; round <= 2; round++) {
@@ -47,7 +44,7 @@ define(["core/player", "core/season", "util/random"], function (player, season, 
             localStorage.setItem("league" + g.lid + "DraftOrder", JSON.stringify(draftOrder));
 
             cb();
-        };
+        });
     }
 
     /*Simulate draft picks until it's the user's turn or the draft is over.

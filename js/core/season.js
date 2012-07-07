@@ -1,4 +1,4 @@
-define(["util/helpers", "util/playMenu", "util/random"], function (helpers, playMenu, random) {
+define(["db", "util/helpers", "util/playMenu", "util/random"], function (db, helpers, playMenu, random) {
     "use strict";
 
     /*Set a new phase of the game.
@@ -36,7 +36,7 @@ define(["util/helpers", "util/playMenu", "util/random"], function (helpers, play
             phaseText = g.season + " preseason";
 
             transaction = g.dbl.transaction(["players", "teams"], IDBTransaction.READ_WRITE);
-            teamStore = transaction.objectStore("teams")
+            teamStore = transaction.objectStore("teams");
 
             // Add row to team stats
             teamStore.index("season").openCursor(IDBKeyRange.only(g.season - 1)).onsuccess = function (event) {
@@ -166,29 +166,16 @@ define(["util/helpers", "util/playMenu", "util/random"], function (helpers, play
 //            awards()
 
             // Set playoff matchups
-            g.dbl.transaction(["teams"]).objectStore("teams").index("season").getAll(g.season).onsuccess = function (event) {
-                var cid, i, j, keys, row, series, teams, teamsAll, teamsConf, tidPlayoffs;
+            db.getTeams(g.season, 'winp', function (teamsAll) {
+                var cid, i, j, keys, row, series, teams, teamsConf, tidPlayoffs;
 
-                teamsAll = event.target.result;
                 teams = [];
-                keys = ["tid", "abbrev", "name", "cid", "won", "lost"];  // Attributes to keep from teamStore
+                keys = ["tid", "abbrev", "name", "cid"];  // Attributes to keep from teamStore
                 for (i = 0; i < teamsAll.length; i++) {
-                    teams[i] = {};
+                    teams[i] = {won: 0}; // Store the games won in the series, not the games won in the regular season
                     for (j = 0; j < keys.length; j++) {
                         teams[i][keys[j]] = teamsAll[i][keys[j]];
                     }
-                    teams[i].winp = 0;
-                    if (teams[i].won + teams[i].lost > 0) {
-                        teams[i].winp = teams[i].won / (teams[i].won + teams[i].lost);
-                    }
-                }
-                teams.sort(function (a, b) {  return b.winp - a.winp; }); // Sort by winning percentage
-
-                // Remove stuff that was just for sorting
-                for (i = 0; i < teamsAll.length; i++) {
-                    teams[i].won = 0;  // Store the games won in the series, not the games won in the regular season
-                    delete teams[i].lost;
-                    delete teams[i].winp;
                 }
 
                 tidPlayoffs = [];
@@ -273,7 +260,7 @@ define(["util/helpers", "util/playMenu", "util/random"], function (helpers, play
                         cb(phase, phaseText);
                     }
                 };
-            };
+            });
 //                g.dbex('UPDATE team_attributes SET playoffs = TRUE WHERE season = :season AND tid IN :tids', season=g.season, tids=tids)
         } else if (phase === c.PHASE_BEFORE_DRAFT) {
             phaseText = g.season + " before draft";

@@ -1,6 +1,6 @@
 main todo
 - testing
-  - how to handle requirejs crap?
+  - refactor player.js (mainly the saving player part, used in draft and new league) and write tests
 - factor out db access from views
   - generalized function to create players list. ask for what attributes, ratings, and stats are required, from what season. take a transaction too. then execute callback with players as input
 - free agents

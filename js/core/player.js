@@ -2,57 +2,51 @@ define(["util/random"], function (random) {
     "use strict";
 
     function Player() {
+        this.p = {}; // Contains the player object that is in the database
     }
 
     /**
      * Load existing player's current ratings and attributes from the database.
      */
-    Player.prototype.load = function () {
-/*        r = g.dbex('SELECT * FROM player_ratings WHERE pid = :pid AND season = :season', pid=pid, season=g.season)
-        this.rating = dict(r.fetchone())
-        r = g.dbex('SELECT * FROM player_attributes WHERE pid = :pid', pid=pid)
-        this.attribute = dict(r.fetchone())*/
-    };
-
-    Player.prototype.save = function (playerStore) {
-        var row;
-
-        row = this.attribute;
-        row.ratings = [this.rating];
-        row.ratings[0].season = g.startingSeason;
-        row.ratings[0].ovr = this.ovr();
-        if (this.attribute.tid >= 0) {
-            row.stats = [{season: g.startingSeason, tid: this.attribute.tid, playoffs: false, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0}];
-        } else {
-            row.stats = [];
-        }
-
-        playerStore.add(row);
+    Player.prototype.load = function (playerStore, pid, cb) {
+        playerStore.get(pid).onsuccess = function (event) {
+            this.p = event.target.result;
+            cb(); // What goes here?
+        };
     };
 
     /**
-     * Develop (increase/decrease) player's ratings.
+     * Add a new player to the database or update an existing player.
+     */
+    Player.prototype.save = function (playerStore) {
+        playerStore.put(this.p);
+    };
+
+    /**
+     * Develop (increase/decrease) player's ratings. This operates on whatever the last row of p.ratings is.
      * @param {number} years Number of years to develop (default 1).
      * @param {generate} generate Generating a new player? (default false). If true, then
      *     the player's age is also updated based on years.
      */
     Player.prototype.develop = function (years, generate) {
-        var age, i, increase, j, key, ovr, plusMinus, pot, ratingKeys;
+        var age, i, increase, j, key, ovr, plusMinus, pot, r, ratingKeys;
 
         years = typeof years !== "undefined" ? years : 1;
         generate = typeof generate !== "undefined" ? generate : false;
 
+        r = this.p.ratings.length - 1;
+
         // Make sure age is always defined
         if (g.hasOwnProperty('season')) {
-            age = g.season - this.attribute.bornYear;
+            age = g.season - this.p.bornYear;
         } else {
-            age = g.startingSeason - this.attribute.bornYear;
+            age = g.startingSeason - this.p.bornYear;
         }
 
         for (i = 0; i < years; i++) {
             age += 1;
-            pot = random.gauss(this.rating.pot, 5);
-            ovr = this.ovr();
+            pot = random.gauss(this.p.ratings[r].pot, 5);
+            ovr = this.p.ratings[r].ovr;
 
             ratingKeys = ['stre', 'spd', 'jmp', 'endu', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb'];
             for (j = 0; j < ratingKeys.length; j++) {
@@ -74,24 +68,24 @@ define(["util/random"], function (random) {
                 }
                 increase = random.gauss(1, 2) * plusMinus;
                 //increase = plusMinus
-                this.rating[key] = this._limitRating(this.rating[key] + increase);
+                this.p.ratings[r][key] = this.limitRating(this.p.ratings[r][key] + increase);
             }
 
-            // Update potential
-            ovr = this.ovr();
-            this.rating.pot += -2 + parseInt(random.gauss(0, 2), 10);
-            if (ovr > this.rating.pot || age > 28) {
-                this.rating.pot = ovr;
+            // Update overall and potential
+            this.p.ratings[r].ovr = this.ovr();
+            this.p.ratings[r].pot += -2 + parseInt(random.gauss(0, 2), 10);
+            if (this.p.ratings[r].ovr > this.p.ratings[r].pot || age > 28) {
+                this.p.ratings[r].pot = this.p.ratings[r].ovr;
             }
         }
 
         if (generate) {
             if (g.hasOwnProperty('season')) {
-                age = g.season - this.attribute.bornYear + years;
-                this.attribute.bornYear = g.season - age;
+                age = g.season - this.p.bornYear + years;
+                this.p.bornYear = g.season - age;
             } else {
-                age = g.startingSeason - this.attribute.bornYear + years;
-                this.attribute.bornYear = g.startingSeason - age;
+                age = g.startingSeason - this.p.bornYear + years;
+                this.p.bornYear = g.startingSeason - age;
             }
         }
     };
@@ -101,16 +95,17 @@ define(["util/random"], function (random) {
      * @param {number} amount Number to be added to each rating (can be negative).
      */
     Player.prototype.bonus = function (amount) {
-        var i, key, ratingKeys;
+        var i, key, r, ratingKeys;
 
+        r = this.p.ratings.length - 1;
         ratingKeys = ['stre', 'spd', 'jmp', 'endu', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb', 'pot'];
         for (i = 0; i < ratingKeys.length; i++) {
             key = ratingKeys[i];
-            this.rating[key] = this._limitRating(this.rating[key] + amount);
+            this.p.ratings[r][key] = this.limitRating(this.p.ratings[r][key] + amount);
         }
     };
 
-    Player.prototype._limitRating = function (rating) {
+    Player.prototype.limitRating = function (rating) {
         if (rating > 100) {
             return 100;
         }
@@ -125,36 +120,42 @@ define(["util/random"], function (random) {
      * @return {number} Overall rating.
      */
     Player.prototype.ovr = function () {
-        return parseInt((this.rating.hgt + this.rating.stre + this.rating.spd + this.rating.jmp + this.rating.endu + this.rating.ins + this.rating.dnk + this.rating.ft + this.rating.fg + this.rating.tp + this.rating.blk + this.rating.stl + this.rating.drb + this.rating.pss + this.rating.reb) / 15, 10);
+        var r, ratings;
+
+        r = this.p.ratings.length - 1;
+        ratings = this.p.ratings[r];
+        return parseInt((ratings.hgt + ratings.stre + ratings.spd + ratings.jmp + ratings.endu + ratings.ins + ratings.dnk + ratings.ft + ratings.fg + ratings.tp + ratings.blk + ratings.stl + ratings.drb + ratings.pss + ratings.reb) / 15, 10);
     };
 
     Player.prototype.contract = function (randomizeExp) {
-        var amount, expiration, maxAmount, minAmount, ovr, potentialDifference, years;
+        var amount, expiration, maxAmount, minAmount, potentialDifference, r, years;
+
         randomizeExp = typeof randomizeExp !== "undefined" ? randomizeExp : false;
+
+        r = this.p.ratings.length - 1;
 
         // Limits on yearly contract amount, in $1000's
         minAmount = 500;
         maxAmount = 20000;
 
-        ovr = this.ovr();
         // Scale amount from 500k to 15mil, proportional to (ovr*2 + pot)*0.5 120-210
-        amount = ((2.0 * ovr + this.rating.pot) * 0.85 - 120) / (210 - 120);  // Scale from 0 to 1 (approx)
+        amount = ((2.0 * this.p.ratings[r].ovr + this.p.ratings[r].pot) * 0.85 - 120) / (210 - 120);  // Scale from 0 to 1 (approx)
         amount = amount * (maxAmount - minAmount) + minAmount;  // Scale from 500k to 15mil
         amount *= random.gauss(1, 0.1);  // Randomize
 
         // Expiration
         // Players with high potentials want short contracts
-        potentialDifference = Math.round((this.rating.pot - ovr) / 4.0);
+        potentialDifference = Math.round((this.p.ratings[r].pot - this.p.ratings[r].ovr) / 4.0);
         years = 5 - potentialDifference;
         if (years < 2) {
             years = 2;
         }
         // Bad players can only ask for short deals
-        if (this.rating.pot < 40) {
+        if (this.p.ratings[r].pot < 40) {
             years = 1;
-        } else if (this.rating.pot < 50) {
+        } else if (this.p.ratings[r].pot < 50) {
             years = 2;
-        } else if (this.rating.pot < 60) {
+        } else if (this.p.ratings[r].pot < 60) {
             years = 3;
         }
 
@@ -220,24 +221,22 @@ define(["util/random"], function (random) {
     };
 
     Player.prototype.generate = function (tid, age, profile, baseRating, pot, draftYear) {
-        this.rating = {};
-        this.rating.pot = pot;
-        this.attribute = {};
-        this.attribute.tid = tid;
+        this.p.tid = tid;
+        this.p.statsTids = [];
+        this.p.stats = [];
         if (tid >= 0) {
-            this.attribute.statsTids = [tid];
-        } else {
-            this.attribute.statsTids = [];
+            this.p.statsTids.push(tid);
+            this.p.stats.push({season: g.startingSeason, tid: this.p.tid, playoffs: false, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0});
         }
-        this.attribute.rosterOrder = 666;  // Will be set later
-        this.attribute.draftYear = draftYear;
-        this.generateRatings(profile, baseRating);
+        this.p.rosterOrder = 666;  // Will be set later
+        this.p.draftYear = draftYear;
+        this.generateRatings(profile, baseRating, pot);
         this.generateAttributes(age);
-        this.attribute.draftPot = pot;
-        this.attribute.draftOvr = this.ovr();
+        this.p.draftPot = pot;
+        this.p.draftOvr = this.p.ratings[0].ovr;
     };
 
-    Player.prototype.generateRatings = function (profile, baseRating) {
+    Player.prototype.generateRatings = function (profile, baseRating, pot) {
         var i, key, profileId, profiles, rating, ratingKeys, ratings, sigmas;
 
         if (profile === 'Point') {
@@ -261,50 +260,57 @@ define(["util/random"], function (random) {
         ratings = [];
         for (i = 0; i < sigmas.length; i++) {
             rating = profiles[profileId][i] + baseRating;
-            ratings[i] = this._limitRating(random.gauss(rating, sigmas[i]));
+            ratings[i] = this.limitRating(random.gauss(rating, sigmas[i]));
         }
 
+        this.p.ratings = [{}];
         ratingKeys = ['hgt', 'stre', 'spd', 'jmp', 'endu', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb'];
         for (i = 0; i < ratingKeys.length; i++) {
             key = ratingKeys[i];
-            this.rating[key] = ratings[i];
+            this.p.ratings[0][key] = ratings[i];
         }
+
+        this.p.ratings[0].season = g.startingSeason;
+        this.p.ratings[0].ovr = this.ovr();
+        this.p.ratings[0].pot = pot;
     };
 
     // Call generate_ratings before this method!
     Player.prototype.generateAttributes = function (age, player_nat) {
-        var contract, maxHgt, minHgt, maxWeight, minWeight, nationality;
+        var contract, maxHgt, minHgt, maxWeight, minWeight, nationality, r;
+
+        r = this.p.ratings.length - 1;
 
         minHgt = 69;  // 5'9"
         maxHgt = 89;  // 7'5"
         minWeight = 150;
         maxWeight = 290;
 
-        this.attribute.pos = this._pos();  // Position (PG, SG, SF, PF, C, G, GF, FC)
-        this.attribute.hgt = parseInt(random.gauss(1, 0.02) * (this.rating.hgt * (maxHgt - minHgt) / 100 + minHgt), 10);  // Height in inches (from minHgt to maxHgt)
-        this.attribute.weight = parseInt(random.gauss(1, 0.02) * ((this.rating.hgt + 0.5 * this.rating.stre) * (maxWeight - minWeight) / 150 + minWeight), 10);  // Weight in pounds (from minWeight to maxWeight)
+        this.p.pos = this._pos();  // Position (PG, SG, SF, PF, C, G, GF, FC)
+        this.p.hgt = parseInt(random.gauss(1, 0.02) * (this.p.ratings[r].hgt * (maxHgt - minHgt) / 100 + minHgt), 10);  // Height in inches (from minHgt to maxHgt)
+        this.p.weight = parseInt(random.gauss(1, 0.02) * ((this.p.ratings[r].hgt + 0.5 * this.p.ratings[r].stre) * (maxWeight - minWeight) / 150 + minWeight), 10);  // Weight in pounds (from minWeight to maxWeight)
         if (g.hasOwnProperty('season')) {
-            this.attribute.bornYear = g.season - age;
+            this.p.bornYear = g.season - age;
         } else {
-            this.attribute.bornYear = g.startingSeason - age;
+            this.p.bornYear = g.startingSeason - age;
         }
 
         // Randomly choose nationality	
         nationality = 'USA';
 
-        this.attribute.bornLoc = nationality;
-        this.attribute.name = this._name(nationality);
+        this.p.bornLoc = nationality;
+        this.p.name = this._name(nationality);
 
-        this.attribute.college = 0;
-        this.attribute.draftRound = 0;
-        this.attribute.draftPick = 0;
-        this.attribute.draftTid = 0;
+        this.p.college = 0;
+        this.p.draftRound = 0;
+        this.p.draftPick = 0;
+        this.p.draftTid = 0;
         contract = this.contract();
-        this.attribute.contractAmount = contract.amount;
-        this.attribute.contractExp = contract.exp;
+        this.p.contractAmount = contract.amount;
+        this.p.contractExp = contract.exp;
 
-        this.attribute.freeAgentTimesAsked = 0;
-        this.attribute.yearsFreeAgent = 0;
+        this.p.freeAgentTimesAsked = 0;
+        this.p.yearsFreeAgent = 0;
     };
 
     Player.prototype._name = function (nationality) {
@@ -340,7 +346,9 @@ define(["util/random"], function (random) {
      * Assign a position (PG, SG, SF, PF, C, G, GF, FC) based on ratings.
      */
     Player.prototype._pos = function (nationality) {
-        var c, g, pf, pg, pos, sf, sg;
+        var c, g, pf, pg, pos, r, sf, sg;
+
+        r = this.p.ratings.length - 1;
 
         g = false;
         pg = false;
@@ -350,28 +358,28 @@ define(["util/random"], function (random) {
         c = false;
 
         // Default position
-        if (this.rating.drb >= 50) {
+        if (this.p.ratings[r].drb >= 50) {
             pos = 'GF';
         } else {
             pos = 'F';
         }
 
-        if (this.rating.hgt <= 30 || this.rating.spd >= 85) {
+        if (this.p.ratings[r].hgt <= 30 || this.p.ratings[r].spd >= 85) {
             g = true;
-            if ((this.rating.pss + this.rating.drb) >= 100) {
+            if ((this.p.ratings[r].pss + this.p.ratings[r].drb) >= 100) {
                 pg = true;
             }
-            if (this.rating.hgt >= 30) {
+            if (this.p.ratings[r].hgt >= 30) {
                 sg = true;
             }
         }
-        if (this.rating.hgt >= 50 && this.rating.hgt <= 65 && this.rating.spd >= 40) {
+        if (this.p.ratings[r].hgt >= 50 && this.p.ratings[r].hgt <= 65 && this.p.ratings[r].spd >= 40) {
             sf = true;
         }
-        if (this.rating.hgt >= 70) {
+        if (this.p.ratings[r].hgt >= 70) {
             pf = true;
         }
-        if ((this.rating.hgt + this.rating.stre) >= 130) {
+        if ((this.p.ratings[r].hgt + this.p.ratings[r].stre) >= 130) {
             c = true;
         }
 
@@ -395,7 +403,7 @@ define(["util/random"], function (random) {
         } else if (pg && sg) {
             pos = 'G';
         }
-        if (pos === 'F' && this.rating.drb <= 20) {
+        if (pos === 'F' && this.p.ratings[r].drb <= 20) {
             pos = 'PF';
         }
 

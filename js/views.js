@@ -45,17 +45,15 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
     }
 
     function init_db(req) {
-        var data, request;
-
         beforeNonLeague();
 
         // Delete any current league databases
-        console.log("Delete any current league databases...");
+        console.log("Deleting any current league databases...");
         if (g.dbl !== undefined) {
             g.dbl.close();
         }
         g.dbm.transaction(["leagues"]).objectStore("leagues").getAll().onsuccess = function (event) {
-            var i, leagues;
+            var data, i, leagues, request;
 
             leagues = event.target.result;
 
@@ -64,28 +62,24 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 localStorage.removeItem("league" + leagues[i].lid + "GameAttributes");
                 localStorage.removeItem("league" + leagues[i].lid + "DraftOrder");
             }
-        };
 
-        // Delete any current meta database
-        console.log("Delete any current meta database...");
-        g.dbm.close();
-        g.indexedDB.deleteDatabase("meta");
+            // Delete any current meta database
+            console.log("Deleting any current meta database...");
+            g.dbm.close();
+            g.indexedDB.deleteDatabase("meta");
 
-        // Create new meta database
-        console.log("Create new meta database...");
-        request = db.connect_meta();
-        request.onsuccess = function (event) {
-            g.dbm = request.result;
-            g.dbm.onerror = function (event) {
-                console.log("Meta database error: " + event.target.errorCode);
+            // Create new meta database
+            console.log("Creating new meta database...");
+            request = db.connect_meta();
+            request.onsuccess = function (event) {
+                g.dbm = request.result;
+                g.dbm.onerror = function (event) {
+                    console.log("Meta database error: " + event.target.errorCode);
+                };
+
+                console.log("Done!");
             };
         };
-
-        console.log("Done!");
-
-        data = {title: "Initialize Database"};
-        data.content = "Resetting databases...";
-        bbgm.ajaxUpdate(data);
     }
 
     function dashboard(req) {

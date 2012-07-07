@@ -85,8 +85,8 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                                 randomizeExpiration = false;
                             }
                             contract = gp.contract(randomizeExpiration);
-                            gp.attribute.contractAmount = contract.amount;
-                            gp.attribute.contractExp = contract.exp;
+                            gp.p.contractAmount = contract.amount;
+                            gp.p.contractExp = contract.exp;
 
                             gp.save(playerStore);
                         }

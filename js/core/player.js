@@ -67,7 +67,7 @@ define(["util/random"], function (random) {
                 }
                 increase = random.gauss(1, 2) * plusMinus;
                 //increase = plusMinus
-                this.p.ratings[r][key] = this.limitRating(this.p.ratings[r][key] + increase);
+                this.p.ratings[r][key] = this._limitRating(this.p.ratings[r][key] + increase);
             }
 
             // Update overall and potential
@@ -100,11 +100,11 @@ define(["util/random"], function (random) {
         ratingKeys = ['stre', 'spd', 'jmp', 'endu', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb', 'pot'];
         for (i = 0; i < ratingKeys.length; i++) {
             key = ratingKeys[i];
-            this.p.ratings[r][key] = this.limitRating(this.p.ratings[r][key] + amount);
+            this.p.ratings[r][key] = this._limitRating(this.p.ratings[r][key] + amount);
         }
     };
 
-    Player.prototype.limitRating = function (rating) {
+    Player.prototype._limitRating = function (rating) {
         if (rating > 100) {
             return 100;
         }
@@ -260,7 +260,7 @@ define(["util/random"], function (random) {
         ratings = [];
         for (i = 0; i < sigmas.length; i++) {
             rating = profiles[profileId][i] + baseRating;
-            ratings[i] = this.limitRating(random.gauss(rating, sigmas[i]));
+            ratings[i] = this._limitRating(random.gauss(rating, sigmas[i]));
         }
 
         this.p.ratings = [{}];

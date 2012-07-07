@@ -292,7 +292,7 @@ define(["util/random"], function (random) {
         minWeight = 150;
         maxWeight = 290;
 
-        this.p.pos = this._pos();  // Position (PG, SG, SF, PF, C, G, GF, FC)
+        this.p.pos = pos(this.p.ratings[r]);  // Position (PG, SG, SF, PF, C, G, GF, FC)
         this.p.hgt = parseInt(random.gauss(1, 0.02) * (this.p.ratings[r].hgt * (maxHgt - minHgt) / 100 + minHgt), 10);  // Height in inches (from minHgt to maxHgt)
         this.p.weight = parseInt(random.gauss(1, 0.02) * ((this.p.ratings[r].hgt + 0.5 * this.p.ratings[r].stre) * (maxWeight - minWeight) / 150 + minWeight), 10);  // Weight in pounds (from minWeight to maxWeight)
         if (g.hasOwnProperty('season')) {
@@ -305,7 +305,7 @@ define(["util/random"], function (random) {
         nationality = 'USA';
 
         this.p.bornLoc = nationality;
-        this.p.name = this._name(nationality);
+        this.p.name = name(nationality);
 
         this.p.college = 0;
         this.p.draftRound = 0;
@@ -319,42 +319,44 @@ define(["util/random"], function (random) {
         this.p.yearsFreeAgent = 0;
     };
 
-    Player.prototype._name = function (nationality) {
-        var fn, ln;
+    function name(nationality) {
+        var fn, fnRand, i, ln;
 
         fn = "Bob";
         ln = "Johnson";
-    /*
-            // First name
-            fn_rand = random.uniform(0, this.fn_max)
-            for row in this.fn_data:
-                if row[4].upper() == nationality.upper():
-                    if float(row[2]) >= fn_rand:
-                        break
-            fn = string.capitalize(row[0])
 
-            // Last name
-            ln_rand = random.uniform(0, this.ln_max)
-            for row in this.ln_data:
-                if row[4].upper() == nationality.upper():
-                    if float(row[2]) >= ln_rand:
-                    //   if (random.random() < 0.3):  // This is needed because there are some duplicate CDF's in last_names.txt
-                        break
-            ln = string.capitalize(row[0])
-            // McWhatever
-            if len(ln) > 3:
-                ln = re.sub('^Mc(\w)', 'Mc' + ln[2].upper(), ln)
-    */
+        // First name
+        fnRand = random.uniform(0, g.firstNames.length - 1);
+        for (i=0; i<g.firstNames.length; i++) {
+            //if row[4].upper() == nationality.upper():
+            if (g.firstNames[i][2] >= fnRand) {
+                break;
+            }
+        }
+        console.log(i)
+        fn = g.firstNames[i][0];
+
+/*
+        // Last name
+        ln_rand = random.uniform(0, this.ln_max)
+        for row in this.ln_data:
+            if row[4].upper() == nationality.upper():
+                if float(row[2]) >= ln_rand:
+                //   if (random.random() < 0.3):  // This is needed because there are some duplicate CDF's in last_names.txt
+                    break
+        ln = string.capitalize(row[0])
+        // McWhatever
+        if len(ln) > 3:
+            ln = re.sub('^Mc(\w)', 'Mc' + ln[2].upper(), ln)
+*/
         return fn + " " + ln;
-    };
+    }
 
     /**
      * Assign a position (PG, SG, SF, PF, C, G, GF, FC) based on ratings.
      */
-    Player.prototype._pos = function (nationality) {
-        var c, g, pf, pg, pos, r, sf, sg;
-
-        r = this.p.ratings.length - 1;
+    function pos(ratings) {
+        var c, g, pf, pg, position, sf, sg;
 
         g = false;
         pg = false;
@@ -364,57 +366,57 @@ define(["util/random"], function (random) {
         c = false;
 
         // Default position
-        if (this.p.ratings[r].drb >= 50) {
-            pos = 'GF';
+        if (ratings.drb >= 50) {
+            position = 'GF';
         } else {
-            pos = 'F';
+            position = 'F';
         }
 
-        if (this.p.ratings[r].hgt <= 30 || this.p.ratings[r].spd >= 85) {
+        if (ratings.hgt <= 30 || ratings.spd >= 85) {
             g = true;
-            if ((this.p.ratings[r].pss + this.p.ratings[r].drb) >= 100) {
+            if ((ratings.pss + ratings.drb) >= 100) {
                 pg = true;
             }
-            if (this.p.ratings[r].hgt >= 30) {
+            if (ratings.hgt >= 30) {
                 sg = true;
             }
         }
-        if (this.p.ratings[r].hgt >= 50 && this.p.ratings[r].hgt <= 65 && this.p.ratings[r].spd >= 40) {
+        if (ratings.hgt >= 50 && ratings.hgt <= 65 && ratings.spd >= 40) {
             sf = true;
         }
-        if (this.p.ratings[r].hgt >= 70) {
+        if (ratings.hgt >= 70) {
             pf = true;
         }
-        if ((this.p.ratings[r].hgt + this.p.ratings[r].stre) >= 130) {
+        if ((ratings.hgt + ratings.stre) >= 130) {
             c = true;
         }
 
         if (pg && !sg && !sf && !pf && !c) {
-            pos = 'PG';
+            position = 'PG';
         } else if (!pg && (g || sg) && !sf && !pf && !c) {
-            pos = 'SG';
+            position = 'SG';
         } else if (!pg && !sg && sf && !pf && !c) {
-            pos = 'SF';
+            position = 'SF';
         } else if (!pg && !sg && !sf && pf && !c) {
-            pos = 'PF';
+            position = 'PF';
         } else if (!pg && !sg && !sf && !pf && c) {
-            pos = 'C';
+            position = 'C';
         }
 
         // Multiple poss
         if ((pf || sf) && g) {
-            pos = 'GF';
+            position = 'GF';
         } else if (c && (pf || sf)) {
-            pos = 'FC';
+            position = 'FC';
         } else if (pg && sg) {
-            pos = 'G';
+            position = 'G';
         }
-        if (pos === 'F' && this.p.ratings[r].drb <= 20) {
-            pos = 'PF';
+        if (position === 'F' && ratings.drb <= 20) {
+            position = 'PF';
         }
 
-        return pos;
-    };
+        return position;
+    }
 
     return {
         Player: Player

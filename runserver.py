@@ -2,6 +2,7 @@ import web
 
 urls = (
     '/(css/.*)', 'static',
+    '/(data/.*)', 'static',
     '/(ico/.*)', 'static',
     '/(img/.*)', 'static',
     '/(js/.*)', 'static',
@@ -16,6 +17,8 @@ class static:
     def GET(self, filename):
         if filename.endswith('.css'):
             web.header('Content-type', 'text/css')
+        elif filename.endswith('.txt'):
+            web.header('Content-type', 'text/plain')
         elif filename.endswith('.js'):
             web.header('Content-type', 'text/javascript')
 

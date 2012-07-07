@@ -7,6 +7,24 @@ g.confs = [{cid: 0, name: "Eastern Conference"}, {cid: 1, name: "Western Confere
 g.divs = [{did: 0, cid: 0, name: "Atlantic"}, {did: 1, cid: 0, name: "Central"}, {did: 2, cid: 0, name: "Southeast"}, {did: 3, cid: 1, name: "Southwest"}, {did: 4, cid: 1, name: "Northwest"}, {did: 5, cid: 1, name: "Pacific"}];
 g.salaryCap = 60000;
 
+$.get("/data/firstNames.txt", function (data) {
+	var csv, rows;
+	rows = data.split("\n");
+	rows.forEach(function (element, index, array) {
+		array[index] = element.split(",");
+	});
+	g.firstNames = rows;
+});
+
+$.get("/data/lastNames.txt", function (data) {
+	var csv, rows;
+	rows = data.split("\n");
+	rows.forEach(function (element, index, array) {
+		array[index] = element.split(",");
+	});
+	g.lastNames = rows;
+});
+
 var c = {};
 
 c.PHASE_PRESEASON = 0;

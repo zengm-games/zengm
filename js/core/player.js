@@ -2,7 +2,6 @@ define(["util/random"], function (random) {
     "use strict";
 
     function Player() {
-        this.p = {}; // Contains the player object that is in the database
     }
 
     /**
@@ -221,6 +220,7 @@ define(["util/random"], function (random) {
     };
 
     Player.prototype.generate = function (tid, age, profile, baseRating, pot, draftYear) {
+        this.p = {}; // Will be saved to database
         this.p.tid = tid;
         this.p.statsTids = [];
         this.p.stats = [];

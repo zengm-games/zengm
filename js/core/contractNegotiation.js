@@ -170,6 +170,12 @@ define(["util/helpers", "util/lock", "util/playMenu", "util/random"], function (
                 cursor = event.target.result;
                 player = cursor.value;
 
+                // Handle stats if the season is in progress
+                if (g.phase <= c.PHASE_PLAYOFFS) { // Resigning your own players happens after this
+                    player.statsTids.push(g.userTid);
+                    player.stats.push({season: g.season, tid: g.userTid, playoffs: false, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0});
+                    player.statsTids = _.uniq(player.statsTids);
+                }
                 player.tid = g.userTid;
                 player.contractAmount = negotiation.playerAmount;
                 player.contractExp = g.season + negotiation.playerYears;

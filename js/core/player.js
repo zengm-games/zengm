@@ -102,6 +102,12 @@ define(["util/random"], function (random) {
             key = ratingKeys[i];
             this.p.ratings[r][key] = this._limitRating(this.p.ratings[r][key] + amount);
         }
+
+        // Update overall and potential
+        this.p.ratings[r].ovr = this.ovr();
+        if (this.p.ratings[r].ovr > this.p.ratings[r].pot) {
+            this.p.ratings[r].pot = this.p.ratings[r].ovr;
+        }
     };
 
     Player.prototype._limitRating = function (rating) {

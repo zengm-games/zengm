@@ -52,3 +52,5 @@ still doesn't work (which unfortunately happens sometimes with a corrupted
 database), delete the folder named `http+++0.0.0.0+8080` within the `indexedDB`
 folder in your Firefox profile folder. That will delete all of the game's stored
 data.
+
+To run the (currently tiny) test suite, go to http://0.0.0.0:8080/test

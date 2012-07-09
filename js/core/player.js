@@ -320,35 +320,35 @@ define(["util/random"], function (random) {
     };
 
     function name(nationality) {
-        var fn, fnRand, i, ln;
-
-        fn = "Bob";
-        ln = "Johnson";
+        var fn, fnRand, i, ln, lnRand;
 
         // First name
-        fnRand = random.uniform(0, g.firstNames.length - 1);
-        for (i=0; i<g.firstNames.length; i++) {
+        fnRand = random.uniform(0, 90.04);
+        for (i = 0; i < g.firstNames.length; i++) {
             //if row[4].upper() == nationality.upper():
             if (g.firstNames[i][2] >= fnRand) {
                 break;
             }
         }
-        console.log(i)
         fn = g.firstNames[i][0];
+        fn = fn.charAt(0).toUpperCase() + fn.substring(1).toLowerCase();
 
-/*
+
         // Last name
-        ln_rand = random.uniform(0, this.ln_max)
-        for row in this.ln_data:
-            if row[4].upper() == nationality.upper():
-                if float(row[2]) >= ln_rand:
-                //   if (random.random() < 0.3):  // This is needed because there are some duplicate CDF's in last_names.txt
-                    break
-        ln = string.capitalize(row[0])
+        lnRand = random.uniform(0, 77.48);
+        for (i = 0; i < g.lastNames.length; i++) {
+            //if row[4].upper() == nationality.upper():
+            if (g.lastNames[i][2] >= lnRand) {
+                break;
+            }
+        }
+        ln = g.lastNames[i][0];
+        ln = ln.charAt(0).toUpperCase() + ln.substring(1).toLowerCase();
         // McWhatever
-        if len(ln) > 3:
-            ln = re.sub('^Mc(\w)', 'Mc' + ln[2].upper(), ln)
-*/
+        if (ln.substring(0, 2) === 'Mc') {
+            ln = ln.substring(0, 2) + ln.charAt(2).toUpperCase() + ln.substring(3);
+        }
+
         return fn + " " + ln;
     }
 

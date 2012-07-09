@@ -28,7 +28,7 @@ define(["util/random"], function (random) {
      *     the player's age is also updated based on years.
      */
     Player.prototype.develop = function (years, generate) {
-        var age, i, increase, j, key, ovr, plusMinus, pot, r, ratingKeys;
+        var age, i, increase, j, key, ovrTemp, plusMinus, pot, r, ratingKeys;
 
         years = typeof years !== "undefined" ? years : 1;
         generate = typeof generate !== "undefined" ? generate : false;
@@ -45,17 +45,17 @@ define(["util/random"], function (random) {
         for (i = 0; i < years; i++) {
             age += 1;
             pot = random.gauss(this.p.ratings[r].pot, 5);
-            ovr = this.p.ratings[r].ovr;
+            ovrTemp = this.p.ratings[r].ovr;
 
             ratingKeys = ['stre', 'spd', 'jmp', 'endu', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb'];
             for (j = 0; j < ratingKeys.length; j++) {
                 key = ratingKeys[j];
                 plusMinus = 28 - age;
                 if (plusMinus > 0) {
-                    if (pot > ovr) {
+                    if (pot > ovrTemp) {
                         // Cap potential growth
-                        if (pot - ovr < 20) {
-                            plusMinus *= (pot - ovr) / 20.0 + 0.5;
+                        if (pot - ovrTemp < 20) {
+                            plusMinus *= (pot - ovrTemp) / 20.0 + 0.5;
                         } else {
                             plusMinus *= 1.5;
                         }
@@ -67,11 +67,11 @@ define(["util/random"], function (random) {
                 }
                 increase = random.gauss(1, 2) * plusMinus;
                 //increase = plusMinus
-                this.p.ratings[r][key] = this._limitRating(this.p.ratings[r][key] + increase);
+                this.p.ratings[r][key] = limitRating(this.p.ratings[r][key] + increase);
             }
 
             // Update overall and potential
-            this.p.ratings[r].ovr = this.ovr();
+            this.p.ratings[r].ovr = ovr(this.p.ratings[r]);
             this.p.ratings[r].pot += -2 + parseInt(random.gauss(0, 2), 10);
             if (this.p.ratings[r].ovr > this.p.ratings[r].pot || age > 28) {
                 this.p.ratings[r].pot = this.p.ratings[r].ovr;
@@ -100,17 +100,17 @@ define(["util/random"], function (random) {
         ratingKeys = ['stre', 'spd', 'jmp', 'endu', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb', 'pot'];
         for (i = 0; i < ratingKeys.length; i++) {
             key = ratingKeys[i];
-            this.p.ratings[r][key] = this._limitRating(this.p.ratings[r][key] + amount);
+            this.p.ratings[r][key] = limitRating(this.p.ratings[r][key] + amount);
         }
 
         // Update overall and potential
-        this.p.ratings[r].ovr = this.ovr();
+        this.p.ratings[r].ovr = ovr(this.p.ratings[r]);
         if (this.p.ratings[r].ovr > this.p.ratings[r].pot) {
             this.p.ratings[r].pot = this.p.ratings[r].ovr;
         }
     };
 
-    Player.prototype._limitRating = function (rating) {
+    function limitRating(rating) {
         if (rating > 100) {
             return 100;
         }
@@ -118,19 +118,15 @@ define(["util/random"], function (random) {
             return 0;
         }
         return parseInt(rating, 10);
-    };
+    }
 
     /**
      * Calculates the overall rating by averaging together all the other ratings.
      * @return {number} Overall rating.
      */
-    Player.prototype.ovr = function () {
-        var r, ratings;
-
-        r = this.p.ratings.length - 1;
-        ratings = this.p.ratings[r];
+    function ovr(ratings) {
         return parseInt((ratings.hgt + ratings.stre + ratings.spd + ratings.jmp + ratings.endu + ratings.ins + ratings.dnk + ratings.ft + ratings.fg + ratings.tp + ratings.blk + ratings.stl + ratings.drb + ratings.pss + ratings.reb) / 15, 10);
-    };
+    }
 
     Player.prototype.contract = function (randomizeExp) {
         var amount, expiration, maxAmount, minAmount, potentialDifference, r, years;
@@ -226,6 +222,8 @@ define(["util/random"], function (random) {
     };
 
     Player.prototype.generate = function (tid, age, profile, baseRating, pot, draftYear) {
+        var contract, maxHgt, minHgt, maxWeight, minWeight, nationality;
+
         this.p = {}; // Will be saved to database
         this.p.tid = tid;
         this.p.statsTids = [];
@@ -235,15 +233,47 @@ define(["util/random"], function (random) {
             this.p.stats.push({season: g.startingSeason, tid: this.p.tid, playoffs: false, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0});
         }
         this.p.rosterOrder = 666;  // Will be set later
+        this.p.ratings = [generateRatings(profile, baseRating, pot)];
+
+        minHgt = 69;  // 5'9"
+        maxHgt = 89;  // 7'5"
+        minWeight = 150;
+        maxWeight = 290;
+
+        this.p.pos = pos(this.p.ratings[0]);  // Position (PG, SG, SF, PF, C, G, GF, FC)
+        this.p.hgt = parseInt(random.gauss(1, 0.02) * (this.p.ratings[0].hgt * (maxHgt - minHgt) / 100 + minHgt), 10);  // Height in inches (from minHgt to maxHgt)
+        this.p.weight = parseInt(random.gauss(1, 0.02) * ((this.p.ratings[0].hgt + 0.5 * this.p.ratings[0].stre) * (maxWeight - minWeight) / 150 + minWeight), 10);  // Weight in pounds (from minWeight to maxWeight)
+        if (g.hasOwnProperty('season')) {
+            this.p.bornYear = g.season - age;
+        } else {
+            this.p.bornYear = g.startingSeason - age;
+        }
+
+        // Randomly choose nationality  
+        nationality = 'USA';
+
+        this.p.bornLoc = nationality;
+        this.p.name = name(nationality);
+
+        this.p.college = 0;
+        this.p.draftRound = 0;
+        this.p.draftPick = 0;
+        this.p.draftTid = 0;
         this.p.draftYear = draftYear;
-        this.generateRatings(profile, baseRating, pot);
-        this.generateAttributes(age);
+        contract = this.contract();
+        this.p.contractAmount = contract.amount;
+        this.p.contractExp = contract.exp;
+
+        this.p.freeAgentTimesAsked = 0;
+        this.p.yearsFreeAgent = 0;
+
+
         this.p.draftPot = pot;
         this.p.draftOvr = this.p.ratings[0].ovr;
     };
 
-    Player.prototype.generateRatings = function (profile, baseRating, pot) {
-        var i, key, profileId, profiles, rating, ratingKeys, ratings, sigmas;
+    function generateRatings(profile, baseRating, pot) {
+        var i, key, profileId, profiles, ratingKeys, ratings, rawRating, rawRatings, sigmas;
 
         if (profile === 'Point') {
             profileId = 1;
@@ -263,61 +293,25 @@ define(["util/random"], function (random) {
         sigmas = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10];
         baseRating = random.gauss(baseRating, 5);
 
-        ratings = [];
+        rawRatings = [];
         for (i = 0; i < sigmas.length; i++) {
-            rating = profiles[profileId][i] + baseRating;
-            ratings[i] = this._limitRating(random.gauss(rating, sigmas[i]));
+            rawRating = profiles[profileId][i] + baseRating;
+            rawRatings[i] = limitRating(random.gauss(rawRating, sigmas[i]));
         }
 
-        this.p.ratings = [{}];
+        ratings = {};
         ratingKeys = ['hgt', 'stre', 'spd', 'jmp', 'endu', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb'];
         for (i = 0; i < ratingKeys.length; i++) {
             key = ratingKeys[i];
-            this.p.ratings[0][key] = ratings[i];
+            ratings[key] = rawRatings[i];
         }
 
-        this.p.ratings[0].season = g.startingSeason;
-        this.p.ratings[0].ovr = this.ovr();
-        this.p.ratings[0].pot = pot;
-    };
+        ratings.season = g.startingSeason;
+        ratings.ovr = ovr(ratings);
+        ratings.pot = pot;
 
-    // Call generate_ratings before this method!
-    Player.prototype.generateAttributes = function (age, player_nat) {
-        var contract, maxHgt, minHgt, maxWeight, minWeight, nationality, r;
-
-        r = this.p.ratings.length - 1;
-
-        minHgt = 69;  // 5'9"
-        maxHgt = 89;  // 7'5"
-        minWeight = 150;
-        maxWeight = 290;
-
-        this.p.pos = pos(this.p.ratings[r]);  // Position (PG, SG, SF, PF, C, G, GF, FC)
-        this.p.hgt = parseInt(random.gauss(1, 0.02) * (this.p.ratings[r].hgt * (maxHgt - minHgt) / 100 + minHgt), 10);  // Height in inches (from minHgt to maxHgt)
-        this.p.weight = parseInt(random.gauss(1, 0.02) * ((this.p.ratings[r].hgt + 0.5 * this.p.ratings[r].stre) * (maxWeight - minWeight) / 150 + minWeight), 10);  // Weight in pounds (from minWeight to maxWeight)
-        if (g.hasOwnProperty('season')) {
-            this.p.bornYear = g.season - age;
-        } else {
-            this.p.bornYear = g.startingSeason - age;
-        }
-
-        // Randomly choose nationality	
-        nationality = 'USA';
-
-        this.p.bornLoc = nationality;
-        this.p.name = name(nationality);
-
-        this.p.college = 0;
-        this.p.draftRound = 0;
-        this.p.draftPick = 0;
-        this.p.draftTid = 0;
-        contract = this.contract();
-        this.p.contractAmount = contract.amount;
-        this.p.contractExp = contract.exp;
-
-        this.p.freeAgentTimesAsked = 0;
-        this.p.yearsFreeAgent = 0;
-    };
+        return ratings;
+    }
 
     function name(nationality) {
         var fn, fnRand, i, ln, lnRand;

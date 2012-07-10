@@ -72,6 +72,8 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                             p = player.develop(p, agingYears, true);
                             if (n < 5) {
                                 p = player.bonus(p, goodNeutralBad * random.randInt(0, 20), true);
+                            } else {
+                                p = player.bonus(p, 0, true);
                             }
                             if (t === -1) {  // Free agents
                                 p = player.bonus(p, -15, false);

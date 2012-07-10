@@ -2,7 +2,7 @@ define(["db", "core/player", "core/season", "util/random"], function (db, player
     "use strict";
 
     function generatePlayers() {
-        var agingYears, baseRating, draftYear, gp, i, playerStore, pot, profile, profiles;
+        var agingYears, baseRating, draftYear, i, p, playerStore, pot, profile, profiles;
 
         playerStore = g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
         profiles = ["Point", "Wing", "Big", "Big", ""];
@@ -20,11 +20,10 @@ define(["db", "core/player", "core/season", "util/random"], function (db, player
             agingYears = random.randInt(0, 3);
             draftYear = g.season;
 
-            gp = new player.Player();
-            gp.generate(c.PLAYER_UNDRAFTED, 19, profile, baseRating, pot, draftYear);
-            gp.develop(agingYears);
+            p = player.generate(c.PLAYER_UNDRAFTED, 19, profile, baseRating, pot, draftYear);
+            p = player.develop(p, agingYears);
 
-            gp.save(playerStore);
+            db.putPlayer(playerStore, p);
         }
     }
 

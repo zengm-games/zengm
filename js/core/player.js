@@ -1,6 +1,75 @@
 define(["util/random"], function (random) {
     "use strict";
 
+    function limitRating(rating) {
+        if (rating > 100) {
+            return 100;
+        }
+        if (rating < 0) {
+            return 0;
+        }
+        return parseInt(rating, 10);
+    }
+
+    /**
+     * Calculates the overall rating by averaging together all the other ratings.
+     * @return {number} Overall rating.
+     */
+    function ovr(ratings) {
+        return parseInt((ratings.hgt + ratings.stre + ratings.spd + ratings.jmp + ratings.endu + ratings.ins + ratings.dnk + ratings.ft + ratings.fg + ratings.tp + ratings.blk + ratings.stl + ratings.drb + ratings.pss + ratings.reb) / 15, 10);
+    }
+
+    function contract(ratings, randomizeExp) {
+        var amount, expiration, maxAmount, minAmount, potentialDifference, years;
+
+        randomizeExp = typeof randomizeExp !== "undefined" ? randomizeExp : false;
+
+        // Limits on yearly contract amount, in $1000's
+        minAmount = 500;
+        maxAmount = 20000;
+
+        // Scale amount from 500k to 15mil, proportional to (ovr*2 + pot)*0.5 120-210
+        amount = ((2.0 * ratings.ovr + ratings.pot) * 0.85 - 120) / (210 - 120);  // Scale from 0 to 1 (approx)
+        amount = amount * (maxAmount - minAmount) + minAmount;  // Scale from 500k to 15mil
+        amount *= random.gauss(1, 0.1);  // Randomize
+
+        // Expiration
+        // Players with high potentials want short contracts
+        potentialDifference = Math.round((ratings.pot - ratings.ovr) / 4.0);
+        years = 5 - potentialDifference;
+        if (years < 2) {
+            years = 2;
+        }
+        // Bad players can only ask for short deals
+        if (ratings.pot < 40) {
+            years = 1;
+        } else if (ratings.pot < 50) {
+            years = 2;
+        } else if (ratings.pot < 60) {
+            years = 3;
+        }
+
+        // Randomize expiration for contracts generated at beginning of new game
+        if (randomizeExp) {
+            years = random.randInt(1, years);
+        }
+
+        if (g.hasOwnProperty("season")) {
+            expiration = g.season + years - 1;
+        } else {
+            expiration = g.startingSeason + years - 1;
+        }
+        if (amount < minAmount) {
+            amount = minAmount;
+        } else if (amount > maxAmount) {
+            amount = maxAmount;
+        } else {
+            amount = 50 * Math.round(amount / 50);  // Make it a multiple of 50k
+        }
+
+        return {amount: amount, exp: expiration};
+    }
+
     /**
      * Develop (increase/decrease) player's ratings. This operates on whatever the last row of p.ratings is.
      * @param {number} years Number of years to develop (default 1).
@@ -72,7 +141,7 @@ define(["util/random"], function (random) {
     }
 
     /**
-     * Add or subtract amount from all current ratings. Then, update the player's contract appropriately
+     * Add or subtract amount from all current ratings. Then, update the player's contract appropriately. Thus, this should only be called on newly generated players.
      * @param {number} amount Number to be added to each rating (can be negative).
      * @param {boolean} randomizeExp Should the number of years on the player's contract be randomized?.
      */
@@ -99,75 +168,6 @@ define(["util/random"], function (random) {
         p.contractExp = c.exp;
 
         return p;
-    }
-
-    function limitRating(rating) {
-        if (rating > 100) {
-            return 100;
-        }
-        if (rating < 0) {
-            return 0;
-        }
-        return parseInt(rating, 10);
-    }
-
-    /**
-     * Calculates the overall rating by averaging together all the other ratings.
-     * @return {number} Overall rating.
-     */
-    function ovr(ratings) {
-        return parseInt((ratings.hgt + ratings.stre + ratings.spd + ratings.jmp + ratings.endu + ratings.ins + ratings.dnk + ratings.ft + ratings.fg + ratings.tp + ratings.blk + ratings.stl + ratings.drb + ratings.pss + ratings.reb) / 15, 10);
-    }
-
-    function contract(ratings, randomizeExp) {
-        var amount, expiration, maxAmount, minAmount, potentialDifference, years;
-
-        randomizeExp = typeof randomizeExp !== "undefined" ? randomizeExp : false;
-
-        // Limits on yearly contract amount, in $1000's
-        minAmount = 500;
-        maxAmount = 20000;
-
-        // Scale amount from 500k to 15mil, proportional to (ovr*2 + pot)*0.5 120-210
-        amount = ((2.0 * ratings.ovr + ratings.pot) * 0.85 - 120) / (210 - 120);  // Scale from 0 to 1 (approx)
-        amount = amount * (maxAmount - minAmount) + minAmount;  // Scale from 500k to 15mil
-        amount *= random.gauss(1, 0.1);  // Randomize
-
-        // Expiration
-        // Players with high potentials want short contracts
-        potentialDifference = Math.round((ratings.pot - ratings.ovr) / 4.0);
-        years = 5 - potentialDifference;
-        if (years < 2) {
-            years = 2;
-        }
-        // Bad players can only ask for short deals
-        if (ratings.pot < 40) {
-            years = 1;
-        } else if (ratings.pot < 50) {
-            years = 2;
-        } else if (ratings.pot < 60) {
-            years = 3;
-        }
-
-        // Randomize expiration for contracts generated at beginning of new game
-        if (randomizeExp) {
-            years = random.randInt(1, years);
-        }
-
-        if (g.hasOwnProperty("season")) {
-            expiration = g.season + years - 1;
-        } else {
-            expiration = g.startingSeason + years - 1;
-        }
-        if (amount < minAmount) {
-            amount = minAmount;
-        } else if (amount > maxAmount) {
-            amount = maxAmount;
-        } else {
-            amount = 50 * Math.round(amount / 50);  // Make it a multiple of 50k
-        }
-
-        return {amount: amount, exp: expiration};
     }
 
     /**
@@ -209,59 +209,6 @@ define(["util/random"], function (random) {
 
         this.addToFreeAgents();
     };*/
-
-    function generate(tid, age, profile, baseRating, pot, draftYear) {
-        var c, maxHgt, minHgt, maxWeight, minWeight, nationality, p;
-
-        p = {}; // Will be saved to database
-        p.tid = tid;
-        p.statsTids = [];
-        p.stats = [];
-        if (tid >= 0) {
-            p.statsTids.push(tid);
-            p.stats.push({season: g.startingSeason, tid: p.tid, playoffs: false, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0});
-        }
-        p.rosterOrder = 666;  // Will be set later
-        p.ratings = [];
-        p.ratings.push(generateRatings(profile, baseRating, pot));
-
-        minHgt = 69;  // 5'9"
-        maxHgt = 89;  // 7'5"
-        minWeight = 150;
-        maxWeight = 290;
-
-        p.pos = pos(p.ratings[0]);  // Position (PG, SG, SF, PF, C, G, GF, FC)
-        p.hgt = parseInt(random.gauss(1, 0.02) * (p.ratings[0].hgt * (maxHgt - minHgt) / 100 + minHgt), 10);  // Height in inches (from minHgt to maxHgt)
-        p.weight = parseInt(random.gauss(1, 0.02) * ((p.ratings[0].hgt + 0.5 * p.ratings[0].stre) * (maxWeight - minWeight) / 150 + minWeight), 10);  // Weight in pounds (from minWeight to maxWeight)
-        if (g.hasOwnProperty('season')) {
-            p.bornYear = g.season - age;
-        } else {
-            p.bornYear = g.startingSeason - age;
-        }
-
-        // Randomly choose nationality  
-        nationality = 'USA';
-
-        p.bornLoc = nationality;
-        p.name = name(nationality);
-
-        p.college = 0;
-        p.draftRound = 0;
-        p.draftPick = 0;
-        p.draftTid = 0;
-        p.draftYear = draftYear;
-        c = contract(p.ratings[0]);
-        p.contractAmount = c.amount;
-        p.contractExp = c.exp;
-
-        p.freeAgentTimesAsked = 0;
-        p.yearsFreeAgent = 0;
-
-        p.draftPot = pot;
-        p.draftOvr = p.ratings[0].ovr;
-
-        return p;
-    }
 
     function generateRatings(profile, baseRating, pot) {
         var i, key, profileId, profiles, ratingKeys, ratings, rawRating, rawRatings, sigmas;
@@ -401,6 +348,59 @@ define(["util/random"], function (random) {
         }
 
         return position;
+    }
+
+    function generate(tid, age, profile, baseRating, pot, draftYear) {
+        var c, maxHgt, minHgt, maxWeight, minWeight, nationality, p;
+
+        p = {}; // Will be saved to database
+        p.tid = tid;
+        p.statsTids = [];
+        p.stats = [];
+        if (tid >= 0) {
+            p.statsTids.push(tid);
+            p.stats.push({season: g.startingSeason, tid: p.tid, playoffs: false, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0});
+        }
+        p.rosterOrder = 666;  // Will be set later
+        p.ratings = [];
+        p.ratings.push(generateRatings(profile, baseRating, pot));
+
+        minHgt = 69;  // 5'9"
+        maxHgt = 89;  // 7'5"
+        minWeight = 150;
+        maxWeight = 290;
+
+        p.pos = pos(p.ratings[0]);  // Position (PG, SG, SF, PF, C, G, GF, FC)
+        p.hgt = parseInt(random.gauss(1, 0.02) * (p.ratings[0].hgt * (maxHgt - minHgt) / 100 + minHgt), 10);  // Height in inches (from minHgt to maxHgt)
+        p.weight = parseInt(random.gauss(1, 0.02) * ((p.ratings[0].hgt + 0.5 * p.ratings[0].stre) * (maxWeight - minWeight) / 150 + minWeight), 10);  // Weight in pounds (from minWeight to maxWeight)
+        if (g.hasOwnProperty('season')) {
+            p.bornYear = g.season - age;
+        } else {
+            p.bornYear = g.startingSeason - age;
+        }
+
+        // Randomly choose nationality  
+        nationality = 'USA';
+
+        p.bornLoc = nationality;
+        p.name = name(nationality);
+
+        p.college = 0;
+        p.draftRound = 0;
+        p.draftPick = 0;
+        p.draftTid = 0;
+        p.draftYear = draftYear;
+        c = contract(p.ratings[0]);
+        p.contractAmount = c.amount;
+        p.contractExp = c.exp;
+
+        p.freeAgentTimesAsked = 0;
+        p.yearsFreeAgent = 0;
+
+        p.draftPot = pot;
+        p.draftOvr = p.ratings[0].ovr;
+
+        return p;
     }
 
     return {

@@ -45,7 +45,7 @@ define(["core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMe
     };
 
     Game.prototype.writeStats = function (callback) {
-        var gameStore, i, p, playerStore, t, that;
+        var i, p, playerStore, t, that;
         this.teamsRemaining = 2;
         this.playersRemaining = this.team[0].player.length + this.team[1].player.length;
         this.callback = callback;
@@ -66,7 +66,6 @@ define(["core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMe
         // Player stats and team stats
         that = this;
         playerStore = this.transaction.objectStore("players");
-        gameStore = this.transaction.objectStore("players");
         for (t = 0; t < 2; t++) {
             this.writeTeamStats(t);
             for (p = 0; p < this.team[t].player.length; p++) {

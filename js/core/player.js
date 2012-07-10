@@ -403,7 +403,24 @@ define(["util/random"], function (random) {
         return p;
     }
 
+    function addRatingsRow(p) {
+        var key, newRatings, r;
+
+        newRatings = {};
+        r = p.ratings.length - 1; // Most recent ratings
+        for (key in p.ratings[r]) {
+            if (p.ratings[r].hasOwnProperty(key)) {
+                newRatings[key] = p.ratings[r][key];
+            }
+        }
+        newRatings.season = g.season;
+        p.ratings.push(newRatings);
+
+        return p;
+    }
+
     return {
+        addRatingsRow: addRatingsRow,
         bonus: bonus,
         contract: contract,
         develop: develop,

@@ -1,4 +1,4 @@
-define(["db", "util/helpers", "util/playMenu", "util/random"], function (db, helpers, playMenu, random) {
+define(["db", "core/player", "util/helpers", "util/playMenu", "util/random"], function (db, player, helpers, playMenu, random) {
     "use strict";
 
     /*Set a new phase of the game.
@@ -72,22 +72,13 @@ define(["db", "util/helpers", "util/playMenu", "util/random"], function (db, hel
                 } else {
                     // Loop through all non-retired players
                     transaction.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) {
-                        var cursorP, key, player, playerNewRatings, playerNewStats, r;
+                        var cursorP, key, p, playerNewStats;
 
                         cursorP = event.target.result;
                         if (cursorP) {
-                            player = cursorP.value;
+                            p = cursorP.value;
 
-                            // Add row to player ratings
-                            playerNewRatings = {};
-                            r = player.ratings.length - 1; // Most recent ratings
-                            for (key in player.ratings[r]) {
-                                if (player.ratings[r].hasOwnProperty(key)) {
-                                    playerNewRatings[key] = player.ratings[r][key];
-                                }
-                            }
-                            playerNewRatings.season = g.season;
-                            player.ratings.push(playerNewRatings);
+                            p = player.addRatingsRow(p);
 
 /*            // Age players
             pids = []
@@ -100,22 +91,22 @@ define(["db", "util/helpers", "util/playMenu", "util/random"], function (db, hel
                 up.develop()
                 up.save()*/
                             // Add row to player stats if they are on a team
-                            if (player.tid >= 0) {
+                            if (p.tid >= 0) {
                                 playerNewStats = {};
-                                for (key in player.stats[0]) {
-                                    if (player.stats[0].hasOwnProperty(key)) {
+                                for (key in p.stats[0]) {
+                                    if (p.stats[0].hasOwnProperty(key)) {
                                         playerNewStats[key] = 0;
                                     }
                                 }
                                 playerNewStats.playoffs = false;
                                 playerNewStats.season = g.season;
-                                playerNewStats.tid = player.tid;
-                                player.stats.push(playerNewStats);
-                                player.statsTids.push(player.tid);
-                                player.statsTids = _.uniq(player.statsTids);
+                                playerNewStats.tid = p.tid;
+                                p.stats.push(playerNewStats);
+                                p.statsTids.push(p.tid);
+                                p.statsTids = _.uniq(p.statsTids);
                             }
 
-                            cursorP.update(player);
+                            cursorP.update(p);
                             cursorP.continue();
                         } else {
 /*                            // AI teams sign free agents

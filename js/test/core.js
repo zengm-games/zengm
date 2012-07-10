@@ -1,24 +1,22 @@
 define(["core/player"], function (player) {
     "use strict";
 
-    describe('core/player.Player', function () {
+    describe('core/player', function () {
         describe('#generate()', function () {
-            it('should add stats row only for players on teams, not free agents or undrafted players', function () {
-                var gp;
+            it('should add stats row only for players generated on teams, not free agents or undrafted players', function () {
+                var p;
 
-                gp = new player.Player();
+                p = player.generate(-2, 19, "", 25, 55, 2012);
+                p.stats.length.should.equal(0);
 
-                gp.generate(-2, 19, "", 25, 55, 2012);
-                gp.p.stats.length.should.equal(0);
+                p = player.generate(-1, 19, "", 25, 55, 2012);
+                p.stats.length.should.equal(0);
 
-                gp.generate(-1, 19, "", 25, 55, 2012);
-                gp.p.stats.length.should.equal(0);
+                p = player.generate(0, 19, "", 25, 55, 2012);
+                p.stats.length.should.equal(1);
 
-                gp.generate(0, 19, "", 25, 55, 2012);
-                gp.p.stats.length.should.equal(1);
-
-                gp.generate(15, 19, "", 25, 55, 2012);
-                gp.p.stats.length.should.equal(1);
+                p = player.generate(15, 19, "", 25, 55, 2012);
+                p.stats.length.should.equal(1);
             });
         });
     });

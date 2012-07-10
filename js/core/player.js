@@ -128,35 +128,33 @@ define(["util/random"], function (random) {
         return parseInt((ratings.hgt + ratings.stre + ratings.spd + ratings.jmp + ratings.endu + ratings.ins + ratings.dnk + ratings.ft + ratings.fg + ratings.tp + ratings.blk + ratings.stl + ratings.drb + ratings.pss + ratings.reb) / 15, 10);
     }
 
-    Player.prototype.contract = function (randomizeExp) {
-        var amount, expiration, maxAmount, minAmount, potentialDifference, r, years;
+    function contract(ratings, randomizeExp) {
+        var amount, expiration, maxAmount, minAmount, potentialDifference, years;
 
         randomizeExp = typeof randomizeExp !== "undefined" ? randomizeExp : false;
-
-        r = this.p.ratings.length - 1;
 
         // Limits on yearly contract amount, in $1000's
         minAmount = 500;
         maxAmount = 20000;
 
         // Scale amount from 500k to 15mil, proportional to (ovr*2 + pot)*0.5 120-210
-        amount = ((2.0 * this.p.ratings[r].ovr + this.p.ratings[r].pot) * 0.85 - 120) / (210 - 120);  // Scale from 0 to 1 (approx)
+        amount = ((2.0 * ratings.ovr + ratings.pot) * 0.85 - 120) / (210 - 120);  // Scale from 0 to 1 (approx)
         amount = amount * (maxAmount - minAmount) + minAmount;  // Scale from 500k to 15mil
         amount *= random.gauss(1, 0.1);  // Randomize
 
         // Expiration
         // Players with high potentials want short contracts
-        potentialDifference = Math.round((this.p.ratings[r].pot - this.p.ratings[r].ovr) / 4.0);
+        potentialDifference = Math.round((ratings.pot - ratings.ovr) / 4.0);
         years = 5 - potentialDifference;
         if (years < 2) {
             years = 2;
         }
         // Bad players can only ask for short deals
-        if (this.p.ratings[r].pot < 40) {
+        if (ratings.pot < 40) {
             years = 1;
-        } else if (this.p.ratings[r].pot < 50) {
+        } else if (ratings.pot < 50) {
             years = 2;
-        } else if (this.p.ratings[r].pot < 60) {
+        } else if (ratings.pot < 60) {
             years = 3;
         }
 
@@ -165,7 +163,7 @@ define(["util/random"], function (random) {
             years = random.randInt(1, years);
         }
 
-        if (g.hasOwnProperty('season')) {
+        if (g.hasOwnProperty("season")) {
             expiration = g.season + years - 1;
         } else {
             expiration = g.startingSeason + years - 1;
@@ -178,8 +176,8 @@ define(["util/random"], function (random) {
             amount = 50 * Math.round(amount / 50);  // Make it a multiple of 50k
         }
 
-        return {"amount": amount, "exp": expiration};
-    };
+        return {amount: amount, exp: expiration};
+    }
 
     /**
      * Adds player to the free agents list.
@@ -195,7 +193,7 @@ define(["util/random"], function (random) {
         phase = typeof phase !== "undefined" ? phase : g.phase;
 
         // Player's desired contract
-        contract = this.contract();
+//        contract = this.contract();
 
         // During regular season, or before season starts, allow contracts for
         // just this year.
@@ -222,7 +220,7 @@ define(["util/random"], function (random) {
     };
 
     Player.prototype.generate = function (tid, age, profile, baseRating, pot, draftYear) {
-        var contract, maxHgt, minHgt, maxWeight, minWeight, nationality;
+        var c, maxHgt, minHgt, maxWeight, minWeight, nationality;
 
         this.p = {}; // Will be saved to database
         this.p.tid = tid;
@@ -260,9 +258,9 @@ define(["util/random"], function (random) {
         this.p.draftPick = 0;
         this.p.draftTid = 0;
         this.p.draftYear = draftYear;
-        contract = this.contract();
-        this.p.contractAmount = contract.amount;
-        this.p.contractExp = contract.exp;
+        c = contract(this.p.ratings[0]);
+        this.p.contractAmount = c.amount;
+        this.p.contractExp = c.exp;
 
         this.p.freeAgentTimesAsked = 0;
         this.p.yearsFreeAgent = 0;

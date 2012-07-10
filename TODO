@@ -1,8 +1,6 @@
 main todo
 - refactor player to get rid of class
   - make leauge.new work
-    - bonus
-      - move contract update inside there.
   - add functions that are commonly used, like adding a row to stats
 - factor out ALL db access from views
   - use localstorage for schedule

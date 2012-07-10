@@ -27,25 +27,25 @@ define(["util/random"], function (random) {
      * @param {generate} generate Generating a new player? (default false). If true, then
      *     the player's age is also updated based on years.
      */
-    Player.prototype.develop = function (years, generate) {
+    function develop(p, years, generate) {
         var age, i, increase, j, key, ovrTemp, plusMinus, pot, r, ratingKeys;
 
         years = typeof years !== "undefined" ? years : 1;
         generate = typeof generate !== "undefined" ? generate : false;
 
-        r = this.p.ratings.length - 1;
+        r = p.ratings.length - 1;
 
         // Make sure age is always defined
-        if (g.hasOwnProperty('season')) {
-            age = g.season - this.p.bornYear;
+        if (g.hasOwnProperty("season")) {
+            age = g.season - p.bornYear;
         } else {
-            age = g.startingSeason - this.p.bornYear;
+            age = g.startingSeason - p.bornYear;
         }
 
         for (i = 0; i < years; i++) {
             age += 1;
-            pot = random.gauss(this.p.ratings[r].pot, 5);
-            ovrTemp = this.p.ratings[r].ovr;
+            pot = random.gauss(p.ratings[r].pot, 5);
+            ovrTemp = p.ratings[r].ovr;
 
             ratingKeys = ['stre', 'spd', 'jmp', 'endu', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb'];
             for (j = 0; j < ratingKeys.length; j++) {
@@ -67,27 +67,29 @@ define(["util/random"], function (random) {
                 }
                 increase = random.gauss(1, 2) * plusMinus;
                 //increase = plusMinus
-                this.p.ratings[r][key] = limitRating(this.p.ratings[r][key] + increase);
+                p.ratings[r][key] = limitRating(p.ratings[r][key] + increase);
             }
 
             // Update overall and potential
-            this.p.ratings[r].ovr = ovr(this.p.ratings[r]);
-            this.p.ratings[r].pot += -2 + parseInt(random.gauss(0, 2), 10);
-            if (this.p.ratings[r].ovr > this.p.ratings[r].pot || age > 28) {
-                this.p.ratings[r].pot = this.p.ratings[r].ovr;
+            p.ratings[r].ovr = ovr(p.ratings[r]);
+            p.ratings[r].pot += -2 + parseInt(random.gauss(0, 2), 10);
+            if (p.ratings[r].ovr > p.ratings[r].pot || age > 28) {
+                p.ratings[r].pot = p.ratings[r].ovr;
             }
         }
 
         if (generate) {
             if (g.hasOwnProperty("season")) {
-                age = g.season - this.p.bornYear + years;
-                this.p.bornYear = g.season - age;
+                age = g.season - p.bornYear + years;
+                p.bornYear = g.season - age;
             } else {
-                age = g.startingSeason - this.p.bornYear + years;
-                this.p.bornYear = g.startingSeason - age;
+                age = g.startingSeason - p.bornYear + years;
+                p.bornYear = g.startingSeason - age;
             }
         }
-    };
+
+        return p;
+    }
 
     /**
      * Add or subtract amount from all current ratings. Then, update the player's contract appropriately
@@ -423,6 +425,7 @@ define(["util/random"], function (random) {
     return {
         bonus: bonus,
         contract: contract,
+        develop: develop,
         Player: Player
     };
 });

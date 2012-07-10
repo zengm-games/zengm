@@ -70,7 +70,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
 
                             gp = new player.Player();
                             gp.generate(t, 19, profile, baseRatings[p], pots[p], draftYear);
-                            gp.develop(agingYears, true);
+                            gp.p = player.develop(gp.p, agingYears, true);
                             if (p < 5) {
                                 gp.p = player.bonus(gp.p, goodNeutralBad * random.randInt(0, 20), true);
                             }

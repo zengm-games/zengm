@@ -70,6 +70,23 @@ define(["util/helpers"], function (helpers) {
         return request;
     }
 
+    /**
+     * Add a new player to the database or update an existing player.
+     */
+    function putPlayer(ot, p) {
+        var playerStore;
+
+        if (ot instanceof IDBObjectStore) {
+            playerStore = ot;
+        } else if (ot instanceof IDBTransaction) {
+            playerStore = ot.objectStore("players");
+        } else {
+            playerStore = g.dbl.transaction("players", IDBTransaction.READ_WRITE).objectStore("players");
+        }
+
+        playerStore.put(p);
+    }
+
     function getTeam(tid, season, cb) {
 
     }
@@ -95,6 +112,7 @@ define(["util/helpers"], function (helpers) {
     return {
         connect_meta: connect_meta,
         connect_league: connect_league,
+        putPlayer: putPlayer,
         getTeam: getTeam,
         getTeams: getTeams
     };

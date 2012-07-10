@@ -15,13 +15,6 @@ define(["util/random"], function (random) {
     };
 
     /**
-     * Add a new player to the database or update an existing player.
-     */
-    Player.prototype.save = function (playerStore) {
-        playerStore.put(this.p);
-    };
-
-    /**
      * Develop (increase/decrease) player's ratings. This operates on whatever the last row of p.ratings is.
      * @param {number} years Number of years to develop (default 1).
      * @param {generate} generate Generating a new player? (default false). If true, then

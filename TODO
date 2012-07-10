@@ -1,6 +1,7 @@
 main todo
 - refactor player to get rid of class
   - make leauge.new work
+    - db.putPlayer - accept either transaction or store
   - add functions that are commonly used, like adding a row to stats
 - factor out ALL db access from views
   - use localstorage for schedule

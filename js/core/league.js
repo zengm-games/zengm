@@ -19,7 +19,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                 // Create new league database
                 request = db.connect_league(g.lid);
                 request.onsuccess = function (event) {
-                    var agingYears, baseRatings, contract, draftYear, gameAttributes, goodNeutralBad, gp, i, p, playerStore, pots, profile, profiles, randomizeExpiration, t, teamStore, transaction;
+                    var agingYears, baseRatings, contract, draftYear, gameAttributes, goodNeutralBad, gp, i, n, p, playerStore, pots, profile, profiles, randomizeExpiration, t, teamStore, transaction;
 
                     g.dbl = request.result;
                     g.dbl.onerror = function (event) {
@@ -63,22 +63,23 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                     for (t = -1; t < 30; t++) {
                         goodNeutralBad = random.randInt(-1, 1);  // determines if this will be a good team or not
                         random.shuffle(pots);
-                        for (p = 0; p < 14; p++) {
+                        for (n = 0; n < 14; n++) {
                             profile = profiles[random.randInt(0, profiles.length - 1)];
                             agingYears = random.randInt(0, 13);
                             draftYear = g.startingSeason - 1 - agingYears;
 
                             gp = new player.Player();
-                            gp.generate(t, 19, profile, baseRatings[p], pots[p], draftYear);
-                            gp.p = player.develop(gp.p, agingYears, true);
-                            if (p < 5) {
-                                gp.p = player.bonus(gp.p, goodNeutralBad * random.randInt(0, 20), true);
+                            gp.generate(t, 19, profile, baseRatings[n], pots[n], draftYear);
+                            p = gp.p;
+                            p = player.develop(p, agingYears, true);
+                            if (n < 5) {
+                                p = player.bonus(p, goodNeutralBad * random.randInt(0, 20), true);
                             }
                             if (t === -1) {  // Free agents
-                                gp.p = player.bonus(gp.p, -15, false);
+                                p = player.bonus(p, -15, false);
                             }
 
-                            gp.save(playerStore);
+                            db.putPlayer(playerStore, p);
                         }
                     }
 

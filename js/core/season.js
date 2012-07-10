@@ -72,7 +72,7 @@ define(["db", "core/player", "util/helpers", "util/playMenu", "util/random"], fu
                 } else {
                     // Loop through all non-retired players
                     transaction.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) {
-                        var cursorP, key, p, playerNewStats;
+                        var cursorP, p;
 
                         cursorP = event.target.result;
                         if (cursorP) {
@@ -92,18 +92,7 @@ define(["db", "core/player", "util/helpers", "util/playMenu", "util/random"], fu
                 up.save()*/
                             // Add row to player stats if they are on a team
                             if (p.tid >= 0) {
-                                playerNewStats = {};
-                                for (key in p.stats[0]) {
-                                    if (p.stats[0].hasOwnProperty(key)) {
-                                        playerNewStats[key] = 0;
-                                    }
-                                }
-                                playerNewStats.playoffs = false;
-                                playerNewStats.season = g.season;
-                                playerNewStats.tid = p.tid;
-                                p.stats.push(playerNewStats);
-                                p.statsTids.push(p.tid);
-                                p.statsTids = _.uniq(p.statsTids);
+                                p = player.addStatsRow(p);
                             }
 
                             cursorP.update(p);

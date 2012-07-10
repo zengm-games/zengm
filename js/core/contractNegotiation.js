@@ -1,4 +1,4 @@
-define(["util/helpers", "util/lock", "util/playMenu", "util/random"], function (helpers, lock, playMenu, random) {
+define(["core/player", "util/helpers", "util/lock", "util/playMenu", "util/random"], function (player, helpers, lock, playMenu, random) {
     "use strict";
 
     /*Start a new contract negotiation with player.
@@ -165,22 +165,20 @@ define(["util/helpers", "util/lock", "util/playMenu", "util/random"], function (
             rosterOrder, = r.fetchone();*/
 
             g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players").openCursor(IDBKeyRange.only(pid)).onsuccess = function (event) {
-                var cursor, player;
+                var cursor, p;
 
                 cursor = event.target.result;
-                player = cursor.value;
+                p = cursor.value;
 
                 // Handle stats if the season is in progress
                 if (g.phase <= c.PHASE_PLAYOFFS) { // Resigning your own players happens after this
-                    player.statsTids.push(g.userTid);
-                    player.stats.push({season: g.season, tid: g.userTid, playoffs: false, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0});
-                    player.statsTids = _.uniq(player.statsTids);
+                    p = player.addStatsRow(p, g.userTid);
                 }
-                player.tid = g.userTid;
-                player.contractAmount = negotiation.playerAmount;
-                player.contractExp = g.season + negotiation.playerYears;
+                p.tid = g.userTid;
+                p.contractAmount = negotiation.playerAmount;
+                p.contractExp = g.season + negotiation.playerYears;
 
-                cursor.update(player);
+                cursor.update(p);
 
                 cancel(pid);
 

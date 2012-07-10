@@ -419,8 +419,30 @@ define(["util/random"], function (random) {
         return p;
     }
 
+    function addStatsRow(p, tid) {
+        var key, newStats;
+
+        tid = typeof tid !== "undefined" ? tid : p.tid;
+
+        newStats = {};
+        for (key in p.stats[0]) {
+            if (p.stats[0].hasOwnProperty(key)) {
+                newStats[key] = 0;
+            }
+        }
+        newStats.playoffs = false;
+        newStats.season = g.season;
+        newStats.tid = tid;
+        p.stats.push(newStats);
+        p.statsTids.push(tid);
+        p.statsTids = _.uniq(p.statsTids);
+
+        return p;
+    }
+
     return {
         addRatingsRow: addRatingsRow,
+        addStatsRow: addStatsRow,
         bonus: bonus,
         contract: contract,
         develop: develop,

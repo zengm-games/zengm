@@ -1,9 +1,12 @@
 main todo
 - refactor player to get rid of class
+  - make leauge.new work
+    - bonus
+      - move contract update inside there.
   - add functions that are commonly used, like adding a row to stats
 - factor out ALL db access from views
   - use localstorage for schedule
-  - generalized function to create players list. ask for what attributes, ratings, and stats are required, from what season. take a transaction too. then execute callback with players as input
+  - generalized function to create players list. ask for what attributes, ratings, and stats are required, from what season. take a transaction (or store? or either?) too. then execute callback with players as input
     - see getPlayers in views.js
   - ALL! for instance, after converting player.Player into a set of functions rather than a class, have db.savePlayer() or whatever
     - in all db access functions, accept a transaction as a first argument. if not given, then start a new transaction.

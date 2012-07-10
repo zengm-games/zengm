@@ -79,7 +79,7 @@ define(["util/random"], function (random) {
         }
 
         if (generate) {
-            if (g.hasOwnProperty('season')) {
+            if (g.hasOwnProperty("season")) {
                 age = g.season - this.p.bornYear + years;
                 this.p.bornYear = g.season - age;
             } else {
@@ -90,25 +90,34 @@ define(["util/random"], function (random) {
     };
 
     /**
-     * Add or subtract amount from all ratings.
+     * Add or subtract amount from all current ratings. Then, update the player's contract appropriately
      * @param {number} amount Number to be added to each rating (can be negative).
+     * @param {boolean} randomizeExp Should the number of years on the player's contract be randomized?.
      */
-    Player.prototype.bonus = function (amount) {
-        var i, key, r, ratingKeys;
+    function bonus(p, amount, randomizeExp) {
+        var c, i, key, r, ratingKeys;
 
-        r = this.p.ratings.length - 1;
+        r = p.ratings.length - 1;
+
         ratingKeys = ['stre', 'spd', 'jmp', 'endu', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb', 'pot'];
         for (i = 0; i < ratingKeys.length; i++) {
             key = ratingKeys[i];
-            this.p.ratings[r][key] = limitRating(this.p.ratings[r][key] + amount);
+            p.ratings[r][key] = limitRating(p.ratings[r][key] + amount);
         }
 
         // Update overall and potential
-        this.p.ratings[r].ovr = ovr(this.p.ratings[r]);
-        if (this.p.ratings[r].ovr > this.p.ratings[r].pot) {
-            this.p.ratings[r].pot = this.p.ratings[r].ovr;
+        p.ratings[r].ovr = ovr(p.ratings[r]);
+        if (p.ratings[r].ovr > p.ratings[r].pot) {
+            p.ratings[r].pot = p.ratings[r].ovr;
         }
-    };
+
+        // Update contract based on development
+        c = contract(p.ratings[r], randomizeExp);
+        p.contractAmount = c.amount;
+        p.contractExp = c.exp;
+
+        return p;
+    }
 
     function limitRating(rating) {
         if (rating > 100) {
@@ -187,13 +196,13 @@ define(["util/random"], function (random) {
      * currently, the free agents generated at the beginning of the game don't
      * use this function.
      */
-    Player.prototype.addToFreeAgents = function (phase) {
+/*    Player.prototype.addToFreeAgents = function (phase) {
         var contract, expiration;
 
         phase = typeof phase !== "undefined" ? phase : g.phase;
 
         // Player's desired contract
-//        contract = this.contract();
+        contract = this.contract();
 
         // During regular season, or before season starts, allow contracts for
         // just this year.
@@ -202,7 +211,7 @@ define(["util/random"], function (random) {
         }
 
 //        g.dbex('UPDATE player_attributes SET tid = :tid, contractAmount = :contractAmount, contractExp = :contractExp, free_agent_times_asked = 0 WHERE pid = :pid', tid=c.PLAYER_FREE_AGENT, contractAmount=contract.amount, contractExp=contract.exp, pid=this.id)
-    };
+    };*/
 
     /**
      * Release player.
@@ -210,14 +219,14 @@ define(["util/random"], function (random) {
      * This keeps track of what the player's current team owes him, and then
      * calls this.addToFreeAgents.
      */
-    Player.prototype.release = function () {
+/*    Player.prototype.release = function () {
         // Keep track of player salary even when he's off the team
-/*        r = g.dbex('SELECT contractAmount, contractExp, tid FROM player_attributes WHERE pid = :pid', pid=this.id)
+        r = g.dbex('SELECT contractAmount, contractExp, tid FROM player_attributes WHERE pid = :pid', pid=this.id)
         contractAmount, contractExp, tid = r.fetchone()
-        g.dbex('INSERT INTO released_players_salaries (pid, tid, contractAmount, contractExp) VALUES (:pid, :tid, :contractAmount, :contractExp)', pid=this.id, tid=tid, contractAmount=contractAmount, contractExp=contractExp)*/
+        g.dbex('INSERT INTO released_players_salaries (pid, tid, contractAmount, contractExp) VALUES (:pid, :tid, :contractAmount, :contractExp)', pid=this.id, tid=tid, contractAmount=contractAmount, contractExp=contractExp)
 
         this.addToFreeAgents();
-    };
+    };*/
 
     Player.prototype.generate = function (tid, age, profile, baseRating, pot, draftYear) {
         var c, maxHgt, minHgt, maxWeight, minWeight, nationality;
@@ -231,7 +240,8 @@ define(["util/random"], function (random) {
             this.p.stats.push({season: g.startingSeason, tid: this.p.tid, playoffs: false, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0});
         }
         this.p.rosterOrder = 666;  // Will be set later
-        this.p.ratings = [generateRatings(profile, baseRating, pot)];
+        this.p.ratings = [];
+        this.p.ratings.push(generateRatings(profile, baseRating, pot));
 
         minHgt = 69;  // 5'9"
         maxHgt = 89;  // 7'5"
@@ -411,6 +421,8 @@ define(["util/random"], function (random) {
     }
 
     return {
+        bonus: bonus,
+        contract: contract,
         Player: Player
     };
 });

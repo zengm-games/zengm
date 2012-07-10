@@ -72,21 +72,11 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                             gp.generate(t, 19, profile, baseRatings[p], pots[p], draftYear);
                             gp.develop(agingYears, true);
                             if (p < 5) {
-                                gp.bonus(goodNeutralBad * random.randInt(0, 20));
+                                gp.p = player.bonus(gp.p, goodNeutralBad * random.randInt(0, 20), true);
                             }
                             if (t === -1) {  // Free agents
-                                gp.bonus(-15);
+                                gp.p = player.bonus(gp.p, -15, false);
                             }
-
-                            // Update contract based on development
-                            if (t >= 0) {
-                                randomizeExpiration = true;  // Players on teams already get randomized contracts
-                            } else {
-                                randomizeExpiration = false;
-                            }
-                            contract = gp.contract(gp.ratings[0], randomizeExpiration);
-                            gp.p.contractAmount = contract.amount;
-                            gp.p.contractExp = contract.exp;
 
                             gp.save(playerStore);
                         }

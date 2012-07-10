@@ -19,7 +19,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                 // Create new league database
                 request = db.connect_league(g.lid);
                 request.onsuccess = function (event) {
-                    var agingYears, baseRatings, contract, draftYear, gameAttributes, goodNeutralBad, gp, i, n, p, playerStore, pots, profile, profiles, randomizeExpiration, t, teamStore, transaction;
+                    var agingYears, baseRatings, contract, draftYear, gameAttributes, goodNeutralBad, i, n, p, playerStore, pots, profile, profiles, randomizeExpiration, t, teamStore, transaction;
 
                     g.dbl = request.result;
                     g.dbl.onerror = function (event) {
@@ -68,9 +68,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                             agingYears = random.randInt(0, 13);
                             draftYear = g.startingSeason - 1 - agingYears;
 
-                            gp = new player.Player();
-                            gp.generate(t, 19, profile, baseRatings[n], pots[n], draftYear);
-                            p = gp.p;
+                            p = player.generate(t, 19, profile, baseRatings[n], pots[n], draftYear);
                             p = player.develop(p, agingYears, true);
                             if (n < 5) {
                                 p = player.bonus(p, goodNeutralBad * random.randInt(0, 20), true);

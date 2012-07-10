@@ -1,13 +1,11 @@
 main todo
-- refactor player to get rid of Player class
-  - make other places that used Player work
-    - add functions that are commonly used, like adding a row to stats or ratings
+- refactor new season code
+  - abstract db access
+  - add functions to player that are commonly used, like adding a row to stats or ratings
 - factor out ALL db access from views
   - use localstorage for schedule
   - generalized function to create players list. ask for what attributes, ratings, and stats are required, from what season. take a transaction (or store? or either?) too. then execute callback with players as input
     - see getPlayers in views.js
-  - ALL! for instance, after converting player.Player into a set of functions rather than a class, have db.savePlayer() or whatever
-    - in all db access functions, accept a transaction as a first argument. if not given, then start a new transaction.
 - resigning old players
   - negotiationList
 - other views

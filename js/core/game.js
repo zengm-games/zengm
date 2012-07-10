@@ -44,13 +44,13 @@ define(["core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMe
         }
     };
 
-    Game.prototype.writeStats = function (callback) {
+    Game.prototype.writeStats = function (transaction, cb) {
         var i, p, playerStore, t, that;
         this.teamsRemaining = 2;
         this.playersRemaining = this.team[0].player.length + this.team[1].player.length;
-        this.callback = callback;
+        this.cb = cb;
 
-        this.transaction = g.dbl.transaction(["games", "players", "playoffSeries", "teams"], IDBTransaction.READ_WRITE);
+        this.transaction = transaction;
         // Record who the starters are
 /*    t = 0; t < 2; t++) {
         r = g.dbex('SELECT pid FROM player_attributes WHERE tid = :tid ORDER BY roster_order ASC LIMIT 5', tid=this.team[t]['id'])
@@ -108,7 +108,7 @@ define(["core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMe
 
                     that.playersRemaining -= 1;
                     if (that.playersRemaining === 0 && that.teamsRemaining === 0) {
-                        that.callback();
+                        that.cb();
                     }
                 };
             }
@@ -229,7 +229,7 @@ define(["core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMe
 
                 that.teamsRemaining -= 1;
                 if (that.playersRemaining === 0 && that.teamsRemaining === 0) {
-                    that.callback();
+                    that.cb();
                 }
             } else {
                 cursor.continue();
@@ -336,14 +336,14 @@ define(["core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMe
     }
 
     /*Convenience function to save game stats.*/
-    function saveResults(results, playoffs, callback) {
+    function saveResults(transaction, results, playoffs, cb) {
         var gm;
 //        r = g.dbex('SELECT in_progress_timestamp FROM schedule WHERE gid = :gid', gid=results['gid'])
 //        in_progress_timestamp, = r.fetchone()
 //        if (in_progress_timestamp > 0) {
             gm = new Game();
             gm.load(results, playoffs);
-            gm.writeStats(callback);
+            gm.writeStats(transaction, cb);
             console.log("Saved results for game " + results.gid);
 //        else {
 //            console.log("Ignored stale results for game " + results['gid']);
@@ -378,7 +378,8 @@ define(["core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMe
             playMenu.setStatus("Playing games (" + num_days + " days remaining)...");
             // Create schedule and team lists for today, to be sent to the client
             season.getSchedule(num_active_teams / 2, function (schedule) {
-                var j, matchup, teams, teams_loaded, tid;
+                var j, matchup, teams, teams_loaded, tid, transaction;
+
 //                    tids_today = [];
                 for (j = 0; j < schedule.length; j++) {
                     matchup = schedule[j];
@@ -388,17 +389,19 @@ define(["core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMe
 //                        tids_today = list(set(tids_today))  // Unique list
                 }
 
+                transaction = g.dbl.transaction(["games", "players", "playoffSeries", "schedule", "teams"], IDBTransaction.READ_WRITE);
+
                 teams = [];
                 teams_loaded = 0;
                 // Load all teams, for now. Would be more efficient to load only some of them, I suppose.
                 for (tid = 0; tid < 30; tid++) {
-                    g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
+                    transaction.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
                         var players, realTid, t;
 
                         players = event.target.result;
                         realTid = players[0].tid;
                         t = {id: realTid, defense: 0, pace: 0, won: 0, lost: 0, cid: 0, did: 0, stat: {}, player: []};
-                        g.dbl.transaction(["teams"]).objectStore("teams").index("tid").getAll(realTid).onsuccess = function (event) {
+                        transaction.objectStore("teams").index("tid").getAll(realTid).onsuccess = function (event) {
                             var doSaveResults, gamesRemaining, gidsFinished, gs, i, j, n_players, p, player, rating, results, team, teamSeasons;
 
                             teamSeasons = event.target.result;
@@ -472,11 +475,11 @@ t.defense = 0.25;
                                     gidsFinished = [];
                                     doSaveResults = function (results, playoffs) {
                                         var i, scheduleStore;
-                                        saveResults(results, playoffs, function () {
+                                        saveResults(transaction, results, playoffs, function () {
                                             gamesRemaining -= 1;
                                             gidsFinished.push(results.gid);
                                             if (gamesRemaining === 0) {
-                                                scheduleStore = g.dbl.transaction(["schedule"], IDBTransaction.READ_WRITE).objectStore("schedule");
+                                                scheduleStore = transaction.objectStore("schedule");
                                                 for (i = 0; i < gidsFinished.length; i++) {
                                                     scheduleStore.delete(gidsFinished[i]);
                                                 }

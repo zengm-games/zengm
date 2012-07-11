@@ -61,6 +61,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 g.indexedDB.deleteDatabase("league" + leagues[i].lid);
                 localStorage.removeItem("league" + leagues[i].lid + "GameAttributes");
                 localStorage.removeItem("league" + leagues[i].lid + "DraftOrder");
+                localStorage.removeItem("league" + leagues[i].lid + "Negotiations");
             }
 
             // Delete any current meta database
@@ -151,7 +152,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             season = helpers.validateSeason(season);
             seasons = helpers.getSeasons(season);
 
-            db.getTeams(season, 'winp', function (teamsAll) {
+            db.getTeams(null, season, 'winp', function (teamsAll) {
                 var confs, confTeams, data, divTeams, i, j, k, keys, teams, template;
 
                 teams = [];
@@ -221,7 +222,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             if (season === g.season && g.phase < c.PHASE_PLAYOFFS) {
                 // In the current season, before playoffs start, display projected matchups
                 finalMatchups = false;
-                db.getTeams(season, 'winp', function (teamsAll) {
+                db.getTeams(null, season, 'winp', function (teamsAll) {
                     var cid, i, j, keys, series, teams, teamsConf;
 
                     teams = [];

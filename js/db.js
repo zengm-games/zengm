@@ -91,8 +91,18 @@ define(["util/helpers"], function (helpers) {
 
     }
 
-    function getTeams(season, sortBy, cb) {
-        g.dbl.transaction(["teams"]).objectStore("teams").index("season").getAll(season).onsuccess = function (event) {
+    function getTeams(ot, season, sortBy, cb) {
+        var teamStore;
+
+        if (ot instanceof IDBObjectStore) {
+            teamStore = ot;
+        } else if (ot instanceof IDBTransaction) {
+            teamStore = ot.objectStore("teams");
+        } else {
+            teamStore = g.dbl.transaction("teams").objectStore("teams");
+        }
+
+        teamStore.index("season").getAll(season).onsuccess = function (event) {
             var teamsAll;
 
             teamsAll = event.target.result;

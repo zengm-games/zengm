@@ -31,7 +31,7 @@ define(["db", "core/player", "core/season", "util/random"], function (db, player
     function setOrder(cb) {
         var draftOrder, i, round;
 
-        db.getTeams(g.season, 'winpAsc', function (teamsAll) {
+        db.getTeams(null, g.season, 'winpAsc', function (teamsAll) {
             draftOrder = [];
 
             for (round = 1; round <= 2; round++) {

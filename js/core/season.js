@@ -146,7 +146,7 @@ define(["db", "core/player", "util/helpers", "util/playMenu", "util/random"], fu
 //            awards()
 
             // Set playoff matchups
-            db.getTeams(g.season, 'winp', function (teamsAll) {
+            db.getTeams(null, g.season, 'winp', function (teamsAll) {
                 var cid, i, j, keys, row, series, teams, teamsConf, tidPlayoffs;
 
                 teams = [];

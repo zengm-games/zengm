@@ -91,6 +91,8 @@ define(["util/helpers"], function (helpers) {
     function getPlayers(playersAll, season, tid, attributes, stats, ratings, options) {
         var i, j, pa, player, players, pr, ps;
 
+        options = typeof options !== "undefined" ? options : {};
+
         players = [];
         for (i = 0; i < playersAll.length; i++) {
             player = {};
@@ -106,10 +108,13 @@ define(["util/helpers"], function (helpers) {
 
                 } else if (attributes[j] === "cashOwed") {
                     player.cashOwed = ((1 + pa.contractExp - g.season) * pa.contractAmount - (1 - options.numGamesRemaining / 82) * pa.contractAmount) / 1000;
+                } else if (attributes[j] === "abbrev") {
+                    player.abbrev = helpers.getAbbrev(pa.tid);
                 } else {
                     player[attributes[j]] = pa[attributes[j]];
                 }
             }
+            console.log(pa);
 
             // Ratings
             for (j = 0; j < pa.ratings.length; j++) {

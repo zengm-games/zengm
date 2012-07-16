@@ -568,6 +568,30 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         });
     }
 
+    function playerRatings(req) {
+        beforeLeague(req, function () {
+            var season, seasons;
+
+            season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
+            season = helpers.validateSeason(season);
+            seasons = helpers.getSeasons(season);
+
+            g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) {
+                var attributes, data, players, ratings, stats, template;
+                attributes = ["pid", "name", "abbrev", "pos", "age"];
+                ratings = ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
+                stats = [];
+
+                players = db.getPlayers(event.target.result, season, undefined, attributes, stats, ratings);
+
+                data = {title: "Player Ratings - League " + g.lid};
+                template = Handlebars.templates.playerRatings;
+                data.league_content = template({g: g, players: players, seasons: seasons});
+                bbgm.ajaxUpdate(data);
+            };
+        });
+    }
+
     function negotiationList() {
         var negotiations;
 
@@ -708,6 +732,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         free_agents: free_agents,
         draft: draft,
         game_log: game_log,
+        playerRatings: playerRatings,
         negotiationList: negotiationList,
         negotiation: negotiation
     };

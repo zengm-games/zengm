@@ -1,6 +1,6 @@
 main todo
 - db.getPlayers
-  - use to make ratings view and stats view
+  - use to make stats view
   - use to make player view
   - use for other access of players "playersAll"
 - refactor new season code

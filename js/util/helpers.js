@@ -40,6 +40,15 @@ define([], function () {
         return [tid, abbrev];
     }
 
+    /* Same as validateTid, but returns only the abbrev. */
+    function getAbbrev(tid) {
+        var abbrev;
+
+        [tid, abbrev] = validateTid(tid);
+
+        return abbrev;
+    }
+
     /*Validate that the given season is valid.
 
     A valid season is the current season or one of the past seasons. If an
@@ -216,6 +225,7 @@ define([], function () {
 
     return {
         validateAbbrev: validateAbbrev,
+        getAbbrev: getAbbrev,
         validateTid: validateTid,
         validateSeason: validateSeason,
         getSeasons: getSeasons,

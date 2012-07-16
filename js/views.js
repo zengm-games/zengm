@@ -331,11 +331,9 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                     }
 
                     g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
-                        var players, playersAll;
+                        var players;
 
-                        playersAll = event.target.result;
-
-                        players = db.getPlayers(playersAll, season, tid, attributes, stats, ratings, numGamesRemaining);
+                        players = db.getPlayers(event.target.result, season, tid, attributes, stats, ratings, {numGamesRemaining: numGamesRemaining, showWithStatsOrRookie: true});
                         cb(players);
                     };
                 };
@@ -343,11 +341,9 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 // Show all players with stats for the given team and year
                 currentSeason = false;
                 g.dbl.transaction(["players"]).objectStore("players").index("statsTids").getAll(tid).onsuccess = function (event) {
-                    var players, playersAll;
+                    var players;
 
-                    playersAll = event.target.result;
-
-                    players = db.getPlayers(playersAll, season, tid, attributes, stats, ratings, 0);
+                    players = db.getPlayers(event.target.result, season, tid, attributes, stats, ratings, {numGamesRemaining: 0, showWithStatsOrRookie: true});
                     cb(players);
                 };
             }
@@ -392,56 +388,13 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             }
 
             g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(c.PLAYER_FREE_AGENT).onsuccess = function (event) {
-                var data, i, j, pa, player, players, playersAll, pr, ps, template;
+                var attributes, data, players, ratings, stats, template;
 
-                playersAll = event.target.result;
-                players = [];
-                for (i = 0; i < playersAll.length; i++) {
-                    pa = playersAll[i];
+                attributes = ["pid", "name", "pos", "age", "contractAmount", "contractExp"];
+                ratings = ["ovr", "pot"];
+                stats = ["min", "pts", "trb", "ast"];
 
-                    // Attributes
-                    player = {pid: pa.pid, name: pa.name, pos: pa.pos, age: g.season - pa.bornYear, contractAmount: pa.contractAmount / 1000, contractExp: pa.contractExp};
-
-                    // Ratings
-                    for (j = 0; j < pa.ratings.length; j++) {
-                        if (pa.ratings[j].season === g.season) {
-                            pr = pa.ratings[j];
-                            break;
-                        }
-                    }
-                    player.ovr = pr.ovr;
-                    player.pot = pr.pot;
-
-                    // Stats
-                    for (j = 0; j < pa.stats.length; j++) {
-                        if (pa.stats[j].season === g.season && pa.stats[j].playoffs === false) {
-                            ps = pa.stats[j];
-                            break;
-                        }
-                    }
-                    // Load previous season if no stats this year
-                    if (typeof ps === "undefined") {
-                        for (j = 0; j < pa.stats.length; j++) {
-                            if (pa.stats[j].season === g.season - 1 && pa.stats[j].playoffs === false) {
-                                ps = pa.stats[j];
-                                break;
-                            }
-                        }
-                    }
-                    if (typeof ps !== "undefined" && ps.gp > 0) {
-                        player.min = ps.min / ps.gp;
-                        player.pts = ps.pts / ps.gp;
-                        player.trb = ps.trb / ps.gp;
-                        player.ast = ps.ast / ps.gp;
-                    } else {
-                        player.min = 0;
-                        player.pts = 0;
-                        player.trb = 0;
-                        player.ast = 0;
-                    }
-
-                    players.push(player);
-                }
+                players = db.getPlayers(event.target.result, g.season, c.PLAYER_FREE_AGENT, attributes, stats, ratings, {oldStats: true});
 
                 data = {title: "Free Agents - League " + g.lid};
                 template = Handlebars.templates.freeAgents;

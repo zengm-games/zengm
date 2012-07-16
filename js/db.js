@@ -88,7 +88,7 @@ define(["util/helpers"], function (helpers) {
     }
 
     /* For a list of player objects (playersAll), create a list suitible for output based on the appropriate season and tid. attributes, statas, and ratings are lists of keys.*/
-    function getPlayers(playersAll, season, tid, attributes, stats, ratings, numGamesRemaining) {
+    function getPlayers(playersAll, season, tid, attributes, stats, ratings, options) {
         var i, j, pa, player, players, pr, ps;
 
         players = [];
@@ -105,7 +105,7 @@ define(["util/helpers"], function (helpers) {
                     player.contractAmount = pa.contractAmount / 1000;
 
                 } else if (attributes[j] === "cashOwed") {
-                    player.cashOwed = ((1 + pa.contractExp - g.season) * pa.contractAmount - (1 - numGamesRemaining / 82) * pa.contractAmount) / 1000;
+                    player.cashOwed = ((1 + pa.contractExp - g.season) * pa.contractAmount - (1 - options.numGamesRemaining / 82) * pa.contractAmount) / 1000;
                 } else {
                     player[attributes[j]] = pa[attributes[j]];
                 }
@@ -131,8 +131,30 @@ define(["util/helpers"], function (helpers) {
                 }
             }
 
+            // Load previous season if no stats this year
+            if (options.oldStats && typeof ps === "undefined") {
+                for (j = 0; j < pa.stats.length; j++) {
+                    if (pa.stats[j].season === g.season - 1 && pa.stats[j].playoffs === false) {
+                        ps = pa.stats[j];
+                        break;
+                    }
+                }
+            }
+
             // Only show a player if they have a stats entry for this team and season, or if they are rookies who have just been drafted and the current roster is being viewed.
-            if (typeof ps !== "undefined" || (pa.draftYear === g.season && season === g.season)) {
+            if (options.showWithStatsOrRookie && (typeof ps !== "undefined" || (pa.draftYear === g.season && season === g.season))) {
+                if (typeof ps !== "undefined" && ps.gp > 0) {
+                    for (j = 0; j < stats.length; j++) {
+                        player[stats[j]] = ps[stats[j]] / ps.gp;
+                    }
+                } else {
+                    for (j = 0; j < stats.length; j++) {
+                        player[stats[j]] = 0;
+                    }
+                }
+
+                players.push(player);
+            } else {
                 if (typeof ps !== "undefined" && ps.gp > 0) {
                     for (j = 0; j < stats.length; j++) {
                         player[stats[j]] = ps[stats[j]] / ps.gp;

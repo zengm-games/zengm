@@ -87,6 +87,69 @@ define(["util/helpers"], function (helpers) {
         playerStore.put(p);
     }
 
+    /* For a list of player objects (playersAll), create a list suitible for output based on the appropriate season and tid. attributes, statas, and ratings are lists of keys.*/
+    function getPlayers(playersAll, season, tid, attributes, stats, ratings, numGamesRemaining) {
+        var i, j, pa, player, players, pr, ps;
+
+        players = [];
+        for (i = 0; i < playersAll.length; i++) {
+            player = {};
+            pa = playersAll[i];
+
+            // Attributes
+            for (j = 0; j < attributes.length; j++) {
+                if (attributes[j] === "age") {
+                    player.age = season - pa.bornYear;
+
+                } else if (attributes[j] === "contractAmount") {
+                    player.contractAmount = pa.contractAmount / 1000;
+
+                } else if (attributes[j] === "cashOwed") {
+                    player.cashOwed = ((1 + pa.contractExp - g.season) * pa.contractAmount - (1 - numGamesRemaining / 82) * pa.contractAmount) / 1000;
+                } else {
+                    player[attributes[j]] = pa[attributes[j]];
+                }
+            }
+
+            // Ratings
+            for (j = 0; j < pa.ratings.length; j++) {
+                if (pa.ratings[j].season === season) {
+                    pr = pa.ratings[j];
+                    break;
+                }
+            }
+            for (j = 0; j < ratings.length; j++) {
+                player[ratings[j]] = pr[ratings[j]];
+            }
+
+            // Stats
+            ps = undefined;
+            for (j = 0; j < pa.stats.length; j++) {
+                if (pa.stats[j].season === season && pa.stats[j].playoffs === false && pa.stats[j].tid === tid) {
+                    ps = pa.stats[j];
+                    break;
+                }
+            }
+
+            // Only show a player if they have a stats entry for this team and season, or if they are rookies who have just been drafted and the current roster is being viewed.
+            if (typeof ps !== "undefined" || (pa.draftYear === g.season && season === g.season)) {
+                if (typeof ps !== "undefined" && ps.gp > 0) {
+                    for (j = 0; j < stats.length; j++) {
+                        player[stats[j]] = ps[stats[j]] / ps.gp;
+                    }
+                } else {
+                    for (j = 0; j < stats.length; j++) {
+                        player[stats[j]] = 0;
+                    }
+                }
+
+                players.push(player);
+            }
+        }
+
+        return players;
+    }
+
     function getTeam(tid, season, cb) {
 
     }
@@ -123,6 +186,7 @@ define(["util/helpers"], function (helpers) {
         connect_meta: connect_meta,
         connect_league: connect_league,
         putPlayer: putPlayer,
+        getPlayers: getPlayers,
         getTeam: getTeam,
         getTeams: getTeams
     };

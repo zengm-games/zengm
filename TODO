@@ -1,6 +1,5 @@
 main todo
 - db.getPlayers
-  - use to make stats view
   - use to make player view
   - use for other access of players "playersAll"
 - refactor new season code
@@ -33,6 +32,7 @@ ratings should all be integers before being saved
 playoff teams aren't being set in exactly the right order
 are playoff wins added to regular season win total? looks like it.
 playoffs scheduling is fucked up. used to work.
+playoff stats tid for each player is set to tid 0
 
 ---
 
@@ -76,6 +76,8 @@ new season
 contract negotiation
 - test all the error conditions and make sure callbacks are appropriately called (unit tests?)
 - add free agent to the end of roster
+player stats
+- how to handle aggregating stats for players who played for more than one team in a season? add them all up in ps in db.getPlayers
 
 ---
 

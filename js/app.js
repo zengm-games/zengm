@@ -43,6 +43,8 @@ requirejs(["db", "views", "bbgm", "api"], function (db, views, bbgm, api) {
             this.get('/l/:lid/game_log/:abbrev/:season', views.game_log);
             this.get('/l/:lid/player_ratings', views.playerRatings);
             this.get('/l/:lid/player_ratings/:season', views.playerRatings);
+            this.get('/l/:lid/player_stats', views.playerStats);
+            this.get('/l/:lid/player_stats/:season', views.playerStats);
             this.get('/l/:lid/negotiation', views.negotiationList);
             this.get('/l/:lid/negotiation/:pid', views.negotiation);
             this.post('/l/:lid/negotiation/:pid', views.negotiation);

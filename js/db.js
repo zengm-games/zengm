@@ -114,34 +114,48 @@ define(["util/helpers"], function (helpers) {
                     player[attributes[j]] = pa[attributes[j]];
                 }
             }
-            console.log(pa);
 
             // Ratings
-            for (j = 0; j < pa.ratings.length; j++) {
-                if (pa.ratings[j].season === season) {
-                    pr = pa.ratings[j];
-                    break;
+            if (ratings.length > 0) {
+                for (j = 0; j < pa.ratings.length; j++) {
+                    if (pa.ratings[j].season === season) {
+                        pr = pa.ratings[j];
+                        break;
+                    }
                 }
-            }
-            for (j = 0; j < ratings.length; j++) {
-                player[ratings[j]] = pr[ratings[j]];
+                for (j = 0; j < ratings.length; j++) {
+                    player[ratings[j]] = pr[ratings[j]];
+                }
             }
 
             // Stats
             ps = undefined;
-            for (j = 0; j < pa.stats.length; j++) {
-                if (pa.stats[j].season === season && pa.stats[j].playoffs === false && pa.stats[j].tid === tid) {
-                    ps = pa.stats[j];
-                    break;
+            if (stats.length > 0) {
+                if (tid !== null) {
+                    // Get stats for a single team
+                    for (j = 0; j < pa.stats.length; j++) {
+                        if (pa.stats[j].season === season && pa.stats[j].playoffs === false && pa.stats[j].tid === tid) {
+                            ps = pa.stats[j];
+                            break;
+                        }
+                    }
+                } else {
+                    // Get stats for all teams - eventually this should imply adding together multiple stats objects rather than just using the first
+                    for (j = 0; j < pa.stats.length; j++) {
+                        if (pa.stats[j].season === season && pa.stats[j].playoffs === false) {
+                            ps = pa.stats[j];
+                            break;
+                        }
+                    }
                 }
-            }
 
-            // Load previous season if no stats this year
-            if (options.oldStats && typeof ps === "undefined") {
-                for (j = 0; j < pa.stats.length; j++) {
-                    if (pa.stats[j].season === g.season - 1 && pa.stats[j].playoffs === false) {
-                        ps = pa.stats[j];
-                        break;
+                // Load previous season if no stats this year
+                if (options.oldStats && typeof ps === "undefined") {
+                    for (j = 0; j < pa.stats.length; j++) {
+                        if (pa.stats[j].season === g.season - 1 && pa.stats[j].playoffs === false) {
+                            ps = pa.stats[j];
+                            break;
+                        }
                     }
                 }
             }
@@ -150,7 +164,29 @@ define(["util/helpers"], function (helpers) {
             if (options.showWithStatsOrRookie && (typeof ps !== "undefined" || (pa.draftYear === g.season && season === g.season))) {
                 if (typeof ps !== "undefined" && ps.gp > 0) {
                     for (j = 0; j < stats.length; j++) {
-                        player[stats[j]] = ps[stats[j]] / ps.gp;
+                        if (stats[j] === "gp") {
+                            player.gp = ps.gp;
+                        } else if (stats[j] === "fgp") {
+                            if (ps.fga > 0) {
+                                player.fgp = 100 * ps.fg / ps.fga;
+                            } else {
+                                player.fgp = 0;
+                            }
+                        } else if (stats[j] === "tpp") {
+                            if (ps.tpa > 0) {
+                                player.tpp = 100 * ps.tp / ps.tpa;
+                            } else {
+                                player.tpp = 0;
+                            }
+                        } else if (stats[j] === "ftp") {
+                            if (ps.fta > 0) {
+                                player.ftp = 100 * ps.ft / ps.fta;
+                            } else {
+                                player.ftp = 0;
+                            }
+                        } else {
+                            player[stats[j]] = ps[stats[j]] / ps.gp;
+                        }
                     }
                 } else {
                     for (j = 0; j < stats.length; j++) {
@@ -159,7 +195,7 @@ define(["util/helpers"], function (helpers) {
                 }
 
                 players.push(player);
-            } else {
+            } else if (!options.showWithStatsOrRookie) {
                 if (typeof ps !== "undefined" && ps.gp > 0) {
                     for (j = 0; j < stats.length; j++) {
                         player[stats[j]] = ps[stats[j]] / ps.gp;

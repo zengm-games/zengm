@@ -582,10 +582,34 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 ratings = ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
                 stats = [];
 
-                players = db.getPlayers(event.target.result, season, undefined, attributes, stats, ratings);
+                players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings);
 
                 data = {title: "Player Ratings - League " + g.lid};
                 template = Handlebars.templates.playerRatings;
+                data.league_content = template({g: g, players: players, seasons: seasons});
+                bbgm.ajaxUpdate(data);
+            };
+        });
+    }
+
+    function playerStats(req) {
+        beforeLeague(req, function () {
+            var season, seasons;
+
+            season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
+            season = helpers.validateSeason(season);
+            seasons = helpers.getSeasons(season);
+
+            g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) {
+                var attributes, data, players, ratings, stats, template;
+                attributes = ["pid", "name", "abbrev", "pos", "age"];
+                ratings = [];
+                stats = ["gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts"];
+
+                players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings, {showWithStatsOrRookie: true});
+
+                data = {title: "Player Stats - League " + g.lid};
+                template = Handlebars.templates.playerStats;
                 data.league_content = template({g: g, players: players, seasons: seasons});
                 bbgm.ajaxUpdate(data);
             };
@@ -733,6 +757,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         draft: draft,
         game_log: game_log,
         playerRatings: playerRatings,
+        playerStats: playerStats,
         negotiationList: negotiationList,
         negotiation: negotiation
     };

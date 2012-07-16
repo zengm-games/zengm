@@ -1,0 +1,30 @@
+<script type="text/javascript">
+$(document).ready(function() {
+  bbgm.dropdown($('#player_stats_select_season'));
+
+  bbgm.datatable($('#player_stats'), 23, [
+    {{#players}}
+	    ['<a href="/l/{{../g.lid}}/player/{{pid}}">{{name}}</a>', '{{pos}}', '<a href="/l/{{../g.lid}}/roster/{{abbrev}}">{{abbrev}}</a>', '{{gp}}', '{{gs}}', '{{round min 1}}', '{{round fg 1}}', '{{round fga 1}}', '{{roundWinp fgp}}', '{{round tp 1}}', '{{round tpa 1}}', '{{round tpp 1}}', '{{round ft 1}}', '{{round fta 1}}', '{{round ftp 1}}', '{{round orb 1}}', '{{round drb 1}}', '{{round trb 1}}', '{{round ast 1}}', '{{round tov 1}}', '{{round stl 1}}', '{{round blk 1}}', '{{round pf 1}}', '{{round pts 1}}'],
+    {{/players}}
+  ]);
+});
+</script>
+
+<form action="/l/{{g.lid}}/player_stats" method="GET" class="form-inline pull-right">
+  <select id="player_stats_select_season" name="season" class="season">
+    {{#seasons}}
+      <option value="{{season}}"{{#if selected}} selected="selected"{{/if}}>{{season}} season</option>
+    {{/seasons}}
+  </select>
+</form>
+
+<h1>Player Stats</h1>
+
+<p class="clearfix">
+<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="player_stats">
+<thead>
+  <tr><th colspan="6"></th><th colspan="3" style="text-align: center" title="Field Goals">FG</th><th colspan="3" style="text-align: center" title="Three-Pointers">3PT</th><th colspan="3" style="text-align: center" title="Free Throws">FT</th><th colspan="3" style="text-align: center" title="Rebounds">Reb</th><th colspan="6"></th></tr>
+  <tr><th>Name</th><th title="Position">Pos</th><th>Team</th><th title="Games Played">GP</th><th title="Games Started">GS</th><th title="Minutes">Min</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Offensive">Off</th><th title="Defensive">Def</th><th title="Total">Tot</th><th title="Assists">Ast</th><th title="Turnovers">TO</th><th title="Steals">Stl</th><th title="Blocks">Blk</th><th title="Personal Fouls">PF</th><th title="Points">Pts</th></tr>
+</thead>
+</table>
+</p>

@@ -538,7 +538,6 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                             player.ast = player.ast / player.gp;
                         }
 
-
                         players.push(player);
                     }
                 }

@@ -87,8 +87,11 @@ define(["util/helpers"], function (helpers) {
         playerStore.put(p);
     }
 
+    /* For a player object (pa)), create an object suitible for output based on the appropriate season and tid. attributes, stats, and ratings are lists of keys, and all those keys will appear flat in a single object IF ONLY ONE YEAR is requested. If tid is null, then any team is acceptable. If season is null, then a list of all seasons is returned for all ratings and stats, and tid is ignored.*/
     function getPlayer(pa, season, tid, attributes, stats, ratings, options) {
-        var j, player, pr, ps;
+        var j, k, player, pr, ps;
+console.log(pa);
+        options = typeof options !== "undefined" ? options : {};
 
         player = {};
 
@@ -111,14 +114,26 @@ define(["util/helpers"], function (helpers) {
 
         // Ratings
         if (ratings.length > 0) {
-            for (j = 0; j < pa.ratings.length; j++) {
-                if (pa.ratings[j].season === season) {
-                    pr = pa.ratings[j];
-                    break;
+            if (season !== null) {
+                // One season
+                for (j = 0; j < pa.ratings.length; j++) {
+                    if (pa.ratings[j].season === season) {
+                        pr = pa.ratings[j];
+                        break;
+                    }
                 }
-            }
-            for (j = 0; j < ratings.length; j++) {
-                player[ratings[j]] = pr[ratings[j]];
+                for (j = 0; j < ratings.length; j++) {
+                    player[ratings[j]] = pr[ratings[j]];
+                }
+            } else {
+                // All seasons
+                player.ratings = [];
+                for (k = 0; k < pa.ratings.length; k++) {
+                    player.ratings[k] = {};
+                    for (j = 0; j < ratings.length; j++) {
+                        player.ratings[k][ratings[j]] = pa.ratings[k][ratings[j]];
+                    }
+                }
             }
         }
 
@@ -204,7 +219,7 @@ define(["util/helpers"], function (helpers) {
         return player;
     }
 
-    /* For a list of player objects (playersAll), create a list suitible for output based on the appropriate season and tid. attributes, statas, and ratings are lists of keys.*/
+    /* For a list of player objects (playersAll), create a list suitible for output based getPlayer.*/
     function getPlayers(playersAll, season, tid, attributes, stats, ratings, options) {
         var i, player, players;
 

@@ -616,6 +616,32 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         });
     }
 
+    function player_(req) {
+        beforeLeague(req, function () {
+            var pid;
+
+            pid = typeof req.params.pid !== "undefined" ? parseInt(req.params.pid, 10) : undefined;
+
+            g.dbl.transaction(["players"]).objectStore("players").get(pid).onsuccess = function (event) {
+                var attributes, currentRatings, data, player, ratings, stats, template;
+
+                attributes = ["pid", "name", "abbrev", "pos", "age", "contractAmount", "contractExp"];
+                ratings = ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
+                stats = ["gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts"];
+
+                player = db.getPlayer(event.target.result, null, null, attributes, stats, ratings);
+console.log(player);
+
+                currentRatings = player.ratings[player.ratings.length - 1];
+
+                data = {title: player.name + " - League " + g.lid};
+                template = Handlebars.templates.player;
+                data.league_content = template({g: g, player: player, currentRatings: currentRatings});
+                bbgm.ajaxUpdate(data);
+            };
+        });
+    }
+
     function negotiationList() {
         var negotiations;
 
@@ -758,6 +784,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         game_log: game_log,
         playerRatings: playerRatings,
         playerStats: playerStats,
+        player: player_,
         negotiationList: negotiationList,
         negotiation: negotiation
     };

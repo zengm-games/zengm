@@ -1,0 +1,97 @@
+<script type="text/javascript">
+$(document).ready(function() {
+/*    $('#player_tabs a').click(function (e) {
+        e.preventDefault();
+        $(this).tab('show');
+    });*/
+  $('#player_tabs').tab();
+});
+</script>
+<div class="row-fluid">
+  <div class="span6">
+    <h1>{{player.name}}</h1>
+    <strong>{{player.team_region}} {{player.team_name}}</strong><br />
+    Height: {{player.hgtFt}}'{{player.hgtIn}}"<br />
+    Weight: {{player.weight}}<br />
+    Age: {{player.age}}<br />
+    Born: {{player.born_year}} - {{player.born_loc}}<br />
+    Draft: {{player.draft_year}} - Round {{player.round}} (Pick {{player.draft_pick}}) by the {{player.draft_team_region}} {{player.draft_team_name}}<br />
+    Contract: ${{player.contractAmount 1}}M per year through {{player.contractExp}}<br />
+  </div>
+  <div class="span6">
+    <h2 class="pull-left">Overall Rating: {{currentRatings.ovr}}</h2>
+    <h2 class="pull-right">Potential: {{currentRatings.pot}}</h2><br /><br /><br />
+    <div class="row-fluid">
+      <div class="span4">
+        <strong>Physical</strong><br/ >
+        Height: {{currentRatings.hgt}}<br />
+        Strength: {{currentRatings.stre}}<br />
+        Speed: {{currentRatings.spd}}<br />
+        Jumping: {{currentRatings.jmp}}<br />
+        Endurance: {{currentRatings.endu}}
+      </div>
+      <div class="span4">
+        <strong>Shooting</strong><br/ >
+        Inside: {{currentRatings.ins}}<br />
+        Layups: {{currentRatings.dnk}}<br />
+        Free throws: {{currentRatings.ft}}<br />
+        Two pointers: {{currentRatings.fg}}<br />
+        Three pointers: {{currentRatings.tp}}
+      </div>
+      <div class="span4">
+        <strong>Skill</strong><br/ >
+        Blocks: {{currentRatings.blk}}<br />
+        Steals: {{currentRatings.stl}}<br />
+        Dribbling: {{currentRatings.drb}}<br />
+        Passing: {{currentRatings.pss}}<br />
+        Rebounding: {{currentRatings.reb}}
+      </div>
+    </div>
+  </div>
+</div>
+
+<p></p>
+
+{% ifplayer.tid != g.user_tid %}
+  <form action="/l/{{g.lid}}/trade" method="POST"><input type="hidden" name="pid" value="{{player.pid}}"><button type="submit" class="btn btn-small">Trade For</button></form>
+{% endif %}
+
+<ul id="player_tabs" class="nav nav-tabs" data-tabs="tabs">
+    <li class="active"><a href="#career_stats" data-toggle="tab">Career Stats</a></li>
+    <li><a href="#playoffs_stats" data-toggle="tab">Playoffs Stats</a></li>
+    <li><a href="#game_log" data-toggle="tab">Game Log</a></li>
+    <li><a href="#ratings_history" data-toggle="tab">Ratings History</a></li>
+</ul>
+<div id="my-tab-content" class="tab-content">
+  <div class="tab-pane active" id="career_stats">
+    <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="player_stats">
+    <thead>
+      <tr><th colspan="6"></th><th colspan="3" style="text-align: center" title="Field Goals">FG</th><th colspan="3" style="text-align: center" title="Three-Pointers">3PT</th><th colspan="3" style="text-align: center" title="Free Throws">FT</th><th colspan="3" style="text-align: center" title="Rebounds">Reb</th><th colspan="6"></th></tr>
+      <tr><th>Year</th><th>Team</th><th>Age</th><th title="Games Played">GP</th><th title="Games Started">GS</th><th title="Minutes">Min</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Offensive">Off</th><th title="Defensive">Def</th><th title="Total">Tot</th><th title="Assists">Ast</th><th title="Turnovers">TO</th><th title="Steals">Stl</th><th title="Blocks">Blk</th><th title="Personal Fouls">PF</th><th title="Points">PPG</th></tr>
+    </thead>
+    <tbody>
+    {{#player.stats}}
+      <tr><td><a href="#">{{season}}</a></td><td><a href="/l/{{../g.lid}}/roster/{{abbrev}}/{{season}}">{{abbrev}}</a></td><td>{{age}}</td><td>{{gp}}</td><td>{{gs}}</td><td>{{round min 1}}</td><td>{{round fg 1}}</td><td>{{round fga 1}}</td><td>{{round fgp 1}}</td><td>{{round tp 1}}</td><td>{{round tpa 1}}</td><td>{{round tpp 1}}</td><td>{{round ft 1}}</td><td>{{round fta 1}}</td><td>{{round ftp 1}}</td><td>{{round orb 1}}</td><td>{{round drb 1}}</td><td>{{round rebounds 1}}</td><td>{{round ast 1}}</td><td>{{round tov 1}}</td><td>{{round stl 1}}</td><td>{{round blk 1}}</td><td>{{round pf 1}}</td><td>{{round pts 1}}</td></tr>
+    {{/player.stats}}
+    </tbody>
+    </table>
+  </div>
+  <div class="tab-pane" id="playoffs_stats">
+    Not implemented yet
+  </div>
+  <div class="tab-pane" id="game_log">
+    Not implemented yet
+  </div>
+  <div class="tab-pane" id="ratings_history">
+    <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="player_ratings">
+    <thead>
+      <tr><th>Year</th><th>Team</th><th>Age</th><th title="Overall">Ovr</th><th title="Potential">Pot</th><th title="Height">Hgt</th><th title="Strength">Str</th><th title="Speed">Spd</th><th title="Jumping">Jmp</th><th title="Endurance">End</th><th title="Inside Scoring">Ins</th><th title="Dunks/Layups">Dnk</th><th title="Free Throw Shooting">FT</th><th title="Two-Point Shooting">2Pt</th><th title="Three-Point Shooting">3Pt</th><th title="Blocks">Blk</th><th title="Steals">Stl</th><th title="Dribbling">Drb</th><th title="Passing">Pss</th><th title="Rebounding">Reb</th></tr>
+    </thead>
+    <tbody>
+      {{#player.ratings}}
+        <tr><td><a href="#">{{season}}</a></td><td><a href="/l/{{../g.lid}}/roster/{{abbrev}}/{{season}}">{{abbrev}}</a></td><td>{{age}}</td><td>{{ovr}}</td><td>{{pot}}</td><td>{{hgt}}</td><td>{{stre}}</td><td>{{spd}}</td><td>{{jmp}}</td><td>{{endu}}</td><td>{{ins}}</td><td>{{dnk}}</td><td>{{ft}}</td><td>{{fg}}</td><td>{{tp}}</td><td>{{blk}}</td><td>{{stl}}</td><td>{{drb}}</td><td>{{pss}}</td><td>{{reb}}</td></tr>
+      {{/player.ratings}}
+    </tbody>
+    </table>
+  </div>
+</div>

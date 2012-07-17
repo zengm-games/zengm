@@ -87,125 +87,133 @@ define(["util/helpers"], function (helpers) {
         playerStore.put(p);
     }
 
+    function getPlayer(pa, season, tid, attributes, stats, ratings, options) {
+        var j, player, pr, ps;
+
+        player = {};
+
+        // Attributes
+        for (j = 0; j < attributes.length; j++) {
+            if (attributes[j] === "age") {
+                player.age = season - pa.bornYear;
+
+            } else if (attributes[j] === "contractAmount") {
+                player.contractAmount = pa.contractAmount / 1000;
+
+            } else if (attributes[j] === "cashOwed") {
+                player.cashOwed = ((1 + pa.contractExp - g.season) * pa.contractAmount - (1 - options.numGamesRemaining / 82) * pa.contractAmount) / 1000;
+            } else if (attributes[j] === "abbrev") {
+                player.abbrev = helpers.getAbbrev(pa.tid);
+            } else {
+                player[attributes[j]] = pa[attributes[j]];
+            }
+        }
+
+        // Ratings
+        if (ratings.length > 0) {
+            for (j = 0; j < pa.ratings.length; j++) {
+                if (pa.ratings[j].season === season) {
+                    pr = pa.ratings[j];
+                    break;
+                }
+            }
+            for (j = 0; j < ratings.length; j++) {
+                player[ratings[j]] = pr[ratings[j]];
+            }
+        }
+
+        // Stats
+        ps = undefined;
+        if (stats.length > 0) {
+            if (tid !== null) {
+                // Get stats for a single team
+                for (j = 0; j < pa.stats.length; j++) {
+                    if (pa.stats[j].season === season && pa.stats[j].playoffs === false && pa.stats[j].tid === tid) {
+                        ps = pa.stats[j];
+                        break;
+                    }
+                }
+            } else {
+                // Get stats for all teams - eventually this should imply adding together multiple stats objects rather than just using the first
+                for (j = 0; j < pa.stats.length; j++) {
+                    if (pa.stats[j].season === season && pa.stats[j].playoffs === false) {
+                        ps = pa.stats[j];
+                        break;
+                    }
+                }
+            }
+
+            // Load previous season if no stats this year
+            if (options.oldStats && typeof ps === "undefined") {
+                for (j = 0; j < pa.stats.length; j++) {
+                    if (pa.stats[j].season === g.season - 1 && pa.stats[j].playoffs === false) {
+                        ps = pa.stats[j];
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Only show a player if they have a stats entry for this team and season, or if they are rookies who have just been drafted and the current roster is being viewed.
+        if (options.showWithStatsOrRookie && (typeof ps !== "undefined" || (pa.draftYear === g.season && season === g.season))) {
+            if (typeof ps !== "undefined" && ps.gp > 0) {
+                for (j = 0; j < stats.length; j++) {
+                    if (stats[j] === "gp") {
+                        player.gp = ps.gp;
+                    } else if (stats[j] === "fgp") {
+                        if (ps.fga > 0) {
+                            player.fgp = 100 * ps.fg / ps.fga;
+                        } else {
+                            player.fgp = 0;
+                        }
+                    } else if (stats[j] === "tpp") {
+                        if (ps.tpa > 0) {
+                            player.tpp = 100 * ps.tp / ps.tpa;
+                        } else {
+                            player.tpp = 0;
+                        }
+                    } else if (stats[j] === "ftp") {
+                        if (ps.fta > 0) {
+                            player.ftp = 100 * ps.ft / ps.fta;
+                        } else {
+                            player.ftp = 0;
+                        }
+                    } else {
+                        player[stats[j]] = ps[stats[j]] / ps.gp;
+                    }
+                }
+            } else {
+                for (j = 0; j < stats.length; j++) {
+                    player[stats[j]] = 0;
+                }
+            }
+        } else if (!options.showWithStatsOrRookie) {
+            if (typeof ps !== "undefined" && ps.gp > 0) {
+                for (j = 0; j < stats.length; j++) {
+                    player[stats[j]] = ps[stats[j]] / ps.gp;
+                }
+            } else {
+                for (j = 0; j < stats.length; j++) {
+                    player[stats[j]] = 0;
+                }
+            }
+        } else {
+            player = null;
+        }
+
+        return player;
+    }
+
     /* For a list of player objects (playersAll), create a list suitible for output based on the appropriate season and tid. attributes, statas, and ratings are lists of keys.*/
     function getPlayers(playersAll, season, tid, attributes, stats, ratings, options) {
-        var i, j, pa, player, players, pr, ps;
+        var i, player, players;
 
         options = typeof options !== "undefined" ? options : {};
 
         players = [];
         for (i = 0; i < playersAll.length; i++) {
-            player = {};
-            pa = playersAll[i];
-
-            // Attributes
-            for (j = 0; j < attributes.length; j++) {
-                if (attributes[j] === "age") {
-                    player.age = season - pa.bornYear;
-
-                } else if (attributes[j] === "contractAmount") {
-                    player.contractAmount = pa.contractAmount / 1000;
-
-                } else if (attributes[j] === "cashOwed") {
-                    player.cashOwed = ((1 + pa.contractExp - g.season) * pa.contractAmount - (1 - options.numGamesRemaining / 82) * pa.contractAmount) / 1000;
-                } else if (attributes[j] === "abbrev") {
-                    player.abbrev = helpers.getAbbrev(pa.tid);
-                } else {
-                    player[attributes[j]] = pa[attributes[j]];
-                }
-            }
-
-            // Ratings
-            if (ratings.length > 0) {
-                for (j = 0; j < pa.ratings.length; j++) {
-                    if (pa.ratings[j].season === season) {
-                        pr = pa.ratings[j];
-                        break;
-                    }
-                }
-                for (j = 0; j < ratings.length; j++) {
-                    player[ratings[j]] = pr[ratings[j]];
-                }
-            }
-
-            // Stats
-            ps = undefined;
-            if (stats.length > 0) {
-                if (tid !== null) {
-                    // Get stats for a single team
-                    for (j = 0; j < pa.stats.length; j++) {
-                        if (pa.stats[j].season === season && pa.stats[j].playoffs === false && pa.stats[j].tid === tid) {
-                            ps = pa.stats[j];
-                            break;
-                        }
-                    }
-                } else {
-                    // Get stats for all teams - eventually this should imply adding together multiple stats objects rather than just using the first
-                    for (j = 0; j < pa.stats.length; j++) {
-                        if (pa.stats[j].season === season && pa.stats[j].playoffs === false) {
-                            ps = pa.stats[j];
-                            break;
-                        }
-                    }
-                }
-
-                // Load previous season if no stats this year
-                if (options.oldStats && typeof ps === "undefined") {
-                    for (j = 0; j < pa.stats.length; j++) {
-                        if (pa.stats[j].season === g.season - 1 && pa.stats[j].playoffs === false) {
-                            ps = pa.stats[j];
-                            break;
-                        }
-                    }
-                }
-            }
-
-            // Only show a player if they have a stats entry for this team and season, or if they are rookies who have just been drafted and the current roster is being viewed.
-            if (options.showWithStatsOrRookie && (typeof ps !== "undefined" || (pa.draftYear === g.season && season === g.season))) {
-                if (typeof ps !== "undefined" && ps.gp > 0) {
-                    for (j = 0; j < stats.length; j++) {
-                        if (stats[j] === "gp") {
-                            player.gp = ps.gp;
-                        } else if (stats[j] === "fgp") {
-                            if (ps.fga > 0) {
-                                player.fgp = 100 * ps.fg / ps.fga;
-                            } else {
-                                player.fgp = 0;
-                            }
-                        } else if (stats[j] === "tpp") {
-                            if (ps.tpa > 0) {
-                                player.tpp = 100 * ps.tp / ps.tpa;
-                            } else {
-                                player.tpp = 0;
-                            }
-                        } else if (stats[j] === "ftp") {
-                            if (ps.fta > 0) {
-                                player.ftp = 100 * ps.ft / ps.fta;
-                            } else {
-                                player.ftp = 0;
-                            }
-                        } else {
-                            player[stats[j]] = ps[stats[j]] / ps.gp;
-                        }
-                    }
-                } else {
-                    for (j = 0; j < stats.length; j++) {
-                        player[stats[j]] = 0;
-                    }
-                }
-
-                players.push(player);
-            } else if (!options.showWithStatsOrRookie) {
-                if (typeof ps !== "undefined" && ps.gp > 0) {
-                    for (j = 0; j < stats.length; j++) {
-                        player[stats[j]] = ps[stats[j]] / ps.gp;
-                    }
-                } else {
-                    for (j = 0; j < stats.length; j++) {
-                        player[stats[j]] = 0;
-                    }
-                }
-
+            player = getPlayer(playersAll[i], season, tid, attributes, stats, ratings, options);
+            if (player !== null) {
                 players.push(player);
             }
         }
@@ -249,6 +257,7 @@ define(["util/helpers"], function (helpers) {
         connect_meta: connect_meta,
         connect_league: connect_league,
         putPlayer: putPlayer,
+        getPlayer: getPlayer,
         getPlayers: getPlayers,
         getTeam: getTeam,
         getTeams: getTeams

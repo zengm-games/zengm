@@ -14,8 +14,8 @@ $(document).ready(function() {
     Height: {{player.hgtFt}}'{{player.hgtIn}}"<br />
     Weight: {{player.weight}}<br />
     Age: {{player.age}}<br />
-    Born: {{player.born_year}} - {{player.born_loc}}<br />
-    Draft: {{player.draft_year}} - Round {{player.round}} (Pick {{player.draft_pick}}) by the {{player.draft_team_region}} {{player.draft_team_name}}<br />
+    Born: {{player.bornYear}} - {{player.bornLoc}}<br />
+    Draft: {{player.draftYear}} - Round {{player.draftRound}} (Pick {{player.draftPick}}) by the {{player.draft_team_region}} {{player.draft_team_name}}<br />
     Contract: ${{player.contractAmount 1}}M per year through {{player.contractExp}}<br />
   </div>
   <div class="span6">
@@ -51,16 +51,15 @@ $(document).ready(function() {
 </div>
 
 <p></p>
-
-{% ifplayer.tid != g.user_tid %}
+{{#if showTradeFor}}
   <form action="/l/{{g.lid}}/trade" method="POST"><input type="hidden" name="pid" value="{{player.pid}}"><button type="submit" class="btn btn-small">Trade For</button></form>
-{% endif %}
+{{/if}}
 
 <ul id="player_tabs" class="nav nav-tabs" data-tabs="tabs">
-    <li class="active"><a href="#career_stats" data-toggle="tab">Career Stats</a></li>
-    <li><a href="#playoffs_stats" data-toggle="tab">Playoffs Stats</a></li>
-    <li><a href="#game_log" data-toggle="tab">Game Log</a></li>
-    <li><a href="#ratings_history" data-toggle="tab">Ratings History</a></li>
+    <li class="active"><a href="#career_stats" data-toggle="tab" data-no-davis="true">Career Stats</a></li>
+    <li><a href="#playoffs_stats" data-toggle="tab" data-no-davis="true">Playoffs Stats</a></li>
+    <li><a href="#game_log" data-toggle="tab" data-no-davis="true">Game Log</a></li>
+    <li><a href="#ratings_history" data-toggle="tab" data-no-davis="true">Ratings History</a></li>
 </ul>
 <div id="my-tab-content" class="tab-content">
   <div class="tab-pane active" id="career_stats">

@@ -4,7 +4,25 @@ templates['player'] = template(function (Handlebars,depth0,helpers,partials,data
   helpers = helpers || Handlebars.helpers;
   var buffer = "", stack1, stack2, foundHelper, tmp1, self=this, functionType="function", helperMissing=helpers.helperMissing, undef=void 0, escapeExpression=this.escapeExpression, blockHelperMissing=helpers.blockHelperMissing;
 
-function program1(depth0,data,depth1) {
+function program1(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n  <form action=\"/l/";
+  foundHelper = helpers['g'];
+  stack1 = foundHelper || depth0['g'];
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/trade\" method=\"POST\"><input type=\"hidden\" name=\"pid\" value=\"";
+  foundHelper = helpers.player;
+  stack1 = foundHelper || depth0.player;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.pid);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.pid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\"><button type=\"submit\" class=\"btn btn-small\">Trade For</button></form>\n";
+  return buffer;}
+
+function program3(depth0,data,depth1) {
   
   var buffer = "", stack1, stack2, stack3;
   buffer += "\n      <tr><td><a href=\"#\">";
@@ -222,7 +240,7 @@ function program1(depth0,data,depth1) {
   buffer += escapeExpression(stack1) + "</td></tr>\n    ";
   return buffer;}
 
-function program3(depth0,data,depth1) {
+function program5(depth0,data,depth1) {
   
   var buffer = "", stack1;
   buffer += "\n        <tr><td><a href=\"#\">";
@@ -389,33 +407,33 @@ function program3(depth0,data,depth1) {
   buffer += escapeExpression(stack1) + "<br />\n    Born: ";
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.born_year);
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.bornYear);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.born_year", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.bornYear", { hash: {} }); }
   buffer += escapeExpression(stack1) + " - ";
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.born_loc);
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.bornLoc);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.born_loc", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.bornLoc", { hash: {} }); }
   buffer += escapeExpression(stack1) + "<br />\n    Draft: ";
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.draft_year);
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.draftYear);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.draft_year", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.draftYear", { hash: {} }); }
   buffer += escapeExpression(stack1) + " - Round ";
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.round);
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.draftRound);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.round", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.draftRound", { hash: {} }); }
   buffer += escapeExpression(stack1) + " (Pick ";
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.draft_pick);
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.draftPick);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.draft_pick", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.draftPick", { hash: {} }); }
   buffer += escapeExpression(stack1) + ") by the ";
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;
@@ -544,23 +562,21 @@ function program3(depth0,data,depth1) {
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.reb);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.reb", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "\n      </div>\n    </div>\n  </div>\n</div>\n\n<p></p>\n\n{% ifplayer.tid != g.user_tid %}\n  <form action=\"/l/";
-  foundHelper = helpers['g'];
-  stack1 = foundHelper || depth0['g'];
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/trade\" method=\"POST\"><input type=\"hidden\" name=\"pid\" value=\"";
-  foundHelper = helpers.player;
-  stack1 = foundHelper || depth0.player;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.pid);
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.pid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "\"><button type=\"submit\" class=\"btn btn-small\">Trade For</button></form>\n{% endif %}\n\n<ul id=\"player_tabs\" class=\"nav nav-tabs\" data-tabs=\"tabs\">\n    <li class=\"active\"><a href=\"#career_stats\" data-toggle=\"tab\">Career Stats</a></li>\n    <li><a href=\"#playoffs_stats\" data-toggle=\"tab\">Playoffs Stats</a></li>\n    <li><a href=\"#game_log\" data-toggle=\"tab\">Game Log</a></li>\n    <li><a href=\"#ratings_history\" data-toggle=\"tab\">Ratings History</a></li>\n</ul>\n<div id=\"my-tab-content\" class=\"tab-content\">\n  <div class=\"tab-pane active\" id=\"career_stats\">\n    <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player_stats\">\n    <thead>\n      <tr><th colspan=\"6\"></th><th colspan=\"3\" style=\"text-align: center\" title=\"Field Goals\">FG</th><th colspan=\"3\" style=\"text-align: center\" title=\"Three-Pointers\">3PT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Free Throws\">FT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Rebounds\">Reb</th><th colspan=\"6\"></th></tr>\n      <tr><th>Year</th><th>Team</th><th>Age</th><th title=\"Games Played\">GP</th><th title=\"Games Started\">GS</th><th title=\"Minutes\">Min</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Offensive\">Off</th><th title=\"Defensive\">Def</th><th title=\"Total\">Tot</th><th title=\"Assists\">Ast</th><th title=\"Turnovers\">TO</th><th title=\"Steals\">Stl</th><th title=\"Blocks\">Blk</th><th title=\"Personal Fouls\">PF</th><th title=\"Points\">PPG</th></tr>\n    </thead>\n    <tbody>\n    ";
+  buffer += escapeExpression(stack1) + "\n      </div>\n    </div>\n  </div>\n</div>\n\n<p></p>\n";
+  foundHelper = helpers.showTradeFor;
+  stack1 = foundHelper || depth0.showTradeFor;
+  stack2 = helpers['if'];
+  tmp1 = self.program(1, program1, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n\n<ul id=\"player_tabs\" class=\"nav nav-tabs\" data-tabs=\"tabs\">\n    <li class=\"active\"><a href=\"#career_stats\" data-toggle=\"tab\" data-no-davis=\"true\">Career Stats</a></li>\n    <li><a href=\"#playoffs_stats\" data-toggle=\"tab\" data-no-davis=\"true\">Playoffs Stats</a></li>\n    <li><a href=\"#game_log\" data-toggle=\"tab\" data-no-davis=\"true\">Game Log</a></li>\n    <li><a href=\"#ratings_history\" data-toggle=\"tab\" data-no-davis=\"true\">Ratings History</a></li>\n</ul>\n<div id=\"my-tab-content\" class=\"tab-content\">\n  <div class=\"tab-pane active\" id=\"career_stats\">\n    <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player_stats\">\n    <thead>\n      <tr><th colspan=\"6\"></th><th colspan=\"3\" style=\"text-align: center\" title=\"Field Goals\">FG</th><th colspan=\"3\" style=\"text-align: center\" title=\"Three-Pointers\">3PT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Free Throws\">FT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Rebounds\">Reb</th><th colspan=\"6\"></th></tr>\n      <tr><th>Year</th><th>Team</th><th>Age</th><th title=\"Games Played\">GP</th><th title=\"Games Started\">GS</th><th title=\"Minutes\">Min</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Offensive\">Off</th><th title=\"Defensive\">Def</th><th title=\"Total\">Tot</th><th title=\"Assists\">Ast</th><th title=\"Turnovers\">TO</th><th title=\"Steals\">Stl</th><th title=\"Blocks\">Blk</th><th title=\"Personal Fouls\">PF</th><th title=\"Points\">PPG</th></tr>\n    </thead>\n    <tbody>\n    ";
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.stats);
-  tmp1 = self.programWithDepth(program1, data, depth0);
+  tmp1 = self.programWithDepth(program3, data, depth0);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;
@@ -571,7 +587,7 @@ function program3(depth0,data,depth1) {
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.ratings);
-  tmp1 = self.programWithDepth(program3, data, depth0);
+  tmp1 = self.programWithDepth(program5, data, depth0);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;

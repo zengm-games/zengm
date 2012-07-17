@@ -625,7 +625,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             g.dbl.transaction(["players"]).objectStore("players").get(pid).onsuccess = function (event) {
                 var attributes, currentRatings, data, player, ratings, stats, template;
 
-                attributes = ["pid", "name", "abbrev", "pos", "age", "contractAmount", "contractExp"];
+                attributes = ["pid", "name", "tid", "abbrev", "pos", "age", "contractAmount", "contractExp", "draftYear", "draftRound", "draftPick"];
                 ratings = ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
                 stats = ["gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts"];
 
@@ -636,7 +636,7 @@ console.log(player);
 
                 data = {title: player.name + " - League " + g.lid};
                 template = Handlebars.templates.player;
-                data.league_content = template({g: g, player: player, currentRatings: currentRatings});
+                data.league_content = template({g: g, player: player, currentRatings: currentRatings, showTradeFor: player.tid !== g.userTid});
                 bbgm.ajaxUpdate(data);
             };
         });

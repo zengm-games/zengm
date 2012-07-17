@@ -15,7 +15,7 @@ requirejs(["db", "views", "bbgm", "api"], function (db, views, bbgm, api) {
         var app = Davis(function () {
             this.configure(function () {
                 this.generateRequestOnPageLoad = true;
-                this.linkSelector = 'a:not([href="#"])';
+                this.linkSelector = 'a:not([data-no-davis=true])';
             });
 
             // Non-league views

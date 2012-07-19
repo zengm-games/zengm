@@ -97,7 +97,7 @@ define(["util/helpers"], function (helpers) {
 
     /* For a player object (pa)), create an object suitible for output based on the appropriate season and tid. attributes, stats, and ratings are lists of keys, and all those keys will appear flat in a single object IF ONLY ONE YEAR is requested. If tid is null, then any team is acceptable. If season is null, then a list of all seasons is returned for all ratings and stats, and tid is ignored. */
     function getPlayer(pa, season, tid, attributes, stats, ratings, options) {
-        var j, k, player, pr, ps;
+        var i, j, k, player, pr, ps, tidTemp;
 
         options = typeof options !== "undefined" ? options : {};
 
@@ -107,7 +107,6 @@ define(["util/helpers"], function (helpers) {
         for (j = 0; j < attributes.length; j++) {
             if (attributes[j] === "age") {
                 player.age = season - pa.bornYear;
-
             } else if (attributes[j] === "contractAmount") {
                 player.contractAmount = pa.contractAmount / 1000;
 
@@ -139,7 +138,23 @@ define(["util/helpers"], function (helpers) {
                 for (k = 0; k < pa.ratings.length; k++) {
                     player.ratings[k] = {};
                     for (j = 0; j < ratings.length; j++) {
-                        player.ratings[k][ratings[j]] = pa.ratings[k][ratings[j]];
+                        console.log(ratings[j]);
+                        if (ratings[j] === "age") {
+                            player.ratings[k].age = pa.ratings[k].season - pa.bornYear;
+                        } else if (ratings[j] === "abbrev") {
+                            // Find the last stats entry for that season, and use that to determine the team
+                            for (i = 0; i < pa.stats.length; i++) {
+                                if (pa.stats[i].season === pa.ratings[k].season && pa.stats[i].playoffs === false) {
+                                    tidTemp = pa.stats[i].tid;
+                                }
+                            }
+                            if (tidTemp >= 0) {
+                                player.ratings[k].abbrev = helpers.getAbbrev(tidTemp);
+                                tidTemp = undefined;
+                            }
+                        } else {
+                            player.ratings[k][ratings[j]] = pa.ratings[k][ratings[j]];
+                        }
                     }
                 }
             }

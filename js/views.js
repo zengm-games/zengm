@@ -626,7 +626,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 var attributes, currentRatings, data, player, ratings, stats, template;
 
                 attributes = ["pid", "name", "tid", "abbrev", "pos", "age", "contractAmount", "contractExp", "draftYear", "draftRound", "draftPick"];
-                ratings = ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
+                ratings = ["season", "abbrev", "age", "ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
                 stats = ["gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts"];
 
                 player = db.getPlayer(event.target.result, null, null, attributes, stats, ratings);

@@ -1,3 +1,7 @@
+/**
+ * @name util.helpers
+ * @namespace
+ */
 define([], function () {
     "use strict";
 
@@ -166,9 +170,12 @@ define([], function () {
 
 
     /**
-     * Clones an object. Otherwise, passing the team objects and modifying them in
-     * here will fuck up future simulations of the same team if a team plays more
-     * than one game in a day. Taken from http://stackoverflow.com/a/3284324/786644
+     * Clones an object.
+     * 
+     * Taken from http://stackoverflow.com/a/3284324/786644
+     *
+     * @memberOf util.helpers
+     * @param {Object} obj Object to be cloned.
      */
     function deepCopy(obj) {
         var key, retVal;
@@ -187,6 +194,8 @@ define([], function () {
 
     /**
      * Display a whole-page error message to the user.
+     * 
+     * @memberOf util.helpers
      * @param {string} error Text of the error message to be displayed.
      */
     function leagueError(error) {

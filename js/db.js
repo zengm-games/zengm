@@ -1,3 +1,7 @@
+/**
+ * @name db
+ * @namespace
+ */
 define(["util/helpers"], function (helpers) {
     "use strict";
 
@@ -72,8 +76,10 @@ define(["util/helpers"], function (helpers) {
 
     /**
      * Add a new player to the database or update an existing player.
+     * 
+     * @memberOf db
      * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction to be used; if null is passed, then a new transaction will be used.
-     * @param {[type]} p Player object.
+     * @param {Object} p Player object.
      */
     function putPlayer(ot, p) {
         var playerStore;
@@ -244,6 +250,8 @@ define(["util/helpers"], function (helpers) {
 
     /**
      * Get a list of teams from the database.
+     * 
+     * @memberOf db
      * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction to be used; if null is passed, then a new transaction will be used.
      * @param {number} season Season for team attributes (such as wins and losses).
      * @param {string|undefined} String represeting the sorting method. "winp" sorts by descending winning percentage, "winpAsc" does the opposite.

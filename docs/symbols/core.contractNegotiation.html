@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - db</title>
+		<title>JsDoc Reference - core.contractNegotiation</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -206,7 +206,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Namespace db
+				Namespace core.contractNegotiation
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -217,13 +217,13 @@ ul.inheritsList
 				
 				
 				
-					<br /><i>Defined in: </i> &lt;js/db.js&gt;.
+					<br /><i>Defined in: </i> &lt;js/core/contractNegotiation.js&gt;.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class db.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class core.contractNegotiation.">
 				<caption>Namespace Summary</caption>
 				<thead>
 					<tr>
@@ -236,7 +236,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/db.html#constructor">db</a></b>
+								<b><a href="../symbols/core.contractNegotiation.html#constructor">core.contractNegotiation</a></b>
 							</div>
 							<div class="description"></div>
 						</td>
@@ -252,7 +252,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class db.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class core.contractNegotiation.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -265,18 +265,45 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">db.<b><a href="../symbols/db.html#.getTeams">getTeams</a></b>(ot, season, String, cb)
+								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.accept">accept</a></b>(pid)
 								</div>
-								<div class="description">Get a list of teams from the database.</div>
+								<div class="description">Accept the player's offer.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">db.<b><a href="../symbols/db.html#.putPlayer">putPlayer</a></b>(ot, p)
+								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.cancel">cancel</a></b>(pid)
 								</div>
-								<div class="description">Add a new player to the database or update an existing player.</div>
+								<div class="description">Cancel contract negotiations with a player.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.cancelAll">cancelAll</a></b>()
+								</div>
+								<div class="description">Cancel all ongoing contract negotiations.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.create">create</a></b>(pid, resigning, cb)
+								</div>
+								<div class="description">Start a new contract negotiation with a player.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.offer">offer</a></b>(pid, teamAmount, teamYears)
+								</div>
+								<div class="description">Make an offer to a player.</div>
 							</td>
 						</tr>
 					
@@ -297,7 +324,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>db</b>
+						<b>core.contractNegotiation</b>
 				</div>
 				
 				<div class="description">
@@ -328,15 +355,17 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name=".getTeams"> </a>
+					<a name=".accept"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">db.</span><b>getTeams</b>(ot, season, String, cb)
+					<span class="light">core.contractNegotiation.</span><b>accept</b>(pid)
 					
 					</div>
 					<div class="description">
-						Get a list of teams from the database.
+						Accept the player's offer.
+
+If successful, then the team's current roster will be displayed.
 						
 						
 					</div>
@@ -348,28 +377,10 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{IDBObjectStore|IDBTransaction|null}</span> <b>ot</b>
+									<span class="light fixedFont">{number}</span> <b>pid</b>
 									
 								</dt>
-								<dd>An IndexedDB object store or transaction to be used; if null is passed, then a new transaction will be used.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{number}</span> <b>season</b>
-									
-								</dt>
-								<dd>Season for team attributes (such as wins and losses).</dd>
-							
-								<dt>
-									<span class="light fixedFont">{string|undefined}</span> <b>String</b>
-									
-								</dt>
-								<dd>represeting the sorting method. "winp" sorts by descending winning percentage, "winpAsc" does the opposite.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{function(Array.Object)}</span> <b>cb</b>
-									
-								</dt>
-								<dd>Callback whose first argument is a list of all the team objects.</dd>
+								<dd>An integer that must correspond with the player ID of a player in an ongoing negotiation.</dd>
 							
 							</dl>
 						
@@ -382,15 +393,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name=".putPlayer"> </a>
+					<a name=".cancel"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">db.</span><b>putPlayer</b>(ot, p)
+					<span class="light">core.contractNegotiation.</span><b>cancel</b>(pid)
 					
 					</div>
 					<div class="description">
-						Add a new player to the database or update an existing player.
+						Cancel contract negotiations with a player.
 						
 						
 					</div>
@@ -402,16 +413,133 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{IDBObjectStore|IDBTransaction|null}</span> <b>ot</b>
+									<span class="light fixedFont">{number}</span> <b>pid</b>
 									
 								</dt>
-								<dd>An IndexedDB object store or transaction to be used; if null is passed, then a new transaction will be used.</dd>
+								<dd>An integer that must correspond with the player ID of a player in an ongoing negotiation.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".cancelAll"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">core.contractNegotiation.</span><b>cancelAll</b>()
+					
+					</div>
+					<div class="description">
+						Cancel all ongoing contract negotiations.
+
+Currently, the only time there should be multiple ongoing negotiations in the first place is when a user is resigning players at the end of the season, although that should probably change eventually.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".create"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">core.contractNegotiation.</span><b>create</b>(pid, resigning, cb)
+					
+					</div>
+					<div class="description">
+						Start a new contract negotiation with a player.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Object}</span> <b>p</b>
+									<span class="light fixedFont">{number}</span> <b>pid</b>
 									
 								</dt>
-								<dd>Player object.</dd>
+								<dd>An integer that must correspond with the player ID of a free agent.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{boolean}</span> <b>resigning</b>
+									
+								</dt>
+								<dd>Set to true if this is a negotiation for a contract extension, which will allow multiple simultaneous negotiations. Set to false otherwise.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{function()}</span> <b>cb</b>
+									
+								</dt>
+								<dd>Callback to be run after a successful negotiation is started.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".offer"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">core.contractNegotiation.</span><b>offer</b>(pid, teamAmount, teamYears)
+					
+					</div>
+					<div class="description">
+						Make an offer to a player.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>pid</b>
+									
+								</dt>
+								<dd>An integer that must correspond with the player ID of a player in an ongoing negotiation.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>teamAmount</b>
+									
+								</dt>
+								<dd>Teams's offer amount in thousands of dollars per year (between 500 and 20000).</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>teamYears</b>
+									
+								</dt>
+								<dd>Team's offer length in years (between 1 and 5).</dd>
 							
 							</dl>
 						

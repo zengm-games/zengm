@@ -1,14 +1,26 @@
+/**
+ * @name core.contractNegotiation
+ * @namespace
+ */
 define(["core/player", "util/helpers", "util/lock", "util/playMenu", "util/random"], function (player, helpers, lock, playMenu, random) {
     "use strict";
 
-    /*Start a new contract negotiation with player.
+    /*
 
     Args:
-        pid: An integer that must correspond with a free agent.
+        pid: 
         resigning: A boolean. True if (this is a negotiation for a contract
             extension with a current player who just became a free agent. False
             otherwise.
     */
+    /**
+     * Start a new contract negotiation with a player.
+     * 
+     * @memberOf core.contractNegotiation
+     * @param {number} pid An integer that must correspond with the player ID of a free agent.
+     * @param {boolean}   resigning Set to true if this is a negotiation for a contract extension, which will allow multiple simultaneous negotiations. Set to false otherwise.
+     * @param {function()} cb Callback to be run after a successful negotiation is started.
+     */
     function create(pid, resigning, cb) {
         var playerStore;
 
@@ -70,10 +82,14 @@ define(["core/player", "util/helpers", "util/lock", "util/playMenu", "util/rando
         };
     }
 
-    /*Make an offer to a player.
-
-    pid must correspond with an ongoing negotiation.
-    */
+    /**
+     * Make an offer to a player.
+     * 
+     * @memberOf core.contractNegotiation
+     * @param {number} pid An integer that must correspond with the player ID of a player in an ongoing negotiation.
+     * @param {number} teamAmount Teams's offer amount in thousands of dollars per year (between 500 and 20000).
+     * @param {number} teamYears Team's offer length in years (between 1 and 5).
+     */
     function offer(pid, teamAmount, teamYears) {
         var i, negotiation, negotiations;
 
@@ -132,10 +148,14 @@ define(["core/player", "util/helpers", "util/lock", "util/playMenu", "util/rando
         localStorage.setItem("league" + g.lid + "Negotiations", JSON.stringify(negotiations));
     }
 
-    /*Accept the player's offer.
-
-    pid must correspond with an ongoing negotiation.
-    */
+    /**
+     * Accept the player's offer.
+     * 
+     * If successful, then the team's current roster will be displayed.
+     * 
+     * @memberOf core.contractNegotiation
+     * @param {number} pid An integer that must correspond with the player ID of a player in an ongoing negotiation.
+     */
     function accept(pid) {
         var i, negotiation, negotiations;
 
@@ -189,10 +209,12 @@ define(["core/player", "util/helpers", "util/lock", "util/playMenu", "util/rando
         });
     }
 
-    /*Cancel contract negotiations with a player.
-
-    pid must correspond with an ongoing negotiation.
-    */
+    /**
+     * Cancel contract negotiations with a player.
+     * 
+     * @memberOf core.contractNegotiation
+     * @param {number} pid An integer that must correspond with the player ID of a player in an ongoing negotiation.
+     */
     function cancel(pid) {
         var i, negotiations;
 
@@ -212,12 +234,13 @@ define(["core/player", "util/helpers", "util/lock", "util/playMenu", "util/rando
         }
     }
 
-    /*Cancel all ongoing contract negotiations.
-
-    As of the time that I"m writing this, the only time there should be multiple
-    ongoing negotiations in the first place is when a user is resigning players
-    at the end of the season, although that should probably change eventually.
-    */
+    /**
+     * Cancel all ongoing contract negotiations.
+     * 
+     * Currently, the only time there should be multiple ongoing negotiations in the first place is when a user is resigning players at the end of the season, although that should probably change eventually.
+     * 
+     * @memberOf core.contractNegotiation
+     */
     function cancelAll() {
         var i, negotiations;
 

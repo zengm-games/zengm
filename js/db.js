@@ -1,6 +1,6 @@
 /**
  * @name db
- * @namespace
+ * @namespace Functions that directly access an IndexedDB database.
  */
 define(["util/helpers"], function (helpers) {
     "use strict";

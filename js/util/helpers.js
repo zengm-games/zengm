@@ -1,6 +1,6 @@
 /**
  * @name util.helpers
- * @namespace
+ * @namespace Various utility functions that don't have anywhere else to go.
  */
 define([], function () {
     "use strict";

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Basketball GM</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link href="/css/bootstrap.css" rel="stylesheet">
+    <link href="/css/bbgm-responsive.css" rel="stylesheet">
+    <link href="/css/bbgm.css" rel="stylesheet">
+    <link href="/css/DT_bootstrap.css" rel="stylesheet">
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <script src="/js/lib/handlebars-1.0.0.beta.6.js"></script>
+    <script src="/templates/helpers.js"></script>
+    <script src="/js/templates.js"></script>
+    <script src="/js/lib/jquery.js"></script>
+    <script src="/js/lib/jquery-ui.js"></script>
+    <script src="/js/lib/underscore.js"></script>
+    <script src="/js/lib/davis.js"></script>
+    <script src="/js/lib/bootstrap-dropdown.js"></script>
+    <script src="/js/lib/bootstrap-tab.js"></script>
+    <script src="/js/lib/jquery.dataTables.min.js"></script>
+    <script src="/js/lib/DT_bootstrap.js"></script>
+<!--    <script src="/js/lib/Linq2IndexedDB.js"></script>-->
+<!--    <script src="/js/lib/query.js" type="application/javascript;version=1.7"></script>-->
+    <script src="/js/globals.js"></script>
+    <script data-main="/js/app.js" src="/js/lib/require.js"></script>
+
+    <link rel="shortcut icon" href="/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="/ico/apple-touch-icon-57-precomposed.png">
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="/"><img src="/ico/logo.png" width="20" hgt="20"> Basketball GM</a>
+          <div class="nav-collapse">
+            <div id="playButton"></div>
+            <div class="nav"><span id="playPhase"></span><br /><span id="playStatus"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <div id="content">LOADING</div>
+
+      <p style="clear: both;"></p>
+      <hr>
+
+DEBUG MENU: <a href="/init_db">Reset DB</a> | <a href="javascript:(function () { season = require('core/season'); season.newPhase(c.PHASE_BEFORE_DRAFT); })()">Skip To Draft</a>
+      <footer>
+        <p><a href="http://www.basketball-gm.com/">Basketball GM</a> 3.0.0alpha is available under the <a href="http://www.gnu.org/licenses/agpl-3.0.html">GNU Affero General Public License</a>. <a href="https://github.com/jdscheff/basketball-gm">Fork it on GitHub!</a></p>
+      </footer>
+
+    </div>
+
+  </body>
+</html>

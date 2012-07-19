@@ -1,6 +1,6 @@
 /**
  * @name core.contractNegotiation
- * @namespace
+ * @namespace All aspects of contract negotiation.
  */
 define(["core/player", "util/helpers", "util/lock", "util/playMenu", "util/random"], function (player, helpers, lock, playMenu, random) {
     "use strict";

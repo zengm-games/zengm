@@ -74,6 +74,28 @@ define(["util/helpers"], function (helpers) {
         return request;
     }
 
+
+    /**
+     * Get an object store based on input which may be the desired object store, a transaction to be used, or null.
+     * 
+     * This allows the other db.* functions to use transactions or object stores that have already been defined, which often makes things a lot faster.
+     * 
+     * @memberOf db
+     * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction to be used; if null is passed, then a new transaction will be used.
+     * @param {string|Array.<string>} transactionObjectStores The object stores to open a transaction with, if necessary.
+     * @param {string} objectStore The object store to return.
+     * @return {IDBObjectStore} The requested object store.
+     */
+    function getObjectStore(ot, transactionObjectStores, objectStore) {
+        if (ot instanceof IDBObjectStore) {
+            return ot;
+        }
+        if (ot instanceof IDBTransaction) {
+            return ot.objectStore(objectStore);
+        }
+        return g.dbl.transaction(transactionObjectStores, IDBTransaction.READ_WRITE).objectStore(objectStore);
+    }
+
     /**
      * Add a new player to the database or update an existing player.
      * 
@@ -84,13 +106,7 @@ define(["util/helpers"], function (helpers) {
     function putPlayer(ot, p) {
         var playerStore;
 
-        if (ot instanceof IDBObjectStore) {
-            playerStore = ot;
-        } else if (ot instanceof IDBTransaction) {
-            playerStore = ot.objectStore("players");
-        } else {
-            playerStore = g.dbl.transaction("players", IDBTransaction.READ_WRITE).objectStore("players");
-        }
+        playerStore = getObjectStore(ot, "players", "players");
 
         playerStore.put(p);
     }
@@ -275,13 +291,7 @@ define(["util/helpers"], function (helpers) {
     function getTeams(ot, season, sortBy, cb) {
         var teamStore;
 
-        if (ot instanceof IDBObjectStore) {
-            teamStore = ot;
-        } else if (ot instanceof IDBTransaction) {
-            teamStore = ot.objectStore("teams");
-        } else {
-            teamStore = g.dbl.transaction("teams").objectStore("teams");
-        }
+        teamStore = getObjectStore(ot, "teams", "teams");
 
         teamStore.index("season").getAll(season).onsuccess = function (event) {
             var teamsAll;

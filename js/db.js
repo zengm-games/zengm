@@ -72,6 +72,8 @@ define(["util/helpers"], function (helpers) {
 
     /**
      * Add a new player to the database or update an existing player.
+     * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction to be used; if null is passed, then a new transaction will be used.
+     * @param {[type]} p Player object.
      */
     function putPlayer(ot, p) {
         var playerStore;
@@ -87,10 +89,10 @@ define(["util/helpers"], function (helpers) {
         playerStore.put(p);
     }
 
-    /* For a player object (pa)), create an object suitible for output based on the appropriate season and tid. attributes, stats, and ratings are lists of keys, and all those keys will appear flat in a single object IF ONLY ONE YEAR is requested. If tid is null, then any team is acceptable. If season is null, then a list of all seasons is returned for all ratings and stats, and tid is ignored.*/
+    /* For a player object (pa)), create an object suitible for output based on the appropriate season and tid. attributes, stats, and ratings are lists of keys, and all those keys will appear flat in a single object IF ONLY ONE YEAR is requested. If tid is null, then any team is acceptable. If season is null, then a list of all seasons is returned for all ratings and stats, and tid is ignored. */
     function getPlayer(pa, season, tid, attributes, stats, ratings, options) {
         var j, k, player, pr, ps;
-console.log(pa);
+
         options = typeof options !== "undefined" ? options : {};
 
         player = {};
@@ -219,7 +221,7 @@ console.log(pa);
         return player;
     }
 
-    /* For a list of player objects (playersAll), create a list suitible for output based getPlayer.*/
+    /* For a list of player objects (playersAll), create a list suitible for output based getPlayer. */
     function getPlayers(playersAll, season, tid, attributes, stats, ratings, options) {
         var i, player, players;
 
@@ -240,6 +242,13 @@ console.log(pa);
 
     }
 
+    /**
+     * Get a list of teams from the database.
+     * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction to be used; if null is passed, then a new transaction will be used.
+     * @param {number} season Season for team attributes (such as wins and losses).
+     * @param {string|undefined} String represeting the sorting method. "winp" sorts by descending winning percentage, "winpAsc" does the opposite.
+     * @param {function(Array.Object)} cb Callback whose first argument is a list of all the team objects.
+     */
     function getTeams(ot, season, sortBy, cb) {
         var teamStore;
 

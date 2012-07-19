@@ -185,6 +185,10 @@ define([], function () {
         return retVal;
     }
 
+    /**
+     * Display a whole-page error message to the user.
+     * @param {string} error Text of the error message to be displayed.
+     */
     function leagueError(error) {
         var data, template;
 

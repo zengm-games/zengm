@@ -1,6 +1,8 @@
 main todo
 - db.getPlayers
   - use to make player view
+    - draft team
+    - career stats
   - use for other access of players "playersAll"
 - refactor new season code
   - abstract db access

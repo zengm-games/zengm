@@ -135,10 +135,15 @@ define(["util/helpers"], function (helpers) {
 
         player = {};
 
+console.log(pa);
         // Attributes
         for (j = 0; j < attributes.length; j++) {
             if (attributes[j] === "age") {
-                player.age = season - pa.bornYear;
+                player.age = g.season - pa.bornYear;
+            } else if (attributes[j] === "hgtFt") {
+                player.hgtFt = Math.floor(pa.hgt / 12);
+            } else if (attributes[j] === "hgtIn") {
+                player.hgtIn = pa.hgt - 12 * Math.floor(pa.hgt / 12);
             } else if (attributes[j] === "contractAmount") {
                 player.contractAmount = pa.contractAmount / 1000;
 
@@ -146,6 +151,10 @@ define(["util/helpers"], function (helpers) {
                 player.cashOwed = ((1 + pa.contractExp - g.season) * pa.contractAmount - (1 - options.numGamesRemaining / 82) * pa.contractAmount) / 1000;
             } else if (attributes[j] === "abbrev") {
                 player.abbrev = helpers.getAbbrev(pa.tid);
+            } else if (attributes[j] === "draftTeamRegion") {
+                player.draftTeamRegion = 'region';
+            } else if (attributes[j] === "draftTeamName") {
+                player.draftTeamName = 'name';
             } else {
                 player[attributes[j]] = pa[attributes[j]];
             }
@@ -170,7 +179,6 @@ define(["util/helpers"], function (helpers) {
                 for (k = 0; k < pa.ratings.length; k++) {
                     player.ratings[k] = {};
                     for (j = 0; j < ratings.length; j++) {
-                        console.log(ratings[j]);
                         if (ratings[j] === "age") {
                             player.ratings[k].age = pa.ratings[k].season - pa.bornYear;
                         } else if (ratings[j] === "abbrev") {

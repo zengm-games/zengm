@@ -625,7 +625,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             g.dbl.transaction(["players"]).objectStore("players").get(pid).onsuccess = function (event) {
                 var attributes, currentRatings, data, player, ratings, stats, template;
 
-                attributes = ["pid", "name", "tid", "abbrev", "pos", "age", "contractAmount", "contractExp", "draftYear", "draftRound", "draftPick"];
+                attributes = ["pid", "name", "tid", "abbrev", "pos", "age", "hgtFt", "hgtIn", "weight", "bornYear", "bornLoc", "contractAmount", "contractExp", "draftYear", "draftRound", "draftPick", "draftTeamRegion", "draftTeamName"];
                 ratings = ["season", "abbrev", "age", "ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
                 stats = ["gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts"];
 

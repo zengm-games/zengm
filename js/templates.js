@@ -437,15 +437,15 @@ function program5(depth0,data,depth1) {
   buffer += escapeExpression(stack1) + ") by the ";
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.draft_team_region);
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.draftTeamRegion);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.draft_team_region", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.draftTeamRegion", { hash: {} }); }
   buffer += escapeExpression(stack1) + " ";
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.draft_team_name);
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.draftTeamName);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.draft_team_name", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.draftTeamName", { hash: {} }); }
   buffer += escapeExpression(stack1) + "<br />\n    Contract: $";
   stack1 = 1;
   foundHelper = helpers.player;

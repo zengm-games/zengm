@@ -111,7 +111,23 @@ define(["util/helpers"], function (helpers) {
         playerStore.put(p);
     }
 
-    /* For a player object (pa)), create an object suitible for output based on the appropriate season and tid. attributes, stats, and ratings are lists of keys, and all those keys will appear flat in a single object IF ONLY ONE YEAR is requested. If tid is null, then any team is acceptable. If season is null, then a list of all seasons is returned for all ratings and stats, and tid is ignored. */
+    /**
+     * Get a filtered player object.
+     *
+     * For a player object (pa), create an object suitible for output based on the appropriate season and tid. attributes, stats, and ratings are lists of keys, and all those keys will appear flat in a single object IF ONLY ONE YEAR is requested. If tid is null, then any team is acceptable. If season is null, then a list of all seasons is returned for all ratings and stats, and tid is ignored.
+     * 
+     * This function is overcomplicated and convoluted.
+     * 
+     * @memberOf db
+     * @param {Object} pa Player object.
+     * @param {number|null} season Season to retrieve stats/ratings for. If null, return stats/ratings for all seasons in a list.
+     * @param {number|null} tid Team ID to retrieve stats for. This is useful in the case where a player played for multiple teams in a season. Eventually, there should be some way to specify whether the stats for multiple teams in a single season should be merged together or not. For now, passing null just picks the first entry, which is clearly wrong.
+     * @param {Array.<string>} attributes List of player attributes to include in output.
+     * @param {Array.<string>} stats List of player stats to include in output.
+     * @param {Array.<string>} ratings List of player ratings to include in output.
+     * @param {Object} options Object containing various domain-specific options that are rarely used and should eventually be documented.
+     * @return {Object} Filtered object containing the requested information for the player.
+     */
     function getPlayer(pa, season, tid, attributes, stats, ratings, options) {
         var i, j, k, player, pr, ps, tidTemp;
 
@@ -258,7 +274,14 @@ define(["util/helpers"], function (helpers) {
         return player;
     }
 
-    /* For a list of player objects (playersAll), create a list suitible for output based getPlayer. */
+    /**
+     * Get an array of filtered player objects.
+     *
+     * After the first argument, all subsequent arguments are passed on to db.getPlayer, where further documentation can also be found.
+     * 
+     * @memberOf db
+     * @param {Array} playersAll Array of player objects.
+     */
     function getPlayers(playersAll, season, tid, attributes, stats, ratings, options) {
         var i, player, players;
 
@@ -286,7 +309,7 @@ define(["util/helpers"], function (helpers) {
      * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction to be used; if null is passed, then a new transaction will be used.
      * @param {number} season Season for team attributes (such as wins and losses).
      * @param {string|undefined} String represeting the sorting method. "winp" sorts by descending winning percentage, "winpAsc" does the opposite.
-     * @param {function(Array.Object)} cb Callback whose first argument is a list of all the team objects.
+     * @param {function(Array)} cb Callback whose first argument is an array of all the team objects.
      */
     function getTeams(ot, season, sortBy, cb) {
         var teamStore;

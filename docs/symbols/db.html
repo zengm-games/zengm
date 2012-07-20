@@ -274,6 +274,24 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont">db.<b><a href="../symbols/db.html#.getPlayer">getPlayer</a></b>(pa, season, tid, attributes, stats, ratings, options)
+								</div>
+								<div class="description">Get a filtered player object.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">db.<b><a href="../symbols/db.html#.getPlayers">getPlayers</a></b>(playersAll, season, tid, attributes, stats, ratings, options)
+								</div>
+								<div class="description">Get an array of filtered player objects.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont">db.<b><a href="../symbols/db.html#.getTeams">getTeams</a></b>(ot, season, String, cb)
 								</div>
 								<div class="description">Get a list of teams from the database.</div>
@@ -394,6 +412,163 @@ This allows the other db.* functions to use transactions or object stores that h
 
 					<hr />
 				
+					<a name=".getPlayer"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{Object}</span>
+					<span class="light">db.</span><b>getPlayer</b>(pa, season, tid, attributes, stats, ratings, options)
+					
+					</div>
+					<div class="description">
+						Get a filtered player object.
+
+For a player object (pa), create an object suitible for output based on the appropriate season and tid. attributes, stats, and ratings are lists of keys, and all those keys will appear flat in a single object IF ONLY ONE YEAR is requested. If tid is null, then any team is acceptable. If season is null, then a list of all seasons is returned for all ratings and stats, and tid is ignored.
+
+This function is overcomplicated and convoluted.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>pa</b>
+									
+								</dt>
+								<dd>Player object.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number|null}</span> <b>season</b>
+									
+								</dt>
+								<dd>Season to retrieve stats/ratings for. If null, return stats/ratings for all seasons in a list.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number|null}</span> <b>tid</b>
+									
+								</dt>
+								<dd>Team ID to retrieve stats for. This is useful in the case where a player played for multiple teams in a season. Eventually, there should be some way to specify whether the stats for multiple teams in a single season should be merged together or not. For now, passing null just picks the first entry, which is clearly wrong.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Array.<string>}</span> <b>attributes</b>
+									
+								</dt>
+								<dd>List of player attributes to include in output.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Array.<string>}</span> <b>stats</b>
+									
+								</dt>
+								<dd>List of player stats to include in output.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Array.<string>}</span> <b>ratings</b>
+									
+								</dt>
+								<dd>List of player ratings to include in output.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>options</b>
+									
+								</dt>
+								<dd>Object containing various domain-specific options that are rarely used and should eventually be documented.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Object}</span> Filtered object containing the requested information for the player.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".getPlayers"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">db.</span><b>getPlayers</b>(playersAll, season, tid, attributes, stats, ratings, options)
+					
+					</div>
+					<div class="description">
+						Get an array of filtered player objects.
+
+After the first argument, all subsequent arguments are passed on to db.getPlayer, where further documentation can also be found.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Array}</span> <b>playersAll</b>
+									
+								</dt>
+								<dd>Array of player objects.</dd>
+							
+								<dt>
+									<b>season</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>tid</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>attributes</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>stats</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>ratings</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>options</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name=".getTeams"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
@@ -432,10 +607,10 @@ This allows the other db.* functions to use transactions or object stores that h
 								<dd>represeting the sorting method. "winp" sorts by descending winning percentage, "winpAsc" does the opposite.</dd>
 							
 								<dt>
-									<span class="light fixedFont">{function(Array.Object)}</span> <b>cb</b>
+									<span class="light fixedFont">{function(Array)}</span> <b>cb</b>
 									
 								</dt>
-								<dd>Callback whose first argument is a list of all the team objects.</dd>
+								<dd>Callback whose first argument is an array of all the team objects.</dd>
 							
 							</dl>
 						
@@ -502,7 +677,7 @@ This allows the other db.* functions to use transactions or object stores that h
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Thu Jul 19 2012 00:40:07 GMT-0400 (EDT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Thu Jul 19 2012 21:15:49 GMT-0400 (EDT)
 		</div>
 	</body>
 </html>

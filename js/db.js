@@ -199,37 +199,44 @@ console.log(pa);
         // Stats
         ps = undefined;
         if (stats.length > 0) {
-            if (tid !== null) {
-                // Get stats for a single team
-                for (j = 0; j < pa.stats.length; j++) {
-                    if (pa.stats[j].season === season && pa.stats[j].playoffs === false && pa.stats[j].tid === tid) {
-                        ps = pa.stats[j];
-                        break;
+            if (season !== null) {
+                // Single season
+                if (tid !== null) {
+                    // Get stats for a single team
+                    for (j = 0; j < pa.stats.length; j++) {
+                        if (pa.stats[j].season === season && pa.stats[j].playoffs === false && pa.stats[j].tid === tid) {
+                            ps = pa.stats[j];
+                            break;
+                        }
+                    }
+                } else {
+                    // Get stats for all teams - eventually this should imply adding together multiple stats objects rather than just using the first
+                    for (j = 0; j < pa.stats.length; j++) {
+                        if (pa.stats[j].season === season && pa.stats[j].playoffs === false) {
+                            ps = pa.stats[j];
+                            break;
+                        }
+                    }
+                }
+
+                // Load previous season if no stats this year
+                if (options.oldStats && typeof ps === "undefined") {
+                    for (j = 0; j < pa.stats.length; j++) {
+                        if (pa.stats[j].season === g.season - 1 && pa.stats[j].playoffs === false) {
+                            ps = pa.stats[j];
+                            break;
+                        }
                     }
                 }
             } else {
-                // Get stats for all teams - eventually this should imply adding together multiple stats objects rather than just using the first
-                for (j = 0; j < pa.stats.length; j++) {
-                    if (pa.stats[j].season === season && pa.stats[j].playoffs === false) {
-                        ps = pa.stats[j];
-                        break;
-                    }
-                }
-            }
-
-            // Load previous season if no stats this year
-            if (options.oldStats && typeof ps === "undefined") {
-                for (j = 0; j < pa.stats.length; j++) {
-                    if (pa.stats[j].season === g.season - 1 && pa.stats[j].playoffs === false) {
-                        ps = pa.stats[j];
-                        break;
-                    }
-                }
+                // Multiple seasons
+                ps = pa.stats;
             }
         }
 
-        // Only show a player if they have a stats entry for this team and season, or if they are rookies who have just been drafted and the current roster is being viewed.
-        if (options.showWithStatsOrRookie && (typeof ps !== "undefined" || (pa.draftYear === g.season && season === g.season))) {
+        function filterStats(player, ps, stats) {
+            var j;
+
             if (typeof ps !== "undefined" && ps.gp > 0) {
                 for (j = 0; j < stats.length; j++) {
                     if (stats[j] === "gp") {
@@ -261,15 +268,35 @@ console.log(pa);
                     player[stats[j]] = 0;
                 }
             }
-        } else if (!options.showWithStatsOrRookie) {
-            if (typeof ps !== "undefined" && ps.gp > 0) {
-                for (j = 0; j < stats.length; j++) {
-                    player[stats[j]] = ps[stats[j]] / ps.gp;
+
+            return player;
+        }
+
+        // Only show a player if they have a stats entry for this team and season, or if they are rookies who have just been drafted and the current roster is being viewed.
+        if (options.showWithStatsOrRookie && (typeof ps !== "undefined" || (pa.draftYear === g.season && season === g.season))) {
+            if (typeof ps !== "undefined" && ps.length > 0) {
+                player.stats = [];
+                // Multiple seasons
+                for (i = 0; i < ps.length; i++) {
+                    player.stats.push({});
+                    player.stats = filterStats(player.stats[i], ps[i], stats);
                 }
             } else {
-                for (j = 0; j < stats.length; j++) {
-                    player[stats[j]] = 0;
+                // Single seasons
+                player = filterStats(player, ps, stats);
+            }
+        } else if (!options.showWithStatsOrRookie) {
+            if (typeof ps !== "undefined" && ps.length > 0) {
+                player.stats = [];
+                // Multiple seasons
+                for (i = 0; i < ps.length; i++) {
+                    console.log(player.stats);
+                    player.stats.push({});
+                    player.stats[i] = filterStats(player.stats[i], ps[i], stats);
                 }
+            } else {
+                // Single seasons
+                player = filterStats(player, ps, stats);
             }
         } else {
             player = null;

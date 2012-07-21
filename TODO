@@ -2,6 +2,7 @@ main todo
 - db.getPlayers
   - use to make player view
     - career stats
+  - redo logic for building stats attributes/list - too convoluted
   - use for other access of players "playersAll"
 - getPlayer
   - the special case attributes should generally be moved directly into the database.

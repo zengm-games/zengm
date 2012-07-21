@@ -1,8 +1,8 @@
 main todo
 - db.getPlayers
   - use to make player view
-    - career stats
-  - redo logic for building stats attributes/list - too convoluted
+    - contract for free agents should note that it is requested, not existing
+    - no contract or ratings shown for retired player
   - use for other access of players "playersAll"
 - getPlayer
   - the special case attributes should generally be moved directly into the database.

@@ -333,7 +333,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                     g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
                         var players;
 
-                        players = db.getPlayers(event.target.result, season, tid, attributes, stats, ratings, {numGamesRemaining: numGamesRemaining, showWithStatsOrRookie: true});
+                        players = db.getPlayers(event.target.result, season, tid, attributes, stats, ratings, {numGamesRemaining: numGamesRemaining, showRookies: true});
                         cb(players);
                     };
                 };
@@ -343,7 +343,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 g.dbl.transaction(["players"]).objectStore("players").index("statsTids").getAll(tid).onsuccess = function (event) {
                     var players;
 
-                    players = db.getPlayers(event.target.result, season, tid, attributes, stats, ratings, {numGamesRemaining: 0, showWithStatsOrRookie: true});
+                    players = db.getPlayers(event.target.result, season, tid, attributes, stats, ratings, {numGamesRemaining: 0, showRookies: true});
                     cb(players);
                 };
             }
@@ -394,7 +394,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 ratings = ["ovr", "pot"];
                 stats = ["min", "pts", "trb", "ast"];
 
-                players = db.getPlayers(event.target.result, g.season, c.PLAYER_FREE_AGENT, attributes, stats, ratings, {oldStats: true});
+                players = db.getPlayers(event.target.result, g.season, c.PLAYER_FREE_AGENT, attributes, stats, ratings, {oldStats: true, showNoStats: true});
 
                 data = {title: "Free Agents - League " + g.lid};
                 template = Handlebars.templates.freeAgents;
@@ -582,7 +582,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 ratings = ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
                 stats = [];
 
-                players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings);
+                players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings, {showNoStats: true});
 
                 data = {title: "Player Ratings - League " + g.lid};
                 template = Handlebars.templates.playerRatings;
@@ -606,7 +606,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 ratings = [];
                 stats = ["gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts"];
 
-                players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings, {showWithStatsOrRookie: true});
+                players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings, {showRookies: true});
 
                 data = {title: "Player Stats - League " + g.lid};
                 template = Handlebars.templates.playerStats;
@@ -627,10 +627,9 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
 
                 attributes = ["pid", "name", "tid", "abbrev", "pos", "age", "hgtFt", "hgtIn", "weight", "bornYear", "bornLoc", "contractAmount", "contractExp", "draftYear", "draftRound", "draftPick", "draftTeamRegion", "draftTeamName"];
                 ratings = ["season", "abbrev", "age", "ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
-                stats = ["gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts"];
+                stats = ["season", "abbrev", "age", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts"];
 
                 player = db.getPlayer(event.target.result, null, null, attributes, stats, ratings);
-console.log(player);
 
                 currentRatings = player.ratings[player.ratings.length - 1];
 

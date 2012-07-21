@@ -224,8 +224,8 @@ function program7(depth0,data,depth1) {
   else { stack1 = stack3; }
   buffer += escapeExpression(stack1) + "</td><td>";
   stack1 = 1;
-  foundHelper = helpers.rebounds;
-  stack2 = foundHelper || depth0.rebounds;
+  foundHelper = helpers.trb;
+  stack2 = foundHelper || depth0.trb;
   foundHelper = helpers.round;
   stack3 = foundHelper || depth0.round;
   if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
@@ -446,7 +446,7 @@ function program9(depth0,data,depth1) {
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.weight);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.weight", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "<br />\n    Age: ";
+  buffer += escapeExpression(stack1) + " lbs<br />\n    Age: ";
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.age);

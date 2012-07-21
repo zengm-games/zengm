@@ -135,7 +135,6 @@ define(["util/helpers"], function (helpers) {
 
         player = {};
 
-console.log(pa);
         // Attributes
         for (j = 0; j < attributes.length; j++) {
             if (attributes[j] === "age") {
@@ -259,13 +258,27 @@ console.log(pa);
                         } else {
                             player.ftp = 0;
                         }
+                    } else if (stats[j] === "season") {
+                        player.season = ps.season;
+                    } else if (stats[j] === "age") {
+                        player.age = ps.season - pa.bornYear;
+                    } else if (stats[j] === "abbrev") {
+                        player.abbrev = helpers.getAbbrev(ps.tid);
                     } else {
                         player[stats[j]] = ps[stats[j]] / ps.gp;
                     }
                 }
             } else {
                 for (j = 0; j < stats.length; j++) {
-                    player[stats[j]] = 0;
+                    if (stats[j] === "season") {
+                        player.season = ps.season;
+                    } else if (stats[j] === "age") {
+                        player.age = ps.season - pa.bornYear;
+                    } else if (stats[j] === "abbrev") {
+                        player.abbrev = helpers.getAbbrev(ps.tid);
+                    } else {
+                        player[stats[j]] = 0;
+                    }
                 }
             }
 
@@ -273,24 +286,12 @@ console.log(pa);
         }
 
         // Only show a player if they have a stats entry for this team and season, or if they are rookies who have just been drafted and the current roster is being viewed.
-        if (options.showWithStatsOrRookie && (typeof ps !== "undefined" || (pa.draftYear === g.season && season === g.season))) {
+        if ((options.showRookie && pa.draftYear === g.season && season === g.season) || typeof ps !== "undefined" || options.showNoStats) {
             if (typeof ps !== "undefined" && ps.length > 0) {
+                console.log(ps);
                 player.stats = [];
                 // Multiple seasons
                 for (i = 0; i < ps.length; i++) {
-                    player.stats.push({});
-                    player.stats = filterStats(player.stats[i], ps[i], stats);
-                }
-            } else {
-                // Single seasons
-                player = filterStats(player, ps, stats);
-            }
-        } else if (!options.showWithStatsOrRookie) {
-            if (typeof ps !== "undefined" && ps.length > 0) {
-                player.stats = [];
-                // Multiple seasons
-                for (i = 0; i < ps.length; i++) {
-                    console.log(player.stats);
                     player.stats.push({});
                     player.stats[i] = filterStats(player.stats[i], ps[i], stats);
                 }

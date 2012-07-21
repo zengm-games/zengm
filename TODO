@@ -1,9 +1,11 @@
 main todo
 - db.getPlayers
   - use to make player view
-    - draft team
+    - "drafted" attribute to display draft info or "undrafted" in player view
     - career stats
   - use for other access of players "playersAll"
+- getPlayer
+  - the special case attributes should generally be moved directly into the database.
 - refactor new season code
   - abstract db access
 - factor out ALL db access from views
@@ -54,9 +56,6 @@ make sure all indexes are actually used. otherwise they're just making it slower
 
 POLISH FEATURES
 
-is dbm necessary?
-- teamStore replaced by helpers.getTeams
-- leagueStore replaced by localstorage of GameAttributes
 jslint --plusplus --predef $ --predef Davis --predef requirejs --predef define --predef window --predef document --predef localStorage --predef IDBKeyRange --predef IDBTransaction --predef g --predef c js/core/draft.js
 - http://stackoverflow.com/questions/7425147/jslint-error-somefunction-was-used-before-it-was-defined
 - http://stackoverflow.com/questions/6744692/jslint-should-we-tolerate-misordered-definitions

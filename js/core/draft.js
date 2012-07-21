@@ -1,4 +1,4 @@
-define(["db", "core/player", "core/season", "util/random"], function (db, player, season, random) {
+define(["db", "core/player", "core/season", "util/helpers", "util/random"], function (db, player, season, helpers, random) {
     "use strict";
 
     function generatePlayers() {
@@ -103,7 +103,7 @@ define(["db", "core/player", "core/season", "util/random"], function (db, player
 */
 
         playerStore.openCursor(IDBKeyRange.only(pid)).onsuccess = function (event) {
-            var cursor, i, player, rookieSalaries, years;
+            var cursor, i, player, rookieSalaries, teams, years;
 
             cursor = event.target.result;
             player = cursor.value;
@@ -114,6 +114,9 @@ define(["db", "core/player", "core/season", "util/random"], function (db, player
             player.draftRound = pick.round;
             player.draftPick = pick.pick;
             player.draftTid = pick.tid;
+            teams = helpers.getTeams();
+            player.draftTeamName = teams[pick.tid].name;
+            player.draftTeamRegion = teams[pick.tid].region;
 
             // Contract
             rookieSalaries = [5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500];

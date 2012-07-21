@@ -390,6 +390,8 @@ define(["util/random"], function (random) {
         p.draftPick = 0;
         p.draftTid = 0;
         p.draftYear = draftYear;
+        p.draftTeamName = null;
+        p.draftTeamRegion = null;
         c = contract(p.ratings[0]);
         p.contractAmount = c.amount;
         p.contractExp = c.exp;

@@ -151,10 +151,6 @@ console.log(pa);
                 player.cashOwed = ((1 + pa.contractExp - g.season) * pa.contractAmount - (1 - options.numGamesRemaining / 82) * pa.contractAmount) / 1000;
             } else if (attributes[j] === "abbrev") {
                 player.abbrev = helpers.getAbbrev(pa.tid);
-            } else if (attributes[j] === "draftTeamRegion") {
-                player.draftTeamRegion = 'region';
-            } else if (attributes[j] === "draftTeamName") {
-                player.draftTeamName = 'name';
             } else {
                 player[attributes[j]] = pa[attributes[j]];
             }

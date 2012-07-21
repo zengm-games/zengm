@@ -1,7 +1,6 @@
 main todo
 - db.getPlayers
   - use to make player view
-    - "drafted" attribute to display draft info or "undrafted" in player view
     - career stats
   - use for other access of players "playersAll"
 - getPlayer

@@ -7,6 +7,54 @@ templates['player'] = template(function (Handlebars,depth0,helpers,partials,data
 function program1(depth0,data) {
   
   var buffer = "", stack1;
+  buffer += "\n      Draft: ";
+  foundHelper = helpers.player;
+  stack1 = foundHelper || depth0.player;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.draftYear);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.draftYear", { hash: {} }); }
+  buffer += escapeExpression(stack1) + " - Round ";
+  foundHelper = helpers.player;
+  stack1 = foundHelper || depth0.player;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.draftRound);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.draftRound", { hash: {} }); }
+  buffer += escapeExpression(stack1) + " (Pick ";
+  foundHelper = helpers.player;
+  stack1 = foundHelper || depth0.player;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.draftPick);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.draftPick", { hash: {} }); }
+  buffer += escapeExpression(stack1) + ") by the ";
+  foundHelper = helpers.player;
+  stack1 = foundHelper || depth0.player;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.draftTeamRegion);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.draftTeamRegion", { hash: {} }); }
+  buffer += escapeExpression(stack1) + " ";
+  foundHelper = helpers.player;
+  stack1 = foundHelper || depth0.player;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.draftTeamName);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.draftTeamName", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "<br />\n    ";
+  return buffer;}
+
+function program3(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n      Undrafted: ";
+  foundHelper = helpers.player;
+  stack1 = foundHelper || depth0.player;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.draftYear);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.draftYear", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "<br />\n    ";
+  return buffer;}
+
+function program5(depth0,data) {
+  
+  var buffer = "", stack1;
   buffer += "\n  <form action=\"/l/";
   foundHelper = helpers['g'];
   stack1 = foundHelper || depth0['g'];
@@ -22,7 +70,7 @@ function program1(depth0,data) {
   buffer += escapeExpression(stack1) + "\"><button type=\"submit\" class=\"btn btn-small\">Trade For</button></form>\n";
   return buffer;}
 
-function program3(depth0,data,depth1) {
+function program7(depth0,data,depth1) {
   
   var buffer = "", stack1, stack2, stack3;
   buffer += "\n      <tr><td><a href=\"#\">";
@@ -240,7 +288,7 @@ function program3(depth0,data,depth1) {
   buffer += escapeExpression(stack1) + "</td></tr>\n    ";
   return buffer;}
 
-function program5(depth0,data,depth1) {
+function program9(depth0,data,depth1) {
   
   var buffer = "", stack1;
   buffer += "\n        <tr><td><a href=\"#\">";
@@ -416,37 +464,18 @@ function program5(depth0,data,depth1) {
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.bornLoc);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.bornLoc", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "<br />\n    Draft: ";
-  foundHelper = helpers.player;
-  stack1 = foundHelper || depth0.player;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.draftYear);
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.draftYear", { hash: {} }); }
-  buffer += escapeExpression(stack1) + " - Round ";
+  buffer += escapeExpression(stack1) + "<br />\n    ";
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.draftRound);
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.draftRound", { hash: {} }); }
-  buffer += escapeExpression(stack1) + " (Pick ";
-  foundHelper = helpers.player;
-  stack1 = foundHelper || depth0.player;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.draftPick);
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.draftPick", { hash: {} }); }
-  buffer += escapeExpression(stack1) + ") by the ";
-  foundHelper = helpers.player;
-  stack1 = foundHelper || depth0.player;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.draftTeamRegion);
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.draftTeamRegion", { hash: {} }); }
-  buffer += escapeExpression(stack1) + " ";
-  foundHelper = helpers.player;
-  stack1 = foundHelper || depth0.player;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.draftTeamName);
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.draftTeamName", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "<br />\n    Contract: $";
+  stack2 = helpers['if'];
+  tmp1 = self.program(1, program1, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.program(3, program3, data);
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n    Contract: $";
   stack1 = 1;
   foundHelper = helpers.player;
   stack2 = foundHelper || depth0.player;
@@ -566,7 +595,7 @@ function program5(depth0,data,depth1) {
   foundHelper = helpers.showTradeFor;
   stack1 = foundHelper || depth0.showTradeFor;
   stack2 = helpers['if'];
-  tmp1 = self.program(1, program1, data);
+  tmp1 = self.program(5, program5, data);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;
@@ -576,7 +605,7 @@ function program5(depth0,data,depth1) {
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.stats);
-  tmp1 = self.programWithDepth(program3, data, depth0);
+  tmp1 = self.programWithDepth(program7, data, depth0);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;
@@ -587,7 +616,7 @@ function program5(depth0,data,depth1) {
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.ratings);
-  tmp1 = self.programWithDepth(program5, data, depth0);
+  tmp1 = self.programWithDepth(program9, data, depth0);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;

@@ -15,7 +15,11 @@ $(document).ready(function() {
     Weight: {{player.weight}}<br />
     Age: {{player.age}}<br />
     Born: {{player.bornYear}} - {{player.bornLoc}}<br />
-    Draft: {{player.draftYear}} - Round {{player.draftRound}} (Pick {{player.draftPick}}) by the {{player.draftTeamRegion}} {{player.draftTeamName}}<br />
+    {{#if player.draftRound}}
+      Draft: {{player.draftYear}} - Round {{player.draftRound}} (Pick {{player.draftPick}}) by the {{player.draftTeamRegion}} {{player.draftTeamName}}<br />
+    {{else}}
+      Undrafted: {{player.draftYear}}<br />
+    {{/if}}
     Contract: ${{player.contractAmount 1}}M per year through {{player.contractExp}}<br />
   </div>
   <div class="span6">

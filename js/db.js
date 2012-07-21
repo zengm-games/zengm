@@ -287,8 +287,7 @@ define(["util/helpers"], function (helpers) {
 
         // Only show a player if they have a stats entry for this team and season, or if they are rookies who have just been drafted and the current roster is being viewed.
         if ((options.showRookie && pa.draftYear === g.season && season === g.season) || typeof ps !== "undefined" || options.showNoStats) {
-            if (typeof ps !== "undefined" && ps.length > 0) {
-                console.log(ps);
+            if (typeof ps !== "undefined" && ps.length >= 0) {
                 player.stats = [];
                 // Multiple seasons
                 for (i = 0; i < ps.length; i++) {

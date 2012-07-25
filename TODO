@@ -1,18 +1,12 @@
 main todo
-- db.getPlayers
-  - use to make player view
-    - contract for free agents should note that it is requested, not existing
-    - no contract or ratings shown for retired player
-  - use for other access of players "playersAll"
-- getPlayer
-  - the special case attributes should generally be moved directly into the database.
-- refactor new season code
-  - abstract db access
-- factor out ALL db access from views
-    - can't really do it for players. too many ways of access. instead, create convenience functions to get stats/ratings/whatever for player/players for one or more seasons
-      - see getPlayers in views.js
+- roster release button
+  - player.release, player.addToFreeAgents
+  - releasedPlayerSalaries
 - resigning old players
   - negotiationList
+- refactor new season code
+  - abstract db access
+- factor out as much db access as possible from views
 - other views
 - reassess how money is stored (ones, thousands, millions?)
 strategic issues
@@ -67,7 +61,6 @@ roster view
 - auto sort button
 - make sure teams dropdown works
 - trade for button
-- release button
 - buy out button
 - row handle is too skinny - why?
 draft
@@ -80,6 +73,13 @@ contract negotiation
 - add free agent to the end of roster
 player stats
 - how to handle aggregating stats for players who played for more than one team in a season? add them all up in ps in db.getPlayers
+player view
+- contract for free agents should note that it is requested, not existing
+- no contract or ratings shown for retired player
+db.getPlayers
+- rename to helpers.filterPlayers
+- use for other access of players "playersAll"
+- the special case attributes should generally be moved directly into the database.
 
 ---
 

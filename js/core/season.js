@@ -294,7 +294,7 @@ define(["db", "core/player", "util/helpers", "util/playMenu", "util/random"], fu
             phaseText = g.season + " free agency";
 
 /*            // Delete all current negotiations to resign players
-            contract_negotiation.cancel_all()
+            contractNegotiation.cancelAll()
 
             // Reset contract demands of current free agents
             r = g.dbex('SELECT pid FROM player_attributes WHERE tid = :tid', tid=c.PLAYER_FREE_AGENT)

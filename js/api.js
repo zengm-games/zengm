@@ -73,6 +73,32 @@ define(["db", "core/draft", "core/game", "core/season", "util/helpers", "util/lo
 //        return {url: url};
     }
 
+    function rosterRelease(pid, cb) {
+        var error, numPlayersOnRoster, tid;
+
+        error = null;
+
+/*        r = g.dbex('SELECT COUNT(*) FROM player_attributes WHERE tid = :tid', tid=g.user_tid)
+        num_players_on_roster, = r.fetchone()
+        if num_players_on_roster <= 5:
+            error = 'You must keep at least 5 players on your roster.'
+        else:
+            pid = int(request.form['pid'])
+            r = g.dbex('SELECT tid FROM player_attributes WHERE pid = :pid', pid=pid)
+            tid, = r.fetchone()
+            if tid == g.user_tid:  # Don't let the user update CPU-controlled rosters
+                p = player.Player()
+                p.load(pid)
+                p.release()
+            else:
+                error = 'You aren\'t allowed to do this.'
+
+        return jsonify(error=error)*/
+
+//        error = 'fuck';
+        cb(error);
+    }
+
     function gameLogList(abbrev, season, firstTime, cb) {
         var games, tid;
 
@@ -165,6 +191,7 @@ define(["db", "core/draft", "core/game", "core/season", "util/helpers", "util/lo
 
     return {
         play: play,
+        rosterRelease: rosterRelease,
         draftUntilUserOrEnd: draftUntilUserOrEnd,
         draftUser: draftUser,
         gameLogList: gameLogList,

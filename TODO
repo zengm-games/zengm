@@ -1,6 +1,7 @@
 main todo
 - roster release button
   - player.release, player.addToFreeAgents
+    - share transaction?
   - releasedPlayerSalaries
 - resigning old players
   - negotiationList

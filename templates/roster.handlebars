@@ -8,12 +8,9 @@ $(document).ready(function() {
             var i = 1;
             $('#roster tbody').children().each(function() {
                 if (i <= 5) {
-                    $(this).find('td:first').removeClass('btn-info');
-                    $(this).find('td:first').addClass('btn-primary');
-                }
-                else {
-                    $(this).find('td:first').removeClass('btn-primary');
-                    $(this).find('td:first').addClass('btn-info');
+                    $(this).find('td:first').removeClass('btn-info').addClass('btn-primary');
+                } else {
+                    $(this).find('td:first').removeClass('btn-primary').addClass('btn-info');
                 }
                 i++;
             });
@@ -26,9 +23,9 @@ $(document).ready(function() {
             });
             return ui;
         };
-        $('#roster tbody').sortable({
+        $("#roster tbody").sortable({
             helper: fixHelper,
-            cursor: 'move',
+            cursor: "move",
             update: function(e, ui) {
                 sorted = $(this).sortable('serialize');
                 $.post('/l/{{g.lid}}/roster/reorder', sorted, function(msg) {
@@ -36,28 +33,29 @@ $(document).ready(function() {
                 });
             }
         }).disableSelection();
-        $('#auto_sort_roster').click(function(event) {
+        $("#auto_sort_roster").click(function(event) {
             $.post('/l/{{g.lid}}/roster/auto_sort', {'json': 1}, function (data) {
                 ajax_update(data);
             }, 'json');
         });
 
         // Release player
-        $('#roster button').click(function(event) {
-            if (this.dataset.action == 'release') {
+        $("#roster button").click(function(event) {
+            if (this.dataset.action === "release") {
                 if (window.confirm('Are you sure you want to release ' + this.dataset.playerName + '?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in ' + this.dataset.contractExpiration + '.')) {
                     var tr = this.parentNode.parentNode;
                     api.rosterRelease(this.dataset.playerId, function(error) {
                         if (error) {
-                            alert('Error: ' + error);
+                            alert("Error: " + error);
                         }
                         else {
                             tr.parentNode.removeChild(tr);
+                            highlightHandles();
                         }                        
                     })
                 }
             }
-            else if (this.dataset.action == 'buy_out') {
+            else if (this.dataset.action === "buyOut") {
                 if ({{team.cash}} > this.dataset.cashOwed) {
                     if (window.confirm('Are you sure you want to buy out ' + this.dataset.playerName + '? You will have to pay him the $' + this.dataset.cashOwed + 'M remaining on his contract from your current cash reserves of ${{team.cash 1}}M. He will then become a free agent and his contract will no longer count towards your salary cap.')) {
                         var tr = this.parentNode.parentNode;
@@ -67,6 +65,7 @@ $(document).ready(function() {
                             }
                             else {
                                 tr.parentNode.removeChild(tr);
+                                highlightHandles();
                             }
                         }, 'json');
                     }
@@ -75,7 +74,7 @@ $(document).ready(function() {
                     alert('You only have ${{team.cash 1}}M in cash, but it would take $' + this.dataset.cashOwed + 'M to buy out ' + this.dataset.playerName + '.');
                 }
             }
-            else if (this.dataset.action == 'trade_for') {
+            else if (this.dataset.action === "tradeFor") {
 
             }
         });
@@ -111,7 +110,7 @@ $(document).ready(function() {
 </thead>
 <tbody>
   {{#players}}
-    <tr id="roster_{{pid}}">{{#if ../sortable}}<td class="roster_handle"></td>{{/if}}<td><a href="/l/{{../g.lid}}/player/{{pid}}">{{name}}</a></td><td>{{pos}}</td><td>{{age}}</td><td>{{ovr}}</td><td>{{pot}}</td>{{#if ../currentSeason}}<td>${{round contractAmount 1}}M through {{contractExp}}</td>{{/if}}<td>{{round min 1}}</td><td>{{round pts 1}}</td><td>{{round trb 1}}</td><td>{{round ast 1}}</td>{{#if ../sortable}}<td><button class="btn btn-mini" data-action="release" data-player-id="{{pid}}" data-player-name="{{name}}" data-contract-expiration="{{contract_exp}}">Release</button></td><td><button class="btn btn-mini" data-action="buy_out" data-player-id="{{pid}}" data-player-name="{{name}}" data-cash-owed="{{round cash_owed 1}}">Buy out</button></td>{{/if}} {{#if ../showTradeFor}}<td><form action="/l/{{g.lid}}/trade" method="POST" style="margin: 0"><input type="hidden" name="pid" value="{{pid}}"><button type="submit" class="btn btn-mini">Trade For</button></form></td>{{/if}}</tr>
+    <tr id="roster_{{pid}}">{{#if ../sortable}}<td class="roster_handle"></td>{{/if}}<td><a href="/l/{{../g.lid}}/player/{{pid}}">{{name}}</a></td><td>{{pos}}</td><td>{{age}}</td><td>{{ovr}}</td><td>{{pot}}</td>{{#if ../currentSeason}}<td>${{round contractAmount 1}}M through {{contractExp}}</td>{{/if}}<td>{{round min 1}}</td><td>{{round pts 1}}</td><td>{{round trb 1}}</td><td>{{round ast 1}}</td>{{#if ../sortable}}<td><button class="btn btn-mini" data-action="release" data-player-id="{{pid}}" data-player-name="{{name}}" data-contract-expiration="{{contract_exp}}">Release</button></td><td><button class="btn btn-mini" data-action="buyOut" data-player-id="{{pid}}" data-player-name="{{name}}" data-cash-owed="{{round cash_owed 1}}">Buy out</button></td>{{/if}} {{#if ../showTradeFor}}<td><form action="/l/{{g.lid}}/trade" method="POST" style="margin: 0"><input type="hidden" name="pid" value="{{pid}}"><button type="submit" class="btn btn-mini">Trade For</button></form></td>{{/if}}</tr>
   {{/players}}
 </tbody>
 </table>

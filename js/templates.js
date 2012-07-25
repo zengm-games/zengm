@@ -2066,19 +2066,19 @@ templates['roster'] = template(function (Handlebars,depth0,helpers,partials,data
 function program1(depth0,data) {
   
   var buffer = "", stack1, stack2;
-  buffer += "\n        // Roster reordering\n        function highlightHandles() {\n            var i = 1;\n            $('#roster tbody').children().each(function() {\n                if (i <= 5) {\n                    $(this).find('td:first').removeClass('btn-info');\n                    $(this).find('td:first').addClass('btn-primary');\n                }\n                else {\n                    $(this).find('td:first').removeClass('btn-primary');\n                    $(this).find('td:first').addClass('btn-info');\n                }\n                i++;\n            });\n        }\n        highlightHandles();\n        var fixHelper = function(e, ui) {\n            // Return helper which preserves the width of table cells being reordered\n            ui.children().each(function() {\n              $(this).width($(this).width());\n            });\n            return ui;\n        };\n        $('#roster tbody').sortable({\n            helper: fixHelper,\n            cursor: 'move',\n            update: function(e, ui) {\n                sorted = $(this).sortable('serialize');\n                $.post('/l/";
+  buffer += "\n        // Roster reordering\n        function highlightHandles() {\n            var i = 1;\n            $('#roster tbody').children().each(function() {\n                if (i <= 5) {\n                    $(this).find('td:first').removeClass('btn-info').addClass('btn-primary');\n                } else {\n                    $(this).find('td:first').removeClass('btn-primary').addClass('btn-info');\n                }\n                i++;\n            });\n        }\n        highlightHandles();\n        var fixHelper = function(e, ui) {\n            // Return helper which preserves the width of table cells being reordered\n            ui.children().each(function() {\n              $(this).width($(this).width());\n            });\n            return ui;\n        };\n        $(\"#roster tbody\").sortable({\n            helper: fixHelper,\n            cursor: \"move\",\n            update: function(e, ui) {\n                sorted = $(this).sortable('serialize');\n                $.post('/l/";
   foundHelper = helpers['g'];
   stack1 = foundHelper || depth0['g'];
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/roster/reorder', sorted, function(msg) {\n                  highlightHandles();\n                });\n            }\n        }).disableSelection();\n        $('#auto_sort_roster').click(function(event) {\n            $.post('/l/";
+  buffer += escapeExpression(stack1) + "/roster/reorder', sorted, function(msg) {\n                  highlightHandles();\n                });\n            }\n        }).disableSelection();\n        $(\"#auto_sort_roster\").click(function(event) {\n            $.post('/l/";
   foundHelper = helpers['g'];
   stack1 = foundHelper || depth0['g'];
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/roster/auto_sort', {'json': 1}, function (data) {\n                ajax_update(data);\n            }, 'json');\n        });\n\n        // Release player\n        $('#roster button').click(function(event) {\n            if (this.dataset.action == 'release') {\n                if (window.confirm('Are you sure you want to release ' + this.dataset.playerName + '?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in ' + this.dataset.contractExpiration + '.')) {\n                    var tr = this.parentNode.parentNode;\n                    api.rosterRelease(this.dataset.playerId, function(error) {\n                        if (error) {\n                            alert('Error: ' + error);\n                        }\n                        else {\n                            tr.parentNode.removeChild(tr);\n                        }                        \n                    })\n                }\n            }\n            else if (this.dataset.action == 'buy_out') {\n                if (";
+  buffer += escapeExpression(stack1) + "/roster/auto_sort', {'json': 1}, function (data) {\n                ajax_update(data);\n            }, 'json');\n        });\n\n        // Release player\n        $(\"#roster button\").click(function(event) {\n            if (this.dataset.action === \"release\") {\n                if (window.confirm('Are you sure you want to release ' + this.dataset.playerName + '?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in ' + this.dataset.contractExpiration + '.')) {\n                    var tr = this.parentNode.parentNode;\n                    api.rosterRelease(this.dataset.playerId, function(error) {\n                        if (error) {\n                            alert(\"Error: \" + error);\n                        }\n                        else {\n                            tr.parentNode.removeChild(tr);\n                            highlightHandles();\n                        }                        \n                    })\n                }\n            }\n            else if (this.dataset.action === \"buyOut\") {\n                if (";
   foundHelper = helpers.team;
   stack1 = foundHelper || depth0.team;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.cash);
@@ -2098,7 +2098,7 @@ function program1(depth0,data) {
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/roster_buy_out', {'pid': this.dataset.playerId}, function (data) {\n                            if (data['error']) {\n                                alert('Error: ' + data['error']);\n                            }\n                            else {\n                                tr.parentNode.removeChild(tr);\n                            }\n                        }, 'json');\n                    }\n                }\n                else {\n                    alert('You only have $";
+  buffer += escapeExpression(stack1) + "/roster_buy_out', {'pid': this.dataset.playerId}, function (data) {\n                            if (data['error']) {\n                                alert('Error: ' + data['error']);\n                            }\n                            else {\n                                tr.parentNode.removeChild(tr);\n                                highlightHandles();\n                            }\n                        }, 'json');\n                    }\n                }\n                else {\n                    alert('You only have $";
   stack1 = 1;
   foundHelper = helpers.team;
   stack2 = foundHelper || depth0.team;
@@ -2106,7 +2106,7 @@ function program1(depth0,data) {
   if(typeof stack2 === functionType) { stack1 = stack2.call(depth0, stack1, { hash: {} }); }
   else if(stack2=== undef) { stack1 = helperMissing.call(depth0, "team.cash", stack1, { hash: {} }); }
   else { stack1 = stack2; }
-  buffer += escapeExpression(stack1) + "M in cash, but it would take $' + this.dataset.cashOwed + 'M to buy out ' + this.dataset.playerName + '.');\n                }\n            }\n            else if (this.dataset.action == 'trade_for') {\n\n            }\n        });\n    ";
+  buffer += escapeExpression(stack1) + "M in cash, but it would take $' + this.dataset.cashOwed + 'M to buy out ' + this.dataset.playerName + '.');\n                }\n            }\n            else if (this.dataset.action === \"tradeFor\") {\n\n            }\n        });\n    ";
   return buffer;}
 
 function program3(depth0,data) {
@@ -2370,7 +2370,7 @@ function program24(depth0,data) {
   stack1 = foundHelper || depth0.contract_exp;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "contract_exp", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "\">Release</button></td><td><button class=\"btn btn-mini\" data-action=\"buy_out\" data-player-id=\"";
+  buffer += escapeExpression(stack1) + "\">Release</button></td><td><button class=\"btn btn-mini\" data-action=\"buyOut\" data-player-id=\"";
   foundHelper = helpers.pid;
   stack1 = foundHelper || depth0.pid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }

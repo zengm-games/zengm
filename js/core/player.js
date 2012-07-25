@@ -1,4 +1,4 @@
-define(["util/random"], function (random) {
+define(["db", "util/random"], function (db, random) {
     "use strict";
 
     function limitRating(rating) {
@@ -177,12 +177,16 @@ define(["util/random"], function (random) {
      * list, because this will also calculate their demanded contract. But
      * currently, the free agents generated at the beginning of the game don't
      * use this function.
+     * 
+     * @param {Object} p Player object.
+     * @param {number=} phase An integer representing the game phase to consider this transaction under (defaults to g.phase).
+     * @param {function()} cb Callback function.
      */
-/*    Player.prototype.addToFreeAgents = function (phase) {
+    function addToFreeAgents(p, phase, cb) {
         var contract, expiration;
 
         phase = typeof phase !== "undefined" ? phase : g.phase;
-
+/*
         // Player's desired contract
         contract = this.contract();
 
@@ -192,23 +196,32 @@ define(["util/random"], function (random) {
             expiration += 1;
         }
 
-//        g.dbex('UPDATE player_attributes SET tid = :tid, contractAmount = :contractAmount, contractExp = :contractExp, free_agent_times_asked = 0 WHERE pid = :pid', tid=c.PLAYER_FREE_AGENT, contractAmount=contract.amount, contractExp=contract.exp, pid=this.id)
-    };*/
+//        g.dbex('UPDATE player_attributes SET tid = :tid, contractAmount = :contractAmount, contractExp = :contractExp, free_agent_times_asked = 0 WHERE pid = :pid', tid=c.PLAYER_FREE_AGENT, contractAmount=contract.amount, contractExp=contract.exp, pid=this.id)*/
+
+        p.tid = c.PLAYER_FREE_AGENT;
+
+        db.putPlayer(undefined, p);
+
+        cb();
+    }
 
     /**
      * Release player.
      * 
      * This keeps track of what the player's current team owes him, and then
-     * calls this.addToFreeAgents.
+     * calls player.addToFreeAgents.
+     * 
+     * @param {Object} p Player object.
+     * @param {function()} cb Callback function.
      */
-/*    Player.prototype.release = function () {
+    function release(p, cb) {
         // Keep track of player salary even when he's off the team
-        r = g.dbex('SELECT contractAmount, contractExp, tid FROM player_attributes WHERE pid = :pid', pid=this.id)
-        contractAmount, contractExp, tid = r.fetchone()
-        g.dbex('INSERT INTO released_players_salaries (pid, tid, contractAmount, contractExp) VALUES (:pid, :tid, :contractAmount, :contractExp)', pid=this.id, tid=tid, contractAmount=contractAmount, contractExp=contractExp)
+//        r = g.dbex('SELECT contractAmount, contractExp, tid FROM player_attributes WHERE pid = :pid', pid=this.id)
+//        contractAmount, contractExp, tid = r.fetchone()
+//        g.dbex('INSERT INTO released_players_salaries (pid, tid, contractAmount, contractExp) VALUES (:pid, :tid, :contractAmount, :contractExp)', pid=this.id, tid=tid, contractAmount=contractAmount, contractExp=contractExp)
 
-        this.addToFreeAgents();
-    };*/
+        addToFreeAgents(p, g.phase, cb);
+    }
 
     function generateRatings(profile, baseRating, pot) {
         var i, key, profileId, profiles, ratingKeys, ratings, rawRating, rawRatings, sigmas;
@@ -445,10 +458,12 @@ define(["util/random"], function (random) {
     return {
         addRatingsRow: addRatingsRow,
         addStatsRow: addStatsRow,
+        addToFreeAgents: addToFreeAgents,
         bonus: bonus,
         contract: contract,
         develop: develop,
-        generate: generate
+        generate: generate,
+        release: release
     };
 });
 /* THSES SHOULDN'T BE NEEDED, IDEALLY

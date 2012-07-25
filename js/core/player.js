@@ -146,7 +146,7 @@ define(["db", "util/random"], function (db, random) {
      * @param {boolean} randomizeExp Should the number of years on the player's contract be randomized?.
      */
     function bonus(p, amount, randomizeExp) {
-        var c, i, key, r, ratingKeys;
+        var cont, i, key, r, ratingKeys;
 
         r = p.ratings.length - 1;
 
@@ -163,9 +163,9 @@ define(["db", "util/random"], function (db, random) {
         }
 
         // Update contract based on development
-        c = contract(p.ratings[r], randomizeExp);
-        p.contractAmount = c.amount;
-        p.contractExp = c.exp;
+        cont = contract(p.ratings[r], randomizeExp);
+        p.contractAmount = cont.amount;
+        p.contractExp = cont.exp;
 
         return p;
     }
@@ -183,20 +183,21 @@ define(["db", "util/random"], function (db, random) {
      * @param {function()} cb Callback function.
      */
     function addToFreeAgents(p, phase, cb) {
-        var contract, expiration;
+        var cont, expiration;
 
         phase = typeof phase !== "undefined" ? phase : g.phase;
-/*
-        // Player's desired contract
-        contract = this.contract();
+
+        cont = contract(p.ratings[p.ratings.length - 1]);
+        p.contractAmount = cont.amount;
+        p.contractExp = cont.exp;
+
+        p.freeAgentTimesAsked = 0;
 
         // During regular season, or before season starts, allow contracts for
         // just this year.
         if (g.phase > c.PHASE_AFTER_TRADE_DEADLINE) {
-            expiration += 1;
+            p.contractExp += 1;
         }
-
-//        g.dbex('UPDATE player_attributes SET tid = :tid, contractAmount = :contractAmount, contractExp = :contractExp, free_agent_times_asked = 0 WHERE pid = :pid', tid=c.PLAYER_FREE_AGENT, contractAmount=contract.amount, contractExp=contract.exp, pid=this.id)*/
 
         p.tid = c.PLAYER_FREE_AGENT;
 
@@ -364,7 +365,7 @@ define(["db", "util/random"], function (db, random) {
     }
 
     function generate(tid, age, profile, baseRating, pot, draftYear) {
-        var c, maxHgt, minHgt, maxWeight, minWeight, nationality, p;
+        var cont, maxHgt, minHgt, maxWeight, minWeight, nationality, p;
 
         p = {}; // Will be saved to database
         p.tid = tid;
@@ -405,9 +406,9 @@ define(["db", "util/random"], function (db, random) {
         p.draftYear = draftYear;
         p.draftTeamName = null;
         p.draftTeamRegion = null;
-        c = contract(p.ratings[0]);
-        p.contractAmount = c.amount;
-        p.contractExp = c.exp;
+        cont = contract(p.ratings[0]);
+        p.contractAmount = cont.amount;
+        p.contractExp = cont.exp;
 
         p.freeAgentTimesAsked = 0;
         p.yearsFreeAgent = 0;

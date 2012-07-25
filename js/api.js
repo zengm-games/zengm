@@ -88,21 +88,23 @@ define(["db", "core/draft", "core/game", "core/player", "core/season", "util/hel
 
             if (numPlayersOnRoster <= 5) {
                 error = "You must keep at least 5 players on your roster.";
-            } else {
-                pid = parseInt(pid, 10);
-                playerStore.get(pid).onsuccess = function (event) {
-                    var p;
-
-                    p = event.target.result;
-                    // Don't let the user update CPU-controlled rosters
-                    if (p.tid === g.userTid) {
-                        player.release(p, function () { cb(error); });
-                    } else {
-                        error = "You aren't allowed to do this.";
-                        cb(error);
-                    }
-                };
+                cb(error);
+                return;
             }
+
+            pid = parseInt(pid, 10);
+            playerStore.get(pid).onsuccess = function (event) {
+                var p;
+
+                p = event.target.result;
+                // Don't let the user update CPU-controlled rosters
+                if (p.tid === g.userTid) {
+                    player.release(p, function () { cb(error); });
+                } else {
+                    error = "You aren't allowed to do this.";
+                    cb(error);
+                }
+            };
         };
     }
 

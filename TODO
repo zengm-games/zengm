@@ -1,7 +1,7 @@
 main todo
 - roster release button
-  - player.release, player.addToFreeAgents - share transaction?
-  - releasedPlayerSalaries
+  - releasedPlayers
+    - fix references to released_players
 - player view
   - show current team
 - resigning old players

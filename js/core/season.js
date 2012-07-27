@@ -17,7 +17,7 @@ define(["db", "core/player", "util/helpers", "util/playMenu", "util/random"], fu
         to be sent to the client.
     */
     function newPhase(phase) {
-        var phaseText, teamStore, transaction;
+        var phaseText, releasedPlayersStore, teamStore, transaction;
 
         // Prevent code running twice
         if (phase === g.phase) {
@@ -244,8 +244,18 @@ define(["db", "core/player", "util/helpers", "util/playMenu", "util/random"], fu
 //                g.dbex('UPDATE team_attributes SET playoffs = TRUE WHERE season = :season AND tid IN :tids', season=g.season, tids=tids)
         } else if (phase === c.PHASE_BEFORE_DRAFT) {
             phaseText = g.season + " before draft";
+
             // Remove released players' salaries from payrolls
-//            g.dbex('DELETE FROM released_players_salaries WHERE contract_exp <= :season', season=g.season)
+            releasedPlayersStore = g.dbl.transaction("releasedPlayers", IDBTransaction.READ_WRITE).objectStore("releasedPlayers");
+            releasedPlayersStore.index("contractExp").getAll(g.season).onsuccess = function (event) {
+                var i, releasedPlayers;
+
+                releasedPlayers = event.target.result;
+
+                for (i = 0; i < releasedPlayers.length; i++) {
+                    releasedPlayersStore.delete(releasedPlayers[i].rid);
+                }
+            };
 
             // Add a year to the free agents
 //            g.dbex('UPDATE player_attributes SET contract_exp = contract_exp + 1 WHERE tid = :tid', tid=c.PLAYER_FREE_AGENT)

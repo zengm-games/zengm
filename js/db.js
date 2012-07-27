@@ -43,7 +43,7 @@ define(["util/helpers"], function (helpers) {
         };
         request.onblocked = function () { g.dbl.close(); };
         request.onupgradeneeded = function (event) {
-            var gameStore, playerStore, playoffSeriesStore, scheduleStore, teamStore;
+            var gameStore, playerStore, playoffSeriesStore, releasedPlayersStore, scheduleStore, teamStore;
 
             console.log("Upgrading league" + lid + " database");
 
@@ -55,6 +55,7 @@ define(["util/helpers"], function (helpers) {
             gameStore = g.dbl.createObjectStore("games", {keyPath: "gid"});
             scheduleStore = g.dbl.createObjectStore("schedule", {keyPath: "gid", autoIncrement: true});
             playoffSeriesStore = g.dbl.createObjectStore("playoffSeries", {keyPath: "season"});
+            releasedPlayersStore = g.dbl.createObjectStore("releasedPlayers", {keyPath: "rid", autoIncrement: true});
             // ... other stores go here later
 
             playerStore.createIndex("tid", "tid", {unique: false});
@@ -70,6 +71,8 @@ define(["util/helpers"], function (helpers) {
 //                teamStore.createIndex("stats.playoffs", "stats.playoffs", {unique: false});
 //                gameStore.createIndex("tid", "tid", {unique: false}); // Not used because it's useless without oppTid checking too
             gameStore.createIndex("season", "season", {unique: false});
+            releasedPlayersStore.createIndex("tid", "tid", {unique: false});
+            releasedPlayersStore.createIndex("contractExp", "contractExp", {unique: false});
         };
         return request;
     }

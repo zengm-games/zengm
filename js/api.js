@@ -74,11 +74,12 @@ define(["db", "core/draft", "core/game", "core/player", "core/season", "util/hel
     }
 
     function rosterRelease(pid, cb) {
-        var error, playerStore;
+        var error, playerStore, transaction;
 
         error = null;
 
-        playerStore = g.dbl.transaction("players", IDBTransaction.READ_WRITE).objectStore("players");
+        transaction = g.dbl.transaction(["players", "releasedPlayers"], IDBTransaction.READ_WRITE);
+        playerStore = transaction.objectStore("players");
 
         playerStore.index("tid").count(IDBKeyRange.only(g.userTid)).onsuccess = function (event) {
             var numPlayersOnRoster;
@@ -99,7 +100,7 @@ define(["db", "core/draft", "core/game", "core/player", "core/season", "util/hel
                 p = event.target.result;
                 // Don't let the user update CPU-controlled rosters
                 if (p.tid === g.userTid) {
-                    player.release(p, function () { cb(error); });
+                    player.release(transaction, p, function () { cb(error); });
                 } else {
                     error = "You aren't allowed to do this.";
                     cb(error);

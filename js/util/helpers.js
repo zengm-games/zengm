@@ -215,7 +215,10 @@ define([], function () {
     Runs a callback function with a single argument representing the payroll in
     thousands of dollars.*/
     function getPayroll(tid, cb) {
-        g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
+        var transaction;
+
+        transaction = g.dbl.transaction(["players", "releasedPlayers"]);
+        transaction.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
             var i, pa, payroll, playersAll, releasedPlayersSalaries;
 
             payroll = 0;
@@ -225,14 +228,17 @@ define([], function () {
                 payroll += pa.contractAmount;
             }
 
-//        r = g.dbex('SELECT SUM(contract_amount) FROM released_players_salaries WHERE tid = :tid', tid=tid)
-//        releasedPlayersSalaries, = r.fetchone()
+            transaction.objectStore("releasedPlayers").index("tid").getAll(tid).onsuccess = function (event) {
+                var i, releasedPlayers;
 
-            if (releasedPlayersSalaries) {
-                payroll += releasedPlayersSalaries;
-            }
+                var releasedPlayers = event.target.result;
+console.log(releasedPlayers);
+                for (i = 0; i < releasedPlayers.length; i++) {
+                    payroll += releasedPlayers[i].contractAmount;
+                }
 
-            cb(parseInt(payroll, 10));
+                cb(parseInt(payroll, 10));
+            };
         };
     }
 

@@ -178,11 +178,13 @@ define(["db", "util/random"], function (db, random) {
      * currently, the free agents generated at the beginning of the game don't
      * use this function.
      * 
+     * @memberOf player
+     * @param {IDBTransaction} transaction An IndexedDB transaction on players, readwrite.
      * @param {Object} p Player object.
      * @param {number=} phase An integer representing the game phase to consider this transaction under (defaults to g.phase).
      * @param {function()} cb Callback function.
      */
-    function addToFreeAgents(p, phase, cb) {
+    function addToFreeAgents(transaction, p, phase, cb) {
         var cont, expiration;
 
         phase = typeof phase !== "undefined" ? phase : g.phase;
@@ -201,7 +203,7 @@ define(["db", "util/random"], function (db, random) {
 
         p.tid = c.PLAYER_FREE_AGENT;
 
-        db.putPlayer(undefined, p);
+        db.putPlayer(transaction, p);
 
         cb();
     }
@@ -212,16 +214,21 @@ define(["db", "util/random"], function (db, random) {
      * This keeps track of what the player's current team owes him, and then
      * calls player.addToFreeAgents.
      * 
+     * @memberOf player
+     * @param {IDBTransaction} transaction An IndexedDB transaction on players and releasedPlayersStore, readwrite.
      * @param {Object} p Player object.
      * @param {function()} cb Callback function.
      */
-    function release(p, cb) {
+    function release(transaction, p, cb) {
         // Keep track of player salary even when he's off the team
-//        r = g.dbex('SELECT contractAmount, contractExp, tid FROM player_attributes WHERE pid = :pid', pid=this.id)
-//        contractAmount, contractExp, tid = r.fetchone()
-//        g.dbex('INSERT INTO released_players_salaries (pid, tid, contractAmount, contractExp) VALUES (:pid, :tid, :contractAmount, :contractExp)', pid=this.id, tid=tid, contractAmount=contractAmount, contractExp=contractExp)
+        transaction.objectStore("releasedPlayers").add({
+            pid: p.pid,
+            tid: p.tid,
+            contractAmount: p.contractAmount,
+            contractExp: p.contractExp
+        });
 
-        addToFreeAgents(p, g.phase, cb);
+        addToFreeAgents(transaction, p, g.phase, cb);
     }
 
     function generateRatings(profile, baseRating, pot) {

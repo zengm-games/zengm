@@ -170,7 +170,7 @@ define(["core/player", "util/helpers", "util/lock", "util/playMenu", "util/rando
 
         // If this contract brings team over the salary cap, it"s not a minimum;
         // contract, and it's not resigning a current player, ERROR!;
-        db.getPayroll(g.userTid, function (payroll) {
+        db.getPayroll(null, g.userTid, function (payroll) {
             if (!negotiation.resigning && (payroll + negotiation.playerAmount > g.salaryCap && negotiation.playerAmount !== 500)) {
                 helpers.leagueError("This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract, buy out a player currently on your roster, or cancel the negotiation.");
                 return;

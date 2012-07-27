@@ -392,7 +392,7 @@ console.log(payroll);
 //                        tids_today = list(set(tids_today))  // Unique list
                 }
 
-                transaction = g.dbl.transaction(["games", "players", "playoffSeries", "schedule", "teams"], IDBTransaction.READ_WRITE);
+                transaction = g.dbl.transaction(["games", "players", "playoffSeries", "releasedPlayers", "schedule", "teams"], IDBTransaction.READ_WRITE);
 
                 teams = [];
                 teams_loaded = 0;

@@ -86,8 +86,8 @@ define(["util/helpers"], function (helpers) {
      * @memberOf db
      * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction to be used; if null is passed, then a new transaction will be used.
      * @param {string|Array.<string>} transactionObjectStores The object stores to open a transaction with, if necessary.
-     * @param {string} objectStore The object store to return.
-     * @return {IDBObjectStore} The requested object store.
+     * @param {string|null} objectStore The object store to return. If null, return a transaction.
+     * @return {IDBObjectStore|IDBTransaction} The requested object store or transaction.
      */
     function getObjectStore(ot, transactionObjectStores, objectStore) {
         if (ot instanceof IDBObjectStore) {
@@ -95,6 +95,9 @@ define(["util/helpers"], function (helpers) {
         }
         if (ot instanceof IDBTransaction) {
             return ot.objectStore(objectStore);
+        }
+        if (objectStore === null) {
+            return g.dbl.transaction(transactionObjectStores, IDBTransaction.READ_WRITE);
         }
         return g.dbl.transaction(transactionObjectStores, IDBTransaction.READ_WRITE).objectStore(objectStore);
     }
@@ -373,13 +376,14 @@ define(["util/helpers"], function (helpers) {
      * This includes players who have been released but are still owed money from their old contracts.
      * 
      * @memberOf db
+     * @param {IDBTransaction|null} ot An IndexedDB transaction on players and releasedPlayers to be used; if null is passed, then a new transaction will be used.
      * @param {number} tid Team ID.
      * @param {function(Array)} cb Callback whose first argument is the payroll in thousands of dollars.
      */
-    function getPayroll(tid, cb) {
+    function getPayroll(ot, tid, cb) {
         var transaction;
 
-        transaction = g.dbl.transaction(["players", "releasedPlayers"]);
+        transaction = getObjectStore(ot, ["players", "releasedPlayers"], null);
         transaction.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
             var i, pa, payroll, playersAll, releasedPlayersSalaries;
 
@@ -393,7 +397,7 @@ define(["util/helpers"], function (helpers) {
             transaction.objectStore("releasedPlayers").index("tid").getAll(tid).onsuccess = function (event) {
                 var i, releasedPlayers;
 
-                var releasedPlayers = event.target.result;
+                releasedPlayers = event.target.result;
                 for (i = 0; i < releasedPlayers.length; i++) {
                     payroll += releasedPlayers[i].contractAmount;
                 }

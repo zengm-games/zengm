@@ -1,4 +1,4 @@
-define(["core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMenu", "util/random"], function (gameSim, season, helpers, lock, playMenu, random) {
+define(["db", "core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMenu", "util/random"], function (db, gameSim, season, helpers, lock, playMenu, random) {
     "use strict";
 
     function Game() {
@@ -183,21 +183,16 @@ define(["core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMe
                 }
 
                 // Only pay player salaries for regular season games.
-/*                db.getPayroll(this.team[t].id, function (payroll) {
-console.log(payroll);
-                });*/
-    /*    if (!that.playoffs) {
-            r = g.dbex('SELECT SUM(contract_amount) * 1000 / 82 FROM released_players_salaries WHERE tid = :tid', tid=this.team[t]['id'])
-            cost_released, = r.fetchone()
-            r = g.dbex('SELECT SUM(contract_amount) * 1000 / 82 FROM player_attributes WHERE tid = :tid', tid=this.team[t]['id'])
-            cost, = r.fetchone()
-            if (cost_released) {
-                cost += cost_released;
-            }
-        }
-        else {*/
-                    cost = 0;
-    //    }
+                cost = 0;
+                // released_players
+                db.getPayroll(this.transaction, that.team[t].id, function (payroll) {
+                    if (!that.playoffs) {
+                        cost = payroll / 82;
+                    } else {
+                        cost = 0;
+                    }
+                    console.log(cost);
+                });
 
                 teamSeason.cash = teamSeason.cash + g.ticketPrice * that.att - cost;
 
@@ -210,20 +205,20 @@ console.log(payroll);
                 teamStats.oppPts += that.team[t2].stat.pts;
                 teamStats.att += that.att;
 
-                if (won && !this.playoffs) {
+                if (won && !that.playoffs) {
                     teamSeason.won += 1;
-                    if (this.same_division) {
+                    if (that.same_division) {
                         teamSeason.wonDiv += 1;
                     }
-                    if (this.same_conference) {
+                    if (that.same_conference) {
                         teamSeason.wonConf += 1;
                     }
-                } else if (!this.playoffs) {
+                } else if (!that.playoffs) {
                     teamSeason.lost += 1;
-                    if (this.same_division) {
+                    if (that.same_division) {
                         teamSeason.lostDiv += 1;
                     }
-                    if (this.same_conference) {
+                    if (that.same_conference) {
                         teamSeason.lostConf += 1;
                     }
                 }

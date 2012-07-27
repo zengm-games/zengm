@@ -93,7 +93,7 @@ define(["util/helpers"], function (helpers) {
         if (ot instanceof IDBObjectStore) {
             return ot;
         }
-        if (ot instanceof IDBTransaction) {
+        if (ot instanceof IDBTransaction && objectStore !== null) {
             return ot.objectStore(objectStore);
         }
         if (objectStore === null) {

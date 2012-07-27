@@ -2,6 +2,7 @@ main todo
 - roster release button
   - releasedPlayers
     - fix references to released_players
+    - in game.js, putting the team stats saving code in the db.getPayroll callback doesn't work. maybe calculate cost before game simulation?
 - player view
   - show current team
 - resigning old players

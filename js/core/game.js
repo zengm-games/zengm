@@ -117,7 +117,7 @@ define(["db", "core/gameSim", "core/season", "util/helpers", "util/lock", "util/
     };
 
     Game.prototype.writeTeamStats = function (t) {
-        var t2, that;
+        var cost, t2, that;
 
         if (t === 0) {
             t2 = 1;
@@ -164,9 +164,17 @@ define(["db", "core/gameSim", "core/season", "util/helpers", "util/lock", "util/
             };
         }
 
+        // Only pay player salaries for regular season games.
+        cost = 0;
+        if (!that.playoffs) {
+            db.getPayroll(that.transaction, that.team[t].id, function (payroll) {
+                cost = payroll / 82;
+            });
+        }
+
         // Team stats
         this.transaction.objectStore("teams").index("tid").openCursor(IDBKeyRange.only(that.team[t].id)).onsuccess = function (event) {
-            var cost, cursor, i, keys, teamSeason, teamStats, won;
+            var cursor, i, keys, teamSeason, teamStats, won;
 
             cursor = event.target.result;
             teamSeason = cursor.value;
@@ -182,19 +190,7 @@ define(["db", "core/gameSim", "core/season", "util/helpers", "util/lock", "util/
                     won = false;
                 }
 
-                // Only pay player salaries for regular season games.
-                cost = 0;
-                // released_players
-                db.getPayroll(this.transaction, that.team[t].id, function (payroll) {
-                    if (!that.playoffs) {
-                        cost = payroll / 82;
-                    } else {
-                        cost = 0;
-                    }
-                    console.log(cost);
-                });
-
-                teamSeason.cash = teamSeason.cash + g.ticketPrice * that.att - cost;
+                teamSeason.cash = teamSeason.cash + g.ticketPrice * that.att - 1000 * cost;
 
                 keys = ['min', 'fg', 'fga', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
                 for (i = 0; i < keys.length; i++) {

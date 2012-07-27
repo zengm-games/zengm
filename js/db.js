@@ -93,8 +93,11 @@ define(["util/helpers"], function (helpers) {
         if (ot instanceof IDBObjectStore) {
             return ot;
         }
-        if (ot instanceof IDBTransaction && objectStore !== null) {
-            return ot.objectStore(objectStore);
+        if (ot instanceof IDBTransaction) {
+            if (objectStore !== null) {
+                return ot.objectStore(objectStore);
+            }
+            return ot; // Return original transaction
         }
         if (objectStore === null) {
             return g.dbl.transaction(transactionObjectStores, IDBTransaction.READ_WRITE);
@@ -381,11 +384,11 @@ define(["util/helpers"], function (helpers) {
      * @param {function(Array)} cb Callback whose first argument is the payroll in thousands of dollars.
      */
     function getPayroll(ot, tid, cb) {
-        var transaction;
+        var payroll, transaction;
 
         transaction = getObjectStore(ot, ["players", "releasedPlayers"], null);
         transaction.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
-            var i, pa, payroll, playersAll, releasedPlayersSalaries;
+            var i, pa, playersAll;
 
             payroll = 0;
             playersAll = event.target.result;
@@ -393,17 +396,16 @@ define(["util/helpers"], function (helpers) {
                 pa = playersAll[i];
                 payroll += pa.contractAmount;
             }
+        };
+        transaction.objectStore("releasedPlayers").index("tid").getAll(tid).onsuccess = function (event) {
+            var i, releasedPlayers;
 
-            transaction.objectStore("releasedPlayers").index("tid").getAll(tid).onsuccess = function (event) {
-                var i, releasedPlayers;
+            releasedPlayers = event.target.result;
+            for (i = 0; i < releasedPlayers.length; i++) {
+                payroll += releasedPlayers[i].contractAmount;
+            }
 
-                releasedPlayers = event.target.result;
-                for (i = 0; i < releasedPlayers.length; i++) {
-                    payroll += releasedPlayers[i].contractAmount;
-                }
-
-                cb(parseInt(payroll, 10));
-            };
+            cb(parseInt(payroll, 10));
         };
     }
 

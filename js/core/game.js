@@ -183,6 +183,9 @@ define(["core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMe
                 }
 
                 // Only pay player salaries for regular season games.
+/*                db.getPayroll(this.team[t].id, function (payroll) {
+console.log(payroll);
+                });*/
     /*    if (!that.playoffs) {
             r = g.dbex('SELECT SUM(contract_amount) * 1000 / 82 FROM released_players_salaries WHERE tid = :tid', tid=this.team[t]['id'])
             cost_released, = r.fetchone()

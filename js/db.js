@@ -367,6 +367,42 @@ define(["util/helpers"], function (helpers) {
         };
     }
 
+    /**
+     * Get the total payroll for a team.
+     * 
+     * This includes players who have been released but are still owed money from their old contracts.
+     * 
+     * @memberOf db
+     * @param {number} tid Team ID.
+     * @param {function(Array)} cb Callback whose first argument is the payroll in thousands of dollars.
+     */
+    function getPayroll(tid, cb) {
+        var transaction;
+
+        transaction = g.dbl.transaction(["players", "releasedPlayers"]);
+        transaction.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
+            var i, pa, payroll, playersAll, releasedPlayersSalaries;
+
+            payroll = 0;
+            playersAll = event.target.result;
+            for (i = 0; i < playersAll.length; i++) {
+                pa = playersAll[i];
+                payroll += pa.contractAmount;
+            }
+
+            transaction.objectStore("releasedPlayers").index("tid").getAll(tid).onsuccess = function (event) {
+                var i, releasedPlayers;
+
+                var releasedPlayers = event.target.result;
+                for (i = 0; i < releasedPlayers.length; i++) {
+                    payroll += releasedPlayers[i].contractAmount;
+                }
+
+                cb(parseInt(payroll, 10));
+            };
+        };
+    }
+
     return {
         connect_meta: connect_meta,
         connect_league: connect_league,
@@ -374,6 +410,7 @@ define(["util/helpers"], function (helpers) {
         getPlayer: getPlayer,
         getPlayers: getPlayers,
         getTeam: getTeam,
-        getTeams: getTeams
+        getTeams: getTeams,
+        getPayroll: getPayroll
     };
 });

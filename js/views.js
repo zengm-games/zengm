@@ -721,7 +721,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                     teams = helpers.getTeams();
                     team = {region: teams[g.userTid].region, name: teams[g.userTid].name};
 
-                    helpers.getPayroll(g.userTid, function (payroll) {
+                    db.getPayroll(g.userTid, function (payroll) {
                         payroll /= 1000;
 
                         data = {title: player.name + " - Contract Negotiation - League " + g.lid};

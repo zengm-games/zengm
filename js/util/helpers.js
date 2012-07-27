@@ -207,41 +207,6 @@ define([], function () {
         bbgm.ajaxUpdate(data);
     }
 
-    /*Get the total payroll for a team.
-
-    This includes players who have been released but are still owed money from
-    their old contracts.
-
-    Runs a callback function with a single argument representing the payroll in
-    thousands of dollars.*/
-    function getPayroll(tid, cb) {
-        var transaction;
-
-        transaction = g.dbl.transaction(["players", "releasedPlayers"]);
-        transaction.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
-            var i, pa, payroll, playersAll, releasedPlayersSalaries;
-
-            payroll = 0;
-            playersAll = event.target.result;
-            for (i = 0; i < playersAll.length; i++) {
-                pa = playersAll[i];
-                payroll += pa.contractAmount;
-            }
-
-            transaction.objectStore("releasedPlayers").index("tid").getAll(tid).onsuccess = function (event) {
-                var i, releasedPlayers;
-
-                var releasedPlayers = event.target.result;
-console.log(releasedPlayers);
-                for (i = 0; i < releasedPlayers.length; i++) {
-                    payroll += releasedPlayers[i].contractAmount;
-                }
-
-                cb(parseInt(payroll, 10));
-            };
-        };
-    }
-
     return {
         validateAbbrev: validateAbbrev,
         getAbbrev: getAbbrev,
@@ -252,7 +217,6 @@ console.log(releasedPlayers);
         loadGameAttributes: loadGameAttributes,
         setGameAttributes: setGameAttributes,
         deepCopy: deepCopy,
-        leagueError: leagueError,
-        getPayroll: getPayroll
+        leagueError: leagueError
     };
 });

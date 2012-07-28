@@ -51,7 +51,7 @@ define(["util/helpers"], function (helpers) {
 
             // rid ("row id") is used as the keyPath for objects without an innate unique identifier
             playerStore = g.dbl.createObjectStore("players", {keyPath: "pid", autoIncrement: true});
-            teamStore = g.dbl.createObjectStore("teams", {keyPath: "rid", autoIncrement: true});
+            teamStore = g.dbl.createObjectStore("teams", {keyPath: "tid"});
             gameStore = g.dbl.createObjectStore("games", {keyPath: "gid"});
             scheduleStore = g.dbl.createObjectStore("schedule", {keyPath: "gid", autoIncrement: true});
             playoffSeriesStore = g.dbl.createObjectStore("playoffSeries", {keyPath: "season"});
@@ -64,10 +64,8 @@ define(["util/helpers"], function (helpers) {
             playerStore.createIndex("statsTids", "statsTids", {unique: false, multiEntry: true});
 //                playerStore.createIndex("stats.season", "stats.season", {unique: false, multiEntry: true});
 //                playerStore.createIndex("stats.playoffs", "stats.playoffs", {unique: false, multiEntry: true});
-            teamStore.createIndex("tid", "tid", {unique: false});
             teamStore.createIndex("cid", "cid", {unique: false});
             teamStore.createIndex("did", "did", {unique: false});
-            teamStore.createIndex("season", "season", {unique: false});
 //                teamStore.createIndex("stats.playoffs", "stats.playoffs", {unique: false});
 //                gameStore.createIndex("tid", "tid", {unique: false}); // Not used because it's useless without oppTid checking too
             gameStore.createIndex("season", "season", {unique: false});
@@ -344,38 +342,77 @@ define(["util/helpers"], function (helpers) {
         return players;
     }
 
-    function getTeam(tid, season, cb) {
+    function getTeam(ta, season, attributes, stats, seasonAttributes) {
+        var j, team, ts, tsa;
 
+        team = {};
+
+        // Attributes
+        for (j = 0; j < attributes.length; j++) {
+            team[attributes[j]] = ta[attributes[j]];
+        }
+
+        // Season attributes
+        if (seasonAttributes.length > 0) {
+            for (j = 0; j < ta.seasons.length; j++) {
+                if (ta.seasons[j].season === season) {
+                    tsa = ta.seasons[j];
+                    break;
+                }
+            }
+            for (j = 0; j < seasonAttributes.length; j++) {
+                if (seasonAttributes[j] === "winp") {
+                    team.winp = 0;
+                    if (tsa.won + tsa.lost > 0) {
+                        team.winp = tsa.won / (tsa.won + tsa.lost);
+                    }
+                } else {
+                    team[seasonAttributes[j]] = tsa[seasonAttributes[j]];
+                }
+            }
+        }
+
+        // Team stats
+
+        return team;
     }
 
     /**
-     * Get a list of teams from the database.
+     * Get an array of filtered team objects.
      * 
      * @memberOf db
      * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction to be used; if null is passed, then a new transaction will be used.
-     * @param {number} season Season for team attributes (such as wins and losses).
+     * @param {number} season Season to retrieve data for.
+     * @param {Array.<string>} attributes List of non-seasonal attributes (such as team name) to include in output.
+     * @param {Array.<string>} stats List of team stats to include in output.
+     * @param {Array.<string>} seasonAttributes List of seasonal attributes (such as wins, losses) to include in output.
      * @param {string|null} String represeting the sorting method. "winp" sorts by descending winning percentage, "winpAsc" does the opposite.
      * @param {function(Array)} cb Callback whose first argument is an array of all the team objects.
      */
-    function getTeams(ot, season, sortBy, cb) {
+    function getTeams(ot, season, attributes, stats, seasonAttributes, sortBy, cb) {
         var teamStore;
 
         teamStore = getObjectStore(ot, "teams", "teams");
 
-        teamStore.index("season").getAll(season).onsuccess = function (event) {
-            var teamsAll;
+        teamStore.getAll().onsuccess = function (event) {
+            var i, teams, teamsAll;
 
             teamsAll = event.target.result;
+            teams = [];
+
+            for (i = 0; i < teamsAll.length; i++) {
+                teams.push(getTeam(teamsAll[i], season, attributes, stats, seasonAttributes));
+            }
 
             if (sortBy === "winp") {
                 // Sort by winning percentage, descending
-                teamsAll.sort(function (a, b) {  return (b.won / (b.won + b.lost)) - (a.won / (a.won + a.lost)); });
+                teams.sort(function (a, b) {  return (b.won / (b.won + b.lost)) - (a.won / (a.won + a.lost)); });
             } else if (sortBy === "winpAsc") {
                 // Sort by winning percentage, ascending
-                teamsAll.sort(function (a, b) {  return (a.won / (a.won + a.lost)) - (b.won / (b.won + b.lost)); });
+                teams.sort(function (a, b) {  return (a.won / (a.won + a.lost)) - (b.won / (b.won + b.lost)); });
             }
 
-            cb(teamsAll);
+            cb(teams);
         };
     }
 

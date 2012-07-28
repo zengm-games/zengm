@@ -328,7 +328,7 @@ define(["db", "core/player", "util/helpers", "util/playMenu", "util/random"], fu
     conference matchup distributions.
     */
     function newSchedule(cb) {
-        g.dbl.transaction(["teams"]).objectStore("teams").index("season").getAll(g.season).onsuccess = function (event) {
+        g.dbl.transaction(["teams"]).objectStore("teams").getAll().onsuccess = function (event) {
             var cid, dids, game, games, good, i, ii, iters, j, jj, k, matchup, matchups, n, newMatchup, t, team, teams, tids, tidsByConf, tryNum;
 
             teams = [];
@@ -556,7 +556,7 @@ define(["db", "core/player", "util/helpers", "util/playMenu", "util/random"], fu
             away teams, respectively, for every game in the season.
     */
     function setSchedule(tids, cb) {
-        g.dbl.transaction(["teams"]).objectStore("teams").index("season").getAll(g.season).onsuccess = function (event) {
+        g.dbl.transaction(["teams"]).objectStore("teams").getAll().onsuccess = function (event) {
             var i, row, schedule, scheduleStore, teams;
 
             teams = event.target.result;

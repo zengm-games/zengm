@@ -146,27 +146,16 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
 
     function standings(req) {
         beforeLeague(req, function () {
-            var season, seasons;
+            var attributes, season, seasonAttributes, seasons;
 
             season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
             season = helpers.validateSeason(season);
             seasons = helpers.getSeasons(season);
 
-            db.getTeams(null, season, 'winp', function (teamsAll) {
-                var confs, confTeams, data, divTeams, i, j, k, keys, teams, template;
-
-                teams = [];
-                keys = ["tid", "cid", "did", "abbrev", "region", "name", "won", "lost", "wonDiv", "lostDiv", "wonConf", "lostConf"];  // Attributes to keep from teamStore
-                for (i = 0; i < teamsAll.length; i++) {
-                    teams[i] = {};
-                    for (j = 0; j < keys.length; j++) {
-                        teams[i][keys[j]] = teamsAll[i][keys[j]];
-                    }
-                    teams[i].winp = 0;
-                    if (teams[i].won + teams[i].lost > 0) {
-                        teams[i].winp = teams[i].won / (teams[i].won + teams[i].lost);
-                    }
-                }
+            attributes = ["tid", "cid", "did", "abbrev", "region", "name"];
+            seasonAttributes = ["won", "lost", "winp", "wonDiv", "lostDiv", "wonConf", "lostConf"];
+            db.getTeams(null, season, attributes, [], seasonAttributes, "winp", function (teams) {
+                var confs, confTeams, data, divTeams, i, j, k, template;
 
                 confs = [];
                 for (i = 0; i < g.confs.length; i++) {

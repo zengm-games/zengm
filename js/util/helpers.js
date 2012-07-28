@@ -91,8 +91,8 @@ define([], function () {
         return seasons;
     }
 
-    /*Returns a list of all the teams. If selectedTid is passed, then the "selected" property will be added to each team, true only for selectedTid and false otherwise.*/
-    function getTeams(selectedTid) {
+    /*Returns a list of all the teams. If selectedTid is passed, then the "selected" property will be added to each team, true only for selectedTid and false otherwise. If cb is passed, it is run with the teams array as an argument. Otherwise, the teams array is returned.*/
+    function getTeams(selectedTid, cb) {
         var i, teams;
 
         selectedTid = typeof selectedTid !== "undefined" ? parseInt(selectedTid, 10) : -1;
@@ -136,7 +136,12 @@ define([], function () {
             teams[selectedTid].selected = true;
         }
 
-        return teams;
+        if (typeof cb !== "undefined") {
+            cb(teams);
+        }
+        else {
+            return teams;
+        }
     }
 
     /*Injects the game attributes stored in localStorage into the g object.*/

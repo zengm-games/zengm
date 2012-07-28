@@ -334,15 +334,15 @@ define(["db", "core/player", "util/helpers", "util/playMenu", "util/random"], fu
     conference matchup distributions.
     */
     function newSchedule(cb) {
-        g.dbl.transaction(["teams"]).objectStore("teams").getAll().onsuccess = function (event) {
+        helpers.getTeams(undefined, function (teamsAll) {
             var cid, dids, game, games, good, i, ii, iters, j, jj, k, matchup, matchups, n, newMatchup, t, team, teams, tids, tidsByConf, tryNum;
 
             teams = [];
             tids = [];  // tid_home, tid_away
 
             // Collect info needed for scheduling
-            for (i = 0; i < event.target.result.length; i++) {
-                team = event.target.result[i];
+            for (i = 0; i < teamsAll.length; i++) {
+                team = teamsAll[i];
                 teams.push({tid: team.tid, cid: team.cid, did: team.did, homeGames: 0, awayGames: 0});
             }
             for (i = 0; i < teams.length; i++) {
@@ -443,7 +443,7 @@ define(["db", "core/player", "util/helpers", "util/playMenu", "util/random"], fu
 
             random.shuffle(tids);
             setSchedule(tids, cb);
-        };
+        });
     }
 
     /*Creates a single day's schedule for an in-progress playoffs.*/
@@ -562,10 +562,9 @@ define(["db", "core/player", "util/helpers", "util/playMenu", "util/random"], fu
             away teams, respectively, for every game in the season.
     */
     function setSchedule(tids, cb) {
-        g.dbl.transaction(["teams"]).objectStore("teams").getAll().onsuccess = function (event) {
-            var i, row, schedule, scheduleStore, teams;
+        helpers.getTeams(undefined, function (teams) {
+            var i, row, schedule, scheduleStore;
 
-            teams = event.target.result;
             schedule = [];
             for (i = 0; i < tids.length; i++) {
                 row = {homeTid: tids[i][0], awayTid: tids[i][1]};
@@ -592,7 +591,7 @@ define(["db", "core/player", "util/helpers", "util/playMenu", "util/random"], fu
 
                 cb();
             };
-        };
+        });
     }
 
     /*Returns a list of n_games games, or all games in the schedule if n_games

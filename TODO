@@ -1,5 +1,4 @@
 main todo
-- season.newSchedule and setSchedule - switch to helpers.getTeams
 - resigning old players
   - negotiationList
 - refactor new season code

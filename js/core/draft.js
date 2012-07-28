@@ -29,14 +29,16 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
 
     /*Sets draft order based on winning percentage (no lottery).*/
     function setOrder(cb) {
-        var draftOrder, i, round;
+        var attributes, draftOrder, i, round, seasonAttributes;
 
-        db.getTeams(null, g.season, 'winpAsc', function (teamsAll) {
+        attributes = ["tid", "abbrev", "name", "cid"];
+        seasonAttributes = ["winp"];
+        db.getTeams(null, g.season, attributes, [], seasonAttributes, "winpAsc", function (teams) {
             draftOrder = [];
 
             for (round = 1; round <= 2; round++) {
-                for (i = 0; i < teamsAll.length; i++) {
-                    draftOrder.push({round: round, pick: i + 1, tid: teamsAll[i].tid, abbrev: teamsAll[i].abbrev});
+                for (i = 0; i < teams.length; i++) {
+                    draftOrder.push({round: round, pick: i + 1, tid: teams[i].tid, abbrev: teams[i].abbrev});
                 }
             }
 

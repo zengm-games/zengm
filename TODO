@@ -1,7 +1,5 @@
 main todo
 - make teamStore more like playerStore, where there is a single unique entry per team
-  - on new season, also duplicate teams.seasons
-  - redo sort code in db.getTeams (winp)
   - season.newSchedule and setSchedule - switch to helpers.getTeams
 - finances view
   - are things like attendance, cost per game, etc being stored in game stats and team stats?

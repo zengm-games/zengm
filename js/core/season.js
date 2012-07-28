@@ -17,7 +17,7 @@ define(["db", "core/player", "util/helpers", "util/playMenu", "util/random"], fu
         to be sent to the client.
     */
     function newPhase(phase) {
-        var phaseText, releasedPlayersStore, teamStore, transaction;
+        var attributes, phaseText, releasedPlayersStore, seasonAttributes, transaction;
 
         // Prevent code running twice
         if (phase === g.phase) {
@@ -36,38 +36,44 @@ define(["db", "core/player", "util/helpers", "util/playMenu", "util/random"], fu
             phaseText = g.season + " preseason";
 
             transaction = g.dbl.transaction(["players", "teams"], IDBTransaction.READ_WRITE);
-            teamStore = transaction.objectStore("teams");
 
-            // Add row to team stats
-            teamStore.index("season").openCursor(IDBKeyRange.only(g.season - 1)).onsuccess = function (event) {
-                var cursor, key, teamNewSeason, teamSeason;
+            // Add row to team stats and season attributes
+            transaction.objectStore("teams").openCursor().onsuccess = function (event) {
+                var cursor, key, team, teamNewSeason, teamNewStats, teamSeason;
 
                 cursor = event.target.result;
                 if (cursor) {
-                    teamSeason = cursor.value;
-                    if (teamSeason.tid >= 0) { // Only players on rosters
-                        teamNewSeason = helpers.deepCopy(teamSeason);
-                        teamNewSeason.season = g.season;
-                        teamNewSeason.won = 0;
-                        teamNewSeason.lost = 0;
-                        teamNewSeason.wonDiv = 0;
-                        teamNewSeason.lostDiv = 0;
-                        teamNewSeason.wonConf = 0;
-                        teamNewSeason.lostConf = 0;
-                        teamNewSeason.madePlayoffs = false;
-                        teamNewSeason.confChamps = false;
-                        teamNewSeason.leagueChamps = false;
-                        //teamNewSeason.stats = [{playoffs: false, gp: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, oppPts: 0, att: 0}];
-                        teamNewSeason.stats = [{}];
-                        for (key in teamSeason.stats[0]) {
-                            if (teamSeason.stats[0].hasOwnProperty(key)) {
-                                teamNewSeason.stats[0][key] = 0;
-                            }
+                    team = cursor.value;
+
+                    teamSeason = team.seasons[team.seasons.length - 1]; // Previous season
+                    teamNewSeason = helpers.deepCopy(teamSeason);
+                    // Reset everything except cash. Cash rolls over.
+                    teamNewSeason.season = g.season;
+                    teamNewSeason.att = 0;
+                    teamNewSeason.cost = 0;
+                    teamNewSeason.won = 0;
+                    teamNewSeason.lost = 0;
+                    teamNewSeason.wonDiv = 0;
+                    teamNewSeason.lostDiv = 0;
+                    teamNewSeason.wonConf = 0;
+                    teamNewSeason.lostConf = 0;
+                    teamNewSeason.madePlayoffs = false;
+                    teamNewSeason.confChamps = false;
+                    teamNewSeason.leagueChamps = false;
+                    team.seasons.push(teamNewSeason);
+
+                    teamNewStats = {};
+                    // Copy new stats from any season and set to 0 (this works - see core.league.new)
+                    for (key in team.stats[0]) {
+                        if (team.stats[0].hasOwnProperty(key)) {
+                            teamNewStats[key] = 0;
                         }
-                        teamNewSeason.stats[0].playoffs = false;
-                        delete teamNewSeason.rid;
-                        teamStore.add(teamNewSeason);
                     }
+                    teamNewStats.season = g.season;
+                    teamNewStats.playoffs = false;
+                    team.stats.push(teamNewStats);
+
+                    cursor.update(team);
                     cursor.continue();
                 } else {
                     // Loop through all non-retired players
@@ -146,17 +152,10 @@ define(["db", "core/player", "util/helpers", "util/playMenu", "util/random"], fu
 //            awards()
 
             // Set playoff matchups
-            db.getTeams(null, g.season, 'winp', function (teamsAll) {
-                var cid, i, j, keys, row, series, teams, teamsConf, tidPlayoffs;
-
-                teams = [];
-                keys = ["tid", "abbrev", "name", "cid"];  // Attributes to keep from teamStore
-                for (i = 0; i < teamsAll.length; i++) {
-                    teams[i] = {won: 0}; // Store the games won in the series, not the games won in the regular season
-                    for (j = 0; j < keys.length; j++) {
-                        teams[i][keys[j]] = teamsAll[i][keys[j]];
-                    }
-                }
+            attributes = ["tid", "abbrev", "name", "cid"];
+            seasonAttributes = ["winp"];
+            db.getTeams(null, g.season, attributes, [], seasonAttributes, "winp", function (teams) {
+                var cid, i, j, row, series, teamsConf, tidPlayoffs;
 
                 tidPlayoffs = [];
                 series = [[], [], [], []];  // First round, second round, third round, fourth round
@@ -187,26 +186,33 @@ define(["db", "core/player", "util/helpers", "util/playMenu", "util/random"], fu
                 row = {season: g.season, currentRound: 0, series: series};
                 g.dbl.transaction(["playoffSeries"], IDBTransaction.READ_WRITE).objectStore("playoffSeries").add(row);
 
-                // Add row to team stats
-                g.dbl.transaction(["teams"], IDBTransaction.READ_WRITE).objectStore("teams").index("season").openCursor(IDBKeyRange.only(g.season)).onsuccess = function (event) {
-                    var cursor, key, playoffStats, teamSeason;
+                // Add row to team stats and team season attributes
+                g.dbl.transaction(["teams"], IDBTransaction.READ_WRITE).objectStore("teams").openCursor().onsuccess = function (event) {
+                    var cursor, i, key, playoffStats, seasonStats, team;
 
                     cursor = event.target.result;
                     if (cursor) {
-                        teamSeason = cursor.value;
-                        if (tidPlayoffs.indexOf(teamSeason.tid) >= 0) {
+                        team = cursor.value;
+                        if (tidPlayoffs.indexOf(team.tid) >= 0) {
+                            for (i = 0; i < team.stats.length; i++) {
+                                if (team.stats[i].season === g.season) {
+                                    seasonStats = team.stats[i];
+                                    break;
+                                }
+                            }
                             playoffStats = {};
-                            for (key in teamSeason.stats[0]) {
-                                if (teamSeason.stats[0].hasOwnProperty(key)) {
+                            for (key in seasonStats) {
+                                if (seasonStats.hasOwnProperty(key)) {
                                     playoffStats[key] = 0;
                                 }
                             }
+                            playoffStats.season = g.season;
                             playoffStats.playoffs = true;
-                            teamSeason.stats.push(playoffStats);
-                            cursor.update(teamSeason);
+                            team.stats.push(playoffStats);
+                            cursor.update(team);
 
                             // Add row to player stats
-                            g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players").index("tid").openCursor(IDBKeyRange.only(teamSeason.tid)).onsuccess = function (event) {
+                            g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players").index("tid").openCursor(IDBKeyRange.only(team.tid)).onsuccess = function (event) {
                                 var cursorP, key, player, playerPlayoffStats;
 
                                 cursorP = event.target.result;

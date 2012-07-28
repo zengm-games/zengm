@@ -406,10 +406,10 @@ define(["util/helpers"], function (helpers) {
 
             if (sortBy === "winp") {
                 // Sort by winning percentage, descending
-                teams.sort(function (a, b) {  return (b.won / (b.won + b.lost)) - (a.won / (a.won + a.lost)); });
+                teams.sort(function (a, b) {  return b.winp - a.winp; });
             } else if (sortBy === "winpAsc") {
                 // Sort by winning percentage, ascending
-                teams.sort(function (a, b) {  return (a.won / (a.won + a.lost)) - (b.won / (b.won + b.lost)); });
+                teams.sort(function (a, b) {  return a.winp - b.winp; });
             }
 
             cb(teams);

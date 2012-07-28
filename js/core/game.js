@@ -200,6 +200,7 @@ define(["db", "core/gameSim", "core/season", "util/helpers", "util/lock", "util/
             teamSeason.cash = teamSeason.cash + g.ticketPrice * that.att - 1000 * cost;
             teamSeason.att += that.att;
             teamSeason.gp += 1;
+            teamSeason.cost += 1000 * cost;
 
             keys = ['min', 'fg', 'fga', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
             for (i = 0; i < keys.length; i++) {

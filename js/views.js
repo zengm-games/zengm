@@ -260,7 +260,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             var attributes, seasonAttributes;
 
             attributes = ["tid", "abbrev", "region", "name"];
-            seasonAttributes = ["att", "cash"];
+            seasonAttributes = ["att", "revenue", "profit", "cash"];
             db.getTeams(null, g.season, attributes, [], seasonAttributes, "winp", function (teams) {
                 var data, i, template;
 
@@ -274,7 +274,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 bbgm.ajaxUpdate(data);
             });
         });
-//    r = g.dbex('SELECT AVG(ts.att) AS att, SUM(ts.att)*:ticket_price / 1000000 AS revenue, (SUM(ts.att)*:ticket_price - SUM(ts.cost)) / 1000000 AS profit, ta.cash / 1000000 as cash, ((SELECT SUM(contract_amount) FROM player_attributes as pa WHERE pa.tid = ta.tid) + (SELECT IFNULL(SUM(contract_amount),0) FROM released_players_salaries as rps WHERE rps.tid = ta.tid)) / 1000 AS payroll FROM team_attributes as ta LEFT OUTER JOIN team_stats as ts ON ta.season = ts.season AND ta.tid = ts.tid WHERE ta.season = :season GROUP BY ta.tid', ticket_price=g.ticket_price, season=g.season)
+//    r = g.dbex('SELECT SUM(ts.att)*:ticket_price / 1000000 AS revenue, (SUM(ts.att)*:ticket_price - SUM(ts.cost)) / 1000000 AS profit, ta.cash / 1000000 as cash, ((SELECT SUM(contract_amount) FROM player_attributes as pa WHERE pa.tid = ta.tid) + (SELECT IFNULL(SUM(contract_amount),0) FROM released_players_salaries as rps WHERE rps.tid = ta.tid)) / 1000 AS payroll FROM team_attributes as ta LEFT OUTER JOIN team_stats as ts ON ta.season = ts.season AND ta.tid = ts.tid WHERE ta.season = :season GROUP BY ta.tid', ticket_price=g.ticket_price, season=g.season)
 //    teams = r.fetchall()
     }
 

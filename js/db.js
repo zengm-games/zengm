@@ -360,18 +360,22 @@ define(["util/helpers"], function (helpers) {
                     break;
                 }
             }
+console.log(tsa);
             for (j = 0; j < seasonAttributes.length; j++) {
                 if (seasonAttributes[j] === "winp") {
                     team.winp = 0;
                     if (tsa.won + tsa.lost > 0) {
                         team.winp = tsa.won / (tsa.won + tsa.lost);
                     }
-                } 
-                if (seasonAttributes[j] === "att") {
+                } else if (seasonAttributes[j] === "att") {
                     team.att = 0;
                     if (tsa.gp > 0) {
                         team.att = tsa.att / tsa.gp;
                     }
+                } else if (seasonAttributes[j] === "revenue") {
+                    team.revenue = tsa.att * g.ticketPrice / 1000000;
+                } else if (seasonAttributes[j] === "profit") {
+                    team.profit = (tsa.att * g.ticketPrice - tsa.cost) / 1000000;
                 } else {
                     team[seasonAttributes[j]] = tsa[seasonAttributes[j]];
                 }

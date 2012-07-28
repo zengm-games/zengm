@@ -419,15 +419,15 @@ function program9(depth0,data,depth1) {
   buffer += escapeExpression(stack1) + "</h1>\n    <strong>";
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.team_region);
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.teamRegion);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.team_region", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.teamRegion", { hash: {} }); }
   buffer += escapeExpression(stack1) + " ";
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.team_name);
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.teamName);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.team_name", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.teamName", { hash: {} }); }
   buffer += escapeExpression(stack1) + "</strong><br />\n    Height: ";
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;

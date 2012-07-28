@@ -138,7 +138,7 @@ define(["util/helpers"], function (helpers) {
      * @return {Object} Filtered object containing the requested information for the player.
      */
     function getPlayer(pa, season, tid, attributes, stats, ratings, options) {
-        var i, j, k, player, pr, ps, tidTemp;
+        var i, j, k, player, pr, ps, teams, tidTemp;
 
         options = typeof options !== "undefined" ? options : {};
 
@@ -159,6 +159,12 @@ define(["util/helpers"], function (helpers) {
                 player.cashOwed = ((1 + pa.contractExp - g.season) * pa.contractAmount - (1 - options.numGamesRemaining / 82) * pa.contractAmount) / 1000;
             } else if (attributes[j] === "abbrev") {
                 player.abbrev = helpers.getAbbrev(pa.tid);
+            } else if (attributes[j] === "teamRegion") {
+                teams = helpers.getTeams();
+                player.teamRegion = teams[pa.tid].region;
+            } else if (attributes[j] === "teamName") {
+                teams = helpers.getTeams();
+                player.teamName = teams[pa.tid].name;
             } else {
                 player[attributes[j]] = pa[attributes[j]];
             }

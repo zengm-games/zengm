@@ -342,7 +342,7 @@ define(["db", "core/gameSim", "core/season", "util/helpers", "util/lock", "util/
             gm = new Game();
             gm.load(results, playoffs);
             gm.writeStats(transaction, cb);
-            console.log("Saved results for game " + results.gid);
+//            console.log("Saved results for game " + results.gid);
 //        else {
 //            console.log("Ignored stale results for game " + results['gid']);
 //        }

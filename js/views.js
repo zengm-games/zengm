@@ -193,7 +193,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
 
     function playoffs(req) {
         beforeLeague(req, function () {
-            var finalMatchups, season, seasons;
+            var attributes, finalMatchups, season, seasonAttributes, seasons;
 
             season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
             season = helpers.validateSeason(season);
@@ -211,17 +211,10 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             if (season === g.season && g.phase < c.PHASE_PLAYOFFS) {
                 // In the current season, before playoffs start, display projected matchups
                 finalMatchups = false;
-                db.getTeams(null, season, 'winp', function (teamsAll) {
-                    var cid, i, j, keys, series, teams, teamsConf;
-
-                    teams = [];
-                    keys = ["tid", "abbrev", "name", "cid"];  // Attributes to keep from teamStore
-                    for (i = 0; i < teamsAll.length; i++) {
-                        teams[i] = {};
-                        for (j = 0; j < keys.length; j++) {
-                            teams[i][keys[j]] = teamsAll[i][keys[j]];
-                        }
-                    }
+                attributes = ["tid", "cid", "abbrev", "name"];
+                seasonAttributes = ["winp"];
+                db.getTeams(null, season, attributes, [], seasonAttributes, "winp", function (teams) {
+                    var cid, i, j, keys, series, teamsConf;
 
                     series = [[], [], [], []];  // First round, second round, third round, fourth round
                     for (cid = 0; cid < 2; cid++) {
@@ -264,17 +257,15 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
 
     function finances(req) {
         beforeLeague(req, function () {
-            db.getTeams(null, g.season, null, function (teamsAll) {
-                var data, i, j, keys, teams, template;
-console.log(teamsAll);
+            var attributes, seasonAttributes;
 
-                teams = [];
-                keys = ["tid", "region", "name", "abbrev", "cash"];  // Attributes to keep from teamStore
-                for (i = 0; i < teamsAll.length; i++) {
-                    teams[i] = {};
-                    for (j = 0; j < keys.length; j++) {
-                        teams[i][keys[j]] = teamsAll[i][keys[j]];
-                    }
+            attributes = ["tid", "abbrev", "region", "name"];
+            seasonAttributes = ["cash"];
+            db.getTeams(null, g.season, attributes, [], seasonAttributes, "winp", function (teams) {
+                var data, i, template;
+
+                for (i = 0; i < teams.length; i++) {
+                    teams[i].cash /= 1000000;
                 }
 
                 data = {title: "Finances - League " + g.lid};
@@ -302,17 +293,17 @@ console.log(teamsAll);
 
             // Run after players are loaded
             function cb(players) {
-                g.dbl.transaction(["teams"]).objectStore("teams").index("tid").getAll(tid).onsuccess = function (event) {
-                    var data, j, team, teamAll, teamSeasons, template;
+                g.dbl.transaction(["teams"]).objectStore("teams").get(tid).onsuccess = function (event) {
+                    var data, j, team, teamAll, teamSeason, template;
 
-                    teamSeasons = event.target.result;
-                    for (j = 0; j < teamSeasons.length; j++) {
-                        if (teamSeasons[j].season === season) {
-                            teamAll = teamSeasons[j];
+                    teamAll = event.target.result;
+                    for (j = 0; j < teamAll.seasons.length; j++) {
+                        if (teamAll.seasons[j].season === season) {
+                            teamSeason = teamAll.seasons[j];
                             break;
                         }
                     }
-                    team = {region: teamAll.region, name: teamAll.name, cash: teamAll.cash / 1000000};
+                    team = {region: teamAll.region, name: teamAll.name, cash: teamSeason.cash / 1000000};
 
                     data = {title: "Roster - League " + g.lid};
                     template = Handlebars.templates.roster;

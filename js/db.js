@@ -386,7 +386,7 @@ define(["util/helpers"], function (helpers) {
      * @param {Array.<string>} attributes List of non-seasonal attributes (such as team name) to include in output.
      * @param {Array.<string>} stats List of team stats to include in output.
      * @param {Array.<string>} seasonAttributes List of seasonal attributes (such as wins, losses) to include in output.
-     * @param {string|null} String represeting the sorting method. "winp" sorts by descending winning percentage, "winpAsc" does the opposite.
+     * @param {string|null} sortBy String represeting the sorting method. "winp" sorts by descending winning percentage, "winpAsc" does the opposite.
      * @param {function(Array)} cb Callback whose first argument is an array of all the team objects.
      */
     function getTeams(ot, season, attributes, stats, seasonAttributes, sortBy, cb) {

@@ -157,6 +157,12 @@ define(["db", "core/player", "util/helpers", "util/playMenu", "util/random"], fu
             db.getTeams(null, g.season, attributes, [], seasonAttributes, "winp", function (teams) {
                 var cid, i, j, row, series, teamsConf, tidPlayoffs;
 
+                // Add entry for wins for each team; delete winp, which was only needed for sorting
+                for (i = 0; i < teams.length; i++) {
+                    teams[i].won = 0;
+                    delete teams[i].winp;
+                }
+
                 tidPlayoffs = [];
                 series = [[], [], [], []];  // First round, second round, third round, fourth round
                 for (cid = 0; cid < 2; cid++) {
@@ -594,18 +600,29 @@ define(["db", "core/player", "util/helpers", "util/playMenu", "util/random"], fu
         });
     }
 
-    /*Returns a list of n_games games, or all games in the schedule if n_games
-    is 0 (default). Each element in the list is a dict with keys 'gid',
-    'home_tid', and 'away_tid'.
+    /*Returns an array of numDays days worth of games (really, just one day), or all games in the schedule if numDays
+    is 0 (default). It is important that, when requesting a day's games, no team will be scheduled to play more than once that day.
     */
-    function getSchedule(numGames, cb) {
-        numGames = parseInt(numGames, 10);
+    function getSchedule(numDays, cb) {
+        numDays = parseInt(numDays, 10);
         g.dbl.transaction(["schedule"]).objectStore("schedule").getAll().onsuccess = function (event) {
-            var schedule;
+            var i, schedule, tids;
 
             schedule = event.target.result;
-            if (numGames > 0) {
-                schedule = schedule.slice(0, numGames);
+            if (numDays > 0) {
+                schedule = schedule.slice(0, g.numTeams / 2);  // This is the maximum number of games possible in a day
+
+                // Only take the games up until right before a team plays for the second time that day
+                tids = [];
+                for (i = 0; i < schedule.length; i++) {
+                    if (tids.indexOf(schedule[i].homeTid) < 0 && tids.indexOf(schedule[i].awayTid) < 0) {
+                        tids.push(schedule[i].homeTid);
+                        tids.push(schedule[i].awayTid);
+                    } else {
+                        break;
+                    }
+                }
+                schedule = schedule.slice(0, i);
             }
             cb(schedule);
         };

@@ -249,6 +249,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                     playoffSeries = event.target.result;
                     series = playoffSeries.series;
 
+console.log(playoffSeries)
                     cb(finalMatchups, series);
                 };
             }

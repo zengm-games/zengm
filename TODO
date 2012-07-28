@@ -1,4 +1,12 @@
 main todo
+- fix crap
+  - looks like all the games are being simulated, but not added to win/loss total always?
+    - if a team plays two games in one "day", the second game is not recorded as W or L
+      - this will be fixed if a team never plays two games in one day.. but i'm a bit perplexed about how it ever used to work in the first place
+  - playoffs
+    - playoffs scheduling is fucked up. used to work. now only one series progresses at a time
+    - playoff stats tid for each player is set to tid 0
+- schedule - more realistic sorting so more games are played each day
 - resigning old players
   - negotiationList
 - refactor new season code
@@ -27,10 +35,7 @@ strategic issues
 BUGS
 
 ratings should all be integers before being saved
-playoff teams aren't being set in exactly the right order
-are playoff wins added to regular season win total? looks like it.
-playoffs scheduling is fucked up. used to work.
-playoff stats tid for each player is set to tid 0
+game simulation stops when a link is clicked, but then restarts when another link is clicked? wtf
 
 ---
 

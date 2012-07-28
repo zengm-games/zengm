@@ -360,7 +360,6 @@ define(["util/helpers"], function (helpers) {
                     break;
                 }
             }
-console.log(tsa);
             for (j = 0; j < seasonAttributes.length; j++) {
                 if (seasonAttributes[j] === "winp") {
                     team.winp = 0;
@@ -376,6 +375,8 @@ console.log(tsa);
                     team.revenue = tsa.att * g.ticketPrice / 1000000;
                 } else if (seasonAttributes[j] === "profit") {
                     team.profit = (tsa.att * g.ticketPrice - tsa.cost) / 1000000;
+                } else if (seasonAttributes[j] === "payroll") {
+                    // Handled later
                 } else {
                     team[seasonAttributes[j]] = tsa[seasonAttributes[j]];
                 }
@@ -391,7 +392,7 @@ console.log(tsa);
      * Get an array of filtered team objects.
      * 
      * @memberOf db
-     * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction to be used; if null is passed, then a new transaction will be used.
+     * @param {IDBTransaction|null} ot An IndexedDB transaction on players, releasedPlayers, and teams; if null is passed, then a new transaction will be used.
      * @param {number} season Season to retrieve data for.
      * @param {Array.<string>} attributes List of non-seasonal attributes (such as team name) to include in output.
      * @param {Array.<string>} stats List of team stats to include in output.
@@ -400,12 +401,11 @@ console.log(tsa);
      * @param {function(Array)} cb Callback whose first argument is an array of all the team objects.
      */
     function getTeams(ot, season, attributes, stats, seasonAttributes, sortBy, cb) {
-        var teamStore;
+        var done, transaction;
 
-        teamStore = getObjectStore(ot, "teams", "teams");
-
-        teamStore.getAll().onsuccess = function (event) {
-            var i, teams, teamsAll;
+        transaction = getObjectStore(ot, ["players", "releasedPlayers", "teams"], null);
+        transaction.objectStore("teams").getAll().onsuccess = function (event) {
+            var i, savePayrollCb, teams, teamsAll;
 
             teamsAll = event.target.result;
             teams = [];
@@ -422,7 +422,21 @@ console.log(tsa);
                 teams.sort(function (a, b) {  return a.winp - b.winp; });
             }
 
-            cb(teams);
+            if (seasonAttributes.indexOf("payroll") < 0) {
+                cb(teams);
+            } else {
+                savePayrollCb = function (i) {
+                    return function (payroll) {
+                        teams[i].payroll = payroll / 1000;
+                        if (i === teams.length - 1) {
+                            cb(teams);
+                        }
+                    };
+                }
+                for (i = 0; i < teams.length; i++) {
+                    getPayroll(transaction, teams[i].tid, savePayrollCb(i));
+                }
+            }
         };
     }
 
@@ -432,7 +446,7 @@ console.log(tsa);
      * This includes players who have been released but are still owed money from their old contracts.
      * 
      * @memberOf db
-     * @param {IDBTransaction|null} ot An IndexedDB transaction on players and releasedPlayers to be used; if null is passed, then a new transaction will be used.
+     * @param {IDBTransaction|null} ot An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.
      * @param {number} tid Team ID.
      * @param {function(Array)} cb Callback whose first argument is the payroll in thousands of dollars.
      */

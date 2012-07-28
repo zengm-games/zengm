@@ -41,7 +41,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                             name: teams[i].name,
                             abbrev: teams[i].abbrev,
                             stats: [{season: g.startingSeason, playoffs: false, gp: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, oppPts: 0}], // Things recorded both in and out of playoffs
-                            seasons: [{season: g.startingSeason, att: 0, cost: 0, cash: 10000000, won: 0, lost: 0, wonDiv: 0, lostDiv: 0, wonConf: 0, lostConf: 0, madePlayoffs: false, confChamps: false, leagueChamps: false,}] // Things that only have one value per season
+                            seasons: [{season: g.startingSeason, gp: 0, att: 0, cost: 0, cash: 10000000, won: 0, lost: 0, wonDiv: 0, lostDiv: 0, wonConf: 0, lostConf: 0, madePlayoffs: false, confChamps: false, leagueChamps: false,}] // Things that only have one value per season
                         });
                     }
 

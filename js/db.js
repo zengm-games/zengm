@@ -366,6 +366,12 @@ define(["util/helpers"], function (helpers) {
                     if (tsa.won + tsa.lost > 0) {
                         team.winp = tsa.won / (tsa.won + tsa.lost);
                     }
+                } 
+                if (seasonAttributes[j] === "att") {
+                    team.att = 0;
+                    if (tsa.gp > 0) {
+                        team.att = tsa.att / tsa.gp;
+                    }
                 } else {
                     team[seasonAttributes[j]] = tsa[seasonAttributes[j]];
                 }

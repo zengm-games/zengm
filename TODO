@@ -81,6 +81,8 @@ db.getPlayers
 - rename to helpers.filterPlayers
 - use for other access of players "playersAll"
 - the special case attributes should generally be moved directly into the database.
+game simulation
+- attendance
 
 ---
 

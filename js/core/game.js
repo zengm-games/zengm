@@ -198,6 +198,8 @@ define(["db", "core/gameSim", "core/season", "util/helpers", "util/lock", "util/
             }
 
             teamSeason.cash = teamSeason.cash + g.ticketPrice * that.att - 1000 * cost;
+            teamSeason.att += that.att;
+            teamSeason.gp += 1;
 
             keys = ['min', 'fg', 'fga', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
             for (i = 0; i < keys.length; i++) {
@@ -206,7 +208,6 @@ define(["db", "core/gameSim", "core/season", "util/helpers", "util/lock", "util/
             teamStats.gp += 1;
             teamStats.trb += that.team[t].stat.orb + that.team[t].stat.drb;
             teamStats.oppPts += that.team[t2].stat.pts;
-            teamStats.att += that.att;
 
             if (won && !that.playoffs) {
                 teamSeason.won += 1;

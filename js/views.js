@@ -260,7 +260,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             var attributes, seasonAttributes;
 
             attributes = ["tid", "abbrev", "region", "name"];
-            seasonAttributes = ["cash"];
+            seasonAttributes = ["att", "cash"];
             db.getTeams(null, g.season, attributes, [], seasonAttributes, "winp", function (teams) {
                 var data, i, template;
 

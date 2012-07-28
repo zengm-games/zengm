@@ -1,0 +1,21 @@
+<script type="text/javascript">
+$(document).ready(function () {
+  bbgm.datatableSinglePage($('#finances'), 5, [
+    {{#teams}}
+      [ '<a href="/l/{{../g.lid}}/roster/{{abbrev}}">{{region}} {{name}}</a>', '{{round att}}', '${{round revenue 1}}M', '${{round profit 1}}M', '${{round cash 1}}M', '${{round payroll 1}}M' ],
+    {{/teams}}
+  ]);
+});
+</script>
+
+<h1>Finances</h1>
+
+<p>The current salary cap is <strong>${{round salaryCap 1}}M</strong>.</p>
+
+<p>
+  <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="finances">
+  <thead>
+    <tr><th>Team</th><th>Avg Attendance</th><th>Revenue (YTD)</th><th>Profit (YTD)</th><th>Cash</th><th>Payroll</th></tr>
+  </thead>
+  </table>
+</p>

@@ -273,6 +273,31 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         });
     }
 
+    function finances(req) {
+        beforeLeague(req, function () {
+            db.getTeams(null, g.season, null, function (teamsAll) {
+                var data, i, j, keys, teams, template;
+console.log(teamsAll);
+
+                teams = [];
+                keys = ["tid", "region", "name", "abbrev", "cash"];  // Attributes to keep from teamStore
+                for (i = 0; i < teamsAll.length; i++) {
+                    teams[i] = {};
+                    for (j = 0; j < keys.length; j++) {
+                        teams[i][keys[j]] = teamsAll[i][keys[j]];
+                    }
+                }
+
+                data = {title: "Finances - League " + g.lid};
+                template = Handlebars.templates.finances;
+                data.league_content = template({g: g, salaryCap: g.salaryCap / 1000, teams: teams});
+                bbgm.ajaxUpdate(data);
+            });
+        });
+//    r = g.dbex('SELECT AVG(ts.att) AS att, SUM(ts.att)*:ticket_price / 1000000 AS revenue, (SUM(ts.att)*:ticket_price - SUM(ts.cost)) / 1000000 AS profit, ta.cash / 1000000 as cash, ((SELECT SUM(contract_amount) FROM player_attributes as pa WHERE pa.tid = ta.tid) + (SELECT IFNULL(SUM(contract_amount),0) FROM released_players_salaries as rps WHERE rps.tid = ta.tid)) / 1000 AS payroll FROM team_attributes as ta LEFT OUTER JOIN team_stats as ts ON ta.season = ts.season AND ta.tid = ts.tid WHERE ta.season = :season GROUP BY ta.tid', ticket_price=g.ticket_price, season=g.season)
+//    teams = r.fetchall()
+    }
+
     function roster(req) {
         beforeLeague(req, function () {
             var abbrev, attributes, currentSeason, ratings, season, seasons, sortable, stats, teams, tid;
@@ -352,7 +377,6 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
 
     function schedule(req) {
         beforeLeague(req, function () {
-
             season.getSchedule(0, function (schedule_) {
                 var data, game, games, i, row, team0, team1, template, vsat;
 
@@ -699,7 +723,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 }
 
                 g.dbl.transaction(["players"]).objectStore("players").get(pid).onsuccess = function (event) {
-                    var data, j, pa, payroll, player, pr, salaryCap, team, teams, template;
+                    var data, j, pa, payroll, player, pr, team, teams, template;
 
                     pa = event.target.result;
 
@@ -716,8 +740,6 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                     player.ovr = pr.ovr;
                     player.pot = pr.pot;
 
-                    salaryCap = g.salaryCap / 1000;
-
                     teams = helpers.getTeams();
                     team = {region: teams[g.userTid].region, name: teams[g.userTid].name};
 
@@ -726,7 +748,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
 
                         data = {title: player.name + " - Contract Negotiation - League " + g.lid};
                         template = Handlebars.templates.negotiation;
-                        data.league_content = template({g: g, negotiation: negotiation, player: player, salaryCap: salaryCap, team: team, payroll: payroll});
+                        data.league_content = template({g: g, negotiation: negotiation, player: player, salaryCap: g.salaryCap / 1000, team: team, payroll: payroll});
                         bbgm.ajaxUpdate(data);
                     });
                 };
@@ -776,6 +798,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         league_dashboard: league_dashboard,
         standings: standings,
         playoffs: playoffs,
+        finances: finances,
         roster: roster,
         schedule: schedule,
         free_agents: free_agents,

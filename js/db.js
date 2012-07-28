@@ -354,7 +354,7 @@ define(["util/helpers"], function (helpers) {
      * @memberOf db
      * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction to be used; if null is passed, then a new transaction will be used.
      * @param {number} season Season for team attributes (such as wins and losses).
-     * @param {string|undefined} String represeting the sorting method. "winp" sorts by descending winning percentage, "winpAsc" does the opposite.
+     * @param {string|null} String represeting the sorting method. "winp" sorts by descending winning percentage, "winpAsc" does the opposite.
      * @param {function(Array)} cb Callback whose first argument is an array of all the team objects.
      */
     function getTeams(ot, season, sortBy, cb) {

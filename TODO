@@ -1,4 +1,7 @@
 main todo
+- make teamStore more like playerStore, where there is a single unique entry per team
+- finances view
+  - are things like attendance, cost per game, etc being stored in game stats and team stats?
 - resigning old players
   - negotiationList
 - refactor new season code

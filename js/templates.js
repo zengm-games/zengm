@@ -2844,7 +2844,7 @@ templates['league_layout'] = template(function (Handlebars,depth0,helpers,partia
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/finances\">Finances</a></li>\n      <li id=\"nav_transaction_log\"><a href=\"#\">Transaction Log</a></li>\n      <li id=\"nav_history\"><a href=\"/l/";
+  buffer += escapeExpression(stack1) + "/finances\">Finances</a></li>\n      <li id=\"nav_history\"><a href=\"/l/";
   foundHelper = helpers['g'];
   stack1 = foundHelper || depth0['g'];
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);

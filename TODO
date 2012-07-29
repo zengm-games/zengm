@@ -1,5 +1,4 @@
 main todo
-- drafted players don't show up in roster?
 - schedule - more realistic sorting so more games are played each day
   - first: build tests to make sure the current one is working as it should
   - then try something like http://en.wikipedia.org/wiki/Round-robin_tournament#Scheduling_algorithm

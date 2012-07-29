@@ -82,10 +82,10 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                     season.newPhase(c.PHASE_REGULAR_SEASON);
                     playMenu.setStatus('Idle');
 
-/*        // Auto sort player's roster (other teams will be done in season.new_phase(c.PHASE_REGULAR_SEASON))
-        roster_auto_sort(g.user_tid)
+                    // Auto sort player's roster (other teams will be done in season.newPhase(c.PHASE_REGULAR_SEASON))
+                    db.rosterAutoSort(null, g.userTid);
 
-        // Default trade settings
+/*        // Default trade settings
         if g.user_tid == 0:
             trade_tid = 1
         else:

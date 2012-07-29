@@ -484,18 +484,19 @@ define(["util/helpers"], function (helpers) {
      * Sort a team's roster based on player ratings.
      * 
      * @memberOf db
+     * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on players readwrite; if null is passed, then a new transaction will be used.
      * @param {number} tid Team ID.
      */
-    function rosterAutoSort(tid) {
+    function rosterAutoSort(ot, tid) {
         var players, playerStore;
 
-        playerStore = getObjectStore(null, "players", "players");
+        playerStore = getObjectStore(ot, "players", "players");
 
         // Get roster and sort by overall rating
         playerStore.index("tid").getAll(tid).onsuccess = function (event) {
             var i;
 
-            players = db.getPlayers(event.target.result, g.season, tid, ["pid"], [], ["ovr"], {showNoStats: true, showRookies: true});
+            players = getPlayers(event.target.result, g.season, tid, ["pid"], [], ["ovr"], {showNoStats: true, showRookies: true});
             players.sort(function (a, b) {  return b.ovr - a.ovr; });
 
             for (i = 0; i < players.length; i++) {

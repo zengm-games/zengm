@@ -17,7 +17,7 @@ define(["db", "core/player", "util/helpers", "util/playMenu", "util/random"], fu
         to be sent to the client.
     */
     function newPhase(phase) {
-        var attributes, phaseText, releasedPlayersStore, seasonAttributes, transaction;
+        var attributes, phaseText, playerStore, releasedPlayersStore, seasonAttributes, tid, transaction;
 
         // Prevent code running twice
         if (phase === g.phase) {
@@ -130,10 +130,13 @@ define(["db", "core/player", "util/helpers", "util/playMenu", "util/random"], fu
 
             newSchedule(function () { cb(phase, phaseText); });
 
-/*            // Auto sort rosters (except player's team)
-            for t in range(30)) {
-                if (t !== g.user_tid) {
-                    roster_auto_sort(t)*/
+            // Auto sort rosters (except player's team)
+            playerStore = g.dbl.transaction("players", IDBTransaction.READ_WRITE).objectStore("players");
+            for (tid = 0; tid < g.numTeams; tid++) {
+                if (tid !== g.userTid) {
+                    db.rosterAutoSort(playerStore, tid);
+                }
+            }
         } else if (phase === c.PHASE_AFTER_TRADE_DEADLINE) {
             phaseText = g.season + " regular season, after trade deadline";
             cb(phase, phaseText);

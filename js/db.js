@@ -339,6 +339,10 @@ define(["util/helpers"], function (helpers) {
             }
         }
 
+        if (options.sortBy === "rosterOrder") {
+            players.sort(function (a, b) {  return a.rosterOrder - b.rosterOrder; });
+        }
+
         return players;
     }
 
@@ -476,6 +480,48 @@ define(["util/helpers"], function (helpers) {
         };
     }
 
+    /**
+     * Sort a team's roster based on player ratings.
+     * 
+     * @memberOf db
+     * @param {number} tid Team ID.
+     */
+    function rosterAutoSort(tid) {
+        var players, playerStore;
+
+        playerStore = getObjectStore(null, "players", "players");
+
+        // Get roster and sort by overall rating
+        playerStore.index("tid").getAll(tid).onsuccess = function (event) {
+            var i;
+
+            players = db.getPlayers(event.target.result, g.season, tid, ["pid"], [], ["ovr"], {showNoStats: true, showRookies: true});
+            players.sort(function (a, b) {  return b.ovr - a.ovr; });
+
+            for (i = 0; i < players.length; i++) {
+                players[i].rosterOrder = i;
+            }
+        }
+
+        // Update rosterOrder
+        playerStore.index("tid").openCursor(IDBKeyRange.only(tid)).onsuccess = function (event) {
+            var cursor, i, p;
+
+            cursor = event.target.result;
+            if (cursor) {
+                p = cursor.value;
+                for (i = 0; i < players.length; i++) {
+                    if (players[i].pid === p.pid) {
+                        p.rosterOrder = players[i].rosterOrder;
+                        break;
+                    }
+                }
+                cursor.update(p);
+                cursor.continue();
+            }
+        }
+    }
+
     return {
         connect_meta: connect_meta,
         connect_league: connect_league,
@@ -484,6 +530,7 @@ define(["util/helpers"], function (helpers) {
         getPlayers: getPlayers,
         getTeam: getTeam,
         getTeams: getTeams,
-        getPayroll: getPayroll
+        getPayroll: getPayroll,
+        rosterAutoSort: rosterAutoSort
     };
 });

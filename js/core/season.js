@@ -499,16 +499,6 @@ define(["db", "core/player", "util/helpers", "util/playMenu", "util/random"], fu
                     else if (current_round === 4) {
                         g.dbex('UPDATE team_attributes SET league_champs = TRUE WHERE season = :season AND tid = :tid', season=g.season, tid=winners[sid][0])*/
 
-                // Add a new round to the database
-/*                current_round += 1
-                query = ('INSERT INTO playoff_series (round, season, tid_home, tid_away, seed_home, seed_away, won_home, won_away) VALUES (:round, :season, :tid_home, :tid_away, :seed_home, :seed_away, 0, 0)')
-                sids = winners.keys()
-                for i in range(min(sids), max(sids), 2):  // Go through winners by 2
-                    if (winners[i][1] < winners[i + 1][1]:  // Which team is the home team?
-                        g.dbex(query, round=current_round, season=g.season, tid_home=winners[i][0], tid_away=winners[i + 1][0], seed_home=winners[i][1], seed_away=winners[i + 1][1])
-                    else {
-                        g.dbex(query, round=current_round, season=g.season, tid_home=winners[i + 1][0], tid_away=winners[i][0], seed_home=winners[i + 1][1], seed_away=winners[i][1])*/
-
                 cb(numActiveTeams);
             }
         };

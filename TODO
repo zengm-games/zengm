@@ -1,4 +1,7 @@
 main todo
+- rosterAutoSort
+  - button in roster view
+  - grep for roster_auto_sort
 - schedule - more realistic sorting so more games are played each day
   - first: build tests to make sure the current one is working as it should
   - then try something like http://en.wikipedia.org/wiki/Round-robin_tournament#Scheduling_algorithm
@@ -39,6 +42,8 @@ playoffs scheduling is fucked up. used to work. now only one series progresses a
 
 PORTING NOTES:
 
+should db.getObjectStore always use readwrite?
+Replace showNoStats with a check of stats.length in db.getPlayer?
 team_attributes.playoffs is now team.made_playoffs
 template loop count - how?
 - conf rankings in standings

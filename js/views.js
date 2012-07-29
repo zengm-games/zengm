@@ -313,7 +313,7 @@ console.log(playoffSeries)
                 };
             }
 
-            attributes = ["pid", "name", "pos", "age", "contractAmount", "contractExp", "cashOwed"];
+            attributes = ["pid", "name", "pos", "age", "contractAmount", "contractExp", "cashOwed", "rosterOrder"];
             ratings = ["ovr", "pot"];
             stats = ["min", "pts", "trb", "ast"];
 
@@ -339,7 +339,7 @@ console.log(playoffSeries)
                     g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
                         var players;
 
-                        players = db.getPlayers(event.target.result, season, tid, attributes, stats, ratings, {numGamesRemaining: numGamesRemaining, showRookies: true});
+                        players = db.getPlayers(event.target.result, season, tid, attributes, stats, ratings, {numGamesRemaining: numGamesRemaining, showRookies: true, sortBy: "rosterOrder"});
                         cb(players);
                     };
                 };
@@ -349,7 +349,7 @@ console.log(playoffSeries)
                 g.dbl.transaction(["players"]).objectStore("players").index("statsTids").getAll(tid).onsuccess = function (event) {
                     var players;
 
-                    players = db.getPlayers(event.target.result, season, tid, attributes, stats, ratings, {numGamesRemaining: 0, showRookies: true});
+                    players = db.getPlayers(event.target.result, season, tid, attributes, stats, ratings, {numGamesRemaining: 0, showRookies: true, sortBy: "rosterOrder"});
                     cb(players);
                 };
             }

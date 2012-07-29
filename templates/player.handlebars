@@ -1,29 +1,28 @@
-<script type="text/javascript">
+<script>
 $(document).ready(function() {
-/*    $('#player_tabs a').click(function (e) {
-        e.preventDefault();
-        $(this).tab('show');
-    });*/
-  $('#player_tabs').tab();
+  $("#player_tabs").tab();
 });
 </script>
 <div class="row-fluid">
   <div class="span6">
-    <h1>{{player.name}}</h1>
-    <strong>{{player.teamRegion}} {{player.teamName}}</strong><br />
-    Height: {{player.hgtFt}}'{{player.hgtIn}}"<br />
-    Weight: {{player.weight}} lbs<br />
-    Age: {{player.age}}<br />
-    Born: {{player.bornYear}} - {{player.bornLoc}}<br />
-    {{#if player.draftRound}}
-      Draft: {{player.draftYear}} - Round {{player.draftRound}} (Pick {{player.draftPick}}) by the {{player.draftTeamRegion}} {{player.draftTeamName}}<br />
-    {{else}}
-      Undrafted: {{player.draftYear}}<br />
-    {{/if}}
-    Contract: ${{player.contractAmount 1}}M per year through {{player.contractExp}}<br />
+    <div style="float: left;">
+      <h1>{{player.name}}</h1>
+      <strong>{{player.teamRegion}} {{player.teamName}}</strong><br />
+      Height: {{player.hgtFt}}'{{player.hgtIn}}"<br />
+      Weight: {{player.weight}} lbs<br />
+      Age: {{player.age}}<br />
+      Born: {{player.bornYear}} - {{player.bornLoc}}<br />
+      {{#if player.draftRound}}
+        Draft: {{player.draftYear}} - Round {{player.draftRound}} (Pick {{player.draftPick}}) by the {{player.draftTeamRegion}} {{player.draftTeamName}}<br />
+      {{else}}
+        Undrafted: {{player.draftYear}}<br />
+      {{/if}}
+      Contract: ${{player.contractAmount 1}}M per year through {{player.contractExp}}<br />
+    </div>
+    <div id="picture" class="player_picture">{{face player.face}}</div>
   </div>
   <div class="span6">
-    <h2 class="pull-left">Overall Rating: {{currentRatings.ovr}}</h2>
+    <h2 class="pull-left">Overall: {{currentRatings.ovr}}</h2>
     <h2 class="pull-right">Potential: {{currentRatings.pot}}</h2><br /><br /><br />
     <div class="row-fluid">
       <div class="span4">

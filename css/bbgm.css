@@ -143,6 +143,12 @@ select.season {
   background-color: #fff;
 }
 
+.player_picture {
+  height: 180px;
+  float: left;
+  width: 120px;
+}
+
 
 /* From bootstrap-responsive.css, force big size */
   .row {

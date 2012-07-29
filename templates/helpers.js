@@ -29,3 +29,15 @@ Handlebars.registerHelper("matchup", function(i, j) {
     var template = Handlebars.compile(source);
     return new Handlebars.SafeString(template({series: series}));
 });
+
+
+Handlebars.registerHelper("face", function(face) {
+    console.log(face);
+    //faces.display("myDivId", face);
+
+    return new Handlebars.SafeString('<script>'
+         + '$(document).ready(function() {'
+         + '  faces.display("picture", ' + JSON.stringify(face) + ');'
+         + '});'
+         + '</script>');
+});

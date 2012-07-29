@@ -423,6 +423,8 @@ define(["db", "util/random"], function (db, random) {
         p.draftPot = pot;
         p.draftOvr = p.ratings[0].ovr;
 
+        p.face = faces.generate();
+
         return p;
     }
 

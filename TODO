@@ -7,6 +7,9 @@ main todo
   - negotiationList
 - refactor new season code
   - abstract db access
+- retiring players
+  - in core.season
+  - when to display notification?
 - other views
 - reassess how money is stored (ones, thousands, millions?)
 strategic issues
@@ -154,9 +157,6 @@ g.dbl.transaction(["players"]).objectStore("players").get(476).onsuccess = funct
 
 
 # Pre-JavaScript TODO
-
-fix commented lines in bbgm.core.season
-- retired players - when to display notification?
 
 player view
 - next, previous buttons (also active on left/right arrows)

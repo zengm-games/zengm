@@ -62,7 +62,6 @@ jslint --plusplus --predef $ --predef Davis --predef requirejs --predef define -
 - http://stackoverflow.com/questions/806163/jslint-using-a-function-before-its-defined-error
 roster view
 - past season: go based on players.stats.tid
-- auto sort button
 - make sure teams dropdown works
 - trade for button
 - buy out button

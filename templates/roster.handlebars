@@ -40,9 +40,7 @@ $(document).ready(function() {
             }
         }).disableSelection();
         $("#auto_sort_roster").click(function(event) {
-            $.post('/l/{{g.lid}}/roster/auto_sort', {'json': 1}, function (data) {
-                ajax_update(data);
-            }, 'json');
+            api.rosterAutoSort();
         });
 
         // Release player

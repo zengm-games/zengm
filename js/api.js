@@ -1,6 +1,6 @@
 /*These are functions that do not return full pages (either JS objects or partial blocks of HTML) and are called from the client.*/
 
-define(["db", "core/draft", "core/game", "core/player", "core/season", "util/helpers", "util/lock", "util/playMenu"], function (db, draft, game, player, season, helpers, lock, playMenu) {
+define(["db", "views", "core/draft", "core/game", "core/player", "core/season", "util/helpers", "util/lock", "util/playMenu"], function (db, views, draft, game, player, season, helpers, lock, playMenu) {
     "use strict";
 
     /*This is kind of a hodgepodge that handles every request from the play
@@ -72,6 +72,12 @@ define(["db", "core/draft", "core/game", "core/player", "core/season", "util/hel
         }*/
 
 //        return {url: url};
+    }
+
+    function rosterAutoSort(cb) {
+        db.rosterAutoSort(null, g.userTid, function () {
+            Davis.location.replace(new Davis.Request("/l/" + g.lid + "/roster"));
+        });
     }
 
     function rosterReorder(sortedPids, cb) {
@@ -224,6 +230,7 @@ define(["db", "core/draft", "core/game", "core/player", "core/season", "util/hel
 
     return {
         play: play,
+        rosterAutoSort: rosterAutoSort,
         rosterReorder: rosterReorder,
         rosterRelease: rosterRelease,
         draftUntilUserOrEnd: draftUntilUserOrEnd,

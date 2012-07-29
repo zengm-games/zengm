@@ -486,8 +486,9 @@ define(["util/helpers"], function (helpers) {
      * @memberOf db
      * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on players readwrite; if null is passed, then a new transaction will be used.
      * @param {number} tid Team ID.
+     * @param {function()} cb Optional callback.
      */
-    function rosterAutoSort(ot, tid) {
+    function rosterAutoSort(ot, tid, cb) {
         var players, playerStore;
 
         playerStore = getObjectStore(ot, "players", "players");
@@ -520,6 +521,10 @@ define(["util/helpers"], function (helpers) {
                 cursor.update(p);
                 cursor.continue();
             }
+        }
+
+        if (typeof cb !== "undefined") {
+            cb();
         }
     }
 

@@ -198,7 +198,7 @@ define([], function () {
     }
 
     /**
-     * Display a whole-page error message to the user.
+     * Display a whole-page error message to the user, while retaining the league menu.
      * 
      * @memberOf util.helpers
      * @param {string} error Text of the error message to be displayed.
@@ -212,6 +212,21 @@ define([], function () {
         bbgm.ajaxUpdate(data);
     }
 
+    /**
+     * Display a whole-page error message to the user.
+     * 
+     * @memberOf util.helpers
+     * @param {string} error Text of the error message to be displayed.
+     */
+    function globalError(error) {
+        var data, template;
+
+        data = {"title": "Error - League " + g.lid};
+        template = Handlebars.templates.error;
+        data.content = template({error: error});
+        bbgm.ajaxUpdate(data);
+    }
+
     return {
         validateAbbrev: validateAbbrev,
         getAbbrev: getAbbrev,
@@ -222,6 +237,7 @@ define([], function () {
         loadGameAttributes: loadGameAttributes,
         setGameAttributes: setGameAttributes,
         deepCopy: deepCopy,
-        leagueError: leagueError
+        leagueError: leagueError,
+        globalError: globalError
     };
 });

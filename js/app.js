@@ -1,4 +1,4 @@
-requirejs(["db", "views", "bbgm", "api"], function (db, views, bbgm, api) {
+requirejs(["db", "views", "bbgm", "api", "util/helpers"], function (db, views, bbgm, api, helpers) {
     "use strict";
 
     window.api = api;
@@ -15,8 +15,14 @@ requirejs(["db", "views", "bbgm", "api"], function (db, views, bbgm, api) {
         var app = Davis(function () {
             this.configure(function () {
                 this.generateRequestOnPageLoad = true;
+                this.handleRouteNotFound = true;
                 this.linkSelector = 'a:not([data-no-davis=true])';
             });
+
+            this.bind('routeNotFound', function () {
+                helpers.globalError("Page not found.")
+            });
+
 
             // Non-league views
             this.get('/init_db', views.init_db);

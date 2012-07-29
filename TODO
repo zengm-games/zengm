@@ -5,6 +5,7 @@ main todo
   - or, try current game generation, sort them to minimize the number of days, and then randomize the days (so you don't get long days all bunched together at the beginning/end)
 - resigning old players
   - negotiationList
+    - see comment in views.negotiationList
 - refactor new season code
   - abstract db access
 - retiring players

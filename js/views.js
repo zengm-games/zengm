@@ -646,33 +646,51 @@ console.log(playoffSeries)
         });
     }
 
-    function negotiationList() {
-        var negotiations;
+    function negotiationList(req) {
+        beforeLeague(req, function () {
+            var negotiations;
 
-        // If there is only one active negotiation with a free agent, go to it;
-        negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
-        if (negotiations.length === 1) {
-            Davis.location.assign(new Davis.Request("/l/" + g.lid + "/negotiation/" + negotiations[0].pid));
-            return;
-        }
+            // If there is only one active negotiation with a free agent, go to it;
+            negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
+            if (negotiations.length === 1) {
+                Davis.location.assign(new Davis.Request("/l/" + g.lid + "/negotiation/" + negotiations[0].pid));
+                return;
+            }
 
-        if (g.phase !== c.PHASE_RESIGN_PLAYERS) {
-            helpers.leagueError("Something bad happened.");
-            return;
-        }
+            if (g.phase !== c.PHASE_RESIGN_PLAYERS) {
+                helpers.leagueError("Something bad happened.");
+                return;
+            }
 
-        // Get all players on team, filter array based on negoatiations data, then pass to db.getPlayers
+            // Get all players on team, filter array based on negotiations data, pass to db.getPlayers, augment with contract data from negotiations
+console.log(negotiations);
+            g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(g.userTid).onsuccess = function (event) {
+                var attributes, data, i, j, players, playersAll, playersSome, ratings, stats, template;
 
-        data = {title: "Resign Players - League " + g.lid};
-        template = Handlebars.templates.player;
-        data.league_content = template({g: g, player: player, currentRatings: currentRatings, showTradeFor: player.tid !== g.userTid});
-        bbgm.ajaxUpdate(data);
+                playersAll = event.target.result;
+                playersSome = [];
+                for (i = 0; i < playersAll.length; i++) {
+                    for (j = 0; j < negotiations.length; j++) {
+                        if (playersAll[i].pid === negotiations[j].pid) {
+                            playersSome.push(playersAll[i]);
+                            break;
+                        }
+                    }
+                }
 
- /*       r = g.dbex("SELECT pa.pid, pa.name, pa.pos, :season - pa.bornYear as age, pr.ovr, pr.pot, AVG(ps.min) as min, AVG(ps.pts) as pts, AVG(ps.orb + ps.drb) as rebounds, AVG(ps.ast) as ast, pa.contractAmount/1000.0*(1+pa.freeAgentTimesAsked/10) as contractAmount, pa.contractExp FROM playerAttributes as pa LEFT OUTER JOIN negotiations as n ON pa.pid = n.pid LEFT OUTER JOIN playerRatings as pr ON pr.season = :season AND pa.pid = pr.pid LEFT OUTER JOIN playerStats as ps ON ps.season = :season AND ps.playoffs = FALSE AND pa.pid = ps.pid WHERE pa.tid = :tid AND n.resigning = 1 GROUP BY pa.pid", season=g.season, tid=c.PLAYER_FREE_AGENT);
+                attributes = ["pid", "name", "pos", "age"];
+                stats = ["min", "pts", "trb", "ast"];
+                ratings = ["ovr", "pot"];
 
-        players = r.fetchall();
+                players = db.getPlayers(playersSome, g.season, g.userTid, attributes, stats, ratings, {sortBy: "rosterOrder", showNoStats: true});
 
-        return renderAllOrJson("negotiationList.html", {"players": players});*/
+                data = {title: "Resign Players - League " + g.lid};
+                template = Handlebars.templates.player;
+                data.league_content = template({g: g, players: players});
+                bbgm.ajaxUpdate(data);
+            };
+        });
+//       r = g.dbex("SELECT pa.contractAmount/1000.0*(1+pa.freeAgentTimesAsked/10) as contractAmount, pa.contractExp FROM playerAttributes as pa LEFT OUTER JOIN negotiations as n ON pa.pid = n.pid LEFT OUTER JOIN playerRatings as pr ON pr.season = :season AND pa.pid = pr.pid LEFT OUTER JOIN playerStats as ps ON ps.season = :season AND ps.playoffs = FALSE AND pa.pid = ps.pid WHERE pa.tid = :tid AND n.resigning = 1 GROUP BY pa.pid", season=g.season, tid=c.PLAYER_FREE_AGENT);
     }
 
     function negotiation(req) {

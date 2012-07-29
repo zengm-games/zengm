@@ -411,6 +411,7 @@ define(["db", "util/random"], function (db, random) {
         p.draftPick = 0;
         p.draftTid = 0;
         p.draftYear = draftYear;
+        p.draftAbbrev = null;
         p.draftTeamName = null;
         p.draftTeamRegion = null;
         cont = contract(p.ratings[0]);

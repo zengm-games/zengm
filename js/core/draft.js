@@ -117,6 +117,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
             player.draftPick = pick.pick;
             player.draftTid = pick.tid;
             teams = helpers.getTeams();
+            player.draftAbbrev = teams[pick.tid].abbrev;
             player.draftTeamName = teams[pick.tid].name;
             player.draftTeamRegion = teams[pick.tid].region;
 

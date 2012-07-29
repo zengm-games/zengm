@@ -25,18 +25,12 @@ function program1(depth0,data) {
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.draftPick);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.draftPick", { hash: {} }); }
-  buffer += escapeExpression(stack1) + ") by the ";
+  buffer += escapeExpression(stack1) + ") by ";
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.draftTeamRegion);
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.draftAbbrev);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.draftTeamRegion", { hash: {} }); }
-  buffer += escapeExpression(stack1) + " ";
-  foundHelper = helpers.player;
-  stack1 = foundHelper || depth0.player;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.draftTeamName);
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.draftTeamName", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.draftAbbrev", { hash: {} }); }
   buffer += escapeExpression(stack1) + "<br />\n      ";
   return buffer;}
 

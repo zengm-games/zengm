@@ -13,7 +13,7 @@ $(document).ready(function() {
       Age: {{player.age}}<br />
       Born: {{player.bornYear}} - {{player.bornLoc}}<br />
       {{#if player.draftRound}}
-        Draft: {{player.draftYear}} - Round {{player.draftRound}} (Pick {{player.draftPick}}) by the {{player.draftTeamRegion}} {{player.draftTeamName}}<br />
+        Draft: {{player.draftYear}} - Round {{player.draftRound}} (Pick {{player.draftPick}}) by {{player.draftAbbrev}}<br />
       {{else}}
         Undrafted: {{player.draftYear}}<br />
       {{/if}}

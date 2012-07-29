@@ -6,6 +6,7 @@ $(document).ready(function() {
 <div class="row-fluid">
   <div class="span6">
     <h1>{{player.name}}</h1>
+    <div id="picture" class="player_picture">{{face player.face}}</div>
     <div style="float: left;">
       <strong>{{player.teamRegion}} {{player.teamName}}</strong><br />
       Height: {{player.hgtFt}}'{{player.hgtIn}}"<br />
@@ -19,7 +20,6 @@ $(document).ready(function() {
       {{/if}}
       Contract: ${{player.contractAmount 1}}M per year through {{player.contractExp}}<br />
     </div>
-    <div id="picture" class="player_picture">{{face player.face}}</div>
   </div>
   <div class="span6">
     <h2 class="pull-left">Overall: {{currentRatings.ovr}}</h2>

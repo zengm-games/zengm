@@ -404,13 +404,22 @@ function program9(depth0,data,depth1) {
   buffer += escapeExpression(stack1) + "</td></tr>\n      ";
   return buffer;}
 
-  buffer += "<script>\n$(document).ready(function() {\n  $(\"#player_tabs\").tab();\n});\n</script>\n<div class=\"row-fluid\">\n  <div class=\"span6\">\n    <div style=\"float: left;\">\n      <h1>";
+  buffer += "<script>\n$(document).ready(function() {\n  $(\"#player_tabs\").tab();\n});\n</script>\n<div class=\"row-fluid\">\n  <div class=\"span6\">\n    <h1>";
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.name);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.name", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "</h1>\n      <strong>";
+  buffer += escapeExpression(stack1) + "</h1>\n    <div id=\"picture\" class=\"player_picture\">";
+  foundHelper = helpers.player;
+  stack1 = foundHelper || depth0.player;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.face);
+  foundHelper = helpers.face;
+  stack2 = foundHelper || depth0.face;
+  if(typeof stack2 === functionType) { stack1 = stack2.call(depth0, stack1, { hash: {} }); }
+  else if(stack2=== undef) { stack1 = helperMissing.call(depth0, "face", stack1, { hash: {} }); }
+  else { stack1 = stack2; }
+  buffer += escapeExpression(stack1) + "</div>\n    <div style=\"float: left;\">\n      <strong>";
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.teamRegion);
@@ -483,16 +492,7 @@ function program9(depth0,data,depth1) {
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.contractExp);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.contractExp", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "<br />\n    </div>\n    <div id=\"picture\" class=\"player_picture\">";
-  foundHelper = helpers.player;
-  stack1 = foundHelper || depth0.player;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.face);
-  foundHelper = helpers.face;
-  stack2 = foundHelper || depth0.face;
-  if(typeof stack2 === functionType) { stack1 = stack2.call(depth0, stack1, { hash: {} }); }
-  else if(stack2=== undef) { stack1 = helperMissing.call(depth0, "face", stack1, { hash: {} }); }
-  else { stack1 = stack2; }
-  buffer += escapeExpression(stack1) + "</div>\n  </div>\n  <div class=\"span6\">\n    <h2 class=\"pull-left\">Overall: ";
+  buffer += escapeExpression(stack1) + "<br />\n    </div>\n  </div>\n  <div class=\"span6\">\n    <h2 class=\"pull-left\">Overall: ";
   foundHelper = helpers.currentRatings;
   stack1 = foundHelper || depth0.currentRatings;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.ovr);

@@ -107,7 +107,7 @@ div#playButton ul li a.dropdown-toggle:hover {
   border-bottom: 1px solid #000;
 }
 
-table#roster td.starter, table#roster td.bench   {
+table#roster td.roster_handle {
   cursor: move;
   width: 18px;
 }

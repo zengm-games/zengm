@@ -19,7 +19,7 @@ $(document).ready(function() {
         var fixHelper = function(e, ui) {
             // Return helper which preserves the width of table cells being reordered
             ui.children().each(function() {
-              $(this).width($(this).width());
+                $(this).width($(this).width());
             });
             return ui;
         };
@@ -27,9 +27,15 @@ $(document).ready(function() {
             helper: fixHelper,
             cursor: "move",
             update: function(e, ui) {
-                sorted = $(this).sortable('serialize');
-                $.post('/l/{{g.lid}}/roster/reorder', sorted, function(msg) {
-                  highlightHandles();
+                var i, sortedPids;
+
+                sortedPids = $(this).sortable("toArray");
+                for (i = 0; i < sortedPids.length; i++) {
+                    sortedPids[i] = parseInt(sortedPids[i].substr(7), 10);
+                }
+
+                api.rosterReorder(sortedPids, function () {
+                    highlightHandles();
                 });
             }
         }).disableSelection();

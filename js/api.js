@@ -74,6 +74,28 @@ define(["db", "core/draft", "core/game", "core/player", "core/season", "util/hel
 //        return {url: url};
     }
 
+    function rosterReorder(sortedPids, cb) {
+        // Update rosterOrder
+        g.dbl.transaction("players", IDBTransaction.READ_WRITE).objectStore("players").index("tid").openCursor(IDBKeyRange.only(g.userTid)).onsuccess = function (event) {
+            var cursor, i, p;
+
+            cursor = event.target.result;
+            if (cursor) {
+                p = cursor.value;
+                for (i = 0; i < sortedPids.length; i++) {
+                    if (sortedPids[i] === p.pid) {
+                        p.rosterOrder = i;
+                        break;
+                    }
+                }
+                cursor.update(p);
+                cursor.continue();
+            } else {
+                cb();
+            }
+        };
+    }
+
     function rosterRelease(pid, cb) {
         var error, playerStore, transaction;
 
@@ -202,6 +224,7 @@ define(["db", "core/draft", "core/game", "core/player", "core/season", "util/hel
 
     return {
         play: play,
+        rosterReorder: rosterReorder,
         rosterRelease: rosterRelease,
         draftUntilUserOrEnd: draftUntilUserOrEnd,
         draftUser: draftUser,

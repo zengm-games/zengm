@@ -656,12 +656,19 @@ console.log(playoffSeries)
             return;
         }
 
-/*        if (g.phase !== c.PHASE_RESIGN_PLAYERS) {
-            error = "Something bad happened.";
-            return renderAllOrJson("leagueError.html", {"error": error});
+        if (g.phase !== c.PHASE_RESIGN_PLAYERS) {
+            helpers.leagueError("Something bad happened.");
+            return;
         }
 
-        r = g.dbex("SELECT pa.pid, pa.name, pa.pos, :season - pa.bornYear as age, pr.ovr, pr.pot, AVG(ps.min) as min, AVG(ps.pts) as pts, AVG(ps.orb + ps.drb) as rebounds, AVG(ps.ast) as ast, pa.contractAmount/1000.0*(1+pa.freeAgentTimesAsked/10) as contractAmount, pa.contractExp FROM playerAttributes as pa LEFT OUTER JOIN negotiations as n ON pa.pid = n.pid LEFT OUTER JOIN playerRatings as pr ON pr.season = :season AND pa.pid = pr.pid LEFT OUTER JOIN playerStats as ps ON ps.season = :season AND ps.playoffs = FALSE AND pa.pid = ps.pid WHERE pa.tid = :tid AND n.resigning = 1 GROUP BY pa.pid", season=g.season, tid=c.PLAYER_FREE_AGENT);
+        // Get all players on team, filter array based on negoatiations data, then pass to db.getPlayers
+
+        data = {title: "Resign Players - League " + g.lid};
+        template = Handlebars.templates.player;
+        data.league_content = template({g: g, player: player, currentRatings: currentRatings, showTradeFor: player.tid !== g.userTid});
+        bbgm.ajaxUpdate(data);
+
+ /*       r = g.dbex("SELECT pa.pid, pa.name, pa.pos, :season - pa.bornYear as age, pr.ovr, pr.pot, AVG(ps.min) as min, AVG(ps.pts) as pts, AVG(ps.orb + ps.drb) as rebounds, AVG(ps.ast) as ast, pa.contractAmount/1000.0*(1+pa.freeAgentTimesAsked/10) as contractAmount, pa.contractExp FROM playerAttributes as pa LEFT OUTER JOIN negotiations as n ON pa.pid = n.pid LEFT OUTER JOIN playerRatings as pr ON pr.season = :season AND pa.pid = pr.pid LEFT OUTER JOIN playerStats as ps ON ps.season = :season AND ps.playoffs = FALSE AND pa.pid = ps.pid WHERE pa.tid = :tid AND n.resigning = 1 GROUP BY pa.pid", season=g.season, tid=c.PLAYER_FREE_AGENT);
 
         players = r.fetchall();
 

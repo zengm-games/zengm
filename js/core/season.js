@@ -219,24 +219,13 @@ define(["db", "core/player", "util/helpers", "util/playMenu", "util/random"], fu
 
                             // Add row to player stats
                             g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players").index("tid").openCursor(IDBKeyRange.only(team.tid)).onsuccess = function (event) {
-                                var cursorP, key, player, playerPlayoffStats;
+                                var cursorP, key, p, playerPlayoffStats;
 
                                 cursorP = event.target.result;
                                 if (cursorP) {
-                                    player = cursorP.value;
-//console.log(player);
-                                    playerPlayoffStats = {};
-//console.log(player.stats.length);
-                                    for (key in player.stats[0]) {
-                                        if (player.stats[0].hasOwnProperty(key)) {
-                                            playerPlayoffStats[key] = 0;
-                                        }
-                                    }
-                                    playerPlayoffStats.playoffs = true;
-                                    playerPlayoffStats.season = g.season;
-                                    player.stats.push(playerPlayoffStats);
-
-                                    cursorP.update(player);
+                                    p = cursorP.value;
+                                    p = player.addStatsRow(p, p.tid, true);
+                                    cursorP.update(p);
                                     cursorP.continue();
                                 }
 /*                                else {

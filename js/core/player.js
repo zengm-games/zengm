@@ -442,10 +442,11 @@ define(["db", "util/random"], function (db, random) {
         return p;
     }
 
-    function addStatsRow(p, tid) {
+    function addStatsRow(p, tid, playoffs) {
         var key, newStats;
 
         tid = typeof tid !== "undefined" ? tid : p.tid;
+        playoffs = typeof playoffs !== "undefined" ? playoffs : false;
 
         newStats = {};
         for (key in p.stats[0]) {
@@ -453,7 +454,7 @@ define(["db", "util/random"], function (db, random) {
                 newStats[key] = 0;
             }
         }
-        newStats.playoffs = false;
+        newStats.playoffs = playoffs;
         newStats.season = g.season;
         newStats.tid = tid;
         p.stats.push(newStats);

@@ -5,8 +5,9 @@ main todo
       - this will be fixed if a team never plays two games in one day.. but i'm a bit perplexed about how it ever used to work in the first place
   - playoffs
     - playoffs scheduling is fucked up. used to work. now only one series progresses at a time
-    - playoff stats tid for each player is set to tid 0
 - schedule - more realistic sorting so more games are played each day
+  - first: build tests to make sure the current one is working as it should
+  - then try something like http://en.wikipedia.org/wiki/Round-robin_tournament#Scheduling_algorithm
 - resigning old players
   - negotiationList
 - refactor new season code

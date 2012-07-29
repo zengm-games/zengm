@@ -1,10 +1,4 @@
 main todo
-- fix crap
-  - looks like all the games are being simulated, but not added to win/loss total always?
-    - if a team plays two games in one "day", the second game is not recorded as W or L
-      - this will be fixed if a team never plays two games in one day.. but i'm a bit perplexed about how it ever used to work in the first place
-  - playoffs
-    - playoffs scheduling is fucked up. used to work. now only one series progresses at a time
 - schedule - more realistic sorting so more games are played each day
   - first: build tests to make sure the current one is working as it should
   - then try something like http://en.wikipedia.org/wiki/Round-robin_tournament#Scheduling_algorithm
@@ -37,6 +31,7 @@ BUGS
 
 ratings should all be integers before being saved
 game simulation stops when a link is clicked, but then restarts when another link is clicked? wtf
+playoffs scheduling is fucked up. used to work. now only one series progresses at a time
 
 ---
 

@@ -2,11 +2,12 @@ main todo
 - schedule - more realistic sorting so more games are played each day
   - first: build tests to make sure the current one is working as it should
   - then try something like http://en.wikipedia.org/wiki/Round-robin_tournament#Scheduling_algorithm
+  - or, try current game generation, sort them to minimize the number of days, and then randomize the days (so you don't get long days all bunched together at the beginning/end)
+- faces.js
 - resigning old players
   - negotiationList
 - refactor new season code
   - abstract db access
-- factor out as much db access as possible from views
 - other views
 - reassess how money is stored (ones, thousands, millions?)
 strategic issues
@@ -29,7 +30,6 @@ strategic issues
 
 BUGS
 
-ratings should all be integers before being saved
 game simulation stops when a link is clicked, but then restarts when another link is clicked? wtf
 playoffs scheduling is fucked up. used to work. now only one series progresses at a time
 
@@ -155,41 +155,11 @@ g.dbl.transaction(["players"]).objectStore("players").get(476).onsuccess = funct
 
 # Pre-JavaScript TODO
 
-BUG: wrong payrolls shown in trade view - can i reproduce this?
-
-BUG: player view for free agents doesn't work
-
 fix commented lines in bbgm.core.season
 - retired players - when to display notification?
 
-database crap
-- optimize
-  - why is it so slow, and so disk thrashy?
-  - are my keys correct/optimal/uptodate? unique keys? foreign keys?
-  - MyISAM or InnoDB? barracuda? test
-  - executemany
-    - upgrade player ratings
-- redo schema
-  - separate dbs for leagues: what user permissions do i need, exactly? update README
-  - normalize (especially the drafted table)
-  - get rid of weird tables, replace with a key-value store table
-  - get rid of "_attribute"
-  - is games_in_progress really needed? just check timestamp
-- sqlalchemy
-  - game simulation progresses at about half the speed as when it was using straight mysqldb (although this has been somewhat ameliorated, it's only like 50% now). but maybe it's still worth it for flexibility with connection pooling, switching to postgresql, etc
-  - sql queries with IN and "join" can use a list directly as bind parameter - doesn't work with mysqldb for lists with 1 element
-  - postgresql
-    - get rid of CONCAT
-    - IFNULL
-  - connection pooling?
-- get rid of INSERTS in .sql file, instead have data elsewhere
-  - then get rid of bulk_execute
-
 player view
 - next, previous buttons (also active on left/right arrows)
-- http://twitter.github.com/bootstrap/javascript.html#tabs
-  - tab for game log
-  - tab for playoff stats
 - link to team roster
 - for retired players, either don't show ratings, or show ratings from best year
 
@@ -206,29 +176,13 @@ datatables
 finances
 - conditional formatting to show negative numbers in red: https://www.google.com/search?q=site%3Adatatables.net+conditional+formatting&ie=utf-8&oe=utf-8&client=ubuntu&channel=fs
 
-BUG:
-- players ask for negative years contracts when resigning them
-  - i think this is fixed..
-
 Client-side game simulation
-- 2: implement client-side
-    - If no response after timeout expires, delete timeout, then unset lock and update play menu
-- 2.5: fix javascript
-  - http://bonsaiden.github.com/JavaScript-Garden/
-    - Namespaces "A common problem of having only one global namespace" "In order to protect code against a possible overwritten undefined variable, a common technique used is to add an additional parameter to an anonymous wrapper that gets no argument passed to it."
-      - just copy what jquery does
-    - "For the best performance, it is recommended to always use the plain for loop and cache the length property. The use of for in on an array is a sign of badly written code that is prone to bugs and bad performance."
-    - It is highly recommended to only use the strict equality (===) operator.
 - 4: web workers? https://developer.mozilla.org/En/Using_web_workers
   - can spawn multiple workers in parallel. "transferable objects" would speed it up
 - Robustness of javascript code
   - g.phase == 3 in league_views might introduce race condition
   - validate data from client?
   - make sure play menu doesn't ever get stuck - some kind of timeout
-
-configuration in text file?
-- http://flask.pocoo.org/docs/patterns/fabric/#the-configuration-file
-- http://flask.pocoo.org/snippets/2/
 
 contract negotiation view
 - bring back to either free agent view or resigning view after either accept or cancel
@@ -243,9 +197,6 @@ dashboard: a bunch of boxes showing..
 - top free agents
 - league leaders
 - team leaders
-
-play menu
-- just send everything over one juggernaut connection per league?
 
 Single page application
 - When a simulation is done (or a player is signed, or whatever), the current page should be reloaded
@@ -266,23 +217,12 @@ include sidebar(s) showing all relevant information, plus make that stuff genera
 
 grep for # links: grep -R --include="*.html" '<a href="#">' .
 
-how to start/manage all these services?
-- supervisor
-
 security
-- password hashing
-  - http://packages.python.org/passlib/new_app_quickstart.html
 - csrf protection
   - http://flask.pocoo.org/docs/security/#cross-site-request-forgery-csrf
   - http://packages.python.org/Flask-SeaSurf/
   - http://flask.pocoo.org/snippets/3/
   - even for ajax https://docs.djangoproject.com/en/1.2/releases/1.2.5/#csrf-exception-for-ajax-requests
-- http://pypi.python.org/pypi/Flask-KVSession
-- http://packages.python.org/Flask-Login/
-- http://flask.pocoo.org/snippets/70/
-
-pep8
-- https://github.com/hhatto/autopep8
 
 playoffs
 - on playoffs start, automatically switch to playoffs view
@@ -292,10 +232,6 @@ playoffs
 
 trades
 - allow trades that go over roster limit, but require players to be cut or traded to meet limit before game simulation continues
-
-unit tests like https://github.com/mitsuhiko/flask/blob/master/examples/minitwit/minitwit_tests.py
-
-refactor player.py
 
 self-contained game simulation code, to allow other people to hack on it easily. automatically make charts and stuff.
 
@@ -307,12 +243,6 @@ abstract opposing team AI: make it a class with various methods to determine act
 
 game log
 - pushstate for individual box scores as well as teams and seasons, somehow?
-
-logging
-- should be more ubiquitous
-
-next redirect like http://flask.pocoo.org/docs/reqcontext/?highlight=url#diving-into-context-locals
-- http://flask.pocoo.org/snippets/62/
 
 # BELOW IS OLD STUFF
 

@@ -84,18 +84,10 @@ define(["db", "core/player", "util/helpers", "util/playMenu", "util/random"], fu
                         if (cursorP) {
                             p = cursorP.value;
 
+                            // Update ratings
                             p = player.addRatingsRow(p);
+                            p = player.develop(p);
 
-/*            // Age players
-            pids = []
-            r = g.dbex('SELECT pid FROM player_attributes WHERE tid !== :tid', tid=c.PLAYER_RETIRED)
-            for pid, in r.fetchall()) {
-                pids.push(pid)
-            up = player.Player()
-            for pid in pids) {
-                up.load(pid)
-                up.develop()
-                up.save()*/
                             // Add row to player stats if they are on a team
                             if (p.tid >= 0) {
                                 p = player.addStatsRow(p);

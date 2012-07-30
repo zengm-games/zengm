@@ -1,4 +1,4 @@
-define(["db", "core/player", "util/helpers", "util/playMenu", "util/random"], function (db, player, helpers, playMenu, random) {
+define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/playMenu", "util/random"], function (db, contractNegotiation, player, helpers, playMenu, random) {
     "use strict";
 
     /*Set a new phase of the game.
@@ -272,30 +272,36 @@ define(["db", "core/player", "util/helpers", "util/playMenu", "util/random"], fu
 //            rpw.retired_players_window.run()
 //            rpw.retired_players_window.destroy()
 
-/*            // Resign players
-            r = g.dbex('SELECT pid, tid, name FROM player_attributes WHERE contract_exp = :season AND tid >= 0', season=g.season)
-            for pid, tid, name in r.fetchall()) {
-                if (tid !== g.user_tid) {
-                    // Automatically negotiate with teams
-                    resign = random.choice([true, false])
-                    p = player.Player()
-                    p.load(pid)
-                    if (resign) {
-                        amount, expiration = p.contract()
-                        g.dbex('UPDATE player_attributes SET contract_amount = :contract_amount, contract_exp = :contract_exp WHERE pid = :pid', contract_amount=amount, contract_exp=expiration, pid=pid)
-                    else {
-                        p.add_to_free_agents(phase)
-                else {
-                    // Add to free agents first, to generate a contract demand
-                    p = player.Player()
-                    p.load(pid)
-                    p.add_to_free_agents(phase)
+            // Resign players or they become free agents
+            playerStore = g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
+            playerStore.index("tid").openCursor(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
+                var cont, cursor, i, p;
 
-                    // Open negotiations with player
-                    error = contract_negotiation.new(pid, resigning=true)
-                    if (error) {
-                        app.logger.debug(error)*/
-            cb(phase, phaseText);
+                cursor = event.target.result;
+                if (cursor) {
+                    p = cursor.value;
+                    if (p.tid !== g.userTid) {
+                        // Automatically negotiate with teams
+                        if (Math.random() > 0.5) { // Should eventually be smarter than a coin flip
+                            cont = player.contract(_.last(p.ratings));
+                            p.contractAmount = cont.amount;
+                            p.contractExp = cont.exp;
+                            cursor.update(p); // Other endpoints include calls to addToFreeAgents, which handles updating the database
+                        } else {
+                            player.addToFreeAgents(p, phase);
+                        }
+                    } else {
+                        // Add to free agents first, to generate a contract demand
+                        player.addToFreeAgents(playerStore, p, phase, function () {
+                            // Open negotiations with player
+                            contractNegotiation.create(p.pid, true);
+                        });
+                    }
+                    cursor.continue();
+                } else {
+                    cb(phase, phaseText);
+                }
+            };
         } else if (phase === c.PHASE_FREE_AGENCY) {
             phaseText = g.season + " free agency";
 

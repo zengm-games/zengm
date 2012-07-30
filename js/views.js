@@ -662,9 +662,9 @@ console.log(playoffSeries)
                 return;
             }
 
-            // Get all players on team, filter array based on negotiations data, pass to db.getPlayers, augment with contract data from negotiations
+            // Get all free agents, filter array based on negotiations data, pass to db.getPlayers, augment with contract data from negotiations
 console.log(negotiations);
-            g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(g.userTid).onsuccess = function (event) {
+            g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(c.PLAYER_FREE_AGENT).onsuccess = function (event) {
                 var attributes, data, i, j, players, playersAll, playersSome, ratings, stats, template;
 
                 playersAll = event.target.result;

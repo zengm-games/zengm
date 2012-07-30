@@ -179,7 +179,7 @@ define(["db", "util/random"], function (db, random) {
      * use this function.
      * 
      * @memberOf player
-     * @param {IDBTransaction} transaction An IndexedDB transaction on players, readwrite.
+     * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on players readwrite; if null is passed, then a new transaction will be used.
      * @param {Object} p Player object.
      * @param {number=} phase An integer representing the game phase to consider this transaction under (defaults to g.phase).
      * @param {function()} cb Callback function.
@@ -203,9 +203,7 @@ define(["db", "util/random"], function (db, random) {
 
         p.tid = c.PLAYER_FREE_AGENT;
 
-        db.putPlayer(transaction, p);
-
-        cb();
+        db.putPlayer(transaction, p, cb);
     }
 
     /**

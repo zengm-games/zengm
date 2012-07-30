@@ -107,15 +107,20 @@ define(["util/helpers"], function (helpers) {
      * Add a new player to the database or update an existing player.
      * 
      * @memberOf db
-     * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction to be used; if null is passed, then a new transaction will be used.
+     * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on players readwrite; if null is passed, then a new transaction will be used.
      * @param {Object} p Player object.
+     * @param {function()} cb Optional callback.
      */
-    function putPlayer(ot, p) {
+    function putPlayer(ot, p, cb) {
         var playerStore;
 
         playerStore = getObjectStore(ot, "players", "players");
 
         playerStore.put(p);
+
+        if (typeof cb !== "undefined") {
+            cb();
+        }
     }
 
     /**

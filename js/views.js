@@ -685,7 +685,7 @@ console.log(negotiations);
                 players = db.getPlayers(playersSome, g.season, g.userTid, attributes, stats, ratings, {sortBy: "rosterOrder", showNoStats: true});
 
                 data = {title: "Resign Players - League " + g.lid};
-                template = Handlebars.templates.player;
+                template = Handlebars.templates.negotiationList;
                 data.league_content = template({g: g, players: players});
                 bbgm.ajaxUpdate(data);
             };

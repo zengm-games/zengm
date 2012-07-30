@@ -280,22 +280,24 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
                 cursor = event.target.result;
                 if (cursor) {
                     p = cursor.value;
-                    if (p.tid !== g.userTid) {
-                        // Automatically negotiate with teams
-                        if (Math.random() > 0.5) { // Should eventually be smarter than a coin flip
-                            cont = player.contract(_.last(p.ratings));
-                            p.contractAmount = cont.amount;
-                            p.contractExp = cont.exp;
-                            cursor.update(p); // Other endpoints include calls to addToFreeAgents, which handles updating the database
+                    if (p.contractExp === g.season) {
+                        if (p.tid !== g.userTid) {
+                            // Automatically negotiate with teams
+                            if (Math.random() > 0.5) { // Should eventually be smarter than a coin flip
+                                cont = player.contract(_.last(p.ratings));
+                                p.contractAmount = cont.amount;
+                                p.contractExp = cont.exp;
+                                cursor.update(p); // Other endpoints include calls to addToFreeAgents, which handles updating the database
+                            } else {
+                                player.addToFreeAgents(playerStore, p, phase);
+                            }
                         } else {
-                            player.addToFreeAgents(p, phase);
+                            // Add to free agents first, to generate a contract demand
+                            player.addToFreeAgents(playerStore, p, phase, function () {
+                                // Open negotiations with player
+                                contractNegotiation.create(p.pid, true);
+                            });
                         }
-                    } else {
-                        // Add to free agents first, to generate a contract demand
-                        player.addToFreeAgents(playerStore, p, phase, function () {
-                            // Open negotiations with player
-                            contractNegotiation.create(p.pid, true);
-                        });
                     }
                     cursor.continue();
                 } else {

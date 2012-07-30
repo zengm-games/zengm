@@ -2,7 +2,7 @@
  * @name core.contractNegotiation
  * @namespace All aspects of contract negotiation.
  */
-define(["core/player", "util/helpers", "util/lock", "util/playMenu", "util/random"], function (player, helpers, lock, playMenu, random) {
+define(["db", "core/player", "util/helpers", "util/lock", "util/playMenu", "util/random"], function (db, player, helpers, lock, playMenu, random) {
     "use strict";
 
     /*
@@ -19,7 +19,7 @@ define(["core/player", "util/helpers", "util/lock", "util/playMenu", "util/rando
      * @memberOf core.contractNegotiation
      * @param {number} pid An integer that must correspond with the player ID of a free agent.
      * @param {boolean}   resigning Set to true if this is a negotiation for a contract extension, which will allow multiple simultaneous negotiations. Set to false otherwise.
-     * @param {function()} cb Callback to be run after a successful negotiation is started.
+     * @param {function()} cb Optional callback to be run only after a successful negotiation is started.
      */
     function create(pid, resigning, cb) {
         var playerStore;
@@ -77,7 +77,9 @@ define(["core/player", "util/helpers", "util/lock", "util/playMenu", "util/rando
                     cursor.update(player);
                 }
 
-                cb();
+                if (typeof cb !== "undefined") {
+                    cb();
+                }
             };
         };
     }

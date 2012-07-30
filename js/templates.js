@@ -1379,7 +1379,16 @@ function program1(depth0,data,depth1) {
   stack1 = foundHelper || depth0.pot;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "pot", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "', '{round {min 1}}', '";
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = 1;
+  foundHelper = helpers.min;
+  stack2 = foundHelper || depth0.min;
+  foundHelper = helpers.round;
+  stack3 = foundHelper || depth0.round;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
+  buffer += escapeExpression(stack1) + "', '";
   stack1 = 1;
   foundHelper = helpers.pts;
   stack2 = foundHelper || depth0.pts;
@@ -1390,8 +1399,8 @@ function program1(depth0,data,depth1) {
   else { stack1 = stack3; }
   buffer += escapeExpression(stack1) + "', '";
   stack1 = 1;
-  foundHelper = helpers.rebounds;
-  stack2 = foundHelper || depth0.rebounds;
+  foundHelper = helpers.trb;
+  stack2 = foundHelper || depth0.trb;
   foundHelper = helpers.round;
   stack3 = foundHelper || depth0.round;
   if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }

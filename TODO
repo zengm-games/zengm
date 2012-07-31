@@ -1,7 +1,6 @@
 main todo
 - schedule - more realistic sorting so more games are played each day
-  - first: build tests to make sure the current one is working as it should
-  - then try something like http://en.wikipedia.org/wiki/Round-robin_tournament#Scheduling_algorithm
+  - try something like http://en.wikipedia.org/wiki/Round-robin_tournament#Scheduling_algorithm
   - or, try current game generation, sort them to minimize the number of days, and then randomize the days (so you don't get long days all bunched together at the beginning/end), and then _.flatten()
 - resigning old players
   - negotiationList

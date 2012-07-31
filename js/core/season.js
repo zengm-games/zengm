@@ -128,8 +128,8 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
                         // Should auto-add players
                         pass*/
 
-            newSchedule(function (schedule) { 
-                setSchedule(schedule, function () { cb(phase, phaseText); });
+            newSchedule(function (tids) { 
+                setSchedule(tids, function () { cb(phase, phaseText); });
             });
 
             // Auto sort rosters (except player's team)

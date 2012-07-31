@@ -2,7 +2,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
     "use strict";
 
     function beforeLeague(req, cb) {
-        var data, leagueMenu, request, template;
+        var leagueMenu, request;
 
         g.lid = parseInt(req.params.lid, 10);
         helpers.loadGameAttributes();
@@ -16,23 +16,25 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             // Connect to league database
             request = db.connect_league(g.lid);
             request.onsuccess = function (event) {
+                var data, template;
+
                 g.dbl = request.result;
                 g.dbl.onerror = function (event) {
                     console.log("League database error: " + event.target.errorCode);
                 };
 
+                data = {};
+                template = Handlebars.templates.league_layout;
+                data.content = template({g: g});
+                bbgm.ajaxUpdate(data);
+
+                // Update play menu
+                playMenu.setStatus();
+                playMenu.setPhase();
+                playMenu.refreshOptions();
+
                 cb();
             };
-
-            data = {};
-            template = Handlebars.templates.league_layout;
-            data.content = template({g: g});
-            bbgm.ajaxUpdate(data);
-
-            // Update play menu
-            playMenu.setStatus();
-            playMenu.setPhase();
-            playMenu.refreshOptions();
         } else {
             cb();
         }
@@ -249,7 +251,6 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                     playoffSeries = event.target.result;
                     series = playoffSeries.series;
 
-console.log(playoffSeries)
                     cb(finalMatchups, series);
                 };
             }
@@ -275,8 +276,6 @@ console.log(playoffSeries)
                 bbgm.ajaxUpdate(data);
             });
         });
-//    r = g.dbex('SELECT SUM(ts.att)*:ticket_price / 1000000 AS revenue, (SUM(ts.att)*:ticket_price - SUM(ts.cost)) / 1000000 AS profit, ta.cash / 1000000 as cash, ((SELECT SUM(contract_amount) FROM player_attributes as pa WHERE pa.tid = ta.tid) + (SELECT IFNULL(SUM(contract_amount),0) FROM released_players_salaries as rps WHERE rps.tid = ta.tid)) / 1000 AS payroll FROM team_attributes as ta LEFT OUTER JOIN team_stats as ts ON ta.season = ts.season AND ta.tid = ts.tid WHERE ta.season = :season GROUP BY ta.tid', ticket_price=g.ticket_price, season=g.season)
-//    teams = r.fetchall()
     }
 
     function roster(req) {
@@ -668,7 +667,6 @@ console.log(playoffSeries)
             }
 
             // Get all free agents, filter array based on negotiations data, pass to db.getPlayers, augment with contract data from negotiations
-console.log(negotiations);
             g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(c.PLAYER_FREE_AGENT).onsuccess = function (event) {
                 var attributes, data, i, j, players, playersAll, playersSome, ratings, stats, template;
 
@@ -705,7 +703,6 @@ console.log(negotiations);
                 bbgm.ajaxUpdate(data);
             };
         });
-//       r = g.dbex("SELECT pa.contractAmount/1000.0*(1+pa.freeAgentTimesAsked/10) as contractAmount, pa.contractExp FROM playerAttributes as pa LEFT OUTER JOIN negotiations as n ON pa.pid = n.pid LEFT OUTER JOIN playerRatings as pr ON pr.season = :season AND pa.pid = pr.pid LEFT OUTER JOIN playerStats as ps ON ps.season = :season AND ps.playoffs = FALSE AND pa.pid = ps.pid WHERE pa.tid = :tid AND n.resigning = 1 GROUP BY pa.pid", season=g.season, tid=c.PLAYER_FREE_AGENT);
     }
 
     function negotiation(req) {

@@ -309,24 +309,26 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
         } else if (phase === c.PHASE_FREE_AGENCY) {
             phaseText = g.season + " free agency";
 
-/*            // Delete all current negotiations to resign players
-            contractNegotiation.cancelAll()
+            // Delete all current negotiations to resign players
+            contractNegotiation.cancelAll();
+
+            playerStore = g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
 
             // Reset contract demands of current free agents
-            r = g.dbex('SELECT pid FROM player_attributes WHERE tid = :tid', tid=c.PLAYER_FREE_AGENT)
-            for pid, in r.fetchall()) {
-                p = player.Player()
-                p.load(pid)
-                p.add_to_free_agents(phase)
+            // This IDBKeyRange only works because c.PLAYER_UNDRAFTED is -2 and c.PLAYER_FREE_AGENT is -1
+            playerStore.index("tid").openCursor(IDBKeyRange.bound(c.PLAYER_UNDRAFTED, c.PLAYER_FREE_AGENT)).onsuccess = function (event) {
+                var cursor, p;
 
-            // Move undrafted players to free agent pool
-            r = g.dbex('SELECT pid FROM player_attributes WHERE tid = :tid', tid=c.PLAYER_UNDRAFTED)
-            for pid, in r.fetchall()) {
-                g.dbex('UPDATE player_attributes SET draft_year = -1, round = -1, draft_pick = -1, draft_tid = -1 WHERE pid = :pid', pid=pid)
-                p = player.Player()
-                p.load(pid)
-                p.add_to_free_agents(phase)*/
-            cb(phase, phaseText);
+                cursor = event.target.result;
+                if (cursor) {
+                    p = cursor.value;
+                    player.addToFreeAgents(playerStore, p, phase);
+                    cursor.update(p);
+                    cursor.continue();
+                } else {
+                    cb(phase, phaseText);
+                }
+            };
         }
     }
 

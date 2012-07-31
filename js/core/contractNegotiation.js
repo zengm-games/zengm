@@ -223,8 +223,6 @@ define(["db", "core/player", "util/helpers", "util/lock", "util/playMenu", "util
         console.log("User canceled contract negotiations with " + pid);
 
         negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
-console.log('before');
-console.log(negotiations);
 
         // Delete negotiation
         for (i = 0; i < negotiations.length; i++) {
@@ -232,8 +230,6 @@ console.log(negotiations);
                 negotiations.splice(i, 1);
             }
         }
-console.log('after');
-console.log(negotiations);
 
         localStorage.setItem("league" + g.lid + "Negotiations", JSON.stringify(negotiations));
 

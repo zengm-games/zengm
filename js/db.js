@@ -163,11 +163,23 @@ define(["util/helpers"], function (helpers) {
             } else if (attributes[j] === "abbrev") {
                 player.abbrev = helpers.getAbbrev(pa.tid);
             } else if (attributes[j] === "teamRegion") {
-                teams = helpers.getTeams();
-                player.teamRegion = teams[pa.tid].region;
+                if (pa.tid >= 0) {
+                    teams = helpers.getTeams();
+                    player.teamRegion = teams[pa.tid].region;
+                } else {
+                    player.teamRegion = "";
+                }
             } else if (attributes[j] === "teamName") {
-                teams = helpers.getTeams();
-                player.teamName = teams[pa.tid].name;
+                if (pa.tid >= 0) {
+                    teams = helpers.getTeams();
+                    player.teamName = teams[pa.tid].name;
+                } else if (pa.tid === c.PLAYER_FREE_AGENT) {
+                    player.teamName = "Free Agent";
+                } else if (pa.tid === c.PLAYER_UNDRAFTED) {
+                    player.teamName = "Draft Prospect";
+                } else if (pa.tid === c.PLAYER_RETIRED) {
+                    player.teamName = "Retired";
+                }
             } else {
                 player[attributes[j]] = pa[attributes[j]];
             }

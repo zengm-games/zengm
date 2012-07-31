@@ -35,7 +35,6 @@ BUGS
 
 game simulation stops when a link is clicked, but then restarts when another link is clicked? wtf
 playoffs scheduling is fucked up. used to work. now only one series progresses at a time
-error when loading player view for a free agent
 
 ---
 
@@ -161,7 +160,7 @@ g.dbl.transaction(["players"]).objectStore("players").get(476).onsuccess = funct
 
 player view
 - next, previous buttons (also active on left/right arrows)
-- link to team roster
+- link to team roster if player is on a team
 - for retired players, either don't show ratings, or show ratings from best year
 
 roster

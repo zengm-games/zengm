@@ -684,6 +684,16 @@ console.log(negotiations);
 
                 players = db.getPlayers(playersSome, g.season, g.userTid, attributes, stats, ratings, {sortBy: "rosterOrder", showNoStats: true});
 
+                for (i = 0; i < players.length; i++) {
+                    for (j = 0; j < negotiations.length; j++) {
+                        if (players[i].pid === negotiations[j].pid) {
+                            players[i].contractAmount = negotiations[j].playerAmount / 1000;
+                            players[i].contractExp = g.season + negotiations[j].playerYears;
+                            break;
+                        }
+                    }
+                }
+
                 data = {title: "Resign Players - League " + g.lid};
                 template = Handlebars.templates.negotiationList;
                 data.league_content = template({g: g, players: players});

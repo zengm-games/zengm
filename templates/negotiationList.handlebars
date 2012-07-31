@@ -2,7 +2,7 @@
 $(document).ready(function() {
   bbgm.datatable($('#negotiation_list'), 4, [
     {{#players}}
-	    [ '<a href="/l/{{../g.lid}}/player/{{pid}}">{{name}}</a>', '{{pos}}', '{{age}}', '{{ovr}}', '{{pot}}', '{{round min 1}}', '{{round pts 1}}', '{{round trb 1}}', '{{round ast 1}}', '${{round contractAmount 3}}M through {{contractExp}}', '<a href="/l/{{../g.lid}}/negotiation/{{pid}}" class="btn btn-mini btn-primary">Negotiate</a>' ],
+	    [ '<a href="/l/{{../g.lid}}/player/{{pid}}">{{name}}</a>', '{{pos}}', '{{age}}', '{{ovr}}', '{{pot}}', '{{round min 1}}', '{{round pts 1}}', '{{round trb 1}}', '{{round ast 1}}', '${{round contractAmount 1}}M through {{contractExp}}', '<a href="/l/{{../g.lid}}/negotiation/{{pid}}" class="btn btn-mini btn-primary">Negotiate</a>' ],
     {{/players}}
   ]);
 } );

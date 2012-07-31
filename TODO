@@ -2,10 +2,6 @@ main todo
 - schedule - more realistic sorting so more games are played each day
   - try something like http://en.wikipedia.org/wiki/Round-robin_tournament#Scheduling_algorithm
   - or, try current game generation, sort them to minimize the number of days, and then randomize the days (so you don't get long days all bunched together at the beginning/end), and then _.flatten()
-- resigning old players
-  - negotiationList
-    - see comment in views.negotiationList to display contract into
-    - might be a good idea to make contractNegotiation.create accept ot as first parameter
 - refactor new season code
   - abstract db access
 - retiring players
@@ -74,6 +70,7 @@ new season
 contract negotiation
 - test all the error conditions and make sure callbacks are appropriately called (unit tests?)
 - add free agent to the end of roster
+- might be a good idea to make contractNegotiation.create accept ot as first parameter
 player stats
 - how to handle aggregating stats for players who played for more than one team in a season? add them all up in ps in db.getPlayers
 player view

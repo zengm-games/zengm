@@ -1,7 +1,4 @@
 main todo
-- roster size check on new season
-  - if CPU team > 15, drop players
-  - worry about cpu team < 5 later
 - from play menu, "resign" phase link should move to negotiationsList
 - schedule - more realistic sorting so more games are played each day
   - try something like http://en.wikipedia.org/wiki/Round-robin_tournament#Scheduling_algorithm
@@ -87,6 +84,8 @@ game simulation
 draftTeamName and draftTeamRegion needed for anything? If not, cut them.
 should db.getObjectStore always use readwrite?
 Replace showNoStats with a check of stats.length in db.getPlayer, at least in some cases?
+roster size check on new season
+- cpu teams with < 5 players should automatically sign free agents
 
 ---
 

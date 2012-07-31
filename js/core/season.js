@@ -106,29 +106,33 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
         } else if (phase === c.PHASE_REGULAR_SEASON) {
             phaseText = g.season + " regular season";
 
+            transaction = g.dbl.transaction(["players", "releasedPlayers", "teams"], IDBTransaction.READ_WRITE);
+            playerStore = transaction.objectStore("players");
+
             done = 0;
             userTeamSizeError = false;
             checkRosterSize = function (tid) {
-                playerStore.index("tid").count(IDBKeyRange.only(tid)).onsuccess = function (event) {
-                    var numPlayersOnRoster;
+                playerStore.index("tid").getAll(IDBKeyRange.only(tid)).onsuccess = function (event) {
+                    var i, numPlayersOnRoster, players, playersAll;
 
-                    numPlayersOnRoster = event.target.result;
-console.log("tid: " + tid + "numPlayersOnRoster: " + numPlayersOnRoster);
+                    playersAll = event.target.result;
+                    numPlayersOnRoster = playersAll.length;
                     if (numPlayersOnRoster > 15) {
                         if (tid === g.userTid) {
                             helpers.error("Your team currently has more than the maximum number of players (15). You must release or buy out players (from the Roster page) before the season starts.");
                             userTeamSizeError = true;
                         } else {
-                            // Automatically drop lowest pot players until we reach 15
-//                                r = g.dbex('SELECT pa.pid FROM player_attributes as pa, player_ratings as pr WHERE pa.pid = pr.pid AND pa.tid = :tid AND pr.season = :season ORDER BY pr.pot ASC LIMIT :n_excess_players', tid=tid, season=g.season, n_excess_players=num_players_on_roster-15)
-//                                for pid, in r.fetchall()) {
-//                                    // Release player.
-//                                    p = player.Player()
-//                                    p.load(pid)
-//                                    p.release()
-                            transaction.objectStore("players").index("tid").openCursor(IDBKeyRange.only(tid)).onsuccess = function (event) {
-
-                            };
+                            // Automatically drop lowest potential players until we reach 15
+                            players = [];
+                            for (i = 0; i < playersAll.length; i++) {
+                                players.push({pid: playersAll[i].pid, pot: _.last(playersAll[i].ratings).pot});
+                            }
+                            players.sort(function (a, b) {  return a.pot - b.pot; });
+                            for (i = 0; i < (numPlayersOnRoster - 15); i++) {
+                                playerStore.get(players[i].pid).onsuccess = function (event) {
+                                    player.release(transaction, event.target.result);
+                                };
+                            }
                         }
                     } else if (numPlayersOnRoster < 5) {
                         if (tid === g.userTid) {
@@ -153,10 +157,8 @@ console.log("tid: " + tid + "numPlayersOnRoster: " + numPlayersOnRoster);
                         }
                     }
                 };
-            }
+            };
 
-            transaction = g.dbl.transaction(["players", "teams"], IDBTransaction.READ_WRITE);
-            playerStore = transaction.objectStore("players");
             // First, make sure teams are all within the roster limits
             // CPU teams
             transaction.objectStore("teams").getAll().onsuccess = function (event) {

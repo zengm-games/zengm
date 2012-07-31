@@ -213,7 +213,7 @@ define(["db", "util/random"], function (db, random) {
      * calls player.addToFreeAgents.
      * 
      * @memberOf player
-     * @param {IDBTransaction} transaction An IndexedDB transaction on players and releasedPlayersStore, readwrite.
+     * @param {IDBTransaction} transaction An IndexedDB transaction on players and releasedPlayers, readwrite.
      * @param {Object} p Player object.
      * @param {function()} cb Callback function.
      */

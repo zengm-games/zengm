@@ -536,11 +536,16 @@ console.log(playoffSeries)
                                 player.ast += ps.ast;
                             }
                         }
-                        if (ps.gp > 0) {
+                        if (typeof ps !== "undefined" && ps.gp > 0) {
                             player.min = player.min / player.gp;
                             player.pts = player.pts / player.gp;
                             player.trb = player.trb / player.gp;
                             player.ast = player.ast / player.gp;
+                        } else {
+                            player.min = 0;
+                            player.pts = 0;
+                            player.trb = 0;
+                            player.ast = 0;
                         }
 
                         players.push(player);

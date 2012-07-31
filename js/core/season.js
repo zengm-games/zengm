@@ -17,7 +17,7 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
         to be sent to the client.
     */
     function newPhase(phase) {
-        var attributes, phaseText, playerStore, releasedPlayersStore, seasonAttributes, tid, transaction;
+        var attributes, checkRosterSize, done, phaseText, playerStore, releasedPlayersStore, seasonAttributes, tid, transaction, userTeamSizeError;
 
         // Prevent code running twice
         if (phase === g.phase) {
@@ -105,40 +105,68 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
             };
         } else if (phase === c.PHASE_REGULAR_SEASON) {
             phaseText = g.season + " regular season";
-/*            // First, make sure teams are all within the roster limits
-            // CPU teams
-            r = g.dbex('SELECT pa.tid, COUNT(*) FROM team_attributes as ta, player_attributes as pa WHERE ta.tid = pa.tid AND ta.season = :season GROUP BY pa.tid', season=g.season)
-            teams = r.fetchall()
-            for tid, num_players_on_roster in teams) {
-                if (num_players_on_roster > 15) {
-                    if (tid === g.user_tid) {
-                        alert("Your team currently has more than the maximum number of players (15). You must release or buy out players (from the Roster page) before the season starts.");
-                    else {
-                        // Automatically drop lowest pot players until we reach 15
-                        r = g.dbex('SELECT pa.pid FROM player_attributes as pa, player_ratings as pr WHERE pa.pid = pr.pid AND pa.tid = :tid AND pr.season = :season ORDER BY pr.pot ASC LIMIT :n_excess_players', tid=tid, season=g.season, n_excess_players=num_players_on_roster-15)
-                        for pid, in r.fetchall()) {
-                            // Release player.
-                            p = player.Player()
-                            p.load(pid)
-                            p.release()
-                else if (num_players_on_roster < 5) {
-                    if (tid === g.user_tid) {
-                        alert("Your team currently has less than the minimum number of players (5). You must add players (through free agency or trades) before the season starts.");
-                    else {
-                        // Should auto-add players
-                        pass*/
 
-            newSchedule(function (tids) { 
-                setSchedule(tids, function () { cb(phase, phaseText); });
-            });
+            done = 0;
+            userTeamSizeError = false;
+            checkRosterSize = function (tid) {
+                playerStore.index("tid").count(IDBKeyRange.only(tid)).onsuccess = function (event) {
+                    var numPlayersOnRoster;
 
-            // Auto sort rosters (except player's team)
-            playerStore = g.dbl.transaction("players", IDBTransaction.READ_WRITE).objectStore("players");
-            for (tid = 0; tid < g.numTeams; tid++) {
-                if (tid !== g.userTid) {
-                    db.rosterAutoSort(playerStore, tid);
-                }
+                    numPlayersOnRoster = event.target.result;
+console.log("tid: " + tid + "numPlayersOnRoster: " + numPlayersOnRoster);
+                    if (numPlayersOnRoster > 15) {
+                        if (tid === g.userTid) {
+                            helpers.error("Your team currently has more than the maximum number of players (15). You must release or buy out players (from the Roster page) before the season starts.");
+                            userTeamSizeError = true;
+                        } else {
+                            // Automatically drop lowest pot players until we reach 15
+//                                r = g.dbex('SELECT pa.pid FROM player_attributes as pa, player_ratings as pr WHERE pa.pid = pr.pid AND pa.tid = :tid AND pr.season = :season ORDER BY pr.pot ASC LIMIT :n_excess_players', tid=tid, season=g.season, n_excess_players=num_players_on_roster-15)
+//                                for pid, in r.fetchall()) {
+//                                    // Release player.
+//                                    p = player.Player()
+//                                    p.load(pid)
+//                                    p.release()
+                            transaction.objectStore("players").index("tid").openCursor(IDBKeyRange.only(tid)).onsuccess = function (event) {
+
+                            };
+                        }
+                    } else if (numPlayersOnRoster < 5) {
+                        if (tid === g.userTid) {
+                            helpers.error("Your team currently has less than the minimum number of players (5). You must add players (through free agency or trades) before the season starts.");
+                            userTeamSizeError = true;
+                        } else {
+                            // Should auto-add players
+                        }
+                    }
+
+                    done += 1;
+                    if (done === g.numTeams && !userTeamSizeError) {
+                        newSchedule(function (tids) { 
+                            setSchedule(tids, function () { cb(phase, phaseText); });
+                        });
+
+                        // Auto sort rosters (except player's team)
+                        for (tid = 0; tid < g.numTeams; tid++) {
+                            if (tid !== g.userTid) {
+                                db.rosterAutoSort(playerStore, tid);
+                            }
+                        }
+                    }
+                };
             }
+
+            transaction = g.dbl.transaction(["players", "teams"], IDBTransaction.READ_WRITE);
+            playerStore = transaction.objectStore("players");
+            // First, make sure teams are all within the roster limits
+            // CPU teams
+            transaction.objectStore("teams").getAll().onsuccess = function (event) {
+                var i, teams;
+
+                teams = event.target.result;
+                for (i = 0; i < teams.length; i++) {
+                    checkRosterSize(teams[i].tid);
+                }
+            };
         } else if (phase === c.PHASE_AFTER_TRADE_DEADLINE) {
             phaseText = g.season + " regular season, after trade deadline";
             cb(phase, phaseText);

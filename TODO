@@ -1,4 +1,8 @@
 main todo
+- roster size check on new season
+  - if CPU team > 15, drop players
+  - worry about cpu team < 5 later
+- from play menu, "resign" phase link should move to negotiationsList
 - schedule - more realistic sorting so more games are played each day
   - try something like http://en.wikipedia.org/wiki/Round-robin_tournament#Scheduling_algorithm
   - or, try current game generation, sort them to minimize the number of days, and then randomize the days (so you don't get long days all bunched together at the beginning/end), and then _.flatten()

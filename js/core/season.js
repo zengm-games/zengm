@@ -128,7 +128,9 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
                         // Should auto-add players
                         pass*/
 
-            newSchedule(function () { cb(phase, phaseText); });
+            newSchedule(function (schedule) { 
+                setSchedule(schedule, function () { cb(phase, phaseText); });
+            });
 
             // Auto sort rosters (except player's team)
             playerStore = g.dbl.transaction("players", IDBTransaction.READ_WRITE).objectStore("players");
@@ -440,7 +442,7 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
             }
 
             random.shuffle(tids);
-            setSchedule(tids, cb);
+            cb(tids);
         });
     }
 

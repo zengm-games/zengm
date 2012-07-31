@@ -19,8 +19,8 @@ requirejs(["db", "views", "bbgm", "api", "util/helpers"], function (db, views, b
                 this.linkSelector = 'a:not([data-no-davis=true])';
             });
 
-            this.bind('routeNotFound', function () {
-                helpers.globalError("Page not found.")
+            this.bind('routeNotFound', function (req) {
+                helpers.error("Page not found.");
             });
 
 

@@ -387,7 +387,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
     function free_agents(req) {
         beforeLeague(req, function () {
             if (g.phase >= c.PHASE_AFTER_TRADE_DEADLINE && g.phase <= c.PHASE_RESIGN_PLAYERS) {
-                helpers.leagueError("You're not allowed to sign free agents now.");
+                helpers.error("You're not allowed to sign free agents now.");
                 return;
             }
 
@@ -427,7 +427,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             }
 
             if (g.phase < c.PHASE_DRAFT && season < g.startingSeason) {
-                helpers.leagueError("There is no draft history yet. Check back after the season.");
+                helpers.error("There is no draft history yet. Check back after the season.");
                 return;
             }
 
@@ -662,7 +662,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             }
 
             if (g.phase !== c.PHASE_RESIGN_PLAYERS) {
-                helpers.leagueError("Something bad happened.");
+                helpers.error("Something bad happened.");
                 return;
             }
 
@@ -728,7 +728,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                     }
                 }
                 if (negotiation === null) {
-                    helpers.leagueError("No negotiation with player " + pid + " in progress.");
+                    helpers.error("No negotiation with player " + pid + " in progress.");
                     return;
                 }
 
@@ -806,6 +806,40 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         });
     }
 
+    /**
+     * Display a whole-page error message to the user.
+     * 
+     * @memberOf views
+     * @param {Object} req Object with parameter "params" containing another object with a string representing the error message in the parameter "error".
+     */
+    function globalError(req) {
+        var data, template;
+
+        beforeNonLeague();
+
+        data = {"title": "Error"};
+        template = Handlebars.templates.error;
+        data.content = template({error: req.params.error});
+        bbgm.ajaxUpdate(data);
+    }
+
+    /**
+     * Display a whole-page error message to the user, while retaining the league menu.
+     * 
+     * @memberOf views
+     * @param {Object} req Object with parameter "params" containing another object with a string representing the error message in the parameter "error" and an integer league ID in "lid".
+     */
+    function leagueError(req) {
+        beforeLeague({params: {lid: req.params.lid}}, function () {
+            var data, template;
+
+            data = {"title": "Error - League " + req.params.lid};
+            template = Handlebars.templates.error;
+            data.league_content = template({error: req.params.error});
+            bbgm.ajaxUpdate(data);
+        });
+    }
+
     return {
         init_db: init_db,
 
@@ -826,6 +860,9 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         playerStats: playerStats,
         player: player_,
         negotiationList: negotiationList,
-        negotiation: negotiation
+        negotiation: negotiation,
+
+        globalError: globalError,
+        leagueError: leagueError
     };
 });

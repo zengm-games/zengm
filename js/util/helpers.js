@@ -138,8 +138,7 @@ define([], function () {
 
         if (typeof cb !== "undefined") {
             cb(teams);
-        }
-        else {
+        } else {
             return teams;
         }
     }
@@ -198,33 +197,22 @@ define([], function () {
     }
 
     /**
-     * Display a whole-page error message to the user, while retaining the league menu.
+     * Display a whole-page error message to the user by calling either views.leagueError or views.globalError as appropriate.
      * 
      * @memberOf util.helpers
      * @param {string} error Text of the error message to be displayed.
      */
-    function leagueError(error) {
-        var data, template;
+    function error(errorText) {
+        var lid, views;
 
-        data = {"title": "Error - League " + g.lid};
-        template = Handlebars.templates.error;
-        data.league_content = template({error: error});
-        bbgm.ajaxUpdate(data);
-    }
+        views = require("views");
 
-    /**
-     * Display a whole-page error message to the user.
-     * 
-     * @memberOf util.helpers
-     * @param {string} error Text of the error message to be displayed.
-     */
-    function globalError(error) {
-        var data, template;
-
-        data = {"title": "Error - League " + g.lid};
-        template = Handlebars.templates.error;
-        data.content = template({error: error});
-        bbgm.ajaxUpdate(data);
+        lid = location.pathname.split("/")[2]; // lid derived from URL
+        if (/^\d+$/.test(lid)) {
+            views.leagueError({params: {lid: parseInt(lid, 10), error: errorText}});
+        } else {
+            views.globalError({params: {error: errorText}});
+        }
     }
 
     return {
@@ -237,7 +225,6 @@ define([], function () {
         loadGameAttributes: loadGameAttributes,
         setGameAttributes: setGameAttributes,
         deepCopy: deepCopy,
-        leagueError: leagueError,
-        globalError: globalError
+        error: error
     };
 });

@@ -36,8 +36,6 @@ playoffs scheduling is fucked up. used to work. now only one series progresses a
 
 PORTING NOTES:
 
-should db.getObjectStore always use readwrite?
-Replace showNoStats with a check of stats.length in db.getPlayer?
 team_attributes.playoffs is now team.made_playoffs
 template loop count - how?
 - conf rankings in standings
@@ -83,6 +81,8 @@ db.getPlayers
 game simulation
 - attendance
 draftTeamName and draftTeamRegion needed for anything? If not, cut them.
+should db.getObjectStore always use readwrite?
+Replace showNoStats with a check of stats.length in db.getPlayer, at least in some cases?
 
 ---
 

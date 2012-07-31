@@ -27,11 +27,11 @@ define(["db", "core/player", "util/helpers", "util/lock", "util/playMenu", "util
         console.log("Trying to start new contract negotiation with player " + pid);
 
         if ((g.phase >= c.PHASE_AFTER_TRADE_DEADLINE && g.phase <= c.PHASE_AFTER_DRAFT) && !resigning) {
-            helpers.leagueError("You're not allowed to sign free agents now.");
+            helpers.error("You're not allowed to sign free agents now.");
             return;
         }
         if (!lock.canStartNegotiation()) {
-            helpers.leagueError("You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process.");
+            helpers.error("You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process.");
             return;
         }
 
@@ -41,7 +41,7 @@ define(["db", "core/player", "util/helpers", "util/lock", "util/playMenu", "util
 
             numPlayersOnRoster = event.target.result.length;
             if (numPlayersOnRoster >= 15 && !resigning) {
-                helpers.leagueError("Your roster is full. Before you can sign a free agent, you'll have to buy out or release one of your current players.");
+                helpers.error("Your roster is full. Before you can sign a free agent, you'll have to buy out or release one of your current players.");
                 return;
             }
 
@@ -51,7 +51,7 @@ define(["db", "core/player", "util/helpers", "util/lock", "util/playMenu", "util
                 cursor = event.target.result;
                 player = cursor.value;
                 if (player.tid !== c.PLAYER_FREE_AGENT) {
-                    helpers.leagueError("Player " + pid + " is not a free agent.");
+                    helpers.error("Player " + pid + " is not a free agent.");
                     return;
                 }
 
@@ -174,7 +174,7 @@ define(["db", "core/player", "util/helpers", "util/lock", "util/playMenu", "util
         // contract, and it's not resigning a current player, ERROR!;
         db.getPayroll(null, g.userTid, function (payroll) {
             if (!negotiation.resigning && (payroll + negotiation.playerAmount > g.salaryCap && negotiation.playerAmount !== 500)) {
-                helpers.leagueError("This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract, buy out a player currently on your roster, or cancel the negotiation.");
+                helpers.error("This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract, buy out a player currently on your roster, or cancel the negotiation.");
                 return;
             }
 

@@ -1,4 +1,4 @@
-define(["core/player"], function (player) {
+define(["core/player", "core/season"], function (player, season) {
     "use strict";
 
     describe('core/player', function () {
@@ -17,6 +17,17 @@ define(["core/player"], function (player) {
 
                 p = player.generate(15, 19, "", 25, 55, 2012);
                 p.stats.length.should.equal(1);
+            });
+        });
+    });
+
+    describe('core/season', function () {
+        describe('#newSchedule()', function () {
+            it('should schedule 1230 games (82 each for 30 teams)', function (done) {
+                season.newSchedule(function (schedule) {
+                    schedule.length.should.equal(1230);
+                    done();
+                });
             });
         });
     });

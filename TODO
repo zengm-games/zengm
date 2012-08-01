@@ -17,8 +17,6 @@ strategic issues
 - don't block the UI in game simulation
   - slide 81 http://www.slideshare.net/nzakas/high-performance-javascript-capitoljs-2011
     - http://www.kryogenix.org/days/2009/07/03/not-blocking-the-ui-in-tight-javascript-loops
-  - web workers?
-    - "transferable objects" would speed it up
 - cache payroll each year?
   - would simplify db.getTeams
   - would allow historical finances view
@@ -95,7 +93,10 @@ g.dbl.transaction(["players"]).objectStore("players").get(476).onsuccess = funct
 
 ---
 
+FUTURE:
 
+Web workers
+- An implementation is in the webworkers branch. It kind of works, but it doesn't seem to play nice with IDB transactions, so I have to open a new transaction when the callback fires, so it is problematic to have multiple workers in parallel all trying to open readwrite transactions.
 
 
 

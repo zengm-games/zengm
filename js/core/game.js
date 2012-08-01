@@ -487,14 +487,42 @@ t.defense = 0.25;
                                             }
                                         });
                                     };
-                                    for (i = 0; i < schedule.length; i++) {
+                                    var workers = [new Worker("/js/core/webWorkerTest.js"), new Worker("/js/core/webWorkerTest.js")];
+                                    workers[0].addEventListener("message", function(e) {
+                                        var i, results;
+
+                                        results = e.data;
+                                        transaction = g.dbl.transaction(["games", "players", "playoffSeries", "releasedPlayers", "schedule", "teams"], IDBTransaction.READ_WRITE);  // Not sure why this is needed. Transaction seems to be closing before this point is reached.
+                                        for (i = 0; i < results.length; i++) {
+                                            doSaveResults(results[i], g.phase === c.PHASE_PLAYOFFS);
+                                        }
+
+                                        // If the schedule length is 0, a new day won't be run in doSaveResults. However, during the playoffs, the schedule is dynamically created every day, so we want to keep going.
+                                        if (schedule.length === 0 && playoffsContinue) {
+                                            play(num_days - 1);
+                                        }
+                                    }, false);
+                                    workers[1].addEventListener("message", function(e) {
+                                        var i, results;
+
+                                        results = e.data;
+                                        transaction = g.dbl.transaction(["games", "players", "playoffSeries", "releasedPlayers", "schedule", "teams"], IDBTransaction.READ_WRITE);  // Not sure why this is needed. Transaction seems to be closing before this point is reached.
+                                        for (i = 0; i < results.length; i++) {
+                                            doSaveResults(results[i], g.phase === c.PHASE_PLAYOFFS);
+                                        }
+                                    }, false);
+                                    workers[0].postMessage({schedule: schedule, teams: teams});
+                                    //workers[0].postMessage({schedule: schedule.slice(0, 5), teams: teams});
+                                    //workers[1].postMessage({schedule: schedule.slice(5), teams: teams});
+/*                                    for (i = 0; i < schedule.length; i++) {
                                         gs = new gameSim.GameSim(schedule[i].gid, teams[schedule[i].homeTid], teams[schedule[i].awayTid]);
                                         results = gs.run();
                                         doSaveResults(results, g.phase === c.PHASE_PLAYOFFS);
                                     }
+                                    // If the schedule length is 0, a new day won't be run in doSaveResults. However, during the playoffs, the schedule is dynamically created every day, so we want to keep going.
                                     if (schedule.length === 0 && playoffsContinue) {
                                         play(num_days - 1);
-                                    }
+                                    }*/
                                 }
                             }
                         };

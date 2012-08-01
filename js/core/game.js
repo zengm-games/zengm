@@ -12,11 +12,10 @@ define(["db", "core/gameSim", "core/season", "util/helpers", "util/lock", "util/
         this.playoffs = playoffs;
         this.id = results.gid;
         this.home = [true, false];
-//console.log(this.team);
 
         // What is the attendance of the game?
         winp = 0;
-        gp = this.team[0].gp + this.team[1].gp;
+        gp = this.team[0].won + this.team[0].lost + this.team[1].won + this.team[1].lost;
         if (gp > 0) {
             winp = (this.team[0].won + this.team[1].won) / gp;
         }

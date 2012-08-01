@@ -78,8 +78,6 @@ db.getPlayers
 - rename to helpers.filterPlayers
 - use for other access of players "playersAll"
 - the special case attributes should generally be moved directly into the database.
-game simulation
-- attendance
 draftTeamName and draftTeamRegion needed for anything? If not, cut them.
 should db.getObjectStore always use readwrite?
 Replace showNoStats with a check of stats.length in db.getPlayer, at least in some cases?

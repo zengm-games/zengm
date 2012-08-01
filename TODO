@@ -1,9 +1,9 @@
 main todo
-- awards
-  - awards.bre, .brw, .mvp, .dpo, .smoy, .roy, .allLeague, .allDefensive
-    - save all the same stuff in there as in the python version
 - history view
-  - when is this shown? do retired players at the same time, then show them here.
+  - copy from python version to show awards
+  - do retired players at the same time, then show them here.
+- game simulation
+  - record who are starters, to get SMOY != MVP
 - retired players
   - test
 - refactor new season code
@@ -12,8 +12,9 @@ main todo
   - in core.season
   - when to display notification?
 - other views
-- reassess how money is stored (ones, thousands, millions?)
+- comments in season.js and elsewhere
 strategic issues
+- reassess how money is stored (ones, thousands, millions?)
 - is localStorage fast enough for game_attributes, and possibly other stuff, like trades and contract negotiation?
 - refactor and make sure i'm doing things correct as far as modules, namespaces, documentation, style, etc.
   - What will replace the AJAX calls? Just call api.whatever function directly and have it do the jQuery crap

@@ -43,7 +43,7 @@ define(["util/helpers"], function (helpers) {
         };
         request.onblocked = function () { g.dbl.close(); };
         request.onupgradeneeded = function (event) {
-            var awardStore, gameStore, playerStore, playoffSeriesStore, releasedPlayersStore, scheduleStore, teamStore;
+            var awardsStore, gameStore, playerStore, playoffSeriesStore, releasedPlayersStore, scheduleStore, teamStore;
 
             console.log("Upgrading league" + lid + " database");
 
@@ -56,7 +56,7 @@ define(["util/helpers"], function (helpers) {
             scheduleStore = g.dbl.createObjectStore("schedule", {keyPath: "gid", autoIncrement: true});
             playoffSeriesStore = g.dbl.createObjectStore("playoffSeries", {keyPath: "season"});
             releasedPlayersStore = g.dbl.createObjectStore("releasedPlayers", {keyPath: "rid", autoIncrement: true});
-            awardStore = g.dbl.createObjectStore("awards", {keyPath: "season"});
+            awardsStore = g.dbl.createObjectStore("awards", {keyPath: "season"});
             // ... other stores go here later
 
             playerStore.createIndex("tid", "tid", {unique: false});
@@ -418,7 +418,7 @@ define(["util/helpers"], function (helpers) {
      * @param {number} season Season to retrieve data for.
      * @param {Array.<string>} attributes List of non-seasonal attributes (such as team name) to include in output.
      * @param {Array.<string>} stats List of team stats to include in output.
-     * @param {Array.<string>} seasonAttributes List of seasonal attributes (such as wins, losses) to include in output.
+     * @param {Array.<string>} seasonAttributes List of seasonal attributes (such as won or lost) to include in output.
      * @param {string|null} sortBy String represeting the sorting method. "winp" sorts by descending winning percentage, "winpAsc" does the opposite.
      * @param {function(Array)} cb Callback whose first argument is an array of all the team objects.
      */

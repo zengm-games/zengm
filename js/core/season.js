@@ -673,40 +673,92 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
 
     /*Computes the awards at the end of a season.*/
     function awards() {
+        var transaction;
+
+        transaction = g.dbl.transaction(["players", "releasedPlayers", "teams"]);
+
         // Any non-retired player can win an award
-        g.dbl.transaction("players").objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) {
-            var attributes, players, ratings, stats;
+        transaction.objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) {
+            var attributes, awards, i, p, players, ratings, seasonAttributes, stats;
+
+            awards = {season: g.season};
 
             attributes = ["pid", "name", "tid", "abbrev", "draftYear"];
             stats = ["gp", "gs", "min", "pts", "trb", "ast", "blk", "stl"];
             ratings = [];
             players = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings);
-console.log(players);
+
+            // Most Valuable Player
+            players.sort(function (a, b) {  return (0.75 * b.pts + b.ast + b.trb) - (0.75 * a.pts + a.ast + a.trb); });
+            p = players[0];
+            awards.mvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.pts, trb: p.trb, ast: p.ast};
+
+            // Sixth Man of the Year - same sort as MVP
+            for (i = 0; i < players.length; i++) {
+                // Must have come off the bench in most games
+                if (players[i].gs === 0 || players[i].gp / players[i].gs > 2) {
+                    break;
+                }
+            }
+            p = players[i];
+            awards.smoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.pts, trb: p.trb, ast: p.ast};
+
+            // Rookie of the Year - same sort as MVP
+            for (i = 0; i < players.length; i++) {
+                // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
+                if (players[i].draftYear === g.season - 1) {
+                    break;
+                }
+            }
+            p = players[i];
+            if (typeof p !== "undefined") { // I suppose there could be no rookies at all..
+                awards.roy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.pts, trb: p.trb, ast: p.ast};
+            }
+
+            // All League Team - same sort as MVP
+            awards.allLeague = [];
+            for (i = 0; i < 15; i++) {
+                p = players[i];
+                awards.allLeague.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.pts, trb: p.trb, ast: p.ast});
+            }
+
+            // Defensive Player of the Year
+            players.sort(function (a, b) {  return (b.trb + 5 * b.blk + 5 * b.stl) - (a.trb + 5 * a.blk + 5 * a.stl); });
+            p = players[0];
+            awards.dpoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.trb, blk: p.blk, stl: p.stl};
+
+            // All Defensive Team - same sort as DPOY
+            awards.allDefensive = [];
+            for (i = 0; i < 15; i++) {
+                p = players[i];
+                awards.allDefensive.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.trb, blk: p.blk, stl: p.stl});
+            }
+
+            attributes = ["tid", "abbrev", "region", "name", "cid"];
+            stats = [];
+            seasonAttributes = ["won", "lost", "winp"];
+            db.getTeams(transaction, g.season, attributes, stats, seasonAttributes, "winp", function (teams) {
+                var i, foundEast, foundWest, t;
+
+                for (i = 0; i < teams.length; i++) {
+                    if (!foundEast && teams[i].cid === 0) {
+                        t = teams[i];
+                        awards.bre = {tid: t.tid, abbrev: t.abbrev, region: t.region, name: t.name, won: t.won, lost: t.lost};
+                        foundEast = true;
+                    } else if (!foundWest && teams[i].cid === 1) {
+                        t = teams[i];
+                        awards.brw = {tid: t.tid, abbrev: t.abbrev, region: t.region, name: t.name, won: t.won, lost: t.lost};
+                        foundWest = true;
+                    }
+
+                    if (foundEast && foundWest) {
+                        break;
+                    }
+                }
+
+                g.dbl.transaction("awards", IDBTransaction.READ_WRITE).objectStore("awards").add(awards);
+            });
         };
-/*        // Cache averages
-        g.dbex('CREATE TEMPORARY TABLE awards_avg (pid INTEGER PRIMARY KEY, name VARCHAR(255), tid INTEGER, abbrev VARCHAR(3), draft_year INTEGER, games_played INTEGER, games_started INTEGER, min FLOAT, pts FLOAT, trb FLOAT, ast FLOAT, blk FLOAT, stl FLOAT)')
-        g.dbex('INSERT INTO awards_avg (pid, name, tid, abbrev, draft_year, games_played, games_started, min, pts, trb, ast, blk, stl) (SELECT pa.pid, pa.name, pa.tid, ta.abbrev, pa.draft_year, SUM(CASE WHEN ps.min > 0 THEN 1 ELSE 0 END) AS games_played, SUM(ps.gs) AS games_started, AVG(ps.min) AS min, AVG(ps.pts) AS pts, AVG(ps.orb+ps.drb) AS trb, AVG(ps.ast) AS ast, AVG(ps.blk) AS blk, AVG(ps.stl) AS stl FROM player_attributes as pa, player_stats as ps, team_attributes as ta WHERE pa.pid = ps.pid AND ps.season = :season AND ps.playoffs = FALSE AND ta.tid = pa.tid AND ta.season = ps.season GROUP BY ps.pid)', season=g.season)
-
-        r = g.dbex('SELECT tid, abbrev, region, name, won, lost FROM team_attributes AS ta WHERE season = :season AND (SELECT cid FROM divisions AS ld WHERE ld.did = ta.did) = 0 ORDER BY CASE won + lost WHEN 0 THEN 0 ELSE won / (won + lost) END DESC', season=g.season)
-        bre = r.fetchone()
-        r = g.dbex('SELECT tid, abbrev, region, name, won, lost FROM team_attributes AS ta WHERE season = :season AND (SELECT cid FROM divisions AS ld WHERE ld.did = ta.did) = 1 ORDER BY CASE won + lost WHEN 0 THEN 0 ELSE won / (won + lost) END DESC', season=g.season)
-        brw = r.fetchone()
-
-        r = g.dbex('SELECT pid, name, tid, abbrev, pts, trb, ast FROM awards_avg ORDER BY (0.75 * pts) + ast + trb DESC')
-        mvp =  r.fetchone()
-        r = g.dbex('SELECT pid, name, tid, abbrev, trb, blk, stl FROM awards_avg ORDER BY trb + 5 * blk + 5 * stl DESC')
-        dpoy = r.fetchone()
-        r = g.dbex('SELECT pid, name, tid, abbrev, pts, trb, ast FROM awards_avg WHERE games_played/(games_started+1) > 2 ORDER BY (0.75 * pts) + ast + trb DESC')
-        smoy = r.fetchone()
-        r = g.dbex('SELECT pid, name, tid, abbrev, pts, trb, ast FROM awards_avg WHERE draft_year = :season - 1 ORDER BY (0.75 * pts) + ast + trb DESC', season=g.season)
-        roy = r.fetchone()
-
-        g.dbex('INSERT INTO awards (season, bre_tid, bre_abbrev, bre_region, bre_name, bre_won, bre_lost, brw_tid, brw_abbrev, brw_region, brw_name, brw_won, brw_lost, mvp_pid, mvp_name, mvp_tid, mvp_abbrev, mvp_pts, mvp_trb, mvp_ast, dpoy_pid, dpoy_name, dpoy_tid, dpoy_abbrev, dpoy_trb, dpoy_blk, dpoy_stl, smoy_pid, smoy_name, smoy_tid, smoy_abbrev, smoy_pts, smoy_trb, smoy_ast, roy_pid, roy_name, roy_tid, roy_abbrev, roy_pts, roy_trb, roy_ast) VALUES (:season, :bre_tid, :bre_abbrev, :bre_region, :bre_name, :bre_won, :bre_lost, :brw_tid, :brw_abbrev, :brw_region, :brw_name, :brw_won, :brw_lost, :mvp_pid, :mvp_name, :mvp_tid, :mvp_abbrev, :mvp_pts, :mvp_trb, :mvp_ast, :dpoy_pid, :dpoy_name, :dpoy_tid, :dpoy_abbrev, :dpoy_trb, :dpoy_blk, :dpoy_stl, :smoy_pid, :smoy_name, :smoy_tid, :smoy_abbrev, :smoy_pts, :smoy_trb, :smoy_ast, :roy_pid, :roy_name, :roy_tid, :roy_abbrev, :roy_pts, :roy_trb, :roy_ast)', season=g.season, bre_tid=bre['tid'], bre_abbrev=bre['abbrev'], bre_region=bre['region'], bre_name=bre['name'], bre_won=bre['won'], bre_lost=bre['lost'], brw_tid=brw['tid'], brw_abbrev=brw['abbrev'], brw_region=brw['region'], brw_name=brw['name'], brw_won=brw['won'], brw_lost=brw['lost'], mvp_pid=mvp['pid'], mvp_name=mvp['name'], mvp_tid=mvp['tid'], mvp_abbrev=mvp['abbrev'], mvp_pts=mvp['pts'], mvp_trb=mvp['trb'], mvp_ast=mvp['ast'], dpoy_pid=dpoy['pid'], dpoy_name=dpoy['name'], dpoy_tid=dpoy['tid'], dpoy_abbrev=dpoy['abbrev'], dpoy_trb=dpoy['trb'], dpoy_blk=dpoy['blk'], dpoy_stl=dpoy['stl'], smoy_pid=smoy['pid'], smoy_name=smoy['name'], smoy_tid=smoy['tid'], smoy_abbrev=smoy['abbrev'], smoy_pts=smoy['pts'], smoy_trb=smoy['trb'], smoy_ast=smoy['ast'], roy_pid=roy['pid'], roy_name=roy['name'], roy_tid=roy['tid'], roy_abbrev=roy['abbrev'], roy_pts=roy['pts'], roy_trb=roy['trb'], roy_ast=roy['ast'])
-
-        g.dbex('INSERT INTO awards_all_league (season, team_type, pid, name, abbrev, pts, trb, ast, blk, stl) (SELECT :season, \'league\', pid, name, abbrev, pts, trb, ast, blk, stl FROM awards_avg ORDER BY (0.75 * pts) + ast + trb DESC LIMIT 15)', season=g.season)
-        g.dbex('INSERT INTO awards_all_league (season, team_type, pid, name, abbrev, pts, trb, ast, blk, stl) (SELECT :season, \'defensive\', pid, name, abbrev, pts, trb, ast, blk, stl FROM awards_avg ORDER BY trb + 5 * blk + 5 * stl DESC LIMIT 15)', season=g.season)
-
-        g.dbex('DROP TABLE awards_avg')*/
     }
 
     /*Save the schedule to the database, overwriting what's currently there.

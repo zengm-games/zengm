@@ -1,5 +1,4 @@
 main todo
-- season.newPhase needs to be broken up. far too unwieldy
 - awards
   - awards.bre, .brw, .mvp, .dpo, .smoy, .roy, .allLeague, .allDefensive
     - save all the same stuff in there as in the python version

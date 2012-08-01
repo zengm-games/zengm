@@ -423,7 +423,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 }
                 seasons = helpers.getSeasons(season, g.season);  // Don't show this season as an option
             } else {
-                seasons = helpers.getSeasons(season, g.season);  // Show this season as an option
+                seasons = helpers.getSeasons(season);  // Show this season as an option
             }
 
             if (g.phase < c.PHASE_DRAFT && season < g.startingSeason) {

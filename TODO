@@ -1,6 +1,12 @@
 main todo
+- season.newPhase needs to be broken up. far too unwieldy
+- awards
+  - awards.bre, .brw, .mvp, .dpo, .smoy, .roy, .allLeague, .allDefensive
+    - save all the same stuff in there as in the python version
+- history view
+  - when is this shown? do retired players at the same time, then show them here.
 - retired players
-  - make retired players view that lists them and key stats for each season based on retiredYear, like draft history view
+  - test
 - refactor new season code
   - abstract db access
 - retiring players
@@ -22,6 +28,10 @@ strategic issues
 - cache payroll each year?
   - would simplify db.getTeams
   - would allow historical finances view
+- notifications (and log) from top right to display log of key events
+  - game results from user's team
+  - players retiring from user's team
+  - league champions
 
 ---
 

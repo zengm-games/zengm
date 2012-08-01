@@ -840,6 +840,43 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         });
     }
 
+    function testSchedule(req) {
+        beforeLeague(req, function () {
+            var data, getNumDays, template;
+
+            getNumDays = function (tids) {
+                var i, numDays, tidsInDay;
+
+                numDays = 0;
+                while (tids.length > 0) {
+//                    console.log(tids.length);
+                    tidsInDay = [];
+                    for (i = 0; i < tids.length; i++) {
+                        if (tidsInDay.indexOf(tids[i][0]) < 0 && tidsInDay.indexOf(tids[i][1]) < 0) {
+                            tidsInDay.push(tids[i][0]);
+                            tidsInDay.push(tids[i][1]);
+                        } else {
+                            break;
+                        }
+                    }
+                    tids = tids.slice(i);
+                    numDays += 1;
+//                    console.log("i: " + i);
+                }
+                return numDays;
+            };
+
+            season.newSchedule(function (tids) {
+                console.log(getNumDays(tids));
+            });
+
+            data = {"title": "Test Schedule - League " + req.params.lid};
+            template = Handlebars.templates.error;
+            data.league_content = "Test Schedule";
+            bbgm.ajaxUpdate(data);
+        });
+    }
+
     return {
         init_db: init_db,
 
@@ -863,6 +900,8 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         negotiation: negotiation,
 
         globalError: globalError,
-        leagueError: leagueError
+        leagueError: leagueError,
+
+        testSchedule: testSchedule
     };
 });

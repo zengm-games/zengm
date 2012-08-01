@@ -369,7 +369,7 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
     */
     function newSchedule(cb) {
         helpers.getTeams(undefined, function (teamsAll) {
-            var cid, dids, game, games, good, i, ii, iters, j, jj, k, matchup, matchups, n, newMatchup, t, team, teams, tids, tidsByConf, tryNum;
+            var cid, days, dids, game, games, good, i, ii, iters, j, jj, jMax, k, matchup, matchups, n, newMatchup, t, team, teams, tids, tidsByConf, tidsInDays, tryNum, used;
 
             teams = [];
             tids = [];  // tid_home, tid_away
@@ -475,7 +475,30 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
                 }
             }
 
+            // Order the schedule so that it takes fewer days to play
             random.shuffle(tids);
+            days = [[]];
+            tidsInDays = [[]];
+            jMax = 0;
+            for (i = 0; i < tids.length; i++) {
+                used = false;
+                for (j = 0; j <= jMax; j++) {
+                    if (tidsInDays[j].indexOf(tids[i][0]) < 0 && tidsInDays[j].indexOf(tids[i][1]) < 0) {
+                        tidsInDays[j].push(tids[i][0]);
+                        tidsInDays[j].push(tids[i][1]);
+                        days[j].push(tids[i]);
+                        used = true;
+                        break;
+                    }
+                }
+                if (!used) {
+                    days.push([tids[i]]);
+                    tidsInDays.push([tids[i][0], tids[i][1]]);
+                    jMax += 1;
+                }
+            }
+            random.shuffle(days);  // Otherwise the most dense days will be at the beginning and the least dense days will be at the end
+            tids = _.flatten(days, true);
             cb(tids);
         });
     }

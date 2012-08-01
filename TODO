@@ -18,6 +18,7 @@ strategic issues
   - slide 81 http://www.slideshare.net/nzakas/high-performance-javascript-capitoljs-2011
     - http://www.kryogenix.org/days/2009/07/03/not-blocking-the-ui-in-tight-javascript-loops
   - web workers?
+    - "transferable objects" would speed it up
 - cache payroll each year?
   - would simplify db.getTeams
   - would allow historical finances view
@@ -57,10 +58,7 @@ roster view
 - make sure teams dropdown works
 - trade for button
 - buy out button
-draft
-- draft history view
 new season
-- player aging
 - auto free agent signing
 contract negotiation
 - test all the error conditions and make sure callbacks are appropriately called (unit tests?)
@@ -83,49 +81,6 @@ roster size check on new season
 
 ---
 
-test deep index stats.tid, stats.season: {pid, stats: {tid, season, pts, reb, ...}}
-
-League schema: teamStats and playerStats refer to totals that will be divided by numGames to get averages
-
-players = {playerAttributes, ratings: {playerRatings}, stats: {season, playoffs=Bool, numGames, playerStats}}
-Index: *pid, tid, ratings.season, stats.tid, stats.season, stats.playoffs
-
-teams = {teamAttributes, numGames, stats: {playoffs=Bool, teamStats}}
-Index: tid, cid, did, season, stats.playoffs
-
-games =  {gid, season, teamStatsForIndividualGame, playerStatsForIndividualGam}
-Index: *gid, tid, season
-- can tid be an array so that gid can be unique? can i index on an array?
-
-playoffSeries = {season, currentRound, series: [[{}, ...], ...]}
-- first row is for round, second row is for series, just like the series object in views.playoffs
-
-schedule = {schedule}
-
-conferences, divisions = simple global data structures
-
-Querying based on multiple indexes: https://github.com/philikon/queryIndexedDB
-Try that first, as it looks simple. If it doesn't work, try: http://linq2indexeddb.codeplex.com/ http://www.kristofdegrave.be/2012/05/using-linq-to-indexed-db.html
-CAN EITHER OF THESE HANDLE JOINS? Intersection and Union in the first, what about second?
-
-var teamStore = dbm.transaction("teams").objectStore("teams");
-request = Index('did').eq(2).getAll(teamStore)
-request.onsuccess = function (event) {
-    console.log(request.result);
-}
-
-var dbConfig = {};
-dbConfig.version = 1;
-var db = window.linq2indexedDB("meta", dbConfig, true);
-db.linq.from("leagues").select().then(function(data){
-	console.log("Selected " + data.length + " items");
-	console.log(data);
-});
-
----
-
-update: http://www.javasscrypt.com/html5/web-sql-db-vs-indexeddb/
-tranasctions: http://blog.nparashuram.com/2011/11/indexeddb-apis-javascriptnext.html        http://stackoverflow.com/questions/10484965/how-can-i-put-several-requests-in-one-transaction-in-indexeddb
 joins: http://blog.oharagroup.net/post/16394604653/a-performance-comparison-websql-vs-indexeddb        http://hacks.mozilla.org/2010/06/comparing-indexeddb-and-webdatabase/
 
 handlebars templates -f js/templates.js
@@ -171,15 +126,10 @@ finances
 - conditional formatting to show negative numbers in red: https://www.google.com/search?q=site%3Adatatables.net+conditional+formatting&ie=utf-8&oe=utf-8&client=ubuntu&channel=fs
 
 Client-side game simulation
-- 4: web workers? https://developer.mozilla.org/En/Using_web_workers
-  - can spawn multiple workers in parallel. "transferable objects" would speed it up
 - Robustness of javascript code
   - g.phase == 3 in league_views might introduce race condition
   - validate data from client?
   - make sure play menu doesn't ever get stuck - some kind of timeout
-
-contract negotiation view
-- bring back to either free agent view or resigning view after either accept or cancel
 
 dashboard: a bunch of boxes showing..
 - record
@@ -247,27 +197,7 @@ Don't allow sort from first column of trade window
 
 ---
 
-On release
-- Update all version numbers (setup.py, README, about dialog box, save file, tables.sql (game_attributes), debian/changelog)
-- Turn off debug mode
-
----
-speed
-- do simulations in C?
-
-- unit tests
-  - schedule
-
-Separate files
-- Each window/dialog gets its own glade file and own .py file in views folder
-- initial build in each constructor DELETE THIS CRAP
-
-Prettier UI: embed Webkit
-- http://www.aclevername.com/articles/python-webgui/
-
 when negotiating, players change values too much when you try to change years
-
-pyflakes
 
 ======
 FUTURE
@@ -319,7 +249,6 @@ in team stats tab, allow toggle to show opponent stats
 NBA
 ---
 real salary cap rules: http://en.wikipedia.org/wiki/NBA_Salary_Cap
-    released players should count against cap
 real contract rules (max/min, etc.)
 allow contracts that aren't the same $ every year
 team and player options

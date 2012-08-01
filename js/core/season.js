@@ -265,9 +265,6 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
 
         phaseText = g.season + " before draft";
 
-        // Select winners of the season's awards
-        awards();
-
         // Remove released players' salaries from payrolls
         releasedPlayersStore = g.dbl.transaction("releasedPlayers", IDBTransaction.READ_WRITE).objectStore("releasedPlayers");
         releasedPlayersStore.index("contractExp").getAll(g.season).onsuccess = function (event) {
@@ -278,12 +275,16 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
             for (i = 0; i < releasedPlayers.length; i++) {
                 releasedPlayersStore.delete(releasedPlayers[i].rid);
             }
+
+            // Select winners of the season's awards
+            // This needs to be inside the callback because of Firefox bug 763915
+            awards();
         };
 
         // Add a year to the free agents
 //            g.dbex('UPDATE player_attributes SET contract_exp = contract_exp + 1 WHERE tid = :tid', tid=c.PLAYER_FREE_AGENT)
 
-        newPhaseCb(c.PHASE_BEFORE_DRAFT, phaseText);
+//        newPhaseCb(c.PHASE_BEFORE_DRAFT, phaseText);
     }
 
     function newPhaseDraft() {
@@ -673,8 +674,7 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
     /*Computes the awards at the end of a season.*/
     function awards() {
         // Any non-retired player can win an award
-/*        g.dbl.transaction("players").objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) {
-console.log(event.target.result);
+        g.dbl.transaction("players").objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) {
             var attributes, players, ratings, stats;
 
             attributes = ["pid", "name", "tid", "abbrev", "draftYear"];
@@ -682,7 +682,7 @@ console.log(event.target.result);
             ratings = [];
             players = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings);
 console.log(players);
-        };*/
+        };
 /*        // Cache averages
         g.dbex('CREATE TEMPORARY TABLE awards_avg (pid INTEGER PRIMARY KEY, name VARCHAR(255), tid INTEGER, abbrev VARCHAR(3), draft_year INTEGER, games_played INTEGER, games_started INTEGER, min FLOAT, pts FLOAT, trb FLOAT, ast FLOAT, blk FLOAT, stl FLOAT)')
         g.dbex('INSERT INTO awards_avg (pid, name, tid, abbrev, draft_year, games_played, games_started, min, pts, trb, ast, blk, stl) (SELECT pa.pid, pa.name, pa.tid, ta.abbrev, pa.draft_year, SUM(CASE WHEN ps.min > 0 THEN 1 ELSE 0 END) AS games_played, SUM(ps.gs) AS games_started, AVG(ps.min) AS min, AVG(ps.pts) AS pts, AVG(ps.orb+ps.drb) AS trb, AVG(ps.ast) AS ast, AVG(ps.blk) AS blk, AVG(ps.stl) AS stl FROM player_attributes as pa, player_stats as ps, team_attributes as ta WHERE pa.pid = ps.pid AND ps.season = :season AND ps.playoffs = FALSE AND ta.tid = pa.tid AND ta.season = ps.season GROUP BY ps.pid)', season=g.season)

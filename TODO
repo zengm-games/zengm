@@ -1,4 +1,6 @@
 main todo
+- retired players
+  - make retired players view that lists them and key stats for each season based on retiredYear, like draft history view
 - refactor new season code
   - abstract db access
 - retiring players

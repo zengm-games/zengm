@@ -298,14 +298,62 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
         } else if (phase === c.PHASE_RESIGN_PLAYERS) {
             phaseText = g.season + " resign players";
 
+            playerStore = g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
+
             // Check for retiring players
-            // Call the contructor each season because that's where the code to check for retirement is
-//            rpw = retired_players_window.RetiredPlayersWindow(self)  // Do the retired player check
-//            rpw.retired_players_window.run()
-//            rpw.retired_players_window.destroy()
+            playerStore.index("tid").openCursor(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) { // All non-retired players
+                var age, cont, cursor, excessAge, excessPot, i, maxAge, minPot, p, pot, update;
+
+                update = false;
+
+                // Players meeting one of these cutoffs might retire
+                maxAge = 34;
+                minPot = 40;
+
+                cursor = event.target.result;
+                if (cursor) {
+                    p = cursor.value;
+
+                    age = g.season - p.bornYear;
+                    pot = _.last(p.ratings).pot;
+
+                    if (age > maxAge || pot < minPot) {
+                        excessAge = 0;
+                        if (age > 34 || p.tid === c.PLAYER_FREE_AGENT) {  // Only players older than 34 or without a contract will retire
+                            if (age > 34) {
+                                excessAge = (age - 34) / 20;  // 0.05 for each year beyond 34
+                            }
+                            excessPot = (40 - pot) / 50.0;  // 0.02 for each potential rating below 40 (this can be negative)
+                            if (excessAge + excessPot + random.gauss(0, 1) > 0) {
+                                p.tid = c.PLAYER_RETIRED;
+                                p.retiredYear = g.season;
+                                update = true;
+                            }
+                        }
+                    }
+
+                    // Update "free agent years" counter and retire players who have been free agents for more than one years
+                    if (p.tid === c.PLAYER_FREE_AGENT) {
+                        if (p.yearsFreeAgent >= 1) {
+                            p.tid = c.PLAYER_RETIRED;
+                            p.retiredYear = g.season;
+                        } else {
+                            p.yearsFreeAgent += 1;
+                        }
+                        update = true;
+                    } else if (p.tid >= 0 && p.yearsFreeAgent > 0) {
+                        p.yearsFreeAgent = 0;
+                        update = true;
+                    }
+
+                    // Update player in DB, if necessary
+                    if (update) {
+                        cursor.update(p);
+                    }
+                }
+            };
 
             // Resign players or they become free agents
-            playerStore = g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
             playerStore.index("tid").openCursor(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
                 var cont, cursor, i, p;
 

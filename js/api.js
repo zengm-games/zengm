@@ -49,13 +49,11 @@ define(["db", "views", "core/draft", "core/game", "core/player", "core/season", 
         } else if (amount === "until_resign_players") {
             if (g.phase === c.PHASE_AFTER_DRAFT) {
                 season.newPhase(c.PHASE_RESIGN_PLAYERS);
-//            url = url_for('negotiation_list', lid=g.lid)
             }
         } else if (amount === "until_free_agency") {
             if (g.phase === c.PHASE_RESIGN_PLAYERS) {
                 season.newPhase(c.PHASE_FREE_AGENCY);
                 playMenu.setStatus("Idle");
-//            url = url_for('free_agents', lid=g.lid)
             }
         } else if (amount === "until_preseason") {
             if (g.phase === c.PHASE_FREE_AGENCY) {

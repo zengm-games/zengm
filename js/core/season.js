@@ -334,6 +334,7 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
                     cursor.continue();
                 } else {
                     cb(phase, phaseText);
+                    Davis.location.assign(new Davis.Request("/l/" + g.lid + "/negotiation"));
                 }
             };
         } else if (phase === c.PHASE_FREE_AGENCY) {
@@ -357,6 +358,7 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
                     cursor.continue();
                 } else {
                     cb(phase, phaseText);
+                    Davis.location.assign(new Davis.Request("/l/" + g.lid + "/free_agents"));
                 }
             };
         }

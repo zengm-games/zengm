@@ -254,6 +254,7 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
 //                        }
                 } else {
                     newPhaseCb(c.PHASE_PLAYOFFS, phaseText);
+                    Davis.location.assign(new Davis.Request("/l/" + g.lid + "/playoffs"));
                 }
             };
         });
@@ -331,12 +332,13 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
 
                     // Select winners of the season's awards
                     // This needs to be inside the callback because of Firefox bug 763915
-                    awards();
+                    awards(function () {
+                        newPhaseCb(c.PHASE_BEFORE_DRAFT, phaseText);
+                        Davis.location.assign(new Davis.Request("/l/" + g.lid + "/history"));
+                    });
                 };
             }
         };
-
-        newPhaseCb(c.PHASE_BEFORE_DRAFT, phaseText);
     }
 
     function newPhaseDraft() {
@@ -701,7 +703,7 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
     }
 
     /*Computes the awards at the end of a season.*/
-    function awards() {
+    function awards(cb) {
         var transaction;
 
         transaction = g.dbl.transaction(["players", "releasedPlayers", "teams"]);
@@ -795,6 +797,8 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
                     }
                 }
                 g.dbl.transaction("awards", IDBTransaction.READ_WRITE).objectStore("awards").add(awards);
+
+                cb();
             });
         };
     }

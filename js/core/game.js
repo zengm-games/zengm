@@ -50,17 +50,6 @@ define(["db", "core/gameSim", "core/season", "util/helpers", "util/lock", "util/
         this.cb = cb;
 
         this.transaction = transaction;
-        // Record who the starters are
-/*    t = 0; t < 2; t++) {
-        r = g.dbex('SELECT pid FROM player_attributes WHERE tid = :tid ORDER BY roster_order ASC LIMIT 5', tid=this.team[t]['id'])
-        for starter_id, in r.fetchall() {
-            for (p=0; p<this.team[t]['player'].length; p++) {
-                if (this.team[t]['player'][p]['id'] === starter_id) {
-                    this.team[t]['player'][p]['stat']['gs'] = 1;
-                }
-            }
-        }
-    }*/
 
         // Player stats and team stats
         that = this;
@@ -374,8 +363,6 @@ define(["db", "core/gameSim", "core/season", "util/helpers", "util/lock", "util/
                 season.getSchedule(0, function (schedule) {
                     if (schedule.length === 0) {
                         season.newPhase(c.PHASE_PLAYOFFS);
-// MOVE THIS TO newPhase(c.PHASE_PLAYOFFS)
-//                url = "/l/" + g.lid + "/history";
                     }
                 });
             }

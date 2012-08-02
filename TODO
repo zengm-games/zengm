@@ -3,6 +3,12 @@ main todo
 - refactor new season code
   - abstract db access
 - other views
+  - trade
+  - team stats
+  - team history
+    - record  when teams make playoffs
+  - league leaders
+  - dashboard
 - comments in season.js and elsewhere
 strategic issues
 - reassess how money is stored (ones, thousands, millions?)

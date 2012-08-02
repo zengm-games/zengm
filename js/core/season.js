@@ -305,6 +305,7 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
                     } else {
                         p.yearsFreeAgent += 1;
                     }
+                    p.contractExp += 1;
                     update = true;
                 } else if (p.tid >= 0 && p.yearsFreeAgent > 0) {
                     p.yearsFreeAgent = 0;
@@ -334,9 +335,6 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
                 };
             }
         };
-
-        // Add a year to the free agents
-//            g.dbex('UPDATE player_attributes SET contract_exp = contract_exp + 1 WHERE tid = :tid', tid=c.PLAYER_FREE_AGENT)
 
         newPhaseCb(c.PHASE_BEFORE_DRAFT, phaseText);
     }

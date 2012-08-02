@@ -1,9 +1,7 @@
 main todo
+- AI signing free agents
 - refactor new season code
   - abstract db access
-- retiring players
-  - in core.season
-  - when to display notification?
 - other views
 - comments in season.js and elsewhere
 strategic issues

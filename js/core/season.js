@@ -265,51 +265,8 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
 
         phaseText = g.season + " before draft";
 
-        // Remove released players' salaries from payrolls
-        releasedPlayersStore = g.dbl.transaction("releasedPlayers", IDBTransaction.READ_WRITE).objectStore("releasedPlayers");
-        releasedPlayersStore.index("contractExp").getAll(g.season).onsuccess = function (event) {
-            var i, releasedPlayers;
-
-            releasedPlayers = event.target.result;
-
-            for (i = 0; i < releasedPlayers.length; i++) {
-                releasedPlayersStore.delete(releasedPlayers[i].rid);
-            }
-
-            // Select winners of the season's awards
-            // This needs to be inside the callback because of Firefox bug 763915
-            awards();
-        };
-
-        // Add a year to the free agents
-//            g.dbex('UPDATE player_attributes SET contract_exp = contract_exp + 1 WHERE tid = :tid', tid=c.PLAYER_FREE_AGENT)
-
-        newPhaseCb(c.PHASE_BEFORE_DRAFT, phaseText);
-    }
-
-    function newPhaseDraft() {
-        var phaseText;
-
-        phaseText = g.season + " draft";
-        newPhaseCb(c.PHASE_DRAFT, phaseText);
-    }
-
-    function newPhaseAfterDraft() {
-        var phaseText;
-
-        phaseText = g.season + " after draft";
-        newPhaseCb(c.PHASE_AFTER_DRAFT, phaseText);
-    }
-
-    function newPhaseResignPlayers() {
-        var phaseText, playerStore;
-
-        phaseText = g.season + " resign players";
-
-        playerStore = g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
-
         // Check for retiring players
-        playerStore.index("tid").openCursor(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) { // All non-retired players
+        g.dbl.transaction("players", IDBTransaction.READ_WRITE).objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) { // All non-retired players
             var age, cont, cursor, excessAge, excessPot, i, maxAge, minPot, p, pot, update;
 
             update = false;
@@ -358,8 +315,52 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
                 if (update) {
                     cursor.update(p);
                 }
+                cursor.continue();
+            } else {
+                // Remove released players' salaries from payrolls
+                releasedPlayersStore = g.dbl.transaction("releasedPlayers", IDBTransaction.READ_WRITE).objectStore("releasedPlayers");
+                releasedPlayersStore.index("contractExp").getAll(g.season).onsuccess = function (event) {
+                    var i, releasedPlayers;
+
+                    releasedPlayers = event.target.result;
+
+                    for (i = 0; i < releasedPlayers.length; i++) {
+                        releasedPlayersStore.delete(releasedPlayers[i].rid);
+                    }
+
+                    // Select winners of the season's awards
+                    // This needs to be inside the callback because of Firefox bug 763915
+                    awards();
+                };
             }
         };
+
+        // Add a year to the free agents
+//            g.dbex('UPDATE player_attributes SET contract_exp = contract_exp + 1 WHERE tid = :tid', tid=c.PLAYER_FREE_AGENT)
+
+        newPhaseCb(c.PHASE_BEFORE_DRAFT, phaseText);
+    }
+
+    function newPhaseDraft() {
+        var phaseText;
+
+        phaseText = g.season + " draft";
+        newPhaseCb(c.PHASE_DRAFT, phaseText);
+    }
+
+    function newPhaseAfterDraft() {
+        var phaseText;
+
+        phaseText = g.season + " after draft";
+        newPhaseCb(c.PHASE_AFTER_DRAFT, phaseText);
+    }
+
+    function newPhaseResignPlayers() {
+        var phaseText, playerStore;
+
+        phaseText = g.season + " resign players";
+
+        playerStore = g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
 
         // Resign players or they become free agents
         playerStore.index("tid").openCursor(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
@@ -765,7 +766,6 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
                         break;
                     }
                 }
-console.log(awards);
                 g.dbl.transaction("awards", IDBTransaction.READ_WRITE).objectStore("awards").add(awards);
             });
         };

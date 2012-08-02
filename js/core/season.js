@@ -624,6 +624,23 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
             } else {
                 // The previous round is over. Either make a new round or go to the next phase.
 
+                // Who won?
+/*                winners = {}
+                r = g.dbex('SELECT sid, tid_home, tid_away, seed_home, seed_away, won_home, won_away FROM playoff_series WHERE round = :round AND season = :season ORDER BY sid ASC', round=current_round, season=g.season)
+                for row in r.fetchall()) {
+                    sid, tid_home, tid_away, seed_home, seed_away, won_home, won_away = row
+                    if (won_home === 4) {
+                        winners[sid] = [tid_home, seed_home]
+                    } else {
+                        winners[sid] = [tid_away, seed_away]
+                    // Record user's team as conference and league champion
+                    if (rnd === 2) {
+                        g.dbex('UPDATE team_attributes SET conf_champs = TRUE WHERE season = :season AND tid = :tid', season=g.season, tid=winners[sid][0])
+                    } else if (rnd === 3) {
+                        g.dbex('UPDATE team_attributes SET league_champs = TRUE WHERE season = :season AND tid = :tid', season=g.season, tid=winners[sid][0])
+                    }
+                }*/
+
                 // Are the whole playoffs over?
                 if (rnd === 3) {
                     newPhase(c.PHASE_BEFORE_DRAFT);
@@ -649,21 +666,6 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
                     playoffSeries.currentRound += 1;
                     cursor.update(playoffSeries, playoffsOver);
                 }
-/*
-                // Who won?
-                winners = {}
-                r = g.dbex('SELECT sid, tid_home, tid_away, seed_home, seed_away, won_home, won_away FROM playoff_series WHERE round = :round AND season = :season ORDER BY sid ASC', round=current_round, season=g.season)
-                for row in r.fetchall()) {
-                    sid, tid_home, tid_away, seed_home, seed_away, won_home, won_away = row
-                    if (won_home === 4) {
-                        winners[sid] = [tid_home, seed_home]
-                    else {
-                        winners[sid] = [tid_away, seed_away]
-                    // Record user's team as conference and league champion
-                    if (current_round === 3) {
-                        g.dbex('UPDATE team_attributes SET conf_champs = TRUE WHERE season = :season AND tid = :tid', season=g.season, tid=winners[sid][0])
-                    else if (current_round === 4) {
-                        g.dbex('UPDATE team_attributes SET league_champs = TRUE WHERE season = :season AND tid = :tid', season=g.season, tid=winners[sid][0])*/
 
                 cb(numActiveTeams);
             }

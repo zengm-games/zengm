@@ -284,7 +284,7 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
         // Add a year to the free agents
 //            g.dbex('UPDATE player_attributes SET contract_exp = contract_exp + 1 WHERE tid = :tid', tid=c.PLAYER_FREE_AGENT)
 
-//        newPhaseCb(c.PHASE_BEFORE_DRAFT, phaseText);
+        newPhaseCb(c.PHASE_BEFORE_DRAFT, phaseText);
     }
 
     function newPhaseDraft() {

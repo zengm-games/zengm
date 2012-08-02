@@ -38,6 +38,8 @@ requirejs(["db", "views", "bbgm", "api", "util/helpers"], function (db, views, b
             this.get('/l/:lid/playoffs', views.playoffs);
             this.get('/l/:lid/playoffs/:season', views.playoffs);
             this.get('/l/:lid/finances', views.finances);
+            this.get('/l/:lid/history', views.history);
+            this.get('/l/:lid/history/:season', views.history);
             this.get('/l/:lid/roster', views.roster);
             this.get('/l/:lid/roster/:abbrev', views.roster);
             this.get('/l/:lid/roster/:abbrev/:season', views.roster);

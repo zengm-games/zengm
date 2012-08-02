@@ -1,0 +1,66 @@
+<script type="text/javascript">
+$(document).ready(function() {
+  bbgm.dropdown($('#history_select_season'));
+});
+</script>
+
+<form action="/l/{{g.lid}}/history" method="GET" class="form-inline pull-right">
+  <select id="history_select_season" name="season" class="season">
+    {{#seasons}}
+      <option value="{{season}}"{{#if selected}} selected="selected"{{/if}}>{{season}} season</option>
+    {{/seasons}}
+  </select>
+</form>
+
+<h1>{{season}} Season Summary</h1>
+
+<p></p>
+<div class="row-fluid">
+  <div class="span4">
+    <h4>League Champions</h4>
+    <p><strong><a href="/l/{{g.lid}}/roster/{{champ.abbrev}}/{{season}}">{{ champ.region}} {{ champ.name}}</a></strong></p>
+    <h4>Best Record</h4>
+    <p>East: <a href="/l/{{g.lid}}/roster/{{bre.abbrev}}/{{season}}">{{awards.bre.region}} {{awards.bre.name}}</a> ({{awards.bre.won}}-{{awards.bre.lost}})<br>
+    West: <a href="/l/{{g.lid}}/roster/{{brw.abbrev}}/{{season}}">{{awards.brw.region}} {{awards.brw.name}}</a> ({{awards.brw.won}}-{{awards.brw.lost}})<br></p>
+    <h4>Most Valueable Player</h4>
+    <p><strong><a href="/l/{{g.lid}}/player/{{awards.mvp.pid}}">{{awards.mvp.name}}</a></strong> (<a href="/l/{{g.lid}}/roster/{{awards.mvp.abbrev}}/{{season}}">{{awards.mvp.abbrev}}</a>)<br>
+    {{round awards.mvp.pts 1}} pts, {{round awards.mvp.trb 1}} reb, {{round awards.mvp.ast 1}} ast</p>
+    <h4>Defensive Player of the Year</h4>
+    <p><strong><a href="/l/{{g.lid}}/player/{{awards.dpoy.pid}}">{{awards.dpoy.name}}</a></strong> (<a href="/l/{{g.lid}}/roster/{{awards.dpoy.abbrev}}/{{season}}">{{awards.dpoy.abbrev}}</a>)<br>
+    {{round awards.dpoy.trb 1}} reb, {{round awards.dpoy.blk 1}} blk, {{round awards.dpoy.stl 1}} stl</p>
+    <h4>Sixth Man of the Year</h4>
+    <p><strong><a href="/l/{{g.lid}}/player/{{awards.smoy.pid}}">{{awards.smoy.name}}</a></strong> (<a href="/l/{{g.lid}}/roster/{{awards.smoy.abbrev}}/{{season}}">{{awards.smoy.abbrev}}</a>)<br>
+    {{round awards.smoy.pts 1}} pts, {{round awards.smoy.trb 1}} reb, {{round awards.smoy.ast 1}} ast</p>
+    <h4>Rookie of the Year</h4>
+    <p><strong><a href="/l/{{g.lid}}/player/{{awards.roy.pid}}">{{awards.roy.name}}</a></strong> (<a href="/l/{{g.lid}}/roster/{{awards.roy.abbrev}}/{{season}}">{{awards.roy.abbrev}}</a>)<br>
+    {{round awards.roy.pts 1}} pts, {{round awards.roy.trb 1}} reb, {{round awards.roy.ast 1}} ast</p>
+  </div>
+  <div class="span4">
+    <h4>All-League Teams</h4>
+    <h5>First Team</h5>
+    {{#awards.allLeague}}
+      <a href="/l/{{../g.lid}}/player/{{pid}}">{{name}}</a> (<a href="/l/{{../g.lid}}/roster/{{abbrev}}/{{../season}}">{{abbrev}}</a>)<br>
+      {% if loop.index == 5 %}
+        <br>
+        <h5>Second Team</h5>
+      {% elif loop.index == 10 %}
+        <br>
+        <h5>Third Team</h5>
+      {% endif %}
+    {{/awards.allLeague}}
+  </div>
+  <div class="span4">
+    <h4>All-Defensive Teams</h4>
+    <h5>First Team</h5>
+    {{#awards.allDefensive}}
+      <a href="/l/{{../g.lid}}/player/{{pid}}">{{name}}</a> (<a href="/l/{{../g.lid}}/roster/{{abbrev}}/{{../season}}">{{abbrev}}</a>)<br>
+      {% if loop.index == 5 %}
+        <br>
+        <h5>Second Team</h5>
+      {% elif loop.index == 10 %}
+        <br>
+        <h5>Third Team</h5>
+      {% endif %}
+    {{/awards.allDefensive}}
+  </div>
+</div>

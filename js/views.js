@@ -278,6 +278,43 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         });
     }
 
+    function history(req) {
+        beforeLeague(req, function () {
+            var attributes, season, seasonAttributes, seasons;
+
+            season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
+            season = helpers.validateSeason(season);
+
+            // If playoffs aren't over, season awards haven't been set
+            if (g.phase <= c.PHASE_PLAYOFFS) {
+                // View last season by default
+                if (season === g.season) {
+                    season -= 1;
+                }
+                seasons = helpers.getSeasons(season, g.season);  // Don't show this season as an option
+            } else {
+                seasons = helpers.getSeasons(season);  // Show this season as an option
+            }
+
+            if (season < g.startingSeason) {
+                helpers.error("There is no league history yet. Check back after the playoffs.");
+                return;
+            }
+
+            g.dbl.transaction("awards").objectStore("awards").get(season).onsuccess = function (event) {
+                var awards, data, template;
+
+                awards = event.target.result;
+
+                data = {title: season + " Season Summary - League " + g.lid};
+                template = Handlebars.templates.history;
+                data.league_content = template({g: g, awards: awards, seasons: seasons, season: season});
+
+                bbgm.ajaxUpdate(data);
+            };
+        });
+    }
+
     function roster(req) {
         beforeLeague(req, function () {
             var abbrev, attributes, currentSeason, ratings, season, seasons, sortable, stats, teams, tid;
@@ -426,8 +463,8 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 seasons = helpers.getSeasons(season);  // Show this season as an option
             }
 
-            if (g.phase < c.PHASE_DRAFT && season < g.startingSeason) {
-                helpers.error("There is no draft history yet. Check back after the season.");
+            if (season < g.startingSeason) {
+                helpers.error("There is no draft history yet. Check back after the draft.");
                 return;
             }
 
@@ -888,6 +925,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         standings: standings,
         playoffs: playoffs,
         finances: finances,
+        history: history,
         roster: roster,
         schedule: schedule,
         free_agents: free_agents,

@@ -276,6 +276,8 @@ define(["util/helpers"], function (helpers) {
                 for (j = 0; j < stats.length; j++) {
                     if (stats[j] === "gp") {
                         player.gp = ps.gp;
+                    } else if (stats[j] === "gs") {
+                        player.gs = ps.gs;
                     } else if (stats[j] === "fgp") {
                         if (ps.fga > 0) {
                             player.fgp = 100 * ps.fg / ps.fga;

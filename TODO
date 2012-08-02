@@ -1,10 +1,4 @@
 main todo
-- history view retired players
-  - why is abbrev ATL? should be FA if they were free agents last, otherwise it should be their last team
-- game simulation
-  - record who are starters, to get SMOY != MVP
-- retired players
-  - test
 - refactor new season code
   - abstract db access
 - retiring players
@@ -87,6 +81,11 @@ should db.getObjectStore always use readwrite?
 Replace showNoStats with a check of stats.length in db.getPlayer, at least in some cases?
 roster size check on new season
 - cpu teams with < 5 players should automatically sign free agents
+history view retired players
+- why is abbrev ATL? should be FA if they were free agents last, otherwise it should be their last team
+  - do i need a handlebars helper so that FA isn't linked anywhere when used as an abbrev?
+retired players
+- test
 
 ---
 

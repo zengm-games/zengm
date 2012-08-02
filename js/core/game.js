@@ -101,6 +101,9 @@ define(["db", "core/gameSim", "core/season", "util/helpers", "util/lock", "util/
                         playerStats[keys[i]] += that.team[t].player[p].stat[keys[i]];
                     }
                     playerStats.gp += 1;
+                    if (p < 5) {
+                        playerStats.gs += 1;
+                    }
                     playerStats.trb += that.team[t].player[p].stat.orb + that.team[t].player[p].stat.drb;
 
                     cursor.update(player);
@@ -252,6 +255,11 @@ define(["db", "core/gameSim", "core/season", "util/helpers", "util/lock", "util/
                 for (i = 0; i < keys.length; i++) {
                     gameStats.teams[t].players[p][keys[i]] = this.team[t].player[p].stat[keys[i]];
                 }
+                if (p < 5) {
+                    gameStats.teams[t].players[p].gs = 1;
+                } else {
+                    gameStats.teams[t].players[p].gs = 0;
+                }
                 gameStats.teams[t].players[p].trb = this.team[t].player[p].stat.orb + this.team[t].player[p].stat.drb;
                 gameStats.teams[t].players[p].pid = this.team[t].player[p].id;
             }
@@ -398,6 +406,7 @@ define(["db", "core/gameSim", "core/season", "util/helpers", "util/lock", "util/
                         var players, realTid, t;
 
                         players = event.target.result;
+                        players.sort(function (a, b) {  return a.rosterOrder - b.rosterOrder; });
                         realTid = players[0].tid;
                         t = {id: realTid, defense: 0, pace: 0, won: 0, lost: 0, cid: 0, did: 0, stat: {}, player: []};
                         transaction.objectStore("teams").get(realTid).onsuccess = function (event) {

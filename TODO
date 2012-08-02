@@ -1,6 +1,6 @@
 main todo
-- history view
-  - show retired players
+- history view retired players
+  - why is abbrev ATL? should be FA if they were free agents last, otherwise it should be their last team
 - game simulation
   - record who are starters, to get SMOY != MVP
 - retired players

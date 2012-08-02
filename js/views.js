@@ -302,15 +302,21 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             }
 
             g.dbl.transaction("awards").objectStore("awards").get(season).onsuccess = function (event) {
-                var awards, data, template;
+                var awards;
 
                 awards = event.target.result;
 
-                data = {title: season + " Season Summary - League " + g.lid};
-                template = Handlebars.templates.history;
-                data.league_content = template({g: g, awards: awards, seasons: seasons, season: season});
+                g.dbl.transaction("players").objectStore("players").index("retiredYear").getAll(season).onsuccess = function (event) {
+                    var retiredPlayers, data, template;
 
-                bbgm.ajaxUpdate(data);
+                    retiredPlayers = db.getPlayers(event.target.result, season, null, ["pid", "name", "abbrev", "age"], [], ["ovr"]);
+
+                    data = {title: season + " Season Summary - League " + g.lid};
+                    template = Handlebars.templates.history;
+                    data.league_content = template({g: g, awards: awards, retiredPlayers: retiredPlayers, seasons: seasons, season: season});
+
+                    bbgm.ajaxUpdate(data);
+                };
             };
         });
     }
@@ -628,7 +634,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 ratings = ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
                 stats = [];
 
-                players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings, {showNoStats: true});
+                players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings);
 
                 data = {title: "Player Ratings - League " + g.lid};
                 template = Handlebars.templates.playerRatings;

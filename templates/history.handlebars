@@ -54,3 +54,11 @@ $(document).ready(function() {
     {{/awards.allDefensive}}
   </div>
 </div>
+<div class="row-fluid">
+  <div class="span12">
+    <h4>Retired Players</h4>
+    {{#retiredPlayers}}
+      <a href="/l/{{../g.lid}}/player/{{pid}}">{{name}}</a> (<a href="/l/{{../g.lid}}/roster/{{abbrev}}/{{../season}}">{{abbrev}}</a>) {{ovr}} {{age}}<br>
+    {{/retiredPlayers}}
+  </div>
+</div>

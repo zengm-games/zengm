@@ -147,6 +147,10 @@ define(["util/helpers"], function (helpers) {
 
         options = typeof options !== "undefined" ? options : {};
 
+        if (stats.length === 0) {
+            options.showNoStats = true;
+        }
+
         player = {};
 
         // Attributes

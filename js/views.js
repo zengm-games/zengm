@@ -307,15 +307,25 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 awards = event.target.result;
 
                 g.dbl.transaction("players").objectStore("players").index("retiredYear").getAll(season).onsuccess = function (event) {
-                    var retiredPlayers, data, template;
+                    var retiredPlayers;
 
                     retiredPlayers = db.getPlayers(event.target.result, season, null, ["pid", "name", "abbrev", "age"], [], ["ovr"]);
 
-                    data = {title: season + " Season Summary - League " + g.lid};
-                    template = Handlebars.templates.history;
-                    data.league_content = template({g: g, awards: awards, retiredPlayers: retiredPlayers, seasons: seasons, season: season});
+                    db.getTeams(null, season, ["abbrev", "region", "name"], [], ["leagueChamps"], null, function(teams) {
+                        var champ, data, i, template;
 
-                    bbgm.ajaxUpdate(data);
+                        for (i = 0; i < teams.length; i++) {
+                            if (teams[i].leagueChamps) {
+                                champ = teams[i];
+                                break;
+                            }
+                        }
+
+                        data = {title: season + " Season Summary - League " + g.lid};
+                        template = Handlebars.templates.history;
+                        data.league_content = template({g: g, awards: awards, champ: champ, retiredPlayers: retiredPlayers, seasons: seasons, season: season});
+                        bbgm.ajaxUpdate(data);
+                    })
                 };
             };
         });

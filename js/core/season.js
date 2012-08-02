@@ -601,9 +601,13 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
 
     /*Creates a single day's schedule for an in-progress playoffs.*/
     function newSchedulePlayoffsDay(cb) {
+        var transaction;
+
+        transaction = g.dbl.transaction(["playoffSeries", "teams"], IDBTransaction.READ_WRITE);
+
         // Make today's  playoff schedule
-        g.dbl.transaction(["playoffSeries"], IDBTransaction.READ_WRITE).objectStore("playoffSeries").openCursor(IDBKeyRange.only(g.season)).onsuccess = function (event) {
-            var cursor, i, matchup, nextRound, numActiveTeams, playoffsOver, playoffSeries, rnd, series, tids;
+        transaction.objectStore("playoffSeries").openCursor(IDBKeyRange.only(g.season)).onsuccess = function (event) {
+            var cursor, i, matchup, nextRound, numActiveTeams, playoffsOver, playoffSeries, rnd, series, tids, winners;
 
             cursor = event.target.result;
             playoffSeries = cursor.value;
@@ -624,7 +628,31 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
             } else {
                 // The previous round is over. Either make a new round or go to the next phase.
 
-                // Who won?
+                // Record who won the league or conference championship
+                if (rnd === 3) {
+                    transaction.objectStore("teams").openCursor(IDBKeyRange.only(series[rnd][0].home.tid)).onsuccess = function (event) {
+                        var cursor, t;
+
+                        cursor = event.target.result;
+                        t = cursor.value;
+                        _.last(t.seasons).confChamps = true;
+                        if (series[rnd][0].home.won === 4) {
+                            _.last(t.seasons).leagueChamps = true;
+                        }
+                        cursor.update(t);
+                    };
+                    transaction.objectStore("teams").openCursor(IDBKeyRange.only(series[rnd][0].away.tid)).onsuccess = function (event) {
+                        var cursor, t;
+
+                        cursor = event.target.result;
+                        t = cursor.value;
+                        _.last(t.seasons).confChamps = true;
+                        if (series[rnd][0].away.won === 4) {
+                            _.last(t.seasons).leagueChamps = true;
+                        }
+                        cursor.update(t);
+                    };
+                }
 /*                winners = {}
                 r = g.dbex('SELECT sid, tid_home, tid_away, seed_home, seed_away, won_home, won_away FROM playoff_series WHERE round = :round AND season = :season ORDER BY sid ASC', round=current_round, season=g.season)
                 for row in r.fetchall()) {

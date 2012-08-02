@@ -18,7 +18,8 @@ $(document).ready(function() {
 <div class="row-fluid">
   <div class="span4">
     <h4>League Champions</h4>
-    <p><strong><a href="/l/{{g.lid}}/roster/{{champ.abbrev}}/{{season}}">{{ champ.region}} {{ champ.name}}</a></strong></p>
+    <p><strong><a href="/l/{{g.lid}}/roster/{{champ.abbrev}}/{{season}}">{{champ.region}} {{champ.name}}</a></strong><br>
+    <a href="/l/{{g.lid}}/playoffs/{{season}}">Playoffs Bracket</a></p>
     <h4>Best Record</h4>
     <p>East: <a href="/l/{{g.lid}}/roster/{{bre.abbrev}}/{{season}}">{{awards.bre.region}} {{awards.bre.name}}</a> ({{awards.bre.won}}-{{awards.bre.lost}})<br>
     West: <a href="/l/{{g.lid}}/roster/{{brw.abbrev}}/{{season}}">{{awards.brw.region}} {{awards.brw.name}}</a> ({{awards.brw.won}}-{{awards.brw.lost}})<br></p>

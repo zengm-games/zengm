@@ -1,6 +1,4 @@
 main todo
-- show league champions in history view
-  - record league champs, division champs, and playoff teams each season
 - AI signing free agents
 - refactor new season code
   - abstract db access

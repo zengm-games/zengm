@@ -716,10 +716,15 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
             }
 
             // All League Team - same sort as MVP
-            awards.allLeague = [];
+            awards.allLeague = [{title: "First Team", players: []}];
             for (i = 0; i < 15; i++) {
                 p = players[i];
-                awards.allLeague.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.pts, trb: p.trb, ast: p.ast});
+                if (i === 5) {
+                    awards.allLeague.push({title: "Second Team", players: []});
+                } else if (i === 10) {
+                    awards.allLeague.push({title: "Third Team", players: []});
+                }
+                _.last(awards.allLeague).players.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.pts, trb: p.trb, ast: p.ast});
             }
 
             // Defensive Player of the Year
@@ -728,10 +733,15 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
             awards.dpoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.trb, blk: p.blk, stl: p.stl};
 
             // All Defensive Team - same sort as DPOY
-            awards.allDefensive = [];
+            awards.allDefensive = [{title: "First Team", players: []}];
             for (i = 0; i < 15; i++) {
                 p = players[i];
-                awards.allDefensive.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.trb, blk: p.blk, stl: p.stl});
+                if (i === 5) {
+                    awards.allDefensive.push({title: "Second Team", players: []});
+                } else if (i === 10) {
+                    awards.allDefensive.push({title: "Third Team", players: []});
+                }
+                _.last(awards.allDefensive).players.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.trb, blk: p.blk, stl: p.stl});
             }
 
             attributes = ["tid", "abbrev", "region", "name", "cid"];
@@ -755,7 +765,7 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
                         break;
                     }
                 }
-
+console.log(awards);
                 g.dbl.transaction("awards", IDBTransaction.READ_WRITE).objectStore("awards").add(awards);
             });
         };

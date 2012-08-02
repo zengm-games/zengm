@@ -37,30 +37,20 @@ $(document).ready(function() {
   </div>
   <div class="span4">
     <h4>All-League Teams</h4>
-    <h5>First Team</h5>
     {{#awards.allLeague}}
-      <a href="/l/{{../g.lid}}/player/{{pid}}">{{name}}</a> (<a href="/l/{{../g.lid}}/roster/{{abbrev}}/{{../season}}">{{abbrev}}</a>)<br>
-      {% if loop.index == 5 %}
-        <br>
-        <h5>Second Team</h5>
-      {% elif loop.index == 10 %}
-        <br>
-        <h5>Third Team</h5>
-      {% endif %}
+      <h5>{{title}}</h5>
+      {{#players}}
+        <a href="/l/{{../../g.lid}}/player/{{pid}}">{{name}}</a> (<a href="/l/{{../../g.lid}}/roster/{{abbrev}}/{{../../season}}">{{abbrev}}</a>)<br>
+      {{/players}}
     {{/awards.allLeague}}
   </div>
   <div class="span4">
     <h4>All-Defensive Teams</h4>
-    <h5>First Team</h5>
     {{#awards.allDefensive}}
-      <a href="/l/{{../g.lid}}/player/{{pid}}">{{name}}</a> (<a href="/l/{{../g.lid}}/roster/{{abbrev}}/{{../season}}">{{abbrev}}</a>)<br>
-      {% if loop.index == 5 %}
-        <br>
-        <h5>Second Team</h5>
-      {% elif loop.index == 10 %}
-        <br>
-        <h5>Third Team</h5>
-      {% endif %}
+      <h5>{{title}}</h5>
+      {{#players}}
+        <a href="/l/{{../../g.lid}}/player/{{pid}}">{{name}}</a> (<a href="/l/{{../../g.lid}}/roster/{{abbrev}}/{{../../season}}">{{abbrev}}</a>)<br>
+      {{/players}}
     {{/awards.allDefensive}}
   </div>
 </div>

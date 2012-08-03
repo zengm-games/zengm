@@ -525,10 +525,10 @@ t.defense = 0.25;
 
                     // Decrease free agent demands and let AI teams sign them
                     freeAgents.decreaseDemands(function () {
-                        freeAgents.autoSign();
+                        freeAgents.autoSign(function () {
+                            cbPlayGames();
+                        });
                     });
-
-                    cbPlayGames();
                 } else {
                     season.newSchedulePlayoffsDay(function (num_active_teams, playoffsOver) {
                         // If season.newSchedulePlayoffsDay didn't move the phase to 4, then

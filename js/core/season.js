@@ -1,4 +1,4 @@
-define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/playMenu", "util/random"], function (db, contractNegotiation, player, helpers, playMenu, random) {
+define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "util/helpers", "util/playMenu", "util/random"], function (db, contractNegotiation, freeAgents, player, helpers, playMenu, random) {
     "use strict";
 
     // This should be called after the phase-specific stuff runs. It needs to be a separate function like this to play nice with async stuff.
@@ -75,8 +75,9 @@ define(["db", "core/contractNegotiation", "core/player", "util/helpers", "util/p
                         cursorP.update(p);
                         cursorP.continue();
                     } else {
-//                            // AI teams sign free agents
-//                            free_agents_auto_sign()
+                        // AI teams sign free agents
+                        freeAgents.autoSign();
+
                         newPhaseCb(c.PHASE_PRESEASON, phaseText);
                     }
                 };

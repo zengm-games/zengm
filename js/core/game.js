@@ -1,4 +1,4 @@
-define(["db", "core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMenu", "util/random"], function (db, gameSim, season, helpers, lock, playMenu, random) {
+define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMenu", "util/random"], function (db, freeAgents, gameSim, season, helpers, lock, playMenu, random) {
     "use strict";
 
     function Game() {
@@ -524,8 +524,9 @@ t.defense = 0.25;
                     num_active_teams = g.numTeams;
 
                     // Decrease free agent demands and let AI teams sign them
-//                    free_agents_decrease_demands();
-//                    free_agents_auto_sign();
+                    freeAgents.decreaseDemands(function () {
+                        freeAgents.autoSign();
+                    });
 
                     cbPlayGames();
                 } else {

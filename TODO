@@ -1,7 +1,5 @@
 main todo
-- AI signing free agents
-  - free_agents_auto_sign in season.js and game.js
-  - free_agents_decrease_demands in game.js
+- AI signing free agents, core.freeAgents.autoSign
 - refactor new season code
   - abstract db access
 - other views
@@ -33,6 +31,7 @@ strategic issues
   - game results from user's team
   - players retiring from user's team
   - league champions
+- AI modules that contain functions which are called to determine if players are resigned, etc.
 
 ---
 

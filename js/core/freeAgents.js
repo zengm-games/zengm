@@ -2,7 +2,7 @@
  * @name core.freeAgents
  * @namespace Functions related to free agents that didn't make sense to put anywhere else.
  */
-define([], function () {
+define(["db", "util/random"], function (db, random) {
     "use strict";
 
     /**
@@ -16,44 +16,87 @@ define([], function () {
     function autoSign(cb) {
         var transaction;
 
-        /*transaction = g.dbl.transaction(["players", "releasedPlayers"], "readwrite");
+        transaction = g.dbl.transaction(["players", "releasedPlayers"], "readwrite");
 
         transaction.objectStore("players").index("tid").getAll(c.PLAYER_FREE_AGENT).onsuccess = function (event) {
+            var i, numPlayersOnRoster, players, signTeam, tids;
 
-        };*/
-/*        // Build freeAgents containing player ids and desired contracts
-        freeAgents = [];
-        r = g.dbex("SELECT pa.pid, pa.contractAmount, pa.contractExp FROM playerAttributes as pa, playerRatings as pr WHERE pa.tid = :tid AND pa.pid = pr.pid AND pr.season = :season ORDER BY pr.ovr + 2*pr.pot DESC", tid=c.PLAYER_FREE_AGENT, season=g.season);
-        for pid, amount, expiration in r.fetchall() {
-            freeAgents.push([pid, amount, expiration, false]);
+            // List of free agents, sorted by value
+            players = event.target.result;
+            players.sort(function (a, b) {  return (_.last(b.ratings).ovr + 2 * _.last(b.ratings).pot) - (_.last(a.ratings).ovr + 2 * _.last(a.ratings).pot); });
 
-        // Randomly order teams and let them sign free agents
-        tids = list(xrange(30));
-        random.shuffle(tids);
-        for i in xrange(30) {
-            tid = tids[i];
+            // Randomly order teams
+            tids = [];
+            for (i = 0; i < g.numTeams; i++) {
+                tids.push(i);
+            }
+            random.shuffle(tids);
 
-            if (tid == g.userTid) {
-                continue;  // Skip the user"s team
+            signTeam = function (ti) {
+                var tid;
 
-            r = g.dbex("SELECT count(*) FROM playerAttributes WHERE tid = :tid", tid=tid);
-            numPlayers, = r.fetchone();
-            payroll = getPayroll(tid);
-            while payroll < g.salaryCap and numPlayers < 15) {
-                j = 0;
-                newPlayer = false;
-                for pid, amount, expiration, signed in freeAgents) {
-                    if (amount + payroll <= g.salaryCap and not signed and numPlayers < 15) {
-                        g.dbex("UPDATE playerAttributes SET tid = :tid, contractAmount = :contractAmount, contractExp = :contractExp WHERE pid = :pid", tid=tid, contractAmount=amount, contractExp=expiration, pid=pid);
-                        freeAgents[j][-1] = true;  // Mark player signed
-                        newPlayer = true;
-                        numPlayers += 1;
-                        payroll += amount;
-                        rosterAutoSort(tid);
-                    j += 1;
-                if (not newPlayer) {
-                    break;*/
-        cb();
+                tid = tids[ti];
+
+                // Skip the user's team
+                if (tid === g.userTid && ti <= tids.length) {
+                    signTeam(ti + 1);
+                    return;
+                }
+
+                // Run callback when all teams have had a turn to sign players
+                if (ti === tids.length) {
+                    cb();
+                    return;
+                }
+
+                db.getNumPlayersOnRoster(transaction, tid, function (numPlayersOnRoster) {
+                    db.getPayroll(transaction, tid, function (payroll) {
+                        var i, newPlayer, p;
+
+                        newPlayer = false;
+
+                        if (payroll < g.salaryCap && numPlayersOnRoster < 15) {
+                            for (i = 0; i < players.length; i++) {
+                                if (players[0].contractAmount + payroll <= g.salaryCap) {
+                                    p = players.shift();
+                                    p.tid = tid;
+                                    db.putPlayer(transaction, p);
+                                    newPlayer = true;
+                                }
+                            }
+                        }
+
+                        if (newPlayer) {
+                            db.rosterAutoSort(transaction, tid);
+                        }
+
+                        if (ti <= tids.length) {
+                            signTeam(ti + 1);
+                        }
+                    });
+                });
+            };
+
+            signTeam(0);
+
+/*                r = g.dbex("SELECT count(*) FROM playerAttributes WHERE tid = :tid", tid=tid);
+                numPlayers, = r.fetchone();
+                payroll = getPayroll(tid);
+                while payroll < g.salaryCap and numPlayers < 15) {
+                    j = 0;
+                    newPlayer = false;
+                    for pid, amount, expiration, signed in freeAgents) {
+                        if (amount + payroll <= g.salaryCap and not signed and numPlayers < 15) {
+                            g.dbex("UPDATE playerAttributes SET tid = :tid, contractAmount = :contractAmount, contractExp = :contractExp WHERE pid = :pid", tid=tid, contractAmount=amount, contractExp=expiration, pid=pid);
+                            freeAgents[j][-1] = true;  // Mark player signed
+                            newPlayer = true;
+                            numPlayers += 1;
+                            payroll += amount;
+                            rosterAutoSort(tid);
+                        j += 1;
+                    if (not newPlayer) {
+                        break;*/
+        };
     }
 
     /**

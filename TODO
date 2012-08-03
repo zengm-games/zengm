@@ -40,7 +40,9 @@ BUGS
 league database error when playoffs end
 game simulation stops when a link is clicked, but then restarts when another link is clicked? wtf
 - This shouldn't happen, right? Views are read only.
-playoffs scheduling is fucked up. used to work. now only one series progresses at a time
+playoffs scheduling is fucked up. used to work.
+- now only one series progresses at a time
+- playoff games put multiple entries in game log?
 
 ---
 

@@ -1,5 +1,7 @@
 main todo
 - AI signing free agents
+  - free_agents_auto_sign in season.js and game.js
+  - free_agents_decrease_demands in game.js
 - refactor new season code
   - abstract db access
 - other views
@@ -10,6 +12,8 @@ main todo
   - league leaders
   - dashboard
 - comments in season.js and elsewhere
+- move to new window button, like gmail, that will open a view in a new window with a minimal UI
+- data binding/updating, in the parent window as well as other windows
 strategic issues
 - reassess how money is stored (ones, thousands, millions?)
 - is localStorage fast enough for game_attributes, and possibly other stuff, like trades and contract negotiation?
@@ -90,6 +94,7 @@ history view retired players
   - do i need a handlebars helper so that FA isn't linked anywhere when used as an abbrev?
 retired players
 - test
+add team dropdown to ratings and stats views
 
 ---
 
@@ -161,8 +166,6 @@ Single page application
 - When a simulation is done (or a player is signed, or whatever), the current page should be reloaded
 - during page reloads or back/forward... what about handling deeper content in URLs? i.e., what box score is being viewed? what year? what stat is sorted? what page in rankings? etc.
 - when a form uses redirect_or_json, the URL isn't updated. not sure what the best way to fix that is.
-
-move to new window button, like gmail, that will open a view in a new window with a minimal UI
 
 play button requirements
 - colors - is this a good idea?

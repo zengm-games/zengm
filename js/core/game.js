@@ -374,13 +374,8 @@ define(["db", "core/gameSim", "core/season", "util/helpers", "util/lock", "util/
             season.getSchedule(num_active_teams / 2, function (schedule) {
                 var j, matchup, teams, teams_loaded, tid, transaction;
 
-//                    tids_today = [];
                 for (j = 0; j < schedule.length; j++) {
                     matchup = schedule[j];
-//                        g.dbex('UPDATE schedule SET in_progress_timestamp = :in_progress_timestamp WHERE gid = :gid', in_progress_timestamp=int(time.time()), gid=game['gid'])
-//                        tids_today.push(matchup.homeTid);
-//                        tids_today.push(matchup.awayTid);
-//                        tids_today = list(set(tids_today))  // Unique list
                 }
 
                 transaction = g.dbl.transaction(["games", "players", "playoffSeries", "releasedPlayers", "schedule", "teams"], IDBTransaction.READ_WRITE);
@@ -495,15 +490,6 @@ t.defense = 0.25;
                             }
                         };
                     };
-
-                    // Only send team data for today's active teams
-/*                    if (tids_today.indexOf(tid) >= 0) {
-console.log(tid);
-                        teams.push(team(tid))
-                    }
-                    else {
-                        teams.push({'id': tid})
-                    }*/
                 }
                 if (schedule.length === 0 && !playoffsContinue) {
                     cbNoGames();

@@ -265,7 +265,12 @@ define(["util/helpers"], function (helpers) {
                 }
             } else {
                 // Multiple seasons
-                ps = pa.stats;
+                ps = [];
+                for (j = 0; j < pa.stats.length; j++) {
+                    if (pa.stats[j].playoffs === false) {
+                        ps.push(pa.stats[j]);
+                    }
+                }
             }
         }
 

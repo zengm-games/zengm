@@ -16,7 +16,7 @@ define([], function () {
     function autoSign(cb) {
         var transaction;
 
-        /*transaction = g.dbl.transaction(["players", "releasedPlayers"], IDBTransaction.READ_WRITE);
+        /*transaction = g.dbl.transaction(["players", "releasedPlayers"], "readwrite");
 
         transaction.objectStore("players").index("tid").getAll(c.PLAYER_FREE_AGENT).onsuccess = function (event) {
 
@@ -65,7 +65,7 @@ define([], function () {
      * @param {function()} cb Callback.
      */
     function decreaseDemands(cb) {
-        g.dbl.transaction("players", IDBTransaction.READ_WRITE).objectStore("players").index("tid").openCursor(c.PLAYER_FREE_AGENT).onsuccess = function (event) {
+        g.dbl.transaction("players", "readwrite").objectStore("players").index("tid").openCursor(c.PLAYER_FREE_AGENT).onsuccess = function (event) {
             var cursor, p;
 
             cursor = event.target.result;

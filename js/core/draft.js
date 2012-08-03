@@ -4,7 +4,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
     function generatePlayers() {
         var agingYears, baseRating, draftYear, i, p, playerStore, pot, profile, profiles;
 
-        playerStore = g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
+        playerStore = g.dbl.transaction(["players"], "readwrite").objectStore("players");
         profiles = ["Point", "Wing", "Big", "Big", ""];
         for (i = 0; i < 70; i++) {
             baseRating = random.randInt(0, 19);
@@ -57,7 +57,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
         var pids, playerStore;
 
         pids = [];
-        playerStore = g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
+        playerStore = g.dbl.transaction(["players"], "readwrite").objectStore("players");
         playerStore.index("tid").getAll(c.PLAYER_UNDRAFTED).onsuccess = function (event) {
             var draftOrder, pick, pid, playersAll, selection;
 

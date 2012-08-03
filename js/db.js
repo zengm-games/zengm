@@ -100,9 +100,9 @@ define(["util/helpers"], function (helpers) {
             return ot; // Return original transaction
         }
         if (objectStore === null) {
-            return g.dbl.transaction(transactionObjectStores, IDBTransaction.READ_WRITE);
+            return g.dbl.transaction(transactionObjectStores, "readwrite");
         }
-        return g.dbl.transaction(transactionObjectStores, IDBTransaction.READ_WRITE).objectStore(objectStore);
+        return g.dbl.transaction(transactionObjectStores, "readwrite").objectStore(objectStore);
     }
 
     /**

@@ -35,7 +35,7 @@ define(["db", "core/player", "util/helpers", "util/lock", "util/playMenu", "util
             return;
         }
 
-        playerStore = g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
+        playerStore = g.dbl.transaction(["players"], "readwrite").objectStore("players");
         playerStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
             var numPlayersOnRoster;
 
@@ -186,7 +186,7 @@ define(["db", "core/player", "util/helpers", "util/lock", "util/playMenu", "util
 /*            r = g.dbex("SELECT MAX(rosterOrder) + 1 FROM playerAttributes WHERE tid = :tid", tid = g.userTid);
             rosterOrder, = r.fetchone();*/
 
-            g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players").openCursor(pid).onsuccess = function (event) {
+            g.dbl.transaction(["players"], "readwrite").objectStore("players").openCursor(pid).onsuccess = function (event) {
                 var cursor, p;
 
                 cursor = event.target.result;

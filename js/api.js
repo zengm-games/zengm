@@ -80,7 +80,7 @@ define(["db", "views", "core/draft", "core/game", "core/player", "core/season", 
 
     function rosterReorder(sortedPids, cb) {
         // Update rosterOrder
-        g.dbl.transaction("players", IDBTransaction.READ_WRITE).objectStore("players").index("tid").openCursor(g.userTid).onsuccess = function (event) {
+        g.dbl.transaction("players", "readwrite").objectStore("players").index("tid").openCursor(g.userTid).onsuccess = function (event) {
             var cursor, i, p;
 
             cursor = event.target.result;
@@ -105,7 +105,7 @@ define(["db", "views", "core/draft", "core/game", "core/player", "core/season", 
 
         error = null;
 
-        transaction = g.dbl.transaction(["players", "releasedPlayers"], IDBTransaction.READ_WRITE);
+        transaction = g.dbl.transaction(["players", "releasedPlayers"], "readwrite");
         playerStore = transaction.objectStore("players");
 
         playerStore.index("tid").count(g.userTid).onsuccess = function (event) {
@@ -204,7 +204,7 @@ define(["db", "views", "core/draft", "core/game", "core/player", "core/season", 
         draftOrder = JSON.parse(localStorage.getItem("league" + g.lid + "DraftOrder"));
         pick = draftOrder.shift();
         if (pick.tid === g.userTid) {
-            playerStore = g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
+            playerStore = g.dbl.transaction(["players"], "readwrite").objectStore("players");
             draft.selectPlayer(pick, pid, playerStore, cb);
             localStorage.setItem("league" + g.lid + "DraftOrder", JSON.stringify(draftOrder));
         } else {

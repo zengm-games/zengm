@@ -378,7 +378,7 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
                     matchup = schedule[j];
                 }
 
-                transaction = g.dbl.transaction(["games", "players", "playoffSeries", "releasedPlayers", "schedule", "teams"], IDBTransaction.READ_WRITE);
+                transaction = g.dbl.transaction(["games", "players", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
 
                 teams = [];
                 teams_loaded = 0;

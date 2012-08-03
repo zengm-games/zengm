@@ -5,7 +5,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
         var l, leagueStore;
 
         l = {tid: tid};
-        leagueStore = g.dbm.transaction(["leagues"], IDBTransaction.READ_WRITE).objectStore("leagues");
+        leagueStore = g.dbm.transaction(["leagues"], "readwrite").objectStore("leagues");
         leagueStore.add(l).onsuccess = function (event) {
             var t;
 
@@ -27,7 +27,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                     };
 
                     // Probably is fastest to use this transaction for everything done to create a new league
-                    transaction = g.dbl.transaction(["players", "teams"], IDBTransaction.READ_WRITE);
+                    transaction = g.dbl.transaction(["players", "teams"], "readwrite");
 
                     // teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league.
                     teamStore = transaction.objectStore("teams");
@@ -99,7 +99,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
     }
 
     function remove(lid) {
-        g.dbm.transaction(["leagues"], IDBTransaction.READ_WRITE).objectStore("leagues").delete(lid);
+        g.dbm.transaction(["leagues"], "readwrite").objectStore("leagues").delete(lid);
         g.indexedDB.deleteDatabase("league" + lid);
         localStorage.removeItem("league" + g.lid + "GameAttributes");
         localStorage.removeItem("league" + g.lid + "Negotiations");

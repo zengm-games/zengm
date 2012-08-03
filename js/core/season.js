@@ -14,7 +14,7 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
         helpers.setGameAttributes({season: g.season + 1});
         phaseText = g.season + " preseason";
 
-        transaction = g.dbl.transaction(["players", "teams"], IDBTransaction.READ_WRITE);
+        transaction = g.dbl.transaction(["players", "teams"], "readwrite");
 
         // Add row to team stats and season attributes
         transaction.objectStore("teams").openCursor().onsuccess = function (event) {
@@ -90,7 +90,7 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
 
         phaseText = g.season + " regular season";
 
-        transaction = g.dbl.transaction(["players", "releasedPlayers", "teams"], IDBTransaction.READ_WRITE);
+        transaction = g.dbl.transaction(["players", "releasedPlayers", "teams"], "readwrite");
         playerStore = transaction.objectStore("players");
 
         done = 0;
@@ -206,10 +206,10 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
             }
 
             row = {season: g.season, currentRound: 0, series: series};
-            g.dbl.transaction(["playoffSeries"], IDBTransaction.READ_WRITE).objectStore("playoffSeries").add(row);
+            g.dbl.transaction(["playoffSeries"], "readwrite").objectStore("playoffSeries").add(row);
 
             // Add row to team stats and team season attributes
-            g.dbl.transaction(["teams"], IDBTransaction.READ_WRITE).objectStore("teams").openCursor().onsuccess = function (event) {
+            g.dbl.transaction(["teams"], "readwrite").objectStore("teams").openCursor().onsuccess = function (event) {
                 var cursor, i, key, playoffStats, seasonStats, team;
 
                 cursor = event.target.result;
@@ -234,7 +234,7 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
                         cursor.update(team);
 
                         // Add row to player stats
-                        g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players").index("tid").openCursor(team.tid).onsuccess = function (event) {
+                        g.dbl.transaction(["players"], "readwrite").objectStore("players").index("tid").openCursor(team.tid).onsuccess = function (event) {
                             var cursorP, key, p, playerPlayoffStats;
 
                             cursorP = event.target.result;
@@ -268,7 +268,7 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
         phaseText = g.season + " before draft";
 
         // Check for retiring players
-        g.dbl.transaction("players", IDBTransaction.READ_WRITE).objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) { // All non-retired players
+        g.dbl.transaction("players", "readwrite").objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) { // All non-retired players
             var age, cont, cursor, excessAge, excessPot, i, maxAge, minPot, p, pot, update;
 
             update = false;
@@ -321,7 +321,7 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
                 cursor.continue();
             } else {
                 // Remove released players' salaries from payrolls
-                releasedPlayersStore = g.dbl.transaction("releasedPlayers", IDBTransaction.READ_WRITE).objectStore("releasedPlayers");
+                releasedPlayersStore = g.dbl.transaction("releasedPlayers", "readwrite").objectStore("releasedPlayers");
                 releasedPlayersStore.index("contractExp").getAll(g.season).onsuccess = function (event) {
                     var i, releasedPlayers;
 
@@ -361,7 +361,7 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
 
         phaseText = g.season + " resign players";
 
-        playerStore = g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
+        playerStore = g.dbl.transaction(["players"], "readwrite").objectStore("players");
 
         // Resign players or they become free agents
         playerStore.index("tid").openCursor(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
@@ -405,7 +405,7 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
         // Delete all current negotiations to resign players
         contractNegotiation.cancelAll();
 
-        playerStore = g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players");
+        playerStore = g.dbl.transaction(["players"], "readwrite").objectStore("players");
 
         // Reset contract demands of current free agents
         // This IDBKeyRange only works because c.PLAYER_UNDRAFTED is -2 and c.PLAYER_FREE_AGENT is -1
@@ -606,7 +606,7 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
     function newSchedulePlayoffsDay(cb) {
         var transaction;
 
-        transaction = g.dbl.transaction(["playoffSeries", "teams"], IDBTransaction.READ_WRITE);
+        transaction = g.dbl.transaction(["playoffSeries", "teams"], "readwrite");
 
         // Make today's  playoff schedule
         transaction.objectStore("playoffSeries").openCursor(g.season).onsuccess = function (event) {
@@ -797,7 +797,7 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
                         break;
                     }
                 }
-                g.dbl.transaction("awards", IDBTransaction.READ_WRITE).objectStore("awards").add(awards);
+                g.dbl.transaction("awards", "readwrite").objectStore("awards").add(awards);
 
                 cb();
             });
@@ -825,7 +825,7 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
                 row.awayName = teams[row.awayTid].name;
                 schedule.push(row);
             }
-            scheduleStore = g.dbl.transaction(["schedule"], IDBTransaction.READ_WRITE).objectStore("schedule");
+            scheduleStore = g.dbl.transaction(["schedule"], "readwrite").objectStore("schedule");
             scheduleStore.getAll().onsuccess = function (event) {
                 var currentSchedule, i;
 

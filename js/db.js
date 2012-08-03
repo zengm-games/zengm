@@ -536,7 +536,7 @@ define(["util/helpers"], function (helpers) {
         }
 
         // Update rosterOrder
-        playerStore.index("tid").openCursor(IDBKeyRange.only(tid)).onsuccess = function (event) {
+        playerStore.index("tid").openCursor(tid).onsuccess = function (event) {
             var cursor, i, p;
 
             cursor = event.target.result;

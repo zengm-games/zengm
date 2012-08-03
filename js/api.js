@@ -80,7 +80,7 @@ define(["db", "views", "core/draft", "core/game", "core/player", "core/season", 
 
     function rosterReorder(sortedPids, cb) {
         // Update rosterOrder
-        g.dbl.transaction("players", IDBTransaction.READ_WRITE).objectStore("players").index("tid").openCursor(IDBKeyRange.only(g.userTid)).onsuccess = function (event) {
+        g.dbl.transaction("players", IDBTransaction.READ_WRITE).objectStore("players").index("tid").openCursor(g.userTid).onsuccess = function (event) {
             var cursor, i, p;
 
             cursor = event.target.result;
@@ -108,7 +108,7 @@ define(["db", "views", "core/draft", "core/game", "core/player", "core/season", 
         transaction = g.dbl.transaction(["players", "releasedPlayers"], IDBTransaction.READ_WRITE);
         playerStore = transaction.objectStore("players");
 
-        playerStore.index("tid").count(IDBKeyRange.only(g.userTid)).onsuccess = function (event) {
+        playerStore.index("tid").count(g.userTid).onsuccess = function (event) {
             var numPlayersOnRoster;
 
             numPlayersOnRoster = event.target.result;
@@ -143,7 +143,7 @@ define(["db", "views", "core/draft", "core/game", "core/player", "core/season", 
         season = helpers.validateSeason(season);
 
         games = [];
-        g.dbl.transaction(["games"]).objectStore("games").index("season").openCursor(IDBKeyRange.only(season)).onsuccess = function (event) {
+        g.dbl.transaction(["games"]).objectStore("games").index("season").openCursor(season).onsuccess = function (event) {
             var content, cursor, game, home, opp, oppPts, pts, template, tidMatch, won;
 
             cursor = event.target.result;

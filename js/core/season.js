@@ -96,7 +96,7 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
         done = 0;
         userTeamSizeError = false;
         checkRosterSize = function (tid) {
-            playerStore.index("tid").getAll(IDBKeyRange.only(tid)).onsuccess = function (event) {
+            playerStore.index("tid").getAll(tid).onsuccess = function (event) {
                 var i, numPlayersOnRoster, players, playersAll;
 
                 playersAll = event.target.result;
@@ -234,7 +234,7 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
                         cursor.update(team);
 
                         // Add row to player stats
-                        g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players").index("tid").openCursor(IDBKeyRange.only(team.tid)).onsuccess = function (event) {
+                        g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players").index("tid").openCursor(team.tid).onsuccess = function (event) {
                             var cursorP, key, p, playerPlayoffStats;
 
                             cursorP = event.target.result;
@@ -609,7 +609,7 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
         transaction = g.dbl.transaction(["playoffSeries", "teams"], IDBTransaction.READ_WRITE);
 
         // Make today's  playoff schedule
-        transaction.objectStore("playoffSeries").openCursor(IDBKeyRange.only(g.season)).onsuccess = function (event) {
+        transaction.objectStore("playoffSeries").openCursor(g.season).onsuccess = function (event) {
             var cursor, i, matchup, nextRound, numActiveTeams, playoffsOver, playoffSeries, rnd, series, tids, winners;
 
             cursor = event.target.result;
@@ -633,7 +633,7 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
 
                 // Record who won the league or conference championship
                 if (rnd === 3) {
-                    transaction.objectStore("teams").openCursor(IDBKeyRange.only(series[rnd][0].home.tid)).onsuccess = function (event) {
+                    transaction.objectStore("teams").openCursor(series[rnd][0].home.tid).onsuccess = function (event) {
                         var cursor, t;
 
                         cursor = event.target.result;
@@ -644,7 +644,7 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
                         }
                         cursor.update(t);
                     };
-                    transaction.objectStore("teams").openCursor(IDBKeyRange.only(series[rnd][0].away.tid)).onsuccess = function (event) {
+                    transaction.objectStore("teams").openCursor(series[rnd][0].away.tid).onsuccess = function (event) {
                         var cursor, t;
 
                         cursor = event.target.result;

@@ -57,7 +57,7 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
         for (t = 0; t < 2; t++) {
             this.writeTeamStats(t);
             for (p = 0; p < this.team[t].player.length; p++) {
-                playerStore.openCursor(IDBKeyRange.only(this.team[t].player[p].id)).onsuccess = function (event) {
+                playerStore.openCursor(this.team[t].player[p].id).onsuccess = function (event) {
                     var cursor, keys, p, player, playerStats, t;
                     cursor = event.target.result;
                     player = cursor.value;
@@ -119,7 +119,7 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
 
         // Record progress of playoff series, if appropriate
         if (this.playoffs && t === 0) {
-            this.transaction.objectStore("playoffSeries").openCursor(IDBKeyRange.only(g.season)).onsuccess = function (event) {
+            this.transaction.objectStore("playoffSeries").openCursor(g.season).onsuccess = function (event) {
                 var cursor, i, playoffRound, playoffSeries, series, won0;
 
                 cursor = event.target.result;
@@ -164,7 +164,7 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
         }
 
         // Team stats
-        this.transaction.objectStore("teams").openCursor(IDBKeyRange.only(that.team[t].id)).onsuccess = function (event) {
+        this.transaction.objectStore("teams").openCursor(that.team[t].id).onsuccess = function (event) {
             var cursor, i, keys, team, teamSeason, teamStats, won;
 
             cursor = event.target.result;

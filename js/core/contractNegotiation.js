@@ -45,7 +45,7 @@ define(["db", "core/player", "util/helpers", "util/lock", "util/playMenu", "util
                 return;
             }
 
-            playerStore.openCursor(IDBKeyRange.only(pid)).onsuccess = function (event) {
+            playerStore.openCursor(pid).onsuccess = function (event) {
                 var cursor, maxOffers, negotiations, player, playerAmount, playerYears;
 
                 cursor = event.target.result;
@@ -186,7 +186,7 @@ define(["db", "core/player", "util/helpers", "util/lock", "util/playMenu", "util
 /*            r = g.dbex("SELECT MAX(rosterOrder) + 1 FROM playerAttributes WHERE tid = :tid", tid = g.userTid);
             rosterOrder, = r.fetchone();*/
 
-            g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players").openCursor(IDBKeyRange.only(pid)).onsuccess = function (event) {
+            g.dbl.transaction(["players"], IDBTransaction.READ_WRITE).objectStore("players").openCursor(pid).onsuccess = function (event) {
                 var cursor, p;
 
                 cursor = event.target.result;

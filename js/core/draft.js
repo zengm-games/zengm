@@ -104,7 +104,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
             return;
 */
 
-        playerStore.openCursor(IDBKeyRange.only(pid)).onsuccess = function (event) {
+        playerStore.openCursor(pid).onsuccess = function (event) {
             var cursor, i, player, rookieSalaries, teams, years;
 
             cursor = event.target.result;

@@ -229,7 +229,7 @@ define(["db", "util/random"], function (db, random) {
         addToFreeAgents(transaction, p, g.phase, cb);
     }
 
-    function generateRatings(profile, baseRating, pot) {
+    function generateRatings(profile, baseRating, pot, season) {
         var i, key, profileId, profiles, ratingKeys, ratings, rawRating, rawRatings, sigmas;
 
         if (profile === 'Point') {
@@ -263,7 +263,7 @@ define(["db", "util/random"], function (db, random) {
             ratings[key] = rawRatings[i];
         }
 
-        ratings.season = g.startingSeason;
+        ratings.season = season ? season : g.startingSeason;
         ratings.ovr = ovr(ratings);
         ratings.pot = pot;
 
@@ -382,7 +382,7 @@ define(["db", "util/random"], function (db, random) {
         }
         p.rosterOrder = 666;  // Will be set later
         p.ratings = [];
-        p.ratings.push(generateRatings(profile, baseRating, pot));
+        p.ratings.push(generateRatings(profile, baseRating, pot, draftYear));
 
         minHgt = 69;  // 5'9"
         maxHgt = 89;  // 7'5"

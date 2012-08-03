@@ -2,7 +2,7 @@
  * @name core.freeAgents
  * @namespace Functions related to free agents that didn't make sense to put anywhere else.
  */
-define(["db", "util/random"], function (db, random) {
+define(["db", "core/player", "util/random"], function (db, player, random) {
     "use strict";
 
     /**
@@ -25,6 +25,11 @@ define(["db", "util/random"], function (db, random) {
             players = event.target.result;
             players.sort(function (a, b) {  return (_.last(b.ratings).ovr + 2 * _.last(b.ratings).pot) - (_.last(a.ratings).ovr + 2 * _.last(a.ratings).pot); });
 
+            if (players.length === 0) {
+                cb();
+                return;
+            }
+
             // Randomly order teams
             tids = [];
             for (i = 0; i < g.numTeams; i++) {
@@ -34,6 +39,7 @@ define(["db", "util/random"], function (db, random) {
 
             signTeam = function (ti) {
                 var tid;
+console.log('signTeam ' + ti)
 
                 tid = tids[ti];
 
@@ -43,59 +49,51 @@ define(["db", "util/random"], function (db, random) {
                     return;
                 }
 
-                // Run callback when all teams have had a turn to sign players
+                // Run callback when all teams have had a turn to sign players. This extra iteration of signTeam is required in case the user's team is the last one.
                 if (ti === tids.length) {
                     cb();
                     return;
                 }
 
-                db.getNumPlayersOnRoster(transaction, tid, function (numPlayersOnRoster) {
+                transaction.objectStore("players").index("tid").count(tid).onsuccess = function (event) {
+                    var numPlayersOnRoster;
+
+                    numPlayersOnRoster = event.target.result;
+
                     db.getPayroll(transaction, tid, function (payroll) {
-                        var i, newPlayer, p;
+                        var i, foundPlayer, p;
 
-                        newPlayer = false;
-
-                        if (payroll < g.salaryCap && numPlayersOnRoster < 15) {
+                        if (numPlayersOnRoster < 15) {
                             for (i = 0; i < players.length; i++) {
-                                if (players[0].contractAmount + payroll <= g.salaryCap) {
+                                if (players[0].contractAmount + payroll <= g.salaryCap || players[0].contractAmount === g.minContract) {
                                     p = players.shift();
                                     p.tid = tid;
-                                    db.putPlayer(transaction, p);
-                                    newPlayer = true;
+                                    p = player.addStatsRow(p, tid);
+                                    db.putPlayer(transaction, p, function () {
+                                        db.rosterAutoSort(transaction, tid, function () {
+                                            if (ti <= tids.length) {
+                                                signTeam(ti + 1);
+                                            }
+                                        });
+                                    });
+                                    numPlayersOnRoster += 1;
+                                    payroll += p.contractAmount;
+                                    foundPlayer = true;
+                                    break;  // Only add one free agent
                                 }
                             }
                         }
 
-                        if (newPlayer) {
-                            db.rosterAutoSort(transaction, tid);
-                        }
-
-                        if (ti <= tids.length) {
-                            signTeam(ti + 1);
+                        if (!foundPlayer) {
+                            if (ti <= tids.length) {
+                                signTeam(ti + 1);
+                            }
                         }
                     });
-                });
+                };
             };
 
             signTeam(0);
-
-/*                r = g.dbex("SELECT count(*) FROM playerAttributes WHERE tid = :tid", tid=tid);
-                numPlayers, = r.fetchone();
-                payroll = getPayroll(tid);
-                while payroll < g.salaryCap and numPlayers < 15) {
-                    j = 0;
-                    newPlayer = false;
-                    for pid, amount, expiration, signed in freeAgents) {
-                        if (amount + payroll <= g.salaryCap and not signed and numPlayers < 15) {
-                            g.dbex("UPDATE playerAttributes SET tid = :tid, contractAmount = :contractAmount, contractExp = :contractExp WHERE pid = :pid", tid=tid, contractAmount=amount, contractExp=expiration, pid=pid);
-                            freeAgents[j][-1] = true;  // Mark player signed
-                            newPlayer = true;
-                            numPlayers += 1;
-                            payroll += amount;
-                            rosterAutoSort(tid);
-                        j += 1;
-                    if (not newPlayer) {
-                        break;*/
         };
     }
 

@@ -1,5 +1,4 @@
 main todo
-- AI signing free agents, core.freeAgents.autoSign
 - refactor new season code
   - abstract db access
 - other views

@@ -478,6 +478,7 @@ define(["db", "util/random"], function (db, random) {
         contract: contract,
         develop: develop,
         generate: generate,
+        ovr: ovr,
         release: release
     };
 });

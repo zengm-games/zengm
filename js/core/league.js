@@ -10,7 +10,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
      * 
      * @memberOf core.league
      * @param {number} tid The team ID for the team the user wants to manage.
-     * @param {string} playerGeneration Either "random" to generate random players or "nba2k12" to load NBA rosters.
+     * @param {string} playerGeneration Either "random" to generate random players or "nba2012" to load NBA rosters.
      */
     function create(tid, playerGeneration) {
         var l, leagueStore;
@@ -56,10 +56,26 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                         });
                     }
 
-                    if (playerGeneration === "nba2k12") {
+                    if (playerGeneration === "nba2012") {
+                        // Load players from file
+                        $.getJSON("/data/nba2012.json", function (players) {
+                            var cont, i, p, playerStore;
 
+                            playerStore = g.dbl.transaction("players", "readwrite").objectStore("players");  // Transaction used above is closed by now
+                            for (i = 0; i < players.length; i++) {
+                                p = players[i];
+                                p.ratings[0].ovr = player.ovr(p.ratings[0]);
+                                p.face = faces.generate();
+                                if (p.tid === c.PLAYER_FREE_AGENT) {
+                                    cont = player.contract(p.ratings[0]);
+                                    p.contractAmount = cont.amount;
+                                    p.contractExp = cont.exp;
+                                }
+                                db.putPlayer(playerStore, p);
+                            }
+                        });
                     } else {
-                    // Generate new players
+                        // Generate new players
                         playerStore = transaction.objectStore("players");
                         profiles = ["Point", "Wing", "Big", ""];
                         baseRatings = [30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 19, 19];

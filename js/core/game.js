@@ -446,7 +446,7 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
                             // Would be better if these were scaled by average min played and end
 //                                t.pace = sum([t['player'][i].composite_rating.pace for i in xrange(n_players)]) / 7
 //                                t.defense. = sum([t['player'][i].composite_rating.defense for i in xrange(n_players)]) / 7 // 0 to 0.5
-t.pace = 100;
+t.pace = 120;
 t.defense = 0.25;
                             t.defense /= 4; // This gives the percentage pts subtracted from the other team's normal FG%
 

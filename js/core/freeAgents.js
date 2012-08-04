@@ -39,7 +39,6 @@ define(["db", "core/player", "util/random"], function (db, player, random) {
 
             signTeam = function (ti) {
                 var tid;
-console.log('signTeam ' + ti)
 
                 tid = tids[ti];
 

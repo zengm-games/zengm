@@ -6,7 +6,6 @@ main todo
   - league leaders
   - dashboard
 - game simulation realism - compare with real stats
-  - pace and defense should be calculated in game.js
   - bigs should get more boards
   - bigs should have higher FG%, even with less shots
   - smalls should have lower FG%, even with more shots

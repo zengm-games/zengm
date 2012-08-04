@@ -444,16 +444,20 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
                             }
 
                             // Would be better if these were scaled by average min played and end
-//                                t.pace = sum([t['player'][i].composite_rating.pace for i in xrange(n_players)]) / 7
-//                                t.defense. = sum([t['player'][i].composite_rating.defense for i in xrange(n_players)]) / 7 // 0 to 0.5
-t.pace = 120;
-t.defense = 0.25;
+                            t.pace = 0;
+                            for (i = 0; i < n_players; i++) {
+                                t.pace += t.player[i].composite_rating.pace;
+                            }
+                            t.pace /= n_players;
+                            t.defense = 0;
+                            for (i = 0; i < n_players; i++) {
+                                t.defense += t.player[i].composite_rating.defense;
+                            }
+                            t.defense /= n_players;
                             t.defense /= 4; // This gives the percentage pts subtracted from the other team's normal FG%
 
 
                             t.stat = {min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0};
-    //console.log(t);
-//                            teams[tid] = t;
                             teams.push(t);
                             teams_loaded += 1;
                             if (teams_loaded === 30) {

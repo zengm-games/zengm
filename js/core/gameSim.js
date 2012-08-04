@@ -248,7 +248,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
 
     GameSim.prototype.is_assist = function () {
-        if (Math.random() < 0.6) {
+        if (Math.random() < 0.65) {
             return true;
         }
         return false;
@@ -321,7 +321,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         var p, ratios;
 
         if (this.is_assist()) {
-            ratios = this.rating_array("assist_ratio", this.o);
+            ratios = this.rating_array("assist_ratio", this.o, 2);
             p = this.players_on_court[this.o][this.pick_player(ratios, shooter)];
             this.record_stat(this.o, p, "ast");
         }
@@ -352,14 +352,20 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
 
 
-    GameSim.prototype.rating_array = function (rating, t) {
+    GameSim.prototype.rating_array = function (rating, t, power) {
         var array, i, p;
+
+        power = typeof power !== "undefined" ? power : null;
 
         array = [0, 0, 0, 0, 0];
         for (i = 0; i < 5; i++) {
             p = this.players_on_court[t][i];
             array[i] = this.team[t].player[p].composite_rating[rating];
+            if (power) {
+                array[i] = Math.pow(array[i], power);
+            }
         }
+
         return array;
     };
 

@@ -678,6 +678,29 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         });
     }
 
+    function teamStats(req) {
+        beforeLeague(req, function () {
+            var attributes, season, seasonAttributes, seasons, stats;
+
+            season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
+            season = helpers.validateSeason(season);
+            seasons = helpers.getSeasons(season);
+
+
+            attributes = ["abbrev"];
+            stats = ["gp", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "oppPts"];
+            seasonAttributes = ["won", "lost"];
+            db.getTeams(null, season, attributes, stats, seasonAttributes, null, function (teams) {
+                var data, template;
+
+                data = {title: "Team Stats - League " + g.lid};
+                template = Handlebars.templates.teamStats;
+                data.league_content = template({g: g, teams: teams, seasons: seasons});
+                bbgm.ajaxUpdate(data);
+            });
+        });
+    }
+
     function player_(req) {
         beforeLeague(req, function () {
             var pid;
@@ -949,6 +972,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         game_log: game_log,
         playerRatings: playerRatings,
         playerStats: playerStats,
+        teamStats: teamStats,
         player: player_,
         negotiationList: negotiationList,
         negotiation: negotiation,

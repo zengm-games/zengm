@@ -1,11 +1,17 @@
 main todo
+- team stats
 - other views
   - trade
-  - team stats
   - team history
     - record  when teams make playoffs
   - league leaders
   - dashboard
+- game simulation realism
+  - bigs should get more boards
+  - bigs should have higher FG%, even with less shots
+  - smalls should have lower FG%, even with more shots
+  - pgs should get more assists
+  - smalls should get less blocks
 - comments in season.js and elsewhere
 - move to new window button, like gmail, that will open a view in a new window with a minimal UI
 - data binding/updating, in the parent window as well as other windows

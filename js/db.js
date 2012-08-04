@@ -376,7 +376,7 @@ define(["util/helpers"], function (helpers) {
     }
 
     function getTeam(ta, season, attributes, stats, seasonAttributes) {
-        var j, team, ts, tsa;
+        var i, j, team, ts, tsa;
 
         team = {};
 
@@ -417,6 +417,82 @@ define(["util/helpers"], function (helpers) {
         }
 
         // Team stats
+        ts = undefined;
+        if (stats.length > 0) {
+            if (season !== null) {
+                // Single season
+                for (j = 0; j < ta.stats.length; j++) {
+                    if (ta.stats[j].season === season && ta.stats[j].playoffs === false) {
+                        ts = ta.stats[j];
+                        break;
+                    }
+                }
+            } else {
+                // Multiple seasons
+                ts = [];
+                for (j = 0; j < ta.stats.length; j++) {
+                    if (ta.stats[j].playoffs === false) {
+                        ts.push(ta.stats[j]);
+                    }
+                }
+            }
+        }
+
+        function filterStats(team, ts, stats) {
+            var j;
+
+            if (typeof ts !== "undefined" && ts.gp > 0) {
+                for (j = 0; j < stats.length; j++) {
+                    if (stats[j] === "gp") {
+                        team.gp = ts.gp;
+                    } else if (stats[j] === "fgp") {
+                        if (ts.fga > 0) {
+                            team.fgp = 100 * ts.fg / ts.fga;
+                        } else {
+                            team.fgp = 0;
+                        }
+                    } else if (stats[j] === "tpp") {
+                        if (ts.tpa > 0) {
+                            team.tpp = 100 * ts.tp / ts.tpa;
+                        } else {
+                            team.tpp = 0;
+                        }
+                    } else if (stats[j] === "ftp") {
+                        if (ts.fta > 0) {
+                            team.ftp = 100 * ts.ft / ts.fta;
+                        } else {
+                            team.ftp = 0;
+                        }
+                    } else if (stats[j] === "season") {
+                        team.season = ts.season;
+                    } else {
+                        team[stats[j]] = ts[stats[j]] / ts.gp;
+                    }
+                }
+            } else {
+                for (j = 0; j < stats.length; j++) {
+                    if (stats[j] === "season") {
+                        team.season = ts.season;
+                    } else {
+                        team[stats[j]] = 0;
+                    }
+                }
+            }
+
+            return team;
+        }
+
+        if (typeof ts !== "undefined" && ts.length >= 0) {
+            team.stats = [];
+            // Multiple seasons
+            for (i = 0; i < ts.length; i++) {
+                team.stats.push({});
+                team.stats[i] = filterStats(team.stats[i], ts[i], stats);
+            }
+        } else {
+            // Single seasons
+            team = filterStats(team, ts, stats);
+        }
 
         return team;
     }

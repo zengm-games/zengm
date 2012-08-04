@@ -4,7 +4,7 @@ $(document).ready(function() {
 
   bbgm.datatableSinglePage($('#team_stats'), 23, [
     {{#teams}}
-	    ['<a href="/l/{{../g.lid}}/roster/{{abbrev}}">{{abbrev}}</a>', '{{gp}}', '{{won}}', '{{lost}}', '{{round fg 1}}', '{{round fga 1}}', '{{roundWinp fgp}}', '{{round tp 1}}', '{{round tpa 1}}', '{{round tpp 1}}', '{{round ft 1}}', '{{round fta 1}}', '{{round ftp 1}}', '{{round orb 1}}', '{{round drb 1}}', '{{round trb 1}}', '{{round ast 1}}', '{{round tov 1}}', '{{round stl 1}}', '{{round blk 1}}', '{{round pf 1}}', '{{round pts 1}}', '{{round oppPts 1}}'],
+	    ['<a href="/l/{{../g.lid}}/roster/{{abbrev}}">{{abbrev}}</a>', '{{gp}}', '{{won}}', '{{lost}}', '{{round fg 1}}', '{{round fga 1}}', '{{round fgp 1}}', '{{round tp 1}}', '{{round tpa 1}}', '{{round tpp 1}}', '{{round ft 1}}', '{{round fta 1}}', '{{round ftp 1}}', '{{round orb 1}}', '{{round drb 1}}', '{{round trb 1}}', '{{round ast 1}}', '{{round tov 1}}', '{{round stl 1}}', '{{round blk 1}}', '{{round pf 1}}', '{{round pts 1}}', '{{round oppPts 1}}'],
     {{/teams}}
   ]);
 });

@@ -902,13 +902,14 @@ function program1(depth0,data,depth1) {
   else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
   else { stack1 = stack3; }
   buffer += escapeExpression(stack1) + "', '";
+  stack1 = 1;
   foundHelper = helpers.fgp;
-  stack1 = foundHelper || depth0.fgp;
-  foundHelper = helpers.roundWinp;
-  stack2 = foundHelper || depth0.roundWinp;
-  if(typeof stack2 === functionType) { stack1 = stack2.call(depth0, stack1, { hash: {} }); }
-  else if(stack2=== undef) { stack1 = helperMissing.call(depth0, "roundWinp", stack1, { hash: {} }); }
-  else { stack1 = stack2; }
+  stack2 = foundHelper || depth0.fgp;
+  foundHelper = helpers.round;
+  stack3 = foundHelper || depth0.round;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
   buffer += escapeExpression(stack1) + "', '";
   stack1 = 1;
   foundHelper = helpers.tp;
@@ -4005,13 +4006,14 @@ function program1(depth0,data,depth1) {
   else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
   else { stack1 = stack3; }
   buffer += escapeExpression(stack1) + "', '";
+  stack1 = 1;
   foundHelper = helpers.fgp;
-  stack1 = foundHelper || depth0.fgp;
-  foundHelper = helpers.roundWinp;
-  stack2 = foundHelper || depth0.roundWinp;
-  if(typeof stack2 === functionType) { stack1 = stack2.call(depth0, stack1, { hash: {} }); }
-  else if(stack2=== undef) { stack1 = helperMissing.call(depth0, "roundWinp", stack1, { hash: {} }); }
-  else { stack1 = stack2; }
+  stack2 = foundHelper || depth0.fgp;
+  foundHelper = helpers.round;
+  stack3 = foundHelper || depth0.round;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
   buffer += escapeExpression(stack1) + "', '";
   stack1 = 1;
   foundHelper = helpers.tp;

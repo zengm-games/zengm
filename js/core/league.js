@@ -1,7 +1,18 @@
+/**
+ * @name core.league
+ * @namespace Creating and removing leagues.
+ */
 define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "util/random"], function (db, player, season, helpers, playMenu, random) {
     "use strict";
 
-    function create(tid) {
+    /**
+     * Create a new league.
+     * 
+     * @memberOf core.league
+     * @param {number} tid The team ID for the team the user wants to manage.
+     * @param {string} playerGeneration Either "random" to generate random players or "nba2k12" to load NBA rosters.
+     */
+    function create(tid, playerGeneration) {
         var l, leagueStore;
 
         l = {tid: tid};
@@ -45,31 +56,35 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                         });
                     }
 
+                    if (playerGeneration === "nba2k12") {
+
+                    } else {
                     // Generate new players
-                    playerStore = transaction.objectStore("players");
-                    profiles = ["Point", "Wing", "Big", ""];
-                    baseRatings = [30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 19, 19];
-                    pots = [70, 60, 50, 50, 55, 45, 65, 35, 50, 45, 55, 55, 40, 40];
-                    for (t = -1; t < 30; t++) {
-                        goodNeutralBad = random.randInt(-1, 1);  // determines if this will be a good team or not
-                        random.shuffle(pots);
-                        for (n = 0; n < 14; n++) {
-                            profile = profiles[random.randInt(0, profiles.length - 1)];
-                            agingYears = random.randInt(0, 13);
-                            draftYear = g.startingSeason - 1 - agingYears;
+                        playerStore = transaction.objectStore("players");
+                        profiles = ["Point", "Wing", "Big", ""];
+                        baseRatings = [30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 19, 19];
+                        pots = [70, 60, 50, 50, 55, 45, 65, 35, 50, 45, 55, 55, 40, 40];
+                        for (t = -1; t < 30; t++) {
+                            goodNeutralBad = random.randInt(-1, 1);  // determines if this will be a good team or not
+                            random.shuffle(pots);
+                            for (n = 0; n < 14; n++) {
+                                profile = profiles[random.randInt(0, profiles.length - 1)];
+                                agingYears = random.randInt(0, 13);
+                                draftYear = g.startingSeason - 1 - agingYears;
 
-                            p = player.generate(t, 19, profile, baseRatings[n], pots[n], draftYear);
-                            p = player.develop(p, agingYears, true);
-                            if (n < 5) {
-                                p = player.bonus(p, goodNeutralBad * random.randInt(0, 20), true);
-                            } else {
-                                p = player.bonus(p, 0, true);
-                            }
-                            if (t === -1) {  // Free agents
-                                p = player.bonus(p, -15, false);
-                            }
+                                p = player.generate(t, 19, profile, baseRatings[n], pots[n], draftYear);
+                                p = player.develop(p, agingYears, true);
+                                if (n < 5) {
+                                    p = player.bonus(p, goodNeutralBad * random.randInt(0, 20), true);
+                                } else {
+                                    p = player.bonus(p, 0, true);
+                                }
+                                if (t === -1) {  // Free agents
+                                    p = player.bonus(p, -15, false);
+                                }
 
-                            db.putPlayer(playerStore, p);
+                                db.putPlayer(playerStore, p);
+                            }
                         }
                     }
 
@@ -98,6 +113,12 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
         };
     }
 
+    /**
+     * Delete an existing league.
+     * 
+     * @memberOf core.league
+     * @param {number} lid League ID.
+     */
     function remove(lid) {
         g.dbm.transaction(["leagues"], "readwrite").objectStore("leagues").delete(lid);
         g.indexedDB.deleteDatabase("league" + lid);

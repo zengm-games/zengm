@@ -57,7 +57,6 @@ define(["util/helpers"], function (helpers) {
             playoffSeriesStore = g.dbl.createObjectStore("playoffSeries", {keyPath: "season"});
             releasedPlayersStore = g.dbl.createObjectStore("releasedPlayers", {keyPath: "rid", autoIncrement: true});
             awardsStore = g.dbl.createObjectStore("awards", {keyPath: "season"});
-            // ... other stores go here later
 
             playerStore.createIndex("tid", "tid", {unique: false});
             playerStore.createIndex("draftYear", "draftYear", {unique: false});

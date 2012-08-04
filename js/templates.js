@@ -2212,7 +2212,7 @@ function program1(depth0,data) {
   if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
   else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  </select></label>\n  <button type=\"submit\" class=\"btn\">Create New League</button>  \n</form>\n";
+  buffer += "\n  </select></label>\n  <label><select name=\"players\">\n    <option value=\"random\">Random Players</option>\n    <option value=\"nba2k12\">2012 NBA Players</option>\n  </select></label>\n  <button type=\"submit\" class=\"btn\">Create New League</button>  \n</form>\n";
   return buffer;});
 templates['playButton'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;

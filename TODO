@@ -1,6 +1,4 @@
 main todo
-- refactor new season code
-  - abstract db access
 - other views
   - trade
   - team stats

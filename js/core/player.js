@@ -382,7 +382,11 @@ define(["db", "util/random"], function (db, random) {
         }
         p.rosterOrder = 666;  // Will be set later
         p.ratings = [];
-        p.ratings.push(generateRatings(profile, baseRating, pot, draftYear));
+        if (g.hasOwnProperty('season')) {
+            p.ratings.push(generateRatings(profile, baseRating, pot, draftYear));
+        } else {
+            p.ratings.push(generateRatings(profile, baseRating, pot, g.season));
+        }
 
         minHgt = 69;  // 5'9"
         maxHgt = 89;  // 7'5"

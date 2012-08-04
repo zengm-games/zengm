@@ -121,7 +121,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         } else if (req.method === "post") {
             tid = parseInt(req.params.tid, 10);
             if (tid >= 0 && tid <= 29) {
-                league.create(tid);
+                league.create(tid, req.params.players);
             }
         }
     }

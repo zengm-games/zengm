@@ -4191,7 +4191,7 @@ function program4(depth0,data) {
   
   return " selected=\"selected\"";}
 
-  buffer += "<script type=\"text/javascript\">\n$(document).ready(function() {\n  bbgm.dropdown($('#team_stats_select_season'));\n\n  bbgm.datatableSinglePage($('#team_stats'), 23, [\n    ";
+  buffer += "<script type=\"text/javascript\">\n$(document).ready(function() {\n  bbgm.dropdown($('#team_stats_select_season'));\n\n  bbgm.datatableSinglePage($('#team_stats'), 2, [\n    ";
   foundHelper = helpers.teams;
   stack1 = foundHelper || depth0.teams;
   tmp1 = self.programWithDepth(program1, data, depth0);

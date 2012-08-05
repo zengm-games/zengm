@@ -289,49 +289,86 @@ define(["db", "util/helpers"], function (db, helpers) {
      * @param {function(boolean, string)} cb Callback function. The first argument is a boolean for whether the trade was accepted or not. The second argumetn is a string containing a message to be dispalyed to the user.
      */
     function propose(cb) {
-        // Rewrite this, making sure to load the stuff from the database, validate it, and then propose the trade
-/*        tids = [g.userTid, otherTid];
-        pids = [userPids, otherPids];
+        if (g.phase >= c.PHASE_AFTER_TRADE_DEADLINE && g.phase <= c.PHASE_PLAYOFFS) {
+            cb(false, "Error! You're not allowed to make trades now.");
+            return;
+        }
 
-        if (g.phase >= c.PHASE_AFTER_TRADE_DEADLINE and g.phase <= c.PHASE_PLAYOFFS) {
-            return (false, "Error! You're not allowed to make trades now.");
+        getPlayers(function (userPids, otherPids) {
+            getOtherTid(function (otherTid) {
+                var pids, tids;
 
-        // The summary will return a warning if (there is a problem. In that case,
-        // that warning will already be pushed to the user so there is no need to
-        // return a redundant message here.
-        r = g.dbex("SELECT tid FROM trade");
-        otherTid, = r.fetchone();
-        s = summary(otherTid, userPids, otherPids);
-        if (len(s["warning"]) > 0) {
-            return (false, "");
+                tids = [g.userTid, otherTid];
+                pids = [userPids, otherPids];
 
-        value = [0.0, 0.0]  // "Value" of the players offered by each team
-        for i in xrange(2) {
-            if (len(pids[i]) > 0) {
-                pidsSql = ", ".join([str(pid) for pid in pids[i]]);
-                r = g.dbex("SELECT pa.pid, pa.contractAmount / 1000 AS contractAmount, :season - pa.bornYear AS age, pr.ovr, pr.pot FROM playerAttributes AS pa, playerRatings AS pr WHERE pa.pid IN (%s) AND pr.pid = pa.pid AND pr.season = :season" % (pidsSql,), season=g.season);
-                for p in r.fetchall() {
-                    value[i] += 10 ** (float(p["pot"]) / 10.0 + float(p["ovr"]) / 20.0 - float(p["age"]) / 10.0 - float(p["contractAmount"]) / 100000.0);
+                // The summary will return a warning if (there is a problem. In that case,
+                // that warning will already be pushed to the user so there is no need to
+                // return a redundant message here.
+                summary(otherTid, userPids, otherPids, function (s) {
+                    var done, i, playerStore, value;
 
-        if (value[0] > value[1] * 0.9) {
-            // Trade players;
-            for i in xrange(2) {
-                if (i == 0) {
-                    j = 1;
-                else if (i == 1) {
-                    j = 0;
-                for pid in pids[i]) {
-                    g.dbex("UPDATE playerAttributes SET tid = :tid WHERE pid = :pid", tid=tids[j], pid=pid);
+                    if (s.warning) {
+                        cb(false, null);
+                        return;
+                    }
 
-            // Auto-sort CPU team roster;
-            rosterAutoSort(tids[1]);
+                    playerStore = g.dbl.transaction("players", "readwrite").objectStore("players");
 
-            clear();
+                    done = 0;
+                    value = [0, 0];  // "Value" of the players offered by each team
+                    for (i = 0; i < 2; i++) {
+                        !function (i) {
+                            playerStore.index("tid").getAll(tids[i]).onsuccess = function (event) {
+                                var j, k, l, players;
 
-            return (true, 'Trade accepted! "Nice doing business with you!"');
-        else {
-            return (false, 'Trade rejected! "What, are you crazy?"');
-        }*/
+                                players = db.getPlayers(event.target.result, g.season, tids[i], ["pid", "contractAmount", "age"], [], ["ovr", "pot"]);
+                                players = _.filter(players[i], function (player) { return pids[i].indexOf(player.pid) >= 0; });
+                                value[i] = _.reduce(s.teams[i].trade, function (memo, player) { return memo + player.pot / 10 + player.ovr / 20 - player.age / 10 - player.contractAmount / 100000; }, 0);
+
+                                done += 1;
+                                if (done === 2) {
+                                    done = 0;
+
+                                    if (value[0] > value[1] * 0.9) {
+                                        // Trade players
+                                        for (j = 0; j < 2; j++) {
+                                            if (j === 0) {
+                                                k = 1;
+                                            } else if (j === 1) {
+                                                k = 0;
+                                            }
+
+                                            for (l = 0; l < pids[j].length; l++) {
+                                                playerStore.openCursor(pids[j][l]).onsuccess = function (event) {
+                                                    var cursor, p;
+
+                                                    cursor = event.target.result;
+                                                    p = cursor.value;
+                                                    p.tid = tids[k];
+                                                    cursor.update(p);
+
+                                                    done += 1;
+                                                    if (done === pids[j].length + pids[k].length) {
+                                                        // Auto-sort CPU team roster;
+                                                        db.rosterAutoSort(playerStore, tids[1], function () {
+                                                            clear();
+                                                            cb(true, 'Trade accepted! "Nice doing business with you!"');
+                                                        });
+                                                    }
+                                                };
+                                            }
+                                        }
+                                    } else {
+                                        cb(false, 'Trade rejected! "What, are you crazy?"');
+                                    }
+                                }
+                            };
+                        }(i);
+                    }
+                });
+            });
+        });
+
     }
 
     return {

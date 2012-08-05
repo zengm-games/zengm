@@ -6,6 +6,10 @@ main todo
     - teamName should just be name
   - after done, make unit tests. figure out how to deal with indexeddb in this context
     - test warnings in trade.summary
+- per 36 stats in team stats view
+  - add a dropdown (maybe make the dropdown handling code more general?)
+  - add an option to db.getPlayers
+- let free agents stay for 2 seasons before retiring, or make retirement probabilistic
 - other views
   - team history
     - record  when teams make playoffs

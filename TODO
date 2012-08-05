@@ -1,6 +1,10 @@
 main todo
 - trade
-  - after I get working, refactor, e.g. validateSavedTids crap should be in trade.js.
+  - switch structure of summary from dict of lists to list of dicts
+    - teamNames to teamName
+  - after I get working, refactor
+    - validateSavedTids crap should be in trade.js.
+    - trade.summary stuff should be automatic and stored in tradeStore
   - after done, make unit tests. figure out how to deal with indexeddb in this context
 - other views
   - team history

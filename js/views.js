@@ -499,13 +499,18 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                             otherRoster = db.getPlayers(event.target.result, g.season, g.userTid, attributes, stats, ratings, {showNoStats: true});
 
                             trade.summary(otherTid, userPids, otherPids, function (summary) {
-                                var data, teams, template;
+                                var data, teams, template, tradeSummary;
 
-                                teams = helpers.getTeams(g.userTid);
+// Somehow delete the entry for g.userTid
+                                teams = helpers.getTeams(otherTid);
+
+                                template = Handlebars.templates.tradeSummary;
+//disablePropose: {% if summary.warning|length > 0 or (summary.trade[0]|length == 0 and summary.trade[1]|length == 0) %} disabled="disabled"{% endif %}
+                                tradeSummary = template({g: g, summary: summary, salaryCap: g.salaryCap / 1000, disablePropose: true});
 
                                 data = {title: "Trade - League " + g.lid};
                                 template = Handlebars.templates.trade;
-                                data.league_content = template({g: g, userRoster: userRoster, otherRoster: otherRoster, userPids: userPids, otherPids: otherPids, summary: summary, teams: teams, otherTid: otherTid, message: message});
+                                data.league_content = template({g: g, userRoster: userRoster, otherRoster: otherRoster, userPids: userPids, otherPids: otherPids, summary: summary, teams: teams, otherTid: otherTid, message: message, tradeSummary: tradeSummary});
                                 bbgm.ajaxUpdate(data);
                             });
                         };

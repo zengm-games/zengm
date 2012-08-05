@@ -186,14 +186,15 @@ define(["db", "views", "core/draft", "core/game", "core/player", "core/season", 
 
     function tradeUpdate(userPids, otherPids, cb) {
         trade.updatePlayers(userPids, otherPids, function (userPids, otherPids) {
-            var s;
-            s = "";
-            cb(s, userPids, otherPids);
+            trade.getOtherTid(function (otherTid) {
+                trade.summary(otherTid, userPids, otherPids, function (summary) {
+                    var template, tradeSummary;
+                    template = Handlebars.templates.tradeSummary;
+                    tradeSummary = template({g: g, summary: summary});
+                    cb(tradeSummary, userPids, otherPids);
+                });
+            });
         });
-/*        r = g.dbex('SELECT tid FROM trade')
-        tid_other, = r.fetchone()
-        summary = trade.summary(tid_other, pids_user, pids_other)
-        s = render_template('trade_summary.html', summary=summary)*/
     }
 
     function draftUntilUserOrEnd(cb2) {

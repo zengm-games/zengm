@@ -517,9 +517,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             if (req.method === "post" && typeof req.params.clear !== "undefined") {
                 // Clear trade
                 trade.clear(function () {
-                    trade.getPlayers(function (userPids, otherPids) {
-                        showTrade(userPids, otherPids);
-                    });
+                    showTrade([], []);
                 });
             } else if (req.method  === "post" && typeof req.params.propose !== "undefined") {
                 // Propose trade

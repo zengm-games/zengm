@@ -55,6 +55,21 @@ define([], function () {
     }
 
     /**
+     * Gets the team ID for the team that the user is trading with.
+     * 
+     * @memberOf core.trade
+     * @param {function(number)} cb Callback function. The argument is the other team's tid.
+     */
+    function getOtherTid(cb) {
+        g.dbl.transaction("trade").objectStore("trade").get(0).onsuccess = function (event) {
+            var tr;
+
+            tr = event.target.result;
+            cb(tr.otherTid);
+        };
+    }
+
+    /**
      * Validates that players are allowed to be traded and updates the database.
      * 
      * If any of the player IDs submitted do not correspond with the two teams that are trading, they will be ignored.
@@ -195,10 +210,24 @@ function summary(otherTid, userPids, otherPids) {
     return s;
 
 
-function clear() {
-    /*Removes all players currently added to the trade.*/;
-    g.dbex("UPDATE trade SET userPids = :userPids, otherPids = :otherPids", userPids=pickle.dumps([]), other=pickle.dumps([]));
+    /**
+     * Remove all players currently added to the trade.
+     * 
+     * @memberOf core.trade
+     * @param {function()} cb Callback function.
+     */
+    function clear(cb) {
+        g.dbl.transaction("trade", "readwrite").objectStore("trade").openCursor(0).onsuccess = function (event) {
+            var cursor, tr;
 
+            cursor = event.target.result;
+            tr = cursor.value;
+            tr.userPids = [];
+            tr.otherPids = [];
+            cursor.update(tr);
+            cb();
+        };
+    }
 
 function propose(otherTid, userPids, otherPids) {
     /*Proposes the current trade in the database.;
@@ -212,18 +241,18 @@ function propose(otherTid, userPids, otherPids) {
     pids = [userPids, otherPids];
 
     if (g.phase >= c.PHASE_AFTER_TRADE_DEADLINE and g.phase <= c.PHASE_PLAYOFFS) {
-        return (false, "Error! You"re not allowed to make trades now.");
+        return (false, "Error! You're not allowed to make trades now.");
 
-    // The summary will return a warning if (there is a problem. In that case,;
-    // that warning will already be pushed to the user so there is no need to;
-    // return a redundant message here.;
+    // The summary will return a warning if (there is a problem. In that case,
+    // that warning will already be pushed to the user so there is no need to
+    // return a redundant message here.
     r = g.dbex("SELECT tid FROM trade");
     otherTid, = r.fetchone();
     s = summary(otherTid, userPids, otherPids);
     if (len(s["warning"]) > 0) {
         return (false, "");
 
-    value = [0.0, 0.0]  // "Value" of the players offered by each team;
+    value = [0.0, 0.0]  // "Value" of the players offered by each team
     for i in xrange(2) {
         if (len(pids[i]) > 0) {
             pidsSql = ", ".join([str(pid) for pid in pids[i]]);
@@ -246,13 +275,19 @@ function propose(otherTid, userPids, otherPids) {
 
         clear();
 
-        return (true, "Trade accepted! "Nice doing business with you!"");
+        return (true, 'Trade accepted! "Nice doing business with you!"');
     else {
-        return (false, "Trade rejected! "What, are you crazy?"");
+        return (false, 'Trade rejected! "What, are you crazy?"');
     }
 }
 
     return {
-        create: create
+        create: create,
+        getOtherTid: getOtherTid,
+        updatePlayers: updatePlayers,
+        getPlayers: getPlayers,
+        summary: summary,
+        clear: clear,
+        propose: propose
     };
 });

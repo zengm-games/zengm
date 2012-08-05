@@ -1,7 +1,8 @@
 main todo
 - trade
-  - switch structure of summary from dict of lists to list of dicts
-    - teamNames to teamName
+  - summary creation in views.js and api.js
+  - clear
+  - propose
   - after I get working, refactor
     - validateSavedTids crap should be in trade.js.
     - trade.summary stuff should be automatic and stored in tradeStore

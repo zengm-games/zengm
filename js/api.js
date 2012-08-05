@@ -1,6 +1,6 @@
 /*These are functions that do not return full pages (either JS objects or partial blocks of HTML) and are called from the client.*/
 
-define(["db", "views", "core/draft", "core/game", "core/player", "core/season", "util/helpers", "util/lock", "util/playMenu"], function (db, views, draft, game, player, season, helpers, lock, playMenu) {
+define(["db", "views", "core/draft", "core/game", "core/player", "core/season", "core/trade", "util/helpers", "util/lock", "util/playMenu"], function (db, views, draft, game, player, season, trade, helpers, lock, playMenu) {
     "use strict";
 
     /*This is kind of a hodgepodge that handles every request from the play
@@ -184,6 +184,18 @@ define(["db", "views", "core/draft", "core/game", "core/player", "core/season", 
         };
     }
 
+    function tradeUpdate(userPids, otherPids, cb) {
+        trade.updatePlayers(userPids, otherPids, function (userPids, otherPids) {
+            var s;
+            s = "";
+            cb(s, userPids, otherPids);
+        });
+/*        r = g.dbex('SELECT tid FROM trade')
+        tid_other, = r.fetchone()
+        summary = trade.summary(tid_other, pids_user, pids_other)
+        s = render_template('trade_summary.html', summary=summary)*/
+    }
+
     function draftUntilUserOrEnd(cb2) {
         playMenu.setStatus('Draft in progress...');
         var pids = draft.untilUserOrEnd(function (pids) {
@@ -231,6 +243,7 @@ define(["db", "views", "core/draft", "core/game", "core/player", "core/season", 
         rosterAutoSort: rosterAutoSort,
         rosterReorder: rosterReorder,
         rosterRelease: rosterRelease,
+        tradeUpdate: tradeUpdate,
         draftUntilUserOrEnd: draftUntilUserOrEnd,
         draftUser: draftUser,
         gameLogList: gameLogList,

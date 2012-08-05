@@ -486,17 +486,31 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                     playerStore = g.dbl.transaction("players").objectStore("players");
 
                     playerStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
-                        var attributes, ratings, stats, userRoster;
+                        var attributes, i, ratings, stats, userRoster;
 
                         attributes = ["pid", "name", "pos", "age", "contractAmount", "contractExp"];
                         ratings = ["ovr", "pot"];
                         stats = ["min", "pts", "trb", "ast"];
                         userRoster = db.getPlayers(event.target.result, g.season, g.userTid, attributes, stats, ratings, {showNoStats: true});
+                        for (i = 0; i < userRoster.length; i++) {
+                            if (userPids.indexOf(userRoster[i].pid) >= 0) {
+                                userRoster[i].selected = true;
+                            } else {
+                                userRoster[i].selected = false;
+                            }
+                        }
 
                         playerStore.index("tid").getAll(otherTid).onsuccess = function (event) {
-                            var otherRoster;
+                            var i, otherRoster;
 
                             otherRoster = db.getPlayers(event.target.result, g.season, g.userTid, attributes, stats, ratings, {showNoStats: true});
+                            for (i = 0; i < otherRoster.length; i++) {
+                                if (otherPids.indexOf(otherRoster[i].pid) >= 0) {
+                                    otherRoster[i].selected = true;
+                                } else {
+                                    otherRoster[i].selected = false;
+                                }
+                            }
 
                             trade.summary(otherTid, userPids, otherPids, function (summary) {
                                 var data, teams, template, tradeSummary;

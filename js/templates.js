@@ -1425,7 +1425,7 @@ function program1(depth0,data,depth1) {
   if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
   else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
   else { stack1 = stack3; }
-  buffer += escapeExpression(stack1) + "M through ";
+  buffer += escapeExpression(stack1) + "M thru ";
   foundHelper = helpers.contractExp;
   stack1 = foundHelper || depth0.contractExp;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -2551,7 +2551,7 @@ function program22(depth0,data) {
   if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
   else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
   else { stack1 = stack3; }
-  buffer += escapeExpression(stack1) + "M through ";
+  buffer += escapeExpression(stack1) + "M thru ";
   foundHelper = helpers.contractExp;
   stack1 = foundHelper || depth0.contractExp;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -3111,7 +3111,7 @@ function program1(depth0,data,depth1) {
   if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
   else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
   else { stack1 = stack3; }
-  buffer += escapeExpression(stack1) + "M through ";
+  buffer += escapeExpression(stack1) + "M thru ";
   foundHelper = helpers.contractExp;
   stack1 = foundHelper || depth0.contractExp;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -3202,18 +3202,18 @@ function program1(depth0,data,depth1) {
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "pot", { hash: {} }); }
   buffer += escapeExpression(stack1) + "', '$";
   stack1 = 1;
-  foundHelper = helpers.contract_amount;
-  stack2 = foundHelper || depth0.contract_amount;
+  foundHelper = helpers.contractAmount;
+  stack2 = foundHelper || depth0.contractAmount;
   foundHelper = helpers.round;
   stack3 = foundHelper || depth0.round;
   if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
   else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
   else { stack1 = stack3; }
-  buffer += escapeExpression(stack1) + "M through ";
-  foundHelper = helpers.contract_exp;
-  stack1 = foundHelper || depth0.contract_exp;
+  buffer += escapeExpression(stack1) + "M thru ";
+  foundHelper = helpers.contractExp;
+  stack1 = foundHelper || depth0.contractExp;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "contract_exp", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "contractExp", { hash: {} }); }
   buffer += escapeExpression(stack1) + "', '";
   stack1 = 1;
   foundHelper = helpers.min;
@@ -3234,8 +3234,8 @@ function program1(depth0,data,depth1) {
   else { stack1 = stack3; }
   buffer += escapeExpression(stack1) + "', '";
   stack1 = 1;
-  foundHelper = helpers.reb;
-  stack2 = foundHelper || depth0.reb;
+  foundHelper = helpers.trb;
+  stack2 = foundHelper || depth0.trb;
   foundHelper = helpers.round;
   stack3 = foundHelper || depth0.round;
   if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
@@ -3313,18 +3313,18 @@ function program4(depth0,data,depth1) {
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "pot", { hash: {} }); }
   buffer += escapeExpression(stack1) + "', '$";
   stack1 = 1;
-  foundHelper = helpers.contract_amount;
-  stack2 = foundHelper || depth0.contract_amount;
+  foundHelper = helpers.contractAmount;
+  stack2 = foundHelper || depth0.contractAmount;
   foundHelper = helpers.round;
   stack3 = foundHelper || depth0.round;
   if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
   else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
   else { stack1 = stack3; }
-  buffer += escapeExpression(stack1) + "M through ";
-  foundHelper = helpers.contract_exp;
-  stack1 = foundHelper || depth0.contract_exp;
+  buffer += escapeExpression(stack1) + "M thru ";
+  foundHelper = helpers.contractExp;
+  stack1 = foundHelper || depth0.contractExp;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "contract_exp", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "contractExp", { hash: {} }); }
   buffer += escapeExpression(stack1) + "', '";
   stack1 = 1;
   foundHelper = helpers.min;
@@ -3345,8 +3345,8 @@ function program4(depth0,data,depth1) {
   else { stack1 = stack3; }
   buffer += escapeExpression(stack1) + "', '";
   stack1 = 1;
-  foundHelper = helpers.reb;
-  stack2 = foundHelper || depth0.reb;
+  foundHelper = helpers.trb;
+  stack2 = foundHelper || depth0.trb;
   foundHelper = helpers.round;
   stack3 = foundHelper || depth0.round;
   if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
@@ -3403,7 +3403,13 @@ function program8(depth0,data) {
   
   return " selected=\"selected\"";}
 
-  buffer += "<script type=\"text/javascript\">\n$(document).ready(function() {\n  // Don't use the dropdown function because this needs to be a POST\n  $('#trade_select_team').change(function(event) {\n    $.ajax({\n      type: 'POST',\n      url: 'url_for(trade_, lid=g.lid)',\n      data: {'json': 1, 'abbrev': $('#trade_select_team').val()},\n      success: function (data) {\n        ajax_update(data);\n      },\n      dataType: 'json'\n    });\n  });\n\n  bbgm.datatableSinglePage($('#roster_user'), 5, [\n    ";
+  buffer += "<script type=\"text/javascript\">\n$(document).ready(function() {\n  // Don't use the dropdown function because this needs to be a POST\n  $('#trade_select_team').change(function(event) {\n    Davis.location.replace(new Davis.Request({\n      abbrev: $('#trade_select_team').val(),\n      fullPath: \"/l/";
+  foundHelper = helpers['g'];
+  stack1 = foundHelper || depth0['g'];
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/trade\",\n      method: \"post\"\n    }));\n  });\n\n  bbgm.datatableSinglePage($('#roster_user'), 5, [\n    ";
   foundHelper = helpers.userRoster;
   stack1 = foundHelper || depth0.userRoster;
   tmp1 = self.programWithDepth(program1, data, depth0);

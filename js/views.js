@@ -471,8 +471,8 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             }
 
             pid = typeof req.params.pid !== "undefined" ? Math.floor(pid) : null;
-            if (typeof req.params.abbrev !== "undefined") {
-                [newOtherTid, abbrev] = helpers.validateAbbrev(req.params.abbrev);
+            if (typeof req.raw.abbrev !== "undefined") {
+                [newOtherTid, abbrev] = helpers.validateAbbrev(req.raw.abbrev);
             } else {
                 newOtherTid = null;
             }
@@ -493,7 +493,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                         stats = ["min", "pts", "trb", "ast"];
                         userRoster = db.getPlayers(event.target.result, g.season, g.userTid, attributes, stats, ratings, {showNoStats: true});
 
-                        playerStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
+                        playerStore.index("tid").getAll(otherTid).onsuccess = function (event) {
                             var otherRoster;
 
                             otherRoster = db.getPlayers(event.target.result, g.season, g.userTid, attributes, stats, ratings, {showNoStats: true});
@@ -501,8 +501,8 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                             trade.summary(otherTid, userPids, otherPids, function (summary) {
                                 var data, teams, template, tradeSummary;
 
-// Somehow delete the entry for g.userTid
                                 teams = helpers.getTeams(otherTid);
+                                teams.splice(g.userTid, 1);  // Can't trade with yourself
 
                                 template = Handlebars.templates.tradeSummary;
 //disablePropose: {% if summary.warning|length > 0 or (summary.trade[0]|length == 0 and summary.trade[1]|length == 0) %} disabled="disabled"{% endif %}

@@ -2,26 +2,22 @@
 $(document).ready(function() {
   // Don't use the dropdown function because this needs to be a POST
   $('#trade_select_team').change(function(event) {
-    $.ajax({
-      type: 'POST',
-      url: 'url_for(trade_, lid=g.lid)',
-      data: {'json': 1, 'abbrev': $('#trade_select_team').val()},
-      success: function (data) {
-        ajax_update(data);
-      },
-      dataType: 'json'
-    });
+    Davis.location.replace(new Davis.Request({
+      abbrev: $('#trade_select_team').val(),
+      fullPath: "/l/{{g.lid}}/trade",
+      method: "post"
+    }));
   });
 
   bbgm.datatableSinglePage($('#roster_user'), 5, [
     {{#userRoster}}
-      [ '<input name="pids_user" type="checkbox" value="{{pid}}"{{#if selected}} checked="checked"{{/if}}>', '<a href="/l/{{../g.lid}}/player/{{pid}}">{{name}}</a>', '{{pos}}', '{{age}}', '{{ovr}}', '{{pot}}', '${{round contract_amount 1}}M through {{contract_exp}}', '{{round min 1}}', '{{round pts 1}}', '{{round reb 1}}', '{{round ast 1}}' ],
+      [ '<input name="pids_user" type="checkbox" value="{{pid}}"{{#if selected}} checked="checked"{{/if}}>', '<a href="/l/{{../g.lid}}/player/{{pid}}">{{name}}</a>', '{{pos}}', '{{age}}', '{{ovr}}', '{{pot}}', '${{round contractAmount 1}}M thru {{contractExp}}', '{{round min 1}}', '{{round pts 1}}', '{{round trb 1}}', '{{round ast 1}}' ],
     {{/userRoster}}
   ]);
 
   bbgm.datatableSinglePage($('#roster_other'), 5, [
     {{#otherRoster}}
-      [ '<input name="pids_other" type="checkbox" value="{{pid}}"{{#if selected}} checked="checked"{{/if}}>', '<a href="/l/{{../g.lid}}/player/{{pid}}">{{name}}</a>', '{{pos}}', '{{age}}', '{{ovr}}', '{{pot}}', '${{round contract_amount 1}}M through {{contract_exp}}', '{{round min 1}}', '{{round pts 1}}', '{{round reb 1}}', '{{round ast 1}}' ],
+      [ '<input name="pids_other" type="checkbox" value="{{pid}}"{{#if selected}} checked="checked"{{/if}}>', '<a href="/l/{{../g.lid}}/player/{{pid}}">{{name}}</a>', '{{pos}}', '{{age}}', '{{ovr}}', '{{pot}}', '${{round contractAmount 1}}M thru {{contractExp}}', '{{round min 1}}', '{{round pts 1}}', '{{round trb 1}}', '{{round ast 1}}' ],
     {{/otherRoster}}
   ]);
 

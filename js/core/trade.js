@@ -19,7 +19,8 @@ define([], function () {
         var cbStartTrade, otherPids;
 
         // Convert pid to tid;
-        if (typeof pid === "undefined" || typeof pid === "null") {
+        if (typeof pid === "undefined" || pid === null) {
+            pid = null;
             otherPids = [];
         } else {
             pid = Math.floor(pid);
@@ -32,7 +33,7 @@ define([], function () {
 
                 cursor = event.target.result;
                 tr = cursor.value;
-                tr.tid = tid;
+                tr.otherTid = tid;
                 tr.otherPids = otherPids;
                 cursor.update(tr);
                 cb();

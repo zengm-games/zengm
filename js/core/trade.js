@@ -229,57 +229,59 @@ function summary(otherTid, userPids, otherPids) {
         };
     }
 
-function propose(otherTid, userPids, otherPids) {
-    /*Proposes the current trade in the database.;
+    /**
+     * Proposes the current trade in the database.
+     * 
+     * Before proposing the trade, the trade is validated to ensure that all player IDs match up with team IDs.
+     * 
+     * @memberOf core.trade
+     * @param {function(boolean, string)} cb Callback function. The first argument is a boolean for whether the trade was accepted or not. The second argumetn is a string containing a message to be dispalyed to the user.
+     */
+    function propose(cb) {
+        // Rewrite this, making sure to load the stuff from the database, validate it, and then propose the trade
+/*        tids = [g.userTid, otherTid];
+        pids = [userPids, otherPids];
 
-    Returns) {
-        A tuple containing a boolean representing whether the trade was accepted;
-        (true) or not (false), and a string containing a message to be pushed to;
-        the user.;
-    */;
-    tids = [g.userTid, otherTid];
-    pids = [userPids, otherPids];
+        if (g.phase >= c.PHASE_AFTER_TRADE_DEADLINE and g.phase <= c.PHASE_PLAYOFFS) {
+            return (false, "Error! You're not allowed to make trades now.");
 
-    if (g.phase >= c.PHASE_AFTER_TRADE_DEADLINE and g.phase <= c.PHASE_PLAYOFFS) {
-        return (false, "Error! You're not allowed to make trades now.");
+        // The summary will return a warning if (there is a problem. In that case,
+        // that warning will already be pushed to the user so there is no need to
+        // return a redundant message here.
+        r = g.dbex("SELECT tid FROM trade");
+        otherTid, = r.fetchone();
+        s = summary(otherTid, userPids, otherPids);
+        if (len(s["warning"]) > 0) {
+            return (false, "");
 
-    // The summary will return a warning if (there is a problem. In that case,
-    // that warning will already be pushed to the user so there is no need to
-    // return a redundant message here.
-    r = g.dbex("SELECT tid FROM trade");
-    otherTid, = r.fetchone();
-    s = summary(otherTid, userPids, otherPids);
-    if (len(s["warning"]) > 0) {
-        return (false, "");
-
-    value = [0.0, 0.0]  // "Value" of the players offered by each team
-    for i in xrange(2) {
-        if (len(pids[i]) > 0) {
-            pidsSql = ", ".join([str(pid) for pid in pids[i]]);
-            r = g.dbex("SELECT pa.pid, pa.contractAmount / 1000 AS contractAmount, :season - pa.bornYear AS age, pr.ovr, pr.pot FROM playerAttributes AS pa, playerRatings AS pr WHERE pa.pid IN (%s) AND pr.pid = pa.pid AND pr.season = :season" % (pidsSql,), season=g.season);
-            for p in r.fetchall() {
-                value[i] += 10 ** (float(p["pot"]) / 10.0 + float(p["ovr"]) / 20.0 - float(p["age"]) / 10.0 - float(p["contractAmount"]) / 100000.0);
-
-    if (value[0] > value[1] * 0.9) {
-        // Trade players;
+        value = [0.0, 0.0]  // "Value" of the players offered by each team
         for i in xrange(2) {
-            if (i == 0) {
-                j = 1;
-            else if (i == 1) {
-                j = 0;
-            for pid in pids[i]) {
-                g.dbex("UPDATE playerAttributes SET tid = :tid WHERE pid = :pid", tid=tids[j], pid=pid);
+            if (len(pids[i]) > 0) {
+                pidsSql = ", ".join([str(pid) for pid in pids[i]]);
+                r = g.dbex("SELECT pa.pid, pa.contractAmount / 1000 AS contractAmount, :season - pa.bornYear AS age, pr.ovr, pr.pot FROM playerAttributes AS pa, playerRatings AS pr WHERE pa.pid IN (%s) AND pr.pid = pa.pid AND pr.season = :season" % (pidsSql,), season=g.season);
+                for p in r.fetchall() {
+                    value[i] += 10 ** (float(p["pot"]) / 10.0 + float(p["ovr"]) / 20.0 - float(p["age"]) / 10.0 - float(p["contractAmount"]) / 100000.0);
 
-        // Auto-sort CPU team roster;
-        rosterAutoSort(tids[1]);
+        if (value[0] > value[1] * 0.9) {
+            // Trade players;
+            for i in xrange(2) {
+                if (i == 0) {
+                    j = 1;
+                else if (i == 1) {
+                    j = 0;
+                for pid in pids[i]) {
+                    g.dbex("UPDATE playerAttributes SET tid = :tid WHERE pid = :pid", tid=tids[j], pid=pid);
 
-        clear();
+            // Auto-sort CPU team roster;
+            rosterAutoSort(tids[1]);
 
-        return (true, 'Trade accepted! "Nice doing business with you!"');
-    else {
-        return (false, 'Trade rejected! "What, are you crazy?"');
+            clear();
+
+            return (true, 'Trade accepted! "Nice doing business with you!"');
+        else {
+            return (false, 'Trade rejected! "What, are you crazy?"');
+        }*/
     }
-}
 
     return {
         create: create,

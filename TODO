@@ -1,7 +1,7 @@
 main todo
 - trade
-  - after I get working, refactor, e.g. validateSavedTids should be in trade.js.
-  - after done, make unit test. figure out how to deal with indexeddb in this context
+  - after I get working, refactor, e.g. validateSavedTids crap should be in trade.js.
+  - after done, make unit tests. figure out how to deal with indexeddb in this context
 - other views
   - team history
     - record  when teams make playoffs

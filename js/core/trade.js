@@ -319,44 +319,52 @@ define(["db", "util/helpers"], function (db, helpers) {
                     for (i = 0; i < 2; i++) {
                         !function (i) {
                             playerStore.index("tid").getAll(tids[i]).onsuccess = function (event) {
-                                var j, k, l, players;
+                                var j, players;
 
                                 players = db.getPlayers(event.target.result, g.season, tids[i], ["pid", "contractAmount", "age"], [], ["ovr", "pot"]);
-                                players = _.filter(players[i], function (player) { return pids[i].indexOf(player.pid) >= 0; });
-                                value[i] = _.reduce(s.teams[i].trade, function (memo, player) { return memo + player.pot / 10 + player.ovr / 20 - player.age / 10 - player.contractAmount / 100000; }, 0);
+                                players = _.filter(players, function (player) { return pids[i].indexOf(player.pid) >= 0; });
+                                value[i] = _.reduce(players, function (memo, player) { console.log(player); return memo + player.pot / 10 + player.ovr / 20 - player.age / 10 - player.contractAmount / 15; }, 0);
 
                                 done += 1;
                                 if (done === 2) {
                                     done = 0;
 
+console.log(value);
                                     if (value[0] > value[1] * 0.9) {
                                         // Trade players
                                         for (j = 0; j < 2; j++) {
-                                            if (j === 0) {
-                                                k = 1;
-                                            } else if (j === 1) {
-                                                k = 0;
-                                            }
+                                            !function (j) {
+                                                var k, l;
 
-                                            for (l = 0; l < pids[j].length; l++) {
-                                                playerStore.openCursor(pids[j][l]).onsuccess = function (event) {
-                                                    var cursor, p;
+                                                if (j === 0) {
+                                                    k = 1;
+                                                } else if (j === 1) {
+                                                    k = 0;
+                                                }
 
-                                                    cursor = event.target.result;
-                                                    p = cursor.value;
-                                                    p.tid = tids[k];
-                                                    cursor.update(p);
+                                                for (l = 0; l < pids[j].length; l++) {
+                                                    !function (l) {
+                                                        playerStore.openCursor(pids[j][l]).onsuccess = function (event) {
+                                                            var cursor, p;
 
-                                                    done += 1;
-                                                    if (done === pids[j].length + pids[k].length) {
-                                                        // Auto-sort CPU team roster;
-                                                        db.rosterAutoSort(playerStore, tids[1], function () {
-                                                            clear();
-                                                            cb(true, 'Trade accepted! "Nice doing business with you!"');
-                                                        });
-                                                    }
-                                                };
-                                            }
+                                                            cursor = event.target.result;
+                                                            p = cursor.value;
+                                                            p.tid = tids[k];
+                                                            cursor.update(p);
+
+                                                            done += 1;
+                                                            if (done === pids[j].length + pids[k].length) {
+                                                                // Auto-sort CPU team roster;
+                                                                db.rosterAutoSort(playerStore, tids[1], function () {
+                                                                    clear(function () {
+                                                                        cb(true, 'Trade accepted! "Nice doing business with you!"');
+                                                                    });
+                                                                });
+                                                            }
+                                                        };
+                                                    }(l);
+                                                }
+                                            }(j);
                                         }
                                     } else {
                                         cb(false, 'Trade rejected! "What, are you crazy?"');

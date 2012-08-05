@@ -3429,7 +3429,7 @@ function program8(depth0,data) {
   if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
   else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  ]);\n\n  roster_checkboxes_user = $('#roster_user input');\n  roster_checkboxes_other = $('#roster_other input');\n\n  $('#rosters input[type=\"checkbox\"]').click(function(event) {\n    var otherPids, serialized, userPids;\n\n    serialized = $('#rosters').serializeArray();\n    userPids = _.map(_.pluck(_.filter(serialized, function (o) { return o.name === \"user_pids\"; }), \"value\"), Math.floor);\n    otherPids = _.map(_.pluck(_.filter(serialized, function (o) { return o.name === \"other_pids\"; }), \"value\"), Math.floor);\n\n    $('#propose_trade button').attr('disabled', 'disabled'); // Will be reenabled, if appropriate, when the summary is loaded\n    api.tradeUpdate(userPids, otherPids, function (summary, userPids, otherPids) {\n      var found, i, j;\n\n      $(\"#trade_summary\").html(summary);\n      for (i = 0; i < roster_checkboxes_user.length; i++) {\n        found = false;\n        for (j = 0; j < userPids.length; j++) {\n          if (Math.floor(roster_checkboxes_user[i].value) === userPids[j]) {\n            roster_checkboxes_user[i].checked = true;\n            found = true;\n            break;\n          }\n        }\n        if (!found) {\n          roster_checkboxes_user[i].checked = false;\n        }\n      }\n      for (i = 0; i < roster_checkboxes_other.length; i++) {\n        found = false;\n        for (j = 0; j < otherPids.length; j++) {\n          if (Math.floor(roster_checkboxes_other[i].value) === otherPids[j]) {\n            roster_checkboxes_other[i].checked = true;\n            found = true;\n            break;\n          }\n        }\n        if (!found) {\n          roster_checkboxes_other[i].checked = false;\n        }\n      }\n    });\n  });\n\n  $('#clear_trade button, #propose_trade button').click(function(event) {\n//    $(this).attr('disabled', 'disabled');\n  });\n});\n</script>\n\n<h1>Trade</h1>\n\n<div class=\"row-fluid\">\n  <div class=\"span7\">\n    <form id=\"rosters\">\n      <p><select id=\"trade_select_team\" name=\"team\" class=\"team form-inline\">\n        ";
+  buffer += "\n  ]);\n\n  roster_checkboxes_user = $('#roster_user input');\n  roster_checkboxes_other = $('#roster_other input');\n\n  $('#rosters input[type=\"checkbox\"]').click(function(event) {\n    var otherPids, serialized, userPids;\n\n    serialized = $('#rosters').serializeArray();\n    userPids = _.map(_.pluck(_.filter(serialized, function (o) { return o.name === \"user_pids\"; }), \"value\"), Math.floor);\n    otherPids = _.map(_.pluck(_.filter(serialized, function (o) { return o.name === \"other_pids\"; }), \"value\"), Math.floor);\n\n    $('#propose_trade button').attr('disabled', 'disabled'); // Will be reenabled, if appropriate, when the summary is loaded\n    api.tradeUpdate(userPids, otherPids, function (summary, userPids, otherPids) {\n      var found, i, j;\n\n      $(\"#trade_summary\").html(summary);\n      for (i = 0; i < roster_checkboxes_user.length; i++) {\n        found = false;\n        for (j = 0; j < userPids.length; j++) {\n          if (Math.floor(roster_checkboxes_user[i].value) === userPids[j]) {\n            roster_checkboxes_user[i].checked = true;\n            found = true;\n            break;\n          }\n        }\n        if (!found) {\n          roster_checkboxes_user[i].checked = false;\n        }\n      }\n      for (i = 0; i < roster_checkboxes_other.length; i++) {\n        found = false;\n        for (j = 0; j < otherPids.length; j++) {\n          if (Math.floor(roster_checkboxes_other[i].value) === otherPids[j]) {\n            roster_checkboxes_other[i].checked = true;\n            found = true;\n            break;\n          }\n        }\n        if (!found) {\n          roster_checkboxes_other[i].checked = false;\n        }\n      }\n    });\n  });\n\n  $('#propose_trade button').click(function(event) {\n    $('#propose_trade button').attr('disabled', 'disabled');\n  });\n});\n</script>\n\n<h1>Trade</h1>\n\n<div class=\"row-fluid\">\n  <div class=\"span7\">\n    <form id=\"rosters\">\n      <p><select id=\"trade_select_team\" name=\"team\" class=\"team form-inline\">\n        ";
   foundHelper = helpers.teams;
   stack1 = foundHelper || depth0.teams;
   tmp1 = self.program(7, program7, data);
@@ -4885,8 +4885,14 @@ function program9(depth0,data) {
 
 function program11(depth0,data) {
   
-  
-  return "<br>";}
+  var buffer = "", stack1;
+  buffer += "<p class=\"alert alert-info\">";
+  foundHelper = helpers.message;
+  stack1 = foundHelper || depth0.message;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "message", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</p>";
+  return buffer;}
 
 function program13(depth0,data) {
   
@@ -5061,7 +5067,17 @@ function program13(depth0,data) {
   tmp1 = self.program(9, program9, data);
   tmp1.hash = {};
   tmp1.fn = tmp1;
-  tmp1.inverse = self.program(11, program11, data);
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n";
+  foundHelper = helpers.message;
+  stack1 = foundHelper || depth0.message;
+  stack2 = helpers['if'];
+  tmp1 = self.program(11, program11, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
   stack1 = stack2.call(depth0, stack1, tmp1);
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n\n<center>\n  <form action=\"/l/";

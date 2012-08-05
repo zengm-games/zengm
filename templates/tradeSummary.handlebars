@@ -41,7 +41,8 @@
 </div>
 
 <br>
-{{#if summary.warning}}<p class="alert alert-error"><strong>Warning!</strong> {{ summary.warning }}</p>{{else}}<br>{{/if}}
+{{#if summary.warning}}<p class="alert alert-error"><strong>Warning!</strong> {{ summary.warning }}</p>{{/if}}
+{{#if message}}<p class="alert alert-info">{{message}}</p>{{/if}}
 
 <center>
   <form action="/l/{{g.lid}}/trade" method="POST" id="propose_trade">

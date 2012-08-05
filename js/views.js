@@ -519,11 +519,11 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                                 teams.splice(g.userTid, 1);  // Can't trade with yourself
 
                                 template = Handlebars.templates.tradeSummary;
-                                tradeSummary = template({g: g, summary: summary});
+                                tradeSummary = template({g: g, summary: summary, message: message});
 
                                 data = {title: "Trade - League " + g.lid};
                                 template = Handlebars.templates.trade;
-                                data.league_content = template({g: g, userRoster: userRoster, otherRoster: otherRoster, userPids: userPids, otherPids: otherPids, summary: summary, teams: teams, otherTid: otherTid, message: message, tradeSummary: tradeSummary});
+                                data.league_content = template({g: g, userRoster: userRoster, otherRoster: otherRoster, userPids: userPids, otherPids: otherPids, summary: summary, teams: teams, otherTid: otherTid, tradeSummary: tradeSummary});
                                 bbgm.ajaxUpdate(data);
                             });
                         };

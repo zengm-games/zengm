@@ -30,7 +30,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                 // Create new league database
                 request = db.connect_league(g.lid);
                 request.onsuccess = function (event) {
-                    var agingYears, baseRatings, contract, draftYear, gameAttributes, goodNeutralBad, i, n, p, playerStore, pots, profile, profiles, randomizeExpiration, t, teamStore, transaction;
+                    var afterPlayerCreation, agingYears, baseRatings, contract, done, draftYear, gameAttributes, goodNeutralBad, i, n, p, playerStore, pots, profile, profiles, randomizeExpiration, t, teamStore, transaction;
 
                     g.dbl = request.result;
                     g.dbl.onerror = function (event) {
@@ -62,12 +62,30 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                         userPids: []
                     });
 
+                    afterPlayerCreation = function () {
+                        gameAttributes = {userTid: tid, season: g.startingSeason, phase: 0, gamesInProgress: false, stopGames: false};
+                        helpers.setGameAttributes(gameAttributes);
+
+                        localStorage.setItem("league" + g.lid + "Negotiations", JSON.stringify([]));
+
+                        // Make schedule, start season
+                        season.newPhase(c.PHASE_REGULAR_SEASON);
+                        playMenu.setStatus('Idle');
+
+                        // Auto sort player's roster (other teams will be done in season.newPhase(c.PHASE_REGULAR_SEASON))
+                        db.rosterAutoSort(null, g.userTid);
+
+                        Davis.location.assign(new Davis.Request('/l/' + g.lid));
+                    }
+
                     if (playerGeneration === "nba2012") {
                         // Load players from file
                         $.getJSON("/data/nba2012.json", function (players) {
                             var cont, i, p, playerStore;
 
                             playerStore = g.dbl.transaction("players", "readwrite").objectStore("players");  // Transaction used above is closed by now
+
+                            done = 0;
                             for (i = 0; i < players.length; i++) {
                                 p = players[i];
                                 p.ratings[0].ovr = player.ovr(p.ratings[0]);
@@ -77,7 +95,12 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                                     p.contractAmount = cont.amount;
                                     p.contractExp = cont.exp;
                                 }
-                                db.putPlayer(playerStore, p);
+                                db.putPlayer(playerStore, p, function () {
+                                    done += 1;
+                                    if (done === players.length) {
+                                        afterPlayerCreation();
+                                    }
+                                });
                             }
                         });
                     } else {
@@ -86,6 +109,8 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                         profiles = ["Point", "Wing", "Big", ""];
                         baseRatings = [30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 19, 19];
                         pots = [70, 60, 50, 50, 55, 45, 65, 35, 50, 45, 55, 55, 40, 40];
+
+                        done = 0;
                         for (t = -1; t < 30; t++) {
                             goodNeutralBad = random.randInt(-1, 1);  // determines if this will be a good team or not
                             random.shuffle(pots);
@@ -105,31 +130,15 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                                     p = player.bonus(p, -15, false);
                                 }
 
-                                db.putPlayer(playerStore, p);
+                                db.putPlayer(playerStore, p, function () {
+                                    done += 1;
+                                    if (done === 31 * 14) {
+                                        afterPlayerCreation();
+                                    }
+                                });
                             }
                         }
                     }
-
-                    gameAttributes = {userTid: tid, season: g.startingSeason, phase: 0, gamesInProgress: false, stopGames: false};
-                    helpers.setGameAttributes(gameAttributes);
-
-                    localStorage.setItem("league" + g.lid + "Negotiations", JSON.stringify([]));
-
-                    // Make schedule, start season
-                    season.newPhase(c.PHASE_REGULAR_SEASON);
-                    playMenu.setStatus('Idle');
-
-                    // Auto sort player's roster (other teams will be done in season.newPhase(c.PHASE_REGULAR_SEASON))
-                    db.rosterAutoSort(null, g.userTid);
-
-/*        // Default trade settings
-        if g.user_tid == 0:
-            trade_tid = 1
-        else:
-            trade_tid = 0
-        g.dbex('INSERT INTO trade (tid) VALUES (:tid)', tid=trade_tid)*/
-
-                    Davis.location.assign(new Davis.Request('/l/' + g.lid));
                 };
             };
         };

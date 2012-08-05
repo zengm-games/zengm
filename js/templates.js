@@ -4896,13 +4896,15 @@ function program13(depth0,data) {
   buffer += "<h3>Trade Summary</h3>\n<div class=\"row-fluid\">\n  <div class=\"span6\">\n    <h4>";
   foundHelper = helpers.summary;
   stack1 = foundHelper || depth0.summary;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.teams);
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1[0]);
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.teamName);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "summary.0.teamName", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "summary.teams.0.teamName", { hash: {} }); }
   buffer += escapeExpression(stack1) + "</h4>\n    <h5>Trade Away:</h5>\n    <ul>\n      ";
   foundHelper = helpers.summary;
   stack1 = foundHelper || depth0.summary;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.teams);
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1[0]);
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.trade);
   tmp1 = self.programWithDepth(program1, data, depth0);
@@ -4916,6 +4918,7 @@ function program13(depth0,data) {
   stack1 = 1;
   foundHelper = helpers.summary;
   stack2 = foundHelper || depth0.summary;
+  stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.teams);
   stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2[0]);
   stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.total);
   foundHelper = helpers.round;
@@ -4926,6 +4929,7 @@ function program13(depth0,data) {
   buffer += escapeExpression(stack1) + "M Total</li>\n    </ul>\n    <h5>Receive:</h5>\n    <ul>\n      ";
   foundHelper = helpers.summary;
   stack1 = foundHelper || depth0.summary;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.teams);
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1[1]);
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.trade);
   tmp1 = self.programWithDepth(program3, data, depth0);
@@ -4939,6 +4943,7 @@ function program13(depth0,data) {
   stack1 = 1;
   foundHelper = helpers.summary;
   stack2 = foundHelper || depth0.summary;
+  stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.teams);
   stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2[1]);
   stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.total);
   foundHelper = helpers.round;
@@ -4950,8 +4955,9 @@ function program13(depth0,data) {
   stack1 = 1;
   foundHelper = helpers.summary;
   stack2 = foundHelper || depth0.summary;
+  stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.teams);
   stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2[0]);
-  stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.payroll_after_trade);
+  stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.payrollAfterTrade);
   foundHelper = helpers.round;
   stack3 = foundHelper || depth0.round;
   if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
@@ -4959,8 +4965,9 @@ function program13(depth0,data) {
   else { stack1 = stack3; }
   buffer += escapeExpression(stack1) + "M</h5>\n    <h5>Salary cap: $";
   stack1 = 1;
-  foundHelper = helpers.salaryCap;
-  stack2 = foundHelper || depth0.salaryCap;
+  foundHelper = helpers.summary;
+  stack2 = foundHelper || depth0.summary;
+  stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.salaryCap);
   foundHelper = helpers.round;
   stack3 = foundHelper || depth0.round;
   if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
@@ -4969,13 +4976,15 @@ function program13(depth0,data) {
   buffer += escapeExpression(stack1) + "M</h5>\n  </div>\n  <div class=\"span6\">\n    <h4>";
   foundHelper = helpers.summary;
   stack1 = foundHelper || depth0.summary;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.teams);
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1[1]);
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.teamName);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "summary.1.teamName", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "summary.teams.1.teamName", { hash: {} }); }
   buffer += escapeExpression(stack1) + "</h4>\n    <h5>Trade Away:</h5>\n    <ul>\n      ";
   foundHelper = helpers.summary;
   stack1 = foundHelper || depth0.summary;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.teams);
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1[1]);
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.trade);
   tmp1 = self.programWithDepth(program5, data, depth0);
@@ -4989,6 +4998,7 @@ function program13(depth0,data) {
   stack1 = 1;
   foundHelper = helpers.summary;
   stack2 = foundHelper || depth0.summary;
+  stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.teams);
   stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2[1]);
   stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.total);
   foundHelper = helpers.round;
@@ -4999,6 +5009,7 @@ function program13(depth0,data) {
   buffer += escapeExpression(stack1) + "M Total</li>\n    </ul>\n    <h5>Receive:</h5>\n    <ul>\n      ";
   foundHelper = helpers.summary;
   stack1 = foundHelper || depth0.summary;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.teams);
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1[0]);
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.trade);
   tmp1 = self.programWithDepth(program7, data, depth0);
@@ -5012,6 +5023,7 @@ function program13(depth0,data) {
   stack1 = 1;
   foundHelper = helpers.summary;
   stack2 = foundHelper || depth0.summary;
+  stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.teams);
   stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2[0]);
   stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.total);
   foundHelper = helpers.round;
@@ -5023,8 +5035,9 @@ function program13(depth0,data) {
   stack1 = 1;
   foundHelper = helpers.summary;
   stack2 = foundHelper || depth0.summary;
+  stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.teams);
   stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2[1]);
-  stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.payroll_after_trade);
+  stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.payrollAfterTrade);
   foundHelper = helpers.round;
   stack3 = foundHelper || depth0.round;
   if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
@@ -5032,8 +5045,9 @@ function program13(depth0,data) {
   else { stack1 = stack3; }
   buffer += escapeExpression(stack1) + "M</h5>\n    <h5>Salary cap: $";
   stack1 = 1;
-  foundHelper = helpers.salaryCap;
-  stack2 = foundHelper || depth0.salaryCap;
+  foundHelper = helpers.summary;
+  stack2 = foundHelper || depth0.summary;
+  stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.salaryCap);
   foundHelper = helpers.round;
   stack3 = foundHelper || depth0.round;
   if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
@@ -5057,8 +5071,9 @@ function program13(depth0,data) {
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
   buffer += escapeExpression(stack1) + "/trade\" method=\"POST\" id=\"propose_trade\">\n    <input type=\"hidden\" name=\"propose\" value=\"1\">\n    <button type=\"submit\" class=\"btn btn-large btn-primary\"";
-  foundHelper = helpers.disablePropose;
-  stack1 = foundHelper || depth0.disablePropose;
+  foundHelper = helpers.summary;
+  stack1 = foundHelper || depth0.summary;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.disablePropose);
   stack2 = helpers['if'];
   tmp1 = self.program(13, program13, data);
   tmp1.hash = {};

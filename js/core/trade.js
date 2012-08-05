@@ -2,7 +2,7 @@
  * @name core.trade
  * @namespace Trades between the user's team and other teams.
  */
-define([], function () {
+define(["db", "util/helpers"], function (db, helpers) {
     "use strict";
 
     /**
@@ -156,75 +156,117 @@ define([], function () {
      * @param {function(Object)} cb Callback function. The argument is an object containing the trade summary.
      */
     function summary(otherTid, userPids, otherPids, cb) {
-        var i, pids, s, tids;
+        var i, done, pids, players, s, tids, transaction;
 
         tids = [g.userTid, otherTid];
         pids = [userPids, otherPids];
 
-        s = [];
+        s = {salaryCap: g.salaryCap / 1000, disablePropose: true, teams: [], warning: null};
         for (i = 0; i < 2; i++) {
-            s.push({trade: [], total: 0, payrollAfterTrade: 0, teamName: "", warning: ""});
+            s.teams.push({trade: [], total: 0, payrollAfterTrade: 0, teamName: ""});
         }
+
+        transaction = g.dbl.transaction(["players", "releasedPlayers"]);
+
+        // Calculate properties of the trade
+        done = 0;
+        players = [[], []];
+        for (i = 0; i < 2; i++) {
+            !function (i) {
+                transaction.objectStore("players").index("tid").getAll(tids[i]).onsuccess = function (event) {
+                    var j, k, overCap, overRosterLimit, ratios, teams;
+
+                    players[i] = db.getPlayers(event.target.result, g.season, tids[i], ["pid", "name", "contractAmount"], [], []);
+                    s.teams[i].trade = _.filter(players[i], function (player) { return pids[i].indexOf(player.pid) >= 0; });
+                    s.teams[i].total = _.reduce(s.teams[i].trade, function (memo, player) { return memo + player.contractAmount; }, 0);
+
+                    done += 1;
+                    if (done === 2) {
+                        done = 0;
+
+                        teams = helpers.getTeams();
+
+                        // Test if any warnings need to be displayed
+                        overCap = [false, false];
+                        overRosterLimit = [false, false];
+                        ratios = [0, 0];
+                        for (j = 0; j < 2; j++) {
+                            if (j === 0) {
+                                k = 1;
+                            } else if (j === 1) {
+                                k = 0;
+                            }
+
+                            s.teams[j].teamName = teams[tids[j]].region + " " + teams[tids[j]].name;
+
+                            if (players[j].length - pids[j].length + pids[k].length > 15) {
+                                overRosterLimit[j] = true;
+                            }
+
+                            if (s.teams[j].total > 0) {
+                                ratios[j] = Math.floor((100 * s.teams[k].total) / s.teams[j].total);
+                            } else {
+                                ratios[j] = Infinity;
+                            }
+
+                            !function (j) {
+                                db.getPayroll(transaction, tids[j], function (payroll) {
+                                    var k;
+
+                                    if (j === 0) {
+                                        k = 1;
+                                    } else if (j === 1) {
+                                        k = 0;
+                                    }
+
+                                    s.teams[j].payrollAfterTrade = payroll / 1000 + s.teams[k].total - s.teams[j].total;
+                                    if (s.teams[j].payrollAfterTrade > g.salaryCap / 1000) {
+                                        overCap[j] = true;
+                                    }
+
+                                    done += 1;
+                                    if (done === 2) {
+                                        if (overRosterLimit.indexOf(true) >= 0) {
+                                            // Which team is at fault?;
+                                            if (overRosterLimit[0] === true) {
+                                                j = 0;
+                                            } else {
+                                                j = 1;
+                                            }
+                                            s.warning = "This trade would put the " + s.teams[j].teamName + " over the maximum roster size limit of 15 players.";
+                                        } else if ((ratios[0] > 125 && overCap[0] === true) || (ratios[1] > 125 && overCap[1] === true)) {
+                                            // Which team is at fault?;
+                                            if (ratios[0] > 125) {
+                                                j = 0;
+                                            } else {
+                                                j = 1;
+                                            }
+                                            s.warning = "The " + s.teams[j].teamName + " are over the salary cap, so the players it receives must have a combined salary of less than 125% of the salaries of the players it trades away.  Currently, that value is " + ratios[j] + "%.";
+                                        }
+
+                                        if (s.warning === null) {
+                                            s.disablePropose = false;
+                                        }
+                                        cb(s);
+                                    }
+                                });
+                            }(j);
+                        }
+                    }
+                };
+            }(i);
+        }
+
+
 /*
-        // Calculate properties of the trade;
-        for (i = 0; i < 2; i++) {
-            if (pids[i].length > 0) {
-                pidsSql = ", ".join([str(pid) for pid in pids[i]]);
-                r = g.dbex("SELECT pid, name, contractAmount / 1000 AS contractAmount FROM playerAttributes WHERE pid IN (%s)" % (pidsSql,));
-                s["trade"][i] = r.fetchall();
-                r = g.dbex("SELECT SUM(contractAmount / 1000) FROM playerAttributes WHERE pid IN (%s)" % (pidsSql,));
-                s["total"][i], = r.fetchone();
-            }
-        }
 
-        // Test if (any warnings need to be displayed;
-        overCap = [false, false];
-        overRosterLimit = [false, false];
-        ratios = [0.0, 0.0];
 
-        for i in xrange(2) {
-            if (i == 0) {
-                j = 1;
-            else if (i == 1) {
-                j = 0;
 
-            s["payrollAfterTrade"][i] = float(getPayroll(tids[i])) / 1000 + float(s["total"][j]) - float(s["total"][i]);
 
-            r = g.dbex("SELECT CONCAT(region, " ", name) FROM teamAttributes WHERE tid = :tid AND season = :season", tid=tids[i], season=g.season);
-            s["teamNames"][i], = r.fetchone();
-            r = g.dbex("SELECT COUNT(*) FROM playerAttributes WHERE tid = :tid", tid=tids[i]);
-            numPlayersOnRoster, = r.fetchone() ;
 
-            if (s["payrollAfterTrade"][i] > float(g.salaryCap) / 1000) {
-                overCap[i] = true;
-            if (numPlayersOnRoster - len(pids[i]) + len(pids[j]) > 15) {
-                overRosterLimit[i] = true;
-            if (s["total"][i] > 0) {
-                ratios[i] = int((100.0 * float(s["total"][j])) / float(s["total"][i]));
-            else if (s["total"][j] > 0) {
-                ratios[i] = float("inf");
-            else {
-                ratios[i] = 1;
 
-        if (true in overRosterLimit) {
-            // Which team is at fault?;
-            if (overRosterLimit[0] == true) {
-                teamName = s["teamNames"][0];
-            else {
-                teamName = s["teamNames"][1];
-            s["warning"] = "This trade would put the %s over the maximum roster size limit of 15 players." % (teamName,);
-        else if ((ratios[0] > 125 and overCap[0] == true) or (ratios[1] > 125 and overCap[1] == true) {
-            // Which team is at fault?;
-            if (ratios[0] > 125) {
-                teamName = s["teamNames"][0];
-                ratio = ratios[0];
-            else {
-                teamName = s["teamNames"][1];
-                ratio = ratios[1];
-            s["warning"] = "The %s are over the salary cap, so the players it receives must have a combined salary less than 125%% of the players it trades.  Currently, that value is %s%%." % (teamName, ratio);
 
         return s;*/
-        cb(s);
     }
 
 

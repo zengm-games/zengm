@@ -1,42 +1,42 @@
 <h3>Trade Summary</h3>
 <div class="row-fluid">
   <div class="span6">
-    <h4>{{summary.0.teamName}}</h4>
+    <h4>{{summary.teams.0.teamName}}</h4>
     <h5>Trade Away:</h5>
     <ul>
-      {{#summary.0.trade}}
+      {{#summary.teams.0.trade}}
         <li><a href="/l/{{../g.lid}}/player/{{pid}}">{{name}}</a> (${{round contractAmount 1}}M)</li>
-      {{/summary.0.trade}}
-      <li>${{round summary.0.total 1}}M Total</li>
+      {{/summary.teams.0.trade}}
+      <li>${{round summary.teams.0.total 1}}M Total</li>
     </ul>
     <h5>Receive:</h5>
     <ul>
-      {{#summary.1.trade}}
+      {{#summary.teams.1.trade}}
         <li><a href="/l/{{../g.lid}}/player/{{pid}}">{{name}}</a> (${{round contractAmount 1}}M)</li>
-      {{/summary.1.trade}}
-      <li>${{round summary.1.total 1}}M Total</li>
+      {{/summary.teams.1.trade}}
+      <li>${{round summary.teams.1.total 1}}M Total</li>
     </ul>
-    <h5>Payroll after trade: ${{round summary.0.payroll_after_trade 1}}M</h5>
-    <h5>Salary cap: ${{round salaryCap 1}}M</h5>
+    <h5>Payroll after trade: ${{round summary.teams.0.payrollAfterTrade 1}}M</h5>
+    <h5>Salary cap: ${{round summary.salaryCap 1}}M</h5>
   </div>
   <div class="span6">
-    <h4>{{summary.1.teamName}}</h4>
+    <h4>{{summary.teams.1.teamName}}</h4>
     <h5>Trade Away:</h5>
     <ul>
-      {{#summary.1.trade}}
+      {{#summary.teams.1.trade}}
         <li><a href="/l/{{../g.lid}}/player/{{pid}}">{{name}}</a> (${{round contractAmount 1}}M)</li>
-      {{/summary.1.trade}}
-      <li>${{round summary.1.total 1}}M Total</li>
+      {{/summary.teams.1.trade}}
+      <li>${{round summary.teams.1.total 1}}M Total</li>
     </ul>
     <h5>Receive:</h5>
     <ul>
-      {{#summary.0.trade}}
+      {{#summary.teams.0.trade}}
         <li><a href="/l/{{../g.lid}}/player/{{pid}}">{{name}}</a> (${{round contractAmount 1}}M)</li>
-      {{/summary.0.trade}}
-      <li>${{round summary.0.total 1}}M Total</li>
+      {{/summary.teams.0.trade}}
+      <li>${{round summary.teams.0.total 1}}M Total</li>
     </ul>
-    <h5>Payroll after trade: ${{round summary.1.payroll_after_trade 1}}M</h5>
-    <h5>Salary cap: ${{round salaryCap 1}}M</h5>
+    <h5>Payroll after trade: ${{round summary.teams.1.payrollAfterTrade 1}}M</h5>
+    <h5>Salary cap: ${{round summary.salaryCap 1}}M</h5>
   </div>
 </div>
 
@@ -46,7 +46,7 @@
 <center>
   <form action="/l/{{g.lid}}/trade" method="POST" id="propose_trade">
     <input type="hidden" name="propose" value="1">
-    <button type="submit" class="btn btn-large btn-primary"{{#if disablePropose}} disabled="disabled"{{/if}}>Propose Trade</button>
+    <button type="submit" class="btn btn-large btn-primary"{{#if summary.disablePropose}} disabled="disabled"{{/if}}>Propose Trade</button>
   </form>
 
   <form action="/l/{{g.lid}}/trade" method="POST" id="clear_trade">

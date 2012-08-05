@@ -519,8 +519,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                                 teams.splice(g.userTid, 1);  // Can't trade with yourself
 
                                 template = Handlebars.templates.tradeSummary;
-//disablePropose: {% if summary.warning|length > 0 or (summary.trade[0]|length == 0 and summary.trade[1]|length == 0) %} disabled="disabled"{% endif %}
-                                tradeSummary = template({g: g, summary: summary, salaryCap: g.salaryCap / 1000, disablePropose: true});
+                                tradeSummary = template({g: g, summary: summary});
 
                                 data = {title: "Trade - League " + g.lid};
                                 template = Handlebars.templates.trade;

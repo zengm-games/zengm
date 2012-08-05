@@ -1,6 +1,7 @@
 main todo
+- trade
+  - after I get working, refactor, e.g. validateSavedTids should be in trade.js.
 - other views
-  - trade
   - team history
     - record  when teams make playoffs
   - league leaders

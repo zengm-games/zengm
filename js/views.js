@@ -1,4 +1,4 @@
-define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "core/season", "util/helpers", "util/playMenu"], function (bbgm, db, contractNegotiation, game, league, season, helpers, playMenu) {
+define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "core/season", "core/trade", "util/helpers", "util/playMenu"], function (bbgm, db, contractNegotiation, game, league, season, trade, helpers, playMenu) {
     "use strict";
 
     function beforeLeague(req, cb) {
@@ -463,66 +463,90 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
 
     function trade_(req) {
         beforeLeague(req, function () {
-            var data, template;
+            var abbrev, newOtherTid, pid, showTrade, validateSavedPids;
 
             if (g.phase >= c.PHASE_AFTER_TRADE_DEADLINE && g.phase <= c.PHASE_PLAYOFFS) {
                 helpers.error("You're not allowed to make trades now.");
                 return;
             }
-/*    extra_json = {}
 
-    pid = request.form.get('pid', None, type=int)
-    abbrev = request.form.get('abbrev', None)
-    if abbrev is not None:
-        new_tid_other, abbrev = validate_abbrev(abbrev)
-    else:
-        new_tid_other = None
+            pid = typeof req.params.pid !== "undefined" ? Math.floor(pid) : null;
+            if (typeof req.params.abbrev !== "undefined") {
+                [newOtherTid, abbrev] = helpers.validateAbbrev(req.params.abbrev);
+            } else {
+                newOtherTid = null;
+            }
 
-    # Clear trade
-    if request.method == 'POST' and 'clear' in request.form:
-        trade.clear()
-        pids_user, pids_other = trade.get_players()
-    # Propose trade
-    elif request.method == 'POST' and 'propose' in request.form:
-        # Validate that player IDs correspond with team IDs
-        pids_user, pids_other = trade.get_players()
-        pids_user, pids_other = trade.update_players(pids_user, pids_other)
+            showTrade = function (userPids, otherPids, message) {
+                var data, template;
 
-        r = g.dbex('SELECT tid FROM trade')
-        tid_other, = r.fetchone()
+                message = typeof message !== "undefined" ? message : null;
 
-        accepted, message = trade.propose(tid_other, pids_user, pids_other)
-        extra_json = {'message': message}
-        pids_user, pids_other = trade.get_players()
-    else:
-        # Start new trade with team or for player
-        if request.method == 'POST' and (new_tid_other is not None or pid is not None):
-            trade.new(tid=new_tid_other, pid=pid)
+                /*    extra_json = {}
 
-        # Validate that player IDs correspond with team IDs
-        pids_user, pids_other = trade.get_players()
-        pids_user, pids_other = trade.update_players(pids_user, pids_other)
+                r = g.dbex('SELECT tid FROM trade')
+                otherTid, = r.fetchone()
 
-    r = g.dbex('SELECT tid FROM trade')
-    tid_other, = r.fetchone()
+                # Load info needed to display trade
+                r = g.dbex('SELECT pa.pid, pa.name, pa.pos, :season - pa.born_year AS age, pr.ovr, pr.pot, pa.contract_amount / 1000 AS contract_amount, pa.contract_exp, AVG(ps.min) AS min, AVG(ps.pts) AS pts, AVG(ps.orb + ps.drb) AS reb, AVG(ps.ast) AS ast FROM player_attributes AS pa LEFT OUTER JOIN player_ratings AS pr ON pr.season = :season AND pa.pid = pr.pid LEFT OUTER JOIN player_stats AS ps ON ps.season = :season AND ps.playoffs = FALSE AND pa.pid = ps.pid WHERE pa.tid = :tid GROUP BY pa.pid ORDER BY pa.roster_order ASC', season=g.season, tid=g.user_tid)
+                userRoster = r.fetchall()
 
-    # Load info needed to display trade
-    r = g.dbex('SELECT pa.pid, pa.name, pa.pos, :season - pa.born_year AS age, pr.ovr, pr.pot, pa.contract_amount / 1000 AS contract_amount, pa.contract_exp, AVG(ps.min) AS min, AVG(ps.pts) AS pts, AVG(ps.orb + ps.drb) AS reb, AVG(ps.ast) AS ast FROM player_attributes AS pa LEFT OUTER JOIN player_ratings AS pr ON pr.season = :season AND pa.pid = pr.pid LEFT OUTER JOIN player_stats AS ps ON ps.season = :season AND ps.playoffs = FALSE AND pa.pid = ps.pid WHERE pa.tid = :tid GROUP BY pa.pid ORDER BY pa.roster_order ASC', season=g.season, tid=g.user_tid)
-    roster_user = r.fetchall()
+                r = g.dbex('SELECT pa.pid, pa.name, pa.pos, :season - pa.born_year AS age, pr.ovr, pr.pot, pa.contract_amount / 1000 AS contract_amount, pa.contract_exp, AVG(ps.min) AS min, AVG(ps.pts) AS pts, AVG(ps.orb + ps.drb) AS reb, AVG(ps.ast) AS ast FROM player_attributes AS pa LEFT OUTER JOIN player_ratings AS pr ON pr.season = :season AND pa.pid = pr.pid LEFT OUTER JOIN player_stats AS ps ON ps.season = :season AND ps.playoffs = FALSE AND pa.pid = ps.pid WHERE pa.tid = :tid GROUP BY pa.pid ORDER BY pa.roster_order ASC', season=g.season, tid=otherTid)
+                otherRoster = r.fetchall()
 
-    r = g.dbex('SELECT pa.pid, pa.name, pa.pos, :season - pa.born_year AS age, pr.ovr, pr.pot, pa.contract_amount / 1000 AS contract_amount, pa.contract_exp, AVG(ps.min) AS min, AVG(ps.pts) AS pts, AVG(ps.orb + ps.drb) AS reb, AVG(ps.ast) AS ast FROM player_attributes AS pa LEFT OUTER JOIN player_ratings AS pr ON pr.season = :season AND pa.pid = pr.pid LEFT OUTER JOIN player_stats AS ps ON ps.season = :season AND ps.playoffs = FALSE AND pa.pid = ps.pid WHERE pa.tid = :tid GROUP BY pa.pid ORDER BY pa.roster_order ASC', season=g.season, tid=tid_other)
-    roster_other = r.fetchall()
+                summary = trade.summary(otherTid, userPids, otherPids)
 
-    summary = trade.summary(tid_other, pids_user, pids_other)
+                r = g.dbex('SELECT tid, abbrev, region, name FROM team_attributes WHERE season = :season AND tid != :tid ORDER BY tid ASC', season=g.season, tid=g.user_tid)
+                teams = r.fetchall()*/
 
-    r = g.dbex('SELECT tid, abbrev, region, name FROM team_attributes WHERE season = :season AND tid != :tid ORDER BY tid ASC', season=g.season, tid=g.user_tid)
-    teams = r.fetchall()
+                data = {title: "Trade - League " + g.lid};
+                template = Handlebars.templates.trade;
+                data.league_content = template({g: g, userRoster: userRoster, otherRoster: otherRoster, userPids: userPids, otherPids: otherPids, summary: summary, teams: teams, otherTid: otherTid, message: message});
+                bbgm.ajaxUpdate(data);
+            };
 
-    return render_all_or_json('trade.html', {'roster_user': roster_user, 'roster_other': roster_other, 'pids_user': pids_user, 'pids_other': pids_other, 'summary': summary, 'teams': teams, 'tid_other': tid_other}, extra_json)*/
-            data = {title: "Trade - League " + g.lid};
-            template = Handlebars.templates.trade;
-            data.league_content = template({g: g});
-            bbgm.ajaxUpdate(data);
+            // Validate that the stored player IDs correspond with the active team ID
+            validateSavedPids = function (cb) {
+                trade.getPlayers(function (userPids, otherPids) {
+                    trade.updatePlayers(userPids, otherPids, function (userPids, otherPids) {
+                        cb(userPids, otherPids);
+                    });
+                });
+            };
+
+            if (req.method === "post" && typeof req.params.clear !== "undefined") {
+                // Clear trade
+                trade.clear(function () {
+                    trade.getPlayers(function (userPids, otherPids) {
+                        showTrade(userPids, otherPids);
+                    });
+                });
+            } else if (req.method  === "post" && typeof req.params.propose !== "undefined") {
+                // Propose trade
+                validateSavedPids(function (userPids, otherPids) {
+                    trade.getOtherTid(function (otherTid) {
+                        trade.propose(otherTid, userPids, otherPids, function (accepted, message) {
+                            trade.getPlayers(function (userPids, otherPids) {
+                                showTrade(userPids, otherPids, message);
+                            });
+                        });
+
+                    });
+                });
+            } else {
+                // Start new trade with team or for player
+                if (req.method === "post" && (newOtherTid !== null || pid !== null)) {
+                    trade.create(newOtherTid, pid, function () {
+                        validateSavedPids(function (userPids, otherPids) {
+                            showTrade(userPids, otherPids);
+                        });
+                    });
+                } else {
+                    validateSavedPids(function (userPids, otherPids) {
+                        showTrade(userPids, otherPids);
+                    });
+                }
+            }
         });
     }
 

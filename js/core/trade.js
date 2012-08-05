@@ -15,15 +15,15 @@ define([], function () {
      * @param {?number} pid An integer representing the ID of a player to be automatically added to the trade, or null if no player should be added immediately. If not null, a trade will be initiated with that player's team, regardless of what tid is set to.
      * @param {function()} cb Callback function.
      */
-    function start(tid, pid, cb) {
-        var cbStartTrade, pidsOther;
+    function create(tid, pid, cb) {
+        var cbStartTrade, otherPids;
 
         // Convert pid to tid;
         if (typeof pid === "undefined" || typeof pid === "null") {
-            pidsOther = [];
+            otherPids = [];
         } else {
             pid = Math.floor(pid);
-            pidsOther = [pid];
+            otherPids = [pid];
         }
 
         cbStartTrade = function (tid) {
@@ -34,7 +34,7 @@ define([], function () {
                 if (cursor) {
                     tr = cursor.value;
                     tr.tid = tid;
-                    tr.pidsOther = pidsOther;
+                    tr.otherPids = otherPids;
                     cursor.update(tr);
                     cb();
                 } else {
@@ -44,7 +44,7 @@ define([], function () {
         };
 
         // Make sure tid is set and corresponds to pid, if (set;
-        if (typeof tid === "undefined" || typeof tid === "null" || pidsOther.length > 0) {
+        if (typeof tid === "undefined" || typeof tid === "null" || otherPids.length > 0) {
             g.dbl.transaction("players").objectStore("players").get(pid).onsuccess = function (event) {
                 var p;
 
@@ -58,7 +58,7 @@ define([], function () {
         }
     }
 
-function updatePlayers(pidsUser, pidsOther) {
+function updatePlayers(userPids, otherPids) {
     /*Validates that players are allowed to be traded and then updates the;
     trade in the database.;
 
@@ -66,53 +66,53 @@ function updatePlayers(pidsUser, pidsOther) {
     are trading, they will be ignored.;
 
     Args) {
-        pidsUser: A list of integer player IDs from the user"s team that;
+        userPids: A list of integer player IDs from the user"s team that;
             are in the trade.;
-        pidsOther: Same as pidsUser but for the other team.;
+        otherPids: Same as userPids but for the other team.;
 
     Returns) {
         A tuple containing the same lists as in the input, but with any invalid;
         IDs removed.;
     */;
-    pids = [pidsUser, pidsOther];
+    pids = [userPids, otherPids];
 
     // Ignore any invalid player IDs    ;
     r = g.dbex("SELECT tid FROM trade");
-    tidOther, = r.fetchone();
-    tids = (g.userTid, tidOther);
+    otherTid = r.fetchone();
+    tids = (g.userTid, otherTid);
     for i in xrange(len(tids)) {
         r = g.dbex("SELECT pid FROM playerAttributes WHERE tid = :tid", tid=tids[i]);
         allPids = [pid for pid, in r.fetchall()];
         pids[i] = [pid for pid in pids[i] if (pid in allPids];
 
     // Save to database;
-    pidsUser, pidsOther = pids;
-    g.dbex("UPDATE trade SET pidsUser = :pidsUser, pidsOther = :pidsOther", pidsUser=pickle.dumps(pidsUser), pidsOther=pickle.dumps(pidsOther));
+    userPids, otherPids = pids;
+    g.dbex("UPDATE trade SET userPids = :userPids, otherPids = :otherPids", userPids=pickle.dumps(userPids), otherPids=pickle.dumps(otherPids));
 
-    return (pidsUser, pidsOther);
+    return (userPids, otherPids);
 
 
 function getPlayers() {
     /*Return two lists of integers, representing the player IDs who are added;
     to the trade for the user"s team and the other team, respectively.;
     */;
-    pidsUser = [];
-    pidsOther = [];
+    userPids = [];
+    otherPids = [];
 
-    r = g.dbex("SELECT pidsUser, pidsOther FROM trade");
+    r = g.dbex("SELECT userPids, otherPids FROM trade");
     row = r.fetchone();
 
     if (row[0] is not None) {
-        pidsUser = pickle.loads(row[0]);
+        userPids = pickle.loads(row[0]);
     if (row[1] is not None) {
-        pidsOther = pickle.loads(row[1]);
-    return (pidsUser, pidsOther);
+        otherPids = pickle.loads(row[1]);
+    return (userPids, otherPids);
 
 
-function summary(tidOther, pidsUser, pidsOther) {
+function summary(otherTid, userPids, otherPids) {
     /*Return all the content needed to summarize the trade.*/;
-    tids = [g.userTid, tidOther];
-    pids = [pidsUser, pidsOther];
+    tids = [g.userTid, otherTid];
+    pids = [userPids, otherPids];
 
     s = {"trade": [[], []], "total": [0, 0], "payrollAfterTrade": [0, 0], "teamNames": ["", ""], "warning": ""};
 
@@ -176,10 +176,10 @@ function summary(tidOther, pidsUser, pidsOther) {
 
 function clear() {
     /*Removes all players currently added to the trade.*/;
-    g.dbex("UPDATE trade SET pidsUser = :pidsUser, pidsOther = :pidsOther", pidsUser=pickle.dumps([]), other=pickle.dumps([]));
+    g.dbex("UPDATE trade SET userPids = :userPids, otherPids = :otherPids", userPids=pickle.dumps([]), other=pickle.dumps([]));
 
 
-function propose(tidOther, pidsUser, pidsOther) {
+function propose(otherTid, userPids, otherPids) {
     /*Proposes the current trade in the database.;
 
     Returns) {
@@ -187,8 +187,8 @@ function propose(tidOther, pidsUser, pidsOther) {
         (true) or not (false), and a string containing a message to be pushed to;
         the user.;
     */;
-    tids = [g.userTid, tidOther];
-    pids = [pidsUser, pidsOther];
+    tids = [g.userTid, otherTid];
+    pids = [userPids, otherPids];
 
     if (g.phase >= c.PHASE_AFTER_TRADE_DEADLINE and g.phase <= c.PHASE_PLAYOFFS) {
         return (false, "Error! You"re not allowed to make trades now.");
@@ -197,8 +197,8 @@ function propose(tidOther, pidsUser, pidsOther) {
     // that warning will already be pushed to the user so there is no need to;
     // return a redundant message here.;
     r = g.dbex("SELECT tid FROM trade");
-    tidOther, = r.fetchone();
-    s = summary(tidOther, pidsUser, pidsOther);
+    otherTid, = r.fetchone();
+    s = summary(otherTid, userPids, otherPids);
     if (len(s["warning"]) > 0) {
         return (false, "");
 
@@ -232,6 +232,6 @@ function propose(tidOther, pidsUser, pidsOther) {
 }
 
     return {
-        start: start
+        create: create
     };
 });

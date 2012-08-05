@@ -1,10 +1,13 @@
 /**
- * @fileoverview Module to emulate some of Python's random library.
+ * @name util.random
+ * @namespace Module to emulate some of Python's random library.
  */
 define([], function() {
     "use strict";
     /**
      * Choose a random integer from [a, b]
+     * 
+     * @memberOf util.random
      * @param {number} a Minimum integer that can be returned.
      * @param {number} b Maximum integer that can be returned.
      * @return {number} Random integer between a and b.
@@ -15,6 +18,8 @@ define([], function() {
 
     /**
      * Shuffles a list in place, returning nothing.
+     * 
+     * @memberOf util.random
      * @param {array} list List to be shuffled in place.
      */
     function shuffle(list) {
@@ -33,7 +38,10 @@ define([], function() {
 
     /**
      * Returns a random number from an approximately Gaussian distribution.
+     * 
      * See: http://www.protonfish.com/random.shtml
+     * 
+     * @memberOf util.random
      * @param {number} mu Mean (default: 0).
      * @param {number} sigma Standard deviation (default: 1).
      * @return {number} Random number from Gaussian distribution.
@@ -46,6 +54,8 @@ define([], function() {
 
     /**
      * Get a random number selected from a uniform distribution.
+     * 
+     * @memberOf util.random
      * @param {number} a Minimum number that can be returned.
      * @param {number} b Maximum number that can be returned.
      * @return {number} Random number from uniform distribution.

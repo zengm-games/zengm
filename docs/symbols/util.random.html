@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - core.league</title>
+		<title>JsDoc Reference - util.random</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -216,7 +216,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Namespace core.league
+				Namespace util.random
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -224,16 +224,16 @@ ul.inheritsList
 				
 				
 			
-				Creating and removing leagues.
+				Module to emulate some of Python's random library.
 				
 				
-					<br /><i>Defined in: </i> &lt;js/core/league.js&gt;.
+					<br /><i>Defined in: </i> &lt;js/util/random.js&gt;.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class core.league.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class util.random.">
 				<caption>Namespace Summary</caption>
 				<thead>
 					<tr>
@@ -246,7 +246,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/core.league.html#constructor">core.league</a></b>
+								<b><a href="../symbols/util.random.html#constructor">util.random</a></b>
 							</div>
 							<div class="description"></div>
 						</td>
@@ -262,7 +262,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class core.league.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class util.random.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -275,18 +275,36 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.league.<b><a href="../symbols/core.league.html#.create">create</a></b>(tid, playerGeneration)
+								<div class="fixedFont">util.random.<b><a href="../symbols/util.random.html#.gauss">gauss</a></b>(mu, sigma)
 								</div>
-								<div class="description">Create a new league.</div>
+								<div class="description">Returns a random number from an approximately Gaussian distribution.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.league.<b><a href="../symbols/core.league.html#.remove">remove</a></b>(lid)
+								<div class="fixedFont">util.random.<b><a href="../symbols/util.random.html#.randInt">randInt</a></b>(a, b)
 								</div>
-								<div class="description">Delete an existing league.</div>
+								<div class="description">Choose a random integer from [a, b]</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">util.random.<b><a href="../symbols/util.random.html#.shuffle">shuffle</a></b>(list)
+								</div>
+								<div class="description">Shuffles a list in place, returning nothing.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">util.random.<b><a href="../symbols/util.random.html#.uniform">uniform</a></b>(a, b)
+								</div>
+								<div class="description">Get a random number selected from a uniform distribution.</div>
 							</td>
 						</tr>
 					
@@ -307,7 +325,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>core.league</b>
+						<b>util.random</b>
 				</div>
 				
 				<div class="description">
@@ -338,15 +356,17 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name=".create"> </a>
+					<a name=".gauss"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
-					
-					<span class="light">core.league.</span><b>create</b>(tid, playerGeneration)
+					<span class="light">{number}</span>
+					<span class="light">util.random.</span><b>gauss</b>(mu, sigma)
 					
 					</div>
 					<div class="description">
-						Create a new league.
+						Returns a random number from an approximately Gaussian distribution.
+
+See: http://www.protonfish.com/random.shtml
 						
 						
 					</div>
@@ -358,16 +378,108 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{number}</span> <b>tid</b>
+									<span class="light fixedFont">{number}</span> <b>mu</b>
 									
 								</dt>
-								<dd>The team ID for the team the user wants to manage.</dd>
+								<dd>Mean (default: 0).</dd>
 							
 								<dt>
-									<span class="light fixedFont">{string}</span> <b>playerGeneration</b>
+									<span class="light fixedFont">{number}</span> <b>sigma</b>
 									
 								</dt>
-								<dd>Either "random" to generate random players or "nba2012" to load NBA rosters.</dd>
+								<dd>Standard deviation (default: 1).</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{number}</span> Random number from Gaussian distribution.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".randInt"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{number}</span>
+					<span class="light">util.random.</span><b>randInt</b>(a, b)
+					
+					</div>
+					<div class="description">
+						Choose a random integer from [a, b]
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>a</b>
+									
+								</dt>
+								<dd>Minimum integer that can be returned.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>b</b>
+									
+								</dt>
+								<dd>Maximum integer that can be returned.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{number}</span> Random integer between a and b.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".shuffle"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">util.random.</span><b>shuffle</b>(list)
+					
+					</div>
+					<div class="description">
+						Shuffles a list in place, returning nothing.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{array}</span> <b>list</b>
+									
+								</dt>
+								<dd>List to be shuffled in place.</dd>
 							
 							</dl>
 						
@@ -380,15 +492,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name=".remove"> </a>
+					<a name=".uniform"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
-					
-					<span class="light">core.league.</span><b>remove</b>(lid)
+					<span class="light">{number}</span>
+					<span class="light">util.random.</span><b>uniform</b>(a, b)
 					
 					</div>
 					<div class="description">
-						Delete an existing league.
+						Get a random number selected from a uniform distribution.
 						
 						
 					</div>
@@ -400,16 +512,29 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{number}</span> <b>lid</b>
+									<span class="light fixedFont">{number}</span> <b>a</b>
 									
 								</dt>
-								<dd>League ID.</dd>
+								<dd>Minimum number that can be returned.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>b</b>
+									
+								</dt>
+								<dd>Maximum number that can be returned.</dd>
 							
 							</dl>
 						
 						
 						
 						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{number}</span> Random number from uniform distribution.</dd>
+							
+							</dl>
 						
 						
 						

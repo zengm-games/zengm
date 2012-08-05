@@ -31,15 +31,11 @@ define([], function () {
                 var cursor, tr;
 
                 cursor = event.target.result;
-                if (cursor) {
-                    tr = cursor.value;
-                    tr.tid = tid;
-                    tr.otherPids = otherPids;
-                    cursor.update(tr);
-                    cb();
-                } else {
-                    console.log("This shouldn't happen...");
-                }
+                tr = cursor.value;
+                tr.tid = tid;
+                tr.otherPids = otherPids;
+                cursor.update(tr);
+                cb();
             };
         };
 
@@ -58,39 +54,65 @@ define([], function () {
         }
     }
 
-function updatePlayers(userPids, otherPids) {
-    /*Validates that players are allowed to be traded and then updates the;
-    trade in the database.;
+    /**
+     * Validates that players are allowed to be traded and updates the database.
+     * 
+     * If any of the player IDs submitted do not correspond with the two teams that are trading, they will be ignored.
+     * 
+     * @memberOf core.trade
+     * @param {Array.<number>} userPids An array of player ID's representing the players on the user's team in the trade.
+     * @param {Array.<number>} otherPids An array of player ID's representing the players on the other team in the trade.
+     * @param {function(Array.<number>, Array.<number>)} cb Callback function. Arguments are the same as the inputs, but with invalid entries removed.
+     */
+    function updatePlayers(userPids, otherPids, cb) {
+        getOtherTid(function (otherTid) {
+            var playerStore;
 
-    If any of the player IDs submitted do not correspond with the two teams that;
-    are trading, they will be ignored.;
+            playerStore = g.dbl.transaction("players").objectStore("players");
 
-    Args) {
-        userPids: A list of integer player IDs from the user"s team that;
-            are in the trade.;
-        otherPids: Same as userPids but for the other team.;
+            playerStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
+                var i, j, players, userPidsGood;
 
-    Returns) {
-        A tuple containing the same lists as in the input, but with any invalid;
-        IDs removed.;
-    */;
-    pids = [userPids, otherPids];
+                userPidsGood = [];
+                players = event.target.result;
+                for (i = 0; i < players.length; i++) {
+                    for (j = 0; j < userPids.length; j++) {
+                        if (players[i].pid === userPids[j]) {
+                            userPidsGood.push(userPids[j]);
+                            break;
+                        }
+                    }
+                }
+                userPids = userPidsGood;
+                playerStore.index("tid").getAll(otherTid).onsuccess = function (event) {
+                    var i, j, players, otherPidsGood;
 
-    // Ignore any invalid player IDs    ;
-    r = g.dbex("SELECT tid FROM trade");
-    otherTid = r.fetchone();
-    tids = (g.userTid, otherTid);
-    for i in xrange(len(tids)) {
-        r = g.dbex("SELECT pid FROM playerAttributes WHERE tid = :tid", tid=tids[i]);
-        allPids = [pid for pid, in r.fetchall()];
-        pids[i] = [pid for pid in pids[i] if (pid in allPids];
+                    userPidsGood = [];
+                    players = event.target.result;
+                    for (i = 0; i < players.length; i++) {
+                        for (j = 0; j < otherPids.length; j++) {
+                            if (players[i].pid === otherPids[j]) {
+                                otherPidsGood.push(otherPids[j]);
+                                break;
+                            }
+                        }
+                    }
+                    otherPids = otherPidsGood;
 
-    // Save to database;
-    userPids, otherPids = pids;
-    g.dbex("UPDATE trade SET userPids = :userPids, otherPids = :otherPids", userPids=pickle.dumps(userPids), otherPids=pickle.dumps(otherPids));
+                    g.dbl.transaction("trade", "readwrite").objectStore("trade").openCursor(0).onsuccess = function (event) { // Same key always, as there is only one trade allowed at a time
+                        var cursor, tr;
 
-    return (userPids, otherPids);
-
+                        cursor = event.target.result;
+                        tr = cursor.value;
+                        tr.userPids = userPids;
+                        tr.otherPids = otherPids;
+                        cursor.update(tr);
+                        cb(userPids, otherPids);
+                    };
+                };
+            };
+        });
+    }
 
 function getPlayers() {
     /*Return two lists of integers, representing the player IDs who are added;

@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - core.contractNegotiation</title>
+		<title>JsDoc Reference - core.trade</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -214,7 +214,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Namespace core.contractNegotiation
+				Namespace core.trade
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -222,16 +222,16 @@ ul.inheritsList
 				
 				
 			
-				All aspects of contract negotiation.
+				Trades between the user's team and other teams.
 				
 				
-					<br /><i>Defined in: </i> &lt;js/core/contractNegotiation.js&gt;.
+					<br /><i>Defined in: </i> &lt;js/core/trade.js&gt;.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class core.contractNegotiation.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class core.trade.">
 				<caption>Namespace Summary</caption>
 				<thead>
 					<tr>
@@ -244,7 +244,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/core.contractNegotiation.html#constructor">core.contractNegotiation</a></b>
+								<b><a href="../symbols/core.trade.html#constructor">core.trade</a></b>
 							</div>
 							<div class="description"></div>
 						</td>
@@ -260,7 +260,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class core.contractNegotiation.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class core.trade.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -273,45 +273,63 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.accept">accept</a></b>(pid)
+								<div class="fixedFont">core.trade.<b><a href="../symbols/core.trade.html#.clear">clear</a></b>(cb)
 								</div>
-								<div class="description">Accept the player's offer.</div>
+								<div class="description">Remove all players currently added to the trade.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.cancel">cancel</a></b>(pid)
+								<div class="fixedFont">core.trade.<b><a href="../symbols/core.trade.html#.create">create</a></b>(tid, pid, cb)
 								</div>
-								<div class="description">Cancel contract negotiations with a player.</div>
+								<div class="description">Start a new trade with a team.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.cancelAll">cancelAll</a></b>()
+								<div class="fixedFont">core.trade.<b><a href="../symbols/core.trade.html#.getOtherTid">getOtherTid</a></b>(cb)
 								</div>
-								<div class="description">Cancel all ongoing contract negotiations.</div>
+								<div class="description">Gets the team ID for the team that the user is trading with.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.create">create</a></b>(pid, resigning, cb)
+								<div class="fixedFont">core.trade.<b><a href="../symbols/core.trade.html#.getPlayers">getPlayers</a></b>(cb)
 								</div>
-								<div class="description">Start a new contract negotiation with a player.</div>
+								<div class="description">Get the arrays containing the player IDs in the trade for both teams.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.offer">offer</a></b>(pid, teamAmount, teamYears)
+								<div class="fixedFont">core.trade.<b><a href="../symbols/core.trade.html#.propose">propose</a></b>(cb)
 								</div>
-								<div class="description">Make an offer to a player.</div>
+								<div class="description">Proposes the current trade in the database.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">core.trade.<b><a href="../symbols/core.trade.html#.summary">summary</a></b>(otherTid, userPids, otherPids, cb)
+								</div>
+								<div class="description">Create a summary of the trade, for eventual display to the user.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">core.trade.<b><a href="../symbols/core.trade.html#.updatePlayers">updatePlayers</a></b>(userPids, otherPids, cb)
+								</div>
+								<div class="description">Validates that players are allowed to be traded and updates the database.</div>
 							</td>
 						</tr>
 					
@@ -332,7 +350,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>core.contractNegotiation</b>
+						<b>core.trade</b>
 				</div>
 				
 				<div class="description">
@@ -363,17 +381,15 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name=".accept"> </a>
+					<a name=".clear"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">core.contractNegotiation.</span><b>accept</b>(pid)
+					<span class="light">core.trade.</span><b>clear</b>(cb)
 					
 					</div>
 					<div class="description">
-						Accept the player's offer.
-
-If successful, then the team's current roster will be displayed.
+						Remove all players currently added to the trade.
 						
 						
 					</div>
@@ -385,75 +401,12 @@ If successful, then the team's current roster will be displayed.
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{number}</span> <b>pid</b>
+									<span class="light fixedFont">{function()}</span> <b>cb</b>
 									
 								</dt>
-								<dd>An integer that must correspond with the player ID of a player in an ongoing negotiation.</dd>
+								<dd>Callback function.</dd>
 							
 							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".cancel"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">core.contractNegotiation.</span><b>cancel</b>(pid)
-					
-					</div>
-					<div class="description">
-						Cancel contract negotiations with a player.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{number}</span> <b>pid</b>
-									
-								</dt>
-								<dd>An integer that must correspond with the player ID of a player in an ongoing negotiation.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".cancelAll"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">core.contractNegotiation.</span><b>cancelAll</b>()
-					
-					</div>
-					<div class="description">
-						Cancel all ongoing contract negotiations.
-
-Currently, the only time there should be multiple ongoing negotiations in the first place is when a user is resigning players at the end of the season, although that should probably change eventually.
-						
-						
-					</div>
-					
-					
-					
 						
 						
 						
@@ -468,11 +421,13 @@ Currently, the only time there should be multiple ongoing negotiations in the fi
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">core.contractNegotiation.</span><b>create</b>(pid, resigning, cb)
+					<span class="light">core.trade.</span><b>create</b>(tid, pid, cb)
 					
 					</div>
 					<div class="description">
-						Start a new contract negotiation with a player.
+						Start a new trade with a team.
+
+One of tid or pid can be set. If both are set, then tid is ignored. If neither are set, a tid of 0 is used.
 						
 						
 					</div>
@@ -484,22 +439,22 @@ Currently, the only time there should be multiple ongoing negotiations in the fi
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{number}</span> <b>pid</b>
+									<span class="light fixedFont">{?number}</span> <b>tid</b>
 									
 								</dt>
-								<dd>An integer that must correspond with the player ID of a free agent.</dd>
+								<dd>An integer representing the team ID of the team the user wants to trade with, or null if pid is set.</dd>
 							
 								<dt>
-									<span class="light fixedFont">{boolean}</span> <b>resigning</b>
+									<span class="light fixedFont">{?number}</span> <b>pid</b>
 									
 								</dt>
-								<dd>Set to true if this is a negotiation for a contract extension, which will allow multiple simultaneous negotiations. Set to false otherwise.</dd>
+								<dd>An integer representing the ID of a player to be automatically added to the trade, or null if no player should be added immediately. If not null, a trade will be initiated with that player's team, regardless of what tid is set to.</dd>
 							
 								<dt>
 									<span class="light fixedFont">{function()}</span> <b>cb</b>
 									
 								</dt>
-								<dd>Optional callback to be run only after a successful negotiation is started.</dd>
+								<dd>Callback function.</dd>
 							
 							</dl>
 						
@@ -512,15 +467,15 @@ Currently, the only time there should be multiple ongoing negotiations in the fi
 
 					<hr />
 				
-					<a name=".offer"> </a>
+					<a name=".getOtherTid"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">core.contractNegotiation.</span><b>offer</b>(pid, teamAmount, teamYears)
+					<span class="light">core.trade.</span><b>getOtherTid</b>(cb)
 					
 					</div>
 					<div class="description">
-						Make an offer to a player.
+						Gets the team ID for the team that the user is trading with.
 						
 						
 					</div>
@@ -532,22 +487,188 @@ Currently, the only time there should be multiple ongoing negotiations in the fi
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{number}</span> <b>pid</b>
+									<span class="light fixedFont">{function(number)}</span> <b>cb</b>
 									
 								</dt>
-								<dd>An integer that must correspond with the player ID of a player in an ongoing negotiation.</dd>
+								<dd>Callback function. The argument is the other team's tid.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".getPlayers"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">core.trade.</span><b>getPlayers</b>(cb)
+					
+					</div>
+					<div class="description">
+						Get the arrays containing the player IDs in the trade for both teams.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{number}</span> <b>teamAmount</b>
+									<span class="light fixedFont">{function(Array.<number>|Array.<number>)}</span> <b>cb</b>
 									
 								</dt>
-								<dd>Teams's offer amount in thousands of dollars per year (between 500 and 20000).</dd>
+								<dd>Callback function. Arguments are arrays containing the player IDs for the user's team and the other team, respectively.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".propose"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">core.trade.</span><b>propose</b>(cb)
+					
+					</div>
+					<div class="description">
+						Proposes the current trade in the database.
+
+Before proposing the trade, the trade is validated to ensure that all player IDs match up with team IDs.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{number}</span> <b>teamYears</b>
+									<span class="light fixedFont">{function(boolean|string)}</span> <b>cb</b>
 									
 								</dt>
-								<dd>Team's offer length in years (between 1 and 5).</dd>
+								<dd>Callback function. The first argument is a boolean for whether the trade was accepted or not. The second argumetn is a string containing a message to be dispalyed to the user.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".summary"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">core.trade.</span><b>summary</b>(otherTid, userPids, otherPids, cb)
+					
+					</div>
+					<div class="description">
+						Create a summary of the trade, for eventual display to the user.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>otherTid</b>
+									
+								</dt>
+								<dd>Team ID for the team that the user is trading with.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Array.<number>}</span> <b>userPids</b>
+									
+								</dt>
+								<dd>An array of player ID's representing the players on the user's team in the trade.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Array.<number>}</span> <b>otherPids</b>
+									
+								</dt>
+								<dd>An array of player ID's representing the players on the other team in the trade.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{function(Object)}</span> <b>cb</b>
+									
+								</dt>
+								<dd>Callback function. The argument is an object containing the trade summary.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".updatePlayers"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">core.trade.</span><b>updatePlayers</b>(userPids, otherPids, cb)
+					
+					</div>
+					<div class="description">
+						Validates that players are allowed to be traded and updates the database.
+
+If any of the player IDs submitted do not correspond with the two teams that are trading, they will be ignored.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Array.<number>}</span> <b>userPids</b>
+									
+								</dt>
+								<dd>An array of player ID's representing the players on the user's team in the trade.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Array.<number>}</span> <b>otherPids</b>
+									
+								</dt>
+								<dd>An array of player ID's representing the players on the other team in the trade.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{function(Array.<number>|Array.<number>)}</span> <b>cb</b>
+									
+								</dt>
+								<dd>Callback function. Arguments are the same as the inputs, but with invalid entries removed.</dd>
 							
 							</dl>
 						

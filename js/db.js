@@ -84,10 +84,10 @@ define(["util/helpers"], function (helpers) {
      * This allows the other db.* functions to use transactions or object stores that have already been defined, which often makes things a lot faster.
      * 
      * @memberOf db
-     * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction to be used; if null is passed, then a new transaction will be used.
-     * @param {string|Array.<string>} transactionObjectStores The object stores to open a transaction with, if necessary.
-     * @param {string|null} objectStore The object store to return. If null, return a transaction.
-     * @return {IDBObjectStore|IDBTransaction} The requested object store or transaction.
+     * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction to be used; if null is passed, then a new transaction will be used.
+     * @param {(string|Array.<string>)} transactionObjectStores The object stores to open a transaction with, if necessary.
+     * @param {?string} objectStore The object store to return. If null, return a transaction.
+     * @return {(IDBObjectStore|IDBTransaction)} The requested object store or transaction.
      */
     function getObjectStore(ot, transactionObjectStores, objectStore) {
         if (ot instanceof IDBObjectStore) {
@@ -134,8 +134,8 @@ define(["util/helpers"], function (helpers) {
      * 
      * @memberOf db
      * @param {Object} pa Player object.
-     * @param {number|null} season Season to retrieve stats/ratings for. If null, return stats/ratings for all seasons in a list.
-     * @param {number|null} tid Team ID to retrieve stats for. This is useful in the case where a player played for multiple teams in a season. Eventually, there should be some way to specify whether the stats for multiple teams in a single season should be merged together or not. For now, passing null just picks the first entry, which is clearly wrong.
+     * @param {?number} season Season to retrieve stats/ratings for. If null, return stats/ratings for all seasons in a list.
+     * @param {?number} tid Team ID to retrieve stats for. This is useful in the case where a player played for multiple teams in a season. Eventually, there should be some way to specify whether the stats for multiple teams in a single season should be merged together or not. For now, passing null just picks the first entry, which is clearly wrong.
      * @param {Array.<string>} attributes List of player attributes to include in output.
      * @param {Array.<string>} stats List of player stats to include in output.
      * @param {Array.<string>} ratings List of player ratings to include in output.
@@ -502,7 +502,7 @@ define(["util/helpers"], function (helpers) {
      * Get an array of filtered team objects.
      * 
      * @memberOf db
-     * @param {IDBTransaction|null} ot An IndexedDB transaction on players, releasedPlayers, and teams; if null is passed, then a new transaction will be used.
+     * @param {(IDBTransaction|null)} ot An IndexedDB transaction on players, releasedPlayers, and teams; if null is passed, then a new transaction will be used.
      * @param {number} season Season to retrieve data for.
      * @param {Array.<string>} attributes List of non-seasonal attributes (such as team name) to include in output.
      * @param {Array.<string>} stats List of team stats to include in output.
@@ -590,7 +590,7 @@ define(["util/helpers"], function (helpers) {
      * Sort a team's roster based on player ratings.
      * 
      * @memberOf db
-     * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on players readwrite; if null is passed, then a new transaction will be used.
+     * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on players readwrite; if null is passed, then a new transaction will be used.
      * @param {number} tid Team ID.
      * @param {function()} cb Optional callback.
      */

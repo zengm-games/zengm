@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - db</title>
+		<title>JsDoc Reference - core.player</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -214,7 +214,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Namespace db
+				Namespace core.player
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -222,16 +222,16 @@ ul.inheritsList
 				
 				
 			
-				Functions that directly access an IndexedDB database.
+				Functions operating on player objects, or parts of player objects.
 				
 				
-					<br /><i>Defined in: </i> &lt;js/db.js&gt;.
+					<br /><i>Defined in: </i> &lt;js/core/player.js&gt;.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class db.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class core.player.">
 				<caption>Namespace Summary</caption>
 				<thead>
 					<tr>
@@ -244,7 +244,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/db.html#constructor">db</a></b>
+								<b><a href="../symbols/core.player.html#constructor">core.player</a></b>
 							</div>
 							<div class="description"></div>
 						</td>
@@ -260,7 +260,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class db.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class core.player.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -273,63 +273,72 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">db.<b><a href="../symbols/db.html#.getObjectStore">getObjectStore</a></b>(ot, transactionObjectStores, objectStore)
+								<div class="fixedFont">core.player.<b><a href="../symbols/core.player.html#.addToFreeAgents">addToFreeAgents</a></b>(ot, p, phase, cb)
 								</div>
-								<div class="description">Get an object store based on input which may be the desired object store, a transaction to be used, or null.</div>
+								<div class="description">Adds player to the free agents list.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">db.<b><a href="../symbols/db.html#.getPayroll">getPayroll</a></b>(ot, tid, cb)
+								<div class="fixedFont">core.player.<b><a href="../symbols/core.player.html#.bonus">bonus</a></b>(p, amount, randomizeExp)
 								</div>
-								<div class="description">Get the total payroll for a team.</div>
+								<div class="description">Add or subtract amount from all current ratings and update the player's contract appropriately.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">db.<b><a href="../symbols/db.html#.getPlayer">getPlayer</a></b>(pa, season, tid, attributes, stats, ratings, options)
+								<div class="fixedFont">core.player.<b><a href="../symbols/core.player.html#.contract">contract</a></b>(ratings, randomizeExp)
 								</div>
-								<div class="description">Get a filtered player object.</div>
+								<div class="description">Generate a contract for a player.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">db.<b><a href="../symbols/db.html#.getPlayers">getPlayers</a></b>(playersAll, season, tid, attributes, stats, ratings, options)
+								<div class="fixedFont">core.player.<b><a href="../symbols/core.player.html#.develop">develop</a></b>(p, years, generate)
 								</div>
-								<div class="description">Get an array of filtered player objects.</div>
+								<div class="description">Develop (increase/decrease) player's ratings.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">db.<b><a href="../symbols/db.html#.getTeams">getTeams</a></b>(ot, season, attributes, stats, seasonAttributes, sortBy, cb)
+								<div class="fixedFont">core.player.<b><a href="../symbols/core.player.html#.limitRating">limitRating</a></b>(rating)
 								</div>
-								<div class="description">Get an array of filtered team objects.</div>
+								<div class="description">Limit a rating to between 0 and 100.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">db.<b><a href="../symbols/db.html#.putPlayer">putPlayer</a></b>(ot, p, cb)
+								<div class="fixedFont">core.player.<b><a href="../symbols/core.player.html#.ovr">ovr</a></b>(ratings)
 								</div>
-								<div class="description">Add a new player to the database or update an existing player.</div>
+								<div class="description">Calculates the overall rating by averaging together all the other ratings.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">db.<b><a href="../symbols/db.html#.rosterAutoSort">rosterAutoSort</a></b>(ot, tid, cb)
+								<div class="fixedFont">core.player.<b><a href="../symbols/core.player.html#.pos">pos</a></b>(ratings)
 								</div>
-								<div class="description">Sort a team's roster based on player ratings.</div>
+								<div class="description">Assign a position (PG, SG, SF, PF, C, G, GF, FC) based on ratings.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">core.player.<b><a href="../symbols/core.player.html#.release">release</a></b>(transaction, p, cb)
+								</div>
+								<div class="description">Release player.</div>
 							</td>
 						</tr>
 					
@@ -350,7 +359,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>db</b>
+						<b>core.player</b>
 				</div>
 				
 				<div class="description">
@@ -381,17 +390,20 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name=".getObjectStore"> </a>
+					<a name=".addToFreeAgents"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
-					<span class="light">{(IDBObjectStore|IDBTransaction)}</span>
-					<span class="light">db.</span><b>getObjectStore</b>(ot, transactionObjectStores, objectStore)
+					
+					<span class="light">core.player.</span><b>addToFreeAgents</b>(ot, p, phase, cb)
 					
 					</div>
 					<div class="description">
-						Get an object store based on input which may be the desired object store, a transaction to be used, or null.
+						Adds player to the free agents list.
 
-This allows the other db.* functions to use transactions or object stores that have already been defined, which often makes things a lot faster.
+This should be THE ONLY way that players are added to the free agents
+list, because this will also calculate their demanded contract. But
+currently, the free agents generated at the beginning of the game don't
+use this function.
 						
 						
 					</div>
@@ -404,340 +416,6 @@ This allows the other db.* functions to use transactions or object stores that h
 							
 								<dt>
 									<span class="light fixedFont">{(IDBObjectStore|IDBTransaction|null)}</span> <b>ot</b>
-									
-								</dt>
-								<dd>An IndexedDB object store or transaction to be used; if null is passed, then a new transaction will be used.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{(string|Array.<string>)}</span> <b>transactionObjectStores</b>
-									
-								</dt>
-								<dd>The object stores to open a transaction with, if necessary.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{?string}</span> <b>objectStore</b>
-									
-								</dt>
-								<dd>The object store to return. If null, return a transaction.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{(IDBObjectStore|IDBTransaction)}</span> The requested object store or transaction.</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name=".getPayroll"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">db.</span><b>getPayroll</b>(ot, tid, cb)
-					
-					</div>
-					<div class="description">
-						Get the total payroll for a team.
-
-This includes players who have been released but are still owed money from their old contracts.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{IDBTransaction|null}</span> <b>ot</b>
-									
-								</dt>
-								<dd>An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{number}</span> <b>tid</b>
-									
-								</dt>
-								<dd>Team ID.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{function(Array)}</span> <b>cb</b>
-									
-								</dt>
-								<dd>Callback whose first argument is the payroll in thousands of dollars.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".getPlayer"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{Object}</span>
-					<span class="light">db.</span><b>getPlayer</b>(pa, season, tid, attributes, stats, ratings, options)
-					
-					</div>
-					<div class="description">
-						Get a filtered player object.
-
-For a player object (pa), create an object suitible for output based on the appropriate season and tid. attributes, stats, and ratings are lists of keys, and all those keys will appear flat in a single object IF ONLY ONE YEAR is requested. If tid is null, then any team is acceptable. If season is null, then a list of all seasons is returned for all ratings and stats, and tid is ignored.
-
-This function is overcomplicated and convoluted.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>pa</b>
-									
-								</dt>
-								<dd>Player object.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{?number}</span> <b>season</b>
-									
-								</dt>
-								<dd>Season to retrieve stats/ratings for. If null, return stats/ratings for all seasons in a list.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{?number}</span> <b>tid</b>
-									
-								</dt>
-								<dd>Team ID to retrieve stats for. This is useful in the case where a player played for multiple teams in a season. Eventually, there should be some way to specify whether the stats for multiple teams in a single season should be merged together or not. For now, passing null just picks the first entry, which is clearly wrong.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Array.<string>}</span> <b>attributes</b>
-									
-								</dt>
-								<dd>List of player attributes to include in output.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Array.<string>}</span> <b>stats</b>
-									
-								</dt>
-								<dd>List of player stats to include in output.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Array.<string>}</span> <b>ratings</b>
-									
-								</dt>
-								<dd>List of player ratings to include in output.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>options</b>
-									
-								</dt>
-								<dd>Object containing various domain-specific options that are rarely used and should eventually be documented.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{Object}</span> Filtered object containing the requested information for the player.</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name=".getPlayers"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">db.</span><b>getPlayers</b>(playersAll, season, tid, attributes, stats, ratings, options)
-					
-					</div>
-					<div class="description">
-						Get an array of filtered player objects.
-
-After the first argument, all subsequent arguments are passed on to db.getPlayer, where further documentation can also be found.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Array}</span> <b>playersAll</b>
-									
-								</dt>
-								<dd>Array of player objects.</dd>
-							
-								<dt>
-									<b>season</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>tid</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>attributes</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>stats</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>ratings</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>options</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".getTeams"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">db.</span><b>getTeams</b>(ot, season, attributes, stats, seasonAttributes, sortBy, cb)
-					
-					</div>
-					<div class="description">
-						Get an array of filtered team objects.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{(IDBTransaction|null)}</span> <b>ot</b>
-									
-								</dt>
-								<dd>An IndexedDB transaction on players, releasedPlayers, and teams; if null is passed, then a new transaction will be used.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{number}</span> <b>season</b>
-									
-								</dt>
-								<dd>Season to retrieve data for.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Array.<string>}</span> <b>attributes</b>
-									
-								</dt>
-								<dd>List of non-seasonal attributes (such as team name) to include in output.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Array.<string>}</span> <b>stats</b>
-									
-								</dt>
-								<dd>List of team stats to include in output.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Array.<string>}</span> <b>seasonAttributes</b>
-									
-								</dt>
-								<dd>List of seasonal attributes (such as won or lost) to include in output.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{string|null}</span> <b>sortBy</b>
-									
-								</dt>
-								<dd>String represeting the sorting method. "winp" sorts by descending winning percentage, "winpAsc" does the opposite.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{function(Array)}</span> <b>cb</b>
-									
-								</dt>
-								<dd>Callback whose first argument is an array of all the team objects.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".putPlayer"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">db.</span><b>putPlayer</b>(ot, p, cb)
-					
-					</div>
-					<div class="description">
-						Add a new player to the database or update an existing player.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{IDBObjectStore|IDBTransaction|null}</span> <b>ot</b>
 									
 								</dt>
 								<dd>An IndexedDB object store or transaction on players readwrite; if null is passed, then a new transaction will be used.</dd>
@@ -749,10 +427,16 @@ After the first argument, all subsequent arguments are passed on to db.getPlayer
 								<dd>Player object.</dd>
 							
 								<dt>
+									<span class="light fixedFont">{?number}</span> <b>phase</b>
+									
+								</dt>
+								<dd>An integer representing the game phase to consider this transaction under (defaults to g.phase if null).</dd>
+							
+								<dt>
 									<span class="light fixedFont">{function()}</span> <b>cb</b>
 									
 								</dt>
-								<dd>Optional callback.</dd>
+								<dd>Callback function.</dd>
 							
 							</dl>
 						
@@ -765,15 +449,17 @@ After the first argument, all subsequent arguments are passed on to db.getPlayer
 
 					<hr />
 				
-					<a name=".rosterAutoSort"> </a>
+					<a name=".bonus"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
-					
-					<span class="light">db.</span><b>rosterAutoSort</b>(ot, tid, cb)
+					<span class="light">{Object}</span>
+					<span class="light">core.player.</span><b>bonus</b>(p, amount, randomizeExp)
 					
 					</div>
 					<div class="description">
-						Sort a team's roster based on player ratings.
+						Add or subtract amount from all current ratings and update the player's contract appropriately.
+
+This should only be called when generating players for a new league. Otherwise, develop should be used.
 						
 						
 					</div>
@@ -785,22 +471,312 @@ After the first argument, all subsequent arguments are passed on to db.getPlayer
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{(IDBObjectStore|IDBTransaction|null)}</span> <b>ot</b>
+									<span class="light fixedFont">{Object}</span> <b>p</b>
 									
 								</dt>
-								<dd>An IndexedDB object store or transaction on players readwrite; if null is passed, then a new transaction will be used.</dd>
+								<dd>Player object.</dd>
 							
 								<dt>
-									<span class="light fixedFont">{number}</span> <b>tid</b>
+									<span class="light fixedFont">{number}</span> <b>amount</b>
 									
 								</dt>
-								<dd>Team ID.</dd>
+								<dd>Number to be added to each rating (can be negative).</dd>
+							
+								<dt>
+									<span class="light fixedFont">{boolean}</span> <b>randomizeExp</b>
+									
+								</dt>
+								<dd>Should the number of years on the player's contract be randomized?.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Object}</span> Updated player object.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".contract"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{Object.<string|number>}</span>
+					<span class="light">core.player.</span><b>contract</b>(ratings, randomizeExp)
+					
+					</div>
+					<div class="description">
+						Generate a contract for a player.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object.<string|number>}</span> <b>ratings</b>
+									
+								</dt>
+								<dd>Ratings object.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{boolean}</span> <b>randomizeExp</b>
+									
+								</dt>
+								<dd>If true, then it is assumed that some random amount of years has elapsed since the contract was signed, thus decreasing the expiration date. This is used when generating players in a new league.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Object.<string|number>}</span> Object containing two properties with integer values, "amount" with the contract amount in thousands of dollars and "exp" with the contract expiration year.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".develop"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{Object}</span>
+					<span class="light">core.player.</span><b>develop</b>(p, years, generate)
+					
+					</div>
+					<div class="description">
+						Develop (increase/decrease) player's ratings. This operates on whatever the last row of p.ratings is.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>p</b>
+									
+								</dt>
+								<dd>Player object.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>years</b>
+									
+								</dt>
+								<dd>Number of years to develop (default 1).</dd>
+							
+								<dt>
+									<span class="light fixedFont">{generate}</span> <b>generate</b>
+									
+								</dt>
+								<dd>Generating a new player? (default false). If true, then the player's age is also updated based on years.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Object}</span> Updated player object.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".limitRating"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{number}</span>
+					<span class="light">core.player.</span><b>limitRating</b>(rating)
+					
+					</div>
+					<div class="description">
+						Limit a rating to between 0 and 100.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>rating</b>
+									
+								</dt>
+								<dd>Input rating.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{number}</span> If rating is below 0, 0. If rating is above 100, 100. Otherwise, rating.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".ovr"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{number}</span>
+					<span class="light">core.player.</span><b>ovr</b>(ratings)
+					
+					</div>
+					<div class="description">
+						Calculates the overall rating by averaging together all the other ratings.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object.<string|number>}</span> <b>ratings</b>
+									
+								</dt>
+								<dd>Ratings object.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{number}</span> Overall rating.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".pos"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{string}</span>
+					<span class="light">core.player.</span><b>pos</b>(ratings)
+					
+					</div>
+					<div class="description">
+						Assign a position (PG, SG, SF, PF, C, G, GF, FC) based on ratings.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object.<string|number>}</span> <b>ratings</b>
+									
+								</dt>
+								<dd>Ratings object.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{string}</span> Position.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".release"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">core.player.</span><b>release</b>(transaction, p, cb)
+					
+					</div>
+					<div class="description">
+						Release player.
+
+This keeps track of what the player's current team owes him, and then calls player.addToFreeAgents.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{IDBTransaction}</span> <b>transaction</b>
+									
+								</dt>
+								<dd>An IndexedDB transaction on players and releasedPlayers, readwrite.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>p</b>
+									
+								</dt>
+								<dd>Player object.</dd>
 							
 								<dt>
 									<span class="light fixedFont">{function()}</span> <b>cb</b>
 									
 								</dt>
-								<dd>Optional callback.</dd>
+								<dd>Callback function.</dd>
 							
 							</dl>
 						
@@ -825,7 +801,7 @@ After the first argument, all subsequent arguments are passed on to db.getPlayer
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sun Aug 05 2012 12:51:22 GMT-0400 (EDT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sun Aug 05 2012 12:51:21 GMT-0400 (EDT)
 		</div>
 	</body>
 </html>

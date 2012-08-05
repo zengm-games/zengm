@@ -1,6 +1,17 @@
+/**
+ * @name core.player
+ * @namespace Functions operating on player objects, or parts of player objects.
+ */
 define(["db", "util/random"], function (db, random) {
     "use strict";
 
+    /**
+     * Limit a rating to between 0 and 100.
+     *
+     * @memberOf core.player
+     * @param {number} rating Input rating.
+     * @return {number} If rating is below 0, 0. If rating is above 100, 100. Otherwise, rating.
+     */
     function limitRating(rating) {
         if (rating > 100) {
             return 100;
@@ -8,17 +19,29 @@ define(["db", "util/random"], function (db, random) {
         if (rating < 0) {
             return 0;
         }
-        return parseInt(rating, 10);
+        return Math.floor(rating);
     }
+
 
     /**
      * Calculates the overall rating by averaging together all the other ratings.
+     * 
+     * @memberOf core.player
+     * @param {Object.<string, number>} ratings Ratings object.
      * @return {number} Overall rating.
      */
     function ovr(ratings) {
-        return parseInt((ratings.hgt + ratings.stre + ratings.spd + ratings.jmp + ratings.endu + ratings.ins + ratings.dnk + ratings.ft + ratings.fg + ratings.tp + ratings.blk + ratings.stl + ratings.drb + ratings.pss + ratings.reb) / 15, 10);
+        return Math.round((ratings.hgt + ratings.stre + ratings.spd + ratings.jmp + ratings.endu + ratings.ins + ratings.dnk + ratings.ft + ratings.fg + ratings.tp + ratings.blk + ratings.stl + ratings.drb + ratings.pss + ratings.reb) / 15);
     }
 
+    /**
+     * Generate a contract for a player.
+     * 
+     * @memberOf core.player
+     * @param {Object.<string, number>} ratings Ratings object.
+     * @param {boolean} randomizeExp If true, then it is assumed that some random amount of years has elapsed since the contract was signed, thus decreasing the expiration date. This is used when generating players in a new league.
+     * @return {Object.<string, number>} Object containing two properties with integer values, "amount" with the contract amount in thousands of dollars and "exp" with the contract expiration year.
+     */
     function contract(ratings, randomizeExp) {
         var amount, expiration, maxAmount, minAmount, potentialDifference, years;
 
@@ -72,9 +95,12 @@ define(["db", "util/random"], function (db, random) {
 
     /**
      * Develop (increase/decrease) player's ratings. This operates on whatever the last row of p.ratings is.
+     * 
+     * @memberOf core.player
+     * @param {Object} p Player object.
      * @param {number} years Number of years to develop (default 1).
-     * @param {generate} generate Generating a new player? (default false). If true, then
-     *     the player's age is also updated based on years.
+     * @param {generate} generate Generating a new player? (default false). If true, then the player's age is also updated based on years.
+     * @return {Object} Updated player object.
      */
     function develop(p, years, generate) {
         var age, i, increase, j, key, ovrTemp, plusMinus, pot, r, ratingKeys;
@@ -141,9 +167,15 @@ define(["db", "util/random"], function (db, random) {
     }
 
     /**
-     * Add or subtract amount from all current ratings. Then, update the player's contract appropriately. Thus, this should only be called on newly generated players.
+     * Add or subtract amount from all current ratings and update the player's contract appropriately.
+     * 
+     * This should only be called when generating players for a new league. Otherwise, develop should be used. 
+     * 
+     * @memberOf core.player
+     * @param {Object} p Player object.
      * @param {number} amount Number to be added to each rating (can be negative).
      * @param {boolean} randomizeExp Should the number of years on the player's contract be randomized?.
+     * @return {Object} Updated player object.
      */
     function bonus(p, amount, randomizeExp) {
         var cont, i, key, r, ratingKeys;
@@ -178,16 +210,16 @@ define(["db", "util/random"], function (db, random) {
      * currently, the free agents generated at the beginning of the game don't
      * use this function.
      * 
-     * @memberOf player
-     * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on players readwrite; if null is passed, then a new transaction will be used.
+     * @memberOf core.player
+     * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on players readwrite; if null is passed, then a new transaction will be used.
      * @param {Object} p Player object.
-     * @param {number=} phase An integer representing the game phase to consider this transaction under (defaults to g.phase).
+     * @param {?number} phase An integer representing the game phase to consider this transaction under (defaults to g.phase if null).
      * @param {function()} cb Callback function.
      */
     function addToFreeAgents(transaction, p, phase, cb) {
         var cont, expiration;
 
-        phase = typeof phase !== "undefined" ? phase : g.phase;
+        phase = phase !== null ? phase : g.phase;
 
         cont = contract(p.ratings[p.ratings.length - 1]);
         p.contractAmount = cont.amount;
@@ -209,10 +241,9 @@ define(["db", "util/random"], function (db, random) {
     /**
      * Release player.
      * 
-     * This keeps track of what the player's current team owes him, and then
-     * calls player.addToFreeAgents.
+     * This keeps track of what the player's current team owes him, and then calls player.addToFreeAgents.
      * 
-     * @memberOf player
+     * @memberOf core.player
      * @param {IDBTransaction} transaction An IndexedDB transaction on players and releasedPlayers, readwrite.
      * @param {Object} p Player object.
      * @param {function()} cb Callback function.
@@ -305,6 +336,10 @@ define(["db", "util/random"], function (db, random) {
 
     /**
      * Assign a position (PG, SG, SF, PF, C, G, GF, FC) based on ratings.
+     * 
+     * @memberOf core.player
+     * @param {Object.<string, number>} ratings Ratings object.
+     * @return {string} Position.
      */
     function pos(ratings) {
         var c, g, pf, pg, position, sf, sg;

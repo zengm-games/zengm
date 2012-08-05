@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - core.contractNegotiation</title>
+		<title>JsDoc Reference - core.freeAgents</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -214,7 +214,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Namespace core.contractNegotiation
+				Namespace core.freeAgents
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -222,16 +222,16 @@ ul.inheritsList
 				
 				
 			
-				All aspects of contract negotiation.
+				Functions related to free agents that didn't make sense to put anywhere else.
 				
 				
-					<br /><i>Defined in: </i> &lt;js/core/contractNegotiation.js&gt;.
+					<br /><i>Defined in: </i> &lt;js/core/freeAgents.js&gt;.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class core.contractNegotiation.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class core.freeAgents.">
 				<caption>Namespace Summary</caption>
 				<thead>
 					<tr>
@@ -244,7 +244,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/core.contractNegotiation.html#constructor">core.contractNegotiation</a></b>
+								<b><a href="../symbols/core.freeAgents.html#constructor">core.freeAgents</a></b>
 							</div>
 							<div class="description"></div>
 						</td>
@@ -260,7 +260,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class core.contractNegotiation.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class core.freeAgents.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -273,45 +273,18 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.accept">accept</a></b>(pid)
+								<div class="fixedFont">core.freeAgents.<b><a href="../symbols/core.freeAgents.html#.autoSign">autoSign</a></b>(cb)
 								</div>
-								<div class="description">Accept the player's offer.</div>
+								<div class="description">AI teams sign free agents.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.cancel">cancel</a></b>(pid)
+								<div class="fixedFont">core.freeAgents.<b><a href="../symbols/core.freeAgents.html#.decreaseDemands">decreaseDemands</a></b>(cb)
 								</div>
-								<div class="description">Cancel contract negotiations with a player.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.cancelAll">cancelAll</a></b>()
-								</div>
-								<div class="description">Cancel all ongoing contract negotiations.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.create">create</a></b>(pid, resigning, cb)
-								</div>
-								<div class="description">Start a new contract negotiation with a player.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.offer">offer</a></b>(pid, teamAmount, teamYears)
-								</div>
-								<div class="description">Make an offer to a player.</div>
+								<div class="description">Decrease contract demands for all free agents.</div>
 							</td>
 						</tr>
 					
@@ -332,7 +305,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>core.contractNegotiation</b>
+						<b>core.freeAgents</b>
 				</div>
 				
 				<div class="description">
@@ -363,17 +336,17 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name=".accept"> </a>
+					<a name=".autoSign"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">core.contractNegotiation.</span><b>accept</b>(pid)
+					<span class="light">core.freeAgents.</span><b>autoSign</b>(cb)
 					
 					</div>
 					<div class="description">
-						Accept the player's offer.
+						AI teams sign free agents.
 
-If successful, then the team's current roster will be displayed.
+Each team (in random order) will sign free agents up to their salary cap or roster size limit. This should eventually be made smarter
 						
 						
 					</div>
@@ -383,123 +356,12 @@ If successful, then the team's current roster will be displayed.
 						
 							<dl class="detailList">
 							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{number}</span> <b>pid</b>
-									
-								</dt>
-								<dd>An integer that must correspond with the player ID of a player in an ongoing negotiation.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".cancel"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">core.contractNegotiation.</span><b>cancel</b>(pid)
-					
-					</div>
-					<div class="description">
-						Cancel contract negotiations with a player.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{number}</span> <b>pid</b>
-									
-								</dt>
-								<dd>An integer that must correspond with the player ID of a player in an ongoing negotiation.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".cancelAll"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">core.contractNegotiation.</span><b>cancelAll</b>()
-					
-					</div>
-					<div class="description">
-						Cancel all ongoing contract negotiations.
-
-Currently, the only time there should be multiple ongoing negotiations in the first place is when a user is resigning players at the end of the season, although that should probably change eventually.
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".create"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">core.contractNegotiation.</span><b>create</b>(pid, resigning, cb)
-					
-					</div>
-					<div class="description">
-						Start a new contract negotiation with a player.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{number}</span> <b>pid</b>
-									
-								</dt>
-								<dd>An integer that must correspond with the player ID of a free agent.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{boolean}</span> <b>resigning</b>
-									
-								</dt>
-								<dd>Set to true if this is a negotiation for a contract extension, which will allow multiple simultaneous negotiations. Set to false otherwise.</dd>
 							
 								<dt>
 									<span class="light fixedFont">{function()}</span> <b>cb</b>
 									
 								</dt>
-								<dd>Optional callback to be run only after a successful negotiation is started.</dd>
+								<dd>Callback.</dd>
 							
 							</dl>
 						
@@ -512,15 +374,17 @@ Currently, the only time there should be multiple ongoing negotiations in the fi
 
 					<hr />
 				
-					<a name=".offer"> </a>
+					<a name=".decreaseDemands"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">core.contractNegotiation.</span><b>offer</b>(pid, teamAmount, teamYears)
+					<span class="light">core.freeAgents.</span><b>decreaseDemands</b>(cb)
 					
 					</div>
 					<div class="description">
-						Make an offer to a player.
+						Decrease contract demands for all free agents.
+
+This is called after each day in the regular season, as free agents become more willing to take smaller contracts.
 						
 						
 					</div>
@@ -532,22 +396,10 @@ Currently, the only time there should be multiple ongoing negotiations in the fi
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{number}</span> <b>pid</b>
+									<span class="light fixedFont">{function()}</span> <b>cb</b>
 									
 								</dt>
-								<dd>An integer that must correspond with the player ID of a player in an ongoing negotiation.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{number}</span> <b>teamAmount</b>
-									
-								</dt>
-								<dd>Teams's offer amount in thousands of dollars per year (between 500 and 20000).</dd>
-							
-								<dt>
-									<span class="light fixedFont">{number}</span> <b>teamYears</b>
-									
-								</dt>
-								<dd>Team's offer length in years (between 1 and 5).</dd>
+								<dd>Callback.</dd>
 							
 							</dl>
 						

@@ -205,8 +205,10 @@ define(["db", "util/helpers"], function (db, helpers) {
 
                             if (s.teams[j].total > 0) {
                                 ratios[j] = Math.floor((100 * s.teams[k].total) / s.teams[j].total);
-                            } else {
+                            } else if (s.teams[k].total > 0) {
                                 ratios[j] = Infinity;
+                            } else {
+                                ratios[j] = 100;
                             }
 
                             !function (j) {
@@ -256,17 +258,6 @@ define(["db", "util/helpers"], function (db, helpers) {
                 };
             }(i);
         }
-
-
-/*
-
-
-
-
-
-
-
-        return s;*/
     }
 
 

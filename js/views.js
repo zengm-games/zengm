@@ -461,6 +461,71 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         });
     }
 
+    function trade_(req) {
+        beforeLeague(req, function () {
+            var data, template;
+
+            if (g.phase >= c.PHASE_AFTER_TRADE_DEADLINE && g.phase <= c.PHASE_PLAYOFFS) {
+                helpers.error("You're not allowed to make trades now.");
+                return;
+            }
+/*    extra_json = {}
+
+    pid = request.form.get('pid', None, type=int)
+    abbrev = request.form.get('abbrev', None)
+    if abbrev is not None:
+        new_tid_other, abbrev = validate_abbrev(abbrev)
+    else:
+        new_tid_other = None
+
+    # Clear trade
+    if request.method == 'POST' and 'clear' in request.form:
+        trade.clear()
+        pids_user, pids_other = trade.get_players()
+    # Propose trade
+    elif request.method == 'POST' and 'propose' in request.form:
+        # Validate that player IDs correspond with team IDs
+        pids_user, pids_other = trade.get_players()
+        pids_user, pids_other = trade.update_players(pids_user, pids_other)
+
+        r = g.dbex('SELECT tid FROM trade')
+        tid_other, = r.fetchone()
+
+        accepted, message = trade.propose(tid_other, pids_user, pids_other)
+        extra_json = {'message': message}
+        pids_user, pids_other = trade.get_players()
+    else:
+        # Start new trade with team or for player
+        if request.method == 'POST' and (new_tid_other is not None or pid is not None):
+            trade.new(tid=new_tid_other, pid=pid)
+
+        # Validate that player IDs correspond with team IDs
+        pids_user, pids_other = trade.get_players()
+        pids_user, pids_other = trade.update_players(pids_user, pids_other)
+
+    r = g.dbex('SELECT tid FROM trade')
+    tid_other, = r.fetchone()
+
+    # Load info needed to display trade
+    r = g.dbex('SELECT pa.pid, pa.name, pa.pos, :season - pa.born_year AS age, pr.ovr, pr.pot, pa.contract_amount / 1000 AS contract_amount, pa.contract_exp, AVG(ps.min) AS min, AVG(ps.pts) AS pts, AVG(ps.orb + ps.drb) AS reb, AVG(ps.ast) AS ast FROM player_attributes AS pa LEFT OUTER JOIN player_ratings AS pr ON pr.season = :season AND pa.pid = pr.pid LEFT OUTER JOIN player_stats AS ps ON ps.season = :season AND ps.playoffs = FALSE AND pa.pid = ps.pid WHERE pa.tid = :tid GROUP BY pa.pid ORDER BY pa.roster_order ASC', season=g.season, tid=g.user_tid)
+    roster_user = r.fetchall()
+
+    r = g.dbex('SELECT pa.pid, pa.name, pa.pos, :season - pa.born_year AS age, pr.ovr, pr.pot, pa.contract_amount / 1000 AS contract_amount, pa.contract_exp, AVG(ps.min) AS min, AVG(ps.pts) AS pts, AVG(ps.orb + ps.drb) AS reb, AVG(ps.ast) AS ast FROM player_attributes AS pa LEFT OUTER JOIN player_ratings AS pr ON pr.season = :season AND pa.pid = pr.pid LEFT OUTER JOIN player_stats AS ps ON ps.season = :season AND ps.playoffs = FALSE AND pa.pid = ps.pid WHERE pa.tid = :tid GROUP BY pa.pid ORDER BY pa.roster_order ASC', season=g.season, tid=tid_other)
+    roster_other = r.fetchall()
+
+    summary = trade.summary(tid_other, pids_user, pids_other)
+
+    r = g.dbex('SELECT tid, abbrev, region, name FROM team_attributes WHERE season = :season AND tid != :tid ORDER BY tid ASC', season=g.season, tid=g.user_tid)
+    teams = r.fetchall()
+
+    return render_all_or_json('trade.html', {'roster_user': roster_user, 'roster_other': roster_other, 'pids_user': pids_user, 'pids_other': pids_other, 'summary': summary, 'teams': teams, 'tid_other': tid_other}, extra_json)*/
+            data = {title: "Trade - League " + g.lid};
+            template = Handlebars.templates.trade;
+            data.league_content = template({g: g});
+            bbgm.ajaxUpdate(data);
+        });
+    }
+
     function draft(req) {
         beforeLeague(req, function () {
             var playerStore, season, seasons;
@@ -968,6 +1033,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         roster: roster,
         schedule: schedule,
         free_agents: free_agents,
+        trade: trade_,
         draft: draft,
         game_log: game_log,
         playerRatings: playerRatings,

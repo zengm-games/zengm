@@ -48,6 +48,9 @@ strategic issues
   - players retiring from user's team
   - league champions
 - AI modules that contain functions which are called to determine if players are resigned, etc.
+- season crap
+  - startingSeason should be stored so later years can have different values (such as the NBA players, should be 2011)
+  - "2011-12" display for some phases, "2012" for later ones
 
 ---
 
@@ -70,7 +73,6 @@ template loop count - how?
 - class="separator"
   - box score (top 5)
   - standings (top 8)
-startingSeason should be stored so later years can have different values
 at some point, go through the indexeddb code. factor out common patterns into a library. combine transactions where appropriate
 make sure all indexes are actually used. otherwise they're just making it slower for nothing
 

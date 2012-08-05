@@ -99,7 +99,7 @@ define([], function () {
                     }
                     otherPids = otherPidsGood;
 
-                    g.dbl.transaction("trade", "readwrite").objectStore("trade").openCursor(0).onsuccess = function (event) { // Same key always, as there is only one trade allowed at a time
+                    g.dbl.transaction("trade", "readwrite").objectStore("trade").openCursor(0).onsuccess = function (event) {
                         var cursor, tr;
 
                         cursor = event.target.result;
@@ -114,21 +114,20 @@ define([], function () {
         });
     }
 
-function getPlayers() {
-    /*Return two lists of integers, representing the player IDs who are added;
-    to the trade for the user"s team and the other team, respectively.;
-    */;
-    userPids = [];
-    otherPids = [];
+    /**
+     * Get the arrays containing the player IDs in the trade for both teams.
+     * 
+     * @memberOf core.trade
+     * @param {function(Array.<number>, Array.<number>)} cb Callback function. Arguments are arrays containing the player IDs for the user's team and the other team, respectively.
+     */
+    function getPlayers(cb) {
+        g.dbl.transaction("trade").objectStore("trade").get(0).onsuccess = function (event) {
+            var tr;
 
-    r = g.dbex("SELECT userPids, otherPids FROM trade");
-    row = r.fetchone();
-
-    if (row[0] is not None) {
-        userPids = pickle.loads(row[0]);
-    if (row[1] is not None) {
-        otherPids = pickle.loads(row[1]);
-    return (userPids, otherPids);
+            tr = event.target.result;
+            cb(tr.userPids, tr.otherPids);
+        };
+    }
 
 
 function summary(otherTid, userPids, otherPids) {

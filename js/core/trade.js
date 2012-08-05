@@ -102,7 +102,7 @@ define([], function () {
                 playerStore.index("tid").getAll(otherTid).onsuccess = function (event) {
                     var i, j, players, otherPidsGood;
 
-                    userPidsGood = [];
+                    otherPidsGood = [];
                     players = event.target.result;
                     for (i = 0; i < players.length; i++) {
                         for (j = 0; j < otherPids.length; j++) {
@@ -145,69 +145,86 @@ define([], function () {
     }
 
 
-function summary(otherTid, userPids, otherPids) {
-    /*Return all the content needed to summarize the trade.*/;
-    tids = [g.userTid, otherTid];
-    pids = [userPids, otherPids];
+    /**
+     * Create a summary of the trade, for eventual display to the user.
+     * 
+     * @memberOf core.trade
+     * @param {number} otherTid Team ID for the team that the user is trading with.
+     * @param {Array.<number>} userPids An array of player ID's representing the players on the user's team in the trade.
+     * @param {Array.<number>} otherPids An array of player ID's representing the players on the other team in the trade.
+     * @param {function(Object)} cb Callback function. The argument is an object containing the trade summary.
+     */
+    function summary(otherTid, userPids, otherPids, cb) {
+        var i, pids, s, tids;
 
-    s = {"trade": [[], []], "total": [0, 0], "payrollAfterTrade": [0, 0], "teamNames": ["", ""], "warning": ""};
+        tids = [g.userTid, otherTid];
+        pids = [userPids, otherPids];
 
-    // Calculate properties of the trade;
-    for i in xrange(2) {
-        if (len(pids[i]) > 0) {
-            pidsSql = ", ".join([str(pid) for pid in pids[i]]);
-            r = g.dbex("SELECT pid, name, contractAmount / 1000 AS contractAmount FROM playerAttributes WHERE pid IN (%s)" % (pidsSql,));
-            s["trade"][i] = r.fetchall();
-            r = g.dbex("SELECT SUM(contractAmount / 1000) FROM playerAttributes WHERE pid IN (%s)" % (pidsSql,));
-            s["total"][i], = r.fetchone();
+        s = [];
+        for (i = 0; i < 2; i++) {
+            s.push({trade: [], total: 0, payrollAfterTrade: 0, teamName: "", warning: ""});
+        }
+/*
+        // Calculate properties of the trade;
+        for (i = 0; i < 2; i++) {
+            if (pids[i].length > 0) {
+                pidsSql = ", ".join([str(pid) for pid in pids[i]]);
+                r = g.dbex("SELECT pid, name, contractAmount / 1000 AS contractAmount FROM playerAttributes WHERE pid IN (%s)" % (pidsSql,));
+                s["trade"][i] = r.fetchall();
+                r = g.dbex("SELECT SUM(contractAmount / 1000) FROM playerAttributes WHERE pid IN (%s)" % (pidsSql,));
+                s["total"][i], = r.fetchone();
+            }
+        }
 
-    // Test if (any warnings need to be displayed;
-    overCap = [false, false];
-    overRosterLimit = [false, false];
-    ratios = [0.0, 0.0];
+        // Test if (any warnings need to be displayed;
+        overCap = [false, false];
+        overRosterLimit = [false, false];
+        ratios = [0.0, 0.0];
 
-    for i in xrange(2) {
-        if (i == 0) {
-            j = 1;
-        else if (i == 1) {
-            j = 0;
+        for i in xrange(2) {
+            if (i == 0) {
+                j = 1;
+            else if (i == 1) {
+                j = 0;
 
-        s["payrollAfterTrade"][i] = float(getPayroll(tids[i])) / 1000 + float(s["total"][j]) - float(s["total"][i]);
+            s["payrollAfterTrade"][i] = float(getPayroll(tids[i])) / 1000 + float(s["total"][j]) - float(s["total"][i]);
 
-        r = g.dbex("SELECT CONCAT(region, " ", name) FROM teamAttributes WHERE tid = :tid AND season = :season", tid=tids[i], season=g.season);
-        s["teamNames"][i], = r.fetchone();
-        r = g.dbex("SELECT COUNT(*) FROM playerAttributes WHERE tid = :tid", tid=tids[i]);
-        numPlayersOnRoster, = r.fetchone() ;
+            r = g.dbex("SELECT CONCAT(region, " ", name) FROM teamAttributes WHERE tid = :tid AND season = :season", tid=tids[i], season=g.season);
+            s["teamNames"][i], = r.fetchone();
+            r = g.dbex("SELECT COUNT(*) FROM playerAttributes WHERE tid = :tid", tid=tids[i]);
+            numPlayersOnRoster, = r.fetchone() ;
 
-        if (s["payrollAfterTrade"][i] > float(g.salaryCap) / 1000) {
-            overCap[i] = true;
-        if (numPlayersOnRoster - len(pids[i]) + len(pids[j]) > 15) {
-            overRosterLimit[i] = true;
-        if (s["total"][i] > 0) {
-            ratios[i] = int((100.0 * float(s["total"][j])) / float(s["total"][i]));
-        else if (s["total"][j] > 0) {
-            ratios[i] = float("inf");
-        else {
-            ratios[i] = 1;
+            if (s["payrollAfterTrade"][i] > float(g.salaryCap) / 1000) {
+                overCap[i] = true;
+            if (numPlayersOnRoster - len(pids[i]) + len(pids[j]) > 15) {
+                overRosterLimit[i] = true;
+            if (s["total"][i] > 0) {
+                ratios[i] = int((100.0 * float(s["total"][j])) / float(s["total"][i]));
+            else if (s["total"][j] > 0) {
+                ratios[i] = float("inf");
+            else {
+                ratios[i] = 1;
 
-    if (true in overRosterLimit) {
-        // Which team is at fault?;
-        if (overRosterLimit[0] == true) {
-            teamName = s["teamNames"][0];
-        else {
-            teamName = s["teamNames"][1];
-        s["warning"] = "This trade would put the %s over the maximum roster size limit of 15 players." % (teamName,);
-    else if ((ratios[0] > 125 and overCap[0] == true) or (ratios[1] > 125 and overCap[1] == true) {
-        // Which team is at fault?;
-        if (ratios[0] > 125) {
-            teamName = s["teamNames"][0];
-            ratio = ratios[0];
-        else {
-            teamName = s["teamNames"][1];
-            ratio = ratios[1];
-        s["warning"] = "The %s are over the salary cap, so the players it receives must have a combined salary less than 125%% of the players it trades.  Currently, that value is %s%%." % (teamName, ratio);
+        if (true in overRosterLimit) {
+            // Which team is at fault?;
+            if (overRosterLimit[0] == true) {
+                teamName = s["teamNames"][0];
+            else {
+                teamName = s["teamNames"][1];
+            s["warning"] = "This trade would put the %s over the maximum roster size limit of 15 players." % (teamName,);
+        else if ((ratios[0] > 125 and overCap[0] == true) or (ratios[1] > 125 and overCap[1] == true) {
+            // Which team is at fault?;
+            if (ratios[0] > 125) {
+                teamName = s["teamNames"][0];
+                ratio = ratios[0];
+            else {
+                teamName = s["teamNames"][1];
+                ratio = ratios[1];
+            s["warning"] = "The %s are over the salary cap, so the players it receives must have a combined salary less than 125%% of the players it trades.  Currently, that value is %s%%." % (teamName, ratio);
 
-    return s;
+        return s;*/
+        cb(s);
+    }
 
 
     /**

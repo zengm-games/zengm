@@ -38,13 +38,12 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                     };
 
                     // Probably is fastest to use this transaction for everything done to create a new league
-                    transaction = g.dbl.transaction(["players", "teams"], "readwrite");
+                    transaction = g.dbl.transaction(["players", "teams", "trade"], "readwrite");
 
                     // teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league.
                     teamStore = transaction.objectStore("teams");
                     for (i = 0; i < teams.length; i++) {
                         teamStore.add({
-//                            rid: teams[i]['tid'], // This shouldn't be necessary if autoincrement is working on this store http://www.raymondcamden.com/index.cfm/2012/4/26/Sample-of-IndexedDB-with-Autogenerating-Keys
                             tid: teams[i].tid,
                             cid: teams[i].cid,
                             did: teams[i].did,
@@ -55,6 +54,13 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                             seasons: [{season: g.startingSeason, gp: 0, att: 0, cost: 0, cash: 10000000, won: 0, lost: 0, wonDiv: 0, lostDiv: 0, wonConf: 0, lostConf: 0, madePlayoffs: false, confChamps: false, leagueChamps: false,}] // Things that only have one value per season
                         });
                     }
+
+                    transaction.objectStore("trade").add({
+                        rid: 0,
+                        otherTid: tid === 0 ? 1 : 0,
+                        otherPids: [],
+                        userPids: []
+                    });
 
                     if (playerGeneration === "nba2012") {
                         // Load players from file

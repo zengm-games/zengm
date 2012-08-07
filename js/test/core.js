@@ -195,12 +195,29 @@ console.log(otherPids);
             });
             it("should filter out invalid players", function (done) {
                 trade.create(3, null, function () {
-                    var userPidsTest, otherPidsTest;
-
                     trade.updatePlayers([1, 16, 20, 90], [12, 63, 70, 524], function (userPids, otherPids) {
                         JSON.stringify(userPids).should.equal(JSON.stringify([16, 20]));
                         JSON.stringify(otherPids).should.equal(JSON.stringify([63, 70]));
                         done();
+                    });
+                });
+            });
+            it("should delete the other team's players, but not the user's players, from the trade when a new team is selected", function (done) {
+                trade.create(3, null, function () {
+                    var userPidsTest, otherPidsTest;
+
+                    userPidsTest = [16, 20];
+                    otherPidsTest = [63, 70];
+                    trade.updatePlayers(userPidsTest, otherPidsTest, function (userPids, otherPids) {
+                        JSON.stringify(userPids).should.equal(JSON.stringify(userPidsTest));
+                        JSON.stringify(otherPids).should.equal(JSON.stringify(otherPidsTest));
+                        trade.create(4, null, function () {
+                            trade.getPlayers(function (userPids, otherPids) {
+                                JSON.stringify(userPids).should.equal(JSON.stringify(userPidsTest));
+                                JSON.stringify(otherPids).should.equal(JSON.stringify([]));
+                                done();
+                            });
+                        });
                     });
                 });
             });

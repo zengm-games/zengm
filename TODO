@@ -1,7 +1,6 @@
 main todo
 - trade tests
   - sometimes fail - must be a race condition somewhere
-  - trade.summary - make sure warnings are being created correctly
 - per 36 stats in team stats view
   - add a dropdown (maybe make the dropdown handling code more general?)
   - add an option to db.getPlayers

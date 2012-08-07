@@ -132,17 +132,17 @@ define(["db", "core/league", "core/player", "core/season", "core/trade", "util/h
 
     describe("core/trade", function () {
         var testCreateTrade;
-        before(function(done) {
+        before(function (done) {
             db.connectMeta(function () {
                 league.create(0, "random", function () {
                     done();
                 });
             });
         });
-        after(function(done) {
+        after(function (done) {
             league.remove(g.lid, done);
         });
-        afterEach(function(done) {
+        afterEach(function (done) {
             // Set to a trade with team 1 and no players;
             trade.create(1, null, function () {
                 trade.clear(done);
@@ -159,7 +159,7 @@ console.log(otherPids);
                     cb();
                 });
             });
-        }
+        };
 
         describe("#create()", function () {
             it("should create trade with team ID", function (done) {
@@ -218,6 +218,20 @@ console.log(otherPids);
                                 done();
                             });
                         });
+                    });
+                });
+            });
+        });
+
+        describe("#summary()", function () {
+            it("should warn when more than 15 players will be on a team after a trade", function (done) {
+                trade.create(5, null, function () {
+                    trade.updatePlayers([], [90, 92], function (userPids, otherPids) {
+                        trade.summary(5, [], [90, 92], function(summary) {
+                            summary.warning.should.contain("over the maximum roster size limit of 15 players");
+                            console.log(summary);
+                            done();
+                        })
                     });
                 });
             });

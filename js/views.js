@@ -49,27 +49,33 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             g.dbl.close();
         }
         g.dbm.transaction(["leagues"]).objectStore("leagues").getAll().onsuccess = function (event) {
-            var data, i, leagues, request;
+            var data, done, i, leagues, request;
 
             leagues = event.target.result;
 
+            done = 0;
             for (i = 0; i < leagues.length; i++) {
-                g.indexedDB.deleteDatabase("league" + leagues[i].lid);
+                league.remove(i, function () {
+                    done += 1;
+                    if (done === leagues.length) {
+                        // Delete any current meta database
+                        console.log("Deleting any current meta database...");
+                        g.dbm.close();
+                        request = g.indexedDB.deleteDatabase("meta");
+                        request.onsuccess = function (event) {
+                            // Create new meta database
+                            console.log("Creating new meta database...");
+                            db.connectMeta(function () {
+                                console.log("Done!");
+                            });
+                        };
+                    }
+                });
+/*                g.indexedDB.deleteDatabase("league" + leagues[i].lid);
                 localStorage.removeItem("league" + leagues[i].lid + "GameAttributes");
                 localStorage.removeItem("league" + leagues[i].lid + "DraftOrder");
-                localStorage.removeItem("league" + leagues[i].lid + "Negotiations");
+                localStorage.removeItem("league" + leagues[i].lid + "Negotiations");*/
             }
-
-            // Delete any current meta database
-            console.log("Deleting any current meta database...");
-            g.dbm.close();
-            g.indexedDB.deleteDatabase("meta");
-
-            // Create new meta database
-            console.log("Creating new meta database...");
-            request = db.connectMeta(function () {
-                console.log("Done!");
-            });
         };
     }
 

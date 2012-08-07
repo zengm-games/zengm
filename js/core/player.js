@@ -294,7 +294,7 @@ define(["db", "util/random"], function (db, random) {
             ratings[key] = rawRatings[i];
         }
 
-        ratings.season = season ? season : g.startingSeason;
+        ratings.season = season;
         ratings.ovr = ovr(ratings);
         ratings.pot = pot;
 
@@ -404,8 +404,10 @@ define(["db", "util/random"], function (db, random) {
         return position;
     }
 
-    function generate(tid, age, profile, baseRating, pot, draftYear) {
+    function generate(tid, age, profile, baseRating, pot, draftYear, newLeague) {
         var cont, maxHgt, minHgt, maxWeight, minWeight, nationality, p;
+
+        newLeague = typeof newLeague !== undefined ? newLeague : false;
 
         p = {}; // Will be saved to database
         p.tid = tid;
@@ -417,9 +419,11 @@ define(["db", "util/random"], function (db, random) {
         }
         p.rosterOrder = 666;  // Will be set later
         p.ratings = [];
-        if (g.hasOwnProperty('season')) {
+        if (newLeague) {
+            // Create player for new league
             p.ratings.push(generateRatings(profile, baseRating, pot, draftYear));
         } else {
+            // Create player to be drafted
             p.ratings.push(generateRatings(profile, baseRating, pot, g.season));
         }
 

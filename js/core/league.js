@@ -145,14 +145,21 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
      * @param {number} lid League ID.
      */
     function remove(lid, cb) {
-        g.dbm.transaction(["leagues"], "readwrite").objectStore("leagues").delete(lid);
-        g.indexedDB.deleteDatabase("league" + lid);
-        localStorage.removeItem("league" + g.lid + "GameAttributes");
-        localStorage.removeItem("league" + g.lid + "Negotiations");
+        var request;
 
-        if (typeof cb !== "undefined") {
+        g.dbm.transaction(["leagues"], "readwrite").objectStore("leagues").delete(lid);
+        request = g.indexedDB.deleteDatabase("league" + lid);
+        localStorage.removeItem("league" + g.lid + "GameAttributes");
+        localStorage.removeItem("league" + g.lid + "DraftOrder");
+        localStorage.removeItem("league" + g.lid + "Negotiations");
+        request.onsuccess = function (event) {
+            console.log("Database league" + lid + " successfully deleted");
             cb();
-        }
+        };
+        request.onfailure = function (e) {        
+            console.log("myError: ", e);
+            cb();
+        };
     }
 
     return {

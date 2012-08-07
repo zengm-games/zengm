@@ -427,7 +427,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         });
     }
 
-    function free_agents(req) {
+    function freeAgents(req) {
         beforeLeague(req, function () {
             if (g.phase >= c.PHASE_AFTER_TRADE_DEADLINE && g.phase <= c.PHASE_RESIGN_PLAYERS) {
                 helpers.error("You're not allowed to sign free agents now.");
@@ -710,7 +710,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         });
     }
 
-    function game_log(req) {
+    function gameLog(req) {
         beforeLeague(req, function () {
             var abbrev, data, season, seasons, teams, template, tid;
 
@@ -1065,10 +1065,10 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         history: history,
         roster: roster,
         schedule: schedule,
-        free_agents: free_agents,
+        free_agents: freeAgents,
         trade: trade_,
         draft: draft,
-        game_log: game_log,
+        gameLog: gameLog,
         playerRatings: playerRatings,
         playerStats: playerStats,
         teamStats: teamStats,

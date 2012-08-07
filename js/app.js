@@ -37,14 +37,14 @@ requirejs(["db", "views", "bbgm", "api", "util/helpers"], function (db, views, b
             this.get('/l/:lid/roster/:abbrev', views.roster);
             this.get('/l/:lid/roster/:abbrev/:season', views.roster);
             this.get('/l/:lid/schedule', views.schedule);
-            this.get('/l/:lid/free_agents', views.free_agents);
+            this.get('/l/:lid/free_agents', views.freeAgents);
             this.get('/l/:lid/trade', views.trade);
             this.post('/l/:lid/trade', views.trade);
             this.get('/l/:lid/draft', views.draft);
             this.get('/l/:lid/draft/:season', views.draft);
-            this.get('/l/:lid/game_log', views.game_log);
-            this.get('/l/:lid/game_log/:abbrev', views.game_log);
-            this.get('/l/:lid/game_log/:abbrev/:season', views.game_log);
+            this.get('/l/:lid/game_log', views.gameLog);
+            this.get('/l/:lid/game_log/:abbrev', views.gameLog);
+            this.get('/l/:lid/game_log/:abbrev/:season', views.gameLog);
             this.get('/l/:lid/player_ratings', views.playerRatings);
             this.get('/l/:lid/player_ratings/:season', views.playerRatings);
             this.get('/l/:lid/player_stats', views.playerStats);

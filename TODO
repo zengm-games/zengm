@@ -1,14 +1,12 @@
 main todo
+- league leaders
 - trade tests
   - sometimes fail - must be a race condition somewhere
 - let free agents stay for 2 seasons before retiring, or make retirement probabilistic
-- other views
-  - team history
-    - record  when teams make playoffs
-  - league leaders
-  - dashboard
-- nba player potential ratings
-  - also make sure rookies are reasonable
+- nba roster
+  - nba player potential ratings
+  - if necessary, scale everything down a bit to make it comparable to normal players
+  - free agents are way overrated. is this roster file legit?
 - game simulation realism - compare with real stats
   - gameSim.rating_array power should be moved to game.js instead
   - height should matter a lot more
@@ -23,6 +21,10 @@ main todo
 - comments in season.js and elsewhere
 - move to new window button, like gmail, that will open a view in a new window with a minimal UI
 - data binding/updating, in the parent window as well as other windows
+- other views
+  - team history
+    - record  when teams make playoffs
+  - dashboard
 strategic issues
 - reassess how money is stored (ones, thousands, millions?)
 - is localStorage fast enough for game_attributes, and possibly other stuff, like trades and contract negotiation?

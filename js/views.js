@@ -121,7 +121,9 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         } else if (req.method === "post") {
             tid = parseInt(req.params.tid, 10);
             if (tid >= 0 && tid <= 29) {
-                league.create(tid, req.params.players);
+                league.create(tid, req.params.players, function () {
+                    Davis.location.assign(new Davis.Request("/l/" + g.lid));
+                });
             }
         }
     }
@@ -130,8 +132,9 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         var lid;
 
         lid = parseInt(req.params.lid, 10);
-        league.remove(lid);
-        req.redirect('/');
+        league.remove(lid, function () {
+            req.redirect("/");
+        });
     }
 
     function league_dashboard(req) {

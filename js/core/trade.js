@@ -45,10 +45,8 @@ define(["db", "util/helpers"], function (db, helpers) {
             g.dbl.transaction("players").objectStore("players").get(pid).onsuccess = function (event) {
                 var p;
 
-                p = event.target.result.length;
-                tid = p.tid;
-
-                cbStartTrade(tid);
+                p = event.target.result;
+                cbStartTrade(p.tid);
             };
         } else {
             cbStartTrade(Math.floor(tid));

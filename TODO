@@ -1,4 +1,7 @@
 main todo
+- clean up dbm initialization code (app.js and core.js test)
+- league.remove should close league db first (and then use this in core.js test)
+- trade tests sometimes fail - must be a race condition somewhere
 - trade
   - after I get working, refactor
     - validateSavedTids crap should be in trade.js.

@@ -12,7 +12,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
      * @param {number} tid The team ID for the team the user wants to manage.
      * @param {string} playerGeneration Either "random" to generate random players or "nba2012" to load NBA rosters.
      */
-    function create(tid, playerGeneration) {
+    function create(tid, playerGeneration, cb) {
         var l, leagueStore;
 
         l = {tid: tid};
@@ -35,6 +35,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                     g.dbl = request.result;
                     g.dbl.onerror = function (event) {
                         console.log("League database error: " + event.target.errorCode);
+console.log(event);
                     };
 
                     // Probably is fastest to use this transaction for everything done to create a new league
@@ -75,7 +76,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                         // Auto sort player's roster (other teams will be done in season.newPhase(c.PHASE_REGULAR_SEASON))
                         db.rosterAutoSort(null, g.userTid);
 
-                        Davis.location.assign(new Davis.Request('/l/' + g.lid));
+                        cb();
                     }
 
                     if (playerGeneration === "nba2012") {
@@ -150,11 +151,15 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
      * @memberOf core.league
      * @param {number} lid League ID.
      */
-    function remove(lid) {
+    function remove(lid, cb) {
         g.dbm.transaction(["leagues"], "readwrite").objectStore("leagues").delete(lid);
         g.indexedDB.deleteDatabase("league" + lid);
         localStorage.removeItem("league" + g.lid + "GameAttributes");
         localStorage.removeItem("league" + g.lid + "Negotiations");
+
+        if (typeof cb !== "undefined") {
+            cb();
+        }
     }
 
     return {

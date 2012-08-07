@@ -97,16 +97,21 @@ define(["util/helpers", "util/lock"], function (helpers, lock) {
             the client.
     */
     function setStatus(status) {
-        var oldStatus;
+        var oldStatus, playStatusElement;
 
         oldStatus = g.pmStatus;
+        playStatusElement = document.getElementById("playStatus");
         if (typeof status === "undefined") {
             status = oldStatus;
-            document.getElementById("playStatus").innerHTML = status;
+            if (playStatusElement) {
+                playStatusElement.innerHTML = status;
+            }
         }
         if (status !== oldStatus) {
             helpers.setGameAttributes({pmStatus: status});
-            document.getElementById("playStatus").innerHTML = status;
+            if (playStatusElement) {
+                playStatusElement.innerHTML = status;
+            }
             console.log("Set status: " + status);
         }
     }
@@ -121,16 +126,21 @@ define(["util/helpers", "util/lock"], function (helpers, lock) {
             the client.
     */
     function setPhase(phaseText) {
-        var oldPhaseText;
+        var oldPhaseText, playPhaseElement;
 
         oldPhaseText = g.pmPhase;
+        playPhaseElement = document.getElementById("playPhase");
         if (typeof phaseText === "undefined") {
             phaseText = oldPhaseText;
-            document.getElementById("playPhase").innerHTML = phaseText;
+            if (playPhaseElement) {
+                playPhaseElement.innerHTML = phaseText;
+            }
         }
         if (phaseText !== oldPhaseText) {
             helpers.setGameAttributes({pmPhase: phaseText});
-            document.getElementById("playPhase").innerHTML = phaseText;
+            if (playPhaseElement) {
+                playPhaseElement.innerHTML = phaseText;
+            }
             console.log("Set phase: " + phaseText);
         }
     }
@@ -140,11 +150,14 @@ define(["util/helpers", "util/lock"], function (helpers, lock) {
     to client.
     */
     function refreshOptions() {
-        var button, template;
+        var button, playButtonElement, template;
 
         template = Handlebars.templates.playButton;
         button = template({options: options()});
-        document.getElementById("playButton").innerHTML = button;
+        playButtonElement = document.getElementById("playButton");
+        if (playButtonElement) {
+            playButtonElement.innerHTML = button;
+        }
     }
 
     return {

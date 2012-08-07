@@ -1,4 +1,5 @@
 main todo
+- http://datatables.net/extras/ such as scroller, colreorder, colvis, ...
 - trade tests
   - sometimes fail - must be a race condition somewhere
 - per 36 stats in team stats view

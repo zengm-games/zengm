@@ -3440,12 +3440,10 @@ function program8(depth0,data) {
   else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n      </select>\n      <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"roster_other\">\n      <thead>\n        <tr><th></th><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall Rating\">Ovr</th><th title=\"Potential Rating\">Pot</th><th>Contract</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th></tr>\n      </thead>\n      </table>\n      </p>\n\n      <h2>";
-  foundHelper = helpers.summary;
-  stack1 = foundHelper || depth0.summary;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1[0]);
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.teamName);
+  foundHelper = helpers.userTeamName;
+  stack1 = foundHelper || depth0.userTeamName;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "summary.0.teamName", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "userTeamName", { hash: {} }); }
   buffer += escapeExpression(stack1) + "</h2>\n      <p>\n      <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"roster_user\">\n      <thead>\n        <tr><th></th><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall Rating\">Ovr</th><th title=\"Potential Rating\">Pot</th><th>Contract</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th></tr>\n      </thead>\n      </table>\n      </p>\n    </form>\n  </div>\n  <div class=\"span5\" id=\"trade_summary\">\n    ";
   foundHelper = helpers.tradeSummary;
   stack1 = foundHelper || depth0.tradeSummary;
@@ -4891,7 +4889,7 @@ function program11(depth0,data) {
   stack1 = foundHelper || depth0.message;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "message", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "</p>";
+  buffer += escapeExpression(stack1) + "</p>\n";
   return buffer;}
 
 function program13(depth0,data) {
@@ -4904,9 +4902,9 @@ function program13(depth0,data) {
   stack1 = foundHelper || depth0.summary;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.teams);
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1[0]);
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.teamName);
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.name);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "summary.teams.0.teamName", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "summary.teams.0.name", { hash: {} }); }
   buffer += escapeExpression(stack1) + "</h4>\n    <h5>Trade Away:</h5>\n    <ul>\n      ";
   foundHelper = helpers.summary;
   stack1 = foundHelper || depth0.summary;
@@ -4984,9 +4982,9 @@ function program13(depth0,data) {
   stack1 = foundHelper || depth0.summary;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.teams);
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1[1]);
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.teamName);
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.name);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "summary.teams.1.teamName", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "summary.teams.1.name", { hash: {} }); }
   buffer += escapeExpression(stack1) + "</h4>\n    <h5>Trade Away:</h5>\n    <ul>\n      ";
   foundHelper = helpers.summary;
   stack1 = foundHelper || depth0.summary;

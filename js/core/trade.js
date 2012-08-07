@@ -161,7 +161,7 @@ define(["db", "util/helpers"], function (db, helpers) {
 
         s = {salaryCap: g.salaryCap / 1000, disablePropose: true, teams: [], warning: null};
         for (i = 0; i < 2; i++) {
-            s.teams.push({trade: [], total: 0, payrollAfterTrade: 0, teamName: ""});
+            s.teams.push({trade: [], total: 0, payrollAfterTrade: 0, name: ""});
         }
 
         transaction = g.dbl.transaction(["players", "releasedPlayers"]);
@@ -195,7 +195,7 @@ define(["db", "util/helpers"], function (db, helpers) {
                                 k = 0;
                             }
 
-                            s.teams[j].teamName = teams[tids[j]].region + " " + teams[tids[j]].name;
+                            s.teams[j].name = teams[tids[j]].region + " " + teams[tids[j]].name;
 
                             if (players[j].length - pids[j].length + pids[k].length > 15) {
                                 overRosterLimit[j] = true;
@@ -233,7 +233,7 @@ define(["db", "util/helpers"], function (db, helpers) {
                                             } else {
                                                 j = 1;
                                             }
-                                            s.warning = "This trade would put the " + s.teams[j].teamName + " over the maximum roster size limit of 15 players.";
+                                            s.warning = "This trade would put the " + s.teams[j].name + " over the maximum roster size limit of 15 players.";
                                         } else if ((ratios[0] > 125 && overCap[0] === true) || (ratios[1] > 125 && overCap[1] === true)) {
                                             // Which team is at fault?;
                                             if (ratios[0] > 125) {
@@ -241,7 +241,7 @@ define(["db", "util/helpers"], function (db, helpers) {
                                             } else {
                                                 j = 1;
                                             }
-                                            s.warning = "The " + s.teams[j].teamName + " are over the salary cap, so the players it receives must have a combined salary of less than 125% of the salaries of the players it trades away.  Currently, that value is " + ratios[j] + "%.";
+                                            s.warning = "The " + s.teams[j].name + " are over the salary cap, so the players it receives must have a combined salary of less than 125% of the salaries of the players it trades away.  Currently, that value is " + ratios[j] + "%.";
                                         }
 
                                         if (s.warning === null) {

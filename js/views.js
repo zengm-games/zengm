@@ -513,7 +513,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
 
                                 data = {title: "Trade - League " + g.lid};
                                 template = Handlebars.templates.trade;
-                                data.league_content = template({g: g, userRoster: userRoster, otherRoster: otherRoster, userPids: userPids, otherPids: otherPids, summary: summary, teams: teams, otherTid: otherTid, tradeSummary: tradeSummary});
+                                data.league_content = template({g: g, userRoster: userRoster, otherRoster: otherRoster, userPids: userPids, otherPids: otherPids, teams: teams, otherTid: otherTid, tradeSummary: tradeSummary, userTeamName: summary.teams[0].name});
                                 bbgm.ajaxUpdate(data);
                             });
                         };

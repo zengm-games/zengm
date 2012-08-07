@@ -101,9 +101,12 @@ define(["util/helpers"], function (helpers) {
      * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction to be used; if null is passed, then a new transaction will be used.
      * @param {(string|Array.<string>)} transactionObjectStores The object stores to open a transaction with, if necessary.
      * @param {?string} objectStore The object store to return. If null, return a transaction.
+     * @param {boolean=} readwrite Should the transaction be readwrite or not? This only applies when a new transaction is created here (i.e. no transaction or objectStore is passed).
      * @return {(IDBObjectStore|IDBTransaction)} The requested object store or transaction.
      */
-    function getObjectStore(ot, transactionObjectStores, objectStore) {
+    function getObjectStore(ot, transactionObjectStores, objectStore, readwrite) {
+        readwrite = typeof readwrite !== "undefined" ? readwrite : false;
+
         if (ot instanceof IDBObjectStore) {
             return ot;
         }
@@ -114,9 +117,15 @@ define(["util/helpers"], function (helpers) {
             return ot; // Return original transaction
         }
         if (objectStore === null) {
-            return g.dbl.transaction(transactionObjectStores, "readwrite");
+            if (readwrite) {
+                return g.dbl.transaction(transactionObjectStores, "readwrite");
+            }
+            return g.dbl.transaction(transactionObjectStores);
         }
-        return g.dbl.transaction(transactionObjectStores, "readwrite").objectStore(objectStore);
+        if (readwrite) {
+            return g.dbl.transaction(transactionObjectStores, "readwrite").objectStore(objectStore);
+        }
+        return g.dbl.transaction(transactionObjectStores).objectStore(objectStore);
     }
 
     /**
@@ -556,7 +565,7 @@ define(["util/helpers"], function (helpers) {
                             cb(teams);
                         }
                     };
-                }
+                };
                 for (i = 0; i < teams.length; i++) {
                     getPayroll(transaction, teams[i].tid, savePayrollCb(i));
                 }
@@ -611,7 +620,7 @@ define(["util/helpers"], function (helpers) {
     function rosterAutoSort(ot, tid, cb) {
         var players, playerStore;
 
-        playerStore = getObjectStore(ot, "players", "players");
+        playerStore = getObjectStore(ot, "players", "players", "readwrite");
 
         // Get roster and sort by overall rating
         playerStore.index("tid").getAll(tid).onsuccess = function (event) {

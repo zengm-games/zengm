@@ -1,9 +1,6 @@
 main todo
 - trade tests
   - sometimes fail - must be a race condition somewhere
-- per 36 stats in team stats view
-  - add a dropdown (maybe make the dropdown handling code more general?)
-  - add an option to db.getPlayers
 - let free agents stay for 2 seasons before retiring, or make retirement probabilistic
 - other views
   - team history
@@ -113,13 +110,19 @@ history view retired players
   - do i need a handlebars helper so that FA isn't linked anywhere when used as an abbrev?
 retired players
 - test
-trade
+trade refactoring
 - validateSavedTids crap should be in trade.js.
 - trade.summary stuff should be automatic and stored in tradeStore
-DataTables
+DataTables - need to rethink a lot of this, particularly how to make a decent UI
 - http://datatables.net/extras/ such as scroller, colreorder, colvis, ...
 - add team dropdown to ratings and stats views - but should this refresh the view, or just filter the DataTable?
   - could use something like http://www.datatables.net/extras/thirdparty/ColumnFilterWidgets/DataTables/extras/ColumnFilterWidgets/ to also filter on positions
+- per 36 stats in team stats view
+  - add a dropdown (maybe make the dropdown handling code more general?)
+  - add an option to db.getPlayers
+- default to sort descending when column is clicked
+  - http://datatables.net/ref#asSorting will work. maybe pass it as an option to bbgm_datatable
+
 ---
 
 joins: http://blog.oharagroup.net/post/16394604653/a-performance-comparison-websql-vs-indexeddb        http://hacks.mozilla.org/2010/06/comparing-indexeddb-and-webdatabase/
@@ -161,10 +164,6 @@ roster
 - "buy out" only sensitive when there's enough money
 - highlight handle on hover, like button
 - "trade for" only sensitive when trades are allowed
-
-datatables
-- default to sort descending when column is clicked
-  - http://datatables.net/ref#asSorting will work. maybe pass it as an option to bbgm_datatable
 
 finances
 - conditional formatting to show negative numbers in red: https://www.google.com/search?q=site%3Adatatables.net+conditional+formatting&ie=utf-8&oe=utf-8&client=ubuntu&channel=fs

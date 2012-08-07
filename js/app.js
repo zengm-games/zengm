@@ -5,7 +5,7 @@ requirejs(["db", "views", "bbgm", "api", "util/helpers"], function (db, views, b
     window.bbgm = bbgm;
 
     db.connectMeta(function () {
-        var app = Davis(function () {
+        var app = new Davis(function () {
             this.configure(function () {
                 this.generateRequestOnPageLoad = true;
                 this.handleRouteNotFound = true;

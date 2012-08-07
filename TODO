@@ -1,5 +1,4 @@
 main todo
-- league.remove should close league db first (and then use this in core.js test)
 - trade tests sometimes fail - must be a race condition somewhere
 - trade
   - after I get working, refactor

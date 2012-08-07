@@ -139,12 +139,9 @@ define(["db", "core/league", "core/player", "core/season", "core/trade", "util/h
                 });
             });
         });
-/*        after(function(done) {
-//    if (g.dbl !== undefined) {
-        //g.dbl.close();
-//    }
+        after(function(done) {
             league.remove(g.lid, done);
-        });*/
+        });
         afterEach(function(done) {
             // Set to a trade with team 1 and no players;
             trade.create(1, null, function () {
@@ -222,12 +219,3 @@ function numInArrayEqualTo(array, x) {
     }
     return n;
 }
-
-                /*g.dbl.transaction("trade").objectStore("trade").get(0).onsuccess = function (event) {
-                    var tr;
-
-                    tr = event.target.result;
-console.log(tr);
-                    [2].length.should.equal(1230);
-                    done();
-                };*/

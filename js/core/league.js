@@ -147,6 +147,10 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
     function remove(lid, cb) {
         var request;
 
+        if (typeof g.dbl !== "undefined" && g.lid === lid) {
+            g.dbl.close();
+        }
+
         g.dbm.transaction(["leagues"], "readwrite").objectStore("leagues").delete(lid);
         request = g.indexedDB.deleteDatabase("league" + lid);
         localStorage.removeItem("league" + g.lid + "GameAttributes");

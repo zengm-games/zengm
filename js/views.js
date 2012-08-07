@@ -45,9 +45,6 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
 
         // Delete any current league databases
         console.log("Deleting any current league databases...");
-        if (g.dbl !== undefined) {
-            g.dbl.close();
-        }
         g.dbm.transaction(["leagues"]).objectStore("leagues").getAll().onsuccess = function (event) {
             var data, done, i, leagues, request;
 
@@ -71,10 +68,6 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                         };
                     }
                 });
-/*                g.indexedDB.deleteDatabase("league" + leagues[i].lid);
-                localStorage.removeItem("league" + leagues[i].lid + "GameAttributes");
-                localStorage.removeItem("league" + leagues[i].lid + "DraftOrder");
-                localStorage.removeItem("league" + leagues[i].lid + "Negotiations");*/
             }
         };
     }

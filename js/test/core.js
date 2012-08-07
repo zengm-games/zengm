@@ -133,20 +133,17 @@ define(["db", "core/league", "core/player", "core/season", "core/trade", "util/h
     describe("core/trade", function () {
         var testCreateTrade;
         before(function(done) {
-            g.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
-            var request = db.connect_meta();
-            request.onsuccess = function (event) {
-                g.dbm = request.result;
-                g.dbm.onerror = function (event) {
-                    console.log("Meta database error: " + event.target.errorCode);
-                };
+            db.connectMeta(function () {
                 league.create(0, "random", function () {
                     console.log(g.dbl);
                     done();
                 });
-            };
+            });
         });
 /*        after(function(done) {
+    if (g.dbl !== undefined) {
+        g.dbl.close();
+    }
 //            league.remove(g.lid, done);
             done();
         });*/

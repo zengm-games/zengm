@@ -23,20 +23,13 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
             g.lid = event.target.result;
             t = event.target.transaction;
             g.dbm.transaction(["teams"]).objectStore("teams").getAll().onsuccess = function (event) {
-                var request, teams;
+                var teams;
 
                 teams = event.target.result;
 
                 // Create new league database
-                request = db.connect_league(g.lid);
-                request.onsuccess = function (event) {
+                db.connectLeague(g.lid, function () {
                     var afterPlayerCreation, agingYears, baseRatings, contract, done, draftYear, gameAttributes, goodNeutralBad, i, n, p, playerStore, pots, profile, profiles, randomizeExpiration, t, teamStore, transaction;
-
-                    g.dbl = request.result;
-                    g.dbl.onerror = function (event) {
-                        console.log("League database error: " + event.target.errorCode);
-console.log(event);
-                    };
 
                     // Probably is fastest to use this transaction for everything done to create a new league
                     transaction = g.dbl.transaction(["players", "teams", "trade"], "readwrite");
@@ -140,7 +133,7 @@ console.log(event);
                             }
                         }
                     }
-                };
+                });
             };
         };
     }

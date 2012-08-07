@@ -5,7 +5,9 @@
 define(["util/helpers"], function (helpers) {
     "use strict";
 
-    function connect_meta() {
+    g.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
+
+    function connectMeta(cb) {
         var request;
 
         console.log('Connecting to database "meta"');
@@ -30,10 +32,16 @@ define(["util/helpers"], function (helpers) {
                 teamStore.add(teams[i]);
             }
         };
-        return request;
+        request.onsuccess = function (event) {
+            g.dbm = request.result;
+            g.dbm.onerror = function (event) {
+                console.log("Meta database error: " + event.target.errorCode);
+            };
+            cb();
+        };
     }
 
-    function connect_league(lid) {
+    function connectLeague(lid, cb) {
         var request;
 
         console.log('Connecting to database "league' + lid + '"');
@@ -74,7 +82,13 @@ define(["util/helpers"], function (helpers) {
             releasedPlayersStore.createIndex("tid", "tid", {unique: false});
             releasedPlayersStore.createIndex("contractExp", "contractExp", {unique: false});
         };
-        return request;
+        request.onsuccess = function (event) {
+            g.dbl = request.result;
+            g.dbl.onerror = function (event) {
+                console.log("League database error: " + event.target.errorCode);
+            };
+            cb();
+        };
     }
 
 
@@ -635,8 +649,8 @@ define(["util/helpers"], function (helpers) {
     }
 
     return {
-        connect_meta: connect_meta,
-        connect_league: connect_league,
+        connectMeta: connectMeta,
+        connectLeague: connectLeague,
         putPlayer: putPlayer,
         getPlayer: getPlayer,
         getPlayers: getPlayers,

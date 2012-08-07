@@ -2,7 +2,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
     "use strict";
 
     function beforeLeague(req, cb) {
-        var leagueMenu, request;
+        var leagueMenu;
 
         g.lid = parseInt(req.params.lid, 10);
         helpers.loadGameAttributes();
@@ -14,14 +14,8 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         leagueMenu = document.getElementById("league_menu");
         if (leagueMenu === null || parseInt(leagueMenu.dataset.lid, 10) !== g.lid) {
             // Connect to league database
-            request = db.connect_league(g.lid);
-            request.onsuccess = function (event) {
+            db.connectLeague(g.lid, function () {
                 var data, template;
-
-                g.dbl = request.result;
-                g.dbl.onerror = function (event) {
-                    console.log("League database error: " + event.target.errorCode);
-                };
 
                 data = {};
                 template = Handlebars.templates.league_layout;
@@ -34,7 +28,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 playMenu.refreshOptions();
 
                 cb();
-            };
+            });
         } else {
             cb();
         }
@@ -73,15 +67,9 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
 
             // Create new meta database
             console.log("Creating new meta database...");
-            request = db.connect_meta();
-            request.onsuccess = function (event) {
-                g.dbm = request.result;
-                g.dbm.onerror = function (event) {
-                    console.log("Meta database error: " + event.target.errorCode);
-                };
-
+            request = db.connectMeta(function () {
                 console.log("Done!");
-            };
+            });
         };
     }
 

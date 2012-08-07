@@ -4,14 +4,7 @@ requirejs(["db", "views", "bbgm", "api", "util/helpers"], function (db, views, b
     window.api = api;
     window.bbgm = bbgm;
 
-    g.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
-    var request = db.connect_meta();
-    request.onsuccess = function (event) {
-        g.dbm = request.result;
-        g.dbm.onerror = function (event) {
-            console.log("Meta database error: " + event.target.errorCode);
-        };
-
+    db.connectMeta(function () {
         var app = Davis(function () {
             this.configure(function () {
                 this.generateRequestOnPageLoad = true;
@@ -68,5 +61,5 @@ requirejs(["db", "views", "bbgm", "api", "util/helpers"], function (db, views, b
         $(document).ready(function () {
             app.start();
         });
-    };
+    });
 });

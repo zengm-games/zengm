@@ -135,17 +135,16 @@ define(["db", "core/league", "core/player", "core/season", "core/trade", "util/h
         before(function(done) {
             db.connectMeta(function () {
                 league.create(0, "random", function () {
-                    console.log(g.dbl);
                     done();
                 });
             });
         });
 /*        after(function(done) {
-    if (g.dbl !== undefined) {
-        g.dbl.close();
-    }
+//    if (g.dbl !== undefined) {
+        //g.dbl.close();
+//    }
             league.remove(g.lid, done);
-        });
+        });*/
         afterEach(function(done) {
             // Set to a trade with team 1 and no players;
             trade.create(1, null, function () {

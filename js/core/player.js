@@ -421,10 +421,10 @@ define(["db", "util/random"], function (db, random) {
         p.ratings = [];
         if (newLeague) {
             // Create player for new league
-            p.ratings.push(generateRatings(profile, baseRating, pot, draftYear));
+            p.ratings.push(generateRatings(profile, baseRating, pot, g.startingSeason));
         } else {
             // Create player to be drafted
-            p.ratings.push(generateRatings(profile, baseRating, pot, g.season));
+            p.ratings.push(generateRatings(profile, baseRating, pot, draftYear));
         }
 
         minHgt = 69;  // 5'9"

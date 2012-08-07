@@ -61,6 +61,7 @@ strategic issues
 
 BUGS
 
+sometimes, after creating a new league, the redirect to the league dashboard doesn't happen
 league database error when playoffs end
 game simulation stops when a link is clicked, but then restarts when another link is clicked? wtf
 - This shouldn't happen, right? Views are read only.

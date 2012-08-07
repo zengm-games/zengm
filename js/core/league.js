@@ -113,7 +113,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                                 agingYears = random.randInt(0, 13);
                                 draftYear = g.startingSeason - 1 - agingYears;
 
-                                p = player.generate(t, 19, profile, baseRatings[n], pots[n], draftYear);
+                                p = player.generate(t, 19, profile, baseRatings[n], pots[n], draftYear, true);
                                 p = player.develop(p, agingYears, true);
                                 if (n < 5) {
                                     p = player.bonus(p, goodNeutralBad * random.randInt(0, 20), true);

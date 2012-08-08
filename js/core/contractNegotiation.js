@@ -193,10 +193,10 @@ define(["db", "core/player", "util/helpers", "util/lock", "util/playMenu", "util
                 p = cursor.value;
 
                 // Handle stats if the season is in progress
-                if (g.phase <= c.PHASE_PLAYOFFS) { // Resigning your own players happens after this
-                    p = player.addStatsRow(p, g.userTid);
-                }
                 p.tid = g.userTid;
+                if (g.phase <= c.PHASE_PLAYOFFS) { // Resigning your own players happens after this
+                    p = player.addStatsRow(p);
+                }
                 p.contractAmount = negotiation.playerAmount;
                 p.contractExp = g.season + negotiation.playerYears;
 

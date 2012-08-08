@@ -67,7 +67,7 @@ define(["db", "core/player", "util/random"], function (db, player, random) {
                                 if (players[0].contractAmount + payroll <= g.salaryCap || players[0].contractAmount === g.minContract) {
                                     p = players.shift();
                                     p.tid = tid;
-                                    p = player.addStatsRow(p, tid);
+                                    p = player.addStatsRow(p);
                                     db.putPlayer(transaction, p, function () {
                                         db.rosterAutoSort(transaction, tid, function () {
                                             if (ti <= tids.length) {

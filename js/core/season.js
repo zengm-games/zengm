@@ -76,9 +76,9 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
                         cursorP.continue();
                     } else {
                         // AI teams sign free agents
-                        freeAgents.autoSign();
-
-                        newPhaseCb(c.PHASE_PRESEASON, phaseText);
+                        freeAgents.autoSign(function () {
+                            newPhaseCb(c.PHASE_PRESEASON, phaseText);
+                        });
                     }
                 };
             }
@@ -240,7 +240,7 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
                             cursorP = event.target.result;
                             if (cursorP) {
                                 p = cursorP.value;
-                                p = player.addStatsRow(p, p.tid, true);
+                                p = player.addStatsRow(p, true);
                                 cursorP.update(p);
                                 cursorP.continue();
                             }

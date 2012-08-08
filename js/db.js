@@ -218,11 +218,16 @@ define(["util/helpers"], function (helpers) {
         if (ratings.length > 0) {
             if (season !== null) {
                 // One season
+                pr = null;
                 for (j = 0; j < pa.ratings.length; j++) {
                     if (pa.ratings[j].season === season) {
                         pr = pa.ratings[j];
                         break;
                     }
+                }
+                if (pr === null) {
+                    // Must be retired, or not in the league yet
+                    return null;
                 }
                 for (j = 0; j < ratings.length; j++) {
                     player[ratings[j]] = pr[ratings[j]];

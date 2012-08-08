@@ -1,8 +1,6 @@
 main todo
 - league leaders
-  - pretty up
-  - make sure it works for old seasons
-- for player ratings/stats views, show abbrev for the tid of that season and link to the roster from that year
+  - minimum minutes played to show?
 - trade tests
   - sometimes fail - must be a race condition somewhere
 - let free agents stay for 2 seasons before retiring, or make retirement probabilistic

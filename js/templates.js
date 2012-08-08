@@ -859,6 +859,11 @@ function program1(depth0,data,depth1) {
   stack1 = foundHelper || depth0.abbrev;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "abbrev", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/";
+  foundHelper = helpers.season;
+  stack1 = foundHelper || depth1.season;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "...season", { hash: {} }); }
   buffer += escapeExpression(stack1) + "\">";
   foundHelper = helpers.abbrev;
   stack1 = foundHelper || depth0.abbrev;
@@ -2214,7 +2219,17 @@ function program2(depth0,data) {
 
 function program4(depth0,data,depth1) {
   
-  var buffer = "", stack1;
+  var buffer = "", stack1, stack2;
+  buffer += "\n    ";
+  foundHelper = helpers.newRow;
+  stack1 = foundHelper || depth0.newRow;
+  stack2 = helpers['if'];
+  tmp1 = self.program(5, program5, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n    <div class=\"span4\">\n      <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed leaders\">\n      <thead>\n        <tr><th>";
   foundHelper = helpers.name;
   stack1 = foundHelper || depth0.name;
@@ -2233,7 +2248,7 @@ function program4(depth0,data,depth1) {
   buffer += escapeExpression(stack1) + "</th></tr>\n      </thead>\n      <tbody>\n        ";
   foundHelper = helpers.data;
   stack1 = foundHelper || depth0.data;
-  tmp1 = self.programWithDepth(program5, data, depth1);
+  tmp1 = self.programWithDepth(program7, data, depth1);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;
@@ -2242,14 +2257,19 @@ function program4(depth0,data,depth1) {
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n      </tbody>\n      </table>\n    </div>\n  ";
   return buffer;}
-function program5(depth0,data,depth2) {
+function program5(depth0,data) {
+  
+  
+  return "\n</div>\n<p></p>\n<div class=\"row-fluid\">\n    ";}
+
+function program7(depth0,data,depth2) {
   
   var buffer = "", stack1, stack2, stack3;
   buffer += "\n          <tr";
   foundHelper = helpers.userTeam;
   stack1 = foundHelper || depth0.userTeam;
   stack2 = helpers['if'];
-  tmp1 = self.program(6, program6, data);
+  tmp1 = self.program(8, program8, data);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;
@@ -2308,7 +2328,7 @@ function program5(depth0,data,depth2) {
   else { stack1 = stack3; }
   buffer += escapeExpression(stack1) + "</tr>\n        ";
   return buffer;}
-function program6(depth0,data) {
+function program8(depth0,data) {
   
   
   return " class=\"alert-info\"";}
@@ -2927,6 +2947,11 @@ function program1(depth0,data,depth1) {
   stack1 = foundHelper || depth0.abbrev;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "abbrev", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/";
+  foundHelper = helpers.season;
+  stack1 = foundHelper || depth1.season;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "...season", { hash: {} }); }
   buffer += escapeExpression(stack1) + "\">";
   foundHelper = helpers.abbrev;
   stack1 = foundHelper || depth0.abbrev;

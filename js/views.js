@@ -736,7 +736,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             season = helpers.validateSeason(season);
             seasons = helpers.getSeasons(season);
 
-            g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) {
+            g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
                 var attributes, categories, data, i, j, players, ratings, stats, template, userAbbrev;
 
                 userAbbrev = helpers.getAbbrev(g.userTid);
@@ -767,9 +767,15 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                             categories[i].data[j].userTeam = false;
                         }
                     }
+                    if (i === 3) {
+                        categories[i].newRow = true;
+                    }
+                    else {
+                        categories[i].newRow = false;
+                    }
                 }
 
-                data = {title: "Player Stats - League " + g.lid};
+                data = {title: "League Leaders - League " + g.lid};
                 template = Handlebars.templates.leaders;
                 data.league_content = template({g: g, categories: categories, season: season, seasons: seasons});
                 bbgm.ajaxUpdate(data);
@@ -785,17 +791,17 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             season = helpers.validateSeason(season);
             seasons = helpers.getSeasons(season);
 
-            g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) {
+            g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
                 var attributes, data, players, ratings, stats, template;
-                attributes = ["pid", "name", "abbrev", "pos", "age"];
+                attributes = ["pid", "name", "pos", "age"];
                 ratings = ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
-                stats = [];
+                stats = ["abbrev"];
 
                 players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings);
 
                 data = {title: "Player Ratings - League " + g.lid};
                 template = Handlebars.templates.playerRatings;
-                data.league_content = template({g: g, players: players, seasons: seasons});
+                data.league_content = template({g: g, players: players, season: season, seasons: seasons});
                 bbgm.ajaxUpdate(data);
             };
         });
@@ -809,7 +815,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             season = helpers.validateSeason(season);
             seasons = helpers.getSeasons(season);
 
-            g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) {
+            g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
                 var attributes, data, players, ratings, stats, template;
                 attributes = ["pid", "name", "pos", "age"];
                 ratings = [];
@@ -819,7 +825,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
 
                 data = {title: "Player Stats - League " + g.lid};
                 template = Handlebars.templates.playerStats;
-                data.league_content = template({g: g, players: players, seasons: seasons});
+                data.league_content = template({g: g, players: players, season: season, seasons: seasons});
                 bbgm.ajaxUpdate(data);
             };
         });
@@ -1114,7 +1120,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         history: history,
         roster: roster,
         schedule: schedule,
-        free_agents: freeAgents,
+        freeAgents: freeAgents,
         trade: trade_,
         draft: draft,
         gameLog: gameLog,

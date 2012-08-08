@@ -4,7 +4,7 @@ $(document).ready(function() {
 
   bbgm.datatable($('#player_ratings'), 4, [
     {{#players}}
-      ['<a href="/l/{{../g.lid}}/player/{{pid}}">{{name}}</a>', '{{pos}}', '<a href="/l/{{../g.lid}}/roster/{{abbrev}}">{{abbrev}}</a>', '{{age}}', '{{ovr}}', '{{pot}}', '{{hgt}}', '{{stre}}', '{{spd}}', '{{jmp}}', '{{endu}}', '{{ins}}', '{{dnk}}', '{{ft}}', '{{fg}}', '{{tp}}', '{{blk}}', '{{stl}}', '{{drb}}', '{{pss}}', '{{reb}}'],
+      ['<a href="/l/{{../g.lid}}/player/{{pid}}">{{name}}</a>', '{{pos}}', '<a href="/l/{{../g.lid}}/roster/{{abbrev}}/{{../season}}">{{abbrev}}</a>', '{{age}}', '{{ovr}}', '{{pot}}', '{{hgt}}', '{{stre}}', '{{spd}}', '{{jmp}}', '{{endu}}', '{{ins}}', '{{dnk}}', '{{ft}}', '{{fg}}', '{{tp}}', '{{blk}}', '{{stl}}', '{{drb}}', '{{pss}}', '{{reb}}'],
     {{/players}}
   ]);
 });

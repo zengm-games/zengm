@@ -125,6 +125,8 @@ DataTables - need to rethink a lot of this, particularly how to make a decent UI
   - add an option to db.getPlayers
 - default to sort descending when column is clicked
   - http://datatables.net/ref#asSorting will work. maybe pass it as an option to bbgm_datatable
+player.addStatsRow
+- season parameter wouldn't be needed if g.season was already set. Set g.season early, then.
 
 ---
 

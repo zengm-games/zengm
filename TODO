@@ -1,8 +1,4 @@
 main todo
-- league leaders
-  - minimum minutes played to show?
-- trade tests
-  - sometimes fail - must be a race condition somewhere
 - let free agents stay for 2 seasons before retiring, or make retirement probabilistic
 - nba roster
   - nba player potential ratings
@@ -124,6 +120,8 @@ DataTables - need to rethink a lot of this, particularly how to make a decent UI
   - http://datatables.net/ref#asSorting will work. maybe pass it as an option to bbgm_datatable
 player.addStatsRow
 - season parameter wouldn't be needed if g.season was already set. Set g.season early, then.
+league leaders
+- minimum minutes played to show?
 
 ---
 

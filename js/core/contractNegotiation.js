@@ -5,23 +5,15 @@
 define(["db", "core/player", "util/helpers", "util/lock", "util/playMenu", "util/random"], function (db, player, helpers, lock, playMenu, random) {
     "use strict";
 
-    /*
-
-    Args:
-        pid: 
-        resigning: A boolean. True if (this is a negotiation for a contract
-            extension with a current player who just became a free agent. False
-            otherwise.
-    */
     /**
      * Start a new contract negotiation with a player.
      * 
      * @memberOf core.contractNegotiation
      * @param {number} pid An integer that must correspond with the player ID of a free agent.
-     * @param {boolean}   resigning Set to true if this is a negotiation for a contract extension, which will allow multiple simultaneous negotiations. Set to false otherwise.
+     * @param {boolean} resigning Set to true if this is a negotiation for a contract extension, which will allow multiple simultaneous negotiations. Set to false otherwise.
      * @param {function()} cb Optional callback to be run only after a successful negotiation is started.
      */
-    function create(pid, resigning, cb) {
+    function create(ot, pid, resigning, cb) {
         var playerStore;
 
         console.log("Trying to start new contract negotiation with player " + pid);
@@ -35,7 +27,7 @@ define(["db", "core/player", "util/helpers", "util/lock", "util/playMenu", "util
             return;
         }
 
-        playerStore = g.dbl.transaction(["players"], "readwrite").objectStore("players");
+        playerStore = db.getObjectStore(ot, "players", "players", true);
         playerStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
             var numPlayersOnRoster;
 

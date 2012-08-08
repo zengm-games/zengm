@@ -1,7 +1,6 @@
 main todo
 - league leaders
   - minimum minutes played to show?
-- resigning players view loads early and is erroneously blank
 - trade tests
   - sometimes fail - must be a race condition somewhere
 - let free agents stay for 2 seasons before retiring, or make retirement probabilistic

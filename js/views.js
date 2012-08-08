@@ -1020,7 +1020,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                         }
                     }
                     if (!found) {
-                        contractNegotiation.create(pid, false, cbDisplayNegotiation);
+                        contractNegotiation.create(null, pid, false, cbDisplayNegotiation);
                     }
                 } else {
                     // Make an offer to the player;

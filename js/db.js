@@ -101,7 +101,7 @@ define(["util/helpers"], function (helpers) {
      * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction to be used; if null is passed, then a new transaction will be used.
      * @param {(string|Array.<string>)} transactionObjectStores The object stores to open a transaction with, if necessary.
      * @param {?string} objectStore The object store to return. If null, return a transaction.
-     * @param {boolean=} readwrite Should the transaction be readwrite or not? This only applies when a new transaction is created here (i.e. no transaction or objectStore is passed).
+     * @param {boolean=} readwrite Should the transaction be readwrite or not? This only applies when a new transaction is created here (i.e. no transaction or objectStore is passed). Default false.
      * @return {(IDBObjectStore|IDBTransaction)} The requested object store or transaction.
      */
     function getObjectStore(ot, transactionObjectStores, objectStore, readwrite) {
@@ -665,6 +665,7 @@ define(["util/helpers"], function (helpers) {
     return {
         connectMeta: connectMeta,
         connectLeague: connectLeague,
+        getObjectStore: getObjectStore,
         putPlayer: putPlayer,
         getPlayer: getPlayer,
         getPlayers: getPlayers,

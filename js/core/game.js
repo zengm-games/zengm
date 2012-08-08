@@ -133,7 +133,6 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
                     won0 = false;
                 }
 
-console.log('hi');
                 for (i = 0; i < playoffRound.length; i++) {
                     series = playoffRound[i];
 
@@ -143,7 +142,6 @@ console.log('hi');
                         } else {
                             series.away.won += 1;
                         }
-console.log(playoffSeries.series[0][3].home.won + " " + playoffSeries.series[0][3].away.won)
                     } else if (series.away.tid === that.team[t].id) {
                         if (won0) {
                             series.away.won += 1;
@@ -155,7 +153,6 @@ console.log(playoffSeries.series[0][3].home.won + " " + playoffSeries.series[0][
 
                 cursor.update(playoffSeries);
             };
-            this.transaction.objectStore("playoffSeries").get(g.season).onsuccess = function (event) { console.log(event.target.result.series[0][3].home.won + " " + event.target.result.series[0][3].away.won); }
         }
 
         // Only pay player salaries for regular season games.
@@ -396,7 +393,7 @@ console.log(playoffSeries.series[0][3].home.won + " " + playoffSeries.series[0][
                         realTid = players[0].tid;
                         t = {id: realTid, defense: 0, pace: 0, won: 0, lost: 0, cid: 0, did: 0, stat: {}, player: []};
                         transaction.objectStore("teams").get(realTid).onsuccess = function (event) {
-                            var doSaveResults, gamesRemaining, gidsFinished, gs, i, j, n_players, p, player, rating, results, team, teamSeason;
+                            var doGameSim, doSaveResults, gamesRemaining, gidsFinished, i, j, n_players, p, player, rating, team, teamSeason;
 
                             team = event.target.result;
                             for (j = 0; j < team.seasons.length; j++) {
@@ -471,26 +468,34 @@ console.log(playoffSeries.series[0][3].home.won + " " + playoffSeries.series[0][
                                 if ((schedule && schedule.length > 0) || playoffsContinue) {
                                     gamesRemaining = schedule.length;
                                     gidsFinished = [];
-                                    doSaveResults = function (results, playoffs) {
-                                        var i, scheduleStore;
+                                    doGameSim = function (i) {
+                                        var gs, results;
+
+                                        if (i < schedule.length) {
+                                            gs = new gameSim.GameSim(schedule[i].gid, teams[schedule[i].homeTid], teams[schedule[i].awayTid]);
+                                            results = gs.run();
+                                            doSaveResults(i, results, g.phase === c.PHASE_PLAYOFFS);
+                                        }
+                                    }
+                                    doSaveResults = function (i, results, playoffs) {
                                         saveResults(transaction, results, playoffs, function () {
+                                            var j, scheduleStore;
+
                                             gamesRemaining -= 1;
                                             gidsFinished.push(results.gid);
                                             if (gamesRemaining === 0) {
                                                 scheduleStore = transaction.objectStore("schedule");
-                                                for (i = 0; i < gidsFinished.length; i++) {
-                                                    scheduleStore.delete(gidsFinished[i]);
+                                                for (j = 0; j < gidsFinished.length; j++) {
+                                                    scheduleStore.delete(gidsFinished[j]);
                                                 }
 
                                                 play(num_days - 1);
+                                            } else {
+                                                doGameSim(i + 1);
                                             }
                                         });
                                     };
-                                    for (i = 0; i < schedule.length; i++) {
-                                        gs = new gameSim.GameSim(schedule[i].gid, teams[schedule[i].homeTid], teams[schedule[i].awayTid]);
-                                        results = gs.run();
-                                        doSaveResults(results, g.phase === c.PHASE_PLAYOFFS);
-                                    }
+                                    doGameSim(0); // Will loop through schedule and simulate all games
                                     if (schedule.length === 0 && playoffsContinue) {
                                         play(num_days - 1);
                                     }

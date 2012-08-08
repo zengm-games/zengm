@@ -1,4 +1,9 @@
 main todo
+- playoffs scheduling is fucked up. used to work.
+  - now only one series progresses at a time
+  - playoff games put multiple entries in game log?
+  - it seems that updating an object in an indexeddb store multiple times in one transaction only saves the last update and none of the previous ones. this is the same bug that was causing problems with scheduling multiple games for a team in one day.
+    - ah, it's because of not nesting subsequent requests! But how to fix? Play around to find a quick fix. If not, look at old versions and find one that worked.
 - league leaders
   - minimum minutes played to show?
 - trade tests
@@ -58,9 +63,6 @@ sometimes, after creating a new league, the redirect to the league dashboard doe
 league database error when playoffs end
 game simulation stops when a link is clicked, but then restarts when another link is clicked? wtf
 - This seems to generally work now, but it's not perfect. If you do any action that writes to the database, such as reordering the roster, something bad could happen because IndexedDB doesn't like multiple writes going on at the same time
-playoffs scheduling is fucked up. used to work.
-- now only one series progresses at a time
-- playoff games put multiple entries in game log?
 
 ---
 

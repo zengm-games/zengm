@@ -8,6 +8,7 @@ urls = (
     '/(js/.*)', 'static',
     '/(templates/.*)', 'static',
     '/test', 'test',
+    '/test_case', 'test_case',
     '/.*', 'index'
 )
 app = web.application(urls, globals())
@@ -35,6 +36,12 @@ class index:
 class test:
     def GET(self):
         f = open('test.html')
+        return f.read()
+
+
+class test_case:
+    def GET(self):
+        f = open('test_case.html')
         return f.read()
 
 

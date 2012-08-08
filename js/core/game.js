@@ -133,6 +133,7 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
                     won0 = false;
                 }
 
+console.log('hi');
                 for (i = 0; i < playoffRound.length; i++) {
                     series = playoffRound[i];
 
@@ -142,6 +143,7 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
                         } else {
                             series.away.won += 1;
                         }
+console.log(playoffSeries.series[0][3].home.won + " " + playoffSeries.series[0][3].away.won)
                     } else if (series.away.tid === that.team[t].id) {
                         if (won0) {
                             series.away.won += 1;
@@ -153,6 +155,7 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
 
                 cursor.update(playoffSeries);
             };
+            this.transaction.objectStore("playoffSeries").get(g.season).onsuccess = function (event) { console.log(event.target.result.series[0][3].home.won + " " + event.target.result.series[0][3].away.won); }
         }
 
         // Only pay player salaries for regular season games.
@@ -334,6 +337,7 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
     /*Convenience function to save game stats.*/
     function saveResults(transaction, results, playoffs, cb) {
         var gm;
+
 //        r = g.dbex('SELECT in_progress_timestamp FROM schedule WHERE gid = :gid', gid=results['gid'])
 //        in_progress_timestamp, = r.fetchone()
 //        if (in_progress_timestamp > 0) {

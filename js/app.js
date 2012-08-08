@@ -45,6 +45,8 @@ requirejs(["db", "views", "bbgm", "api", "util/helpers"], function (db, views, b
             this.get('/l/:lid/game_log', views.gameLog);
             this.get('/l/:lid/game_log/:abbrev', views.gameLog);
             this.get('/l/:lid/game_log/:abbrev/:season', views.gameLog);
+            this.get('/l/:lid/leaders', views.leaders);
+            this.get('/l/:lid/leaders/:season', views.leaders);
             this.get('/l/:lid/player_ratings', views.playerRatings);
             this.get('/l/:lid/player_ratings/:season', views.playerRatings);
             this.get('/l/:lid/player_stats', views.playerStats);

@@ -728,6 +728,55 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         });
     }
 
+    function leaders(req) {
+        beforeLeague(req, function () {
+            var season, seasons;
+
+            season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
+            season = helpers.validateSeason(season);
+            seasons = helpers.getSeasons(season);
+
+            g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) {
+                var attributes, categories, data, i, j, players, ratings, stats, template, userAbbrev;
+
+                userAbbrev = helpers.getAbbrev(g.userTid);
+
+                categories = [];
+                categories.push({name: "Points", stat: "Pts", title: "Points Per Game", data: []});
+                categories.push({name: "Rebounds", stat: "Reb", title: "Rebounds Per Game", data: []});
+                categories.push({name: "Assists", stat: "Ast", title: "Assists Per Game", data: []});
+                categories.push({name: "Field Goal Percentage", stat: "FG%", title: "Field Goal Percentage", data: []});
+                categories.push({name: "Blocks", stat: "Blk", title: "Blocks Per Game", data: []});
+                categories.push({name: "Steals", stat: "Stl", title: "Steals Per Game", data: []});
+
+                attributes = ["pid", "name"];
+                ratings = [];
+                stats = ["pts", "trb", "ast", "fgp", "blk", "stl", "abbrev"];  // This needs to be in the same order as categories
+                players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings);
+
+                for (i = 0; i < categories.length; i++) {
+                    players.sort(function (a, b) {  return b[stats[i]] - a[stats[i]]; });
+                    for (j = 0; j < 10; j++) {
+                        categories[i].data[j] = helpers.deepCopy(players[j]);
+                        categories[i].data[j].i = j + 1;
+                        categories[i].data[j].stat = categories[i].data[j][stats[i]];
+                        delete categories[i].data[j][stats[i]];
+                        if (userAbbrev === categories[i].data[j].abbrev) {
+                            categories[i].data[j].userTeam = true;
+                        } else {
+                            categories[i].data[j].userTeam = false;
+                        }
+                    }
+                }
+
+                data = {title: "Player Stats - League " + g.lid};
+                template = Handlebars.templates.leaders;
+                data.league_content = template({g: g, categories: categories, season: season, seasons: seasons});
+                bbgm.ajaxUpdate(data);
+            };
+        });
+    }
+
     function playerRatings(req) {
         beforeLeague(req, function () {
             var season, seasons;
@@ -762,9 +811,9 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
 
             g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) {
                 var attributes, data, players, ratings, stats, template;
-                attributes = ["pid", "name", "abbrev", "pos", "age"];
+                attributes = ["pid", "name", "pos", "age"];
                 ratings = [];
-                stats = ["gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts"];
+                stats = ["abbrev", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts"];
 
                 players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings, {showRookies: true});
 
@@ -1069,6 +1118,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         trade: trade_,
         draft: draft,
         gameLog: gameLog,
+        leaders: leaders,
         playerRatings: playerRatings,
         playerStats: playerStats,
         teamStats: teamStats,

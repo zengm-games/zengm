@@ -41,9 +41,10 @@ define(["db", "views", "core/draft", "core/game", "core/player", "core/season", 
         } else if (amount === "until_draft") {
             if (g.phase === c.PHASE_BEFORE_DRAFT) {
                 season.newPhase(c.PHASE_DRAFT);
-                draft.generatePlayers();
-                draft.setOrder(function () {
-                    Davis.location.assign(new Davis.Request("/l/" + g.lid + "/draft"));
+                draft.generatePlayers(function () {
+                    draft.setOrder(function () {
+                        Davis.location.assign(new Davis.Request("/l/" + g.lid + "/draft"));
+                    });
                 });
             }
         } else if (amount === "until_resign_players") {

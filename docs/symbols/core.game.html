@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - core.league</title>
+		<title>JsDoc Reference - core.game</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -218,7 +218,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Namespace core.league
+				Namespace core.game
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -226,16 +226,16 @@ ul.inheritsList
 				
 				
 			
-				Creating and removing leagues.
+				Everything about games except the actual simulation. So, loading the schedule, loading the teams, saving the results, and handling multi-day simulations and what happens when there are no games left to play.
 				
 				
-					<br /><i>Defined in: </i> &lt;js/core/league.js&gt;.
+					<br /><i>Defined in: </i> &lt;js/core/game.js&gt;.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class core.league.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class core.game.">
 				<caption>Namespace Summary</caption>
 				<thead>
 					<tr>
@@ -248,7 +248,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/core.league.html#constructor">core.league</a></b>
+								<b><a href="../symbols/core.game.html#constructor">core.game</a></b>
 							</div>
 							<div class="description"></div>
 						</td>
@@ -264,7 +264,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class core.league.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class core.game.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -277,18 +277,9 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.league.<b><a href="../symbols/core.league.html#.create">create</a></b>(tid, playerGeneration, cb)
+								<div class="fixedFont">core.game.<b><a href="../symbols/core.game.html#.loadTeams">loadTeams</a></b>(transaction, cb)
 								</div>
-								<div class="description">Create a new league.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">core.league.<b><a href="../symbols/core.league.html#.remove">remove</a></b>(lid, cb)
-								</div>
-								<div class="description">Delete an existing league.</div>
+								<div class="description">Load all teams into an array of team objects.</div>
 							</td>
 						</tr>
 					
@@ -309,7 +300,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>core.league</b>
+						<b>core.game</b>
 				</div>
 				
 				<div class="description">
@@ -340,63 +331,17 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name=".create"> </a>
+					<a name=".loadTeams"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">core.league.</span><b>create</b>(tid, playerGeneration, cb)
+					<span class="light">core.game.</span><b>loadTeams</b>(transaction, cb)
 					
 					</div>
 					<div class="description">
-						Create a new league.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{number}</span> <b>tid</b>
-									
-								</dt>
-								<dd>The team ID for the team the user wants to manage.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{string}</span> <b>playerGeneration</b>
-									
-								</dt>
-								<dd>Either "random" to generate random players or "nba2012" to load NBA rosters.</dd>
-							
-								<dt>
-									<b>cb</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
+						Load all teams into an array of team objects.
 
-					<hr />
-				
-					<a name=".remove"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">core.league.</span><b>remove</b>(lid, cb)
-					
-					</div>
-					<div class="description">
-						Delete an existing league.
+The team objects contain all the information needed to simulate games.
 						
 						
 					</div>
@@ -408,16 +353,16 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{number}</span> <b>lid</b>
+									<span class="light fixedFont">{IDBTransaction}</span> <b>transaction</b>
 									
 								</dt>
-								<dd>League ID.</dd>
+								<dd>A readwrite IndexedDB transaction on games, players, playoffSeries, releasedPlayers, schedule, and teams.</dd>
 							
 								<dt>
-									<b>cb</b>
+									<span class="light fixedFont">{function(Array)}</span> <b>cb</b>
 									
 								</dt>
-								<dd></dd>
+								<dd>Callback function that takes the array of team objects as its only argument.</dd>
 							
 							</dl>
 						

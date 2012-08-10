@@ -335,28 +335,15 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
         return r;
     }
 
-    /*Convenience function to save game stats.*/
-    function saveResults(transaction, results, playoffs, cb) {
-        var gm;
-
-//        r = g.dbex('SELECT in_progress_timestamp FROM schedule WHERE gid = :gid', gid=results['gid'])
-//        in_progress_timestamp, = r.fetchone()
-//        if (in_progress_timestamp > 0) {
-            gm = new Game();
-            gm.load(results, playoffs);
-            gm.writeStats(transaction, cb);
-//            console.log("Saved results for game " + results.gid);
-//        else {
-//            console.log("Ignored stale results for game " + results['gid']);
-//        }
-    }
-
-    // Load a single team
-    function loadTeam(tid) {
-        
-    }
-
-    // Load all teams into a list
+    /**
+     * Load all teams into an array of team objects.
+     * 
+     * The team objects contain all the information needed to simulate games.
+     * 
+     * @memberOf core.game
+     * @param {IDBTransaction} transaction A readwrite IndexedDB transaction on games, players, playoffSeries, releasedPlayers, schedule, and teams.
+     * @param {function(Array)} cb Callback function that takes the array of team objects as its only argument.
+     */
     function loadTeams(transaction, cb) {
         var teams, tid;
 
@@ -499,7 +486,11 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
                             }
                         };
                         doSaveResults = function (i, results, playoffs) {
-                            saveResults(transaction, results, playoffs, function () {
+                            var gm;
+
+                            gm = new Game();
+                            gm.load(results, playoffs);
+                            gm.writeStats(transaction, function () {
                                 var j, scheduleStore;
 
                                 gamesRemaining -= 1;

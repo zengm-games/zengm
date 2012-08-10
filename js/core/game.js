@@ -1,3 +1,7 @@
+/**
+ * @name core.game
+ * @namespace Everything about games except the actual simulation. So, loading the schedule, loading the teams, saving the results, and handling multi-day simulations and what happens when there are no games left to play.
+ */
 define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMenu", "util/random"], function (db, freeAgents, gameSim, season, helpers, lock, playMenu, random) {
     "use strict";
 
@@ -347,6 +351,101 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
 //        }
     }
 
+    // Load a single team
+    function loadTeam(tid) {
+        
+    }
+
+    // Load all teams into a list
+    function loadTeams(transaction, cb) {
+        var teams, tid;
+
+        teams = [];
+
+        for (tid = 0; tid < 30; tid++) {
+            transaction.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
+                var players, realTid, t;
+
+                players = event.target.result;
+                players.sort(function (a, b) {  return a.rosterOrder - b.rosterOrder; });
+                realTid = players[0].tid;
+                t = {id: realTid, defense: 0, pace: 0, won: 0, lost: 0, cid: 0, did: 0, stat: {}, player: []};
+                transaction.objectStore("teams").get(realTid).onsuccess = function (event) {
+                    var i, j, n_players, p, player, rating, team, teamSeason;
+
+                    team = event.target.result;
+                    for (j = 0; j < team.seasons.length; j++) {
+                        if (team.seasons[j].season === g.season) {
+                            teamSeason = team.seasons[j];
+                            break;
+                        }
+                    }
+                    t.won = teamSeason.won;
+                    t.lost = teamSeason.lost;
+                    t.cid = team.cid;
+                    t.did = team.did;
+
+                    for (i = 0; i < players.length; i++) {
+                        player = players[i];
+                        p = {id: player.pid, name: player.name, pos: player.pos, ovr: 0, stat: {}, composite_rating: {}};
+
+                        for (j = 0; j < player.ratings.length; j++) {
+                            if (player.ratings[j].season === g.season) {
+                                rating = player.ratings[j];
+                                break;
+                            }
+                        }
+
+                        p.ovr = rating.ovr;
+
+                        p.composite_rating.pace = _composite(90, 140, rating, ['spd', 'jmp', 'dnk', 'tp', 'stl', 'drb', 'pss'], undefined, false);
+                        p.composite_rating.shot_ratio = _composite(0, 0.5, rating, ['ins', 'dnk', 'fg', 'tp']);
+                        p.composite_rating.assist_ratio = _composite(0, 0.5, rating, ['drb', 'pss', 'spd']);
+                        p.composite_rating.turnover_ratio = _composite(0, 0.5, rating, ['drb', 'pss', 'spd'], true);
+                        p.composite_rating.field_goal_percentage = _composite(0.38, 0.68, rating, ['hgt', 'jmp', 'ins', 'dnk', 'fg', 'tp']);
+                        p.composite_rating.free_throw_percentage = _composite(0.65, 0.9, rating, ['ft']);
+                        p.composite_rating.three_pointer_percentage = _composite(0, 0.45, rating, ['tp']);
+                        p.composite_rating.rebound_ratio = _composite(0, 0.5, rating, ['hgt', 'stre', 'jmp', 'reb']);
+                        p.composite_rating.steal_ratio = _composite(0, 0.5, rating, ['spd', 'stl']);
+                        p.composite_rating.block_ratio = _composite(0, 0.5, rating, ['hgt', 'jmp', 'blk']);
+                        p.composite_rating.foul_ratio = _composite(0, 0.5, rating, ['spd'], true);
+                        p.composite_rating.defense = _composite(0, 0.5, rating, ['stre', 'spd']);
+
+                        p.stat = {gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, court_time: 0, bench_time: 0, energy: 1};
+
+                        t.player.push(p);
+                    }
+
+                    // Number of players to factor into pace and defense rating calculation
+                    n_players = t.player.length;
+                    if (n_players > 7) {
+                        n_players = 7;
+                    }
+
+                    // Would be better if these were scaled by average min played and end
+                    t.pace = 0;
+                    for (i = 0; i < n_players; i++) {
+                        t.pace += t.player[i].composite_rating.pace;
+                    }
+                    t.pace /= n_players;
+                    t.defense = 0;
+                    for (i = 0; i < n_players; i++) {
+                        t.defense += t.player[i].composite_rating.defense;
+                    }
+                    t.defense /= n_players;
+                    t.defense /= 4;  // This gives the percentage pts subtracted from the other team's normal FG%
+
+
+                    t.stat = {min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0};
+                    teams.push(t);
+                    if (teams.length === 30) {
+                        cb(teams);
+                    }
+                };
+            };
+        }
+    }
+
     /*Play numDays days worth of games. If start is true, then this is
     starting a new series of games. If not, then it's continuing a simulation.
     */
@@ -375,135 +474,54 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
             playMenu.setStatus("Playing games (" + numDays + " days remaining)...");
             // Create schedule and team lists for today, to be sent to the client
             season.getSchedule(1, function (schedule) {
-                var j, matchup, teams, tid, transaction;
+                var tid, transaction;
 
-                for (j = 0; j < schedule.length; j++) {
-                    matchup = schedule[j];
-                }
-
+                // This transaction is used for a day's simulations, first reading data from it and then writing the game results
                 transaction = g.dbl.transaction(["games", "players", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
 
-                teams = [];
                 // Load all teams, for now. Would be more efficient to load only some of them, I suppose.
-                for (tid = 0; tid < 30; tid++) {
-                    transaction.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
-                        var players, realTid, t;
+                loadTeams(transaction, function (teams) {
+                    var doGameSim, doSaveResults, gamesRemaining, gidsFinished;
 
-                        players = event.target.result;
-                        players.sort(function (a, b) {  return a.rosterOrder - b.rosterOrder; });
-                        realTid = players[0].tid;
-                        t = {id: realTid, defense: 0, pace: 0, won: 0, lost: 0, cid: 0, did: 0, stat: {}, player: []};
-                        transaction.objectStore("teams").get(realTid).onsuccess = function (event) {
-                            var doGameSim, doSaveResults, gamesRemaining, gidsFinished, i, j, n_players, p, player, rating, team, teamSeason;
+                    teams.sort(function (a, b) {  return a.id - b.id; });  // Order teams by tid
 
-                            team = event.target.result;
-                            for (j = 0; j < team.seasons.length; j++) {
-                                if (team.seasons[j].season === g.season) {
-                                    teamSeason = team.seasons[j];
-                                    break;
-                                }
-                            }
-                            t.won = teamSeason.won;
-                            t.lost = teamSeason.lost;
-                            t.cid = team.cid;
-                            t.did = team.did;
+                    // Play games
+                    if ((schedule && schedule.length > 0) || playoffsContinue) {
+                        gamesRemaining = schedule.length;
+                        gidsFinished = [];
+                        doGameSim = function (i) {
+                            var gs, results;
 
-                            for (i = 0; i < players.length; i++) {
-                                player = players[i];
-                                p = {id: player.pid, name: player.name, pos: player.pos, ovr: 0, stat: {}, composite_rating: {}};
-
-                                for (j = 0; j < player.ratings.length; j++) {
-                                    if (player.ratings[j].season === g.season) {
-                                        rating = player.ratings[j];
-                                        break;
-                                    }
-                                }
-
-                                p.ovr = rating.ovr;
-
-                                p.composite_rating.pace = _composite(90, 140, rating, ['spd', 'jmp', 'dnk', 'tp', 'stl', 'drb', 'pss'], undefined, false);
-                                p.composite_rating.shot_ratio = _composite(0, 0.5, rating, ['ins', 'dnk', 'fg', 'tp']);
-                                p.composite_rating.assist_ratio = _composite(0, 0.5, rating, ['drb', 'pss', 'spd']);
-                                p.composite_rating.turnover_ratio = _composite(0, 0.5, rating, ['drb', 'pss', 'spd'], true);
-                                p.composite_rating.field_goal_percentage = _composite(0.38, 0.68, rating, ['hgt', 'jmp', 'ins', 'dnk', 'fg', 'tp']);
-                                p.composite_rating.free_throw_percentage = _composite(0.65, 0.9, rating, ['ft']);
-                                p.composite_rating.three_pointer_percentage = _composite(0, 0.45, rating, ['tp']);
-                                p.composite_rating.rebound_ratio = _composite(0, 0.5, rating, ['hgt', 'stre', 'jmp', 'reb']);
-                                p.composite_rating.steal_ratio = _composite(0, 0.5, rating, ['spd', 'stl']);
-                                p.composite_rating.block_ratio = _composite(0, 0.5, rating, ['hgt', 'jmp', 'blk']);
-                                p.composite_rating.foul_ratio = _composite(0, 0.5, rating, ['spd'], true);
-                                p.composite_rating.defense = _composite(0, 0.5, rating, ['stre', 'spd']);
-
-                                p.stat = {gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, court_time: 0, bench_time: 0, energy: 1};
-
-                                t.player.push(p);
-                            }
-
-                            // Number of players to factor into pace and defense rating calculation
-                            n_players = t.player.length;
-                            if (n_players > 7) {
-                                n_players = 7;
-                            }
-
-                            // Would be better if these were scaled by average min played and end
-                            t.pace = 0;
-                            for (i = 0; i < n_players; i++) {
-                                t.pace += t.player[i].composite_rating.pace;
-                            }
-                            t.pace /= n_players;
-                            t.defense = 0;
-                            for (i = 0; i < n_players; i++) {
-                                t.defense += t.player[i].composite_rating.defense;
-                            }
-                            t.defense /= n_players;
-                            t.defense /= 4;  // This gives the percentage pts subtracted from the other team's normal FG%
-
-
-                            t.stat = {min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0};
-                            teams.push(t);
-                            if (teams.length === 30) {
-                                teams.sort(function (a, b) {  return a.id - b.id; });  // Order teams by tid
-
-                                // Play games
-                                if ((schedule && schedule.length > 0) || playoffsContinue) {
-                                    gamesRemaining = schedule.length;
-                                    gidsFinished = [];
-                                    doGameSim = function (i) {
-                                        var gs, results;
-
-                                        if (i < schedule.length) {
-                                            gs = new gameSim.GameSim(schedule[i].gid, teams[schedule[i].homeTid], teams[schedule[i].awayTid]);
-                                            results = gs.run();
-                                            doSaveResults(i, results, g.phase === c.PHASE_PLAYOFFS);
-                                        }
-                                    };
-                                    doSaveResults = function (i, results, playoffs) {
-                                        saveResults(transaction, results, playoffs, function () {
-                                            var j, scheduleStore;
-
-                                            gamesRemaining -= 1;
-                                            gidsFinished.push(results.gid);
-                                            if (gamesRemaining === 0) {
-                                                scheduleStore = transaction.objectStore("schedule");
-                                                for (j = 0; j < gidsFinished.length; j++) {
-                                                    scheduleStore.delete(gidsFinished[j]);
-                                                }
-
-                                                play(numDays - 1);
-                                            } else {
-                                                doGameSim(i + 1);
-                                            }
-                                        });
-                                    };
-                                    doGameSim(0); // Will loop through schedule and simulate all games
-                                    if (schedule.length === 0 && playoffsContinue) {
-                                        play(numDays - 1);
-                                    }
-                                }
+                            if (i < schedule.length) {
+                                gs = new gameSim.GameSim(schedule[i].gid, teams[schedule[i].homeTid], teams[schedule[i].awayTid]);
+                                results = gs.run();
+                                doSaveResults(i, results, g.phase === c.PHASE_PLAYOFFS);
                             }
                         };
-                    };
-                }
+                        doSaveResults = function (i, results, playoffs) {
+                            saveResults(transaction, results, playoffs, function () {
+                                var j, scheduleStore;
+
+                                gamesRemaining -= 1;
+                                gidsFinished.push(results.gid);
+                                if (gamesRemaining === 0) {
+                                    scheduleStore = transaction.objectStore("schedule");
+                                    for (j = 0; j < gidsFinished.length; j++) {
+                                        scheduleStore.delete(gidsFinished[j]);
+                                    }
+
+                                    play(numDays - 1);
+                                } else {
+                                    doGameSim(i + 1);
+                                }
+                            });
+                        };
+                        doGameSim(0); // Will loop through schedule and simulate all games
+                        if (schedule.length === 0 && playoffsContinue) {
+                            play(numDays - 1);
+                        }
+                    }
+                });
                 if (schedule.length === 0 && !playoffsContinue) {
                     cbNoGames();
                 }

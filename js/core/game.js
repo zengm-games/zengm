@@ -338,7 +338,7 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
     /**
      * Load all teams into an array of team objects.
      * 
-     * The team objects contain all the information needed to simulate games.
+     * The team objects contain all the information needed to simulate games. It would be more efficient if it only loaded team data for teams that are actually playing, particularly in the playoffs.
      * 
      * @memberOf core.game
      * @param {IDBTransaction} transaction A readwrite IndexedDB transaction on games, players, playoffSeries, releasedPlayers, schedule, and teams.

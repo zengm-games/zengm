@@ -422,7 +422,6 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
                     t.defense /= n_players;
                     t.defense /= 4;  // This gives the percentage pts subtracted from the other team's normal FG%
 
-
                     t.stat = {min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0};
                     teams.push(t);
                     if (teams.length === 30) {
@@ -433,9 +432,14 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
         }
     }
 
-    /*Play numDays days worth of games. If start is true, then this is
-    starting a new series of games. If not, then it's continuing a simulation.
-    */
+    /**
+     * Play one or more days of games.
+     * 
+     * This also handles the case where there are no more games to be played by switching the phase to either the playoffs or before the draft, as appropriate.
+     * 
+     * @param {number} numDays An integer representing the number of days to be simulated. If numDays is larger than the number of days remaining, then all games will be simulated up until either the end of the regular season or the end of the playoffs, whichever happens first.
+     * @param {boolean} start Is this a new request from the user to play games (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed.
+     */
     function play(numDays, start) {
         var cbNoGames, cbPlayGames, playoffsContinue;
 
@@ -551,8 +555,7 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
                     });
                 } else {
                     season.newSchedulePlayoffsDay(function (playoffsOver) {
-                        // If season.newSchedulePlayoffsDay didn't move the phase to 4, then
-                        // the playoffs are still happening.
+                        // If season.newSchedulePlayoffsDay didn't move the phase to c.PHASE_BEFORE_DRAFT, then the playoffs are still happening.
                         if (g.phase === c.PHASE_PLAYOFFS) {
                             playoffsContinue = true;
                         }

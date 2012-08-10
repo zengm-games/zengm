@@ -842,12 +842,21 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
         });
     }
 
-    /*Returns an array of numDays days worth of games (really, just one day), or all games in the schedule if numDays
-    is 0 (default). It is important that, when requesting a day's games, no team will be scheduled to play more than once that day.
+   /**
+    * Get an array of games from the schedule.
+    * 
+    * @memberOf core.season
+    * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on schedule; if null is passed, then a new transaction will be used.
+    * @param {number} numDays Number of days of games requested. Currently, this will return all games if 0 is passed or one day of games if any number greater than 0 is passed.
+    * @param {function(Array)} cb Callback function that takes the requested schedule array as its only argument.
     */
-    function getSchedule(numDays, cb) {
-        numDays = parseInt(numDays, 10);
-        g.dbl.transaction(["schedule"]).objectStore("schedule").getAll().onsuccess = function (event) {
+    function getSchedule(ot, numDays, cb) {
+        var scheduleStore;
+
+        numDays = Math.floor(numDays);
+
+        scheduleStore = db.getObjectStore(ot, "schedule", "schedule");
+        scheduleStore.getAll().onsuccess = function (event) {
             var i, schedule, tids;
 
             schedule = event.target.result;

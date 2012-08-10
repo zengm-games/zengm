@@ -400,7 +400,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
 
     function schedule(req) {
         beforeLeague(req, function () {
-            season.getSchedule(0, function (schedule_) {
+            season.getSchedule(null, 0, function (schedule_) {
                 var data, game, games, i, row, team0, team1, template, vsat;
 
                 games = [];

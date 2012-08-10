@@ -24,7 +24,7 @@ define(["db", "views", "core/draft", "core/game", "core/player", "core/season", 
             game.play(numDays, true);
         } else if (amount === "until_playoffs") {
             if (g.phase < c.PHASE_PLAYOFFS) {
-/*                season.getSchedule(0, function (schedule) {
+/*                season.getSchedule(null, 0, function (schedule) {
                     numDays = Math.floor(2 * schedule.length / (g.numTeams));
                     game.play(numDays, true);
                 });*/

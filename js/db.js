@@ -625,7 +625,7 @@ define(["util/helpers"], function (helpers) {
     function rosterAutoSort(ot, tid, cb) {
         var players, playerStore;
 
-        playerStore = getObjectStore(ot, "players", "players", "readwrite");
+        playerStore = getObjectStore(ot, "players", "players", true);
 
         // Get roster and sort by overall rating
         playerStore.index("tid").getAll(tid).onsuccess = function (event) {

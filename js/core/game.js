@@ -452,7 +452,7 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
             playMenu.refreshOptions();
             // Check to see if the season is over
             if (g.phase < c.PHASE_PLAYOFFS) {
-                season.getSchedule(0, function (schedule) {
+                season.getSchedule(null, 0, function (schedule) {
                     if (schedule.length === 0) {
                         season.newPhase(c.PHASE_PLAYOFFS);
                     }
@@ -462,13 +462,16 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
 
         // Simulates a day of games. If there are no games left, it calls cbNoGames.
         cbPlayGames = function () {
-            playMenu.setStatus("Playing games (" + numDays + " days remaining)...");
-            // Create schedule and team lists for today, to be sent to the client
-            season.getSchedule(1, function (schedule) {
-                var tid, transaction;
+            var transaction;
 
-                // This transaction is used for a day's simulations, first reading data from it and then writing the game results
-                transaction = g.dbl.transaction(["games", "players", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
+            playMenu.setStatus("Playing games (" + numDays + " days remaining)...");
+
+            // This transaction is used for a day's simulations, first reading data from it and then writing the game results
+            transaction = g.dbl.transaction(["games", "players", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
+
+            // Get the schedule for today
+            season.getSchedule(transaction, 1, function (schedule) {
+                var tid;
 
                 // Load all teams, for now. Would be more efficient to load only some of them, I suppose.
                 loadTeams(transaction, function (teams) {

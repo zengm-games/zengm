@@ -40,10 +40,11 @@ define(["db", "views", "core/draft", "core/game", "core/player", "core/season", 
             playMenu.refreshOptions();
         } else if (amount === "until_draft") {
             if (g.phase === c.PHASE_BEFORE_DRAFT) {
-                season.newPhase(c.PHASE_DRAFT);
-                draft.generatePlayers(function () {
-                    draft.setOrder(function () {
-                        Davis.location.assign(new Davis.Request("/l/" + g.lid + "/draft"));
+                season.newPhase(c.PHASE_DRAFT, function () {
+                    draft.generatePlayers(function () {
+                        draft.setOrder(function () {
+                            Davis.location.assign(new Davis.Request("/l/" + g.lid + "/draft"));
+                        });
                     });
                 });
             }
@@ -53,8 +54,9 @@ define(["db", "views", "core/draft", "core/game", "core/player", "core/season", 
             }
         } else if (amount === "until_free_agency") {
             if (g.phase === c.PHASE_RESIGN_PLAYERS) {
-                season.newPhase(c.PHASE_FREE_AGENCY);
-                playMenu.setStatus("Idle");
+                season.newPhase(c.PHASE_FREE_AGENCY, function () {
+                    playMenu.setStatus("Idle");
+                });
             }
         } else if (amount === "until_preseason") {
             if (g.phase === c.PHASE_FREE_AGENCY) {

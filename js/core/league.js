@@ -63,14 +63,15 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                         localStorage.setItem("league" + g.lid + "Negotiations", JSON.stringify([]));
 
                         // Make schedule, start season
-                        season.newPhase(c.PHASE_REGULAR_SEASON);
-                        playMenu.setStatus('Idle');
+                        season.newPhase(c.PHASE_REGULAR_SEASON, function () {
+                            playMenu.setStatus('Idle');
 
-                        // Auto sort player's roster (other teams will be done in season.newPhase(c.PHASE_REGULAR_SEASON))
-                        db.rosterAutoSort(null, g.userTid);
+                            // Auto sort player's roster (other teams will be done in season.newPhase(c.PHASE_REGULAR_SEASON))
+                            db.rosterAutoSort(null, g.userTid);
 
-                        cb();
-                    }
+                            cb();
+                        });
+                    };
 
                     if (playerGeneration === "nba2012") {
                         // Load players from file

@@ -2,13 +2,16 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
     "use strict";
 
     // This should be called after the phase-specific stuff runs. It needs to be a separate function like this to play nice with async stuff.
-    function newPhaseCb(phase, phaseText) {
+    function newPhaseCb(phase, phaseText, cb) {
         helpers.setGameAttributes({phase: phase});
         playMenu.setPhase(phaseText);
         playMenu.refreshOptions();
+        if (typeof cb !== "undefined") {
+            cb();
+        }
     }
 
-    function newPhasePreseason() {
+    function newPhasePreseason(cb) {
         var phaseText, transaction;
 
         helpers.setGameAttributes({season: g.season + 1});
@@ -77,7 +80,7 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
                     } else {
                         // AI teams sign free agents
                         freeAgents.autoSign(function () {
-                            newPhaseCb(c.PHASE_PRESEASON, phaseText);
+                            newPhaseCb(c.PHASE_PRESEASON, phaseText, cb);
                         });
                     }
                 };
@@ -85,7 +88,7 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
         };
     }
 
-    function newPhaseRegularSeason() {
+    function newPhaseRegularSeason(cb) {
         var checkRosterSize, done, phaseText, playerStore, transaction, userTeamSizeError;
 
         phaseText = g.season + " regular season";
@@ -130,7 +133,7 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
                 done += 1;
                 if (done === g.numTeams && !userTeamSizeError) {
                     newSchedule(function (tids) { 
-                        setSchedule(tids, function () { newPhaseCb(c.PHASE_REGULAR_SEASON, phaseText); });
+                        setSchedule(tids, function () { newPhaseCb(c.PHASE_REGULAR_SEASON, phaseText, cb); });
                     });
 
                     // Auto sort rosters (except player's team)
@@ -155,14 +158,14 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
         };
     }
 
-    function newPhaseAfterTradeDeadline() {
+    function newPhaseAfterTradeDeadline(cb) {
         var phaseText;
 
         phaseText = g.season + " regular season, after trade deadline";
-        newPhaseCb(c.PHASE_AFTER_TRADE_DEADLINE, phaseText);
+        newPhaseCb(c.PHASE_AFTER_TRADE_DEADLINE, phaseText, cb);
     }
 
-    function newPhasePlayoffs() {
+    function newPhasePlayoffs(cb) {
         var attributes, phaseText, seasonAttributes;
 
         phaseText = g.season + " playoffs";
@@ -254,7 +257,7 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
                         cursor.continue();
 //                        }
                 } else {
-                    newPhaseCb(c.PHASE_PLAYOFFS, phaseText);
+                    newPhaseCb(c.PHASE_PLAYOFFS, phaseText, cb);
                     Davis.location.assign(new Davis.Request("/l/" + g.lid + "/playoffs"));
                 }
             };
@@ -262,7 +265,7 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
 //                g.dbex('UPDATE team_attributes SET playoffs = TRUE WHERE season = :season AND tid IN :tids', season=g.season, tids=tids)
     }
 
-    function newPhaseBeforeDraft() {
+    function newPhaseBeforeDraft(cb) {
         var phaseText, releasedPlayersStore;
 
         phaseText = g.season + " before draft";
@@ -334,7 +337,7 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
                     // Select winners of the season's awards
                     // This needs to be inside the callback because of Firefox bug 763915
                     awards(function () {
-                        newPhaseCb(c.PHASE_BEFORE_DRAFT, phaseText);
+                        newPhaseCb(c.PHASE_BEFORE_DRAFT, phaseText, cb);
                         Davis.location.assign(new Davis.Request("/l/" + g.lid + "/history"));
                     });
                 };
@@ -342,21 +345,21 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
         };
     }
 
-    function newPhaseDraft() {
+    function newPhaseDraft(cb) {
         var phaseText;
 
         phaseText = g.season + " draft";
-        newPhaseCb(c.PHASE_DRAFT, phaseText);
+        newPhaseCb(c.PHASE_DRAFT, phaseText, cb);
     }
 
-    function newPhaseAfterDraft() {
+    function newPhaseAfterDraft(cb) {
         var phaseText;
 
         phaseText = g.season + " after draft";
-        newPhaseCb(c.PHASE_AFTER_DRAFT, phaseText);
+        newPhaseCb(c.PHASE_AFTER_DRAFT, phaseText, cb);
     }
 
-    function newPhaseResignPlayers() {
+    function newPhaseResignPlayers(cb) {
         var phaseText, playerStore;
 
         phaseText = g.season + " resign players";
@@ -391,13 +394,13 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
                 }
                 cursor.continue();
             } else {
-                newPhaseCb(c.PHASE_RESIGN_PLAYERS, phaseText);
+                newPhaseCb(c.PHASE_RESIGN_PLAYERS, phaseText, cb);
                 Davis.location.assign(new Davis.Request("/l/" + g.lid + "/negotiation"));
             }
         };
     }
 
-    function newPhaseFreeAgency() {
+    function newPhaseFreeAgency(cb) {
         var phaseText, playerStore;
 
         phaseText = g.season + " free agency";
@@ -419,7 +422,7 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
                 cursor.update(p);
                 cursor.continue();
             } else {
-                newPhaseCb(c.PHASE_FREE_AGENCY, phaseText);
+                newPhaseCb(c.PHASE_FREE_AGENCY, phaseText, cb);
                 Davis.location.assign(new Davis.Request("/l/" + g.lid + "/free_agents"));
             }
         };
@@ -436,30 +439,30 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
     so do not rely on g.phase being updated immediately after this function is
     called.
     */
-    function newPhase(phase) {
+    function newPhase(phase, cb) {
         // Prevent code running twice
         if (phase === g.phase) {
             return;
         }
 
         if (phase === c.PHASE_PRESEASON) {
-            newPhasePreseason();
+            newPhasePreseason(cb);
         } else if (phase === c.PHASE_REGULAR_SEASON) {
-            newPhaseRegularSeason();
+            newPhaseRegularSeason(cb);
         } else if (phase === c.PHASE_AFTER_TRADE_DEADLINE) {
-            newPhaseAfterTradeDeadline();
+            newPhaseAfterTradeDeadline(cb);
         } else if (phase === c.PHASE_PLAYOFFS) {
-            newPhasePlayoffs();
+            newPhasePlayoffs(cb);
         } else if (phase === c.PHASE_BEFORE_DRAFT) {
-            newPhaseBeforeDraft();
+            newPhaseBeforeDraft(cb);
         } else if (phase === c.PHASE_DRAFT) {
-            newPhaseDraft();
+            newPhaseDraft(cb);
         } else if (phase === c.PHASE_AFTER_DRAFT) {
-            newPhaseAfterDraft();
+            newPhaseAfterDraft(cb);
         } else if (phase === c.PHASE_RESIGN_PLAYERS) {
-            newPhaseResignPlayers();
+            newPhaseResignPlayers(cb);
         } else if (phase === c.PHASE_FREE_AGENCY) {
-            newPhaseFreeAgency();
+            newPhaseFreeAgency(cb);
         }
     }
 

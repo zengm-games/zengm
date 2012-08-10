@@ -85,10 +85,12 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
 
             // Is draft over?;
             if (draftOrder.length === 0) {
-                season.newPhase(c.PHASE_AFTER_DRAFT);
+                season.newPhase(c.PHASE_AFTER_DRAFT, function () {
+                    cb(pids);
+                });
+            } else {
+                cb(pids);
             }
-
-            cb(pids);
         };
     }
 

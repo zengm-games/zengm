@@ -456,13 +456,13 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
                                 t.defense += t.player[i].composite_rating.defense;
                             }
                             t.defense /= n_players;
-                            t.defense /= 4; // This gives the percentage pts subtracted from the other team's normal FG%
+                            t.defense /= 4;  // This gives the percentage pts subtracted from the other team's normal FG%
 
 
                             t.stat = {min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0};
                             teams.push(t);
                             if (teams.length === 30) {
-                                teams.sort(function (a, b) {  return a.id - b.id; }); // Order teams by tid
+                                teams.sort(function (a, b) {  return a.id - b.id; });  // Order teams by tid
 
                                 // Play games
                                 if ((schedule && schedule.length > 0) || playoffsContinue) {

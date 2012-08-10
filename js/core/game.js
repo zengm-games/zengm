@@ -347,15 +347,16 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
 //        }
     }
 
-    /*Play num_days days worth of games. If start is true, then this is
+    /*Play numDays days worth of games. If start is true, then this is
     starting a new series of games. If not, then it's continuing a simulation.
     */
-    function play(num_days, start) {
-        var num_active_teams, playoffsContinue;
+    function play(numDays, start) {
+        var cbNoGames, cbPlayGames, playoffsContinue;
 
         start = typeof start !== "undefined" ? start : false;
 
-        function cbNoGames() {
+        // This is called when there are no more games to play, either at the end of the regular season or the end of the playoffs.
+        cbNoGames = function () {
             playMenu.setStatus('Idle');
             lock.set_games_in_progress(false);
             playMenu.refreshOptions();
@@ -367,13 +368,14 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
                     }
                 });
             }
-        }
+        };
 
-        function cbPlayGames() {
-            playMenu.setStatus("Playing games (" + num_days + " days remaining)...");
+        // Simulates a day of games. If there are no games left, it calls cbNoGames.
+        cbPlayGames = function () {
+            playMenu.setStatus("Playing games (" + numDays + " days remaining)...");
             // Create schedule and team lists for today, to be sent to the client
-            season.getSchedule(num_active_teams / 2, function (schedule) {
-                var j, matchup, teams, teams_loaded, tid, transaction;
+            season.getSchedule(1, function (schedule) {
+                var j, matchup, teams, tid, transaction;
 
                 for (j = 0; j < schedule.length; j++) {
                     matchup = schedule[j];
@@ -382,7 +384,6 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
                 transaction = g.dbl.transaction(["games", "players", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
 
                 teams = [];
-                teams_loaded = 0;
                 // Load all teams, for now. Would be more efficient to load only some of them, I suppose.
                 for (tid = 0; tid < 30; tid++) {
                     transaction.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
@@ -460,8 +461,7 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
 
                             t.stat = {min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0};
                             teams.push(t);
-                            teams_loaded += 1;
-                            if (teams_loaded === 30) {
+                            if (teams.length === 30) {
                                 teams.sort(function (a, b) {  return a.id - b.id; }); // Order teams by tid
 
                                 // Play games
@@ -476,7 +476,7 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
                                             results = gs.run();
                                             doSaveResults(i, results, g.phase === c.PHASE_PLAYOFFS);
                                         }
-                                    }
+                                    };
                                     doSaveResults = function (i, results, playoffs) {
                                         saveResults(transaction, results, playoffs, function () {
                                             var j, scheduleStore;
@@ -489,7 +489,7 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
                                                     scheduleStore.delete(gidsFinished[j]);
                                                 }
 
-                                                play(num_days - 1);
+                                                play(numDays - 1);
                                             } else {
                                                 doGameSim(i + 1);
                                             }
@@ -497,7 +497,7 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
                                     };
                                     doGameSim(0); // Will loop through schedule and simulate all games
                                     if (schedule.length === 0 && playoffsContinue) {
-                                        play(num_days - 1);
+                                        play(numDays - 1);
                                     }
                                 }
                             }
@@ -508,7 +508,7 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
                     cbNoGames();
                 }
             });
-        }
+        };
 
         playoffsContinue = false;
 
@@ -524,7 +524,7 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
             }
         }
 
-        if (num_days > 0) {
+        if (numDays > 0) {
             // If we didn't just stop games, let's play
             // Or, if we are starting games (and already passed the lock above),
             // continue even if stop_games was just seen
@@ -534,8 +534,6 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
                 }
                 // Check if it's the playoffs and do some special stuff if it is or isn't
                 if (g.phase !== c.PHASE_PLAYOFFS) {
-                    num_active_teams = g.numTeams;
-
                     // Decrease free agent demands and let AI teams sign them
                     freeAgents.decreaseDemands(function () {
                         freeAgents.autoSign(function () {
@@ -543,10 +541,10 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
                         });
                     });
                 } else {
-                    season.newSchedulePlayoffsDay(function (num_active_teams, playoffsOver) {
+                    season.newSchedulePlayoffsDay(function (playoffsOver) {
                         // If season.newSchedulePlayoffsDay didn't move the phase to 4, then
                         // the playoffs are still happening.
-                        if (!playoffsOver) {
+                        if (g.phase === c.PHASE_PLAYOFFS) {
                             playoffsContinue = true;
                         }
                         cbPlayGames();
@@ -555,7 +553,7 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
             }
         }
         // If this is the last day, update play menu
-        if (num_days === 0) {
+        if (numDays === 0) {
             cbNoGames();
         }
     }

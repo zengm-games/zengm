@@ -613,24 +613,21 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
 
         // Make today's  playoff schedule
         transaction.objectStore("playoffSeries").openCursor(g.season).onsuccess = function (event) {
-            var cursor, i, matchup, nextRound, numActiveTeams, playoffsOver, playoffSeries, rnd, series, tids, winners;
+            var cursor, i, matchup, nextRound, playoffSeries, rnd, series, tids, winners;
 
             cursor = event.target.result;
             playoffSeries = cursor.value;
             series = playoffSeries.series;
             rnd = playoffSeries.currentRound;
             tids = [];
-            numActiveTeams = 0;
-            playoffsOver = false;
 
             for (i = 0; i < series[rnd].length; i++) {
                 if (series[rnd][i].home.won < 4 && series[rnd][i].away.won < 4) {
                     tids.push([series[rnd][i].home.tid, series[rnd][i].away.tid]);
-                    numActiveTeams += 2;
                 }
             }
-            if (numActiveTeams > 0) {
-                setSchedule(tids, function () { cb(numActiveTeams); });
+            if (tids.length > 0) {
+                setSchedule(tids, function () { cb(); });
             } else {
                 // The previous round is over. Either make a new round or go to the next phase.
 
@@ -677,8 +674,7 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
 
                 // Are the whole playoffs over?
                 if (rnd === 3) {
-                    newPhase(c.PHASE_BEFORE_DRAFT);
-                    playoffsOver = true;
+                    newPhase(c.PHASE_BEFORE_DRAFT, cb);
                 } else {
                     nextRound = [];
                     for (i = 0; i < series[rnd].length; i += 2) {
@@ -698,10 +694,10 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
                         series[rnd + 1][i / 2] = matchup;
                     }
                     playoffSeries.currentRound += 1;
-                    cursor.update(playoffSeries, playoffsOver);
-                }
+                    cursor.update(playoffSeries);
 
-                cb(numActiveTeams);
+                    cb();
+                }
             }
         };
     }

@@ -18,7 +18,7 @@ main todo
   - smalls should get less blocks
 - comments in season.js and elsewhere
 - move to new window button, like gmail, that will open a view in a new window with a minimal UI
-- data binding/updating, in the parent window as well as other windows
+- data binding/updating, in the parent window as well as other windows. knockout?
 - other views
   - team history
     - record  when teams make playoffs
@@ -52,7 +52,6 @@ strategic issues
 
 BUGS
 
-sometimes, after creating a new league, the redirect to the league dashboard doesn't happen
 league database error when playoffs end
 game simulation stops when a link is clicked, but then restarts when another link is clicked? wtf
 - This seems to generally work now, but it's not perfect. If you do any action that writes to the database, such as reordering the roster, something bad could happen because IndexedDB doesn't like multiple writes going on at the same time

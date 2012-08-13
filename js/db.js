@@ -637,28 +637,28 @@ define(["util/helpers"], function (helpers) {
             for (i = 0; i < players.length; i++) {
                 players[i].rosterOrder = i;
             }
-        }
 
-        // Update rosterOrder
-        playerStore.index("tid").openCursor(tid).onsuccess = function (event) {
-            var cursor, i, p;
+            // Update rosterOrder
+            playerStore.index("tid").openCursor(tid).onsuccess = function (event) {
+                var cursor, i, p;
 
-            cursor = event.target.result;
-            if (cursor) {
-                p = cursor.value;
-                for (i = 0; i < players.length; i++) {
-                    if (players[i].pid === p.pid) {
-                        p.rosterOrder = players[i].rosterOrder;
-                        break;
+                cursor = event.target.result;
+                if (cursor) {
+                    p = cursor.value;
+                    for (i = 0; i < players.length; i++) {
+                        if (players[i].pid === p.pid) {
+                            p.rosterOrder = players[i].rosterOrder;
+                            break;
+                        }
+                    }
+                    cursor.update(p);
+                    cursor.continue();
+                } else {
+                    if (typeof cb !== "undefined") {
+                        cb();
                     }
                 }
-                cursor.update(p);
-                cursor.continue();
             }
-        }
-
-        if (typeof cb !== "undefined") {
-            cb();
         }
     }
 

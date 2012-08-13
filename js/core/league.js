@@ -67,9 +67,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
                             playMenu.setStatus('Idle');
 
                             // Auto sort player's roster (other teams will be done in season.newPhase(c.PHASE_REGULAR_SEASON))
-                            db.rosterAutoSort(null, g.userTid);
-
-                            cb();
+                            db.rosterAutoSort(null, g.userTid, cb);
                         });
                     };
 

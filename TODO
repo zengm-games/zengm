@@ -1,7 +1,9 @@
 main todo
 - core.game is disgustingly messy and should be rewritten
+  - "Which team is this, again?" shouldn't be needed
 - let free agents stay for 2 seasons before retiring, or make retirement probabilistic
 - nba roster
+  - derive from stats, somehow
   - nba player potential ratings
   - if necessary, scale everything down a bit to make it comparable to normal players
   - free agents are way overrated. is this roster file legit?

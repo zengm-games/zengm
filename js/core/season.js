@@ -213,15 +213,15 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
 
             // Add row to team stats and team season attributes
             g.dbl.transaction(["teams"], "readwrite").objectStore("teams").openCursor().onsuccess = function (event) {
-                var cursor, i, key, playoffStats, seasonStats, team;
+                var cursor, i, key, playoffStats, seasonStats, t;
 
                 cursor = event.target.result;
                 if (cursor) {
-                    team = cursor.value;
-                    if (tidPlayoffs.indexOf(team.tid) >= 0) {
-                        for (i = 0; i < team.stats.length; i++) {
-                            if (team.stats[i].season === g.season) {
-                                seasonStats = team.stats[i];
+                    t = cursor.value;
+                    if (tidPlayoffs.indexOf(t.tid) >= 0) {
+                        for (i = 0; i < t.stats.length; i++) {
+                            if (t.stats[i].season === g.season) {
+                                seasonStats = t.stats[i];
                                 break;
                             }
                         }
@@ -233,11 +233,12 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
                         }
                         playoffStats.season = g.season;
                         playoffStats.playoffs = true;
-                        team.stats.push(playoffStats);
-                        cursor.update(team);
+                        t.stats.push(playoffStats);
+                        _.last(t.seasons).madePlayoffs = true;
+                        cursor.update(t);
 
                         // Add row to player stats
-                        g.dbl.transaction(["players"], "readwrite").objectStore("players").index("tid").openCursor(team.tid).onsuccess = function (event) {
+                        g.dbl.transaction(["players"], "readwrite").objectStore("players").index("tid").openCursor(t.tid).onsuccess = function (event) {
                             var cursorP, key, p, playerPlayoffStats;
 
                             cursorP = event.target.result;
@@ -656,21 +657,6 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
                         cursor.update(t);
                     };
                 }
-/*                winners = {}
-                r = g.dbex('SELECT sid, tid_home, tid_away, seed_home, seed_away, won_home, won_away FROM playoff_series WHERE round = :round AND season = :season ORDER BY sid ASC', round=current_round, season=g.season)
-                for row in r.fetchall()) {
-                    sid, tid_home, tid_away, seed_home, seed_away, won_home, won_away = row
-                    if (won_home === 4) {
-                        winners[sid] = [tid_home, seed_home]
-                    } else {
-                        winners[sid] = [tid_away, seed_away]
-                    // Record user's team as conference and league champion
-                    if (rnd === 2) {
-                        g.dbex('UPDATE team_attributes SET conf_champs = TRUE WHERE season = :season AND tid = :tid', season=g.season, tid=winners[sid][0])
-                    } else if (rnd === 3) {
-                        g.dbex('UPDATE team_attributes SET league_champs = TRUE WHERE season = :season AND tid = :tid', season=g.season, tid=winners[sid][0])
-                    }
-                }*/
 
                 // Are the whole playoffs over?
                 if (rnd === 3) {

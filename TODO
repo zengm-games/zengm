@@ -23,7 +23,6 @@ main todo
 - data binding/updating, in the parent window as well as other windows. knockout?
 - other views
   - team history
-    - record  when teams make playoffs
   - dashboard
 strategic issues
 - reassess how money is stored (ones, thousands, millions?)

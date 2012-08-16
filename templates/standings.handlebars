@@ -13,6 +13,9 @@ $(document).ready(function() {
 </form>
 
 <h1>Standings</h1>
+<!-- ko foreach: confs -->
+<span data-bind="text: name"> </span>
+<!-- /ko -->
 
 {{#confs}}
   <h2>{{name}}</h2>

@@ -1,4 +1,14 @@
 main todo
+- data binding/updating. knockout seems like a decent first try
+  - where should this code go? template, or views.js? maybe views.js as it should only be run sometimes (i.e. not when viewing old seasons)
+    - what i don't want is redundant code in handlebars/view.js and knockout/wherever. probably it should all be knockout.
+    - figure out update mechanism. need the original viewModel to be accessible
+      - one idea: create the viewModel by calling some function (viewModels.js, like views.js or api.js) from the template. have some global variable indicating which view is loaded. then update the viewModel daily if the view has a corresponding viewModel.
+  - do standings view first
+    - mapping to put win/loss data in view model http://knockoutjs.com/documentation/plugins-mapping.html ko.mapping.fromJS
+      - use a list, as in "advanced usage" where key is tid
+    - http://knockoutjs.com/documentation/foreach-binding.html
+  - how to handle multiple windows?
 - core.game is disgustingly messy and should be rewritten
   - "Which team is this, again?" shouldn't be needed
 - let free agents stay for 2 seasons before retiring, or make retirement probabilistic
@@ -20,7 +30,6 @@ main todo
   - smalls should get less blocks
 - comments in season.js and elsewhere
 - move to new window button, like gmail, that will open a view in a new window with a minimal UI
-- data binding/updating, in the parent window as well as other windows. knockout?
 - other views
   - team history
   - dashboard

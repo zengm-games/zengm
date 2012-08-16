@@ -147,7 +147,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             attributes = ["tid", "cid", "did", "abbrev", "region", "name"];
             seasonAttributes = ["won", "lost", "winp", "wonDiv", "lostDiv", "wonConf", "lostConf"];
             db.getTeams(null, season, attributes, [], seasonAttributes, "winp", function (teams) {
-                var confs, confTeams, data, divTeams, i, j, k, template;
+                var confs, confTeams, data, divTeams, i, j, k, template, viewModel;
 
                 confs = [];
                 for (i = 0; i < g.confs.length; i++) {
@@ -177,8 +177,12 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 data = {title: "Standings - League " + g.lid};
                 template = Handlebars.templates.standings;
                 data.league_content = template({g: g, confs: confs, seasons: seasons, season: season});
-
                 bbgm.ajaxUpdate(data);
+
+                console.log(confs);
+                viewModel = ko.mapping.fromJS({confs: confs});
+                ko.applyBindings(viewModel);
+                ko.mapping.fromJS({confs: [{name: "A"}, {name: "B"}]}, viewModel);
             });
         });
     }

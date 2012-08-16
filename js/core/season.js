@@ -263,7 +263,6 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
                 }
             };
         });
-//                g.dbex('UPDATE team_attributes SET playoffs = TRUE WHERE season = :season AND tid IN :tids', season=g.season, tids=tids)
     }
 
     function newPhaseBeforeDraft(cb) {

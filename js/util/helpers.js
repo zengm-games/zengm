@@ -215,6 +215,16 @@ define([], function () {
         }
     }
 
+    /**
+     * Smartly update the currently loaded view, based on the current game state.
+     *
+     * @memberOf util.helpers
+     */
+    function realtimeUpdate() {
+        // Refresh standings if it's the current season standings and the phase is during the regular season
+        Davis.location.replace(new Davis.Request(location.pathname, {realtime: true}));
+    }
+
     return {
         validateAbbrev: validateAbbrev,
         getAbbrev: getAbbrev,
@@ -225,6 +235,7 @@ define([], function () {
         loadGameAttributes: loadGameAttributes,
         setGameAttributes: setGameAttributes,
         deepCopy: deepCopy,
-        error: error
+        error: error,
+        realtimeUpdate: realtimeUpdate
     };
 });

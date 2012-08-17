@@ -145,9 +145,9 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             seasons = helpers.getSeasons(season);
 
             attributes = ["tid", "cid", "did", "abbrev", "region", "name"];
-            seasonAttributes = ["won", "lost", "winp", "wonDiv", "lostDiv", "wonConf", "lostConf"];
+            seasonAttributes = ["won", "lost", "winp", "wonHome", "lostHome", "wonAway", "lostAway", "wonDiv", "lostDiv", "wonConf", "lostConf"];
             db.getTeams(null, season, attributes, [], seasonAttributes, "winp", function (teams) {
-                var confs, confTeams, data, divTeams, i, j, k, template, viewModel;
+                var confs, confTeams, data, divTeams, i, j, k, mapping, template, viewModel;
 
                 confs = [];
                 for (i = 0; i < g.confs.length; i++) {
@@ -174,15 +174,28 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                     }
                 }
 
-                data = {title: "Standings - League " + g.lid};
-                template = Handlebars.templates.standings;
-                data.league_content = template({g: g, confs: confs, seasons: seasons, season: season});
-                bbgm.ajaxUpdate(data);
+                if (!req.raw.realtime || !g.viewModels.standings) {
+                    data = {title: "Standings - League " + g.lid};
+                    template = Handlebars.templates.standings;
+                    data.league_content = template({g: g, confs: confs, seasons: seasons, season: season});
+                    bbgm.ajaxUpdate(data);
 
-                console.log(confs);
-                viewModel = ko.mapping.fromJS({confs: confs});
-                ko.applyBindings(viewModel);
-                ko.mapping.fromJS({confs: [{name: "A"}, {name: "B"}]}, viewModel);
+                    // Does this "mapping" line do anything? how to tell?
+                    mapping = {
+                        "confs.divs.teams": {
+                            key: function(data) {
+console.log('fuck')
+                                return ko.utils.unwrapObservable(data.tid);
+                            }
+                        }
+                    }
+                    g.viewModels.standings = ko.mapping.fromJS({confs: confs}, mapping);
+                    ko.applyBindings(g.viewModels.standings);
+                } else {
+                    ko.mapping.fromJS({confs: confs}, g.viewModels.standings)
+                }
+
+//                ko.mapping.fromJS({confs: confs}, viewModel);
             });
         });
     }

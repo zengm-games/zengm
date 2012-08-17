@@ -445,7 +445,7 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
 
         start = typeof start !== "undefined" ? start : false;
 
-        // This is called when there are no more games to play, either at the end of the regular season or the end of the playoffs.
+        // This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season or the end of the playoffs.
         cbNoGames = function () {
             playMenu.setStatus('Idle');
             lock.set_games_in_progress(false);
@@ -508,6 +508,7 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
                                         scheduleStore.delete(gidsFinished[j]);
                                     }
 
+                                    helpers.realtimeUpdate();
                                     play(numDays - 1);
                                 } else {
                                     doGameSim(i + 1);

@@ -920,7 +920,7 @@ function program2(depth0,data,depth2) {
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n";
   return buffer;});
-templates['standings'] = template(function (Handlebars,depth0,helpers,partials,data) {
+templates['standings'] = template(function (Handlebars,depth0,helpers,partials,data,depth1) {
   helpers = helpers || Handlebars.helpers;
   var buffer = "", stack1, foundHelper, functionType="function", escapeExpression=this.escapeExpression, self=this, helperMissing=helpers.helperMissing, blockHelperMissing=helpers.blockHelperMissing;
 
@@ -946,7 +946,25 @@ function program2(depth0,data) {
   
   return " selected=\"selected\"";}
 
-function program4(depth0,data,depth1) {
+function program4(depth0,data,depth2) {
+  
+  var buffer = "", stack1, foundHelper;
+  buffer += "\n        <tr><td>1. <a href=\"/l/";
+  stack1 = depth2['g'];
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.lid;
+  stack1 = typeof stack1 === functionType ? stack1() : stack1;
+  buffer += escapeExpression(stack1) + "/roster/";
+  foundHelper = helpers.abbrev;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
+  else { stack1 = depth0.abbrev; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
+  buffer += escapeExpression(stack1) + "\">";
+  foundHelper = helpers.region;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
+  else { stack1 = depth0.region; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
+  buffer += escapeExpression(stack1) + "</a></td><td align=\"right\">GB</td></tr>\n      ";
+  return buffer;}
+
+function program6(depth0,data,depth1) {
   
   var buffer = "", stack1, foundHelper;
   buffer += "\n  <h2>";
@@ -955,19 +973,19 @@ function program4(depth0,data,depth1) {
   else { stack1 = depth0.name; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
   buffer += escapeExpression(stack1) + "</h2>\n  <div class=\"row-fluid\">\n    <div class=\"span9\">\n      ";
   foundHelper = helpers.divs;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},inverse:self.noop,fn:self.programWithDepth(program5, data, depth1)}); }
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},inverse:self.noop,fn:self.programWithDepth(program7, data, depth1)}); }
   else { stack1 = depth0.divs; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  if (!helpers.divs) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program5, data, depth1)}); }
+  if (!helpers.divs) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program7, data, depth1)}); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n    </div>\n\n    <div class=\"span3\">\n      <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\">\n      <thead>\n        <tr><th width=\"100%\">Team</th><th align=\"right\">GB</th></tr>\n      </thead>\n      <tbody>\n      ";
   foundHelper = helpers.teams;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},inverse:self.noop,fn:self.programWithDepth(program8, data, depth1)}); }
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},inverse:self.noop,fn:self.programWithDepth(program10, data, depth1)}); }
   else { stack1 = depth0.teams; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  if (!helpers.teams) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program8, data, depth1)}); }
+  if (!helpers.teams) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program10, data, depth1)}); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n      </tbody>\n      </table>\n    </div>\n  </div>\n";
   return buffer;}
-function program5(depth0,data,depth2) {
+function program7(depth0,data,depth2) {
   
   var buffer = "", stack1, foundHelper;
   buffer += "\n          <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\">\n          <thead>\n            <tr><th width=\"100%\">";
@@ -976,13 +994,13 @@ function program5(depth0,data,depth2) {
   else { stack1 = depth0.name; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
   buffer += escapeExpression(stack1) + "</th><th>W</th><th>L</th><th>Pct</th><th>GB</th><th>Home</th><th>Road</th><th>Div</th><th>Conf</th><th>Streak</th><th>L10</th></tr>\n          </thead>\n          <tbody>\n          ";
   foundHelper = helpers.teams;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},inverse:self.noop,fn:self.programWithDepth(program6, data, depth2)}); }
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},inverse:self.noop,fn:self.programWithDepth(program8, data, depth2)}); }
   else { stack1 = depth0.teams; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  if (!helpers.teams) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program6, data, depth2)}); }
+  if (!helpers.teams) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program8, data, depth2)}); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n          </tbody>\n          </table>\n      ";
   return buffer;}
-function program6(depth0,data,depth3) {
+function program8(depth0,data,depth3) {
   
   var buffer = "", stack1, foundHelper;
   buffer += "\n            <tr><td><a href=\"/l/";
@@ -1048,7 +1066,7 @@ function program6(depth0,data,depth3) {
   buffer += escapeExpression(stack1) + "</td><td>Streak</td><td>L10</td></tr>\n          ";
   return buffer;}
 
-function program8(depth0,data,depth2) {
+function program10(depth0,data,depth2) {
   
   var buffer = "", stack1, foundHelper;
   buffer += "\n        <tr><td>1. <a href=\"/l/";
@@ -1076,13 +1094,47 @@ function program8(depth0,data,depth2) {
   else { stack1 = depth0.seasons; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
   if (!helpers.seasons) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data)}); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  </select>\n</form>\n\n<h1>Standings</h1>\n<!-- ko foreach: confs -->\n<span data-bind=\"text: name\"> </span>\n<!-- /ko -->\n\n";
-  foundHelper = helpers.confs;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},inverse:self.noop,fn:self.programWithDepth(program4, data, depth0)}); }
-  else { stack1 = depth0.confs; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  if (!helpers.confs) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program4, data, depth0)}); }
+  buffer += "\n  </select>\n</form>\n\n<h1>Standings</h1>\n<!-- ko foreach: confs -->\n  <h2 data-bind=\"text: name\"></h2>\n  <div class=\"row-fluid\">\n    <div class=\"span9\">\n      <!-- ko foreach: divs -->\n        <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\">\n        <thead>\n          <tr><th width=\"100%\" data-bind=\"text: name\"></th><th>W</th><th>L</th><th>Pct</th><th>GB</th><th>Home</th><th>Road</th><th>Div</th><th>Conf</th><th>Streak</th><th>L10</th></tr>\n        </thead>\n        <tbody data-bind=\"template: {name: 'div-row-template', foreach: teams}\"></tbody>\n        </table>\n      <!-- /ko -->\n    </div>\n\n    <div class=\"span3\">\n      <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\">\n      <thead>\n        <tr><th width=\"100%\">Team</th><th align=\"right\">GB</th></tr>\n      </thead>\n      <tbody>\n      ";
+  foundHelper = helpers.teams;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},inverse:self.noop,fn:self.programWithDepth(program4, data, depth1)}); }
+  else { stack1 = depth0.teams; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
+  if (!helpers.teams) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program4, data, depth1)}); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n";
+  buffer += "\n      </tbody>\n      </table>\n    </div>\n  </div>\n<!-- /ko -->\n\n";
+  foundHelper = helpers.confs;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},inverse:self.noop,fn:self.programWithDepth(program6, data, depth0)}); }
+  else { stack1 = depth0.confs; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
+  if (!helpers.confs) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program6, data, depth0)}); }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n\n<script type=\"text/html\" id=\"div-row-template\">\n  <tr><td><a href=\"/l/";
+  stack1 = depth0['g'];
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.lid;
+  stack1 = typeof stack1 === functionType ? stack1() : stack1;
+  buffer += escapeExpression(stack1) + "/roster/";
+  foundHelper = helpers.abbrev;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
+  else { stack1 = depth0.abbrev; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
+  buffer += escapeExpression(stack1) + "\"><span data-bind=\"text: region\"></span> <span data-bind=\"text: name\"></span></a></td><td data-bind=\"text: won\"> </td><td data-bind=\"text: lost\"> </td><td>";
+  stack1 = depth0.winp;
+  foundHelper = helpers.roundWinp;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, {hash:{}}) : helperMissing.call(depth0, "roundWinp", stack1, {hash:{}});
+  buffer += escapeExpression(stack1) + "</td><td>GB</td><td><span data-bind=\"text: wonHome\"></span>-<span data-bind=\"text: lostHome\"></span></td><td><span data-bind=\"text: wonAway\"></span>-<span data-bind=\"text: lostAway\"></span></td><td>";
+  foundHelper = helpers.wonDiv;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
+  else { stack1 = depth0.wonDiv; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
+  buffer += escapeExpression(stack1) + "-";
+  foundHelper = helpers.lostDiv;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
+  else { stack1 = depth0.lostDiv; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
+  buffer += escapeExpression(stack1) + "</td><td>";
+  foundHelper = helpers.wonConf;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
+  else { stack1 = depth0.wonConf; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
+  buffer += escapeExpression(stack1) + "-";
+  foundHelper = helpers.lostConf;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
+  else { stack1 = depth0.lostConf; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
+  buffer += escapeExpression(stack1) + "</td><td>Streak</td><td>L10</td></tr>\n</script>";
   return buffer;});
 templates['schedule'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;

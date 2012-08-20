@@ -1,6 +1,18 @@
+/**
+ * @name test.core
+ * @namespace Tests for any of the modules within the core folder. This might need to be split into multiple files eventually.
+ */
 define(["db", "core/draft", "core/league", "core/player", "core/season", "core/trade", "util/helpers"], function (db, draft, league, player, season, trade, helpers) {
     "use strict";
 
+    /**
+     * Finds the number of times an element appears in an array.
+     * 
+     * @memberOf test.core
+     * @param {Array} array The array to search over.
+     * @param {*} x Element to search for
+     * @return {number} The number of times x was found in array.
+     */
     function numInArrayEqualTo(array, x) {
         var idx, n;
 

@@ -32,11 +32,7 @@ $(document).ready(function() {
       <thead>
         <tr><th width="100%">Team</th><th align="right">GB</th></tr>
       </thead>
-      <tbody>
-      {{#teams}}
-        <tr><td>1. <a href="/l/{{../../g.lid}}/roster/{{abbrev}}">{{region}}</a></td><td align="right">GB</td></tr>
-      {{/teams}}
-      </tbody>
+      <tbody data-bind="template: {name: 'conf-row-template', foreach: teams}"></tbody>
       </table>
     </div>
   </div>
@@ -76,5 +72,9 @@ $(document).ready(function() {
 {{/confs}}
 
 <script type="text/html" id="div-row-template">
-  <tr><td><a href="/l/{{g.lid}}/roster/{{abbrev}}"><span data-bind="text: region"></span> <span data-bind="text: name"></span></a></td><td data-bind="text: won"> </td><td data-bind="text: lost"> </td><td>{{roundWinp winp}}</td><td>GB</td><td><span data-bind="text: wonHome"></span>-<span data-bind="text: lostHome"></span></td><td><span data-bind="text: wonAway"></span>-<span data-bind="text: lostAway"></span></td><td>{{wonDiv}}-{{lostDiv}}</td><td>{{wonConf}}-{{lostConf}}</td><td>Streak</td><td>L10</td></tr>
+  <tr><td><a href="/l/{{g.lid}}/roster/{{abbrev}}"><span data-bind="text: region"></span> <span data-bind="text: name"></span></a></td><td data-bind="text: won"> </td><td data-bind="text: lost"> </td><td>{{roundWinp winp}}</td><td>GB</td><td><span data-bind="text: wonHome"></span>-<span data-bind="text: lostHome"></span></td><td><span data-bind="text: wonAway"></span>-<span data-bind="text: lostAway"></span></td><td><span data-bind="text: wonDiv"></span>-<span data-bind="text: lostDiv"></td><td><span data-bind="text: wonConf"></span>-<span data-bind="text: lostConf"></td><td>Streak</td><td>L10</td></tr>
+</script>
+
+<script type="text/html" id="conf-row-template">
+  <tr><td>1. <a data-bind="attr: {href: '/l/{{g.lid}}/roster/' + abbrev}"><span data-bind="text: region"></span></a></td><td align="right">GB</td></tr>
 </script>

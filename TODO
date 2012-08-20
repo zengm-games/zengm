@@ -2,11 +2,8 @@ main todo
 - data binding/updating. knockout seems like a decent first try
   - do standings view first
     - http://jsfiddle.net/L4hUq/ for links
-    - mapping to put win/loss data in view model http://knockoutjs.com/documentation/plugins-mapping.html ko.mapping.fromJS
-      - use a list, as in "advanced usage" where key is tid.
-        - if I highlight the team name or some other unchanging component, my highlight should persist through updates, right? (maybe test this)
-        - i tried this, but the "mapping" varibale never seems to be used, possibly because of my deep structure in confs.
     - completely get rid of handlebars
+    - polish the rest of standings (GB, etc)
   - what happens when i build a model, apply it, and then navigate away? is that ever garbage collected, or do i need to do something manually?
   - by using davis.js routing in helpers.realtimeUpdate, I can't do a callback (or can i??), so page updates might be out of sync with game simulation (which might not be a bad thing, especially if long processes like player stats could refresh only every X days as appropriate)
   - how to handle multiple windows?

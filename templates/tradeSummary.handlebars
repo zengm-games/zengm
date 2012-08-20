@@ -5,14 +5,14 @@
     <h5>Trade Away:</h5>
     <ul>
       {{#summary.teams.0.trade}}
-        <li><a href="/l/{{../g.lid}}/player/{{pid}}">{{name}}</a> (${{round contractAmount 1}}M)</li>
+        <li><a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a> (${{round contractAmount 1}}M)</li>
       {{/summary.teams.0.trade}}
       <li>${{round summary.teams.0.total 1}}M Total</li>
     </ul>
     <h5>Receive:</h5>
     <ul>
       {{#summary.teams.1.trade}}
-        <li><a href="/l/{{../g.lid}}/player/{{pid}}">{{name}}</a> (${{round contractAmount 1}}M)</li>
+        <li><a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a> (${{round contractAmount 1}}M)</li>
       {{/summary.teams.1.trade}}
       <li>${{round summary.teams.1.total 1}}M Total</li>
     </ul>
@@ -24,14 +24,14 @@
     <h5>Trade Away:</h5>
     <ul>
       {{#summary.teams.1.trade}}
-        <li><a href="/l/{{../g.lid}}/player/{{pid}}">{{name}}</a> (${{round contractAmount 1}}M)</li>
+        <li><a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a> (${{round contractAmount 1}}M)</li>
       {{/summary.teams.1.trade}}
       <li>${{round summary.teams.1.total 1}}M Total</li>
     </ul>
     <h5>Receive:</h5>
     <ul>
       {{#summary.teams.0.trade}}
-        <li><a href="/l/{{../g.lid}}/player/{{pid}}">{{name}}</a> (${{round contractAmount 1}}M)</li>
+        <li><a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a> (${{round contractAmount 1}}M)</li>
       {{/summary.teams.0.trade}}
       <li>${{round summary.teams.0.total 1}}M Total</li>
     </ul>
@@ -46,12 +46,12 @@
 {{/if}}
 
 <center>
-  <form action="/l/{{g.lid}}/trade" method="POST" id="propose_trade">
+  <form action="/l/{{lid}}/trade" method="POST" id="propose_trade">
     <input type="hidden" name="propose" value="1">
     <button type="submit" class="btn btn-large btn-primary"{{#if summary.disablePropose}} disabled="disabled"{{/if}}>Propose Trade</button>
   </form>
 
-  <form action="/l/{{g.lid}}/trade" method="POST" id="clear_trade">
+  <form action="/l/{{lid}}/trade" method="POST" id="clear_trade">
     <input type="hidden" name="clear" value="1">
     <button type="submit" class="btn">Clear Trade</button>
   </form>

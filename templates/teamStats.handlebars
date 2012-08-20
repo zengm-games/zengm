@@ -1,16 +1,16 @@
 <script type="text/javascript">
 $(document).ready(function() {
-  bbgm.dropdown($('#team_stats_select_season'));
+  ui.dropdown($('#team_stats_select_season'));
 
-  bbgm.datatableSinglePage($('#team_stats'), 2, [
+  ui.datatableSinglePage($('#team_stats'), 2, [
     {{#teams}}
-	    ['<a href="/l/{{../g.lid}}/roster/{{abbrev}}">{{abbrev}}</a>', '{{gp}}', '{{won}}', '{{lost}}', '{{round fg 1}}', '{{round fga 1}}', '{{round fgp 1}}', '{{round tp 1}}', '{{round tpa 1}}', '{{round tpp 1}}', '{{round ft 1}}', '{{round fta 1}}', '{{round ftp 1}}', '{{round orb 1}}', '{{round drb 1}}', '{{round trb 1}}', '{{round ast 1}}', '{{round tov 1}}', '{{round stl 1}}', '{{round blk 1}}', '{{round pf 1}}', '{{round pts 1}}', '{{round oppPts 1}}'],
+	    ['<a href="/l/{{../lid}}/roster/{{abbrev}}">{{abbrev}}</a>', '{{gp}}', '{{won}}', '{{lost}}', '{{round fg 1}}', '{{round fga 1}}', '{{round fgp 1}}', '{{round tp 1}}', '{{round tpa 1}}', '{{round tpp 1}}', '{{round ft 1}}', '{{round fta 1}}', '{{round ftp 1}}', '{{round orb 1}}', '{{round drb 1}}', '{{round trb 1}}', '{{round ast 1}}', '{{round tov 1}}', '{{round stl 1}}', '{{round blk 1}}', '{{round pf 1}}', '{{round pts 1}}', '{{round oppPts 1}}'],
     {{/teams}}
   ]);
 });
 </script>
 
-<form action="/l/{{g.lid}}/team_stats" method="GET" class="form-inline pull-right">
+<form action="/l/{{lid}}/team_stats" method="GET" class="form-inline pull-right">
   <select id="team_stats_select_season" name="season" class="season">
     {{#seasons}}
       <option value="{{season}}"{{#if selected}} selected="selected"{{/if}}>{{season}} season</option>

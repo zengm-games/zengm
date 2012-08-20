@@ -1,10 +1,10 @@
 <script type="text/javascript">
 $(document).ready(function() {
-  bbgm.dropdown($("#leaders_select_season"));
+  ui.dropdown($("#leaders_select_season"));
 });
 </script>
 
-<form action="/l/{{g.lid}}/leaders" method="GET" class="form-inline pull-right">
+<form action="/l/{{lid}}/leaders" method="GET" class="form-inline pull-right">
   <select id="leaders_select_season" name="season" class="season">
     {{#seasons}}
       <option value="{{season}}"{{#if selected}} selected="selected"{{/if}}>{{season}} season</option>
@@ -29,7 +29,7 @@ $(document).ready(function() {
       </thead>
       <tbody>
         {{#data}}
-          <tr{{#if userTeam}} class="alert-info"{{/if}}><td>{{i}}. <a href="/l/{{../../g.lid}}/player/{{pid}}">{{name}}</a>, <a href="/l/{{../../g.lid}}/roster/{{abbrev}}/{{../../season}}">{{abbrev}}</a></td><td>{{round stat 1}}</tr>
+          <tr{{#if userTeam}} class="alert-info"{{/if}}><td>{{i}}. <a href="/l/{{../../lid}}/player/{{pid}}">{{name}}</a>, <a href="/l/{{../../lid}}/roster/{{abbrev}}/{{../../season}}">{{abbrev}}</a></td><td>{{round stat 1}}</tr>
         {{/data}}
       </tbody>
       </table>

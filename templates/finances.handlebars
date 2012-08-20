@@ -1,8 +1,8 @@
 <script type="text/javascript">
 $(document).ready(function () {
-  bbgm.datatableSinglePage($('#finances'), 5, [
+  ui.datatableSinglePage($('#finances'), 5, [
     {{#teams}}
-      [ '<a href="/l/{{../g.lid}}/roster/{{abbrev}}">{{region}} {{name}}</a>', '{{round att}}', '${{round revenue 1}}M', '${{round profit 1}}M', '${{round cash 1}}M', '${{round payroll 1}}M' ],
+      [ '<a href="/l/{{../lid}}/roster/{{abbrev}}">{{region}} {{name}}</a>', '{{round att}}', '${{round revenue 1}}M', '${{round profit 1}}M', '${{round cash 1}}M', '${{round payroll 1}}M' ],
     {{/teams}}
   ]);
 });

@@ -1,9 +1,9 @@
 <h1>Contract negotiation</h1>
 
 {{#if resigning}}
-  <p>You are allowed to go over the salary cap to make this deal because you are resigning <a href="/l/{{g.lid}}/player/{{player.pid}}">{{player.name}}</a> to a contract extension. <strong>If you do not come to an agreement here, <a href="/l/{{g.lid}}/player/{{player.pid}}">{{player.name}}</a> will become a free agent.</strong> He will then be able to sign with any team, and you won't be able to go over the salary cap to sign him.</p>
+  <p>You are allowed to go over the salary cap to make this deal because you are resigning <a href="/l/{{lid}}/player/{{player.pid}}">{{player.name}}</a> to a contract extension. <strong>If you do not come to an agreement here, <a href="/l/{{lid}}/player/{{player.pid}}">{{player.name}}</a> will become a free agent.</strong> He will then be able to sign with any team, and you won't be able to go over the salary cap to sign him.</p>
 {{else}}
-  <p>You are not allowed to go over the salary cap to make this deal because <a href="/l/{{g.lid}}/player/{{player.pid}}">{{player.name}}</a> is a free agent.</p>
+  <p>You are not allowed to go over the salary cap to make this deal because <a href="/l/{{lid}}/player/{{player.pid}}">{{player.name}}</a> is a free agent.</p>
 {{/if}}
 
 <div class="row-fluid">
@@ -12,7 +12,7 @@
     <p>Current Payroll: ${{round payroll 1}}M</p>
     <p>Salary Cap: ${{round salaryCap 1}}M</p>
     <h2>Your Proposal</h2>
-    <form action="/l/{{g.lid}}/negotiation/{{player.pid}}" class="form-horizontal" method="POST">
+    <form action="/l/{{lid}}/negotiation/{{player.pid}}" class="form-horizontal" method="POST">
       <input type="text" name="teamYears" id="teamYears" class="span1" value="{{negotiation.teamYears}}"> years
       <p><div class="input-prepend input-append">
         <span class="add-on">$</span><input type="text" name="teamAmount" id="teamAmount" class="span1" value="{{negotiation.teamAmount}}"><span class="add-on">M</span> per year
@@ -20,20 +20,20 @@
       <button type="submit" class="btn btn-large btn-primary">Submit Proposal</button>  
     </form>
 
-    <form action="/l/{{g.lid}}/negotiation/{{player.pid}}" class="form-horizontal" method="POST">
+    <form action="/l/{{lid}}/negotiation/{{player.pid}}" class="form-horizontal" method="POST">
       <input type="hidden" name="cancel" value="1">
       <button type="submit" class="btn btn-danger">Can't reach a deal? End negotiation</button>
     </form>
 
   </div>
   <div class="span6">
-    <h2><a href="/l/{{g.lid}}/player/{{player.pid}}">{{player.name}}</a></h2>
+    <h2><a href="/l/{{lid}}/player/{{player.pid}}">{{player.name}}</a></h2>
     <p>Overal: {{player.ovr}}</p>
     <p>Potential: {{player.pot}}</p>
     <h2>Player Proposal</h2>
     <p>{{negotiation.playerYears}} years (through {{negotiation.playerExpiration}})</p>
     <p>${{round negotiation.playerAmount 3}}M per year</p>
-    <form action="/l/{{g.lid}}/negotiation/{{player.pid}}" class="form-horizontal" method="POST">
+    <form action="/l/{{lid}}/negotiation/{{player.pid}}" class="form-horizontal" method="POST">
       <input type="hidden" name="accept" value="1">
       <button type="submit" class="btn btn-large btn-primary" id="accept">Accept Player Proposal</button>
     </form>

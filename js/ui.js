@@ -37,26 +37,39 @@ define([], function () {
         return [league_id, league_root_url, league_page];
     }
 
-    // For AJAX updating pages
-    function ajaxUpdate(data) {
-        var league_page, result;
+    /**
+     * Replaces the displayed view.
+     *
+     * This updates the content of the page (either #content if data.inLeague is false or #league_content otherwise), sets the title (and appends the league number to it when appropriate), and injects g.lid as lid to the template.
+     *
+     * @memberOf ui
+     * @param  {Object} data An object with several properties: "title" the title of the page; "vars" the variables to be passed to the handlebars template; "template" the name of the handlebars template; "isLeague" a boolean saying whether this is within a league or not.
+     * @param  {function()} cb Optional callback
+     */
+    function update(data, cb) {
+        var league_page, rendered, result;
 
+        data.vars.lid = g.lid;
+        rendered = Handlebars.templates[data.template](data.vars);
+        if (data.inLeague) {
+            $("#league_content").html(rendered);
+            if (data.hasOwnProperty("title")) {
+                data.title += " - League " + g.lid;
+            }
+        } else {
+            $("#content").html(rendered);
+        }
         if (data.hasOwnProperty("title")) {
             $("title").text(data.title + " - Basketball GM");
-        }
-        if (data.hasOwnProperty("league_content")) {
-            $("#league_content").html(data.league_content);
-        }
-        if (data.hasOwnProperty("content")) {
-            $("#content").html(data.content);
-        }
-        if (data.hasOwnProperty("message")) {
-            alert(data.message);
         }
 
         result = parseLeagueUrl(document.URL);
         league_page = result[2];
         highlightNav(league_page);
+
+        if (typeof cb !== "undefined") {
+            cb();
+        }
     }
 
     // Data tables
@@ -129,14 +142,14 @@ define([], function () {
         highlightNav(league_page);
 
         window.onpopstate = function (event) {
-            ajaxUpdate(event.state);
+            update(event.state);
         };
     });
 
     return {
-        ajaxUpdate: ajaxUpdate,
         datatable: datatable,
         datatableSinglePage: datatableSinglePage,
-        dropdown: dropdown
+        dropdown: dropdown,
+        update: update
     };
 });

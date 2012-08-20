@@ -41,7 +41,7 @@
   });
 </script>
 
-<form action="/l/{{g.lid}}/game_log" method="GET" class="form-inline pull-right">
+<form action="/l/{{lid}}/game_log" method="GET" class="form-inline pull-right">
   <select id="game_log_select_abbrev" name="team" class="team">
     {{#teams}}
       <option value="{{abbrev}}"{{#if selected}} selected="selected"{{/if}}}>{{region}} {{name}}</option>

@@ -1,16 +1,16 @@
 <script type="text/javascript">
 $(document).ready(function() {
-  bbgm.dropdown($('#player_ratings_select_season'));
+  ui.dropdown($('#player_ratings_select_season'));
 
-  bbgm.datatable($('#player_ratings'), 4, [
+  ui.datatable($('#player_ratings'), 4, [
     {{#players}}
-      ['<a href="/l/{{../g.lid}}/player/{{pid}}">{{name}}</a>', '{{pos}}', '<a href="/l/{{../g.lid}}/roster/{{abbrev}}/{{../season}}">{{abbrev}}</a>', '{{age}}', '{{ovr}}', '{{pot}}', '{{hgt}}', '{{stre}}', '{{spd}}', '{{jmp}}', '{{endu}}', '{{ins}}', '{{dnk}}', '{{ft}}', '{{fg}}', '{{tp}}', '{{blk}}', '{{stl}}', '{{drb}}', '{{pss}}', '{{reb}}'],
+      ['<a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>', '{{pos}}', '<a href="/l/{{../lid}}/roster/{{abbrev}}/{{../season}}">{{abbrev}}</a>', '{{age}}', '{{ovr}}', '{{pot}}', '{{hgt}}', '{{stre}}', '{{spd}}', '{{jmp}}', '{{endu}}', '{{ins}}', '{{dnk}}', '{{ft}}', '{{fg}}', '{{tp}}', '{{blk}}', '{{stl}}', '{{drb}}', '{{pss}}', '{{reb}}'],
     {{/players}}
   ]);
 });
 </script>
 
-<form action="/l/{{g.lid}}/player_ratings" method="GET" class="form-inline pull-right">
+<form action="/l/{{lid}}/player_ratings" method="GET" class="form-inline pull-right">
   <select id="player_ratings_select_season" name="season" class="season">
     {{#seasons}}
       <option value="{{season}}"{{#if selected}} selected="selected"{{/if}}>{{season}} season</option>

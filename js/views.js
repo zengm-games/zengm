@@ -15,12 +15,12 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         if (leagueMenu === null || parseInt(leagueMenu.dataset.lid, 10) !== g.lid) {
             // Connect to league database
             db.connectLeague(g.lid, function () {
-                var data, template;
+                var data;
 
-                data = {};
-                template = Handlebars.templates.league_layout;
-                data.content = template({g: g});
-                ui.ajaxUpdate(data);
+                data = {inLeague: false};
+                data.template = "league_layout";
+                data.vars = {};
+                ui.update(data);
 
                 // Update play menu
                 playMenu.setStatus();
@@ -35,9 +35,9 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
     }
 
     function beforeNonLeague() {
-        document.getElementById("playButton").innerHTML = '';
-        document.getElementById("playPhase").innerHTML = '';
-        document.getElementById("playStatus").innerHTML = '';
+        document.getElementById("playButton").innerHTML = "";
+        document.getElementById("playPhase").innerHTML = "";
+        document.getElementById("playStatus").innerHTML = "";
     }
 
     function init_db(req) {
@@ -76,15 +76,15 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         beforeNonLeague();
 
         g.dbm.transaction(["leagues"]).objectStore("leagues").getAll().onsuccess = function (event) {
-            var data, leagues, template;
+            var data, leagues;
 
             leagues = event.target.result;
 
-            data = {title: "Dashboard"};
-            template = Handlebars.templates.dashboard;
-            data.content = template({leagues: leagues});
-
-            ui.ajaxUpdate(data);
+            data = {inLeague: false};
+            data.template = "dashboard";
+            data.title = "Dashboard";
+            data.vars = {leagues: leagues};
+            ui.update(data);
         };
     }
 
@@ -95,15 +95,15 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
         if (req.method === "get") {
             g.dbm.transaction(["teams"]).objectStore("teams").getAll().onsuccess = function (event) {
-                var data, teams, template;
+                var data, teams;
 
                 teams = event.target.result;
 
-                data = {title: "Create New League"};
-                template = Handlebars.templates.newLeague;
-                data.content = template({teams: teams});
-
-                ui.ajaxUpdate(data);
+                data = {inLeague: false};
+                data.template = "newLeague";
+                data.title = "Create New League";
+                data.vars = {teams: teams};
+                ui.update(data);
             };
         } else if (req.method === "post") {
             tid = parseInt(req.params.tid, 10);
@@ -126,13 +126,13 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
     function league_dashboard(req) {
         beforeLeague(req, function () {
-            var data, template;
+            var data;
 
-            data = {title: "Dashboard - League " + g.lid};
-            template = Handlebars.templates.leagueDashboard;
-            data.league_content = template({g: g});
-
-            ui.ajaxUpdate(data);
+            data = {inLeague: true};
+            data.template = "leagueDashboard";
+            data.title = "Dashboard";
+            data.vars = {};
+            ui.update(data, req.raw.cb);
         });
     }
 
@@ -147,7 +147,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             attributes = ["tid", "cid", "did", "abbrev", "region", "name"];
             seasonAttributes = ["won", "lost", "winp", "wonHome", "lostHome", "wonAway", "lostAway", "wonDiv", "lostDiv", "wonConf", "lostConf"];
             db.getTeams(null, season, attributes, [], seasonAttributes, "winp", function (teams) {
-                var confs, confTeams, data, divTeams, i, j, k, mapping, template, viewModel;
+                var confs, confTeams, data, divTeams, i, j, k;
 
                 confs = [];
                 for (i = 0; i < g.confs.length; i++) {
@@ -174,14 +174,11 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     }
                 }
 
-                data = {title: "Standings - League " + g.lid};
-                template = Handlebars.templates.standings;
-                data.league_content = template({g: g, confs: confs, seasons: seasons, season: season});
-                ui.ajaxUpdate(data);
-
-                if (typeof req.raw.cb !== "undefined") {
-                    req.raw.cb();
-                }
+                data = {inLeague: true};
+                data.template = "standings";
+                data.title = season + " Standings";
+                data.vars = {confs: confs, seasons: seasons, season: season};
+                ui.update(data, req.raw.cb);
             });
         });
     }
@@ -195,12 +192,13 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             seasons = helpers.getSeasons(season);
 
             function cb(finalMatchups, series) {
-                var data, template;
+                var data;
 
-                data = {title: "Playoffs - League " + g.lid};
-                template = Handlebars.templates.playoffs;
-                data.league_content = template({g: g, finalMatchups: finalMatchups, series: series, seasons: seasons, season: season});
-                ui.ajaxUpdate(data);
+                data = {inLeague: true};
+                data.template = "playoffs";
+                data.title = season + " Playoffs";
+                data.vars = {finalMatchups: finalMatchups, series: series, seasons: seasons, season: season};
+                ui.update(data, req.raw.cb);
             }
 
             if (season === g.season && g.phase < c.PHASE_PLAYOFFS) {
@@ -257,16 +255,17 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             attributes = ["tid", "abbrev", "region", "name"];
             seasonAttributes = ["att", "revenue", "profit", "cash", "payroll"];
             db.getTeams(null, g.season, attributes, [], seasonAttributes, "winp", function (teams) {
-                var data, i, template;
+                var data, i;
 
                 for (i = 0; i < teams.length; i++) {
                     teams[i].cash /= 1000000;
                 }
 
-                data = {title: "Finances - League " + g.lid};
-                template = Handlebars.templates.finances;
-                data.league_content = template({g: g, salaryCap: g.salaryCap / 1000, teams: teams});
-                ui.ajaxUpdate(data);
+                data = {inLeague: true};
+                data.template = "finances";
+                data.title = "Finances";
+                data.vars = {salaryCap: g.salaryCap / 1000, teams: teams};
+                ui.update(data, req.raw.cb);
             });
         });
     }
@@ -305,7 +304,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     retiredPlayers = db.getPlayers(event.target.result, season, null, ["pid", "name", "abbrev", "age"], [], ["ovr"]);
 
                     db.getTeams(null, season, ["abbrev", "region", "name"], [], ["leagueChamps"], null, function(teams) {
-                        var champ, data, i, template;
+                        var champ, data, i;
 
                         for (i = 0; i < teams.length; i++) {
                             if (teams[i].leagueChamps) {
@@ -314,10 +313,11 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                             }
                         }
 
-                        data = {title: season + " Season Summary - League " + g.lid};
-                        template = Handlebars.templates.history;
-                        data.league_content = template({g: g, awards: awards, champ: champ, retiredPlayers: retiredPlayers, seasons: seasons, season: season});
-                        ui.ajaxUpdate(data);
+                        data = {inLeague: true};
+                        data.template = "history";
+                        data.title = season + " Season Summary";
+                        data.vars = {awards: awards, champ: champ, retiredPlayers: retiredPlayers, seasons: seasons, season: season};
+                        ui.update(data, req.raw.cb);
                     })
                 };
             };
@@ -342,7 +342,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             // Run after players are loaded
             function cb(players) {
                 transaction.objectStore("teams").get(tid).onsuccess = function (event) {
-                    var data, j, team, teamAll, teamSeason, template;
+                    var data, j, team, teamAll, teamSeason;
 
                     teamAll = event.target.result;
                     for (j = 0; j < teamAll.seasons.length; j++) {
@@ -353,10 +353,11 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     }
                     team = {region: teamAll.region, name: teamAll.name, cash: teamSeason.cash / 1000000};
 
-                    data = {title: "Roster - League " + g.lid};
-                    template = Handlebars.templates.roster;
-                    data.league_content = template({g: g, teams: teams, seasons: seasons, sortable: sortable, currentSeason: currentSeason, showTradeFor: currentSeason && tid !== g.userTid, players: players, numRosterSpots: 15 - players.length, team: team});
-                    ui.ajaxUpdate(data);
+                    data = {inLeague: true};
+                    data.template = "roster";
+                    data.title = "Roster";
+                    data.vars = {teams: teams, seasons: seasons, sortable: sortable, currentSeason: currentSeason, showTradeFor: currentSeason && tid !== g.userTid, players: players, numRosterSpots: 15 - players.length, team: team};
+                    ui.update(data, req.raw.cb);
                 };
             }
 
@@ -406,7 +407,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
     function schedule(req) {
         beforeLeague(req, function () {
             season.getSchedule(null, 0, function (schedule_) {
-                var data, game, games, i, row, team0, team1, template, vsat;
+                var data, game, games, i, row, team0, team1, vsat;
 
                 games = [];
                 for (i = 0; i < schedule_.length; i++) {
@@ -424,10 +425,11 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     }
                 }
 
-                data = {title: "Schedule - League " + g.lid};
-                template = Handlebars.templates.schedule;
-                data.league_content = template({g: g, games: games});
-                ui.ajaxUpdate(data);
+                data = {inLeague: true};
+                data.template = "schedule";
+                data.title = "Schedule";
+                data.vars = {games: games};
+                ui.update(data, req.raw.cb);
             });
         });
     }
@@ -440,7 +442,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             }
 
             g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(c.PLAYER_FREE_AGENT).onsuccess = function (event) {
-                var attributes, data, players, ratings, stats, template;
+                var attributes, data, players, ratings, stats;
 
                 attributes = ["pid", "name", "pos", "age", "contractAmount", "contractExp"];
                 ratings = ["ovr", "pot"];
@@ -448,10 +450,11 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
                 players = db.getPlayers(event.target.result, g.season, c.PLAYER_FREE_AGENT, attributes, stats, ratings, {oldStats: true, showNoStats: true});
 
-                data = {title: "Free Agents - League " + g.lid};
-                template = Handlebars.templates.freeAgents;
-                data.league_content = template({g: g, players: players});
-                ui.ajaxUpdate(data);
+                data = {inLeague: true};
+                data.template = "freeAgents";
+                data.title = "Free Agents";
+                data.vars = {players: players};
+                ui.update(data, req.raw.cb);
             };
         });
     }
@@ -508,18 +511,18 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                             }
 
                             trade.summary(otherTid, userPids, otherPids, function (summary) {
-                                var data, teams, template, tradeSummary;
+                                var data, teams, tradeSummary;
 
                                 teams = helpers.getTeams(otherTid);
                                 teams.splice(g.userTid, 1);  // Can't trade with yourself
 
-                                template = Handlebars.templates.tradeSummary;
-                                tradeSummary = template({g: g, summary: summary, message: message});
+                                tradeSummary = Handlebars.templates.tradeSummary({lid: g.lid, summary: summary, message: message});
 
-                                data = {title: "Trade - League " + g.lid};
-                                template = Handlebars.templates.trade;
-                                data.league_content = template({g: g, userRoster: userRoster, otherRoster: otherRoster, userPids: userPids, otherPids: otherPids, teams: teams, otherTid: otherTid, tradeSummary: tradeSummary, userTeamName: summary.teams[0].name});
-                                ui.ajaxUpdate(data);
+                                data = {inLeague: true};
+                                data.template = "trade";
+                                data.title = "Trade";
+                                data.vars = {userRoster: userRoster, otherRoster: otherRoster, userPids: userPids, otherPids: otherPids, teams: teams, otherTid: otherTid, tradeSummary: tradeSummary, userTeamName: summary.teams[0].name};
+                                ui.update(data, req.raw.cb);
                             });
                         };
                     };
@@ -611,7 +614,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     }
 
                     playerStore.index("draftYear").getAll(g.season).onsuccess = function (event) {
-                        var data, drafted, draftAbbrev, draftOrder, draftTid, i, pa, player, playersAll, pr, slot, started, template;
+                        var data, drafted, draftAbbrev, draftOrder, draftTid, i, pa, player, playersAll, pr, slot, started;
 
                         playersAll = event.target.result;
                         playersAll.sort(function (a, b) {  return (g.numTeams * (a.draftRound - 1) + a.draftPick) - (g.numTeams * (b.draftRound - 1) + b.draftPick); });
@@ -642,10 +645,11 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                             drafted.push({abbrev: slot.abbrev, rnd: slot.round, pick: slot.pick});
                         }
 
-                        data = {title: "Draft - League " + g.lid};
-                        template = Handlebars.templates.draft;
-                        data.league_content = template({g: g, undrafted: undrafted, drafted: drafted, started: started});
-                        ui.ajaxUpdate(data);
+                        data = {inLeague: true};
+                        data.template = "draft";
+                        data.title = "Draft";
+                        data.vars = {undrafted: undrafted, drafted: drafted, started: started};
+                        ui.update(data, req.raw.cb);
                     };
                 };
                 return;
@@ -653,7 +657,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
             // Show a summary of an old draft
             playerStore.index("draftYear").getAll(season).onsuccess = function (event) {
-                var currentAbbrev, currentPr, currentTid, data, draftAbbrev, draftPr, draftTid, i, j, pa, player, players, playersAll, ps, template;
+                var currentAbbrev, currentPr, currentTid, data, draftAbbrev, draftPr, draftTid, i, j, pa, player, players, playersAll, ps;
 
                 playersAll = event.target.result;
 
@@ -707,17 +711,18 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     }
                 }
 
-                data = {title: season + " Draft Results - League " + g.lid};
-                template = Handlebars.templates.draftSummary;
-                data.league_content = template({g: g, players: players, seasons: seasons});
-                ui.ajaxUpdate(data);
+                data = {inLeague: true};
+                data.template = "draftSummary";
+                data.title = season + " Draft Results";
+                data.vars = {players: players, seasons: seasons};
+                ui.update(data, req.raw.cb);
             };
         });
     }
 
     function gameLog(req) {
         beforeLeague(req, function () {
-            var abbrev, data, season, seasons, teams, template, tid;
+            var abbrev, data, season, seasons, teams, tid;
 
             abbrev = typeof req.params.abbrev !== "undefined" ? req.params.abbrev : undefined;
             [tid, abbrev] = helpers.validateAbbrev(abbrev);
@@ -726,10 +731,11 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             seasons = helpers.getSeasons(season);
             teams = helpers.getTeams(tid);
 
-            data = {title: "Game Log - League " + g.lid};
-            template = Handlebars.templates.gameLog;
-            data.league_content = template({g: g, teams: teams, seasons: seasons});
-            ui.ajaxUpdate(data);
+            data = {inLeague: true};
+            data.template = "gameLog";
+            data.title = "Game Log";
+            data.vars = {teams: teams, seasons: seasons};
+            ui.update(data, req.raw.cb);
         });
     }
 
@@ -742,7 +748,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             seasons = helpers.getSeasons(season);
 
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
-                var attributes, categories, data, i, j, players, ratings, stats, template, userAbbrev;
+                var attributes, categories, data, i, j, players, ratings, stats, userAbbrev;
 
                 userAbbrev = helpers.getAbbrev(g.userTid);
 
@@ -774,16 +780,16 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     }
                     if (i === 3) {
                         categories[i].newRow = true;
-                    }
-                    else {
+                    } else {
                         categories[i].newRow = false;
                     }
                 }
 
-                data = {title: "League Leaders - League " + g.lid};
-                template = Handlebars.templates.leaders;
-                data.league_content = template({g: g, categories: categories, season: season, seasons: seasons});
-                ui.ajaxUpdate(data);
+                data = {inLeague: true};
+                data.template = "leaders";
+                data.title = "League Leaders";
+                data.vars = {categories: categories, season: season, seasons: seasons};
+                ui.update(data, req.raw.cb);
             };
         });
     }
@@ -797,17 +803,18 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             seasons = helpers.getSeasons(season);
 
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
-                var attributes, data, players, ratings, stats, template;
+                var attributes, data, players, ratings, stats;
                 attributes = ["pid", "name", "pos", "age"];
                 ratings = ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
                 stats = ["abbrev"];
 
                 players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings);
 
-                data = {title: "Player Ratings - League " + g.lid};
-                template = Handlebars.templates.playerRatings;
-                data.league_content = template({g: g, players: players, season: season, seasons: seasons});
-                ui.ajaxUpdate(data);
+                data = {inLeague: true};
+                data.template = "playerRatings";
+                data.title = "Player Ratings";
+                data.vars = {players: players, season: season, seasons: seasons};
+                ui.update(data, req.raw.cb);
             };
         });
     }
@@ -821,17 +828,18 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             seasons = helpers.getSeasons(season);
 
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
-                var attributes, data, players, ratings, stats, template;
+                var attributes, data, players, ratings, stats;
                 attributes = ["pid", "name", "pos", "age"];
                 ratings = [];
                 stats = ["abbrev", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts"];
 
                 players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings, {showRookies: true});
 
-                data = {title: "Player Stats - League " + g.lid};
-                template = Handlebars.templates.playerStats;
-                data.league_content = template({g: g, players: players, season: season, seasons: seasons});
-                ui.ajaxUpdate(data);
+                data = {inLeague: true};
+                data.template = "playerStats";
+                data.title = "Player Stats";
+                data.vars = {players: players, season: season, seasons: seasons};
+                ui.update(data, req.raw.cb);
             };
         });
     }
@@ -849,12 +857,13 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             stats = ["gp", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "oppPts"];
             seasonAttributes = ["won", "lost"];
             db.getTeams(null, season, attributes, stats, seasonAttributes, null, function (teams) {
-                var data, template;
+                var data;
 
-                data = {title: "Team Stats - League " + g.lid};
-                template = Handlebars.templates.teamStats;
-                data.league_content = template({g: g, teams: teams, seasons: seasons});
-                ui.ajaxUpdate(data);
+                data = {inLeague: true};
+                data.template = "teamStats";
+                data.title = "Team Stats";
+                data.vars = {teams: teams, seasons: seasons};
+                ui.update(data, req.raw.cb);
             });
         });
     }
@@ -866,7 +875,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             pid = typeof req.params.pid !== "undefined" ? parseInt(req.params.pid, 10) : undefined;
 
             g.dbl.transaction(["players"]).objectStore("players").get(pid).onsuccess = function (event) {
-                var attributes, currentRatings, data, player, ratings, stats, template;
+                var attributes, currentRatings, data, player, ratings, stats;
 
                 attributes = ["pid", "name", "tid", "abbrev", "teamRegion", "teamName", "pos", "age", "hgtFt", "hgtIn", "weight", "bornYear", "bornLoc", "contractAmount", "contractExp", "draftYear", "draftRound", "draftPick", "draftAbbrev", "face"];
                 ratings = ["season", "abbrev", "age", "ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
@@ -876,10 +885,11 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
                 currentRatings = player.ratings[player.ratings.length - 1];
 
-                data = {title: player.name + " - League " + g.lid};
-                template = Handlebars.templates.player;
-                data.league_content = template({g: g, player: player, currentRatings: currentRatings, showTradeFor: player.tid !== g.userTid});
-                ui.ajaxUpdate(data);
+                data = {inLeague: true};
+                data.template = "player";
+                data.title = player.name;
+                data.vars = {player: player, currentRatings: currentRatings, showTradeFor: player.tid !== g.userTid};
+                ui.update(data, req.raw.cb);
             };
         });
     }
@@ -902,7 +912,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
             // Get all free agents, filter array based on negotiations data, pass to db.getPlayers, augment with contract data from negotiations
             g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(c.PLAYER_FREE_AGENT).onsuccess = function (event) {
-                var attributes, data, i, j, players, playersAll, playersSome, ratings, stats, template;
+                var attributes, data, i, j, players, playersAll, playersSome, ratings, stats;
 
                 playersAll = event.target.result;
                 playersSome = [];
@@ -931,10 +941,11 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     }
                 }
 
-                data = {title: "Resign Players - League " + g.lid};
-                template = Handlebars.templates.negotiationList;
-                data.league_content = template({g: g, players: players});
-                ui.ajaxUpdate(data);
+                data = {inLeague: true};
+                data.template = "negotiationList";
+                data.title = "Resign Players";
+                data.vars = {players: players};
+                ui.update(data, req.raw.cb);
             };
         });
     }
@@ -975,7 +986,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                 }
 
                 g.dbl.transaction(["players"]).objectStore("players").get(pid).onsuccess = function (event) {
-                    var data, j, pa, payroll, player, pr, team, teams, template;
+                    var data, j, pa, payroll, player, pr, team, teams;
 
                     pa = event.target.result;
 
@@ -998,10 +1009,11 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     db.getPayroll(null, g.userTid, function (payroll) {
                         payroll /= 1000;
 
-                        data = {title: player.name + " - Contract Negotiation - League " + g.lid};
-                        template = Handlebars.templates.negotiation;
-                        data.league_content = template({g: g, negotiation: negotiation, player: player, salaryCap: g.salaryCap / 1000, team: team, payroll: payroll});
-                        ui.ajaxUpdate(data);
+                        data = {inLeague: true};
+                        data.template = "negotiation";
+                        data.title = player.name + " - Contract Negotiation";
+                        data.vars = {negotiation: negotiation, player: player, salaryCap: g.salaryCap / 1000, team: team, payroll: payroll};
+                        ui.update(data, req.raw.cb);
                     });
                 };
             }
@@ -1047,14 +1059,15 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
      * @param {Object} req Object with parameter "params" containing another object with a string representing the error message in the parameter "error".
      */
     function globalError(req) {
-        var data, template;
+        var data;
 
         beforeNonLeague();
 
-        data = {"title": "Error"};
-        template = Handlebars.templates.error;
-        data.content = template({error: req.params.error});
-        ui.ajaxUpdate(data);
+        data = {inLeague: false};
+        data.template = "error";
+        data.title = "Error";
+        data.vars = {error: req.params.error};
+        ui.update(data);
     }
 
     /**
@@ -1065,18 +1078,19 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
      */
     function leagueError(req) {
         beforeLeague({params: {lid: req.params.lid}}, function () {
-            var data, template;
+            var data;
 
-            data = {"title": "Error - League " + req.params.lid};
-            template = Handlebars.templates.error;
-            data.league_content = template({error: req.params.error});
-            ui.ajaxUpdate(data);
+            data = {inLeague: true};
+            data.template = "error";
+            data.title = "Error";
+            data.vars = {error: req.params.error};
+            ui.update(data);
         });
     }
 
     function testSchedule(req) {
         beforeLeague(req, function () {
-            var data, getNumDays, template;
+            var data, getNumDays;
 
             getNumDays = function (tids) {
                 var i, numDays, tidsInDay;
@@ -1105,9 +1119,9 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             });
 
             data = {"title": "Test Schedule - League " + req.params.lid};
-            template = Handlebars.templates.error;
+            data.template = "error";
             data.league_content = "Test Schedule";
-            ui.ajaxUpdate(data);
+            ui.update(data, req.raw.cb);
         });
     }
 

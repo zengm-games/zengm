@@ -1,10 +1,10 @@
 <script type="text/javascript">
 $(document).ready(function() {
-    bbgm.dropdown($('#standings_select_season'));
+    ui.dropdown($('#standings_select_season'));
 });
 </script>
 
-<form action="/l/{{g.lid}}/standings" method="GET" class="form-inline pull-right">
+<form action="/l/{{lid}}/standings" method="GET" class="form-inline pull-right">
   <select id="standings_select_season" name="season" class="season">
     {{#seasons}}
       <option value="{{season}}"{{#if selected}} selected="selected"{{/if}}>{{season}} season</option>
@@ -25,7 +25,7 @@ $(document).ready(function() {
           </thead>
           <tbody>
           {{#teams}}
-            <tr><td><a href="/l/{{../../../g.lid}}/roster/{{abbrev}}">{{region}} {{name}}</a></td><td>{{won}}</td><td>{{lost}}</td><td>{{roundWinp winp}}</td><td>GB</td><td>{{wonHome}}-{{lostHome}}</td><td>{{wonRoad}}-{{lostRoad}}</td><td>{{wonDiv}}-{{lostDiv}}</td><td>{{wonConf}}-{{lostConf}}</td><td>Streak</td><td>L10</td></tr>
+            <tr><td><a href="/l/{{../../../lid}}/roster/{{abbrev}}">{{region}} {{name}}</a></td><td>{{won}}</td><td>{{lost}}</td><td>{{roundWinp winp}}</td><td>GB</td><td>{{wonHome}}-{{lostHome}}</td><td>{{wonRoad}}-{{lostRoad}}</td><td>{{wonDiv}}-{{lostDiv}}</td><td>{{wonConf}}-{{lostConf}}</td><td>Streak</td><td>L10</td></tr>
           {{/teams}}
           </tbody>
           </table>
@@ -39,7 +39,7 @@ $(document).ready(function() {
       </thead>
       <tbody>
       {{#teams}}
-        <tr><td>1. <a href="/l/{{../../g.lid}}/roster/{{abbrev}}">{{region}}</a></td><td align="right">GB</td></tr>
+        <tr><td>1. <a href="/l/{{../../lid}}/roster/{{abbrev}}">{{region}}</a></td><td align="right">GB</td></tr>
       {{/teams}}
       </tbody>
       </table>

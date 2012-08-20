@@ -1,4 +1,4 @@
-define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "core/season", "core/trade", "util/helpers", "util/playMenu"], function (bbgm, db, contractNegotiation, game, league, season, trade, helpers, playMenu) {
+define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "core/season", "core/trade", "util/helpers", "util/playMenu", "lib/knockout", "lib/knockout.mapping"], function (bbgm, db, contractNegotiation, game, league, season, trade, helpers, playMenu, ko, komap) {
     "use strict";
 
     function beforeLeague(req, cb) {
@@ -180,22 +180,11 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                     data.league_content = template({g: g, confs: confs, seasons: seasons, season: season});
                     bbgm.ajaxUpdate(data);
 
-                    // Does this "mapping" line do anything? how to tell?
-                    mapping = {
-                        "confs.divs.teams": {
-                            key: function(data) {
-console.log('fuck')
-                                return ko.utils.unwrapObservable(data.tid);
-                            }
-                        }
-                    }
-                    g.viewModels.standings = ko.mapping.fromJS({confs: confs}, mapping);
+                    g.viewModels.standings = komap.fromJS({confs: confs});
                     ko.applyBindings(g.viewModels.standings);
                 } else {
-                    ko.mapping.fromJS({confs: confs}, g.viewModels.standings)
+                    komap.fromJS({confs: confs}, g.viewModels.standings);
                 }
-
-//                ko.mapping.fromJS({confs: confs}, viewModel);
             });
         });
     }

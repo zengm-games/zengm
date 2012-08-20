@@ -1,17 +1,10 @@
 main todo
-- data binding/updating. knockout seems like a decent first try
-  - do standings view first
-    - http://jsfiddle.net/L4hUq/ for links
-    - completely get rid of handlebars
-    - polish the rest of standings (GB, etc)
-  - what happens when i build a model, apply it, and then navigate away? is that ever garbage collected, or do i need to do something manually?
-  - by using davis.js routing in helpers.realtimeUpdate, I can't do a callback (or can i??), so page updates might be out of sync with game simulation (which might not be a bad thing, especially if long processes like player stats could refresh only every X days as appropriate)
-  - how to handle multiple windows?
-  - can i eventually get rid of handlebars everywhere?
-  - specify container in ko.applyBindings
-  - use for play menu
+- data binding/updating
+  - knockoutjs is too flaky. try just a naive approach first, and use something better later
+  - callback for playing games
+    - EVERY VIEW must ensure that the callback is appropriately called. Accomplish this through some ui.* function to handle updating the HTML and other boilerplate
 - rename bbgm to ui and rewrite
-  - move helpers.realtimeUpdate there, maybe others
+  - move helpers.realtimeUpdate there, maybe others. playMenu?
   - is the onpopstate stuff needed with Davis.js?
   - Rewrite parseLeagueUrl to return an object, and use it elsewhere (maybe better in helpers?)
 - core.game is disgustingly messy and should be rewritten

@@ -1113,7 +1113,7 @@ function program4(depth0,data) {
   return buffer;});
 templates['standings'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;
-  var buffer = "", stack1, stack2, foundHelper, tmp1, self=this, functionType="function", helperMissing=helpers.helperMissing, undef=void 0, escapeExpression=this.escapeExpression, blockHelperMissing=helpers.blockHelperMissing;
+  var buffer = "", stack1, foundHelper, tmp1, self=this, functionType="function", helperMissing=helpers.helperMissing, undef=void 0, escapeExpression=this.escapeExpression, blockHelperMissing=helpers.blockHelperMissing;
 
 function program1(depth0,data) {
   
@@ -1318,7 +1318,7 @@ function program8(depth0,data,depth2) {
   if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
   else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  </select>\n</form>\n\n<h1>Standings</h1>\n<!-- ko foreach: confs -->\n  <h2 data-bind=\"text: name\"></h2>\n  <div class=\"row-fluid\">\n    <div class=\"span9\">\n      <!-- ko foreach: divs -->\n        <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\">\n        <thead>\n          <tr><th width=\"100%\" data-bind=\"text: name\"></th><th>W</th><th>L</th><th>Pct</th><th>GB</th><th>Home</th><th>Road</th><th>Div</th><th>Conf</th><th>Streak</th><th>L10</th></tr>\n        </thead>\n        <tbody data-bind=\"template: {name: 'div-row-template', foreach: teams}\"></tbody>\n        </table>\n      <!-- /ko -->\n    </div>\n\n    <div class=\"span3\">\n      <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\">\n      <thead>\n        <tr><th width=\"100%\">Team</th><th align=\"right\">GB</th></tr>\n      </thead>\n      <tbody data-bind=\"template: {name: 'conf-row-template', foreach: teams}\"></tbody>\n      </table>\n    </div>\n  </div>\n<!-- /ko -->\n\n";
+  buffer += "\n  </select>\n</form>\n\n<h1>Standings</h1>\n\n";
   foundHelper = helpers.confs;
   stack1 = foundHelper || depth0.confs;
   tmp1 = self.programWithDepth(program4, data, depth0);
@@ -1328,26 +1328,6 @@ function program8(depth0,data,depth2) {
   if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
   else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n\n<script type=\"text/html\" id=\"div-row-template\">\n  <tr><td><a href=\"/l/";
-  foundHelper = helpers['g'];
-  stack1 = foundHelper || depth0['g'];
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.lid);
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "g.lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/roster/";
-  foundHelper = helpers.abbrev;
-  stack1 = foundHelper || depth0.abbrev;
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "abbrev", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "\"><span data-bind=\"text: region\"></span> <span data-bind=\"text: name\"></span></a></td><td data-bind=\"text: won\"> </td><td data-bind=\"text: lost\"> </td><td>";
-  foundHelper = helpers.winp;
-  stack1 = foundHelper || depth0.winp;
-  foundHelper = helpers.roundWinp;
-  stack2 = foundHelper || depth0.roundWinp;
-  if(typeof stack2 === functionType) { stack1 = stack2.call(depth0, stack1, { hash: {} }); }
-  else if(stack2=== undef) { stack1 = helperMissing.call(depth0, "roundWinp", stack1, { hash: {} }); }
-  else { stack1 = stack2; }
-  buffer += escapeExpression(stack1) + "</td><td>GB</td><td><span data-bind=\"text: wonHome\"></span>-<span data-bind=\"text: lostHome\"></span></td><td><span data-bind=\"text: wonAway\"></span>-<span data-bind=\"text: lostAway\"></span></td><td><span data-bind=\"text: wonDiv\"></span>-<span data-bind=\"text: lostDiv\"></td><td><span data-bind=\"text: wonConf\"></span>-<span data-bind=\"text: lostConf\"></td><td>Streak</td><td>L10</td></tr>\n</script>\n\n<script type=\"text/html\" id=\"conf-row-template\">\n  <tr><td>1. <a data-bind=\"attr: {href: '' + abbrev}\"><span data-bind=\"text: region\"></span></a></td><td align=\"right\">GB</td></tr>\n</script>";
   return buffer;});
 templates['error'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;

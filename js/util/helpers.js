@@ -219,10 +219,11 @@ define([], function () {
      * Smartly update the currently loaded view, based on the current game state.
      *
      * @memberOf util.helpers
+     * @param {function()} cb Optional callback that will run after the page updates.
      */
-    function realtimeUpdate() {
+    function realtimeUpdate(cb) {
         // Refresh standings if it's the current season standings and the phase is during the regular season
-        Davis.location.replace(new Davis.Request(location.pathname, {realtime: true}));
+        Davis.location.replace(new Davis.Request(location.pathname, {cb: cb}));
     }
 
     return {

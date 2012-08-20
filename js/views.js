@@ -1,4 +1,4 @@
-define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "core/season", "core/trade", "util/helpers", "util/playMenu", "lib/knockout", "lib/knockout.mapping"], function (bbgm, db, contractNegotiation, game, league, season, trade, helpers, playMenu, ko, komap) {
+define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "core/season", "core/trade", "util/helpers", "util/playMenu"], function (bbgm, db, contractNegotiation, game, league, season, trade, helpers, playMenu) {
     "use strict";
 
     function beforeLeague(req, cb) {
@@ -174,16 +174,13 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                     }
                 }
 
-                if (!req.raw.realtime || !g.viewModels.standings) {
-                    data = {title: "Standings - League " + g.lid};
-                    template = Handlebars.templates.standings;
-                    data.league_content = template({g: g, confs: confs, seasons: seasons, season: season});
-                    bbgm.ajaxUpdate(data);
+                data = {title: "Standings - League " + g.lid};
+                template = Handlebars.templates.standings;
+                data.league_content = template({g: g, confs: confs, seasons: seasons, season: season});
+                bbgm.ajaxUpdate(data);
 
-                    g.viewModels.standings = komap.fromJS({confs: confs});
-                    ko.applyBindings(g.viewModels.standings);
-                } else {
-                    komap.fromJS({confs: confs}, g.viewModels.standings);
+                if (typeof req.raw.cb !== "undefined") {
+                    req.raw.cb();
                 }
             });
         });
@@ -329,7 +326,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
 
     function roster(req) {
         beforeLeague(req, function () {
-            var abbrev, attributes, currentSeason, ratings, season, seasons, sortable, stats, teams, tid;
+            var abbrev, attributes, currentSeason, ratings, season, seasons, sortable, stats, teams, tid, transaction;
 
             abbrev = typeof req.params.abbrev !== "undefined" ? req.params.abbrev : undefined;
             [tid, abbrev] = helpers.validateAbbrev(abbrev);
@@ -340,9 +337,11 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
 
             sortable = false;
 
+            transaction = g.dbl.transaction(["players", "schedule", "teams"]);
+
             // Run after players are loaded
             function cb(players) {
-                g.dbl.transaction(["teams"]).objectStore("teams").get(tid).onsuccess = function (event) {
+                transaction.objectStore("teams").get(tid).onsuccess = function (event) {
                     var data, j, team, teamAll, teamSeason, template;
 
                     teamAll = event.target.result;
@@ -372,7 +371,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 if (tid === g.userTid) {
                     sortable = true;
                 }
-                g.dbl.transaction(["schedule"]).objectStore("schedule").getAll().onsuccess = function (event) {
+                transaction.objectStore("schedule").getAll().onsuccess = function (event) {
                     var i, numGamesRemaining, schedule;
 
                     // numGamesRemaining doesn't need to be calculated except for g.userTid, but it is.
@@ -384,7 +383,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                         }
                     }
 
-                    g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
+                    transaction.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
                         var players;
 
                         players = db.getPlayers(event.target.result, season, tid, attributes, stats, ratings, {numGamesRemaining: numGamesRemaining, showRookies: true, sortBy: "rosterOrder", showNoStats: true});
@@ -394,7 +393,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             } else {
                 // Show all players with stats for the given team and year
                 currentSeason = false;
-                g.dbl.transaction(["players"]).objectStore("players").index("statsTids").getAll(tid).onsuccess = function (event) {
+                transaction.objectStore("players").index("statsTids").getAll(tid).onsuccess = function (event) {
                     var players;
 
                     players = db.getPlayers(event.target.result, season, tid, attributes, stats, ratings, {numGamesRemaining: 0, showRookies: true, sortBy: "rosterOrder"});

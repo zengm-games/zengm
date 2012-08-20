@@ -12,6 +12,7 @@ main todo
   - how to handle multiple windows?
   - can i eventually get rid of handlebars everywhere?
   - specify container in ko.applyBindings
+  - use for play menu
 - rename bbgm to ui and rewrite
   - move helpers.realtimeUpdate there, maybe others
 - core.game is disgustingly messy and should be rewritten

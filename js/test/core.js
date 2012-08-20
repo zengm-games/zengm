@@ -1,6 +1,18 @@
 define(["db", "core/draft", "core/league", "core/player", "core/season", "core/trade", "util/helpers"], function (db, draft, league, player, season, trade, helpers) {
     "use strict";
 
+    function numInArrayEqualTo(array, x) {
+        var idx, n;
+
+        n = 0;
+        idx = array.indexOf(x);
+        while (idx !== -1) {
+            n += 1;
+            idx = array.indexOf(x, idx + 1);
+        }
+        return n;
+    }
+
     describe("core/draft", function () {
         var testDraftUntilUserOrEnd, testDraftUser;
 
@@ -23,7 +35,7 @@ define(["db", "core/draft", "core/league", "core/player", "core/season", "core/t
                     cb();
                 };
             });
-        }
+        };
 
         testDraftUser = function (round, cb) {
             var draftOrder, pick, playerStore;
@@ -47,7 +59,7 @@ define(["db", "core/draft", "core/league", "core/player", "core/season", "core/t
                 });
                 localStorage.setItem("league" + g.lid + "DraftOrder", JSON.stringify(draftOrder));
             };
-        }
+        };
 
         describe("#generatePlayers()", function () {
             it("should generate 70 players for the draft", function (done) {
@@ -241,7 +253,6 @@ define(["db", "core/draft", "core/league", "core/player", "core/season", "core/t
             trade.getOtherTid(function (otherTid) {
                 otherTid.should.equal(otherTidTest);
                 trade.getPlayers(function (userPids, otherPids) {
-console.log(otherPids);
                     JSON.stringify(userPids).should.equal(JSON.stringify(userPidsTest));
                     JSON.stringify(otherPids).should.equal(JSON.stringify(otherPidsTest));
                     cb();
@@ -315,26 +326,14 @@ console.log(otherPids);
             it("should warn when more than 15 players will be on a team after a trade", function (done) {
                 trade.create(5, null, function () {
                     trade.updatePlayers([], [90, 92], function (userPids, otherPids) {
-                        trade.summary(5, [], [90, 92], function(summary) {
+                        trade.summary(5, [], [90, 92], function (summary) {
                             summary.warning.should.contain("over the maximum roster size limit of 15 players");
                             console.log(summary);
                             done();
-                        })
+                        });
                     });
                 });
             });
         });
     });
 });
-
-function numInArrayEqualTo(array, x) {
-    var idx, n;
-
-    n = 0;
-    idx = array.indexOf(x);
-    while (idx !== -1) {
-        n += 1;
-        idx = array.indexOf(x, idx + 1);
-    }
-    return n;
-}

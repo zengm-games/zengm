@@ -34,7 +34,7 @@ define(["db", "views", "core/draft", "core/game", "core/player", "core/season", 
             helpers.setGameAttributes({stopGames: true});
 //            g.dbex('UPDATE schedule SET in_progress_timestamp = 0')
 
-            // This is needed because we can't be sure if (bbgm.core.game.play will be called again
+            // This is needed because we can't be sure if core.game.play will be called again
             playMenu.setStatus('Idle');
             lock.set_games_in_progress(false);
             playMenu.refreshOptions();

@@ -1,8 +1,8 @@
-requirejs(["db", "views", "bbgm", "api", "util/helpers"], function (db, views, bbgm, api, helpers) {
+requirejs(["api", "db", "views", "ui", "util/helpers"], function (api, db, views, ui, helpers) {
     "use strict";
 
     window.api = api;
-    window.bbgm = bbgm;
+    window.ui = ui;
 
     db.connectMeta(function () {
         var app = new Davis(function () {

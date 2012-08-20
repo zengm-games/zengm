@@ -1,4 +1,4 @@
-define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "core/season", "core/trade", "util/helpers", "util/playMenu"], function (bbgm, db, contractNegotiation, game, league, season, trade, helpers, playMenu) {
+define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "core/season", "core/trade", "util/helpers", "util/playMenu"], function (db, ui, contractNegotiation, game, league, season, trade, helpers, playMenu) {
     "use strict";
 
     function beforeLeague(req, cb) {
@@ -20,7 +20,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 data = {};
                 template = Handlebars.templates.league_layout;
                 data.content = template({g: g});
-                bbgm.ajaxUpdate(data);
+                ui.ajaxUpdate(data);
 
                 // Update play menu
                 playMenu.setStatus();
@@ -84,7 +84,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             template = Handlebars.templates.dashboard;
             data.content = template({leagues: leagues});
 
-            bbgm.ajaxUpdate(data);
+            ui.ajaxUpdate(data);
         };
     }
 
@@ -103,7 +103,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 template = Handlebars.templates.newLeague;
                 data.content = template({teams: teams});
 
-                bbgm.ajaxUpdate(data);
+                ui.ajaxUpdate(data);
             };
         } else if (req.method === "post") {
             tid = parseInt(req.params.tid, 10);
@@ -132,7 +132,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             template = Handlebars.templates.leagueDashboard;
             data.league_content = template({g: g});
 
-            bbgm.ajaxUpdate(data);
+            ui.ajaxUpdate(data);
         });
     }
 
@@ -177,7 +177,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 data = {title: "Standings - League " + g.lid};
                 template = Handlebars.templates.standings;
                 data.league_content = template({g: g, confs: confs, seasons: seasons, season: season});
-                bbgm.ajaxUpdate(data);
+                ui.ajaxUpdate(data);
 
                 if (typeof req.raw.cb !== "undefined") {
                     req.raw.cb();
@@ -200,7 +200,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 data = {title: "Playoffs - League " + g.lid};
                 template = Handlebars.templates.playoffs;
                 data.league_content = template({g: g, finalMatchups: finalMatchups, series: series, seasons: seasons, season: season});
-                bbgm.ajaxUpdate(data);
+                ui.ajaxUpdate(data);
             }
 
             if (season === g.season && g.phase < c.PHASE_PLAYOFFS) {
@@ -266,7 +266,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 data = {title: "Finances - League " + g.lid};
                 template = Handlebars.templates.finances;
                 data.league_content = template({g: g, salaryCap: g.salaryCap / 1000, teams: teams});
-                bbgm.ajaxUpdate(data);
+                ui.ajaxUpdate(data);
             });
         });
     }
@@ -317,7 +317,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                         data = {title: season + " Season Summary - League " + g.lid};
                         template = Handlebars.templates.history;
                         data.league_content = template({g: g, awards: awards, champ: champ, retiredPlayers: retiredPlayers, seasons: seasons, season: season});
-                        bbgm.ajaxUpdate(data);
+                        ui.ajaxUpdate(data);
                     })
                 };
             };
@@ -356,7 +356,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                     data = {title: "Roster - League " + g.lid};
                     template = Handlebars.templates.roster;
                     data.league_content = template({g: g, teams: teams, seasons: seasons, sortable: sortable, currentSeason: currentSeason, showTradeFor: currentSeason && tid !== g.userTid, players: players, numRosterSpots: 15 - players.length, team: team});
-                    bbgm.ajaxUpdate(data);
+                    ui.ajaxUpdate(data);
                 };
             }
 
@@ -427,7 +427,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 data = {title: "Schedule - League " + g.lid};
                 template = Handlebars.templates.schedule;
                 data.league_content = template({g: g, games: games});
-                bbgm.ajaxUpdate(data);
+                ui.ajaxUpdate(data);
             });
         });
     }
@@ -451,7 +451,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 data = {title: "Free Agents - League " + g.lid};
                 template = Handlebars.templates.freeAgents;
                 data.league_content = template({g: g, players: players});
-                bbgm.ajaxUpdate(data);
+                ui.ajaxUpdate(data);
             };
         });
     }
@@ -519,7 +519,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                                 data = {title: "Trade - League " + g.lid};
                                 template = Handlebars.templates.trade;
                                 data.league_content = template({g: g, userRoster: userRoster, otherRoster: otherRoster, userPids: userPids, otherPids: otherPids, teams: teams, otherTid: otherTid, tradeSummary: tradeSummary, userTeamName: summary.teams[0].name});
-                                bbgm.ajaxUpdate(data);
+                                ui.ajaxUpdate(data);
                             });
                         };
                     };
@@ -645,7 +645,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                         data = {title: "Draft - League " + g.lid};
                         template = Handlebars.templates.draft;
                         data.league_content = template({g: g, undrafted: undrafted, drafted: drafted, started: started});
-                        bbgm.ajaxUpdate(data);
+                        ui.ajaxUpdate(data);
                     };
                 };
                 return;
@@ -710,7 +710,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 data = {title: season + " Draft Results - League " + g.lid};
                 template = Handlebars.templates.draftSummary;
                 data.league_content = template({g: g, players: players, seasons: seasons});
-                bbgm.ajaxUpdate(data);
+                ui.ajaxUpdate(data);
             };
         });
     }
@@ -729,7 +729,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             data = {title: "Game Log - League " + g.lid};
             template = Handlebars.templates.gameLog;
             data.league_content = template({g: g, teams: teams, seasons: seasons});
-            bbgm.ajaxUpdate(data);
+            ui.ajaxUpdate(data);
         });
     }
 
@@ -783,7 +783,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 data = {title: "League Leaders - League " + g.lid};
                 template = Handlebars.templates.leaders;
                 data.league_content = template({g: g, categories: categories, season: season, seasons: seasons});
-                bbgm.ajaxUpdate(data);
+                ui.ajaxUpdate(data);
             };
         });
     }
@@ -807,7 +807,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 data = {title: "Player Ratings - League " + g.lid};
                 template = Handlebars.templates.playerRatings;
                 data.league_content = template({g: g, players: players, season: season, seasons: seasons});
-                bbgm.ajaxUpdate(data);
+                ui.ajaxUpdate(data);
             };
         });
     }
@@ -831,7 +831,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 data = {title: "Player Stats - League " + g.lid};
                 template = Handlebars.templates.playerStats;
                 data.league_content = template({g: g, players: players, season: season, seasons: seasons});
-                bbgm.ajaxUpdate(data);
+                ui.ajaxUpdate(data);
             };
         });
     }
@@ -854,7 +854,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 data = {title: "Team Stats - League " + g.lid};
                 template = Handlebars.templates.teamStats;
                 data.league_content = template({g: g, teams: teams, seasons: seasons});
-                bbgm.ajaxUpdate(data);
+                ui.ajaxUpdate(data);
             });
         });
     }
@@ -879,7 +879,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 data = {title: player.name + " - League " + g.lid};
                 template = Handlebars.templates.player;
                 data.league_content = template({g: g, player: player, currentRatings: currentRatings, showTradeFor: player.tid !== g.userTid});
-                bbgm.ajaxUpdate(data);
+                ui.ajaxUpdate(data);
             };
         });
     }
@@ -934,7 +934,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                 data = {title: "Resign Players - League " + g.lid};
                 template = Handlebars.templates.negotiationList;
                 data.league_content = template({g: g, players: players});
-                bbgm.ajaxUpdate(data);
+                ui.ajaxUpdate(data);
             };
         });
     }
@@ -1001,7 +1001,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
                         data = {title: player.name + " - Contract Negotiation - League " + g.lid};
                         template = Handlebars.templates.negotiation;
                         data.league_content = template({g: g, negotiation: negotiation, player: player, salaryCap: g.salaryCap / 1000, team: team, payroll: payroll});
-                        bbgm.ajaxUpdate(data);
+                        ui.ajaxUpdate(data);
                     });
                 };
             }
@@ -1054,7 +1054,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
         data = {"title": "Error"};
         template = Handlebars.templates.error;
         data.content = template({error: req.params.error});
-        bbgm.ajaxUpdate(data);
+        ui.ajaxUpdate(data);
     }
 
     /**
@@ -1070,7 +1070,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             data = {"title": "Error - League " + req.params.lid};
             template = Handlebars.templates.error;
             data.league_content = template({error: req.params.error});
-            bbgm.ajaxUpdate(data);
+            ui.ajaxUpdate(data);
         });
     }
 
@@ -1107,7 +1107,7 @@ define(["bbgm", "db", "core/contractNegotiation", "core/game", "core/league", "c
             data = {"title": "Test Schedule - League " + req.params.lid};
             template = Handlebars.templates.error;
             data.league_content = "Test Schedule";
-            bbgm.ajaxUpdate(data);
+            ui.ajaxUpdate(data);
         });
     }
 

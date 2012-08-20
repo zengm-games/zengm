@@ -1,5 +1,5 @@
 /*
-bbgm.util.lock
+util.lock
 
 These functions all deal with locking game state when there is some blocking
 action in progress, currently one of these things:

@@ -1,12 +1,10 @@
-<h1>Active Leagues</h1>
-
 <ul class="dashboard_league">
   {{#leagues}}
     <li>
-      <a href="/l/{{lid}}"><h3>League {{lid}}</h3><span class="clearfix">{{region}} {{name}}</span><span class="clearfix">{{phaseText}}</span></a>
+      <a href="/l/{{lid}}" class="btn"><h3>League {{lid}}</h3><span class="clearfix">{{region}} {{name}}</span><span class="clearfix">{{phaseText}}</span></a>
       <form action="/delete_league" method="POST"><input type="hidden" name="lid" value="{{lid}}"><button class="btn btn-mini">Delete</button></form>
     </li>
   {{/leagues}}
 
-  <li class="dashboard_league_new"><a href="/new_league"><h2>Create new league</h2></a></li>
+  <li class="dashboard_league_new"><a href="/new_league" class="btn"><h2 style="line-height: 30px; padding-top: 4px;">Create new league</h2></a></li>
 </ul>

@@ -1,5 +1,9 @@
 main todo
-- polish dashboard
+- bootstrap 2.1
+  - but i don't want to change the font size
+- overall dashboard
+  - correctly display metadata
+- league dashboard
   - record
   - playoff scenario
   - history
@@ -30,8 +34,6 @@ main todo
   - smalls should get less blocks
 - comments in season.js and elsewhere
 - move to new window button, like gmail, that will open a view in a new window with a minimal UI
-- bootstrap 2.1
-  - but i don't want to change the font size
 - other views
   - team history
   - dashboard

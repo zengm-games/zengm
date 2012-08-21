@@ -100,7 +100,7 @@ define(["util/helpers", "util/lock"], function (helpers, lock) {
 
     // For dropdown menus to change team/season/whatever
     // This should be cleaned up, but it works for now.
-    function dropdown(select1, select2) {
+    function dropdown(select1, select2, extraParam) {
         if (arguments.length === 1) {
             select1.change(function (event) {
                 var league_page, league_root_url, result, url;
@@ -111,7 +111,7 @@ define(["util/helpers", "util/lock"], function (helpers, lock) {
                 url = "/l/" + g.lid + "/" + league_page + "/" + select1.val();
                 Davis.location.assign(new Davis.Request(url));
             });
-        } else if (arguments.length === 2) {
+        } else if (arguments.length >= 2) {
             select1.change(function (event) {
                 var league_page, league_root_url, result, url;
 
@@ -119,6 +119,9 @@ define(["util/helpers", "util/lock"], function (helpers, lock) {
                 league_root_url = result[1];
                 league_page = result[2];
                 url = "/l/" + g.lid + "/" + league_page + "/" + select1.val() + "/" + select2.val();
+                if (typeof extraParam !== "undefined" && extraParam.length > 0) {
+                    url += "/" + extraParam;
+                }
                 Davis.location.assign(new Davis.Request(url));
             });
             select2.change(function (event) {
@@ -128,6 +131,9 @@ define(["util/helpers", "util/lock"], function (helpers, lock) {
                 league_root_url = result[1];
                 league_page = result[2];
                 url = "/l/" + g.lid + "/" + league_page + "/" + select1.val() + "/" + select2.val();
+                if (typeof extraParam !== "undefined" && extraParam.length > 0) {
+                    url += "/" + extraParam;
+                }
                 Davis.location.assign(new Davis.Request(url));
             });
         }

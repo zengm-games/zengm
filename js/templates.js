@@ -4413,7 +4413,12 @@ function program5(depth0,data) {
   
   return " selected=\"selected\"";}
 
-  buffer += "<script type=\"text/javascript\">\n$(document).ready(function () {\n  ui.dropdown($('#game_log_select_team'), $('#game_log_select_season'));\n});\n</script>\n\n<form action=\"/l/";
+  buffer += "<script type=\"text/javascript\">\n$(document).ready(function () {\n  ui.dropdown($(\"#game_log_select_team\"), $(\"#game_log_select_season\"), \"";
+  foundHelper = helpers.gid;
+  stack1 = foundHelper || depth0.gid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "gid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\");\n});\n</script>\n\n<form action=\"/l/";
   foundHelper = helpers.lid;
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }

@@ -846,7 +846,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     data.container = "league_content";
                     data.template = "gameLog";
                     data.title = "Game Log";
-                    data.vars = {boxScore: contentBoxScore, gameLogList: contentGameLogList, teams: teams, seasons: seasons};
+                    data.vars = {boxScore: contentBoxScore, gameLogList: contentGameLogList, gid: gid, teams: teams, seasons: seasons};
                     ui.update(data, req.raw.cb);
                 });
             });

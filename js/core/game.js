@@ -35,81 +35,73 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/help
         }
 
         // Are the teams in the same conference/division?
-        this.same_conference = false;
-        this.same_division = false;
+        this.sameConf = false;
+        this.sameDiv = false;
         cid = [-1, -1];
         did = [-1, -1];
         if (this.team[0].cid === this.team[1].cid) {
-            this.same_conference = true;
+            this.sameConf = true;
         }
         if (this.team[0].did === this.team[1].did) {
-            this.same_division = true;
+            this.sameDiv = true;
         }
     };
 
     Game.prototype.writeStats = function (transaction, cb) {
-        var i, p, playerStore, t, that;
+        var p, t;
+
         this.teamsRemaining = 2;
         this.playersRemaining = this.team[0].player.length + this.team[1].player.length;
         this.cb = cb;
-
         this.transaction = transaction;
 
-        // Player stats and team stats
-        that = this;
-        playerStore = this.transaction.objectStore("players");
         for (t = 0; t < 2; t++) {
             this.writeTeamStats(t);
             for (p = 0; p < this.team[t].player.length; p++) {
-                playerStore.openCursor(this.team[t].player[p].id).onsuccess = function (event) {
-                    var cursor, keys, p, player, playerStats, t;
-                    cursor = event.target.result;
-                    player = cursor.value;
-
-                    // Find the correct row of stats
-                    for (i = 0; i < player.stats.length; i++) {
-                        if (player.stats[i].season === g.season && player.stats[i].playoffs === that.playoffs) {
-                            playerStats = player.stats[i];
-                            break;
-                        }
-                    }
-
-                    // Which team is this, again?
-                    if (player.tid === that.team[0].id) {
-                        t = 0;
-                    } else {
-                        t = 1;
-                    }
-
-                    // Which player is this, again?
-                    for (p = 0; p < that.team[t].player.length; p++) {
-                        if (player.pid === that.team[t].player[p].id) {
-                            break;
-                        }
-                    }
-
-                    // Update stats
-                    keys = ['min', 'fg', 'fga', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
-                    for (i = 0; i < keys.length; i++) {
-                        playerStats[keys[i]] += that.team[t].player[p].stat[keys[i]];
-                    }
-                    playerStats.gp += 1;
-                    if (p < 5) {
-                        playerStats.gs += 1;
-                    }
-                    playerStats.trb += that.team[t].player[p].stat.orb + that.team[t].player[p].stat.drb;
-
-                    cursor.update(player);
-
-                    that.playersRemaining -= 1;
-                    if (that.playersRemaining === 0 && that.teamsRemaining === 0) {
-                        that.cb();
-                    }
-                };
+                this.writePlayerStats(t, p);
             }
         }
-        that.writeGameStats();
+        this.writeGameStats();
     };
+
+    Game.prototype.writePlayerStats = function(t, p) {
+        var that;
+
+        that = this;
+
+        this.transaction.objectStore("players").openCursor(that.team[t].player[p].id).onsuccess = function (event) {
+            var cursor, i, keys, player, playerStats;
+
+            cursor = event.target.result;
+            player = cursor.value;
+
+            // Find the correct row of stats
+            for (i = 0; i < player.stats.length; i++) {
+                if (player.stats[i].season === g.season && player.stats[i].playoffs === that.playoffs) {
+                    playerStats = player.stats[i];
+                    break;
+                }
+            }
+
+            // Update stats
+            keys = ['min', 'fg', 'fga', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
+            for (i = 0; i < keys.length; i++) {
+                playerStats[keys[i]] += that.team[t].player[p].stat[keys[i]];
+            }
+            playerStats.gp += 1;
+            if (p < 5) {
+                playerStats.gs += 1;
+            }
+            playerStats.trb += that.team[t].player[p].stat.orb + that.team[t].player[p].stat.drb;
+
+            cursor.update(player);
+
+            that.playersRemaining -= 1;
+            if (that.playersRemaining === 0 && that.teamsRemaining === 0) {
+                that.cb();
+            }
+        };
+    }
 
     Game.prototype.writeTeamStats = function (t) {
         var cost, t2, that;
@@ -210,10 +202,10 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/help
             }
             if (won && !that.playoffs) {
                 teamSeason.won += 1;
-                if (that.same_division) {
+                if (that.sameDiv) {
                     teamSeason.wonDiv += 1;
                 }
-                if (that.same_conference) {
+                if (that.sameConf) {
                     teamSeason.wonConf += 1;
                 }
 
@@ -232,10 +224,10 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/help
                 }
             } else if (!that.playoffs) {
                 teamSeason.lost += 1;
-                if (that.same_division) {
+                if (that.sameDiv) {
                     teamSeason.lostDiv += 1;
                 }
-                if (that.same_conference) {
+                if (that.sameConf) {
                     teamSeason.lostConf += 1;
                 }
 
@@ -389,7 +381,7 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/help
                 realTid = players[0].tid;
                 t = {id: realTid, defense: 0, pace: 0, won: 0, lost: 0, cid: 0, did: 0, stat: {}, player: []};
                 transaction.objectStore("teams").get(realTid).onsuccess = function (event) {
-                    var i, j, n_players, p, player, rating, team, teamSeason;
+                    var i, j, numPlayers, p, player, rating, team, teamSeason;
 
                     team = event.target.result;
                     for (j = 0; j < team.seasons.length; j++) {
@@ -435,22 +427,22 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/help
                     }
 
                     // Number of players to factor into pace and defense rating calculation
-                    n_players = t.player.length;
-                    if (n_players > 7) {
-                        n_players = 7;
+                    numPlayers = t.player.length;
+                    if (numPlayers > 7) {
+                        numPlayers = 7;
                     }
 
                     // Would be better if these were scaled by average min played and end
                     t.pace = 0;
-                    for (i = 0; i < n_players; i++) {
+                    for (i = 0; i < numPlayers; i++) {
                         t.pace += t.player[i].composite_rating.pace;
                     }
-                    t.pace /= n_players;
+                    t.pace /= numPlayers;
                     t.defense = 0;
-                    for (i = 0; i < n_players; i++) {
+                    for (i = 0; i < numPlayers; i++) {
                         t.defense += t.player[i].composite_rating.defense;
                     }
-                    t.defense /= n_players;
+                    t.defense /= numPlayers;
                     t.defense /= 4;  // This gives the percentage pts subtracted from the other team's normal FG%
 
                     t.stat = {min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0};

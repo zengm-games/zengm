@@ -4,7 +4,6 @@ main todo
   - update
     - instead of inLeague, use "container" with the id of the container to use. then, replace all other (or at least more) handlebars usage elsewhere with this.
 - core.game is messy and should be rewritten
-  - "Which team is this, again?" shouldn't be needed
 - let free agents stay for 2 seasons before retiring, or make retirement probabilistic
 - nba roster
   - define file format for external player sources

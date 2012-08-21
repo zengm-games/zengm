@@ -103,10 +103,10 @@ div#playButton ul li a.dropdown-toggle:hover {
   text-shadow: none;
 }
 
-.table-striped tbody tr.separator td {
+.table-bordered tbody tr.separator td {
   border-bottom: 1px solid #888;
 }
-th {
+.table-bordered thead tr:last-child th {
   border-bottom: 1px solid #888;
 }
 

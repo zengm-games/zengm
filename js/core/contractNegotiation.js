@@ -2,7 +2,7 @@
  * @name core.contractNegotiation
  * @namespace All aspects of contract negotiation.
  */
-define(["db", "core/player", "util/helpers", "util/lock", "util/playMenu", "util/random"], function (db, player, helpers, lock, playMenu, random) {
+define(["db", "ui", "core/player", "util/helpers", "util/lock", "util/random"], function (db, ui, player, helpers, lock, random) {
     "use strict";
 
     /**
@@ -60,8 +60,8 @@ define(["db", "core/player", "util/helpers", "util/lock", "util/playMenu", "util
                 negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
                 negotiations.push({pid: pid, teamAmount: playerAmount, teamYears: playerYears, playerAmount: playerAmount, playerYears: playerYears, numOffersMade: 0, maxOffers: maxOffers, resigning: resigning});
                 localStorage.setItem("league" + g.lid + "Negotiations", JSON.stringify(negotiations));
-                playMenu.setStatus("Contract negotiation in progress...");
-                playMenu.refreshOptions();
+                ui.updateStatus("Contract negotiation in progress...");
+                ui.updatePlayMenu();
 
                 // Keep track of how many times negotiations happen with a player;
                 if (!resigning) {
@@ -227,8 +227,8 @@ define(["db", "core/player", "util/helpers", "util/lock", "util/playMenu", "util
 
         // If no negotiations are in progress, update status
         if (!lock.negotiationInProgress()) {
-            playMenu.setStatus("Idle");
-            playMenu.refreshOptions();
+            ui.updateStatus("Idle");
+            ui.updatePlayMenu();
         }
     }
 

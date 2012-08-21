@@ -1,11 +1,11 @@
-define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "util/helpers", "util/playMenu", "util/random"], function (db, contractNegotiation, freeAgents, player, helpers, playMenu, random) {
+define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player", "util/helpers", "util/random"], function (db, ui, contractNegotiation, freeAgents, player, helpers, random) {
     "use strict";
 
     // This should be called after the phase-specific stuff runs. It needs to be a separate function like this to play nice with async stuff.
     function newPhaseCb(phase, phaseText, cb) {
         helpers.setGameAttributes({phase: phase});
-        playMenu.setPhase(phaseText);
-        playMenu.refreshOptions();
+        ui.updatePhase(phaseText);
+        ui.updatePlayMenu();
         if (typeof cb !== "undefined") {
             cb();
         }

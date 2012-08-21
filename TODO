@@ -1,6 +1,5 @@
 main todo
 - ui
-  - move playMenu there?
   - update
     - instead of inLeague, use "container" with the id of the container to use. then, replace all other (or at least more) handlebars usage elsewhere with this.
 - core.game is messy and should be rewritten

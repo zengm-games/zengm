@@ -2,7 +2,7 @@
  * @name core.league
  * @namespace Creating and removing leagues.
  */
-define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "util/random"], function (db, player, season, helpers, playMenu, random) {
+define(["db", "ui", "core/player", "core/season", "util/helpers", "util/random"], function (db, ui, player, season, helpers, random) {
     "use strict";
 
     /**
@@ -64,7 +64,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/playMenu", "ut
 
                         // Make schedule, start season
                         season.newPhase(c.PHASE_REGULAR_SEASON, function () {
-                            playMenu.setStatus('Idle');
+                            ui.updateStatus('Idle');
 
                             // Auto sort player's roster (other teams will be done in season.newPhase(c.PHASE_REGULAR_SEASON))
                             db.rosterAutoSort(null, g.userTid, cb);

@@ -1,6 +1,6 @@
 /*These are functions that do not return full pages (either JS objects or partial blocks of HTML) and are called from the client.*/
 
-define(["db", "views", "core/draft", "core/game", "core/player", "core/season", "core/trade", "util/helpers", "util/lock", "util/playMenu"], function (db, views, draft, game, player, season, trade, helpers, lock, playMenu) {
+define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/season", "core/trade", "util/helpers", "util/lock"], function (db, views, ui, draft, game, player, season, trade, helpers, lock) {
     "use strict";
 
     /*This is kind of a hodgepodge that handles every request from the play
@@ -35,9 +35,9 @@ define(["db", "views", "core/draft", "core/game", "core/player", "core/season", 
 //            g.dbex('UPDATE schedule SET in_progress_timestamp = 0')
 
             // This is needed because we can't be sure if core.game.play will be called again
-            playMenu.setStatus('Idle');
+            ui.updateStatus('Idle');
             lock.set_games_in_progress(false);
-            playMenu.refreshOptions();
+            ui.updatePlayMenu();
         } else if (amount === "until_draft") {
             if (g.phase === c.PHASE_BEFORE_DRAFT) {
                 season.newPhase(c.PHASE_DRAFT, function () {
@@ -55,7 +55,7 @@ define(["db", "views", "core/draft", "core/game", "core/player", "core/season", 
         } else if (amount === "until_free_agency") {
             if (g.phase === c.PHASE_RESIGN_PLAYERS) {
                 season.newPhase(c.PHASE_FREE_AGENCY, function () {
-                    playMenu.setStatus("Idle");
+                    ui.updateStatus("Idle");
                 });
             }
         } else if (amount === "until_preseason") {
@@ -199,12 +199,12 @@ define(["db", "views", "core/draft", "core/game", "core/player", "core/season", 
     }
 
     function draftUntilUserOrEnd(cb2) {
-        playMenu.setStatus('Draft in progress...');
+        ui.updateStatus('Draft in progress...');
         var pids = draft.untilUserOrEnd(function (pids) {
             var done = false;
             if (g.phase === c.PHASE_AFTER_DRAFT) {
                 done = true;
-                playMenu.setStatus('Idle');
+                ui.updateStatus('Idle');
             }
             cb2(pids, done);
         });

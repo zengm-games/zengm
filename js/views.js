@@ -1,4 +1,4 @@
-define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "core/season", "core/trade", "util/helpers", "util/playMenu"], function (db, ui, contractNegotiation, game, league, season, trade, helpers, playMenu) {
+define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "core/season", "core/trade", "util/helpers"], function (db, ui, contractNegotiation, game, league, season, trade, helpers) {
     "use strict";
 
     function beforeLeague(req, cb) {
@@ -23,9 +23,9 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                 ui.update(data);
 
                 // Update play menu
-                playMenu.setStatus();
-                playMenu.setPhase();
-                playMenu.refreshOptions();
+                ui.updateStatus();
+                ui.updatePhase();
+                ui.updatePlayMenu();
 
                 cb();
             });

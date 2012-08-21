@@ -2,7 +2,7 @@
  * @name core.game
  * @namespace Everything about games except the actual simulation. So, loading the schedule, loading the teams, saving the results, and handling multi-day simulations and what happens when there are no games left to play.
  */
-define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMenu", "util/random"], function (db, ui, freeAgents, gameSim, season, helpers, lock, playMenu, random) {
+define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", "util/lock", "util/random"], function (db, ui, freeAgents, gameSim, season, helpers, lock, random) {
     "use strict";
 
     function Game() {
@@ -470,9 +470,9 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/help
 
         // This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season or the end of the playoffs.
         cbNoGames = function () {
-            playMenu.setStatus('Idle');
+            ui.updateStatus('Idle');
             lock.set_games_in_progress(false);
-            playMenu.refreshOptions();
+            ui.updatePlayMenu();
             // Check to see if the season is over
             if (g.phase < c.PHASE_PLAYOFFS) {
                 season.getSchedule(null, 0, function (schedule) {
@@ -487,7 +487,7 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/help
         cbPlayGames = function () {
             var transaction;
 
-            playMenu.setStatus("Playing games (" + numDays + " days remaining)...");
+            ui.updateStatus("Playing games (" + numDays + " days remaining)...");
 
             // This transaction is used for a day's simulations, first reading data from it and then writing the game results
             transaction = g.dbl.transaction(["games", "players", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
@@ -558,7 +558,7 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/help
         if (start) {
             if (lock.can_start_games()) {
                 lock.set_games_in_progress(true);
-                playMenu.refreshOptions();
+                ui.updatePlayMenu();
             } else {
                 // If not allowed to start games, don't
                 return;

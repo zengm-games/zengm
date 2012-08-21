@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - core.freeAgents</title>
+		<title>JsDoc Reference - api</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -222,7 +222,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Namespace core.freeAgents
+				Namespace api
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -230,16 +230,16 @@ ul.inheritsList
 				
 				
 			
-				Functions related to free agents that didn't make sense to put anywhere else.
+				Functions called directly in response to user action (clicking a button, etc).
 				
 				
-					<br /><i>Defined in: </i> &lt;js/core/freeAgents.js&gt;.
+					<br /><i>Defined in: </i> &lt;js/api.js&gt;.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class core.freeAgents.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class api.">
 				<caption>Namespace Summary</caption>
 				<thead>
 					<tr>
@@ -252,7 +252,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/core.freeAgents.html#constructor">core.freeAgents</a></b>
+								<b><a href="../symbols/api.html#constructor">api</a></b>
 							</div>
 							<div class="description"></div>
 						</td>
@@ -266,42 +266,6 @@ ul.inheritsList
 
 <!-- ============================== methods summary ======================== -->
 			
-				
-				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class core.freeAgents.">
-					<caption>Method Summary</caption>
-					<thead>
-						<tr>
-							<th scope="col">Method Attributes</th>
-							<th scope="col">Method Name and Description</th>
-						</tr>
-					</thead>
-					<tbody>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">core.freeAgents.<b><a href="../symbols/core.freeAgents.html#.autoSign">autoSign</a></b>(cb)
-								</div>
-								<div class="description">AI teams sign free agents.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">core.freeAgents.<b><a href="../symbols/core.freeAgents.html#.decreaseDemands">decreaseDemands</a></b>(cb)
-								</div>
-								<div class="description">Decrease contract demands for all free agents.</div>
-							</td>
-						</tr>
-					
-					</tbody>
-				</table>
-				
-				
-				
-			
 <!-- ============================== events summary ======================== -->
 			
 
@@ -313,7 +277,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>core.freeAgents</b>
+						<b>api</b>
 				</div>
 				
 				<div class="description">
@@ -339,87 +303,6 @@ ul.inheritsList
 			
 
 <!-- ============================== method details ========================= -->		
-			
-				<div class="sectionTitle">
-					Method Detail
-				</div>
-				
-					<a name=".autoSign"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">core.freeAgents.</span><b>autoSign</b>(cb)
-					
-					</div>
-					<div class="description">
-						AI teams sign free agents.
-
-Each team (in random order) will sign free agents up to their salary cap or roster size limit. This should eventually be made smarter
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{function()}</span> <b>cb</b>
-									
-								</dt>
-								<dd>Callback.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".decreaseDemands"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">core.freeAgents.</span><b>decreaseDemands</b>(cb)
-					
-					</div>
-					<div class="description">
-						Decrease contract demands for all free agents.
-
-This is called after each day in the regular season, as free agents become more willing to take smaller contracts.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{function()}</span> <b>cb</b>
-									
-								</dt>
-								<dd>Callback.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					
-				
 			
 			
 <!-- ============================== event details ========================= -->		

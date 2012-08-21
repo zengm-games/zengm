@@ -1,11 +1,10 @@
-/*These are functions that do not return full pages (either JS objects or partial blocks of HTML) and are called from the client.*/
-
+/**
+ * @name api
+ * @namespace Functions called directly in response to user action (clicking a button, etc).
+ */
 define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/season", "core/trade", "util/helpers", "util/lock"], function (db, views, ui, draft, game, player, season, trade, helpers, lock) {
     "use strict";
 
-    /*This is kind of a hodgepodge that handles every request from the play
-    button and returns the appropriate response in JSON.
-    */
     function play(amount) {
         var numDays;
 
@@ -32,7 +31,6 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
             }
         } else if (amount === "stop") {
             helpers.setGameAttributes({stopGames: true});
-//            g.dbex('UPDATE schedule SET in_progress_timestamp = 0')
 
             // This is needed because we can't be sure if core.game.play will be called again
             ui.updateStatus('Idle');
@@ -67,12 +65,6 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
                 season.newPhase(c.PHASE_REGULAR_SEASON);
             }
         }
-
-/*        if (error) {
-            alert(error);
-        }*/
-
-//        return {url: url};
     }
 
     function rosterAutoSort(cb) {
@@ -233,7 +225,6 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
             var content, i, game;
 
             game = event.target.result;
-console.log(game);
             for (i = 0; i < game.teams.length; i++) {
                 game.teams[i].players[4].separator = true;
                 _.last(game.teams[i].players).separator = true;

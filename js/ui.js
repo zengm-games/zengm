@@ -1,3 +1,7 @@
+/**
+ * @name ui
+ * @namespace Anything that directly updates the UI.
+ */
 define(["util/helpers", "util/lock"], function (helpers, lock) {
     "use strict";
 

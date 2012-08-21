@@ -144,8 +144,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         beforeLeague(req, function () {
             var attributes, gb, season, seasonAttributes, seasons;
 
-            season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
-            season = helpers.validateSeason(season);
+            season = helpers.validateSeason(req.params.season);
             seasons = helpers.getSeasons(season);
 
             // Calculate the number of games that team is behind team0
@@ -213,8 +212,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         beforeLeague(req, function () {
             var attributes, finalMatchups, season, seasonAttributes, seasons;
 
-            season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
-            season = helpers.validateSeason(season);
+            season = helpers.validateSeason(req.params.season);
             seasons = helpers.getSeasons(season);
 
             function cb(finalMatchups, series) {
@@ -302,8 +300,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         beforeLeague(req, function () {
             var attributes, season, seasonAttributes, seasons;
 
-            season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
-            season = helpers.validateSeason(season);
+            season = helpers.validateSeason(req.params.season);
 
             // If playoffs aren't over, season awards haven't been set
             if (g.phase <= c.PHASE_PLAYOFFS) {
@@ -357,10 +354,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         beforeLeague(req, function () {
             var abbrev, attributes, currentSeason, ratings, season, seasons, sortable, stats, teams, tid, transaction;
 
-            abbrev = typeof req.params.abbrev !== "undefined" ? req.params.abbrev : undefined;
-            [tid, abbrev] = helpers.validateAbbrev(abbrev);
-            season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
-            season = helpers.validateSeason(season);
+            [tid, abbrev] = helpers.validateAbbrev(req.params.abbrev);
+            season = helpers.validateSeason(req.params.season);
             seasons = helpers.getSeasons(season);
             teams = helpers.getTeams(tid);
 
@@ -606,8 +601,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         beforeLeague(req, function () {
             var playerStore, season, seasons;
 
-            season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
-            season = helpers.validateSeason(season);
+            season = helpers.validateSeason(req.params.season);
 
             // Draft hasn't happened yet this year
             if (g.phase < c.PHASE_DRAFT) {
@@ -857,8 +851,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         beforeLeague(req, function () {
             var season, seasons;
 
-            season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
-            season = helpers.validateSeason(season);
+            season = helpers.validateSeason(req.params.season);
             seasons = helpers.getSeasons(season);
 
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
@@ -913,8 +906,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         beforeLeague(req, function () {
             var season, seasons;
 
-            season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
-            season = helpers.validateSeason(season);
+            season = helpers.validateSeason(req.params.season);
             seasons = helpers.getSeasons(season);
 
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
@@ -939,8 +931,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         beforeLeague(req, function () {
             var season, seasons;
 
-            season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
-            season = helpers.validateSeason(season);
+            season = helpers.validateSeason(req.params.season);
             seasons = helpers.getSeasons(season);
 
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
@@ -965,8 +956,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         beforeLeague(req, function () {
             var attributes, season, seasonAttributes, seasons, stats;
 
-            season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
-            season = helpers.validateSeason(season);
+            season = helpers.validateSeason(req.params.season);
             seasons = helpers.getSeasons(season);
 
 

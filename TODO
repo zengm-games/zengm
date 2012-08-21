@@ -1,6 +1,5 @@
 main todo
-- lines like this do nothing:
-            abbrev = typeof req.params.abbrev !== "undefined" ? req.params.abbrev : undefined;
+- polish dashboard
 - core.game is messy and should be rewritten
 - let free agents stay for 2 seasons before retiring, or make retirement probabilistic
 - nba roster

@@ -78,9 +78,18 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         beforeNonLeague();
 
         g.dbm.transaction(["leagues"]).objectStore("leagues").getAll().onsuccess = function (event) {
-            var data, leagues;
+            var data, i, leagues, teams;
 
             leagues = event.target.result;
+            teams = helpers.getTeams();
+
+            for (i = 0; i < leagues.length; i++) {
+                leagues[i].region = teams[leagues[i].tid].region;
+                leagues[i].name = teams[leagues[i].tid].name;
+                leagues[i].phaseText = JSON.parse(localStorage.getItem("league" + leagues[i].lid + "GameAttributes")).pmPhase;
+                delete leagues[i].tid;
+            }
+console.log(leagues);
 
             data = {
                 container: "content",

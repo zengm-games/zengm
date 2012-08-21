@@ -3,7 +3,7 @@
 <ul class="dashboard_league">
   {{#leagues}}
     <li>
-      <a href="/l/{{lid}}"><h3>League {{lid}}</h3><span class="clearfix">{{team}}</span><span class="clearfix">Phase</span></a>
+      <a href="/l/{{lid}}"><h3>League {{lid}}</h3><span class="clearfix">{{region}} {{name}}</span><span class="clearfix">{{phaseText}}</span></a>
       <form action="/delete_league" method="POST"><input type="hidden" name="lid" value="{{lid}}"><button class="btn btn-mini">Delete</button></form>
     </li>
   {{/leagues}}

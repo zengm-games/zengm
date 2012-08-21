@@ -1,6 +1,7 @@
 main todo
 - overall dashboard
-  - correctly display metadata
+  - prettier buttons with gradients
+    - bootstrap 2.1.0 expand button
 - league dashboard
   - record
   - playoff scenario
@@ -135,6 +136,7 @@ realtime data binding/updating
 - handle deeper content, like pagination/sorting in tables
 multiple windows
 - have some element in the database with the last "action" time. poll it with some frequency, and update if needed
+pmPhase and pmStatus should be phaseText and statusText
 
 ---
 

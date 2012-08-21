@@ -132,6 +132,17 @@ define([], function () {
         }
     }
 
+    /**
+     * Smartly update the currently loaded view, based on the current game state.
+     *
+     * @memberOf util.helpers
+     * @param {function()} cb Optional callback that will run after the page updates.
+     */
+    function realtimeUpdate(cb) {
+        // Refresh standings if it's the current season standings and the phase is during the regular season
+        Davis.location.replace(new Davis.Request(location.pathname, {cb: cb}));
+    }
+
     $(document).ready(function () {
         var league_id, league_page, league_root_url, result;
 
@@ -140,16 +151,13 @@ define([], function () {
         league_root_url = result[1];
         league_page = result[2];
         highlightNav(league_page);
-
-        window.onpopstate = function (event) {
-            update(event.state);
-        };
     });
 
     return {
         datatable: datatable,
         datatableSinglePage: datatableSinglePage,
         dropdown: dropdown,
+        realtimeUpdate: realtimeUpdate,
         update: update
     };
 });

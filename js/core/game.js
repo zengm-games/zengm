@@ -2,7 +2,7 @@
  * @name core.game
  * @namespace Everything about games except the actual simulation. So, loading the schedule, loading the teams, saving the results, and handling multi-day simulations and what happens when there are no games left to play.
  */
-define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMenu", "util/random"], function (db, freeAgents, gameSim, season, helpers, lock, playMenu, random) {
+define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", "util/lock", "util/playMenu", "util/random"], function (db, ui, freeAgents, gameSim, season, helpers, lock, playMenu, random) {
     "use strict";
 
     function Game() {
@@ -508,7 +508,7 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
                                         scheduleStore.delete(gidsFinished[j]);
                                     }
 
-                                    helpers.realtimeUpdate(function () {
+                                    ui.realtimeUpdate(function () {
                                         play(numDays - 1);
                                     });
                                 } else {

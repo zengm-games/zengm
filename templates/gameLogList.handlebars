@@ -4,7 +4,7 @@
 </thead>
 <tbody>
   {{#games}}
-    <tr id="{{gid}}"><td>{{#unless home}}@{{/unless}}{{oppAbbrev}}</td><td>{{#if won}}W{{else}}L{{/if}}</td><td>{{pts}}-{{oppPts}}</td></tr>
+    <tr{{#if selected}} class="alert-info"{{/if}}><td><a href="/l/{{../lid}}/game_log/{{../abbrev}}/{{../season}}/{{gid}}">{{#unless home}}@{{/unless}}{{oppAbbrev}}</a></td><td><a href="/l/{{../lid}}/game_log/{{../abbrev}}/{{../season}}/{{gid}}">{{#if won}}W{{else}}L{{/if}}</a></td><td><a href="/l/{{../lid}}/game_log/{{../abbrev}}/{{../season}}/{{gid}}">{{pts}}-{{oppPts}}</a></td></tr>
   {{/games}}
 </tbody>
 </table>

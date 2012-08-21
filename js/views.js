@@ -759,21 +759,97 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
     function gameLog(req) {
         beforeLeague(req, function () {
-            var abbrev, data, season, seasons, teams, tid;
+            var abbrev, boxScore, gameLogList, gid, season, seasons, teams, tid;
 
-            abbrev = typeof req.params.abbrev !== "undefined" ? req.params.abbrev : undefined;
-            [tid, abbrev] = helpers.validateAbbrev(abbrev);
-            season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
-            season = helpers.validateSeason(season);
+            [tid, abbrev] = helpers.validateAbbrev(req.params.abbrev);
+            season = helpers.validateSeason(req.params.season);
             seasons = helpers.getSeasons(season);
             teams = helpers.getTeams(tid);
+            gid = typeof req.params.gid !== "undefined" ? parseInt(req.params.gid, 10) : null;
 
-            data = {};
-            data.container = "league_content";
-            data.template = "gameLog";
-            data.title = "Game Log";
-            data.vars = {teams: teams, seasons: seasons};
-            ui.update(data, req.raw.cb);
+            gameLogList = function (abbrev, season, cb) {
+                var games, tid;
+
+                [tid, abbrev] = helpers.validateAbbrev(abbrev);
+                season = helpers.validateSeason(season);
+
+                games = [];
+                g.dbl.transaction(["games"]).objectStore("games").index("season").openCursor(season).onsuccess = function (event) {
+                    var content, cursor, game, home, opp, oppPts, pts, tidMatch, won;
+
+                    cursor = event.target.result;
+                    if (cursor) {
+                        game = cursor.value;
+
+                        // Check tid
+                        tidMatch = false;
+                        if (game.teams[0].tid === tid) {
+                            tidMatch = true;
+                            home = true;
+                            pts = game.teams[0].pts;
+                            oppPts = game.teams[1].pts;
+                            opp = helpers.validateTid(game.teams[1].tid);
+                        } else if (game.teams[1].tid === tid) {
+                            tidMatch = true;
+                            home = false;
+                            pts = game.teams[1].pts;
+                            oppPts = game.teams[0].pts;
+                            opp = helpers.validateTid(game.teams[0].tid);
+                        }
+
+                        if (tidMatch) {
+                            if (pts > oppPts) {
+                                won = true;
+                            } else {
+                                won = false;
+                            }
+                            games.push({gid: game.gid, home: home, oppAbbrev: opp[1], won: won, pts: pts, oppPts: oppPts});
+                            if (game.gid === gid) {
+                                _.last(games).selected = true;
+                            }
+                        }
+
+                        cursor.continue();
+                    } else {
+                        content = Handlebars.templates.gameLogList({lid: g.lid, abbrev: abbrev, games: games, season: season});
+                        cb(content);
+                    }
+                };
+            };
+
+            boxScore = function (gid, cb) {
+                if (gid !== null) {
+                    gid = parseInt(gid, 10);
+
+                    g.dbl.transaction(["games"]).objectStore("games").get(gid).onsuccess = function (event) {
+                        var content, i, game;
+
+                        game = event.target.result;
+                        for (i = 0; i < game.teams.length; i++) {
+                            game.teams[i].players[4].separator = true;
+                            _.last(game.teams[i].players).separator = true;
+                        }
+
+                        content = Handlebars.templates.boxScore({lid: g.lid, game: game});
+                        cb(content);
+                    };
+                } else {
+                    cb("<p>Select a game from the menu on the right to view a box score.</p>");
+                }
+            };
+
+            gameLogList(abbrev, season, function (contentGameLogList) {
+                boxScore(gid, function (contentBoxScore) {
+                    var data;
+
+                    data = {};
+                    data.container = "league_content";
+                    data.template = "gameLog";
+                    data.title = "Game Log";
+                    data.vars = {boxScore: contentBoxScore, gameLogList: contentGameLogList, teams: teams, seasons: seasons};
+                    ui.update(data, req.raw.cb);
+                });
+            });
         });
     }
 

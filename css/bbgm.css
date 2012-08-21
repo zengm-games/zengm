@@ -121,18 +121,30 @@ span.roster_bench  {
   color: #49afcd;
 }
 
-table#game_log_list tbody tr:hover td {
-  background-color: #d9edf7;
-  border-color: #bce8f1;
-  color: #3a87ad;
-  cursor: pointer;
-}
-
 table#game_log_list tbody tr.alert-info td, table.leaders tbody tr.alert-info td {
   background-color: #d9edf7;
   border-color: #bce8f1;
   color: #3a87ad;
 }
+
+table#game_log_list tbody td {
+  padding: 0;
+}
+
+table#game_log_list td a {
+  color: #3a87ad;
+  display: block;
+  padding: 4px 5px 4px 5px;  /* Expand to encompass normal td padding, which was set to 0 here above. */
+  text-decoration: none;
+}
+
+table#game_log_list tbody tr:hover td {
+  background-color: #d9edf7;
+  border-color: #bce8f1;
+  color: #3a87ad;
+  text-decoration: none;
+}
+
 
 select.season {
   width: 120px;

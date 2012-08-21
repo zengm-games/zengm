@@ -131,53 +131,6 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
         };
     }
 
-    function gameLogList(abbrev, season, firstTime, cb) {
-        var games, tid;
-
-        [tid, abbrev] = helpers.validateAbbrev(abbrev);
-        season = helpers.validateSeason(season);
-
-        games = [];
-        g.dbl.transaction(["games"]).objectStore("games").index("season").openCursor(season).onsuccess = function (event) {
-            var content, cursor, game, home, opp, oppPts, pts, tidMatch, won;
-
-            cursor = event.target.result;
-            if (cursor) {
-                game = cursor.value;
-
-                // Check tid
-                tidMatch = false;
-                if (game.teams[0].tid === tid) {
-                    tidMatch = true;
-                    home = true;
-                    pts = game.teams[0].pts;
-                    oppPts = game.teams[1].pts;
-                    opp = helpers.validateTid(game.teams[1].tid);
-                } else if (game.teams[1].tid === tid) {
-                    tidMatch = true;
-                    home = false;
-                    pts = game.teams[1].pts;
-                    oppPts = game.teams[0].pts;
-                    opp = helpers.validateTid(game.teams[0].tid);
-                }
-
-                if (tidMatch) {
-                    if (pts > oppPts) {
-                        won = true;
-                    } else {
-                        won = false;
-                    }
-                    games.push({gid: game.gid, home: home, oppAbbrev: opp[1], won: won, pts: pts, oppPts: oppPts});
-                }
-
-                cursor.continue();
-            } else {
-                content = Handlebars.templates.gameLogList({games: games});
-                cb(content);
-            }
-        };
-    }
-
     function tradeUpdate(userPids, otherPids, cb) {
         trade.updatePlayers(userPids, otherPids, function (userPids, otherPids) {
             trade.getOtherTid(function (otherTid) {
@@ -218,23 +171,6 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
         }
     }
 
-    function boxScore(gid, cb) {
-        gid = parseInt(gid, 10);
-
-        g.dbl.transaction(["games"]).objectStore("games").get(gid).onsuccess = function (event) {
-            var content, i, game;
-
-            game = event.target.result;
-            for (i = 0; i < game.teams.length; i++) {
-                game.teams[i].players[4].separator = true;
-                _.last(game.teams[i].players).separator = true;
-            }
-
-            content = Handlebars.templates.boxScore({lid: g.lid, game: game});
-            cb(content);
-        };
-    }
-
     return {
         play: play,
         rosterAutoSort: rosterAutoSort,
@@ -242,8 +178,6 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
         rosterRelease: rosterRelease,
         tradeUpdate: tradeUpdate,
         draftUntilUserOrEnd: draftUntilUserOrEnd,
-        draftUser: draftUser,
-        gameLogList: gameLogList,
-        boxScore: boxScore
+        draftUser: draftUser
     };
 });

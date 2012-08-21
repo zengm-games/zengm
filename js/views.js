@@ -17,10 +17,11 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             db.connectLeague(g.lid, function () {
                 var data;
 
-                data = {};
-                data.container = "content";
-                data.template = "leagueLayout";
-                data.vars = {};
+                data = {
+                    container: "content",
+                    template: "leagueLayout",
+                    vars: {}
+                };
                 ui.update(data);
 
                 // Update play menu
@@ -81,11 +82,12 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
             leagues = event.target.result;
 
-            data = {};
-            data.container = "content";
-            data.template = "dashboard";
-            data.title = "Dashboard";
-            data.vars = {leagues: leagues};
+            data = {
+                container: "content",
+                template: "dashboard",
+                title: "Dashboard",
+                vars: {leagues: leagues}
+            };
             ui.update(data);
         };
     }
@@ -101,11 +103,12 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
                 teams = event.target.result;
 
-                data = {};
-                data.container = "content";
-                data.template = "newLeague";
-                data.title = "Create New League";
-                data.vars = {teams: teams};
+                data = {
+                    container: "content",
+                    template: "newLeague",
+                    title: "Create New League",
+                    vars: {teams: teams}
+                };
                 ui.update(data);
             };
         } else if (req.method === "post") {
@@ -131,11 +134,12 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         beforeLeague(req, function () {
             var data;
 
-            data = {};
-            data.container = "league_content";
-            data.template = "leagueDashboard";
-            data.title = "Dashboard";
-            data.vars = {};
+            data = {
+                container: "league_content",
+                template: "leagueDashboard",
+                title: "Dashboard",
+                vars: {}
+            };
             ui.update(data, req.raw.cb);
         });
     }
@@ -198,11 +202,12 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     }
                 }
 
-                data = {};
-                data.container = "league_content";
-                data.template = "standings";
-                data.title = season + " Standings";
-                data.vars = {confs: confs, seasons: seasons, season: season};
+                data = {
+                    container: "league_content",
+                    template: "standings",
+                    title: season + " Standings",
+                    vars: {confs: confs, seasons: seasons, season: season}
+                };
                 ui.update(data, req.raw.cb);
             });
         });
@@ -218,11 +223,12 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             function cb(finalMatchups, series) {
                 var data;
 
-                data = {};
-                data.container = "league_content";
-                data.template = "playoffs";
-                data.title = season + " Playoffs";
-                data.vars = {finalMatchups: finalMatchups, series: series, seasons: seasons, season: season};
+                data = {
+                    container: "league_content",
+                    template: "playoffs",
+                    title: season + " Playoffs",
+                    vars: {finalMatchups: finalMatchups, series: series, seasons: seasons, season: season}
+                };
                 ui.update(data, req.raw.cb);
             }
 
@@ -286,11 +292,12 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     teams[i].cash /= 1000000;
                 }
 
-                data = {};
-                data.container = "league_content";
-                data.template = "finances";
-                data.title = "Finances";
-                data.vars = {salaryCap: g.salaryCap / 1000, teams: teams};
+                data = {
+                    container: "league_content",
+                    template: "finances",
+                    title: "Finances",
+                    vars: {salaryCap: g.salaryCap / 1000, teams: teams}
+                };
                 ui.update(data, req.raw.cb);
             });
         });
@@ -338,11 +345,12 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                             }
                         }
 
-                        data = {};
-                        data.container = "league_content";
-                        data.template = "history";
-                        data.title = season + " Season Summary";
-                        data.vars = {awards: awards, champ: champ, retiredPlayers: retiredPlayers, seasons: seasons, season: season};
+                        data = {
+                            container: "league_content",
+                            template: "history",
+                            title: season + " Season Summary",
+                            vars: {awards: awards, champ: champ, retiredPlayers: retiredPlayers, seasons: seasons, season: season}
+                        };
                         ui.update(data, req.raw.cb);
                     });
                 };
@@ -379,11 +387,12 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     }
                     team = {region: teamAll.region, name: teamAll.name, cash: teamSeason.cash / 1000000};
 
-                    data = {};
-                    data.container = "league_content";
-                    data.template = "roster";
-                    data.title = "Roster";
-                    data.vars = {teams: teams, seasons: seasons, sortable: sortable, currentSeason: currentSeason, showTradeFor: currentSeason && tid !== g.userTid, players: players, numRosterSpots: 15 - players.length, team: team};
+                    data = {
+                        container: "league_content",
+                        template: "roster",
+                        title: "Roster",
+                        vars: {teams: teams, seasons: seasons, sortable: sortable, currentSeason: currentSeason, showTradeFor: currentSeason && tid !== g.userTid, players: players, numRosterSpots: 15 - players.length, team: team}
+                    };
                     ui.update(data, req.raw.cb);
                 };
             }
@@ -452,11 +461,12 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     }
                 }
 
-                data = {};
-                data.container = "league_content";
-                data.template = "schedule";
-                data.title = "Schedule";
-                data.vars = {games: games};
+                data = {
+                    container: "league_content",
+                    template: "schedule",
+                    title: "Schedule",
+                    vars: {games: games}
+                };
                 ui.update(data, req.raw.cb);
             });
         });
@@ -478,11 +488,12 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
                 players = db.getPlayers(event.target.result, g.season, c.PLAYER_FREE_AGENT, attributes, stats, ratings, {oldStats: true, showNoStats: true});
 
-                data = {};
-                data.container = "league_content";
-                data.template = "freeAgents";
-                data.title = "Free Agents";
-                data.vars = {players: players};
+                data = {
+                    container: "league_content",
+                    template: "freeAgents",
+                    title: "Free Agents",
+                    vars: {players: players}
+                };
                 ui.update(data, req.raw.cb);
             };
         });
@@ -547,11 +558,12 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
                                 tradeSummary = Handlebars.templates.tradeSummary({lid: g.lid, summary: summary, message: message});
 
-                                data = {};
-                                data.container = "league_content";
-                                data.template = "trade";
-                                data.title = "Trade";
-                                data.vars = {userRoster: userRoster, otherRoster: otherRoster, userPids: userPids, otherPids: otherPids, teams: teams, otherTid: otherTid, tradeSummary: tradeSummary, userTeamName: summary.teams[0].name};
+                                data = {
+                                    container: "league_content",
+                                    template: "trade",
+                                    title: "Trade",
+                                    vars: {userRoster: userRoster, otherRoster: otherRoster, userPids: userPids, otherPids: otherPids, teams: teams, otherTid: otherTid, tradeSummary: tradeSummary, userTeamName: summary.teams[0].name}
+                                };
                                 ui.update(data, req.raw.cb);
                             });
                         };
@@ -674,11 +686,12 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                             drafted.push({abbrev: slot.abbrev, rnd: slot.round, pick: slot.pick});
                         }
 
-                        data = {};
-                        data.container = "league_content";
-                        data.template = "draft";
-                        data.title = "Draft";
-                        data.vars = {undrafted: undrafted, drafted: drafted, started: started};
+                        data = {
+                            container: "league_content",
+                            template: "draft",
+                            title: "Draft",
+                            vars: {undrafted: undrafted, drafted: drafted, started: started}
+                        };
                         ui.update(data, req.raw.cb);
                     };
                 };
@@ -741,11 +754,12 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     }
                 }
 
-                data = {};
-                data.container = "league_content";
-                data.template = "draftSummary";
-                data.title = season + " Draft Results";
-                data.vars = {players: players, seasons: seasons};
+                data = {
+                    container: "league_content",
+                    template: "draftSummary",
+                    title: season + " Draft Results",
+                    vars: {players: players, seasons: seasons}
+                };
                 ui.update(data, req.raw.cb);
             };
         });
@@ -836,11 +850,12 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                 boxScore(gid, function (contentBoxScore) {
                     var data;
 
-                    data = {};
-                    data.container = "league_content";
-                    data.template = "gameLog";
-                    data.title = "Game Log";
-                    data.vars = {boxScore: contentBoxScore, gameLogList: contentGameLogList, gid: gid, teams: teams, seasons: seasons};
+                    data = {
+                        container: "league_content",
+                        template: "gameLog",
+                        title: "Game Log",
+                        vars: {boxScore: contentBoxScore, gameLogList: contentGameLogList, gid: gid, teams: teams, seasons: seasons}
+                    };
                     ui.update(data, req.raw.cb);
                 });
             });
@@ -892,11 +907,12 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     }
                 }
 
-                data = {};
-                data.container = "league_content";
-                data.template = "leaders";
-                data.title = "League Leaders";
-                data.vars = {categories: categories, season: season, seasons: seasons};
+                data = {
+                    container: "league_content",
+                    template: "leaders",
+                    title: "League Leaders",
+                    vars: {categories: categories, season: season, seasons: seasons}
+                };
                 ui.update(data, req.raw.cb);
             };
         });
@@ -917,11 +933,12 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
                 players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings);
 
-                data = {};
-                data.container = "league_content";
-                data.template = "playerRatings";
-                data.title = "Player Ratings";
-                data.vars = {players: players, season: season, seasons: seasons};
+                data = {
+                    container: "league_content",
+                    template: "playerRatings",
+                    title: "Player Ratings",
+                    vars: {players: players, season: season, seasons: seasons}
+                };
                 ui.update(data, req.raw.cb);
             };
         });
@@ -942,11 +959,12 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
                 players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings, {showRookies: true});
 
-                data = {};
-                data.container = "league_content";
-                data.template = "playerStats";
-                data.title = "Player Stats";
-                data.vars = {players: players, season: season, seasons: seasons};
+                data = {
+                    container: "league_content",
+                    template: "playerStats",
+                    title: "Player Stats",
+                    vars: {players: players, season: season, seasons: seasons}
+                };
                 ui.update(data, req.raw.cb);
             };
         });
@@ -966,11 +984,12 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             db.getTeams(null, season, attributes, stats, seasonAttributes, null, function (teams) {
                 var data;
 
-                data = {};
-                data.container = "league_content";
-                data.template = "teamStats";
-                data.title = "Team Stats";
-                data.vars = {teams: teams, seasons: seasons};
+                data = {
+                    container: "league_content",
+                    template: "teamStats",
+                    title: "Team Stats",
+                    vars: {teams: teams, seasons: seasons}
+                };
                 ui.update(data, req.raw.cb);
             });
         });
@@ -993,11 +1012,12 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
                 currentRatings = player.ratings[player.ratings.length - 1];
 
-                data = {};
-                data.container = "league_content";
-                data.template = "player";
-                data.title = player.name;
-                data.vars = {player: player, currentRatings: currentRatings, showTradeFor: player.tid !== g.userTid};
+                data = {
+                    container: "league_content",
+                    template: "player",
+                    title: player.name,
+                    vars: {player: player, currentRatings: currentRatings, showTradeFor: player.tid !== g.userTid}
+                };
                 ui.update(data, req.raw.cb);
             };
         });
@@ -1050,11 +1070,12 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     }
                 }
 
-                data = {};
-                data.container = "league_content";
-                data.template = "negotiationList";
-                data.title = "Resign Players";
-                data.vars = {players: players};
+                data = {
+                    container: "league_content",
+                    template: "negotiationList",
+                    title: "Resign Players",
+                    vars: {players: players}
+                };
                 ui.update(data, req.raw.cb);
             };
         });
@@ -1119,11 +1140,12 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     db.getPayroll(null, g.userTid, function (payroll) {
                         payroll /= 1000;
 
-                        data = {};
-                        data.container = "league_content";
-                        data.template = "negotiation";
-                        data.title = player.name + " - Contract Negotiation";
-                        data.vars = {negotiation: negotiation, player: player, salaryCap: g.salaryCap / 1000, team: team, payroll: payroll};
+                        data = {
+                            container: "league_content",
+                            template: "negotiation",
+                            title: player.name + " - Contract Negotiation",
+                            vars: {negotiation: negotiation, player: player, salaryCap: g.salaryCap / 1000, team: team, payroll: payroll}
+                        };
                         ui.update(data, req.raw.cb);
                     });
                 };
@@ -1174,11 +1196,12 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
         beforeNonLeague();
 
-        data = {};
-        data.container = "content";
-        data.template = "error";
-        data.title = "Error";
-        data.vars = {error: req.params.error};
+        data = {
+            container: "content",
+            template: "error",
+            title: "Error",
+            vars: {error: req.params.error}
+        };
         ui.update(data, req.raw.cb);
     }
 
@@ -1192,11 +1215,12 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         beforeLeague(req, function () {
             var data;
 
-            data = {};
-            data.container = "league_content";
-            data.template = "error";
-            data.title = "Error";
-            data.vars = {error: req.params.error};
+            data = {
+                container: "league_content",
+                template: "error",
+                title: "Error",
+                vars: {error: req.params.error}
+            };
             ui.update(data, req.raw.cb);
         });
     }

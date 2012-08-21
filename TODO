@@ -9,8 +9,6 @@ main todo
   - top free agents
   - league leaders
   - team leaders
-- consistent seasons shown in titles/headers
-  - "Page Name - 2012 - League whatever" for title, and just "Page Name" for header
 - core.game is messy and should be rewritten
 - let free agents stay for 2 seasons before retiring, or make retirement probabilistic
 - nba roster

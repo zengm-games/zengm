@@ -679,12 +679,7 @@ function program4(depth0,data) {
   if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
   else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  </select>\n</form>\n\n<h1>";
-  foundHelper = helpers.season;
-  stack1 = foundHelper || depth0.season;
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "season", { hash: {} }); }
-  buffer += escapeExpression(stack1) + " Playoffs</h1>\n\n";
+  buffer += "\n  </select>\n</form>\n\n<h1>Playoffs</h1>\n\n";
   foundHelper = helpers.finalMatchups;
   stack1 = foundHelper || depth0.finalMatchups;
   stack2 = helpers.unless;
@@ -3875,12 +3870,7 @@ function program10(depth0,data,depth1) {
   if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
   else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  </select>\n</form>\n\n<h1>";
-  foundHelper = helpers.season;
-  stack1 = foundHelper || depth0.season;
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "season", { hash: {} }); }
-  buffer += escapeExpression(stack1) + " Season Summary</h1>\n\n<p></p>\n<div class=\"row-fluid\">\n  <div class=\"span4\">\n    <h4>League Champions</h4>\n    <p><strong><a href=\"/l/";
+  buffer += "\n  </select>\n</form>\n\n<h1>Season Summary</h1>\n\n<p></p>\n<div class=\"row-fluid\">\n  <div class=\"span4\">\n    <h4>League Champions</h4>\n    <p><strong><a href=\"/l/";
   foundHelper = helpers.lid;
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -5486,12 +5476,7 @@ function program4(depth0,data) {
   if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
   else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  </select>\n</form>\n\n<h1>";
-  foundHelper = helpers.season;
-  stack1 = foundHelper || depth0.season;
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "season", { hash: {} }); }
-  buffer += escapeExpression(stack1) + " Draft Results</h1>\n<p>\n  <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"draft_results\">\n  <thead>\n    <tr><th colspan=\"3\"></th><th colspan=\"4\" style=\"text-align: center\">At Draft</th><th colspan=\"4\" style=\"text-align: center\">Current</th><th colspan=\"5\" style=\"text-align: center\">Career Stats</th></tr>\n    <tr><th>Pick</th><th>Name</th><th title=\"Position\">Pos</th><th>Team</th><th>Age</th><th title=\"Overall rating\">Ovr</th><th title=\"Potential rating\">Pot</th><th>Team</th><th>Age</th><th title=\"Overall rating\">Ovr</th><th title=\"Potential rating\">Pot</th><th title=\"Games Played\">GP</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">PPG</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th></tr>\n  </thead>\n  </table>\n</p>\n";
+  buffer += "\n  </select>\n</form>\n\n<h1>Draft Summary</h1>\n<p>\n  <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"draft_results\">\n  <thead>\n    <tr><th colspan=\"3\"></th><th colspan=\"4\" style=\"text-align: center\">At Draft</th><th colspan=\"4\" style=\"text-align: center\">Current</th><th colspan=\"5\" style=\"text-align: center\">Career Stats</th></tr>\n    <tr><th>Pick</th><th>Name</th><th title=\"Position\">Pos</th><th>Team</th><th>Age</th><th title=\"Overall rating\">Ovr</th><th title=\"Potential rating\">Pot</th><th>Team</th><th>Age</th><th title=\"Overall rating\">Ovr</th><th title=\"Potential rating\">Pot</th><th title=\"Games Played\">GP</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">PPG</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th></tr>\n  </thead>\n  </table>\n</p>\n";
   return buffer;});
 templates['gameLogList'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;

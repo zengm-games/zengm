@@ -205,7 +205,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                 data = {
                     container: "league_content",
                     template: "standings",
-                    title: season + " Standings",
+                    title: "Standings - " + season,
                     vars: {confs: confs, seasons: seasons, season: season}
                 };
                 ui.update(data, req.raw.cb);
@@ -226,7 +226,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                 data = {
                     container: "league_content",
                     template: "playoffs",
-                    title: season + " Playoffs",
+                    title: "Playoffs - " + season,
                     vars: {finalMatchups: finalMatchups, series: series, seasons: seasons, season: season}
                 };
                 ui.update(data, req.raw.cb);
@@ -348,7 +348,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                         data = {
                             container: "league_content",
                             template: "history",
-                            title: season + " Season Summary",
+                            title: "Season Summary - " + season,
                             vars: {awards: awards, champ: champ, retiredPlayers: retiredPlayers, seasons: seasons, season: season}
                         };
                         ui.update(data, req.raw.cb);
@@ -390,7 +390,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     data = {
                         container: "league_content",
                         template: "roster",
-                        title: "Roster",
+                        title: team.region + " " + team.name + " " + "Roster - " + season,
                         vars: {teams: teams, seasons: seasons, sortable: sortable, currentSeason: currentSeason, showTradeFor: currentSeason && tid !== g.userTid, players: players, numRosterSpots: 15 - players.length, team: team}
                     };
                     ui.update(data, req.raw.cb);
@@ -757,7 +757,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                 data = {
                     container: "league_content",
                     template: "draftSummary",
-                    title: season + " Draft Results",
+                    title: "Draft Results - " + season,
                     vars: {players: players, seasons: seasons}
                 };
                 ui.update(data, req.raw.cb);
@@ -910,7 +910,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                 data = {
                     container: "league_content",
                     template: "leaders",
-                    title: "League Leaders",
+                    title: "League Leaders - " + season,
                     vars: {categories: categories, season: season, seasons: seasons}
                 };
                 ui.update(data, req.raw.cb);
@@ -936,7 +936,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                 data = {
                     container: "league_content",
                     template: "playerRatings",
-                    title: "Player Ratings",
+                    title: "Player Ratings - " + season,
                     vars: {players: players, season: season, seasons: seasons}
                 };
                 ui.update(data, req.raw.cb);
@@ -962,7 +962,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                 data = {
                     container: "league_content",
                     template: "playerStats",
-                    title: "Player Stats",
+                    title: "Player Stats - " + season,
                     vars: {players: players, season: season, seasons: seasons}
                 };
                 ui.update(data, req.raw.cb);
@@ -977,7 +977,6 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             season = helpers.validateSeason(req.params.season);
             seasons = helpers.getSeasons(season);
 
-
             attributes = ["abbrev"];
             stats = ["gp", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "oppPts"];
             seasonAttributes = ["won", "lost"];
@@ -987,8 +986,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                 data = {
                     container: "league_content",
                     template: "teamStats",
-                    title: "Team Stats",
-                    vars: {teams: teams, seasons: seasons}
+                    title: "Team Stats - " + season,
+                    vars: {teams: teams, season: season, seasons: seasons}
                 };
                 ui.update(data, req.raw.cb);
             });
@@ -1143,7 +1142,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                         data = {
                             container: "league_content",
                             template: "negotiation",
-                            title: player.name + " - Contract Negotiation",
+                            title: "Contract Negotiation - " + player.name,
                             vars: {negotiation: negotiation, player: player, salaryCap: g.salaryCap / 1000, team: team, payroll: payroll}
                         };
                         ui.update(data, req.raw.cb);

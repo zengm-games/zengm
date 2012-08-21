@@ -1,5 +1,14 @@
 main todo
 - polish dashboard
+  - record
+  - playoff scenario
+  - history
+  - roster spots
+  - payroll
+  - expiring contracts
+  - top free agents
+  - league leaders
+  - team leaders
 - consistent seasons shown in titles/headers
   - "Page Name - 2012 - League whatever" for title, and just "Page Name" for header
 - core.game is messy and should be rewritten
@@ -122,9 +131,10 @@ player.addStatsRow
 - season parameter wouldn't be needed if g.season was already set. Set g.season early, then.
 league leaders
 - minimum minutes played to show?
-data binding/updating
+realtime data binding/updating
 - knockoutjs is too flaky. try just a naive approach first, and use something better later
 - be smarter about things that don't change, like old box scores, stats from old seasons, etc
+- handle deeper content, like pagination/sorting in tables
 multiple windows
 - have some element in the database with the last "action" time. poll it with some frequency, and update if needed
 
@@ -178,22 +188,6 @@ Client-side game simulation
   - g.phase == 3 in league_views might introduce race condition
   - validate data from client?
   - make sure play menu doesn't ever get stuck - some kind of timeout
-
-dashboard: a bunch of boxes showing..
-- record
-- playoff scenario
-- history
-- roster spots
-- payroll
-- expiring contracts
-- top free agents
-- league leaders
-- team leaders
-
-Single page application
-- When a simulation is done (or a player is signed, or whatever), the current page should be reloaded
-- during page reloads or back/forward... what about handling deeper content in URLs? i.e., what box score is being viewed? what year? what stat is sorted? what page in rankings? etc.
-- when a form uses redirect_or_json, the URL isn't updated. not sure what the best way to fix that is.
 
 play button requirements
 - colors - is this a good idea?

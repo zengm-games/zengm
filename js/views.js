@@ -19,7 +19,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
                 data = {};
                 data.container = "content";
-                data.template = "league_layout";
+                data.template = "leagueLayout";
                 data.vars = {};
                 ui.update(data);
 

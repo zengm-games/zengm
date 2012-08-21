@@ -3,6 +3,9 @@ body {
   padding-bottom: 40px;
 }
 
+.navbar-inverse a.brand {
+  color: #fff;
+}
 a.brand img {
   vertical-align: top;
 }
@@ -95,12 +98,22 @@ div#playButton ul li a {
   text-shadow: none;
 }
 div#playButton ul li a.dropdown-toggle {
+  background: transparent;
+  border-bottom-color: #fff;
+  border-top-color: #fff;
   color: #FFFFFF;
+  line-height: 19px;
+  padding: 10px 10px 11px 10px;
   text-shadow: none;
 }
 div#playButton ul li a.dropdown-toggle:hover {
   color: #FFFFFF;
   text-shadow: none;
+}
+div#playButton ul li a.dropdown-toggle .caret {
+  border-bottom-color: #fff;
+  border-top-color: #fff;
+  opacity: 0.75;
 }
 
 .table-bordered tbody tr.separator td {

@@ -17,11 +17,48 @@ and start hacking. Or email me <jdscheff@gmail.com> and we can discuss how you
 want to contribute.
 
 
-# Coding style
+# JavaScript coding style
 
 Douglas Crockford is always right.
 
 Documentation is based on https://developers.google.com/closure/compiler/docs/js-for-compiler
+
+
+# Twitter Bootstrap
+
+Basketball GM currently uses Bootstrap 2.1 with a few changes to make it work more like 2.0:
+
+* @baseFontSize set to 13px in variables.less
+* @baseLineHeight set to 18px in variables.less
+* The headings section of type.less with altered sizes and margins:
+
+	// Headings
+	// -------------------------
+
+	h1, h2, h3, h4, h5, h6 {
+	  margin: 0;
+	  font-family: @headingsFontFamily;
+	  font-weight: @headingsFontWeight;
+	  line-height: 1;
+	  color: @headingsColor;
+	  text-rendering: optimizelegibility; // Fix the character spacing for headings
+	  small {
+	    font-weight: normal;
+	    line-height: 1;
+	    color: @grayLight;
+	  }
+	}
+	h1 { font-size: 30px; line-height: 36px; }
+	h2 { font-size: 24px; line-height: 36px; }
+	h3 { font-size: 18px; line-height: 27px; }
+	h4 { font-size: 14px; line-height: 18px; }
+	h5 { font-size: 12px; line-height: 18px; }
+	h6 { font-size: 11px; line-height: 18px; }
+
+	h1 small { font-size: 18px; }
+	h2 small { font-size: 18px; }
+	h3 small { font-size: 14px; }
+	h4 small { font-size: 12px; }
 
 
 # Basketball stuff

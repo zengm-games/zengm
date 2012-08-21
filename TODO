@@ -1,6 +1,7 @@
 main todo
 - bootstrap 2.1
-  - but i don't want to change the font size
+  - update javascript stuff
+  - incorporate stuff from HACKING into bbgm.css and use normal bootstrap.css
 - overall dashboard
   - correctly display metadata
 - league dashboard

@@ -17,7 +17,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             db.connectLeague(g.lid, function () {
                 var data;
 
-                data = {inLeague: false};
+                data = {};
+                data.container = "content";
                 data.template = "league_layout";
                 data.vars = {};
                 ui.update(data);
@@ -80,7 +81,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
             leagues = event.target.result;
 
-            data = {inLeague: false};
+            data = {};
+            data.container = "content";
             data.template = "dashboard";
             data.title = "Dashboard";
             data.vars = {leagues: leagues};
@@ -99,7 +101,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
                 teams = event.target.result;
 
-                data = {inLeague: false};
+                data = {};
+                data.container = "content";
                 data.template = "newLeague";
                 data.title = "Create New League";
                 data.vars = {teams: teams};
@@ -128,7 +131,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         beforeLeague(req, function () {
             var data;
 
-            data = {inLeague: true};
+            data = {};
+            data.container = "league_content";
             data.template = "leagueDashboard";
             data.title = "Dashboard";
             data.vars = {};
@@ -195,7 +199,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     }
                 }
 
-                data = {inLeague: true};
+                data = {};
+                data.container = "league_content";
                 data.template = "standings";
                 data.title = season + " Standings";
                 data.vars = {confs: confs, seasons: seasons, season: season};
@@ -215,7 +220,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             function cb(finalMatchups, series) {
                 var data;
 
-                data = {inLeague: true};
+                data = {};
+                data.container = "league_content";
                 data.template = "playoffs";
                 data.title = season + " Playoffs";
                 data.vars = {finalMatchups: finalMatchups, series: series, seasons: seasons, season: season};
@@ -282,7 +288,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     teams[i].cash /= 1000000;
                 }
 
-                data = {inLeague: true};
+                data = {};
+                data.container = "league_content";
                 data.template = "finances";
                 data.title = "Finances";
                 data.vars = {salaryCap: g.salaryCap / 1000, teams: teams};
@@ -334,12 +341,13 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                             }
                         }
 
-                        data = {inLeague: true};
+                        data = {};
+                        data.container = "league_content";
                         data.template = "history";
                         data.title = season + " Season Summary";
                         data.vars = {awards: awards, champ: champ, retiredPlayers: retiredPlayers, seasons: seasons, season: season};
                         ui.update(data, req.raw.cb);
-                    })
+                    });
                 };
             };
         });
@@ -376,7 +384,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     }
                     team = {region: teamAll.region, name: teamAll.name, cash: teamSeason.cash / 1000000};
 
-                    data = {inLeague: true};
+                    data = {};
+                    data.container = "league_content";
                     data.template = "roster";
                     data.title = "Roster";
                     data.vars = {teams: teams, seasons: seasons, sortable: sortable, currentSeason: currentSeason, showTradeFor: currentSeason && tid !== g.userTid, players: players, numRosterSpots: 15 - players.length, team: team};
@@ -448,7 +457,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     }
                 }
 
-                data = {inLeague: true};
+                data = {};
+                data.container = "league_content";
                 data.template = "schedule";
                 data.title = "Schedule";
                 data.vars = {games: games};
@@ -473,7 +483,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
                 players = db.getPlayers(event.target.result, g.season, c.PLAYER_FREE_AGENT, attributes, stats, ratings, {oldStats: true, showNoStats: true});
 
-                data = {inLeague: true};
+                data = {};
+                data.container = "league_content";
                 data.template = "freeAgents";
                 data.title = "Free Agents";
                 data.vars = {players: players};
@@ -541,7 +552,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
                                 tradeSummary = Handlebars.templates.tradeSummary({lid: g.lid, summary: summary, message: message});
 
-                                data = {inLeague: true};
+                                data = {};
+                                data.container = "league_content";
                                 data.template = "trade";
                                 data.title = "Trade";
                                 data.vars = {userRoster: userRoster, otherRoster: otherRoster, userPids: userPids, otherPids: otherPids, teams: teams, otherTid: otherTid, tradeSummary: tradeSummary, userTeamName: summary.teams[0].name};
@@ -668,7 +680,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                             drafted.push({abbrev: slot.abbrev, rnd: slot.round, pick: slot.pick});
                         }
 
-                        data = {inLeague: true};
+                        data = {};
+                        data.container = "league_content";
                         data.template = "draft";
                         data.title = "Draft";
                         data.vars = {undrafted: undrafted, drafted: drafted, started: started};
@@ -734,7 +747,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     }
                 }
 
-                data = {inLeague: true};
+                data = {};
+                data.container = "league_content";
                 data.template = "draftSummary";
                 data.title = season + " Draft Results";
                 data.vars = {players: players, seasons: seasons};
@@ -754,7 +768,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             seasons = helpers.getSeasons(season);
             teams = helpers.getTeams(tid);
 
-            data = {inLeague: true};
+            data = {};
+            data.container = "league_content";
             data.template = "gameLog";
             data.title = "Game Log";
             data.vars = {teams: teams, seasons: seasons};
@@ -808,7 +823,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     }
                 }
 
-                data = {inLeague: true};
+                data = {};
+                data.container = "league_content";
                 data.template = "leaders";
                 data.title = "League Leaders";
                 data.vars = {categories: categories, season: season, seasons: seasons};
@@ -833,7 +849,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
                 players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings);
 
-                data = {inLeague: true};
+                data = {};
+                data.container = "league_content";
                 data.template = "playerRatings";
                 data.title = "Player Ratings";
                 data.vars = {players: players, season: season, seasons: seasons};
@@ -858,7 +875,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
                 players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings, {showRookies: true});
 
-                data = {inLeague: true};
+                data = {};
+                data.container = "league_content";
                 data.template = "playerStats";
                 data.title = "Player Stats";
                 data.vars = {players: players, season: season, seasons: seasons};
@@ -882,7 +900,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             db.getTeams(null, season, attributes, stats, seasonAttributes, null, function (teams) {
                 var data;
 
-                data = {inLeague: true};
+                data = {};
+                data.container = "league_content";
                 data.template = "teamStats";
                 data.title = "Team Stats";
                 data.vars = {teams: teams, seasons: seasons};
@@ -908,7 +927,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
                 currentRatings = player.ratings[player.ratings.length - 1];
 
-                data = {inLeague: true};
+                data = {};
+                data.container = "league_content";
                 data.template = "player";
                 data.title = player.name;
                 data.vars = {player: player, currentRatings: currentRatings, showTradeFor: player.tid !== g.userTid};
@@ -964,7 +984,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     }
                 }
 
-                data = {inLeague: true};
+                data = {};
+                data.container = "league_content";
                 data.template = "negotiationList";
                 data.title = "Resign Players";
                 data.vars = {players: players};
@@ -1032,7 +1053,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     db.getPayroll(null, g.userTid, function (payroll) {
                         payroll /= 1000;
 
-                        data = {inLeague: true};
+                        data = {};
+                        data.container = "league_content";
                         data.template = "negotiation";
                         data.title = player.name + " - Contract Negotiation";
                         data.vars = {negotiation: negotiation, player: player, salaryCap: g.salaryCap / 1000, team: team, payroll: payroll};
@@ -1086,7 +1108,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
         beforeNonLeague();
 
-        data = {inLeague: false};
+        data = {};
+        data.container = "content";
         data.template = "error";
         data.title = "Error";
         data.vars = {error: req.params.error};
@@ -1103,7 +1126,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         beforeLeague(req, function () {
             var data;
 
-            data = {inLeague: true};
+            data = {};
+            data.container = "league_content";
             data.template = "error";
             data.title = "Error";
             data.vars = {error: req.params.error};

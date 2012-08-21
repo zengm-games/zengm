@@ -143,6 +143,54 @@ define(["db", "ui", "core/player", "util/helpers", "util/lock", "util/random"], 
     }
 
     /**
+     * Cancel contract negotiations with a player.
+     * 
+     * @memberOf core.contractNegotiation
+     * @param {number} pid An integer that must correspond with the player ID of a player in an ongoing negotiation.
+     */
+    function cancel(pid) {
+        var i, negotiations;
+
+        console.log("User canceled contract negotiations with " + pid);
+
+        negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
+
+        // Delete negotiation
+        for (i = 0; i < negotiations.length; i++) {
+            if (negotiations[i].pid === pid) {
+                negotiations.splice(i, 1);
+            }
+        }
+
+        localStorage.setItem("league" + g.lid + "Negotiations", JSON.stringify(negotiations));
+
+        // If no negotiations are in progress, update status
+        if (!lock.negotiationInProgress()) {
+            ui.updateStatus("Idle");
+            ui.updatePlayMenu();
+        }
+    }
+
+    /**
+     * Cancel all ongoing contract negotiations.
+     * 
+     * Currently, the only time there should be multiple ongoing negotiations in the first place is when a user is resigning players at the end of the season, although that should probably change eventually.
+     * 
+     * @memberOf core.contractNegotiation
+     */
+    function cancelAll() {
+        var i, negotiations;
+
+        console.log("Canceling all ongoing contract negotiations...");
+
+        // If no negotiations are in progress, update status
+        negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
+        for (i = 0; i < negotiations.length; i++) {
+            cancel(negotiations[i].pid);
+        }
+    }
+
+    /**
      * Accept the player's offer.
      * 
      * If successful, then the team's current roster will be displayed.
@@ -203,59 +251,11 @@ define(["db", "ui", "core/player", "util/helpers", "util/lock", "util/random"], 
         });
     }
 
-    /**
-     * Cancel contract negotiations with a player.
-     * 
-     * @memberOf core.contractNegotiation
-     * @param {number} pid An integer that must correspond with the player ID of a player in an ongoing negotiation.
-     */
-    function cancel(pid) {
-        var i, negotiations;
-
-        console.log("User canceled contract negotiations with " + pid);
-
-        negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
-
-        // Delete negotiation
-        for (i = 0; i < negotiations.length; i++) {
-            if (negotiations[i].pid === pid) {
-                negotiations.splice(i, 1);
-            }
-        }
-
-        localStorage.setItem("league" + g.lid + "Negotiations", JSON.stringify(negotiations));
-
-        // If no negotiations are in progress, update status
-        if (!lock.negotiationInProgress()) {
-            ui.updateStatus("Idle");
-            ui.updatePlayMenu();
-        }
-    }
-
-    /**
-     * Cancel all ongoing contract negotiations.
-     * 
-     * Currently, the only time there should be multiple ongoing negotiations in the first place is when a user is resigning players at the end of the season, although that should probably change eventually.
-     * 
-     * @memberOf core.contractNegotiation
-     */
-    function cancelAll() {
-        var i, negotiations;
-
-        console.log("Canceling all ongoing contract negotiations...");
-
-        // If no negotiations are in progress, update status
-        negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
-        for (i = 0; i < negotiations.length; i++) {
-            cancel(negotiations[i].pid);
-        }
-    }
-
     return {
-        create: create,
-        offer: offer,
         accept: accept,
         cancel: cancel,
-        cancelAll: cancelAll
+        cancelAll: cancelAll,
+        create: create,
+        offer: offer
     };
 });

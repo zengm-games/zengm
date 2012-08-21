@@ -55,15 +55,12 @@ define(["util/helpers", "util/lock"], function (helpers, lock) {
 
         data.vars.lid = g.lid;
         rendered = Handlebars.templates[data.template](data.vars);
-        if (data.inLeague) {
-            $("#league_content").html(rendered);
-            if (data.hasOwnProperty("title")) {
+        $("#" + data.container).html(rendered);
+
+        if (data.hasOwnProperty("title")) {
+            if (data.container === "league_content") {
                 data.title += " - League " + g.lid;
             }
-        } else {
-            $("#content").html(rendered);
-        }
-        if (data.hasOwnProperty("title")) {
             $("title").text(data.title + " - Basketball GM");
         }
 

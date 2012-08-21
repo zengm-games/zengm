@@ -201,17 +201,25 @@ define([], function () {
      * 
      * @memberOf util.helpers
      * @param {string} error Text of the error message to be displayed.
+     * @param {Object} req Optional Davis.js request object, containing the callback function and any other metadata
      */
-    function error(errorText) {
+    function error(errorText, req) {
         var lid, views;
 
         views = require("views");
 
+        if (typeof req !== "undefined") {
+            req.params.error = errorText;
+        } else {
+            req = {params: {error: errorText}, raw: {}};
+        }
+
         lid = location.pathname.split("/")[2]; // lid derived from URL
         if (/^\d+$/.test(lid)) {
-            views.leagueError({params: {lid: parseInt(lid, 10), error: errorText}});
+            req.params.lid = parseInt(lid, 10);
+            views.leagueError(req);
         } else {
-            views.globalError({params: {error: errorText}});
+            views.globalError(req);
         }
     }
 

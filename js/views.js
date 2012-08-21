@@ -289,7 +289,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             }
 
             if (season < g.startingSeason) {
-                helpers.error("There is no league history yet. Check back after the playoffs.");
+                helpers.error("There is no league history yet. Check back after the playoffs.", req);
                 return;
             }
 
@@ -437,7 +437,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
     function freeAgents(req) {
         beforeLeague(req, function () {
             if (g.phase >= c.PHASE_AFTER_TRADE_DEADLINE && g.phase <= c.PHASE_RESIGN_PLAYERS) {
-                helpers.error("You're not allowed to sign free agents now.");
+                helpers.error("You're not allowed to sign free agents now.", req);
                 return;
             }
 
@@ -464,7 +464,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             var abbrev, newOtherTid, pid, showTrade, validateSavedPids;
 
             if (g.phase >= c.PHASE_AFTER_TRADE_DEADLINE && g.phase <= c.PHASE_PLAYOFFS) {
-                helpers.error("You're not allowed to make trades now.");
+                helpers.error("You're not allowed to make trades now.", req);
                 return;
             }
 
@@ -586,7 +586,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             }
 
             if (season < g.startingSeason) {
-                helpers.error("There is no draft history yet. Check back after the draft.");
+                helpers.error("There is no draft history yet. Check back after the draft.", req);
                 return;
             }
 
@@ -906,7 +906,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             }
 
             if (g.phase !== c.PHASE_RESIGN_PLAYERS) {
-                helpers.error("Something bad happened.");
+                helpers.error("Something bad happened.", req);
                 return;
             }
 
@@ -973,7 +973,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     }
                 }
                 if (negotiation === null) {
-                    helpers.error("No negotiation with player " + pid + " in progress.");
+                    helpers.error("No negotiation with player " + pid + " in progress.", req);
                     return;
                 }
 
@@ -1067,7 +1067,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         data.template = "error";
         data.title = "Error";
         data.vars = {error: req.params.error};
-        ui.update(data);
+        ui.update(data, req.raw.cb);
     }
 
     /**
@@ -1077,14 +1077,14 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
      * @param {Object} req Object with parameter "params" containing another object with a string representing the error message in the parameter "error" and an integer league ID in "lid".
      */
     function leagueError(req) {
-        beforeLeague({params: {lid: req.params.lid}}, function () {
+        beforeLeague(req, function () {
             var data;
 
             data = {inLeague: true};
             data.template = "error";
             data.title = "Error";
             data.vars = {error: req.params.error};
-            ui.update(data);
+            ui.update(data, req.raw.cb);
         });
     }
 

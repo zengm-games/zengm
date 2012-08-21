@@ -508,8 +508,9 @@ define(["db", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", 
                                         scheduleStore.delete(gidsFinished[j]);
                                     }
 
-                                    helpers.realtimeUpdate();
-                                    play(numDays - 1);
+                                    helpers.realtimeUpdate(function () {
+                                        play(numDays - 1);
+                                    });
                                 } else {
                                     doGameSim(i + 1);
                                 }

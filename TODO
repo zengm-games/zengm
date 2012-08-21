@@ -66,12 +66,6 @@ game simulation stops when a link is clicked, but then restarts when another lin
 
 PORTING NOTES:
 
-team_attributes.playoffs is now team.made_playoffs
-template loop count - how?
-- conf rankings in standings
-- class="separator"
-  - box score (top 5)
-  - standings (top 8)
 at some point, go through the indexeddb code. factor out common patterns into a library. combine transactions where appropriate
 make sure all indexes are actually used. otherwise they're just making it slower for nothing
 

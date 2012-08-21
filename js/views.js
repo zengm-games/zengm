@@ -156,6 +156,9 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                         if (g.confs[i].cid === teams[k].cid) {
                             confTeams.push(teams[k]);
                             _.last(confTeams).rank = confTeams.length;
+                            if (confTeams.length === 8) {
+                                _.last(confTeams).separator = true;
+                            }
                         }
                     }
 
@@ -342,6 +345,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
             // Run after players are loaded
             function cb(players) {
+                players[4].separator = true;
+
                 transaction.objectStore("teams").get(tid).onsuccess = function (event) {
                     var data, j, team, teamAll, teamSeason;
 

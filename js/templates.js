@@ -1289,8 +1289,18 @@ function program6(depth0,data,depth3) {
 
 function program8(depth0,data,depth2) {
   
-  var buffer = "", stack1;
-  buffer += "\n        <tr><td>";
+  var buffer = "", stack1, stack2;
+  buffer += "\n        <tr";
+  foundHelper = helpers.separator;
+  stack1 = foundHelper || depth0.separator;
+  stack2 = helpers['if'];
+  tmp1 = self.program(9, program9, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "><td>";
   foundHelper = helpers.rank;
   stack1 = foundHelper || depth0.rank;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -1317,6 +1327,10 @@ function program8(depth0,data,depth2) {
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "gb", { hash: {} }); }
   buffer += escapeExpression(stack1) + "</td></tr>\n      ";
   return buffer;}
+function program9(depth0,data) {
+  
+  
+  return " class=\"separator\"";}
 
   buffer += "<script type=\"text/javascript\">\n$(document).ready(function() {\n    ui.dropdown($('#standings_select_season'));\n});\n</script>\n\n<form action=\"/l/";
   foundHelper = helpers.lid;
@@ -1603,7 +1617,17 @@ function program1(depth0,data,depth1) {
 function program2(depth0,data,depth2) {
   
   var buffer = "", stack1, stack2, stack3;
-  buffer += "\n    <tr><td><a href=\"/l/";
+  buffer += "\n    <tr";
+  foundHelper = helpers.separator;
+  stack1 = foundHelper || depth0.separator;
+  stack2 = helpers['if'];
+  tmp1 = self.program(3, program3, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "><td><a href=\"/l/";
   foundHelper = helpers.lid;
   stack1 = foundHelper || depth2.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -1704,6 +1728,10 @@ function program2(depth0,data,depth2) {
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "pts", { hash: {} }); }
   buffer += escapeExpression(stack1) + "</td></tr>\n  ";
   return buffer;}
+function program3(depth0,data) {
+  
+  
+  return " class=\"separator\"";}
 
   buffer += "<h2><a href=\"/l/";
   foundHelper = helpers.lid;
@@ -2466,7 +2494,7 @@ templates['roster'] = template(function (Handlebars,depth0,helpers,partials,data
 function program1(depth0,data) {
   
   var buffer = "", stack1, stack2;
-  buffer += "\n        // Roster reordering\n        function highlightHandles() {\n            var i = 1;\n            $('#roster tbody').children().each(function() {\n                if (i <= 5) {\n                    $(this).find('td:first').removeClass('btn-info').addClass('btn-primary');\n                } else {\n                    $(this).find('td:first').removeClass('btn-primary').addClass('btn-info');\n                }\n                i++;\n            });\n        }\n        highlightHandles();\n        var fixHelper = function(e, ui) {\n            // Return helper which preserves the width of table cells being reordered\n            ui.children().each(function() {\n                $(this).width($(this).width());\n            });\n            return ui;\n        };\n        $(\"#roster tbody\").sortable({\n            helper: fixHelper,\n            cursor: \"move\",\n            update: function(e, ui) {\n                var i, sortedPids;\n\n                sortedPids = $(this).sortable(\"toArray\");\n                for (i = 0; i < sortedPids.length; i++) {\n                    sortedPids[i] = parseInt(sortedPids[i].substr(7), 10);\n                }\n\n                api.rosterReorder(sortedPids, function () {\n                    highlightHandles();\n                });\n            }\n        }).disableSelection();\n        $(\"#auto_sort_roster\").click(function(event) {\n            api.rosterAutoSort();\n        });\n\n        // Release player\n        $(\"#roster button\").click(function(event) {\n            if (this.dataset.action === \"release\") {\n                if (window.confirm('Are you sure you want to release ' + this.dataset.playerName + '?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in ' + this.dataset.contractExpiration + '.')) {\n                    var tr = this.parentNode.parentNode;\n                    api.rosterRelease(this.dataset.playerId, function(error) {\n                        if (error) {\n                            alert(\"Error: \" + error);\n                        }\n                        else {\n                            tr.parentNode.removeChild(tr);\n                            highlightHandles();\n                        }                        \n                    })\n                }\n            }\n            else if (this.dataset.action === \"buyOut\") {\n                if (";
+  buffer += "\n        // Roster reordering\n        function highlightHandles() {\n            var i = 1;\n            $('#roster tbody').children().each(function() {\n                var tr;\n\n                tr = $(this);\n                if (i <= 5) {\n                    tr.find('td:first').removeClass('btn-info').addClass('btn-primary');\n                } else {\n                    tr.find('td:first').removeClass('btn-primary').addClass('btn-info');\n                }\n                if (i === 5) {\n                    tr.addClass('separator');\n                } else {\n                    tr.removeClass('separator');\n                }\n                i++;\n            });\n        }\n        highlightHandles();\n        var fixHelper = function(e, ui) {\n            // Return helper which preserves the width of table cells being reordered\n            ui.children().each(function() {\n                $(this).width($(this).width());\n            });\n            return ui;\n        };\n        $(\"#roster tbody\").sortable({\n            helper: fixHelper,\n            cursor: \"move\",\n            update: function(e, ui) {\n                var i, sortedPids;\n\n                sortedPids = $(this).sortable(\"toArray\");\n                for (i = 0; i < sortedPids.length; i++) {\n                    sortedPids[i] = parseInt(sortedPids[i].substr(7), 10);\n                }\n\n                api.rosterReorder(sortedPids, function () {\n                    highlightHandles();\n                });\n            }\n        }).disableSelection();\n        $(\"#auto_sort_roster\").click(function(event) {\n            api.rosterAutoSort();\n        });\n\n        // Release player\n        $(\"#roster button\").click(function(event) {\n            if (this.dataset.action === \"release\") {\n                if (window.confirm('Are you sure you want to release ' + this.dataset.playerName + '?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in ' + this.dataset.contractExpiration + '.')) {\n                    var tr = this.parentNode.parentNode;\n                    api.rosterRelease(this.dataset.playerId, function(error) {\n                        if (error) {\n                            alert(\"Error: \" + error);\n                        }\n                        else {\n                            tr.parentNode.removeChild(tr);\n                            highlightHandles();\n                        }                        \n                    })\n                }\n            }\n            else if (this.dataset.action === \"buyOut\") {\n                if (";
   foundHelper = helpers.team;
   stack1 = foundHelper || depth0.team;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.cash);
@@ -2600,11 +2628,21 @@ function program19(depth0,data,depth1) {
   stack1 = foundHelper || depth0.pid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "pid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "\">";
+  buffer += escapeExpression(stack1) + "\"";
+  foundHelper = helpers.separator;
+  stack1 = foundHelper || depth0.separator;
+  stack2 = helpers['if'];
+  tmp1 = self.program(20, program20, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += ">";
   foundHelper = helpers.sortable;
   stack1 = foundHelper || depth1.sortable;
   stack2 = helpers['if'];
-  tmp1 = self.program(20, program20, data);
+  tmp1 = self.program(22, program22, data);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;
@@ -2649,7 +2687,7 @@ function program19(depth0,data,depth1) {
   foundHelper = helpers.currentSeason;
   stack1 = foundHelper || depth1.currentSeason;
   stack2 = helpers['if'];
-  tmp1 = self.program(22, program22, data);
+  tmp1 = self.program(24, program24, data);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;
@@ -2695,7 +2733,7 @@ function program19(depth0,data,depth1) {
   foundHelper = helpers.sortable;
   stack1 = foundHelper || depth1.sortable;
   stack2 = helpers['if'];
-  tmp1 = self.program(24, program24, data);
+  tmp1 = self.program(26, program26, data);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;
@@ -2705,7 +2743,7 @@ function program19(depth0,data,depth1) {
   foundHelper = helpers.showTradeFor;
   stack1 = foundHelper || depth1.showTradeFor;
   stack2 = helpers['if'];
-  tmp1 = self.program(26, program26, data);
+  tmp1 = self.program(28, program28, data);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;
@@ -2716,9 +2754,14 @@ function program19(depth0,data,depth1) {
 function program20(depth0,data) {
   
   
-  return "<td class=\"roster_handle\"></td>";}
+  return " class=\"separator\"";}
 
 function program22(depth0,data) {
+  
+  
+  return "<td class=\"roster_handle\"></td>";}
+
+function program24(depth0,data) {
   
   var buffer = "", stack1, stack2, stack3;
   buffer += "<td>$";
@@ -2738,7 +2781,7 @@ function program22(depth0,data) {
   buffer += escapeExpression(stack1) + "</td>";
   return buffer;}
 
-function program24(depth0,data) {
+function program26(depth0,data) {
   
   var buffer = "", stack1, stack2, stack3;
   buffer += "<td><button class=\"btn btn-mini\" data-action=\"release\" data-player-id=\"";
@@ -2778,7 +2821,7 @@ function program24(depth0,data) {
   buffer += escapeExpression(stack1) + "\">Buy out</button></td>";
   return buffer;}
 
-function program26(depth0,data) {
+function program28(depth0,data) {
   
   var buffer = "", stack1;
   buffer += "<td><form action=\"/l/";

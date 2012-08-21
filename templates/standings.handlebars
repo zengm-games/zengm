@@ -39,7 +39,7 @@ $(document).ready(function() {
       </thead>
       <tbody>
       {{#teams}}
-        <tr><td>{{rank}}. <a href="/l/{{../../lid}}/roster/{{abbrev}}">{{region}}</a></td><td align="right">{{gb}}</td></tr>
+        <tr{{#if separator}} class="separator"{{/if}}><td>{{rank}}. <a href="/l/{{../../lid}}/roster/{{abbrev}}">{{region}}</a></td><td align="right">{{gb}}</td></tr>
       {{/teams}}
       </tbody>
       </table>

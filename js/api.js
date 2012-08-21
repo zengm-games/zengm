@@ -147,7 +147,7 @@ define(["db", "views", "core/draft", "core/game", "core/player", "core/season", 
 
         games = [];
         g.dbl.transaction(["games"]).objectStore("games").index("season").openCursor(season).onsuccess = function (event) {
-            var content, cursor, game, home, opp, oppPts, pts, template, tidMatch, won;
+            var content, cursor, game, home, opp, oppPts, pts, tidMatch, won;
 
             cursor = event.target.result;
             if (cursor) {
@@ -180,8 +180,7 @@ define(["db", "views", "core/draft", "core/game", "core/player", "core/season", 
 
                 cursor.continue();
             } else {
-                template = Handlebars.templates.gameLogList;
-                content = template({games: games});
+                content = Handlebars.templates.gameLogList({games: games});
                 cb(content);
             }
         };
@@ -191,9 +190,8 @@ define(["db", "views", "core/draft", "core/game", "core/player", "core/season", 
         trade.updatePlayers(userPids, otherPids, function (userPids, otherPids) {
             trade.getOtherTid(function (otherTid) {
                 trade.summary(otherTid, userPids, otherPids, function (summary) {
-                    var template, tradeSummary;
-                    template = Handlebars.templates.tradeSummary;
-                    tradeSummary = template({g: g, summary: summary});
+                    var tradeSummary;
+                    tradeSummary = Handlebars.templates.tradeSummary({lid: g.lid, summary: summary});
                     cb(tradeSummary, userPids, otherPids);
                 });
             });
@@ -232,12 +230,16 @@ define(["db", "views", "core/draft", "core/game", "core/player", "core/season", 
         gid = parseInt(gid, 10);
 
         g.dbl.transaction(["games"]).objectStore("games").get(gid).onsuccess = function (event) {
-            var content, game, template;
+            var content, i, game;
 
             game = event.target.result;
+console.log(game);
+            for (i = 0; i < game.teams.length; i++) {
+                game.teams[i].players[4].separator = true;
+                _.last(game.teams[i].players).separator = true;
+            }
 
-            template = Handlebars.templates.boxScore;
-            content = template({g: g, game: game});
+            content = Handlebars.templates.boxScore({lid: g.lid, game: game});
             cb(content);
         };
     }

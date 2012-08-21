@@ -104,7 +104,11 @@ div#playButton ul li a.dropdown-toggle:hover {
 }
 
 .table-striped tbody tr.separator td {
-  border-bottom: 1px solid #000;
+  border-bottom: 1px solid #666;
+}
+
+th {
+  border-bottom: 1px solid #666;
 }
 
 table#roster td.roster_handle {

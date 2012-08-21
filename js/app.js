@@ -57,7 +57,6 @@ requirejs(["api", "db", "views", "ui", "util/helpers"], function (api, db, views
             this.get("/l/:lid/negotiation", views.negotiationList);
             this.get("/l/:lid/negotiation/:pid", views.negotiation);
             this.post("/l/:lid/negotiation/:pid", views.negotiation);
-            this.get("/l/:lid/test/schedule", views.testSchedule);
         });
 
         $(document).ready(function () {

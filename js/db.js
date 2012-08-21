@@ -405,7 +405,7 @@ define(["util/helpers"], function (helpers) {
     }
 
     function getTeam(ta, season, attributes, stats, seasonAttributes) {
-        var i, j, team, ts, tsa;
+        var i, j, lastTenLost, lastTenWon, team, ts, tsa;
 
         team = {};
 
@@ -439,6 +439,18 @@ define(["util/helpers"], function (helpers) {
                     team.profit = (tsa.att * g.ticketPrice - tsa.cost) / 1000000;
                 } else if (seasonAttributes[j] === "payroll") {
                     // Handled later
+                } else if (seasonAttributes[j] === "lastTen") {
+                    lastTenWon = _.reduce(tsa.lastTen, function (memo, num) { return memo + num; }, 0);
+                    lastTenLost = tsa.lastTen.length - lastTenWon;
+                    team.lastTen = lastTenWon + "-" + lastTenLost;
+                } else if (seasonAttributes[j] === "streak") {
+                    if (tsa.streak === 0) {
+                        team.streak = "None";
+                    } else if (tsa.streak > 0) {
+                        team.streak = "Won " + tsa.streak;
+                    } else if (tsa.streak < 0) {
+                        team.streak = "Lost " + Math.abs(tsa.streak);
+                    }
                 } else {
                     team[seasonAttributes[j]] = tsa[seasonAttributes[j]];
                 }

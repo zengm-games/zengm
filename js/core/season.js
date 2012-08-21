@@ -35,10 +35,16 @@ define(["db", "core/contractNegotiation", "core/freeAgents", "core/player", "uti
                 teamNewSeason.cost = 0;
                 teamNewSeason.won = 0;
                 teamNewSeason.lost = 0;
+                teamNewSeason.wonHome = 0;
+                teamNewSeason.lostHome = 0;
+                teamNewSeason.wonAway = 0;
+                teamNewSeason.lostAway = 0;
                 teamNewSeason.wonDiv = 0;
                 teamNewSeason.lostDiv = 0;
                 teamNewSeason.wonConf = 0;
                 teamNewSeason.lostConf = 0;
+                teamNewSeason.lastTen = [];
+                teamNewSeason.streak = 0;
                 teamNewSeason.madePlayoffs = false;
                 teamNewSeason.confChamps = false;
                 teamNewSeason.leagueChamps = false;

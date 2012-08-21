@@ -25,7 +25,7 @@ $(document).ready(function() {
           </thead>
           <tbody>
           {{#teams}}
-            <tr><td><a href="/l/{{../../../lid}}/roster/{{abbrev}}">{{region}} {{name}}</a></td><td>{{won}}</td><td>{{lost}}</td><td>{{roundWinp winp}}</td><td>GB</td><td>{{wonHome}}-{{lostHome}}</td><td>{{wonRoad}}-{{lostRoad}}</td><td>{{wonDiv}}-{{lostDiv}}</td><td>{{wonConf}}-{{lostConf}}</td><td>Streak</td><td>L10</td></tr>
+            <tr><td><a href="/l/{{../../../lid}}/roster/{{abbrev}}">{{region}} {{name}}</a></td><td>{{won}}</td><td>{{lost}}</td><td>{{roundWinp winp}}</td><td>{{gb}}</td><td>{{wonHome}}-{{lostHome}}</td><td>{{wonAway}}-{{lostAway}}</td><td>{{wonDiv}}-{{lostDiv}}</td><td>{{wonConf}}-{{lostConf}}</td><td>{{streak}}</td><td>{{lastTen}}</td></tr>
           {{/teams}}
           </tbody>
           </table>
@@ -39,7 +39,7 @@ $(document).ready(function() {
       </thead>
       <tbody>
       {{#teams}}
-        <tr><td>1. <a href="/l/{{../../lid}}/roster/{{abbrev}}">{{region}}</a></td><td align="right">GB</td></tr>
+        <tr><td>{{rank}}. <a href="/l/{{../../lid}}/roster/{{abbrev}}">{{region}}</a></td><td align="right">{{gb}}</td></tr>
       {{/teams}}
       </tbody>
       </table>

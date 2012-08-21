@@ -145,9 +145,9 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             seasons = helpers.getSeasons(season);
 
             attributes = ["tid", "cid", "did", "abbrev", "region", "name"];
-            seasonAttributes = ["won", "lost", "winp", "wonHome", "lostHome", "wonAway", "lostAway", "wonDiv", "lostDiv", "wonConf", "lostConf"];
+            seasonAttributes = ["won", "lost", "winp", "wonHome", "lostHome", "wonAway", "lostAway", "wonDiv", "lostDiv", "wonConf", "lostConf", "lastTen", "streak"];
             db.getTeams(null, season, attributes, [], seasonAttributes, "winp", function (teams) {
-                var confs, confTeams, data, divTeams, i, j, k;
+                var confs, confTeams, data, divTeams, i, j, k, lastTenLost, lastTenWon;
 
                 confs = [];
                 for (i = 0; i < g.confs.length; i++) {
@@ -155,6 +155,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     for (k = 0; k < teams.length; k++) {
                         if (g.confs[i].cid === teams[k].cid) {
                             confTeams.push(teams[k]);
+                            _.last(confTeams).rank = confTeams.length;
                         }
                     }
 
@@ -1088,43 +1089,6 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         });
     }
 
-    function testSchedule(req) {
-        beforeLeague(req, function () {
-            var data, getNumDays;
-
-            getNumDays = function (tids) {
-                var i, numDays, tidsInDay;
-
-                numDays = 0;
-                while (tids.length > 0) {
-//                    console.log(tids.length);
-                    tidsInDay = [];
-                    for (i = 0; i < tids.length; i++) {
-                        if (tidsInDay.indexOf(tids[i][0]) < 0 && tidsInDay.indexOf(tids[i][1]) < 0) {
-                            tidsInDay.push(tids[i][0]);
-                            tidsInDay.push(tids[i][1]);
-                        } else {
-                            break;
-                        }
-                    }
-                    tids = tids.slice(i);
-                    numDays += 1;
-//                    console.log("i: " + i);
-                }
-                return numDays;
-            };
-
-            season.newSchedule(function (tids) {
-                console.log(getNumDays(tids));
-            });
-
-            data = {"title": "Test Schedule - League " + req.params.lid};
-            data.template = "error";
-            data.league_content = "Test Schedule";
-            ui.update(data, req.raw.cb);
-        });
-    }
-
     return {
         init_db: init_db,
 
@@ -1152,8 +1116,6 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         negotiation: negotiation,
 
         globalError: globalError,
-        leagueError: leagueError,
-
-        testSchedule: testSchedule
+        leagueError: leagueError
     };
 });

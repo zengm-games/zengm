@@ -205,6 +205,9 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/help
             teamStats.trb += that.team[t].stat.orb + that.team[t].stat.drb;
             teamStats.oppPts += that.team[t2].stat.pts;
 
+            if (teamSeason.lastTen.length === 10) {
+                teamSeason.lastTen.pop();
+            }
             if (won && !that.playoffs) {
                 teamSeason.won += 1;
                 if (that.same_division) {
@@ -213,6 +216,20 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/help
                 if (that.same_conference) {
                     teamSeason.wonConf += 1;
                 }
+
+                if (t === 0) {
+                    teamSeason.wonHome += 1;
+                } else {
+                    teamSeason.wonAway += 1;
+                }
+
+                teamSeason.lastTen.unshift(1);
+
+                if (teamSeason.streak >= 0) {
+                    teamSeason.streak += 1;
+                } else {
+                    teamSeason.streak = 1;
+                }
             } else if (!that.playoffs) {
                 teamSeason.lost += 1;
                 if (that.same_division) {
@@ -220,6 +237,20 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/help
                 }
                 if (that.same_conference) {
                     teamSeason.lostConf += 1;
+                }
+
+                if (t === 0) {
+                    teamSeason.lostHome += 1;
+                } else {
+                    teamSeason.lostAway += 1;
+                }
+
+                teamSeason.lastTen.unshift(0);
+
+                if (teamSeason.streak <= 0) {
+                    teamSeason.streak -= 1;
+                } else {
+                    teamSeason.streak = -1;
                 }
             }
 

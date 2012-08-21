@@ -614,7 +614,7 @@ h3,
 h4,
 h5,
 h6 {
-  margin: 0;
+  margin: 9px 0;
   font-family: inherit;
   font-weight: bold;
   line-height: 1;
@@ -634,37 +634,37 @@ h6 small {
 }
 
 h1 {
-  font-size: 30px;
-  line-height: 36px;
+  font-size: 36px;
+  line-height: 40px;
 }
 
 h2 {
-  font-size: 24px;
-  line-height: 36px;
+  font-size: 30px;
+  line-height: 40px;
 }
 
 h3 {
-  font-size: 18px;
-  line-height: 27px;
+  font-size: 24px;
+  line-height: 40px;
 }
 
 h4 {
-  font-size: 14px;
-  line-height: 18px;
+  font-size: 18px;
+  line-height: 20px;
 }
 
 h5 {
-  font-size: 12px;
-  line-height: 18px;
+  font-size: 14px;
+  line-height: 20px;
 }
 
 h6 {
-  font-size: 11px;
-  line-height: 18px;
+  font-size: 12px;
+  line-height: 20px;
 }
 
 h1 small {
-  font-size: 18px;
+  font-size: 24px;
 }
 
 h2 small {
@@ -676,7 +676,7 @@ h3 small {
 }
 
 h4 small {
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .page-header {

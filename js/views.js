@@ -138,38 +138,55 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
     function standings(req) {
         beforeLeague(req, function () {
-            var attributes, season, seasonAttributes, seasons;
+            var attributes, gb, season, seasonAttributes, seasons;
 
             season = typeof req.params.season !== "undefined" ? req.params.season : undefined;
             season = helpers.validateSeason(season);
             seasons = helpers.getSeasons(season);
 
+            // Calculate the number of games that team is behind team0
+            gb = function (team0, team) {
+                return ((team0.won - team0.lost) - (team.won - team.lost)) / 2;
+            };
+
             attributes = ["tid", "cid", "did", "abbrev", "region", "name"];
             seasonAttributes = ["won", "lost", "winp", "wonHome", "lostHome", "wonAway", "lostAway", "wonDiv", "lostDiv", "wonConf", "lostConf", "lastTen", "streak"];
             db.getTeams(null, season, attributes, [], seasonAttributes, "winp", function (teams) {
-                var confs, confTeams, data, divTeams, i, j, k, lastTenLost, lastTenWon;
+                var confs, confTeams, data, divTeams, i, j, k, l, lastTenLost, lastTenWon;
 
                 confs = [];
                 for (i = 0; i < g.confs.length; i++) {
                     confTeams = [];
+                    l = 0;
                     for (k = 0; k < teams.length; k++) {
                         if (g.confs[i].cid === teams[k].cid) {
-                            confTeams.push(teams[k]);
-                            _.last(confTeams).rank = confTeams.length;
-                            if (confTeams.length === 8) {
-                                _.last(confTeams).separator = true;
+                            confTeams.push(helpers.deepCopy(teams[k]));
+                            confTeams[l].rank = l + 1;
+                            if (l === 0) {
+                                confTeams[l].gb = 0;
+                            } else {
+                                confTeams[l].gb = gb(confTeams[0], confTeams[l]);
                             }
+                            l += 1;
                         }
                     }
+                    confTeams[7].separator = true;
 
                     confs.push({name: g.confs[i].name, divs: [], teams: confTeams});
 
                     for (j = 0; j < g.divs.length; j++) {
                         if (g.divs[j].cid === g.confs[i].cid) {
                             divTeams = [];
+                            l = 0;
                             for (k = 0; k < teams.length; k++) {
                                 if (g.divs[j].did === teams[k].did) {
-                                    divTeams.push(teams[k]);
+                                    divTeams.push(helpers.deepCopy(teams[k]));
+                                    if (l === 0) {
+                                        divTeams[l].gb = 0;
+                                    } else {
+                                        divTeams[l].gb = gb(divTeams[0], divTeams[l]);
+                                    }
+                                    l += 1;
                                 }
                             }
 

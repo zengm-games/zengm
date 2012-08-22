@@ -1,14 +1,6 @@
 main todo
 - league dashboard
-  - record
-  - playoff scenario
-  - history
-  - roster spots
-  - payroll
-  - expiring contracts
-  - top free agents
-  - league leaders
-  - team leaders
+- payroll shown in roster view
 - core.game is messy and should be rewritten
 - let free agents stay for 2 seasons before retiring, or make retirement probabilistic
 - nba roster
@@ -138,6 +130,7 @@ pmPhase and pmStatus should be phaseText and statusText
 commas for thousands
 - number of games played in delete league view
 - attendance in finances
+transaction log (free agent signings, etc)
 
 ---
 

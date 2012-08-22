@@ -1,1 +1,86 @@
-<h1>League {{lid}}</h1>
+<h1>{region} {name} Dashboard</h1>
+
+<div class="row-fluid">
+  <div class="span4">
+    <h2>Current Record</h2>
+    <p>
+      {won}-{lost}<br>
+      <a href="/l/{{lid}}/standings">» Standings</a>
+    </p>
+
+    <h2>Playoffs</h2>
+    <p>
+      {rank}th place in the {conf} Conference (or show the active series with a link to playoffs view)<br>
+      <a href="/l/{{lid}}/playoffs">» Playoff Projections (or Playoffs)</a>
+    </p>
+
+    <h2>Next Game</h2>
+    <p>
+      None scheduled<br>
+      <a href="/l/{{lid}}/standings">» Schedule</a>
+    </p>
+
+    <h2>Recent History</h2>
+    <p>
+      2011: won-lost, made playoffs<br>
+      2010: won-lost, conference champs<br>
+      2009: won-lost, league champs<br>
+      <a href="/l/{{lid}}/team_history">» Team History</a>
+    </p>
+
+  </div>
+  <div class="span4">
+    <h2>Team Stats</h2>
+    <p>
+      Points: 4th (85)<br>
+      Allowed: 4th (83)<br>
+      Rebounds: 4th (15)<br>
+      Assists: 4th (15)<br>
+      <a href="/l/{{lid}}/team_stats">» Team Stats</a>
+    </p>
+
+    <h2>Team Leaders</h2>
+    <p>
+      Bob Johnson: 14 pts<br>
+      Bob Johnson: 14 reb<br>
+      Bob Johnson: 14 ast<br>
+      <a href="/l/{{lid}}/roster">» Full Roster</a>
+    </p>
+
+    <h2>League Leaders</h2>
+    <p>
+      Bob Johnson, ATL: 14 pts<br>
+      Bob Johnson, ATL: 14 reb<br>
+      Bob Johnson, ATL: 14 ast<br>
+      <a href="/l/{{lid}}/player_stats">» Player Stats</a>
+    </p>
+  </div>
+  <div class="span4">
+    <h2>Expiring Contracts</h2>
+    <p>
+      Bob Johnson: 27 yo, 15 pts<br>
+      Bob Johnson: 27 yo, 15 pts<br>
+      Bob Johnson: 27 yo, 15 pts<br>
+      <a href="/l/{{lid}}/roster">» Full Roster</a>
+    </p>
+
+    <h2>Finances</h2>
+    <p>
+      Revenue (YTD): $<br>
+      Profit (YTD): $<br>
+      Cash: $<br>
+      Payroll: $<br>
+      Salary Cap: $<br>
+      <a href="/l/{{lid}}/finances">» League Finances</a>
+    </p>
+
+    <h2>Top Free Agents</h2>
+    <p>
+      Bob Johnson: 68 ovr, 71 pot<br>
+      Bob Johnson: 68 ovr, 71 pot<br>
+      Bob Johnson: 68 ovr, 71 pot<br>
+      (You currently have {numRosterSpots} open roster spots.)<br>
+      <a href="/l/{{lid}}/free_agents">» Free Agents</a>
+    </p>
+  </div>
+</div>

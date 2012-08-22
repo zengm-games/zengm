@@ -1487,12 +1487,57 @@ templates['leagueDashboard'] = template(function (Handlebars,depth0,helpers,part
   var buffer = "", stack1, foundHelper, self=this, functionType="function", helperMissing=helpers.helperMissing, undef=void 0, escapeExpression=this.escapeExpression;
 
 
-  buffer += "<h1>League ";
+  buffer += "<h1>{region} {name} Dashboard</h1>\n\n<div class=\"row-fluid\">\n  <div class=\"span4\">\n    <h2>Current Record</h2>\n    <p>\n      {won}-{lost}<br>\n      <a href=\"/l/";
   foundHelper = helpers.lid;
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "</h1>\n";
+  buffer += escapeExpression(stack1) + "/standings\">» Standings</a>\n    </p>\n\n    <h2>Playoffs</h2>\n    <p>\n      {rank}th place in the {conf} Conference (or show the active series with a link to playoffs view)<br>\n      <a href=\"/l/";
+  foundHelper = helpers.lid;
+  stack1 = foundHelper || depth0.lid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/playoffs\">» Playoff Projections (or Playoffs)</a>\n    </p>\n\n    <h2>Next Game</h2>\n    <p>\n      None scheduled<br>\n      <a href=\"/l/";
+  foundHelper = helpers.lid;
+  stack1 = foundHelper || depth0.lid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/standings\">» Schedule</a>\n    </p>\n\n    <h2>Recent History</h2>\n    <p>\n      2011: won-lost, made playoffs<br>\n      2010: won-lost, conference champs<br>\n      2009: won-lost, league champs<br>\n      <a href=\"/l/";
+  foundHelper = helpers.lid;
+  stack1 = foundHelper || depth0.lid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/team_history\">» Team History</a>\n    </p>\n\n  </div>\n  <div class=\"span4\">\n    <h2>Team Stats</h2>\n    <p>\n      Points: 4th (85)<br>\n      Allowed: 4th (83)<br>\n      Rebounds: 4th (15)<br>\n      Assists: 4th (15)<br>\n      <a href=\"/l/";
+  foundHelper = helpers.lid;
+  stack1 = foundHelper || depth0.lid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/team_stats\">» Team Stats</a>\n    </p>\n\n    <h2>Team Leaders</h2>\n    <p>\n      Bob Johnson: 14 pts<br>\n      Bob Johnson: 14 reb<br>\n      Bob Johnson: 14 ast<br>\n      <a href=\"/l/";
+  foundHelper = helpers.lid;
+  stack1 = foundHelper || depth0.lid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/roster\">» Full Roster</a>\n    </p>\n\n    <h2>League Leaders</h2>\n    <p>\n      Bob Johnson, ATL: 14 pts<br>\n      Bob Johnson, ATL: 14 reb<br>\n      Bob Johnson, ATL: 14 ast<br>\n      <a href=\"/l/";
+  foundHelper = helpers.lid;
+  stack1 = foundHelper || depth0.lid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/player_stats\">» Player Stats</a>\n    </p>\n  </div>\n  <div class=\"span4\">\n    <h2>Expiring Contracts</h2>\n    <p>\n      Bob Johnson: 27 yo, 15 pts<br>\n      Bob Johnson: 27 yo, 15 pts<br>\n      Bob Johnson: 27 yo, 15 pts<br>\n      <a href=\"/l/";
+  foundHelper = helpers.lid;
+  stack1 = foundHelper || depth0.lid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/roster\">» Full Roster</a>\n    </p>\n\n    <h2>Finances</h2>\n    <p>\n      Revenue (YTD): $<br>\n      Profit (YTD): $<br>\n      Cash: $<br>\n      Payroll: $<br>\n      Salary Cap: $<br>\n      <a href=\"/l/";
+  foundHelper = helpers.lid;
+  stack1 = foundHelper || depth0.lid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/finances\">» League Finances</a>\n    </p>\n\n    <h2>Top Free Agents</h2>\n    <p>\n      Bob Johnson: 68 ovr, 71 pot<br>\n      Bob Johnson: 68 ovr, 71 pot<br>\n      Bob Johnson: 68 ovr, 71 pot<br>\n      (You currently have {numRosterSpots} open roster spots.)<br>\n      <a href=\"/l/";
+  foundHelper = helpers.lid;
+  stack1 = foundHelper || depth0.lid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/free_agents\">» Free Agents</a>\n    </p>\n  </div>\n</div>";
   return buffer;});
 templates['boxScore'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;
@@ -2602,7 +2647,7 @@ function program9(depth0,data) {
   stack1 = foundHelper || depth0.numRosterSpots;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "numRosterSpots", { hash: {} }); }
-  buffer += escapeExpression(stack1) + " empty roster spots.</p>\n  <p>Drag and drop row handles to move players between the starting lineup (<span class=\"roster_gs\">&#9632;</span>) and the bench (<span class=\"roster_bench\">&#9632;</span>).</p>\n  <p><button class=\"btn\" id=\"auto_sort_roster\">Auto sort roster</button></p>\n";
+  buffer += escapeExpression(stack1) + " open roster spots.</p>\n  <p>Drag and drop row handles to move players between the starting lineup (<span class=\"roster_gs\">&#9632;</span>) and the bench (<span class=\"roster_bench\">&#9632;</span>).</p>\n  <p><button class=\"btn\" id=\"auto_sort_roster\">Auto sort roster</button></p>\n";
   return buffer;}
 
 function program11(depth0,data) {
@@ -3309,7 +3354,12 @@ templates['leagueLayout'] = template(function (Handlebars,depth0,helpers,partial
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/schedule\">Schedule</a></li>\n      <li id=\"nav_history\"><a href=\"#\">History</a></li>\n      <li class=\"nav-header\">Players</li>\n      <li id=\"nav_free_agents\"><a href=\"/l/";
+  buffer += escapeExpression(stack1) + "/schedule\">Schedule</a></li>\n      <li id=\"nav_history\"><a href=\"/l/";
+  foundHelper = helpers.lid;
+  stack1 = foundHelper || depth0.lid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/team_history\">History</a></li>\n      <li class=\"nav-header\">Players</li>\n      <li id=\"nav_free_agents\"><a href=\"/l/";
   foundHelper = helpers.lid;
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }

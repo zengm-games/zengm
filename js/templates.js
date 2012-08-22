@@ -1819,11 +1819,6 @@ function program18(depth0,data,depth2) {
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
   buffer += escapeExpression(stack1) + "/history\">» League History</a>\n    </p>\n\n  </div>\n  <div class=\"span4\">\n    <h3>Team Stats</h3>\n    <p>\n      Points: ";
-  foundHelper = helpers.ptsRank;
-  stack1 = foundHelper || depth0.ptsRank;
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "ptsRank", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "th (";
   stack1 = 1;
   foundHelper = helpers.pts;
   stack2 = foundHelper || depth0.pts;
@@ -1832,12 +1827,12 @@ function program18(depth0,data,depth2) {
   if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
   else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
   else { stack1 = stack3; }
-  buffer += escapeExpression(stack1) + ")<br>\n      Allowed: ";
-  foundHelper = helpers.oppPtsRank;
-  stack1 = foundHelper || depth0.oppPtsRank;
+  buffer += escapeExpression(stack1) + " (";
+  foundHelper = helpers.ptsRank;
+  stack1 = foundHelper || depth0.ptsRank;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "oppPtsRank", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "th (";
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "ptsRank", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "th)<br>\n      Allowed: ";
   stack1 = 1;
   foundHelper = helpers.oppPts;
   stack2 = foundHelper || depth0.oppPts;
@@ -1846,12 +1841,12 @@ function program18(depth0,data,depth2) {
   if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
   else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
   else { stack1 = stack3; }
-  buffer += escapeExpression(stack1) + ")<br>\n      Rebounds: ";
-  foundHelper = helpers.trbRank;
-  stack1 = foundHelper || depth0.trbRank;
+  buffer += escapeExpression(stack1) + " (";
+  foundHelper = helpers.oppPtsRank;
+  stack1 = foundHelper || depth0.oppPtsRank;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "trbRank", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "th (";
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "oppPtsRank", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "th)<br>\n      Rebounds: ";
   stack1 = 1;
   foundHelper = helpers.trb;
   stack2 = foundHelper || depth0.trb;
@@ -1860,12 +1855,12 @@ function program18(depth0,data,depth2) {
   if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
   else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
   else { stack1 = stack3; }
-  buffer += escapeExpression(stack1) + ")<br>\n      Assists: ";
-  foundHelper = helpers.astRank;
-  stack1 = foundHelper || depth0.astRank;
+  buffer += escapeExpression(stack1) + " (";
+  foundHelper = helpers.trbRank;
+  stack1 = foundHelper || depth0.trbRank;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "astRank", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "th (";
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "trbRank", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "th)<br>\n      Assists: ";
   stack1 = 1;
   foundHelper = helpers.ast;
   stack2 = foundHelper || depth0.ast;
@@ -1874,17 +1869,259 @@ function program18(depth0,data,depth2) {
   if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
   else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
   else { stack1 = stack3; }
-  buffer += escapeExpression(stack1) + ")<br>\n      <a href=\"/l/";
+  buffer += escapeExpression(stack1) + " (";
+  foundHelper = helpers.astRank;
+  stack1 = foundHelper || depth0.astRank;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "astRank", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "th)<br>\n      <a href=\"/l/";
   foundHelper = helpers.lid;
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/team_stats\">» Team Stats</a>\n    </p>\n\n    <h3>Team Leaders</h3>\n    <p>\n      Bob Johnson: 14 pts<br>\n      Bob Johnson: 14 reb<br>\n      Bob Johnson: 14 ast<br>\n      <a href=\"/l/";
+  buffer += escapeExpression(stack1) + "/team_stats\">» Team Stats</a>\n    </p>\n\n    <h3>Team Leaders</h3>\n    <p>\n      <a href=\"/l/";
   foundHelper = helpers.lid;
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/roster\">» Full Roster</a>\n    </p>\n\n    <h3>League Leaders</h3>\n    <p>\n      Bob Johnson, ATL: 14 pts<br>\n      Bob Johnson, ATL: 14 reb<br>\n      Bob Johnson, ATL: 14 ast<br>\n      <a href=\"/l/";
+  buffer += escapeExpression(stack1) + "/players/";
+  foundHelper = helpers.teamLeaders;
+  stack1 = foundHelper || depth0.teamLeaders;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.pts);
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.pid);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "teamLeaders.pts.pid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\">";
+  foundHelper = helpers.teamLeaders;
+  stack1 = foundHelper || depth0.teamLeaders;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.pts);
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.name);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "teamLeaders.pts.name", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</a>: ";
+  stack1 = 1;
+  foundHelper = helpers.teamLeaders;
+  stack2 = foundHelper || depth0.teamLeaders;
+  stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.pts);
+  stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.stat);
+  foundHelper = helpers.round;
+  stack3 = foundHelper || depth0.round;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
+  buffer += escapeExpression(stack1) + " pts<br>\n      <a href=\"/l/";
+  foundHelper = helpers.lid;
+  stack1 = foundHelper || depth0.lid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/players/";
+  foundHelper = helpers.teamLeaders;
+  stack1 = foundHelper || depth0.teamLeaders;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.trb);
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.pid);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "teamLeaders.trb.pid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\">";
+  foundHelper = helpers.teamLeaders;
+  stack1 = foundHelper || depth0.teamLeaders;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.trb);
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.name);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "teamLeaders.trb.name", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</a>: ";
+  stack1 = 1;
+  foundHelper = helpers.teamLeaders;
+  stack2 = foundHelper || depth0.teamLeaders;
+  stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.trb);
+  stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.stat);
+  foundHelper = helpers.round;
+  stack3 = foundHelper || depth0.round;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
+  buffer += escapeExpression(stack1) + " reb<br>\n      <a href=\"/l/";
+  foundHelper = helpers.lid;
+  stack1 = foundHelper || depth0.lid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/players/";
+  foundHelper = helpers.teamLeaders;
+  stack1 = foundHelper || depth0.teamLeaders;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.ast);
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.pid);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "teamLeaders.ast.pid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\">";
+  foundHelper = helpers.teamLeaders;
+  stack1 = foundHelper || depth0.teamLeaders;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.ast);
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.name);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "teamLeaders.ast.name", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</a>: ";
+  stack1 = 1;
+  foundHelper = helpers.teamLeaders;
+  stack2 = foundHelper || depth0.teamLeaders;
+  stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.ast);
+  stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.stat);
+  foundHelper = helpers.round;
+  stack3 = foundHelper || depth0.round;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
+  buffer += escapeExpression(stack1) + " ast<br>\n      <a href=\"/l/";
+  foundHelper = helpers.lid;
+  stack1 = foundHelper || depth0.lid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/roster\">» Full Roster</a>\n    </p>\n\n    <h3>League Leaders</h3>\n    <p>\n      <a href=\"/l/";
+  foundHelper = helpers.lid;
+  stack1 = foundHelper || depth0.lid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/players/";
+  foundHelper = helpers.leagueLeaders;
+  stack1 = foundHelper || depth0.leagueLeaders;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.pts);
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.pid);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "leagueLeaders.pts.pid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\">";
+  foundHelper = helpers.leagueLeaders;
+  stack1 = foundHelper || depth0.leagueLeaders;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.pts);
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.name);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "leagueLeaders.pts.name", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</a>, <a href=\"/l/";
+  foundHelper = helpers.lid;
+  stack1 = foundHelper || depth0.lid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/roster/";
+  foundHelper = helpers.leagueLeaders;
+  stack1 = foundHelper || depth0.leagueLeaders;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.pts);
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.abbrev);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "leagueLeaders.pts.abbrev", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\">";
+  foundHelper = helpers.leagueLeaders;
+  stack1 = foundHelper || depth0.leagueLeaders;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.pts);
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.abbrev);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "leagueLeaders.pts.abbrev", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</a>: ";
+  stack1 = 1;
+  foundHelper = helpers.leagueLeaders;
+  stack2 = foundHelper || depth0.leagueLeaders;
+  stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.pts);
+  stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.stat);
+  foundHelper = helpers.round;
+  stack3 = foundHelper || depth0.round;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
+  buffer += escapeExpression(stack1) + " pts<br>\n      <a href=\"/l/";
+  foundHelper = helpers.lid;
+  stack1 = foundHelper || depth0.lid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/players/";
+  foundHelper = helpers.leagueLeaders;
+  stack1 = foundHelper || depth0.leagueLeaders;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.trb);
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.pid);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "leagueLeaders.trb.pid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\">";
+  foundHelper = helpers.leagueLeaders;
+  stack1 = foundHelper || depth0.leagueLeaders;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.trb);
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.name);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "leagueLeaders.trb.name", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</a>, <a href=\"/l/";
+  foundHelper = helpers.lid;
+  stack1 = foundHelper || depth0.lid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/roster/";
+  foundHelper = helpers.leagueLeaders;
+  stack1 = foundHelper || depth0.leagueLeaders;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.trb);
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.abbrev);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "leagueLeaders.trb.abbrev", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\">";
+  foundHelper = helpers.leagueLeaders;
+  stack1 = foundHelper || depth0.leagueLeaders;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.trb);
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.abbrev);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "leagueLeaders.trb.abbrev", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</a>: ";
+  stack1 = 1;
+  foundHelper = helpers.leagueLeaders;
+  stack2 = foundHelper || depth0.leagueLeaders;
+  stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.trb);
+  stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.stat);
+  foundHelper = helpers.round;
+  stack3 = foundHelper || depth0.round;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
+  buffer += escapeExpression(stack1) + " reb<br>\n      <a href=\"/l/";
+  foundHelper = helpers.lid;
+  stack1 = foundHelper || depth0.lid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/players/";
+  foundHelper = helpers.leagueLeaders;
+  stack1 = foundHelper || depth0.leagueLeaders;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.ast);
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.pid);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "leagueLeaders.ast.pid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\">";
+  foundHelper = helpers.leagueLeaders;
+  stack1 = foundHelper || depth0.leagueLeaders;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.ast);
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.name);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "leagueLeaders.ast.name", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</a>, <a href=\"/l/";
+  foundHelper = helpers.lid;
+  stack1 = foundHelper || depth0.lid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/roster/";
+  foundHelper = helpers.leagueLeaders;
+  stack1 = foundHelper || depth0.leagueLeaders;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.ast);
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.abbrev);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "leagueLeaders.ast.abbrev", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\">";
+  foundHelper = helpers.leagueLeaders;
+  stack1 = foundHelper || depth0.leagueLeaders;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.ast);
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.abbrev);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "leagueLeaders.ast.abbrev", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</a>: ";
+  stack1 = 1;
+  foundHelper = helpers.leagueLeaders;
+  stack2 = foundHelper || depth0.leagueLeaders;
+  stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.ast);
+  stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.stat);
+  foundHelper = helpers.round;
+  stack3 = foundHelper || depth0.round;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
+  buffer += escapeExpression(stack1) + " ast<br>\n      <a href=\"/l/";
   foundHelper = helpers.lid;
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }

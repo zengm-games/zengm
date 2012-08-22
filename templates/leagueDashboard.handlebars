@@ -42,26 +42,26 @@
   <div class="span4">
     <h3>Team Stats</h3>
     <p>
-      Points: {{ptsRank}}th ({{round pts 1}})<br>
-      Allowed: {{oppPtsRank}}th ({{round oppPts 1}})<br>
-      Rebounds: {{trbRank}}th ({{round trb 1}})<br>
-      Assists: {{astRank}}th ({{round ast 1}})<br>
+      Points: {{round pts 1}} ({{ptsRank}}th)<br>
+      Allowed: {{round oppPts 1}} ({{oppPtsRank}}th)<br>
+      Rebounds: {{round trb 1}} ({{trbRank}}th)<br>
+      Assists: {{round ast 1}} ({{astRank}}th)<br>
       <a href="/l/{{lid}}/team_stats">» Team Stats</a>
     </p>
 
     <h3>Team Leaders</h3>
     <p>
-      Bob Johnson: 14 pts<br>
-      Bob Johnson: 14 reb<br>
-      Bob Johnson: 14 ast<br>
+      <a href="/l/{{lid}}/players/{{teamLeaders.pts.pid}}">{{teamLeaders.pts.name}}</a>: {{round teamLeaders.pts.stat 1}} pts<br>
+      <a href="/l/{{lid}}/players/{{teamLeaders.trb.pid}}">{{teamLeaders.trb.name}}</a>: {{round teamLeaders.trb.stat 1}} reb<br>
+      <a href="/l/{{lid}}/players/{{teamLeaders.ast.pid}}">{{teamLeaders.ast.name}}</a>: {{round teamLeaders.ast.stat 1}} ast<br>
       <a href="/l/{{lid}}/roster">» Full Roster</a>
     </p>
 
     <h3>League Leaders</h3>
     <p>
-      Bob Johnson, ATL: 14 pts<br>
-      Bob Johnson, ATL: 14 reb<br>
-      Bob Johnson, ATL: 14 ast<br>
+      <a href="/l/{{lid}}/players/{{leagueLeaders.pts.pid}}">{{leagueLeaders.pts.name}}</a>, <a href="/l/{{lid}}/roster/{{leagueLeaders.pts.abbrev}}">{{leagueLeaders.pts.abbrev}}</a>: {{round leagueLeaders.pts.stat 1}} pts<br>
+      <a href="/l/{{lid}}/players/{{leagueLeaders.trb.pid}}">{{leagueLeaders.trb.name}}</a>, <a href="/l/{{lid}}/roster/{{leagueLeaders.trb.abbrev}}">{{leagueLeaders.trb.abbrev}}</a>: {{round leagueLeaders.trb.stat 1}} reb<br>
+      <a href="/l/{{lid}}/players/{{leagueLeaders.ast.pid}}">{{leagueLeaders.ast.name}}</a>, <a href="/l/{{lid}}/roster/{{leagueLeaders.ast.abbrev}}">{{leagueLeaders.ast.abbrev}}</a>: {{round leagueLeaders.ast.stat 1}} ast<br>
       <a href="/l/{{lid}}/leaders">» League Leaders</a><br>
       <a href="/l/{{lid}}/player_stats">» Player Stats</a>
     </p>

@@ -318,16 +318,47 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                                     }
                                 }
 
+                                g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
+                                    var attributes, i, leagueLeaders, players, ratings, stats, userPlayers;
 
-                                var data;
+                                    attributes = ["pid", "name", "abbrev", "tid"];
+                                    ratings = ["ovr", "pot"];
+                                    stats = ["pts", "trb", "ast"];  // This is also used later to find team/league leaders for these player stats
+                                    players = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings);
 
-                                data = {
-                                    container: "league_content",
-                                    template: "leagueDashboard",
-                                    title: "Dashboard",
-                                    vars: vars
+                                    vars.leagueLeaders = {};
+                                    for (i = 0; i < stats.length; i++) {
+                                        players.sort(function (a, b) {  return b[stats[i]] - a[stats[i]]; });
+                                        vars.leagueLeaders[stats[i]] = {
+                                            pid: players[0].pid,
+                                            name: players[0].name,
+                                            abbrev: players[0].abbrev,
+                                            stat: players[0][stats[i]]
+                                        };
+                                    }
+
+                                    userPlayers = _.filter(players, function (p) { return p.tid === g.userTid; });
+                                    vars.teamLeaders = {};
+                                    for (i = 0; i < stats.length; i++) {
+                                        userPlayers.sort(function (a, b) {  return b[stats[i]] - a[stats[i]]; });
+                                        vars.teamLeaders[stats[i]] = {
+                                            pid: userPlayers[0].pid,
+                                            name: userPlayers[0].name,
+                                            stat: userPlayers[0][stats[i]]
+                                        };
+                                    }
+console.log(vars.teamLeaders);
+
+                                    var data;
+
+                                    data = {
+                                        container: "league_content",
+                                        template: "leagueDashboard",
+                                        title: "Dashboard",
+                                        vars: vars
+                                    };
+                                    ui.update(data, req.raw.cb);
                                 };
-                                ui.update(data, req.raw.cb);
                             });
                         };
                     });

@@ -100,7 +100,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         };
     }
 
-    function new_league(req) {
+    function newLeague(req) {
         var tid;
 
         beforeNonLeague();
@@ -129,7 +129,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         }
     }
 
-    function delete_league(req) {
+    function deleteLeague(req) {
         var lid;
 
         lid = parseInt(req.params.lid, 10);
@@ -173,7 +173,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         }
     }
 
-    function league_dashboard(req) {
+    function leagueDashboard(req) {
         beforeLeague(req, function () {
             var data;
 
@@ -1271,10 +1271,10 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         init_db: init_db,
 
         dashboard: dashboard,
-        new_league: new_league,
-        delete_league: delete_league,
+        newLeague: newLeague,
+        deleteLeague: deleteLeague,
 
-        league_dashboard: league_dashboard,
+        leagueDashboard: leagueDashboard,
         standings: standings,
         playoffs: playoffs,
         finances: finances,

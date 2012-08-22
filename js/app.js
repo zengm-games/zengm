@@ -20,12 +20,12 @@ requirejs(["api", "db", "views", "ui", "util/helpers"], function (api, db, views
             // Non-league views
             this.get("/init_db", views.init_db);
             this.get("/", views.dashboard);
-            this.get("/new_league", views.new_league);
-            this.post("/new_league", views.new_league);
-            this.post("/delete_league", views.delete_league);
+            this.get("/new_league", views.newLeague);
+            this.post("/new_league", views.newLeague);
+            this.post("/delete_league", views.deleteLeague);
 
             // League views
-            this.get("/l/:lid", views.league_dashboard);
+            this.get("/l/:lid", views.leagueDashboard);
             this.get("/l/:lid/standings", views.standings);
             this.get("/l/:lid/standings/:season", views.standings);
             this.get("/l/:lid/playoffs", views.playoffs);

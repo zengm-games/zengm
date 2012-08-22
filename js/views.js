@@ -175,18 +175,21 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
     function leagueDashboard(req) {
         beforeLeague(req, function () {
-            var transaction;
+            var transaction, vars;
+
+            vars = {};
+            vars.season = g.season;
 
             transaction = g.dbl.transaction(["games", "players", "playoffSeries", "schedule", "teams"]);
 
             transaction.objectStore("teams").get(g.userTid).onsuccess = function (event) {
-                var attributes, seasonAttributes, stats, userTeam, vars;
+                var attributes, seasonAttributes, stats, userTeam;
 
                 userTeam = event.target.result;
 
-                vars = {};
                 vars.region = userTeam.region;
                 vars.name = userTeam.name;
+                vars.abbrev = userTeam.abbrev;
 
                 attributes = ["tid", "cid", "region", "name"];
                 stats = ["pts", "trb", "ast", "oppPts"];
@@ -199,8 +202,6 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     vars.streakLong = teams[g.userTid].streakLong;
 
                     vars.rank = 1;
-console.dir(teams);
-console.log(userTeam);
                     for (i = 0; i < teams.length; i++) {
                         if (teams[i].cid === userTeam.cid) {
                             if (teams[i].tid === userTeam.tid) {
@@ -211,15 +212,62 @@ console.log(userTeam);
                         }
                     }
 
-                    var data;
+                    transaction.objectStore("games").index("season").getAll(g.season).onsuccess = function (event) {
+                        var game, games, i, tidMatch;
 
-                    data = {
-                        container: "league_content",
-                        template: "leagueDashboard",
-                        title: "Dashboard",
-                        vars: vars
+                        games = event.target.result;
+                        games.reverse();  // Look through most recent games first
+
+                        vars.recentGames = [];
+
+                        for (i = 0; i < games.length; i++) {
+                            // Check tid
+                            tidMatch = false;
+                            if (games[i].teams[0].tid === g.userTid) {
+                                tidMatch = true;
+                                game = {
+                                    gid: games[i].gid,
+                                    home: true,
+                                    pts: games[i].teams[0].pts,
+                                    oppPts: games[i].teams[1].pts,
+                                    oppAbbrev: helpers.getAbbrev(games[i].teams[1].tid)
+                                };
+                            } else if (games[i].teams[1].tid === g.userTid) {
+                                tidMatch = true;
+                                game = {
+                                    gid: games[i].gid,
+                                    home: false,
+                                    pts: games[i].teams[1].pts,
+                                    oppPts: games[i].teams[0].pts,
+                                    oppAbbrev: helpers.getAbbrev(games[i].teams[0].tid)
+                                };
+                            }
+
+                            if (tidMatch) {
+                                if (game.pts > game.oppPts) {
+                                    game.won = true;
+                                } else {
+                                    game.won = false;
+                                }
+                                vars.recentGames.push(game);
+                            }
+
+                            if (vars.recentGames.length === 3) {
+                                break;
+                            }
+                        }
+                        vars.recentGames.reverse();  // Show most recent displayed game last
+
+                        var data;
+
+                        data = {
+                            container: "league_content",
+                            template: "leagueDashboard",
+                            title: "Dashboard",
+                            vars: vars
+                        };
+                        ui.update(data, req.raw.cb);
                     };
-                    ui.update(data, req.raw.cb);
                 });
             };
         });

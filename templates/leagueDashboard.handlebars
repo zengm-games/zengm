@@ -10,16 +10,17 @@
 
     <h2>Playoffs</h2>
     <p>
-      {{rank}}th place in conference<vr>
+      {{rank}}th place in conference<br>
       (Top 8 teams make the playoffs)<br>
       <a href="/l/{{lid}}/playoffs">» Playoff Projections (or Playoffs)</a>
     </p>
 
     <h2>Recent Games</h2>
     <p>
-      @DET L 67-102<br>
-      PHI L 67-102<br>
-      SAC W 88-62<br>
+      {{#unless recentGames}}No games yet this season.<br>{{/unless}}
+      {{#recentGames}}
+        {{#unless home}}@{{/unless}}<a href="/l/{{../lid}}/roster/{{oppAbbrev}}">{{oppAbbrev}}</a> {{#if won}}W{{else}}L{{/if}} <a href="/l/{{../lid}}/game_log/{{../abbrev}}/{{../season}}/{{gid}}">{{pts}}-{{oppPts}}</a><br>
+      {{/recentGames}}
       <a href="/l/{{lid}}/game_log">» Game Log</a><br>
       Next: @WAS (only show if applicable)<br>
       <a href="/l/{{lid}}/standings">» Schedule</a> (only show if applicable)

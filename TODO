@@ -58,6 +58,7 @@ league database error when playoffs end
 - is it only the first year, and is it due to retiring players?
 game simulation stops when a link is clicked, but then restarts when another link is clicked? wtf
 - This seems to generally work now, but it's not perfect. If you do any action that writes to the database, such as reordering the roster, something bad could happen because IndexedDB doesn't like multiple writes going on at the same time
+sometimes deleting leagues or resetting db fails, i think because some open connection is blocking it, but i don't know why
 
 ---
 

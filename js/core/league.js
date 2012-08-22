@@ -146,7 +146,7 @@ define(["db", "ui", "core/player", "core/season", "util/helpers", "util/random"]
     function remove(lid, cb) {
         var request;
 
-        if (typeof g.dbl !== "undefined" && g.lid === lid) {
+        if (typeof g.dbl !== "undefined") {
             g.dbl.close();
         }
 
@@ -156,8 +156,12 @@ define(["db", "ui", "core/player", "core/season", "util/helpers", "util/random"]
             console.log("Database league" + lid + " successfully deleted");
             cb();
         };
-        request.onfailure = function (event) {        
-            console.log("myError: ", event);
+        request.onfailure = function (event) {
+            console.log("Error: ", event);
+            cb();
+        };
+        request.onblocked = function (event) {
+            console.log("Blocked: ", event);
             cb();
         };
         localStorage.removeItem("league" + g.lid + "GameAttributes");

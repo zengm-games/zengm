@@ -2,8 +2,11 @@
 
 <p>Are you <em>absolutely</em> sure you want to delete League {{lid}}? You will <em>permanently</em> lose any record of all {{numSeasons}} seasons, {{numPlayers}} players, and {{numGames}} games from this league (well... unless you have backup somewhere).</p>
 
-<form action="/delete_league" method="post">
+<form action="/delete_league" method="post" style="float: left; margin-right: 1em">
   <input type="hidden" name="lid" value="{{lid}}">
   <input type="hidden" name="confirm" value="1">
-  <button class="btn">Yes, I am sure! Delete League {{lid}}.</button>
+  <button class="btn btn-danger">Yes, I am sure! Delete League {{lid}}.</button>
+</form>
+<form action="/" method="get">
+  <button class="btn">Cancel</button>
 </form>

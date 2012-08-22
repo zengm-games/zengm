@@ -194,13 +194,11 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                 vars.abbrev = userTeam.abbrev;
                 vars.won = userTeamSeason.won;
                 vars.lost = userTeamSeason.lost;
-                vars.att = userTeamSeason.att;
                 vars.cash = userTeamSeason.cash / 1000000;
 
                 vars.recentHistory = [];
                 // 3 most recent years
                 for (i = userTeam.seasons.length - 2; i > userTeam.seasons.length - 5 && i >= 0; i--) {
-                    console.log(i);
                     extraText = "";
                     if (userTeam.seasons[i].leagueChamps) {
                         extraText = "league champs";
@@ -217,7 +215,6 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                         extraText: extraText
                     });
                 }
-                console.log(vars.recentHistory)
 
                 db.getPayroll(transaction, g.userTid, function (payroll) {
                     var attributes, seasonAttributes, stats;
@@ -226,13 +223,9 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
                     attributes = ["tid", "cid"];
                     stats = ["pts", "oppPts", "trb", "ast"];  // This is also used later to find ranks for these team stats
-                    seasonAttributes = ["won", "lost", "winp", "streakLong", "revenue", "profit"];
+                    seasonAttributes = ["won", "lost", "winp", "streakLong", "att", "revenue", "profit"];
                     db.getTeams(transaction, g.season, attributes, stats, seasonAttributes, "winp", function (teams) {
                         var i, j, ranks;
-
-                        vars.streakLong = teams[g.userTid].streakLong;
-                        vars.revenue = teams[g.userTid].revenue;
-                        vars.profit = teams[g.userTid].profit;
 
                         vars.rank = 1;
                         for (i = 0; i < teams.length; i++) {
@@ -242,6 +235,11 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                                     vars.oppPts = teams[i].oppPts;
                                     vars.trb = teams[i].trb;
                                     vars.ast = teams[i].ast;
+
+                                    vars.streakLong = teams[i].streakLong;
+                                    vars.att = teams[i].att;
+                                    vars.revenue = teams[i].revenue;
+                                    vars.profit = teams[i].profit;
                                     break;
                                 } else {
                                     vars.rank += 1;
@@ -258,6 +256,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                                 }
                             }
                         }
+                        vars.oppPtsRank = 30 - vars.oppPtsRank;
 
                         transaction.objectStore("games").index("season").getAll(g.season).onsuccess = function (event) {
                             var game, games, i, tidMatch;
@@ -302,17 +301,34 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                                     break;
                                 }
                             }
-                            vars.recentGames.reverse();  // Show most recent displayed game last
 
-                            var data;
+                            season.getSchedule(transaction, 0, function (schedule) {
+                                var i;
 
-                            data = {
-                                container: "league_content",
-                                template: "leagueDashboard",
-                                title: "Dashboard",
-                                vars: vars
-                            };
-                            ui.update(data, req.raw.cb);
+                                vars.nextGameAbbrev = "";
+                                vars.nextGameHome = false;
+                                for (i = 0; i < schedule.length; i++) {
+                                    if (schedule[i].homeTid === g.userTid) {
+                                        vars.nextGameAbbrev = schedule[i].awayAbbrev;
+                                        vars.nextGameHome = true;
+                                        break;
+                                    } else if (schedule[i].awayTid === g.userTid) {
+                                        vars.nextGameAbbrev = schedule[i].homeAbbrev;
+                                        break;
+                                    }
+                                }
+
+
+                                var data;
+
+                                data = {
+                                    container: "league_content",
+                                    template: "leagueDashboard",
+                                    title: "Dashboard",
+                                    vars: vars
+                                };
+                                ui.update(data, req.raw.cb);
+                            });
                         };
                     });
                 });

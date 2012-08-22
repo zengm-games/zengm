@@ -2,42 +2,45 @@
 
 <div class="row-fluid">
   <div class="span4">
-    <h2>Current Record</h2>
+    <h3>Current Record</h3>
     <p>
       {{won}}-{{lost}}{{#if streakLong}}, {{streakLong}}{{/if}}<br>
       <a href="/l/{{lid}}/standings">» Standings</a>
     </p>
 
-    <h2>Playoffs</h2>
+    <h3>Playoffs</h3>
     <p>
       {{rank}}th place in conference<br>
       (Top 8 teams make the playoffs)<br>
       <a href="/l/{{lid}}/playoffs">» Playoff Projections (or Playoffs)</a>
     </p>
 
-    <h2>Recent Games</h2>
+    <h3>Recent Games</h3>
     <p>
-      {{#unless recentGames}}No games yet this season.<br>{{/unless}}
+      {{#if nextGameAbbrev}}
+        Next Game: {{#unless nextGameHome}}@{{/unless}}<a href="/l/{{lid}}/roster/{{nextGameAbbrev}}">{{nextGameAbbrev}}</a><br>
+      {{/if}}
+      {{#unless recentGames}}No completed games yet this season.<br>{{/unless}}
       {{#recentGames}}
         {{#unless home}}@{{/unless}}<a href="/l/{{../lid}}/roster/{{oppAbbrev}}">{{oppAbbrev}}</a> {{#if won}}won{{else}}lost{{/if}} <a href="/l/{{../lid}}/game_log/{{../abbrev}}/{{../season}}/{{gid}}">{{pts}}-{{oppPts}}</a><br>
       {{/recentGames}}
       <a href="/l/{{lid}}/game_log">» Game Log</a><br>
-      Next: @WAS (only show if applicable)<br>
-      <a href="/l/{{lid}}/standings">» Schedule</a> (only show if applicable)
+      <a href="/l/{{lid}}/standings">» Schedule</a>
     </p>
 
-    <h2>Recent History</h2>
+    <h3>Recent History</h3>
     <p>
+      {{#unless recentGames}}None yet.<br>{{/unless}}
       {{#recentHistory}}
         <a href="/l/{{../lid}}/roster/{{../abbrev}}/{{season}}">{{season}}</a>: <a href="/l/{{../lid}}/standings/{{season}}">{{won}}-{{lost}}</a>{{#if extraText}}, <a href="/l/{{../../lid}}/playoffs/{{season}}">{{extraText}}</a>{{/if}}<br>
       {{/recentHistory}}
-      <a href="/l/{{lid}}/team_history">» Full Team History</a><br>
+      <a href="/l/{{lid}}/team_history">» Team History</a><br>
       <a href="/l/{{lid}}/history">» League History</a>
     </p>
 
   </div>
   <div class="span4">
-    <h2>Team Stats</h2>
+    <h3>Team Stats</h3>
     <p>
       Points: {{ptsRank}}th ({{round pts 1}})<br>
       Allowed: {{oppPtsRank}}th ({{round oppPts 1}})<br>
@@ -46,7 +49,7 @@
       <a href="/l/{{lid}}/team_stats">» Team Stats</a>
     </p>
 
-    <h2>Team Leaders</h2>
+    <h3>Team Leaders</h3>
     <p>
       Bob Johnson: 14 pts<br>
       Bob Johnson: 14 reb<br>
@@ -54,17 +57,17 @@
       <a href="/l/{{lid}}/roster">» Full Roster</a>
     </p>
 
-    <h2>League Leaders</h2>
+    <h3>League Leaders</h3>
     <p>
       Bob Johnson, ATL: 14 pts<br>
       Bob Johnson, ATL: 14 reb<br>
       Bob Johnson, ATL: 14 ast<br>
       <a href="/l/{{lid}}/leaders">» League Leaders</a><br>
-      <a href="/l/{{lid}}/player_stats">» All Player Stats</a>
+      <a href="/l/{{lid}}/player_stats">» Player Stats</a>
     </p>
   </div>
   <div class="span4">
-    <h2>Expiring Contracts</h2>
+    <h3>Expiring Contracts</h3>
     <p>
       Bob Johnson: 27 yo, 15 pts<br>
       Bob Johnson: 27 yo, 15 pts<br>
@@ -72,7 +75,7 @@
       <a href="/l/{{lid}}/roster">» Full Roster</a>
     </p>
 
-    <h2>Finances</h2>
+    <h3>Finances</h3>
     <p>
       Avg Attendance: {{round att}}<br>
       Revenue (YTD): ${{round revenue 1}}M<br>
@@ -83,7 +86,7 @@
       <a href="/l/{{lid}}/finances">» League Finances</a>
     </p>
 
-    <h2>Top Free Agents</h2>
+    <h3>Top Free Agents</h3>
     <p>
       Bob Johnson: 68 ovr, 71 pot<br>
       Bob Johnson: 68 ovr, 71 pot<br>

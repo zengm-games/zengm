@@ -1499,17 +1499,52 @@ function program1(depth0,data) {
 
 function program3(depth0,data) {
   
+  var buffer = "", stack1, stack2;
+  buffer += "\n        Next Game: ";
+  foundHelper = helpers.nextGameHome;
+  stack1 = foundHelper || depth0.nextGameHome;
+  stack2 = helpers.unless;
+  tmp1 = self.program(4, program4, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "<a href=\"/l/";
+  foundHelper = helpers.lid;
+  stack1 = foundHelper || depth0.lid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/roster/";
+  foundHelper = helpers.nextGameAbbrev;
+  stack1 = foundHelper || depth0.nextGameAbbrev;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "nextGameAbbrev", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\">";
+  foundHelper = helpers.nextGameAbbrev;
+  stack1 = foundHelper || depth0.nextGameAbbrev;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "nextGameAbbrev", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</a><br>\n      ";
+  return buffer;}
+function program4(depth0,data) {
   
-  return "No games yet this season.<br>";}
+  
+  return "@";}
 
-function program5(depth0,data,depth1) {
+function program6(depth0,data) {
+  
+  
+  return "No completed games yet this season.<br>";}
+
+function program8(depth0,data,depth1) {
   
   var buffer = "", stack1, stack2;
   buffer += "\n        ";
   foundHelper = helpers.home;
   stack1 = foundHelper || depth0.home;
   stack2 = helpers.unless;
-  tmp1 = self.program(6, program6, data);
+  tmp1 = self.program(9, program9, data);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;
@@ -1534,10 +1569,10 @@ function program5(depth0,data,depth1) {
   foundHelper = helpers.won;
   stack1 = foundHelper || depth0.won;
   stack2 = helpers['if'];
-  tmp1 = self.program(8, program8, data);
+  tmp1 = self.program(11, program11, data);
   tmp1.hash = {};
   tmp1.fn = tmp1;
-  tmp1.inverse = self.program(10, program10, data);
+  tmp1.inverse = self.program(13, program13, data);
   stack1 = stack2.call(depth0, stack1, tmp1);
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += " <a href=\"/l/";
@@ -1572,22 +1607,27 @@ function program5(depth0,data,depth1) {
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "oppPts", { hash: {} }); }
   buffer += escapeExpression(stack1) + "</a><br>\n      ";
   return buffer;}
-function program6(depth0,data) {
+function program9(depth0,data) {
   
   
   return "@";}
 
-function program8(depth0,data) {
+function program11(depth0,data) {
   
   
   return "won";}
 
-function program10(depth0,data) {
+function program13(depth0,data) {
   
   
   return "lost";}
 
-function program12(depth0,data,depth1) {
+function program15(depth0,data) {
+  
+  
+  return "None yet.<br>";}
+
+function program17(depth0,data,depth1) {
   
   var buffer = "", stack1, stack2;
   buffer += "\n        <a href=\"/l/";
@@ -1634,7 +1674,7 @@ function program12(depth0,data,depth1) {
   foundHelper = helpers.extraText;
   stack1 = foundHelper || depth0.extraText;
   stack2 = helpers['if'];
-  tmp1 = self.programWithDepth(program13, data, depth1);
+  tmp1 = self.programWithDepth(program18, data, depth1);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;
@@ -1642,7 +1682,7 @@ function program12(depth0,data,depth1) {
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "<br>\n      ";
   return buffer;}
-function program13(depth0,data,depth2) {
+function program18(depth0,data,depth2) {
   
   var buffer = "", stack1;
   buffer += ", <a href=\"/l/";
@@ -1673,7 +1713,7 @@ function program13(depth0,data,depth2) {
   stack1 = foundHelper || depth0.name;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "name", { hash: {} }); }
-  buffer += escapeExpression(stack1) + " Dashboard</h1>\n\n<div class=\"row-fluid\">\n  <div class=\"span4\">\n    <h2>Current Record</h2>\n    <p>\n      ";
+  buffer += escapeExpression(stack1) + " Dashboard</h1>\n\n<div class=\"row-fluid\">\n  <div class=\"span4\">\n    <h3>Current Record</h3>\n    <p>\n      ";
   foundHelper = helpers.won;
   stack1 = foundHelper || depth0.won;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -1698,7 +1738,7 @@ function program13(depth0,data,depth2) {
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/standings\">» Standings</a>\n    </p>\n\n    <h2>Playoffs</h2>\n    <p>\n      ";
+  buffer += escapeExpression(stack1) + "/standings\">» Standings</a>\n    </p>\n\n    <h3>Playoffs</h3>\n    <p>\n      ";
   foundHelper = helpers.rank;
   stack1 = foundHelper || depth0.rank;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -1708,10 +1748,10 @@ function program13(depth0,data,depth2) {
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/playoffs\">» Playoff Projections (or Playoffs)</a>\n    </p>\n\n    <h2>Recent Games</h2>\n    <p>\n      ";
-  foundHelper = helpers.recentGames;
-  stack1 = foundHelper || depth0.recentGames;
-  stack2 = helpers.unless;
+  buffer += escapeExpression(stack1) + "/playoffs\">» Playoff Projections (or Playoffs)</a>\n    </p>\n\n    <h3>Recent Games</h3>\n    <p>\n      ";
+  foundHelper = helpers.nextGameAbbrev;
+  stack1 = foundHelper || depth0.nextGameAbbrev;
+  stack2 = helpers['if'];
   tmp1 = self.program(3, program3, data);
   tmp1.hash = {};
   tmp1.fn = tmp1;
@@ -1721,7 +1761,17 @@ function program13(depth0,data,depth2) {
   buffer += "\n      ";
   foundHelper = helpers.recentGames;
   stack1 = foundHelper || depth0.recentGames;
-  tmp1 = self.programWithDepth(program5, data, depth0);
+  stack2 = helpers.unless;
+  tmp1 = self.program(6, program6, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n      ";
+  foundHelper = helpers.recentGames;
+  stack1 = foundHelper || depth0.recentGames;
+  tmp1 = self.programWithDepth(program8, data, depth0);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;
@@ -1733,15 +1783,25 @@ function program13(depth0,data,depth2) {
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/game_log\">» Game Log</a><br>\n      Next: @WAS (only show if applicable)<br>\n      <a href=\"/l/";
+  buffer += escapeExpression(stack1) + "/game_log\">» Game Log</a><br>\n      <a href=\"/l/";
   foundHelper = helpers.lid;
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/standings\">» Schedule</a> (only show if applicable)\n    </p>\n\n    <h2>Recent History</h2>\n    <p>\n      ";
+  buffer += escapeExpression(stack1) + "/standings\">» Schedule</a>\n    </p>\n\n    <h3>Recent History</h3>\n    <p>\n      ";
+  foundHelper = helpers.recentGames;
+  stack1 = foundHelper || depth0.recentGames;
+  stack2 = helpers.unless;
+  tmp1 = self.program(15, program15, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n      ";
   foundHelper = helpers.recentHistory;
   stack1 = foundHelper || depth0.recentHistory;
-  tmp1 = self.programWithDepth(program12, data, depth0);
+  tmp1 = self.programWithDepth(program17, data, depth0);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;
@@ -1753,12 +1813,12 @@ function program13(depth0,data,depth2) {
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/team_history\">» Full Team History</a><br>\n      <a href=\"/l/";
+  buffer += escapeExpression(stack1) + "/team_history\">» Team History</a><br>\n      <a href=\"/l/";
   foundHelper = helpers.lid;
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/history\">» League History</a>\n    </p>\n\n  </div>\n  <div class=\"span4\">\n    <h2>Team Stats</h2>\n    <p>\n      Points: ";
+  buffer += escapeExpression(stack1) + "/history\">» League History</a>\n    </p>\n\n  </div>\n  <div class=\"span4\">\n    <h3>Team Stats</h3>\n    <p>\n      Points: ";
   foundHelper = helpers.ptsRank;
   stack1 = foundHelper || depth0.ptsRank;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -1819,12 +1879,12 @@ function program13(depth0,data,depth2) {
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/team_stats\">» Team Stats</a>\n    </p>\n\n    <h2>Team Leaders</h2>\n    <p>\n      Bob Johnson: 14 pts<br>\n      Bob Johnson: 14 reb<br>\n      Bob Johnson: 14 ast<br>\n      <a href=\"/l/";
+  buffer += escapeExpression(stack1) + "/team_stats\">» Team Stats</a>\n    </p>\n\n    <h3>Team Leaders</h3>\n    <p>\n      Bob Johnson: 14 pts<br>\n      Bob Johnson: 14 reb<br>\n      Bob Johnson: 14 ast<br>\n      <a href=\"/l/";
   foundHelper = helpers.lid;
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/roster\">» Full Roster</a>\n    </p>\n\n    <h2>League Leaders</h2>\n    <p>\n      Bob Johnson, ATL: 14 pts<br>\n      Bob Johnson, ATL: 14 reb<br>\n      Bob Johnson, ATL: 14 ast<br>\n      <a href=\"/l/";
+  buffer += escapeExpression(stack1) + "/roster\">» Full Roster</a>\n    </p>\n\n    <h3>League Leaders</h3>\n    <p>\n      Bob Johnson, ATL: 14 pts<br>\n      Bob Johnson, ATL: 14 reb<br>\n      Bob Johnson, ATL: 14 ast<br>\n      <a href=\"/l/";
   foundHelper = helpers.lid;
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -1834,12 +1894,12 @@ function program13(depth0,data,depth2) {
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/player_stats\">» All Player Stats</a>\n    </p>\n  </div>\n  <div class=\"span4\">\n    <h2>Expiring Contracts</h2>\n    <p>\n      Bob Johnson: 27 yo, 15 pts<br>\n      Bob Johnson: 27 yo, 15 pts<br>\n      Bob Johnson: 27 yo, 15 pts<br>\n      <a href=\"/l/";
+  buffer += escapeExpression(stack1) + "/player_stats\">» Player Stats</a>\n    </p>\n  </div>\n  <div class=\"span4\">\n    <h3>Expiring Contracts</h3>\n    <p>\n      Bob Johnson: 27 yo, 15 pts<br>\n      Bob Johnson: 27 yo, 15 pts<br>\n      Bob Johnson: 27 yo, 15 pts<br>\n      <a href=\"/l/";
   foundHelper = helpers.lid;
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/roster\">» Full Roster</a>\n    </p>\n\n    <h2>Finances</h2>\n    <p>\n      Avg Attendance: ";
+  buffer += escapeExpression(stack1) + "/roster\">» Full Roster</a>\n    </p>\n\n    <h3>Finances</h3>\n    <p>\n      Avg Attendance: ";
   foundHelper = helpers.att;
   stack1 = foundHelper || depth0.att;
   foundHelper = helpers.round;
@@ -1897,7 +1957,7 @@ function program13(depth0,data,depth2) {
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/finances\">» League Finances</a>\n    </p>\n\n    <h2>Top Free Agents</h2>\n    <p>\n      Bob Johnson: 68 ovr, 71 pot<br>\n      Bob Johnson: 68 ovr, 71 pot<br>\n      Bob Johnson: 68 ovr, 71 pot<br>\n      (You have {numRosterSpots} open roster spots)<br>\n      <a href=\"/l/";
+  buffer += escapeExpression(stack1) + "/finances\">» League Finances</a>\n    </p>\n\n    <h3>Top Free Agents</h3>\n    <p>\n      Bob Johnson: 68 ovr, 71 pot<br>\n      Bob Johnson: 68 ovr, 71 pot<br>\n      Bob Johnson: 68 ovr, 71 pot<br>\n      (You have {numRosterSpots} open roster spots)<br>\n      <a href=\"/l/";
   foundHelper = helpers.lid;
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }

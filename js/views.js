@@ -321,11 +321,12 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                                 g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
                                     var attributes, i, leagueLeaders, players, ratings, stats, userPlayers;
 
-                                    attributes = ["pid", "name", "abbrev", "tid"];
+                                    attributes = ["pid", "name", "abbrev", "tid", "age", "contractAmount", "contractExp", "rosterOrder"];
                                     ratings = ["ovr", "pot"];
                                     stats = ["pts", "trb", "ast"];  // This is also used later to find team/league leaders for these player stats
                                     players = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings);
 
+                                    // League leaders
                                     vars.leagueLeaders = {};
                                     for (i = 0; i < stats.length; i++) {
                                         players.sort(function (a, b) {  return b[stats[i]] - a[stats[i]]; });
@@ -337,6 +338,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                                         };
                                     }
 
+                                    // Team leaders
                                     userPlayers = _.filter(players, function (p) { return p.tid === g.userTid; });
                                     vars.teamLeaders = {};
                                     for (i = 0; i < stats.length; i++) {
@@ -346,6 +348,23 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                                             name: userPlayers[0].name,
                                             stat: userPlayers[0][stats[i]]
                                         };
+                                    }
+
+                                    // Expiring contracts
+                                    userPlayers.sort(function (a, b) {  return a.rosterOrder - b.rosterOrder; });
+                                    vars.expiring = [];
+                                    for (i = 0; i < userPlayers.length; i++) {
+                                        if (userPlayers[i].contractExp === g.season) {
+                                            vars.expiring.push({
+                                                pid: userPlayers[i].pid,
+                                                name: userPlayers[i].name,
+                                                age: userPlayers[i].age,
+                                                pts: userPlayers[i].pts,
+                                                contractAmount: userPlayers[i].contractAmount,
+                                                ovr: userPlayers[i].ovr,
+                                                pot: userPlayers[i].pot
+                                            });
+                                        }
                                     }
 
                                     var data;

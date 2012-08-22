@@ -4,9 +4,9 @@ main todo
     - playoff series: if it's after the playoffs have started and the user's team made the playoffs, show most recent playoff series
     - player objects for this year
       - can index on tid to return only free agents and active players, since only the current year is shown, retired players don't matter
-      - filter for user's team: expiring contracts
       - filter for free agents: free agents
   - rankings should say 1st, 2nd, 3rd rather than 1th, 2th, 3th
+  - expiring contracts should be for next year after free agency starts
   - show more info for expiring contracts, like salary, ovr, pot?
   - next game should show something when active in playoffs, a message at least
   - does streak and games list always match up? doesn't seem to. why?
@@ -18,6 +18,7 @@ main todo
 - bootstrap 2.1 contract negotiation view
 - show payroll in roster view
 - refactor game log list (like league dashboard, getAll?)
+  - why is it so slow? slower than dashboard, even
 - core.game is messy and should be rewritten
 - let free agents stay for 2 seasons before retiring, or make retirement probabilistic
 - nba roster

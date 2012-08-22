@@ -69,9 +69,10 @@
   <div class="span4">
     <h3>Expiring Contracts</h3>
     <p>
-      Bob Johnson: 27 yo, 15 pts<br>
-      Bob Johnson: 27 yo, 15 pts<br>
-      Bob Johnson: 27 yo, 15 pts<br>
+      {{#expiring}}
+        <a href="/l/{{../lid}}/players/{{pid}}">{{name}}</a>: {{age}} yo, ${{round contractAmount 1}}M<br>
+        <span style="margin-left: 2em">{{round pts 1}} pts, {{ovr}} ovr, {{pot}} pot</span><br>
+      {{/expiring}}
       <a href="/l/{{lid}}/roster">» Full Roster</a>
     </p>
 

@@ -179,95 +179,142 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
             vars = {};
             vars.season = g.season;
+            vars.salaryCap = g.salaryCap / 1000;
 
-            transaction = g.dbl.transaction(["games", "players", "playoffSeries", "schedule", "teams"]);
+            transaction = g.dbl.transaction(["games", "players", "playoffSeries", "releasedPlayers", "schedule", "teams"]);
 
             transaction.objectStore("teams").get(g.userTid).onsuccess = function (event) {
-                var attributes, seasonAttributes, stats, userTeam;
+                var extraText, i, userTeam, userTeamSeason;
 
                 userTeam = event.target.result;
+                userTeamSeason = _.last(userTeam.seasons);
 
                 vars.region = userTeam.region;
                 vars.name = userTeam.name;
                 vars.abbrev = userTeam.abbrev;
+                vars.won = userTeamSeason.won;
+                vars.lost = userTeamSeason.lost;
+                vars.att = userTeamSeason.att;
+                vars.cash = userTeamSeason.cash / 1000000;
 
-                attributes = ["tid", "cid", "region", "name"];
-                stats = ["pts", "trb", "ast", "oppPts"];
-                seasonAttributes = ["won", "lost", "winp", "streakLong"];
-                db.getTeams(transaction, g.season, attributes, stats, seasonAttributes, "winp", function (teams) {
-                    var i;
-
-                    vars.won = teams[g.userTid].won;
-                    vars.lost = teams[g.userTid].lost;
-                    vars.streakLong = teams[g.userTid].streakLong;
-
-                    vars.rank = 1;
-                    for (i = 0; i < teams.length; i++) {
-                        if (teams[i].cid === userTeam.cid) {
-                            if (teams[i].tid === userTeam.tid) {
-                                break;
-                            } else {
-                                vars.rank += 1;
-                            }
-                        }
+                vars.recentHistory = [];
+                // 3 most recent years
+                for (i = userTeam.seasons.length - 2; i > userTeam.seasons.length - 5 && i >= 0; i--) {
+                    console.log(i);
+                    extraText = "";
+                    if (userTeam.seasons[i].leagueChamps) {
+                        extraText = "league champs";
+                    } else if (userTeam.seasons[i].confChamps) {
+                        extraText = "conference champs";
+                    } else if (userTeam.seasons[i].madePlayoffs) {
+                        extraText = "made playoffs";
                     }
 
-                    transaction.objectStore("games").index("season").getAll(g.season).onsuccess = function (event) {
-                        var game, games, i, tidMatch;
+                    vars.recentHistory.push({
+                        season: userTeam.seasons[i].season,
+                        won: userTeam.seasons[i].won,
+                        lost: userTeam.seasons[i].lost,
+                        extraText: extraText
+                    });
+                }
+                console.log(vars.recentHistory)
 
-                        games = event.target.result;
-                        games.reverse();  // Look through most recent games first
+                db.getPayroll(transaction, g.userTid, function (payroll) {
+                    var attributes, seasonAttributes, stats;
 
-                        vars.recentGames = [];
+                    vars.payroll = payroll / 1000;
 
-                        for (i = 0; i < games.length; i++) {
-                            // Check tid
-                            tidMatch = false;
-                            if (games[i].teams[0].tid === g.userTid) {
-                                tidMatch = true;
-                                game = {
-                                    gid: games[i].gid,
-                                    home: true,
-                                    pts: games[i].teams[0].pts,
-                                    oppPts: games[i].teams[1].pts,
-                                    oppAbbrev: helpers.getAbbrev(games[i].teams[1].tid)
-                                };
-                            } else if (games[i].teams[1].tid === g.userTid) {
-                                tidMatch = true;
-                                game = {
-                                    gid: games[i].gid,
-                                    home: false,
-                                    pts: games[i].teams[1].pts,
-                                    oppPts: games[i].teams[0].pts,
-                                    oppAbbrev: helpers.getAbbrev(games[i].teams[0].tid)
-                                };
-                            }
+                    attributes = ["tid", "cid"];
+                    stats = ["pts", "oppPts", "trb", "ast"];  // This is also used later to find ranks for these team stats
+                    seasonAttributes = ["won", "lost", "winp", "streakLong", "revenue", "profit"];
+                    db.getTeams(transaction, g.season, attributes, stats, seasonAttributes, "winp", function (teams) {
+                        var i, j, ranks;
 
-                            if (tidMatch) {
-                                if (game.pts > game.oppPts) {
-                                    game.won = true;
+                        vars.streakLong = teams[g.userTid].streakLong;
+                        vars.revenue = teams[g.userTid].revenue;
+                        vars.profit = teams[g.userTid].profit;
+
+                        vars.rank = 1;
+                        for (i = 0; i < teams.length; i++) {
+                            if (teams[i].cid === userTeam.cid) {
+                                if (teams[i].tid === g.userTid) {
+                                    vars.pts = teams[i].pts;
+                                    vars.oppPts = teams[i].oppPts;
+                                    vars.trb = teams[i].trb;
+                                    vars.ast = teams[i].ast;
+                                    break;
                                 } else {
-                                    game.won = false;
+                                    vars.rank += 1;
                                 }
-                                vars.recentGames.push(game);
-                            }
-
-                            if (vars.recentGames.length === 3) {
-                                break;
                             }
                         }
-                        vars.recentGames.reverse();  // Show most recent displayed game last
 
-                        var data;
+                        for (i = 0; i < stats.length; i++) {
+                            teams.sort(function (a, b) {  return b[stats[i]] - a[stats[i]]; });
+                            for (j = 0; j < teams.length; j++) {
+                                if (teams[j].tid === g.userTid) {
+                                    vars[stats[i] + "Rank"] = j + 1;
+                                    break;
+                                }
+                            }
+                        }
 
-                        data = {
-                            container: "league_content",
-                            template: "leagueDashboard",
-                            title: "Dashboard",
-                            vars: vars
+                        transaction.objectStore("games").index("season").getAll(g.season).onsuccess = function (event) {
+                            var game, games, i, tidMatch;
+
+                            games = event.target.result;
+                            games.reverse();  // Look through most recent games first
+
+                            vars.recentGames = [];
+                            for (i = 0; i < games.length; i++) {
+                                // Check tid
+                                tidMatch = false;
+                                if (games[i].teams[0].tid === g.userTid) {
+                                    tidMatch = true;
+                                    game = {
+                                        gid: games[i].gid,
+                                        home: true,
+                                        pts: games[i].teams[0].pts,
+                                        oppPts: games[i].teams[1].pts,
+                                        oppAbbrev: helpers.getAbbrev(games[i].teams[1].tid)
+                                    };
+                                } else if (games[i].teams[1].tid === g.userTid) {
+                                    tidMatch = true;
+                                    game = {
+                                        gid: games[i].gid,
+                                        home: false,
+                                        pts: games[i].teams[1].pts,
+                                        oppPts: games[i].teams[0].pts,
+                                        oppAbbrev: helpers.getAbbrev(games[i].teams[0].tid)
+                                    };
+                                }
+
+                                if (tidMatch) {
+                                    if (game.pts > game.oppPts) {
+                                        game.won = true;
+                                    } else {
+                                        game.won = false;
+                                    }
+                                    vars.recentGames.push(game);
+                                }
+
+                                if (vars.recentGames.length === 3) {
+                                    break;
+                                }
+                            }
+                            vars.recentGames.reverse();  // Show most recent displayed game last
+
+                            var data;
+
+                            data = {
+                                container: "league_content",
+                                template: "leagueDashboard",
+                                title: "Dashboard",
+                                vars: vars
+                            };
+                            ui.update(data, req.raw.cb);
                         };
-                        ui.update(data, req.raw.cb);
-                    };
+                    });
                 });
             };
         });

@@ -1,8 +1,6 @@
 main todo
 - league dashboard
   - db access for content
-    - all team objects for this season: team stats, finances
-    - team object for user's team: team history
     - playoff series: if it's after the playoffs have started and the user's team made the playoffs, show most recent playoff series
     - schedule: next game
     - player objects for this year: league leaders
@@ -145,6 +143,12 @@ commas for thousands
 - number of games played in delete league view
 - attendance in finances
 transaction log (free agent signings, etc)
+money display
+- -$, not $-. Might need a new handlebars function to do this
+- conditional formatting to show negative dollars in red
+  - https://www.google.com/search?q=site%3Adatatables.net+conditional+formatting&ie=utf-8&oe=utf-8&client=ubuntu&channel=fs
+  - finances
+  - dashboard
 
 ---
 
@@ -187,9 +191,6 @@ roster
 - "buy out" only sensitive when there's enough money
 - highlight handle on hover, like button
 - "trade for" only sensitive when trades are allowed
-
-finances
-- conditional formatting to show negative numbers in red: https://www.google.com/search?q=site%3Adatatables.net+conditional+formatting&ie=utf-8&oe=utf-8&client=ubuntu&channel=fs
 
 Client-side game simulation
 - Robustness of javascript code

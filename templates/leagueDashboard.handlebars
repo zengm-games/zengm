@@ -19,7 +19,7 @@
     <p>
       {{#unless recentGames}}No games yet this season.<br>{{/unless}}
       {{#recentGames}}
-        {{#unless home}}@{{/unless}}<a href="/l/{{../lid}}/roster/{{oppAbbrev}}">{{oppAbbrev}}</a> {{#if won}}W{{else}}L{{/if}} <a href="/l/{{../lid}}/game_log/{{../abbrev}}/{{../season}}/{{gid}}">{{pts}}-{{oppPts}}</a><br>
+        {{#unless home}}@{{/unless}}<a href="/l/{{../lid}}/roster/{{oppAbbrev}}">{{oppAbbrev}}</a> {{#if won}}won{{else}}lost{{/if}} <a href="/l/{{../lid}}/game_log/{{../abbrev}}/{{../season}}/{{gid}}">{{pts}}-{{oppPts}}</a><br>
       {{/recentGames}}
       <a href="/l/{{lid}}/game_log">» Game Log</a><br>
       Next: @WAS (only show if applicable)<br>
@@ -28,10 +28,10 @@
 
     <h2>Recent History</h2>
     <p>
-      2011: won-lost, made playoffs<br>
-      2010: won-lost, conference champs<br>
-      2009: won-lost, league champs<br>
-      <a href="/l/{{lid}}/team_history">» Team History</a><br>
+      {{#recentHistory}}
+        <a href="/l/{{../lid}}/roster/{{../abbrev}}/{{season}}">{{season}}</a>: <a href="/l/{{../lid}}/standings/{{season}}">{{won}}-{{lost}}</a>{{#if extraText}}, <a href="/l/{{../../lid}}/playoffs/{{season}}">{{extraText}}</a>{{/if}}<br>
+      {{/recentHistory}}
+      <a href="/l/{{lid}}/team_history">» Full Team History</a><br>
       <a href="/l/{{lid}}/history">» League History</a>
     </p>
 
@@ -39,10 +39,10 @@
   <div class="span4">
     <h2>Team Stats</h2>
     <p>
-      Points: 4th (85)<br>
-      Allowed: 4th (83)<br>
-      Rebounds: 4th (15)<br>
-      Assists: 4th (15)<br>
+      Points: {{ptsRank}}th ({{round pts 1}})<br>
+      Allowed: {{oppPtsRank}}th ({{round oppPts 1}})<br>
+      Rebounds: {{trbRank}}th ({{round trb 1}})<br>
+      Assists: {{astRank}}th ({{round ast 1}})<br>
       <a href="/l/{{lid}}/team_stats">» Team Stats</a>
     </p>
 
@@ -74,11 +74,12 @@
 
     <h2>Finances</h2>
     <p>
-      Revenue (YTD): $<br>
-      Profit (YTD): $<br>
-      Cash: $<br>
-      Payroll: $<br>
-      Salary Cap: $<br>
+      Avg Attendance: {{round att}}<br>
+      Revenue (YTD): ${{round revenue 1}}M<br>
+      Profit (YTD): ${{round profit 1}}M<br>
+      Cash: ${{round cash 1}}M<br>
+      Payroll: ${{round payroll 1}}M<br>
+      Salary Cap: ${{round salaryCap 1}}M<br>
       <a href="/l/{{lid}}/finances">» League Finances</a>
     </p>
 

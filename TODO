@@ -63,6 +63,7 @@ strategic issues
 BUGS
 
 league database error when playoffs end
+- is it only the first year, and is it due to retiring players?
 game simulation stops when a link is clicked, but then restarts when another link is clicked? wtf
 - This seems to generally work now, but it's not perfect. If you do any action that writes to the database, such as reordering the roster, something bad could happen because IndexedDB doesn't like multiple writes going on at the same time
 
@@ -134,6 +135,9 @@ realtime data binding/updating
 multiple windows
 - have some element in the database with the last "action" time. poll it with some frequency, and update if needed
 pmPhase and pmStatus should be phaseText and statusText
+commas for thousands
+- number of games played in delete league view
+- attendance in finances
 
 ---
 

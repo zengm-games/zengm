@@ -2118,7 +2118,7 @@ function program1(depth0,data) {
   stack1 = foundHelper || depth0.phaseText;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "phaseText", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "</span></a>\n      <form action=\"/delete_league\" method=\"POST\"><input type=\"hidden\" name=\"lid\" value=\"";
+  buffer += escapeExpression(stack1) + "</span></a>\n      <form action=\"/delete_league\" method=\"post\"><input type=\"hidden\" name=\"lid\" value=\"";
   foundHelper = helpers.lid;
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -3350,6 +3350,48 @@ templates['leagueLayout'] = template(function (Handlebars,depth0,helpers,partial
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
   buffer += escapeExpression(stack1) + "/team_stats\">Team Stats</a></li>\n    </ul>\n  </div>\n</div>\n";
+  return buffer;});
+templates['deleteLeague'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  helpers = helpers || Handlebars.helpers;
+  var buffer = "", stack1, foundHelper, self=this, functionType="function", helperMissing=helpers.helperMissing, undef=void 0, escapeExpression=this.escapeExpression;
+
+
+  buffer += "<h1>Delete League ";
+  foundHelper = helpers.lid;
+  stack1 = foundHelper || depth0.lid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "?</h1>\n\n<p>Are you <em>absolutely</em> sure you want to delete League ";
+  foundHelper = helpers.lid;
+  stack1 = foundHelper || depth0.lid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "? You will <em>permanently</em> lose any record of all ";
+  foundHelper = helpers.numSeasons;
+  stack1 = foundHelper || depth0.numSeasons;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "numSeasons", { hash: {} }); }
+  buffer += escapeExpression(stack1) + " seasons, ";
+  foundHelper = helpers.numPlayers;
+  stack1 = foundHelper || depth0.numPlayers;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "numPlayers", { hash: {} }); }
+  buffer += escapeExpression(stack1) + " players, and ";
+  foundHelper = helpers.numGames;
+  stack1 = foundHelper || depth0.numGames;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "numGames", { hash: {} }); }
+  buffer += escapeExpression(stack1) + " games from this league (well... unless you have backup somewhere).</p>\n\n<form action=\"/delete_league\" method=\"post\">\n  <input type=\"hidden\" name=\"lid\" value=\"";
+  foundHelper = helpers.lid;
+  stack1 = foundHelper || depth0.lid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\">\n  <input type=\"hidden\" name=\"confirm\" value=\"1\">\n  <button class=\"btn\">Yes, I am sure! Delete League ";
+  foundHelper = helpers.lid;
+  stack1 = foundHelper || depth0.lid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + ".</button>\n</form>";
   return buffer;});
 templates['trade'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;

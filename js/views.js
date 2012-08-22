@@ -89,7 +89,6 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                 leagues[i].phaseText = JSON.parse(localStorage.getItem("league" + leagues[i].lid + "GameAttributes")).pmPhase;
                 delete leagues[i].tid;
             }
-console.log(leagues);
 
             data = {
                 container: "content",
@@ -134,9 +133,44 @@ console.log(leagues);
         var lid;
 
         lid = parseInt(req.params.lid, 10);
-        league.remove(lid, function () {
-            req.redirect("/");
-        });
+
+        if (!req.params.confirm) {
+            db.connectLeague(lid, function () {
+                var transaction;
+
+                transaction = g.dbl.transaction(["games", "players", "teams"]);
+                transaction.objectStore("games").count().onsuccess = function (event) {
+                    var numGames;
+
+                    numGames = event.target.result;
+
+                    transaction.objectStore("teams").get(0).onsuccess = function (event) {
+                        var numSeasons;
+
+                        numSeasons = event.target.result.seasons.length;
+
+                        transaction.objectStore("players").count().onsuccess = function (event) {
+                            var data, numPlayers;
+
+                            numPlayers = event.target.result;
+
+                            g.lid = lid;  // Injected into the template by ui.update
+                            data = {
+                                container: "content",
+                                template: "deleteLeague",
+                                title: "Dashboard",
+                                vars: {numGames: numGames, numPlayers: numPlayers, numSeasons: numSeasons}
+                            };
+                            ui.update(data, req.raw.cb);
+                        };
+                    };
+                };
+            });
+        } else {
+            league.remove(lid, function () {
+                req.redirect("/");
+            });
+        }
     }
 
     function league_dashboard(req) {

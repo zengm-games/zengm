@@ -22,7 +22,7 @@
       {{/if}}
       {{#unless recentGames}}No completed games yet this season.<br>{{/unless}}
       {{#recentGames}}
-        {{#unless home}}@{{/unless}}<a href="/l/{{../lid}}/roster/{{oppAbbrev}}">{{oppAbbrev}}</a> {{#if won}}won{{else}}lost{{/if}} <a href="/l/{{../lid}}/game_log/{{../abbrev}}/{{../season}}/{{gid}}">{{pts}}-{{oppPts}}</a><br>
+        {{#unless home}}@{{/unless}}<a href="/l/{{../lid}}/roster/{{oppAbbrev}}">{{oppAbbrev}}</a>, {{#if won}}won{{else}}lost{{/if}} <a href="/l/{{../lid}}/game_log/{{../abbrev}}/{{../season}}/{{gid}}">{{pts}}-{{oppPts}}</a><br>
       {{/recentGames}}
       <a href="/l/{{lid}}/game_log">» Game Log</a><br>
       <a href="/l/{{lid}}/standings">» Schedule</a>

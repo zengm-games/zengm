@@ -11,6 +11,10 @@ main todo
   - next game should show something when active in playoffs, a message at least
   - does streak and games list always match up? doesn't seem to. why?
   - only show streak before playoffs start, otherwise it's inaccurate
+- draft history view
+  - career stats actually seem to be this season
+  - GP should be integer
+- when a contract is accepted, go back to negotiations list if there are other ones remaining
 - bootstrap 2.1 contract negotiation view
 - show payroll in roster view
 - refactor game log list (like league dashboard, getAll?)
@@ -144,13 +148,14 @@ pmPhase and pmStatus should be phaseText and statusText
 commas for thousands
 - number of games played in delete league view
 - attendance in finances
+- attendance in league dashboard
 transaction log (free agent signings, etc)
 money display
 - -$, not $-. Might need a new handlebars function to do this
 - conditional formatting to show negative dollars in red
   - https://www.google.com/search?q=site%3Adatatables.net+conditional+formatting&ie=utf-8&oe=utf-8&client=ubuntu&channel=fs
   - finances
-  - dashboard
+  - league dashboard
 
 ---
 

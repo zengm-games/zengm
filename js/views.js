@@ -347,7 +347,6 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                                             stat: userPlayers[0][stats[i]]
                                         };
                                     }
-console.log(vars.teamLeaders);
 
                                     var data;
 

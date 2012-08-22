@@ -1,6 +1,18 @@
 main todo
 - league dashboard
-- payroll shown in roster view
+  - db access for content
+    - all team objects for this season: playoff seeding, team stats, finances
+    - games: recent games
+    - team object for user's team: team history
+    - playoff series: if it's after the playoffs have started, show playoff series, if applicable
+    - schedule: next game
+    - player objects for this year: league leaders
+      - filter for user's team: team leaders, expiring contracts
+      - filter for free agents: free agents
+  - rankings should say 1st, 2nd, 3rd rather than 1th, 2th, 3th
+  - show more info for expiring contracts, like salary, ovr, pot?
+  - next game should show something when active in playoffs
+- show payroll in roster view
 - core.game is messy and should be rewritten
 - let free agents stay for 2 seasons before retiring, or make retirement probabilistic
 - nba roster

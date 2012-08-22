@@ -1,23 +1,28 @@
-<h1>{region} {name} Dashboard</h1>
+<h1>{{region}} {{name}} Dashboard</h1>
 
 <div class="row-fluid">
   <div class="span4">
     <h2>Current Record</h2>
     <p>
-      {won}-{lost}<br>
+      {{won}}-{{lost}}{{#if streakLong}}, {{streakLong}}{{/if}}<br>
       <a href="/l/{{lid}}/standings">» Standings</a>
     </p>
 
     <h2>Playoffs</h2>
     <p>
-      {rank}th place in the {conf} Conference (or show the active series with a link to playoffs view)<br>
+      {{rank}}th place in conference<vr>
+      (Top 8 teams make the playoffs)<br>
       <a href="/l/{{lid}}/playoffs">» Playoff Projections (or Playoffs)</a>
     </p>
 
-    <h2>Next Game</h2>
+    <h2>Recent Games</h2>
     <p>
-      None scheduled<br>
-      <a href="/l/{{lid}}/standings">» Schedule</a>
+      @DET L 67-102<br>
+      PHI L 67-102<br>
+      SAC W 88-62<br>
+      <a href="/l/{{lid}}/game_log">» Game Log</a><br>
+      Next: @WAS (only show if applicable)<br>
+      <a href="/l/{{lid}}/standings">» Schedule</a> (only show if applicable)
     </p>
 
     <h2>Recent History</h2>
@@ -25,7 +30,8 @@
       2011: won-lost, made playoffs<br>
       2010: won-lost, conference champs<br>
       2009: won-lost, league champs<br>
-      <a href="/l/{{lid}}/team_history">» Team History</a>
+      <a href="/l/{{lid}}/team_history">» Team History</a><br>
+      <a href="/l/{{lid}}/history">» League History</a>
     </p>
 
   </div>
@@ -52,7 +58,8 @@
       Bob Johnson, ATL: 14 pts<br>
       Bob Johnson, ATL: 14 reb<br>
       Bob Johnson, ATL: 14 ast<br>
-      <a href="/l/{{lid}}/player_stats">» Player Stats</a>
+      <a href="/l/{{lid}}/leaders">» League Leaders</a><br>
+      <a href="/l/{{lid}}/player_stats">» All Player Stats</a>
     </p>
   </div>
   <div class="span4">
@@ -79,7 +86,7 @@
       Bob Johnson: 68 ovr, 71 pot<br>
       Bob Johnson: 68 ovr, 71 pot<br>
       Bob Johnson: 68 ovr, 71 pot<br>
-      (You currently have {numRosterSpots} open roster spots.)<br>
+      (You have {numRosterSpots} open roster spots)<br>
       <a href="/l/{{lid}}/free_agents">» Free Agents</a>
     </p>
   </div>

@@ -443,13 +443,25 @@ define(["util/helpers"], function (helpers) {
                     lastTenWon = _.reduce(tsa.lastTen, function (memo, num) { return memo + num; }, 0);
                     lastTenLost = tsa.lastTen.length - lastTenWon;
                     team.lastTen = lastTenWon + "-" + lastTenLost;
-                } else if (seasonAttributes[j] === "streak") {
+                } else if (seasonAttributes[j] === "streak") {  // For standings
                     if (tsa.streak === 0) {
                         team.streak = "None";
                     } else if (tsa.streak > 0) {
                         team.streak = "Won " + tsa.streak;
                     } else if (tsa.streak < 0) {
                         team.streak = "Lost " + Math.abs(tsa.streak);
+                    }
+                } else if (seasonAttributes[j] === "streakLong") {  // For dashboard
+                    if (tsa.streak === 0) {
+                        team.streakLong = null;
+                    } else if (tsa.streak === 1) {
+                        team.streakLong = "won last game";
+                    } else if (tsa.streak > 1) {
+                        team.streakLong = "won last " + tsa.streak + " games";
+                    } else if (tsa.streak === -1) {
+                        team.streakLong = "lost last game";
+                    } else if (tsa.streak < -1) {
+                        team.streakLong = "lost last " + Math.abs(tsa.streak) + " games";
                     }
                 } else {
                     team[seasonAttributes[j]] = tsa[seasonAttributes[j]];

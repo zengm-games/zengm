@@ -175,15 +175,53 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
     function leagueDashboard(req) {
         beforeLeague(req, function () {
-            var data;
+            var transaction;
 
-            data = {
-                container: "league_content",
-                template: "leagueDashboard",
-                title: "Dashboard",
-                vars: {}
+            transaction = g.dbl.transaction(["games", "players", "playoffSeries", "schedule", "teams"]);
+
+            transaction.objectStore("teams").get(g.userTid).onsuccess = function (event) {
+                var attributes, seasonAttributes, stats, userTeam, vars;
+
+                userTeam = event.target.result;
+
+                vars = {};
+                vars.region = userTeam.region;
+                vars.name = userTeam.name;
+
+                attributes = ["tid", "cid", "region", "name"];
+                stats = ["pts", "trb", "ast", "oppPts"];
+                seasonAttributes = ["won", "lost", "winp", "streakLong"];
+                db.getTeams(transaction, g.season, attributes, stats, seasonAttributes, "winp", function (teams) {
+                    var i;
+
+                    vars.won = teams[g.userTid].won;
+                    vars.lost = teams[g.userTid].lost;
+                    vars.streakLong = teams[g.userTid].streakLong;
+
+                    vars.rank = 1;
+console.dir(teams);
+console.log(userTeam);
+                    for (i = 0; i < teams.length; i++) {
+                        if (teams[i].cid === userTeam.cid) {
+                            if (teams[i].tid === userTeam.tid) {
+                                break;
+                            } else {
+                                vars.rank += 1;
+                            }
+                        }
+                    }
+
+                    var data;
+
+                    data = {
+                        container: "league_content",
+                        template: "leagueDashboard",
+                        title: "Dashboard",
+                        vars: vars
+                    };
+                    ui.update(data, req.raw.cb);
+                });
             };
-            ui.update(data, req.raw.cb);
         });
     }
 

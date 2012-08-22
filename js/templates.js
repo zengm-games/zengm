@@ -1484,30 +1484,85 @@ function program1(depth0,data,depth1) {
   return buffer;});
 templates['leagueDashboard'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;
-  var buffer = "", stack1, foundHelper, self=this, functionType="function", helperMissing=helpers.helperMissing, undef=void 0, escapeExpression=this.escapeExpression;
+  var buffer = "", stack1, stack2, foundHelper, tmp1, self=this, functionType="function", helperMissing=helpers.helperMissing, undef=void 0, escapeExpression=this.escapeExpression;
 
+function program1(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += ", ";
+  foundHelper = helpers.streakLong;
+  stack1 = foundHelper || depth0.streakLong;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "streakLong", { hash: {} }); }
+  buffer += escapeExpression(stack1);
+  return buffer;}
 
-  buffer += "<h1>{region} {name} Dashboard</h1>\n\n<div class=\"row-fluid\">\n  <div class=\"span4\">\n    <h2>Current Record</h2>\n    <p>\n      {won}-{lost}<br>\n      <a href=\"/l/";
+  buffer += "<h1>";
+  foundHelper = helpers.region;
+  stack1 = foundHelper || depth0.region;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "region", { hash: {} }); }
+  buffer += escapeExpression(stack1) + " ";
+  foundHelper = helpers.name;
+  stack1 = foundHelper || depth0.name;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "name", { hash: {} }); }
+  buffer += escapeExpression(stack1) + " Dashboard</h1>\n\n<div class=\"row-fluid\">\n  <div class=\"span4\">\n    <h2>Current Record</h2>\n    <p>\n      ";
+  foundHelper = helpers.won;
+  stack1 = foundHelper || depth0.won;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "won", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "-";
+  foundHelper = helpers.lost;
+  stack1 = foundHelper || depth0.lost;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lost", { hash: {} }); }
+  buffer += escapeExpression(stack1);
+  foundHelper = helpers.streakLong;
+  stack1 = foundHelper || depth0.streakLong;
+  stack2 = helpers['if'];
+  tmp1 = self.program(1, program1, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "<br>\n      <a href=\"/l/";
   foundHelper = helpers.lid;
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/standings\">» Standings</a>\n    </p>\n\n    <h2>Playoffs</h2>\n    <p>\n      {rank}th place in the {conf} Conference (or show the active series with a link to playoffs view)<br>\n      <a href=\"/l/";
+  buffer += escapeExpression(stack1) + "/standings\">» Standings</a>\n    </p>\n\n    <h2>Playoffs</h2>\n    <p>\n      ";
+  foundHelper = helpers.rank;
+  stack1 = foundHelper || depth0.rank;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "rank", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "th place in conference<vr>\n      (Top 8 teams make the playoffs)<br>\n      <a href=\"/l/";
   foundHelper = helpers.lid;
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/playoffs\">» Playoff Projections (or Playoffs)</a>\n    </p>\n\n    <h2>Next Game</h2>\n    <p>\n      None scheduled<br>\n      <a href=\"/l/";
+  buffer += escapeExpression(stack1) + "/playoffs\">» Playoff Projections (or Playoffs)</a>\n    </p>\n\n    <h2>Recent Games</h2>\n    <p>\n      @DET L 67-102<br>\n      PHI L 67-102<br>\n      SAC W 88-62<br>\n      <a href=\"/l/";
   foundHelper = helpers.lid;
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/standings\">» Schedule</a>\n    </p>\n\n    <h2>Recent History</h2>\n    <p>\n      2011: won-lost, made playoffs<br>\n      2010: won-lost, conference champs<br>\n      2009: won-lost, league champs<br>\n      <a href=\"/l/";
+  buffer += escapeExpression(stack1) + "/game_log\">» Game Log</a><br>\n      Next: @WAS (only show if applicable)<br>\n      <a href=\"/l/";
   foundHelper = helpers.lid;
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/team_history\">» Team History</a>\n    </p>\n\n  </div>\n  <div class=\"span4\">\n    <h2>Team Stats</h2>\n    <p>\n      Points: 4th (85)<br>\n      Allowed: 4th (83)<br>\n      Rebounds: 4th (15)<br>\n      Assists: 4th (15)<br>\n      <a href=\"/l/";
+  buffer += escapeExpression(stack1) + "/standings\">» Schedule</a> (only show if applicable)\n    </p>\n\n    <h2>Recent History</h2>\n    <p>\n      2011: won-lost, made playoffs<br>\n      2010: won-lost, conference champs<br>\n      2009: won-lost, league champs<br>\n      <a href=\"/l/";
+  foundHelper = helpers.lid;
+  stack1 = foundHelper || depth0.lid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/team_history\">» Team History</a><br>\n      <a href=\"/l/";
+  foundHelper = helpers.lid;
+  stack1 = foundHelper || depth0.lid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/history\">» League History</a>\n    </p>\n\n  </div>\n  <div class=\"span4\">\n    <h2>Team Stats</h2>\n    <p>\n      Points: 4th (85)<br>\n      Allowed: 4th (83)<br>\n      Rebounds: 4th (15)<br>\n      Assists: 4th (15)<br>\n      <a href=\"/l/";
   foundHelper = helpers.lid;
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -1522,7 +1577,12 @@ templates['leagueDashboard'] = template(function (Handlebars,depth0,helpers,part
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/player_stats\">» Player Stats</a>\n    </p>\n  </div>\n  <div class=\"span4\">\n    <h2>Expiring Contracts</h2>\n    <p>\n      Bob Johnson: 27 yo, 15 pts<br>\n      Bob Johnson: 27 yo, 15 pts<br>\n      Bob Johnson: 27 yo, 15 pts<br>\n      <a href=\"/l/";
+  buffer += escapeExpression(stack1) + "/leaders\">» League Leaders</a><br>\n      <a href=\"/l/";
+  foundHelper = helpers.lid;
+  stack1 = foundHelper || depth0.lid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/player_stats\">» All Player Stats</a>\n    </p>\n  </div>\n  <div class=\"span4\">\n    <h2>Expiring Contracts</h2>\n    <p>\n      Bob Johnson: 27 yo, 15 pts<br>\n      Bob Johnson: 27 yo, 15 pts<br>\n      Bob Johnson: 27 yo, 15 pts<br>\n      <a href=\"/l/";
   foundHelper = helpers.lid;
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -1532,7 +1592,7 @@ templates['leagueDashboard'] = template(function (Handlebars,depth0,helpers,part
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/finances\">» League Finances</a>\n    </p>\n\n    <h2>Top Free Agents</h2>\n    <p>\n      Bob Johnson: 68 ovr, 71 pot<br>\n      Bob Johnson: 68 ovr, 71 pot<br>\n      Bob Johnson: 68 ovr, 71 pot<br>\n      (You currently have {numRosterSpots} open roster spots.)<br>\n      <a href=\"/l/";
+  buffer += escapeExpression(stack1) + "/finances\">» League Finances</a>\n    </p>\n\n    <h2>Top Free Agents</h2>\n    <p>\n      Bob Johnson: 68 ovr, 71 pot<br>\n      Bob Johnson: 68 ovr, 71 pot<br>\n      Bob Johnson: 68 ovr, 71 pot<br>\n      (You have {numRosterSpots} open roster spots)<br>\n      <a href=\"/l/";
   foundHelper = helpers.lid;
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }

@@ -1,14 +1,16 @@
 <h1>Create New League</h1>
+<p>
 <form action="/new_league" method="POST">
-  <label>Which team do you want to manage?
+  <label>Which team do you want to manage?</label>
   <select name="tid">
     {{#teams}}
       <option value="{{tid}}">{{region}} {{name}}</option>
     {{/teams}}
-  </select></label>
+  </select>
   <label><select name="players">
     <option value="random">Random Players</option>
     <option value="nba2012">2012 NBA Players</option>
   </select></label>
   <button type="submit" class="btn">Create New League</button>  
 </form>
+</p>

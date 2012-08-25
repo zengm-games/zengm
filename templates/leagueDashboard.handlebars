@@ -51,17 +51,17 @@
 
     <h3>Team Leaders</h3>
     <p>
-      <a href="/l/{{lid}}/players/{{teamLeaders.pts.pid}}">{{teamLeaders.pts.name}}</a>: {{round teamLeaders.pts.stat 1}} pts<br>
-      <a href="/l/{{lid}}/players/{{teamLeaders.trb.pid}}">{{teamLeaders.trb.name}}</a>: {{round teamLeaders.trb.stat 1}} reb<br>
-      <a href="/l/{{lid}}/players/{{teamLeaders.ast.pid}}">{{teamLeaders.ast.name}}</a>: {{round teamLeaders.ast.stat 1}} ast<br>
+      <a href="/l/{{lid}}/player/{{teamLeaders.pts.pid}}">{{teamLeaders.pts.name}}</a>: {{round teamLeaders.pts.stat 1}} pts<br>
+      <a href="/l/{{lid}}/player/{{teamLeaders.trb.pid}}">{{teamLeaders.trb.name}}</a>: {{round teamLeaders.trb.stat 1}} reb<br>
+      <a href="/l/{{lid}}/player/{{teamLeaders.ast.pid}}">{{teamLeaders.ast.name}}</a>: {{round teamLeaders.ast.stat 1}} ast<br>
       <a href="/l/{{lid}}/roster">» Full Roster</a>
     </p>
 
     <h3>League Leaders</h3>
     <p>
-      <a href="/l/{{lid}}/players/{{leagueLeaders.pts.pid}}">{{leagueLeaders.pts.name}}</a>, <a href="/l/{{lid}}/roster/{{leagueLeaders.pts.abbrev}}">{{leagueLeaders.pts.abbrev}}</a>: {{round leagueLeaders.pts.stat 1}} pts<br>
-      <a href="/l/{{lid}}/players/{{leagueLeaders.trb.pid}}">{{leagueLeaders.trb.name}}</a>, <a href="/l/{{lid}}/roster/{{leagueLeaders.trb.abbrev}}">{{leagueLeaders.trb.abbrev}}</a>: {{round leagueLeaders.trb.stat 1}} reb<br>
-      <a href="/l/{{lid}}/players/{{leagueLeaders.ast.pid}}">{{leagueLeaders.ast.name}}</a>, <a href="/l/{{lid}}/roster/{{leagueLeaders.ast.abbrev}}">{{leagueLeaders.ast.abbrev}}</a>: {{round leagueLeaders.ast.stat 1}} ast<br>
+      <a href="/l/{{lid}}/player/{{leagueLeaders.pts.pid}}">{{leagueLeaders.pts.name}}</a>, <a href="/l/{{lid}}/roster/{{leagueLeaders.pts.abbrev}}">{{leagueLeaders.pts.abbrev}}</a>: {{round leagueLeaders.pts.stat 1}} pts<br>
+      <a href="/l/{{lid}}/player/{{leagueLeaders.trb.pid}}">{{leagueLeaders.trb.name}}</a>, <a href="/l/{{lid}}/roster/{{leagueLeaders.trb.abbrev}}">{{leagueLeaders.trb.abbrev}}</a>: {{round leagueLeaders.trb.stat 1}} reb<br>
+      <a href="/l/{{lid}}/player/{{leagueLeaders.ast.pid}}">{{leagueLeaders.ast.name}}</a>, <a href="/l/{{lid}}/roster/{{leagueLeaders.ast.abbrev}}">{{leagueLeaders.ast.abbrev}}</a>: {{round leagueLeaders.ast.stat 1}} ast<br>
       <a href="/l/{{lid}}/leaders">» League Leaders</a><br>
       <a href="/l/{{lid}}/player_stats">» Player Stats</a>
     </p>
@@ -70,7 +70,7 @@
     <h3>Expiring Contracts</h3>
     <p>
       {{#expiring}}
-        <a href="/l/{{../lid}}/players/{{pid}}">{{name}}</a>: {{age}} yo, ${{round contractAmount 1}}M<br>
+        <a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>: {{age}} yo, ${{round contractAmount 1}}M<br>
         <span style="margin-left: 2em">{{round pts 1}} pts, {{ovr}} ovr, {{pot}} pot</span><br>
       {{/expiring}}
       <a href="/l/{{lid}}/roster">» Full Roster</a>

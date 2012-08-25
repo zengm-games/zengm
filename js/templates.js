@@ -1711,7 +1711,7 @@ function program20(depth0,data,depth1) {
   stack1 = foundHelper || depth1.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "...lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/players/";
+  buffer += escapeExpression(stack1) + "/player/";
   foundHelper = helpers.pid;
   stack1 = foundHelper || depth0.pid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -1938,7 +1938,7 @@ function program20(depth0,data,depth1) {
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/players/";
+  buffer += escapeExpression(stack1) + "/player/";
   foundHelper = helpers.teamLeaders;
   stack1 = foundHelper || depth0.teamLeaders;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.pts);
@@ -1968,7 +1968,7 @@ function program20(depth0,data,depth1) {
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/players/";
+  buffer += escapeExpression(stack1) + "/player/";
   foundHelper = helpers.teamLeaders;
   stack1 = foundHelper || depth0.teamLeaders;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.trb);
@@ -1998,7 +1998,7 @@ function program20(depth0,data,depth1) {
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/players/";
+  buffer += escapeExpression(stack1) + "/player/";
   foundHelper = helpers.teamLeaders;
   stack1 = foundHelper || depth0.teamLeaders;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.ast);
@@ -2033,7 +2033,7 @@ function program20(depth0,data,depth1) {
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/players/";
+  buffer += escapeExpression(stack1) + "/player/";
   foundHelper = helpers.leagueLeaders;
   stack1 = foundHelper || depth0.leagueLeaders;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.pts);
@@ -2082,7 +2082,7 @@ function program20(depth0,data,depth1) {
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/players/";
+  buffer += escapeExpression(stack1) + "/player/";
   foundHelper = helpers.leagueLeaders;
   stack1 = foundHelper || depth0.leagueLeaders;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.trb);
@@ -2131,7 +2131,7 @@ function program20(depth0,data,depth1) {
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/players/";
+  buffer += escapeExpression(stack1) + "/player/";
   foundHelper = helpers.leagueLeaders;
   stack1 = foundHelper || depth0.leagueLeaders;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.ast);

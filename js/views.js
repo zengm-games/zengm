@@ -354,7 +354,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                                     userPlayers.sort(function (a, b) {  return a.rosterOrder - b.rosterOrder; });
                                     vars.expiring = [];
                                     for (i = 0; i < userPlayers.length; i++) {
-                                        if (userPlayers[i].contractExp === g.season) {
+                                        // Show contracts expiring this year, or next year if we're already in free agency
+                                        if (userPlayers[i].contractExp === g.season || (g.phase >= c.PHASE_RESIGN_PLAYERS && userPlayers[i].contractExp === g.season + 1)) {
                                             vars.expiring.push({
                                                 pid: userPlayers[i].pid,
                                                 name: userPlayers[i].name,

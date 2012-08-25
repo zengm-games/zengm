@@ -76,15 +76,6 @@
     </p>
   </div>
   <div class="span4">
-    <h3>Expiring Contracts</h3>
-    <p>
-      {{#expiring}}
-        <a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>: {{age}} yo, ${{round contractAmount 1}}M<br>
-        <span style="margin-left: 2em">{{round pts 1}} pts, {{ovr}} ovr, {{pot}} pot</span><br>
-      {{/expiring}}
-      <a href="/l/{{lid}}/roster">» Full Roster</a>
-    </p>
-
     <h3>Finances</h3>
     <p>
       Avg Attendance: {{round att}}<br>
@@ -98,11 +89,22 @@
 
     <h3>Top Free Agents</h3>
     <p>
-      Bob Johnson: 68 ovr, 71 pot<br>
-      Bob Johnson: 68 ovr, 71 pot<br>
-      Bob Johnson: 68 ovr, 71 pot<br>
-      (You have {numRosterSpots} open roster spots)<br>
+      {{#unless freeAgents}}None.<br>{{/unless}}
+      {{#freeAgents}}
+        <a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>: {{age}} yo, {{ovr}} ovr, {{pot}} pot</span><br>
+      {{/freeAgents}}
+      (You have {{numRosterSpots}} open roster spots)<br>
       <a href="/l/{{lid}}/free_agents">» Free Agents</a>
+    </p>
+
+    <h3>Expiring Contracts</h3>
+    <p>
+      {{#unless expiring}}None.<br>{{/unless}}
+      {{#expiring}}
+        <a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>: {{age}} yo, ${{round contractAmount 1}}M<br>
+        <span style="margin-left: 2em">{{round pts 1}} pts, {{ovr}} ovr, {{pot}} pot</span><br>
+      {{/expiring}}
+      <a href="/l/{{lid}}/roster">» Full Roster</a>
     </p>
   </div>
 </div>

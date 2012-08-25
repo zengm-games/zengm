@@ -2,9 +2,6 @@ main todo
 - chrome
   - indexeddb-getall-shim
 - league dashboard
-  - db access for content
-    - player objects for this year
-      - filter for free agents: free agents
   - rankings should say 1st, 2nd, 3rd rather than 1th, 2th, 3th
   - next game should show something when active in playoffs, a message at least
   - does streak and games list always match up? doesn't seem to. why?

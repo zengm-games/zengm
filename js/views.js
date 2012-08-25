@@ -319,12 +319,12 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                                 }
 
                                 g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) {
-                                    var attributes, i, leagueLeaders, players, ratings, stats, userPlayers;
+                                    var attributes, i, freeAgents, leagueLeaders, players, ratings, stats, userPlayers;
 
                                     attributes = ["pid", "name", "abbrev", "tid", "age", "contractAmount", "contractExp", "rosterOrder"];
                                     ratings = ["ovr", "pot"];
                                     stats = ["pts", "trb", "ast"];  // This is also used later to find team/league leaders for these player stats
-                                    players = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings);
+                                    players = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings, {showNoStats: true});
 
                                     // League leaders
                                     vars.leagueLeaders = {};
@@ -367,6 +367,29 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                                             });
                                         }
                                     }
+
+                                    // Free agents
+                                    freeAgents = _.filter(players, function (p) { return p.tid === c.PLAYER_FREE_AGENT; });
+                                    freeAgents.sort(function (a, b) {  return (b.ovr + b.pot) - (a.ovr + a.pot); });
+                                    vars.freeAgents = [];
+                                    if (freeAgents.length > 0) {
+                                        i = 0;
+                                        while (true) {
+                                            vars.freeAgents.push({
+                                                pid: freeAgents[i].pid,
+                                                name: freeAgents[i].name,
+                                                age: freeAgents[i].age,
+                                                ovr: freeAgents[i].ovr,
+                                                pot: freeAgents[i].pot
+                                            });
+
+                                            i += 1;
+                                            if (i === 3 || i === freeAgents.length) {
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    vars.numRosterSpots = 15 - userPlayers.length;
 
                                     g.dbl.transaction(["playoffSeries"]).objectStore("playoffSeries").get(g.season).onsuccess = function (event) {
                                         var data, found, i, playoffSeries, rnd, series;

@@ -318,7 +318,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                                     }
                                 }
 
-                                g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
+                                g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) {
                                     var attributes, i, leagueLeaders, players, ratings, stats, userPlayers;
 
                                     attributes = ["pid", "name", "abbrev", "tid", "age", "contractAmount", "contractExp", "rosterOrder"];

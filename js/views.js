@@ -369,7 +369,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                                     }
 
                                     g.dbl.transaction(["playoffSeries"]).objectStore("playoffSeries").get(g.season).onsuccess = function (event) {
-                                        var found, i, playoffSeries, rnd, series;
+                                        var data, found, i, playoffSeries, rnd, series;
 
                                         playoffSeries = event.target.result;
                                         vars.showPlayoffSeries = false;
@@ -401,8 +401,6 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                                                 }
                                             }
                                         }
-
-                                        var data;
 
                                         data = {
                                             container: "league_content",

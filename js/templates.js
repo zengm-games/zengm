@@ -1905,8 +1905,8 @@ function program28(depth0,data,depth1) {
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
   buffer += escapeExpression(stack1) + "/standings\">» Schedule</a>\n    </p>\n\n    <h3>Recent History</h3>\n    <p>\n      ";
-  foundHelper = helpers.recentGames;
-  stack1 = foundHelper || depth0.recentGames;
+  foundHelper = helpers.recentHistory;
+  stack1 = foundHelper || depth0.recentHistory;
   stack2 = helpers.unless;
   tmp1 = self.program(23, program23, data);
   tmp1.hash = {};

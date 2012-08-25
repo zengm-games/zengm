@@ -4,7 +4,7 @@
   <div class="span4">
     <h3>Current Record</h3>
     <p>
-      {{won}}-{{lost}}{{#if streakLong}}, {{streakLong}}{{/if}}<br>
+      {{won}}-{{lost}}{{#unless playoffsStarted}}{{#if streakLong}}, {{streakLong}}{{/if}}{{/unless}}<br>
       <a href="/l/{{lid}}/standings">» Standings</a>
     </p>
 

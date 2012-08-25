@@ -13,7 +13,7 @@ requirejs(["api", "db", "views", "ui", "util/helpers"], function (api, db, views
             });
 
             this.bind("routeNotFound", function (req) {
-                helpers.error("Page not found.");
+                helpers.error("Page not found.", req);
             });
 
 

@@ -1,11 +1,6 @@
 main todo
 - chrome
   - indexeddb-getall-shim
-- league dashboard
-  - rankings should say 1st, 2nd, 3rd rather than 1th, 2th, 3th
-  - next game should show something when active in playoffs, a message at least
-  - does streak and games list always match up? doesn't seem to. why?
-  - only show streak before playoffs start, otherwise it's inaccurate
 - draft history view
   - career stats actually seem to be this season
   - GP should be integer
@@ -152,6 +147,10 @@ money display
   - https://www.google.com/search?q=site%3Adatatables.net+conditional+formatting&ie=utf-8&oe=utf-8&client=ubuntu&channel=fs
   - finances
   - league dashboard
+internationalization
+- league dashboard rankings should say 1st, 2nd, 3rd rather than 1th, 2th, 3th
+league dashboard
+- next game should show something when active in playoffs, a message at least
 
 ---
 

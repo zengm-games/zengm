@@ -1512,6 +1512,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         beforeLeague(req, function () {
             var data;
 
+console.log('hi');
+console.log(req.raw);
             data = {
                 container: "league_content",
                 template: "error",

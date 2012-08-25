@@ -39,7 +39,7 @@ $(document).ready(function() {
   <div class="span4">
     <h4>All-League Teams</h4>
     {{#awards.allLeague}}
-      <h5>{{title}}</h5>
+      <b>{{title}}</b><br>
       {{#players}}
         <a href="/l/{{../../lid}}/player/{{pid}}">{{name}}</a> (<a href="/l/{{../../lid}}/roster/{{abbrev}}/{{../../season}}">{{abbrev}}</a>)<br>
       {{/players}}
@@ -48,7 +48,7 @@ $(document).ready(function() {
   <div class="span4">
     <h4>All-Defensive Teams</h4>
     {{#awards.allDefensive}}
-      <h5>{{title}}</h5>
+      <b>{{title}}</b><br>
       {{#players}}
         <a href="/l/{{../../lid}}/player/{{pid}}">{{name}}</a> (<a href="/l/{{../../lid}}/roster/{{abbrev}}/{{../../season}}">{{abbrev}}</a>)<br>
       {{/players}}

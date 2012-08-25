@@ -23,6 +23,7 @@ Handlebars.registerHelper("roundWinp", function (value) {
     return output;
 });
 
+// It would be better if this took the series object directly, but handlebars doesn't like doing that
 Handlebars.registerHelper("matchup", function (i, j) {
     "use strict";
     var series, source, template;

@@ -368,15 +368,50 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                                         }
                                     }
 
-                                    var data;
+                                    g.dbl.transaction(["playoffSeries"]).objectStore("playoffSeries").get(g.season).onsuccess = function (event) {
+                                        var found, i, playoffSeries, rnd, series;
 
-                                    data = {
-                                        container: "league_content",
-                                        template: "leagueDashboard",
-                                        title: "Dashboard",
-                                        vars: vars
+                                        playoffSeries = event.target.result;
+                                        vars.showPlayoffSeries = false;
+                                        vars.playoffsStarted = g.phase >= c.PHASE_PLAYOFFS;
+                                        if (typeof playoffSeries !== "undefined") {
+                                            series = playoffSeries.series;
+                                            found = false;
+                                            // Find the latest playoff series with the user's team in it
+                                            for (rnd = playoffSeries.currentRound; rnd >= 0; rnd--) {
+                                                for (i = 0; i < series[rnd].length; i++) {
+                                                    if (series[rnd][i].home.tid === g.userTid || series[rnd][i].away.tid === g.userTid) {
+                                                        vars.series = [[series[rnd][i]]];
+                                                        found = true;
+                                                        vars.showPlayoffSeries = true;
+                                                        if (rnd === 0) {
+                                                            vars.seriesTitle = "First Round";
+                                                        } else if (rnd === 1) {
+                                                            vars.seriesTitle = "Second Round";
+                                                        } else if (rnd === 2) {
+                                                            vars.seriesTitle = "Conference Finals";
+                                                        } else if (rnd === 3) {
+                                                            vars.seriesTitle = "League Finals";
+                                                        }
+                                                        break;
+                                                    }
+                                                }
+                                                if (found) {
+                                                    break;
+                                                }
+                                            }
+                                        }
+
+                                        var data;
+
+                                        data = {
+                                            container: "league_content",
+                                            template: "leagueDashboard",
+                                            title: "Dashboard",
+                                            vars: vars
+                                        };
+                                        ui.update(data, req.raw.cb);
                                     };
-                                    ui.update(data, req.raw.cb);
                                 };
                             });
                         };

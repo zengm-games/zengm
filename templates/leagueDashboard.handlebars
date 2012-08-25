@@ -10,9 +10,18 @@
 
     <h3>Playoffs</h3>
     <p>
-      {{rank}}th place in conference<br>
-      (Top 8 teams make the playoffs)<br>
-      <a href="/l/{{lid}}/playoffs">» Playoff Projections (or Playoffs)</a>
+      {{#if showPlayoffSeries}}
+        <b>{{seriesTitle}}</b><br>
+        {{matchup 0 0}}<br>
+      {{else}}
+        {{rank}}th place in conference<br>
+        (Top 8 teams make the playoffs)<br>
+      {{/if}}
+      {{#if playoffsStarted}}
+        <a href="/l/{{lid}}/playoffs">» Playoffs</a>
+      {{else}}
+        <a href="/l/{{lid}}/playoffs">» Playoffs Projections</a>
+      {{/if}}
     </p>
 
     <h3>Recent Games</h3>

@@ -109,8 +109,13 @@ $(document).ready(function() {
 
 <h1>{{team.region}} {{team.name}} Roster</h1>
 
+{{#if currentSeason}}
+  <p>{{numRosterSpots}} open roster spots<br>
+  Payroll: ${{round payroll 1}}M<br>
+  Salary cap: ${{round salaryCap 1}}M</p>
+{{/if}}
+
 {{#if sortable}}
-  <p>You currently have {{numRosterSpots}} open roster spots.</p>
   <p>Drag and drop row handles to move players between the starting lineup (<span class="roster_gs">&#9632;</span>) and the bench (<span class="roster_bench">&#9632;</span>).</p>
   <p><button class="btn" id="auto_sort_roster">Auto sort roster</button></p>
 {{/if}}

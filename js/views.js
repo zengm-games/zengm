@@ -657,10 +657,10 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
             sortable = false;
 
-            transaction = g.dbl.transaction(["players", "schedule", "teams"]);
+            transaction = g.dbl.transaction(["players", "releasedPlayers", "schedule", "teams"]);
 
             // Run after players are loaded
-            function cb(players) {
+            function cb(players, payroll) {
                 players[4].separator = true;
 
                 transaction.objectStore("teams").get(tid).onsuccess = function (event) {
@@ -679,7 +679,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                         container: "league_content",
                         template: "roster",
                         title: team.region + " " + team.name + " " + "Roster - " + season,
-                        vars: {teams: teams, seasons: seasons, sortable: sortable, currentSeason: currentSeason, showTradeFor: currentSeason && tid !== g.userTid, players: players, numRosterSpots: 15 - players.length, team: team}
+                        vars: {teams: teams, seasons: seasons, sortable: sortable, currentSeason: currentSeason, showTradeFor: currentSeason && tid !== g.userTid, players: players, numRosterSpots: 15 - players.length, team: team, payroll: payroll, salaryCap: g.salaryCap / 1000}
                     };
                     ui.update(data, req.raw.cb);
                 };
@@ -712,7 +712,9 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                         var players;
 
                         players = db.getPlayers(event.target.result, season, tid, attributes, stats, ratings, {numGamesRemaining: numGamesRemaining, showRookies: true, sortBy: "rosterOrder", showNoStats: true});
-                        cb(players);
+                        db.getPayroll(transaction, tid, function (payroll) {
+                            cb(players, payroll / 1000);
+                        });
                     };
                 };
             } else {
@@ -722,7 +724,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     var players;
 
                     players = db.getPlayers(event.target.result, season, tid, attributes, stats, ratings, {numGamesRemaining: 0, showRookies: true, sortBy: "rosterOrder"});
-                    cb(players);
+                    cb(players, null);
                 };
             }
         });

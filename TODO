@@ -4,7 +4,6 @@ main todo
 - draft history view
   - career stats actually seem to be this season
   - GP should be integer
-- show payroll in roster view
 - core.game is messy and should be rewritten
 - let free agents stay for 2 seasons before retiring, or make retirement probabilistic
 - nba roster

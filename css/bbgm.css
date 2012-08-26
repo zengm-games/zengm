@@ -56,10 +56,14 @@ ul.dashboard_league li form {
   right: 0;
 }
 ul.dashboard_league li.dashboard_league_new a {
-  border-color: #46a546;
+  color: #fff;
 }
 ul.dashboard_league li.dashboard_league_new a:hover {
-  border-color: #468847;
+  color: #fff;
+}
+ul.dashboard_league li.dashboard_league_new h2 {
+  line-height: 30px;
+  padding-top: 4px;
 }
 
 .sidebar-nav {

@@ -188,6 +188,11 @@ select.season {
   width: 100px;
 }
 
+/* This is needed to keep the form fields the right size inside row-fluid after upgrading to Bootstrap 2.1. */
+.row-fluid input[class*="span"] {
+    min-height: 28px;
+}
+
 
 /* From bootstrap-responsive.css, force big size */
   .row {

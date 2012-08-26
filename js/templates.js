@@ -5823,7 +5823,7 @@ function program3(depth0,data) {
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.teamYears);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "negotiation.teamYears", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "\"> years\n      <p><div class=\"input-prepend input-append\">\n        <span class=\"add-on\">$</span><input type=\"text\" name=\"teamAmount\" id=\"teamAmount\" class=\"span1\" value=\"";
+  buffer += escapeExpression(stack1) + "\"> years\n      <p><div class=\"input-prepend input-append\">\n        <span class=\"add-on\">$</span><input type=\"text\" name=\"teamAmount\" id=\"teamAmount\" class=\"span5\" value=\"";
   foundHelper = helpers.negotiation;
   stack1 = foundHelper || depth0.negotiation;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.teamAmount);

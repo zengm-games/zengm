@@ -1380,7 +1380,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
     function negotiation(req) {
         beforeLeague(req, function () {
-            var found, i, negotiations, pid, teamAmountNew, teamYearsNew;
+            var cbRedirectNegotiationOrRoster, found, i, negotiations, pid, teamAmountNew, teamYearsNew;
 
             pid = parseInt(req.params.pid, 10);
 
@@ -1448,14 +1448,24 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                 };
             }
 
+            // Show the negotiations list if there are more ongoing negotiations
+            cbRedirectNegotiationOrRoster = function () {
+                negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
+                if (negotiations.length > 0) {
+                    Davis.location.assign(new Davis.Request("/l/" + g.lid + "/negotiation"));
+                } else {
+                    Davis.location.assign(new Davis.Request("/l/" + g.lid + "/roster"));
+                }
+            };
+
             // Any action requires a POST. GET will just view the status of the
             // negotiation, if (it exists
             if (req.method === "post") {
                 if (req.params.hasOwnProperty("cancel")) {
                     contractNegotiation.cancel(pid);
-                    Davis.location.assign(new Davis.Request("/l/" + g.lid));
+                    cbRedirectNegotiationOrRoster();
                 } else if (req.params.hasOwnProperty("accept")) {
-                    contractNegotiation.accept(pid);
+                    contractNegotiation.accept(pid, cbRedirectNegotiationOrRoster);
                 } else if (req.params.hasOwnProperty("new")) {
                     // If there is no active negotiation with this pid, create it;
                     negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));

@@ -4,7 +4,6 @@ main todo
 - draft history view
   - career stats actually seem to be this season
   - GP should be integer
-- when a contract is accepted, go back to negotiations list if there are other ones remaining
 - show payroll in roster view
 - refactor game log list (like league dashboard, getAll?)
   - why is it so slow? slower than dashboard, even

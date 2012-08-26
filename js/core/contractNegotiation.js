@@ -197,8 +197,9 @@ define(["db", "ui", "core/player", "util/helpers", "util/lock", "util/random"], 
      * 
      * @memberOf core.contractNegotiation
      * @param {number} pid An integer that must correspond with the player ID of a player in an ongoing negotiation.
+     * @param {function()} cb Optional callback to be run only after the contract is successfully accepted.
      */
-    function accept(pid) {
+    function accept(pid, cb) {
         var i, negotiation, negotiations;
 
         negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
@@ -246,7 +247,7 @@ define(["db", "ui", "core/player", "util/helpers", "util/lock", "util/random"], 
 
                 console.log("User accepted contract proposal from " + pid);
 
-                Davis.location.assign(new Davis.Request("/l/" + g.lid + "/roster"));
+                cb();
             };
         });
     }

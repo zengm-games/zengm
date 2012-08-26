@@ -259,7 +259,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                         vars.oppPtsRank = 30 - vars.oppPtsRank;
 
                         transaction.objectStore("games").index("season").getAll(g.season).onsuccess = function (event) {
-                            var game, games, i, tidMatch;
+                            var games, i;
 
                             games = event.target.result;
                             games.reverse();  // Look through most recent games first
@@ -267,34 +267,24 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                             vars.recentGames = [];
                             for (i = 0; i < games.length; i++) {
                                 // Check tid
-                                tidMatch = false;
                                 if (games[i].teams[0].tid === g.userTid) {
-                                    tidMatch = true;
-                                    game = {
+                                    vars.recentGames.push({
                                         gid: games[i].gid,
                                         home: true,
                                         pts: games[i].teams[0].pts,
                                         oppPts: games[i].teams[1].pts,
-                                        oppAbbrev: helpers.getAbbrev(games[i].teams[1].tid)
-                                    };
+                                        oppAbbrev: helpers.getAbbrev(games[i].teams[1].tid),
+                                        won: games[i].teams[0].pts > games[i].teams[1].pts
+                                    });
                                 } else if (games[i].teams[1].tid === g.userTid) {
-                                    tidMatch = true;
-                                    game = {
+                                    vars.recentGames.push({
                                         gid: games[i].gid,
                                         home: false,
                                         pts: games[i].teams[1].pts,
                                         oppPts: games[i].teams[0].pts,
-                                        oppAbbrev: helpers.getAbbrev(games[i].teams[0].tid)
-                                    };
-                                }
-
-                                if (tidMatch) {
-                                    if (game.pts > game.oppPts) {
-                                        game.won = true;
-                                    } else {
-                                        game.won = false;
-                                    }
-                                    vars.recentGames.push(game);
+                                        oppAbbrev: helpers.getAbbrev(games[i].teams[0].tid),
+                                        won: games[i].teams[1].pts > games[i].teams[0].pts
+                                    });
                                 }
 
                                 if (vars.recentGames.length === 3) {
@@ -1080,46 +1070,39 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                 season = helpers.validateSeason(season);
 
                 games = [];
-                g.dbl.transaction(["games"]).objectStore("games").index("season").openCursor(season).onsuccess = function (event) {
-                    var content, cursor, game, home, opp, oppPts, pts, tidMatch, won;
+                g.dbl.transaction(["games"]).objectStore("games").index("season").getAll(season).onsuccess = function (event) {
+                    var content, i, games, gamesAll;
 
-                    cursor = event.target.result;
-                    if (cursor) {
-                        game = cursor.value;
+                    gamesAll = event.target.result;
 
+                    games = [];
+                    for (i = 0; i < gamesAll.length; i++) {
                         // Check tid
-                        tidMatch = false;
-                        if (game.teams[0].tid === tid) {
-                            tidMatch = true;
-                            home = true;
-                            pts = game.teams[0].pts;
-                            oppPts = game.teams[1].pts;
-                            opp = helpers.validateTid(game.teams[1].tid);
-                        } else if (game.teams[1].tid === tid) {
-                            tidMatch = true;
-                            home = false;
-                            pts = game.teams[1].pts;
-                            oppPts = game.teams[0].pts;
-                            opp = helpers.validateTid(game.teams[0].tid);
+                        if (gamesAll[i].teams[0].tid === g.userTid) {
+                            games.push({
+                                gid: gamesAll[i].gid,
+                                home: true,
+                                pts: gamesAll[i].teams[0].pts,
+                                oppPts: gamesAll[i].teams[1].pts,
+                                oppAbbrev: helpers.getAbbrev(gamesAll[i].teams[1].tid),
+                                won: gamesAll[i].teams[0].pts > gamesAll[i].teams[1].pts,
+                                selected: gamesAll[i].gid === gid
+                            });
+                        } else if (gamesAll[i].teams[1].tid === g.userTid) {
+                            games.push({
+                                gid: gamesAll[i].gid,
+                                home: false,
+                                pts: gamesAll[i].teams[1].pts,
+                                oppPts: gamesAll[i].teams[0].pts,
+                                oppAbbrev: helpers.getAbbrev(gamesAll[i].teams[0].tid),
+                                won: gamesAll[i].teams[1].pts > gamesAll[i].teams[0].pts,
+                                selected: gamesAll[i].gid === gid
+                            });
                         }
-
-                        if (tidMatch) {
-                            if (pts > oppPts) {
-                                won = true;
-                            } else {
-                                won = false;
-                            }
-                            games.push({gid: game.gid, home: home, oppAbbrev: opp[1], won: won, pts: pts, oppPts: oppPts});
-                            if (game.gid === gid) {
-                                _.last(games).selected = true;
-                            }
-                        }
-
-                        cursor.continue();
-                    } else {
-                        content = Handlebars.templates.gameLogList({lid: g.lid, abbrev: abbrev, games: games, season: season});
-                        cb(content);
                     }
+
+                    content = Handlebars.templates.gameLogList({lid: g.lid, abbrev: abbrev, games: games, season: season});
+                    cb(content);
                 };
             };
 

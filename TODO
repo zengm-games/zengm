@@ -1,13 +1,6 @@
 main todo
 - chrome
   - indexeddb-getall-shim
-- career stats from db.getPlayer
-  - draft history view
-- playoff stats in player view
-  - need a way to request only playoff stats from db.getPlayers - see all the playoffs === false stuff
-- draft history view
-  - career stats actually seem to be this season
-  - GP should be integer
 - core.game is messy and should be rewritten
 - let free agents stay for 2 seasons before retiring, or make retirement probabilistic
 - nba roster
@@ -150,6 +143,8 @@ add activeYears multientry like statsTids use for:
 - league leaders
 - stats
 - ratings
+playoff stats in player view
+- need a way to request only playoff stats from db.getPlayers - see all the playoffs === false stuff
 
 ---
 
@@ -177,7 +172,7 @@ realtime data binding/updating
   - uses handlebars
 - knockoutjs is too flaky. try just a naive approach first, and use something better later
 - be smarter about things that don't change, like old box scores, stats from old seasons, etc
-- handle deeper content, like pagination/sorting in tables
+- handle deeper content, like pagination/sorting in tables and tabs in player view
 
 
 

@@ -4,7 +4,7 @@ $(document).ready(function() {
 
     ui.datatableSinglePage($('#draft_results'), 0, [
         {{#players}}
-	          ['{{rnd}}-{{pick}}', '<a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>', '{{pos}}', '<a href="/l/{{../lid}}/roster/{{draftAbbrev}}">{{draftAbbrev}}</a>', '{{draftAge}}', '{{draftOvr}}', '{{draftPot}}', '<a href="/l/{{../lid}}/roster/{{currentAbbrev}}">{{currentAbbrev}}</a>', '{{currentAge}}', '{{currentOvr}}', '{{currentPot}}', '{{round gp 1}}', '{{round min 1}}', '{{round pts 1}}', '{{round trb 1}}', '{{round ast 1}}'],
+	          ['{{rnd}}-{{pick}}', '<a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>', '{{pos}}', '<a href="/l/{{../lid}}/roster/{{draftAbbrev}}">{{draftAbbrev}}</a>', '{{draftAge}}', '{{draftOvr}}', '{{draftPot}}', '<a href="/l/{{../lid}}/roster/{{currentAbbrev}}">{{currentAbbrev}}</a>', '{{currentAge}}', '{{currentOvr}}', '{{currentPot}}', '{{round gp 0}}', '{{round min 1}}', '{{round pts 1}}', '{{round trb 1}}', '{{round ast 1}}'],
         {{/players}}
     ]);
 });

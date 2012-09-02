@@ -3948,10 +3948,10 @@ function program28(depth0,data) {
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "name", { hash: {} }); }
   buffer += escapeExpression(stack1) + "\" data-contract-expiration=\"";
-  foundHelper = helpers.contract_exp;
-  stack1 = foundHelper || depth0.contract_exp;
+  foundHelper = helpers.contractExp;
+  stack1 = foundHelper || depth0.contractExp;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "contract_exp", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "contractExp", { hash: {} }); }
   buffer += escapeExpression(stack1) + "\">Release</button></td><td><button class=\"btn btn-mini\" data-action=\"buyOut\" data-player-id=\"";
   foundHelper = helpers.pid;
   stack1 = foundHelper || depth0.pid;
@@ -6589,7 +6589,7 @@ function program1(depth0,data,depth1) {
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentPot", { hash: {} }); }
   buffer += escapeExpression(stack1) + "', '";
-  stack1 = 1;
+  stack1 = 0;
   foundHelper = helpers.gp;
   stack2 = foundHelper || depth0.gp;
   foundHelper = helpers.round;

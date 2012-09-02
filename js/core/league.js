@@ -165,7 +165,6 @@ define(["db", "ui", "core/player", "core/season", "util/helpers", "util/random"]
             cb();
         };
         localStorage.removeItem("league" + g.lid + "GameAttributes");
-        localStorage.removeItem("league" + g.lid + "DraftOrder");
         localStorage.removeItem("league" + g.lid + "Negotiations");
     }
 

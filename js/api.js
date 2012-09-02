@@ -156,19 +156,20 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
     }
 
     function draftUser(pid, cb) {
-        var draftOrder, pick, playerStore;
-
         pid = parseInt(pid, 10);
 
-        draftOrder = JSON.parse(localStorage.getItem("league" + g.lid + "DraftOrder"));
-        pick = draftOrder.shift();
-        if (pick.tid === g.userTid) {
-            playerStore = g.dbl.transaction(["players"], "readwrite").objectStore("players");
-            draft.selectPlayer(pick, pid, playerStore, cb);
-            localStorage.setItem("league" + g.lid + "DraftOrder", JSON.stringify(draftOrder));
-        } else {
-            console.log("ERROR: User trying to draft out of turn.");
-        }
+        db.getDraftOrder(null, function (draftOrder) {
+            var pick, playerStore;
+
+            pick = draftOrder.shift();
+            if (pick.tid === g.userTid) {
+                playerStore = g.dbl.transaction(["players"], "readwrite").objectStore("players");
+                draft.selectPlayer(pick, pid, playerStore, cb);
+                db.setDraftOrder(null, draftOrder);
+            } else {
+                console.log("ERROR: User trying to draft out of turn.");
+            }
+        });
     }
 
     return {

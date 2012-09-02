@@ -43,9 +43,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
                 }
             }
 
-            localStorage.setItem("league" + g.lid + "DraftOrder", JSON.stringify(draftOrder));
-
-            cb();
+            db.setDraftOrder(null, draftOrder, cb);
         });
     }
 
@@ -60,37 +58,40 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
         pids = [];
         playerStore = g.dbl.transaction(["players"], "readwrite").objectStore("players");
         playerStore.index("tid").getAll(c.PLAYER_UNDRAFTED).onsuccess = function (event) {
-            var draftOrder, pick, pid, playersAll, selection;
+            var playersAll;
 
             playersAll = event.target.result;
             playersAll.sort(function (a, b) {  return (b.ratings[0].ovr + 2 * b.ratings[0].pot) - (a.ratings[0].ovr + 2 * a.ratings[0].pot); });
 
-            draftOrder = JSON.parse(localStorage.getItem("league" + g.lid + "DraftOrder"));
-            while (draftOrder.length > 0) {
-                pick = draftOrder.shift();
-                if (pick.tid === g.userTid) {
-                    draftOrder.unshift(pick);
-                    break;
+            db.getDraftOrder(null, function (draftOrder) {
+                var pick, pid, selection;
+
+                while (draftOrder.length > 0) {
+                    pick = draftOrder.shift();
+                    if (pick.tid === g.userTid) {
+                        draftOrder.unshift(pick);
+                        break;
+                    }
+
+                    selection = Math.abs(Math.floor(random.gauss(0, 3)));  // 0=best prospect, 1=next best prospect, etc.
+                    pid = playersAll[selection].pid;
+                    selectPlayer(pick, pid, playerStore);
+
+                    pids.push(pid);
+                    playersAll.splice(selection, 1);  // Delete from the list of undrafted players
                 }
 
-                selection = Math.abs(Math.floor(random.gauss(0, 3)));  // 0=best prospect, 1=next best prospect, etc.
-                pid = playersAll[selection].pid;
-                selectPlayer(pick, pid, playerStore);
-
-                pids.push(pid);
-                playersAll.splice(selection, 1);  // Delete from the list of undrafted players
-            }
-
-            localStorage.setItem("league" + g.lid + "DraftOrder", JSON.stringify(draftOrder));
-
-            // Is draft over?;
-            if (draftOrder.length === 0) {
-                season.newPhase(c.PHASE_AFTER_DRAFT, function () {
-                    cb(pids);
-                });
-            } else {
-                cb(pids);
-            }
+                db.setDraftOrder(null, draftOrder, function () {
+                    // Is draft over?;
+                    if (draftOrder.length === 0) {
+                        season.newPhase(c.PHASE_AFTER_DRAFT, function () {
+                            cb(pids);
+                        });
+                    } else {
+                        cb(pids);
+                    }
+                })
+            });
         };
     }
 

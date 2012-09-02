@@ -945,7 +945,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     }
 
                     playerStore.index("draftYear").getAll(g.season).onsuccess = function (event) {
-                        var data, drafted, draftAbbrev, draftOrder, draftTid, i, pa, player, playersAll, pr, slot, started;
+                        var drafted, draftAbbrev, draftTid, i, pa, player, playersAll, pr, started;
 
                         playersAll = event.target.result;
                         playersAll.sort(function (a, b) {  return (g.numTeams * (a.draftRound - 1) + a.draftPick) - (g.numTeams * (b.draftRound - 1) + b.draftPick); });
@@ -970,19 +970,22 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
                         started = drafted.length > 0;
 
-                        draftOrder = JSON.parse(localStorage.getItem("league" + g.lid + "DraftOrder"));
-                        for (i = 0; i < draftOrder.length; i++) {
-                            slot = draftOrder[i];
-                            drafted.push({abbrev: slot.abbrev, rnd: slot.round, pick: slot.pick});
-                        }
+                        db.getDraftOrder(null, function (draftOrder) {
+                            var data, i, slot;
 
-                        data = {
-                            container: "league_content",
-                            template: "draft",
-                            title: "Draft",
-                            vars: {undrafted: undrafted, drafted: drafted, started: started}
-                        };
-                        ui.update(data, req.raw.cb);
+                            for (i = 0; i < draftOrder.length; i++) {
+                                slot = draftOrder[i];
+                                drafted.push({abbrev: slot.abbrev, rnd: slot.round, pick: slot.pick});
+                            }
+
+                            data = {
+                                container: "league_content",
+                                template: "draft",
+                                title: "Draft",
+                                vars: {undrafted: undrafted, drafted: drafted, started: started}
+                            };
+                            ui.update(data, req.raw.cb);
+                        });
                     };
                 };
                 return;

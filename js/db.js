@@ -51,7 +51,7 @@ define(["util/helpers"], function (helpers) {
         };
         request.onblocked = function () { g.dbl.close(); };
         request.onupgradeneeded = function (event) {
-            var awardsStore, gameStore, playerStore, playoffSeriesStore, releasedPlayersStore, scheduleStore, teamStore, tradeStore;
+            var awardsStore, draftOrderStore, gameStore, playerStore, playoffSeriesStore, releasedPlayersStore, scheduleStore, teamStore, tradeStore;
 
             console.log("Upgrading league" + lid + " database");
 
@@ -66,6 +66,7 @@ define(["util/helpers"], function (helpers) {
             releasedPlayersStore = g.dbl.createObjectStore("releasedPlayers", {keyPath: "rid", autoIncrement: true});
             awardsStore = g.dbl.createObjectStore("awards", {keyPath: "season"});
             tradeStore = g.dbl.createObjectStore("trade", {keyPath: "rid"});
+            draftOrderStore = g.dbl.createObjectStore("draftOrder", {keyPath: "rid"});
 
             playerStore.createIndex("tid", "tid", {unique: false});
             playerStore.createIndex("draftYear", "draftYear", {unique: false});
@@ -702,6 +703,20 @@ define(["util/helpers"], function (helpers) {
         }
     }
 
+    function getDraftOrder(ot, cb) {
+        var draftOrder;
+
+        draftOrder = JSON.parse(localStorage.getItem("league" + g.lid + "DraftOrder"));
+        cb(draftOrder);
+    }
+
+    function setDraftOrder(ot, draftOrder, cb) {
+        localStorage.setItem("league" + g.lid + "DraftOrder", JSON.stringify(draftOrder));
+        if (typeof cb !== "undefined") {
+            cb();
+        }
+    }
+
     return {
         connectMeta: connectMeta,
         connectLeague: connectLeague,
@@ -712,6 +727,8 @@ define(["util/helpers"], function (helpers) {
         getTeam: getTeam,
         getTeams: getTeams,
         getPayroll: getPayroll,
-        rosterAutoSort: rosterAutoSort
+        rosterAutoSort: rosterAutoSort,
+        getDraftOrder: getDraftOrder,
+        setDraftOrder: setDraftOrder
     };
 });

@@ -1,4 +1,14 @@
 main todo
+- replace all aspects of localStorage with indexedDB
+  - Draft order
+    - switch to use db functions with localStorage, make sure it still works
+      - weird behavior in api.draftUser when I try to move around the callback
+    - add transactions to db calls
+    - switch to indexedDB and see if it still works
+    - should selectPlayer automatically update draft order?
+  - Negotiations
+  - Game attributes
+  - anything else?
 - after releasing a player (or buying out a player), the roster view should reload so the payroll/roster size info is correct
   - any other times there should be refreshes?
 - chrome
@@ -24,16 +34,9 @@ main todo
   - smalls should get less blocks
 - comments in season.js and elsewhere
 - move to new window button, like gmail, that will open a view in a new window with a minimal UI
-- other views
-  - team history
-  - dashboard
+- team history view
 strategic issues
 - reassess how money is stored (ones, thousands, millions?)
-- is localStorage fast enough for game_attributes, and possibly other stuff, like trades and contract negotiation?
-  - who cares? get rid of all of it and use only indexeddb. but what kind of schema? maybe store single-row things (trade, draft order, ...) in a single objectstore?
-- refactor and make sure i'm doing things correct as far as modules, namespaces, documentation, style, etc.
-  - What will replace the AJAX calls? Just call api.whatever function directly and have it do the jQuery crap
-- speed things up by combining transactions
 - robustness
   - confirm correct database is loaded before writing anything
   - how to handle closed browser in middle of game simulation?

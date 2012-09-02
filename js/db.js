@@ -157,7 +157,7 @@ define(["util/helpers"], function (helpers) {
      * 
      * @memberOf db
      * @param {Object} pa Player object.
-     * @param {?number} season Season to retrieve stats/ratings for. If null, return stats/ratings for all seasons in a list.
+     * @param {?number} season Season to retrieve stats/ratings for. If null, return stats/ratings for all seasons in a list as well as career totals in player.careerStats.
      * @param {?number} tid Team ID to retrieve stats for. This is useful in the case where a player played for multiple teams in a season. Eventually, there should be some way to specify whether the stats for multiple teams in a single season should be merged together or not. For now, passing null just picks the first entry, which is clearly wrong.
      * @param {Array.<string>} attributes List of player attributes to include in output.
      * @param {Array.<string>} stats List of player stats to include in output.
@@ -166,7 +166,7 @@ define(["util/helpers"], function (helpers) {
      * @return {Object} Filtered object containing the requested information for the player.
      */
     function getPlayer(pa, season, tid, attributes, stats, ratings, options) {
-        var i, j, k, player, pr, ps, teams, tidTemp;
+        var i, j, k, key, ignoredKeys, player, pcs, pr, ps, teams, tidTemp;
 
         options = typeof options !== "undefined" ? options : {};
 
@@ -299,6 +299,19 @@ define(["util/helpers"], function (helpers) {
                         ps.push(pa.stats[j]);
                     }
                 }
+                // Career totals
+                pcs = {};
+                if (ps.length > 0) {
+                    // Either aggregate stats or ignore annual crap
+                    ignoredKeys = ["age", "playoffs", "season", "tid"];
+                    for (key in ps[0]) {
+                        if (ps[0].hasOwnProperty(key)) {
+                            if (ignoredKeys.indexOf(key) < 0) {
+                                pcs[key] = _.reduce(_.pluck(ps, key), function (memo, num) { return memo + num; }, 0);
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -365,6 +378,9 @@ define(["util/helpers"], function (helpers) {
                     player.stats.push({});
                     player.stats[i] = filterStats(player.stats[i], ps[i], stats);
                 }
+                // Career totals
+                player.careerStats = {};
+                player.careerStats = filterStats(player.careerStats, pcs, stats);
             } else {
                 // Single seasons
                 player = filterStats(player, ps, stats);

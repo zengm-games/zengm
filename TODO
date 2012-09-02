@@ -1,6 +1,10 @@
 main todo
 - chrome
   - indexeddb-getall-shim
+- career stats from db.getPlayer
+  - draft history view
+- playoff stats in player view
+  - need a way to request only playoff stats from db.getPlayers - see all the playoffs === false stuff
 - draft history view
   - career stats actually seem to be this season
   - GP should be integer
@@ -124,10 +128,6 @@ player.addStatsRow
 - season parameter wouldn't be needed if g.season was already set. Set g.season early, then.
 league leaders
 - minimum minutes played to show?
-realtime data binding/updating
-- knockoutjs is too flaky. try just a naive approach first, and use something better later
-- be smarter about things that don't change, like old box scores, stats from old seasons, etc
-- handle deeper content, like pagination/sorting in tables
 multiple windows
 - have some element in the database with the last "action" time. poll it with some frequency, and update if needed
 pmPhase and pmStatus should be phaseText and statusText
@@ -146,6 +146,10 @@ internationalization
 - league dashboard rankings should say 1st, 2nd, 3rd rather than 1th, 2th, 3th
 league dashboard
 - next game should show something when active in playoffs, a message at least
+add activeYears multientry like statsTids use for:
+- league leaders
+- stats
+- ratings
 
 ---
 
@@ -167,7 +171,13 @@ FUTURE:
 
 Web workers
 - An implementation is in the webworkers branch. It kind of works, but it doesn't seem to play nice with IDB transactions, so I have to open a new transaction when the callback fires, so it is problematic to have multiple workers in parallel all trying to open readwrite transactions.
-
+realtime data binding/updating
+- ember.js
+  - data binding
+  - uses handlebars
+- knockoutjs is too flaky. try just a naive approach first, and use something better later
+- be smarter about things that don't change, like old box scores, stats from old seasons, etc
+- handle deeper content, like pagination/sorting in tables
 
 
 

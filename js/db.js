@@ -704,17 +704,29 @@ define(["util/helpers"], function (helpers) {
     }
 
     function getDraftOrder(ot, cb) {
-        var draftOrder;
+        var draftOrder, draftOrderStore;
 
-        draftOrder = JSON.parse(localStorage.getItem("league" + g.lid + "DraftOrder"));
-        cb(draftOrder);
+        draftOrderStore = getObjectStore(ot, "draftOrder", "draftOrder");
+        draftOrderStore.get(1).onsuccess = function (event) {
+            var draftOrder;
+
+            draftOrder = event.target.result.draftOrder;
+            cb(draftOrder);
+        };
     }
 
     function setDraftOrder(ot, draftOrder, cb) {
-        localStorage.setItem("league" + g.lid + "DraftOrder", JSON.stringify(draftOrder));
-        if (typeof cb !== "undefined") {
-            cb();
-        }
+        var draftOrderStore;
+
+        draftOrderStore = getObjectStore(ot, "draftOrder", "draftOrder", true);
+        draftOrderStore.put({
+            rid: 1,
+            draftOrder: draftOrder
+        }).onsuccess = function (event) {
+            if (typeof cb !== "undefined") {
+                cb();
+            }
+        };
     }
 
     return {

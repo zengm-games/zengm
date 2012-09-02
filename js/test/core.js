@@ -50,14 +50,18 @@ define(["db", "core/draft", "core/league", "core/player", "core/season", "core/t
         };
 
         testDraftUser = function (round, cb) {
-            db.getDraftOrder(null, function (draftOrder) {
+            var transaction;
+
+            transaction = g.dbl.transaction(["draftOrder", "players"], "readwrite");
+            db.getDraftOrder(transaction, function (draftOrder) {
                 var pick, playerStore;
 
                 pick = draftOrder.shift();
                 pick.round.should.equal(round);
                 pick.pick.should.equal(5);
                 pick.tid.should.equal(g.userTid);
-                playerStore = g.dbl.transaction("players", "readwrite").objectStore("players");
+
+                playerStore = transaction.objectStore("players");
                 playerStore.index("tid").get(c.PLAYER_UNDRAFTED).onsuccess = function (event) {
                     var pidBefore;
 
@@ -66,7 +70,7 @@ define(["db", "core/draft", "core/league", "core/player", "core/season", "core/t
                         pidAfter.should.equal(pidBefore);
                         playerStore.get(pidBefore).onsuccess = function (event) {
                             event.target.result.tid.should.equal(g.userTid);
-                            db.setDraftOrder(null, draftOrder, cb);
+                            db.setDraftOrder(transaction, draftOrder, cb);
                         };
                     });
                 };

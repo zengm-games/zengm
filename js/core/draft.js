@@ -53,17 +53,18 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
         A list of player IDs who were drafted.
     */
     function untilUserOrEnd(cb) {
-        var pids, playerStore;
+        var pids, playerStore, transaction;
 
         pids = [];
-        playerStore = g.dbl.transaction(["players"], "readwrite").objectStore("players");
+        transaction = g.dbl.transaction(["draftOrder", "players"], "readwrite");
+        playerStore = transaction.objectStore("players");
         playerStore.index("tid").getAll(c.PLAYER_UNDRAFTED).onsuccess = function (event) {
             var playersAll;
 
             playersAll = event.target.result;
             playersAll.sort(function (a, b) {  return (b.ratings[0].ovr + 2 * b.ratings[0].pot) - (a.ratings[0].ovr + 2 * a.ratings[0].pot); });
 
-            db.getDraftOrder(null, function (draftOrder) {
+            db.getDraftOrder(transaction, function (draftOrder) {
                 var pick, pid, selection;
 
                 while (draftOrder.length > 0) {
@@ -81,7 +82,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
                     playersAll.splice(selection, 1);  // Delete from the list of undrafted players
                 }
 
-                db.setDraftOrder(null, draftOrder, function () {
+                db.setDraftOrder(transaction, draftOrder, function () {
                     // Is draft over?;
                     if (draftOrder.length === 0) {
                         season.newPhase(c.PHASE_AFTER_DRAFT, function () {
@@ -90,7 +91,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
                     } else {
                         cb(pids);
                     }
-                })
+                });
             });
         };
     }

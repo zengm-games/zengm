@@ -32,7 +32,13 @@ define(["db", "ui", "core/player", "core/season", "util/helpers", "util/random"]
                     var afterPlayerCreation, agingYears, baseRatings, contract, done, draftYear, gameAttributes, goodNeutralBad, i, n, p, playerStore, pots, profile, profiles, randomizeExpiration, t, teamStore, transaction;
 
                     // Probably is fastest to use this transaction for everything done to create a new league
-                    transaction = g.dbl.transaction(["players", "teams", "trade"], "readwrite");
+                    transaction = g.dbl.transaction(["draftOrder", "players", "teams", "trade"], "readwrite");
+
+                    // Initialize draft order object store for later use
+                    transaction.objectStore("draftOrder").add({
+                        rid: 1,
+                        draftOrder: []
+                    });
 
                     // teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league.
                     teamStore = transaction.objectStore("teams");

@@ -1,4 +1,6 @@
 main todo
+- after releasing a player (or buying out a player), the roster view should reload so the payroll/roster size info is correct
+  - any other times there should be refreshes?
 - chrome
   - indexeddb-getall-shim
 - core.game is messy and should be rewritten
@@ -274,27 +276,7 @@ synergy
 
 UI
 --
-view any team in the roster window
-    drop down box at the top with team names
-    all actions disabled unless team_id == common.PLAYER_TEAM_ID
-    open this window when a team is double-clicked on in the standings
-customize which columns are displayed in treeviews - kiwi
-treeview formatting
-    str, int, float, currency, date, age - do formatting based on column type
-progress bars
-filtering should be done with treemodelfilter? - see pygtk tutorial
-play menu
-    even after hiding, accelerators still work, so on menuitem activation, check to make sure it's a valid choice!!!
-        or: set accelerators in python code, not glade.  then i can reuse accelerators
-ratings log tab on player window
 some indication of synergy
-toolbar to supplement the menubar
-- New Open Save | Play (drop down menu) | Roster TeamHistory | Trade FreeAgents
-league history
-should trade window be a window or dialog?
-update statusbar while game is saving/loading
-player info window spawned from trade dialog and contract window should have clickable controls
-- problem: a minimal example doesn't have this problem, so I don't know what's wrong
 in team stats tab, allow toggle to show opponent stats
 
 NBA

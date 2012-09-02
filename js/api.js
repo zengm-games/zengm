@@ -164,8 +164,11 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
             pick = draftOrder.shift();
             if (pick.tid === g.userTid) {
                 playerStore = g.dbl.transaction(["players"], "readwrite").objectStore("players");
-                draft.selectPlayer(pick, pid, playerStore, cb);
-                db.setDraftOrder(null, draftOrder);
+                draft.selectPlayer(pick, pid, playerStore, function (pid) {
+                    db.setDraftOrder(null, draftOrder, function () {
+                        cb(pid);
+                    });
+                });
             } else {
                 console.log("ERROR: User trying to draft out of turn.");
             }

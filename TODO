@@ -1,11 +1,9 @@
 main todo
 - replace all aspects of localStorage with indexedDB
   - Draft order
-    - switch to use db functions with localStorage, make sure it still works
-      - weird behavior in api.draftUser when I try to move around the callback
-    - add transactions to db calls
     - switch to indexedDB and see if it still works
-    - should selectPlayer automatically update draft order?
+      - have one object with rid and draftOrder, update that one as necessary
+    - add transactions to db calls where appropriate (search for db.*Draft)
   - Negotiations
   - Game attributes
   - anything else?

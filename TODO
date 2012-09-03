@@ -14,8 +14,6 @@ main todo
 - after releasing a player (or buying out a player), the roster view should reload so the payroll/roster size info is correct
   - any other times there should be refreshes?
 - chrome
-  - shim
-    - index support
   - wants to upgrade dbs all the time?
 - core.game is messy and should be rewritten
 - let free agents stay for 2 seasons before retiring, or make retirement probabilistic

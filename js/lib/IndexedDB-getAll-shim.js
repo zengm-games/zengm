@@ -1,59 +1,67 @@
 (function () {
-	"use strict";
+    "use strict";
 
-	var Event, IDBObjectStore, IDBRequest;
+    var Event, getAll, IDBIndex, IDBObjectStore, IDBRequest;
 
-	IDBObjectStore = window.IDBObjectStore || window.webkitIDBObjectStore || window.mozIDBObjectStore || window.msIDBObjectStore;
+    IDBObjectStore = window.IDBObjectStore || window.webkitIDBObjectStore || window.mozIDBObjectStore || window.msIDBObjectStore;
+    IDBIndex = window.IDBIndex || window.webkitIDBIndex || window.mozIDBIndex || window.msIDBIndex;
 
-	if (typeof IDBObjectStore.prototype.getAll !== "undefined") {
-		return;
-	}
+    if (typeof IDBObjectStore.prototype.getAll !== "undefined" && typeof IDBIndex.prototype.getAll !== "undefined") {
+        return;
+    }
 
-	// https://github.com/axemclion/IndexedDBShim/blob/gh-pages/src/IDBRequest.js
-	IDBRequest = function () {
-	    this.onsuccess = this.onerror = this.result = this.error = this.source = this.transaction = null;
-	    this.readyState = "pending";
-	};
-	// https://github.com/axemclion/IndexedDBShim/blob/gh-pages/src/Event.js
-	Event = function (type, debug) {
-		return {
-			"type": type,
-			debug: debug,
-			bubbles: false,
-			cancelable: false,
-			eventPhase: 0,
-			timeStamp: new Date()
-		};
-	};
+    // https://github.com/axemclion/IndexedDBShim/blob/gh-pages/src/IDBRequest.js
+    IDBRequest = function () {
+        this.onsuccess = null;
+        this.readyState = "pending";
+    };
+    // https://github.com/axemclion/IndexedDBShim/blob/gh-pages/src/Event.js
+    Event = function (type, debug) {
+        return {
+            "type": type,
+            debug: debug,
+            bubbles: false,
+            cancelable: false,
+            eventPhase: 0,
+            timeStamp: new Date()
+        };
+    };
 
-	IDBObjectStore.prototype.getAll = function (key) {
-		var objectStore, request, result;
+    getAll = function (key) {
+        var request, result;
 
-		key = typeof key !== "undefined" ? key : null;
+        key = typeof key !== "undefined" ? key : null;
 
-		request = new IDBRequest();
-		objectStore = this;
-		result = [];
+        request = new IDBRequest();
+        result = [];
 
-		objectStore.openCursor(key).onsuccess = function (event) {
-			var cursor, e, target;
+        // this is either an IDBObjectStore or an IDBIndex, depending on the context.
+        this.openCursor(key).onsuccess = function (event) {
+            var cursor, e, target;
 
-			cursor = event.target.result;
-			if (cursor) {
-				result.push(cursor.value);
-				cursor.continue();
-			} else {
-				if (typeof request.onsuccess === "function") {
-					e = new Event("success");
-					e.target = {
-						readyState: "done",
-						result: result
-					};
-					request.onsuccess(e);
-				}
-			}
-		};
+            cursor = event.target.result;
+            if (cursor) {
+                result.push(cursor.value);
+                cursor.continue();
+            } else {
+                if (typeof request.onsuccess === "function") {
+                    e = new Event("success");
+                    e.target = {
+                        readyState: "done",
+                        result: result
+                    };
+                    request.onsuccess(e);
+                }
+            }
+        };
 
-		return request;
-	};
+        return request;
+    };
+
+    if (typeof IDBObjectStore.prototype.getAll === "undefined") {
+        IDBObjectStore.prototype.getAll = getAll;
+    }
+    if (typeof IDBIndex.prototype.getAll === "undefined") {
+        IDBIndex.prototype.getAll = getAll;
+    }
 }());

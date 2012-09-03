@@ -46,9 +46,11 @@ define([], function () {
 
     /* Same as validateTid, but returns only the abbrev. */
     function getAbbrev(tid) {
-        var abbrev;
+        var abbrev, result;
 
-        [tid, abbrev] = validateTid(tid);
+        result = validateTid(tid);
+        tid = result[0];
+        abbrev = result[1];
 
         return abbrev;
     }

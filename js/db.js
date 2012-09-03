@@ -5,13 +5,11 @@
 define(["util/helpers"], function (helpers) {
     "use strict";
 
-    g.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
-
     function connectMeta(cb) {
         var request;
 
         console.log('Connecting to database "meta"');
-        request = g.indexedDB.open("meta", 1);
+        request = indexedDB.open("meta", 1);
         request.onerror = function (event) {
             console.log("Connection error");
         };
@@ -45,7 +43,7 @@ define(["util/helpers"], function (helpers) {
         var request;
 
         console.log('Connecting to database "league' + lid + '"');
-        request = g.indexedDB.open("league" + lid, 1);
+        request = indexedDB.open("league" + lid, 1);
         request.onerror = function (event) {
             console.log("Connection error");
         };

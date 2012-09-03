@@ -1,4 +1,12 @@
 main todo
+- revamp lock
+  - make it all async, like
+    lock.canStartGames(function (canStartGames) {
+        if (canStartGames) {
+            // whatever
+        }
+    });
+  - actually implement these functions rather than using placeholders
 - replace all aspects of localStorage with indexedDB
   - Negotiations
   - Game attributes
@@ -6,7 +14,9 @@ main todo
 - after releasing a player (or buying out a player), the roster view should reload so the payroll/roster size info is correct
   - any other times there should be refreshes?
 - chrome
-  - indexeddb-getall-shim
+  - shim
+    - index support
+  - wants to upgrade dbs all the time?
 - core.game is messy and should be rewritten
 - let free agents stay for 2 seasons before retiring, or make retirement probabilistic
 - nba roster

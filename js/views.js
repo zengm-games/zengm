@@ -60,7 +60,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                         // Delete any current meta database
                         console.log("Deleting any current meta database...");
                         g.dbm.close();
-                        request = g.indexedDB.deleteDatabase("meta");
+                        request = indexedDB.deleteDatabase("meta");
                         request.onsuccess = function (event) {
                             // Create new meta database
                             console.log("Creating new meta database...");

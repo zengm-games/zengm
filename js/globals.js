@@ -42,3 +42,9 @@ c.PHASE_FREE_AGENCY = 8;
 c.PLAYER_FREE_AGENT = -1;
 c.PLAYER_UNDRAFTED = -2;
 c.PLAYER_RETIRED = -3;
+
+
+window.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
+window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange;
+window.IDBObjectStore = window.IDBObjectStore || window.webkitIDBObjectStore;
+window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction;

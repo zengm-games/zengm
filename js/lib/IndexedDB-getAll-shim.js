@@ -29,7 +29,7 @@
 	IDBObjectStore.prototype.getAll = function (key) {
 		var objectStore, request, result;
 
-		key = typeof key !== "undefined" ? key : undefined;
+		key = typeof key !== "undefined" ? key : null;
 
 		request = new IDBRequest();
 		objectStore = this;

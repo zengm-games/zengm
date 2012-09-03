@@ -157,7 +157,7 @@ define(["db", "ui", "core/player", "core/season", "util/helpers", "util/random"]
         }
 
         g.dbm.transaction(["leagues"], "readwrite").objectStore("leagues").delete(lid);
-        request = g.indexedDB.deleteDatabase("league" + lid);
+        request = indexedDB.deleteDatabase("league" + lid);
         request.onsuccess = function (event) {
             console.log("Database league" + lid + " successfully deleted");
             cb();

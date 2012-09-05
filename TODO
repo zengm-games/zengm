@@ -1,6 +1,8 @@
 main todo
+- tests for core.contractNegotiation
 - replace all aspects of localStorage with indexedDB
-  - Game attributes
+  - Game attributes? Is it worth it?
+    - pmPhase and pmStatus should be phaseText and statusText
   - anything else?
 - revamp lock
   - make it all async, like
@@ -131,7 +133,6 @@ player.addStatsRow
 - season parameter wouldn't be needed if g.season was already set. Set g.season early, then.
 league leaders
 - minimum minutes played to show?
-pmPhase and pmStatus should be phaseText and statusText
 commas for thousands
 - number of games played in delete league view
 - attendance in finances

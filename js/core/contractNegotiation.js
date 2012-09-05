@@ -22,58 +22,60 @@ define(["db", "ui", "core/player", "util/helpers", "util/lock", "util/random"], 
             helpers.error("You're not allowed to sign free agents now.");
             return;
         }
-        if (!lock.canStartNegotiation()) {
-            helpers.error("You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process.");
-            return;
-        }
-
-        playerStore = db.getObjectStore(ot, "players", "players", true);
-        playerStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
-            var numPlayersOnRoster;
-
-            numPlayersOnRoster = event.target.result.length;
-            if (numPlayersOnRoster >= 15 && !resigning) {
-                helpers.error("Your roster is full. Before you can sign a free agent, you'll have to buy out or release one of your current players.");
+        lock.canStartNegotiation(function (canStartNegotiation) {
+            if (!canStartNegotiation) {
+                helpers.error("You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process.");
                 return;
             }
 
-            playerStore.openCursor(pid).onsuccess = function (event) {
-                var cursor, maxOffers, negotiations, player, playerAmount, playerYears;
+            playerStore = db.getObjectStore(ot, "players", "players", true);
+            playerStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
+                var numPlayersOnRoster;
 
-                cursor = event.target.result;
-                player = cursor.value;
-                if (player.tid !== c.PLAYER_FREE_AGENT) {
-                    helpers.error("Player " + pid + " is not a free agent.");
+                numPlayersOnRoster = event.target.result.length;
+                if (numPlayersOnRoster >= 15 && !resigning) {
+                    helpers.error("Your roster is full. Before you can sign a free agent, you'll have to buy out or release one of your current players.");
                     return;
                 }
 
-                // Initial player proposal;
-                playerAmount = player.contractAmount * (1 + player.freeAgentTimesAsked / 10);
-                playerYears = player.contractExp - g.season;
-                // Adjust to account for in-season signings;
-                if (g.phase <= c.PHASE_AFTER_TRADE_DEADLINE) {
-                    playerYears += 1;
-                }
+                playerStore.openCursor(pid).onsuccess = function (event) {
+                    var cursor, maxOffers, negotiations, player, playerAmount, playerYears;
 
-                maxOffers = random.randInt(1, 5);
+                    cursor = event.target.result;
+                    player = cursor.value;
+                    if (player.tid !== c.PLAYER_FREE_AGENT) {
+                        helpers.error("Player " + pid + " is not a free agent.");
+                        return;
+                    }
 
-                negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
-                negotiations.push({pid: pid, teamAmount: playerAmount, teamYears: playerYears, playerAmount: playerAmount, playerYears: playerYears, numOffersMade: 0, maxOffers: maxOffers, resigning: resigning});
-                localStorage.setItem("league" + g.lid + "Negotiations", JSON.stringify(negotiations));
-                ui.updateStatus("Contract negotiation in progress...");
-                ui.updatePlayMenu();
+                    // Initial player proposal;
+                    playerAmount = player.contractAmount * (1 + player.freeAgentTimesAsked / 10);
+                    playerYears = player.contractExp - g.season;
+                    // Adjust to account for in-season signings;
+                    if (g.phase <= c.PHASE_AFTER_TRADE_DEADLINE) {
+                        playerYears += 1;
+                    }
 
-                // Keep track of how many times negotiations happen with a player;
-                if (!resigning) {
-                    player.freeAgentTimesAsked += 1;
-                    cursor.update(player);
-                }
+                    maxOffers = random.randInt(1, 5);
 
-                if (typeof cb !== "undefined") {
-                    cb();
-                }
+                    negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
+                    negotiations.push({pid: pid, teamAmount: playerAmount, teamYears: playerYears, playerAmount: playerAmount, playerYears: playerYears, numOffersMade: 0, maxOffers: maxOffers, resigning: resigning});
+                    localStorage.setItem("league" + g.lid + "Negotiations", JSON.stringify(negotiations));
+                    ui.updateStatus("Contract negotiation in progress...");
+                    ui.updatePlayMenu();
+
+                    // Keep track of how many times negotiations happen with a player;
+                    if (!resigning) {
+                        player.freeAgentTimesAsked += 1;
+                        cursor.update(player);
+                    }
+
+                    if (typeof cb !== "undefined") {
+                        cb();
+                    }
+                };
             };
-        };
+        });
     }
 
     /**
@@ -165,10 +167,12 @@ define(["db", "ui", "core/player", "util/helpers", "util/lock", "util/random"], 
         localStorage.setItem("league" + g.lid + "Negotiations", JSON.stringify(negotiations));
 
         // If no negotiations are in progress, update status
-        if (!lock.negotiationInProgress()) {
-            ui.updateStatus("Idle");
-            ui.updatePlayMenu();
-        }
+        lock.negotiationInProgress(function (negotiationInProgress) {
+            if (!negotiationInProgress) {
+                ui.updateStatus("Idle");
+                ui.updatePlayMenu();
+            }
+        });
     }
 
     /**

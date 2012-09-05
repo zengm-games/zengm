@@ -1,4 +1,8 @@
 main todo
+- replace all aspects of localStorage with indexedDB
+  - Negotiations
+  - Game attributes
+  - anything else?
 - revamp lock
   - make it all async, like
     lock.canStartGames(function (canStartGames) {
@@ -7,10 +11,7 @@ main todo
         }
     });
   - actually implement these functions rather than using placeholders
-- replace all aspects of localStorage with indexedDB
-  - Negotiations
-  - Game attributes
-  - anything else?
+- links from play menu lead to page reload?
 - after releasing a player (or buying out a player), the roster view should reload so the payroll/roster size info is correct
   - any other times there should be refreshes?
 - chrome
@@ -35,7 +36,9 @@ main todo
   - pgs should get more assists
   - smalls should get less blocks
 - comments in season.js and elsewhere
-- move to new window button, like gmail, that will open a view in a new window with a minimal UI
+- multiple windows
+  - have some element in the database with the last "action" time. poll it with some frequency, and update if needed
+  - move to new window button, like gmail, that will open a view in a new window with a minimal UI
 - team history view
 strategic issues
 - reassess how money is stored (ones, thousands, millions?)
@@ -128,8 +131,6 @@ player.addStatsRow
 - season parameter wouldn't be needed if g.season was already set. Set g.season early, then.
 league leaders
 - minimum minutes played to show?
-multiple windows
-- have some element in the database with the last "action" time. poll it with some frequency, and update if needed
 pmPhase and pmStatus should be phaseText and statusText
 commas for thousands
 - number of games played in delete league view

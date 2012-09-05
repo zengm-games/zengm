@@ -26,16 +26,22 @@ define(["util/helpers"], function (helpers) {
         return g.gamesInProgress;
     }
 
-    /*Returns true or false depending on whether the negotiations table is
-    empty or not.*/
-    function negotiationInProgress() {
+    /**
+     * Is a negotiation in progress?
+     *
+     * Calls the callback function with either true or false depending on whether there is an ongoing negoation.
+     * 
+     * @memberOf lock
+     * @param {function(boolean)} cb Callback.
+     */
+    function negotiationInProgress(cb) {
         var negotiations;
 
         negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
         if (negotiations.length > 0) {
-            return true;
+            return cb(true);
         }
-        return false;
+        return cb(false);
     }
 
     /*Returns a boolean. Games can be started only when there is no contract
@@ -66,22 +72,30 @@ define(["util/helpers"], function (helpers) {
         return true;
     }
 
-    function canStartNegotiation() {
+    /**
+     * Can a new contract negotiation be started?
+     *
+     * Calls the callback function with either true or false. If games are in progress or a free agent (not resigning!) is being negotiated with, false.
+     * 
+     * @memberOf lock
+     * @param {function(boolean)} cb Callback.
+     */
+    function canStartNegotiation(cb) {
         var i, negotiations;
 
         if (g.gamesInProgress) {
-            return false;
+            return cb(false);
         }
 
         // Allow multiple parallel negotiations only for resigning players
         negotiations = JSON.parse(localStorage.getItem("league" + g.lid + "Negotiations"));
         for (i = 0; i < negotiations.length; i++) {
             if (!negotiations[i].resigning) {
-                return false;
+                return cb(false);
             }
         }
 
-        return true;
+        return cb(true);
     }
 
     return {

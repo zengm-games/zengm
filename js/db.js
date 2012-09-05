@@ -65,6 +65,7 @@ define(["util/helpers"], function (helpers) {
             awardsStore = g.dbl.createObjectStore("awards", {keyPath: "season"});
             tradeStore = g.dbl.createObjectStore("trade", {keyPath: "rid"});
             draftOrderStore = g.dbl.createObjectStore("draftOrder", {keyPath: "rid"});
+            draftOrderStore = g.dbl.createObjectStore("negotiations", {keyPath: "pid"});
 
             playerStore.createIndex("tid", "tid", {unique: false});
             playerStore.createIndex("draftYear", "draftYear", {unique: false});
@@ -131,7 +132,7 @@ define(["util/helpers"], function (helpers) {
      * Add a new player to the database or update an existing player.
      * 
      * @memberOf db
-     * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on players readwrite; if null is passed, then a new transaction will be used.
+     * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on players, readwrite; if null is passed, then a new transaction will be used.
      * @param {Object} p Player object.
      * @param {function()} cb Optional callback.
      */

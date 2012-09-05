@@ -66,8 +66,6 @@ define(["db", "ui", "core/player", "core/season", "util/helpers", "util/random"]
                         gameAttributes = {userTid: tid, season: g.startingSeason, phase: 0, gamesInProgress: false, stopGames: false};
                         helpers.setGameAttributes(gameAttributes);
 
-                        localStorage.setItem("league" + g.lid + "Negotiations", JSON.stringify([]));
-
                         // Make schedule, start season
                         season.newPhase(c.PHASE_REGULAR_SEASON, function () {
                             ui.updateStatus('Idle');
@@ -171,7 +169,6 @@ define(["db", "ui", "core/player", "core/season", "util/helpers", "util/random"]
             cb();
         };
         localStorage.removeItem("league" + g.lid + "GameAttributes");
-        localStorage.removeItem("league" + g.lid + "Negotiations");
     }
 
     return {

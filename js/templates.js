@@ -4384,7 +4384,7 @@ function program1(depth0,data,depth1) {
   else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
   else { stack1 = stack3; }
   buffer += escapeExpression(stack1) + "', '$";
-  stack1 = 1;
+  stack1 = 2;
   foundHelper = helpers.contractAmount;
   stack2 = foundHelper || depth0.contractAmount;
   foundHelper = helpers.round;

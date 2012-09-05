@@ -1,6 +1,5 @@
 main todo
 - replace all aspects of localStorage with indexedDB
-  - Negotiations
   - Game attributes
   - anything else?
 - revamp lock
@@ -12,6 +11,7 @@ main todo
     });
   - actually implement these functions rather than using placeholders
 - links from play menu lead to page reload?
+- free agent list doesn't show added salary demands after failed negotiations
 - after releasing a player (or buying out a player), the roster view should reload so the payroll/roster size info is correct
   - any other times there should be refreshes?
 - chrome

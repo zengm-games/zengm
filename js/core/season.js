@@ -367,11 +367,12 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
     }
 
     function newPhaseResignPlayers(cb) {
-        var phaseText, playerStore;
+        var phaseText, playerStore, transaction;
 
         phaseText = g.season + " resign players";
 
-        playerStore = g.dbl.transaction("players", "readwrite").objectStore("players");
+        transaction = g.dbl.transaction(["negotiations", "players"], "readwrite");
+        playerStore = transaction.objectStore("players");
 
         // Resign players or they become free agents
         playerStore.index("tid").openCursor(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
@@ -395,7 +396,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                         // Add to free agents first, to generate a contract demand
                         player.addToFreeAgents(playerStore, p, c.PHASE_RESIGN_PLAYERS, function () {
                             // Open negotiations with player
-                            contractNegotiation.create(playerStore, p.pid, true);
+                            contractNegotiation.create(transaction, p.pid, true);
                         });
                     }
                 }

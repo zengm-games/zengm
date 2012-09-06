@@ -12,7 +12,7 @@ define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui
      * @param {IDBTransaction|null} ot An IndexedDB transaction on negotiations and players, readwrite; if null is passed, then a new transaction will be used.
      * @param {number} pid An integer that must correspond with the player ID of a free agent.
      * @param {boolean} resigning Set to true if this is a negotiation for a contract extension, which will allow multiple simultaneous negotiations. Set to false otherwise.
-     * @param {function(string=)} cb Optional callback to be run only after a successful negotiation is started. If an error occurs, pass a string error message.
+     * @param {function(string=)} cb Callback to be run only after a successful negotiation is started. If an error occurs, pass a string error message.
      */
     function create(ot, pid, resigning, cb) {
         var transaction;
@@ -70,9 +70,7 @@ define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui
                         ui.updateStatus("Contract negotiation in progress...");
                         ui.updatePlayMenu();
 
-                        if (typeof cb !== "undefined") {
-                            cb();
-                        }
+                        cb();
                     };
                 };
             };
@@ -193,7 +191,7 @@ define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui
      * 
      * @memberOf core.contractNegotiation
      * @param {number} pid An integer that must correspond with the player ID of a player in an ongoing negotiation.
-     * @param {function(string=)} cb Optional callback to be run only after the contract is successfully accepted. If an error occurs, pass a string error message.
+     * @param {function(string=)} cb Callback to be run only after the contract is successfully accepted. If an error occurs, pass a string error message.
      */
     function accept(pid, cb) {
         g.dbl.transaction("negotiations").objectStore("negotiations").get(pid).onsuccess = function (event) {

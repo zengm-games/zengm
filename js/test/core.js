@@ -143,7 +143,54 @@ define(["db", "core/contractNegotiation", "core/draft", "core/league", "core/pla
                 });
             });
             it("should not allow a negotiation to start if there are already 15 players on the user's roster, unless resigning is true", function (done) {
-done();
+                var transaction;
+
+                transaction = g.dbl.transaction(["negotiations", "players"], "readwrite");
+
+                transaction.objectStore("players").openCursor(7).onsuccess = function (event) {
+                    var cursor, p;
+
+                    cursor = event.target.result;
+                    p = cursor.value;
+                    p.tid = g.userTid;
+
+                    cursor.update(p);
+
+                    contractNegotiation.create(transaction, 8, false, function (error) {
+                        error.should.equal("Your roster is full. Before you can sign a free agent, you'll have to buy out or release one of your current players.");
+
+                        transaction.objectStore("negotiations").getAll().onsuccess = function (event) {
+                            var negotiations;
+
+                            negotiations = event.target.result;
+                            negotiations.length.should.equal(0);
+
+                            contractNegotiation.create(transaction, 8, true, function (error) {
+                                (typeof error).should.equal("undefined");
+
+                                transaction.objectStore("negotiations").getAll().onsuccess = function (event) {
+                                    var negotiations;
+
+                                    negotiations = event.target.result;
+                                    negotiations.length.should.equal(1);
+                                    negotiations[0].pid.should.equal(8);
+
+                                    transaction.objectStore("players").openCursor(7).onsuccess = function (event) {
+                                        var cursor, p;
+
+                                        cursor = event.target.result;
+                                        p = cursor.value;
+                                        p.tid = c.PLAYER_FREE_AGENT;
+
+                                        cursor.update(p);
+
+                                        done();
+                                    };
+                                };
+                            });
+                        };
+                    });
+                };
             });
         });
     });

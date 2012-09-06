@@ -1,6 +1,6 @@
 main todo
+- split up core tests into multiple files
 - tests for core.contractNegotiation
-  - create
   - offer
   - cancel
   - cancelAll

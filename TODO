@@ -1,5 +1,10 @@
 main todo
 - tests for core.contractNegotiation
+  - create
+  - offer
+  - cancel
+  - cancelAll
+  - accept
 - replace all aspects of localStorage with indexedDB
   - Game attributes? Is it worth it?
     - pmPhase and pmStatus should be phaseText and statusText

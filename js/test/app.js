@@ -2,7 +2,7 @@ require.config({
     baseUrl: "/js"
 });
 
-requirejs(["lib/chai"], function (chai) {
+requirejs(["lib/chai", "views"], function (chai, views) {
     "use strict";
 
     mocha.setup({ui: "bdd", globals: ["console"], timeout: 2000000000});

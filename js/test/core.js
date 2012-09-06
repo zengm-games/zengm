@@ -2,7 +2,7 @@
  * @name test.core
  * @namespace Tests for any of the modules within the core folder. This might need to be split into multiple files eventually.
  */
-define(["db", "core/draft", "core/league", "core/player", "core/season", "core/trade", "util/helpers"], function (db, draft, league, player, season, trade, helpers) {
+define(["db", "core/contractNegotiation", "core/draft", "core/league", "core/player", "core/season", "core/trade", "util/helpers"], function (db, contractNegotiation, draft, league, player, season, trade, helpers) {
     "use strict";
 
     /**
@@ -24,6 +24,69 @@ define(["db", "core/draft", "core/league", "core/player", "core/season", "core/t
         }
         return n;
     }
+
+    describe("core/contractNegotiation", function () {
+        before(function (done) {
+            db.connectMeta(function () {
+                league.create(14, "random", function () {
+                    done();
+                });
+            });
+        });
+        after(function (done) {
+            league.remove(g.lid, done);
+        });
+        afterEach(function (done) {
+            // Set to a trade with team 1 and no players;
+            contractNegotiation.cancelAll(done);
+        });
+
+        describe("#create()", function () {
+            it("should start a negotiation with a free agent", function (done) {
+                var transaction;
+
+                transaction = g.dbl.transaction(["negotiations", "players"], "readwrite");
+
+                contractNegotiation.create(transaction, 7, false, function () {
+                    transaction.objectStore("negotiations").getAll().onsuccess = function (event) {
+                        var negotiations;
+
+                        negotiations = event.target.result;
+                        negotiations.length.should.equal(1);
+                        negotiations[0].pid.should.equal(7);
+
+                        done();
+                    };
+                });
+            });
+            it("should fail to start a negotiation with anyone but a free agent", function (done) {
+                var transaction;
+
+                transaction = g.dbl.transaction(["negotiations", "players"], "readwrite");
+
+                contractNegotiation.create(transaction, 70, false, function (error) {
+                    error.should.equal("Player 70 is not a free agent.");
+                    transaction.objectStore("negotiations").getAll().onsuccess = function (event) {
+                        var negotiations;
+
+                        negotiations = event.target.result;
+                        negotiations.length.should.equal(0);
+
+                        done();
+                    };
+                });
+            });
+            it("should only allow one concurrent negotiation if resigning is false", function (done) {
+done();
+            });
+            it("should allow multiple concurrent negotiations if resigning is true", function (done) {
+done();
+            });
+            it("should not allow a negotiation to start if there are already 15 players on the user's roster, unless resigning is true", function (done) {
+done();
+            });
+        });
+    });
 
     describe("core/draft", function () {
         var testDraftUntilUserOrEnd, testDraftUser;

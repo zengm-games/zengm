@@ -396,7 +396,11 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                         // Add to free agents first, to generate a contract demand
                         player.addToFreeAgents(playerStore, p, c.PHASE_RESIGN_PLAYERS, function () {
                             // Open negotiations with player
-                            contractNegotiation.create(transaction, p.pid, true);
+                            contractNegotiation.create(transaction, p.pid, true, function (error) {
+                                if (typeof error !== "undefined" && error) {
+                                    return helpers.error(error);
+                                }
+                            });
                         });
                     }
                 }

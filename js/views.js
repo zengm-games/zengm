@@ -37,9 +37,20 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
     }
 
     function beforeNonLeague() {
-        document.getElementById("playButton").innerHTML = "";
-        document.getElementById("playPhase").innerHTML = "";
-        document.getElementById("playStatus").innerHTML = "";
+        var playButtonElement, playPhaseElement, playStatusElement;
+
+        playButtonElement = document.getElementById("playButton");
+        if (playButtonElement) {
+            playButtonElement.innerHTML = "";
+        }
+        playPhaseElement = document.getElementById("playPhase");
+        if (playPhaseElement) {
+            playPhaseElement.innerHTML = "";
+        }
+        playStatusElement = document.getElementById("playStatus");
+        if (playStatusElement) {
+            playStatusElement.innerHTML = "";
+        }
     }
 
     function init_db(req) {
@@ -1373,14 +1384,17 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
     function negotiation(req) {
         beforeLeague(req, function () {
-            var cbRedirectNegotiationOrRoster, found, i, pid, teamAmountNew, teamYearsNew;
+            var cbDisplayNegotiation, cbRedirectNegotiationOrRoster, found, i, pid, teamAmountNew, teamYearsNew;
 
             pid = parseInt(req.params.pid, 10);
 
-            function cbDisplayNegotiation() {
+            cbDisplayNegotiation = function (error) {
+                if (typeof error !== "undefined" && error) {
+                    return helpers.error(error, req);
+                }
+
                 if (req.method === "post") {
-                    Davis.location.assign(new Davis.Request("/l/" + g.lid + "/negotiation/" + pid));
-                    return;
+                    return Davis.location.assign(new Davis.Request("/l/" + g.lid + "/negotiation/" + pid));
                 }
 
                 g.dbl.transaction("negotiations").objectStore("negotiations").get(pid).onsuccess = function (event) {
@@ -1389,8 +1403,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     negotiation = event.target.result;
 
                     if (!negotiation) {
-                        helpers.error("No negotiation with player " + pid + " in progress.", req);
-                        return;
+                        return helpers.error("No negotiation with player " + pid + " in progress.", req);
                     }
 
                     negotiation.playerAmount /= 1000;
@@ -1435,10 +1448,14 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                         });
                     };
                 };
-            }
+            };
 
             // Show the negotiations list if there are more ongoing negotiations
-            cbRedirectNegotiationOrRoster = function () {
+            cbRedirectNegotiationOrRoster = function (error) {
+                if (typeof error !== "undefined" && error) {
+                    return helpers.error(error, req);
+                }
+
                 g.dbl.transaction("negotiations").objectStore("negotiations").getAll().onsuccess = function (event) {
                     var negotiations;
 

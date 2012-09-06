@@ -2,7 +2,7 @@
  * @name core.contractNegotiation
  * @namespace All aspects of contract negotiation.
  */
-define(["db", "ui", "core/player", "util/helpers", "util/lock", "util/random"], function (db, ui, player, helpers, lock, random) {
+define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui, player, lock, random) {
     "use strict";
 
     /**
@@ -12,7 +12,7 @@ define(["db", "ui", "core/player", "util/helpers", "util/lock", "util/random"], 
      * @param {IDBTransaction|null} ot An IndexedDB transaction on negotiations and players, readwrite; if null is passed, then a new transaction will be used.
      * @param {number} pid An integer that must correspond with the player ID of a free agent.
      * @param {boolean} resigning Set to true if this is a negotiation for a contract extension, which will allow multiple simultaneous negotiations. Set to false otherwise.
-     * @param {function()} cb Optional callback to be run only after a successful negotiation is started.
+     * @param {function(string=)} cb Optional callback to be run only after a successful negotiation is started. If an error occurs, pass a string error message.
      */
     function create(ot, pid, resigning, cb) {
         var transaction;
@@ -20,8 +20,7 @@ define(["db", "ui", "core/player", "util/helpers", "util/lock", "util/random"], 
         console.log("Trying to start new contract negotiation with player " + pid);
 
         if ((g.phase >= c.PHASE_AFTER_TRADE_DEADLINE && g.phase <= c.PHASE_AFTER_DRAFT) && !resigning) {
-            helpers.error("You're not allowed to sign free agents now.");
-            return;
+            return cb("You're not allowed to sign free agents now.");
         }
 
         transaction = db.getObjectStore(ot, ["negotiations", "players"], null, true);
@@ -30,8 +29,7 @@ define(["db", "ui", "core/player", "util/helpers", "util/lock", "util/random"], 
             var playerStore;
 
             if (!canStartNegotiation) {
-                helpers.error("You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process.");
-                return;
+                return cb("You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process.");
             }
 
             playerStore = transaction.objectStore("players");
@@ -40,8 +38,7 @@ define(["db", "ui", "core/player", "util/helpers", "util/lock", "util/random"], 
 
                 numPlayersOnRoster = event.target.result.length;
                 if (numPlayersOnRoster >= 15 && !resigning) {
-                    helpers.error("Your roster is full. Before you can sign a free agent, you'll have to buy out or release one of your current players.");
-                    return;
+                    return cb("Your roster is full. Before you can sign a free agent, you'll have to buy out or release one of your current players.");
                 }
 
                 playerStore.openCursor(pid).onsuccess = function (event) {
@@ -50,8 +47,7 @@ define(["db", "ui", "core/player", "util/helpers", "util/lock", "util/random"], 
                     cursor = event.target.result;
                     player = cursor.value;
                     if (player.tid !== c.PLAYER_FREE_AGENT) {
-                        helpers.error("Player " + pid + " is not a free agent.");
-                        return;
+                        return cb("Player " + pid + " is not a free agent.");
                     }
 
                     // Initial player proposal;
@@ -176,8 +172,9 @@ define(["db", "ui", "core/player", "util/helpers", "util/lock", "util/random"], 
      * Currently, the only time there should be multiple ongoing negotiations in the first place is when a user is resigning players at the end of the season, although that should probably change eventually.
      * 
      * @memberOf core.contractNegotiation
+     * @param {function()} cb Optional callback.
      */
-    function cancelAll() {
+    function cancelAll(cb) {
         var i, negotiations;
 
         console.log("Canceling all ongoing contract negotiations...");
@@ -185,6 +182,7 @@ define(["db", "ui", "core/player", "util/helpers", "util/lock", "util/random"], 
         g.dbl.transaction("negotiations", "readwrite").objectStore("negotiations").clear().onsuccess = function (event) {
             ui.updateStatus("Idle");
             ui.updatePlayMenu();
+            cb();
         };
     }
 
@@ -195,7 +193,7 @@ define(["db", "ui", "core/player", "util/helpers", "util/lock", "util/random"], 
      * 
      * @memberOf core.contractNegotiation
      * @param {number} pid An integer that must correspond with the player ID of a player in an ongoing negotiation.
-     * @param {function()} cb Optional callback to be run only after the contract is successfully accepted.
+     * @param {function(string=)} cb Optional callback to be run only after the contract is successfully accepted. If an error occurs, pass a string error message.
      */
     function accept(pid, cb) {
         g.dbl.transaction("negotiations").objectStore("negotiations").get(pid).onsuccess = function (event) {
@@ -207,8 +205,7 @@ define(["db", "ui", "core/player", "util/helpers", "util/lock", "util/random"], 
             // contract, and it's not resigning a current player, ERROR!;
             db.getPayroll(null, g.userTid, function (payroll) {
                 if (!negotiation.resigning && (payroll + negotiation.playerAmount > g.salaryCap && negotiation.playerAmount !== 500)) {
-                    helpers.error("This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract, buy out a player currently on your roster, or cancel the negotiation.");
-                    return;
+                    return cb("This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract, buy out a player currently on your roster, or cancel the negotiation.");
                 }
 
                 // Adjust to account for in-season signings;

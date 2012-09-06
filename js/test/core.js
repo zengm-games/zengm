@@ -47,7 +47,9 @@ define(["db", "core/contractNegotiation", "core/draft", "core/league", "core/pla
 
                 transaction = g.dbl.transaction(["negotiations", "players"], "readwrite");
 
-                contractNegotiation.create(transaction, 7, false, function () {
+                contractNegotiation.create(transaction, 7, false, function (error) {
+                    (typeof error).should.equal("undefined");
+
                     transaction.objectStore("negotiations").getAll().onsuccess = function (event) {
                         var negotiations;
 
@@ -66,6 +68,7 @@ define(["db", "core/contractNegotiation", "core/draft", "core/league", "core/pla
 
                 contractNegotiation.create(transaction, 70, false, function (error) {
                     error.should.equal("Player 70 is not a free agent.");
+
                     transaction.objectStore("negotiations").getAll().onsuccess = function (event) {
                         var negotiations;
 
@@ -77,10 +80,67 @@ define(["db", "core/contractNegotiation", "core/draft", "core/league", "core/pla
                 });
             });
             it("should only allow one concurrent negotiation if resigning is false", function (done) {
-done();
+                var transaction;
+
+                transaction = g.dbl.transaction(["negotiations", "players"], "readwrite");
+
+                contractNegotiation.create(transaction, 7, false, function (error) {
+                    (typeof error).should.equal("undefined");
+
+                    transaction.objectStore("negotiations").getAll().onsuccess = function (event) {
+                        var negotiations;
+
+                        negotiations = event.target.result;
+                        negotiations.length.should.equal(1);
+                        negotiations[0].pid.should.equal(7);
+
+                        contractNegotiation.create(transaction, 8, false, function (error) {
+                            error.should.equal("You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process.");
+
+                            transaction.objectStore("negotiations").getAll().onsuccess = function (event) {
+                                var negotiations;
+
+                                negotiations = event.target.result;
+                                negotiations.length.should.equal(1);
+                                negotiations[0].pid.should.equal(7);
+
+                                done();
+                            };
+                        });
+                    };
+                });
             });
             it("should allow multiple concurrent negotiations if resigning is true", function (done) {
-done();
+                var transaction;
+
+                transaction = g.dbl.transaction(["negotiations", "players"], "readwrite");
+
+                contractNegotiation.create(transaction, 7, true, function (error) {
+                    (typeof error).should.equal("undefined");
+
+                    transaction.objectStore("negotiations").getAll().onsuccess = function (event) {
+                        var negotiations;
+
+                        negotiations = event.target.result;
+                        negotiations.length.should.equal(1);
+                        negotiations[0].pid.should.equal(7);
+
+                        contractNegotiation.create(transaction, 8, true, function (error) {
+                            (typeof error).should.equal("undefined");
+
+                            transaction.objectStore("negotiations").getAll().onsuccess = function (event) {
+                                var negotiations;
+
+                                negotiations = event.target.result;
+                                negotiations.length.should.equal(2);
+                                negotiations[0].pid.should.equal(7);
+                                negotiations[1].pid.should.equal(8);
+
+                                done();
+                            };
+                        });
+                    };
+                });
             });
             it("should not allow a negotiation to start if there are already 15 players on the user's roster, unless resigning is true", function (done) {
 done();

@@ -23,6 +23,7 @@ main todo
   - nba player potential ratings
   - if necessary, scale everything down a bit to make it comparable to normal players
   - free agents are way overrated. is this roster file legit?
+- overtime
 - game simulation realism - compare with real stats
   - gameSim.rating_array power should be moved to game.js instead
   - height should matter a lot more
@@ -262,7 +263,6 @@ FUTURE
 
 GAMESIM
 -------
-overtime
 take all ratings into account
 blocks, assists (maybe other things) should not be so evenly distributed
 home and away games

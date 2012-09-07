@@ -1,10 +1,4 @@
 main todo
-- split up core tests into multiple files
-- tests for core.contractNegotiation
-  - offer
-  - cancel
-  - cancelAll
-  - accept
 - replace all aspects of localStorage with indexedDB
   - Game attributes? Is it worth it?
     - pmPhase and pmStatus should be phaseText and statusText
@@ -17,7 +11,6 @@ main todo
         }
     });
   - actually implement these functions rather than using placeholders
-- links from play menu lead to page reload?
 - free agent list doesn't show added salary demands after failed negotiations
 - after releasing a player (or buying out a player), the roster view should reload so the payroll/roster size info is correct
   - any other times there should be refreshes?

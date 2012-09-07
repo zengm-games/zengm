@@ -781,13 +781,18 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             }
 
             g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(c.PLAYER_FREE_AGENT).onsuccess = function (event) {
-                var attributes, data, players, ratings, stats;
+                var attributes, data, i, players, ratings, stats;
 
-                attributes = ["pid", "name", "pos", "age", "contractAmount", "contractExp"];
+                attributes = ["pid", "name", "pos", "age", "contractAmount", "contractExp", "freeAgentTimesAsked"];
                 ratings = ["ovr", "pot"];
                 stats = ["min", "pts", "trb", "ast"];
 
                 players = db.getPlayers(event.target.result, g.season, c.PLAYER_FREE_AGENT, attributes, stats, ratings, {oldStats: true, showNoStats: true});
+
+                for (i = 0; i < players.length; i++) {
+                    players[i].contractAmount = players[i].contractAmount * (1 + players[i].freeAgentTimesAsked / 10);
+                    delete players[i].freeAgentTimesAsked;
+                }
 
                 data = {
                     container: "league_content",

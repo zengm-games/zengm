@@ -814,7 +814,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                 return;
             }
 
-            pid = typeof req.params.pid !== "undefined" ? Math.floor(pid) : null;
+            pid = typeof req.params.pid !== "undefined" ? parseInt(req.params.pid, 10) : null;
             if (typeof req.raw.abbrev !== "undefined") {
                 [newOtherTid, abbrev] = helpers.validateAbbrev(req.raw.abbrev);
             } else {
@@ -822,6 +822,10 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             }
 
             showTrade = function (userPids, otherPids, message) {
+                if (req.method === "post") {
+                    return Davis.location.assign(new Davis.Request("/l/" + g.lid + "/trade"));
+                }
+
                 message = typeof message !== "undefined" ? message : null;
 
                 trade.getOtherTid(function (otherTid) {

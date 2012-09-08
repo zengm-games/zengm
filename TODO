@@ -1,4 +1,9 @@
 main todo
+- roster view
+  - buy out button
+- player view
+  - trade for button only displays if they are on a team
+  - sign free agent button when appropriate
 - replace all aspects of localStorage with indexedDB
   - Game attributes? Is it worth it?
     - pmPhase and pmStatus should be phaseText and statusText
@@ -86,11 +91,6 @@ jslint --plusplus --predef $ --predef Davis --predef requirejs --predef define -
 - http://stackoverflow.com/questions/6744692/jslint-should-we-tolerate-misordered-definitions
   - http://javascript.crockford.com/code.html
 - http://stackoverflow.com/questions/806163/jslint-using-a-function-before-its-defined-error
-roster view
-- past season: go based on players.stats.tid
-- make sure teams dropdown works
-- trade for button
-- buy out button
 new season
 - auto free agent signing
 contract negotiation

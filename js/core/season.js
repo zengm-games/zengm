@@ -418,26 +418,26 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
         phaseText = g.season + " free agency";
 
         // Delete all current negotiations to resign players
-        contractNegotiation.cancelAll();
+        contractNegotiation.cancelAll(function () {
+            playerStore = g.dbl.transaction(["players"], "readwrite").objectStore("players");
 
-        playerStore = g.dbl.transaction(["players"], "readwrite").objectStore("players");
+            // Reset contract demands of current free agents
+            // This IDBKeyRange only works because c.PLAYER_UNDRAFTED is -2 and c.PLAYER_FREE_AGENT is -1
+            playerStore.index("tid").openCursor(IDBKeyRange.bound(c.PLAYER_UNDRAFTED, c.PLAYER_FREE_AGENT)).onsuccess = function (event) {
+                var cursor, p;
 
-        // Reset contract demands of current free agents
-        // This IDBKeyRange only works because c.PLAYER_UNDRAFTED is -2 and c.PLAYER_FREE_AGENT is -1
-        playerStore.index("tid").openCursor(IDBKeyRange.bound(c.PLAYER_UNDRAFTED, c.PLAYER_FREE_AGENT)).onsuccess = function (event) {
-            var cursor, p;
-
-            cursor = event.target.result;
-            if (cursor) {
-                p = cursor.value;
-                player.addToFreeAgents(playerStore, p, c.PHASE_FREE_AGENCY);
-                cursor.update(p);
-                cursor.continue();
-            } else {
-                newPhaseCb(c.PHASE_FREE_AGENCY, phaseText, cb);
-                Davis.location.assign(new Davis.Request("/l/" + g.lid + "/free_agents"));
-            }
-        };
+                cursor = event.target.result;
+                if (cursor) {
+                    p = cursor.value;
+                    player.addToFreeAgents(playerStore, p, c.PHASE_FREE_AGENCY);
+                    cursor.update(p);
+                    cursor.continue();
+                } else {
+                    newPhaseCb(c.PHASE_FREE_AGENCY, phaseText, cb);
+                    Davis.location.assign(new Davis.Request("/l/" + g.lid + "/free_agents"));
+                }
+            };
+        });
     }
 
     /*Set a new phase of the game.

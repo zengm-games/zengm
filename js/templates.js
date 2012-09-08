@@ -3896,7 +3896,7 @@ function program21(depth0,data,depth1) {
   foundHelper = helpers.showTradeFor;
   stack1 = foundHelper || depth1.showTradeFor;
   stack2 = helpers['if'];
-  tmp1 = self.program(30, program30, data);
+  tmp1 = self.programWithDepth(program30, data, depth0, depth1);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;
@@ -3974,19 +3974,19 @@ function program28(depth0,data) {
   buffer += escapeExpression(stack1) + "\">Buy out</button></td>";
   return buffer;}
 
-function program30(depth0,data) {
+function program30(depth0,data,depth1,depth2) {
   
   var buffer = "", stack1;
   buffer += "<td><form action=\"/l/";
   foundHelper = helpers.lid;
-  stack1 = foundHelper || depth0.lid;
+  stack1 = foundHelper || depth2.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "......lid", { hash: {} }); }
   buffer += escapeExpression(stack1) + "/trade\" method=\"POST\" style=\"margin: 0\"><input type=\"hidden\" name=\"pid\" value=\"";
   foundHelper = helpers.pid;
-  stack1 = foundHelper || depth0.pid;
+  stack1 = foundHelper || depth1.pid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "pid", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "...pid", { hash: {} }); }
   buffer += escapeExpression(stack1) + "\"><button type=\"submit\" class=\"btn btn-mini\">Trade For</button></form></td>";
   return buffer;}
 

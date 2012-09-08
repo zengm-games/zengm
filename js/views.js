@@ -1151,6 +1151,9 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                         for (i = 0; i < game.teams.length; i++) {
                             game.teams[i].players[4].separator = true;
                             _.last(game.teams[i].players).separator = true;
+
+                            // Fix the total minutes calculation, because JavaScript only has floats so it gets fucked up
+                            game.teams[i].min = 240 + 25 * game.overtimes;
                         }
 
                         content = Handlebars.templates.boxScore({lid: g.lid, game: game});

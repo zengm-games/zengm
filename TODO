@@ -2,7 +2,6 @@ main todo
 - overtime
   - game results should show (OT) after the score
     - overtimes is stored in gamesStore. should it display as OT, 2OT, 3OT, etc?
-  - minutes total in box score should be accurate. Calculate by 240 + 25*overtimes, pass to template
 - replace all aspects of localStorage with indexedDB
   - Game attributes? Is it worth it?
     - pmPhase and pmStatus should be phaseText and statusText

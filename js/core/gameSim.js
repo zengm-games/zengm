@@ -9,7 +9,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * This function is self-contained and independent of the database, so that
      * eventually it can be ported to JavaScript and run client-side.
      */
-     "use strict";
+    "use strict";
 
     /**
      * Initialize the two teams that are playing this game.
@@ -54,7 +54,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
         this.subs_every_n = 5;  // How many possessions to wait before doing subs
 
-        this.overtime = false;
+        this.overtimes = 0;
     }
 
 
@@ -68,7 +68,8 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      *     and the extraneous data (defense, pace, ovr,
      *     composite_rating) removed. In other words...
      *         {
-     *             "id": 0,
+     *             "gid": 0,
+     *             "overtimes": 0,
      *             "'"team": [
      *                 {
      *                     "id": 0,
@@ -93,14 +94,12 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
         // Play overtime periods if necessary
         while (this.team[0].stat.pts === this.team[1].stat.pts) {
-            if (!this.overtime) {
+            if (this.overtimes === 0) {
                 this.num_possessions = Math.round(this.num_possessions * 5 / 48);  // 5 minutes of possessions
-                this.overtime = true;
             }
-            console.log('TIE: ' + this.team[0].stat.pts + ' - ' + this.team[1].stat.pts);
-            console.log(this);
+            this.overtimes += 1;
+            console.log("TIE: " + this.id);
             this.simPossessions();
-            console.log('+OT: ' + this.team[0].stat.pts + ' - ' + this.team[1].stat.pts);
         }
 
         // Delete stuff that isn't needed before returning
@@ -113,7 +112,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             }
         }
 
-        return {"gid": this.id, "team": this.team};
+        return {"gid": this.id, "overtimes": this.overtimes, "team": this.team};
     };
 
 
@@ -157,7 +156,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         var b, dt, i, ovrs, p, pp, t;
 
         // Time elapsed
-        dt = (this.overtime ? 5 : 48) / (2 * this.num_possessions) * this.subs_every_n;
+        dt = (this.overtimes > 0 ? 5 : 48) / (2 * this.num_possessions) * this.subs_every_n;
 
         for (t = 0; t < 2; t++) {
             // Overall ratings scaled by fatigue

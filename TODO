@@ -1,4 +1,8 @@
 main todo
+- overtime
+  - game results should show (OT) after the score
+    - overtimes is stored in gamesStore. should it display as OT, 2OT, 3OT, etc?
+  - minutes total in box score should be accurate. Calculate by 240 + 25*overtimes, pass to template
 - replace all aspects of localStorage with indexedDB
   - Game attributes? Is it worth it?
     - pmPhase and pmStatus should be phaseText and statusText
@@ -20,10 +24,6 @@ main todo
   - nba player potential ratings
   - if necessary, scale everything down a bit to make it comparable to normal players
   - free agents are way overrated. is this roster file legit?
-- overtime
-  - record whether overtime or not in database
-  - game results should show (OT) after the score
-  - minutes in box score should be accurate
 - game simulation realism - compare with real stats
   - gameSim.rating_array power should be moved to game.js instead
   - height should matter a lot more

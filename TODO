@@ -54,6 +54,7 @@ strategic issues
 - AI modules that contain functions which are called to determine if players are resigned, etc.
 - season crap
   - startingSeason should be stored so later years can have different values (such as the NBA players, should be 2011)
+    - grep for 2012, fix any hardcoded values
   - "2011-12" display for some phases, "2012" for later ones
 
 ---
@@ -70,12 +71,11 @@ sometimes deleting leagues or resetting db fails, i think because some open conn
 
 PORTING NOTES:
 
-at some point, go through the indexeddb code. factor out common patterns into a library. combine transactions where appropriate
 make sure all indexes are actually used. otherwise they're just making it slower for nothing
 
 ---
 
-POLISH FEATURES
+POLISH FEATURES (i.e. not required for public beta, probably.. but go through the list again to check)
 
 jslint --plusplus --predef $ --predef Davis --predef requirejs --predef define --predef window --predef document --predef localStorage --predef IDBKeyRange --predef IDBTransaction --predef g --predef c js/core/draft.js
 - http://stackoverflow.com/questions/7425147/jslint-error-somefunction-was-used-before-it-was-defined
@@ -92,11 +92,11 @@ player view
 - contract for free agents should note that it is requested, not existing
 - no contract or ratings shown for retired player
 db.getPlayers
-- rename to helpers.filterPlayers
+- rename to helpers.filterPlayers?
 - use for other access of players "playersAll"
 - the special case attributes should generally be moved directly into the database.
 draftTeamName and draftTeamRegion needed for anything? If not, cut them.
-Replace showNoStats with a check of stats.length in db.getPlayer, at least in some cases?
+Replace showNoStats with a check of stats.length in db.getPlayer, at least in some cases? API is messy
 roster size check on new season
 - cpu teams with < 5 players should automatically sign free agents
 history view retired players
@@ -111,7 +111,7 @@ DataTables - need to rethink a lot of this, particularly how to make a decent UI
 - http://datatables.net/extras/ such as scroller, colreorder, colvis, ...
 - add team dropdown to ratings and stats views - but should this refresh the view, or just filter the DataTable?
   - could use something like http://www.datatables.net/extras/thirdparty/ColumnFilterWidgets/DataTables/extras/ColumnFilterWidgets/ to also filter on positions
-- per 36 stats in team stats view
+- per 36 stats in team/player stats view
   - add a dropdown (maybe make the dropdown handling code more general?)
   - add an option to db.getPlayers
 - default to sort descending when column is clicked

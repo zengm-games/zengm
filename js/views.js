@@ -1321,7 +1321,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     container: "league_content",
                     template: "player",
                     title: player.name,
-                    vars: {player: player, currentRatings: currentRatings, showTradeFor: player.tid !== g.userTid}
+                    vars: {player: player, currentRatings: currentRatings, showTradeFor: player.tid !== g.userTid && player.tid >= 0}
                 };
                 ui.update(data, req.raw.cb);
             };

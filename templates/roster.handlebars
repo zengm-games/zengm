@@ -68,7 +68,7 @@ $(document).ready(function() {
             }
             else if (this.dataset.action === "buyOut") {
                 if ({{team.cash}} > this.dataset.cashOwed) {
-                    if (window.confirm('Are you sure you want to buy out ' + this.dataset.playerName + '? You will have to pay him the $' + this.dataset.cashOwed + 'M remaining on his contract from your current cash reserves of ${{team.cash 1}}M. He will then become a free agent and his contract will no longer count towards your salary cap.')) {
+                    if (window.confirm('Are you sure you want to buy out ' + this.dataset.playerName + '? You will have to pay him the $' + this.dataset.cashOwed + 'M remaining on his contract from your current cash reserves of ${{round team.cash 2}}M. He will then become a free agent and his contract will no longer count towards your salary cap.')) {
                         var tr = this.parentNode.parentNode;
                         api.rosterBuyOut(this.dataset.playerId, function (error) {
                             if (error) {
@@ -81,7 +81,7 @@ $(document).ready(function() {
                     }
                 }
                 else {
-                    alert('You only have ${{team.cash 1}}M in cash, but it would take $' + this.dataset.cashOwed + 'M to buy out ' + this.dataset.playerName + '.');
+                    alert('Error: You only have ${{round team.cash 2}}M in cash, but it would take $' + this.dataset.cashOwed + 'M to buy out ' + this.dataset.playerName + '.');
                 }
             }
             else if (this.dataset.action === "tradeFor") {
@@ -125,7 +125,7 @@ $(document).ready(function() {
 </thead>
 <tbody>
   {{#players}}
-    <tr id="roster_{{pid}}"{{#if separator}} class="separator"{{/if}}>{{#if ../sortable}}<td class="roster_handle"></td>{{/if}}<td><a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a></td><td>{{pos}}</td><td>{{age}}</td><td>{{ovr}}</td><td>{{pot}}</td>{{#if ../currentSeason}}<td>${{round contractAmount 1}}M thru {{contractExp}}</td>{{/if}}<td>{{round min 1}}</td><td>{{round pts 1}}</td><td>{{round trb 1}}</td><td>{{round ast 1}}</td>{{#if ../sortable}}<td><button class="btn btn-mini" data-action="release" data-player-id="{{pid}}" data-player-name="{{name}}" data-contract-expiration="{{contractExp}}">Release</button></td><td><button class="btn btn-mini" data-action="buyOut" data-player-id="{{pid}}" data-player-name="{{name}}" data-cash-owed="{{round cashOwed 1}}">Buy out</button></td>{{/if}} {{#if ../showTradeFor}}<td><form action="/l/{{../../lid}}/trade" method="POST" style="margin: 0"><input type="hidden" name="pid" value="{{../pid}}"><button type="submit" class="btn btn-mini">Trade For</button></form></td>{{/if}}</tr>
+    <tr id="roster_{{pid}}"{{#if separator}} class="separator"{{/if}}>{{#if ../sortable}}<td class="roster_handle"></td>{{/if}}<td><a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a></td><td>{{pos}}</td><td>{{age}}</td><td>{{ovr}}</td><td>{{pot}}</td>{{#if ../currentSeason}}<td>${{round contractAmount 1}}M thru {{contractExp}}</td>{{/if}}<td>{{round min 1}}</td><td>{{round pts 1}}</td><td>{{round trb 1}}</td><td>{{round ast 1}}</td>{{#if ../sortable}}<td><button class="btn btn-mini" data-action="release" data-player-id="{{pid}}" data-player-name="{{name}}" data-contract-expiration="{{contractExp}}">Release</button></td><td><button class="btn btn-mini" data-action="buyOut" data-player-id="{{pid}}" data-player-name="{{name}}" data-cash-owed="{{round cashOwed 2}}">Buy out</button></td>{{/if}} {{#if ../showTradeFor}}<td><form action="/l/{{../../lid}}/trade" method="POST" style="margin: 0"><input type="hidden" name="pid" value="{{../pid}}"><button type="submit" class="btn btn-mini">Trade For</button></form></td>{{/if}}</tr>
   {{/players}}
 </tbody>
 </table>

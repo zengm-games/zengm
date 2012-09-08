@@ -3623,7 +3623,7 @@ templates['roster'] = template(function (Handlebars,depth0,helpers,partials,data
 
 function program1(depth0,data) {
   
-  var buffer = "", stack1, stack2;
+  var buffer = "", stack1, stack2, stack3;
   buffer += "\n        // Roster reordering\n        function highlightHandles() {\n            var i = 1;\n            $('#roster tbody').children().each(function() {\n                var tr;\n\n                tr = $(this);\n                if (i <= 5) {\n                    tr.find('td:first').removeClass('btn-info').addClass('btn-primary');\n                } else {\n                    tr.find('td:first').removeClass('btn-primary').addClass('btn-info');\n                }\n                if (i === 5) {\n                    tr.addClass('separator');\n                } else {\n                    tr.removeClass('separator');\n                }\n                i++;\n            });\n        }\n        highlightHandles();\n        var fixHelper = function(e, ui) {\n            // Return helper which preserves the width of table cells being reordered\n            ui.children().each(function() {\n                $(this).width($(this).width());\n            });\n            return ui;\n        };\n        $(\"#roster tbody\").sortable({\n            helper: fixHelper,\n            cursor: \"move\",\n            update: function(e, ui) {\n                var i, sortedPids;\n\n                sortedPids = $(this).sortable(\"toArray\");\n                for (i = 0; i < sortedPids.length; i++) {\n                    sortedPids[i] = parseInt(sortedPids[i].substr(7), 10);\n                }\n\n                api.rosterReorder(sortedPids, function () {\n                    highlightHandles();\n                });\n            }\n        }).disableSelection();\n        $(\"#auto_sort_roster\").click(function(event) {\n            api.rosterAutoSort();\n        });\n\n        // Release player\n        $(\"#roster button\").click(function(event) {\n            if (this.dataset.action === \"release\") {\n                if (window.confirm('Are you sure you want to release ' + this.dataset.playerName + '?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in ' + this.dataset.contractExpiration + '.')) {\n                    var tr = this.parentNode.parentNode;\n                    api.rosterRelease(this.dataset.playerId, function (error) {\n                        if (error) {\n                            alert(\"Error: \" + error);\n                        }\n                        else {\n                            Davis.location.assign(new Davis.Request(Davis.location.current()));\n                        }                        \n                    });\n                }\n            }\n            else if (this.dataset.action === \"buyOut\") {\n                if (";
   foundHelper = helpers.team;
   stack1 = foundHelper || depth0.team;
@@ -3631,21 +3631,25 @@ function program1(depth0,data) {
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "team.cash", { hash: {} }); }
   buffer += escapeExpression(stack1) + " > this.dataset.cashOwed) {\n                    if (window.confirm('Are you sure you want to buy out ' + this.dataset.playerName + '? You will have to pay him the $' + this.dataset.cashOwed + 'M remaining on his contract from your current cash reserves of $";
-  stack1 = 1;
+  stack1 = 2;
   foundHelper = helpers.team;
   stack2 = foundHelper || depth0.team;
   stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.cash);
-  if(typeof stack2 === functionType) { stack1 = stack2.call(depth0, stack1, { hash: {} }); }
-  else if(stack2=== undef) { stack1 = helperMissing.call(depth0, "team.cash", stack1, { hash: {} }); }
-  else { stack1 = stack2; }
-  buffer += escapeExpression(stack1) + "M. He will then become a free agent and his contract will no longer count towards your salary cap.')) {\n                        var tr = this.parentNode.parentNode;\n                        api.rosterBuyOut(this.dataset.playerId, function (error) {\n                            if (error) {\n                                alert(\"Error: \" + error);\n                            }\n                            else {\n                                Davis.location.assign(new Davis.Request(Davis.location.current()));\n                            }\n                        });\n                    }\n                }\n                else {\n                    alert('You only have $";
-  stack1 = 1;
+  foundHelper = helpers.round;
+  stack3 = foundHelper || depth0.round;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
+  buffer += escapeExpression(stack1) + "M. He will then become a free agent and his contract will no longer count towards your salary cap.')) {\n                        var tr = this.parentNode.parentNode;\n                        api.rosterBuyOut(this.dataset.playerId, function (error) {\n                            if (error) {\n                                alert(\"Error: \" + error);\n                            }\n                            else {\n                                Davis.location.assign(new Davis.Request(Davis.location.current()));\n                            }\n                        });\n                    }\n                }\n                else {\n                    alert('Error: You only have $";
+  stack1 = 2;
   foundHelper = helpers.team;
   stack2 = foundHelper || depth0.team;
   stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.cash);
-  if(typeof stack2 === functionType) { stack1 = stack2.call(depth0, stack1, { hash: {} }); }
-  else if(stack2=== undef) { stack1 = helperMissing.call(depth0, "team.cash", stack1, { hash: {} }); }
-  else { stack1 = stack2; }
+  foundHelper = helpers.round;
+  stack3 = foundHelper || depth0.round;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
   buffer += escapeExpression(stack1) + "M in cash, but it would take $' + this.dataset.cashOwed + 'M to buy out ' + this.dataset.playerName + '.');\n                }\n            }\n            else if (this.dataset.action === \"tradeFor\") {\n\n            }\n        });\n    ";
   return buffer;}
 
@@ -3958,7 +3962,7 @@ function program28(depth0,data) {
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "name", { hash: {} }); }
   buffer += escapeExpression(stack1) + "\" data-cash-owed=\"";
-  stack1 = 1;
+  stack1 = 2;
   foundHelper = helpers.cashOwed;
   stack2 = foundHelper || depth0.cashOwed;
   foundHelper = helpers.round;

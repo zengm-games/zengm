@@ -1,6 +1,6 @@
 main todo
 - roster view
-  - buy out button disabled when not enough cash
+  - show cash in roster view
 - replace all aspects of localStorage with indexedDB
   - Game attributes? Is it worth it?
     - pmPhase and pmStatus should be phaseText and statusText

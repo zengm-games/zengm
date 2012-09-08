@@ -686,6 +686,15 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     }
                     team = {region: teamAll.region, name: teamAll.name, cash: teamSeason.cash / 1000000};
 
+                    for (j = 0; j < players.length; j++) {
+                        if (players.length > 5) {
+                            players[j].canRelease = true;
+                            if (players[j].cashOwed <= team.cash) {
+                                players[j].canBuyOut = true;
+                            }
+                        }
+                    }
+
                     data = {
                         container: "league_content",
                         template: "roster",
@@ -720,7 +729,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     }
 
                     transaction.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
-                        var players;
+                        var i, players;
 
                         players = db.getPlayers(event.target.result, season, tid, attributes, stats, ratings, {numGamesRemaining: numGamesRemaining, showRookies: true, sortBy: "rosterOrder", showNoStats: true});
                         db.getPayroll(transaction, tid, function (payroll) {

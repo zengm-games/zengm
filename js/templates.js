@@ -3891,11 +3891,10 @@ function program21(depth0,data,depth1) {
   tmp1.inverse = self.noop;
   stack1 = stack2.call(depth0, stack1, tmp1);
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += " ";
   foundHelper = helpers.showTradeFor;
   stack1 = foundHelper || depth1.showTradeFor;
   stack2 = helpers['if'];
-  tmp1 = self.programWithDepth(program30, data, depth0, depth1);
+  tmp1 = self.programWithDepth(program33, data, depth0, depth1);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;
@@ -3951,7 +3950,17 @@ function program28(depth0,data) {
   stack1 = foundHelper || depth0.contractExp;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "contractExp", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "\">Release</button></td><td><button class=\"btn btn-mini\" data-action=\"buyOut\" data-player-id=\"";
+  buffer += escapeExpression(stack1) + "\"";
+  foundHelper = helpers.canRelease;
+  stack1 = foundHelper || depth0.canRelease;
+  stack2 = helpers.unless;
+  tmp1 = self.program(29, program29, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += ">Release</button></td><td><button class=\"btn btn-mini\" data-action=\"buyOut\" data-player-id=\"";
   foundHelper = helpers.pid;
   stack1 = foundHelper || depth0.pid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -3970,10 +3979,29 @@ function program28(depth0,data) {
   if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
   else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
   else { stack1 = stack3; }
-  buffer += escapeExpression(stack1) + "\">Buy out</button></td>";
+  buffer += escapeExpression(stack1) + "\"";
+  foundHelper = helpers.canBuyOut;
+  stack1 = foundHelper || depth0.canBuyOut;
+  stack2 = helpers.unless;
+  tmp1 = self.program(31, program31, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += ">Buy out</button></td>";
   return buffer;}
+function program29(depth0,data) {
+  
+  
+  return " disabled=\"disabled\"";}
 
-function program30(depth0,data,depth1,depth2) {
+function program31(depth0,data) {
+  
+  
+  return " disabled=\"disabled\"";}
+
+function program33(depth0,data,depth1,depth2) {
   
   var buffer = "", stack1;
   buffer += "<td><form action=\"/l/";

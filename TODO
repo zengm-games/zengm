@@ -1,7 +1,4 @@
 main todo
-- overtime
-  - game results should show (OT) after the score
-    - overtimes is stored in gamesStore. should it display as OT, 2OT, 3OT, etc?
 - replace all aspects of localStorage with indexedDB
   - Game attributes? Is it worth it?
     - pmPhase and pmStatus should be phaseText and statusText

@@ -270,13 +270,21 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                         vars.oppPtsRank = 30 - vars.oppPtsRank;
 
                         transaction.objectStore("games").index("season").getAll(g.season).onsuccess = function (event) {
-                            var games, i;
+                            var games, i, overtime;
 
                             games = event.target.result;
                             games.reverse();  // Look through most recent games first
 
                             vars.recentGames = [];
                             for (i = 0; i < games.length; i++) {
+                                if (games[i].overtimes === 1) {
+                                    overtime = " (OT)";
+                                } else if (games[i].overtimes > 1) {
+                                    overtime = " (" + games[i].overtimes + "OT)";
+                                } else {
+                                    overtime = "";
+                                }
+
                                 // Check tid
                                 if (games[i].teams[0].tid === g.userTid) {
                                     vars.recentGames.push({
@@ -285,7 +293,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                                         pts: games[i].teams[0].pts,
                                         oppPts: games[i].teams[1].pts,
                                         oppAbbrev: helpers.getAbbrev(games[i].teams[1].tid),
-                                        won: games[i].teams[0].pts > games[i].teams[1].pts
+                                        won: games[i].teams[0].pts > games[i].teams[1].pts,
+                                        overtime: overtime
                                     });
                                 } else if (games[i].teams[1].tid === g.userTid) {
                                     vars.recentGames.push({
@@ -294,7 +303,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                                         pts: games[i].teams[1].pts,
                                         oppPts: games[i].teams[0].pts,
                                         oppAbbrev: helpers.getAbbrev(games[i].teams[0].tid),
-                                        won: games[i].teams[1].pts > games[i].teams[0].pts
+                                        won: games[i].teams[1].pts > games[i].teams[0].pts,
+                                        overtime: overtime
                                     });
                                 }
 
@@ -1105,14 +1115,22 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
                 games = [];
                 g.dbl.transaction(["games"]).objectStore("games").index("season").getAll(season).onsuccess = function (event) {
-                    var content, i, games, gamesAll;
+                    var content, i, games, gamesAll, overtime;
 
                     gamesAll = event.target.result;
 
                     games = [];
                     for (i = 0; i < gamesAll.length; i++) {
+                        if (gamesAll[i].overtimes === 1) {
+                            overtime = " (OT)";
+                        } else if (gamesAll[i].overtimes > 1) {
+                            overtime = " (" + gamesAll[i].overtimes + "OT)";
+                        } else {
+                            overtime = "";
+                        }
+
                         // Check tid
-                        if (gamesAll[i].teams[0].tid === g.userTid) {
+                        if (gamesAll[i].teams[0].tid === tid) {
                             games.push({
                                 gid: gamesAll[i].gid,
                                 home: true,
@@ -1120,9 +1138,10 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                                 oppPts: gamesAll[i].teams[1].pts,
                                 oppAbbrev: helpers.getAbbrev(gamesAll[i].teams[1].tid),
                                 won: gamesAll[i].teams[0].pts > gamesAll[i].teams[1].pts,
-                                selected: gamesAll[i].gid === gid
+                                selected: gamesAll[i].gid === gid,
+                                overtime: overtime
                             });
-                        } else if (gamesAll[i].teams[1].tid === g.userTid) {
+                        } else if (gamesAll[i].teams[1].tid === tid) {
                             games.push({
                                 gid: gamesAll[i].gid,
                                 home: false,
@@ -1130,7 +1149,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                                 oppPts: gamesAll[i].teams[0].pts,
                                 oppAbbrev: helpers.getAbbrev(gamesAll[i].teams[0].tid),
                                 won: gamesAll[i].teams[1].pts > gamesAll[i].teams[0].pts,
-                                selected: gamesAll[i].gid === gid
+                                selected: gamesAll[i].gid === gid,
+                                overtime: overtime
                             });
                         }
                     }
@@ -1145,7 +1165,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     gid = parseInt(gid, 10);
 
                     g.dbl.transaction(["games"]).objectStore("games").get(gid).onsuccess = function (event) {
-                        var content, i, game;
+                        var content, i, game, overtime;
 
                         game = event.target.result;
                         for (i = 0; i < game.teams.length; i++) {
@@ -1156,7 +1176,15 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                             game.teams[i].min = 240 + 25 * game.overtimes;
                         }
 
-                        content = Handlebars.templates.boxScore({lid: g.lid, game: game});
+                        if (game.overtimes === 1) {
+                            overtime = " (OT)";
+                        } else if (game.overtimes > 1) {
+                            overtime = " (" + game.overtimes + "OT)";
+                        } else {
+                            overtime = "";
+                        }
+
+                        content = Handlebars.templates.boxScore({lid: g.lid, game: game, overtime: overtime});
                         cb(content);
                     };
                 } else {

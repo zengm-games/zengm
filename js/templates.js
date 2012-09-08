@@ -1868,6 +1868,11 @@ function program17(depth0,data,depth1) {
   stack1 = foundHelper || depth0.oppPts;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "oppPts", { hash: {} }); }
+  buffer += escapeExpression(stack1);
+  foundHelper = helpers.overtime;
+  stack1 = foundHelper || depth0.overtime;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "overtime", { hash: {} }); }
   buffer += escapeExpression(stack1) + "</a><br>\n      ";
   return buffer;}
 function program18(depth0,data) {
@@ -2936,6 +2941,11 @@ function program3(depth0,data) {
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.pts);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "game.lost.pts", { hash: {} }); }
+  buffer += escapeExpression(stack1);
+  foundHelper = helpers.overtime;
+  stack1 = foundHelper || depth0.overtime;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "overtime", { hash: {} }); }
   buffer += escapeExpression(stack1) + "</h2>\n";
   foundHelper = helpers.game;
   stack1 = foundHelper || depth0.game;
@@ -6852,6 +6862,11 @@ function program1(depth0,data,depth1) {
   stack1 = foundHelper || depth0.oppPts;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "oppPts", { hash: {} }); }
+  buffer += escapeExpression(stack1);
+  foundHelper = helpers.overtime;
+  stack1 = foundHelper || depth0.overtime;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "overtime", { hash: {} }); }
   buffer += escapeExpression(stack1) + "</a></td></tr>\n  ";
   return buffer;}
 function program2(depth0,data) {

@@ -98,7 +98,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
                 this.num_possessions = Math.round(this.num_possessions * 5 / 48);  // 5 minutes of possessions
             }
             this.overtimes += 1;
-            console.log("TIE: " + this.id);
+            console.log("TIE: " + this.id + " (teams: " + this.team[0].id + ", " + this.team[1].id + ")");
             this.simPossessions();
         }
 

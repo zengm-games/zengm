@@ -2,7 +2,7 @@
 $(document).ready(function () {
   ui.datatableSinglePage($('#finances'), 5, [
     {{#teams}}
-      [ '<a href="/l/{{../lid}}/roster/{{abbrev}}">{{region}} {{name}}</a>', '{{round att}}', '${{round revenue 1}}M', '${{round profit 1}}M', '${{round cash 1}}M', '${{round payroll 1}}M' ],
+      [ '<a href="/l/{{../lid}}/roster/{{abbrev}}">{{region}} {{name}}</a>', '{{round att}}', '${{round revenue 2}}M', '${{round profit 2}}M', '${{round cash 2}}M', '${{round payroll 2}}M' ],
     {{/teams}}
   ]);
 });
@@ -10,7 +10,7 @@ $(document).ready(function () {
 
 <h1>Finances</h1>
 
-<p>The current salary cap is <strong>${{round salaryCap 1}}M</strong>.</p>
+<p>The current salary cap is <strong>${{round salaryCap 2}}M</strong>.</p>
 
 <p>
   <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="finances">

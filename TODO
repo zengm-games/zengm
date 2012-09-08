@@ -1,6 +1,4 @@
 main todo
-- roster view
-  - show cash in roster view
 - replace all aspects of localStorage with indexedDB
   - Game attributes? Is it worth it?
     - pmPhase and pmStatus should be phaseText and statusText
@@ -191,8 +189,6 @@ player view
 - for retired players, either don't show ratings, or show ratings from best year
 
 roster
-- "release" only sensitive with more than 5 players
-- "buy out" only sensitive when there's enough money
 - highlight handle on hover, like button
 - "trade for" only sensitive when trades are allowed
 

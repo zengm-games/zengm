@@ -79,11 +79,11 @@
     <h3>Finances</h3>
     <p>
       Avg Attendance: {{round att}}<br>
-      Revenue (YTD): ${{round revenue 1}}M<br>
-      Profit (YTD): ${{round profit 1}}M<br>
-      Cash: ${{round cash 1}}M<br>
-      Payroll: ${{round payroll 1}}M<br>
-      Salary Cap: ${{round salaryCap 1}}M<br>
+      Revenue (YTD): ${{round revenue 2}}M<br>
+      Profit (YTD): ${{round profit 2}}M<br>
+      Cash: ${{round cash 2}}M<br>
+      Payroll: ${{round payroll 2}}M<br>
+      Salary Cap: ${{round salaryCap 2}}M<br>
       <a href="/l/{{lid}}/finances">» League Finances</a>
     </p>
 
@@ -101,7 +101,7 @@
     <p>
       {{#unless expiring}}None.<br>{{/unless}}
       {{#expiring}}
-        <a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>: {{age}} yo, ${{round contractAmount 1}}M<br>
+        <a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>: {{age}} yo, ${{round contractAmount 2}}M<br>
         <span style="margin-left: 2em">{{round pts 1}} pts, {{ovr}} ovr, {{pot}} pot</span><br>
       {{/expiring}}
       <a href="/l/{{lid}}/roster">» Full Roster</a>

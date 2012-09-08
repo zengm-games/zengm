@@ -56,30 +56,28 @@ $(document).ready(function() {
             if (this.dataset.action === "release") {
                 if (window.confirm('Are you sure you want to release ' + this.dataset.playerName + '?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in ' + this.dataset.contractExpiration + '.')) {
                     var tr = this.parentNode.parentNode;
-                    api.rosterRelease(this.dataset.playerId, function(error) {
+                    api.rosterRelease(this.dataset.playerId, function (error) {
                         if (error) {
                             alert("Error: " + error);
                         }
                         else {
-                            tr.parentNode.removeChild(tr);
-                            highlightHandles();
+                            Davis.location.assign(new Davis.Request(Davis.location.current()));
                         }                        
-                    })
+                    });
                 }
             }
             else if (this.dataset.action === "buyOut") {
                 if ({{team.cash}} > this.dataset.cashOwed) {
                     if (window.confirm('Are you sure you want to buy out ' + this.dataset.playerName + '? You will have to pay him the $' + this.dataset.cashOwed + 'M remaining on his contract from your current cash reserves of ${{team.cash 1}}M. He will then become a free agent and his contract will no longer count towards your salary cap.')) {
                         var tr = this.parentNode.parentNode;
-                        $.post('/l/{{lid}}/roster_buy_out', {'pid': this.dataset.playerId}, function (data) {
-                            if (data['error']) {
-                                alert('Error: ' + data['error']);
+                        api.rosterBuyOut(this.dataset.playerId, function (error) {
+                            if (error) {
+                                alert("Error: " + error);
                             }
                             else {
-                                tr.parentNode.removeChild(tr);
-                                highlightHandles();
+                                Davis.location.assign(new Davis.Request(Davis.location.current()));
                             }
-                        }, 'json');
+                        });
                     }
                 }
                 else {
@@ -127,7 +125,7 @@ $(document).ready(function() {
 </thead>
 <tbody>
   {{#players}}
-    <tr id="roster_{{pid}}"{{#if separator}} class="separator"{{/if}}>{{#if ../sortable}}<td class="roster_handle"></td>{{/if}}<td><a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a></td><td>{{pos}}</td><td>{{age}}</td><td>{{ovr}}</td><td>{{pot}}</td>{{#if ../currentSeason}}<td>${{round contractAmount 1}}M thru {{contractExp}}</td>{{/if}}<td>{{round min 1}}</td><td>{{round pts 1}}</td><td>{{round trb 1}}</td><td>{{round ast 1}}</td>{{#if ../sortable}}<td><button class="btn btn-mini" data-action="release" data-player-id="{{pid}}" data-player-name="{{name}}" data-contract-expiration="{{contractExp}}">Release</button></td><td><button class="btn btn-mini" data-action="buyOut" data-player-id="{{pid}}" data-player-name="{{name}}" data-cash-owed="{{round cash_owed 1}}">Buy out</button></td>{{/if}} {{#if ../showTradeFor}}<td><form action="/l/{{../../lid}}/trade" method="POST" style="margin: 0"><input type="hidden" name="pid" value="{{../pid}}"><button type="submit" class="btn btn-mini">Trade For</button></form></td>{{/if}}</tr>
+    <tr id="roster_{{pid}}"{{#if separator}} class="separator"{{/if}}>{{#if ../sortable}}<td class="roster_handle"></td>{{/if}}<td><a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a></td><td>{{pos}}</td><td>{{age}}</td><td>{{ovr}}</td><td>{{pot}}</td>{{#if ../currentSeason}}<td>${{round contractAmount 1}}M thru {{contractExp}}</td>{{/if}}<td>{{round min 1}}</td><td>{{round pts 1}}</td><td>{{round trb 1}}</td><td>{{round ast 1}}</td>{{#if ../sortable}}<td><button class="btn btn-mini" data-action="release" data-player-id="{{pid}}" data-player-name="{{name}}" data-contract-expiration="{{contractExp}}">Release</button></td><td><button class="btn btn-mini" data-action="buyOut" data-player-id="{{pid}}" data-player-name="{{name}}" data-cash-owed="{{round cashOwed 1}}">Buy out</button></td>{{/if}} {{#if ../showTradeFor}}<td><form action="/l/{{../../lid}}/trade" method="POST" style="margin: 0"><input type="hidden" name="pid" value="{{../pid}}"><button type="submit" class="btn btn-mini">Trade For</button></form></td>{{/if}}</tr>
   {{/players}}
 </tbody>
 </table>

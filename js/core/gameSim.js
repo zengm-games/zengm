@@ -47,12 +47,14 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     function GameSim(gid, team1, team2) {
         this.id = gid;
         this.team = [team1, team2];  // If a team plays twice in a day, this needs to be a deep copy
-        this.num_possessions = parseInt(Math.round((this.team[0].pace + this.team[1].pace) / 2 * random.gauss(1, 0.03)), 10);
+        this.num_possessions = Math.round((this.team[0].pace + this.team[1].pace) / 2 * random.gauss(1, 0.03));
 
         // Starting lineups, which works because players are ordered by their roster_order
         this.players_on_court = [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]];
 
         this.subs_every_n = 5;  // How many possessions to wait before doing subs
+
+        this.overtime = false;
     }
 
 
@@ -84,9 +86,45 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      *         }
      */
     GameSim.prototype.run = function () {
-        var i, p, ratios, shooter, t;
+        var p, t;
 
-        // Simulate the game
+        // Simulate the game up to the end of regulation
+        this.simPossessions();
+
+        // Play overtime periods if necessary
+        while (this.team[0].stat.pts === this.team[1].stat.pts) {
+            if (!this.overtime) {
+                this.num_possessions = Math.round(this.num_possessions * 5 / 48);  // 5 minutes of possessions
+                this.overtime = true;
+            }
+            console.log('TIE: ' + this.team[0].stat.pts + ' - ' + this.team[1].stat.pts);
+            console.log(this);
+            this.simPossessions();
+            console.log('+OT: ' + this.team[0].stat.pts + ' - ' + this.team[1].stat.pts);
+        }
+
+        // Delete stuff that isn't needed before returning
+        for (t = 0; t < 2; t++) {
+            delete this.team[t].defense;
+            delete this.team[t].pace;
+            for (p = 0; p < this.team[t].player.length; p++) {
+                delete this.team[t].player[p].ovr;
+                delete this.team[t].player[p].composite_rating;
+            }
+        }
+
+        return {"gid": this.id, "team": this.team};
+    };
+
+
+
+    /**
+     * Simulate this.num_possessions possessions. So to simulate regulation or
+     * overtime, just set this.num_possessions to appropriate values.
+     */
+    GameSim.prototype.simPossessions = function () {
+        var i, ratios, shooter;
+
         for (this.o = 0; this.o < 2; this.o++) {
             this.d = (this.o === 1) ? 0 : 1;
             for (i = 0; i < this.num_possessions; i++) {
@@ -107,18 +145,6 @@ define(["util/helpers", "util/random"], function (helpers, random) {
                 }
             }
         }
-
-        // Delete stuff that isn"t needed before returning
-        for (t = 0; t < 2; t++) {
-            delete this.team[t].defense;
-            delete this.team[t].pace;
-            for (p = 0; p < this.team[t].player.length; p++) {
-                delete this.team[t].player[p].ovr;
-                delete this.team[t].player[p].composite_rating;
-            }
-        }
-
-        return {"gid": this.id, "team": this.team};
     };
 
 
@@ -130,7 +156,9 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.update_players_on_court = function () {
         var b, dt, i, ovrs, p, pp, t;
 
-        dt = 48.0 / (2 * this.num_possessions) * this.subs_every_n;  // Time elapsed in this possession
+        // Time elapsed
+        dt = (this.overtime ? 5 : 48) / (2 * this.num_possessions) * this.subs_every_n;
+
         for (t = 0; t < 2; t++) {
             // Overall ratings scaled by fatigue
             ovrs = [];
@@ -376,7 +404,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * 
      * Args:
      *     ratios: 
-     *     exempt: An integer representing a player that can"t be picked (i.e. you
+     *     exempt: An integer representing a player that can'"'t be picked (i.e. you
      *         can't assist your own shot, which is the only current use of
      *         exempt). The value of exempt ranges from 0 to 4, corresponding to
      *         the index of the player in this.players_on_court. This is *NOT* the

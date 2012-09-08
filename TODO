@@ -84,8 +84,6 @@ jslint --plusplus --predef $ --predef Davis --predef requirejs --predef define -
 - http://stackoverflow.com/questions/6744692/jslint-should-we-tolerate-misordered-definitions
   - http://javascript.crockford.com/code.html
 - http://stackoverflow.com/questions/806163/jslint-using-a-function-before-its-defined-error
-new season
-- auto free agent signing
 contract negotiation
 - test all the error conditions and make sure callbacks are appropriately called (unit tests?)
 - add free agent to the end of roster

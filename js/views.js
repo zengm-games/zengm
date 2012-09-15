@@ -408,7 +408,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                                         playoffSeries = event.target.result;
                                         vars.showPlayoffSeries = false;
                                         vars.playoffsStarted = g.phase >= c.PHASE_PLAYOFFS;
-                                        if (typeof playoffSeries !== "undefined") {
+                                        if (playoffSeries !== undefined) {
                                             series = playoffSeries.series;
                                             found = false;
                                             // Find the latest playoff series with the user's team in it
@@ -576,7 +576,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             } else {
                 // Display the current or archived playoffs
                 finalMatchups = true;
-                g.dbl.transaction(["playoffSeries"]).objectStore("playoffSeries").get(season).onsuccess = function (event) {
+                g.dbl.transaction("playoffSeries").objectStore("playoffSeries").get(season).onsuccess = function (event) {
                     var playoffSeries, series;
 
                     playoffSeries = event.target.result;
@@ -644,7 +644,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
                     retiredPlayers = db.getPlayers(event.target.result, season, null, ["pid", "name", "abbrev", "age"], [], ["ovr"]);
 
-                    db.getTeams(null, season, ["abbrev", "region", "name"], [], ["leagueChamps"], null, function(teams) {
+                    db.getTeams(null, season, ["abbrev", "region", "name"], [], ["leagueChamps"], null, function (teams) {
                         var champ, data, i;
 
                         for (i = 0; i < teams.length; i++) {
@@ -833,8 +833,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                 return;
             }
 
-            pid = typeof req.params.pid !== "undefined" ? parseInt(req.params.pid, 10) : null;
-            if (typeof req.raw.abbrev !== "undefined") {
+            pid = req.params.pid !== undefined ? parseInt(req.params.pid, 10) : null;
+            if (req.raw.abbrev !== undefined) {
                 [newOtherTid, abbrev] = helpers.validateAbbrev(req.raw.abbrev);
             } else {
                 newOtherTid = null;
@@ -845,7 +845,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     return Davis.location.assign(new Davis.Request("/l/" + g.lid + "/trade"));
                 }
 
-                message = typeof message !== "undefined" ? message : null;
+                message = message !== undefined ? message : null;
 
                 trade.getOtherTid(function (otherTid) {
                     var playerStore;
@@ -909,12 +909,12 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                 });
             };
 
-            if (req.method === "post" && typeof req.params.clear !== "undefined") {
+            if (req.method === "post" && req.params.clear !== undefined) {
                 // Clear trade
                 trade.clear(function () {
                     showTrade([], []);
                 });
-            } else if (req.method  === "post" && typeof req.params.propose !== "undefined") {
+            } else if (req.method  === "post" && req.params.propose !== undefined) {
                 // Propose trade
                 trade.propose(function (accepted, message) {
                     trade.getPlayers(function (userPids, otherPids) {
@@ -1070,7 +1070,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                                 player.ast += ps.ast;
                             }
                         }
-                        if (typeof ps !== "undefined" && ps.gp > 0) {
+                        if (ps !== undefined && ps.gp > 0) {
                             player.min = player.min / player.gp;
                             player.pts = player.pts / player.gp;
                             player.trb = player.trb / player.gp;
@@ -1105,7 +1105,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             season = helpers.validateSeason(req.params.season);
             seasons = helpers.getSeasons(season);
             teams = helpers.getTeams(tid);
-            gid = typeof req.params.gid !== "undefined" ? parseInt(req.params.gid, 10) : null;
+            gid = req.params.gid !== undefined ? parseInt(req.params.gid, 10) : null;
 
             gameLogList = function (abbrev, season, cb) {
                 var games, tid;
@@ -1344,7 +1344,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         beforeLeague(req, function () {
             var pid;
 
-            pid = typeof req.params.pid !== "undefined" ? parseInt(req.params.pid, 10) : undefined;
+            pid = req.params.pid !== undefined ? parseInt(req.params.pid, 10) : undefined;
 
             g.dbl.transaction(["players"]).objectStore("players").get(pid).onsuccess = function (event) {
                 var attributes, currentRatings, data, player, ratings, stats;
@@ -1438,7 +1438,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             pid = parseInt(req.params.pid, 10);
 
             cbDisplayNegotiation = function (error) {
-                if (typeof error !== "undefined" && error) {
+                if (error !== undefined && error) {
                     return helpers.error(error, req);
                 }
 
@@ -1501,7 +1501,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
             // Show the negotiations list if there are more ongoing negotiations
             cbRedirectNegotiationOrRoster = function (error) {
-                if (typeof error !== "undefined" && error) {
+                if (error !== undefined && error) {
                     return helpers.error(error, req);
                 }
 

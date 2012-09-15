@@ -267,8 +267,12 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                         cursor.continue();
 //                        }
                 } else {
-                    newPhaseCb(c.PHASE_PLAYOFFS, phaseText, cb);
-                    Davis.location.assign(new Davis.Request("/l/" + g.lid + "/playoffs"));
+                    newPhaseCb(c.PHASE_PLAYOFFS, phaseText, function () {
+                        if (cb !== undefined) {
+                            cb();
+                        }
+                        Davis.location.assign(new Davis.Request("/l/" + g.lid + "/playoffs"));
+                    });
                 }
             };
         });
@@ -346,8 +350,12 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                     // Select winners of the season's awards
                     // This needs to be inside the callback because of Firefox bug 763915
                     awards(function () {
-                        newPhaseCb(c.PHASE_BEFORE_DRAFT, phaseText, cb);
-                        Davis.location.assign(new Davis.Request("/l/" + g.lid + "/history"));
+                        newPhaseCb(c.PHASE_BEFORE_DRAFT, phaseText, function () {
+                            if (cb !== undefined) {
+                                cb();
+                            }
+                            Davis.location.assign(new Davis.Request("/l/" + g.lid + "/history"));
+                        });
                     });
                 };
             }
@@ -408,8 +416,12 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                 }
                 cursor.continue();
             } else {
-                newPhaseCb(c.PHASE_RESIGN_PLAYERS, phaseText, cb);
-                Davis.location.assign(new Davis.Request("/l/" + g.lid + "/negotiation"));
+                newPhaseCb(c.PHASE_RESIGN_PLAYERS, phaseText, function () {
+                    if (cb !== undefined) {
+                        cb();
+                    }
+                    Davis.location.assign(new Davis.Request("/l/" + g.lid + "/negotiation"));
+                });
             }
         };
     }
@@ -435,8 +447,12 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                     cursor.update(p);
                     cursor.continue();
                 } else {
-                    newPhaseCb(c.PHASE_FREE_AGENCY, phaseText, cb);
-                    Davis.location.assign(new Davis.Request("/l/" + g.lid + "/free_agents"));
+                    newPhaseCb(c.PHASE_FREE_AGENCY, phaseText, function () {
+                        if (cb !== undefined) {
+                            cb();
+                        }
+                        Davis.location.assign(new Davis.Request("/l/" + g.lid + "/free_agents"));
+                    });
                 }
             };
         });

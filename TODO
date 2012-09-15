@@ -1,12 +1,8 @@
 main todo
 - replace all gameAttributes localStorage with indexedDB
-  - what exactly is stored in the database, all of g or just the changing parts?
+  - what exactly is stored in the database, all of g or just the changing parts? Explicitly document this.
   - bugs
     - "undefined regular season"
-    - premature switch to season history view after playoffs?
-    - "stop" still shows after season ends
-    - "Something bad happened" when refreshing (prematurely?) to the contract negotiation view
-    - not allowed to sign free agents when refreshing (prematurely?) to the free agents view
   - pmPhase and pmStatus should be phaseText and statusText
   - phase text in dashboard
 - hitting the phase twice shouldn't be possible. but if i, for instance, hit "until preseason" twice quickly, i skip a year

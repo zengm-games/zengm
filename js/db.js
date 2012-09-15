@@ -775,16 +775,18 @@ console.log(event);
         numUpdated = 0;
         for (i = 0; i < toUpdate.length; i++) {
             key = toUpdate[i];
-            gameAttributesStore.put({key: key, value: gameAttributes[key]}).onsuccess = function (event) {
-                g[key] = gameAttributes[key];
+            (function (key) {
+                gameAttributesStore.put({key: key, value: gameAttributes[key]}).onsuccess = function (event) {
+                    g[key] = gameAttributes[key];
 
-                numUpdated += 1;
-                if (numUpdated === toUpdate.length) {
-                    if (cb !== undefined) {
-                        cb();
+                    numUpdated += 1;
+                    if (numUpdated === toUpdate.length) {
+                        if (cb !== undefined) {
+                            cb();
+                        }
                     }
-                }
-            };
+                };
+            }(key));
         }
     }
 

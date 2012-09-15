@@ -241,23 +241,23 @@ define(["db", "util/lock"], function (db, lock) {
         status: A string containing the current status message to be pushed to
             the client.
     */
-    function updateStatus(status) {
+    function updateStatus(statusText) {
         var oldStatus, playStatusElement;
 
-        oldStatus = g.pmStatus;
+        oldStatus = g.statusText;
         playStatusElement = document.getElementById("playStatus");
-        if (status === undefined) {
-            status = oldStatus;
+        if (statusText === undefined) {
+            statusText = oldStatus;
             if (playStatusElement) {
-                playStatusElement.innerHTML = status;
+                playStatusElement.innerHTML = statusText;
             }
         }
-        if (status !== oldStatus) {
-            db.setGameAttributes({pmStatus: status}, function () {
+        if (statusText !== oldStatus) {
+            db.setGameAttributes({statusText: statusText}, function () {
                 if (playStatusElement) {
-                    playStatusElement.innerHTML = status;
+                    playStatusElement.innerHTML = statusText;
                 }
-                console.log("Set status: " + status);
+                console.log("Set status: " + statusText);
             });
         }
     }
@@ -274,7 +274,7 @@ define(["db", "util/lock"], function (db, lock) {
     function updatePhase(phaseText) {
         var oldPhaseText, playPhaseElement;
 
-        oldPhaseText = g.pmPhase;
+        oldPhaseText = g.phaseText;
         playPhaseElement = document.getElementById("playPhase");
         if (phaseText === undefined) {
             phaseText = oldPhaseText;
@@ -283,7 +283,7 @@ define(["db", "util/lock"], function (db, lock) {
             }
         }
         if (phaseText !== oldPhaseText) {
-            db.setGameAttributes({pmPhase: phaseText}, function () {
+            db.setGameAttributes({phaseText: phaseText}, function () {
                 if (playPhaseElement) {
                     playPhaseElement.innerHTML = phaseText;
                 }

@@ -472,16 +472,17 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/lock
         // This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season or the end of the playoffs.
         cbNoGames = function () {
             ui.updateStatus('Idle');
-            lock.set_games_in_progress(false);
-            ui.updatePlayMenu();
-            // Check to see if the season is over
-            if (g.phase < c.PHASE_PLAYOFFS) {
-                season.getSchedule(null, 0, function (schedule) {
-                    if (schedule.length === 0) {
-                        season.newPhase(c.PHASE_PLAYOFFS);
-                    }
-                });
-            }
+            lock.setGamesInProgress(false, function () {
+               ui.updatePlayMenu();
+               // Check to see if the season is over
+               if (g.phase < c.PHASE_PLAYOFFS) {
+                   season.getSchedule(null, 0, function (schedule) {
+                       if (schedule.length === 0) {
+                           season.newPhase(c.PHASE_PLAYOFFS);
+                       }
+                   });
+               } 
+            });
         };
 
         // Simulates a day of games. If there are no games left, it calls cbNoGames.
@@ -558,8 +559,7 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/lock
         // that? If so, set the lock and update the play menu
         if (start) {
             if (lock.can_start_games()) {
-                lock.set_games_in_progress(true);
-                ui.updatePlayMenu();
+                lock.setGamesInProgress(true, ui.updatePlayMenu);
             } else {
                 // If not allowed to start games, don't
                 return;

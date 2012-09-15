@@ -5,15 +5,16 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         var leagueMenu;
 
         g.lid = parseInt(req.params.lid, 10);
-        db.loadGameAttributes(null, function () {
-            // Make sure league exists
+
+        // Make sure league exists
 
 
-            // Make sure league template FOR THE CURRENT LEAGUE is showing
-            leagueMenu = document.getElementById("league_menu");
-            if (leagueMenu === null || parseInt(leagueMenu.dataset.lid, 10) !== g.lid) {
-                // Connect to league database
-                db.connectLeague(g.lid, function () {
+        // Make sure league template FOR THE CURRENT LEAGUE is showing
+        leagueMenu = document.getElementById("league_menu");
+        if (leagueMenu === null || parseInt(leagueMenu.dataset.lid, 10) !== g.lid) {
+            // Connect to league database
+            db.connectLeague(g.lid, function () {
+                db.loadGameAttributes(function () {
                     var data;
 
                     data = {
@@ -30,10 +31,10 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
                     cb();
                 });
-            } else {
-                cb();
-            }
-        });
+            });
+        } else {
+            cb();
+        }
     }
 
     function beforeNonLeague() {
@@ -97,7 +98,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             for (i = 0; i < leagues.length; i++) {
                 leagues[i].region = teams[leagues[i].tid].region;
                 leagues[i].name = teams[leagues[i].tid].name;
-                leagues[i].phaseText = JSON.parse(localStorage.getItem("league" + leagues[i].lid + "GameAttributes")).pmPhase;
+                leagues[i].phaseText = "PHASE TEXT";
                 delete leagues[i].tid;
             }
 
@@ -117,7 +118,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         beforeNonLeague();
 
         if (req.method === "get") {
-            g.dbm.transaction(["teams"]).objectStore("teams").getAll().onsuccess = function (event) {
+            g.dbm.transaction("teams").objectStore("teams").getAll().onsuccess = function (event) {
                 var data, teams;
 
                 teams = event.target.result;

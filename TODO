@@ -1,10 +1,14 @@
 main todo
 - replace all gameAttributes localStorage with indexedDB
-  - switch to indexeddb
-    - how to structure data? one object, or a bunch of rows? bunch of rows, right?
-  - getGameAttributes returns either one thing, or everything
+  - what exactly is stored in the database, all of g or just the changing parts?
+  - bugs
+    - "undefined regular season"
+    - premature switch to season history view after playoffs?
+    - "stop" still shows after season ends
+    - "Something bad happened" when refreshing (prematurely?) to the contract negotiation view
+    - not allowed to sign free agents when refreshing (prematurely?) to the free agents view
   - pmPhase and pmStatus should be phaseText and statusText
-  - should getGameAttributes directly access g or not?
+  - phase text in dashboard
 - hitting the phase twice shouldn't be possible. but if i, for instance, hit "until preseason" twice quickly, i skip a year
 - Anything labeled "Optional callback" should be like {function()=}
 - multiple windows

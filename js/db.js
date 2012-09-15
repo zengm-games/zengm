@@ -50,7 +50,7 @@ console.log(event);
         };
         request.onblocked = function () { g.dbl.close(); };
         request.onupgradeneeded = function (event) {
-            var awardsStore, draftOrderStore, gameStore, playerStore, playoffSeriesStore, releasedPlayersStore, scheduleStore, teamStore, tradeStore;
+            var awardsStore, draftOrderStore, gameAttributesStore, gameStore, playerStore, playoffSeriesStore, releasedPlayersStore, scheduleStore, teamStore, tradeStore;
 
             console.log("Upgrading league" + lid + " database");
 
@@ -67,6 +67,7 @@ console.log(event);
             tradeStore = g.dbl.createObjectStore("trade", {keyPath: "rid"});
             draftOrderStore = g.dbl.createObjectStore("draftOrder", {keyPath: "rid"});
             draftOrderStore = g.dbl.createObjectStore("negotiations", {keyPath: "pid"});
+            gameAttributesStore = g.dbl.createObjectStore("gameAttributes", {keyPath: "key"});
 
             playerStore.createIndex("tid", "tid", {unique: false});
             playerStore.createIndex("draftYear", "draftYear", {unique: false});
@@ -106,7 +107,7 @@ console.log(event);
      * @return {(IDBObjectStore|IDBTransaction)} The requested object store or transaction.
      */
     function getObjectStore(ot, transactionObjectStores, objectStore, readwrite) {
-        readwrite = typeof readwrite !== "undefined" ? readwrite : false;
+        readwrite = readwrite !== undefined ? readwrite : false;
 
         if (ot instanceof IDBObjectStore) {
             return ot;
@@ -144,7 +145,7 @@ console.log(event);
 
         playerStore.put(p);
 
-        if (typeof cb !== "undefined") {
+        if (cb !== undefined) {
             cb();
         }
     }
@@ -261,7 +262,6 @@ console.log(event);
         }
 
         // Stats
-        ps = undefined;
         if (stats.length > 0) {
             if (season !== null) {
                 // Single season
@@ -284,7 +284,7 @@ console.log(event);
                 }
 
                 // Load previous season if no stats this year
-                if (options.oldStats && typeof ps === "undefined") {
+                if (options.oldStats && ps === undefined) {
                     for (j = 0; j < pa.stats.length; j++) {
                         if (pa.stats[j].season === g.season - 1 && pa.stats[j].playoffs === false) {
                             ps = pa.stats[j];
@@ -319,7 +319,7 @@ console.log(event);
         function filterStats(player, ps, stats) {
             var j;
 
-            if (typeof ps !== "undefined" && ps.gp > 0) {
+            if (ps !== undefined && ps.gp > 0) {
                 for (j = 0; j < stats.length; j++) {
                     if (stats[j] === "gp") {
                         player.gp = ps.gp;
@@ -371,8 +371,8 @@ console.log(event);
         }
 
         // Only show a player if they have a stats entry for this team and season, or if they are rookies who have just been drafted and the current roster is being viewed.
-        if ((options.showRookies && pa.draftYear === g.season && season === g.season) || typeof ps !== "undefined" || options.showNoStats) {
-            if (typeof ps !== "undefined" && ps.length >= 0) {
+        if ((options.showRookies && pa.draftYear === g.season && season === g.season) || ps !== undefined || options.showNoStats) {
+            if (ps !== undefined && ps.length >= 0) {
                 player.stats = [];
                 // Multiple seasons
                 for (i = 0; i < ps.length; i++) {
@@ -732,47 +732,59 @@ console.log(event);
     /**
      * Load game attributes from the database and update the global variable g.
      * 
-     * @param {(string|Array|null)} attribute If null, return all attributes. If string, return just the one identified by the string. If an array of strings, return those attributes only.
      * @param {function()} cb Optional callback.
      */
-    function loadGameAttributes(attribute, cb) {
-        var gameAttributes, prop;
+    function loadGameAttributes(cb) {
+        g.dbl.transaction("gameAttributes").objectStore("gameAttributes").getAll().onsuccess = function (event) {
+            var i, gameAttributes;
 
-        gameAttributes = JSON.parse(localStorage.getItem("league" + g.lid + "GameAttributes"));
-        for (prop in gameAttributes) {
-            if (gameAttributes.hasOwnProperty(prop)) {
-                g[prop] = gameAttributes[prop];
+            gameAttributes = event.target.result;
+
+            for (i = 0; i < gameAttributes.length; i++) {
+                g[gameAttributes[i].key] = gameAttributes[i].value;
             }
-        }
 
-        if (cb !== undefined) {
-            cb();
-        }
+            if (cb !== undefined) {
+                cb();
+            }
+        };
     }
 
     /**
      * Set values in the gameAttributes objectStore and update the global variable g.
+     *
+     * This function is a little messy because the callback must only be called after everything in the database has been updated.
      * 
      * @param {Object} gameAttributes Each element in the object will be inserted/updated in the database with the key of the object representing the key in the database.
      * @param {function()} cb Optional callback.
      */
     function setGameAttributes(gameAttributes, cb) {
-        var gameAttributesOld, prop;
+        var gameAttributesStore, i, key, numUpdated, toUpdate;
 
-        gameAttributesOld = JSON.parse(localStorage.getItem("league" + g.lid + "GameAttributes"));
-        if (gameAttributesOld === null) {
-            gameAttributesOld = {};
-        }
-        for (prop in gameAttributes) {
-            if (gameAttributes.hasOwnProperty(prop)) {
-                gameAttributesOld[prop] = gameAttributes[prop];
-                g[prop] = gameAttributes[prop];
+        toUpdate = [];
+        for (key in gameAttributes) {
+            if (gameAttributes.hasOwnProperty(key)) {
+                if (g[key] !== gameAttributes[key]) {
+                    toUpdate.push(key);
+                }
             }
         }
-        localStorage.setItem("league" + g.lid + "GameAttributes", JSON.stringify(gameAttributesOld));
 
-        if (cb !== undefined) {
-            cb();
+        gameAttributesStore = g.dbl.transaction("gameAttributes", "readwrite").objectStore("gameAttributes");
+
+        numUpdated = 0;
+        for (i = 0; i < toUpdate.length; i++) {
+            key = toUpdate[i];
+            gameAttributesStore.put({key: key, value: gameAttributes[key]}).onsuccess = function (event) {
+                g[key] = gameAttributes[key];
+
+                numUpdated += 1;
+                if (numUpdated === toUpdate.length) {
+                    if (cb !== undefined) {
+                        cb();
+                    }
+                }
+            };
         }
     }
 

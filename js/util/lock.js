@@ -13,13 +13,13 @@ actions.
 define(["db"], function (db) {
     "use strict";
 
-    function setGamesInProgress(status) {
+    function setGamesInProgress(status, cb) {
         if (status) {
             status = true;
         } else {
             status = false;
         }
-        db.setGameAttributes({gamesInProgress: status});
+        db.setGameAttributes({gamesInProgress: status}, cb);
     }
 
     function gamesInProgress() {
@@ -112,7 +112,7 @@ define(["db"], function (db) {
     }
 
     return {
-        set_games_in_progress: setGamesInProgress,
+        setGamesInProgress: setGamesInProgress,
         games_in_progress: gamesInProgress,
         negotiationInProgress: negotiationInProgress,
         can_start_games: canStartGames,

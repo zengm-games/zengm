@@ -152,11 +152,11 @@ define(["db", "ui", "core/player", "core/season", "util/random"], function (db, 
     function remove(lid, cb) {
         var request;
 
-        if (typeof g.dbl !== "undefined") {
+        if (g.dbl !== undefined) {
             g.dbl.close();
         }
 
-        g.dbm.transaction(["leagues"], "readwrite").objectStore("leagues").delete(lid);
+        g.dbm.transaction("leagues", "readwrite").objectStore("leagues").delete(lid);
         request = indexedDB.deleteDatabase("league" + lid);
         request.onsuccess = function (event) {
             console.log("Database league" + lid + " successfully deleted");
@@ -170,7 +170,6 @@ define(["db", "ui", "core/player", "core/season", "util/random"], function (db, 
             console.log("Blocked: ", event);
             cb();
         };
-        localStorage.removeItem("league" + g.lid + "GameAttributes");
     }
 
     return {

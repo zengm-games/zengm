@@ -1,4 +1,7 @@
 main todo
+- move debug menu somewhere more reasonable
+  - top right? or reserve that for notifications? maybe have 2 icons
+  - reveal only with key press?
 - hitting the phase twice shouldn't be possible. but if i, for instance, hit "until preseason" twice quickly, i skip a year
 - Anything labeled "Optional callback" should be like {function()=}
 - multiple windows

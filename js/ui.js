@@ -289,6 +289,18 @@ define(["db", "util/lock"], function (db, lock) {
                 }
                 console.log("Set phase: " + phaseText);
             });
+
+            // Update phase in meta database. No need to have this block updating the UI or anything.
+            g.dbm.transaction("leagues", "readwrite").objectStore("leagues").openCursor(g.lid).onsuccess = function (event) {
+                var cursor, l;
+
+                cursor = event.target.result;
+                l = cursor.value;
+
+                l.phaseText = phaseText;
+
+                cursor.update(l);
+            };
         }
     }
 

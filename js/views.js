@@ -89,7 +89,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
     function dashboard(req) {
         beforeNonLeague();
 
-        g.dbm.transaction(["leagues"]).objectStore("leagues").getAll().onsuccess = function (event) {
+        g.dbm.transaction("leagues").objectStore("leagues").getAll().onsuccess = function (event) {
             var data, i, leagues, teams;
 
             leagues = event.target.result;
@@ -98,7 +98,6 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             for (i = 0; i < leagues.length; i++) {
                 leagues[i].region = teams[leagues[i].tid].region;
                 leagues[i].name = teams[leagues[i].tid].name;
-                leagues[i].phaseText = "PHASE TEXT";
                 delete leagues[i].tid;
             }
 

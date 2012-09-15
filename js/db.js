@@ -753,6 +753,8 @@ console.log(event);
     /**
      * Set values in the gameAttributes objectStore and update the global variable g.
      *
+     * Items stored in gameAttributes are globally available through the global variable g. If a value is a constant across all leagues/games/whatever, it should just be set in globals.js instead.
+     * 
      * This function is a little messy because the callback must only be called after everything in the database has been updated.
      * 
      * @param {Object} gameAttributes Each element in the object will be inserted/updated in the database with the key of the object representing the key in the database.

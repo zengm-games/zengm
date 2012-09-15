@@ -1,7 +1,4 @@
 main todo
-- replace all gameAttributes localStorage with indexedDB
-  - what exactly is stored in the database, all of g or just the changing parts? Explicitly document this.
-  - phase text in dashboard
 - hitting the phase twice shouldn't be possible. but if i, for instance, hit "until preseason" twice quickly, i skip a year
 - Anything labeled "Optional callback" should be like {function()=}
 - multiple windows

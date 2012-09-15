@@ -15,8 +15,8 @@ define(["db", "ui", "core/player", "core/season", "util/random"], function (db, 
     function create(tid, playerGeneration, cb) {
         var l, leagueStore;
 
-        l = {tid: tid};
-        leagueStore = g.dbm.transaction(["leagues"], "readwrite").objectStore("leagues");
+        l = {tid: tid, phaseText: ""};
+        leagueStore = g.dbm.transaction("leagues", "readwrite").objectStore("leagues");
         leagueStore.add(l).onsuccess = function (event) {
             var t;
 

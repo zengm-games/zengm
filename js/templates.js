@@ -3567,7 +3567,7 @@ function program1(depth0,data) {
   if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
   else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  </select>\n  <label><select name=\"players\">\n    <option value=\"random\">Random Players</option>\n    <option value=\"nba2012\">2012 NBA Players</option>\n  </select></label>\n  <button type=\"submit\" class=\"btn\">Create New League</button>  \n</form>\n</p>";
+  buffer += "\n  </select>\n  <label><select name=\"players\">\n    <option value=\"random\">Random Players</option>\n    <option value=\"nba2012\">2012 NBA Players</option>\n  </select></label>\n  <button type=\"submit\" class=\"btn\" onclick=\"this.disabled=true; this.innerHTML='Generating league...';\">Create New League</button>  \n</form>\n</p>";
   return buffer;});
 templates['playButton'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;
@@ -4462,7 +4462,7 @@ function program1(depth0,data,depth1) {
   buffer += escapeExpression(stack1) + "\" method=\"POST\" style=\"margin: 0\"><input type=\"hidden\" name=\"new\" value=\"1\"><button type=\"submit\" class=\"btn btn-mini btn-primary\">Negotiate</button></form>' ],\n    ";
   return buffer;}
 
-  buffer += "<script type=\"text/javascript\">\n$(document).ready(function() {\n  ui.datatable($('#free_agents'), 4, [\n    ";
+  buffer += "<script>\n$(document).ready(function () {\n  ui.datatable($(\"#free_agents\"), 4, [\n    ";
   foundHelper = helpers.players;
   stack1 = foundHelper || depth0.players;
   tmp1 = self.programWithDepth(program1, data, depth0);
@@ -4472,7 +4472,7 @@ function program1(depth0,data,depth1) {
   if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
   else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  ]);\n} );\n</script>\n\n<h1>Free Agents</h1>\n\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"free_agents\">\n<thead>\n  <tr><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall\">Ovr</th><th title=\"Potential\">Pot</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th>Asking for</th><th>Negotiate</th></tr>\n</thead>\n</table>\n";
+  buffer += "\n  ]);\n});\n</script>\n\n<h1>Free Agents</h1>\n\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"free_agents\">\n<thead>\n  <tr><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall\">Ovr</th><th title=\"Potential\">Pot</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th>Asking for</th><th>Negotiate</th></tr>\n</thead>\n</table>\n";
   return buffer;});
 templates['leagueLayout'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;

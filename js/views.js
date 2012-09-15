@@ -5,35 +5,35 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         var leagueMenu;
 
         g.lid = parseInt(req.params.lid, 10);
-        helpers.loadGameAttributes();
+        db.loadGameAttributes(null, function () {
+            // Make sure league exists
 
-        // Make sure league exists
 
+            // Make sure league template FOR THE CURRENT LEAGUE is showing
+            leagueMenu = document.getElementById("league_menu");
+            if (leagueMenu === null || parseInt(leagueMenu.dataset.lid, 10) !== g.lid) {
+                // Connect to league database
+                db.connectLeague(g.lid, function () {
+                    var data;
 
-        // Make sure league template FOR THE CURRENT LEAGUE is showing
-        leagueMenu = document.getElementById("league_menu");
-        if (leagueMenu === null || parseInt(leagueMenu.dataset.lid, 10) !== g.lid) {
-            // Connect to league database
-            db.connectLeague(g.lid, function () {
-                var data;
+                    data = {
+                        container: "content",
+                        template: "leagueLayout",
+                        vars: {}
+                    };
+                    ui.update(data);
 
-                data = {
-                    container: "content",
-                    template: "leagueLayout",
-                    vars: {}
-                };
-                ui.update(data);
+                    // Update play menu
+                    ui.updateStatus();
+                    ui.updatePhase();
+                    ui.updatePlayMenu();
 
-                // Update play menu
-                ui.updateStatus();
-                ui.updatePhase();
-                ui.updatePlayMenu();
-
+                    cb();
+                });
+            } else {
                 cb();
-            });
-        } else {
-            cb();
-        }
+            }
+        });
     }
 
     function beforeNonLeague() {
@@ -259,7 +259,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                         }
 
                         for (i = 0; i < stats.length; i++) {
-                            teams.sort(function (a, b) {  return b[stats[i]] - a[stats[i]]; });
+                            teams.sort(function (a, b) { return b[stats[i]] - a[stats[i]]; });
                             for (j = 0; j < teams.length; j++) {
                                 if (teams[j].tid === g.userTid) {
                                     vars[stats[i] + "Rank"] = j + 1;

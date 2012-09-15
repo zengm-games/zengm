@@ -1,8 +1,16 @@
 main todo
-- replace all aspects of localStorage with indexedDB
-  - Game attributes? Is it worth it?
-    - pmPhase and pmStatus should be phaseText and statusText
-  - anything else?
+- replace all gameAttributes localStorage with indexedDB
+  - switch to indexeddb
+    - how to structure data? one object, or a bunch of rows? bunch of rows, right?
+  - getGameAttributes returns either one thing, or everything
+  - pmPhase and pmStatus should be phaseText and statusText
+  - should getGameAttributes directly access g or not?
+- hitting the phase twice shouldn't be possible. but if i, for instance, hit "until preseason" twice quickly, i skip a year
+- Anything labeled "Optional callback" should be like {function()=}
+- multiple windows
+  - have some element in the database with the last "action" time. poll it with some frequency, and update if needed
+    - indexeddb, or localstorage? benchmark. probably indexeddb in game attributes
+  - move to new window button, like gmail, that will open a view in a new window with a minimal UI
 - revamp lock
   - make it all async, like
     lock.canStartGames(function (canStartGames) {
@@ -20,7 +28,7 @@ main todo
   - nba player potential ratings
   - if necessary, scale everything down a bit to make it comparable to normal players
   - free agents are way overrated. is this roster file legit?
-- game simulation realism - compare with real stats
+- game simulation realism
   - gameSim.rating_array power should be moved to game.js instead
   - height should matter a lot more
     - e.g.
@@ -31,22 +39,14 @@ main todo
     - if i make some fundamental change, i need to account for it in randomly generated players
   - pgs should get more assists
   - smalls should get less blocks
+  - home/away advantage
 - comments in season.js and elsewhere
-- multiple windows
-  - have some element in the database with the last "action" time. poll it with some frequency, and update if needed
-  - move to new window button, like gmail, that will open a view in a new window with a minimal UI
 - team history view
 strategic issues
 - reassess how money is stored (ones, thousands, millions?)
 - robustness
   - confirm correct database is loaded before writing anything
   - how to handle closed browser in middle of game simulation?
-- don't block the UI in game simulation
-  - slide 81 http://www.slideshare.net/nzakas/high-performance-javascript-capitoljs-2011
-    - http://www.kryogenix.org/days/2009/07/03/not-blocking-the-ui-in-tight-javascript-loops
-- cache payroll each year?
-  - would simplify db.getTeams
-  - would allow historical finances view
 - notifications (and log) from top right to display log of key events
   - game results from user's team
   - players retiring from user's team
@@ -141,6 +141,19 @@ add activeYears multientry like statsTids use for:
 - ratings
 playoff stats in player view
 - need a way to request only playoff stats from db.getPlayers - see all the playoffs === false stuff
+cache payroll each year?
+- cache at the end of the playoffs
+- update cached value for this year whenever it changes
+  - player is signed
+  - trade happens
+  - player is bought out
+  - player is released
+- would simplify db.getTeams
+- would allow historical finances view
+- but is it worth it? would the cached values be meaningful?
+don't block the UI in game simulation
+- slide 81 http://www.slideshare.net/nzakas/high-performance-javascript-capitoljs-2011
+  - http://www.kryogenix.org/days/2009/07/03/not-blocking-the-ui-in-tight-javascript-loops
 
 ---
 

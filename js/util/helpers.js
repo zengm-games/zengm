@@ -145,36 +145,6 @@ define([], function () {
         }
     }
 
-    /*Injects the game attributes stored in localStorage into the g object.*/
-    function loadGameAttributes() {
-        var gameAttributes, prop;
-
-        gameAttributes = JSON.parse(localStorage.getItem("league" + g.lid + "GameAttributes"));
-        for (prop in gameAttributes) {
-            if (gameAttributes.hasOwnProperty(prop)) {
-                g[prop] = gameAttributes[prop];
-            }
-        }
-    }
-
-    /*Takes an object and stores the properties (updating or inserting) in gameAttributes and g.*/
-    function setGameAttributes(gameAttributes) {
-        var gameAttributesOld, prop;
-
-        gameAttributesOld = JSON.parse(localStorage.getItem("league" + g.lid + "GameAttributes"));
-        if (gameAttributesOld === null) {
-            gameAttributesOld = {};
-        }
-        for (prop in gameAttributes) {
-            if (gameAttributes.hasOwnProperty(prop)) {
-                gameAttributesOld[prop] = gameAttributes[prop];
-                g[prop] = gameAttributes[prop];
-            }
-        }
-        localStorage.setItem("league" + g.lid + "GameAttributes", JSON.stringify(gameAttributesOld));
-    }
-
-
     /**
      * Clones an object.
      * 
@@ -232,8 +202,6 @@ define([], function () {
         validateSeason: validateSeason,
         getSeasons: getSeasons,
         getTeams: getTeams,
-        loadGameAttributes: loadGameAttributes,
-        setGameAttributes: setGameAttributes,
         deepCopy: deepCopy,
         error: error
     };

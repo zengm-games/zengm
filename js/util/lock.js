@@ -10,7 +10,7 @@ action in progress, currently one of these things:
 There are also functions to check if it is permissible to start one of those
 actions.
 */
-define(["db", "util/helpers"], function (db, helpers) {
+define(["db"], function (db) {
     "use strict";
 
     function setGamesInProgress(status) {
@@ -19,7 +19,7 @@ define(["db", "util/helpers"], function (db, helpers) {
         } else {
             status = false;
         }
-        helpers.setGameAttributes({gamesInProgress: status});
+        db.setGameAttributes({gamesInProgress: status});
     }
 
     function gamesInProgress() {

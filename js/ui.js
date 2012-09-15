@@ -2,7 +2,7 @@
  * @name ui
  * @namespace Anything that directly updates the UI.
  */
-define(["util/helpers", "util/lock"], function (helpers, lock) {
+define(["db", "util/lock"], function (db, lock) {
     "use strict";
 
     function highlightNav(leaguePage) {
@@ -142,7 +142,7 @@ define(["util/helpers", "util/lock"], function (helpers, lock) {
     /**
      * Smartly update the currently loaded view, based on the current game state.
      *
-     * @memberOf util.helpers
+     * @memberOf ui
      * @param {function()} cb Optional callback that will run after the page updates.
      */
     function realtimeUpdate(cb) {
@@ -246,18 +246,19 @@ define(["util/helpers", "util/lock"], function (helpers, lock) {
 
         oldStatus = g.pmStatus;
         playStatusElement = document.getElementById("playStatus");
-        if (typeof status === "undefined") {
+        if (status === undefined) {
             status = oldStatus;
             if (playStatusElement) {
                 playStatusElement.innerHTML = status;
             }
         }
         if (status !== oldStatus) {
-            helpers.setGameAttributes({pmStatus: status});
-            if (playStatusElement) {
-                playStatusElement.innerHTML = status;
-            }
-            console.log("Set status: " + status);
+            db.setGameAttributes({pmStatus: status}, function () {
+                if (playStatusElement) {
+                    playStatusElement.innerHTML = status;
+                }
+                console.log("Set status: " + status);
+            });
         }
     }
 
@@ -275,18 +276,19 @@ define(["util/helpers", "util/lock"], function (helpers, lock) {
 
         oldPhaseText = g.pmPhase;
         playPhaseElement = document.getElementById("playPhase");
-        if (typeof phaseText === "undefined") {
+        if (phaseText === undefined) {
             phaseText = oldPhaseText;
             if (playPhaseElement) {
                 playPhaseElement.innerHTML = phaseText;
             }
         }
         if (phaseText !== oldPhaseText) {
-            helpers.setGameAttributes({pmPhase: phaseText});
-            if (playPhaseElement) {
-                playPhaseElement.innerHTML = phaseText;
-            }
-            console.log("Set phase: " + phaseText);
+            db.setGameAttributes({pmPhase: phaseText}, function () {
+                if (playPhaseElement) {
+                    playPhaseElement.innerHTML = phaseText;
+                }
+                console.log("Set phase: " + phaseText);
+            });
         }
     }
 

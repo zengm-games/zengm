@@ -3,96 +3,98 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
 
     // This should be called after the phase-specific stuff runs. It needs to be a separate function like this to play nice with async stuff.
     function newPhaseCb(phase, phaseText, cb) {
-        helpers.setGameAttributes({phase: phase});
-        ui.updatePhase(phaseText);
-        ui.updatePlayMenu();
-        if (typeof cb !== "undefined") {
-            cb();
-        }
+        db.setGameAttributes({phase: phase}, function () {
+            ui.updatePhase(phaseText);
+            ui.updatePlayMenu();
+            if (cb !== undefined) {
+                cb();
+            }
+        });
     }
 
     function newPhasePreseason(cb) {
-        var phaseText, transaction;
+        db.setGameAttributes({season: g.season + 1}, function () {
+            var phaseText, transaction;
 
-        helpers.setGameAttributes({season: g.season + 1});
-        phaseText = g.season + " preseason";
+            phaseText = g.season + " preseason";
 
-        transaction = g.dbl.transaction(["players", "teams"], "readwrite");
+            transaction = g.dbl.transaction(["players", "teams"], "readwrite");
 
-        // Add row to team stats and season attributes
-        transaction.objectStore("teams").openCursor().onsuccess = function (event) {
-            var cursor, key, team, teamNewSeason, teamNewStats, teamSeason;
+            // Add row to team stats and season attributes
+            transaction.objectStore("teams").openCursor().onsuccess = function (event) {
+                var cursor, key, team, teamNewSeason, teamNewStats, teamSeason;
 
-            cursor = event.target.result;
-            if (cursor) {
-                team = cursor.value;
+                cursor = event.target.result;
+                if (cursor) {
+                    team = cursor.value;
 
-                teamSeason = team.seasons[team.seasons.length - 1]; // Previous season
-                teamNewSeason = helpers.deepCopy(teamSeason);
-                // Reset everything except cash. Cash rolls over.
-                teamNewSeason.season = g.season;
-                teamNewSeason.gp = 0;
-                teamNewSeason.att = 0;
-                teamNewSeason.cost = 0;
-                teamNewSeason.won = 0;
-                teamNewSeason.lost = 0;
-                teamNewSeason.wonHome = 0;
-                teamNewSeason.lostHome = 0;
-                teamNewSeason.wonAway = 0;
-                teamNewSeason.lostAway = 0;
-                teamNewSeason.wonDiv = 0;
-                teamNewSeason.lostDiv = 0;
-                teamNewSeason.wonConf = 0;
-                teamNewSeason.lostConf = 0;
-                teamNewSeason.lastTen = [];
-                teamNewSeason.streak = 0;
-                teamNewSeason.madePlayoffs = false;
-                teamNewSeason.confChamps = false;
-                teamNewSeason.leagueChamps = false;
-                team.seasons.push(teamNewSeason);
+                    teamSeason = team.seasons[team.seasons.length - 1]; // Previous season
+                    teamNewSeason = helpers.deepCopy(teamSeason);
+                    // Reset everything except cash. Cash rolls over.
+                    teamNewSeason.season = g.season;
+                    teamNewSeason.gp = 0;
+                    teamNewSeason.att = 0;
+                    teamNewSeason.cost = 0;
+                    teamNewSeason.won = 0;
+                    teamNewSeason.lost = 0;
+                    teamNewSeason.wonHome = 0;
+                    teamNewSeason.lostHome = 0;
+                    teamNewSeason.wonAway = 0;
+                    teamNewSeason.lostAway = 0;
+                    teamNewSeason.wonDiv = 0;
+                    teamNewSeason.lostDiv = 0;
+                    teamNewSeason.wonConf = 0;
+                    teamNewSeason.lostConf = 0;
+                    teamNewSeason.lastTen = [];
+                    teamNewSeason.streak = 0;
+                    teamNewSeason.madePlayoffs = false;
+                    teamNewSeason.confChamps = false;
+                    teamNewSeason.leagueChamps = false;
+                    team.seasons.push(teamNewSeason);
 
-                teamNewStats = {};
-                // Copy new stats from any season and set to 0 (this works - see core.league.new)
-                for (key in team.stats[0]) {
-                    if (team.stats[0].hasOwnProperty(key)) {
-                        teamNewStats[key] = 0;
-                    }
-                }
-                teamNewStats.season = g.season;
-                teamNewStats.playoffs = false;
-                team.stats.push(teamNewStats);
-
-                cursor.update(team);
-                cursor.continue();
-            } else {
-                // Loop through all non-retired players
-                transaction.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) {
-                    var cursorP, p;
-
-                    cursorP = event.target.result;
-                    if (cursorP) {
-                        p = cursorP.value;
-
-                        // Update ratings
-                        p = player.addRatingsRow(p);
-                        p = player.develop(p);
-
-                        // Add row to player stats if they are on a team
-                        if (p.tid >= 0) {
-                            p = player.addStatsRow(p);
+                    teamNewStats = {};
+                    // Copy new stats from any season and set to 0 (this works - see core.league.new)
+                    for (key in team.stats[0]) {
+                        if (team.stats[0].hasOwnProperty(key)) {
+                            teamNewStats[key] = 0;
                         }
-
-                        cursorP.update(p);
-                        cursorP.continue();
-                    } else {
-                        // AI teams sign free agents
-                        freeAgents.autoSign(function () {
-                            newPhaseCb(c.PHASE_PRESEASON, phaseText, cb);
-                        });
                     }
-                };
-            }
-        };
+                    teamNewStats.season = g.season;
+                    teamNewStats.playoffs = false;
+                    team.stats.push(teamNewStats);
+
+                    cursor.update(team);
+                    cursor.continue();
+                } else {
+                    // Loop through all non-retired players
+                    transaction.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) {
+                        var cursorP, p;
+
+                        cursorP = event.target.result;
+                        if (cursorP) {
+                            p = cursorP.value;
+
+                            // Update ratings
+                            p = player.addRatingsRow(p);
+                            p = player.develop(p);
+
+                            // Add row to player stats if they are on a team
+                            if (p.tid >= 0) {
+                                p = player.addStatsRow(p);
+                            }
+
+                            cursorP.update(p);
+                            cursorP.continue();
+                        } else {
+                            // AI teams sign free agents
+                            freeAgents.autoSign(function () {
+                                newPhaseCb(c.PHASE_PRESEASON, phaseText, cb);
+                            });
+                        }
+                    };
+                }
+            };
+        });
     }
 
     function newPhaseRegularSeason(cb) {

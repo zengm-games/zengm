@@ -2,7 +2,7 @@
  * @name core.league
  * @namespace Creating and removing leagues.
  */
-define(["db", "ui", "core/player", "core/season", "util/helpers", "util/random"], function (db, ui, player, season, helpers, random) {
+define(["db", "ui", "core/player", "core/season", "util/random"], function (db, ui, player, season, random) {
     "use strict";
 
     /**
@@ -29,7 +29,7 @@ define(["db", "ui", "core/player", "core/season", "util/helpers", "util/random"]
 
                 // Create new league database
                 db.connectLeague(g.lid, function () {
-                    var afterPlayerCreation, agingYears, baseRatings, contract, done, draftYear, gameAttributes, goodNeutralBad, i, n, p, playerStore, pots, profile, profiles, randomizeExpiration, t, teamStore, transaction;
+                    var afterPlayerCreation, agingYears, baseRatings, contract, done, draftYear, goodNeutralBad, i, n, p, playerStore, pots, profile, profiles, randomizeExpiration, t, teamStore, transaction;
 
                     // Probably is fastest to use this transaction for everything done to create a new league
                     transaction = g.dbl.transaction(["draftOrder", "players", "teams", "trade"], "readwrite");
@@ -63,15 +63,17 @@ define(["db", "ui", "core/player", "core/season", "util/helpers", "util/random"]
                     });
 
                     afterPlayerCreation = function () {
+                        var gameAttributes;
+
                         gameAttributes = {userTid: tid, season: g.startingSeason, phase: 0, gamesInProgress: false, stopGames: false};
-                        helpers.setGameAttributes(gameAttributes);
+                        db.setGameAttributes(gameAttributes, function () {
+                            // Make schedule, start season
+                            season.newPhase(c.PHASE_REGULAR_SEASON, function () {
+                                ui.updateStatus('Idle');
 
-                        // Make schedule, start season
-                        season.newPhase(c.PHASE_REGULAR_SEASON, function () {
-                            ui.updateStatus('Idle');
-
-                            // Auto sort player's roster (other teams will be done in season.newPhase(c.PHASE_REGULAR_SEASON))
-                            db.rosterAutoSort(null, g.userTid, cb);
+                                // Auto sort player's roster (other teams will be done in season.newPhase(c.PHASE_REGULAR_SEASON))
+                                db.rosterAutoSort(null, g.userTid, cb);
+                            });
                         });
                     };
 

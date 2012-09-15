@@ -2,7 +2,7 @@
  * @name core.game
  * @namespace Everything about games except the actual simulation. So, loading the schedule, loading the teams, saving the results, and handling multi-day simulations and what happens when there are no games left to play.
  */
-define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/helpers", "util/lock", "util/random"], function (db, ui, freeAgents, gameSim, season, helpers, lock, random) {
+define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/lock", "util/random"], function (db, ui, freeAgents, gameSim, season, lock, random) {
     "use strict";
 
     function Game() {
@@ -465,7 +465,7 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/help
      * @param {boolean} start Is this a new request from the user to play games (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed.
      */
     function play(numDays, start) {
-        var cbNoGames, cbPlayGames, playoffsContinue;
+        var cbNoGames, cbPlayGames, cbYetAnother, playoffsContinue;
 
         start = typeof start !== "undefined" ? start : false;
 
@@ -566,35 +566,40 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/help
             }
         }
 
+        cbYetAnother = function () {
+            // Check if it's the playoffs and do some special stuff if it is or isn't
+            if (g.phase !== c.PHASE_PLAYOFFS) {
+                // Decrease free agent demands and let AI teams sign them
+                freeAgents.decreaseDemands(function () {
+                    freeAgents.autoSign(function () {
+                        cbPlayGames();
+                    });
+                });
+            } else {
+                season.newSchedulePlayoffsDay(function (playoffsOver) {
+                    // If season.newSchedulePlayoffsDay didn't move the phase to c.PHASE_BEFORE_DRAFT, then the playoffs are still happening.
+                    if (g.phase === c.PHASE_PLAYOFFS) {
+                        playoffsContinue = true;
+                    }
+                    cbPlayGames();
+                });
+            }
+        }
+
         if (numDays > 0) {
             // If we didn't just stop games, let's play
             // Or, if we are starting games (and already passed the lock above),
             // continue even if stop_games was just seen
             if (start || !g.stopGames) {
                 if (g.stopGames) {
-                    helpers.setGameAttributes({stopGames: false});
+                    db.setGameAttributes({stopGames: false}, cbYetAnother);
                 }
-                // Check if it's the playoffs and do some special stuff if it is or isn't
-                if (g.phase !== c.PHASE_PLAYOFFS) {
-                    // Decrease free agent demands and let AI teams sign them
-                    freeAgents.decreaseDemands(function () {
-                        freeAgents.autoSign(function () {
-                            cbPlayGames();
-                        });
-                    });
-                } else {
-                    season.newSchedulePlayoffsDay(function (playoffsOver) {
-                        // If season.newSchedulePlayoffsDay didn't move the phase to c.PHASE_BEFORE_DRAFT, then the playoffs are still happening.
-                        if (g.phase === c.PHASE_PLAYOFFS) {
-                            playoffsContinue = true;
-                        }
-                        cbPlayGames();
-                    });
+                else {
+                    cbYetAnother();
                 }
             }
-        }
-        // If this is the last day, update play menu
-        if (numDays === 0) {
+        } else if (numDays === 0) {
+            // If this is the last day, update play menu
             cbNoGames();
         }
     }

@@ -2,7 +2,7 @@
  * @name api
  * @namespace Functions called directly in response to user action (clicking a button, etc).
  */
-define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/season", "core/trade", "util/helpers", "util/lock"], function (db, views, ui, draft, game, player, season, trade, helpers, lock) {
+define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/season", "core/trade", "util/lock"], function (db, views, ui, draft, game, player, season, trade, lock) {
     "use strict";
 
     function play(amount) {
@@ -30,12 +30,12 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
                 game.play(500, true);
             }
         } else if (amount === "stop") {
-            helpers.setGameAttributes({stopGames: true});
-
-            // This is needed because we can't be sure if core.game.play will be called again
-            ui.updateStatus('Idle');
-            lock.set_games_in_progress(false);
-            ui.updatePlayMenu();
+            db.setGameAttributes({stopGames: true}, function () {
+                // This is needed because we can't be sure if core.game.play will be called again
+                ui.updateStatus('Idle');
+                lock.set_games_in_progress(false);
+                ui.updatePlayMenu();
+            });
         } else if (amount === "until_draft") {
             if (g.phase === c.PHASE_BEFORE_DRAFT) {
                 season.newPhase(c.PHASE_DRAFT, function () {

@@ -33,6 +33,7 @@ define(["util/helpers"], function (helpers) {
         request.onsuccess = function (event) {
             g.dbm = request.result;
             g.dbm.onerror = function (event) {
+console.log(event);
                 console.log("Meta database error: " + event.target.errorCode);
             };
             cb();
@@ -694,7 +695,7 @@ define(["util/helpers"], function (helpers) {
                     cursor.update(p);
                     cursor.continue();
                 } else {
-                    if (typeof cb !== "undefined") {
+                    if (cb !== undefined) {
                         cb();
                     }
                 }
@@ -728,6 +729,53 @@ define(["util/helpers"], function (helpers) {
         };
     }
 
+    /**
+     * Load game attributes from the database and update the global variable g.
+     * 
+     * @param {(string|Array|null)} attribute If null, return all attributes. If string, return just the one identified by the string. If an array of strings, return those attributes only.
+     * @param {function()} cb Optional callback.
+     */
+    function loadGameAttributes(attribute, cb) {
+        var gameAttributes, prop;
+
+        gameAttributes = JSON.parse(localStorage.getItem("league" + g.lid + "GameAttributes"));
+        for (prop in gameAttributes) {
+            if (gameAttributes.hasOwnProperty(prop)) {
+                g[prop] = gameAttributes[prop];
+            }
+        }
+
+        if (cb !== undefined) {
+            cb();
+        }
+    }
+
+    /**
+     * Set values in the gameAttributes objectStore and update the global variable g.
+     * 
+     * @param {Object} gameAttributes Each element in the object will be inserted/updated in the database with the key of the object representing the key in the database.
+     * @param {function()} cb Optional callback.
+     */
+    function setGameAttributes(gameAttributes, cb) {
+        var gameAttributesOld, prop;
+
+        gameAttributesOld = JSON.parse(localStorage.getItem("league" + g.lid + "GameAttributes"));
+        if (gameAttributesOld === null) {
+            gameAttributesOld = {};
+        }
+        for (prop in gameAttributes) {
+            if (gameAttributes.hasOwnProperty(prop)) {
+                gameAttributesOld[prop] = gameAttributes[prop];
+                g[prop] = gameAttributes[prop];
+            }
+        }
+        localStorage.setItem("league" + g.lid + "GameAttributes", JSON.stringify(gameAttributesOld));
+
+        if (cb !== undefined) {
+            cb();
+        }
+    }
+
     return {
         connectMeta: connectMeta,
         connectLeague: connectLeague,
@@ -740,6 +788,8 @@ define(["util/helpers"], function (helpers) {
         getPayroll: getPayroll,
         rosterAutoSort: rosterAutoSort,
         getDraftOrder: getDraftOrder,
-        setDraftOrder: setDraftOrder
+        setDraftOrder: setDraftOrder,
+        loadGameAttributes: loadGameAttributes,
+        setGameAttributes: setGameAttributes
     };
 });

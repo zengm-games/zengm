@@ -49,6 +49,19 @@
             <div id="playButton"></div>
             <div class="nav"><span id="playPhase"></span><br /><span id="playStatus"></span></div>
           </div>
+
+            <ul class="nav pull-right">
+              <li class="dropdown">
+                <a data-toggle="dropdown" class="dropdown-toggle" href="#">Debug Menu <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="javascript:(function () { season = require('core/season'); season.newPhase(c.PHASE_PLAYOFFS); })()">Skip To Playoffs</a></li>
+                  <li><a href="javascript:(function () { season = require('core/season'); season.newPhase(c.PHASE_BEFORE_DRAFT); })()">Skip To Before Draft</a></li>
+                  <li><a href="javascript:(function () { season = require('core/season'); season.newPhase(c.PHASE_RESIGN_PLAYERS); })()">Skip To Resign Players</a></li>
+                  <li class="divider"></li>
+                  <li><a href="/init_db">Reset DB</a></li>
+                </ul>
+              </li>
+            </ul>
         </div>
       </div>
     </div>
@@ -59,9 +72,8 @@
       <p style="clear: both;"></p>
       <hr>
 
-DEBUG MENU: <a href="/init_db">Reset DB</a> | <a href="javascript:(function () { season = require('core/season'); season.newPhase(c.PHASE_PLAYOFFS); })()">Skip To Playoffs</a> | <a href="javascript:(function () { season = require('core/season'); season.newPhase(c.PHASE_BEFORE_DRAFT); })()">Skip To Draft</a> | <a href="javascript:(function () { season = require('core/season'); season.newPhase(c.PHASE_RESIGN_PLAYERS); })()">Skip To Resign Players</a>
       <footer>
-        <p><a href="http://www.basketball-gm.com/">Basketball GM</a> 3.0.0alpha is available under the <a href="http://www.gnu.org/licenses/agpl-3.0.html">GNU Affero General Public License</a>. <a href="https://github.com/jdscheff/basketball-gm">Fork it on GitHub!</a></p>
+        <p><a href="http://www.basketball-gm.com/">Basketball GM</a> 3.0.0-alpha is available under the <a href="http://www.gnu.org/licenses/agpl-3.0.html">GNU Affero General Public License</a>. <a href="https://github.com/jdscheff/basketball-gm">Fork it on GitHub!</a></p>
       </footer>
 
     </div>

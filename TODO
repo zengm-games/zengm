@@ -1,14 +1,11 @@
 main todo
-- move debug menu somewhere more reasonable
-  - top right? or reserve that for notifications? maybe have 2 icons
-  - reveal only with key press?
 - hitting the phase twice shouldn't be possible. but if i, for instance, hit "until preseason" twice quickly, i skip a year
 - Anything labeled "Optional callback" should be like {function()=}
 - multiple windows
   - have some element in the database with the last "action" time. poll it with some frequency, and update if needed
     - indexeddb, or localstorage? benchmark. probably indexeddb in game attributes
   - move to new window button, like gmail, that will open a view in a new window with a minimal UI
-- revamp lock
+- revamp lock?
   - make it all async, like
     lock.canStartGames(function (canStartGames) {
         if (canStartGames) {
@@ -16,8 +13,6 @@ main todo
         }
     });
   - actually implement these functions rather than using placeholders
-- chrome
-  - wants to upgrade dbs all the time?
 - let free agents stay for 2 seasons before retiring, or make retirement probabilistic
 - nba roster
   - define file format for external player sources
@@ -52,7 +47,7 @@ strategic issues
 - season crap
   - startingSeason should be stored so later years can have different values (such as the NBA players, should be 2011)
     - grep for 2012, fix any hardcoded values
-  - "2011-12" display for some phases, "2012" for later ones
+- import/export games
 
 ---
 
@@ -86,7 +81,7 @@ contract negotiation
 player stats
 - how to handle aggregating stats for players who played for more than one team in a season? add them all up in ps in db.getPlayers
 player view
-- contract for free agents should note that it is requested, not existing
+- contract for free agents should note that it is requested, not existing. also, make sure the penalty for repeated negotiations is accounted for, as in the free agents view
 - no contract or ratings shown for retired player
 db.getPlayers
 - rename to helpers.filterPlayers?

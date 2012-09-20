@@ -352,10 +352,12 @@ console.log(value);
 
                                                             done += 1;
                                                             if (done === pids[j].length + pids[k].length) {
-                                                                // Auto-sort CPU team roster;
+                                                                // Auto-sort CPU team roster
                                                                 db.rosterAutoSort(playerStore, tids[1], function () {
                                                                     clear(function () {
-                                                                        cb(true, 'Trade accepted! "Nice doing business with you!"');
+                                                                        db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                                                                            cb(true, 'Trade accepted! "Nice doing business with you!"');
+                                                                        });
                                                                     });
                                                                 });
                                                             }

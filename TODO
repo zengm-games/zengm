@@ -1,8 +1,15 @@
 main todo
 - hitting the phase twice shouldn't be possible. but if i, for instance, hit "until preseason" twice quickly, i skip a year
+  - maybe have something like lock.phaseChangeInProgress? but some timeout would be needed to reset
 - multiple windows
   - have some element in the database with the last "action" time. poll it with some frequency, and update if needed
-    - indexeddb, or localstorage? benchmark. probably indexeddb in game attributes
+    - get with (new function) db.getAttribute to get single attribute
+    - update on...
+      - new phase - DONE
+      - game played - DONE
+      - contract negotiation accepted/cancelled
+      - trade
+    - any db errors? shouldn't be, as it's all reading
   - move to new window button, like gmail, that will open a view in a new window with a minimal UI
 - revamp lock?
   - make it all async, like

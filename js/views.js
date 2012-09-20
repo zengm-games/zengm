@@ -2,9 +2,35 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
     "use strict";
 
     function beforeLeague(req, cb) {
-        var leagueMenu;
+        var checkDbChange, leagueMenu;
 
         g.lid = parseInt(req.params.lid, 10);
+
+        checkDbChange = function (lid) {
+            var oldLastDbChange;
+
+            // Stop if the league isn't viewed anymore
+            if (lid !== g.lid) {
+                return;
+            }
+
+            oldLastDbChange = g.lastDbChange;
+
+            db.loadGameAttribute("lastDbChange", function () {
+                if (g.lastDbChange !== oldLastDbChange) {
+                    db.loadGameAttributes(function () {
+                        ui.realtimeUpdate(function () {
+                            ui.updatePlayMenu();
+                            ui.updatePhase();
+                            ui.updateStatus();
+                            setTimeout(checkDbChange, 3000, g.lid);
+                        });
+                    });
+                } else {
+                    setTimeout(checkDbChange, 3000, g.lid);
+                }
+            });
+        }
 
         // Make sure league exists
 
@@ -30,6 +56,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     ui.updatePlayMenu();
 
                     cb();
+
+                    checkDbChange(g.lid);
                 });
             });
         } else {
@@ -39,6 +67,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
     function beforeNonLeague() {
         var playButtonElement, playPhaseElement, playStatusElement;
+
+        g.lid = null;
 
         playButtonElement = document.getElementById("playButton");
         if (playButtonElement) {
@@ -78,6 +108,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                             console.log("Creating new meta database...");
                             db.connectMeta(function () {
                                 console.log("Done!");
+                                Davis.location.assign(new Davis.Request("/"));
                             });
                         };
                     }

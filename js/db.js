@@ -730,6 +730,22 @@ console.log(event);
     }
 
     /**
+     * Load a game attribute from the database and update the global variable g.
+     *
+     * @param {string} key Key in gameAttributes to load the value for.
+     * @param {function()=} cb Optional callback.
+     */
+    function loadGameAttribute(key, cb) {
+        g.dbl.transaction("gameAttributes").objectStore("gameAttributes").get(key).onsuccess = function (event) {
+            g[key] = event.target.result.value;
+
+            if (cb !== undefined) {
+                cb();
+            }
+        };
+    }
+
+    /**
      * Load game attributes from the database and update the global variable g.
      * 
      * @param {function()=} cb Optional callback.
@@ -805,6 +821,7 @@ console.log(event);
         rosterAutoSort: rosterAutoSort,
         getDraftOrder: getDraftOrder,
         setDraftOrder: setDraftOrder,
+        loadGameAttribute: loadGameAttribute,
         loadGameAttributes: loadGameAttributes,
         setGameAttributes: setGameAttributes
     };

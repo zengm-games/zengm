@@ -534,7 +534,9 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/lock
                                     }
 
                                     ui.realtimeUpdate(function () {
-                                        play(numDays - 1);
+                                        db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                                            play(numDays - 1);
+                                        });
                                     });
                                 } else {
                                     doGameSim(i + 1);

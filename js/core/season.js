@@ -3,7 +3,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
 
     // This should be called after the phase-specific stuff runs. It needs to be a separate function like this to play nice with async stuff.
     function newPhaseCb(phase, phaseText, cb) {
-        db.setGameAttributes({phase: phase}, function () {
+        db.setGameAttributes({phase: phase, lastDbChange: Date.now()}, function () {
             ui.updatePhase(phaseText);
             ui.updatePlayMenu();
             if (cb !== undefined) {

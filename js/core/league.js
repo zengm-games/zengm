@@ -65,7 +65,7 @@ define(["db", "ui", "core/player", "core/season", "util/random"], function (db, 
                     afterPlayerCreation = function () {
                         var gameAttributes;
 
-                        gameAttributes = {userTid: tid, season: g.startingSeason, phase: 0, gamesInProgress: false, stopGames: false};
+                        gameAttributes = {userTid: tid, season: g.startingSeason, phase: 0, gamesInProgress: false, stopGames: false, lastDbChange: 0};
                         db.setGameAttributes(gameAttributes, function () {
                             // Make schedule, start season
                             season.newPhase(c.PHASE_REGULAR_SEASON, function () {

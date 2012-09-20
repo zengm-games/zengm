@@ -154,12 +154,14 @@ define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui
 
         // Delete negotiation
         g.dbl.transaction("negotiations", "readwrite").objectStore("negotiations").delete(pid).onsuccess = function (event) {
-            // If no negotiations are in progress, update status
-            lock.negotiationInProgress(function (negotiationInProgress) {
-                if (!negotiationInProgress) {
-                    ui.updateStatus("Idle");
-                    ui.updatePlayMenu();
-                }
+            db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                // If no negotiations are in progress, update status
+                lock.negotiationInProgress(function (negotiationInProgress) {
+                    if (!negotiationInProgress) {
+                        ui.updateStatus("Idle");
+                        ui.updatePlayMenu();
+                    }
+                });
             });
         };
     }
@@ -234,7 +236,9 @@ define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui
 
                     console.log("User accepted contract proposal from " + pid);
 
-                    cb();
+                    db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                        cb();
+                    });
                 };
             });
         };

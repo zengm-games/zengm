@@ -7,7 +7,9 @@ main todo
     - update on...
       - new phase - DONE
       - game played - DONE
-      - contract negotiation accepted/cancelled
+      - contract negotiation accepted/cancelled - DONE
+      - release
+      - buy out
       - trade
     - any db errors? shouldn't be, as it's all reading
   - move to new window button, like gmail, that will open a view in a new window with a minimal UI

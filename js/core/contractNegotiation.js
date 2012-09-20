@@ -170,7 +170,7 @@ define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui
      * Currently, the only time there should be multiple ongoing negotiations in the first place is when a user is resigning players at the end of the season, although that should probably change eventually.
      * 
      * @memberOf core.contractNegotiation
-     * @param {function()} cb Optional callback.
+     * @param {function()=} cb Optional callback.
      */
     function cancelAll(cb) {
         var i, negotiations;

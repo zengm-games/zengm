@@ -48,7 +48,7 @@ define(["db", "util/lock"], function (db, lock) {
      *
      * @memberOf ui
      * @param  {Object} data An object with several properties: "title" the title of the page; "vars" the variables to be passed to the handlebars template; "template" the name of the handlebars template; "isLeague" a boolean saying whether this is within a league or not.
-     * @param  {function()} cb Optional callback
+     * @param {function()=} cb Optional callback
      */
     function update(data, cb) {
         var league_page, rendered, result;
@@ -143,7 +143,7 @@ define(["db", "util/lock"], function (db, lock) {
      * Smartly update the currently loaded view, based on the current game state.
      *
      * @memberOf ui
-     * @param {function()} cb Optional callback that will run after the page updates.
+     * @param {function()=} cb Optional callback that will run after the page updates.
      */
     function realtimeUpdate(cb) {
         // Refresh standings if it's the current season standings and the phase is during the regular season

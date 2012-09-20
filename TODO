@@ -1,6 +1,5 @@
 main todo
 - hitting the phase twice shouldn't be possible. but if i, for instance, hit "until preseason" twice quickly, i skip a year
-- Anything labeled "Optional callback" should be like {function()=}
 - multiple windows
   - have some element in the database with the last "action" time. poll it with some frequency, and update if needed
     - indexeddb, or localstorage? benchmark. probably indexeddb in game attributes

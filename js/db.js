@@ -136,7 +136,7 @@ console.log(event);
      * @memberOf db
      * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on players, readwrite; if null is passed, then a new transaction will be used.
      * @param {Object} p Player object.
-     * @param {function()} cb Optional callback.
+     * @param {function()=} cb Optional callback.
      */
     function putPlayer(ot, p, cb) {
         var playerStore;
@@ -661,7 +661,7 @@ console.log(event);
      * @memberOf db
      * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on players readwrite; if null is passed, then a new transaction will be used.
      * @param {number} tid Team ID.
-     * @param {function()} cb Optional callback.
+     * @param {function()=} cb Optional callback.
      */
     function rosterAutoSort(ot, tid, cb) {
         var players, playerStore;
@@ -732,7 +732,7 @@ console.log(event);
     /**
      * Load game attributes from the database and update the global variable g.
      * 
-     * @param {function()} cb Optional callback.
+     * @param {function()=} cb Optional callback.
      */
     function loadGameAttributes(cb) {
         g.dbl.transaction("gameAttributes").objectStore("gameAttributes").getAll().onsuccess = function (event) {
@@ -758,7 +758,7 @@ console.log(event);
      * This function is a little messy because the callback must only be called after everything in the database has been updated.
      * 
      * @param {Object} gameAttributes Each element in the object will be inserted/updated in the database with the key of the object representing the key in the database.
-     * @param {function()} cb Optional callback.
+     * @param {function()=} cb Optional callback.
      */
     function setGameAttributes(gameAttributes, cb) {
         var gameAttributesStore, i, key, numUpdated, toUpdate;

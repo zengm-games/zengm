@@ -116,7 +116,11 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
                 p = event.target.result;
                 // Don't let the user update CPU-controlled rosters
                 if (p.tid === g.userTid) {
-                    player.release(transaction, p, cb);
+                    player.release(transaction, p, function () {
+                        db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                            cb();
+                        });
+                    });
                 } else {
                     return cb("You aren't allowed to do this.");
                 }
@@ -172,7 +176,11 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
                                 cursor.update(t);
 
                                 // Set to FA in database
-                                player.addToFreeAgents(transaction, p, null, cb);
+                                player.addToFreeAgents(transaction, p, null, function () {
+                                    db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                                        cb();
+                                    });
+                                });
                             } else {
                                 return cb("Not enough cash.");
                             }

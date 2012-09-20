@@ -8,8 +8,8 @@ main todo
       - new phase - DONE
       - game played - DONE
       - contract negotiation accepted/cancelled - DONE
-      - release
-      - buy out
+      - release - DONE
+      - buy out - DONE
       - trade
     - any db errors? shouldn't be, as it's all reading
   - move to new window button, like gmail, that will open a view in a new window with a minimal UI

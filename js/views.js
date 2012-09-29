@@ -30,7 +30,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     setTimeout(checkDbChange, 3000, g.lid);
                 }
             });
-        }
+        };
 
         // Make sure league exists
 
@@ -872,11 +872,15 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             }
 
             showTrade = function (userPids, otherPids, message) {
-                if (req.method === "post") {
-                    return Davis.location.assign(new Davis.Request("/l/" + g.lid + "/trade"));
+                message = message !== undefined ? message : null;
+                if (message === null && req.raw.message !== undefined) {
+                    message = req.raw.message; // Passed explicitly a couple lines below. Otherwise, undefined.
                 }
 
-                message = message !== undefined ? message : null;
+                if (req.method === "post") {
+                    // Refresh, but pass the latest message if there is one
+                    return Davis.location.assign(new Davis.Request("/l/" + g.lid + "/trade", {message: message}));
+                }
 
                 trade.getOtherTid(function (otherTid) {
                     var playerStore;
@@ -948,7 +952,9 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             } else if (req.method  === "post" && req.params.propose !== undefined) {
                 // Propose trade
                 trade.propose(function (accepted, message) {
+console.log(message);
                     trade.getPlayers(function (userPids, otherPids) {
+console.log(message);
                         showTrade(userPids, otherPids, message);
                     });
                 });

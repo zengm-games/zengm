@@ -1,11 +1,10 @@
 main todo
-- no message when trade is accepted? do other trade messages still work?
 - hitting the phase twice shouldn't be possible. but if i, for instance, hit "until preseason" twice quickly, i skip a year
   - maybe have something like lock.phaseChangeInProgress? but some timeout would be needed to reset
 - multiple windows
   - have some element in the database with the last "action" time. poll it with some frequency, and update if needed
     - any db errors? shouldn't be, as it's all reading. try opening a ton of windows and testing.
-    - do lock functions work with multiple windows? basically... is g being updated appropriately? should it be entirely refreshed every time?
+    - do lock functions work with multiple windows? basically... is g being updated appropriately? should it be entirely refreshed every time lock is checked?
   - move to new window button, like gmail, that will open a view in a new window with a minimal UI
 - check lid in game sim and stop if there's no match. similar to how the multiple window stuff works
 - revamp lock?

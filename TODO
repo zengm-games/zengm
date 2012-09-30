@@ -10,7 +10,6 @@ main todo
     - somehow should not show the "new window" links in popup windows. set display:none on css class?
     - links to the right of each header
       - only the icon should be clickable, not the area above and below
-      - tooltip: Move To New Window
       - multiple clicks should open multiple windows (do they need unique names in window.open?)
       - insert query string before # in URL when making popup in ui.moveToNewWindow
 - check lid in game sim and stop if there's no match. similar to how the multiple window stuff works

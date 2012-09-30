@@ -4089,7 +4089,7 @@ function program33(depth0,data,depth1,depth2) {
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.name);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "team.name", { hash: {} }); }
-  buffer += escapeExpression(stack1) + " Roster <a href=\"javascript:api.moveToNewWindow()\" class=\"new_window\" data-no-davis=\"true\"><img src=\"/ico/new_window.png\" height=\"16\" width=\"16\"></a></h1>\n\n";
+  buffer += escapeExpression(stack1) + " Roster <a href=\"javascript:api.moveToNewWindow()\" class=\"new_window\" title=\"Move To New Window\" data-no-davis=\"true\"><img src=\"/ico/new_window.png\" height=\"16\" width=\"16\"></a></h1>\n\n";
   foundHelper = helpers.currentSeason;
   stack1 = foundHelper || depth0.currentSeason;
   stack2 = helpers['if'];

@@ -240,6 +240,10 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
         });
     }
 
+    function moveToNewWindow() {
+        ui.moveToNewWindow();
+    }
+
     return {
         play: play,
         rosterAutoSort: rosterAutoSort,
@@ -248,6 +252,7 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
         rosterBuyOut: rosterBuyOut,
         tradeUpdate: tradeUpdate,
         draftUntilUserOrEnd: draftUntilUserOrEnd,
-        draftUser: draftUser
+        draftUser: draftUser,
+        moveToNewWindow: moveToNewWindow
     };
 });

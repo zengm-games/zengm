@@ -304,6 +304,12 @@ define(["db", "util/lock"], function (db, lock) {
         }
     }
 
+    function moveToNewWindow() {
+        console.log('hi');
+        window.open(document.URL, "name", "height=600,width=800,scrollbars=yes");
+        Davis.location.assign(new Davis.Request("/l/" + g.lid));
+    }
+
     $(document).ready(function () {
         var league_id, league_page, league_root_url, result;
 
@@ -322,6 +328,7 @@ define(["db", "util/lock"], function (db, lock) {
         update: update,
         updatePhase: updatePhase,
         updatePlayMenu: updatePlayMenu,
-        updateStatus: updateStatus
+        updateStatus: updateStatus,
+        moveToNewWindow: moveToNewWindow
     };
 });

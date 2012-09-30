@@ -306,7 +306,8 @@ define(["db", "util/lock"], function (db, lock) {
     }
 
     function moveToNewWindow() {
-        window.open(document.URL + "?w=popup", "name", "height=600,width=800,scrollbars=yes");
+        // Window name is set to the current time, so each window has a unique name and thus a new window is always opened
+        window.open(document.URL + "?w=popup", Date.now(), "height=600,width=800,scrollbars=yes");
         Davis.location.assign(new Davis.Request("/l/" + g.lid));
     }
 

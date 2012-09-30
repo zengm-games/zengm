@@ -594,6 +594,11 @@ function program11(depth0,data,depth1) {
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.name);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.name", { hash: {} }); }
+  buffer += escapeExpression(stack1) + " ";
+  foundHelper = helpers.new_window;
+  stack1 = foundHelper || depth0.new_window;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "new_window", { hash: {} }); }
   buffer += escapeExpression(stack1) + "</h1>\n    <div id=\"picture\" class=\"player_picture\">";
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;
@@ -877,7 +882,12 @@ function program4(depth0,data) {
   if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
   else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  </select>\n</form>\n\n<h1>Playoffs</h1>\n\n";
+  buffer += "\n  </select>\n</form>\n\n<h1>Playoffs ";
+  foundHelper = helpers.new_window;
+  stack1 = foundHelper || depth0.new_window;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "new_window", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</h1>\n\n";
   foundHelper = helpers.finalMatchups;
   stack1 = foundHelper || depth0.finalMatchups;
   stack2 = helpers.unless;
@@ -1295,7 +1305,12 @@ function program4(depth0,data) {
   if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
   else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  </select>\n</form>\n\n<h1>Player Stats</h1>\n\n<p class=\"clearfix\">\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player_stats\">\n<thead>\n  <tr><th colspan=\"6\"></th><th colspan=\"3\" style=\"text-align: center\" title=\"Field Goals\">FG</th><th colspan=\"3\" style=\"text-align: center\" title=\"Three-Pointers\">3PT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Free Throws\">FT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Rebounds\">Reb</th><th colspan=\"6\"></th></tr>\n  <tr><th>Name</th><th title=\"Position\">Pos</th><th>Team</th><th title=\"Games Played\">GP</th><th title=\"Games Started\">GS</th><th title=\"Minutes\">Min</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Offensive\">Off</th><th title=\"Defensive\">Def</th><th title=\"Total\">Tot</th><th title=\"Assists\">Ast</th><th title=\"Turnovers\">TO</th><th title=\"Steals\">Stl</th><th title=\"Blocks\">Blk</th><th title=\"Personal Fouls\">PF</th><th title=\"Points\">Pts</th></tr>\n</thead>\n</table>\n</p>\n";
+  buffer += "\n  </select>\n</form>\n\n<h1>Player Stats ";
+  foundHelper = helpers.new_window;
+  stack1 = foundHelper || depth0.new_window;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "new_window", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</h1>\n\n<p class=\"clearfix\">\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player_stats\">\n<thead>\n  <tr><th colspan=\"6\"></th><th colspan=\"3\" style=\"text-align: center\" title=\"Field Goals\">FG</th><th colspan=\"3\" style=\"text-align: center\" title=\"Three-Pointers\">3PT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Free Throws\">FT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Rebounds\">Reb</th><th colspan=\"6\"></th></tr>\n  <tr><th>Name</th><th title=\"Position\">Pos</th><th>Team</th><th title=\"Games Played\">GP</th><th title=\"Games Started\">GS</th><th title=\"Minutes\">Min</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Offensive\">Off</th><th title=\"Defensive\">Def</th><th title=\"Total\">Tot</th><th title=\"Assists\">Ast</th><th title=\"Turnovers\">TO</th><th title=\"Steals\">Stl</th><th title=\"Blocks\">Blk</th><th title=\"Personal Fouls\">PF</th><th title=\"Points\">Pts</th></tr>\n</thead>\n</table>\n</p>\n";
   return buffer;});
 templates['standings'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;
@@ -1540,7 +1555,12 @@ function program9(depth0,data) {
   if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
   else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  </select>\n</form>\n\n<h1>Standings</h1>\n\n";
+  buffer += "\n  </select>\n</form>\n\n<h1>Standings ";
+  foundHelper = helpers.new_window;
+  stack1 = foundHelper || depth0.new_window;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "new_window", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</h1>\n\n";
   foundHelper = helpers.confs;
   stack1 = foundHelper || depth0.confs;
   tmp1 = self.programWithDepth(program4, data, depth0);
@@ -2081,7 +2101,12 @@ function program35(depth0,data,depth1) {
   stack1 = foundHelper || depth0.name;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "name", { hash: {} }); }
-  buffer += escapeExpression(stack1) + " Dashboard</h1>\n\n<div class=\"row-fluid\">\n  <div class=\"span4\">\n    <h3>Current Record</h3>\n    <p>\n      ";
+  buffer += escapeExpression(stack1) + " Dashboard ";
+  foundHelper = helpers.new_window;
+  stack1 = foundHelper || depth0.new_window;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "new_window", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</h1>\n\n<div class=\"row-fluid\">\n  <div class=\"span4\">\n    <h3>Current Record</h3>\n    <p>\n      ";
   foundHelper = helpers.won;
   stack1 = foundHelper || depth0.won;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -3043,7 +3068,12 @@ function program1(depth0,data,depth1) {
   if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
   else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  ]);\n});\n</script>\n\n<h1>Finances</h1>\n\n<p>The current salary cap is <strong>$";
+  buffer += "\n  ]);\n});\n</script>\n\n<h1>Finances ";
+  foundHelper = helpers.new_window;
+  stack1 = foundHelper || depth0.new_window;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "new_window", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</h1>\n\n<p>The current salary cap is <strong>$";
   stack1 = 2;
   foundHelper = helpers.salaryCap;
   stack2 = foundHelper || depth0.salaryCap;
@@ -3194,7 +3224,12 @@ function program6(depth0,data,depth1) {
   buffer += escapeExpression(stack1) + "</td></tr>\n      ";
   return buffer;}
 
-  buffer += "<script type=\"text/javascript\">\n$(document).ready(function() {\n    function updateDraftTables(pids) {\n        for (var i=0; i<pids.length; i++) {\n            var draftedPlayer = new Array(5);\n            // Find row in undrafted players table, get metadata, delete row\n            var undraftedTds = $('#undrafted_' + pids[i] + ' td')\n            for (var j=0; j<5; j++) {\n                draftedPlayer[j] = undraftedTds[j].innerHTML;\n            }\n\n            // Find correct row (first blank row) in drafted players table, write metadata\n            var draftedRows = $('#drafted tbody tr');\n            for (var j=0; j<draftedRows.length; j++) {\n                if (draftedRows[j].children[3].innerHTML.length == 0) {\n                    $('#undrafted_' + pids[i]).remove();\n                    draftedRows[j].children[2].innerHTML = draftedPlayer[0];\n                    draftedRows[j].children[3].innerHTML = draftedPlayer[1];\n                    draftedRows[j].children[4].innerHTML = draftedPlayer[2];\n                    draftedRows[j].children[5].innerHTML = draftedPlayer[3];\n                    draftedRows[j].children[6].innerHTML = draftedPlayer[4];\n                    break;\n                }\n            }\n        }\n    }\n\n    \n\n    function draftUntilUserOrEnd() {\n        api.draftUntilUserOrEnd(function (pids, done) {\n          updateDraftTables(pids);\n          if (!done) {\n              $('#undrafted button').removeAttr('disabled');\n          }\n      });\n    }\n\n    $('#start_draft').click(function(event) {\n        $($('#start_draft').parent()).hide()\n        draftUntilUserOrEnd();\n    });\n\n    $('#undrafted button').click(function(event) {\n        $('#undrafted button').attr('disabled', 'disabled');\n        api.draftUser(this.getAttribute('data-player-id'), function (pid) {\n            updateDraftTables([pid]);\n            draftUntilUserOrEnd();\n        });\n    });\n});\n</script>\n\n<h1>Draft</h1>\n\n<p>When your turn in the draft comes up, select from the list of available players on the left.</p>\n\n<p";
+  buffer += "<script type=\"text/javascript\">\n$(document).ready(function() {\n    function updateDraftTables(pids) {\n        for (var i=0; i<pids.length; i++) {\n            var draftedPlayer = new Array(5);\n            // Find row in undrafted players table, get metadata, delete row\n            var undraftedTds = $('#undrafted_' + pids[i] + ' td')\n            for (var j=0; j<5; j++) {\n                draftedPlayer[j] = undraftedTds[j].innerHTML;\n            }\n\n            // Find correct row (first blank row) in drafted players table, write metadata\n            var draftedRows = $('#drafted tbody tr');\n            for (var j=0; j<draftedRows.length; j++) {\n                if (draftedRows[j].children[3].innerHTML.length == 0) {\n                    $('#undrafted_' + pids[i]).remove();\n                    draftedRows[j].children[2].innerHTML = draftedPlayer[0];\n                    draftedRows[j].children[3].innerHTML = draftedPlayer[1];\n                    draftedRows[j].children[4].innerHTML = draftedPlayer[2];\n                    draftedRows[j].children[5].innerHTML = draftedPlayer[3];\n                    draftedRows[j].children[6].innerHTML = draftedPlayer[4];\n                    break;\n                }\n            }\n        }\n    }\n\n    \n\n    function draftUntilUserOrEnd() {\n        api.draftUntilUserOrEnd(function (pids, done) {\n          updateDraftTables(pids);\n          if (!done) {\n              $('#undrafted button').removeAttr('disabled');\n          }\n      });\n    }\n\n    $('#start_draft').click(function(event) {\n        $($('#start_draft').parent()).hide()\n        draftUntilUserOrEnd();\n    });\n\n    $('#undrafted button').click(function(event) {\n        $('#undrafted button').attr('disabled', 'disabled');\n        api.draftUser(this.getAttribute('data-player-id'), function (pid) {\n            updateDraftTables([pid]);\n            draftUntilUserOrEnd();\n        });\n    });\n});\n</script>\n\n<h1>Draft ";
+  foundHelper = helpers.new_window;
+  stack1 = foundHelper || depth0.new_window;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "new_window", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</h1>\n\n<p>When your turn in the draft comes up, select from the list of available players on the left.</p>\n\n<p";
   foundHelper = helpers.started;
   stack1 = foundHelper || depth0.started;
   stack2 = helpers['if'];
@@ -3345,7 +3380,12 @@ function program1(depth0,data,depth1) {
   buffer += escapeExpression(stack1) + "</a>\n";
   return buffer;}
 
-  buffer += "<h1>Upcoming Schedule</h1>\n\n<ol>\n";
+  buffer += "<h1>Upcoming Schedule ";
+  foundHelper = helpers.new_window;
+  stack1 = foundHelper || depth0.new_window;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "new_window", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</h1>\n\n<ol>\n";
   foundHelper = helpers.games;
   stack1 = foundHelper || depth0.games;
   tmp1 = self.programWithDepth(program1, data, depth0);
@@ -3520,7 +3560,12 @@ function program8(depth0,data) {
   if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
   else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  </select>\n</form>\n\n<h1>League Leaders</h1>\n\n<p></p>\n<div class=\"row-fluid\">\n  ";
+  buffer += "\n  </select>\n</form>\n\n<h1>League Leaders ";
+  foundHelper = helpers.new_window;
+  stack1 = foundHelper || depth0.new_window;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "new_window", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</h1>\n\n<p></p>\n<div class=\"row-fluid\">\n  ";
   foundHelper = helpers.categories;
   stack1 = foundHelper || depth0.categories;
   tmp1 = self.programWithDepth(program4, data, depth0);
@@ -4360,7 +4405,12 @@ function program4(depth0,data) {
   if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
   else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  </select>\n</form>\n\n<h1>Player Ratings</h1>\n\n<p class=\"clearfix\">\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player_ratings\">\n<thead>\n  <tr><th>Name</th><th title=\"Position\">Pos</th><th>Team</th><th>Age</th><th title=\"Overall\">Ovr</th><th title=\"Potential\">Pot</th><th title=\"Height\">Hgt</th><th title=\"Strength\">Str</th><th title=\"Speed\">Spd</th><th title=\"Jumping\">Jmp</th><th title=\"Endurance\">End</th><th title=\"Inside Scoring\">Ins</th><th title=\"Dunks/Layups\">Dnk</th><th title=\"Free Throw Shooting\">FT</th><th title=\"Two-Point Shooting\">2Pt</th><th title=\"Three-Point Shooting\">3Pt</th><th title=\"Blocks\">Blk</th><th title=\"Steals\">Stl</th><th title=\"Dribbling\">Drb</th><th title=\"Passing\">Pss</th><th title=\"Rebounding\">Reb</th></tr>\n</thead>\n</table>\n</p>\n";
+  buffer += "\n  </select>\n</form>\n\n<h1>Player Ratings ";
+  foundHelper = helpers.new_window;
+  stack1 = foundHelper || depth0.new_window;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "new_window", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</h1>\n\n<p class=\"clearfix\">\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player_ratings\">\n<thead>\n  <tr><th>Name</th><th title=\"Position\">Pos</th><th>Team</th><th>Age</th><th title=\"Overall\">Ovr</th><th title=\"Potential\">Pot</th><th title=\"Height\">Hgt</th><th title=\"Strength\">Str</th><th title=\"Speed\">Spd</th><th title=\"Jumping\">Jmp</th><th title=\"Endurance\">End</th><th title=\"Inside Scoring\">Ins</th><th title=\"Dunks/Layups\">Dnk</th><th title=\"Free Throw Shooting\">FT</th><th title=\"Two-Point Shooting\">2Pt</th><th title=\"Three-Point Shooting\">3Pt</th><th title=\"Blocks\">Blk</th><th title=\"Steals\">Stl</th><th title=\"Dribbling\">Drb</th><th title=\"Passing\">Pss</th><th title=\"Rebounding\">Reb</th></tr>\n</thead>\n</table>\n</p>\n";
   return buffer;});
 templates['freeAgents'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;
@@ -4477,7 +4527,12 @@ function program1(depth0,data,depth1) {
   if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
   else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  ]);\n});\n</script>\n\n<h1>Free Agents</h1>\n\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"free_agents\">\n<thead>\n  <tr><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall\">Ovr</th><th title=\"Potential\">Pot</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th>Asking for</th><th>Negotiate</th></tr>\n</thead>\n</table>\n";
+  buffer += "\n  ]);\n});\n</script>\n\n<h1>Free Agents ";
+  foundHelper = helpers.new_window;
+  stack1 = foundHelper || depth0.new_window;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "new_window", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</h1>\n\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"free_agents\">\n<thead>\n  <tr><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall\">Ovr</th><th title=\"Potential\">Pot</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th>Asking for</th><th>Negotiate</th></tr>\n</thead>\n</table>\n";
   return buffer;});
 templates['leagueLayout'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;
@@ -4897,7 +4952,12 @@ function program8(depth0,data) {
   if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
   else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  ]);\n\n  roster_checkboxes_user = $('#roster_user input');\n  roster_checkboxes_other = $('#roster_other input');\n\n  $('#rosters input[type=\"checkbox\"]').click(function(event) {\n    var otherPids, serialized, userPids;\n\n    serialized = $('#rosters').serializeArray();\n    userPids = _.map(_.pluck(_.filter(serialized, function (o) { return o.name === \"user_pids\"; }), \"value\"), Math.floor);\n    otherPids = _.map(_.pluck(_.filter(serialized, function (o) { return o.name === \"other_pids\"; }), \"value\"), Math.floor);\n\n    $('#propose_trade button').attr('disabled', 'disabled'); // Will be reenabled, if appropriate, when the summary is loaded\n    api.tradeUpdate(userPids, otherPids, function (summary, userPids, otherPids) {\n      var found, i, j;\n\n      $(\"#trade_summary\").html(summary);\n      for (i = 0; i < roster_checkboxes_user.length; i++) {\n        found = false;\n        for (j = 0; j < userPids.length; j++) {\n          if (Math.floor(roster_checkboxes_user[i].value) === userPids[j]) {\n            roster_checkboxes_user[i].checked = true;\n            found = true;\n            break;\n          }\n        }\n        if (!found) {\n          roster_checkboxes_user[i].checked = false;\n        }\n      }\n      for (i = 0; i < roster_checkboxes_other.length; i++) {\n        found = false;\n        for (j = 0; j < otherPids.length; j++) {\n          if (Math.floor(roster_checkboxes_other[i].value) === otherPids[j]) {\n            roster_checkboxes_other[i].checked = true;\n            found = true;\n            break;\n          }\n        }\n        if (!found) {\n          roster_checkboxes_other[i].checked = false;\n        }\n      }\n    });\n  });\n\n  $('#propose_trade button').click(function(event) {\n    $('#propose_trade button').attr('disabled', 'disabled');\n  });\n});\n</script>\n\n<h1>Trade</h1>\n\n<div class=\"row-fluid\">\n  <div class=\"span7\">\n    <form id=\"rosters\">\n      <p><select id=\"trade_select_team\" name=\"team\" class=\"team form-inline\">\n        ";
+  buffer += "\n  ]);\n\n  roster_checkboxes_user = $('#roster_user input');\n  roster_checkboxes_other = $('#roster_other input');\n\n  $('#rosters input[type=\"checkbox\"]').click(function(event) {\n    var otherPids, serialized, userPids;\n\n    serialized = $('#rosters').serializeArray();\n    userPids = _.map(_.pluck(_.filter(serialized, function (o) { return o.name === \"user_pids\"; }), \"value\"), Math.floor);\n    otherPids = _.map(_.pluck(_.filter(serialized, function (o) { return o.name === \"other_pids\"; }), \"value\"), Math.floor);\n\n    $('#propose_trade button').attr('disabled', 'disabled'); // Will be reenabled, if appropriate, when the summary is loaded\n    api.tradeUpdate(userPids, otherPids, function (summary, userPids, otherPids) {\n      var found, i, j;\n\n      $(\"#trade_summary\").html(summary);\n      for (i = 0; i < roster_checkboxes_user.length; i++) {\n        found = false;\n        for (j = 0; j < userPids.length; j++) {\n          if (Math.floor(roster_checkboxes_user[i].value) === userPids[j]) {\n            roster_checkboxes_user[i].checked = true;\n            found = true;\n            break;\n          }\n        }\n        if (!found) {\n          roster_checkboxes_user[i].checked = false;\n        }\n      }\n      for (i = 0; i < roster_checkboxes_other.length; i++) {\n        found = false;\n        for (j = 0; j < otherPids.length; j++) {\n          if (Math.floor(roster_checkboxes_other[i].value) === otherPids[j]) {\n            roster_checkboxes_other[i].checked = true;\n            found = true;\n            break;\n          }\n        }\n        if (!found) {\n          roster_checkboxes_other[i].checked = false;\n        }\n      }\n    });\n  });\n\n  $('#propose_trade button').click(function(event) {\n    $('#propose_trade button').attr('disabled', 'disabled');\n  });\n});\n</script>\n\n<h1>Trade ";
+  foundHelper = helpers.new_window;
+  stack1 = foundHelper || depth0.new_window;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "new_window", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</h1>\n\n<div class=\"row-fluid\">\n  <div class=\"span7\">\n    <form id=\"rosters\">\n      <p><select id=\"trade_select_team\" name=\"team\" class=\"team form-inline\">\n        ";
   foundHelper = helpers.teams;
   stack1 = foundHelper || depth0.teams;
   tmp1 = self.program(7, program7, data);
@@ -5142,7 +5202,12 @@ function program10(depth0,data,depth1) {
   if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
   else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  </select>\n</form>\n\n<h1>Season Summary</h1>\n\n<p></p>\n<div class=\"row-fluid\">\n  <div class=\"span4\">\n    <h4>League Champions</h4>\n    <p><strong><a href=\"/l/";
+  buffer += "\n  </select>\n</form>\n\n<h1>Season Summary ";
+  foundHelper = helpers.new_window;
+  stack1 = foundHelper || depth0.new_window;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "new_window", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</h1>\n\n<p></p>\n<div class=\"row-fluid\">\n  <div class=\"span4\">\n    <h4>League Champions</h4>\n    <p><strong><a href=\"/l/";
   foundHelper = helpers.lid;
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -5705,7 +5770,12 @@ function program5(depth0,data) {
   if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
   else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  </select>\n</form>\n\n<h1>Game Log</h1>\n\n<p>\n<div class=\"row-fluid\">\n  <div class=\"span9\">\n    ";
+  buffer += "\n  </select>\n</form>\n\n<h1>Game Log ";
+  foundHelper = helpers.new_window;
+  stack1 = foundHelper || depth0.new_window;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "new_window", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</h1>\n\n<p>\n<div class=\"row-fluid\">\n  <div class=\"span9\">\n    ";
   foundHelper = helpers.boxScore;
   stack1 = foundHelper || depth0.boxScore;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -5985,7 +6055,12 @@ function program4(depth0,data) {
   if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
   else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  </select>\n</form>\n\n<h1>Team Stats</h1>\n\n<p class=\"clearfix\">\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"team_stats\">\n<thead>\n  <tr><th colspan=\"4\"></th><th colspan=\"3\" style=\"text-align: center\" title=\"Field Goals\">FG</th><th colspan=\"3\" style=\"text-align: center\" title=\"Three-Pointers\">3PT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Free Throws\">FT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Rebounds\">Reb</th><th colspan=\"7\"></th></tr>\n  <tr><th>Team</th><th title=\"Games Played\">GP</th><th title=\"Won\">W</th><th title=\"Lost\">L</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Offensive\">Off</th><th title=\"Defensive\">Def</th><th title=\"Total\">Tot</th><th title=\"Assists\">Ast</th><th title=\"Turnovers\">TO</th><th title=\"Steals\">Stl</th><th title=\"Blocks\">Blk</th><th title=\"Personal Fouls\">PF</th><th title=\"Points\">Pts</th><th title=\"Opponent's Points\">OPts</th></tr>\n</thead>\n</table>\n</p>";
+  buffer += "\n  </select>\n</form>\n\n<h1>Team Stats ";
+  foundHelper = helpers.new_window;
+  stack1 = foundHelper || depth0.new_window;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "new_window", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</h1>\n\n<p class=\"clearfix\">\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"team_stats\">\n<thead>\n  <tr><th colspan=\"4\"></th><th colspan=\"3\" style=\"text-align: center\" title=\"Field Goals\">FG</th><th colspan=\"3\" style=\"text-align: center\" title=\"Three-Pointers\">3PT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Free Throws\">FT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Rebounds\">Reb</th><th colspan=\"7\"></th></tr>\n  <tr><th>Team</th><th title=\"Games Played\">GP</th><th title=\"Won\">W</th><th title=\"Lost\">L</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Offensive\">Off</th><th title=\"Defensive\">Def</th><th title=\"Total\">Tot</th><th title=\"Assists\">Ast</th><th title=\"Turnovers\">TO</th><th title=\"Steals\">Stl</th><th title=\"Blocks\">Blk</th><th title=\"Personal Fouls\">PF</th><th title=\"Points\">Pts</th><th title=\"Opponent's Points\">OPts</th></tr>\n</thead>\n</table>\n</p>";
   return buffer;});
 templates['negotiation'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;
@@ -6054,7 +6129,12 @@ function program3(depth0,data) {
   buffer += escapeExpression(stack1) + "</a> is a free agent.</p>\n";
   return buffer;}
 
-  buffer += "<h1>Contract negotiation</h1>\n\n";
+  buffer += "<h1>Contract Negotiation ";
+  foundHelper = helpers.new_window;
+  stack1 = foundHelper || depth0.new_window;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "new_window", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</h1>\n\n";
   foundHelper = helpers.resigning;
   stack1 = foundHelper || depth0.resigning;
   stack2 = helpers['if'];
@@ -6754,7 +6834,12 @@ function program4(depth0,data) {
   if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
   else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  </select>\n</form>\n\n<h1>Draft Summary</h1>\n<p>\n  <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"draft_results\">\n  <thead>\n    <tr><th colspan=\"3\"></th><th colspan=\"4\" style=\"text-align: center\">At Draft</th><th colspan=\"4\" style=\"text-align: center\">Current</th><th colspan=\"5\" style=\"text-align: center\">Career Stats</th></tr>\n    <tr><th>Pick</th><th>Name</th><th title=\"Position\">Pos</th><th>Team</th><th>Age</th><th title=\"Overall rating\">Ovr</th><th title=\"Potential rating\">Pot</th><th>Team</th><th>Age</th><th title=\"Overall rating\">Ovr</th><th title=\"Potential rating\">Pot</th><th title=\"Games Played\">GP</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">PPG</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th></tr>\n  </thead>\n  </table>\n</p>\n";
+  buffer += "\n  </select>\n</form>\n\n<h1>Draft Summary ";
+  foundHelper = helpers.new_window;
+  stack1 = foundHelper || depth0.new_window;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "new_window", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</h1>\n<p>\n  <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"draft_results\">\n  <thead>\n    <tr><th colspan=\"3\"></th><th colspan=\"4\" style=\"text-align: center\">At Draft</th><th colspan=\"4\" style=\"text-align: center\">Current</th><th colspan=\"5\" style=\"text-align: center\">Career Stats</th></tr>\n    <tr><th>Pick</th><th>Name</th><th title=\"Position\">Pos</th><th>Team</th><th>Age</th><th title=\"Overall rating\">Ovr</th><th title=\"Potential rating\">Pot</th><th>Team</th><th>Age</th><th title=\"Overall rating\">Ovr</th><th title=\"Potential rating\">Pot</th><th title=\"Games Played\">GP</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">PPG</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th></tr>\n  </thead>\n  </table>\n</p>\n";
   return buffer;});
 templates['gameLogList'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;

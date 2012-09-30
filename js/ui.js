@@ -34,8 +34,9 @@ define(["db", "util/lock"], function (db, lock) {
             league_root_url = split_url.slice(0, 5).join("/");
         }
         if (split_url.length === 6) {
-            // Get rid of any trailing #
+            // Get rid of any trailing # or ?
             league_page = split_url[5].split("#")[0];
+            league_page = split_url[5].split("?")[0];
         }
 
         return [league_id, league_root_url, league_page];
@@ -51,7 +52,7 @@ define(["db", "util/lock"], function (db, lock) {
      * @param {function()=} cb Optional callback
      */
     function update(data, cb) {
-        var league_page, rendered, result;
+        var leaguePage, rendered, result;
 
         data.vars.lid = g.lid;
         rendered = Handlebars.templates[data.template](data.vars);
@@ -65,8 +66,8 @@ define(["db", "util/lock"], function (db, lock) {
         }
 
         result = parseLeagueUrl(document.URL);
-        league_page = result[2];
-        highlightNav(league_page);
+        leaguePage = result[2];
+        highlightNav(leaguePage);
 
         if (typeof cb !== "undefined") {
             cb();
@@ -305,8 +306,7 @@ define(["db", "util/lock"], function (db, lock) {
     }
 
     function moveToNewWindow() {
-        console.log('hi');
-        window.open(document.URL, "name", "height=600,width=800,scrollbars=yes");
+        window.open(document.URL + "?w=popup", "name", "height=600,width=800,scrollbars=yes");
         Davis.location.assign(new Davis.Request("/l/" + g.lid));
     }
 

@@ -2,9 +2,11 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
     "use strict";
 
     function beforeLeague(req, cb) {
-        var checkDbChange, leagueMenu;
+        var checkDbChange, leagueMenu, popup;
 
         g.lid = parseInt(req.params.lid, 10);
+
+        popup = req.params.w === "popup";
 
         checkDbChange = function (lid) {
             var oldLastDbChange;
@@ -49,6 +51,13 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                         vars: {}
                     };
                     ui.update(data);
+
+                    if (popup) {
+                        $("#top_menu").hide();
+                        $("#league_menu").hide();
+                        $("#league_content").css("margin-left", 0);
+                        $("body").css("padding-top", "4px");
+                    }
 
                     // Update play menu
                     ui.updateStatus();

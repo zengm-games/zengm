@@ -2,16 +2,18 @@ main todo
 - hitting the phase twice shouldn't be possible. but if i, for instance, hit "until preseason" twice quickly, i skip a year
   - maybe have something like lock.phaseChangeInProgress? but some timeout would be needed to reset
 - multiple windows
+  - sorting roster should update other windows
   - have some element in the database with the last "action" time. poll it with some frequency, and update if needed
     - any db errors? shouldn't be, as it's all reading. try opening a ton of windows and testing.
     - in lock functions, update g from database before using any potentially sensitive values
   - move to new window button, like gmail, that will open a view in a new window with a minimal UI
     - test with roster
-    - somehow should not show the "new window" links in popup windows. set display:none on css class?
+    - make some kind of block/helper for new window link to insert in handlebars more easily
     - links to the right of each header
       - only the icon should be clickable, not the area above and below
       - multiple clicks should open multiple windows (do they need unique names in window.open?)
       - insert query string before # in URL when making popup in ui.moveToNewWindow. also, account for any other query string already there (although there currently aren't any others, AFAIK)
+    - could this eventually be done with a responsive layout and no tricks? would that be desirable or not?
 - check lid in game sim and stop if there's no match. similar to how the multiple window stuff works
 - revamp lock?
   - make it all async, like

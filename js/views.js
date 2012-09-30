@@ -43,7 +43,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             // Connect to league database
             db.connectLeague(g.lid, function () {
                 db.loadGameAttributes(function () {
-                    var data;
+                    var css, data;
 
                     data = {
                         container: "content",
@@ -52,11 +52,17 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     };
                     ui.update(data);
 
+                    // Set up the display for a popup: menus hidden, margins decreased, and new window links removed
                     if (popup) {
                         $("#top_menu").hide();
                         $("#league_menu").hide();
                         $("#league_content").css("margin-left", 0);
                         $("body").css("padding-top", "4px");
+
+                        css = document.createElement("style");
+                        css.type = "text/css";
+                        css.innerHTML = ".new_window { display: none }";
+                        document.body.appendChild(css);
                     }
 
                     // Update play menu

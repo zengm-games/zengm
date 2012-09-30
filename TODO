@@ -4,8 +4,12 @@ main todo
 - multiple windows
   - have some element in the database with the last "action" time. poll it with some frequency, and update if needed
     - any db errors? shouldn't be, as it's all reading. try opening a ton of windows and testing.
-    - do lock functions work with multiple windows? basically... is g being updated appropriately? should it be entirely refreshed every time lock is checked?
+    - in lock functions, update g from database before using any potentially sensitive values
   - move to new window button, like gmail, that will open a view in a new window with a minimal UI
+    - Make popup.html like index.html, but showing only league_content div. Then it should autoupdate like a normal new window, right?
+    - links to the right of each header
+      - pop up the current URL in a new window
+      - in this window, go to dashboard
 - check lid in game sim and stop if there's no match. similar to how the multiple window stuff works
 - revamp lock?
   - make it all async, like

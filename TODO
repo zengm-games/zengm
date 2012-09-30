@@ -8,7 +8,6 @@ main todo
     - in lock functions, update g from database before using any potentially sensitive values
   - move to new window button, like gmail, that will open a view in a new window with a minimal UI
     - test with roster
-    - make some kind of block/helper for new window link to insert in handlebars more easily
     - links to the right of each header
       - only the icon should be clickable, not the area above and below
       - multiple clicks should open multiple windows (do they need unique names in window.open?)

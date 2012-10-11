@@ -25,6 +25,7 @@
     <script src="/js/lib/bootstrap-tab.js"></script>
     <script src="/js/lib/jquery.dataTables.js"></script>
     <script src="/js/lib/DT_bootstrap.js"></script>
+    <script src="/js/lib/jquery.tabSlideOut.js"></script>
     <script src="/js/globals.js"></script>
     <script data-main="/js/app.js" src="/js/lib/require.js"></script>
 
@@ -75,8 +76,21 @@
       <footer>
         <p><a href="http://www.basketball-gm.com/">Basketball GM</a> 3.0.0-alpha is available under the <a href="http://www.gnu.org/licenses/agpl-3.0.html">GNU Affero General Public License</a>. <a href="https://github.com/jdscheff/basketball-gm">Fork it on GitHub!</a></p>
       </footer>
-
     </div>
+
+    <div class="slide-out">
+      <button class="slide-out-handle btn btn-inverse">Feedback</button>
+      <p>Either <a href="mailto:jdscheff@gmail.com">send me an email</a> (jdscheff@gmail.com) or <a href="https://github.com/jdscheff/basketball-gm/issues">submit an issue on GitHub</a>.</p>
+      <p>All thoughts, comments, and suggestions are appreciated!</p>
+    </div>
+    <script type="text/javascript">
+    $(function(){
+      $('.slide-out').tabSlideOut({
+        tabHandle: '.slide-out-handle',
+        rightPos: '20px'
+      });
+    });
+    </script>
 
   </body>
 </html>

@@ -10,6 +10,7 @@ main todo
     });
   - actually implement these functions rather than using placeholders
 - let free agents stay for 2 seasons before retiring, or make retirement probabilistic
+  - is retirement working for the first season, at all?
 - nba roster
   - define file format for external player sources
   - derive from stats, somehow
@@ -29,7 +30,7 @@ main todo
   - smalls should get less blocks
   - home/away advantage
 - comments in season.js and elsewhere
-- add feedback form
+- put on play.basketball-gm.com, with splash page on basketball-gm.com
 strategic issues
 - reassess how money is stored (ones, thousands, millions?)
 - robustness

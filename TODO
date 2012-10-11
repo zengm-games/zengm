@@ -1,154 +1,149 @@
 main todo (before public beta)
-- hitting the phase twice shouldn't be possible. but if i, for instance, hit "until preseason" twice quickly, i skip a year
-  - maybe have something like lock.phaseChangeInProgress? but some timeout would be needed to reset
-- revamp lock?
-  - make it all async, like
-    lock.canStartGames(function (canStartGames) {
-        if (canStartGames) {
-            // whatever
-        }
-    });
-  - actually implement these functions rather than using placeholders
-- let free agents stay for 2 seasons before retiring, or make retirement probabilistic
-  - is retirement working for the first season, at all?
-- nba roster
-  - DON'T SHOW AS OPTION by default
-  - show an option to upload a data file
-    - define file format for external player sources
-    - derive from stats, somehow?
-    - nba player potential ratings
-    - if necessary, scale everything down a bit to make it comparable to normal players
-    - free agents are way overrated. is this roster file legit?
-- game simulation realism
-  - gameSim.rating_array power should be moved to game.js instead
-  - height should matter a lot more
-    - e.g.
-      - bigs should get more boards
-      - bigs should have higher FG%, even with less shots
-        - bad shooters should get more shots than they do now, e.g. noah
-      - smalls should have lower FG%, even with more shots
-    - if i make some fundamental change, i need to account for it in randomly generated players
-  - pgs should get more assists
-  - smalls should get less blocks
-  - home/away advantage
-- reassess how money is stored (ones, thousands, millions?)
-  - should be thousands
-- put on play.basketball-gm.com, with splash page on basketball-gm.com
-strategic issues
-- notifications (and log) from top right to display log of key events
-  - game results from user's team
-  - players retiring from user's team
-  - league champions
-- AI modules that contain functions which are called to determine if players are resigned, etc.
-- season crap
-  - startingSeason should be stored so later years can have different values (such as the NBA players, should be 2011)
-    - grep for 2012, fix any hardcoded values
-- import/export games
+------------------------------
+
+hitting the phase twice shouldn't be possible. but if i, for instance, hit "until preseason" twice quickly, i skip a year
+  maybe have something like lock.phaseChangeInProgress? but some timeout would be needed to reset
+revamp lock?
+  make it all async, like
+  lock.canStartGames(function (canStartGames) {
+      if (canStartGames) {
+          // whatever
+      }
+  });
+  actually implement these functions rather than using placeholders
+let free agents stay for 2 seasons before retiring, or make retirement probabilistic
+  is retirement working for the first season, at all?
+nba roster
+  DON'T SHOW AS OPTION by default
+  show an option to upload a data file
+    define file format for external player sources
+    derive from stats, somehow?
+    nba player potential ratings
+    if necessary, scale everything down a bit to make it comparable to normal players
+    free agents are way overrated. is this roster file legit?
+game simulation realism
+  gameSim.rating_array power should be moved to game.js instead
+  height should matter a lot more
+    e.g.
+      bigs should get more boards
+      bigs should have higher FG%, even with less shots
+        bad shooters should get more shots than they do now, e.g. noah
+      smalls should have lower FG%, even with more shots
+    if i make some fundamental change, i need to account for it in randomly generated players
+  pgs should get more assists
+  smalls should get less blocks
+  home/away advantage
+reassess how money is stored (ones, thousands, millions?)
+  should be thousands. then everything is close, either *1000 or /1000.
+startingSeason should be stored in db so later years can have different values (such as the NBA players, should be 2011)
+  grep for 2012, fix any hardcoded values
+import/export games
+make sure all indexes are actually used. otherwise they're just making it slower for nothing
+put on play.basketball-gm.com, with splash page on basketball-gm.com
 
 ---
 
 BUGS
 
 league database error when playoffs end
-- is it only the first year, and is it due to retiring players?
+  is it only the first year, and is it due to retiring players?
 game simulation stops when a link is clicked, but then restarts when another link is clicked? wtf
-- This seems to generally work now, but it's not perfect. If you do any action that writes to the database, such as reordering the roster, something bad could happen because IndexedDB doesn't like multiple writes going on at the same time
+  This seems to generally work now, but it's not perfect. If you do any action that writes to the database, such as reordering the roster, something bad could happen because IndexedDB doesn't like multiple writes going on at the same time
 sometimes deleting leagues or resetting db fails, i think because some open connection is blocking it, but i don't know why
-
----
-
-PORTING NOTES:
-
-make sure all indexes are actually used. otherwise they're just making it slower for nothing
 
 ---
 
 POLISH FEATURES (i.e. not required for public beta, probably.. but go through the list again to check)
 
 jslint --plusplus --predef $ --predef Davis --predef requirejs --predef define --predef window --predef document --predef localStorage --predef IDBKeyRange --predef IDBTransaction --predef g --predef c js/core/draft.js
-- http://stackoverflow.com/questions/7425147/jslint-error-somefunction-was-used-before-it-was-defined
-- http://stackoverflow.com/questions/6744692/jslint-should-we-tolerate-misordered-definitions
-  - http://javascript.crockford.com/code.html
-- http://stackoverflow.com/questions/806163/jslint-using-a-function-before-its-defined-error
+  http://stackoverflow.com/questions/7425147/jslint-error-somefunction-was-used-before-it-was-defined
+  http://stackoverflow.com/questions/6744692/jslint-should-we-tolerate-misordered-definitions
+    http://javascript.crockford.com/code.html
+  http://stackoverflow.com/questions/806163/jslint-using-a-function-before-its-defined-error
 contract negotiation
-- test all the error conditions and make sure callbacks are appropriately called (unit tests?)
-- add free agent to the end of roster
-- might be a good idea to make contractNegotiation.create accept ot as first parameter
+  test all the error conditions and make sure callbacks are appropriately called (unit tests?)
+  add free agent to the end of roster
+  might be a good idea to make contractNegotiation.create accept ot as first parameter
 player stats
-- how to handle aggregating stats for players who played for more than one team in a season? add them all up in ps in db.getPlayers
+  how to handle aggregating stats for players who played for more than one team in a season? add them all up in ps in db.getPlayers
 player view
-- contract for free agents should note that it is requested, not existing. also, make sure the penalty for repeated negotiations is accounted for, as in the free agents view
-- no contract or ratings shown for retired player
+  contract for free agents should note that it is requested, not existing. also, make sure the penalty for repeated negotiations is accounted for, as in the free agents view
+  no contract or ratings shown for retired player
 db.getPlayers
-- rename to helpers.filterPlayers?
-- use for other access of players "playersAll"
-- the special case attributes should generally be moved directly into the database.
+  rename to helpers.filterPlayers?
+  use for other access of players "playersAll"
+  the special case attributes should generally be moved directly into the database.
 draftTeamName and draftTeamRegion needed for anything? If not, cut them.
 Replace showNoStats with a check of stats.length in db.getPlayer, at least in some cases? API is messy
 roster size check on new season
-- cpu teams with < 5 players should automatically sign free agents
+  cpu teams with < 5 players should automatically sign free agents
 history view retired players
-- why is abbrev ATL? should be FA if they were free agents last, otherwise it should be their last team
-  - do i need a handlebars helper so that FA isn't linked anywhere when used as an abbrev?
+  why is abbrev ATL? should be FA if they were free agents last, otherwise it should be their last team
+    do i need a handlebars helper so that FA isn't linked anywhere when used as an abbrev?
 retired players
-- test
+  test
 trade refactoring
-- validateSavedTids crap should be in trade.js.
-- trade.summary stuff should be automatic and stored in tradeStore
+  validateSavedTids crap should be in trade.js.
+  trade.summary stuff should be automatic and stored in tradeStore
 DataTables - need to rethink a lot of this, particularly how to make a decent UI
-- http://datatables.net/extras/ such as scroller, colreorder, colvis, ...
-- add team dropdown to ratings and stats views - but should this refresh the view, or just filter the DataTable?
-  - could use something like http://www.datatables.net/extras/thirdparty/ColumnFilterWidgets/DataTables/extras/ColumnFilterWidgets/ to also filter on positions
-- per 36 stats in team/player stats view
-  - add a dropdown (maybe make the dropdown handling code more general?)
-  - add an option to db.getPlayers
-- default to sort descending when column is clicked
-  - http://datatables.net/ref#asSorting will work. maybe pass it as an option to bbgm_datatable
+  http://datatables.net/extras/ such as scroller, colreorder, colvis, ...
+  add team dropdown to ratings and stats views - but should this refresh the view, or just filter the DataTable?
+    could use something like http://www.datatables.net/extras/thirdparty/ColumnFilterWidgets/DataTables/extras/ColumnFilterWidgets/ to also filter on positions
+  per 36 stats in team/player stats view
+    add a dropdown (maybe make the dropdown handling code more general?)
+    add an option to db.getPlayers
+  default to sort descending when column is clicked
+    http://datatables.net/ref#asSorting will work. maybe pass it as an option to bbgm_datatable
 player.addStatsRow
-- season parameter wouldn't be needed if g.season was already set. Set g.season early, then.
+  season parameter wouldn't be needed if g.season was already set. Set g.season early, then.
 league leaders
-- minimum minutes played to show?
+  minimum minutes played to show?
 commas for thousands
-- number of games played in delete league view
-- attendance in finances
-- attendance in league dashboard
+  number of games played in delete league view
+  attendance in finances
+  attendance in league dashboard
 transaction log (free agent signings, etc)
 money display
-- -$, not $-. Might need a new handlebars function to do this
-- conditional formatting to show negative dollars in red
-  - https://www.google.com/search?q=site%3Adatatables.net+conditional+formatting&ie=utf-8&oe=utf-8&client=ubuntu&channel=fs
-  - finances
-  - league dashboard
+  -$, not $-. Might need a new handlebars function to do this
+  conditional formatting to show negative dollars in red
+    https://www.google.com/search?q=site%3Adatatables.net+conditional+formatting&ie=utf-8&oe=utf-8&client=ubuntu&channel=fs
+    finances
+    league dashboard
 internationalization
-- league dashboard rankings should say 1st, 2nd, 3rd rather than 1th, 2th, 3th
+  league dashboard rankings should say 1st, 2nd, 3rd rather than 1th, 2th, 3th
 league dashboard
-- next game should show something when active in playoffs, a message at least
+  next game should show something when active in playoffs, a message at least
 add activeYears multientry like statsTids use for:
-- league leaders
-- stats
-- ratings
+  league leaders
+  stats
+  ratings
 playoff stats in player view
-- need a way to request only playoff stats from db.getPlayers - see all the playoffs === false stuff
+  need a way to request only playoff stats from db.getPlayers - see all the playoffs === false stuff
 cache payroll each year?
-- cache at the end of the playoffs
-- update cached value for this year whenever it changes
-  - player is signed
-  - trade happens
-  - player is bought out
-  - player is released
-- would simplify db.getTeams
-- would allow historical finances view
-- but is it worth it? would the cached values be meaningful?
+  cache at the end of the playoffs
+  update cached value for this year whenever it changes
+    player is signed
+    trade happens
+    player is bought out
+    player is released
+  would simplify db.getTeams
+  would allow historical finances view
+  but is it worth it? would the cached values be meaningful?
 don't block the UI in game simulation
-- slide 81 http://www.slideshare.net/nzakas/high-performance-javascript-capitoljs-2011
-  - http://www.kryogenix.org/days/2009/07/03/not-blocking-the-ui-in-tight-javascript-loops
+  slide 81 http://www.slideshare.net/nzakas/high-performance-javascript-capitoljs-2011
+    http://www.kryogenix.org/days/2009/07/03/not-blocking-the-ui-in-tight-javascript-loops
 in lock functions, update g from database before using any potentially sensitive values
-- or should these g.whatever variables be set at all if they're sensitive? lid doesn't change obviously, but the others?
+  or should these g.whatever variables be set at all if they're sensitive? lid doesn't change obviously, but the others?
 move to new window button, like gmail, that will open a view in a new window with a minimal UI
-- only the icon should be clickable, not the area above and below
-- insert query string before # in URL when making popup in ui.moveToNewWindow. also, account for any other query string already there (although there currently aren't any others, AFAIK)
+  only the icon should be clickable, not the area above and below
+  insert query string before # in URL when making popup in ui.moveToNewWindow. also, account for any other query string already there (although there currently aren't any others, AFAIK)
 team history view needs more love
 auto-add players when AI teams are below limit (in season.js)
+AI modules that contain functions which are called to determine if players are resigned, etc.
+notifications (and log) from top right to display log of key events
+  game results from user's team
+  players retiring from user's team
+  league champions
 
 ---
 
@@ -169,14 +164,14 @@ g.dbl.transaction(["players"]).objectStore("players").get(476).onsuccess = funct
 FUTURE:
 
 Web workers
-- An implementation is in the webworkers branch. It kind of works, but it doesn't seem to play nice with IDB transactions, so I have to open a new transaction when the callback fires, so it is problematic to have multiple workers in parallel all trying to open readwrite transactions.
-realtime data binding/updating
-- ember.js
-  - data binding
-  - uses handlebars
-- knockoutjs is too flaky. try just a naive approach first, and use something better later
-- be smarter about things that don't change, like old box scores, stats from old seasons, etc
-- handle deeper content, like pagination/sorting in tables and tabs in player view
+  An implementation is in the webworkers branch. It kind of works, but it doesn't seem to play nice with IDB transactions, so I have to open a new transaction when the callback fires, so it is problematic to have multiple workers in parallel all trying to open readwrite transactions.
+more sophisticatedrealtime data binding/updating
+  ember.js
+    data binding
+    uses handlebars
+  knockoutjs is too flaky. try just a naive approach first, and use something better later
+  be smarter about things that don't change, like old box scores, stats from old seasons, etc
+  handle deeper content, like pagination/sorting in tables and tabs in player view
 
 
 
@@ -188,25 +183,25 @@ realtime data binding/updating
 # Pre-JavaScript TODO
 
 player view
-- next, previous buttons (also active on left/right arrows)
-- link to team roster if player is on a team
-- for retired players, either don't show ratings, or show ratings from best year
+  next, previous buttons (also active on left/right arrows)
+  link to team roster if player is on a team
+  for retired players, either don't show ratings, or show ratings from best year
 
 roster
-- highlight handle on hover, like button
-- "trade for" only sensitive when trades are allowed
+  highlight handle on hover, like button
+  "trade for" only sensitive when trades are allowed
 
 Client-side game simulation
-- Robustness of javascript code
-  - g.phase == 3 in league_views might introduce race condition
-  - validate data from client?
-  - make sure play menu doesn't ever get stuck - some kind of timeout
+  Robustness of javascript code
+    g.phase == 3 in league_views might introduce race condition
+    validate data from client?
+    make sure play menu doesn't ever get stuck - some kind of timeout
 
 play button requirements
-- colors - is this a good idea?
-  - green: move to new phase
-  - blue: play games
-  - red: other immediate action
+  colors - is this a good idea?
+    green: move to new phase
+    blue: play games
+    red: other immediate action
 
 make validate_season work correctly
 
@@ -215,31 +210,31 @@ include sidebar(s) showing all relevant information, plus make that stuff genera
 grep for # links: grep -R --include="*.html" '<a href="#">' .
 
 security
-- csrf protection
-  - http://flask.pocoo.org/docs/security/#cross-site-request-forgery-csrf
-  - http://packages.python.org/Flask-SeaSurf/
-  - http://flask.pocoo.org/snippets/3/
-  - even for ajax https://docs.djangoproject.com/en/1.2/releases/1.2.5/#csrf-exception-for-ajax-requests
+  csrf protection
+    http://flask.pocoo.org/docs/security/#cross-site-request-forgery-csrf
+    http://packages.python.org/Flask-SeaSurf/
+    http://flask.pocoo.org/snippets/3/
+    even for ajax https://docs.djangoproject.com/en/1.2/releases/1.2.5/#csrf-exception-for-ajax-requests
 
 playoffs
-- on playoffs start, automatically switch to playoffs view
-- link to team rosters... or better to link to a summary of the series?
+  on playoffs start, automatically switch to playoffs view
+  link to team rosters... or better to link to a summary of the series?
 
 # Then
 
 trades
-- allow trades that go over roster limit, but require players to be cut or traded to meet limit before game simulation continues
+  allow trades that go over roster limit, but require players to be cut or traded to meet limit before game simulation continues
 
 self-contained game simulation code, to allow other people to hack on it easily. automatically make charts and stuff.
 
 warning when window is closed and game simulation is in progress
-- http://stackoverflow.com/questions/1244535/alert-when-browser-window-closed-accidentally
-- https://developer.mozilla.org/en/DOM/window.onbeforeunload
+  http://stackoverflow.com/questions/1244535/alert-when-browser-window-closed-accidentally
+  https://developer.mozilla.org/en/DOM/window.onbeforeunload
 
 abstract opposing team AI: make it a class with various methods to determine actions at different time points
 
 game log
-- pushstate for individual box scores as well as teams and seasons, somehow?
+  pushstate for individual box scores as well as teams and seasons, somehow?
 
 # BELOW IS OLD STUFF
 
@@ -262,16 +257,16 @@ take all ratings into account
 blocks, assists (maybe other things) should not be so evenly distributed
 home and away games
 synergy
-- Gameplay bonuses when any of the following are true...
-  - At least one player with dribbling > X
-  - At least two players with shooting_three_pointers > X
-  - At least three players with shooting_three_pointers > X
-  - At least four players with shooting_three_pointers > X
-  - At least one player with rebounding > X
-  - At least one player with blocks > X
-  - At least three players with steals > X
-  - At least one player with inside_scoring > X
-  - At least three players with speed > X and (shooting_layups > X or shooting_layups + jumping > X)
+  Gameplay bonuses when any of the following are true...
+    At least one player with dribbling > X
+    At least two players with shooting_three_pointers > X
+    At least three players with shooting_three_pointers > X
+    At least four players with shooting_three_pointers > X
+    At least one player with rebounding > X
+    At least one player with blocks > X
+    At least three players with steals > X
+    At least one player with inside_scoring > X
+    At least three players with speed > X and (shooting_layups > X or shooting_layups + jumping > X)
 
 UI
 --
@@ -300,13 +295,13 @@ use constants for phase #'s, other things.  maybe create a dict CONST in common.
 AI (NON-GAMESIM)
 ----------------
 trade
-- mechanism similar to free_agent_times_asked to prevent prolonged negotiations
-- AI teams trade with each other
-- opponent GM trade AI based on their team's status: contending or rebuilding
-- record player value for contending and rebuilding teams in player_attributes, so opposing GMs can more easily suggest trades (i.e. "i'll make the deal if you throw in X")
-- Feedback from trades (way off, that's close, etc)
-- "Oh, you again?" after failed trade attempts
-- AI teams should be aware of contract lengths and the implications thereof
+  mechanism similar to free_agent_times_asked to prevent prolonged negotiations
+  AI teams trade with each other
+  opponent GM trade AI based on their team's status: contending or rebuilding
+  record player value for contending and rebuilding teams in player_attributes, so opposing GMs can more easily suggest trades (i.e. "i'll make the deal if you throw in X")
+  Feedback from trades (way off, that's close, etc)
+  "Oh, you again?" after failed trade attempts
+  AI teams should be aware of contract lengths and the implications thereof
 AI teams release/buy out players to sign a better free agent
 
 FEATURES
@@ -321,6 +316,6 @@ advanced stats (+/-, PER, etc)
 punishment for going in debt: if cash is less than $10M, can't sign any new contracts
 advisors
 trades
-- draft picks
-- cash
-- drop players as part of trade, to free up roster space
+  draft picks
+  cash
+  drop players as part of trade, to free up roster space

@@ -263,7 +263,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                         };
                     }
 //                        else {
-// RACE CONDITION: Should only run after the players update above finishes. won't be a race condition if they use the same transaction
+// RACE CONDITION: Should only run after the players update above finishes. won't be a race condition if they use the same transaction?
                         cursor.continue();
 //                        }
                 } else {
@@ -407,7 +407,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                         player.addToFreeAgents(playerStore, p, c.PHASE_RESIGN_PLAYERS, function () {
                             // Open negotiations with player
                             contractNegotiation.create(transaction, p.pid, true, function (error) {
-                                if (typeof error !== "undefined" && error) {
+                                if (error !== undefined && error) {
                                     return helpers.error(error);
                                 }
                             });
@@ -467,7 +467,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
 
     The phase update may happen asynchronously if the database must be accessed,
     so do not rely on g.phase being updated immediately after this function is
-    called.
+    called. Instead, pass a callback.
     */
     function newPhase(phase, cb) {
         // Prevent code running twice
@@ -757,7 +757,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                 }
             }
             p = players[i];
-            if (typeof p !== "undefined") { // I suppose there could be no rookies at all..
+            if (p !== undefined) { // I suppose there could be no rookies at all..
                 awards.roy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.pts, trb: p.trb, ast: p.ast};
             }
 

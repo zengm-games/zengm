@@ -1,4 +1,4 @@
-main todo
+main todo (before public beta)
 - hitting the phase twice shouldn't be possible. but if i, for instance, hit "until preseason" twice quickly, i skip a year
   - maybe have something like lock.phaseChangeInProgress? but some timeout would be needed to reset
 - revamp lock?
@@ -12,11 +12,13 @@ main todo
 - let free agents stay for 2 seasons before retiring, or make retirement probabilistic
   - is retirement working for the first season, at all?
 - nba roster
-  - define file format for external player sources
-  - derive from stats, somehow
-  - nba player potential ratings
-  - if necessary, scale everything down a bit to make it comparable to normal players
-  - free agents are way overrated. is this roster file legit?
+  - DON'T SHOW AS OPTION by default
+  - show an option to upload a data file
+    - define file format for external player sources
+    - derive from stats, somehow?
+    - nba player potential ratings
+    - if necessary, scale everything down a bit to make it comparable to normal players
+    - free agents are way overrated. is this roster file legit?
 - game simulation realism
   - gameSim.rating_array power should be moved to game.js instead
   - height should matter a lot more
@@ -29,7 +31,6 @@ main todo
   - pgs should get more assists
   - smalls should get less blocks
   - home/away advantage
-- comments in season.js and elsewhere
 - put on play.basketball-gm.com, with splash page on basketball-gm.com
 strategic issues
 - reassess how money is stored (ones, thousands, millions?)
@@ -149,6 +150,7 @@ move to new window button, like gmail, that will open a view in a new window wit
 - only the icon should be clickable, not the area above and below
 - insert query string before # in URL when making popup in ui.moveToNewWindow. also, account for any other query string already there (although there currently aren't any others, AFAIK)
 team history view needs more love
+auto-add players when AI teams are below limit (in season.js)
 
 ---
 

@@ -2,7 +2,6 @@ main todo
 - hitting the phase twice shouldn't be possible. but if i, for instance, hit "until preseason" twice quickly, i skip a year
   - maybe have something like lock.phaseChangeInProgress? but some timeout would be needed to reset
 - multiple windows
-  - sorting roster should update other windows
   - have some element in the database with the last "action" time. poll it with some frequency, and update if needed
     - any db errors? shouldn't be, as it's all reading. try opening a ton of windows and testing.
     - in lock functions, update g from database before using any potentially sensitive values

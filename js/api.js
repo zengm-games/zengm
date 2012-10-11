@@ -68,7 +68,9 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
 
     function rosterAutoSort(cb) {
         db.rosterAutoSort(null, g.userTid, function () {
-            Davis.location.replace(new Davis.Request("/l/" + g.lid + "/roster"));
+            db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                Davis.location.replace(new Davis.Request("/l/" + g.lid + "/roster"));
+            });
         });
     }
 
@@ -89,7 +91,9 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
                 cursor.update(p);
                 cursor.continue();
             } else {
-                cb();
+                db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                    cb();
+                });
             }
         };
     }

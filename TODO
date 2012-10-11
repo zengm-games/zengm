@@ -31,12 +31,10 @@ main todo (before public beta)
   - pgs should get more assists
   - smalls should get less blocks
   - home/away advantage
+- reassess how money is stored (ones, thousands, millions?)
+  - should be thousands
 - put on play.basketball-gm.com, with splash page on basketball-gm.com
 strategic issues
-- reassess how money is stored (ones, thousands, millions?)
-- robustness
-  - confirm correct database is loaded before writing anything
-  - how to handle closed browser in middle of game simulation?
 - notifications (and log) from top right to display log of key events
   - game results from user's team
   - players retiring from user's team

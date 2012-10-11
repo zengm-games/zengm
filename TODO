@@ -1,14 +1,6 @@
 main todo
 - hitting the phase twice shouldn't be possible. but if i, for instance, hit "until preseason" twice quickly, i skip a year
   - maybe have something like lock.phaseChangeInProgress? but some timeout would be needed to reset
-- multiple windows
-  - have some element in the database with the last "action" time. poll it with some frequency, and update if needed
-    - any db errors? shouldn't be, as it's all reading. try opening a ton of windows and testing.
-    - in lock functions, update g from database before using any potentially sensitive values
-  - move to new window button, like gmail, that will open a view in a new window with a minimal UI
-    - only the icon should be clickable, not the area above and below
-    - insert query string before # in URL when making popup in ui.moveToNewWindow. also, account for any other query string already there (although there currently aren't any others, AFAIK)
-- check lid in game sim and stop if there's no match. similar to how the multiple window stuff works
 - revamp lock?
   - make it all async, like
     lock.canStartGames(function (canStartGames) {
@@ -37,7 +29,7 @@ main todo
   - smalls should get less blocks
   - home/away advantage
 - comments in season.js and elsewhere
-- team history view
+- add feedback form
 strategic issues
 - reassess how money is stored (ones, thousands, millions?)
 - robustness
@@ -150,6 +142,12 @@ cache payroll each year?
 don't block the UI in game simulation
 - slide 81 http://www.slideshare.net/nzakas/high-performance-javascript-capitoljs-2011
   - http://www.kryogenix.org/days/2009/07/03/not-blocking-the-ui-in-tight-javascript-loops
+in lock functions, update g from database before using any potentially sensitive values
+- or should these g.whatever variables be set at all if they're sensitive? lid doesn't change obviously, but the others?
+move to new window button, like gmail, that will open a view in a new window with a minimal UI
+- only the icon should be clickable, not the area above and below
+- insert query string before # in URL when making popup in ui.moveToNewWindow. also, account for any other query string already there (although there currently aren't any others, AFAIK)
+team history view needs more love
 
 ---
 

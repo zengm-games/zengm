@@ -1,0 +1,8 @@
+<h1>Team History {{new_window}}</h1>
+
+<p>
+  {{#unless history}}None yet.{{/unless}}
+  {{#history}}
+    <a href="/l/{{../lid}}/roster/{{../abbrev}}/{{season}}">{{season}}</a>: <a href="/l/{{../lid}}/standings/{{season}}">{{won}}-{{lost}}</a>{{#if extraText}}, <a href="/l/{{../../lid}}/playoffs/{{season}}">{{extraText}}</a>{{/if}}<br>
+  {{/history}}
+</p>

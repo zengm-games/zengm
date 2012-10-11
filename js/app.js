@@ -48,6 +48,7 @@ requirejs(["api", "db", "views", "ui", "util/helpers"], function (api, db, views
             this.get("/l/:lid/roster/:abbrev", views.roster);
             this.get("/l/:lid/roster/:abbrev/:season", views.roster);
             this.get("/l/:lid/schedule", views.schedule);
+            this.get("/l/:lid/team_history", views.teamHistory);
             this.get("/l/:lid/free_agents", views.freeAgents);
             this.get("/l/:lid/trade", views.trade);
             this.post("/l/:lid/trade", views.trade);

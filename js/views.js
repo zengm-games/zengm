@@ -838,6 +838,47 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         });
     }
 
+    function teamHistory(req) {
+        beforeLeague(req, function () {
+            g.dbl.transaction("teams").objectStore("teams").get(g.userTid).onsuccess = function (event) {
+                var abbrev, data, extraText, history, i, userTeam, userTeamSeason;
+
+                userTeam = event.target.result;
+                
+                abbrev = userTeam.abbrev;
+
+                history = [];
+                // 3 most recent years
+                for (i = 0; i < userTeam.seasons.length; i++) {
+                    extraText = "";
+                    if (userTeam.seasons[i].leagueChamps) {
+                        extraText = "league champs";
+                    } else if (userTeam.seasons[i].confChamps) {
+                        extraText = "conference champs";
+                    } else if (userTeam.seasons[i].madePlayoffs) {
+                        extraText = "made playoffs";
+                    }
+
+                    history.push({
+                        season: userTeam.seasons[i].season,
+                        won: userTeam.seasons[i].won,
+                        lost: userTeam.seasons[i].lost,
+                        extraText: extraText
+                    });
+                }
+                history.reverse(); // Show most recent season first
+
+                data = {
+                    container: "league_content",
+                    template: "teamHistory",
+                    title: "Team History",
+                    vars: {abbrev: abbrev, history: history}
+                };
+                ui.update(data, req.raw.cb);
+            };
+        });
+    }
+
     function freeAgents(req) {
         beforeLeague(req, function () {
             if (g.phase >= c.PHASE_AFTER_TRADE_DEADLINE && g.phase <= c.PHASE_RESIGN_PLAYERS) {
@@ -1658,6 +1699,7 @@ console.log(message);
         history: history,
         roster: roster,
         schedule: schedule,
+        teamHistory: teamHistory,
         freeAgents: freeAgents,
         trade: trade_,
         draft: draft,

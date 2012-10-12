@@ -1,7 +1,6 @@
 var g = {};
 
 // If any of these things are supposed to change at any point, they should be stored in gameAttributes rather than here.
-g.startingSeason = 2012;
 g.ticketPrice = 45;
 g.numTeams = 30;
 g.confs = [{cid: 0, name: "Eastern Conference"}, {cid: 1, name: "Western Conference"}];

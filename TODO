@@ -1,10 +1,6 @@
 main todo (before public beta)
 ------------------------------
 
-"play until preseason" phase shift should refresh pages (realtime)
-  set lastDbChange and reload page, like api.rosterAutoSort
-  other phase changes?
-  make an explicit list of where realtime updates occur
 hitting the phase twice shouldn't be possible. but if i, for instance, hit "until preseason" twice quickly, i skip a year
   maybe have something like lock.phaseChangeInProgress? but some timeout would be needed to reset
 revamp lock?

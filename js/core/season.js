@@ -2,12 +2,15 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
     "use strict";
 
     // This should be called after the phase-specific stuff runs. It needs to be a separate function like this to play nice with async stuff.
-    function newPhaseCb(phase, phaseText, cb) {
+    function newPhaseCb(phase, phaseText, cb, reload) {
         db.setGameAttributes({phase: phase, lastDbChange: Date.now()}, function () {
             ui.updatePhase(phaseText);
             ui.updatePlayMenu();
             if (cb !== undefined) {
                 cb();
+            }
+            if (reload !== undefined && reload) {
+                Davis.location.replace(new Davis.Request(location.pathname, {cb: cb}));
             }
         });
     }
@@ -88,7 +91,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                         } else {
                             // AI teams sign free agents
                             freeAgents.autoSign(function () {
-                                newPhaseCb(c.PHASE_PRESEASON, phaseText, cb);
+                                newPhaseCb(c.PHASE_PRESEASON, phaseText, cb, true);
                             });
                         }
                     };
@@ -142,7 +145,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                 done += 1;
                 if (done === g.numTeams && !userTeamSizeError) {
                     newSchedule(function (tids) { 
-                        setSchedule(tids, function () { newPhaseCb(c.PHASE_REGULAR_SEASON, phaseText, cb); });
+                        setSchedule(tids, function () { newPhaseCb(c.PHASE_REGULAR_SEASON, phaseText, cb, true); });
                     });
 
                     // Auto sort rosters (except player's team)
@@ -373,7 +376,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
         var phaseText;
 
         phaseText = g.season + " after draft";
-        newPhaseCb(c.PHASE_AFTER_DRAFT, phaseText, cb);
+        newPhaseCb(c.PHASE_AFTER_DRAFT, phaseText, cb, true);
     }
 
     function newPhaseResignPlayers(cb) {

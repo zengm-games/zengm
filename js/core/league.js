@@ -57,13 +57,13 @@ define(["db", "ui", "core/player", "core/season", "util/random"], function (db, 
                                 name: teams[i].name,
                                 abbrev: teams[i].abbrev,
                                 stats: [{season: g.startingSeason, playoffs: false, gp: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, oppPts: 0}], // Things recorded both in and out of playoffs
-                                seasons: [{season: g.startingSeason, gp: 0, att: 0, cost: 0, cash: 10000000, won: 0, lost: 0, wonHome: 0, lostHome: 0, wonAway: 0, lostAway: 0, wonDiv: 0, lostDiv: 0, wonConf: 0, lostConf: 0, lastTen: [], streak: 0, madePlayoffs: false, confChamps: false, leagueChamps: false}] // Things that only have one value per season
+                                seasons: [{season: g.startingSeason, gp: 0, att: 0, cost: 0, cash: 10000, won: 0, lost: 0, wonHome: 0, lostHome: 0, wonAway: 0, lostAway: 0, wonDiv: 0, lostDiv: 0, wonConf: 0, lostConf: 0, lastTen: [], streak: 0, madePlayoffs: false, confChamps: false, leagueChamps: false}] // Things that only have one value per season
                             });
                         }
 
                         transaction.objectStore("trade").add({
                             rid: 0,
-                            otherTid: tid === 0 ? 1 : 0,
+                            otherTid: tid === 0 ? 1 : 0,  // Load initial trade view with the lowest-numbered non-user team (so, either 0 or 1)
                             otherPids: [],
                             userPids: []
                         });

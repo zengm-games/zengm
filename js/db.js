@@ -187,10 +187,9 @@ console.log(event);
             } else if (attributes[j] === "hgtIn") {
                 player.hgtIn = pa.hgt - 12 * Math.floor(pa.hgt / 12);
             } else if (attributes[j] === "contractAmount") {
-                player.contractAmount = pa.contractAmount / 1000;
-
+                player.contractAmount = pa.contractAmount / 1000;  // [millions of dollars]
             } else if (attributes[j] === "cashOwed") {
-                player.cashOwed = ((1 + pa.contractExp - g.season) * pa.contractAmount - (1 - options.numGamesRemaining / 82) * pa.contractAmount) / 1000;
+                player.cashOwed = ((1 + pa.contractExp - g.season) * pa.contractAmount - (1 - options.numGamesRemaining / 82) * pa.contractAmount) / 1000;  // [millions of dollars]
             } else if (attributes[j] === "abbrev") {
                 player.abbrev = helpers.getAbbrev(pa.tid);
             } else if (attributes[j] === "teamRegion") {
@@ -451,9 +450,9 @@ console.log(event);
                         team.att = tsa.att / tsa.gp;
                     }
                 } else if (seasonAttributes[j] === "revenue") {
-                    team.revenue = tsa.att * g.ticketPrice / 1000000;
+                    team.revenue = tsa.att * g.ticketPrice / 1000000;  // [millions of dollars]
                 } else if (seasonAttributes[j] === "profit") {
-                    team.profit = (tsa.att * g.ticketPrice - tsa.cost) / 1000000;
+                    team.profit = tsa.att * g.ticketPrice / 1000000 - tsa.cost / 1000;  // [millions of dollars]
                 } else if (seasonAttributes[j] === "payroll") {
                     // Handled later
                 } else if (seasonAttributes[j] === "lastTen") {
@@ -642,16 +641,17 @@ console.log(event);
                 pa = playersAll[i];
                 payroll += pa.contractAmount;
             }
-        };
-        transaction.objectStore("releasedPlayers").index("tid").getAll(tid).onsuccess = function (event) {
-            var i, releasedPlayers;
 
-            releasedPlayers = event.target.result;
-            for (i = 0; i < releasedPlayers.length; i++) {
-                payroll += releasedPlayers[i].contractAmount;
-            }
+            transaction.objectStore("releasedPlayers").index("tid").getAll(tid).onsuccess = function (event) {
+                var i, releasedPlayers;
 
-            cb(parseInt(payroll, 10));
+                releasedPlayers = event.target.result;
+                for (i = 0; i < releasedPlayers.length; i++) {
+                    payroll += releasedPlayers[i].contractAmount;
+                }
+
+                cb(parseInt(payroll, 10));
+            };
         };
     }
 

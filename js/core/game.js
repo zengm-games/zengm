@@ -152,108 +152,110 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/lock
             };
         }
 
-        // Only pay player salaries for regular season games.
-        cost = 0;
-        if (!that.playoffs) {
-            db.getPayroll(that.transaction, that.team[t].id, function (payroll) {
-                cost = payroll / 82;
-            });
-        }
+        db.getPayroll(this.transaction, that.team[t].id, function (payroll) {
+            // Only pay player salaries for regular season games.
+            cost = 0;
+            if (!that.playoffs) {
+                cost = payroll / 82;  // [thousands of dollars]
+            }
 
-        // Team stats
-        this.transaction.objectStore("teams").openCursor(that.team[t].id).onsuccess = function (event) {
-            var cursor, i, keys, team, teamSeason, teamStats, won;
+            // Team stats
+            that.transaction.objectStore("teams").openCursor(that.team[t].id).onsuccess = function (event) {
+                var cursor, i, keys, team, teamSeason, teamStats, won;
 
-            cursor = event.target.result;
-            team = cursor.value;
-            for (i = 0; i < team.seasons.length; i++) {
-                if (team.seasons[i].season === g.season) {
-                    teamSeason = team.seasons[i];
-                    break;
+                cursor = event.target.result;
+                team = cursor.value;
+                for (i = 0; i < team.seasons.length; i++) {
+                    if (team.seasons[i].season === g.season) {
+                        teamSeason = team.seasons[i];
+                        break;
+                    }
                 }
-            }
-            for (i = 0; i < team.stats.length; i++) {
-                if (team.stats[i].season === g.season && team.stats[i].playoffs === that.playoffs) {
-                    teamStats = team.stats[i];
-                    break;
-                }
-            }
-
-            if (that.team[t].stat.pts > that.team[t2].stat.pts) {
-                won = true;
-            } else {
-                won = false;
-            }
-
-            teamSeason.cash = teamSeason.cash + g.ticketPrice * that.att - 1000 * cost;
-            teamSeason.att += that.att;
-            teamSeason.gp += 1;
-            teamSeason.cost += 1000 * cost;
-
-            keys = ['min', 'fg', 'fga', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
-            for (i = 0; i < keys.length; i++) {
-                teamStats[keys[i]] += that.team[t].stat[keys[i]];
-            }
-            teamStats.gp += 1;
-            teamStats.trb += that.team[t].stat.orb + that.team[t].stat.drb;
-            teamStats.oppPts += that.team[t2].stat.pts;
-
-            if (teamSeason.lastTen.length === 10) {
-                teamSeason.lastTen.pop();
-            }
-            if (won && !that.playoffs) {
-                teamSeason.won += 1;
-                if (that.sameDiv) {
-                    teamSeason.wonDiv += 1;
-                }
-                if (that.sameConf) {
-                    teamSeason.wonConf += 1;
+                for (i = 0; i < team.stats.length; i++) {
+                    if (team.stats[i].season === g.season && team.stats[i].playoffs === that.playoffs) {
+                        teamStats = team.stats[i];
+                        break;
+                    }
                 }
 
-                if (t === 0) {
-                    teamSeason.wonHome += 1;
+                if (that.team[t].stat.pts > that.team[t2].stat.pts) {
+                    won = true;
                 } else {
-                    teamSeason.wonAway += 1;
+                    won = false;
                 }
 
-                teamSeason.lastTen.unshift(1);
+console.log(teamSeason.cash + " " + g.ticketPrice * that.att / 1000 + " " + cost);
+                teamSeason.cash = teamSeason.cash + g.ticketPrice * that.att / 1000 - cost;
+                teamSeason.att += that.att;
+                teamSeason.gp += 1;
+                teamSeason.cost += cost;
+console.log(teamSeason.cash);
 
-                if (teamSeason.streak >= 0) {
-                    teamSeason.streak += 1;
-                } else {
-                    teamSeason.streak = 1;
+                keys = ['min', 'fg', 'fga', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
+                for (i = 0; i < keys.length; i++) {
+                    teamStats[keys[i]] += that.team[t].stat[keys[i]];
                 }
-            } else if (!that.playoffs) {
-                teamSeason.lost += 1;
-                if (that.sameDiv) {
-                    teamSeason.lostDiv += 1;
+                teamStats.gp += 1;
+                teamStats.trb += that.team[t].stat.orb + that.team[t].stat.drb;
+                teamStats.oppPts += that.team[t2].stat.pts;
+
+                if (teamSeason.lastTen.length === 10) {
+                    teamSeason.lastTen.pop();
                 }
-                if (that.sameConf) {
-                    teamSeason.lostConf += 1;
+                if (won && !that.playoffs) {
+                    teamSeason.won += 1;
+                    if (that.sameDiv) {
+                        teamSeason.wonDiv += 1;
+                    }
+                    if (that.sameConf) {
+                        teamSeason.wonConf += 1;
+                    }
+
+                    if (t === 0) {
+                        teamSeason.wonHome += 1;
+                    } else {
+                        teamSeason.wonAway += 1;
+                    }
+
+                    teamSeason.lastTen.unshift(1);
+
+                    if (teamSeason.streak >= 0) {
+                        teamSeason.streak += 1;
+                    } else {
+                        teamSeason.streak = 1;
+                    }
+                } else if (!that.playoffs) {
+                    teamSeason.lost += 1;
+                    if (that.sameDiv) {
+                        teamSeason.lostDiv += 1;
+                    }
+                    if (that.sameConf) {
+                        teamSeason.lostConf += 1;
+                    }
+
+                    if (t === 0) {
+                        teamSeason.lostHome += 1;
+                    } else {
+                        teamSeason.lostAway += 1;
+                    }
+
+                    teamSeason.lastTen.unshift(0);
+
+                    if (teamSeason.streak <= 0) {
+                        teamSeason.streak -= 1;
+                    } else {
+                        teamSeason.streak = -1;
+                    }
                 }
 
-                if (t === 0) {
-                    teamSeason.lostHome += 1;
-                } else {
-                    teamSeason.lostAway += 1;
+                cursor.update(team);
+
+                that.teamsRemaining -= 1;
+                if (that.playersRemaining === 0 && that.teamsRemaining === 0) {
+                    that.cb();
                 }
-
-                teamSeason.lastTen.unshift(0);
-
-                if (teamSeason.streak <= 0) {
-                    teamSeason.streak -= 1;
-                } else {
-                    teamSeason.streak = -1;
-                }
-            }
-
-            cursor.update(team);
-
-            that.teamsRemaining -= 1;
-            if (that.playersRemaining === 0 && that.teamsRemaining === 0) {
-                that.cb();
-            }
-        };
+            };
+        });
     };
 
     Game.prototype.writeGameStats = function () {

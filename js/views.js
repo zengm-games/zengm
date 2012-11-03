@@ -236,7 +236,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
             vars = {};
             vars.season = g.season;
-            vars.salaryCap = g.salaryCap / 1000;
+            vars.salaryCap = g.salaryCap / 1000;  // [millions of dollars]
 
             transaction = g.dbl.transaction(["games", "players", "playoffSeries", "releasedPlayers", "schedule", "teams"]);
 
@@ -251,7 +251,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                 vars.abbrev = userTeam.abbrev;
                 vars.won = userTeamSeason.won;
                 vars.lost = userTeamSeason.lost;
-                vars.cash = userTeamSeason.cash / 1000000;
+                vars.cash = userTeamSeason.cash / 1000;  // [millions of dollars]
 
                 vars.recentHistory = [];
                 // 3 most recent years
@@ -276,7 +276,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                 db.getPayroll(transaction, g.userTid, function (payroll) {
                     var attributes, seasonAttributes, stats;
 
-                    vars.payroll = payroll / 1000;
+                    vars.payroll = payroll / 1000;  // [millions of dollars]
 
                     attributes = ["tid", "cid"];
                     stats = ["pts", "oppPts", "trb", "ast"];  // This is also used later to find ranks for these team stats
@@ -644,7 +644,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                 var data, i;
 
                 for (i = 0; i < teams.length; i++) {
-                    teams[i].cash /= 1000000;
+                    teams[i].cash /= 1000;  // [millions of dollars]
                 }
 
                 data = {
@@ -740,7 +740,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                             break;
                         }
                     }
-                    team = {region: teamAll.region, name: teamAll.name, cash: teamSeason.cash / 1000000};
+                    team = {region: teamAll.region, name: teamAll.name, cash: teamSeason.cash / 1000};
 
                     for (j = 0; j < players.length; j++) {
                         if (players.length > 5) {

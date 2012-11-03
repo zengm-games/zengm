@@ -5363,11 +5363,12 @@ function program10(depth0,data,depth1) {
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
   buffer += escapeExpression(stack1) + "/roster/";
-  foundHelper = helpers.bre;
-  stack1 = foundHelper || depth0.bre;
+  foundHelper = helpers.awards;
+  stack1 = foundHelper || depth0.awards;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.bre);
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.abbrev);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "bre.abbrev", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "awards.bre.abbrev", { hash: {} }); }
   buffer += escapeExpression(stack1) + "/";
   foundHelper = helpers.season;
   stack1 = foundHelper || depth0.season;
@@ -5407,11 +5408,12 @@ function program10(depth0,data,depth1) {
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
   buffer += escapeExpression(stack1) + "/roster/";
-  foundHelper = helpers.brw;
-  stack1 = foundHelper || depth0.brw;
+  foundHelper = helpers.awards;
+  stack1 = foundHelper || depth0.awards;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.brw);
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.abbrev);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "brw.abbrev", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "awards.brw.abbrev", { hash: {} }); }
   buffer += escapeExpression(stack1) + "/";
   foundHelper = helpers.season;
   stack1 = foundHelper || depth0.season;

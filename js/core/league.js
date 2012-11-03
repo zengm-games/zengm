@@ -18,10 +18,8 @@ define(["db", "ui", "core/player", "core/season", "util/random"], function (db, 
         l = {tid: tid, phaseText: ""};
         leagueStore = g.dbm.transaction("leagues", "readwrite").objectStore("leagues");
         leagueStore.add(l).onsuccess = function (event) {
-            var t;
-
             g.lid = event.target.result;
-            t = event.target.transaction;
+
             g.dbm.transaction(["teams"]).objectStore("teams").getAll().onsuccess = function (event) {
                 var teams;
 
@@ -71,10 +69,14 @@ define(["db", "ui", "core/player", "core/season", "util/random"], function (db, 
                         afterPlayerCreation = function () {
                             // Make schedule, start season
                             season.newPhase(c.PHASE_REGULAR_SEASON, function () {
+                                var lid;
+
                                 ui.updateStatus('Idle');
 
+                                lid = g.lid;  // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer now the league ID
+
                                 // Auto sort player's roster (other teams will be done in season.newPhase(c.PHASE_REGULAR_SEASON))
-                                db.rosterAutoSort(null, g.userTid, cb);
+                                db.rosterAutoSort(null, g.userTid, function () { cb(lid); });
                             });
                         };
 

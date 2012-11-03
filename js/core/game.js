@@ -184,12 +184,10 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/lock
                     won = false;
                 }
 
-console.log(teamSeason.cash + " " + g.ticketPrice * that.att / 1000 + " " + cost);
                 teamSeason.cash = teamSeason.cash + g.ticketPrice * that.att / 1000 - cost;
                 teamSeason.att += that.att;
                 teamSeason.gp += 1;
                 teamSeason.cost += cost;
-console.log(teamSeason.cash);
 
                 keys = ['min', 'fg', 'fga', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
                 for (i = 0; i < keys.length; i++) {

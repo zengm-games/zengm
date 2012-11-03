@@ -179,8 +179,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         } else if (req.method === "post") {
             tid = parseInt(req.params.tid, 10);
             if (tid >= 0 && tid <= 29) {
-                league.create(tid, req.params.players, function () {
-                    Davis.location.assign(new Davis.Request("/l/" + g.lid));
+                league.create(tid, req.params.players, function (lid) {
+                    Davis.location.assign(new Davis.Request("/l/" + lid));
                 });
             }
         }

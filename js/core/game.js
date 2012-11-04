@@ -105,7 +105,7 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/lock
     }
 
     Game.prototype.writeTeamStats = function (t) {
-        var cost, t2, that;
+        var t2, that;
 
         if (t === 0) {
             t2 = 1;
@@ -153,11 +153,15 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/lock
         }
 
         db.getPayroll(this.transaction, that.team[t].id, function (payroll) {
+            var cost, revenue;
+
             // Only pay player salaries for regular season games.
             cost = 0;
             if (!that.playoffs) {
                 cost = payroll / 82;  // [thousands of dollars]
             }
+
+            revenue = g.ticketPrice * that.att / 1000;  // [thousands of dollars]
 
             // Team stats
             that.transaction.objectStore("teams").openCursor(that.team[t].id).onsuccess = function (event) {
@@ -184,9 +188,10 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/lock
                     won = false;
                 }
 
-                teamSeason.cash = teamSeason.cash + g.ticketPrice * that.att / 1000 - cost;
+                teamSeason.cash = teamSeason.cash + revenue - cost;
                 teamSeason.att += that.att;
                 teamSeason.gp += 1;
+                teamSeason.revenue += revenue;
                 teamSeason.cost += cost;
 
                 keys = ['min', 'fg', 'fga', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];

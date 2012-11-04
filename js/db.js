@@ -450,9 +450,9 @@ console.log(event);
                         team.att = tsa.att / tsa.gp;
                     }
                 } else if (seasonAttributes[j] === "revenue") {
-                    team.revenue = tsa.att * g.ticketPrice / 1000000;  // [millions of dollars]
+                    team.revenue = tsa.revenue / 1000;  // [millions of dollars]
                 } else if (seasonAttributes[j] === "profit") {
-                    team.profit = tsa.att * g.ticketPrice / 1000000 - tsa.cost / 1000;  // [millions of dollars]
+                    team.profit = (tsa.revenue - tsa.cost) / 1000;  // [millions of dollars]
                 } else if (seasonAttributes[j] === "payroll") {
                     // Handled later
                 } else if (seasonAttributes[j] === "lastTen") {

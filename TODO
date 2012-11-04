@@ -36,7 +36,7 @@ game simulation realism
 import/export games
 make sure all indexes are actually used. otherwise they're just making it slower for nothing
 put on play.basketball-gm.com, with splash page on basketball-gm.com
-store revenue in db rather than calculating it from attendance every time
+payroll not showing in finances view
 
 ---
 

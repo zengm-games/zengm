@@ -583,7 +583,7 @@ console.log(event);
 
         transaction = getObjectStore(ot, ["players", "releasedPlayers", "teams"], null);
         transaction.objectStore("teams").getAll().onsuccess = function (event) {
-            var i, savePayrollCb, teams, teamsAll;
+            var i, savePayroll, teams, teamsAll;
 
             teamsAll = event.target.result;
             teams = [];
@@ -603,17 +603,17 @@ console.log(event);
             if (seasonAttributes.indexOf("payroll") < 0) {
                 cb(teams);
             } else {
-                savePayrollCb = function (i) {
-                    return function (payroll) {
+                savePayroll = function (i) {
+                    getPayroll(transaction, teams[i].tid, function (payroll) {
                         teams[i].payroll = payroll / 1000;
                         if (i === teams.length - 1) {
                             cb(teams);
+                        } else {
+                            savePayroll(i + 1);
                         }
-                    };
+                    });
                 };
-                for (i = 0; i < teams.length; i++) {
-                    getPayroll(transaction, teams[i].tid, savePayrollCb(i));
-                }
+                savePayroll(0);
             }
         };
     }

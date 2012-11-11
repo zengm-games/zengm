@@ -10,19 +10,11 @@ revamp lock?
           // whatever
       }
   });
-  actually implement these functions rather than using placeholders
+  actually implement these functions rather than using placeholders. check the db, not g
 free agents
   let free agents stay for 2 seasons before retiring, or make retirement probabilistic
     is retirement working for the first season, at all?
   on new game, have enough free agents so the pool isn't totally depleted
-nba roster
-  DON'T SHOW AS OPTION by default
-  show an option to upload a data file
-    define file format for external player sources
-    derive from stats, somehow?
-    nba player potential ratings
-    if necessary, scale everything down a bit to make it comparable to normal players
-    free agents are way overrated. is this roster file legit?
 game simulation realism
   gameSim.rating_array power should be moved to game.js instead
   height should matter a lot more
@@ -38,6 +30,7 @@ game simulation realism
 import/export games
 make sure all indexes are actually used. otherwise they're just making it slower for nothing
 put on play.basketball-gm.com, with splash page on basketball-gm.com
+http://davidwalsh.name/page-visibility for page reloads?
 
 ---
 
@@ -143,6 +136,13 @@ notifications (and log) from top right to display log of key events
   game results from user's team
   players retiring from user's team
   league champions
+show an option to upload a data file for rosters
+  nba roster
+    define file format for external player sources
+    derive from stats, somehow?
+    nba player potential ratings
+    if necessary, scale everything down a bit to make it comparable to normal players
+    free agents are way overrated. is this roster file legit?
 
 ---
 

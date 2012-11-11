@@ -20,7 +20,7 @@ define(["db", "ui", "core/player", "core/season", "util/random"], function (db, 
         leagueStore.add(l).onsuccess = function (event) {
             g.lid = event.target.result;
 
-            g.dbm.transaction(["teams"]).objectStore("teams").getAll().onsuccess = function (event) {
+            g.dbm.transaction("teams").objectStore("teams").getAll().onsuccess = function (event) {
                 var teams;
 
                 teams = event.target.result;

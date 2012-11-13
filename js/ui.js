@@ -201,35 +201,38 @@ define(["db", "util/lock"], function (db, lock) {
             keys = ["until_preseason"];
         }
 
-        if (lock.games_in_progress()) {
-            keys = ["stop"];
-        }
-        lock.negotiationInProgress(function (negotiationInProgress) {
-            if (negotiationInProgress && g.phase !== c.PHASE_RESIGN_PLAYERS) {
-                keys = ["contract_negotiation"];
+        lock.gamesInProgress(function (gamesInProgress) {
+            if (gamesInProgress) {
+                keys = ["stop"];
             }
 
-            // This code is very ugly. Basically I just want to filter all_options into
-            // some_options based on if the ID matches one of the keys.
-            ids = [];
-            for (i = 0; i < allOptions.length; i++) {
-                ids.push(allOptions[i].id);
-            }
-            someOptions = [];
-            for (i = 0; i < keys.length; i++) {
-                for (j = 0; j < ids.length; j++) {
-                    if (ids[j] === keys[i]) {
-                        someOptions.push(allOptions[j]);
-                        break;
+            lock.negotiationInProgress(function (negotiationInProgress) {
+                if (negotiationInProgress && g.phase !== c.PHASE_RESIGN_PLAYERS) {
+                    keys = ["contract_negotiation"];
+                }
+
+                // This code is very ugly. Basically I just want to filter all_options into
+                // some_options based on if the ID matches one of the keys.
+                ids = [];
+                for (i = 0; i < allOptions.length; i++) {
+                    ids.push(allOptions[i].id);
+                }
+                someOptions = [];
+                for (i = 0; i < keys.length; i++) {
+                    for (j = 0; j < ids.length; j++) {
+                        if (ids[j] === keys[i]) {
+                            someOptions.push(allOptions[j]);
+                            break;
+                        }
                     }
                 }
-            }
 
-            button = Handlebars.templates.playButton({options: someOptions});
-            playButtonElement = document.getElementById("playButton");
-            if (playButtonElement) {
-                playButtonElement.innerHTML = button;
-            }
+                button = Handlebars.templates.playButton({options: someOptions});
+                playButtonElement = document.getElementById("playButton");
+                if (playButtonElement) {
+                    playButtonElement.innerHTML = button;
+                }
+            });
         });
     }
 

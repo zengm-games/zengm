@@ -42,6 +42,7 @@ game simulation stops when a link is clicked, but then restarts when another lin
   This seems to generally work now, but it's not perfect. If you do any action that writes to the database, such as reordering the roster, something bad could happen because IndexedDB doesn't like multiple writes going on at the same time
 sometimes deleting leagues or resetting db fails, i think because some open connection is blocking it, but i don't know why
 db error when switching to resign players phase?
+when full UI is open in two tabs, a "stop" command from one tab doesn't do anything to the other tab?
 
 ---
 

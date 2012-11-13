@@ -22,8 +22,18 @@ define(["db"], function (db) {
         db.setGameAttributes({gamesInProgress: status}, cb);
     }
 
-    function gamesInProgress() {
-        return g.gamesInProgress;
+    /**
+     * Is game simulation in progress?
+     *
+     * Calls the callback function with either true or false depending on whether there is a game simulation currently in progress.
+     * 
+     * @memberOf lock
+     * @param {function(boolean)} cb Callback.
+     */
+    function gamesInProgress(cb) {
+        db.loadGameAttribute("gamesInProgress", function () {
+            cb(g.gamesInProgress);
+        });
     }
 
     /**
@@ -113,7 +123,7 @@ define(["db"], function (db) {
 
     return {
         setGamesInProgress: setGamesInProgress,
-        games_in_progress: gamesInProgress,
+        gamesInProgress: gamesInProgress,
         negotiationInProgress: negotiationInProgress,
         can_start_games: canStartGames,
         canStartNegotiation: canStartNegotiation

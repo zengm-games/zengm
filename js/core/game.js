@@ -478,7 +478,7 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/lock
         cbNoGames = function () {
             ui.updateStatus('Idle');
             lock.setGamesInProgress(false, function () {
-               ui.updatePlayMenu(function () {
+               ui.updatePlayMenu(null, function () {
                    // Check to see if the season is over
                    if (g.phase < c.PHASE_PLAYOFFS) {
                        season.getSchedule(null, 0, function (schedule) {

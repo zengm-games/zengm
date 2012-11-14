@@ -2,6 +2,8 @@ main todo (before public beta)
 ------------------------------
 
 GET TESTS WORKING AGAIN IN FIREFOX AND CHROME
+  current status: modules work individually, but not together. is this fixed:
+    tests fail in Firefox, seemingly due to the async db access in lock.js. Remove the async part of util.lock.gamesInProgress and everything works. I think this happens because ui.updatePlayMenu is calling util.lock.gamesInProgress after the next test starts. So make it use a callback.. will that slow anything down or something?
 hitting the phase twice shouldn't be possible. but if i, for instance, hit "until preseason" twice quickly, i skip a year
   maybe have something like lock.phaseChangeInProgress? but some timeout would be needed to reset
 revamp lock?
@@ -52,7 +54,7 @@ In firefox, I can add this to the new league form:
    onclick="this.disabled=true; this.innerHTML='Generating league...'; this.form.submit();"
   but that doesn't seem to play nice with davis.js
 trading is glitchy in chrome
-tests fail in Firefox, seemingly due to the async db access in lock.js. Remove the async part of util.lock.gamesInProgress and everything works. I think this happens because ui.updatePlayMenu is calling util.lock.gamesInProgress after the next test starts. So make it use a callback.. will that slow anything down or something?
+
 
 ---
 

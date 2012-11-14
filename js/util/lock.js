@@ -43,12 +43,14 @@ define(["db"], function (db) {
      * Calls the callback function with either true or false depending on whether there is an ongoing negoation.
      * 
      * @memberOf lock
+     * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on negotiations; if null is passed, then a new transaction will be used.
      * @param {function(boolean)} cb Callback.
      */
-    function negotiationInProgress(cb) {
-        var negotiations;
+    function negotiationInProgress(ot, cb) {
+        var negotiationStore;
 
-        g.dbl.transaction("negotiations").objectStore("negotiations").getAll().onsuccess = function (event) {
+        negotiationStore = db.getObjectStore(ot, "negotiations", "negotiations");
+        negotiationStore.getAll().onsuccess = function (event) {
             var negotiations;
 
             negotiations = event.target.result;
@@ -100,6 +102,7 @@ define(["db"], function (db) {
     function canStartNegotiation(ot, cb) {
         gamesInProgress(ot, function (gamesInProgressBool) {
             var negotiationStore;
+
             if (gamesInProgressBool) {
                 return cb(false);
             }

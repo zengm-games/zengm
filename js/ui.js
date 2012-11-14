@@ -152,9 +152,9 @@ define(["db", "util/lock"], function (db, lock) {
     }
 
     /*Get current options based on game state and push rendered play button
-    to client.
+    to client. ot is passed on to the lock functions.
     */
-    function updatePlayMenu(cb) {
+    function updatePlayMenu(ot, cb) {
         var allOptions, button, i, ids, j, keys, playButtonElement, someOptions;
 
         allOptions = [{id: "stop", url: 'javascript:api.play("stop");', label: "Stop", normal_link: false},
@@ -201,12 +201,12 @@ define(["db", "util/lock"], function (db, lock) {
             keys = ["until_preseason"];
         }
 
-        lock.gamesInProgress(null, function (gamesInProgress) {
+        lock.gamesInProgress(ot, function (gamesInProgress) {
             if (gamesInProgress) {
                 keys = ["stop"];
             }
 
-            lock.negotiationInProgress(function (negotiationInProgress) {
+            lock.negotiationInProgress(ot, function (negotiationInProgress) {
                 if (negotiationInProgress && g.phase !== c.PHASE_RESIGN_PLAYERS) {
                     keys = ["contract_negotiation"];
                 }

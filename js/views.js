@@ -22,7 +22,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                 if (g.lastDbChange !== oldLastDbChange) {
                     db.loadGameAttributes(function () {
                         ui.realtimeUpdate(function () {
-                            ui.updatePlayMenu(function () {
+                            ui.updatePlayMenu(null, function () {
                                 ui.updatePhase();
                                 ui.updateStatus();
                                 setTimeout(checkDbChange, 3000, g.lid);
@@ -69,7 +69,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     // Update play menu
                     ui.updateStatus();
                     ui.updatePhase();
-                    ui.updatePlayMenu(function () {
+                    ui.updatePlayMenu(null, function () {
                         cb();
                         checkDbChange(g.lid);
                     });

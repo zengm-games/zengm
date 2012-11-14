@@ -5,7 +5,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
     function newPhaseCb(phase, phaseText, cb, reload) {
         db.setGameAttributes({phase: phase, lastDbChange: Date.now()}, function () {
             ui.updatePhase(phaseText);
-            ui.updatePlayMenu(function () {
+            ui.updatePlayMenu(null, function () {
                 if (cb !== undefined) {
                     cb();
                 }

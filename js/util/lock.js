@@ -98,30 +98,30 @@ define(["db"], function (db) {
      * @param {function(boolean)} cb Callback.
      */
     function canStartNegotiation(ot, cb) {
-        var negotiationStore;
-
-        negotiationStore = db.getObjectStore(ot, "negotiations", "negotiations");
-
-        // Allow multiple parallel negotiations only for resigning players
-        negotiationStore.getAll().onsuccess = function (event) {
-            var i, negotiations;
-
-            negotiations = event.target.result;
-
-            for (i = 0; i < negotiations.length; i++) {
-                if (!negotiations[i].resigning) {
-                    return cb(false);
-                }
+        gamesInProgress(ot, function (gamesInProgressBool) {
+            var negotiationStore;
+            if (gamesInProgressBool) {
+                return cb(false);
             }
 
-            gamesInProgress(ot, function (gamesInProgressBool) {
-                if (gamesInProgressBool) {
-                    return cb(false);
+            negotiationStore = db.getObjectStore(ot, "negotiations", "negotiations");
+
+            // Allow multiple parallel negotiations only for resigning players
+            negotiationStore.getAll().onsuccess = function (event) {
+                var i, negotiations;
+
+                negotiations = event.target.result;
+
+                for (i = 0; i < negotiations.length; i++) {
+                    if (!negotiations[i].resigning) {
+                        return cb(false);
+                    }
                 }
 
+
                 return cb(true);
-            });
-        };
+            };
+        });
     }
 
     return {

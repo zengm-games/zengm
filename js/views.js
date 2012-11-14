@@ -162,6 +162,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
         beforeNonLeague();
 
+console.log(req.method);
         if (req.method === "get") {
             g.dbm.transaction("teams").objectStore("teams").getAll().onsuccess = function (event) {
                 var data, teams;

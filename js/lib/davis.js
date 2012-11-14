@@ -1,5 +1,5 @@
 /*!
- * Davis - http://davisjs.com - JavaScript Routing - 0.9.0
+ * Davis - http://davisjs.com - JavaScript Routing - 0.9.6
  * Copyright (C) 2011 Oliver Nightingale
  * MIT Licensed
  */
@@ -65,7 +65,7 @@ Davis.extend = function (extension) {
 /*!
  * the version
  */
-Davis.version = "0.9.0";/*!
+Davis.version = "0.9.6";/*!
  * Davis - utils
  * Copyright (C) 2011 Oliver Nightingale
  * MIT Licensed
@@ -223,8 +223,7 @@ Davis.utils = (function () {
    * @returns {Array}
    */
   var toArray = function (args, start) {
-    var start = start || 0
-    return Array.prototype.slice.call(args, start)
+    return Array.prototype.slice.call(args, start || 0)
   }
 
   /*!
@@ -286,6 +285,10 @@ Davis.listener = function () {
     return originChecks[elem.nodeName.toUpperCase()](elem)
   }
 
+  var hasModifier = function (event) {
+    return (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey)
+  }
+
   /*!
    * A handler that creates a new Davis.Request and pushes it onto the history stack using Davis.history.
    * 
@@ -294,7 +297,9 @@ Davis.listener = function () {
    */
   var handler = function (targetExtractor) {
     return function (event) {
+      if (hasModifier(event)) return true
       if (differentOrigin(this)) return true
+
       var request = new Davis.Request (targetExtractor.call(Davis.$(this)));
       Davis.location.assign(request)
       event.stopPropagation()
@@ -309,15 +314,24 @@ Davis.listener = function () {
    */
   var clickHandler = handler(function () {
     var self = this
+
     return {
       method: 'get',
-      fullPath: this.attr('href'),
+      fullPath: this.prop('href'),
       title: this.attr('title'),
       delegateToServer: function () {
-        window.location.pathname = self.attr('href')
+        window.location = self.prop('href')
       }
     };
   });
+
+  /*!
+   * Decodes the url, including + characters.
+   * @private
+   */
+  var decodeUrl = function (str) {
+    return decodeURIComponent(str.replace(/\+/g, '%20'))
+  };
 
   /*!
    * A handler specialized for submit events.  Gets the request details from a form elem
@@ -327,7 +341,7 @@ Davis.listener = function () {
     var self = this
     return {
       method: this.attr('method'),
-      fullPath: decodeURI(this.serialize() ? [this.attr('action'), this.serialize()].join("?") : this.attr('action')),
+      fullPath: decodeUrl(this.serialize() ? [this.prop('action'), this.serialize()].join("?") : this.prop('action')),
       title: this.attr('title'),
       delegateToServer: function () {
         self.submit()
@@ -361,7 +375,8 @@ Davis.listener = function () {
     Davis.$(document).undelegate(this.settings.linkSelector, 'click', clickHandler)
     Davis.$(document).undelegate(this.settings.formSelector, 'submit', submitHandler)
   }
-}/*!
+}
+/*!
  * Davis - event
  * Copyright (C) 2011 Oliver Nightingale
  * MIT Licensed
@@ -565,7 +580,7 @@ Davis.Route = (function () {
  * @param {String} path This string can contain place holders for variables, e.g. '/user/:id' or '/user/*splat'
  * @param {Function} callback One or more callbacks that will be called in order when a request matching both the path and method is triggered.
  */
-  var Route = function (method, path) {
+  var Route = function (method, path, handlers) {
     var convertPathToRegExp = function () {
       if (!(path instanceof RegExp)) {
         var str = path
@@ -599,7 +614,12 @@ Davis.Route = (function () {
     this.paramNames = capturePathParamNames();
     this.path = convertPathToRegExp();
     this.method = convertMethodToRegExp();
-    this.handlers = Davis.utils.toArray(arguments, 2);
+
+    if (typeof handlers === 'function') {
+      this.handlers = [handlers]
+    } else {
+      this.handlers = handlers;
+    }
   }
 
   /**
@@ -786,15 +806,21 @@ Davis.router = function () {
    * @returns {Davis.Route} the route that has just been created and added to the route list.
    * @memberOf router
    */
-  this.route = function (method, path, handler) {
-    var createRoute = function (path, handler) {
-      var scope = scopePaths.join('')
-      var route = new Davis.Route (method, scope + path, handler)
+  this.route = function (method, path) {
+    var createRoute = function (path) {
+      var handlers = Davis.utils.toArray(arguments, 1),
+          scope = scopePaths.join(''),
+          fullPath, route
+
+      (typeof path == 'string') ? fullPath = scope + path : fullPath = path
+
+      route = new Davis.Route (method, fullPath, handlers)
+
       routeCollection.push(route)
       return route
     }
 
-    return (arguments.length == 1) ? createRoute : createRoute.call(this, path, handler)
+    return (arguments.length == 1) ? createRoute : createRoute.apply(this, Davis.utils.toArray(arguments, 1))
   }
 
   /**
@@ -967,7 +993,7 @@ Davis.router = function () {
         var path = /.+/;
         var handler = arguments[0];
       } else if (arguments.length == 2) {
-        var path = arguments[0];
+        var path = scopePaths.join('') + arguments[0];
         var handler = arguments[1];
       };
 
@@ -1050,7 +1076,8 @@ Davis.router = function () {
       return route.match(method, path)
     })[0];
   };
-}/*!
+}
+/*!
  * Davis - history
  * Copyright (C) 2011 Oliver Nightingale
  * MIT Licensed
@@ -1078,18 +1105,6 @@ Davis.history = (function () {
    * @private
    */
   var popped = false
-
-  /*!
-   * method to check whether or not this is the first pop state event received
-   * @private
-   */
-   function hasPopped () {
-     if ('state' in window.history) {
-       return true
-     } else {
-       return popped
-     };
-   }
 
   /*!
    * Add a handler to the push state event.  This event is not a native event but is fired
@@ -1126,9 +1141,9 @@ Davis.history = (function () {
       if (event.state && event.state._davis) {
         handler(new Davis.Request(event.state._davis))
       } else {
-        if (hasPopped()) handler(Davis.Request.forPageLoad())
-        popped = true
+        if (popped) handler(Davis.Request.forPageLoad())
       };
+      popped = true
     }
   }
 
@@ -1166,6 +1181,7 @@ Davis.history = (function () {
    */
   function changeStateWith (methodName) {
     return function (request, opts) {
+      popped = true
       history[methodName](wrapStateData(request.toJSON()), request.title, request.location());
       if (opts && opts.silent) return
       Davis.utils.forEach(pushStateHandlers, function (handler) {
@@ -1370,6 +1386,9 @@ Davis.Request = (function () {
  * Simple get requests can be created by just passing a path when initializing a request, to set the method
  * or title you have to pass in an object.
  *
+ * Each request will have a timestamp property to make it easier to determine if the application is moving
+ * forward or backward through the history stack.
+ *
  * Example
  *
  *     var request = new Davis.Request ("/foo/12")
@@ -1397,7 +1416,8 @@ Davis.Request = (function () {
     var raw = Davis.$.extend({}, {
       title: "",
       fullPath: fullPath,
-      method: "get"
+      method: "get",
+      timestamp: +new Date ()
     }, opts)
 
     var self = this;
@@ -1405,6 +1425,7 @@ Davis.Request = (function () {
     this.params = {};
     this.title = raw.title;
     this.queryString = raw.fullPath.split("?")[1];
+    this.timestamp = raw.timestamp;
     this._staleCallback = function () {};
 
     if (this.queryString) {
@@ -1561,7 +1582,8 @@ Davis.Request = (function () {
     return {
       title: this.raw.title,
       fullPath: this.raw.fullPath,
-      method: this.raw.method
+      method: this.raw.method,
+      timestamp: this.raw.timestamp
     }
   }
 

@@ -716,9 +716,11 @@ console.log(req.method);
 
     function roster(req) {
         beforeLeague(req, function () {
-            var abbrev, attributes, currentSeason, ratings, season, seasons, sortable, stats, teams, tid, transaction;
+            var abbrev, attributes, currentSeason, out, ratings, season, seasons, sortable, stats, teams, tid, transaction;
 
-            [tid, abbrev] = helpers.validateAbbrev(req.params.abbrev);
+            out = helpers.validateAbbrev(req.params.abbrev);
+            tid = out[0];
+            abbrev = out[1];
             season = helpers.validateSeason(req.params.season);
             seasons = helpers.getSeasons(season);
             teams = helpers.getTeams(tid);
@@ -914,7 +916,7 @@ console.log(req.method);
 
     function trade_(req) {
         beforeLeague(req, function () {
-            var abbrev, newOtherTid, pid, showTrade, validateSavedPids;
+            var abbrev, newOtherTid, out, pid, showTrade, validateSavedPids;
 
             if (g.phase >= c.PHASE_AFTER_TRADE_DEADLINE && g.phase <= c.PHASE_PLAYOFFS) {
                 helpers.error("You're not allowed to make trades now.", req);
@@ -923,7 +925,9 @@ console.log(req.method);
 
             pid = req.params.pid !== undefined ? parseInt(req.params.pid, 10) : null;
             if (req.raw.abbrev !== undefined) {
-                [newOtherTid, abbrev] = helpers.validateAbbrev(req.raw.abbrev);
+                out = helpers.validateAbbrev(req.raw.abbrev);
+                newOtherTid = out[0];
+                abbrev = out[1];
             } else {
                 newOtherTid = null;
             }
@@ -1193,18 +1197,22 @@ console.log(message);
 
     function gameLog(req) {
         beforeLeague(req, function () {
-            var abbrev, boxScore, gameLogList, gid, season, seasons, teams, tid;
+            var abbrev, boxScore, gameLogList, gid, out, season, seasons, teams, tid;
 
-            [tid, abbrev] = helpers.validateAbbrev(req.params.abbrev);
+            out = helpers.validateAbbrev(req.params.abbrev);
+            tid = out[0];
+            abbrev = out[1];
             season = helpers.validateSeason(req.params.season);
             seasons = helpers.getSeasons(season);
             teams = helpers.getTeams(tid);
             gid = req.params.gid !== undefined ? parseInt(req.params.gid, 10) : null;
 
             gameLogList = function (abbrev, season, cb) {
-                var games, tid;
+                var games, out, tid;
 
-                [tid, abbrev] = helpers.validateAbbrev(abbrev);
+                out = helpers.validateAbbrev(abbrev);
+                tid = out[0];
+                abbrev = out[1];
                 season = helpers.validateSeason(season);
 
                 games = [];

@@ -1,6 +1,7 @@
 main todo (before public beta)
 ------------------------------
 
+GET TESTS WORKING AGAIN IN FIREFOX AND CHROME
 hitting the phase twice shouldn't be possible. but if i, for instance, hit "until preseason" twice quickly, i skip a year
   maybe have something like lock.phaseChangeInProgress? but some timeout would be needed to reset
 revamp lock?
@@ -45,6 +46,11 @@ db error when switching to resign players phase?
 when full UI is open in two tabs, a "stop" command from one tab doesn't do anything to the other tab?
 free agent error message "You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process." is only displayed transiently before the free agent list is reloaded?
 tests fail in Firefox, seemingly due to the async db access in lock.js. But they work in Chrome??
+In firefox, I can add this to the new league form:
+   onclick="this.disabled=true; this.innerHTML='Generating league...';"
+  in chrome, it doesn't work. http://productforums.google.com/forum/#!topic/chrome/M7y2gZDvXAk says to change it to
+   onclick="this.disabled=true; this.innerHTML='Generating league...'; this.form.submit();"
+  but that doesn't seem to play nice with davis.js
 
 ---
 

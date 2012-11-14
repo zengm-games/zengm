@@ -43,6 +43,7 @@ game simulation stops when a link is clicked, but then restarts when another lin
 sometimes deleting leagues or resetting db fails, i think because some open connection is blocking it, but i don't know why
 db error when switching to resign players phase?
 when full UI is open in two tabs, a "stop" command from one tab doesn't do anything to the other tab?
+free agent error message "You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process." is only displayed transiently before the free agent list is reloaded?
 
 ---
 

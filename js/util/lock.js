@@ -28,10 +28,11 @@ define(["db"], function (db) {
      * Calls the callback function with either true or false depending on whether there is a game simulation currently in progress.
      * 
      * @memberOf lock
+     * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on gameAttributes; if null is passed, then a new transaction will be used.
      * @param {function(boolean)} cb Callback.
      */
-    function gamesInProgress(cb) {
-        db.loadGameAttribute("gamesInProgress", function () {
+    function gamesInProgress(ot, cb) {
+        db.loadGameAttribute(ot, "gamesInProgress", function () {
             cb(g.gamesInProgress);
         });
     }
@@ -93,15 +94,11 @@ define(["db"], function (db) {
      * Calls the callback function with either true or false. If games are in progress or a free agent (not resigning!) is being negotiated with, false.
      * 
      * @memberOf lock
-     * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on negotiations; if null is passed, then a new transaction will be used.
+     * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on gameAttributes and negotiations; if null is passed, then a new transaction will be used.
      * @param {function(boolean)} cb Callback.
      */
     function canStartNegotiation(ot, cb) {
         var negotiationStore;
-
-        if (g.gamesInProgress) {
-            return cb(false);
-        }
 
         negotiationStore = db.getObjectStore(ot, "negotiations", "negotiations");
 
@@ -117,7 +114,13 @@ define(["db"], function (db) {
                 }
             }
 
-            return cb(true);
+            gamesInProgress(ot, function (gamesInProgressBool) {
+                if (gamesInProgressBool) {
+                    return cb(false);
+                }
+
+                return cb(true);
+            });
         };
     }
 

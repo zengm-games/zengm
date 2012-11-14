@@ -201,7 +201,7 @@ define(["db", "util/lock"], function (db, lock) {
             keys = ["until_preseason"];
         }
 
-        lock.gamesInProgress(function (gamesInProgress) {
+        lock.gamesInProgress(null, function (gamesInProgress) {
             if (gamesInProgress) {
                 keys = ["stop"];
             }

@@ -18,7 +18,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
             oldLastDbChange = g.lastDbChange;
 
-            db.loadGameAttribute("lastDbChange", function () {
+            db.loadGameAttribute(null, "lastDbChange", function () {
                 if (g.lastDbChange !== oldLastDbChange) {
                     db.loadGameAttributes(function () {
                         ui.realtimeUpdate(function () {

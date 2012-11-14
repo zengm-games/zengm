@@ -9,7 +9,7 @@ define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui
      * Start a new contract negotiation with a player.
      * 
      * @memberOf core.contractNegotiation
-     * @param {IDBTransaction|null} ot An IndexedDB transaction on negotiations and players, readwrite; if null is passed, then a new transaction will be used.
+     * @param {IDBTransaction|null} ot An IndexedDB transaction on gameAttributes, negotiations, and players, readwrite; if null is passed, then a new transaction will be used.
      * @param {number} pid An integer that must correspond with the player ID of a free agent.
      * @param {boolean} resigning Set to true if this is a negotiation for a contract extension, which will allow multiple simultaneous negotiations. Set to false otherwise.
      * @param {function(string=)} cb Callback to be run only after a successful negotiation is started. If an error occurs, pass a string error message.
@@ -23,7 +23,7 @@ define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui
             return cb("You're not allowed to sign free agents now.");
         }
 
-        transaction = db.getObjectStore(ot, ["negotiations", "players"], null, true);
+        transaction = db.getObjectStore(ot, ["gameAttributes", "negotiations", "players"], null, true);
 
         lock.canStartNegotiation(transaction, function (canStartNegotiation) {
             var playerStore;

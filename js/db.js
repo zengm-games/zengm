@@ -732,11 +732,16 @@ console.log(event);
     /**
      * Load a game attribute from the database and update the global variable g.
      *
+     * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on gameAttributes; if null is passed, then a new transaction will be used.
      * @param {string} key Key in gameAttributes to load the value for.
      * @param {function()=} cb Optional callback.
      */
-    function loadGameAttribute(key, cb) {
-        g.dbl.transaction("gameAttributes").objectStore("gameAttributes").get(key).onsuccess = function (event) {
+    function loadGameAttribute(ot, key, cb) {
+        var gameAttributesStore;
+
+        gameAttributesStore = getObjectStore(ot, "gameAttributes", "gameAttributes", true);
+
+        gameAttributesStore.get(key).onsuccess = function (event) {
             g[key] = event.target.result.value;
 
             if (cb !== undefined) {

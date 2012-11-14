@@ -51,6 +51,7 @@ In firefox, I can add this to the new league form:
   in chrome, it doesn't work. http://productforums.google.com/forum/#!topic/chrome/M7y2gZDvXAk says to change it to
    onclick="this.disabled=true; this.innerHTML='Generating league...'; this.form.submit();"
   but that doesn't seem to play nice with davis.js
+trading is glitchy in chrome
 
 ---
 

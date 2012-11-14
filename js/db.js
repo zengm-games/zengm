@@ -739,9 +739,10 @@ console.log(event);
     function loadGameAttribute(ot, key, cb) {
         var gameAttributesStore;
 
-        gameAttributesStore = getObjectStore(ot, "gameAttributes", "gameAttributes", true);
+        gameAttributesStore = getObjectStore(ot, "gameAttributes", "gameAttributes");
 
         gameAttributesStore.get(key).onsuccess = function (event) {
+if (event.target.result === undefined) { console.log(key); console.log(gameAttributesStore); }
             g[key] = event.target.result.value;
 
             if (cb !== undefined) {

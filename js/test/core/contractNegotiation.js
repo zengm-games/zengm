@@ -14,7 +14,8 @@ define(["db", "core/contractNegotiation", "core/league"], function (db, contract
             });
         });
         after(function (done) {
-            league.remove(g.lid, done);
+            // WHY IS THIS DELAY NEEDED??
+            setTimeout(function () { league.remove(g.lid, done); }, 1000);
         });
         afterEach(function (done) {
             // Set to a trade with team 1 and no players;

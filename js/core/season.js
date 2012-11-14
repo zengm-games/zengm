@@ -384,7 +384,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
 
         phaseText = g.season + " resign players";
 
-        transaction = g.dbl.transaction(["negotiations", "players"], "readwrite");
+        transaction = g.dbl.transaction(["gameAttributes", "negotiations", "players"], "readwrite");
         playerStore = transaction.objectStore("players");
 
         // Resign players or they become free agents

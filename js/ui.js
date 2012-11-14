@@ -154,7 +154,7 @@ define(["db", "util/lock"], function (db, lock) {
     /*Get current options based on game state and push rendered play button
     to client.
     */
-    function updatePlayMenu() {
+    function updatePlayMenu(cb) {
         var allOptions, button, i, ids, j, keys, playButtonElement, someOptions;
 
         allOptions = [{id: "stop", url: 'javascript:api.play("stop");', label: "Stop", normal_link: false},
@@ -231,6 +231,10 @@ define(["db", "util/lock"], function (db, lock) {
                 playButtonElement = document.getElementById("playButton");
                 if (playButtonElement) {
                     playButtonElement.innerHTML = button;
+                }
+
+                if (cb !== undefined) {
+                    cb();
                 }
             });
         });

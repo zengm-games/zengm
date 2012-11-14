@@ -32,6 +32,7 @@ import/export games
 make sure all indexes are actually used. otherwise they're just making it slower for nothing
 put on play.basketball-gm.com, with splash page on basketball-gm.com
 http://davidwalsh.name/page-visibility for page reloads?
+is season.newPhaseCb calling cb twice?
 
 ---
 

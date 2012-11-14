@@ -68,9 +68,7 @@ define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui
 
                     transaction.objectStore("negotiations").add({pid: pid, teamAmount: playerAmount, teamYears: playerYears, playerAmount: playerAmount, playerYears: playerYears, numOffersMade: 0, maxOffers: maxOffers, resigning: resigning}).onsuccess = function (event) {
                         ui.updateStatus("Contract negotiation in progress...");
-                        ui.updatePlayMenu();
-
-                        cb();
+                        ui.updatePlayMenu(cb);
                     };
                 };
             };
@@ -181,8 +179,7 @@ define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui
 
         g.dbl.transaction("negotiations", "readwrite").objectStore("negotiations").clear().onsuccess = function (event) {
             ui.updateStatus("Idle");
-            ui.updatePlayMenu();
-            cb();
+            ui.updatePlayMenu(cb);
         };
     }
 

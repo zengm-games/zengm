@@ -5,13 +5,14 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
     function newPhaseCb(phase, phaseText, cb, reload) {
         db.setGameAttributes({phase: phase, lastDbChange: Date.now()}, function () {
             ui.updatePhase(phaseText);
-            ui.updatePlayMenu();
-            if (cb !== undefined) {
-                cb();
-            }
-            if (reload !== undefined && reload) {
-                Davis.location.replace(new Davis.Request(location.pathname, {cb: cb}));
-            }
+            ui.updatePlayMenu(function () {
+                if (cb !== undefined) {
+                    cb();
+                }
+                if (reload !== undefined && reload) {
+                    Davis.location.replace(new Davis.Request(location.pathname, {cb: cb}));
+                }
+            });
         });
     }
 

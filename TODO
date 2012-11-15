@@ -4,6 +4,10 @@ main todo (before public beta)
 GET TESTS WORKING AGAIN IN FIREFOX AND CHROME
   current status: modules work individually, but not together. is this fixed:
     tests fail in Firefox, seemingly due to the async db access in lock.js. Remove the async part of util.lock.gamesInProgress and everything works. I think this happens because ui.updatePlayMenu is calling util.lock.gamesInProgress after the next test starts. So make it use a callback.. will that slow anything down or something?
+  I think this is because of leftover global variables. If there is an old entry in g, then the initial setGameAttributes call doesn't save them to the database, and thus when the lock file looks for the database entry it finds nothing. Fixing this will probably also fix the random transient bugs I observed in the past when creating a new league. Options:
+    Reset g when a league is created/loaded (Quick fix, but possibly not desirable, as it means reading in the data files for names every time.)
+    Have a different variable for transient globals, i.e. globals that only pertain to a specific league, and reset when appropriate.
+    Don't worry about redundant DB updating and just update everything every time - THIS IS PROBABLY THE SAFEST, since we can't really rely on g anyway. Maybe this points to a bigger picture... do we really need game attributes to be persistently stored in g? Shouldn't they all be loaded from the DB every single time?
 hitting the phase twice shouldn't be possible. but if i, for instance, hit "until preseason" twice quickly, i skip a year
   maybe have something like lock.phaseChangeInProgress? but some timeout would be needed to reset
 revamp lock?

@@ -72,13 +72,7 @@ console.log(event);
             playerStore.createIndex("tid", "tid", {unique: false});
             playerStore.createIndex("draftYear", "draftYear", {unique: false});
             playerStore.createIndex("retiredYear", "retiredYear", {unique: false});
-            playerStore.createIndex("ratings.season", "ratings.season", {unique: false});
             playerStore.createIndex("statsTids", "statsTids", {unique: false, multiEntry: true});
-//                playerStore.createIndex("stats.season", "stats.season", {unique: false, multiEntry: true});
-//                playerStore.createIndex("stats.playoffs", "stats.playoffs", {unique: false, multiEntry: true});
-            teamStore.createIndex("cid", "cid", {unique: false});
-            teamStore.createIndex("did", "did", {unique: false});
-//                teamStore.createIndex("stats.playoffs", "stats.playoffs", {unique: false});
 //                gameStore.createIndex("tid", "tid", {unique: false}); // Not used because it's useless without oppTid checking too
             gameStore.createIndex("season", "season", {unique: false});
             releasedPlayersStore.createIndex("tid", "tid", {unique: false});

@@ -52,6 +52,7 @@ In firefox, I can add this to the new league form:
    onclick="this.disabled=true; this.innerHTML='Generating league...'; this.form.submit();"
   but that doesn't seem to play nice with davis.js
     https://github.com/olivernn/davis.js/issues/63
+  full page reload should still work if i set up webpy to allow POST
 trading is glitchy in chrome
 
 

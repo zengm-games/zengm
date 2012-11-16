@@ -41,6 +41,9 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         // Make sure league template FOR THE CURRENT LEAGUE is showing
         leagueMenu = document.getElementById("league_menu");
         if (leagueMenu === null || parseInt(leagueMenu.dataset.lid, 10) !== g.lid) {
+            // Clear old game attributes from g, to make sure the new ones are saved to the db in db.setGameAttributes
+            helpers.resetG();
+
             // Connect to league database
             db.connectLeague(g.lid, function () {
                 db.loadGameAttributes(function () {

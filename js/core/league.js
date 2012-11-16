@@ -2,7 +2,7 @@
  * @name core.league
  * @namespace Creating and removing leagues.
  */
-define(["db", "ui", "core/player", "core/season", "util/random"], function (db, ui, player, season, random) {
+define(["db", "ui", "core/player", "core/season", "util/helpers", "util/random"], function (db, ui, player, season, helpers, random) {
     "use strict";
 
     /**
@@ -27,10 +27,13 @@ define(["db", "ui", "core/player", "core/season", "util/random"], function (db, 
 
                 // Create new league database
                 db.connectLeague(g.lid, function () {
-                    var gameAttributes, startingSeason;
+                    var gameAttributes, key, startingSeason;
 
                     startingSeason = 2012;
                     gameAttributes = {userTid: tid, season: startingSeason, startingSeason: startingSeason, phase: 0, gamesInProgress: false, stopGames: false, lastDbChange: 0};
+
+                    // Clear old game attributes from g, to make sure the new ones are saved to the db in db.setGameAttributes
+                    helpers.resetG();
 
                     db.setGameAttributes(gameAttributes, function () {
                         var afterPlayerCreation, agingYears, baseRatings, contract, done, draftYear, goodNeutralBad, i, n, p, playerStore, pots, profile, profiles, randomizeExpiration, t, teamStore, transaction;

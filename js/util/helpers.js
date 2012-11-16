@@ -195,6 +195,23 @@ define([], function () {
         }
     }
 
+    /**
+     * Delete all the things from the global variable g that are not stored in league databases.
+     *
+     * This is used to clear out values from other leagues, to ensure that the appropriate values are updated in the database when calling db.setGameAttributes.
+     * 
+     * @memberOf util.helpers
+     */
+    function resetG() {
+        var key;
+
+        for (key in g) {
+            if (g.hasOwnProperty(key) && g.notInDb.indexOf(key) < 0) {
+                delete g[key];
+            }
+        }
+    }
+
     return {
         validateAbbrev: validateAbbrev,
         getAbbrev: getAbbrev,
@@ -203,6 +220,7 @@ define([], function () {
         getSeasons: getSeasons,
         getTeams: getTeams,
         deepCopy: deepCopy,
-        error: error
+        error: error,
+        resetG: resetG
     };
 });

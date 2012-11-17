@@ -166,14 +166,15 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
                             }
                         }
 
-                        cashOwed = 1000 * ((1 + p.contractExp - g.season) * p.contractAmount - (1 - numGamesRemaining / 82) * p.contractAmount);
+                        cashOwed = ((1 + p.contractExp - g.season) * p.contractAmount - (1 - numGamesRemaining / 82) * p.contractAmount);  // [thousands of dollars]
 
                         transaction.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
                             var cash, cursor, t;
 
                             cursor = event.target.result;
                             t = cursor.value;
-                            cash = _.last(t.seasons).cash;
+                            cash = _.last(t.seasons).cash;  // [thousands of dollars]
+
                             if (cashOwed < cash) {
                                 // Pay the cash
                                 _.last(t.seasons).cash -= cashOwed;

@@ -3,6 +3,7 @@ main todo (before public beta)
 
 hitting the phase twice shouldn't be possible. but if i, for instance, hit "until preseason" twice quickly, i skip a year
   maybe have something like lock.phaseChangeInProgress? but some timeout would be needed to reset
+  quick fix: disable play menu on click, reenable on new phase?
 revamp lock?
   make it all async, like
   lock.canStartGames(function (canStartGames) {
@@ -33,6 +34,7 @@ put on play.basketball-gm.com, with splash page on basketball-gm.com
 http://davidwalsh.name/page-visibility for page reloads?
 is season.newPhaseCb calling cb twice?
 bootstrap 2.2?
+free agent balance.. maybe increase salary cap?
 
 ---
 
@@ -54,7 +56,8 @@ In firefox, I can add this to the new league form:
     https://github.com/olivernn/davis.js/issues/63
   full page reload should still work if i set up webpy to allow POST
 trading is glitchy in chrome
-
+error during draft?
+after submitting a contract offer, it resets to 1 year for your proposal
 
 ---
 

@@ -33,19 +33,22 @@ change soon.
 
 ## Installing and Running
 
-Basketball GM will currently ONLY work in Mozilla Firefox (any recent version)
-or Google Chrome (version 23 or higher) due to their support for IndexedDB. I
-recommend you use Firefox, though, because the game currently runs much slower
-in Chrome and it seems more glitchy in Chrome.
+Basketball GM requires a web browser with IndexedDB support. Mozilla Firefox
+(any recent version) works best and is most thoroughly tested. Google Chrome
+(version 23 or higher) seems to generally work, but it's not as well tested
+as Firefox. Internet Explorer 10 should theoretically work, but I haven't
+tried it. (TLDR: Use Firefox)
 
 In addition to a supported browser, you need some way of running a web server to
 display the content. The easiest way is using the `runserver.py` file included
-here. If you install Python and web.py (as simple as `sudo apt-get install
-python-webpy` on Ubuntu), then you can run:
+here. First, install Python and web.py (as simple as `sudo apt-get install
+python-webpy` on Ubuntu). Then, from the command line, run:
 
     python runserver.py
 
-Then, point your browser to http://0.0.0.0:8080/
+Finally, point your browser to http://0.0.0.0:8080/
+
+If that URL doesn't work, try http://127.0.0.1:8080/
 
 ## Debugging and Problem Solving
 

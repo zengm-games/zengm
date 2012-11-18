@@ -1647,8 +1647,7 @@ console.log(message);
                     // Make an offer to the player;
                     teamAmountNew = parseInt(req.params.teamAmount * 1000, 10);
                     teamYearsNew = parseInt(req.params.teamYears, 10);
-                    contractNegotiation.offer(pid, teamAmountNew, teamYearsNew);
-                    cbDisplayNegotiation();
+                    contractNegotiation.offer(pid, teamAmountNew, teamYearsNew, cbDisplayNegotiation);
                 }
             } else {
                 cbDisplayNegotiation();

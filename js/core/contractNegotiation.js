@@ -76,30 +76,53 @@ define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui
     }
 
     /**
+     * Restrict the input to between 500 and 20000, the valid amount of annual thousands of dollars for a contract.
+     * 
+     * @memberOf core.contractNegotiation
+     * @param {number} years Annual salary, in thousands of dollars, to be validated.
+     * @return {[type]} An integer between 500 and 20000.
+     */
+    function validAmount(amount) {
+        if (amount < 500) {
+            amount = 500;
+        } else if (amount > 20000) {
+            amount = 20000;
+        }
+        return Math.round(amount);
+    }
+
+    /**
+     * Restrict the input to between 1 and 5, the valid number of years for a contract.
+     * 
+     * @memberOf core.contractNegotiation
+     * @param {number} years Number of years, to be validated.
+     * @return {[type]} An integer between 1 and 5.
+     */
+    function validYears(years) {
+        if (years < 1) {
+            years = 1;
+        } else if (years > 5) {
+            years = 5;
+        }
+        return Math.round(years);
+    }
+
+    /**
      * Make an offer to a player.
      * 
      * @memberOf core.contractNegotiation
      * @param {number} pid An integer that must correspond with the player ID of a player in an ongoing negotiation.
      * @param {number} teamAmount Teams's offer amount in thousands of dollars per year (between 500 and 20000).
      * @param {number} teamYears Team's offer length in years (between 1 and 5).
+     * @param {function()=} cb Optional callback.
      */
-    function offer(pid, teamAmount, teamYears) {
+    function offer(pid, teamAmount, teamYears, cb) {
         var i, negotiation, negotiations;
 
         console.log("User made contract offer for " + teamAmount + " over " + teamYears + " years to " + pid);
 
-        if (teamAmount > 20000) {
-            teamAmount = 20000;
-        }
-        if (teamYears > 5) {
-            teamYears = 5;
-        }
-        if (teamAmount < 500) {
-            teamAmount = 500;
-        }
-        if (teamYears < 1) {
-            teamYears = 1;
-        }
+        teamAmount = validAmount(teamAmount);
+        teamYears = validYears(teamYears);
 
         g.dbl.transaction("negotiations", "readwrite").objectStore("negotiations").openCursor(pid).onsuccess = function (event) {
             var cursor, negotiation;
@@ -128,14 +151,17 @@ define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui
                 negotiation.playerAmount = 1.05 * negotiation.playerAmount;
             }
 
-            if (negotiation.playerAmount > 20000) {
-                negotiation.playerAmount = 20000;
-            }
-            if (negotiation.playerYears > 5) {
-                negotiation.playerYears = 5;
-            }
+            negotiation.playerAmount = validAmount(negotiation.playerAmount);
+            negotiation.playerYears = validYears(negotiation.playerYears);
+
+            negotiation.teamAmount = teamAmount;
+            negotiation.teamYears = teamYears;
 
             cursor.update(negotiation);
+
+            if (cb !== undefined) {
+                cb();
+            }
         };
     }
 

@@ -57,7 +57,6 @@ In firefox, I can add this to the new league form:
   full page reload should still work if i set up webpy to allow POST
 trading is glitchy in chrome
 error during draft?
-after submitting a contract offer, it resets to 1 year for your proposal
 
 ---
 
@@ -160,6 +159,9 @@ show an option to upload a data file for rosters
     if necessary, scale everything down a bit to make it comparable to normal players
     free agents are way overrated. is this roster file legit?
 should all this stuff be always in g, or read dynamically from the database?
+player finder
+  search by stats or ratings
+  trade for button, or sign button if free agent
 
 ---
 

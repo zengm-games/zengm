@@ -164,7 +164,7 @@ console.log(event);
     function getPlayer(pa, season, tid, attributes, stats, ratings, options) {
         var i, j, k, key, ignoredKeys, player, pcs, pr, ps, teams, tidTemp;
 
-        options = typeof options !== "undefined" ? options : {};
+        options = options !== undefined ? options : {};
 
         if (stats.length === 0) {
             options.showNoStats = true;
@@ -397,7 +397,7 @@ console.log(event);
     function getPlayers(playersAll, season, tid, attributes, stats, ratings, options) {
         var i, player, players;
 
-        options = typeof options !== "undefined" ? options : {};
+        options = options !== undefined ? options : {};
 
         players = [];
         for (i = 0; i < playersAll.length; i++) {
@@ -504,7 +504,7 @@ console.log(event);
         function filterStats(team, ts, stats) {
             var j;
 
-            if (typeof ts !== "undefined" && ts.gp > 0) {
+            if (ts !== undefined && ts.gp > 0) {
                 for (j = 0; j < stats.length; j++) {
                     if (stats[j] === "gp") {
                         team.gp = ts.gp;
@@ -545,7 +545,7 @@ console.log(event);
             return team;
         }
 
-        if (typeof ts !== "undefined" && ts.length >= 0) {
+        if (ts !== undefined && ts.length >= 0) {
             team.stats = [];
             // Multiple seasons
             for (i = 0; i < ts.length; i++) {
@@ -717,7 +717,7 @@ console.log(event);
             rid: 1,
             draftOrder: draftOrder
         }).onsuccess = function (event) {
-            if (typeof cb !== "undefined") {
+            if (cb !== undefined) {
                 cb();
             }
         };
@@ -736,7 +736,6 @@ console.log(event);
         gameAttributesStore = getObjectStore(ot, "gameAttributes", "gameAttributes");
 
         gameAttributesStore.get(key).onsuccess = function (event) {
-if (event.target.result === undefined) { console.log(key); console.log(gameAttributesStore); }
             g[key] = event.target.result.value;
 
             if (cb !== undefined) {

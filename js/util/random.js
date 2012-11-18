@@ -2,7 +2,7 @@
  * @name util.random
  * @namespace Module to emulate some of Python's random library.
  */
-define([], function() {
+define([], function () {
     "use strict";
     /**
      * Choose a random integer from [a, b]
@@ -47,8 +47,8 @@ define([], function() {
      * @return {number} Random number from Gaussian distribution.
      */
     function gauss(mu, sigma) {
-        mu = typeof mu !== "undefined" ? mu : 0;
-        sigma = typeof sigma !== "undefined" ? sigma : 1;
+        mu = mu !== undefined ? mu : 0;
+        sigma = sigma !== undefined ? sigma : 1;
         return ((Math.random() * 2 - 1) + (Math.random() * 2 - 1) + (Math.random() * 2 - 1)) * sigma + mu;
     }
 

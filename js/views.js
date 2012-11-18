@@ -389,7 +389,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                                     // League leaders
                                     vars.leagueLeaders = {};
                                     for (i = 0; i < stats.length; i++) {
-                                        players.sort(function (a, b) {  return b[stats[i]] - a[stats[i]]; });
+                                        players.sort(function (a, b) { return b[stats[i]] - a[stats[i]]; });
                                         vars.leagueLeaders[stats[i]] = {
                                             pid: players[0].pid,
                                             name: players[0].name,
@@ -402,7 +402,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                                     userPlayers = _.filter(players, function (p) { return p.tid === g.userTid; });
                                     vars.teamLeaders = {};
                                     for (i = 0; i < stats.length; i++) {
-                                        userPlayers.sort(function (a, b) {  return b[stats[i]] - a[stats[i]]; });
+                                        userPlayers.sort(function (a, b) { return b[stats[i]] - a[stats[i]]; });
                                         vars.teamLeaders[stats[i]] = {
                                             pid: userPlayers[0].pid,
                                             name: userPlayers[0].name,
@@ -849,7 +849,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                 var abbrev, data, extraText, history, i, userTeam, userTeamSeason;
 
                 userTeam = event.target.result;
-                
+
                 abbrev = userTeam.abbrev;
 
                 history = [];
@@ -1338,7 +1338,7 @@ console.log(message);
                 players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings);
 
                 for (i = 0; i < categories.length; i++) {
-                    players.sort(function (a, b) {  return b[stats[i]] - a[stats[i]]; });
+                    players.sort(function (a, b) { return b[stats[i]] - a[stats[i]]; });
                     for (j = 0; j < 10; j++) {
                         categories[i].data[j] = helpers.deepCopy(players[j]);
                         categories[i].data[j].i = j + 1;

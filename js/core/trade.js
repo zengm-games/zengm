@@ -19,7 +19,7 @@ define(["db", "util/helpers"], function (db, helpers) {
         var cbStartTrade, otherPids;
 
         // Convert pid to tid;
-        if (typeof pid === "undefined" || pid === null) {
+        if (pid === undefined || pid === null) {
             pid = null;
             otherPids = [];
         } else {
@@ -41,7 +41,7 @@ define(["db", "util/helpers"], function (db, helpers) {
         };
 
         // Make sure tid is set and corresponds to pid, if (set;
-        if (typeof tid === "undefined" || typeof tid === "null" || otherPids.length > 0) {
+        if (tid === undefined || tid === null || otherPids.length > 0) {
             g.dbl.transaction("players").objectStore("players").get(pid).onsuccess = function (event) {
                 var p;
 

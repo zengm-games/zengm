@@ -45,7 +45,7 @@ define(["db", "util/random"], function (db, random) {
     function contract(ratings, randomizeExp) {
         var amount, expiration, maxAmount, minAmount, potentialDifference, years;
 
-        randomizeExp = typeof randomizeExp !== "undefined" ? randomizeExp : false;
+        randomizeExp = randomizeExp !== undefined ? randomizeExp : false;
 
         // Limits on yearly contract amount, in $1000's
         minAmount = 500;
@@ -105,8 +105,8 @@ define(["db", "util/random"], function (db, random) {
     function develop(p, years, generate) {
         var age, i, increase, j, key, ovrTemp, plusMinus, pot, r, ratingKeys;
 
-        years = typeof years !== "undefined" ? years : 1;
-        generate = typeof generate !== "undefined" ? generate : false;
+        years = years !== undefined ? years : 1;
+        generate = generate !== undefined ? generate : false;
 
         r = p.ratings.length - 1;
 
@@ -407,7 +407,7 @@ define(["db", "util/random"], function (db, random) {
     function generate(tid, age, profile, baseRating, pot, draftYear, newLeague) {
         var cont, maxHgt, minHgt, maxWeight, minWeight, nationality, p;
 
-        newLeague = typeof newLeague !== undefined ? newLeague : false;
+        newLeague = newLeague !== undefined ? newLeague : false;
 
         p = {}; // Will be saved to database
         p.tid = tid;
@@ -510,8 +510,8 @@ define(["db", "util/random"], function (db, random) {
     function addStatsRow(p, playoffs, season) {
         var key, newStats;
 
-        playoffs = typeof playoffs !== "undefined" ? playoffs : false;
-        season = typeof season !== "undefined" ? season : g.season;
+        playoffs = playoffs !== undefined ? playoffs : false;
+        season = season !== undefined ? season : g.season;
 
         p.stats.push({season: season, tid: p.tid, playoffs: playoffs, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0});
         p.statsTids.push(p.tid);

@@ -98,7 +98,6 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
 
     /* Callback is used when this is called to select a player for the user's team.*/
     function selectPlayer(pick, pid, playerStore, cb) {
-        cb = typeof cb !== "undefined" ? cb : function (pid) {};
 /*
         // Validate that tid should be picking now
         r = g.dbex('SELECT tid, round, pick FROM draftResults WHERE season = :season AND pid = 0 ORDER BY round, pick ASC LIMIT 1', season=g.season);
@@ -135,7 +134,9 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
 
             cursor.update(player);
 
-            cb(pid);
+            if (cb !== undefined) {
+                cb(pid);
+            }
         };
     }
 

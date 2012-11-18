@@ -1,7 +1,7 @@
 Handlebars.registerHelper("round", function (value, precision) {
     "use strict";
 
-    precision = typeof precision !== "undefined" ? parseInt(precision, 10) : 0;
+    precision = precision !== undefined ? parseInt(precision, 10) : 0;
 
     return parseFloat(value).toFixed(precision);
 });

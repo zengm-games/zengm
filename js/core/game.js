@@ -330,8 +330,8 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/lock
     function _composite(minval, maxval, rating, components, inverse, rand) {
         var add, component, i, r, rcomp, rmax, sign, y;
 
-        inverse = typeof inverse !== "undefined" ? inverse : false;
-        rand = typeof rand !== "undefined" ? rand : true;
+        inverse = inverse !== undefined ? inverse : false;
+        rand = rand !== undefined ? rand : true;
 
         r = 0.0;
         rmax = 0.0;
@@ -472,7 +472,7 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/lock
     function play(numDays, start) {
         var cbNoGames, cbPlayGames, cbYetAnother, playoffsContinue;
 
-        start = typeof start !== "undefined" ? start : false;
+        start = start !== undefined ? start : false;
 
         // This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season or the end of the playoffs.
         cbNoGames = function () {

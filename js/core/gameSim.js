@@ -381,7 +381,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.rating_array = function (rating, t, power) {
         var array, i, p;
 
-        power = typeof power !== "undefined" ? power : null;
+        power = power !== undefined ? power : null;
 
         array = [0, 0, 0, 0, 0];
         for (i = 0; i < 5; i++) {
@@ -412,7 +412,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.pick_player = function (ratios, exempt) {
         var pick, rand;
 
-        exempt = typeof exempt !== "undefined" ? exempt : false;
+        exempt = exempt !== undefined ? exempt : false;
         if (exempt !== false) {
             ratios[exempt] = 0;
         }
@@ -438,7 +438,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * (default is 1).
      */
     GameSim.prototype.record_stat = function (t, p, s, amount) {
-        amount = typeof amount !== "undefined" ? amount : 1;
+        amount = amount !== undefined ? amount : 1;
         this.team[t].player[p].stat[s] = this.team[t].player[p].stat[s] + amount;
         if (s !== "gs" && s !== "court_time" && s !== "bench_time" && s !== "energy") {
             this.team[t].stat[s] = this.team[t].stat[s] + amount;

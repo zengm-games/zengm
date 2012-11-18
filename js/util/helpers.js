@@ -82,7 +82,7 @@ define([], function () {
         var season, seasons;
 
         selectedSeason = parseInt(selectedSeason, 10);
-        ignoredSeason = typeof ignoredSeason !== "undefined" ? parseInt(ignoredSeason, 10) : null;
+        ignoredSeason = ignoredSeason !== undefined ? parseInt(ignoredSeason, 10) : null;
 
         seasons = [];
         for (season = g.startingSeason; season <= g.season; season++) {
@@ -97,7 +97,7 @@ define([], function () {
     function getTeams(selectedTid, cb) {
         var i, teams;
 
-        selectedTid = typeof selectedTid !== "undefined" ? parseInt(selectedTid, 10) : -1;
+        selectedTid = selectedTid !== undefined ? parseInt(selectedTid, 10) : -1;
         teams = [
             {tid: 0, cid: 0, did: 2, region: "Atlanta", name: "Herons", abbrev: "ATL"},
             {tid: 1, cid: 0, did: 0, region: "Boston", name: "Clovers", abbrev: "BOS"},
@@ -138,7 +138,7 @@ define([], function () {
             teams[selectedTid].selected = true;
         }
 
-        if (typeof cb !== "undefined") {
+        if (cb !== undefined) {
             cb(teams);
         } else {
             return teams;
@@ -180,7 +180,7 @@ define([], function () {
 
         views = require("views");
 
-        if (typeof req !== "undefined") {
+        if (req !== undefined) {
             req.params.error = errorText;
         } else {
             req = {params: {error: errorText}, raw: {}};

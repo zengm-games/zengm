@@ -34,6 +34,7 @@ put on play.basketball-gm.com, with splash page on basketball-gm.com
 http://davidwalsh.name/page-visibility for page reloads?
 bootstrap 2.2?
 free agent balance.. maybe increase salary cap?
+git tag as beta
 
 ---
 
@@ -54,7 +55,7 @@ In firefox, I can add this to the new league form:
     https://github.com/olivernn/davis.js/issues/63
   full page reload should still work if i set up webpy to allow POST
 trading is glitchy in chrome
-error during draft?
+error during draft? - this might be fixed due to the double cb bugfix
 
 ---
 

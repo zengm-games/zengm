@@ -1,7 +1,7 @@
 requirejs(["api", "db", "views", "ui", "util/helpers"], function (api, db, views, ui, helpers) {
     "use strict";
 
-    if (typeof indexedDB === "undefined") {
+    if (indexedDB === undefined) {
         var data = {
             container: "content",
             template: "browserError",

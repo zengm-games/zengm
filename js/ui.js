@@ -69,7 +69,7 @@ define(["db", "util/lock"], function (db, lock) {
         leaguePage = result[2];
         highlightNav(leaguePage);
 
-        if (typeof cb !== "undefined") {
+        if (cb !== undefined) {
             cb();
         }
     }
@@ -78,7 +78,7 @@ define(["db", "util/lock"], function (db, lock) {
     function datatable(table, sort_col, data) {
         table.dataTable({
             aaData: data,
-            aaSorting: [[ sort_col, "desc" ]],
+            aaSorting: [[sort_col, "desc"]],
             bDeferRender: true,
             sPaginationType: "bootstrap",
             oLanguage: {
@@ -92,7 +92,7 @@ define(["db", "util/lock"], function (db, lock) {
     function datatableSinglePage(table, sort_col, data) {
         table.dataTable({
             aaData: data,
-            aaSorting: [[ sort_col, "desc" ]],
+            aaSorting: [[sort_col, "desc"]],
             bFilter: false,
             bInfo: false,
             bPaginate: false
@@ -120,7 +120,7 @@ define(["db", "util/lock"], function (db, lock) {
                 league_root_url = result[1];
                 league_page = result[2];
                 url = "/l/" + g.lid + "/" + league_page + "/" + select1.val() + "/" + select2.val();
-                if (typeof extraParam !== "undefined" && extraParam.length > 0) {
+                if (extraParam !== undefined && extraParam.length > 0) {
                     url += "/" + extraParam;
                 }
                 Davis.location.assign(new Davis.Request(url));
@@ -132,7 +132,7 @@ define(["db", "util/lock"], function (db, lock) {
                 league_root_url = result[1];
                 league_page = result[2];
                 url = "/l/" + g.lid + "/" + league_page + "/" + select1.val() + "/" + select2.val();
-                if (typeof extraParam !== "undefined" && extraParam.length > 0) {
+                if (extraParam !== undefined && extraParam.length > 0) {
                     url += "/" + extraParam;
                 }
                 Davis.location.assign(new Davis.Request(url));

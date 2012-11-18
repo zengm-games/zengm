@@ -32,7 +32,6 @@ import/export games
 make sure all indexes are actually used. otherwise they're just making it slower for nothing
 put on play.basketball-gm.com, with splash page on basketball-gm.com
 http://davidwalsh.name/page-visibility for page reloads?
-is season.newPhaseCb calling cb twice?
 bootstrap 2.2?
 free agent balance.. maybe increase salary cap?
 
@@ -47,7 +46,6 @@ game simulation stops when a link is clicked, but then restarts when another lin
 sometimes deleting leagues or resetting db fails, i think because some open connection is blocking it, but i don't know why
 db error when switching to resign players phase?
 when full UI is open in two tabs, a "stop" command from one tab doesn't do anything to the other tab?
-free agent error message "You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process." is only displayed transiently before the free agent list is reloaded?
 In firefox, I can add this to the new league form:
    onclick="this.disabled=true; this.innerHTML='Generating league...';"
   in chrome, it doesn't work. http://productforums.google.com/forum/#!topic/chrome/M7y2gZDvXAk says to change it to
@@ -60,7 +58,7 @@ error during draft?
 
 ---
 
-POLISH FEATURES (i.e. not required for public beta, probably.. but go through the list again to check)
+FUTURE FEATURES (i.e. not required for public beta, probably.. but go through the list again to check)
 
 jslint --plusplus --predef $ --predef Davis --predef requirejs --predef define --predef window --predef document --predef localStorage --predef IDBKeyRange --predef IDBTransaction --predef g --predef c js/core/draft.js
   http://stackoverflow.com/questions/7425147/jslint-error-somefunction-was-used-before-it-was-defined
@@ -162,6 +160,8 @@ should all this stuff be always in g, or read dynamically from the database?
 player finder
   search by stats or ratings
   trade for button, or sign button if free agent
+free agent error message "You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process." is only displayed transiently before the free agent list is reloaded?
+online "locker" that you can sync saved games to
 
 ---
 
@@ -171,11 +171,10 @@ handlebars templates -f js/templates.js
 
 TODO:
 only need handlebars.runtime.js
-merge game_attributes into league table of meta database
 
 ---
 
-g.dbl.transaction(["players"]).objectStore("players").get(476).onsuccess = function (event) { console.log(event.target.result); };
+g.dbl.transaction("players").objectStore("players").get(476).onsuccess = function (event) { console.log(event.target.result); };
 
 g.dbl.transaction("gameAttributes").objectStore("gameAttributes").getAll().onsuccess = function (event) { console.dir(event.target.result); };
 

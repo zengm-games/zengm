@@ -2,6 +2,16 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
     "use strict";
 
     // This should be called after the phase-specific stuff runs. It needs to be a separate function like this to play nice with async stuff.
+    /**
+     * Common tasks run after a new phrase is set.
+     *
+     *This updates the phase, executes a callback, and (if necessary) reloads the UI.
+     * 
+     * @param {number} phase Integer representing the new phase of the game (see other functions in this module).
+     * @param {string} phaseText Textual representation of the new phase, which will be displayed in the UI.
+     * @param {function()=} cb Optional callback run after the phase is set and the play menu is updated.
+     * @param {boolean=} reload Optional boolean (defaul false) which, if set to true, will reload the current page before (after? both?) calling the callback.
+     */
     function newPhaseCb(phase, phaseText, cb, reload) {
         db.setGameAttributes({phase: phase, lastDbChange: Date.now()}, function () {
             ui.updatePhase(phaseText);
@@ -10,7 +20,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                     cb();
                 }
                 if (reload !== undefined && reload) {
-                    Davis.location.replace(new Davis.Request(location.pathname, {cb: cb}));
+                    Davis.location.replace(new Davis.Request(location.pathname));
                 }
             });
         });

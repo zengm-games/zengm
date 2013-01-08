@@ -73,7 +73,7 @@ console.log(event);
             playerStore.createIndex("draftYear", "draftYear", {unique: false});
             playerStore.createIndex("retiredYear", "retiredYear", {unique: false});
             playerStore.createIndex("statsTids", "statsTids", {unique: false, multiEntry: true});
-//                gameStore.createIndex("tid", "tid", {unique: false}); // Not used because it's useless without oppTid checking too
+//            gameStore.createIndex("tid", "tid", {unique: false}); // Not used because it's useless without oppTid checking too
             gameStore.createIndex("season", "season", {unique: false});
             releasedPlayersStore.createIndex("tid", "tid", {unique: false});
             releasedPlayersStore.createIndex("contractExp", "contractExp", {unique: false});

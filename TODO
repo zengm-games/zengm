@@ -29,9 +29,7 @@ game simulation realism
   smalls should get less blocks
   home/away advantage
 import/export games
-make sure all indexes are actually used. otherwise they're just making it slower for nothing
 put on play.basketball-gm.com, with splash page on basketball-gm.com
-http://davidwalsh.name/page-visibility for page reloads?
 bootstrap 2.2?
 free agent balance.. maybe increase salary cap?
 git tag as beta
@@ -69,7 +67,6 @@ jslint --plusplus --predef $ --predef Davis --predef requirejs --predef define -
 contract negotiation
   test all the error conditions and make sure callbacks are appropriately called (unit tests?)
   add free agent to the end of roster
-  might be a good idea to make contractNegotiation.create accept ot as first parameter
 player stats
   how to handle aggregating stats for players who played for more than one team in a season? add them all up in ps in db.getPlayers
 player view
@@ -165,8 +162,6 @@ free agent error message "You cannot initiate a new negotiaion while game simula
 online "locker" that you can sync saved games to
 
 ---
-
-joins: http://blog.oharagroup.net/post/16394604653/a-performance-comparison-websql-vs-indexeddb        http://hacks.mozilla.org/2010/06/comparing-indexeddb-and-webdatabase/
 
 handlebars templates -f js/templates.js
 

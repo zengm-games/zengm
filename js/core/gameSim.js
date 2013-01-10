@@ -347,7 +347,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         var p, ratios;
 
         if (this.is_assist()) {
-            ratios = this.rating_array("assist_ratio", this.o, 2);
+            ratios = this.rating_array("assist_ratio", this.o);
             p = this.players_on_court[this.o][this.pick_player(ratios, shooter)];
             this.record_stat(this.o, p, "ast");
         }
@@ -378,18 +378,13 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
 
 
-    GameSim.prototype.rating_array = function (rating, t, power) {
+    GameSim.prototype.rating_array = function (rating, t) {
         var array, i, p;
-
-        power = power !== undefined ? power : null;
 
         array = [0, 0, 0, 0, 0];
         for (i = 0; i < 5; i++) {
             p = this.players_on_court[t][i];
             array[i] = this.team[t].player[p].composite_rating[rating];
-            if (power) {
-                array[i] = Math.pow(array[i], power);
-            }
         }
 
         return array;

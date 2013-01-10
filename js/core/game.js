@@ -327,40 +327,36 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/lock
         };
     };
 
-    function _composite(minval, maxval, rating, components, inverse, rand) {
+    function _composite(minval, maxval, rating, components, power, rand) {
         var add, component, i, r, rcomp, rmax, sign, y;
 
-        inverse = inverse !== undefined ? inverse : false;
+        power = power !== undefined ? power : 1;
         rand = rand !== undefined ? rand : true;
 
-        r = 0.0;
-        rmax = 0.0;
-        if (inverse) {
-            sign = -1;
-            add = -100;
-        } else {
-            sign = 1;
-            add = 0;
-        }
+        r = 0;
+        rmax = 0;
         for (i = 0; i < components.length; i++) {
             component = components[i];
             // Sigmoidal transformation
-            y = (rating[component] - 70) / 10;
-            rcomp = y / Math.sqrt(1 + Math.pow(y, 2));
-            rcomp = (rcomp + 1) * 50;
-    //        rcomp = rating[component]
+            //y = (rating[component] - 70) / 10;
+            //rcomp = y / Math.sqrt(1 + Math.pow(y, 2));
+            //rcomp = (rcomp + 1) * 50;
+            rcomp = rating[component];
 
-            r = r + sign * (add + rcomp);
-            rmax = rmax + sign * (add + 100);
+            r = r + rcomp;
         }
-        // Scale from minval to maxval
+
+        // Scale from 0 to 1
         r = r / (100.0 * components.length);  // 0-1
-    //    r = r / (rmax * components.length)  // 0-1
-        r = r * (maxval - minval) + minval;  // Min-Max
+        r = Math.pow(r, power);
+
         // Randomize: Mulitply by a random number from N(1,0.1)
         if (rand) {
             r = random.gauss(1, 0.1) * r;
         }
+
+        // Scale from minval to maxval
+        r = r * (maxval - minval) + minval;
         return r;
     }
 
@@ -417,14 +413,14 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/lock
                         p.composite_rating.pace = _composite(90, 140, rating, ['spd', 'jmp', 'dnk', 'tp', 'stl', 'drb', 'pss'], undefined, false);
                         p.composite_rating.shot_ratio = _composite(0, 0.5, rating, ['ins', 'dnk', 'fg', 'tp']);
                         p.composite_rating.assist_ratio = _composite(0, 0.5, rating, ['drb', 'pss', 'spd']);
-                        p.composite_rating.turnover_ratio = _composite(0, 0.5, rating, ['drb', 'pss', 'spd'], true);
+                        p.composite_rating.turnover_ratio = _composite(0, 0.5, rating, ['drb', 'pss', 'spd'], -1);
                         p.composite_rating.field_goal_percentage = _composite(0.38, 0.68, rating, ['hgt', 'jmp', 'ins', 'dnk', 'fg', 'tp']);
                         p.composite_rating.free_throw_percentage = _composite(0.65, 0.9, rating, ['ft']);
                         p.composite_rating.three_pointer_percentage = _composite(0, 0.45, rating, ['tp']);
                         p.composite_rating.rebound_ratio = _composite(0, 0.5, rating, ['hgt', 'stre', 'jmp', 'reb']);
                         p.composite_rating.steal_ratio = _composite(0, 0.5, rating, ['spd', 'stl']);
                         p.composite_rating.block_ratio = _composite(0, 0.5, rating, ['hgt', 'jmp', 'blk']);
-                        p.composite_rating.foul_ratio = _composite(0, 0.5, rating, ['spd'], true);
+                        p.composite_rating.foul_ratio = _composite(0, 0.5, rating, ['spd'], -1);
                         p.composite_rating.defense = _composite(0, 0.5, rating, ['stre', 'spd']);
 
                         p.stat = {gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, court_time: 0, bench_time: 0, energy: 1};

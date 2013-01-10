@@ -17,7 +17,6 @@ free agents
     is retirement working for the first season, at all?
   on new game, have enough free agents so the pool isn't totally depleted
 game simulation realism
-  gameSim.rating_array power should be moved to game.js instead
   height should matter a lot more
     e.g.
       bigs should get more boards

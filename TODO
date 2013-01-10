@@ -17,6 +17,7 @@ free agents
     is retirement working for the first season, at all?
   on new game, have enough free agents so the pool isn't totally depleted
 game simulation realism
+  separate composite ratings for shooting in different places (jumpshot, inside, fast break, three, etc)
   height should matter a lot more
     e.g.
       bigs should get more boards
@@ -268,6 +269,7 @@ FUTURE
 GAMESIM
 -------
 take all ratings into account
+  energy, etc
 blocks, assists (maybe other things) should not be so evenly distributed
 home and away games
 synergy

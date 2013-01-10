@@ -327,11 +327,29 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/lock
         };
     };
 
-    function _composite(minval, maxval, rating, components, power, rand) {
+    /**
+     * Build a composite rating.
+     *
+     * Composite ratings are combinations of player ratings meant to represent one facet of the game, like the ability to make a jump shot. All composite ratings are scaled from 0 to 1.
+     * 
+     * @memberOf core.game
+     * @param {Object.<string, number>} ratings Player's ratings object.
+     * @param {Array.<string>} components List of player ratings to include in the composite ratings
+     * @param {Array.<number>=} weights Optional array of weights used in the linear combination of components. If undefined, then all weights are assumed to be 1. If defined, this must be the same size as components.
+     * @param {number=} power Power that the composite rating is raised to after the components are linearly combined by  the weights and scaled from 0 to 1. This can be used to introduce nonlinearities, like making a certain stat more uniform (power < 1) or more unevenly distributed (power > 1) or making a composite rating an inverse (power = -1). Default value is 1.
+     * @return {number} Composite rating, a number between 0 and 1.
+     */
+    function _composite(rating, components, weights, power) {
         var add, component, i, r, rcomp, rmax, sign, y;
 
         power = power !== undefined ? power : 1;
-        rand = rand !== undefined ? rand : true;
+        if (weights === undefined) {
+            // Default: array of ones with same size as components
+            weights = [];
+            for (i = 0; i < components.length; i++) {
+                weights.push(1);
+            }
+        }
 
         r = 0;
         rmax = 0;
@@ -341,22 +359,14 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/lock
             //y = (rating[component] - 70) / 10;
             //rcomp = y / Math.sqrt(1 + Math.pow(y, 2));
             //rcomp = (rcomp + 1) * 50;
-            rcomp = rating[component];
+            rcomp = weights[i] * rating[component];
 
             r = r + rcomp;
         }
-
-        // Scale from 0 to 1
-        r = r / (100.0 * components.length);  // 0-1
+        
+        r = r / (100.0 * components.length);  // Scale from 0 to 1
         r = Math.pow(r, power);
 
-        // Randomize: Mulitply by a random number from N(1,0.1)
-        if (rand) {
-            r = random.gauss(1, 0.1) * r;
-        }
-
-        // Scale from minval to maxval
-        r = r * (maxval - minval) + minval;
         return r;
     }
 
@@ -399,7 +409,7 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/lock
 
                     for (i = 0; i < players.length; i++) {
                         player = players[i];
-                        p = {id: player.pid, name: player.name, pos: player.pos, ovr: 0, stat: {}, composite_rating: {}};
+                        p = {id: player.pid, name: player.name, pos: player.pos, ovr: 0, stat: {}, compositeRating: {}};
 
                         for (j = 0; j < player.ratings.length; j++) {
                             if (player.ratings[j].season === g.season) {
@@ -410,18 +420,20 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/lock
 
                         p.ovr = rating.ovr;
 
-                        p.composite_rating.pace = _composite(90, 140, rating, ['spd', 'jmp', 'dnk', 'tp', 'stl', 'drb', 'pss'], undefined, false);
-                        p.composite_rating.shot_ratio = _composite(0, 0.5, rating, ['ins', 'dnk', 'fg', 'tp']);
-                        p.composite_rating.assist_ratio = _composite(0, 0.5, rating, ['drb', 'pss', 'spd']);
-                        p.composite_rating.turnover_ratio = _composite(0, 0.5, rating, ['drb', 'pss', 'spd'], -1);
-                        p.composite_rating.field_goal_percentage = _composite(0.38, 0.68, rating, ['hgt', 'jmp', 'ins', 'dnk', 'fg', 'tp']);
-                        p.composite_rating.free_throw_percentage = _composite(0.65, 0.9, rating, ['ft']);
-                        p.composite_rating.three_pointer_percentage = _composite(0, 0.45, rating, ['tp']);
-                        p.composite_rating.rebound_ratio = _composite(0, 0.5, rating, ['hgt', 'stre', 'jmp', 'reb']);
-                        p.composite_rating.steal_ratio = _composite(0, 0.5, rating, ['spd', 'stl']);
-                        p.composite_rating.block_ratio = _composite(0, 0.5, rating, ['hgt', 'jmp', 'blk']);
-                        p.composite_rating.foul_ratio = _composite(0, 0.5, rating, ['spd'], -1);
-                        p.composite_rating.defense = _composite(0, 0.5, rating, ['stre', 'spd']);
+                        p.compositeRating.pace = _composite(rating, ['spd', 'jmp', 'dnk', 'tp', 'stl', 'drb', 'pss']);
+                        p.compositeRating.usage = _composite(rating, ['ins', 'dnk', 'fg', 'tp']);
+                        p.compositeRating.assists = _composite(rating, ['drb', 'pss', 'spd']);
+                        p.compositeRating.turnovers = _composite(rating, ['drb', 'pss', 'spd'], undefined, -1);
+                        p.compositeRating.shootingPost = _composite(rating, ['hgt', 'stre', 'spd', 'ins']);  // Post scoring
+                        p.compositeRating.shootingDunk = _composite(rating, ['hgt', 'spd', 'jmp', 'dnk']);  // Dunk or layup, fast break or half court
+                        p.compositeRating.shootingTwo = _composite(rating, ['hgt', 'fg']);  // Two point jump shot
+                        p.compositeRating.shootingThree = _composite(rating, ['hgt', 'tp']);  // Three point jump shot
+                        p.compositeRating.shootingFT = _composite(rating, ['ft']);  // Free throw
+                        p.compositeRating.rebounds = _composite(rating, ['hgt', 'stre', 'jmp', 'reb']);
+                        p.compositeRating.steals = _composite(rating, ['spd', 'stl']);
+                        p.compositeRating.blocks = _composite(rating, ['hgt', 'jmp', 'blk']);
+                        p.compositeRating.fouls = _composite(rating, ['spd'], undefined, -1);
+                        p.compositeRating.defense = _composite(rating, ['stre', 'spd']);
 
                         p.stat = {gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, court_time: 0, bench_time: 0, energy: 1};
 
@@ -437,12 +449,13 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/lock
                     // Would be better if these were scaled by average min played and end
                     t.pace = 0;
                     for (i = 0; i < numPlayers; i++) {
-                        t.pace += t.player[i].composite_rating.pace;
+                        t.pace += t.player[i].compositeRating.pace;
                     }
                     t.pace /= numPlayers;
+                    t.pace = t.pace * 50 + 90;  // Scale between 90 and 140
                     t.defense = 0;
                     for (i = 0; i < numPlayers; i++) {
-                        t.defense += t.player[i].composite_rating.defense;
+                        t.defense += t.player[i].compositeRating.defense;
                     }
                     t.defense /= numPlayers;
                     t.defense /= 4;  // This gives the percentage pts subtracted from the other team's normal FG%

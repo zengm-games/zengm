@@ -25,7 +25,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      *         dict contains another four elements: id (player's unique ID
      *         number), ovr (overall rating, as stored in the DB),
      *         stat (a dict for storing player stats, similar to the one for
-     *         team stats), and composite_ratings (a dict containing various
+     *         team stats), and compositeRatings (an object containing various
      *         ratings used in the game simulation). In other words...
      *             {
      *                 "id": 0,
@@ -37,7 +37,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      *                         "id": 0,
      *                         "ovr": 0,
      *                         "stat": {},
-     *                         "composite_rating": {}
+     *                         "compositeRating": {}
      *                     },
      *                     ...
      *                 ]
@@ -66,7 +66,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      *     A list of dicts, one for each team, similar to the inputs to
      *     __init__, but with both the team and player "stat" dicts filled in
      *     and the extraneous data (defense, pace, ovr,
-     *     composite_rating) removed. In other words...
+     *     compositeRating) removed. In other words...
      *         {
      *             "gid": 0,
      *             "overtimes": 0,
@@ -107,7 +107,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             delete this.team[t].pace;
             for (p = 0; p < this.team[t].player.length; p++) {
                 delete this.team[t].player[p].ovr;
-                delete this.team[t].player[p].composite_rating;
+                delete this.team[t].player[p].compositeRating;
             }
         }
 
@@ -131,7 +131,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
                 }
                 if (!this.is_turnover()) {
                     // Shot if there is no turnover
-                    ratios = this.rating_array("shot_ratio", this.o);
+                    ratios = this.rating_array("usage", this.o);
                     shooter = this.pick_player(ratios);
                     if (!this.is_block()) {
                         if (!this.is_free_throw(shooter)) {
@@ -206,7 +206,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
 
     GameSim.prototype.is_turnover = function () {
-        if (Math.random() < (0.1 + this.team[this.d].defense) * 0.7) {
+        if (Math.random() < (0.1 + this.team[this.d].defense) * 0.35) {
             this.do_turnover();
             return true;
         }
@@ -226,7 +226,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
 
     GameSim.prototype.is_block = function () {
-        if (Math.random() < (0.02 + this.team[this.d].defense) * 0.7) {
+        if (Math.random() < (0.02 + this.team[this.d].defense) * 0.35) {
             this.do_block();
             return true;
         }
@@ -246,21 +246,25 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
 
     GameSim.prototype.is_made_shot = function (shooter) {
-        var p, stat, type;
+        var p, r, type;
 
         p = this.players_on_court[this.o][shooter];
         this.record_stat(this.o, p, "fga");
         // Three pointer or two pointer
-        if (this.team[this.o].player[p].composite_rating.three_pointer_percentage > 0.25 && Math.random() < (0.5 * this.team[this.o].player[p].composite_rating.three_pointer_percentage)) {
+        if (this.team[this.o].player[p].compositeRating.shootingThree > 0.4 && Math.random() < (0.25 * this.team[this.o].player[p].compositeRating.shootingThree)) {
             this.record_stat(this.o, p, "tpa");
             type = 3;
-            stat = "three_pointer_percentage";
+            r = this.team[this.o].player[p].compositeRating.shootingThree * 0.45;
         } else {
             type = 2;
-            stat = "field_goal_percentage";
+            r = "shootingTwo";
+            r = this.team[this.o].player[p].compositeRating.shootingTwo * 0.3 + 0.4;
         }
         // Make or miss
-        if (Math.random() < (this.team[this.o].player[p].composite_rating[stat] - this.team[this.d].defense)) {
+//p.compositeRating.field_goal_percentage = _composite(0.38, 0.68, rating, ['hgt', 'jmp', 'ins', 'dnk', 'fg', 'tp']);
+//p.compositeRating.free_throw_percentage = _composite(0.65, 0.9, rating, ['ft']);
+//p.compositeRating.three_pointer_percentage = _composite(0, 0.45, rating, ['tp']);
+        if (Math.random() < (r - this.team[this.d].defense * 0.5)) {
             this.do_made_shot(shooter, type);
             // And 1
             if (Math.random() < 0.1) {
@@ -285,7 +289,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.do_turnover = function () {
         var p, ratios;
 
-        ratios = this.rating_array("turnover_ratio", this.o);
+        ratios = this.rating_array("turnovers", this.o);
         p = this.players_on_court[this.o][this.pick_player(ratios)];
         this.record_stat(this.o, p, "tov");
         this.is_steal();
@@ -296,7 +300,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.do_steal = function () {
         var p, ratios;
 
-        ratios = this.rating_array("steal_ratio", this.d);
+        ratios = this.rating_array("steals", this.d);
         p = this.players_on_court[this.d][this.pick_player(ratios)];
         this.record_stat(this.d, p, "stl");
     };
@@ -306,7 +310,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.do_block = function () {
         var p, ratios;
 
-        ratios = this.rating_array("block_ratio", this.d);
+        ratios = this.rating_array("blocks", this.d);
         p = this.players_on_court[this.d][this.pick_player(ratios)];
         this.record_stat(this.d, p, "blk");
     };
@@ -320,7 +324,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         p = this.players_on_court[this.o][shooter];
         for (i = 0; i < amount; i++) {
             this.record_stat(this.o, p, "fta");
-            if (Math.random() < this.team[this.o].player[p].composite_rating.free_throw_percentage) {
+            if (Math.random() < this.team[this.o].player[p].compositeRating.shootingFT * 0.3 + 0.6) {  // Between 60% and 90%
                 this.record_stat(this.o, p, "ft");
                 this.record_stat(this.o, p, "pts");
             }
@@ -334,7 +338,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.do_foul = function (shooter) {
         var p, ratios;
 
-        ratios = this.rating_array("foul_ratio", this.d);
+        ratios = this.rating_array("fouls", this.d);
         p = this.players_on_court[this.d][this.pick_player(ratios)];
         this.record_stat(this.d, p, "pf");
         // Foul out
@@ -347,7 +351,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         var p, ratios;
 
         if (this.is_assist()) {
-            ratios = this.rating_array("assist_ratio", this.o);
+            ratios = this.rating_array("assists", this.o);
             p = this.players_on_court[this.o][this.pick_player(ratios, shooter)];
             this.record_stat(this.o, p, "ast");
         }
@@ -366,11 +370,11 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         var p, ratios;
 
         if (Math.random() < 0.8) {
-            ratios = this.rating_array("rebound_ratio", this.d);
+            ratios = this.rating_array("rebounds", this.d);
             p = this.players_on_court[this.d][this.pick_player(ratios)];
             this.record_stat(this.d, p, "drb");
         } else {
-            ratios = this.rating_array("rebound_ratio", this.o);
+            ratios = this.rating_array("rebounds", this.o);
             p = this.players_on_court[this.o][this.pick_player(ratios)];
             this.record_stat(this.o, p, "orb");
         }
@@ -384,7 +388,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         array = [0, 0, 0, 0, 0];
         for (i = 0; i < 5; i++) {
             p = this.players_on_court[t][i];
-            array[i] = this.team[t].player[p].composite_rating[rating];
+            array[i] = this.team[t].player[p].compositeRating[rating];
         }
 
         return array;

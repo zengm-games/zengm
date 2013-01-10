@@ -27,7 +27,7 @@ define(["db", "util/random"], function (db, random) {
      * Calculates the overall rating by averaging together all the other ratings.
      * 
      * @memberOf core.player
-     * @param {Object.<string, number>} ratings Ratings object.
+     * @param {Object.<string, number>} ratings Player's ratings object.
      * @return {number} Overall rating.
      */
     function ovr(ratings) {

@@ -206,7 +206,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
 
     GameSim.prototype.is_turnover = function () {
-        if (Math.random() < 0.1 + this.team[this.d].defense) {
+        if (Math.random() < (0.1 + this.team[this.d].defense) * 0.7) {
             this.do_turnover();
             return true;
         }
@@ -226,7 +226,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
 
     GameSim.prototype.is_block = function () {
-        if (Math.random() < (0.02 + this.team[this.d].defense)) {
+        if (Math.random() < (0.02 + this.team[this.d].defense) * 0.7) {
             this.do_block();
             return true;
         }

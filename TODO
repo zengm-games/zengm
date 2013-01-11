@@ -18,6 +18,8 @@ free agents
   on new game, have enough free agents so the pool isn't totally depleted
 game simulation realism
   separate composite ratings for shooting in different places (jumpshot, inside, fast break, three, etc)
+    how do i know how many of each are shot? log it in some kind of game summary log
+    better shots (dunks/layups) should occur when created by other factors (defense, passing, etc)
   height should matter a lot more
     e.g.
       bigs should get more boards
@@ -27,6 +29,7 @@ game simulation realism
     if i make some fundamental change, i need to account for it in randomly generated players
   pgs should get more assists
   smalls should get less blocks
+  compare team and player stat distributions against reality
   home/away advantage
 import/export games
 put on play.basketball-gm.com, with splash page on basketball-gm.com

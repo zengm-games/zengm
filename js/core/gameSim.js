@@ -246,28 +246,42 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
 
     GameSim.prototype.is_made_shot = function (shooter) {
-        var p, r, type;
+        var p, probMake, probAndOne, r1, r2, r3, type;
 
         p = this.players_on_court[this.o][shooter];
         this.record_stat(this.o, p, "fga");
-        // Three pointer or two pointer
+
+        // Pick the type of shot and store the success rate (with no defense) in probMake and the probability of an and one in probAndOne
         if (this.team[this.o].player[p].compositeRating.shootingThree > 0.4 && Math.random() < (0.25 * this.team[this.o].player[p].compositeRating.shootingThree)) {
+            // Three pointer
             this.record_stat(this.o, p, "tpa");
             type = 3;
-            r = this.team[this.o].player[p].compositeRating.shootingThree * 0.45;
+            probMake = this.team[this.o].player[p].compositeRating.shootingThree * 0.81;
+            probAndOne = 0.01;
         } else {
-            type = 2;
-            r = "shootingTwo";
-            r = this.team[this.o].player[p].compositeRating.shootingTwo * 0.3 + 0.4;
+            r1 = Math.random() * this.team[this.o].player[p].compositeRating.shootingTwo;
+            r2 = Math.random() * this.team[this.o].player[p].compositeRating.shootingDunk;
+            r3 = Math.random() * this.team[this.o].player[p].compositeRating.shootingPost;
+            if (r1 > r2 && r1 > r3) {
+                // Two point jumper
+                type = 2;
+                probMake = this.team[this.o].player[p].compositeRating.shootingTwo * 0.3 + 0.31;
+                probAndOne = 0.05;
+            } else if (r2 > r3) {
+                // Dunk, fast break or half court
+                probMake = this.team[this.o].player[p].compositeRating.shootingPost * 0.3 + 0.54;
+                probAndOne = 0.2;
+            } else {
+                // Post up
+                probMake = this.team[this.o].player[p].compositeRating.shootingPost * 0.3 + 0.39;
+                probAndOne = 0.2;
+            }
         }
         // Make or miss
-//p.compositeRating.field_goal_percentage = _composite(0.38, 0.68, rating, ['hgt', 'jmp', 'ins', 'dnk', 'fg', 'tp']);
-//p.compositeRating.free_throw_percentage = _composite(0.65, 0.9, rating, ['ft']);
-//p.compositeRating.three_pointer_percentage = _composite(0, 0.45, rating, ['tp']);
-        if (Math.random() < (r - this.team[this.d].defense * 0.5)) {
+        if (Math.random() < (probMake - this.team[this.d].defense * 0.5)) {
             this.do_made_shot(shooter, type);
             // And 1
-            if (Math.random() < 0.1) {
+            if (Math.random() < probAndOne) {
                 this.do_free_throw(shooter, 1);
             }
             return true;

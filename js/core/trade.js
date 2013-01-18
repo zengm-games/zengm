@@ -321,7 +321,7 @@ define(["db", "util/helpers"], function (db, helpers) {
 
                                 players = db.getPlayers(event.target.result, g.season, tids[i], ["pid", "contractAmount", "age"], [], ["ovr", "pot"]);
                                 players = _.filter(players, function (player) { return pids[i].indexOf(player.pid) >= 0; });
-                                value[i] = _.reduce(players, function (memo, player) { console.log(player); return memo + player.ratings.pot / 10 + player.ratings.ovr / 20 - player.age / 10 - player.contractAmount / 15; }, 0);
+                                value[i] = _.reduce(players, function (memo, player) { return memo + player.ratings.pot / 10 + player.ratings.ovr / 20 - player.age / 10 - player.contractAmount / 15; }, 0);
 
                                 done += 1;
                                 if (done === 2) {

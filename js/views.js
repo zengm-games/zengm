@@ -1668,13 +1668,43 @@ console.log(message);
             seasons = helpers.getSeasons(season);
 
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
-                var attributes, data, players, ratings, stats;
+                var attributes, data, players, ratings, ratingsAll, stats, statsAll;
                 attributes = [];
                 ratings = ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
                 stats = ["gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts"];
 
-                players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings, {showRookies: true});
-console.log(players);
+                players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings);
+//console.log(players);
+
+                ratingsAll = _.reduce(players, function (memo, player) {
+                    var rating;
+                    for (rating in player.ratings) {
+                        if (player.ratings.hasOwnProperty(rating)) {
+                            if (memo.hasOwnProperty(rating)) {
+                                memo[rating].push(player.ratings[rating]);
+                            } else {
+                                memo[rating] = [player.ratings[rating]];
+                            }
+                        }
+                    }
+                    return memo;
+                }, {});
+
+                statsAll = _.reduce(players, function (memo, player) {
+                    var stat;
+                    for (stat in player.stats) {
+                        if (player.stats.hasOwnProperty(stat)) {
+                            if (memo.hasOwnProperty(stat)) {
+                                memo[stat].push(player.stats[stat]);
+                            } else {
+                                memo[stat] = [player.stats[stat]];
+                            }
+                        }
+                    }
+                    return memo;
+                }, {});
+console.log(ratingsAll);
+console.log(statsAll);
 
 /*                data = {
                     container: "league_content",

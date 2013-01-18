@@ -18,7 +18,8 @@ free agents
   on new game, have enough free agents so the pool isn't totally depleted
 game simulation realism
   make pages that show stats and ratings as medians/quintiles, for a given season. this will help see how they evolve over time, respond to tweaking, etc.
-    dist
+    dist - use some kind of underscore functions to do this, filter/reduce like in trade.js?
+    also show the number of players, to make sure nothing funny is going on
     add NBA data for comparison
   separate composite ratings for shooting in different places (jumpshot, inside, fast break, three, etc)
     how do i know how many of each are shot? log it in some kind of game summary log

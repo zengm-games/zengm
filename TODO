@@ -17,6 +17,10 @@ free agents
     is retirement working for the first season, at all?
   on new game, have enough free agents so the pool isn't totally depleted
 game simulation realism
+  make pages that show stats and ratings as medians/quintiles, for a given season. this will help see how they evolve over time, respond to tweaking, etc.
+    dist
+      db.getPlayer and db.getPlayers should always return objects with ratings and stats stored separately. Otherwise it's very confusing
+    add NBA data for comparison
   separate composite ratings for shooting in different places (jumpshot, inside, fast break, three, etc)
     how do i know how many of each are shot? log it in some kind of game summary log
     better shots (dunks/layups) should occur when created by other factors (defense, passing, etc)
@@ -27,7 +31,7 @@ game simulation realism
         bad shooters should get more shots than they do now, e.g. noah
       smalls should have lower FG%, even with more shots
     if i make some fundamental change, i need to account for it in randomly generated players
-  pgs should get more assists
+  pgs should get more assists - increase prob for the "PG" (best ball handler and passer) on the floor
   smalls should get less blocks
   compare team and player stat distributions against reality
   home/away advantage

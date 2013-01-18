@@ -1656,6 +1656,38 @@ console.log(message);
     }
 
     /**
+     * Show distributions of ratings and stats for a given year.
+     * 
+     * @memberOf views
+     */
+    function dist(req) {
+        beforeLeague(req, function () {
+            var season, seasons;
+
+            season = helpers.validateSeason(req.params.season);
+            seasons = helpers.getSeasons(season);
+
+            g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
+                var attributes, data, players, ratings, stats;
+                attributes = [];
+                ratings = ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
+                stats = ["gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts"];
+
+                players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings, {showRookies: true});
+console.log(players);
+
+/*                data = {
+                    container: "league_content",
+                    template: "playerStats",
+                    title: "Player Stats - " + season,
+                    vars: {players: players, season: season, seasons: seasons}
+                };
+                ui.update(data, req.raw.cb);*/
+            };
+        });
+    }
+
+    /**
      * Display a whole-page error message to the user.
      * 
      * @memberOf views
@@ -1721,6 +1753,7 @@ console.log(message);
         player: player_,
         negotiationList: negotiationList,
         negotiation: negotiation,
+        dist: dist,
 
         globalError: globalError,
         leagueError: leagueError

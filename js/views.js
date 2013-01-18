@@ -389,12 +389,12 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                                     // League leaders
                                     vars.leagueLeaders = {};
                                     for (i = 0; i < stats.length; i++) {
-                                        players.sort(function (a, b) { return b[stats[i]] - a[stats[i]]; });
+                                        players.sort(function (a, b) { return b.stats[stats[i]] - a.stats[stats[i]]; });
                                         vars.leagueLeaders[stats[i]] = {
                                             pid: players[0].pid,
                                             name: players[0].name,
                                             abbrev: players[0].abbrev,
-                                            stat: players[0][stats[i]]
+                                            stat: players[0].stats[stats[i]]
                                         };
                                     }
 
@@ -402,11 +402,11 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                                     userPlayers = _.filter(players, function (p) { return p.tid === g.userTid; });
                                     vars.teamLeaders = {};
                                     for (i = 0; i < stats.length; i++) {
-                                        userPlayers.sort(function (a, b) { return b[stats[i]] - a[stats[i]]; });
+                                        userPlayers.sort(function (a, b) { return b.stats[stats[i]] - a.stats[stats[i]]; });
                                         vars.teamLeaders[stats[i]] = {
                                             pid: userPlayers[0].pid,
                                             name: userPlayers[0].name,
-                                            stat: userPlayers[0][stats[i]]
+                                            stat: userPlayers[0].stats[stats[i]]
                                         };
                                     }
 
@@ -420,17 +420,17 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                                                 pid: userPlayers[i].pid,
                                                 name: userPlayers[i].name,
                                                 age: userPlayers[i].age,
-                                                pts: userPlayers[i].pts,
+                                                pts: userPlayers[i].stats.pts,
                                                 contractAmount: userPlayers[i].contractAmount,
-                                                ovr: userPlayers[i].ovr,
-                                                pot: userPlayers[i].pot
+                                                ovr: userPlayers[i].ratings.ovr,
+                                                pot: userPlayers[i].ratings.pot
                                             });
                                         }
                                     }
 
                                     // Free agents
                                     freeAgents = _.filter(players, function (p) { return p.tid === c.PLAYER_FREE_AGENT; });
-                                    freeAgents.sort(function (a, b) {  return (b.ovr + b.pot) - (a.ovr + a.pot); });
+                                    freeAgents.sort(function (a, b) {  return (b.ratings.ovr + b.ratings.pot) - (a.ratings.ovr + a.ratings.pot); });
                                     vars.freeAgents = [];
                                     if (freeAgents.length > 0) {
                                         i = 0;
@@ -439,8 +439,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                                                 pid: freeAgents[i].pid,
                                                 name: freeAgents[i].name,
                                                 age: freeAgents[i].age,
-                                                ovr: freeAgents[i].ovr,
-                                                pot: freeAgents[i].pot
+                                                ovr: freeAgents[i].ratings.ovr,
+                                                pot: freeAgents[i].ratings.pot
                                             });
 
                                             i += 1;
@@ -1338,12 +1338,12 @@ console.log(message);
                 players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings);
 
                 for (i = 0; i < categories.length; i++) {
-                    players.sort(function (a, b) { return b[stats[i]] - a[stats[i]]; });
+                    players.sort(function (a, b) { return b.stats[stats[i]] - a.stats[stats[i]]; });
                     for (j = 0; j < 10; j++) {
                         categories[i].data[j] = helpers.deepCopy(players[j]);
                         categories[i].data[j].i = j + 1;
-                        categories[i].data[j].stat = categories[i].data[j][stats[i]];
-                        delete categories[i].data[j][stats[i]];
+                        categories[i].data[j].stat = categories[i].data[j].stats[stats[i]];
+                        delete categories[i].data[j].stats[stats[i]];
                         if (userAbbrev === categories[i].data[j].abbrev) {
                             categories[i].data[j].userTeam = true;
                         } else {

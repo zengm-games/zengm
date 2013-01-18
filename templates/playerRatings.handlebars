@@ -4,7 +4,7 @@ $(document).ready(function() {
 
   ui.datatable($('#player_ratings'), 4, [
     {{#players}}
-      ['<a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>', '{{pos}}', '<a href="/l/{{../lid}}/roster/{{abbrev}}/{{../season}}">{{abbrev}}</a>', '{{age}}', '{{ovr}}', '{{pot}}', '{{hgt}}', '{{stre}}', '{{spd}}', '{{jmp}}', '{{endu}}', '{{ins}}', '{{dnk}}', '{{ft}}', '{{fg}}', '{{tp}}', '{{blk}}', '{{stl}}', '{{drb}}', '{{pss}}', '{{reb}}'],
+      ['<a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>', '{{pos}}', '<a href="/l/{{../lid}}/roster/{{stats.abbrev}}/{{../season}}">{{stats.abbrev}}</a>', '{{age}}', '{{ratings.ovr}}', '{{ratings.pot}}', '{{ratings.hgt}}', '{{ratings.stre}}', '{{ratings.spd}}', '{{ratings.jmp}}', '{{ratings.endu}}', '{{ratings.ins}}', '{{ratings.dnk}}', '{{ratings.ft}}', '{{ratings.fg}}', '{{ratings.tp}}', '{{ratings.blk}}', '{{ratings.stl}}', '{{ratings.drb}}', '{{ratings.pss}}', '{{ratings.reb}}'],
     {{/players}}
   ]);
 });

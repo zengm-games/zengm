@@ -147,7 +147,7 @@ console.log(event);
     /**
      * Get a filtered player object.
      *
-     * For a player object (pa), create an object suitible for output based on the appropriate season and tid. attributes, stats, and ratings are lists of keys, and all those keys will appear flat in a single object IF ONLY ONE YEAR is requested. If tid is null, then any team is acceptable. If season is null, then a list of all seasons is returned for all ratings and stats, and tid is ignored.
+     * For a player object (pa), create an object suitible for output based on the appropriate season and tid. attributes, stats, and ratings are lists of keys. In the output, the attributes keys will be in the root of the object. There will also be stats and ratings properties containing the filtered stats and ratings objects, if appropriate. If season is null, then the stats and ratings objects will contain lists of objects for each season and tid is ignored. Then, there will also be a careerStats property in the output object containing an object with career averages.
      * 
      * This function is overcomplicated and convoluted.
      * 
@@ -224,8 +224,10 @@ console.log(event);
                     // Must be retired, or not in the league yet
                     return null;
                 }
+
+                player.ratings = {};
                 for (j = 0; j < ratings.length; j++) {
-                    player[ratings[j]] = pr[ratings[j]];
+                    player.ratings[ratings[j]] = pr[ratings[j]];
                 }
             } else {
                 // All seasons
@@ -377,7 +379,7 @@ console.log(event);
                 player.careerStats = filterStats(player.careerStats, pcs, stats);
             } else {
                 // Single seasons
-                player = filterStats(player, ps, stats);
+                player.stats = filterStats({}, ps, stats);
             }
         } else {
             player = null;
@@ -772,7 +774,7 @@ console.log(event);
      * 
      * This function is a little messy because the callback must only be called after everything in the database has been updated.
      * 
-     * @param {Object} gameAttributes Each element in the object will be inserted/updated in the database with the key of the object representing the key in the database.
+     * @param {Object} gameAttributes Each property in the object will be inserted/updated in the database with the key of the object representing the key in the database.
      * @param {function()=} cb Optional callback.
      */
     function setGameAttributes(gameAttributes, cb) {

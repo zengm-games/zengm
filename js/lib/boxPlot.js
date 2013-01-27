@@ -129,14 +129,14 @@ var boxPlot = (function () {
 		minScaleLabel.innerHTML = round(plot.scale[0]);
 		minScaleLabel.style.position = "absolute";
 		minScaleLabel.style.left = 0;
-		minScaleLabel.style.top = "40px";
+		minScaleLabel.style.top = "43px";
 		containerDiv.appendChild(minScaleLabel);
 
 		lowerLabel = document.createElement("div");
 		lowerLabel.innerHTML = round(val.min);
 		lowerLabel.style.position = "absolute";
 		lowerLabel.style.right = x.min + "%";
-		lowerLabel.style.top = "0px";
+		lowerLabel.style.top = "3px";
 		lowerLabel.style.marginRight = "-0.6em";
 		containerDiv.appendChild(lowerLabel);
 
@@ -144,7 +144,7 @@ var boxPlot = (function () {
 		q1Label.innerHTML = round(val.q1);
 		q1Label.style.position = "absolute";
 		q1Label.style.right = x.q1 + "%";
-		q1Label.style.top = "40px";
+		q1Label.style.top = "43px";
 		q1Label.style.marginRight = "-0.6em";
 		containerDiv.appendChild(q1Label);
 
@@ -152,7 +152,7 @@ var boxPlot = (function () {
 		medianLabel.innerHTML = round(val.median);
 		medianLabel.style.position = "absolute";
 		medianLabel.style.right = x.median + "%";
-		medianLabel.style.top = "0px";
+		medianLabel.style.top = "3px";
 		medianLabel.style.marginRight = "-0.6em";
 		containerDiv.appendChild(medianLabel);
 
@@ -160,7 +160,7 @@ var boxPlot = (function () {
 		q3Label.innerHTML = round(val.q3);
 		q3Label.style.position = "absolute";
 		q3Label.style.right = x.q3 + "%";
-		q3Label.style.top = "40px";
+		q3Label.style.top = "43px";
 		q3Label.style.marginRight = "-0.6em";
 		containerDiv.appendChild(q3Label);
 
@@ -168,7 +168,7 @@ var boxPlot = (function () {
 		upperLabel.innerHTML = round(val.max);
 		upperLabel.style.position = "absolute";
 		upperLabel.style.right = x.max + "%";
-		upperLabel.style.top = "0px";
+		upperLabel.style.top = "3px";
 		upperLabel.style.marginRight = "-0.6em";
 		containerDiv.appendChild(upperLabel);
 
@@ -176,7 +176,7 @@ var boxPlot = (function () {
 		maxScaleLabel.innerHTML = round(plot.scale[1]);
 		maxScaleLabel.style.position = "absolute";
 		maxScaleLabel.style.right = 0;
-		maxScaleLabel.style.top = "40px";
+		maxScaleLabel.style.top = "43px";
 		containerDiv.appendChild(maxScaleLabel);
 	}
 

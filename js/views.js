@@ -1686,13 +1686,33 @@ console.log(message);
                 }, {});
 console.log(ratingsAll);
 
-/*                data = {
+                data = {
                     container: "league_content",
-                    template: "playerStats",
-                    title: "Player Stats - " + season,
-                    vars: {players: players, season: season, seasons: seasons}
+                    template: "distPlayerRatings",
+                    title: "Player Rating Distributions - " + season,
+                    vars: {season: season, seasons: seasons}
                 };
-                ui.update(data, req.raw.cb);*/
+                ui.update(data, function () {
+                    var rating, tbody;
+
+                    tbody = $("#dist_player_ratings tbody");
+
+                    for (rating in ratingsAll) {
+                        if (ratingsAll.hasOwnProperty(rating)) {
+                            tbody.append('<tr><td style="text-align: right; padding-right: 1em;">' + rating + '</td><td width="100%"><div id="' + rating + 'BoxPlot"></div></td></tr>');
+
+                            boxPlot.create({
+                              data: ratingsAll[rating],
+                              scale: [0, 100],
+                              container: rating + "BoxPlot"
+                            });
+                        }
+                    }
+
+                    if (req.raw.cb !== undefined) {
+                        req.raw.cb();
+                    }
+                });
             };
         });
     }

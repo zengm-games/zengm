@@ -36,6 +36,15 @@ var boxPlot = (function () {
 		return Math.round(100 - (((v - scale[0]) / (scale[1] - scale[0])) * 100));
 	}
 
+	function boxPlotElementStyle(div) {
+		div.style.background = "#fff";
+		div.style.position = "absolute";
+		div.style.top = "22px";
+		div.style.border = "thin solid #000";
+		div.style.width = "0px";
+		div.style.height = "20px";
+	}
+
 	function round(value, precision) {
 	    precision = precision !== undefined ? parseInt(precision, 10) : 1;
 
@@ -70,10 +79,11 @@ var boxPlot = (function () {
 		// Lines/boxes
 		containerDiv = document.getElementById(plot.container);
 		containerDiv.style.height = "34px";
+		containerDiv.style.paddingBottom = "30px";
+		containerDiv.style.position = "relative";
 
 		midLineDiv = document.createElement("div");
-		midLineDiv.id = "midLine" + plot.container;
-		midLineDiv.className = "boxplot-element";
+		boxPlotElementStyle(midLineDiv);
 		midLineDiv.style.height = "10px";
 		midLineDiv.style.width = "100%";
 		midLineDiv.style.border = "none";
@@ -81,41 +91,35 @@ var boxPlot = (function () {
 		containerDiv.appendChild(midLineDiv);
 
 		upperBoxDiv = document.createElement("div");
-		upperBoxDiv.id = "upperBox" + plot.container;
-		upperBoxDiv.className = "boxplot-element";
+		boxPlotElementStyle(upperBoxDiv);
 		upperBoxDiv.style.right = x.q3 + "%";
 		upperBoxDiv.style.width = (x.median - x.q3) + "%";
 		containerDiv.appendChild(upperBoxDiv);
 
 		lowerBoxDiv = document.createElement("div");
-		lowerBoxDiv.id = "lowerBox" + plot.container;
-		lowerBoxDiv.className = "boxplot-element";
+		boxPlotElementStyle(lowerBoxDiv);
 		lowerBoxDiv.style.right = x.median + "%";
 		lowerBoxDiv.style.width = x.q1 - x.median + "%";
 		containerDiv.appendChild(lowerBoxDiv);
 
 		lowerWhiskerDiv = document.createElement("div");
-		lowerWhiskerDiv.id = "lowerWhisker" + plot.container;
-		lowerWhiskerDiv.className = "boxplot-element";
+		boxPlotElementStyle(lowerWhiskerDiv);
 		lowerWhiskerDiv.style.right = x.min + "%";
 		containerDiv.appendChild(lowerWhiskerDiv);
 
 		upperWhiskerDiv = document.createElement("div");
-		upperWhiskerDiv.id = "upperWhisker" + plot.container;
-		upperWhiskerDiv.className = "boxplot-element";
+		boxPlotElementStyle(upperWhiskerDiv);
 		upperWhiskerDiv.style.right = x.max + "%";
 		containerDiv.appendChild(upperWhiskerDiv);
 
 		minScaleDiv = document.createElement("div");
-		minScaleDiv.id = "upperWhisker" + plot.container;
-		minScaleDiv.className = "boxplot-element";
+		boxPlotElementStyle(minScaleDiv);
 		minScaleDiv.style.left = 0;
 		minScaleDiv.style.borderRight = 0;
 		containerDiv.appendChild(minScaleDiv);
 
 		maxScaleDiv = document.createElement("div");
-		maxScaleDiv.id = "upperWhisker" + plot.container;
-		maxScaleDiv.className = "boxplot-element";
+		boxPlotElementStyle(maxScaleDiv);
 		maxScaleDiv.style.right = 0;
 		maxScaleDiv.style.borderLeft = 0;
 		containerDiv.appendChild(maxScaleDiv);

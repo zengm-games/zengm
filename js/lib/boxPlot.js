@@ -71,71 +71,71 @@ var boxPlot = (function () {
 
 		// Lines/boxes
 		containerDiv = document.getElementById(plot.container);
-		containerDiv.style.height = plot.width + "px";
-		containerDiv.style.width = "56px";
+		containerDiv.style.height = "26px";
+		containerDiv.style.width = plot.width + "px";
 		containerDiv.style.border = "none";
-		containerDiv.style.borderRight = "1px solid";
+		containerDiv.style.borderBottom = "1px solid";
 
 		upperBoxDiv = document.createElement("div");
 		upperBoxDiv.id = "upperBox" + plot.container;
 		upperBoxDiv.className = "boxplot-element";
-		upperBoxDiv.style.top = x.q3 + "px";
-		upperBoxDiv.style.height = (x.median - x.q3) + "px";
+		upperBoxDiv.style.right = x.q3 + "px";
+		upperBoxDiv.style.width = (x.median - x.q3) + "px";
 		containerDiv.appendChild(upperBoxDiv);
 
 		lowerBoxDiv = document.createElement("div");
 		lowerBoxDiv.id = "lowerBox" + plot.container;
 		lowerBoxDiv.className = "boxplot-element";
-		lowerBoxDiv.style.top = x.median + "px";
-		lowerBoxDiv.style.height = x.q1 - x.median + "px";
+		lowerBoxDiv.style.right = x.median + "px";
+		lowerBoxDiv.style.width = x.q1 - x.median + "px";
 		containerDiv.appendChild(lowerBoxDiv);
 
 		lowerWhiskerDiv = document.createElement("div");
 		lowerWhiskerDiv.id = "lowerWhisker" + plot.container;
 		lowerWhiskerDiv.className = "boxplot-element";
-		lowerWhiskerDiv.style.top = x.min + "px";
+		lowerWhiskerDiv.style.right = x.min + "px";
 		containerDiv.appendChild(lowerWhiskerDiv);
 
 		upperWhiskerDiv = document.createElement("div");
 		upperWhiskerDiv.id = "upperWhisker" + plot.container;
 		upperWhiskerDiv.className = "boxplot-element";
-		upperWhiskerDiv.style.top = x.max + "px";
+		upperWhiskerDiv.style.right = x.max + "px";
 		containerDiv.appendChild(upperWhiskerDiv);
 
 		// Labels
 		lowerLabel = document.createElement("div");
 		lowerLabel.className = "boxplot-label";
 		lowerLabel.innerHTML = round(val.min);
-		lowerLabel.style.top = x.min + "px";
-		lowerLabel.style.left = "0px";
+		lowerLabel.style.right = x.min + "px";
+		lowerLabel.style.top = "70px";
 		containerDiv.appendChild(lowerLabel);
 
 		q1Label = document.createElement("div");
 		q1Label.className = "boxplot-label";
 		q1Label.innerHTML = round(val.q1);
-		q1Label.style.top = (x.q1 - 9) + "px";
-		q1Label.style.left = "80px";
+		q1Label.style.right = (x.q1 - 9) + "px";
+		q1Label.style.top = "70px";
 		containerDiv.appendChild(q1Label);
 
 		medianLabel = document.createElement("div");
 		medianLabel.className = "boxplot-label";
 		medianLabel.innerHTML = round(val.median);
-		medianLabel.style.top = (x.median - 9) + "px";
-		medianLabel.style.left = "0px";
+		medianLabel.style.right = (x.median - 9) + "px";
+		medianLabel.style.top = "70px";
 		containerDiv.appendChild(medianLabel);
 
 		q3Label = document.createElement("div");
 		q3Label.className = "boxplot-label";
 		q3Label.innerHTML = round(val.q3);
-		q3Label.style.top = (x.q3 - 9) + "px";
-		q3Label.style.left = "80px";
+		q3Label.style.right = (x.q3 - 9) + "px";
+		q3Label.style.top = "70px";
 		containerDiv.appendChild(q3Label);
 
 		upperLabel = document.createElement("div");
 		upperLabel.className = "boxplot-label";
 		upperLabel.innerHTML = round(val.max);
-		upperLabel.style.top = (x.max - 9) + "px";
-		upperLabel.style.left = "0px";
+		upperLabel.style.right = (x.max - 9) + "px";
+		upperLabel.style.top = "70px";
 		containerDiv.appendChild(upperLabel);
 	}
 

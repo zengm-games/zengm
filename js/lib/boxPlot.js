@@ -55,7 +55,7 @@ var boxPlot = (function () {
      *     container: id of the div the box plot will appear in.
      */
 	function create(plot) {
-		var containerDiv, lowerBoxDiv, lowerLabel, lowerWhiskerDiv, i, medianLabel, q1Label, q3Label, upperBoxDiv, upperLabel, upperWhiskerDiv, val, x;
+		var containerDiv, lowerBoxDiv, lowerLabel, lowerWhiskerDiv, i, medianLabel, midLineDiv, maxScaleDiv, maxScaleLabel, minScaleDiv, minScaleLabel, q1Label, q3Label, upperBoxDiv, upperLabel, upperWhiskerDiv, val, x;
 
 		val = calculateValues(plot.data);
 
@@ -71,10 +71,17 @@ var boxPlot = (function () {
 
 		// Lines/boxes
 		containerDiv = document.getElementById(plot.container);
-		containerDiv.style.height = "26px";
+		containerDiv.style.height = "34px";
 		containerDiv.style.width = plot.width + "px";
-		containerDiv.style.border = "none";
-		containerDiv.style.borderBottom = "1px solid";
+
+		midLineDiv = document.createElement("div");
+		midLineDiv.id = "midLine" + plot.container;
+		midLineDiv.className = "boxplot-element";
+		midLineDiv.style.height = "10px";
+		midLineDiv.style.width = "100%";
+		midLineDiv.style.border = "none";
+		midLineDiv.style.borderBottom = "1px solid";
+		containerDiv.appendChild(midLineDiv);
 
 		upperBoxDiv = document.createElement("div");
 		upperBoxDiv.id = "upperBox" + plot.container;
@@ -102,41 +109,69 @@ var boxPlot = (function () {
 		upperWhiskerDiv.style.right = x.max + "px";
 		containerDiv.appendChild(upperWhiskerDiv);
 
+		minScaleDiv = document.createElement("div");
+		minScaleDiv.id = "upperWhisker" + plot.container;
+		minScaleDiv.className = "boxplot-element";
+		minScaleDiv.style.left = 0;
+		minScaleDiv.style.borderRight = 0;
+		containerDiv.appendChild(minScaleDiv);
+
+		maxScaleDiv = document.createElement("div");
+		maxScaleDiv.id = "upperWhisker" + plot.container;
+		maxScaleDiv.className = "boxplot-element";
+		maxScaleDiv.style.right = 0;
+		maxScaleDiv.style.borderLeft = 0;
+		containerDiv.appendChild(maxScaleDiv);
+
 		// Labels
+		minScaleLabel = document.createElement("div");
+		minScaleLabel.innerHTML = round(plot.scale[0]);
+		minScaleLabel.style.position = "absolute";
+		minScaleLabel.style.left = 0;
+		minScaleLabel.style.top = "40px";
+		containerDiv.appendChild(minScaleLabel);
+
 		lowerLabel = document.createElement("div");
-		lowerLabel.className = "boxplot-label";
 		lowerLabel.innerHTML = round(val.min);
-		lowerLabel.style.right = x.min + "px";
-		lowerLabel.style.top = "70px";
+		lowerLabel.style.position = "absolute";
+		lowerLabel.style.right = (x.min - 9) + "px";
+		lowerLabel.style.top = "0px";
 		containerDiv.appendChild(lowerLabel);
 
 		q1Label = document.createElement("div");
-		q1Label.className = "boxplot-label";
 		q1Label.innerHTML = round(val.q1);
+		q1Label.style.position = "absolute";
 		q1Label.style.right = (x.q1 - 9) + "px";
-		q1Label.style.top = "70px";
+		q1Label.style.top = "40px";
 		containerDiv.appendChild(q1Label);
 
 		medianLabel = document.createElement("div");
-		medianLabel.className = "boxplot-label";
 		medianLabel.innerHTML = round(val.median);
+		medianLabel.style.position = "absolute";
 		medianLabel.style.right = (x.median - 9) + "px";
-		medianLabel.style.top = "70px";
+		medianLabel.style.top = "0px";
 		containerDiv.appendChild(medianLabel);
 
 		q3Label = document.createElement("div");
-		q3Label.className = "boxplot-label";
 		q3Label.innerHTML = round(val.q3);
+		q3Label.style.position = "absolute";
 		q3Label.style.right = (x.q3 - 9) + "px";
-		q3Label.style.top = "70px";
+		q3Label.style.top = "40px";
 		containerDiv.appendChild(q3Label);
 
 		upperLabel = document.createElement("div");
-		upperLabel.className = "boxplot-label";
 		upperLabel.innerHTML = round(val.max);
+		upperLabel.style.position = "absolute";
 		upperLabel.style.right = (x.max - 9) + "px";
-		upperLabel.style.top = "70px";
+		upperLabel.style.top = "0px";
 		containerDiv.appendChild(upperLabel);
+
+		maxScaleLabel = document.createElement("div");
+		maxScaleLabel.innerHTML = round(plot.scale[1]);
+		maxScaleLabel.style.position = "absolute";
+		maxScaleLabel.style.right = 0;
+		maxScaleLabel.style.top = "40px";
+		containerDiv.appendChild(maxScaleLabel);
 	}
 
     return {

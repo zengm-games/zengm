@@ -19,6 +19,10 @@ free agents
 game simulation realism
   make pages that show stats and ratings as medians/quintiles, for a given season. this will help see how they evolve over time, respond to tweaking, etc.
     make the debug menu only show within a league, and allow it to dynamically know the lid
+    come up with a way of plotting horizontal box plots easily
+      scale is based on some predefined reasonable range
+      show numbers below points on the box plot
+        including the min and max of the scale, in a smaller/less dark font
     separate pages for player stats, player ratings, and team stats
     also show the number of players, to make sure nothing funny is going on
     for stats, add NBA data for comparison

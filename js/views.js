@@ -1655,12 +1655,7 @@ console.log(message);
         });
     }
 
-    /**
-     * Show distributions of ratings and stats for a given year.
-     * 
-     * @memberOf views
-     */
-    function dist(req) {
+    function distPlayerRatings(req) {
         beforeLeague(req, function () {
             var season, seasons;
 
@@ -1671,7 +1666,7 @@ console.log(message);
                 var attributes, data, players, ratings, ratingsAll, stats, statsAll;
                 attributes = [];
                 ratings = ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
-                stats = ["gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts"];
+                stats = [];
 
                 players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings);
 //console.log(players);
@@ -1689,6 +1684,34 @@ console.log(message);
                     }
                     return memo;
                 }, {});
+console.log(ratingsAll);
+
+/*                data = {
+                    container: "league_content",
+                    template: "playerStats",
+                    title: "Player Stats - " + season,
+                    vars: {players: players, season: season, seasons: seasons}
+                };
+                ui.update(data, req.raw.cb);*/
+            };
+        });
+    }
+
+    function distPlayerStats(req) {
+        beforeLeague(req, function () {
+            var season, seasons;
+
+            season = helpers.validateSeason(req.params.season);
+            seasons = helpers.getSeasons(season);
+
+            g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
+                var attributes, data, players, ratings, ratingsAll, stats, statsAll;
+                attributes = [];
+                ratings = [];
+                stats = ["gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts"];
+
+                players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings);
+//console.log(players);
 
                 statsAll = _.reduce(players, function (memo, player) {
                     var stat;
@@ -1703,7 +1726,6 @@ console.log(message);
                     }
                     return memo;
                 }, {});
-console.log(ratingsAll);
 console.log(statsAll);
 
 /*                data = {
@@ -1783,7 +1805,8 @@ console.log(statsAll);
         player: player_,
         negotiationList: negotiationList,
         negotiation: negotiation,
-        dist: dist,
+        distPlayerRatings: distPlayerRatings,
+        distPlayerStats: distPlayerStats,
 
         globalError: globalError,
         leagueError: leagueError

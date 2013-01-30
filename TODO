@@ -20,12 +20,10 @@ game simulation realism
   make pages that show stats and ratings as medians/quintiles, for a given season. this will help see how they evolve over time, respond to tweaking, etc.
     why do box plot numbers all show X.0? No fractions?
     round min/max of scale to integers (or don't round at all?)
-    player stats box plots
-      link from bottom of player stats page, like player ratings
-      add NBA data for comparison
+    player stats box plots - add NBA data for comparison - show as gray box plot in the background
     team stats box plots
       link from bottom of team stats page, like player ratings
-      add NBA data for comparison
+      add NBA data for comparison - show as gray box plot in the background
   separate composite ratings for shooting in different places (jumpshot, inside, fast break, three, etc)
     how do i know how many of each are shot? log it in some kind of game summary log
     better shots (dunks/layups) should occur when created by other factors (defense, passing, etc)

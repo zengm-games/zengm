@@ -1663,7 +1663,7 @@ console.log(message);
             seasons = helpers.getSeasons(season);
 
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
-                var attributes, data, players, ratings, ratingsAll, stats, statsAll;
+                var attributes, data, players, ratings, ratingsAll, stats;
                 attributes = [];
                 ratings = ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
                 stats = [];
@@ -1684,7 +1684,6 @@ console.log(message);
                     }
                     return memo;
                 }, {});
-console.log(ratingsAll);
 
                 data = {
                     container: "league_content",
@@ -1702,9 +1701,9 @@ console.log(ratingsAll);
                             tbody.append('<tr><td style="text-align: right; padding-right: 1em;">' + rating + '</td><td width="100%"><div id="' + rating + 'BoxPlot"></div></td></tr>');
 
                             boxPlot.create({
-                              data: ratingsAll[rating],
-                              scale: [0, 100],
-                              container: rating + "BoxPlot"
+                                data: ratingsAll[rating],
+                                scale: [0, 100],
+                                container: rating + "BoxPlot"
                             });
                         }
                     }
@@ -1725,7 +1724,7 @@ console.log(ratingsAll);
             seasons = helpers.getSeasons(season);
 
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
-                var attributes, data, players, ratings, ratingsAll, stats, statsAll;
+                var attributes, data, players, ratings, stats, statsAll;
                 attributes = [];
                 ratings = [];
                 stats = ["gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts"];
@@ -1746,15 +1745,59 @@ console.log(ratingsAll);
                     }
                     return memo;
                 }, {});
-console.log(statsAll);
 
-/*                data = {
+                data = {
                     container: "league_content",
-                    template: "playerStats",
-                    title: "Player Stats - " + season,
-                    vars: {players: players, season: season, seasons: seasons}
+                    template: "distPlayerStats",
+                    title: "Player Stat Distributions - " + season,
+                    vars: {season: season, seasons: seasons}
                 };
-                ui.update(data, req.raw.cb);*/
+                ui.update(data, function () {
+                    var scale, stat, tbody;
+
+                    tbody = $("#dist_player_stats tbody");
+
+                    // Scales for the box plots. This is not done dynamically so that the plots will be comparable across seasons.
+                    scale = {
+                        gp: [0, 82],
+                        gs: [0, 82],
+                        min: [0, 50],
+                        fg: [0, 20],
+                        fga: [0, 40],
+                        fgp: [0, 100],
+                        tp: [0, 5],
+                        tpa: [0, 10],
+                        tpp: [0, 100],
+                        ft: [0, 15],
+                        fta: [0, 25],
+                        ftp: [0, 100],
+                        orb: [0, 10],
+                        drb: [0, 15],
+                        trb: [0, 25],
+                        ast: [0, 15],
+                        tov: [0, 10],
+                        stl: [0, 5],
+                        blk: [0, 5],
+                        pf: [0, 6],
+                        pts: [0, 50]
+                    };
+
+                    for (stat in statsAll) {
+                        if (statsAll.hasOwnProperty(stat)) {
+                            tbody.append('<tr><td style="text-align: right; padding-right: 1em;">' + stat + '</td><td width="100%"><div id="' + stat + 'BoxPlot"></div></td></tr>');
+
+                            boxPlot.create({
+                                data: statsAll[stat],
+                                scale: scale[stat],
+                                container: stat + "BoxPlot"
+                            });
+                        }
+                    }
+
+                    if (req.raw.cb !== undefined) {
+                        req.raw.cb();
+                    }
+                });
             };
         });
     }

@@ -3,6 +3,7 @@ import web
 urls = (
     '/(css/.*)', 'static',
     '/(data/.*)', 'static',
+    '/(docs.*)', 'static',
     '/(ico/.*)', 'static',
     '/(img/.*)', 'static',
     '/(js/.*)', 'static',
@@ -22,6 +23,10 @@ class static:
             web.header('Content-type', 'text/plain')
         elif filename.endswith('.js'):
             web.header('Content-type', 'text/javascript')
+        elif filename.endswith('/'):
+            filename += 'index.html'
+        elif not '.' in filename:
+            filename += '/index.html'
 
         f = open(filename)
         return f.read()

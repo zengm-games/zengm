@@ -281,7 +281,7 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.accept">accept</a></b>(pid)
+								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.accept">accept</a></b>(pid, cb)
 								</div>
 								<div class="description">Accept the player's offer.</div>
 							</td>
@@ -299,7 +299,7 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.cancelAll">cancelAll</a></b>()
+								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.cancelAll">cancelAll</a></b>(cb)
 								</div>
 								<div class="description">Cancel all ongoing contract negotiations.</div>
 							</td>
@@ -308,7 +308,7 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.create">create</a></b>(pid, resigning, cb, cb)
+								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.create">create</a></b>(ot, pid, resigning, cb)
 								</div>
 								<div class="description">Start a new contract negotiation with a player.</div>
 							</td>
@@ -317,9 +317,27 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.offer">offer</a></b>(pid, teamAmount, teamYears)
+								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.offer">offer</a></b>(pid, teamAmount, teamYears, cb)
 								</div>
 								<div class="description">Make an offer to a player.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.validAmount">validAmount</a></b>(years)
+								</div>
+								<div class="description">Restrict the input to between 500 and 20000, the valid amount of annual thousands of dollars for a contract.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.validYears">validYears</a></b>(years)
+								</div>
+								<div class="description">Restrict the input to between 1 and 5, the valid number of years for a contract.</div>
 							</td>
 						</tr>
 					
@@ -375,7 +393,7 @@ ul.inheritsList
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">core.contractNegotiation.</span><b>accept</b>(pid)
+					<span class="light">core.contractNegotiation.</span><b>accept</b>(pid, cb)
 					
 					</div>
 					<div class="description">
@@ -397,6 +415,12 @@ If successful, then the team's current roster will be displayed.
 									
 								</dt>
 								<dd>An integer that must correspond with the player ID of a player in an ongoing negotiation.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{function(string=)}</span> <b>cb</b>
+									
+								</dt>
+								<dd>Callback to be run only after the contract is successfully accepted. If an error occurs, pass a string error message.</dd>
 							
 							</dl>
 						
@@ -449,7 +473,7 @@ If successful, then the team's current roster will be displayed.
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">core.contractNegotiation.</span><b>cancelAll</b>()
+					<span class="light">core.contractNegotiation.</span><b>cancelAll</b>(cb)
 					
 					</div>
 					<div class="description">
@@ -462,6 +486,17 @@ Currently, the only time there should be multiple ongoing negotiations in the fi
 					
 					
 					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{function()=}</span> <b>cb</b>
+									
+								</dt>
+								<dd>Optional callback.</dd>
+							
+							</dl>
 						
 						
 						
@@ -476,7 +511,7 @@ Currently, the only time there should be multiple ongoing negotiations in the fi
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">core.contractNegotiation.</span><b>create</b>(pid, resigning, cb, cb)
+					<span class="light">core.contractNegotiation.</span><b>create</b>(ot, pid, resigning, cb)
 					
 					</div>
 					<div class="description">
@@ -492,6 +527,12 @@ Currently, the only time there should be multiple ongoing negotiations in the fi
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
+									<span class="light fixedFont">{IDBTransaction|null}</span> <b>ot</b>
+									
+								</dt>
+								<dd>An IndexedDB transaction on gameAttributes, negotiations, and players, readwrite; if null is passed, then a new transaction will be used.</dd>
+							
+								<dt>
 									<span class="light fixedFont">{number}</span> <b>pid</b>
 									
 								</dt>
@@ -504,16 +545,10 @@ Currently, the only time there should be multiple ongoing negotiations in the fi
 								<dd>Set to true if this is a negotiation for a contract extension, which will allow multiple simultaneous negotiations. Set to false otherwise.</dd>
 							
 								<dt>
-									<span class="light fixedFont">{function()}</span> <b>cb</b>
+									<span class="light fixedFont">{function(string=)}</span> <b>cb</b>
 									
 								</dt>
-								<dd>Optional callback to be run only after a successful negotiation is started.</dd>
-							
-								<dt>
-									<b>cb</b>
-									
-								</dt>
-								<dd></dd>
+								<dd>Callback to be run only after a successful negotiation is started. If an error occurs, pass a string error message.</dd>
 							
 							</dl>
 						
@@ -530,7 +565,7 @@ Currently, the only time there should be multiple ongoing negotiations in the fi
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">core.contractNegotiation.</span><b>offer</b>(pid, teamAmount, teamYears)
+					<span class="light">core.contractNegotiation.</span><b>offer</b>(pid, teamAmount, teamYears, cb)
 					
 					</div>
 					<div class="description">
@@ -563,11 +598,103 @@ Currently, the only time there should be multiple ongoing negotiations in the fi
 								</dt>
 								<dd>Team's offer length in years (between 1 and 5).</dd>
 							
+								<dt>
+									<span class="light fixedFont">{function()=}</span> <b>cb</b>
+									
+								</dt>
+								<dd>Optional callback.</dd>
+							
 							</dl>
 						
 						
 						
 						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".validAmount"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{[type]}</span>
+					<span class="light">core.contractNegotiation.</span><b>validAmount</b>(years)
+					
+					</div>
+					<div class="description">
+						Restrict the input to between 500 and 20000, the valid amount of annual thousands of dollars for a contract.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>years</b>
+									
+								</dt>
+								<dd>Annual salary, in thousands of dollars, to be validated.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{[type]}</span> An integer between 500 and 20000.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".validYears"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{[type]}</span>
+					<span class="light">core.contractNegotiation.</span><b>validYears</b>(years)
+					
+					</div>
+					<div class="description">
+						Restrict the input to between 1 and 5, the valid number of years for a contract.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>years</b>
+									
+								</dt>
+								<dd>Number of years, to be validated.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{[type]}</span> An integer between 1 and 5.</dd>
+							
+							</dl>
 						
 						
 						
@@ -586,7 +713,7 @@ Currently, the only time there should be multiple ongoing negotiations in the fi
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Tue Aug 21 2012 12:18:20 GMT-0400 (EDT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Tue Jan 29 2013 20:52:25 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

@@ -126,7 +126,7 @@ var boxPlot = (function () {
 
 		// Labels
 		minScaleLabel = document.createElement("div");
-		minScaleLabel.innerHTML = round(plot.scale[0]);
+		minScaleLabel.innerHTML = round(plot.scale[0], 0);
 		minScaleLabel.style.position = "absolute";
 		minScaleLabel.style.left = 0;
 		minScaleLabel.style.top = "43px";
@@ -173,7 +173,7 @@ var boxPlot = (function () {
 		containerDiv.appendChild(upperLabel);
 
 		maxScaleLabel = document.createElement("div");
-		maxScaleLabel.innerHTML = round(plot.scale[1]);
+		maxScaleLabel.innerHTML = round(plot.scale[1], 0);
 		maxScaleLabel.style.position = "absolute";
 		maxScaleLabel.style.right = 0;
 		maxScaleLabel.style.top = "43px";

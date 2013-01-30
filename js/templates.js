@@ -5460,38 +5460,18 @@ function program10(depth0,data,depth1) {
   stack1 = foundHelper || depth0.name;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "name", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "</a> (<a href=\"/l/";
-  foundHelper = helpers.lid;
-  stack1 = foundHelper || depth1.lid;
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "...lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/roster/";
-  foundHelper = helpers.abbrev;
-  stack1 = foundHelper || depth0.abbrev;
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "abbrev", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "/";
-  foundHelper = helpers.season;
-  stack1 = foundHelper || depth1.season;
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "...season", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "\">";
-  foundHelper = helpers.abbrev;
-  stack1 = foundHelper || depth0.abbrev;
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "abbrev", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "</a>) ";
+  buffer += escapeExpression(stack1) + "</a> (overall rating: ";
   foundHelper = helpers.ratings;
   stack1 = foundHelper || depth0.ratings;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.ovr);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "ratings.ovr", { hash: {} }); }
-  buffer += escapeExpression(stack1) + " ";
+  buffer += escapeExpression(stack1) + "; age: ";
   foundHelper = helpers.age;
   stack1 = foundHelper || depth0.age;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "age", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "<br>\n    ";
+  buffer += escapeExpression(stack1) + ")<br>\n    ";
   return buffer;}
 
   buffer += "<script type=\"text/javascript\">\n$(document).ready(function() {\n  ui.dropdown($('#history_select_season'));\n});\n</script>\n\n<form action=\"/l/";

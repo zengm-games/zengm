@@ -103,9 +103,6 @@ draftTeamName and draftTeamRegion needed for anything? If not, cut them.
 Replace showNoStats with a check of stats.length in db.getPlayer, at least in some cases? API is messy
 roster size check on new season
   cpu teams with < 5 players should automatically sign free agents
-history view retired players
-  why is abbrev ATL? should be FA if they were free agents last, otherwise it should be their last team
-    do i need a handlebars helper so that FA isn't linked anywhere when used as an abbrev?
 retired players
   test
 trade refactoring

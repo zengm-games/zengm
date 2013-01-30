@@ -59,7 +59,7 @@ $(document).ready(function() {
   <div class="span12">
     <h4>Retired Players</h4>
     {{#retiredPlayers}}
-      <a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a> (<a href="/l/{{../lid}}/roster/{{abbrev}}/{{../season}}">{{abbrev}}</a>) {{ratings.ovr}} {{age}}<br>
+      <a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a> (overall rating: {{ratings.ovr}}; age: {{age}})<br>
     {{/retiredPlayers}}
   </div>
 </div>

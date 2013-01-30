@@ -691,7 +691,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                 g.dbl.transaction("players").objectStore("players").index("retiredYear").getAll(season).onsuccess = function (event) {
                     var retiredPlayers;
 
-                    retiredPlayers = db.getPlayers(event.target.result, season, null, ["pid", "name", "abbrev", "age"], [], ["ovr"]);
+                    retiredPlayers = db.getPlayers(event.target.result, season, null, ["pid", "name", "age"], [], ["ovr"]);
 
                     db.getTeams(null, season, ["abbrev", "region", "name"], [], ["leagueChamps"], null, function (teams) {
                         var champ, data, i;

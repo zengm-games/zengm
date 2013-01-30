@@ -316,7 +316,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                                 }
                             }
                         }
-                        vars.oppPtsRank = 30 - vars.oppPtsRank;
+                        vars.oppPtsRank = 31 - vars.oppPtsRank;
 
                         transaction.objectStore("games").index("season").getAll(g.season).onsuccess = function (event) {
                             var games, i, overtime;

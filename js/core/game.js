@@ -617,9 +617,13 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/lock
         // If this is a request to start a new simulation... are we allowed to do
         // that? If so, set the lock and update the play menu
         if (start) {
-            lock.canStartGames(function (canStartGames) {
+            lock.canStartGames(null, function (canStartGames) {
                 if (canStartGames) {
-                    cbRunDay();
+                    lock.setGamesInProgress(true, function () {
+                        ui.updatePlayMenu(null, function () {
+                            cbRunDay();
+                        });
+                    });
                 }
             });
         } else {

@@ -62,37 +62,29 @@ define(["db"], function (db) {
         };
     }
 
-    /*Returns a boolean. Games can be started only when there is no contract
-    negotiation in progress and there is no other game simulation in progress.
-    */
     /**
      * Can new game simulations be started?
      *
+     * Calls the callback function with either true or false. If games are in progress or any contract negotiation is in progress, false.
+     *
+     * @memberOf lock
+     * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on gameAttributes and negotiations; if null is passed, then a new transaction will be used.
      * @param {function(boolean)} cb Callback.
      */
-    function canStartGames(cb) {
-/*        r = g.dbex('SELECT games_in_progress FROM game_attributes')
-        games_in_progress, = r.fetchone()
+    function canStartGames(ot, cb) {
+        gamesInProgress(ot, function (gamesInProgressBool) {
+            if (gamesInProgressBool) {
+                return cb(false);
+            }
 
-        if games_in_progress or negotiation_in_progress():
-            return false;
-        else {
-            return true;
-        }
+            negotiationInProgress(ot, function (negotiationInProgressBool) {
+                if (negotiationInProgressBool) {
+                    return cb(false);
+                }
 
-        can_start_negotiation: function () {
-        r = g.dbex('SELECT games_in_progress FROM game_attributes')
-        games_in_progress, = r.fetchone()
-
-        if games_in_progress:
-            return false;
-
-        // Allow multiple parallel negotiations (ignore negotiation_in_progress) only for resigning players
-        r = g.dbex('SELECT 1 FROM negotiations WHERE resigning = false')
-        if r.rowcount:
-            return false;*/
-
-        cb(true);
+                return cb(true);
+            });
+        });
     }
 
     /**
@@ -106,16 +98,12 @@ define(["db"], function (db) {
      */
     function canStartNegotiation(ot, cb) {
         gamesInProgress(ot, function (gamesInProgressBool) {
-            var negotiationStore;
-
             if (gamesInProgressBool) {
                 return cb(false);
             }
 
-            negotiationStore = db.getObjectStore(ot, "negotiations", "negotiations");
-
             // Allow multiple parallel negotiations only for resigning players
-            negotiationStore.getAll().onsuccess = function (event) {
+            db.getObjectStore(ot, "negotiations", "negotiations").getAll().onsuccess = function (event) {
                 var i, negotiations;
 
                 negotiations = event.target.result;
@@ -125,7 +113,6 @@ define(["db"], function (db) {
                         return cb(false);
                     }
                 }
-
 
                 return cb(true);
             };

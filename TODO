@@ -1,7 +1,6 @@
 main todo (before public beta)
 ------------------------------
 
-auto sort roster button is broken. sort seems arbitrary
 hitting the phase twice shouldn't be possible. but if i, for instance, hit "until preseason" twice quickly, i skip a year
   maybe have something like lock.phaseChangeInProgress? but some timeout would be needed to reset
   quick fix: disable play menu on click, reenable on new phase?

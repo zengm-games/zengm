@@ -669,7 +669,7 @@ console.log(event);
             var i;
 
             players = getPlayers(event.target.result, g.season, tid, ["pid"], [], ["ovr"], {showNoStats: true, showRookies: true});
-            players.sort(function (a, b) {  return b.ovr - a.ovr; });
+            players.sort(function (a, b) {  return b.ratings.ovr - a.ratings.ovr; });
 
             for (i = 0; i < players.length; i++) {
                 players[i].rosterOrder = i;

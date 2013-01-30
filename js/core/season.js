@@ -749,19 +749,19 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
             players = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings);
 
             // Most Valuable Player
-            players.sort(function (a, b) {  return (0.75 * b.pts + b.ast + b.trb) - (0.75 * a.pts + a.ast + a.trb); });
+            players.sort(function (a, b) {  return (0.75 * b.stats.pts + b.stats.ast + b.stats.trb) - (0.75 * a.stats.pts + a.stats.ast + a.stats.trb); });
             p = players[0];
-            awards.mvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.pts, trb: p.trb, ast: p.ast};
+            awards.mvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
 
             // Sixth Man of the Year - same sort as MVP
             for (i = 0; i < players.length; i++) {
                 // Must have come off the bench in most games
-                if (players[i].gs === 0 || players[i].gp / players[i].gs > 2) {
+                if (players[i].stats.gs === 0 || players[i].stats.gp / players[i].stats.gs > 2) {
                     break;
                 }
             }
             p = players[i];
-            awards.smoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.pts, trb: p.trb, ast: p.ast};
+            awards.smoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
 
             // Rookie of the Year - same sort as MVP
             for (i = 0; i < players.length; i++) {
@@ -772,7 +772,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
             }
             p = players[i];
             if (p !== undefined) { // I suppose there could be no rookies at all..
-                awards.roy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.pts, trb: p.trb, ast: p.ast};
+                awards.roy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
             }
 
             // All League Team - same sort as MVP
@@ -784,13 +784,13 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                 } else if (i === 10) {
                     awards.allLeague.push({title: "Third Team", players: []});
                 }
-                _.last(awards.allLeague).players.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.pts, trb: p.trb, ast: p.ast});
+                _.last(awards.allLeague).players.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast});
             }
 
             // Defensive Player of the Year
-            players.sort(function (a, b) {  return (b.trb + 5 * b.blk + 5 * b.stl) - (a.trb + 5 * a.blk + 5 * a.stl); });
+            players.sort(function (a, b) {  return (b.stats.trb + 5 * b.stats.blk + 5 * b.stats.stl) - (a.stats.trb + 5 * a.stats.blk + 5 * a.stats.stl); });
             p = players[0];
-            awards.dpoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.trb, blk: p.blk, stl: p.stl};
+            awards.dpoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.stats.trb, blk: p.stats.blk, stl: p.stats.stl};
 
             // All Defensive Team - same sort as DPOY
             awards.allDefensive = [{title: "First Team", players: []}];
@@ -801,7 +801,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                 } else if (i === 10) {
                     awards.allDefensive.push({title: "Third Team", players: []});
                 }
-                _.last(awards.allDefensive).players.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.trb, blk: p.blk, stl: p.stl});
+                _.last(awards.allDefensive).players.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.stats.trb, blk: p.stats.blk, stl: p.stats.stl});
             }
 
             attributes = ["tid", "abbrev", "region", "name", "cid"];

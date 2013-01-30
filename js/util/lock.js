@@ -65,7 +65,12 @@ define(["db"], function (db) {
     /*Returns a boolean. Games can be started only when there is no contract
     negotiation in progress and there is no other game simulation in progress.
     */
-    function canStartGames() {
+    /**
+     * Can new game simulations be started?
+     *
+     * @param {function(boolean)} cb Callback.
+     */
+    function canStartGames(cb) {
 /*        r = g.dbex('SELECT games_in_progress FROM game_attributes')
         games_in_progress, = r.fetchone()
 
@@ -87,7 +92,7 @@ define(["db"], function (db) {
         if r.rowcount:
             return false;*/
 
-        return true;
+        cb(true);
     }
 
     /**
@@ -131,7 +136,7 @@ define(["db"], function (db) {
         setGamesInProgress: setGamesInProgress,
         gamesInProgress: gamesInProgress,
         negotiationInProgress: negotiationInProgress,
-        can_start_games: canStartGames,
+        canStartGames: canStartGames,
         canStartNegotiation: canStartNegotiation
     };
 });

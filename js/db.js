@@ -807,6 +807,12 @@ console.log(event);
                 };
             }(key));
         }
+
+        if (numUpdated === 0 && toUpdate.length === 0) {
+            if (cb !== undefined) {
+                cb();
+            }
+        }
     }
 
     return {

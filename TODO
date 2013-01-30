@@ -1,21 +1,17 @@
 main todo (before public beta)
 ------------------------------
 
-revamp lock?
-  make it all async, like
-  lock.canStartGames(function (canStartGames) {
-      if (canStartGames) {
-          // whatever
-      }
-  });
-  actually implement these functions rather than using placeholders. check the db, not g
+lock
+  actually implement lock.canStartGames rather than just returning true. check the db, not g
+  documentation for lock.canStartGames
+  documentation for lock.setGamesInProgress
 free agents
   let free agents stay for 2 seasons before retiring, or make retirement probabilistic
     is retirement working for the first season, at all?
   on new game, have enough free agents so the pool isn't totally depleted
 game simulation realism
   make pages that show stats and ratings as medians/quintiles, for a given season. this will help see how they evolve over time, respond to tweaking, etc.
-    round min/max of scale to integers (or don't round at all?)
+    don't round min/max of scale to integers, just let them be whatever they are
     player stats box plots - add NBA data for comparison - show as gray box plot in the background
     team stats box plots
       link from bottom of team stats page, like player ratings
@@ -55,6 +51,7 @@ advanced stats
   +/-
   WP?
   APM?
+  shot charts?
 git tag as beta
 
 ---

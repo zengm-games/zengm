@@ -479,9 +479,11 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/lock
      * @param {boolean} start Is this a new request from the user to play games (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed.
      */
     function play(numDays, start) {
-        var cbNoGames, cbPlayGames, cbYetAnother, playoffsContinue;
+        var cbNoGames, cbPlayGames, cbRunDay, playoffsContinue;
 
         start = start !== undefined ? start : false;
+
+        playoffsContinue = false;
 
         // This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season or the end of the playoffs.
         cbNoGames = function () {
@@ -570,54 +572,58 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/lock
             });
         };
 
-        playoffsContinue = false;
+        // This simulates a day, including game simulation and any other bookkeeping that needs to be done
+        cbRunDay = function () {
+            var cbYetAnother;
+
+            // This is called if there are remaining days to simulate
+            cbYetAnother = function () {
+                // Check if it's the playoffs and do some special stuff if it is or isn't
+                if (g.phase !== c.PHASE_PLAYOFFS) {
+                    // Decrease free agent demands and let AI teams sign them
+                    freeAgents.decreaseDemands(function () {
+                        freeAgents.autoSign(function () {
+                            cbPlayGames();
+                        });
+                    });
+                } else {
+                    season.newSchedulePlayoffsDay(function (playoffsOver) {
+                        // If season.newSchedulePlayoffsDay didn't move the phase to c.PHASE_BEFORE_DRAFT, then the playoffs are still happening.
+                        if (g.phase === c.PHASE_PLAYOFFS) {
+                            playoffsContinue = true;
+                        }
+                        cbPlayGames();
+                    });
+                }
+            };
+
+            if (numDays > 0) {
+                // If we didn't just stop games, let's play
+                // Or, if we are starting games (and already passed the lock), continue even if stopGames was just seen
+                if (start || !g.stopGames) {
+                    if (g.stopGames) {
+                        db.setGameAttributes({stopGames: false}, cbYetAnother);
+                    }
+                    else {
+                        cbYetAnother();
+                    }
+                }
+            } else if (numDays === 0) {
+                // If this is the last day, update play menu
+                cbNoGames();
+            }
+        }
 
         // If this is a request to start a new simulation... are we allowed to do
         // that? If so, set the lock and update the play menu
         if (start) {
-            if (lock.can_start_games()) {
-                lock.setGamesInProgress(true, ui.updatePlayMenu);
-            } else {
-                // If not allowed to start games, don't
-                return;
-            }
-        }
-
-        cbYetAnother = function () {
-            // Check if it's the playoffs and do some special stuff if it is or isn't
-            if (g.phase !== c.PHASE_PLAYOFFS) {
-                // Decrease free agent demands and let AI teams sign them
-                freeAgents.decreaseDemands(function () {
-                    freeAgents.autoSign(function () {
-                        cbPlayGames();
-                    });
-                });
-            } else {
-                season.newSchedulePlayoffsDay(function (playoffsOver) {
-                    // If season.newSchedulePlayoffsDay didn't move the phase to c.PHASE_BEFORE_DRAFT, then the playoffs are still happening.
-                    if (g.phase === c.PHASE_PLAYOFFS) {
-                        playoffsContinue = true;
-                    }
-                    cbPlayGames();
-                });
-            }
-        }
-
-        if (numDays > 0) {
-            // If we didn't just stop games, let's play
-            // Or, if we are starting games (and already passed the lock above),
-            // continue even if stop_games was just seen
-            if (start || !g.stopGames) {
-                if (g.stopGames) {
-                    db.setGameAttributes({stopGames: false}, cbYetAnother);
+            lock.canStartGames(function (canStartGames) {
+                if (canStartGames) {
+                    cbRunDay();
                 }
-                else {
-                    cbYetAnother();
-                }
-            }
-        } else if (numDays === 0) {
-            // If this is the last day, update play menu
-            cbNoGames();
+            });
+        } else {
+            cbRunDay();
         }
     }
 

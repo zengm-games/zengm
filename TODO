@@ -1,9 +1,6 @@
 main todo (before public beta)
 ------------------------------
 
-hitting the phase twice shouldn't be possible. but if i, for instance, hit "until preseason" twice quickly, i skip a year
-  maybe have something like lock.phaseChangeInProgress? but some timeout would be needed to reset
-  quick fix: disable play menu on click, reenable on new phase?
 revamp lock?
   make it all async, like
   lock.canStartGames(function (canStartGames) {
@@ -187,6 +184,8 @@ player finder
 free agent error message "You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process." is only displayed transiently before the free agent list is reloaded?
 online "locker" that you can sync saved games to
 customize which columns are shown in roster view (and possibly other summary views like trade, free agent, etc)
+hitting the phase twice shouldn't be possible. but if i, for instance, hit "until preseason" twice quickly, i skip a year
+  maybe have something like lock.phaseChangeInProgress? but some timeout would be needed to reset
 
 ---
 

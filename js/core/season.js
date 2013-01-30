@@ -484,9 +484,18 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
     called. Instead, pass a callback.
     */
     function newPhase(phase, cb) {
+        var button, playButtonElement;
+
         // Prevent code running twice
         if (phase === g.phase) {
             return;
+        }
+
+        // Prevent new phase from being clicked twice by deleting all options from the play menu. The options will be restored after the new phase is set.
+        button = Handlebars.templates.playButton({options: []});
+        playButtonElement = document.getElementById("playButton");
+        if (playButtonElement) {
+            playButtonElement.innerHTML = button;
         }
 
         if (phase === c.PHASE_PRESEASON) {

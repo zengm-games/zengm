@@ -1,10 +1,12 @@
 main todo (before public beta)
 ------------------------------
 
+playing until playoffs shouldn't say "500 days". find the real value
 free agents
   let free agents stay for 2 seasons before retiring, or make retirement probabilistic
     is retirement working for the first season, at all?
   on new game, have enough free agents so the pool isn't totally depleted
+player view should show more on one screen rather than using tabs, like basketball-reference
 game simulation realism
   make pages that show stats and ratings as medians/quintiles, for a given season. this will help see how they evolve over time, respond to tweaking, etc.
     don't round min/max of scale to integers, just let them be whatever they are
@@ -20,7 +22,7 @@ game simulation realism
       match up defenders with offensive players, 1 for 1
       the player with the ball starts beyond the 3 point line. options are to shoot a contested 3, attack of the dribble, or pass. take action based somehow on expected value, factoring in defense as well
       attack off the dribble and pass both include risk of turnover
-      if pass, pick player randomly based on ability. then, determine how open that player is based on team characteristics (number of shooters, etc) and prior action that possession (at this point, basically just if someone attacked off the dribble previously) and determine their location based on player characteristics (3, midrange, post, basket)
+      if pass, pick player randomly based on ability. then, determine how open that player is based on team characteristics (number of shooters, etc; synergy!) and prior action that possession (at this point, basically just if someone attacked off the dribble previously) and determine their location based on player characteristics (3, midrange, post, basket)
       then again: options are to shoot, dribble, or pass. repeat as above. but each time, have some bonus added to the "shoot" option due to the shot clock
     other factors to include:
       double teams
@@ -43,11 +45,17 @@ put on play.basketball-gm.com, with splash page on basketball-gm.com
 bootstrap 2.2?
 free agent balance.. maybe increase salary cap?
 advanced stats
-  PER
-  +/-
-  WP?
+  PER - http://www.basketball-reference.com/about/per.html
+  WS - http://www.basketball-reference.com/about/ws.html requires Basketball on Paper - http://www.sports-reference.com/cbb/about/ws.html is simpler
+  +/- and other stats needed to calculate above - track in game
+  calculated stats like PER and WS - do daily
   APM?
   shot charts?
+help menu
+  overview
+  loading/saving games
+  stats (explain advanced stats)
+  game simulation
 git tag as beta
 
 ---

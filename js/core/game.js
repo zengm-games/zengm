@@ -2,7 +2,7 @@
  * @name core.game
  * @namespace Everything about games except the actual simulation. So, loading the schedule, loading the teams, saving the results, and handling multi-day simulations and what happens when there are no games left to play.
  */
-define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/lock", "util/random"], function (db, ui, freeAgents, gameSim, season, lock, random) {
+define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/season", "util/lock", "util/random"], function (db, ui, advStats, freeAgents, gameSim, season, lock, random) {
     "use strict";
 
     function Game() {
@@ -550,9 +550,11 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/lock
                                         scheduleStore.delete(gidsFinished[j]);
                                     }
 
-                                    ui.realtimeUpdate(function () {
-                                        db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                                            play(numDays - 1);
+                                    advStats.calculateAll(function () {  // Update all advanced stats every day
+                                        ui.realtimeUpdate(function () {
+                                            db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                                                play(numDays - 1);
+                                            });
                                         });
                                     });
                                 } else {

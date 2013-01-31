@@ -1,6 +1,6 @@
 /**
  * @name core.advStats
- * @namespace Advanced stats (PER, WS, etc) that require some nontrivial calculation and thus are calculated and cached once each day.
+ * @namespace Advanced stats (PER, WS, etc) that require some nontrivial calculations and thus are calculated and cached once each day.
  */
 define(["db"], function (db) {
     "use strict";
@@ -12,10 +12,22 @@ define(["db"], function (db) {
      *
      * @memberOf core.advStats
      */
-    function calculatePER() {
-        // Total league stats (not per game averages) - ft, pf, ast, fg, pts, fga, orb, tov, fta, trb
+    function calculatePER(cb) {
+        // Total team stats (not per game averages) - ast, fg, plus all the others needed for league totals
+        var attributes, stats;
 
-        // Total team stats (not per game averages) - ast, fg
+        attributes = ["tid"];
+        stats = ["ft", "pf", "ast", "fg", "pts", "fga", "orb", "tov", "fta", "trb"];
+        db.getTeams(null, g.season, attributes, stats, [], {totals: true}, function (teams) {
+// TODO: add option for total stats to db.getTeams
+console.log(teams);
+
+            if (cb !== undefined) {
+                cb();
+            }
+        });
+
+        // Total league stats (not per game averages) - ft, pf, ast, fg, pts, fga, orb, tov, fta, trb
 
         // Calculate pace for each team, using the "estimated pace adjustment" formula rather than the "pace adjustment" formula because it's simpler and ends up at nearly the same result.
 
@@ -26,15 +38,16 @@ define(["db"], function (db) {
         // aPER
 
         // PER
+
+        // Where to save? new field in stats, or new object advStats? probably just in stats, right?
     }
 
     function calculateWS() {
 
     }
 
-    function calculateAll() {
-        calculatePER();
-        calculateWS();
+    function calculateAll(cb) {
+        calculatePER(cb);
     }
 
     return {

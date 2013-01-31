@@ -284,7 +284,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     attributes = ["tid", "cid"];
                     stats = ["pts", "oppPts", "trb", "ast"];  // This is also used later to find ranks for these team stats
                     seasonAttributes = ["won", "lost", "winp", "streakLong", "att", "revenue", "profit"];
-                    db.getTeams(transaction, g.season, attributes, stats, seasonAttributes, "winp", function (teams) {
+                    db.getTeams(transaction, g.season, attributes, stats, seasonAttributes, {sortBy: "winp"}, function (teams) {
                         var i, j, ranks;
 
                         vars.rank = 1;
@@ -516,7 +516,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
             attributes = ["tid", "cid", "did", "abbrev", "region", "name"];
             seasonAttributes = ["won", "lost", "winp", "wonHome", "lostHome", "wonAway", "lostAway", "wonDiv", "lostDiv", "wonConf", "lostConf", "lastTen", "streak"];
-            db.getTeams(null, season, attributes, [], seasonAttributes, "winp", function (teams) {
+            db.getTeams(null, season, attributes, [], seasonAttributes, {sortBy: "winp"}, function (teams) {
                 var confs, confTeams, data, divTeams, i, j, k, l, lastTenLost, lastTenWon;
 
                 confs = [];
@@ -595,7 +595,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                 finalMatchups = false;
                 attributes = ["tid", "cid", "abbrev", "name"];
                 seasonAttributes = ["winp"];
-                db.getTeams(null, season, attributes, [], seasonAttributes, "winp", function (teams) {
+                db.getTeams(null, season, attributes, [], seasonAttributes, {sortBy: "winp"}, function (teams) {
                     var cid, i, j, keys, series, teamsConf;
 
                     series = [[], [], [], []];  // First round, second round, third round, fourth round
@@ -643,7 +643,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
             attributes = ["tid", "abbrev", "region", "name"];
             seasonAttributes = ["att", "revenue", "profit", "cash", "payroll"];
-            db.getTeams(null, g.season, attributes, [], seasonAttributes, "winp", function (teams) {
+            db.getTeams(null, g.season, attributes, [], seasonAttributes, {}, function (teams) {
                 var data, i;
 
                 for (i = 0; i < teams.length; i++) {
@@ -693,7 +693,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
                     retiredPlayers = db.getPlayers(event.target.result, season, null, ["pid", "name", "age"], [], ["ovr"]);
 
-                    db.getTeams(null, season, ["abbrev", "region", "name"], [], ["leagueChamps"], null, function (teams) {
+                    db.getTeams(null, season, ["abbrev", "region", "name"], [], ["leagueChamps"], {}, function (teams) {
                         var champ, data, i;
 
                         for (i = 0; i < teams.length; i++) {
@@ -1430,7 +1430,7 @@ console.log(message);
             attributes = ["abbrev"];
             stats = ["gp", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "oppPts"];
             seasonAttributes = ["won", "lost"];
-            db.getTeams(null, season, attributes, stats, seasonAttributes, null, function (teams) {
+            db.getTeams(null, season, attributes, stats, seasonAttributes, {}, function (teams) {
                 var data;
 
                 data = {

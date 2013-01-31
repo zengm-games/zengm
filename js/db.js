@@ -571,10 +571,11 @@ console.log(event);
      * @param {Array.<string>} attributes List of non-seasonal attributes (such as team name) to include in output.
      * @param {Array.<string>} stats List of team stats to include in output.
      * @param {Array.<string>} seasonAttributes List of seasonal attributes (such as won or lost) to include in output.
+     * @param {Object} options Object containing various options. Possible keys include... "options": String represeting the sorting method; "winp" sorts by descending winning percentage, "winpAsc" does the opposite, default is no sorting. "totals": Boolean representing whether to return total stats (true) or per-game averages (false); default is false.
      * @param {string|null} sortBy String represeting the sorting method. "winp" sorts by descending winning percentage, "winpAsc" does the opposite.
      * @param {function(Array)} cb Callback whose first argument is an array of all the team objects.
      */
-    function getTeams(ot, season, attributes, stats, seasonAttributes, sortBy, cb) {
+    function getTeams(ot, season, attributes, stats, seasonAttributes, options, cb) {
         var done, transaction;
 
         transaction = getObjectStore(ot, ["players", "releasedPlayers", "teams"], null);
@@ -588,12 +589,14 @@ console.log(event);
                 teams.push(getTeam(teamsAll[i], season, attributes, stats, seasonAttributes));
             }
 
-            if (sortBy === "winp") {
-                // Sort by winning percentage, descending
-                teams.sort(function (a, b) {  return b.winp - a.winp; });
-            } else if (sortBy === "winpAsc") {
-                // Sort by winning percentage, ascending
-                teams.sort(function (a, b) {  return a.winp - b.winp; });
+            if (options.hasOwnProperty("sortBy")) {
+                if (options.sortBy === "winp") {
+                    // Sort by winning percentage, descending
+                    teams.sort(function (a, b) {  return b.winp - a.winp; });
+                } else if (options.sortBy === "winpAsc") {
+                    // Sort by winning percentage, ascending
+                    teams.sort(function (a, b) {  return a.winp - b.winp; });
+                }
             }
 
             if (seasonAttributes.indexOf("payroll") < 0) {

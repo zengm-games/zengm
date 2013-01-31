@@ -34,7 +34,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
 
         attributes = ["tid", "abbrev", "name", "cid"];
         seasonAttributes = ["winp"];
-        db.getTeams(null, g.season, attributes, [], seasonAttributes, "winpAsc", function (teams) {
+        db.getTeams(null, g.season, attributes, [], seasonAttributes, {sortBy: "winpAsc"}, function (teams) {
             draftOrder = [];
 
             for (round = 1; round <= 2; round++) {

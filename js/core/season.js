@@ -196,7 +196,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
         // Set playoff matchups
         attributes = ["tid", "abbrev", "name", "cid"];
         seasonAttributes = ["winp"];
-        db.getTeams(null, g.season, attributes, [], seasonAttributes, "winp", function (teams) {
+        db.getTeams(null, g.season, attributes, [], seasonAttributes, {sortBy: "winp"}, function (teams) {
             var cid, i, j, row, series, teamsConf, tidPlayoffs;
 
             // Add entry for wins for each team; delete winp, which was only needed for sorting
@@ -816,7 +816,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
             attributes = ["tid", "abbrev", "region", "name", "cid"];
             stats = [];
             seasonAttributes = ["won", "lost", "winp"];
-            db.getTeams(transaction, g.season, attributes, stats, seasonAttributes, "winp", function (teams) {
+            db.getTeams(transaction, g.season, attributes, stats, seasonAttributes, {sortBy: "winp"}, function (teams) {
                 var i, foundEast, foundWest, t;
 
                 for (i = 0; i < teams.length; i++) {

@@ -33,7 +33,7 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
             db.setGameAttributes({stopGames: true}, function () {
                 // This is needed because we can't be sure if core.game.play will be called again
                 ui.updateStatus('Idle');
-                lock.setGamesInProgress(false, ui.updatePlayMenu);
+                db.setGameAttributes({gamesInProgress: false}, ui.updatePlayMenu);
             });
         } else if (amount === "until_draft") {
             if (g.phase === c.PHASE_BEFORE_DRAFT) {

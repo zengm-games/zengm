@@ -2758,10 +2758,10 @@ function program1(depth0,data,depth1) {
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "abbrev", { hash: {} }); }
   buffer += escapeExpression(stack1) + "/";
   foundHelper = helpers.game;
-  stack1 = foundHelper || depth0.game;
+  stack1 = foundHelper || depth1.game;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.season);
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "game.season", { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "...game.season", { hash: {} }); }
   buffer += escapeExpression(stack1) + "\">";
   foundHelper = helpers.region;
   stack1 = foundHelper || depth0.region;

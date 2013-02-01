@@ -1,6 +1,8 @@
 main todo (before public beta)
 ------------------------------
 
+link team rosters from playoffs view
+show record (w-l) on roster view
 make getAll shim use native FF getAll
 playing until playoffs shouldn't say "500 days". find the real value
 free agents
@@ -45,14 +47,12 @@ import/export games
 put on play.basketball-gm.com, with splash page on basketball-gm.com
 bootstrap 2.2?
 free agent balance.. maybe increase salary cap?
-advanced stats
-  PER - http://www.basketball-reference.com/about/per.html
-    - use for awards
-  WS - http://www.basketball-reference.com/about/ws.html requires Basketball on Paper - http://www.sports-reference.com/cbb/about/ws.html is simpler
-  +/- and other stats needed to calculate above - track in game
-  calculated stats like PER and WS - do daily
-  APM?
-  shot charts?
+use PER for awards
+add PER to...
+  draft summary view
+  trade view
+  free agents view
+  negotiations list view
 help menu
   overview
   loading/saving games
@@ -186,6 +186,11 @@ online "locker" that you can sync saved games to
 customize which columns are shown in roster view (and possibly other summary views like trade, free agent, etc)
 hitting the phase twice shouldn't be possible. but if i, for instance, hit "until preseason" twice quickly, i skip a year
   maybe have something like lock.phaseChangeInProgress? but some timeout would be needed to reset
+advanced stats
+  WS - http://www.basketball-reference.com/about/ws.html requires Basketball on Paper - http://www.sports-reference.com/cbb/about/ws.html is simpler
+  +/- and other stats needed to calculate above - track in game
+  APM?
+  shot charts?
 
 ---
 
@@ -259,7 +264,6 @@ security
 
 playoffs
   on playoffs start, automatically switch to playoffs view
-  link to team rosters... or better to link to a summary of the series?
 
 # Then
 

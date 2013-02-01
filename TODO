@@ -1,7 +1,6 @@
 main todo (before public beta)
 ------------------------------
 
-fix age in old roster view
 link team rosters from playoffs view
 show record (w-l) on roster view
 make getAll shim use native FF getAll
@@ -15,9 +14,11 @@ game simulation realism
   make pages that show stats and ratings as medians/quintiles, for a given season. this will help see how they evolve over time, respond to tweaking, etc.
     don't round min/max of scale to integers, just let them be whatever they are
     player stats box plots - add NBA data for comparison - show as gray box plot in the background
+      http://www.databasebasketball.com/stats_download.htm
     team stats box plots
       link from bottom of team stats page, like player ratings
       add NBA data for comparison - show as gray box plot in the background
+        http://www.databasebasketball.com/stats_download.htm
   separate composite ratings for shooting in different places (jumpshot, inside, fast break, three, etc)
     how do i know how many of each are shot? log it in some kind of game summary log
     better shots (dunks/layups) should occur when created by other factors (defense, passing, etc)
@@ -33,7 +34,7 @@ game simulation realism
       pick and roll
       pick and pop
       fast breaks
-  height should matter a lot more
+  height should matter a lot more - reevaluate aver redoing possession simulation as described above
     e.g.
       bigs should get more boards
       bigs should have higher FG%, even with less shots
@@ -51,7 +52,7 @@ free agent balance.. maybe increase salary cap?
 PER
   slow, particularly after multiple seasons?
   how to deal with players traded mid-season?
-  how to calculate career per in player view?
+  how to calculate career per in player view? average weighted by minutes each year
   use for awards
   add to...
     draft summary view

@@ -802,9 +802,15 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                 // Show all players with stats for the given team and year
                 currentSeason = false;
                 transaction.objectStore("players").index("statsTids").getAll(tid).onsuccess = function (event) {
-                    var players;
+                    var i, players;
 
                     players = db.getPlayers(event.target.result, season, tid, attributes, stats, ratings, {numGamesRemaining: 0, showRookies: true, sortBy: "rosterOrder"});
+
+                    // Fix ages
+                    for (i = 0; i < players.length; i++) {
+                        players[i].age = players[i].age - (g.season - season);
+                    }
+
                     cb(players, null);
                 };
             }
@@ -1376,12 +1382,17 @@ console.log(message);
             seasons = helpers.getSeasons(season);
 
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
-                var attributes, data, players, ratings, stats;
+                var attributes, data, i, players, ratings, stats;
                 attributes = ["pid", "name", "pos", "age"];
                 ratings = ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
                 stats = ["abbrev"];
 
                 players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings);
+
+                // Fix ages
+                for (i = 0; i < players.length; i++) {
+                    players[i].age = players[i].age - (g.season - season);
+                }
 
                 data = {
                     container: "league_content",

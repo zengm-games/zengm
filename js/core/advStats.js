@@ -42,7 +42,8 @@ define(["db"], function (db) {
             }
 
             // Total player stats (not per game averages) - min, tp, ast, fg, ft, tov, fga, fta, trb, orb, stl, blk, pf
-            g.dbl.transaction("players").objectStore("players").getAll().onsuccess = function (event) {
+            // Active players have tid >= 0
+            g.dbl.transaction("players").objectStore("players").getAll(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
                 var aPER, attributes, drbp, factor, i, PER, players, ratings, stats, tid, uPER, vop;
                 attributes = ["pid", "tid"];
                 ratings = [];
@@ -55,38 +56,40 @@ define(["db"], function (db) {
                 for (i = 0; i < players.length; i++) {
                     tid = players[i].tid;
 
-                    factor = (2 / 3) - (0.5 * (league.ast / league.fg)) / (2 * (league.fg / league.ft));
-                    vop = league.pts / (league.fga - league.orb + league.tov + 0.44 * league.fta);
-                    drbp = (league.trb - league.orb) / league.trb;  // DRB%
+                    if (tid >= 0) {  // No need to calculate for non-active players
+                        factor = (2 / 3) - (0.5 * (league.ast / league.fg)) / (2 * (league.fg / league.ft));
+                        vop = league.pts / (league.fga - league.orb + league.tov + 0.44 * league.fta);
+                        drbp = (league.trb - league.orb) / league.trb;  // DRB%
 
-                    if (players[i].stats.min > 0) {
-                        uPER = (1 / players[i].stats.min) *
-                               (players[i].stats.tp
-                               + (2 / 3) * players[i].stats.ast
-                               + (2 - factor * (teams[tid].ast / teams[tid].fg)) * players[i].stats.fg
-                               + (players[i].stats.ft * 0.5 * (1 + (1 - (teams[tid].ast / teams[tid].fg)) + (2 / 3) * (teams[tid].ast / teams[tid].fg)))
-                               - vop * players[i].stats.tov
-                               - vop * drbp * (players[i].stats.fga - players[i].stats.fg)
-                               - vop * 0.44 * (0.44 + (0.56 * drbp)) * (players[i].stats.fta - players[i].stats.ft)
-                               + vop * (1 - drbp) * (players[i].stats.trb - players[i].stats.orb)
-                               + vop * drbp * players[i].stats.orb
-                               + vop * players[i].stats.stl
-                               + vop * drbp * players[i].stats.blk
-                               - players[i].stats.pf * ((league.ft / league.pf) - 0.44 * (league.fta / league.pf) * vop));
-                    } else {
-                        uPER = 0;
+                        if (players[i].stats.min > 0) {
+                            uPER = (1 / players[i].stats.min) *
+                                   (players[i].stats.tp
+                                   + (2 / 3) * players[i].stats.ast
+                                   + (2 - factor * (teams[tid].ast / teams[tid].fg)) * players[i].stats.fg
+                                   + (players[i].stats.ft * 0.5 * (1 + (1 - (teams[tid].ast / teams[tid].fg)) + (2 / 3) * (teams[tid].ast / teams[tid].fg)))
+                                   - vop * players[i].stats.tov
+                                   - vop * drbp * (players[i].stats.fga - players[i].stats.fg)
+                                   - vop * 0.44 * (0.44 + (0.56 * drbp)) * (players[i].stats.fta - players[i].stats.ft)
+                                   + vop * (1 - drbp) * (players[i].stats.trb - players[i].stats.orb)
+                                   + vop * drbp * players[i].stats.orb
+                                   + vop * players[i].stats.stl
+                                   + vop * drbp * players[i].stats.blk
+                                   - players[i].stats.pf * ((league.ft / league.pf) - 0.44 * (league.fta / league.pf) * vop));
+                        } else {
+                            uPER = 0;
+                        }
+
+                        aPER[i] = teams[tid].pace * uPER;
+                        league.aPER = league.aPER + aPER[i] * players[i].stats.min;
                     }
-
-                    aPER[i] = teams[tid].pace * uPER;
-                    league.aPER = league.aPER + aPER[i] * players[i].stats.min;
                 }
 
                 league.aPER = league.aPER / (league.gp * 5 * 48);
 
                 PER = _.map(aPER, function (num) { return num * (15 / league.aPER); });
 
-                // Save to database
-                g.dbl.transaction("players", "readwrite").objectStore("players").openCursor().onsuccess = function (event) {
+                // Save to database. Active players have tid >= 0
+                g.dbl.transaction("players", "readwrite").objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
                     var cursor, i, p;
 
                     cursor = event.target.result;
@@ -96,11 +99,12 @@ define(["db"], function (db) {
                         for (i = 0; i < players.length; i++) {
                             if (players[i].pid === p.pid) {
                                 _.last(p.stats).per = PER[i];
+
+                                cursor.update(p);
+
                                 break;
                             }
                         }
-
-                        cursor.update(p);
 
                         cursor.continue();
                     } else {

@@ -1,6 +1,7 @@
 main todo (before public beta)
 ------------------------------
 
+make getAll shim use native FF getAll
 playing until playoffs shouldn't say "500 days". find the real value
 free agents
   let free agents stay for 2 seasons before retiring, or make retirement probabilistic
@@ -46,6 +47,7 @@ bootstrap 2.2?
 free agent balance.. maybe increase salary cap?
 advanced stats
   PER - http://www.basketball-reference.com/about/per.html
+    - use for awards
   WS - http://www.basketball-reference.com/about/ws.html requires Basketball on Paper - http://www.sports-reference.com/cbb/about/ws.html is simpler
   +/- and other stats needed to calculate above - track in game
   calculated stats like PER and WS - do daily

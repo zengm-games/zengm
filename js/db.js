@@ -158,13 +158,16 @@ console.log(event);
      * @param {Array.<string>} attributes List of player attributes to include in output.
      * @param {Array.<string>} stats List of player stats to include in output.
      * @param {Array.<string>} ratings List of player ratings to include in output.
-     * @param {Object} options Object containing various domain-specific options that are rarely used and should eventually be documented.
+    * @param {Object} options Object containing various options. Possible keys include...  "totals": Boolean representing whether to return total stats (true) or per-game averages (false); default is false. Other keys should eventually be documented.
      * @return {Object} Filtered object containing the requested information for the player.
      */
     function getPlayer(pa, season, tid, attributes, stats, ratings, options) {
         var i, j, k, key, ignoredKeys, player, pcs, pr, ps, teams, tidTemp;
 
         options = options !== undefined ? options : {};
+        if (!options.hasOwnProperty("totals")) {
+            options.totals = false;
+        }
 
         if (stats.length === 0) {
             options.showNoStats = true;
@@ -344,8 +347,14 @@ console.log(event);
                         player.age = ps.season - pa.bornYear;
                     } else if (stats[j] === "abbrev") {
                         player.abbrev = helpers.getAbbrev(ps.tid);
+                    } else if (stats[j] === "per") {
+                        player.per = ps.per;
                     } else {
-                        player[stats[j]] = ps[stats[j]] / ps.gp;
+                        if (options.totals) {
+                            player[stats[j]] = ps[stats[j]];
+                        } else {
+                            player[stats[j]] = ps[stats[j]] / ps.gp;
+                        }
                     }
                 }
             } else {
@@ -400,6 +409,9 @@ console.log(event);
         var i, player, players;
 
         options = options !== undefined ? options : {};
+        if (!options.hasOwnProperty("totals")) {
+            options.totals = false;
+        }
 
         players = [];
         for (i = 0; i < playersAll.length; i++) {
@@ -416,7 +428,15 @@ console.log(event);
         return players;
     }
 
-    function getTeam(ta, season, attributes, stats, seasonAttributes) {
+
+    /**
+     * Get a filtered team object.
+     *
+     * See db.getTeams for documentation.
+     * 
+     * @memberOf db
+     */
+    function getTeam(ta, season, attributes, stats, seasonAttributes, options) {
         var i, j, lastTenLost, lastTenWon, team, ts, tsa;
 
         team = {};
@@ -531,7 +551,11 @@ console.log(event);
                     } else if (stats[j] === "season") {
                         team.season = ts.season;
                     } else {
-                        team[stats[j]] = ts[stats[j]] / ts.gp;
+                        if (options.totals) {
+                            team[stats[j]] = ts[stats[j]];
+                        } else {
+                            team[stats[j]] = ts[stats[j]] / ts.gp;
+                        }
                     }
                 }
             } else {
@@ -571,12 +595,17 @@ console.log(event);
      * @param {Array.<string>} attributes List of non-seasonal attributes (such as team name) to include in output.
      * @param {Array.<string>} stats List of team stats to include in output.
      * @param {Array.<string>} seasonAttributes List of seasonal attributes (such as won or lost) to include in output.
-     * @param {Object} options Object containing various options. Possible keys include... "options": String represeting the sorting method; "winp" sorts by descending winning percentage, "winpAsc" does the opposite, default is no sorting. "totals": Boolean representing whether to return total stats (true) or per-game averages (false); default is false.
+     * @param {Object} options Object containing various options. Possible keys include... "sortBy": String represeting the sorting method; "winp" sorts by descending winning percentage, "winpAsc" does the opposite, default is sort by team ID. "totals": Boolean representing whether to return total stats (true) or per-game averages (false); default is false.
      * @param {string|null} sortBy String represeting the sorting method. "winp" sorts by descending winning percentage, "winpAsc" does the opposite.
      * @param {function(Array)} cb Callback whose first argument is an array of all the team objects.
      */
     function getTeams(ot, season, attributes, stats, seasonAttributes, options, cb) {
         var done, transaction;
+
+        options = options !== undefined ? options : {};
+        if (!options.hasOwnProperty("totals")) {
+            options.totals = false;
+        }
 
         transaction = getObjectStore(ot, ["players", "releasedPlayers", "teams"], null);
         transaction.objectStore("teams").getAll().onsuccess = function (event) {
@@ -586,7 +615,7 @@ console.log(event);
             teams = [];
 
             for (i = 0; i < teamsAll.length; i++) {
-                teams.push(getTeam(teamsAll[i], season, attributes, stats, seasonAttributes));
+                teams.push(getTeam(teamsAll[i], season, attributes, stats, seasonAttributes, options));
             }
 
             if (options.hasOwnProperty("sortBy")) {

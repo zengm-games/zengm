@@ -768,7 +768,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
             attributes = ["pid", "name", "pos", "age", "contractAmount", "contractExp", "cashOwed", "rosterOrder"];
             ratings = ["ovr", "pot"];
-            stats = ["min", "pts", "trb", "ast"];
+            stats = ["min", "pts", "trb", "ast", "per"];
 
             if (season === g.season) {
                 // Show players currently on the roster
@@ -1405,7 +1405,7 @@ console.log(message);
                 var attributes, data, players, ratings, stats;
                 attributes = ["pid", "name", "pos", "age"];
                 ratings = [];
-                stats = ["abbrev", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts"];
+                stats = ["abbrev", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per"];
 
                 players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings, {showRookies: true});
 
@@ -1455,7 +1455,7 @@ console.log(message);
 
                 attributes = ["pid", "name", "tid", "abbrev", "teamRegion", "teamName", "pos", "age", "hgtFt", "hgtIn", "weight", "bornYear", "bornLoc", "contractAmount", "contractExp", "draftYear", "draftRound", "draftPick", "draftAbbrev", "face"];
                 ratings = ["season", "abbrev", "age", "ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
-                stats = ["season", "abbrev", "age", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts"];
+                stats = ["season", "abbrev", "age", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per"];
 
                 player = db.getPlayer(event.target.result, null, null, attributes, stats, ratings);
 

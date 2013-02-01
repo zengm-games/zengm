@@ -1,6 +1,7 @@
 main todo (before public beta)
 ------------------------------
 
+fix age in old roster view
 link team rosters from playoffs view
 show record (w-l) on roster view
 make getAll shim use native FF getAll

@@ -146,7 +146,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
             for (i = 0; i < leagues.length; i++) {
                 leagues[i].region = teams[leagues[i].tid].region;
-                leagues[i].name = teams[leagues[i].tid].name;
+                leagues[i].teamName = teams[leagues[i].tid].name;
                 delete leagues[i].tid;
             }
 
@@ -161,9 +161,12 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
     }
 
     function newLeague(req) {
-        var tid;
+        var name, randomName, tid;
 
         beforeNonLeague();
+
+        // Pick a random league name, either for the GET or POST phase
+        randomName = g.nickNames[Math.floor(Math.random() * g.nickNames.length)];
 
         if (req.method === "get") {
             g.dbm.transaction("teams").objectStore("teams").getAll().onsuccess = function (event) {
@@ -175,14 +178,15 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                     container: "content",
                     template: "newLeague",
                     title: "Create New League",
-                    vars: {teams: teams}
+                    vars: {teams: teams, randomName: randomName}
                 };
                 ui.update(data);
             };
         } else if (req.method === "post") {
-            tid = parseInt(req.params.tid, 10);
+            tid = Math.floor(req.params.tid);
+            name = req.params.name.length > 0 ? req.params.name : randomName;
             if (tid >= 0 && tid <= 29) {
-                league.create(tid, req.params.players, function (lid) {
+                league.create(name, tid, req.params.players, function (lid) {
                     Davis.location.assign(new Davis.Request("/l/" + lid));
                 });
             }

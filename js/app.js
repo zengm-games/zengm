@@ -27,7 +27,6 @@ requirejs(["api", "db", "views", "ui", "util/helpers"], function (api, db, views
                 helpers.error("Page not found.", req);
             });
 
-
             // Non-league views
             this.get("/init_db", views.init_db);
             this.get("/", views.dashboard);

@@ -1,6 +1,8 @@
 <h1>Create New League</h1>
 <p>
 <form action="/new_league" method="POST">
+  <label>League name</label>
+  <input type="text" name="name" value="{{randomName}}" />
   <label>Which team do you want to manage?</label>
   <select name="tid">
     {{#teams}}

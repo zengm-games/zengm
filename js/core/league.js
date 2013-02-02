@@ -9,13 +9,14 @@ define(["db", "ui", "core/player", "core/season", "util/helpers", "util/random"]
      * Create a new league.
      * 
      * @memberOf core.league
+     * @param {string} name The name of the league.
      * @param {number} tid The team ID for the team the user wants to manage.
      * @param {string} playerGeneration Either "random" to generate random players or "nba2012" to load NBA rosters.
      */
-    function create(tid, playerGeneration, cb) {
+    function create(name, tid, playerGeneration, cb) {
         var l, leagueStore;
 
-        l = {tid: tid, phaseText: ""};
+        l = {name: name, tid: tid, phaseText: ""};
         leagueStore = g.dbm.transaction("leagues", "readwrite").objectStore("leagues");
         leagueStore.add(l).onsuccess = function (event) {
             g.lid = event.target.result;

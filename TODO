@@ -1,6 +1,10 @@
 main todo (before public beta)
 ------------------------------
 
+import/export games
+  allow for named leagues, otherwise this gets confusing
+    test for HTML/JS injection
+    "Edit" button between "Export" and "Delete"
 multiyear revenue/profit is messed up in finances view
 show record (w-l) on roster view - make it more like a summary, as in basketball-reference
 free agents
@@ -45,7 +49,6 @@ game simulation realism
   smalls should get less blocks
   compare team and player stat distributions against reality
   home/away advantage
-import/export games
 put on play.basketball-gm.com, with splash page on basketball-gm.com
 bootstrap 2.2?
 free agent balance.. maybe increase salary cap?

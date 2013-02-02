@@ -39,6 +39,11 @@ ul.dashboard_league li {
   float: left;
   margin: 1em 1em 0 0;
   position: relative;
+  overflow: hidden;
+}
+ul.dashboard_league li strong {
+  line-height: 27px;
+  white-space: nowrap;
 }
 ul.dashboard_league li a {
   display: block;

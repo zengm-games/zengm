@@ -7,10 +7,18 @@ g.confs = [{cid: 0, name: "Eastern Conference"}, {cid: 1, name: "Western Confere
 g.divs = [{did: 0, cid: 0, name: "Atlantic"}, {did: 1, cid: 0, name: "Central"}, {did: 2, cid: 0, name: "Southeast"}, {did: 3, cid: 1, name: "Southwest"}, {did: 4, cid: 1, name: "Northwest"}, {did: 5, cid: 1, name: "Pacific"}];
 g.salaryCap = 60000;  // [thousands of dollars]
 g.minContract = 500;  // [thousands of dollars]
-g.notInDb = ["dbm", "dbl", "lid", "ticketPrice", "numTeams", "confs", "divs", "salaryCap", "minContract", "notInDb", "firstNames", "lastNames"];
+
+// THIS MUST BE ACCURATE OR BAD STUFF WILL HAPPEN
+g.notInDb = ["dbm", "dbl", "lid", "ticketPrice", "numTeams", "confs", "divs", "salaryCap", "minContract", "notInDb", "nickNames", "firstNames", "lastNames"];
+
+$.get("/data/nickNames.txt", function (data) {
+	var rows;
+	rows = data.split("\n");
+	g.nickNames = rows;
+});
 
 $.get("/data/firstNames.txt", function (data) {
-	var csv, rows;
+	var rows;
 	rows = data.split("\n");
 	rows.forEach(function (element, index, array) {
 		array[index] = element.split(",");
@@ -19,7 +27,7 @@ $.get("/data/firstNames.txt", function (data) {
 });
 
 $.get("/data/lastNames.txt", function (data) {
-	var csv, rows;
+	var rows;
 	rows = data.split("\n");
 	rows.forEach(function (element, index, array) {
 		array[index] = element.split(",");

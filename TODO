@@ -1,10 +1,16 @@
 main todo (before public beta)
 ------------------------------
 
-import/export games
-  allow for named leagues, otherwise this gets confusing
-    test for HTML/JS injection
-    "Edit" button between "Export" and "Delete" - set in leaguesStore and gameAttributes
+league names
+  test for HTML/JS injection
+  "Edit" button between "Export" and "Delete" - set in leaguesStore and gameAttributes
+export league
+   on anything but the smallest amount of data, it's very slow (firefox) and/or crashy (chrome). How to work around this?
+    http://stackoverflow.com/questions/695151/data-protocol-url-size-limitations
+    HTML5 file API?
+    https://github.com/dcneiner/Downloadify
+import league
+  ignore old lid
 multiyear revenue/profit is messed up in finances view
 show record (w-l) on roster view - make it more like a summary, as in basketball-reference
 free agents

@@ -187,6 +187,7 @@ define(["db", "ui", "core/player", "core/season", "util/helpers", "util/random"]
      * 
      * @memberOf core.league
      * @param {number} lid League ID.
+     * @param {function(Object)} cb Callback whose first argument contains all the exported league data.
      */
     function export_(lid, cb) {
         if (g.dbl !== undefined) {
@@ -220,10 +221,7 @@ define(["db", "ui", "core/player", "core/season", "util/helpers", "util/random"]
                 };
 
                 // Iterate through all the stores
-                exportStore(stores.length - 1, function (exportedLeague) {
-                    // Serialize and give it back to the user
-                    cb(JSON.stringify(exportedLeague));
-                });
+                exportStore(stores.length - 1, cb);
             });
         };
     }

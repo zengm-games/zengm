@@ -87,7 +87,6 @@ console.log(event);
         };
     }
 
-
     /**
      * Get an object store based on input which may be the desired object store, a transaction to be used, or null.
      * 

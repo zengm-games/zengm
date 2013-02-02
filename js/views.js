@@ -237,6 +237,17 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         }
     }
 
+    function exportLeague(req) {
+        var lid;
+
+        lid = parseInt(req.params.lid, 10);
+
+        league.export_(lid, function (exportedLeagueJSON) {
+console.log(exportedLeagueJSON);
+
+        });
+    }
+
     function leagueDashboard(req) {
         beforeLeague(req, function () {
             var transaction, vars;
@@ -1868,6 +1879,7 @@ console.log(message);
         dashboard: dashboard,
         newLeague: newLeague,
         deleteLeague: deleteLeague,
+        exportLeague: exportLeague,
 
         leagueDashboard: leagueDashboard,
         standings: standings,

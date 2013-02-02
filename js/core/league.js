@@ -156,6 +156,7 @@ define(["db", "ui", "core/player", "core/season", "util/helpers", "util/random"]
      * 
      * @memberOf core.league
      * @param {number} lid League ID.
+     * @param {function()=} cb Optional callback.
      */
     function remove(lid, cb) {
         var request;
@@ -180,8 +181,56 @@ define(["db", "ui", "core/player", "core/season", "util/helpers", "util/random"]
         };
     }
 
+
+    /**
+     * Export an existing league.
+     * 
+     * @memberOf core.league
+     * @param {number} lid League ID.
+     */
+    function export_(lid, cb) {
+        if (g.dbl !== undefined) {
+            g.dbl.close();
+        }
+
+        g.dbm.transaction("leagues").objectStore("leagues").get(lid).onsuccess = function (event) {
+            var exportedLeague;
+
+            exportedLeague = {};
+
+            // Row from leagueStore
+            exportedLeague.metadata = event.target.result;
+
+            db.connectLeague(lid, function () {
+                var exportStore, stores;
+
+                stores = ["players", "teams", "games", "schedule", "playoffSeries", "releasedPlayers", "awards", "trade", "draftOrder", "negotiations", "gameAttributes"];
+
+                exportStore = function (i, cb) {
+                    console.log("Exporting " + stores[i] + "...");
+                    g.dbl.transaction(stores[i]).objectStore(stores[i]).getAll().onsuccess = function (event) {
+                        exportedLeague[stores[i]] = event.target.result;
+
+                        if (i > 0) {
+                            exportStore(i - 1, cb);
+                        } else {
+                            cb(exportedLeague);
+                        }
+                    };
+                };
+
+                // Iterate through all the stores
+                exportStore(stores.length - 1, function (exportedLeague) {
+                    // Serialize and give it back to the user
+                    cb(JSON.stringify(exportedLeague));
+                });
+            });
+        };
+    }
+
     return {
         create: create,
+        export_: export_,
         remove: remove
     };
 });

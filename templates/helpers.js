@@ -30,12 +30,12 @@ Handlebars.registerHelper("matchup", function (i, j) {
 
     series = this.series[i][j];
 
-    source = "{{#if series.home.name}}" +
-             "  {{#if series.home.wonSeries}}<strong>{{/if}}{{series.home.seed}}. {{series.home.name}} {{series.home.won}}{{#if series.home.wonSeries}}</strong>{{/if}}<br>" +
-             "  {{#if series.away.wonSeries}}<strong>{{/if}}{{series.away.seed}}. {{series.away.name}} {{series.away.won}}{{#if series.away.wonSeries}}</strong>{{/if}}" +
-             "{{/if}}";
+    source = '{{#if series.home.name}}' +
+             '  {{#if series.home.wonSeries}}<strong>{{/if}}{{series.home.seed}}. <a href="/l/{{lid}}/roster/{{series.home.abbrev}}/{{season}}">{{series.home.name}}</a> {{series.home.won}}{{#if series.home.wonSeries}}</strong>{{/if}}<br>' +
+             '  {{#if series.away.wonSeries}}<strong>{{/if}}{{series.away.seed}}. <a href="/l/{{lid}}/roster/{{series.away.abbrev}}/{{season}}">{{series.away.name}}</a> {{series.away.won}}{{#if series.away.wonSeries}}</strong>{{/if}}' +
+             '{{/if}}';
     template = Handlebars.compile(source);
-    return new Handlebars.SafeString(template({series: series}));
+    return new Handlebars.SafeString(template({lid: this.lid, season: this.season, series: series}));
 });
 
 

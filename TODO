@@ -2,7 +2,6 @@ main todo (before public beta)
 ------------------------------
 
 multiyear revenue/profit is messed up in finances view
-link team rosters from playoffs view
 show record (w-l) on roster view
 make getAll shim use native FF getAll
 playing until playoffs shouldn't say "500 days". find the real value
@@ -10,7 +9,11 @@ free agents
   let free agents stay for 2 seasons before retiring, or make retirement probabilistic
     is retirement working for the first season, at all?
   on new game, have enough free agents so the pool isn't totally depleted
-player view should show more on one screen rather than using tabs, like basketball-reference
+player view
+  add "negotiate" button for free agents, like "trade for" button
+  contract for free agents should note that it is requested, not existing. also, make sure the penalty for repeated negotiations is accounted for, as in the free agents view
+  no contract or ratings shown for retired player
+  should show more on one screen rather than using tabs, like basketball-reference
 game simulation realism
   make pages that show stats and ratings as medians/quintiles, for a given season. this will help see how they evolve over time, respond to tweaking, etc.
     don't round min/max of scale to integers, just let them be whatever they are
@@ -104,9 +107,6 @@ contract negotiation
   add free agent to the end of roster
 player stats
   how to handle aggregating stats for players who played for more than one team in a season? add them all up in ps in db.getPlayers
-player view
-  contract for free agents should note that it is requested, not existing. also, make sure the penalty for repeated negotiations is accounted for, as in the free agents view
-  no contract or ratings shown for retired player
 db.getPlayers
   rename to helpers.filterPlayers?
   use for other access of players "playersAll"

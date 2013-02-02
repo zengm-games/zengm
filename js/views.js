@@ -1464,15 +1464,19 @@ console.log(message);
             g.dbl.transaction(["players"]).objectStore("players").get(pid).onsuccess = function (event) {
                 var attributes, currentRatings, data, player, ratings, stats;
 
-                attributes = ["pid", "name", "tid", "abbrev", "teamRegion", "teamName", "pos", "age", "hgtFt", "hgtIn", "weight", "bornYear", "bornLoc", "contractAmount", "contractExp", "draftYear", "draftRound", "draftPick", "draftAbbrev", "face"];
+                attributes = ["pid", "name", "tid", "abbrev", "teamRegion", "teamName", "pos", "age", "hgtFt", "hgtIn", "weight", "bornYear", "bornLoc", "contractAmount", "contractExp", "draftYear", "draftRound", "draftPick", "draftAbbrev", "face", "freeAgentTimesAsked"];
                 ratings = ["season", "abbrev", "age", "ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
                 stats = ["season", "abbrev", "age", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per"];
 
                 player = db.getPlayer(event.target.result, null, null, attributes, stats, ratings);
 
+                // Account for extra free agent demands
+                if (player.tid === c.PLAYER_FREE_AGENT) {
+                    player.contractAmount = player.contractAmount * (1 + player.freeAgentTimesAsked / 10);
+                }
+
                 currentRatings = player.ratings[player.ratings.length - 1];
 
-console.log(player.tid === c.PLAYER_FREE_AGENT)
                 data = {
                     container: "league_content",
                     template: "player",

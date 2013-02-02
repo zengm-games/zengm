@@ -2,7 +2,7 @@
   var template = Handlebars.template, templates = Handlebars.templates = Handlebars.templates || {};
 templates['player'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;
-  var buffer = "", stack1, stack2, foundHelper, tmp1, self=this, functionType="function", helperMissing=helpers.helperMissing, undef=void 0, escapeExpression=this.escapeExpression, blockHelperMissing=helpers.blockHelperMissing;
+  var buffer = "", stack1, stack2, stack3, foundHelper, tmp1, self=this, functionType="function", helperMissing=helpers.helperMissing, undef=void 0, escapeExpression=this.escapeExpression, blockHelperMissing=helpers.blockHelperMissing;
 
 function program1(depth0,data) {
   
@@ -727,9 +727,11 @@ function program17(depth0,data,depth1) {
   foundHelper = helpers.player;
   stack2 = foundHelper || depth0.player;
   stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.contractAmount);
-  if(typeof stack2 === functionType) { stack1 = stack2.call(depth0, stack1, { hash: {} }); }
-  else if(stack2=== undef) { stack1 = helperMissing.call(depth0, "player.contractAmount", stack1, { hash: {} }); }
-  else { stack1 = stack2; }
+  foundHelper = helpers.round;
+  stack3 = foundHelper || depth0.round;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
   buffer += escapeExpression(stack1) + "M per year through ";
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;

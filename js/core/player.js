@@ -415,7 +415,7 @@ define(["db", "util/random"], function (db, random) {
         p.stats = [];
         if (tid >= 0) {
             // This only happens when generating random players for a new league, so g.startingSeason can be safely used rather than g.draftYear
-            addStatsRow(p, false, g.startingSeason)
+            addStatsRow(p, false, g.startingSeason);
         }
         p.rosterOrder = 666;  // Will be set later
         p.ratings = [];

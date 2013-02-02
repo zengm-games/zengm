@@ -4,7 +4,7 @@ main todo (before public beta)
 import/export games
   allow for named leagues, otherwise this gets confusing
     test for HTML/JS injection
-    "Edit" button between "Export" and "Delete"
+    "Edit" button between "Export" and "Delete" - set in leaguesStore and gameAttributes
 multiyear revenue/profit is messed up in finances view
 show record (w-l) on roster view - make it more like a summary, as in basketball-reference
 free agents

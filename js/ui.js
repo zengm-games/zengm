@@ -60,7 +60,7 @@ define(["db", "util/lock"], function (db, lock) {
 
         if (data.hasOwnProperty("title")) {
             if (data.container === "league_content") {
-                data.title += " - League " + g.lid;
+                data.title += " - " + g.leagueName;
             }
             $("title").text(data.title + " - Basketball GM");
         }

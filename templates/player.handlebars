@@ -18,7 +18,7 @@ $(document).ready(function() {
       {{else}}
         Undrafted: {{player.draftYear}}<br />
       {{/if}}
-      Contract: ${{player.contractAmount 2}}M per year through {{player.contractExp}}<br />
+      {{#if freeAgent}}Desired contract{{else}}Contract{{/if}}: ${{player.contractAmount 2}}M per year through {{player.contractExp}}<br />
     </div>
   </div>
   <div class="span6">
@@ -56,6 +56,9 @@ $(document).ready(function() {
 <p></p>
 {{#if showTradeFor}}
   <form action="/l/{{lid}}/trade" method="POST"><input type="hidden" name="pid" value="{{player.pid}}"><button type="submit" class="btn btn-small">Trade For</button></form>
+{{/if}}
+{{#if freeAgent}}
+  <form action="/l/{{lid}}/negotiation/{{player.pid}}" method="POST"><input type="hidden" name="new" value="1"><button type="submit" class="btn btn-small">Sign free agent</button></form>
 {{/if}}
 
 <ul id="player_tabs" class="nav nav-tabs" data-tabs="tabs">

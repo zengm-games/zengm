@@ -48,6 +48,16 @@ function program3(depth0,data) {
 
 function program5(depth0,data) {
   
+  
+  return "Desired contract";}
+
+function program7(depth0,data) {
+  
+  
+  return "Contract";}
+
+function program9(depth0,data) {
+  
   var buffer = "", stack1;
   buffer += "\n  <form action=\"/l/";
   foundHelper = helpers.lid;
@@ -63,7 +73,24 @@ function program5(depth0,data) {
   buffer += escapeExpression(stack1) + "\"><button type=\"submit\" class=\"btn btn-small\">Trade For</button></form>\n";
   return buffer;}
 
-function program7(depth0,data,depth1) {
+function program11(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n  <form action=\"/l/";
+  foundHelper = helpers.lid;
+  stack1 = foundHelper || depth0.lid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "/negotiation/";
+  foundHelper = helpers.player;
+  stack1 = foundHelper || depth0.player;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.pid);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.pid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\" method=\"POST\"><input type=\"hidden\" name=\"new\" value=\"1\"><button type=\"submit\" class=\"btn btn-small\">Sign free agent</button></form>\n";
+  return buffer;}
+
+function program13(depth0,data,depth1) {
   
   var buffer = "", stack1, stack2, stack3;
   buffer += "\n      <tr><td><a href=\"#\">";
@@ -289,7 +316,7 @@ function program7(depth0,data,depth1) {
   buffer += escapeExpression(stack1) + "</td></tr>\n    ";
   return buffer;}
 
-function program9(depth0,data) {
+function program15(depth0,data) {
   
   var buffer = "", stack1, stack2, stack3;
   buffer += "\n      <tr><td>Career</td><td></td><td></td><td>";
@@ -485,7 +512,7 @@ function program9(depth0,data) {
   buffer += escapeExpression(stack1) + "</td></tr>\n    ";
   return buffer;}
 
-function program11(depth0,data,depth1) {
+function program17(depth0,data,depth1) {
   
   var buffer = "", stack1;
   buffer += "\n        <tr><td><a href=\"#\">";
@@ -685,7 +712,17 @@ function program11(depth0,data,depth1) {
   tmp1.inverse = self.program(3, program3, data);
   stack1 = stack2.call(depth0, stack1, tmp1);
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n      Contract: $";
+  buffer += "\n      ";
+  foundHelper = helpers.freeAgent;
+  stack1 = foundHelper || depth0.freeAgent;
+  stack2 = helpers['if'];
+  tmp1 = self.program(5, program5, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.program(7, program7, data);
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += ": $";
   stack1 = 2;
   foundHelper = helpers.player;
   stack2 = foundHelper || depth0.player;
@@ -805,7 +842,17 @@ function program11(depth0,data,depth1) {
   foundHelper = helpers.showTradeFor;
   stack1 = foundHelper || depth0.showTradeFor;
   stack2 = helpers['if'];
-  tmp1 = self.program(5, program5, data);
+  tmp1 = self.program(9, program9, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n";
+  foundHelper = helpers.freeAgent;
+  stack1 = foundHelper || depth0.freeAgent;
+  stack2 = helpers['if'];
+  tmp1 = self.program(11, program11, data);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;
@@ -815,7 +862,7 @@ function program11(depth0,data,depth1) {
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.stats);
-  tmp1 = self.programWithDepth(program7, data, depth0);
+  tmp1 = self.programWithDepth(program13, data, depth0);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;
@@ -827,7 +874,7 @@ function program11(depth0,data,depth1) {
   stack1 = foundHelper || depth0.player;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.careerStats);
   stack2 = helpers['with'];
-  tmp1 = self.program(9, program9, data);
+  tmp1 = self.program(15, program15, data);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;
@@ -837,7 +884,7 @@ function program11(depth0,data,depth1) {
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.ratings);
-  tmp1 = self.programWithDepth(program11, data, depth0);
+  tmp1 = self.programWithDepth(program17, data, depth0);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;

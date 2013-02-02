@@ -1472,11 +1472,12 @@ console.log(message);
 
                 currentRatings = player.ratings[player.ratings.length - 1];
 
+console.log(player.tid === c.PLAYER_FREE_AGENT)
                 data = {
                     container: "league_content",
                     template: "player",
                     title: player.name,
-                    vars: {player: player, currentRatings: currentRatings, showTradeFor: player.tid !== g.userTid && player.tid >= 0}
+                    vars: {player: player, currentRatings: currentRatings, showTradeFor: player.tid !== g.userTid && player.tid >= 0, freeAgent: player.tid === c.PLAYER_FREE_AGENT}
                 };
                 ui.update(data, req.raw.cb);
             };

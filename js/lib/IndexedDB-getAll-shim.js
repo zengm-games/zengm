@@ -1,3 +1,5 @@
+// IndexedDB-getAll-shim v1.1 - https://github.com/jdscheff/IndexedDB-getAll-shim
+
 (function () {
     "use strict";
 
@@ -6,7 +8,13 @@
     IDBObjectStore = window.IDBObjectStore || window.webkitIDBObjectStore || window.mozIDBObjectStore || window.msIDBObjectStore;
     IDBIndex = window.IDBIndex || window.webkitIDBIndex || window.mozIDBIndex || window.msIDBIndex;
 
-    if (typeof IDBObjectStore.prototype.getAll !== "undefined" && typeof IDBIndex.prototype.getAll !== "undefined") {
+    if (IDBObjectStore.prototype.getAll !== undefined && IDBIndex.prototype.getAll !== undefined) {
+        return;
+    }
+
+    if (IDBObjectStore.prototype.mozGetAll !== undefined && IDBIndex.prototype.mozGetAll !== undefined) {
+        IDBObjectStore.prototype.getAll = IDBObjectStore.prototype.mozGetAll;
+        IDBIndex.prototype.getAll = IDBIndex.prototype.mozGetAll;
         return;
     }
 
@@ -30,7 +38,7 @@
     getAll = function (key) {
         var request, result;
 
-        key = typeof key !== "undefined" ? key : null;
+        key = key !== undefined ? key : null;
 
         request = new IDBRequest();
         result = [];
@@ -58,10 +66,6 @@
         return request;
     };
 
-    if (typeof IDBObjectStore.prototype.getAll === "undefined") {
-        IDBObjectStore.prototype.getAll = getAll;
-    }
-    if (typeof IDBIndex.prototype.getAll === "undefined") {
-        IDBIndex.prototype.getAll = getAll;
-    }
+    IDBObjectStore.prototype.getAll = getAll;
+    IDBIndex.prototype.getAll = getAll;
 }());

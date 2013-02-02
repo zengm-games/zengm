@@ -27,7 +27,7 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
                     numDays = Math.floor(2 * schedule.length / (g.numTeams));
                     game.play(numDays, true);
                 });*/
-                game.play(500, true);
+                game.play(100, true);
             }
         } else if (amount === "stop") {
             db.setGameAttributes({stopGames: true}, function () {

@@ -50,9 +50,16 @@ ul.dashboard_league li a {
 ul.dashboard_league li a:hover {
   color: #000;
 }
-ul.dashboard_league li form {
+ul.dashboard_league li form.delete .btn {
+  border-radius: 4px 4px 0 0;
   position: absolute;
   top: 0;
+  right: 0;
+}
+ul.dashboard_league li form.export .btn {
+  border-radius: 0 0 4px 4px;
+  position: absolute;
+  top: 19px;
   right: 0;
 }
 ul.dashboard_league li.dashboard_league_new a {
@@ -62,6 +69,7 @@ ul.dashboard_league li.dashboard_league_new a:hover {
   color: #fff;
 }
 ul.dashboard_league li.dashboard_league_new h2 {
+  font-size: 20px;
   line-height: 30px;
   padding-top: 4px;
 }

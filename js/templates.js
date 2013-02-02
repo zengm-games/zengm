@@ -3460,12 +3460,17 @@ function program1(depth0,data) {
   stack1 = foundHelper || depth0.phaseText;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "phaseText", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "</span></a>\n      <form action=\"/delete_league\" method=\"post\"><input type=\"hidden\" name=\"lid\" value=\"";
+  buffer += escapeExpression(stack1) + "</span></a>\n      <form action=\"/delete_league\" method=\"POST\" class=\"delete\"><input type=\"hidden\" name=\"lid\" value=\"";
   foundHelper = helpers.lid;
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "\"><button class=\"btn btn-mini\">Delete</button></form>\n    </li>\n  ";
+  buffer += escapeExpression(stack1) + "\"><button class=\"btn btn-mini\">Delete</button></form>\n      <form action=\"/export_league\" method=\"POST\" class=\"export\"><input type=\"hidden\" name=\"lid\" value=\"";
+  foundHelper = helpers.lid;
+  stack1 = foundHelper || depth0.lid;
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\"><button class=\"btn btn-mini\">Export</button></form>\n    </li>\n  ";
   return buffer;}
 
   buffer += "<ul class=\"dashboard_league\">\n  ";
@@ -3478,7 +3483,7 @@ function program1(depth0,data) {
   if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
   else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n\n  <li class=\"dashboard_league_new\"><a href=\"/new_league\" class=\"btn btn-primary\"><h2 style=\"\">Create new league</h2></a></li>\n</ul>\n";
+  buffer += "\n\n  <li class=\"dashboard_league_new\"><a href=\"/new_league\" class=\"btn btn-primary\"><h2 style=\"\">Create new league</h2></a></li>\n  <li class=\"dashboard_league_new\"><a href=\"/new_league\" class=\"btn btn-primary\"><h2 style=\"\">Import saved league</h2></a></li>\n</ul>\n";
   return buffer;});
 templates['schedule'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;

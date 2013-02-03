@@ -42,13 +42,12 @@ ul.dashboard_league li {
   overflow: hidden;
 }
 ul.dashboard_league li strong {
-  line-height: 27px;
   white-space: nowrap;
 }
 ul.dashboard_league li a.league {
   display: block;
-  height: 68px;
-  padding: 0 8px 0 8px;
+  height: 56px;
+  padding: 6px 8px 6px 8px;
   text-align: left;
   width: 138px;
 }
@@ -76,7 +75,7 @@ ul.dashboard_league li.dashboard_league_new a:hover {
 ul.dashboard_league li.dashboard_league_new h2 {
   font-size: 20px;
   line-height: 30px;
-  padding-top: 4px;
+  margin-top: -2px;
 }
 
 .sidebar-nav {

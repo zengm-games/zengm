@@ -3460,7 +3460,7 @@ function program1(depth0,data) {
   stack1 = foundHelper || depth0.name;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "name", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "</strong><span class=\"clearfix\">";
+  buffer += escapeExpression(stack1) + "<br></strong><span class=\"clearfix\">";
   foundHelper = helpers.region;
   stack1 = foundHelper || depth0.region;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -3470,7 +3470,7 @@ function program1(depth0,data) {
   stack1 = foundHelper || depth0.teamName;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "teamName", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "</span><span class=\"clearfix\">";
+  buffer += escapeExpression(stack1) + "<br></span><span class=\"clearfix\">";
   foundHelper = helpers.phaseText;
   stack1 = foundHelper || depth0.phaseText;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -3523,7 +3523,7 @@ function program1(depth0,data) {
   buffer += escapeExpression(stack1) + "\");\n        });\n      </script>\n    </li>\n  ";
   return buffer;}
 
-  buffer += "<script type=\"text/javascript\">\nfunction generateExportButton(lid, name) {\n  var league = require('core/league');\n  league.export_(lid, function (exportedLeague) {\n    Downloadify.create('downloadify' + lid, {\n      filename: function(){\n        return name + \".json\";\n      },\n      data: function(){ \n        return JSON.stringify(exportedLeague);\n      },\n      onComplete: function(){ alert('Export complete'); },\n      onError: function(){ alert('Downloadify error'); },\n      swf: '/js/lib/downloadify.swf',\n      downloadImage: '/img/download.png',\n      width: 100,\n      height: 30,\n      transparent: true,\n      append: false\n     });\n  });\n}\n</script>\n\n<ul class=\"dashboard_league\">\n  ";
+  buffer += "<script type=\"text/javascript\">\nfunction generateExportButton(lid, name) {\n  var league = require('core/league');\n  league.export_(lid, function (exportedLeague) {\n    Downloadify.create('downloadify' + lid, {\n      filename: name + \".json\",\n      data: function(){ \n        return JSON.stringify(exportedLeague);\n      },\n      onComplete: function(){\n        $(\"#modalExport\" + lid).modal('hide');\n      },\n      onError: function(){ alert('Downloadify error'); },\n      swf: '/js/lib/downloadify.swf',\n      downloadImage: '/img/download.png',\n      width: 100,\n      height: 30,\n      transparent: true,\n      append: false\n     });\n  });\n}\n</script>\n\n<ul class=\"dashboard_league\">\n  ";
   foundHelper = helpers.leagues;
   stack1 = foundHelper || depth0.leagues;
   tmp1 = self.program(1, program1, data);

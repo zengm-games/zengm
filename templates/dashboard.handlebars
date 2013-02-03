@@ -3,13 +3,13 @@ function generateExportButton(lid, name) {
   var league = require('core/league');
   league.export_(lid, function (exportedLeague) {
     Downloadify.create('downloadify' + lid, {
-      filename: function(){
-        return name + ".json";
-      },
+      filename: name + ".json",
       data: function(){ 
         return JSON.stringify(exportedLeague);
       },
-      onComplete: function(){ alert('Export complete'); },
+      onComplete: function(){
+        $("#modalExport" + lid).modal('hide');
+      },
       onError: function(){ alert('Downloadify error'); },
       swf: '/js/lib/downloadify.swf',
       downloadImage: '/img/download.png',
@@ -25,7 +25,7 @@ function generateExportButton(lid, name) {
 <ul class="dashboard_league">
   {{#leagues}}
     <li>
-      <a href="/l/{{lid}}" class="btn league" title="{{lid}}. {{name}}"><strong>{{lid}}. {{name}}</strong><span class="clearfix">{{region}} {{teamName}}</span><span class="clearfix">{{phaseText}}</span></a>
+      <a href="/l/{{lid}}" class="btn league" title="{{lid}}. {{name}}"><strong>{{lid}}. {{name}}<br></strong><span class="clearfix">{{region}} {{teamName}}<br></span><span class="clearfix">{{phaseText}}</span></a>
       <form action="/delete_league" method="POST" class="delete"><input type="hidden" name="lid" value="{{lid}}"><button class="btn btn-mini">Delete</button></form>
       <a class="btn btn-mini export" href="#modalExport{{lid}}" data-toggle="modal" data-no-davis="true">Export</a>
 

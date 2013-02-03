@@ -4,11 +4,9 @@ main todo (before public beta)
 league names
   test for HTML/JS injection
   "Edit" button between "Export" and "Delete" - set in leaguesStore and gameAttributes
+    move delete/edit/export under one button, "manage". have the 3 buttons pop out in place when you hit manage, then it functions as it does now. popped buttons can be colored too, then
 export league
-   on anything but the smallest amount of data, it's very slow (firefox) and/or crashy (chrome). How to work around this?
-    http://stackoverflow.com/questions/695151/data-protocol-url-size-limitations
-    HTML5 file API?
-    https://github.com/dcneiner/Downloadify
+  test with really big league. probably won't work at some point
 import league
   ignore old lid
 multiyear revenue/profit is messed up in finances view

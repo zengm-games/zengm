@@ -1,12 +1,57 @@
+<script type="text/javascript">
+function generateExportButton(lid, name) {
+  var league = require('core/league');
+  league.export_(lid, function (exportedLeague) {
+    Downloadify.create('downloadify' + lid, {
+      filename: function(){
+        return name + ".json";
+      },
+      data: function(){ 
+        return JSON.stringify(exportedLeague);
+      },
+      onComplete: function(){ alert('Export complete'); },
+      onError: function(){ alert('Downloadify error'); },
+      swf: '/js/lib/downloadify.swf',
+      downloadImage: '/img/download.png',
+      width: 100,
+      height: 30,
+      transparent: true,
+      append: false
+     });
+  });
+}
+</script>
+
 <ul class="dashboard_league">
   {{#leagues}}
     <li>
-      <a href="/l/{{lid}}" class="btn" title="{{lid}}. {{name}}"><strong>{{lid}}. {{name}}</strong><span class="clearfix">{{region}} {{teamName}}</span><span class="clearfix">{{phaseText}}</span></a>
+      <a href="/l/{{lid}}" class="btn league" title="{{lid}}. {{name}}"><strong>{{lid}}. {{name}}</strong><span class="clearfix">{{region}} {{teamName}}</span><span class="clearfix">{{phaseText}}</span></a>
       <form action="/delete_league" method="POST" class="delete"><input type="hidden" name="lid" value="{{lid}}"><button class="btn btn-mini">Delete</button></form>
-      <form action="/export_league" method="POST" class="export"><input type="hidden" name="lid" value="{{lid}}"><button class="btn btn-mini">Export</button></form>
+      <a class="btn btn-mini export" href="#modalExport{{lid}}" data-toggle="modal" data-no-davis="true">Export</a>
+
+      <div id="modalExport{{lid}}" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h3 id="myModalLabel">Export {{name}} ({{lid}})</h3>
+        </div>
+        <div class="modal-body">
+          <p>Exporting a league allows you to back up all the data for a league into a single convenient file that you can later import here or on another computer.</p>
+          <p id="downloadify{{lid}}">Please wait... depending on the age of your league, this could take a long time to generate and then also take a long time to download.<br><br>(Note: You must have Flash 10 or higher installed for exporting to work.)</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+        </div>
+      </div>
+      <script type="text/javascript">
+        $("#modalExport{{lid}}").on("show", function () {
+          generateExportButton({{lid}}, "{{name}}");
+        });
+      </script>
     </li>
   {{/leagues}}
 
-  <li class="dashboard_league_new"><a href="/new_league" class="btn btn-primary"><h2 style="">Create new league</h2></a></li>
-  <li class="dashboard_league_new"><a href="/new_league" class="btn btn-primary"><h2 style="">Import saved league</h2></a></li>
+  <li class="dashboard_league_new"><a href="/new_league" class="btn btn-primary league"><h2 style="">Create new league</h2></a></li>
+  <li class="dashboard_league_new"><a href="/new_league" class="btn btn-primary league"><h2 style="">Import saved league</h2></a></li>
 </ul>
+
+<hr style="clear: both">

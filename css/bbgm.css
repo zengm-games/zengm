@@ -45,14 +45,14 @@ ul.dashboard_league li strong {
   line-height: 27px;
   white-space: nowrap;
 }
-ul.dashboard_league li a {
+ul.dashboard_league li a.league {
   display: block;
   height: 68px;
   padding: 0 8px 0 8px;
   text-align: left;
   width: 138px;
 }
-ul.dashboard_league li a:hover {
+ul.dashboard_league li a.league:hover {
   color: #000;
 }
 ul.dashboard_league li form.delete .btn {
@@ -61,7 +61,7 @@ ul.dashboard_league li form.delete .btn {
   top: 0;
   right: 0;
 }
-ul.dashboard_league li form.export .btn {
+ul.dashboard_league li a.export {
   border-radius: 0 0 4px 4px;
   position: absolute;
   top: 19px;

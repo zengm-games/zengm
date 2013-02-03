@@ -33,7 +33,6 @@ requirejs(["api", "db", "views", "ui", "util/helpers"], function (api, db, views
             this.get("/new_league", views.newLeague);
             this.post("/new_league", views.newLeague);
             this.post("/delete_league", views.deleteLeague);
-            this.post("/export_league", views.exportLeague);
 
             // League views
             this.get("/l/:lid", views.leagueDashboard);

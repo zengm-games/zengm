@@ -237,25 +237,6 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         }
     }
 
-    function exportLeague(req) {
-        var evt, fakeClick, lid;
-
-        lid = parseInt(req.params.lid, 10);
-
-        league.export_(lid, function (exportedLeague) {
-            var evt, link;
-
-            link = document.createElement("a");
-            link.href = "data:Application/octet-stream," + encodeURIComponent(JSON.stringify(exportedLeague));
-            link.download = exportedLeague.metadata.name + ".json";
-
-            // Credit to http://www.raymondcamden.com/index.cfm/2012/8/23/Proof-of-Concept--Build-a-download-feature-for-IndexedDB and http://stackoverflow.com/questions/268490/jquery-document-createelement-equivalent but I'm not sure why link.click() doesn't seem to work.
-            evt = document.createEvent("MouseEvents");
-            evt.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-            link.dispatchEvent(evt);
-        });
-    }
-
     function leagueDashboard(req) {
         beforeLeague(req, function () {
             var transaction, vars;
@@ -1887,7 +1868,6 @@ console.log(message);
         dashboard: dashboard,
         newLeague: newLeague,
         deleteLeague: deleteLeague,
-        exportLeague: exportLeague,
 
         leagueDashboard: leagueDashboard,
         standings: standings,

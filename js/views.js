@@ -1353,7 +1353,8 @@ console.log(message);
                         categories[i].data[j] = helpers.deepCopy(players[j]);
                         categories[i].data[j].i = j + 1;
                         categories[i].data[j].stat = categories[i].data[j].stats[stats[i]];
-                        delete categories[i].data[j].stats[stats[i]];
+                        categories[i].data[j].abbrev = categories[i].data[j].stats.abbrev;
+                        delete categories[i].data[j].stats;
                         if (userAbbrev === categories[i].data[j].abbrev) {
                             categories[i].data[j].userTeam = true;
                         } else {
@@ -1367,6 +1368,7 @@ console.log(message);
                     }
                 }
 
+console.log(categories)
                 data = {
                     container: "league_content",
                     template: "leaders",

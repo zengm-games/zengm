@@ -18,7 +18,7 @@ $(document).ready(function() {
       {{else}}
         Undrafted: {{player.draftYear}}<br />
       {{/if}}
-      {{#if freeAgent}}Desired contract{{else}}Contract{{/if}}: ${{round player.contractAmount 2}}M per year through {{player.contractExp}}<br />
+      {{#if freeAgent}}Asking for{{else}}Contract{{/if}}: ${{round player.contractAmount 2}}M/yr thru {{player.contractExp}}<br />
     </div>
   </div>
   <div class="span6">

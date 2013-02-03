@@ -49,7 +49,7 @@ function program3(depth0,data) {
 function program5(depth0,data) {
   
   
-  return "Desired contract";}
+  return "Asking for";}
 
 function program7(depth0,data) {
   
@@ -732,7 +732,7 @@ function program17(depth0,data,depth1) {
   if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
   else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
   else { stack1 = stack3; }
-  buffer += escapeExpression(stack1) + "M per year through ";
+  buffer += escapeExpression(stack1) + "M/yr thru ";
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.contractExp);

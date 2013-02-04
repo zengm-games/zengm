@@ -1,12 +1,16 @@
+/**
+ * @name core.season
+ * @namespace Somewhat of a hodgepodge. Basically, this is for anything related to a single season that doesn't deserve to be broken out into its own file. Currently, this includes things that happen when moving between phases of the season (i.e. regular season to playoffs) and scheduling. As I write this, I realize that it might make more sense to break up those two classes of functions into two separate modules, but oh well.
+ */
 define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player", "util/helpers", "util/random"], function (db, ui, contractNegotiation, freeAgents, player, helpers, random) {
     "use strict";
 
-    // This should be called after the phase-specific stuff runs. It needs to be a separate function like this to play nice with async stuff.
     /**
      * Common tasks run after a new phrase is set.
      *
-     *This updates the phase, executes a callback, and (if necessary) reloads the UI.
+     * This updates the phase, executes a callback, and (if necessary) reloads the UI. It should only be called from one of the NewPhase* functions defined below.
      * 
+     * @memberOf core.season
      * @param {number} phase Integer representing the new phase of the game (see other functions in this module).
      * @param {string} phaseText Textual representation of the new phase, which will be displayed in the UI.
      * @param {function()=} cb Optional callback run after the phase is set and the play menu is updated.
@@ -472,17 +476,15 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
         });
     }
 
-    /*Set a new phase of the game.
-
-    This function is called to do all the crap that must be done during
-    transitions between phases of the game, such as moving from the regular
-    season to the playoffs. Phases are defined in the c.PHASE_* global
-    variables.
-
-    The phase update may happen asynchronously if the database must be accessed,
-    so do not rely on g.phase being updated immediately after this function is
-    called. Instead, pass a callback.
-    */
+    /**
+     * Set a new phase of the game.
+     *
+     * This function is called to do all the crap that must be done during transitions between phases of the game, such as moving from the regular season to the playoffs. Phases are defined in the c.PHASE_* global variables. The phase update may happen asynchronously if the database must be accessed, so do not rely on g.phase being updated immediately after this function is called. Instead, pass a callback.
+     * 
+     * @memberOf core.season
+     * @param {number} phase Numeric phase ID. This should always be one of the c.PHASE_* variables defined in globals.js.
+     * @param {function()=} cb Optional callback run after the phase change is completed.
+     */
     function newPhase(phase, cb) {
         var button, playButtonElement;
 
@@ -519,9 +521,14 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
         }
     }
 
-    /*Creates a new regular season schedule with appropriate division and
-    conference matchup distributions.
-    */
+    /**
+     * Creates a new regular season schedule.
+     *
+     * This makes an NBA-like schedule in terms of conference matchups, division matchups, and home/away games.
+     * 
+     * @memberOf core.season
+     * @param {function(Array)} cb Callback to run after the schedule is generated. The argument is a list of all the season's games, where each entry in the list is a list of the home team ID and the away team ID.
+     */
     function newSchedule(cb) {
         helpers.getTeams(undefined, function (teamsAll) {
             var cid, days, dids, game, games, good, i, ii, iters, j, jj, jMax, k, matchup, matchups, n, newMatchup, t, team, teams, tids, tidsByConf, tidsInDays, tryNum, used;
@@ -740,7 +747,14 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
         };
     }
 
-    /*Computes the awards at the end of a season.*/
+    /**
+     * Compute the awards (MVP, etc) after a season finishes.
+     *
+     * The awards are saved to the "awards" object store.
+     *
+     * @memberOf core.season
+     * @param {function()} cb Callback function run after the database operations finish.
+     */
     function awards(cb) {
         var transaction;
 
@@ -841,12 +855,14 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
         };
     }
 
-    /*Save the schedule to the database, overwriting what's currently there.
-
-    Args:
-        tids: A list of lists, each containing the team IDs of the home and
-            away teams, respectively, for every game in the season.
-    */
+    /**
+     * Save the schedule to the database, overwriting what's currently there.
+     * 
+     * @memberOf core.season
+     * @param {Array} tids A list of lists, each containing the team IDs of the home and
+            away teams, respectively, for every game in the season, respectively.
+     * @param {function()} cb Callback function run after the database operations finish.
+     */
     function setSchedule(tids, cb) {
         helpers.getTeams(undefined, function (teams) {
             var i, row, schedule, scheduleStore;
@@ -880,14 +896,14 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
         });
     }
 
-   /**
-    * Get an array of games from the schedule.
-    * 
-    * @memberOf core.season
-    * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on schedule; if null is passed, then a new transaction will be used.
-    * @param {number} numDays Number of days of games requested. Currently, this will return all games if 0 is passed or one day of games if any number greater than 0 is passed.
-    * @param {function(Array)} cb Callback function that takes the requested schedule array as its only argument.
-    */
+    /**
+     * Get an array of games from the schedule.
+     * 
+     * @memberOf core.season
+     * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on schedule; if null is passed, then a new transaction will be used.
+     * @param {number} numDays Number of days of games requested. Currently, this will return all games if 0 is passed or one day of games if any number greater than 0 is passed.
+     * @param {function(Array)} cb Callback function that takes the requested schedule array as its only argument.
+     */
     function getSchedule(ot, numDays, cb) {
         var scheduleStore;
 

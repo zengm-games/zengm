@@ -193,6 +193,8 @@ ul.inheritsList
 	
 	<li><a href="../symbols/api.html">api</a></li>
 	
+	<li><a href="../symbols/core.advStats.html">core.advStats</a></li>
+	
 	<li><a href="../symbols/core.contractNegotiation.html">core.contractNegotiation</a></li>
 	
 	<li><a href="../symbols/core.freeAgents.html">core.freeAgents</a></li>
@@ -203,6 +205,8 @@ ul.inheritsList
 	
 	<li><a href="../symbols/core.player.html">core.player</a></li>
 	
+	<li><a href="../symbols/core.season.html">core.season</a></li>
+	
 	<li><a href="../symbols/core.trade.html">core.trade</a></li>
 	
 	<li><a href="../symbols/db.html">db</a></li>
@@ -210,6 +214,8 @@ ul.inheritsList
 	<li><a href="../symbols/ui.html">ui</a></li>
 	
 	<li><a href="../symbols/util.helpers.html">util.helpers</a></li>
+	
+	<li><a href="../symbols/util.lock.html">util.lock</a></li>
 	
 	<li><a href="../symbols/util.random.html">util.random</a></li>
 	
@@ -317,7 +323,16 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">db.<b><a href="../symbols/db.html#.getTeams">getTeams</a></b>(ot, season, attributes, stats, seasonAttributes, sortBy, cb)
+								<div class="fixedFont">db.<b><a href="../symbols/db.html#.getTeam">getTeam</a></b>(ta, season, attributes, stats, seasonAttributes, options)
+								</div>
+								<div class="description">Get a filtered team object.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">db.<b><a href="../symbols/db.html#.getTeams">getTeams</a></b>(ot, season, attributes, stats, seasonAttributes, options, sortBy, cb)
 								</div>
 								<div class="description">Get an array of filtered team objects.</div>
 							</td>
@@ -565,7 +580,7 @@ This function is overcomplicated and convoluted.
 									<span class="light fixedFont">{Object}</span> <b>options</b>
 									
 								</dt>
-								<dd>Object containing various domain-specific options that are rarely used and should eventually be documented.</dd>
+								<dd>Object containing various options. Possible keys include...  "totals": Boolean representing whether to return total stats (true) or per-game averages (false); default is false. Other keys should eventually be documented.</dd>
 							
 							</dl>
 						
@@ -659,11 +674,79 @@ After the first argument, all subsequent arguments are passed on to db.getPlayer
 
 					<hr />
 				
+					<a name=".getTeam"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">db.</span><b>getTeam</b>(ta, season, attributes, stats, seasonAttributes, options)
+					
+					</div>
+					<div class="description">
+						Get a filtered team object.
+
+See db.getTeams for documentation.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>ta</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>season</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>attributes</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>stats</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>seasonAttributes</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>options</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name=".getTeams"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">db.</span><b>getTeams</b>(ot, season, attributes, stats, seasonAttributes, sortBy, cb)
+					<span class="light">db.</span><b>getTeams</b>(ot, season, attributes, stats, seasonAttributes, options, sortBy, cb)
 					
 					</div>
 					<div class="description">
@@ -707,6 +790,12 @@ After the first argument, all subsequent arguments are passed on to db.getPlayer
 									
 								</dt>
 								<dd>List of seasonal attributes (such as won or lost) to include in output.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>options</b>
+									
+								</dt>
+								<dd>Object containing various options. Possible keys include... "sortBy": String represeting the sorting method; "winp" sorts by descending winning percentage, "winpAsc" does the opposite, default is sort by team ID. "totals": Boolean representing whether to return total stats (true) or per-game averages (false); default is false.</dd>
 							
 								<dt>
 									<span class="light fixedFont">{string|null}</span> <b>sortBy</b>
@@ -839,7 +928,7 @@ After the first argument, all subsequent arguments are passed on to db.getPlayer
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Tue Jan 29 2013 20:52:25 GMT-0500 (EST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Mon Feb 04 2013 01:41:46 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

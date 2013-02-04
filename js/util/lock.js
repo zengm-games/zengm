@@ -1,15 +1,7 @@
-/*
-util.lock
-
-These functions all deal with locking game state when there is some blocking
-action in progress, currently one of these things:
-
-* Game simulation is in progress
-* User is negotiating a contract
-
-There are also functions to check if it is permissible to start one of those
-actions.
-*/
+/**
+ * @name util.lock
+ * @namespace These functions all deal with locking game state when there is some blocking action in progress. Like don't allow game simulations when a trade is being negotiated. For figuring out the current state, trust only the database.
+ */
 define(["db"], function (db) {
     "use strict";
 
@@ -18,7 +10,7 @@ define(["db"], function (db) {
      *
      * Calls the callback function with either true or false depending on whether there is a game simulation currently in progress.
      * 
-     * @memberOf lock
+     * @memberOf util.lock
      * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on gameAttributes; if null is passed, then a new transaction will be used.
      * @param {function(boolean)} cb Callback.
      */
@@ -33,7 +25,7 @@ define(["db"], function (db) {
      *
      * Calls the callback function with either true or false depending on whether there is an ongoing negoation.
      * 
-     * @memberOf lock
+     * @memberOf util.lock
      * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on negotiations; if null is passed, then a new transaction will be used.
      * @param {function(boolean)} cb Callback.
      */
@@ -58,7 +50,7 @@ define(["db"], function (db) {
      *
      * Calls the callback function with either true or false. If games are in progress or any contract negotiation is in progress, false.
      *
-     * @memberOf lock
+     * @memberOf util.lock
      * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on gameAttributes and negotiations; if null is passed, then a new transaction will be used.
      * @param {function(boolean)} cb Callback.
      */
@@ -83,7 +75,7 @@ define(["db"], function (db) {
      *
      * Calls the callback function with either true or false. If games are in progress or a free agent (not resigning!) is being negotiated with, false.
      * 
-     * @memberOf lock
+     * @memberOf util.lock
      * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on gameAttributes and negotiations; if null is passed, then a new transaction will be used.
      * @param {function(boolean)} cb Callback.
      */

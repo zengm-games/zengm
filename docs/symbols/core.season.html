@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - core.contractNegotiation</title>
+		<title>JsDoc Reference - core.season</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -228,7 +228,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Namespace core.contractNegotiation
+				Namespace core.season
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -236,16 +236,16 @@ ul.inheritsList
 				
 				
 			
-				All aspects of contract negotiation.
+				Somewhat of a hodgepodge. Basically, this is for anything related to a single season that doesn't deserve to be broken out into its own file. Currently, this includes things that happen when moving between phases of the season (i.e. regular season to playoffs) and scheduling. As I write this, I realize that it might make more sense to break up those two classes of functions into two separate modules, but oh well.
 				
 				
-					<br /><i>Defined in: </i> &lt;js/core/contractNegotiation.js&gt;.
+					<br /><i>Defined in: </i> &lt;js/core/season.js&gt;.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class core.contractNegotiation.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class core.season.">
 				<caption>Namespace Summary</caption>
 				<thead>
 					<tr>
@@ -258,7 +258,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/core.contractNegotiation.html#constructor">core.contractNegotiation</a></b>
+								<b><a href="../symbols/core.season.html#constructor">core.season</a></b>
 							</div>
 							<div class="description"></div>
 						</td>
@@ -274,7 +274,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class core.contractNegotiation.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class core.season.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -287,63 +287,54 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.accept">accept</a></b>(pid, cb)
+								<div class="fixedFont">core.season.<b><a href="../symbols/core.season.html#.awards">awards</a></b>(cb)
 								</div>
-								<div class="description">Accept the player's offer.</div>
+								<div class="description">Compute the awards (MVP, etc) after a season finishes.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.cancel">cancel</a></b>(pid)
+								<div class="fixedFont">core.season.<b><a href="../symbols/core.season.html#.getSchedule">getSchedule</a></b>(ot, numDays, cb)
 								</div>
-								<div class="description">Cancel contract negotiations with a player.</div>
+								<div class="description">Get an array of games from the schedule.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.cancelAll">cancelAll</a></b>(cb)
+								<div class="fixedFont">core.season.<b><a href="../symbols/core.season.html#.newPhase">newPhase</a></b>(phase, cb)
 								</div>
-								<div class="description">Cancel all ongoing contract negotiations.</div>
+								<div class="description">Set a new phase of the game.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.create">create</a></b>(ot, pid, resigning, cb)
+								<div class="fixedFont">core.season.<b><a href="../symbols/core.season.html#.newPhaseCb">newPhaseCb</a></b>(phase, phaseText, cb, reload)
 								</div>
-								<div class="description">Start a new contract negotiation with a player.</div>
+								<div class="description">Common tasks run after a new phrase is set.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.offer">offer</a></b>(pid, teamAmount, teamYears, cb)
+								<div class="fixedFont">core.season.<b><a href="../symbols/core.season.html#.newSchedule">newSchedule</a></b>(cb)
 								</div>
-								<div class="description">Make an offer to a player.</div>
+								<div class="description">Creates a new regular season schedule.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.validAmount">validAmount</a></b>(years)
+								<div class="fixedFont">core.season.<b><a href="../symbols/core.season.html#.setSchedule">setSchedule</a></b>(tids, cb)
 								</div>
-								<div class="description">Restrict the input to between 500 and 20000, the valid amount of annual thousands of dollars for a contract.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">core.contractNegotiation.<b><a href="../symbols/core.contractNegotiation.html#.validYears">validYears</a></b>(years)
-								</div>
-								<div class="description">Restrict the input to between 1 and 5, the valid number of years for a contract.</div>
+								<div class="description">Save the schedule to the database, overwriting what's currently there.</div>
 							</td>
 						</tr>
 					
@@ -364,7 +355,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>core.contractNegotiation</b>
+						<b>core.season</b>
 				</div>
 				
 				<div class="description">
@@ -395,17 +386,17 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name=".accept"> </a>
+					<a name=".awards"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">core.contractNegotiation.</span><b>accept</b>(pid, cb)
+					<span class="light">core.season.</span><b>awards</b>(cb)
 					
 					</div>
 					<div class="description">
-						Accept the player's offer.
+						Compute the awards (MVP, etc) after a season finishes.
 
-If successful, then the team's current roster will be displayed.
+The awards are saved to the "awards" object store.
 						
 						
 					</div>
@@ -417,16 +408,10 @@ If successful, then the team's current roster will be displayed.
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{number}</span> <b>pid</b>
+									<span class="light fixedFont">{function()}</span> <b>cb</b>
 									
 								</dt>
-								<dd>An integer that must correspond with the player ID of a player in an ongoing negotiation.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{function(string=)}</span> <b>cb</b>
-									
-								</dt>
-								<dd>Callback to be run only after the contract is successfully accepted. If an error occurs, pass a string error message.</dd>
+								<dd>Callback function run after the database operations finish.</dd>
 							
 							</dl>
 						
@@ -439,15 +424,15 @@ If successful, then the team's current roster will be displayed.
 
 					<hr />
 				
-					<a name=".cancel"> </a>
+					<a name=".getSchedule"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">core.contractNegotiation.</span><b>cancel</b>(pid)
+					<span class="light">core.season.</span><b>getSchedule</b>(ot, numDays, cb)
 					
 					</div>
 					<div class="description">
-						Cancel contract negotiations with a player.
+						Get an array of games from the schedule.
 						
 						
 					</div>
@@ -459,10 +444,22 @@ If successful, then the team's current roster will be displayed.
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{number}</span> <b>pid</b>
+									<span class="light fixedFont">{(IDBObjectStore|IDBTransaction|null)}</span> <b>ot</b>
 									
 								</dt>
-								<dd>An integer that must correspond with the player ID of a player in an ongoing negotiation.</dd>
+								<dd>An IndexedDB object store or transaction on schedule; if null is passed, then a new transaction will be used.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>numDays</b>
+									
+								</dt>
+								<dd>Number of days of games requested. Currently, this will return all games if 0 is passed or one day of games if any number greater than 0 is passed.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{function(Array)}</span> <b>cb</b>
+									
+								</dt>
+								<dd>Callback function that takes the requested schedule array as its only argument.</dd>
 							
 							</dl>
 						
@@ -475,17 +472,17 @@ If successful, then the team's current roster will be displayed.
 
 					<hr />
 				
-					<a name=".cancelAll"> </a>
+					<a name=".newPhase"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">core.contractNegotiation.</span><b>cancelAll</b>(cb)
+					<span class="light">core.season.</span><b>newPhase</b>(phase, cb)
 					
 					</div>
 					<div class="description">
-						Cancel all ongoing contract negotiations.
+						Set a new phase of the game.
 
-Currently, the only time there should be multiple ongoing negotiations in the first place is when a user is resigning players at the end of the season, although that should probably change eventually.
+This function is called to do all the crap that must be done during transitions between phases of the game, such as moving from the regular season to the playoffs. Phases are defined in the c.PHASE_* global variables. The phase update may happen asynchronously if the database must be accessed, so do not rely on g.phase being updated immediately after this function is called. Instead, pass a callback.
 						
 						
 					</div>
@@ -495,12 +492,18 @@ Currently, the only time there should be multiple ongoing negotiations in the fi
 						
 							<dl class="detailList">
 							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>phase</b>
+									
+								</dt>
+								<dd>Numeric phase ID. This should always be one of the c.PHASE_* variables defined in globals.js.</dd>
 							
 								<dt>
 									<span class="light fixedFont">{function()=}</span> <b>cb</b>
 									
 								</dt>
-								<dd>Optional callback.</dd>
+								<dd>Optional callback run after the phase change is completed.</dd>
 							
 							</dl>
 						
@@ -513,69 +516,17 @@ Currently, the only time there should be multiple ongoing negotiations in the fi
 
 					<hr />
 				
-					<a name=".create"> </a>
+					<a name=".newPhaseCb"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">core.contractNegotiation.</span><b>create</b>(ot, pid, resigning, cb)
+					<span class="light">core.season.</span><b>newPhaseCb</b>(phase, phaseText, cb, reload)
 					
 					</div>
 					<div class="description">
-						Start a new contract negotiation with a player.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{IDBTransaction|null}</span> <b>ot</b>
-									
-								</dt>
-								<dd>An IndexedDB transaction on gameAttributes, negotiations, and players, readwrite; if null is passed, then a new transaction will be used.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{number}</span> <b>pid</b>
-									
-								</dt>
-								<dd>An integer that must correspond with the player ID of a free agent.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{boolean}</span> <b>resigning</b>
-									
-								</dt>
-								<dd>Set to true if this is a negotiation for a contract extension, which will allow multiple simultaneous negotiations. Set to false otherwise.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{function(string=)}</span> <b>cb</b>
-									
-								</dt>
-								<dd>Callback to be run only after a successful negotiation is started. If an error occurs, pass a string error message.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
+						Common tasks run after a new phrase is set.
 
-					<hr />
-				
-					<a name=".offer"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">core.contractNegotiation.</span><b>offer</b>(pid, teamAmount, teamYears, cb)
-					
-					</div>
-					<div class="description">
-						Make an offer to a player.
+This updates the phase, executes a callback, and (if necessary) reloads the UI. It should only be called from one of the NewPhase* functions defined below.
 						
 						
 					</div>
@@ -587,28 +538,28 @@ Currently, the only time there should be multiple ongoing negotiations in the fi
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{number}</span> <b>pid</b>
+									<span class="light fixedFont">{number}</span> <b>phase</b>
 									
 								</dt>
-								<dd>An integer that must correspond with the player ID of a player in an ongoing negotiation.</dd>
+								<dd>Integer representing the new phase of the game (see other functions in this module).</dd>
 							
 								<dt>
-									<span class="light fixedFont">{number}</span> <b>teamAmount</b>
+									<span class="light fixedFont">{string}</span> <b>phaseText</b>
 									
 								</dt>
-								<dd>Teams's offer amount in thousands of dollars per year (between 500 and 20000).</dd>
-							
-								<dt>
-									<span class="light fixedFont">{number}</span> <b>teamYears</b>
-									
-								</dt>
-								<dd>Team's offer length in years (between 1 and 5).</dd>
+								<dd>Textual representation of the new phase, which will be displayed in the UI.</dd>
 							
 								<dt>
 									<span class="light fixedFont">{function()=}</span> <b>cb</b>
 									
 								</dt>
-								<dd>Optional callback.</dd>
+								<dd>Optional callback run after the phase is set and the play menu is updated.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{boolean=}</span> <b>reload</b>
+									
+								</dt>
+								<dd>Optional boolean (defaul false) which, if set to true, will reload the current page before (after? both?) calling the callback.</dd>
 							
 							</dl>
 						
@@ -621,15 +572,17 @@ Currently, the only time there should be multiple ongoing negotiations in the fi
 
 					<hr />
 				
-					<a name=".validAmount"> </a>
+					<a name=".newSchedule"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
-					<span class="light">{number}</span>
-					<span class="light">core.contractNegotiation.</span><b>validAmount</b>(years)
+					
+					<span class="light">core.season.</span><b>newSchedule</b>(cb)
 					
 					</div>
 					<div class="description">
-						Restrict the input to between 500 and 20000, the valid amount of annual thousands of dollars for a contract.
+						Creates a new regular season schedule.
+
+This makes an NBA-like schedule in terms of conference matchups, division matchups, and home/away games.
 						
 						
 					</div>
@@ -641,38 +594,31 @@ Currently, the only time there should be multiple ongoing negotiations in the fi
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{number}</span> <b>years</b>
+									<span class="light fixedFont">{function(Array)}</span> <b>cb</b>
 									
 								</dt>
-								<dd>Annual salary, in thousands of dollars, to be validated.</dd>
+								<dd>Callback to run after the schedule is generated. The argument is a list of all the season's games, where each entry in the list is a list of the home team ID and the away team ID.</dd>
 							
 							</dl>
 						
 						
 						
 						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{number}</span> An integer between 500 and 20000.</dd>
-							
-							</dl>
 						
 						
 						
 
 					<hr />
 				
-					<a name=".validYears"> </a>
+					<a name=".setSchedule"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
-					<span class="light">{number}</span>
-					<span class="light">core.contractNegotiation.</span><b>validYears</b>(years)
+					
+					<span class="light">core.season.</span><b>setSchedule</b>(tids, cb)
 					
 					</div>
 					<div class="description">
-						Restrict the input to between 1 and 5, the valid number of years for a contract.
+						Save the schedule to the database, overwriting what's currently there.
 						
 						
 					</div>
@@ -684,23 +630,23 @@ Currently, the only time there should be multiple ongoing negotiations in the fi
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{number}</span> <b>years</b>
+									<span class="light fixedFont">{Array}</span> <b>tids</b>
 									
 								</dt>
-								<dd>Number of years, to be validated.</dd>
+								<dd>A list of lists, each containing the team IDs of the home and
+            away teams, respectively, for every game in the season, respectively.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{function()}</span> <b>cb</b>
+									
+								</dt>
+								<dd>Callback function run after the database operations finish.</dd>
 							
 							</dl>
 						
 						
 						
 						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{number}</span> An integer between 1 and 5.</dd>
-							
-							</dl>
 						
 						
 						

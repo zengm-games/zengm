@@ -11,6 +11,7 @@ define(["db"], function (db) {
      * This is based on http://www.basketball-reference.com/about/per.html
      *
      * @memberOf core.advStats
+     * @param {function()} cb Callback function.
      */
     function calculatePER(cb) {
         // Total team stats (not per game averages) - gp, pts, ast, fg, plus all the others needed for league totals

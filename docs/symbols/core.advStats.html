@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - ui</title>
+		<title>JsDoc Reference - core.advStats</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -228,7 +228,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Namespace ui
+				Namespace core.advStats
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -236,16 +236,16 @@ ul.inheritsList
 				
 				
 			
-				Anything that directly updates the UI.
+				Advanced stats (PER, WS, etc) that require some nontrivial calculations and thus are calculated and cached once each day.
 				
 				
-					<br /><i>Defined in: </i> &lt;js/ui.js&gt;.
+					<br /><i>Defined in: </i> &lt;js/core/advStats.js&gt;.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ui.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class core.advStats.">
 				<caption>Namespace Summary</caption>
 				<thead>
 					<tr>
@@ -258,7 +258,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/ui.html#constructor">ui</a></b>
+								<b><a href="../symbols/core.advStats.html#constructor">core.advStats</a></b>
 							</div>
 							<div class="description"></div>
 						</td>
@@ -274,7 +274,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ui.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class core.advStats.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -287,18 +287,9 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">ui.<b><a href="../symbols/ui.html#.realtimeUpdate">realtimeUpdate</a></b>(cb)
+								<div class="fixedFont">core.advStats.<b><a href="../symbols/core.advStats.html#.calculatePER">calculatePER</a></b>(cb)
 								</div>
-								<div class="description">Smartly update the currently loaded view, based on the current game state.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">ui.<b><a href="../symbols/ui.html#.update">update</a></b>(data, cb)
-								</div>
-								<div class="description">Replaces the displayed view.</div>
+								<div class="description">Calcualte the current season's Player Efficiency Rating (PER) for each active player and write it to the database.</div>
 							</td>
 						</tr>
 					
@@ -319,7 +310,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>ui</b>
+						<b>core.advStats</b>
 				</div>
 				
 				<div class="description">
@@ -350,15 +341,17 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name=".realtimeUpdate"> </a>
+					<a name=".calculatePER"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">ui.</span><b>realtimeUpdate</b>(cb)
+					<span class="light">core.advStats.</span><b>calculatePER</b>(cb)
 					
 					</div>
 					<div class="description">
-						Smartly update the currently loaded view, based on the current game state.
+						Calcualte the current season's Player Efficiency Rating (PER) for each active player and write it to the database.
+
+This is based on http://www.basketball-reference.com/about/per.html
 						
 						
 					</div>
@@ -370,54 +363,10 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{function()=}</span> <b>cb</b>
+									<span class="light fixedFont">{function()}</span> <b>cb</b>
 									
 								</dt>
-								<dd>Optional callback that will run after the page updates.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".update"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">ui.</span><b>update</b>(data, cb)
-					
-					</div>
-					<div class="description">
-						Replaces the displayed view.
-
-This updates the content of the page (either #content if data.inLeague is false or #league_content otherwise), sets the title (and appends the league number to it when appropriate), and injects g.lid as lid to the template.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>data</b>
-									
-								</dt>
-								<dd>An object with several properties: "title" the title of the page; "vars" the variables to be passed to the handlebars template; "template" the name of the handlebars template; "isLeague" a boolean saying whether this is within a league or not.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{function()=}</span> <b>cb</b>
-									
-								</dt>
-								<dd>Optional callback</dd>
+								<dd>Callback function.</dd>
 							
 							</dl>
 						
@@ -442,7 +391,7 @@ This updates the content of the page (either #content if data.inLeague is false 
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Mon Feb 04 2013 01:41:47 GMT-0500 (EST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Mon Feb 04 2013 01:41:46 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

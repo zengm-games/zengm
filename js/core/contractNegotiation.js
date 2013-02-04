@@ -80,7 +80,7 @@ define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui
      * 
      * @memberOf core.contractNegotiation
      * @param {number} years Annual salary, in thousands of dollars, to be validated.
-     * @return {[type]} An integer between 500 and 20000.
+     * @return {number} An integer between 500 and 20000.
      */
     function validAmount(amount) {
         if (amount < 500) {
@@ -96,7 +96,7 @@ define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui
      * 
      * @memberOf core.contractNegotiation
      * @param {number} years Number of years, to be validated.
-     * @return {[type]} An integer between 1 and 5.
+     * @return {number} An integer between 1 and 5.
      */
     function validYears(years) {
         if (years < 1) {

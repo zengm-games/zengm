@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - ui</title>
+		<title>JsDoc Reference - util.lock</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -228,7 +228,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Namespace ui
+				Namespace util.lock
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -236,16 +236,16 @@ ul.inheritsList
 				
 				
 			
-				Anything that directly updates the UI.
+				These functions all deal with locking game state when there is some blocking action in progress. Like don't allow game simulations when a trade is being negotiated. For figuring out the current state, trust only the database.
 				
 				
-					<br /><i>Defined in: </i> &lt;js/ui.js&gt;.
+					<br /><i>Defined in: </i> &lt;js/util/lock.js&gt;.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class ui.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class util.lock.">
 				<caption>Namespace Summary</caption>
 				<thead>
 					<tr>
@@ -258,7 +258,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/ui.html#constructor">ui</a></b>
+								<b><a href="../symbols/util.lock.html#constructor">util.lock</a></b>
 							</div>
 							<div class="description"></div>
 						</td>
@@ -274,7 +274,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class ui.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class util.lock.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -287,18 +287,44 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">ui.<b><a href="../symbols/ui.html#.realtimeUpdate">realtimeUpdate</a></b>(cb)
+								<div class="fixedFont">util.lock.<b><a href="../symbols/util.lock.html#.canStartGames">canStartGames</a></b>(ot, cb)
 								</div>
-								<div class="description">Smartly update the currently loaded view, based on the current game state.</div>
+								<div class="description">Can new game simulations be started?
+
+Calls the callback function with either true or false.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">ui.<b><a href="../symbols/ui.html#.update">update</a></b>(data, cb)
+								<div class="fixedFont">util.lock.<b><a href="../symbols/util.lock.html#.canStartNegotiation">canStartNegotiation</a></b>(ot, cb)
 								</div>
-								<div class="description">Replaces the displayed view.</div>
+								<div class="description">Can a new contract negotiation be started?
+
+Calls the callback function with either true or false.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">util.lock.<b><a href="../symbols/util.lock.html#.gamesInProgress">gamesInProgress</a></b>(ot, cb)
+								</div>
+								<div class="description">Is game simulation in progress?
+
+Calls the callback function with either true or false depending on whether there is a game simulation currently in progress.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">util.lock.<b><a href="../symbols/util.lock.html#.negotiationInProgress">negotiationInProgress</a></b>(ot, cb)
+								</div>
+								<div class="description">Is a negotiation in progress?
+
+Calls the callback function with either true or false depending on whether there is an ongoing negoation.</div>
 							</td>
 						</tr>
 					
@@ -319,7 +345,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>ui</b>
+						<b>util.lock</b>
 				</div>
 				
 				<div class="description">
@@ -350,15 +376,17 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name=".realtimeUpdate"> </a>
+					<a name=".canStartGames"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">ui.</span><b>realtimeUpdate</b>(cb)
+					<span class="light">util.lock.</span><b>canStartGames</b>(ot, cb)
 					
 					</div>
 					<div class="description">
-						Smartly update the currently loaded view, based on the current game state.
+						Can new game simulations be started?
+
+Calls the callback function with either true or false. If games are in progress or any contract negotiation is in progress, false.
 						
 						
 					</div>
@@ -370,10 +398,16 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{function()=}</span> <b>cb</b>
+									<span class="light fixedFont">{IDBObjectStore|IDBTransaction|null}</span> <b>ot</b>
 									
 								</dt>
-								<dd>Optional callback that will run after the page updates.</dd>
+								<dd>An IndexedDB object store or transaction on gameAttributes and negotiations; if null is passed, then a new transaction will be used.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{function(boolean)}</span> <b>cb</b>
+									
+								</dt>
+								<dd>Callback.</dd>
 							
 							</dl>
 						
@@ -386,17 +420,17 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name=".update"> </a>
+					<a name=".canStartNegotiation"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">ui.</span><b>update</b>(data, cb)
+					<span class="light">util.lock.</span><b>canStartNegotiation</b>(ot, cb)
 					
 					</div>
 					<div class="description">
-						Replaces the displayed view.
+						Can a new contract negotiation be started?
 
-This updates the content of the page (either #content if data.inLeague is false or #league_content otherwise), sets the title (and appends the league number to it when appropriate), and injects g.lid as lid to the template.
+Calls the callback function with either true or false. If games are in progress or a free agent (not resigning!) is being negotiated with, false.
 						
 						
 					</div>
@@ -408,16 +442,104 @@ This updates the content of the page (either #content if data.inLeague is false 
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Object}</span> <b>data</b>
+									<span class="light fixedFont">{IDBObjectStore|IDBTransaction|null}</span> <b>ot</b>
 									
 								</dt>
-								<dd>An object with several properties: "title" the title of the page; "vars" the variables to be passed to the handlebars template; "template" the name of the handlebars template; "isLeague" a boolean saying whether this is within a league or not.</dd>
+								<dd>An IndexedDB object store or transaction on gameAttributes and negotiations; if null is passed, then a new transaction will be used.</dd>
 							
 								<dt>
-									<span class="light fixedFont">{function()=}</span> <b>cb</b>
+									<span class="light fixedFont">{function(boolean)}</span> <b>cb</b>
 									
 								</dt>
-								<dd>Optional callback</dd>
+								<dd>Callback.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".gamesInProgress"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">util.lock.</span><b>gamesInProgress</b>(ot, cb)
+					
+					</div>
+					<div class="description">
+						Is game simulation in progress?
+
+Calls the callback function with either true or false depending on whether there is a game simulation currently in progress.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{IDBObjectStore|IDBTransaction|null}</span> <b>ot</b>
+									
+								</dt>
+								<dd>An IndexedDB object store or transaction on gameAttributes; if null is passed, then a new transaction will be used.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{function(boolean)}</span> <b>cb</b>
+									
+								</dt>
+								<dd>Callback.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".negotiationInProgress"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">util.lock.</span><b>negotiationInProgress</b>(ot, cb)
+					
+					</div>
+					<div class="description">
+						Is a negotiation in progress?
+
+Calls the callback function with either true or false depending on whether there is an ongoing negoation.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{IDBObjectStore|IDBTransaction|null}</span> <b>ot</b>
+									
+								</dt>
+								<dd>An IndexedDB object store or transaction on negotiations; if null is passed, then a new transaction will be used.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{function(boolean)}</span> <b>cb</b>
+									
+								</dt>
+								<dd>Callback.</dd>
 							
 							</dl>
 						

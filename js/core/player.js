@@ -499,7 +499,7 @@ define(["db", "util/random"], function (db, random) {
     /**
      * Add a new row of stats to a player object.
      * 
-     * A row contains stats for unique values of (team, season, playoffs). So new rows need to be added when a player joins a new team, when a new season starts, or when a player's team makes teh playoffs. The team ID in p.tid will be used in the stats row, so if a player is changing teams, update p.tid before calling this.
+     * A row contains stats for unique values of (team, season, playoffs). So new rows need to be added when a player joins a new team, when a new season starts, or when a player's team makes the playoffs. The team ID in p.tid will be used in the stats row, so if a player is changing teams, update p.tid before calling this.
      *
      * @memberOf core.player
      * @param {Object} p Player object.
@@ -532,18 +532,3 @@ define(["db", "util/random"], function (db, random) {
         release: release
     };
 });
-/* THSES SHOULDN'T BE NEEDED, IDEALLY
-    def get_attributes(this):
-        d = this.attribute
-        d.pid = this.id
-        return d
-
-    def get_ratings(this):
-        d = this.rating
-        if not hasattr(g, 'season'):
-            d.season = g.startingSeason
-        else {
-            d.season = g.season
-        d.ovr = this.ovr()
-        d.pid = this.id
-        return d*/

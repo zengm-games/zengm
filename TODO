@@ -237,7 +237,8 @@ more sophisticatedrealtime data binding/updating
   knockoutjs is too flaky. try just a naive approach first, and use something better later
   be smarter about things that don't change, like old box scores, stats from old seasons, etc
   handle deeper content, like pagination/sorting in tables and tabs in player view
-
+  angularjs
+    seems nice and widely used. would need to build some kind of signal system on top of this, basically to update the UI data variables from indexeddb when appropriate
 
 
 

@@ -1373,7 +1373,6 @@ console.log(message);
                     }
                 }
 
-console.log(categories)
                 data = {
                     container: "league_content",
                     template: "leaders",
@@ -1492,7 +1491,7 @@ console.log(categories)
                     container: "league_content",
                     template: "player",
                     title: player.name,
-                    vars: {player: player, currentRatings: currentRatings, showTradeFor: player.tid !== g.userTid && player.tid >= 0, freeAgent: player.tid === c.PLAYER_FREE_AGENT}
+                    vars: {player: player, currentRatings: currentRatings, showTradeFor: player.tid !== g.userTid && player.tid >= 0, freeAgent: player.tid === c.PLAYER_FREE_AGENT, retired: player.tid === c.PLAYER_RETIRED, showContract: player.tid !== c.PLAYER_UNDRAFTED && player.tid !== c.PLAYER_RETIRED}
                 };
                 ui.update(data, req.raw.cb);
             };

@@ -2,7 +2,7 @@
   var template = Handlebars.template, templates = Handlebars.templates = Handlebars.templates || {};
 templates['player'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;
-  var buffer = "", stack1, stack2, stack3, foundHelper, tmp1, self=this, functionType="function", helperMissing=helpers.helperMissing, undef=void 0, escapeExpression=this.escapeExpression, blockHelperMissing=helpers.blockHelperMissing;
+  var buffer = "", stack1, stack2, foundHelper, tmp1, self=this, functionType="function", helperMissing=helpers.helperMissing, undef=void 0, escapeExpression=this.escapeExpression, blockHelperMissing=helpers.blockHelperMissing;
 
 function program1(depth0,data) {
   
@@ -48,15 +48,154 @@ function program3(depth0,data) {
 
 function program5(depth0,data) {
   
+  var buffer = "", stack1, stack2, stack3;
+  buffer += "\n        ";
+  foundHelper = helpers.freeAgent;
+  stack1 = foundHelper || depth0.freeAgent;
+  stack2 = helpers['if'];
+  tmp1 = self.program(6, program6, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.program(8, program8, data);
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += ": $";
+  stack1 = 2;
+  foundHelper = helpers.player;
+  stack2 = foundHelper || depth0.player;
+  stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.contractAmount);
+  foundHelper = helpers.round;
+  stack3 = foundHelper || depth0.round;
+  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
+  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
+  else { stack1 = stack3; }
+  buffer += escapeExpression(stack1) + "M/yr thru ";
+  foundHelper = helpers.player;
+  stack1 = foundHelper || depth0.player;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.contractExp);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.contractExp", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "<br />\n      ";
+  return buffer;}
+function program6(depth0,data) {
+  
   
   return "Asking for";}
 
-function program7(depth0,data) {
+function program8(depth0,data) {
   
   
   return "Contract";}
 
-function program9(depth0,data) {
+function program10(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n    <div class=\"span6\">\n      <h2 class=\"pull-left\">Overall: ";
+  foundHelper = helpers.currentRatings;
+  stack1 = foundHelper || depth0.currentRatings;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.ovr);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.ovr", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</h2>\n      <h2 class=\"pull-right\">Potential: ";
+  foundHelper = helpers.currentRatings;
+  stack1 = foundHelper || depth0.currentRatings;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.pot);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.pot", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "</h2><br /><br /><br />\n      <div class=\"row-fluid\">\n        <div class=\"span4\">\n          <strong>Physical</strong><br/ >\n          Height: ";
+  foundHelper = helpers.currentRatings;
+  stack1 = foundHelper || depth0.currentRatings;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.hgt);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.hgt", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "<br />\n          Strength: ";
+  foundHelper = helpers.currentRatings;
+  stack1 = foundHelper || depth0.currentRatings;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.stre);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.stre", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "<br />\n          Speed: ";
+  foundHelper = helpers.currentRatings;
+  stack1 = foundHelper || depth0.currentRatings;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.spd);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.spd", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "<br />\n          Jumping: ";
+  foundHelper = helpers.currentRatings;
+  stack1 = foundHelper || depth0.currentRatings;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.jmp);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.jmp", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "<br />\n          Endurance: ";
+  foundHelper = helpers.currentRatings;
+  stack1 = foundHelper || depth0.currentRatings;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.endu);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.endu", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\n        </div>\n        <div class=\"span4\">\n          <strong>Shooting</strong><br/ >\n          Inside: ";
+  foundHelper = helpers.currentRatings;
+  stack1 = foundHelper || depth0.currentRatings;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.ins);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.ins", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "<br />\n          Layups: ";
+  foundHelper = helpers.currentRatings;
+  stack1 = foundHelper || depth0.currentRatings;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.dnk);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.dnk", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "<br />\n          Free throws: ";
+  foundHelper = helpers.currentRatings;
+  stack1 = foundHelper || depth0.currentRatings;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.ft);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.ft", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "<br />\n          Two pointers: ";
+  foundHelper = helpers.currentRatings;
+  stack1 = foundHelper || depth0.currentRatings;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.fg);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.fg", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "<br />\n          Three pointers: ";
+  foundHelper = helpers.currentRatings;
+  stack1 = foundHelper || depth0.currentRatings;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.tp);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.tp", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\n        </div>\n        <div class=\"span4\">\n          <strong>Skill</strong><br/ >\n          Blocks: ";
+  foundHelper = helpers.currentRatings;
+  stack1 = foundHelper || depth0.currentRatings;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.blk);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.blk", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "<br />\n          Steals: ";
+  foundHelper = helpers.currentRatings;
+  stack1 = foundHelper || depth0.currentRatings;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.stl);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.stl", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "<br />\n          Dribbling: ";
+  foundHelper = helpers.currentRatings;
+  stack1 = foundHelper || depth0.currentRatings;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.drb);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.drb", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "<br />\n          Passing: ";
+  foundHelper = helpers.currentRatings;
+  stack1 = foundHelper || depth0.currentRatings;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.pss);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.pss", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "<br />\n          Rebounding: ";
+  foundHelper = helpers.currentRatings;
+  stack1 = foundHelper || depth0.currentRatings;
+  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.reb);
+  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
+  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.reb", { hash: {} }); }
+  buffer += escapeExpression(stack1) + "\n        </div>\n      </div>\n    </div>\n  ";
+  return buffer;}
+
+function program12(depth0,data) {
   
   var buffer = "", stack1;
   buffer += "\n  <form action=\"/l/";
@@ -73,7 +212,7 @@ function program9(depth0,data) {
   buffer += escapeExpression(stack1) + "\"><button type=\"submit\" class=\"btn btn-small\">Trade For</button></form>\n";
   return buffer;}
 
-function program11(depth0,data) {
+function program14(depth0,data) {
   
   var buffer = "", stack1;
   buffer += "\n  <form action=\"/l/";
@@ -90,7 +229,7 @@ function program11(depth0,data) {
   buffer += escapeExpression(stack1) + "\" method=\"POST\"><input type=\"hidden\" name=\"new\" value=\"1\"><button type=\"submit\" class=\"btn btn-small\">Sign free agent</button></form>\n";
   return buffer;}
 
-function program13(depth0,data,depth1) {
+function program16(depth0,data,depth1) {
   
   var buffer = "", stack1, stack2, stack3;
   buffer += "\n    <tr><td><a href=\"#\">";
@@ -316,7 +455,7 @@ function program13(depth0,data,depth1) {
   buffer += escapeExpression(stack1) + "</td></tr>\n  ";
   return buffer;}
 
-function program15(depth0,data) {
+function program18(depth0,data) {
   
   var buffer = "", stack1, stack2, stack3;
   buffer += "\n    <tr><td>Career</td><td></td><td></td><td>";
@@ -512,7 +651,7 @@ function program15(depth0,data) {
   buffer += escapeExpression(stack1) + "</td></tr>\n  ";
   return buffer;}
 
-function program17(depth0,data,depth1) {
+function program20(depth0,data,depth1) {
   
   var buffer = "", stack1;
   buffer += "\n      <tr><td><a href=\"#\">";
@@ -713,138 +852,30 @@ function program17(depth0,data,depth1) {
   stack1 = stack2.call(depth0, stack1, tmp1);
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n      ";
-  foundHelper = helpers.freeAgent;
-  stack1 = foundHelper || depth0.freeAgent;
+  foundHelper = helpers.showContract;
+  stack1 = foundHelper || depth0.showContract;
   stack2 = helpers['if'];
   tmp1 = self.program(5, program5, data);
   tmp1.hash = {};
   tmp1.fn = tmp1;
-  tmp1.inverse = self.program(7, program7, data);
+  tmp1.inverse = self.noop;
   stack1 = stack2.call(depth0, stack1, tmp1);
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ": $";
-  stack1 = 2;
-  foundHelper = helpers.player;
-  stack2 = foundHelper || depth0.player;
-  stack2 = (stack2 === null || stack2 === undefined || stack2 === false ? stack2 : stack2.contractAmount);
-  foundHelper = helpers.round;
-  stack3 = foundHelper || depth0.round;
-  if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
-  else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
-  else { stack1 = stack3; }
-  buffer += escapeExpression(stack1) + "M/yr thru ";
-  foundHelper = helpers.player;
-  stack1 = foundHelper || depth0.player;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.contractExp);
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "player.contractExp", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "<br />\n    </div>\n  </div>\n  <div class=\"span6\">\n    <h2 class=\"pull-left\">Overall: ";
-  foundHelper = helpers.currentRatings;
-  stack1 = foundHelper || depth0.currentRatings;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.ovr);
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.ovr", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "</h2>\n    <h2 class=\"pull-right\">Potential: ";
-  foundHelper = helpers.currentRatings;
-  stack1 = foundHelper || depth0.currentRatings;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.pot);
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.pot", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "</h2><br /><br /><br />\n    <div class=\"row-fluid\">\n      <div class=\"span4\">\n        <strong>Physical</strong><br/ >\n        Height: ";
-  foundHelper = helpers.currentRatings;
-  stack1 = foundHelper || depth0.currentRatings;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.hgt);
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.hgt", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "<br />\n        Strength: ";
-  foundHelper = helpers.currentRatings;
-  stack1 = foundHelper || depth0.currentRatings;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.stre);
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.stre", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "<br />\n        Speed: ";
-  foundHelper = helpers.currentRatings;
-  stack1 = foundHelper || depth0.currentRatings;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.spd);
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.spd", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "<br />\n        Jumping: ";
-  foundHelper = helpers.currentRatings;
-  stack1 = foundHelper || depth0.currentRatings;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.jmp);
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.jmp", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "<br />\n        Endurance: ";
-  foundHelper = helpers.currentRatings;
-  stack1 = foundHelper || depth0.currentRatings;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.endu);
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.endu", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "\n      </div>\n      <div class=\"span4\">\n        <strong>Shooting</strong><br/ >\n        Inside: ";
-  foundHelper = helpers.currentRatings;
-  stack1 = foundHelper || depth0.currentRatings;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.ins);
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.ins", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "<br />\n        Layups: ";
-  foundHelper = helpers.currentRatings;
-  stack1 = foundHelper || depth0.currentRatings;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.dnk);
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.dnk", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "<br />\n        Free throws: ";
-  foundHelper = helpers.currentRatings;
-  stack1 = foundHelper || depth0.currentRatings;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.ft);
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.ft", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "<br />\n        Two pointers: ";
-  foundHelper = helpers.currentRatings;
-  stack1 = foundHelper || depth0.currentRatings;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.fg);
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.fg", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "<br />\n        Three pointers: ";
-  foundHelper = helpers.currentRatings;
-  stack1 = foundHelper || depth0.currentRatings;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.tp);
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.tp", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "\n      </div>\n      <div class=\"span4\">\n        <strong>Skill</strong><br/ >\n        Blocks: ";
-  foundHelper = helpers.currentRatings;
-  stack1 = foundHelper || depth0.currentRatings;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.blk);
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.blk", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "<br />\n        Steals: ";
-  foundHelper = helpers.currentRatings;
-  stack1 = foundHelper || depth0.currentRatings;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.stl);
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.stl", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "<br />\n        Dribbling: ";
-  foundHelper = helpers.currentRatings;
-  stack1 = foundHelper || depth0.currentRatings;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.drb);
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.drb", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "<br />\n        Passing: ";
-  foundHelper = helpers.currentRatings;
-  stack1 = foundHelper || depth0.currentRatings;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.pss);
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.pss", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "<br />\n        Rebounding: ";
-  foundHelper = helpers.currentRatings;
-  stack1 = foundHelper || depth0.currentRatings;
-  stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.reb);
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "currentRatings.reb", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "\n      </div>\n    </div>\n  </div>\n</div>\n\n<p></p>\n";
+  buffer += "\n    </div>\n  </div>\n  ";
+  foundHelper = helpers.retired;
+  stack1 = foundHelper || depth0.retired;
+  stack2 = helpers.unless;
+  tmp1 = self.program(10, program10, data);
+  tmp1.hash = {};
+  tmp1.fn = tmp1;
+  tmp1.inverse = self.noop;
+  stack1 = stack2.call(depth0, stack1, tmp1);
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n</div>\n\n<p></p>\n";
   foundHelper = helpers.showTradeFor;
   stack1 = foundHelper || depth0.showTradeFor;
   stack2 = helpers['if'];
-  tmp1 = self.program(9, program9, data);
+  tmp1 = self.program(12, program12, data);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;
@@ -854,7 +885,7 @@ function program17(depth0,data,depth1) {
   foundHelper = helpers.freeAgent;
   stack1 = foundHelper || depth0.freeAgent;
   stack2 = helpers['if'];
-  tmp1 = self.program(11, program11, data);
+  tmp1 = self.program(14, program14, data);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;
@@ -864,7 +895,7 @@ function program17(depth0,data,depth1) {
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.stats);
-  tmp1 = self.programWithDepth(program13, data, depth0);
+  tmp1 = self.programWithDepth(program16, data, depth0);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;
@@ -876,7 +907,7 @@ function program17(depth0,data,depth1) {
   stack1 = foundHelper || depth0.player;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.careerStats);
   stack2 = helpers['with'];
-  tmp1 = self.program(15, program15, data);
+  tmp1 = self.program(18, program18, data);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;
@@ -886,7 +917,7 @@ function program17(depth0,data,depth1) {
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.ratings);
-  tmp1 = self.programWithDepth(program17, data, depth0);
+  tmp1 = self.programWithDepth(program20, data, depth0);
   tmp1.hash = {};
   tmp1.fn = tmp1;
   tmp1.inverse = self.noop;

@@ -13,39 +13,43 @@
       {{else}}
         Undrafted: {{player.draftYear}}<br />
       {{/if}}
-      {{#if freeAgent}}Asking for{{else}}Contract{{/if}}: ${{round player.contractAmount 2}}M/yr thru {{player.contractExp}}<br />
+      {{#if showContract}}
+        {{#if freeAgent}}Asking for{{else}}Contract{{/if}}: ${{round player.contractAmount 2}}M/yr thru {{player.contractExp}}<br />
+      {{/if}}
     </div>
   </div>
-  <div class="span6">
-    <h2 class="pull-left">Overall: {{currentRatings.ovr}}</h2>
-    <h2 class="pull-right">Potential: {{currentRatings.pot}}</h2><br /><br /><br />
-    <div class="row-fluid">
-      <div class="span4">
-        <strong>Physical</strong><br/ >
-        Height: {{currentRatings.hgt}}<br />
-        Strength: {{currentRatings.stre}}<br />
-        Speed: {{currentRatings.spd}}<br />
-        Jumping: {{currentRatings.jmp}}<br />
-        Endurance: {{currentRatings.endu}}
-      </div>
-      <div class="span4">
-        <strong>Shooting</strong><br/ >
-        Inside: {{currentRatings.ins}}<br />
-        Layups: {{currentRatings.dnk}}<br />
-        Free throws: {{currentRatings.ft}}<br />
-        Two pointers: {{currentRatings.fg}}<br />
-        Three pointers: {{currentRatings.tp}}
-      </div>
-      <div class="span4">
-        <strong>Skill</strong><br/ >
-        Blocks: {{currentRatings.blk}}<br />
-        Steals: {{currentRatings.stl}}<br />
-        Dribbling: {{currentRatings.drb}}<br />
-        Passing: {{currentRatings.pss}}<br />
-        Rebounding: {{currentRatings.reb}}
+  {{#unless retired}}
+    <div class="span6">
+      <h2 class="pull-left">Overall: {{currentRatings.ovr}}</h2>
+      <h2 class="pull-right">Potential: {{currentRatings.pot}}</h2><br /><br /><br />
+      <div class="row-fluid">
+        <div class="span4">
+          <strong>Physical</strong><br/ >
+          Height: {{currentRatings.hgt}}<br />
+          Strength: {{currentRatings.stre}}<br />
+          Speed: {{currentRatings.spd}}<br />
+          Jumping: {{currentRatings.jmp}}<br />
+          Endurance: {{currentRatings.endu}}
+        </div>
+        <div class="span4">
+          <strong>Shooting</strong><br/ >
+          Inside: {{currentRatings.ins}}<br />
+          Layups: {{currentRatings.dnk}}<br />
+          Free throws: {{currentRatings.ft}}<br />
+          Two pointers: {{currentRatings.fg}}<br />
+          Three pointers: {{currentRatings.tp}}
+        </div>
+        <div class="span4">
+          <strong>Skill</strong><br/ >
+          Blocks: {{currentRatings.blk}}<br />
+          Steals: {{currentRatings.stl}}<br />
+          Dribbling: {{currentRatings.drb}}<br />
+          Passing: {{currentRatings.pss}}<br />
+          Rebounding: {{currentRatings.reb}}
+        </div>
       </div>
     </div>
-  </div>
+  {{/unless}}
 </div>
 
 <p></p>

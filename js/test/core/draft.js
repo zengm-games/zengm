@@ -10,7 +10,7 @@ define(["db", "core/draft", "core/league"], function (db, draft, league) {
 
         before(function (done) {
             db.connectMeta(function () {
-                league.create(4, "random", function () {
+                league.create("Test", 4, "random", function () {
                     done();
                 });
             });

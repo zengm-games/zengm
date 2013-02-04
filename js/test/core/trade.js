@@ -10,7 +10,7 @@ define(["db", "core/league", "core/trade"], function (db, league, trade) {
 
         before(function (done) {
             db.connectMeta(function () {
-                league.create(0, "random", function () {
+                league.create("Test", 0, "random", function () {
                     done();
                 });
             });

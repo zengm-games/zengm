@@ -8,7 +8,7 @@ define(["db", "core/contractNegotiation", "core/league"], function (db, contract
     describe("core/contractNegotiation", function () {
         before(function (done) {
             db.connectMeta(function () {
-                league.create(14, "random", function () {
+                league.create("Test", 14, "random", function () {
                     done();
                 });
             });

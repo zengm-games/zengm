@@ -1,7 +1,6 @@
 main todo (before public beta)
 ------------------------------
 
-in resigning phase, clicking free agents should lead to negotiations view
 league names
   test for HTML/JS injection
   "Edit" button between "Export" and "Delete" - set in leaguesStore and gameAttributes

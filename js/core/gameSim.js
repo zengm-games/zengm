@@ -70,7 +70,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      *         {
      *             "gid": 0,
      *             "overtimes": 0,
-     *             "'"team": [
+     *             "team": [
      *                 {
      *                     "id": 0,
      *                     "stat": {},
@@ -415,7 +415,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * 
      * Args:
      *     ratios: 
-     *     exempt: An integer representing a player that can'"'t be picked (i.e. you
+     *     exempt: An integer representing a player that can't be picked (i.e. you
      *         can't assist your own shot, which is the only current use of
      *         exempt). The value of exempt ranges from 0 to 4, corresponding to
      *         the index of the player in this.players_on_court. This is *NOT* the

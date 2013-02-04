@@ -897,6 +897,11 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
     function freeAgents(req) {
         beforeLeague(req, function () {
             if (g.phase >= c.PHASE_AFTER_TRADE_DEADLINE && g.phase <= c.PHASE_RESIGN_PLAYERS) {
+                if (g.phase === c.PHASE_RESIGN_PLAYERS) {
+                    Davis.location.assign(new Davis.Request("/l/" + g.lid + "/negotiation"));
+                    return;
+                }
+
                 helpers.error("You're not allowed to sign free agents now.", req);
                 return;
             }

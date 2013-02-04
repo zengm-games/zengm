@@ -93,7 +93,7 @@ function program11(depth0,data) {
 function program13(depth0,data,depth1) {
   
   var buffer = "", stack1, stack2, stack3;
-  buffer += "\n      <tr><td><a href=\"#\">";
+  buffer += "\n    <tr><td><a href=\"#\">";
   foundHelper = helpers.season;
   stack1 = foundHelper || depth0.season;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -313,13 +313,13 @@ function program13(depth0,data,depth1) {
   if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
   else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
   else { stack1 = stack3; }
-  buffer += escapeExpression(stack1) + "</td></tr>\n    ";
+  buffer += escapeExpression(stack1) + "</td></tr>\n  ";
   return buffer;}
 
 function program15(depth0,data) {
   
   var buffer = "", stack1, stack2, stack3;
-  buffer += "\n      <tr><td>Career</td><td></td><td></td><td>";
+  buffer += "\n    <tr><td>Career</td><td></td><td></td><td>";
   foundHelper = helpers.gp;
   stack1 = foundHelper || depth0.gp;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -509,13 +509,13 @@ function program15(depth0,data) {
   if(typeof stack3 === functionType) { stack1 = stack3.call(depth0, stack2, stack1, { hash: {} }); }
   else if(stack3=== undef) { stack1 = helperMissing.call(depth0, "round", stack2, stack1, { hash: {} }); }
   else { stack1 = stack3; }
-  buffer += escapeExpression(stack1) + "</td></tr>\n    ";
+  buffer += escapeExpression(stack1) + "</td></tr>\n  ";
   return buffer;}
 
 function program17(depth0,data,depth1) {
   
   var buffer = "", stack1;
-  buffer += "\n        <tr><td><a href=\"#\">";
+  buffer += "\n      <tr><td><a href=\"#\">";
   foundHelper = helpers.season;
   stack1 = foundHelper || depth0.season;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
@@ -630,10 +630,10 @@ function program17(depth0,data,depth1) {
   stack1 = foundHelper || depth0.reb;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "reb", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "</td></tr>\n      ";
+  buffer += escapeExpression(stack1) + "</td></tr>\n    ";
   return buffer;}
 
-  buffer += "<script>\n$(document).ready(function() {\n  $(\"#player_tabs\").tab();\n});\n</script>\n<div class=\"row-fluid\">\n  <div class=\"span6\">\n    <h1>";
+  buffer += "<div class=\"row-fluid\">\n  <div class=\"span6\">\n    <h1>";
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.name);
@@ -860,7 +860,7 @@ function program17(depth0,data,depth1) {
   tmp1.inverse = self.noop;
   stack1 = stack2.call(depth0, stack1, tmp1);
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n\n<ul id=\"player_tabs\" class=\"nav nav-tabs\" data-tabs=\"tabs\">\n    <li class=\"active\"><a href=\"#career_stats\" data-toggle=\"tab\" data-no-davis=\"true\">Career Stats</a></li>\n    <li><a href=\"#playoffs_stats\" data-toggle=\"tab\" data-no-davis=\"true\">Playoffs Stats</a></li>\n    <li><a href=\"#game_log\" data-toggle=\"tab\" data-no-davis=\"true\">Game Log</a></li>\n    <li><a href=\"#ratings_history\" data-toggle=\"tab\" data-no-davis=\"true\">Ratings History</a></li>\n</ul>\n<div id=\"my-tab-content\" class=\"tab-content\">\n  <div class=\"tab-pane active\" id=\"career_stats\">\n    <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player_stats\">\n    <thead>\n      <tr><th colspan=\"6\"></th><th colspan=\"3\" style=\"text-align: center\" title=\"Field Goals\">FG</th><th colspan=\"3\" style=\"text-align: center\" title=\"Three-Pointers\">3PT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Free Throws\">FT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Rebounds\">Reb</th><th colspan=\"6\"></th></tr>\n      <tr><th>Year</th><th>Team</th><th>Age</th><th title=\"Games Played\">GP</th><th title=\"Games Started\">GS</th><th title=\"Minutes\">Min</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Offensive\">Off</th><th title=\"Defensive\">Def</th><th title=\"Total\">Tot</th><th title=\"Assists\">Ast</th><th title=\"Turnovers\">TO</th><th title=\"Steals\">Stl</th><th title=\"Blocks\">Blk</th><th title=\"Personal Fouls\">PF</th><th title=\"Points\">Pts</th><th title=\"Player Efficiency Rating\">PER</th></tr>\n    </thead>\n    <tbody>\n    ";
+  buffer += "\n\n<h2>Regular Season Stats</h2>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player_stats\">\n  <thead>\n    <tr><th colspan=\"6\"></th><th colspan=\"3\" style=\"text-align: center\" title=\"Field Goals\">FG</th><th colspan=\"3\" style=\"text-align: center\" title=\"Three-Pointers\">3PT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Free Throws\">FT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Rebounds\">Reb</th><th colspan=\"6\"></th></tr>\n    <tr><th>Year</th><th>Team</th><th>Age</th><th title=\"Games Played\">GP</th><th title=\"Games Started\">GS</th><th title=\"Minutes\">Min</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Offensive\">Off</th><th title=\"Defensive\">Def</th><th title=\"Total\">Tot</th><th title=\"Assists\">Ast</th><th title=\"Turnovers\">TO</th><th title=\"Steals\">Stl</th><th title=\"Blocks\">Blk</th><th title=\"Personal Fouls\">PF</th><th title=\"Points\">Pts</th><th title=\"Player Efficiency Rating\">PER</th></tr>\n  </thead>\n  <tbody>\n  ";
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.stats);
@@ -871,7 +871,7 @@ function program17(depth0,data,depth1) {
   if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
   else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n    ";
+  buffer += "\n  ";
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.careerStats);
@@ -882,7 +882,7 @@ function program17(depth0,data,depth1) {
   tmp1.inverse = self.noop;
   stack1 = stack2.call(depth0, stack1, tmp1);
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n    </tbody>\n    </table>\n  </div>\n  <div class=\"tab-pane\" id=\"playoffs_stats\">\n    Not implemented yet\n  </div>\n  <div class=\"tab-pane\" id=\"game_log\">\n    Not implemented yet\n  </div>\n  <div class=\"tab-pane\" id=\"ratings_history\">\n    <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player_ratings\">\n    <thead>\n      <tr><th>Year</th><th>Team</th><th>Age</th><th title=\"Overall\">Ovr</th><th title=\"Potential\">Pot</th><th title=\"Height\">Hgt</th><th title=\"Strength\">Str</th><th title=\"Speed\">Spd</th><th title=\"Jumping\">Jmp</th><th title=\"Endurance\">End</th><th title=\"Inside Scoring\">Ins</th><th title=\"Dunks/Layups\">Dnk</th><th title=\"Free Throw Shooting\">FT</th><th title=\"Two-Point Shooting\">2Pt</th><th title=\"Three-Point Shooting\">3Pt</th><th title=\"Blocks\">Blk</th><th title=\"Steals\">Stl</th><th title=\"Dribbling\">Drb</th><th title=\"Passing\">Pss</th><th title=\"Rebounding\">Reb</th></tr>\n    </thead>\n    <tbody>\n      ";
+  buffer += "\n  </tbody>\n</table>\n\n<h2>Ratings History</h2>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player_ratings\">\n  <thead>\n    <tr><th>Year</th><th>Team</th><th>Age</th><th title=\"Overall\">Ovr</th><th title=\"Potential\">Pot</th><th title=\"Height\">Hgt</th><th title=\"Strength\">Str</th><th title=\"Speed\">Spd</th><th title=\"Jumping\">Jmp</th><th title=\"Endurance\">End</th><th title=\"Inside Scoring\">Ins</th><th title=\"Dunks/Layups\">Dnk</th><th title=\"Free Throw Shooting\">FT</th><th title=\"Two-Point Shooting\">2Pt</th><th title=\"Three-Point Shooting\">3Pt</th><th title=\"Blocks\">Blk</th><th title=\"Steals\">Stl</th><th title=\"Dribbling\">Drb</th><th title=\"Passing\">Pss</th><th title=\"Rebounding\">Reb</th></tr>\n  </thead>\n  <tbody>\n    ";
   foundHelper = helpers.player;
   stack1 = foundHelper || depth0.player;
   stack1 = (stack1 === null || stack1 === undefined || stack1 === false ? stack1 : stack1.ratings);
@@ -893,7 +893,7 @@ function program17(depth0,data,depth1) {
   if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
   else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n    </tbody>\n    </table>\n  </div>\n</div>";
+  buffer += "\n  </tbody>\n</table>";
   return buffer;});
 templates['playoffs'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;

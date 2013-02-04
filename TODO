@@ -18,7 +18,6 @@ free agents
   on new game, have enough free agents so the pool isn't totally depleted
 player view
   no contract or ratings shown for retired player
-  should show more on one screen rather than using tabs, like basketball-reference
 game simulation realism
   make pages that show stats and ratings as medians/quintiles, for a given season. this will help see how they evolve over time, respond to tweaking, etc.
     don't round min/max of scale to integers, just let them be whatever they are

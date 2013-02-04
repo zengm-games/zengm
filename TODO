@@ -1,12 +1,14 @@
 main todo (before public beta)
 ------------------------------
 
+in resigning phase, clicking free agents should lead to negotiations view
 league names
   test for HTML/JS injection
   "Edit" button between "Export" and "Delete" - set in leaguesStore and gameAttributes
     move delete/edit/export under one button, "manage". have the 3 buttons pop out in place when you hit manage, then it functions as it does now. popped buttons can be colored too, then
 export league
   test with really big league. probably won't work at some point
+    yep. just get rid of this feature for now? eventually do online sync?
 import league
   ignore old lid
 multiyear revenue/profit is messed up in finances view
@@ -50,13 +52,16 @@ game simulation realism
       smalls should have lower FG%, even with more shots
     if i make some fundamental change, i need to account for it in randomly generated players
   pgs should get more assists - increase prob for the "PG" (best ball handler and passer) on the floor
+  more and better 3 point shooters
   smalls should get less blocks
   compare team and player stat distributions against reality
   home/away advantage
+contract negotiation - make increased demands more lenient
 put on play.basketball-gm.com, with splash page on basketball-gm.com
 bootstrap 2.2?
 free agent balance.. maybe increase salary cap?
 low ovr, high pot draft picks should develop better.
+high ovr, low pot draft picks should develop worse?
 different market sizes in different cities, making it easier or harder
 some way to actually win/lose the game
 PER

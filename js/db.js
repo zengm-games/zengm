@@ -385,6 +385,7 @@ console.log(event);
                 // Career totals
                 player.careerStats = {};
                 player.careerStats = filterStats(player.careerStats, pcs, stats);
+                player.careerStats.per = _.reduce(ps, function (memo, ps) { return memo + ps.per * ps.min; }, 0) / (player.careerStats.min * player.careerStats.gp); // Special case for PER - weight by minutes per season
             } else {
                 // Single seasons
                 player.stats = filterStats({}, ps, stats);

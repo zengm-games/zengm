@@ -60,12 +60,6 @@ ul.dashboard_league li form.delete .btn {
   top: 0;
   right: 0;
 }
-ul.dashboard_league li a.export {
-  border-radius: 0 0 4px 4px;
-  position: absolute;
-  top: 19px;
-  right: 0;
-}
 ul.dashboard_league li.dashboard_league_new a {
   color: #fff;
 }

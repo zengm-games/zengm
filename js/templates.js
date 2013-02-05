@@ -3511,50 +3511,10 @@ function program1(depth0,data) {
   stack1 = foundHelper || depth0.lid;
   if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
   else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "\"><button class=\"btn btn-mini\">Delete</button></form>\n      <a class=\"btn btn-mini export\" href=\"#modalExport";
-  foundHelper = helpers.lid;
-  stack1 = foundHelper || depth0.lid;
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "\" data-toggle=\"modal\" data-no-davis=\"true\">Export</a>\n\n      <div id=\"modalExport";
-  foundHelper = helpers.lid;
-  stack1 = foundHelper || depth0.lid;
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "\" class=\"modal hide\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"myModalLabel\" aria-hidden=\"true\">\n        <div class=\"modal-header\">\n          <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">×</button>\n          <h3 id=\"myModalLabel\">Export ";
-  foundHelper = helpers.name;
-  stack1 = foundHelper || depth0.name;
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "name", { hash: {} }); }
-  buffer += escapeExpression(stack1) + " (";
-  foundHelper = helpers.lid;
-  stack1 = foundHelper || depth0.lid;
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + ")</h3>\n        </div>\n        <div class=\"modal-body\">\n          <p>Exporting a league allows you to back up all the data for a league into a single convenient file that you can later import here or on another computer.</p>\n          <p id=\"downloadify";
-  foundHelper = helpers.lid;
-  stack1 = foundHelper || depth0.lid;
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "\">Please wait... depending on the age of your league, this could take a long time to generate and then also take a long time to download.<br><br>(Note: You must have Flash 10 or higher installed for exporting to work.)</p>\n        </div>\n        <div class=\"modal-footer\">\n          <button class=\"btn\" data-dismiss=\"modal\" aria-hidden=\"true\">Cancel</button>\n        </div>\n      </div>\n      <script type=\"text/javascript\">\n        $(\"#modalExport";
-  foundHelper = helpers.lid;
-  stack1 = foundHelper || depth0.lid;
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "\").on(\"show\", function () {\n          generateExportButton(";
-  foundHelper = helpers.lid;
-  stack1 = foundHelper || depth0.lid;
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "lid", { hash: {} }); }
-  buffer += escapeExpression(stack1) + ", \"";
-  foundHelper = helpers.name;
-  stack1 = foundHelper || depth0.name;
-  if(typeof stack1 === functionType) { stack1 = stack1.call(depth0, { hash: {} }); }
-  else if(stack1=== undef) { stack1 = helperMissing.call(depth0, "name", { hash: {} }); }
-  buffer += escapeExpression(stack1) + "\");\n        });\n      </script>\n    </li>\n  ";
+  buffer += escapeExpression(stack1) + "\"><button class=\"btn btn-mini\">Delete</button></form>\n    </li>\n  ";
   return buffer;}
 
-  buffer += "<script type=\"text/javascript\">\nfunction generateExportButton(lid, name) {\n  var league = require('core/league');\n  league.export_(lid, function (exportedLeague) {\n    Downloadify.create('downloadify' + lid, {\n      filename: name + \".json\",\n      data: function(){ \n        return JSON.stringify(exportedLeague);\n      },\n      onComplete: function(){\n        $(\"#modalExport\" + lid).modal('hide');\n      },\n      onError: function(){ alert('Downloadify error'); },\n      swf: '/js/lib/downloadify.swf',\n      downloadImage: '/img/download.png',\n      width: 100,\n      height: 30,\n      transparent: true,\n      append: false\n     });\n  });\n}\n</script>\n\n<ul class=\"dashboard_league\">\n  ";
+  buffer += "<ul class=\"dashboard_league\">\n  ";
   foundHelper = helpers.leagues;
   stack1 = foundHelper || depth0.leagues;
   tmp1 = self.program(1, program1, data);
@@ -3564,7 +3524,7 @@ function program1(depth0,data) {
   if(foundHelper && typeof stack1 === functionType) { stack1 = stack1.call(depth0, tmp1); }
   else { stack1 = blockHelperMissing.call(depth0, stack1, tmp1); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n\n  <li class=\"dashboard_league_new\"><a href=\"/new_league\" class=\"btn btn-primary league\"><h2 style=\"\">Create new league</h2></a></li>\n  <li class=\"dashboard_league_new\"><a href=\"/new_league\" class=\"btn btn-primary league\"><h2 style=\"\">Import saved league</h2></a></li>\n</ul>\n\n<hr style=\"clear: both\">\n";
+  buffer += "\n\n  <li class=\"dashboard_league_new\"><a href=\"/new_league\" class=\"btn btn-primary league\"><h2 style=\"\">Create new league</h2></a></li>\n  <li class=\"dashboard_league_new\"><a href=\"/new_league\" class=\"btn btn-primary league\"><h2 style=\"\">Import saved league</h2></a></li>\n</ul>";
   return buffer;});
 templates['schedule'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;

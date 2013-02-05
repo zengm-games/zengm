@@ -1,13 +1,6 @@
 main todo (before public beta)
 ------------------------------
 
-import/export stuff
-  doesn't seem to work with more than several MBs of data. just get rid of this feature for now? eventually do online sync?
-  league names
-    "Edit" button between "Export" and "Delete" - set in leaguesStore and gameAttributes
-      move delete/edit/export under one button, "manage". have the 3 buttons pop out in place when you hit manage, then it functions as it does now. popped buttons can be colored too, then
-  import league
-    ignore old lid
 show record (w-l) on roster view - make it more like a summary, as in basketball-reference
 free agents
   let free agents stay for 2 seasons before retiring, or make retirement probabilistic
@@ -203,6 +196,13 @@ advanced stats
   +/- and other stats needed to calculate above - track in game
   APM?
   shot charts?
+import/export stuff
+  data urls don't work with more than ~1 MB. downloadifydoesn't seem to work with more than several MBs of data. until a better solution comes (online sync?), wait.
+  league names
+    "Edit" button between "Export" and "Delete" - set in leaguesStore and gameAttributes
+      move delete/edit/export under one button, "manage". have the 3 buttons pop out in place when you hit manage, then it functions as it does now. popped buttons can be colored too, then
+  import league
+    ignore old lid
 
 ---
 

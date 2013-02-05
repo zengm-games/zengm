@@ -26,12 +26,15 @@ Documentation is based on https://developers.google.com/closure/compiler/docs/js
 
 # Twitter Bootstrap
 
-Basketball GM currently uses Bootstrap 2.1 compiled with a few changes to make it work more like 2.0:
+Basketball GM currently uses Bootstrap 2.1 compiled without responsive parts and
+with a few changes to make it work more like 2.0:
 
 * @baseFontSize set to 13px in variables.less
 * @baseLineHeight set to 18px in variables.less
 
-There are more changes in bbgm.css, but the baseFontSize and baseLineHeight stuff is too much of a bitch to do that way, because they are used in so many places.
+There are more changes in bbgm.css, but the baseFontSize and baseLineHeight
+stuff is too much of a bitch to do that way, because they are used in so many
+places.
 
 
 # Basketball stuff

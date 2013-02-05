@@ -52,6 +52,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                     teamNewSeason.season = g.season;
                     teamNewSeason.gp = 0;
                     teamNewSeason.att = 0;
+                    teamNewSeason.revenue = 0;
                     teamNewSeason.cost = 0;
                     teamNewSeason.won = 0;
                     teamNewSeason.lost = 0;

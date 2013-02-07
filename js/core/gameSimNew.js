@@ -121,7 +121,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * overtime, just set this.num_possessions to appropriate values.
      */
     GameSim.prototype.simPossessions = function () {
-        var i, ratios, shooter;
+        var endOfPossession, i;
 
         for (this.o = 0; this.o < 2; this.o++) {
             this.d = (this.o === 1) ? 0 : 1;
@@ -133,21 +133,18 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
                 // Play each possession until the shot clock expires
                 while (this.ticks > 0) {
-                    if (!this.is_turnover()) {
-                        // Shot if there is no turnover
-                        ratios = this.rating_array("usage", this.o);
-                        shooter = this.pick_player(ratios);
-                        if (!this.is_block()) {
-                            if (!this.is_free_throw(shooter)) {
-                                if (!this.is_made_shot(shooter)) {
-                                    this.do_rebound();
-                                }
-                            }
-                        }
+                    if (this.is_turnover()) {
                         break;
                     }
 
-                    this.ticks = this.ticks - 1;
+                    // Shoot, pass, or dribble
+                    endOfPossession = this.move();
+
+                    if (endOfPossession) {
+                        break;
+                    } else {
+                        this.ticks = this.ticks - 1;
+                    }
                 }
             }
         }
@@ -163,7 +160,6 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.setMatchups = function () {
         var ind, p, playersOnCourtTemp, sortBy, t;
 
-        console.log(this.players_on_court)
         for (t = 0; t < 2; t++) {
             sortBy = this.rating_array("defenseInterior", t);
             ind = [0, 1, 2, 3, 4];
@@ -174,7 +170,6 @@ define(["util/helpers", "util/random"], function (helpers, random) {
                 this.players_on_court[t][p] = playersOnCourtTemp[ind[p]];
             }
         }
-        console.log(this.players_on_court)
     };
 
 
@@ -237,6 +232,30 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         this.setMatchups();
     };
 
+
+
+
+
+
+    GameSim.prototype.move = function () {
+        var ratios, shooter;
+
+        // Shot if there is no turnover
+        ratios = this.rating_array("usage", this.o);
+        shooter = this.pick_player(ratios);
+        if (this.is_block()) {
+            return true;
+        }
+        if (this.is_free_throw(shooter)) {
+            return true;
+        }
+        if (!this.is_made_shot(shooter)) {
+            this.do_rebound();
+            return true;
+        } else {
+            return true;
+        }
+    };
 
 
     GameSim.prototype.is_turnover = function () {

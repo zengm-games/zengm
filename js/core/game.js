@@ -2,7 +2,7 @@
  * @name core.game
  * @namespace Everything about games except the actual simulation. So, loading the schedule, loading the teams, saving the results, and handling multi-day simulations and what happens when there are no games left to play.
  */
-define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/season", "util/lock", "util/random"], function (db, ui, advStats, freeAgents, gameSim, season, lock, random) {
+define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSimNew", "core/season", "util/lock", "util/random"], function (db, ui, advStats, freeAgents, gameSimNew, season, lock, random) {
     "use strict";
 
     function Game() {
@@ -433,7 +433,8 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/se
                         p.compositeRating.steals = _composite(rating, ['spd', 'stl']);
                         p.compositeRating.blocks = _composite(rating, ['hgt', 'jmp', 'blk']);
                         p.compositeRating.fouls = _composite(rating, ['spd'], undefined, -1);
-                        p.compositeRating.defense = _composite(rating, ['stre', 'spd']);
+                        p.compositeRating.defenseInterior = _composite(rating, ['hgt', 'stre', 'spd', 'jmp'], [2, 1, 0.5, 0.5]);
+                        p.compositeRating.defensePerimeter = _composite(rating, ['hgt', 'stre', 'spd', 'jmp'], [0.5, 1, 2, 0.5]);
 
                         p.stat = {gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, court_time: 0, bench_time: 0, energy: 1};
 
@@ -455,7 +456,7 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/se
                     t.pace = t.pace * 50 + 90;  // Scale between 90 and 140
                     t.defense = 0;
                     for (i = 0; i < numPlayers; i++) {
-                        t.defense += t.player[i].compositeRating.defense;
+                        t.defense += t.player[i].compositeRating.defenseInterior + t.player[i].compositeRating.defensePerimeter;
                     }
                     t.defense /= numPlayers;
                     t.defense /= 4;  // This gives the percentage pts subtracted from the other team's normal FG%
@@ -529,7 +530,7 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/se
                             var gs, results;
 
                             if (i < schedule.length) {
-                                gs = new gameSim.GameSim(schedule[i].gid, teams[schedule[i].homeTid], teams[schedule[i].awayTid]);
+                                gs = new gameSimNew.GameSim(schedule[i].gid, teams[schedule[i].homeTid], teams[schedule[i].awayTid]);
                                 results = gs.run();
                                 doSaveResults(i, results, g.phase === c.PHASE_PLAYOFFS);
                             }

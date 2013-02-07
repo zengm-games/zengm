@@ -48,6 +48,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         this.id = gid;
         this.team = [team1, team2];  // If a team plays twice in a day, this needs to be a deep copy
         this.num_possessions = Math.round((this.team[0].pace + this.team[1].pace) / 2 * random.gauss(1, 0.03));
+        this.numTicks = 5;  // Analogous to the shot clock. A tick happens when any action occurs, like passing the ball or dribbling towards the basket.
 
         // Starting lineups, which works because players are ordered by their roster_order
         this.players_on_court = [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]];
@@ -121,15 +122,24 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * overtime, just set this.num_possessions to appropriate values.
      */
     GameSim.prototype.simPossessions = function () {
-        var endOfPossession, i;
+        var i, outcome;
 
         for (this.o = 0; this.o < 2; this.o++) {
             this.d = (this.o === 1) ? 0 : 1;
             for (i = 0; i < this.num_possessions; i++) {
-                this.ticks = 5;  // Analogous to the shot clock. A tick happens when any action occurs, like passing the ball or dribbling towards the basket.
+                this.ticks = this.numTicks;  // Reset shot clock
                 if (i % this.subs_every_n === 0) {
                     this.update_players_on_court();
                 }
+
+                // Set the positions of offensive players relative to the basket
+                this.initDistances();
+
+                // Start with the PG dribbling the ball
+                this.initBallHandler();
+
+                // Start with all players defended tightly
+                this.initOpenness();
 
                 // Play each possession until the shot clock expires
                 while (this.ticks > 0) {
@@ -138,10 +148,13 @@ define(["util/helpers", "util/random"], function (helpers, random) {
                     }
 
                     // Shoot, pass, or dribble
-                    endOfPossession = this.move();
+                    outcome = this.move();
 
-                    if (endOfPossession) {
+                    // If the possession ended in a defensive rebound or a made shot, go to the next possession
+                    if (outcome === "madeShot" || outcome === "defReb") {
                         break;
+                    } else if (outcome === "offReb") {
+                        this.ticks = this.numTicks;  // Reset shot clock
                     } else {
                         this.ticks = this.ticks - 1;
                     }
@@ -234,26 +247,63 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
 
 
+    /**
+     * Initialize the distance of each offensive player from the basket at the beginning of a possession.
+     *
+     * 0 = at basket
+     * 1 = low post
+     * 2 = midrange
+     * 3 = 3 point range
+     */
+    GameSim.prototype.initDistances = function () {
+        this.distances = [1, 2, 3, 3, 3];  // These correspond with this.players_on_court
+    };
 
 
 
+    /**
+     * Initialize which player has the ball at the beginning of a possession.
+     */
+    GameSim.prototype.initBallHandler = function () {
+        this.ballHandler = 4;  // This corresponds with this.players_on_court
+    };
+
+
+
+    /**
+     * Initialize how open each offensive player is at the beginning of a possession.
+     *
+     * 0 = not open at all
+     * 1 = completely open
+     */
+    GameSim.prototype.initOpenness = function () {
+        this.openness = [0, 0, 0, 0, 0];  // These correspond with this.players_on_court
+    };
+
+
+
+    /**
+     * This simulates the player with the ball doing a "move", which means dribbling, passing, or shoting. This works by estimating the expected value of points for this possession based on all three options and picking whatever action maximizes this metric.
+     *
+     * So, before calling this function, various things need to be set up, like matchups between offensive and defensive players, positioning of offensive players, who has the ball, etc.
+     */
     GameSim.prototype.move = function () {
-        var ratios, shooter;
+        var expPtsDribble, expPtsPass, expPtsShoot, ratios, shooter;
 
         // Shot if there is no turnover
         ratios = this.rating_array("usage", this.o);
         shooter = this.pick_player(ratios);
         if (this.is_block()) {
-            return true;
+            return "defReb";
         }
         if (this.is_free_throw(shooter)) {
-            return true;
+            return "madeShot";
         }
         if (!this.is_made_shot(shooter)) {
             this.do_rebound();
-            return true;
+            return "defReb";
         } else {
-            return true;
+            return "madeShot";
         }
     };
 

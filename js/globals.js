@@ -51,6 +51,11 @@ c.PLAYER_FREE_AGENT = -1;
 c.PLAYER_UNDRAFTED = -2;
 c.PLAYER_RETIRED = -3;
 
+c.DISTANCE_AT_RIM = 0;
+c.DISTANCE_LOW_POST = 1;
+c.DISTANCE_MID_RANGE = 2;
+c.DISTANCE_THREE_POINTER = 3;
+
 
 window.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
 window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange;

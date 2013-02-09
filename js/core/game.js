@@ -424,10 +424,10 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSimNew", "core
                         p.compositeRating.usage = _composite(rating, ['ins', 'dnk', 'fg', 'tp']);
                         p.compositeRating.assists = _composite(rating, ['drb', 'pss', 'spd']);
                         p.compositeRating.turnovers = _composite(rating, ['drb', 'pss', 'spd'], undefined, -1);
-                        p.compositeRating.shootingPost = _composite(rating, ['hgt', 'stre', 'spd', 'ins'], [1, 0.6, 0.2, 1]);  // Post scoring
-                        p.compositeRating.shootingDunk = _composite(rating, ['hgt', 'spd', 'jmp', 'dnk'], [1, 0.2, 0.6, 0.4]);  // Dunk or layup, fast break or half court
-                        p.compositeRating.shootingTwo = _composite(rating, ['hgt', 'fg'], [0.2, 1]);  // Two point jump shot
-                        p.compositeRating.shootingThree = _composite(rating, ['hgt', 'tp'], [0.2, 1]);  // Three point jump shot
+                        p.compositeRating.shootingLowPost = _composite(rating, ['hgt', 'stre', 'spd', 'ins'], [1, 0.6, 0.2, 1]);  // Post scoring
+                        p.compositeRating.shootingAtRim = _composite(rating, ['hgt', 'spd', 'jmp', 'dnk'], [1, 0.2, 0.6, 0.4]);  // Dunk or layup, fast break or half court
+                        p.compositeRating.shootingMidRange = _composite(rating, ['hgt', 'fg'], [0.2, 1]);  // Two point jump shot
+                        p.compositeRating.shootingThreePointer = _composite(rating, ['hgt', 'tp'], [0.2, 1]);  // Three point jump shot
                         p.compositeRating.shootingFT = _composite(rating, ['ft']);  // Free throw
                         p.compositeRating.rebounds = _composite(rating, ['hgt', 'stre', 'jmp', 'reb'], [1, 0.1, 0.1, 0.2]);
                         p.compositeRating.steals = _composite(rating, ['spd', 'stl']);

@@ -49,6 +49,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         this.team = [team1, team2];  // If a team plays twice in a day, this needs to be a deep copy
         this.num_possessions = Math.round((this.team[0].pace + this.team[1].pace) / 2 * random.gauss(1, 0.03));
         this.numTicks = 5;  // Analogous to the shot clock. A tick happens when any action occurs, like passing the ball or dribbling towards the basket.
+        this.discord = 0;  // Defensive discord. 0 = defense is comfortable. 1 = complete chaos.
 
         // Starting lineups, which works because players are ordered by their roster_order
         this.players_on_court = [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]];
@@ -141,9 +142,13 @@ define(["util/helpers", "util/random"], function (helpers, random) {
                 // Start with all players defended tightly
                 this.initOpenness();
 
+                // Initialize defensive discord
+                this.discord = 0;
+
                 // Play each possession until the shot clock expires
                 while (this.ticks > 0) {
-                    if (this.is_turnover()) {
+                    if (this.probTurnover() > Math.random()) {
+                        this.doTurnover();
                         break;
                     }
 
@@ -178,7 +183,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             ind = [0, 1, 2, 3, 4];
             ind.sort(function (a, b) { return sortBy[a] - sortBy[b]; });
 
-            playersOnCourtTemp = this.players_on_court[t].slice() ;  // Copy by value, not reference
+            playersOnCourtTemp = this.players_on_court[t].slice();  // Copy by value, not reference
             for (p = 0; p < 5; p++) {
                 this.players_on_court[t][p] = playersOnCourtTemp[ind[p]];
             }
@@ -256,7 +261,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * 3 = 3 point range
      */
     GameSim.prototype.initDistances = function () {
-        this.distances = [1, 2, 3, 3, 3];  // These correspond with this.players_on_court
+        this.distances = [c.DISTANCE_AT_RIM, c.DISTANCE_MID_RANGE, c.DISTANCE_THREE_POINTER, c.DISTANCE_THREE_POINTER, c.DISTANCE_THREE_POINTER];  // These correspond with this.players_on_court
     };
 
 
@@ -290,30 +295,244 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.move = function () {
         var expPtsDribble, expPtsPass, expPtsShoot, ratios, shooter;
 
-        // Shot if there is no turnover
-        ratios = this.rating_array("usage", this.o);
-        shooter = this.pick_player(ratios);
-        if (this.is_block()) {
-            return "defReb";
-        }
-        if (this.is_free_throw(shooter)) {
+        // Expected points for shooting
+        expPtsShoot = this.expPtsShoot();
+
+        // Expected points for passing
+        expPtsPass = this.expPtsPass();
+
+        // Expected points for dribbling
+        expPtsDribble = this.expPtsDribble();
+
+        if (expPtsShoot > expPtsPass && expPtsShoot > expPtsDribble) {
+            // Shoot
+            shooter = this.ballHandler;
+            if (this.is_block()) {
+                return "defReb";
+            }
+            if (this.is_free_throw(shooter)) {
+                return "madeShot";
+            }
+            if (!this.is_made_shot(shooter)) {
+                this.do_rebound();
+                return "defReb";
+            }
+
             return "madeShot";
         }
-        if (!this.is_made_shot(shooter)) {
-            this.do_rebound();
-            return "defReb";
-        } else {
-            return "madeShot";
+        if (expPtsPass > expPtsShoot && expPtsPass > expPtsDribble) {
+            // Pass
+            this.ballHandler = random.randInt(0, 4);
+            return "pass";
         }
+
+        // Dribble
+        this.discord += 0.1;
+        return "dribble";
     };
 
 
-    GameSim.prototype.is_turnover = function () {
-        if (Math.random() < (0.1 + this.team[this.d].defense) * 0.35) {
-            this.do_turnover();
-            return true;
+
+    /**
+     * Calculates the expected points scored if the given player took a shot right now.
+     *
+     * @param {number} i An integer between 0 and 4 representing the index of this.players_on_court[this.o] for the player of interest. If undefined, then this.ballHandler is used.
+     * @param {number} i A number between 0 and 1 representing defensive discord. If undefined, then this.discord is used.
+     * @param {number} i An integer representing the number of ticks left (similar to shot clock). If undefined, then this.ticks is used.
+     * @return {number} Points, from 0 to 4.
+     */
+    GameSim.prototype.expPtsShoot = function (i, discord, ticks) {
+        var expPtsShoot, probFg;
+
+        i = i !== undefined ? i : this.ballHandler;
+        discord = discord !== undefined ? discord : this.discord;
+        ticks = ticks !== undefined ? ticks : this.ticks;
+
+        probFg = this.probFg(i, discord, ticks);
+        expPtsShoot = probFg * this.distances[this.ballHandler] + this.probFt(i) * (probFg * this.probAndOne(i) + (1 - probFg) * this.probMissedAndFouled(i));
+
+        return expPtsShoot;
+    };
+
+
+
+    /**
+     * Calculates the expected points scored if the given player passed right now.
+     *
+     * @param {number} i An integer between 0 and 4 representing the index of this.players_on_court[this.o] for the player of interest. If undefined, then this.ballHandler is used.
+     * @param {number} i A number between 0 and 1 representing defensive discord. If undefined, then this.discord is used.
+     * @param {number} i An integer representing the number of ticks left (similar to shot clock). If undefined, then this.ticks is used.
+     * @return {number} Points, from 0 to 4.
+     */
+    GameSim.prototype.expPtsPass = function (i, discord, ticks) {
+        var expPtsPass, expPtsPassTest, j, passTo, probFg;
+
+        i = i !== undefined ? i : this.ballHandler;
+        discord = discord !== undefined ? discord : this.discord;
+        ticks = ticks !== undefined ? ticks : this.ticks;
+
+        expPtsPass = 0;
+        passTo = -1;  // Index of this.players_on_court[this.o], like i
+
+        if (ticks > 1) { // If ticks is 1, then any move besides a shot will result in 0 points.
+            // Try passing to each player, who will then dribble, pass or shoot
+            for (j = 0; j < 5; j++) {
+                if (j !== i) {
+                    // Pass to j, j shoots
+                    expPtsPassTest = this.expPtsShoot(j, this.discord, ticks - 1);
+                    if (expPtsPassTest > expPtsPass) {
+                        expPtsPass = expPtsPassTest;
+                        passTo = j;
+                    }
+
+                    if (ticks > 2) {
+                        // Pass to j, j passes
+                        expPtsPassTest = this.expPtsPass(j, discord, ticks - 1);
+                        if (expPtsPassTest > expPtsPass) {
+                            expPtsPass = expPtsPassTest;
+                            passTo = j;
+                        }
+
+                        // Pass to j, j dribbles
+                    }
+                }
+            }
         }
-        return false;
+
+        return expPtsPass;
+    };
+
+
+
+    /**
+     * Calculates the expected points scored if the given player attacked off the dribble right now.
+     *
+     * @param {number} i An integer between 0 and 4 representing the index of this.players_on_court[this.o] for the player of interest. If undefined, then this.ballHandler is used.
+     * @param {number} i A number between 0 and 1 representing defensive discord. If undefined, then this.discord is used.
+     * @param {number} i An integer representing the number of ticks left (similar to shot clock). If undefined, then this.ticks is used.
+     * @return {number} Points, from 0 to 4.
+     */
+    GameSim.prototype.expPtsDribble = function (i, discord, ticks) {
+        var expPtsShoot, probFg;
+
+        i = i !== undefined ? i : this.ballHandler;
+        discord = discord !== undefined ? discord : this.discord;
+        ticks = ticks !== undefined ? ticks : this.ticks;
+
+        return 0;
+    };
+
+
+
+    /**
+     * Calculates the probability of the current ball handler in the current situation making a shot if he takes one (situation-dependent field goal percentage).
+     *
+     * @param {number} i An integer between 0 and 4 representing the index of this.players_on_court[this.o] for the player of interest. If undefined, then this.ballHandler is used.
+     * @param {number} i A number between 0 and 1 representing defensive discord. If undefined, then this.discord is used.
+     * @param {number} i An integer representing the number of ticks left (similar to shot clock). If undefined, then this.ticks is used.
+     * @return {number} Probability from 0 to 1.
+     */
+    GameSim.prototype.probFg = function (i, discord, ticks) {
+        var d, p, P;
+
+        i = i !== undefined ? i : this.ballHandler;
+        discord = discord !== undefined ? discord : this.discord;
+        ticks = ticks !== undefined ? ticks : this.ticks;
+
+        p = this.players_on_court[this.o][i];
+        d = this.distances[i];
+
+        // Default values
+        if (d === c.DISTANCE_AT_RIM) {  // At rim
+            P = 0.8;
+        } else if (d === c.DISTANCE_LOW_POST) {  // Low post
+            P = 0.55;
+        } else if (d === c.DISTANCE_MID_RANGE) {  // Mid range
+            P = 0.39;
+        } else if (d === c.DISTANCE_THREE_POINTER) {
+            P = 0.36;
+        }
+
+        return P;
+    };
+
+
+
+    /**
+     * Calculates the probability of the current ball handler making a free throw if he takes one (free throw percentage).
+     *
+     * @param {number} i An integer between 0 and 4 representing the index of this.players_on_court[this.o] for the player of interest.
+     * @return {number} Probability from 0 to 1.
+     */
+    GameSim.prototype.probFt = function (i) {
+        var p, P;
+
+        p = this.players_on_court[this.o][i];
+
+        P = this.team[this.o].player[p].compositeRating.shootingFT * 0.3 + 0.6;
+
+        return P;
+    };
+
+
+
+    /**
+     * Assuming a shot was made, calculates the probability that the shooter was fouled.
+     *
+     * @param {number} i An integer between 0 and 4 representing the index of this.players_on_court[this.o] for the player of interest.
+     * @return {number} Probability from 0 to 1.
+     */
+    GameSim.prototype.probAndOne = function (i) {
+        var d, p, P;
+
+        p = this.players_on_court[this.o][i];
+        d = this.distances[this.ballHandler];
+
+        // Default values
+        if (d === c.DISTANCE_AT_RIM) {  // At rim
+            P = 0.2;
+        } else if (d === c.DISTANCE_LOW_POST) {  // Low post
+            P = 0.1;
+        } else if (d === c.DISTANCE_MID_RANGE) {  // Mid range
+            P = 0.025;
+        } else if (d === c.DISTANCE_THREE_POINTER) {
+            P = 0.025;
+        }
+
+        return P;
+    };
+
+
+
+    /**
+     * Assuming a shot was missed, calculates the probability that the shooter was fouled.
+     *
+     * @param {number} i An integer between 0 and 4 representing the index of this.players_on_court[this.o] for the player of interest.
+     * @return {number} Probability from 0 to 1.
+     */
+    GameSim.prototype.probMissedAndFouled = function (i) {
+        var d, p, P;
+
+        p = this.players_on_court[this.o][i];
+        d = this.distances[i];
+
+        // Default values
+        if (d === c.DISTANCE_AT_RIM) {  // At rim
+            P = 0.2;
+        } else if (d === c.DISTANCE_LOW_POST) {  // Low post
+            P = 0.1;
+        } else if (d === c.DISTANCE_MID_RANGE) {  // Mid range
+            P = 0.025;
+        } else if (d === c.DISTANCE_THREE_POINTER) {
+            P = 0.025;
+        }
+
+        return P;
+    };
+
+
+    GameSim.prototype.probTurnover = function () {
+        return (0.1 + this.team[this.d].defense) * 0.35;
     };
 
 
@@ -355,28 +574,28 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         this.record_stat(this.o, p, "fga");
 
         // Pick the type of shot and store the success rate (with no defense) in probMake and the probability of an and one in probAndOne
-        if (this.team[this.o].player[p].compositeRating.shootingThree > 0.4 && Math.random() < (0.25 * this.team[this.o].player[p].compositeRating.shootingThree)) {
+        if (this.team[this.o].player[p].compositeRating.shootingThreePointer > 0.4 && Math.random() < (0.25 * this.team[this.o].player[p].compositeRating.shootingThreePointer)) {
             // Three pointer
             this.record_stat(this.o, p, "tpa");
             type = 3;
-            probMake = this.team[this.o].player[p].compositeRating.shootingThree * 0.81;
+            probMake = this.team[this.o].player[p].compositeRating.shootingThreePointer * 0.81;
             probAndOne = 0.01;
         } else {
-            r1 = Math.random() * this.team[this.o].player[p].compositeRating.shootingTwo;
-            r2 = Math.random() * this.team[this.o].player[p].compositeRating.shootingDunk;
-            r3 = Math.random() * this.team[this.o].player[p].compositeRating.shootingPost;
+            r1 = Math.random() * this.team[this.o].player[p].compositeRating.shootingMidRange;
+            r2 = Math.random() * this.team[this.o].player[p].compositeRating.shootingAtRim;
+            r3 = Math.random() * this.team[this.o].player[p].compositeRating.shootingLowPost;
             if (r1 > r2 && r1 > r3) {
                 // Two point jumper
                 type = 2;
-                probMake = this.team[this.o].player[p].compositeRating.shootingTwo * 0.3 + 0.31;
+                probMake = this.team[this.o].player[p].compositeRating.shootingMidRange * 0.3 + 0.31;
                 probAndOne = 0.05;
             } else if (r2 > r3) {
                 // Dunk, fast break or half court
-                probMake = this.team[this.o].player[p].compositeRating.shootingPost * 0.3 + 0.54;
+                probMake = this.team[this.o].player[p].compositeRating.shootingAtRim * 0.3 + 0.54;
                 probAndOne = 0.2;
             } else {
                 // Post up
-                probMake = this.team[this.o].player[p].compositeRating.shootingPost * 0.3 + 0.39;
+                probMake = this.team[this.o].player[p].compositeRating.shootingLowPost * 0.3 + 0.39;
                 probAndOne = 0.2;
             }
         }
@@ -403,7 +622,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
 
 
-    GameSim.prototype.do_turnover = function () {
+    GameSim.prototype.doTurnover = function () {
         var p, ratios;
 
         ratios = this.rating_array("turnovers", this.o);

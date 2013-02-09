@@ -49,6 +49,7 @@ low ovr, high pot draft picks should develop better.
 high ovr, low pot draft picks should develop worse?
 different market sizes in different cities, making it easier or harder
 some way to actually win/lose the game
+bootstrap 2.3
 PER
   shouldn't be recalculated for everyone in the playoffs, only active teams' players (also in the regular season, but that's less important)
   slow, particularly after multiple seasons?

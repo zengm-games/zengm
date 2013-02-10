@@ -46,7 +46,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         this.id = gid;
         this.team = [team1, team2];  // If a team plays twice in a day, this needs to be a deep copy
         this.num_possessions = Math.round((this.team[0].pace + this.team[1].pace) / 2 * random.gauss(1, 0.03));
-        this.numTicks = 5;  // Analogous to the shot clock. A tick happens when any action occurs, like passing the ball or dribbling towards the basket.
+        this.numTicks = 4;  // Analogous to the shot clock. A tick happens when any action occurs, like passing the ball or dribbling towards the basket.
         this.discord = 0;  // Defensive discord. 0 = defense is comfortable. 1 = complete chaos.
 
         // Starting lineups, which works because players are ordered by their roster_order
@@ -327,7 +327,7 @@ console.log("DRIBBLE " + this.ballHandler);
         discord = discord !== undefined ? discord : this.discord;
         ticks = ticks !== undefined ? ticks : this.ticks;
 
-        twoOrThree = this.distances[this.ballHandler] === c.DISTANCE_THREE_POINTER ? 3 : 2;
+        twoOrThree = this.distances[i] === c.DISTANCE_THREE_POINTER ? 3 : 2;
 
         probFg = this.probFg(i, discord, ticks);
         expPtsShoot = probFg * twoOrThree + this.probFt(i) * (probFg * this.probAndOne(i) + (1 - probFg) * this.probMissedAndFouled(i));
@@ -418,16 +418,18 @@ console.log("DRIBBLE " + this.ballHandler);
                 expPtsDribble = expPtsDribbleTest;
             }
 
-            // Dribble, then pass
-            expPtsDribbleTest = this.expPtsPass(j, discord, ticks - 1);
-            if (expPtsDribbleTest > expPtsDribble) {
-                expPtsDribble = expPtsDribbleTest;
-            }
+            if (ticks > 2) {
+                // Dribble, then pass
+                expPtsDribbleTest = this.expPtsPass(j, discord, ticks - 1);
+                if (expPtsDribbleTest > expPtsDribble) {
+                    expPtsDribble = expPtsDribbleTest;
+                }
 
-            // Dribble, then dribble more
-            expPtsDribbleTest = this.expPtsDribble(j, discord, ticks - 1);
-            if (expPtsDribbleTest > expPtsDribble) {
-                expPtsDribble = expPtsDribbleTest;
+                // Dribble, then dribble more
+                expPtsDribbleTest = this.expPtsDribble(j, discord, ticks - 1);
+                if (expPtsDribbleTest > expPtsDribble) {
+                    expPtsDribble = expPtsDribbleTest;
+                }
             }
         }
 
@@ -501,7 +503,7 @@ console.log("DRIBBLE " + this.ballHandler);
         i = i !== undefined ? i : this.ballHandler;
 
         p = this.players_on_court[this.o][i];
-        d = this.distances[this.ballHandler];
+        d = this.distances[i];
 
         // Default values
         if (d === c.DISTANCE_AT_RIM) {  // At rim

@@ -5,9 +5,6 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * When an instance of this class is created, information about the two teams
      * is passed to GameSim(). Then GameSim.run() will actually simulate a game and
      * return the results (stats) of the simulation.
-     * 
-     * This function is self-contained and independent of the database, so that
-     * eventually it can be ported to JavaScript and run client-side.
      */
     "use strict";
 
@@ -293,13 +290,15 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * So, before calling this function, various things need to be set up, like matchups between offensive and defensive players, positioning of offensive players, who has the ball, etc.
      */
     GameSim.prototype.move = function () {
-        var expPtsDribble, expPtsPass, expPtsShoot, ratios, shooter;
+        var expPtsDribble, expPtsPass, expPtsShoot, passTo, ratios, shooter, x;
 
         // Expected points for shooting
         expPtsShoot = this.expPtsShoot();
 
         // Expected points for passing
-        expPtsPass = this.expPtsPass();
+        x = this.expPtsPass();
+        expPtsPass = x.expPtsPass;
+        passTo = x.passTo;
 
         // Expected points for dribbling
         expPtsDribble = this.expPtsDribble();
@@ -322,7 +321,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         }
         if (expPtsPass > expPtsShoot && expPtsPass > expPtsDribble) {
             // Pass
-            this.ballHandler = random.randInt(0, 4);
+            this.ballHandler = passTo;
             return "pass";
         }
 
@@ -362,7 +361,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * @param {number} i An integer between 0 and 4 representing the index of this.players_on_court[this.o] for the player of interest. If undefined, then this.ballHandler is used.
      * @param {number} i A number between 0 and 1 representing defensive discord. If undefined, then this.discord is used.
      * @param {number} i An integer representing the number of ticks left (similar to shot clock). If undefined, then this.ticks is used.
-     * @return {number} Points, from 0 to 4.
+     * @return {number} An object containing "expPtsPass" which is points, from 0 to 4, and "passTo" the index of the player to pass to (like i).
      */
     GameSim.prototype.expPtsPass = function (i, discord, ticks) {
         var expPtsPass, expPtsPassTest, j, passTo, probFg;
@@ -379,7 +378,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             for (j = 0; j < 5; j++) {
                 if (j !== i) {
                     // Pass to j, j shoots
-                    expPtsPassTest = this.expPtsShoot(j, this.discord, ticks - 1);
+                    expPtsPassTest = this.expPtsShoot(j, discord, ticks - 1);
                     if (expPtsPassTest > expPtsPass) {
                         expPtsPass = expPtsPassTest;
                         passTo = j;
@@ -394,12 +393,20 @@ define(["util/helpers", "util/random"], function (helpers, random) {
                         }
 
                         // Pass to j, j dribbles
+                        expPtsPassTest = this.expPtsDribble(j, discord, ticks - 1);
+                        if (expPtsPassTest > expPtsPass) {
+                            expPtsPass = expPtsPassTest;
+                            passTo = j;
+                        }
                     }
                 }
             }
         }
 
-        return expPtsPass;
+        return {
+            expPtsPass: expPtsPass,
+            passTo: passTo
+        };
     };
 
 
@@ -413,13 +420,36 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * @return {number} Points, from 0 to 4.
      */
     GameSim.prototype.expPtsDribble = function (i, discord, ticks) {
-        var expPtsShoot, probFg;
+        var expPtsDribble, expPtsDribbleTest, j;
 
         i = i !== undefined ? i : this.ballHandler;
         discord = discord !== undefined ? discord : this.discord;
         ticks = ticks !== undefined ? ticks : this.ticks;
 
-        return 0;
+        expPtsDribble = 0;
+        discord = discord + 0.1;
+
+        if (ticks > 1) { // If ticks is 1, then any move besides a shot will result in 0 points.
+            // Dribble, then shoot
+            expPtsDribbleTest = this.expPtsShoot(j, discord, ticks - 1);
+            if (expPtsDribbleTest > expPtsDribble) {
+                expPtsDribble = expPtsDribbleTest;
+            }
+
+            // Dribble, then pass
+            expPtsDribbleTest = this.expPtsPass(j, discord, ticks - 1);
+            if (expPtsDribbleTest > expPtsDribble) {
+                expPtsDribble = expPtsDribbleTest;
+            }
+
+            // Dribble, then dribble more
+            expPtsDribbleTest = this.expPtsDribble(j, discord, ticks - 1);
+            if (expPtsDribbleTest > expPtsDribble) {
+                expPtsDribble = expPtsDribbleTest;
+            }
+        }
+
+        return expPtsDribble;
     };
 
 

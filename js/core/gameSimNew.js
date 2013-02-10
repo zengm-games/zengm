@@ -303,24 +303,13 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         // Expected points for dribbling
         expPtsDribble = this.expPtsDribble();
 
+        // Shoot
         if (expPtsShoot > expPtsPass && expPtsShoot > expPtsDribble) {
-            // Shoot
-            shooter = this.ballHandler;
-            if (this.is_block()) {
-                return "defReb";
-            }
-            if (this.is_free_throw(shooter)) {
-                return "madeShot";
-            }
-            if (!this.is_made_shot(shooter)) {
-                this.do_rebound();
-                return "defReb";
-            }
-
-            return "madeShot";
+            return this.doShot();  // madeShot, offReb, or defReb
         }
+
+        // Pass
         if (expPtsPass > expPtsShoot && expPtsPass > expPtsDribble) {
-            // Pass
             this.ballHandler = passTo;
             return "pass";
         }
@@ -486,16 +475,16 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         return P;
     };
 
-
-
     /**
      * Calculates the probability of the current ball handler making a free throw if he takes one (free throw percentage).
      *
-     * @param {number} i An integer between 0 and 4 representing the index of this.players_on_court[this.o] for the player of interest.
+     * @param {number} i An integer between 0 and 4 representing the index of this.players_on_court[this.o] for the player of interest. If undefined, then this.ballHandler is used.
      * @return {number} Probability from 0 to 1.
      */
     GameSim.prototype.probFt = function (i) {
         var p, P;
+
+        i = i !== undefined ? i : this.ballHandler;
 
         p = this.players_on_court[this.o][i];
 
@@ -504,16 +493,16 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         return P;
     };
 
-
-
     /**
      * Assuming a shot was made, calculates the probability that the shooter was fouled.
      *
-     * @param {number} i An integer between 0 and 4 representing the index of this.players_on_court[this.o] for the player of interest.
+     * @param {number} i An integer between 0 and 4 representing the index of this.players_on_court[this.o] for the player of interest. If undefined, then this.ballHandler is used.
      * @return {number} Probability from 0 to 1.
      */
     GameSim.prototype.probAndOne = function (i) {
         var d, p, P;
+
+        i = i !== undefined ? i : this.ballHandler;
 
         p = this.players_on_court[this.o][i];
         d = this.distances[this.ballHandler];
@@ -532,16 +521,16 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         return P;
     };
 
-
-
     /**
      * Assuming a shot was missed, calculates the probability that the shooter was fouled.
      *
-     * @param {number} i An integer between 0 and 4 representing the index of this.players_on_court[this.o] for the player of interest.
+     * @param {number} i An integer between 0 and 4 representing the index of this.players_on_court[this.o] for the player of interest. If undefined, then this.ballHandler is used.
      * @return {number} Probability from 0 to 1.
      */
     GameSim.prototype.probMissedAndFouled = function (i) {
         var d, p, P;
+
+        i = i !== undefined ? i : this.ballHandler;
 
         p = this.players_on_court[this.o][i];
         d = this.distances[i];
@@ -560,10 +549,94 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         return P;
     };
 
-
     GameSim.prototype.probTurnover = function () {
         return (0.1 + this.team[this.d].defense) * 0.35;
     };
+
+    GameSim.prototype.probBlk = function () {
+        return (0.02 + this.team[this.d].defense) * 0.35;
+    };
+
+    GameSim.prototype.doShot = function () {
+        var p, ratios;
+
+        // Blocked shot
+        if (this.probBlk() > Math.random()) {
+            ratios = this.rating_array("blocks", this.d);
+            p = this.players_on_court[this.d][this.pick_player(ratios)];
+            this.record_stat(this.d, p, "blk");
+
+            p = this.players_on_court[this.d][this.ballHandler];
+            this.record_stat(this.o, p, "fga");
+
+            return this.doReb();  // offReb or defReb
+        }
+
+        // Miss, but fouled
+        if (this.probMissedAndFouled() > Math.random()) {
+            return this.doFt(2);  // offReb, defReb, or madeShot
+        }
+
+        // Shoot
+        if (!this.is_made_shot(this.ballHandler)) {
+            return this.doReb();  // offReb or defReb
+        }
+
+        // And one
+        if (this.probAndOne() > Math.random()) {
+            return this.doFt(1);  // offReb, defReb, or madeShot
+        }
+
+        return "madeShot";
+    };
+
+    GameSim.prototype.doReb = function () {
+        var p, ratios;
+
+        if (0.8 > Math.random()) {
+            ratios = this.rating_array("rebounds", this.d);
+            p = this.players_on_court[this.d][this.pick_player(ratios)];
+            this.record_stat(this.d, p, "drb");
+        } else {
+            ratios = this.rating_array("rebounds", this.o);
+            p = this.players_on_court[this.o][this.pick_player(ratios)];
+            this.record_stat(this.o, p, "orb");
+        }
+    };
+
+    /**
+     * Free throw(s).
+     *
+     * @param {number} amount Amount of free throws that this.ballHandler will shoot (should be an integer from 1 to 3).
+     */
+    GameSim.prototype.doFt = function (amount) {
+        var i, p;
+
+        this.doPf(this.d);
+
+        p = this.players_on_court[this.o][this.ballHandler];
+        for (i = 0; i < amount; i++) {
+            this.record_stat(this.o, p, "fta");
+            if (this.probFt() > Math.random()) {
+                this.record_stat(this.o, p, "ft");
+                this.record_stat(this.o, p, "pts");
+            }
+        }
+    };
+
+    /**
+     * Personal foul.
+     *
+     * @param {Object} od Either this.o or this.d for an offensive or defensive foul.
+     */
+    GameSim.prototype.doPf = function (od) {
+        var p, ratios;
+
+        ratios = this.rating_array("fouls", od);
+        p = this.players_on_court[this.d][this.pick_player(ratios)];
+        this.record_stat(od, p, "pf");
+    };
+
 
 
 
@@ -575,30 +648,8 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         return false;
     };
 
-
-
-    GameSim.prototype.is_block = function () {
-        if (Math.random() < (0.02 + this.team[this.d].defense) * 0.35) {
-            this.do_block();
-            return true;
-        }
-        return false;
-    };
-
-
-
-    GameSim.prototype.is_free_throw = function (shooter) {
-        if (Math.random() < 0.15) {
-            this.do_free_throw(shooter, 2);
-            return true;
-        }
-        return false;
-    };
-
-
-
     GameSim.prototype.is_made_shot = function (shooter) {
-        var p, probMake, probAndOne, r1, r2, r3, type;
+        var p, probMake, r1, r2, r3, type;
 
         p = this.players_on_court[this.o][shooter];
         this.record_stat(this.o, p, "fga");
@@ -609,7 +660,6 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             this.record_stat(this.o, p, "tpa");
             type = 3;
             probMake = this.team[this.o].player[p].compositeRating.shootingThreePointer * 0.81;
-            probAndOne = 0.01;
         } else {
             r1 = Math.random() * this.team[this.o].player[p].compositeRating.shootingMidRange;
             r2 = Math.random() * this.team[this.o].player[p].compositeRating.shootingAtRim;
@@ -618,24 +668,17 @@ define(["util/helpers", "util/random"], function (helpers, random) {
                 // Two point jumper
                 type = 2;
                 probMake = this.team[this.o].player[p].compositeRating.shootingMidRange * 0.3 + 0.31;
-                probAndOne = 0.05;
             } else if (r2 > r3) {
                 // Dunk, fast break or half court
                 probMake = this.team[this.o].player[p].compositeRating.shootingAtRim * 0.3 + 0.54;
-                probAndOne = 0.2;
             } else {
                 // Post up
                 probMake = this.team[this.o].player[p].compositeRating.shootingLowPost * 0.3 + 0.39;
-                probAndOne = 0.2;
             }
         }
         // Make or miss
         if (Math.random() < (probMake - this.team[this.d].defense * 0.5)) {
             this.do_made_shot(shooter, type);
-            // And 1
-            if (Math.random() < probAndOne) {
-                this.do_free_throw(shooter, 1);
-            }
             return true;
         }
         return false;
@@ -673,46 +716,6 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
 
 
-    GameSim.prototype.do_block = function () {
-        var p, ratios;
-
-        ratios = this.rating_array("blocks", this.d);
-        p = this.players_on_court[this.d][this.pick_player(ratios)];
-        this.record_stat(this.d, p, "blk");
-    };
-
-
-
-    GameSim.prototype.do_free_throw = function (shooter, amount) {
-        var i, p;
-
-        this.do_foul(shooter);
-        p = this.players_on_court[this.o][shooter];
-        for (i = 0; i < amount; i++) {
-            this.record_stat(this.o, p, "fta");
-            if (Math.random() < this.team[this.o].player[p].compositeRating.shootingFT * 0.3 + 0.6) {  // Between 60% and 90%
-                this.record_stat(this.o, p, "ft");
-                this.record_stat(this.o, p, "pts");
-            }
-        }
-    };
-
-
-    /**
-     * Assign a foul to anyone who isn't shooter.
-     */
-    GameSim.prototype.do_foul = function (shooter) {
-        var p, ratios;
-
-        ratios = this.rating_array("fouls", this.d);
-        p = this.players_on_court[this.d][this.pick_player(ratios)];
-        this.record_stat(this.d, p, "pf");
-        // Foul out
-        //if this.team[this.d].player[p].stat.pf >= 6 {
-    };
-
-
-
     GameSim.prototype.do_made_shot = function (shooter, type) {
         var p, ratios;
 
@@ -727,22 +730,6 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         if (type === 3) {
             this.record_stat(this.o, p, "tp");  // Extra point for 3's
             this.record_stat(this.o, p, "pts");
-        }
-    };
-
-
-
-    GameSim.prototype.do_rebound = function () {
-        var p, ratios;
-
-        if (Math.random() < 0.8) {
-            ratios = this.rating_array("rebounds", this.d);
-            p = this.players_on_court[this.d][this.pick_player(ratios)];
-            this.record_stat(this.d, p, "drb");
-        } else {
-            ratios = this.rating_array("rebounds", this.o);
-            p = this.players_on_court[this.o][this.pick_player(ratios)];
-            this.record_stat(this.o, p, "orb");
         }
     };
 

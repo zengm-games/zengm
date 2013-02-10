@@ -25,11 +25,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ## Warning
 
-This is an incomplete port of Basketball GM from PyGObject (GTK+) to web-based
-technologies. Overall, things are working pretty well. You can play the game and
-pretty much all the basic functionality works. There is still a fairly short
-list of things in the TODO file that need to be done before it is even beta
-quality, though.
+The game simulation code is undergoing a major rewrite now, and thus game
+simulation results are currently wacky.
 
 ## Installing and Running
 

@@ -296,7 +296,7 @@ console.log("expPts: " + expPtsShoot + " " + expPtsPass + " " + expPtsDribble);
         // Shoot
         if (expPtsShoot > expPtsPass && expPtsShoot > expPtsDribble) {
 console.log("SHOOT " + this.ballHandler);
-            return this.doShot();  // madeShot, offReb, or defReb
+            return this.moveShot();  // madeShot, offReb, or defReb
         }
 
         // Pass
@@ -309,9 +309,7 @@ console.log("PASS " + this.passer + " " + passTo);
 
         // Dribble
 console.log("DRIBBLE " + this.ballHandler);
-        this.passer = -1;  // No assist if the player dribbles first
-        this.discord += 0.1;
-        return "dribble";
+        return this.moveDribble();  // dribble
     };
 
     /**
@@ -323,14 +321,16 @@ console.log("DRIBBLE " + this.ballHandler);
      * @return {number} Points, from 0 to 4.
      */
     GameSim.prototype.expPtsShoot = function (i, discord, ticks) {
-        var expPtsShoot, probFg;
+        var expPtsShoot, probFg, twoOrThree;
 
         i = i !== undefined ? i : this.ballHandler;
         discord = discord !== undefined ? discord : this.discord;
         ticks = ticks !== undefined ? ticks : this.ticks;
 
+        twoOrThree = this.distances[this.ballHandler] === c.DISTANCE_THREE_POINTER ? 3 : 2;
+
         probFg = this.probFg(i, discord, ticks);
-        expPtsShoot = probFg * this.distances[this.ballHandler] + this.probFt(i) * (probFg * this.probAndOne(i) + (1 - probFg) * this.probMissedAndFouled(i));
+        expPtsShoot = probFg * twoOrThree + this.probFt(i) * (probFg * this.probAndOne(i) + (1 - probFg) * this.probMissedAndFouled(i));
 
         return expPtsShoot;
     };
@@ -398,14 +398,18 @@ console.log("DRIBBLE " + this.ballHandler);
      * @return {number} Points, from 0 to 4.
      */
     GameSim.prototype.expPtsDribble = function (i, discord, ticks) {
-        var expPtsDribble, expPtsDribbleTest, j;
+        var expPtsDribble, expPtsDribbleTest, j, pd, po;
 
         i = i !== undefined ? i : this.ballHandler;
         discord = discord !== undefined ? discord : this.discord;
         ticks = ticks !== undefined ? ticks : this.ticks;
 
         expPtsDribble = 0;
-        discord = discord + 0.1;
+
+        po = this.players_on_court[this.o][i];
+        pd = this.players_on_court[this.d][i];
+        discord = this.bound(discord + this.team[this.o].player[po].compositeRating.ballHandling - this.team[this.d].player[pd].compositeRating.defensePerimeter, 0, 1);
+        if (discord > 1) { discord = 1; }
 
         if (ticks > 1) { // If ticks is 1, then any move besides a shot will result in 0 points.
             // Dribble, then shoot
@@ -450,6 +454,7 @@ console.log("DRIBBLE " + this.ballHandler);
         p = this.players_on_court[this.o][i];
         d = this.distances[i];
 
+        // Base probabilities
         if (d === c.DISTANCE_AT_RIM) {
             P = this.team[this.o].player[p].compositeRating.shootingAtRim * 0.3 + 0.54;
         } else if (d === c.DISTANCE_LOW_POST) {
@@ -459,6 +464,9 @@ console.log("DRIBBLE " + this.ballHandler);
         } else if (d === c.DISTANCE_THREE_POINTER) {
             P = 0.25 * this.team[this.o].player[p].compositeRating.shootingThreePointer;
         }
+
+        // Modulate by defensive discord
+        P = P + 0.1 * (discord - 0.25);
 
         return P;
     };
@@ -545,7 +553,7 @@ console.log("DRIBBLE " + this.ballHandler);
         return (0.02 + this.team[this.d].defense) * 0.35;
     };
 
-    GameSim.prototype.doShot = function () {
+    GameSim.prototype.moveShot = function () {
         var p, ratios;
 
         // Blocked shot
@@ -560,11 +568,6 @@ console.log("DRIBBLE " + this.ballHandler);
             return this.doReb();  // offReb or defReb
         }
 
-        // Miss, but fouled
-        if (this.probMissedAndFouled() > Math.random()) {
-            return this.doFt(2);  // offReb, defReb, or madeShot
-        }
-
         // Make
         if (this.probFg() > Math.random()) {
             // And one
@@ -577,8 +580,27 @@ console.log("DRIBBLE " + this.ballHandler);
             return this.doFg();  // madeShot
         }
 
+        // Miss, but fouled
+        if (this.probMissedAndFouled() > Math.random()) {
+            return this.doFt(2);  // offReb, defReb, or madeShot
+        }
+
         // Miss
         return this.doReb();  // offReb or defReb
+    };
+
+
+    GameSim.prototype.moveDribble = function () {
+        var pd, po;
+
+        this.passer = -1;  // No assist if the player dribbles first
+
+        po = this.players_on_court[this.o][this.ballHandler];
+        pd = this.players_on_court[this.d][this.ballHandler];
+
+        this.discord = this.bound(this.discord + this.team[this.o].player[po].compositeRating.ballHandling - this.team[this.d].player[pd].compositeRating.defensePerimeter, 0, 1);
+
+        return "dribble";
     };
 
     GameSim.prototype.doReb = function () {
@@ -726,6 +748,16 @@ console.log("DRIBBLE " + this.ballHandler);
         if (s !== "gs" && s !== "court_time" && s !== "bench_time" && s !== "energy") {
             this.team[t].stat[s] = this.team[t].stat[s] + amount;
         }
+    };
+
+    GameSim.prototype.bound = function (x, min, max) {
+        if (x > max) {
+            return max;
+        }
+        if (x < min) {
+            return min;
+        }
+        return x;
     };
 
     return {

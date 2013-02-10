@@ -422,6 +422,7 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSimNew", "core
 
                         p.compositeRating.pace = _composite(rating, ['spd', 'jmp', 'dnk', 'tp', 'stl', 'drb', 'pss']);
                         p.compositeRating.usage = _composite(rating, ['ins', 'dnk', 'fg', 'tp']);
+                        p.compositeRating.ballHandling = _composite(rating, ['drb', 'spd']);
                         p.compositeRating.assists = _composite(rating, ['drb', 'pss', 'spd']);
                         p.compositeRating.turnovers = _composite(rating, ['drb', 'pss', 'spd'], undefined, -1);
                         p.compositeRating.shootingLowPost = _composite(rating, ['hgt', 'stre', 'spd', 'ins'], [1, 0.6, 0.2, 1]);  // Post scoring

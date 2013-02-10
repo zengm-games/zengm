@@ -550,7 +550,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     };
 
     GameSim.prototype.probTurnover = function () {
-        return (0.1 + this.team[this.d].defense) * 0.35;
+        return (0.1 + this.team[this.d].defense) * 0.06;
     };
 
     GameSim.prototype.probBlk = function () {

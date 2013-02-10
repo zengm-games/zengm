@@ -260,7 +260,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * Initialize which player has the ball at the beginning of a possession.
      */
     GameSim.prototype.initBallHandler = function () {
-        this.ballHandler = 4;  // This corresponds with this.players_on_court
+        this.ballHandler = 0;  // This corresponds with this.players_on_court
     };
 
     /**
@@ -292,23 +292,23 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         // Expected points for dribbling
         expPtsDribble = this.expPtsDribble();
 
-console.log("expPts: " + expPtsShoot + " " + expPtsPass + " " + expPtsDribble);
+//console.log("expPts: " + expPtsShoot + " " + expPtsPass + " " + expPtsDribble);
         // Shoot
         if (expPtsShoot > expPtsPass && expPtsShoot > expPtsDribble) {
-console.log("SHOOT " + this.ballHandler);
+//console.log("SHOOT " + this.ballHandler);
             return this.moveShot();  // madeShot, offReb, or defReb
         }
 
         // Pass
         if (expPtsPass > expPtsShoot && expPtsPass > expPtsDribble) {
             this.passer = this.ballHandler;
-console.log("PASS " + this.passer + " " + passTo);
+//console.log("PASS " + this.passer + " " + passTo);
             this.ballHandler = passTo;
             return "pass";
         }
 
         // Dribble
-console.log("DRIBBLE " + this.ballHandler);
+//console.log("DRIBBLE " + this.ballHandler);
         return this.moveDribble();  // dribble
     };
 

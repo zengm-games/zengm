@@ -139,6 +139,9 @@ define(["util/helpers", "util/random"], function (helpers, random) {
                 // Initialize defensive discord
                 this.discord = 0;
 
+                // Keep track of the last person to pass the ball, used for assist tracking. -1 means no assist for a shot taken.
+                this.passer = -1;
+
                 // Play each possession until the shot clock expires
                 while (this.ticks > 0) {
                     if (this.probTurnover() > Math.random()) {
@@ -154,6 +157,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
                         break;
                     } else if (outcome === "offReb") {
                         this.ticks = this.numTicks;  // Reset shot clock
+                        this.passer = -1;
                     } else {
                         this.ticks = this.ticks - 1;
                     }
@@ -288,18 +292,24 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         // Expected points for dribbling
         expPtsDribble = this.expPtsDribble();
 
+console.log("expPts: " + expPtsShoot + " " + expPtsPass + " " + expPtsDribble);
         // Shoot
         if (expPtsShoot > expPtsPass && expPtsShoot > expPtsDribble) {
+console.log("SHOOT " + this.ballHandler);
             return this.doShot();  // madeShot, offReb, or defReb
         }
 
         // Pass
         if (expPtsPass > expPtsShoot && expPtsPass > expPtsDribble) {
+            this.passer = this.ballHandler;
+console.log("PASS " + this.passer + " " + passTo);
             this.ballHandler = passTo;
             return "pass";
         }
 
         // Dribble
+console.log("DRIBBLE " + this.ballHandler);
+        this.passer = -1;  // No assist if the player dribbles first
         this.discord += 0.1;
         return "dribble";
     };
@@ -609,8 +619,9 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             }
         }
 
+        // If the last free throw was missed, then there is a rebound opportunity
         if (outcome === "missedShot") {
-            return this.doReb();
+            return this.doReb();  // offReb or defReb
         }
 
         return outcome;
@@ -632,9 +643,11 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             this.record_stat(this.o, p, "pts");  // Extra point for 3s
         }
 
-// NEED TO TRACK WHO PASSED THIS GUY THE BALL!
-//        p = this.players_on_court[this.o][this.pick_player(ratios, shooter)];
-//        this.record_stat(this.o, p, "ast");
+        // Assist?
+        if (this.passer >= 0) {
+            p = this.players_on_court[this.o][this.passer];
+            this.record_stat(this.o, p, "ast");
+        }
 
         return "madeShot";
     };
@@ -684,20 +697,10 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * 
      * Args:
      *     ratios: 
-     *     exempt: An integer representing a player that can't be picked (i.e. you
-     *         can't assist your own shot, which is the only current use of
-     *         exempt). The value of exempt ranges from 0 to 4, corresponding to
-     *         the index of the player in this.players_on_court. This is *NOT* the
-     *         same value as the player ID *or* the index of the
-     *         this.team[t].player list. Yes, that's confusing.
      */
-    GameSim.prototype.pick_player = function (ratios, exempt) {
+    GameSim.prototype.pick_player = function (ratios) {
         var pick, rand;
 
-        exempt = exempt !== undefined ? exempt : false;
-        if (exempt !== false) {
-            ratios[exempt] = 0;
-        }
         rand = Math.random() * (ratios[0] + ratios[1] + ratios[2] + ratios[3] + ratios[4]);
         if (rand < ratios[0]) {
             pick = 0;

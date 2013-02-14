@@ -573,7 +573,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             return this.doReb();  // offReb or defReb
         }
 
-console.log(this.probFg())
+//console.log(this.probFg())
         // Make
         if (this.probFg() > Math.random()) {
             // And one
@@ -687,7 +687,7 @@ console.log(this.probFg())
     GameSim.prototype.doFg = function () {
         var d, p;
 
-console.log("madeShot " + this.team[this.o].stat.fg / this.team[this.o].stat.fga);
+//console.log("madeShot " + this.team[this.o].stat.fg / this.team[this.o].stat.fga);
         p = this.players_on_court[this.o][this.ballHandler];
         d = this.distances[this.ballHandler];
 

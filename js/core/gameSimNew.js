@@ -253,7 +253,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * 3 = 3 point range
      */
     GameSim.prototype.initDistances = function () {
-        this.distances = [c.DISTANCE_AT_RIM, c.DISTANCE_MID_RANGE, c.DISTANCE_THREE_POINTER, c.DISTANCE_THREE_POINTER, c.DISTANCE_THREE_POINTER];  // These correspond with this.players_on_court
+        this.distances = [c.DISTANCE_THREE_POINTER, c.DISTANCE_THREE_POINTER, c.DISTANCE_THREE_POINTER, c.DISTANCE_MID_RANGE, c.DISTANCE_LOW_POST];  // These correspond with this.players_on_court
     };
 
     /**
@@ -295,22 +295,21 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         // Expected points for dribbling
         expPtsDribble = this.expPtsDribble();
 
-console.log("expPts: " + expPtsShoot + " " + expPtsPass + " " + expPtsDribble);
-debugger;
+//console.log("expPts: " + expPtsShoot + " " + expPtsPass + " " + expPtsDribble);
         // Shoot
         if (expPtsShoot > expPtsPass && expPtsShoot > expPtsDribble) {
-console.log("SHOOT " + this.ballHandler);
-            return this.moveShot();  // madeShot, offReb, or defReb
+//console.log("SHOOT " + this.ballHandler);
+            return this.moveShoot();  // madeShot, offReb, or defReb
         }
 
         // Pass
         if (expPtsPass > expPtsShoot && expPtsPass > expPtsDribble) {
-console.log("PASS " + this.passer + " " + passTo);
+//console.log("PASS " + this.ballHandler + " " + passTo);
             return this.movePass(passTo);  // pass
         }
 
         // Dribble
-console.log("DRIBBLE " + this.ballHandler);
+//console.log("DRIBBLE " + this.ballHandler);
         return this.moveDribble();  // dribble
     };
 
@@ -332,7 +331,7 @@ console.log("DRIBBLE " + this.ballHandler);
         twoOrThree = this.distances[i] === c.DISTANCE_THREE_POINTER ? 3 : 2;
 
         probFg = this.probFg(i, discord, ticks);
-        expPtsShoot = probFg * twoOrThree + this.probFt(i) * (probFg * this.probAndOne(i) + (1 - probFg) * this.probMissedAndFouled(i));
+        expPtsShoot = probFg * twoOrThree + this.probFt(i) * (probFg * this.probAndOne(i) + (1 - probFg) * this.probMissAndFoul(i));
 //console.log('shoot ' + i + ' at tick ' + ticks + ', discord ' + discord + ', expPtsShoot ' + expPtsShoot);
 
         return expPtsShoot;
@@ -472,9 +471,9 @@ console.log("DRIBBLE " + this.ballHandler);
         }
 
         // Modulate by defensive discord
-        P = P + 0.1 * (discord - 0.25);
+        P = P + 0.1 * (discord - 0.1);
 
-        return P;
+        return this.bound(P, 0, 1);
     };
 
     /**
@@ -492,7 +491,7 @@ console.log("DRIBBLE " + this.ballHandler);
 
         P = this.team[this.o].player[p].compositeRating.shootingFT * 0.3 + 0.6;
 
-        return P;
+        return this.bound(P, 0, 1);
     };
 
     /**
@@ -520,7 +519,7 @@ console.log("DRIBBLE " + this.ballHandler);
             P = 0.025;
         }
 
-        return P;
+        return this.bound(P, 0, 1);
     };
 
     /**
@@ -529,7 +528,7 @@ console.log("DRIBBLE " + this.ballHandler);
      * @param {number} i An integer between 0 and 4 representing the index of this.players_on_court[this.o] for the player of interest. If undefined, then this.ballHandler is used.
      * @return {number} Probability from 0 to 1.
      */
-    GameSim.prototype.probMissedAndFouled = function (i) {
+    GameSim.prototype.probMissAndFoul = function (i) {
         var d, p, P;
 
         i = i !== undefined ? i : this.ballHandler;
@@ -548,18 +547,18 @@ console.log("DRIBBLE " + this.ballHandler);
             P = 0.025;
         }
 
-        return P;
+        return this.bound(P, 0, 1);
     };
 
     GameSim.prototype.probTurnover = function () {
-        return (0.1 + this.team[this.d].defense) * 0.06;
+        return this.bound((0.1 + this.team[this.d].defense) * 0.06, 0, 1);
     };
 
     GameSim.prototype.probBlk = function () {
-        return (0.02 + this.team[this.d].defense) * 0.35;
+        return this.bound((0.02 + this.team[this.d].defense) * 0.35, 0, 1);
     };
 
-    GameSim.prototype.moveShot = function () {
+    GameSim.prototype.moveShoot = function () {
         var p, ratios;
 
         // Blocked shot
@@ -574,6 +573,7 @@ console.log("DRIBBLE " + this.ballHandler);
             return this.doReb();  // offReb or defReb
         }
 
+console.log(this.probFg())
         // Make
         if (this.probFg() > Math.random()) {
             // And one
@@ -587,12 +587,12 @@ console.log("DRIBBLE " + this.ballHandler);
         }
 
         // Miss, but fouled
-        if (this.probMissedAndFouled() > Math.random()) {
+        if (this.probMissAndFoul() > Math.random()) {
             return this.doFt(2);  // offReb, defReb, or madeShot
         }
 
         // Miss
-        return this.doReb();  // offReb or defReb
+        return this.doFgMiss();  // offReb or defReb
     };
 
     GameSim.prototype.movePass = function (passTo) {
@@ -687,6 +687,7 @@ console.log("DRIBBLE " + this.ballHandler);
     GameSim.prototype.doFg = function () {
         var d, p;
 
+console.log("madeShot " + this.team[this.o].stat.fg / this.team[this.o].stat.fga);
         p = this.players_on_court[this.o][this.ballHandler];
         d = this.distances[this.ballHandler];
 
@@ -708,6 +709,20 @@ console.log("DRIBBLE " + this.ballHandler);
 
         return "madeShot";
     };
+
+    GameSim.prototype.doFgMiss = function () {
+        var d, p;
+
+        p = this.players_on_court[this.o][this.ballHandler];
+        d = this.distances[this.ballHandler];
+
+        this.record_stat(this.o, p, "fga");
+        if (d === c.DISTANCE_THREE_POINTER) {
+            this.record_stat(this.o, p, "tpa");
+        }
+
+        return this.doReb();
+    }
 
     /**
      * Personal foul.

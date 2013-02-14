@@ -2,9 +2,6 @@ main todo (before public beta)
 ------------------------------
 
 gameSimNew
-  this.expPtsDribble(1, 0.039, 3) produces different output at different times in a play - why?
-  add discord for passing
-  make function to increment discord for passing/dribbling situations so DRY
 show record (w-l) on roster view - make it more like a summary, as in basketball-reference
 free agents
   let free agents stay for 2 seasons before retiring, or make retirement probabilistic

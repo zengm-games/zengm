@@ -12,7 +12,7 @@ requirejs(["lib/chai", "views"], function (chai, views) {
     });
     chai.should();
 
-    require(["test/core/contractNegotiation", "test/core/draft", "test/core/player", "test/core/season", "test/core/trade"], function (testContractNegotiation, testDraft, testPlayer, testSeason, testTrade) {
+    require(["test/core/contractNegotiation", "test/core/draft", "test/core/gameSimNew", "test/core/player", "test/core/season", "test/core/trade"], function (testContractNegotiation, testDraft, testGameSimNew, testPlayer, testSeason, testTrade) {
         mocha.run();
     });
 });

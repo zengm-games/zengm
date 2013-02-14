@@ -124,7 +124,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             for (i = 0; i < this.num_possessions; i++) {
                 this.ticks = this.numTicks;  // Reset shot clock
                 if (i % this.subs_every_n === 0) {
-                    this.update_players_on_court();
+                    this.updatePlayersOnCourt();
                 }
 
                 // Set the positions of offensive players relative to the basket
@@ -190,7 +190,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * Do substitutions when appropriate, track energy levels, and record
      * the number of minutes each player plays. This function is currently VERY SLOW.
      */
-    GameSim.prototype.update_players_on_court = function () {
+    GameSim.prototype.updatePlayersOnCourt = function () {
         var b, dt, i, ovrs, p, pp, t;
 
         // Time elapsed

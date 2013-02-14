@@ -2,7 +2,7 @@
  * @name core.game
  * @namespace Everything about games except the actual simulation. So, loading the schedule, loading the teams, saving the results, and handling multi-day simulations and what happens when there are no games left to play.
  */
-define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSimNew", "core/season", "util/lock", "util/random"], function (db, ui, advStats, freeAgents, gameSimNew, season, lock, random) {
+define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSimNew", "core/season", "util/lock", "util/random"], function (db, ui, advStats, freeAgents, gameSim, season, lock, random) {
     "use strict";
 
     function Game() {
@@ -531,7 +531,7 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSimNew", "core
                             var gs, results;
 
                             if (i < schedule.length) {
-                                gs = new gameSimNew.GameSim(schedule[i].gid, teams[schedule[i].homeTid], teams[schedule[i].awayTid]);
+                                gs = new gameSim.GameSim(schedule[i].gid, teams[schedule[i].homeTid], teams[schedule[i].awayTid]);
                                 results = gs.run();
                                 doSaveResults(i, results, g.phase === c.PHASE_PLAYOFFS);
                             }

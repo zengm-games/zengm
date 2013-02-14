@@ -281,34 +281,36 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.move = function () {
         var expPtsDribble, expPtsPass, expPtsShoot, passTo, ratios, shooter, x;
 
+//console.log('Expected points for shooting');
         // Expected points for shooting
         expPtsShoot = this.expPtsShoot();
 
+//console.log('Expected points for passing');
         // Expected points for passing
         x = this.expPtsPass();
         expPtsPass = x.expPtsPass;
         passTo = x.passTo;
 
+//console.log('Expected points for dribbling');
         // Expected points for dribbling
         expPtsDribble = this.expPtsDribble();
 
-//console.log("expPts: " + expPtsShoot + " " + expPtsPass + " " + expPtsDribble);
+console.log("expPts: " + expPtsShoot + " " + expPtsPass + " " + expPtsDribble);
+debugger;
         // Shoot
         if (expPtsShoot > expPtsPass && expPtsShoot > expPtsDribble) {
-//console.log("SHOOT " + this.ballHandler);
+console.log("SHOOT " + this.ballHandler);
             return this.moveShot();  // madeShot, offReb, or defReb
         }
 
         // Pass
         if (expPtsPass > expPtsShoot && expPtsPass > expPtsDribble) {
-            this.passer = this.ballHandler;
-//console.log("PASS " + this.passer + " " + passTo);
-            this.ballHandler = passTo;
-            return "pass";
+console.log("PASS " + this.passer + " " + passTo);
+            return this.movePass(passTo);  // pass
         }
 
         // Dribble
-//console.log("DRIBBLE " + this.ballHandler);
+console.log("DRIBBLE " + this.ballHandler);
         return this.moveDribble();  // dribble
     };
 
@@ -316,8 +318,8 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * Calculates the expected points scored if the given player took a shot right now.
      *
      * @param {number} i An integer between 0 and 4 representing the index of this.players_on_court[this.o] for the player of interest. If undefined, then this.ballHandler is used.
-     * @param {number} i A number between 0 and 1 representing defensive discord. If undefined, then this.discord is used.
-     * @param {number} i An integer representing the number of ticks left (similar to shot clock). If undefined, then this.ticks is used.
+     * @param {number} discord A number between 0 and 1 representing defensive discord. If undefined, then this.discord is used.
+     * @param {number} ticks An integer representing the number of ticks left (similar to shot clock). If undefined, then this.ticks is used.
      * @return {number} Points, from 0 to 4.
      */
     GameSim.prototype.expPtsShoot = function (i, discord, ticks) {
@@ -331,6 +333,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
         probFg = this.probFg(i, discord, ticks);
         expPtsShoot = probFg * twoOrThree + this.probFt(i) * (probFg * this.probAndOne(i) + (1 - probFg) * this.probMissedAndFouled(i));
+//console.log('shoot ' + i + ' at tick ' + ticks + ', discord ' + discord + ', expPtsShoot ' + expPtsShoot);
 
         return expPtsShoot;
     };
@@ -339,8 +342,8 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * Calculates the expected points scored if the given player passed right now.
      *
      * @param {number} i An integer between 0 and 4 representing the index of this.players_on_court[this.o] for the player of interest. If undefined, then this.ballHandler is used.
-     * @param {number} i A number between 0 and 1 representing defensive discord. If undefined, then this.discord is used.
-     * @param {number} i An integer representing the number of ticks left (similar to shot clock). If undefined, then this.ticks is used.
+     * @param {number} discord A number between 0 and 1 representing defensive discord. If undefined, then this.discord is used.
+     * @param {number} ticks An integer representing the number of ticks left (similar to shot clock). If undefined, then this.ticks is used.
      * @return {number} An object containing "expPtsPass" which is points, from 0 to 4, and "passTo" the index of the player to pass to (like i).
      */
     GameSim.prototype.expPtsPass = function (i, discord, ticks) {
@@ -352,6 +355,8 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
         expPtsPass = 0;
         passTo = -1;  // Index of this.players_on_court[this.o], like i
+
+        discord = this.updateDiscord("pass", i, discord);
 
         if (ticks > 1) { // If ticks is 1, then any move besides a shot will result in 0 points.
             // Try passing to each player, who will then dribble, pass or shoot
@@ -382,6 +387,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
                 }
             }
         }
+//console.log('pass from ' + i + ' to ' + passTo + ' at tick ' + ticks + ', discord ' + discord + ', expPtsPass ' + expPtsPass);
 
         return {
             expPtsPass: expPtsPass,
@@ -393,12 +399,12 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * Calculates the expected points scored if the given player attacked off the dribble right now.
      *
      * @param {number} i An integer between 0 and 4 representing the index of this.players_on_court[this.o] for the player of interest. If undefined, then this.ballHandler is used.
-     * @param {number} i A number between 0 and 1 representing defensive discord. If undefined, then this.discord is used.
-     * @param {number} i An integer representing the number of ticks left (similar to shot clock). If undefined, then this.ticks is used.
+     * @param {number} discord A number between 0 and 1 representing defensive discord. If undefined, then this.discord is used.
+     * @param {number} ticks An integer representing the number of ticks left (similar to shot clock). If undefined, then this.ticks is used.
      * @return {number} Points, from 0 to 4.
      */
     GameSim.prototype.expPtsDribble = function (i, discord, ticks) {
-        var expPtsDribble, expPtsDribbleTest, j, pd, po;
+        var expPtsDribble, expPtsDribbleTest, pd, po;
 
         i = i !== undefined ? i : this.ballHandler;
         discord = discord !== undefined ? discord : this.discord;
@@ -406,32 +412,30 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
         expPtsDribble = 0;
 
-        po = this.players_on_court[this.o][i];
-        pd = this.players_on_court[this.d][i];
-        discord = this.bound(discord + this.team[this.o].player[po].compositeRating.ballHandling - this.team[this.d].player[pd].compositeRating.defensePerimeter, 0, 1);
-        if (discord > 1) { discord = 1; }
+        discord = this.updateDiscord("dribble", i, discord);
 
         if (ticks > 1) { // If ticks is 1, then any move besides a shot will result in 0 points.
             // Dribble, then shoot
-            expPtsDribbleTest = this.expPtsShoot(j, discord, ticks - 1);
+            expPtsDribbleTest = this.expPtsShoot(i, discord, ticks - 1);
             if (expPtsDribbleTest > expPtsDribble) {
                 expPtsDribble = expPtsDribbleTest;
             }
 
             if (ticks > 2) {
                 // Dribble, then pass
-                expPtsDribbleTest = this.expPtsPass(j, discord, ticks - 1);
+                expPtsDribbleTest = this.expPtsPass(i, discord, ticks - 1);
                 if (expPtsDribbleTest > expPtsDribble) {
                     expPtsDribble = expPtsDribbleTest;
                 }
 
                 // Dribble, then dribble more
-                expPtsDribbleTest = this.expPtsDribble(j, discord, ticks - 1);
+                expPtsDribbleTest = this.expPtsDribble(i, discord, ticks - 1);
                 if (expPtsDribbleTest > expPtsDribble) {
                     expPtsDribble = expPtsDribbleTest;
                 }
             }
         }
+//console.log('dribble ' + i + ' at tick ' + ticks + ', discord ' + discord + ', expPtsDribble ' + expPtsDribble);
 
         return expPtsDribble;
     };
@@ -442,8 +446,8 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * Calculates the probability of the current ball handler in the current situation making a shot if he takes one (situation-dependent field goal percentage).
      *
      * @param {number} i An integer between 0 and 4 representing the index of this.players_on_court[this.o] for the player of interest. If undefined, then this.ballHandler is used.
-     * @param {number} i A number between 0 and 1 representing defensive discord. If undefined, then this.discord is used.
-     * @param {number} i An integer representing the number of ticks left (similar to shot clock). If undefined, then this.ticks is used.
+     * @param {number} discord A number between 0 and 1 representing defensive discord. If undefined, then this.discord is used.
+     * @param {number} ticks An integer representing the number of ticks left (similar to shot clock). If undefined, then this.ticks is used.
      * @return {number} Probability from 0 to 1.
      */
     GameSim.prototype.probFg = function (i, discord, ticks) {
@@ -591,18 +595,47 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         return this.doReb();  // offReb or defReb
     };
 
+    GameSim.prototype.movePass = function (passTo) {
+        this.discord = this.updateDiscord("pass");  // Important - call this before updating this.ballHandler
+
+        this.passer = this.ballHandler;
+        this.ballHandler = passTo;
+
+        return "pass";
+    };
 
     GameSim.prototype.moveDribble = function () {
-        var pd, po;
+        this.discord = this.updateDiscord("dribble");
 
         this.passer = -1;  // No assist if the player dribbles first
 
-        po = this.players_on_court[this.o][this.ballHandler];
-        pd = this.players_on_court[this.d][this.ballHandler];
-
-        this.discord = this.bound(this.discord + this.team[this.o].player[po].compositeRating.ballHandling - this.team[this.d].player[pd].compositeRating.defensePerimeter, 0, 1);
-
         return "dribble";
+    };
+
+    /**
+     * Updates defensive discord in a predefined manner for dribbling or passsing.
+     *
+     * @param {string} move Either "dribble" or "pass", which lets the function know which ratings to use to inform the updated discord.
+     * @param {number} i An integer between 0 and 4 representing the index of this.players_on_court[this.o] for the player of interest. If undefined, then this.ballHandler is used.
+     * @param {number} discord A number between 0 and 1 representing defensive discord. If undefined, then this.discord is used.
+     * @return {number} Probability from 0 to 1.
+     */
+    GameSim.prototype.updateDiscord = function (move, i, discord) {
+        var pd, po;
+
+        i = i !== undefined ? i : this.ballHandler;
+        discord = discord !== undefined ? discord : this.discord;
+
+        po = this.players_on_court[this.o][i];
+        pd = this.players_on_court[this.d][i];
+
+        if (move === "dribble") {
+            discord = this.bound(discord + 0.2 * (this.team[this.o].player[po].compositeRating.ballHandling - this.team[this.d].player[pd].compositeRating.defensePerimeter), 0, 1);
+        } else if (move === "pass") {
+            discord = this.bound(discord + 0.2 * (this.team[this.o].player[po].compositeRating.passing - this.team[this.d].player[pd].compositeRating.defensePerimeter), 0, 1);
+        }
+
+        return discord;
     };
 
     GameSim.prototype.doReb = function () {

@@ -17,6 +17,7 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSimNew", "core
         this.id = results.gid;
         this.overtimes = results.overtimes;
         this.home = [true, false];
+        this.playByPlay = results.playByPlay;
 
         // What is the attendance of the game?
         winp = 0;
@@ -264,7 +265,7 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSimNew", "core
     Game.prototype.writeGameStats = function () {
         var gameStats, i, keys, p, t, that, tl, tw;
 
-        gameStats = {gid: this.id, season: g.season, playoffs: this.playoffs, overtimes: this.overtimes, won: {}, lost: {}, teams: [{tid: this.team[0].id, players: []}, {tid: this.team[1].id, players: []}]};
+        gameStats = {gid: this.id, season: g.season, playoffs: this.playoffs, overtimes: this.overtimes, won: {}, lost: {}, teams: [{tid: this.team[0].id, players: []}, {tid: this.team[1].id, players: []}], playByPlay: this.playByPlay};
         for (t = 0; t < 2; t++) {
             keys = ['min', 'fg', 'fga', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
             for (i = 0; i < keys.length; i++) {

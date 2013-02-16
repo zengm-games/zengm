@@ -48,6 +48,8 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         this.num_possessions = Math.round((this.team[0].pace + this.team[1].pace) / 2 * random.gauss(1, 0.03));
         this.numTicks = 4;  // Analogous to the shot clock. A tick happens when any action occurs, like passing the ball or dribbling towards the basket.
         this.discord = 0;  // Defensive discord. 0 = defense is comfortable. 1 = complete chaos.
+        this.timeRemaining = 48 * 60;  // Length of the game, in seconds.
+        this.playByPlay = "";  // String of HTML-formatted play-by-play for this game
 
         // Starting lineups, which works because players are ordered by their roster_order
         this.players_on_court = [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]];
@@ -81,7 +83,8 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      *                     ]
      *                 },
      *             ...
-     *             ]
+     *             ],
+     *             "playByPlay": ""
      *         }
      */
     GameSim.prototype.run = function () {
@@ -109,7 +112,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             }
         }
 
-        return {"gid": this.id, "overtimes": this.overtimes, "team": this.team};
+        return {"gid": this.id, "overtimes": this.overtimes, "team": this.team, "playByPlay": this.playByPlay};
     };
 
     /**
@@ -119,50 +122,58 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.simPossessions = function () {
         var i, outcome;
 
-        for (this.o = 0; this.o < 2; this.o++) {
+        this.o = 0;
+        this.d = 1;
+        outcome = "";
+
+        while (this.timeRemaining > 0) {
+            // Possession change
+            this.o = (this.o === 1) ? 0 : 1;
             this.d = (this.o === 1) ? 0 : 1;
-            for (i = 0; i < this.num_possessions; i++) {
-                this.ticks = this.numTicks;  // Reset shot clock
-                if (i % this.subs_every_n === 0) {
-                    this.updatePlayersOnCourt();
+
+            this.ticks = this.numTicks;  // Reset shot clock
+            if (i % this.subs_every_n === 0) {
+                this.updatePlayersOnCourt();
+            }
+
+            // Set the positions of offensive players relative to the basket
+            this.initDistances();
+
+            // Start with the PG dribbling the ball
+            this.initBallHandler();
+
+            // Start with all players defended tightly
+            this.initOpenness();
+
+            // Initialize defensive discord
+            this.discord = 0;
+
+            // Keep track of the last person to pass the ball, used for assist tracking. -1 means no assist for a shot taken.
+            this.passer = -1;
+
+            // Play each possession until the shot clock expires
+            while (this.ticks > 0) {
+                if (this.probTurnover() > Math.random()) {
+                    this.doTurnover();
+                    break;
                 }
 
-                // Set the positions of offensive players relative to the basket
-                this.initDistances();
+                // Shoot, pass, or dribble
+                outcome = this.move();
 
-                // Start with the PG dribbling the ball
-                this.initBallHandler();
+                this.ticks = this.ticks - 1;
 
-                // Start with all players defended tightly
-                this.initOpenness();
-
-                // Initialize defensive discord
-                this.discord = 0;
-
-                // Keep track of the last person to pass the ball, used for assist tracking. -1 means no assist for a shot taken.
-                this.passer = -1;
-
-                // Play each possession until the shot clock expires
-                while (this.ticks > 0) {
-                    if (this.probTurnover() > Math.random()) {
-                        this.doTurnover();
-                        break;
-                    }
-
-                    // Shoot, pass, or dribble
-                    outcome = this.move();
-
-                    // If the possession ended in a defensive rebound or a made shot, go to the next possession
-                    if (outcome === "madeShot" || outcome === "defReb") {
-                        break;
-                    } else if (outcome === "offReb") {
-                        this.ticks = this.numTicks;  // Reset shot clock
-                        this.passer = -1;
-                    } else {
-                        this.ticks = this.ticks - 1;
-                    }
+                // If the possession ended in a defensive rebound or a made shot, go to the next possession
+                if (outcome === "madeShot" || outcome === "defReb") {
+                    break;
+                } else if (outcome === "offReb") {
+                    this.ticks = this.numTicks;  // Reset shot clock
+                    this.passer = -1;
                 }
             }
+
+            // Convert ticks to seconds, and decrease timeRemaining by the number of ticks used
+            this.timeRemaining = this.timeRemaining - (this.numTicks - this.ticks) * 24 / this.numTicks;
         }
     };
 
@@ -261,6 +272,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      */
     GameSim.prototype.initBallHandler = function () {
         this.ballHandler = 0;  // This corresponds with this.players_on_court
+        this.log(this.team[this.o].player[this.ballHandler].name + " brings the ball up the court<br>");
     };
 
     /**
@@ -561,11 +573,15 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.moveShoot = function () {
         var p, ratios;
 
+        p = this.players_on_court[this.o][this.ballHandler];
+        this.log(this.team[this.o].player[p].name + " shoots from " + c.DISTANCES[this.distances[this.ballHandler]] + "... ");
+
         // Blocked shot
         if (this.probBlk() > Math.random()) {
             ratios = this.rating_array("blocks", this.d);
             p = this.players_on_court[this.d][this.pick_player(ratios)];
             this.record_stat(this.d, p, "blk");
+            this.log("blocked by " + this.team[this.o].player[p].name + "!<br>");
 
             p = this.players_on_court[this.d][this.ballHandler];
             this.record_stat(this.o, p, "fga");
@@ -578,36 +594,51 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         if (this.probFg() > Math.random()) {
             // And one
             if (this.probAndOne() > Math.random()) {
+                this.log("he makes the shot and is fouled!<br>");
                 this.doFg();
                 return this.doFt(1);  // offReb, defReb, or madeShot
             }
 
+            this.log("he makes the shot<br><br>");
             // No foul
             return this.doFg();  // madeShot
         }
 
         // Miss, but fouled
         if (this.probMissAndFoul() > Math.random()) {
+            this.log("he misses the shot but is fouled<br>");
             return this.doFt(2);  // offReb, defReb, or madeShot
         }
 
         // Miss
+        this.log("he misses<br>");
         return this.doFgMiss();  // offReb or defReb
     };
 
     GameSim.prototype.movePass = function (passTo) {
+        var p, p2;
+
         this.discord = this.updateDiscord("pass");  // Important - call this before updating this.ballHandler
 
         this.passer = this.ballHandler;
         this.ballHandler = passTo;
 
+        p = this.players_on_court[this.o][this.passer];
+        p2 = this.players_on_court[this.o][this.ballHandler];
+        this.log(this.team[this.o].player[p].name + " passes to " + this.team[this.o].player[p2].name + "<br>");
+
         return "pass";
     };
 
     GameSim.prototype.moveDribble = function () {
+        var p;
+
         this.discord = this.updateDiscord("dribble");
 
         this.passer = -1;  // No assist if the player dribbles first
+
+        p = this.players_on_court[this.o][this.ballHandler];
+        this.log(this.team[this.o].player[p].name + " attacks his man off the dribble<br>");
 
         return "dribble";
     };
@@ -645,10 +676,12 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             ratios = this.rating_array("rebounds", this.d);
             p = this.players_on_court[this.d][this.pick_player(ratios)];
             this.record_stat(this.d, p, "drb");
+            this.log(this.team[this.d].player[p].name + " comes down with the rebound<br><br>");
         } else {
             ratios = this.rating_array("rebounds", this.o);
             p = this.players_on_court[this.o][this.pick_player(ratios)];
             this.record_stat(this.o, p, "orb");
+            this.log(this.team[this.o].player[p].name + " comes down with the offensive rebound<br>");
         }
     };
 
@@ -673,6 +706,24 @@ define(["util/helpers", "util/random"], function (helpers, random) {
                 outcome = "madeShot";
             } else {
                 outcome = "missedShot";
+            }
+
+            if (outcome === "madeShot" && amount === 1) {
+                this.log(this.team[this.o].player[p].name + " makes the free throw<br>");
+            } else if (outcome === "missedShot" && amount === 1) {
+                this.log(this.team[this.o].player[p].name + " misses the free throw<br>");
+            } else if (outcome === "madeShot" && amount > 1 && i === 0) {
+                this.log(this.team[this.o].player[p].name + " makes the first free throw<br>");
+            } else if (outcome === "madeShot" && amount > 1 && i === 1) {
+                this.log(this.team[this.o].player[p].name + " makes the second free throw<br>");
+            } else if (outcome === "madeShot" && amount > 1 && i === 2) {
+                this.log(this.team[this.o].player[p].name + " makes the third free throw<br>");
+            } else if (outcome === "missedShot" && amount > 1 && i === 0) {
+                this.log(this.team[this.o].player[p].name + " misses the first free throw<br>");
+            } else if (outcome === "missedShot" && amount > 1 && i === 1) {
+                this.log(this.team[this.o].player[p].name + " misses the second free throw<br>");
+            } else if (outcome === "missedShot" && amount > 1 && i === 2) {
+                this.log(this.team[this.o].player[p].name + " misses the third free throw<br>");
             }
         }
 
@@ -722,7 +773,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         }
 
         return this.doReb();
-    }
+    };
 
     /**
      * Personal foul.
@@ -749,6 +800,9 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             ratios = this.rating_array("steals", this.d);
             p = this.players_on_court[this.d][this.pick_player(ratios)];
             this.record_stat(this.d, p, "stl");
+            this.log(this.team[this.d].player[p].name + " steals the ball<br>");
+        } else {
+            this.log(this.team[this.o].player[p].name + " turns the ball over<br>");
         }
     };
 
@@ -808,6 +862,12 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             return min;
         }
         return x;
+    };
+
+
+    GameSim.prototype.log = function (msg) {
+//console.log(msg);
+        this.playByPlay += msg;
     };
 
     return {

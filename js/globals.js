@@ -55,6 +55,7 @@ c.DISTANCE_AT_RIM = 0;
 c.DISTANCE_LOW_POST = 1;
 c.DISTANCE_MID_RANGE = 2;
 c.DISTANCE_THREE_POINTER = 3;
+c.DISTANCES = ["at the rim", "from the low post", "a mid-range jumper", "a three pointer"];
 
 
 window.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;

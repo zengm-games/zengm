@@ -677,12 +677,13 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             p = this.players_on_court[this.d][this.pick_player(ratios)];
             this.record_stat(this.d, p, "drb");
             this.log(this.team[this.d].player[p].name + " comes down with the rebound<br><br>");
-        } else {
-            ratios = this.rating_array("rebounds", this.o);
-            p = this.players_on_court[this.o][this.pick_player(ratios)];
-            this.record_stat(this.o, p, "orb");
-            this.log(this.team[this.o].player[p].name + " comes down with the offensive rebound<br>");
+            return "defReb";
         }
+        ratios = this.rating_array("rebounds", this.o);
+        p = this.players_on_court[this.o][this.pick_player(ratios)];
+        this.record_stat(this.o, p, "orb");
+        this.log(this.team[this.o].player[p].name + " comes down with the offensive rebound<br>");
+        return "offReb";
     };
 
     /**
@@ -800,9 +801,9 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             ratios = this.rating_array("steals", this.d);
             p = this.players_on_court[this.d][this.pick_player(ratios)];
             this.record_stat(this.d, p, "stl");
-            this.log(this.team[this.d].player[p].name + " steals the ball<br>");
+            this.log(this.team[this.d].player[p].name + " steals the ball<br><br>");
         } else {
-            this.log(this.team[this.o].player[p].name + " turns the ball over<br>");
+            this.log(this.team[this.o].player[p].name + " turns the ball over<br><br>");
         }
     };
 
@@ -866,7 +867,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
 
     GameSim.prototype.log = function (msg) {
-//console.log(msg);
+console.log(msg);
         this.playByPlay += msg;
     };
 

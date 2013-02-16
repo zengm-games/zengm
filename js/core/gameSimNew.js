@@ -168,6 +168,8 @@ define(["util/helpers", "util/random"], function (helpers, random) {
                     break;
                 } else if (outcome === "offReb") {
                     this.ticks = this.numTicks;  // Reset shot clock
+                    this.initDistances();
+                    this.initOpenness();
                     this.passer = -1;
                 }
             }
@@ -676,11 +678,12 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             ratios = this.rating_array("rebounds", this.d);
             p = this.players_on_court[this.d][this.pick_player(ratios)];
             this.record_stat(this.d, p, "drb");
-            this.log(this.team[this.d].player[p].name + " comes down with the rebound<br><br>");
+            this.log(this.team[this.d].player[p].name + " comes down with the defensive rebound<br><br>");
             return "defReb";
         }
         ratios = this.rating_array("rebounds", this.o);
-        p = this.players_on_court[this.o][this.pick_player(ratios)];
+        this.ballHandler = this.pick_player(ratios);
+        p = this.players_on_court[this.o][this.ballHandler];
         this.record_stat(this.o, p, "orb");
         this.log(this.team[this.o].player[p].name + " comes down with the offensive rebound<br>");
         return "offReb";

@@ -1214,7 +1214,7 @@ console.log(message);
 
     function gameLog(req) {
         beforeLeague(req, function () {
-            var abbrev, boxScore, gameLogList, gid, out, season, seasons, teams, tid;
+            var abbrev, cbBoxScore, cbDisplay, cbGameLogList, cbPlayByPlay, gid, out, season, seasons, teams, tid, view;
 
             out = helpers.validateAbbrev(req.params.abbrev);
             tid = out[0];
@@ -1223,8 +1223,9 @@ console.log(message);
             seasons = helpers.getSeasons(season);
             teams = helpers.getTeams(tid);
             gid = req.params.gid !== undefined ? parseInt(req.params.gid, 10) : null;
+            view = req.params.view === "play_by_play" ? "play_by_play" : "box_score";
 
-            gameLogList = function (abbrev, season, cb) {
+            cbGameLogList = function (abbrev, season, cb) {
                 var games, out, tid;
 
                 out = helpers.validateAbbrev(abbrev);
@@ -1274,12 +1275,12 @@ console.log(message);
                         }
                     }
 
-                    content = Handlebars.templates.gameLogList({lid: g.lid, abbrev: abbrev, games: games, season: season});
+                    content = Handlebars.templates.gameLogList({lid: g.lid, abbrev: abbrev, games: games, season: season, view: view});
                     cb(content);
                 };
             };
 
-            boxScore = function (gid, cb) {
+            cbBoxScore = function (gid, contentGameLogList, cb) {
                 if (gid !== null) {
                     gid = parseInt(gid, 10);
 
@@ -1303,26 +1304,54 @@ console.log(message);
                             overtime = "";
                         }
 
-                        content = Handlebars.templates.boxScore({lid: g.lid, game: game, overtime: overtime});
-                        cb(content);
+                        content = Handlebars.templates.boxScore({lid: g.lid, game: game, overtime: overtime, season: season});
+                        cb(contentGameLogList, content);
                     };
                 } else {
-                    cb("<p>Select a game from the menu on the right to view a box score.</p>");
+                    cb(contentGameLogList, "<p>Select a game from the menu on the right to view the box score or play-by-play recap.</p>");
                 }
             };
 
-            gameLogList(abbrev, season, function (contentGameLogList) {
-                boxScore(gid, function (contentBoxScore) {
-                    var data;
+            // "Select from menu" message is needed because play by play can only be selected after a game is picked
+            cbPlayByPlay = function (gid, contentGameLogList, cb) {
+                gid = parseInt(gid, 10);
 
-                    data = {
-                        container: "league_content",
-                        template: "gameLog",
-                        title: "Game Log",
-                        vars: {boxScore: contentBoxScore, gameLogList: contentGameLogList, gid: gid, teams: teams, seasons: seasons}
-                    };
-                    ui.update(data, req.raw.cb);
-                });
+                g.dbl.transaction(["games"]).objectStore("games").get(gid).onsuccess = function (event) {
+                    var content, i, game, overtime;
+
+                    game = event.target.result;
+
+                    if (game.overtimes === 1) {
+                        overtime = " (OT)";
+                    } else if (game.overtimes > 1) {
+                        overtime = " (" + game.overtimes + "OT)";
+                    } else {
+                        overtime = "";
+                    }
+
+                    content = Handlebars.templates.playByPlay({lid: g.lid, game: game, overtime: overtime, season: season});
+                    cb(contentGameLogList, content);
+                };
+            };
+
+            cbDisplay = function (contentGameLogList, contentGameInfo) {
+                var data;
+
+                data = {
+                    container: "league_content",
+                    template: "gameLog",
+                    title: "Game Log",
+                    vars: {boxScore: contentGameInfo, gameLogList: contentGameLogList, gid: gid, teams: teams, seasons: seasons}
+                };
+                ui.update(data, req.raw.cb);
+            };
+
+            cbGameLogList(abbrev, season, function (contentGameLogList) {
+                if (view === "box_score") {
+                    cbBoxScore(gid, contentGameLogList, cbDisplay);
+                } else {
+                    cbPlayByPlay(gid, contentGameLogList, cbDisplay);
+                }
             });
         });
     }

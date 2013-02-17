@@ -2,7 +2,9 @@ main todo (before public beta)
 ------------------------------
 
 gameSimNew
-  alternative approach to "noise" - should be set at the beginning of the possession for each player (i.e., defenses reacting differently) and then offensive players behave rationally. this will enable players who shoot rarely to actually shoot a decent percentage (hopefully) and get rid of bad 3s and require less random number generation
+  Better discord: Each defender calculates expPtsShoot for his player, and changes "openness" based on that. The total change in "openness" is a function of the player with the ball (i.e., all changes should sum to what discord currently is)
+    "noise" in changes in openness to simulate different defensive reactions
+  initial location of players based on expPtsShoot
   is there enough heterogeneity in shot locations?
 show record (w-l) on roster view - make it more like a summary, as in basketball-reference
 free agents

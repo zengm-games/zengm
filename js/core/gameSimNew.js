@@ -51,7 +51,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         this.noise = 1;
 
         // Starting lineups, which works because players are ordered by their roster_order
-        this.players_on_court = [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]];
+        this.playersOnCourt = [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]];
 
         this.subs_every_n = 5;  // How many possessions to wait before doing subs
 
@@ -191,9 +191,9 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             ind = [0, 1, 2, 3, 4];
             ind.sort(function (a, b) { return sortBy[a] - sortBy[b]; });
 
-            playersOnCourtTemp = this.players_on_court[t].slice();  // Copy by value, not reference
+            playersOnCourtTemp = this.playersOnCourt[t].slice();  // Copy by value, not reference
             for (p = 0; p < 5; p++) {
-                this.players_on_court[t][p] = playersOnCourtTemp[ind[p]];
+                this.playersOnCourt[t][p] = playersOnCourtTemp[ind[p]];
             }
         }
     };
@@ -211,7 +211,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         for (t = 0; t < 2; t++) {
             // Update minutes (ovr, court, and bench)
             for (p = 0; p < this.team[t].player.length; p++) {
-                if (this.players_on_court[t].indexOf(p) >= 0) {
+                if (this.playersOnCourt[t].indexOf(p) >= 0) {
                     this.record_stat(t, p, "min", dt);
                     this.record_stat(t, p, "court_time", dt);
                     this.record_stat(t, p, "energy", -dt * 0.01);
@@ -235,14 +235,14 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
             // Loop through players on court (in inverse order of current roster position)
             i = 0;
-            for (pp = 0; pp < this.players_on_court[t].length; pp++) {
-                p = this.players_on_court[t][pp];
-                this.players_on_court[t][i] = p;
+            for (pp = 0; pp < this.playersOnCourt[t].length; pp++) {
+                p = this.playersOnCourt[t][pp];
+                this.playersOnCourt[t][i] = p;
                 // Loop through bench players (in order of current roster position) to see if any should be subbed in)
                 for (b = 0; b < this.team[t].player.length; b++) {
-                    if (this.players_on_court[t].indexOf(b) === -1 && this.team[t].player[p].stat.court_time > 3 && this.team[t].player[b].stat.bench_time > 3 && ovrs[b] > ovrs[p]) {
+                    if (this.playersOnCourt[t].indexOf(b) === -1 && this.team[t].player[p].stat.court_time > 3 && this.team[t].player[b].stat.bench_time > 3 && ovrs[b] > ovrs[p]) {
                         // Substitute player
-                        this.players_on_court[t][i] = b;
+                        this.playersOnCourt[t][i] = b;
                         this.team[t].player[b].stat.court_time = random.gauss(0, 2);
                         this.team[t].player[b].stat.bench_time = random.gauss(0, 2);
                         this.team[t].player[p].stat.court_time = random.gauss(0, 2);
@@ -267,14 +267,14 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * 3 = 3 point range
      */
     GameSim.prototype.initDistances = function () {
-        this.distances = [c.DISTANCE_THREE_POINTER, c.DISTANCE_THREE_POINTER, c.DISTANCE_THREE_POINTER, c.DISTANCE_MID_RANGE, c.DISTANCE_LOW_POST];  // These correspond with this.players_on_court
+        this.distances = [c.DISTANCE_THREE_POINTER, c.DISTANCE_THREE_POINTER, c.DISTANCE_THREE_POINTER, c.DISTANCE_MID_RANGE, c.DISTANCE_LOW_POST];  // These correspond with this.playersOnCourt
     };
 
     /**
      * Initialize which player has the ball at the beginning of a possession.
      */
     GameSim.prototype.initBallHandler = function () {
-        this.ballHandler = 0;  // This corresponds with this.players_on_court
+        this.ballHandler = 0;  // This corresponds with this.playersOnCourt
         this.log(this.team[this.o].player[this.ballHandler].name + " brings the ball up the court<br>");
     };
 
@@ -285,7 +285,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * 1 = completely open
      */
     GameSim.prototype.initOpenness = function () {
-        this.openness = [0, 0, 0, 0, 0];  // These correspond with this.players_on_court
+        this.openness = [0, 0, 0, 0, 0];  // These correspond with this.playersOnCourt
     };
 
     /**
@@ -331,7 +331,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     /**
      * Calculates the expected points scored if the given player took a shot right now.
      *
-     * @param {number} i An integer between 0 and 4 representing the index of this.players_on_court[this.o] for the player of interest. If undefined, then this.ballHandler is used.
+     * @param {number} i An integer between 0 and 4 representing the index of this.playersOnCourt[this.o] for the player of interest. If undefined, then this.ballHandler is used.
      * @param {number} discord A number between 0 and 1 representing defensive discord. If undefined, then this.discord is used.
      * @param {number} ticks An integer representing the number of ticks left (similar to shot clock). If undefined, then this.ticks is used.
      * @return {number} Points, from 0 to 4.
@@ -355,7 +355,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     /**
      * Calculates the expected points scored if the given player passed right now.
      *
-     * @param {number} i An integer between 0 and 4 representing the index of this.players_on_court[this.o] for the player of interest. If undefined, then this.ballHandler is used.
+     * @param {number} i An integer between 0 and 4 representing the index of this.playersOnCourt[this.o] for the player of interest. If undefined, then this.ballHandler is used.
      * @param {number} discord A number between 0 and 1 representing defensive discord. If undefined, then this.discord is used.
      * @param {number} ticks An integer representing the number of ticks left (similar to shot clock). If undefined, then this.ticks is used.
      * @return {number} An object containing "expPtsPass" which is points, from 0 to 4, and "passTo" the index of the player to pass to (like i).
@@ -368,7 +368,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         ticks = ticks !== undefined ? ticks : this.ticks;
 
         expPtsPass = 0;
-        passTo = -1;  // Index of this.players_on_court[this.o], like i
+        passTo = -1;  // Index of this.playersOnCourt[this.o], like i
 
         discord = this.updateDiscord("pass", i, discord);
 
@@ -412,7 +412,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     /**
      * Calculates the expected points scored if the given player attacked off the dribble right now.
      *
-     * @param {number} i An integer between 0 and 4 representing the index of this.players_on_court[this.o] for the player of interest. If undefined, then this.ballHandler is used.
+     * @param {number} i An integer between 0 and 4 representing the index of this.playersOnCourt[this.o] for the player of interest. If undefined, then this.ballHandler is used.
      * @param {number} discord A number between 0 and 1 representing defensive discord. If undefined, then this.discord is used.
      * @param {number} ticks An integer representing the number of ticks left (similar to shot clock). If undefined, then this.ticks is used.
      * @return {number} Points, from 0 to 4.
@@ -459,7 +459,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     /**
      * Calculates the probability of the current ball handler in the current situation making a shot if he takes one (situation-dependent field goal percentage).
      *
-     * @param {number} i An integer between 0 and 4 representing the index of this.players_on_court[this.o] for the player of interest. If undefined, then this.ballHandler is used.
+     * @param {number} i An integer between 0 and 4 representing the index of this.playersOnCourt[this.o] for the player of interest. If undefined, then this.ballHandler is used.
      * @param {number} discord A number between 0 and 1 representing defensive discord. If undefined, then this.discord is used.
      * @param {number} ticks An integer representing the number of ticks left (similar to shot clock). If undefined, then this.ticks is used.
      * @return {number} Probability from 0 to 1.
@@ -471,7 +471,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         discord = discord !== undefined ? discord : this.discord;
         ticks = ticks !== undefined ? ticks : this.ticks;
 
-        p = this.players_on_court[this.o][i];
+        p = this.playersOnCourt[this.o][i];
         d = this.distances[i];
 
         // Base probabilities
@@ -494,7 +494,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     /**
      * Calculates the probability of the current ball handler making a free throw if he takes one (free throw percentage).
      *
-     * @param {number} i An integer between 0 and 4 representing the index of this.players_on_court[this.o] for the player of interest. If undefined, then this.ballHandler is used.
+     * @param {number} i An integer between 0 and 4 representing the index of this.playersOnCourt[this.o] for the player of interest. If undefined, then this.ballHandler is used.
      * @return {number} Probability from 0 to 1.
      */
     GameSim.prototype.probFt = function (i) {
@@ -502,7 +502,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
         i = i !== undefined ? i : this.ballHandler;
 
-        p = this.players_on_court[this.o][i];
+        p = this.playersOnCourt[this.o][i];
 
         P = this.team[this.o].player[p].compositeRating.shootingFT * 0.3 + 0.6;
 
@@ -512,7 +512,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     /**
      * Assuming a shot was made, calculates the probability that the shooter was fouled.
      *
-     * @param {number} i An integer between 0 and 4 representing the index of this.players_on_court[this.o] for the player of interest. If undefined, then this.ballHandler is used.
+     * @param {number} i An integer between 0 and 4 representing the index of this.playersOnCourt[this.o] for the player of interest. If undefined, then this.ballHandler is used.
      * @return {number} Probability from 0 to 1.
      */
     GameSim.prototype.probAndOne = function (i) {
@@ -520,7 +520,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
         i = i !== undefined ? i : this.ballHandler;
 
-        p = this.players_on_court[this.o][i];
+        p = this.playersOnCourt[this.o][i];
         d = this.distances[i];
 
         // Default values
@@ -540,7 +540,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     /**
      * Assuming a shot was missed, calculates the probability that the shooter was fouled.
      *
-     * @param {number} i An integer between 0 and 4 representing the index of this.players_on_court[this.o] for the player of interest. If undefined, then this.ballHandler is used.
+     * @param {number} i An integer between 0 and 4 representing the index of this.playersOnCourt[this.o] for the player of interest. If undefined, then this.ballHandler is used.
      * @return {number} Probability from 0 to 1.
      */
     GameSim.prototype.probMissAndFoul = function (i) {
@@ -548,7 +548,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
         i = i !== undefined ? i : this.ballHandler;
 
-        p = this.players_on_court[this.o][i];
+        p = this.playersOnCourt[this.o][i];
         d = this.distances[i];
 
         // Default values
@@ -576,17 +576,17 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.moveShoot = function () {
         var p, ratios;
 
-        p = this.players_on_court[this.o][this.ballHandler];
+        p = this.playersOnCourt[this.o][this.ballHandler];
         this.log(this.team[this.o].player[p].name + " shoots from " + c.DISTANCES[this.distances[this.ballHandler]] + "... ");
 
         // Blocked shot
         if (this.probBlk() > Math.random()) {
             ratios = this.rating_array("blocks", this.d);
-            p = this.players_on_court[this.d][this.pick_player(ratios)];
+            p = this.playersOnCourt[this.d][this.pick_player(ratios)];
             this.record_stat(this.d, p, "blk");
             this.log("blocked by " + this.team[this.o].player[p].name + "!<br>");
 
-            p = this.players_on_court[this.d][this.ballHandler];
+            p = this.playersOnCourt[this.d][this.ballHandler];
             this.record_stat(this.o, p, "fga");
 
             return this.doReb();  // offReb or defReb
@@ -626,8 +626,8 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         this.passer = this.ballHandler;
         this.ballHandler = passTo;
 
-        p = this.players_on_court[this.o][this.passer];
-        p2 = this.players_on_court[this.o][this.ballHandler];
+        p = this.playersOnCourt[this.o][this.passer];
+        p2 = this.playersOnCourt[this.o][this.ballHandler];
         this.log(this.team[this.o].player[p].name + " passes to " + this.team[this.o].player[p2].name + "<br>");
 
         return "pass";
@@ -640,7 +640,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
         this.passer = -1;  // No assist if the player dribbles first
 
-        p = this.players_on_court[this.o][this.ballHandler];
+        p = this.playersOnCourt[this.o][this.ballHandler];
         this.log(this.team[this.o].player[p].name + " attacks his man off the dribble<br>");
 
         return "dribble";
@@ -650,7 +650,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * Updates defensive discord in a predefined manner for dribbling or passsing.
      *
      * @param {string} move Either "dribble" or "pass", which lets the function know which ratings to use to inform the updated discord.
-     * @param {number} i An integer between 0 and 4 representing the index of this.players_on_court[this.o] for the player of interest. If undefined, then this.ballHandler is used.
+     * @param {number} i An integer between 0 and 4 representing the index of this.playersOnCourt[this.o] for the player of interest. If undefined, then this.ballHandler is used.
      * @param {number} discord A number between 0 and 1 representing defensive discord. If undefined, then this.discord is used.
      * @return {number} Probability from 0 to 1.
      */
@@ -660,8 +660,8 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         i = i !== undefined ? i : this.ballHandler;
         discord = discord !== undefined ? discord : this.discord;
 
-        po = this.players_on_court[this.o][i];
-        pd = this.players_on_court[this.d][i];
+        po = this.playersOnCourt[this.o][i];
+        pd = this.playersOnCourt[this.d][i];
 
         if (move === "dribble") {
             discord = this.bound(discord + 0.2 * (this.team[this.o].player[po].compositeRating.ballHandling - this.team[this.d].player[pd].compositeRating.defensePerimeter), 0, 1);
@@ -677,14 +677,14 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
         if (0.8 > Math.random()) {
             ratios = this.rating_array("rebounds", this.d);
-            p = this.players_on_court[this.d][this.pick_player(ratios)];
+            p = this.playersOnCourt[this.d][this.pick_player(ratios)];
             this.record_stat(this.d, p, "drb");
             this.log(this.team[this.d].player[p].name + " comes down with the defensive rebound<br><br>");
             return "defReb";
         }
         ratios = this.rating_array("rebounds", this.o);
         this.ballHandler = this.pick_player(ratios);
-        p = this.players_on_court[this.o][this.ballHandler];
+        p = this.playersOnCourt[this.o][this.ballHandler];
         this.record_stat(this.o, p, "orb");
         this.log(this.team[this.o].player[p].name + " comes down with the offensive rebound<br>");
         return "offReb";
@@ -702,7 +702,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
         this.doPf(this.d);
 
-        p = this.players_on_court[this.o][this.ballHandler];
+        p = this.playersOnCourt[this.o][this.ballHandler];
         for (i = 0; i < amount; i++) {
             this.record_stat(this.o, p, "fta");
             if (this.probFt() > Math.random()) {
@@ -744,7 +744,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         var d, p;
 
 //console.log("madeShot " + this.team[this.o].stat.fg / this.team[this.o].stat.fga);
-        p = this.players_on_court[this.o][this.ballHandler];
+        p = this.playersOnCourt[this.o][this.ballHandler];
         d = this.distances[this.ballHandler];
 
         this.record_stat(this.o, p, "fg");
@@ -759,7 +759,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
         // Assist?
         if (this.passer >= 0) {
-            p = this.players_on_court[this.o][this.passer];
+            p = this.playersOnCourt[this.o][this.passer];
             this.record_stat(this.o, p, "ast");
         }
 
@@ -769,7 +769,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.doFgMiss = function () {
         var d, p;
 
-        p = this.players_on_court[this.o][this.ballHandler];
+        p = this.playersOnCourt[this.o][this.ballHandler];
         d = this.distances[this.ballHandler];
 
         this.record_stat(this.o, p, "fga");
@@ -789,7 +789,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         var p, ratios;
 
         ratios = this.rating_array("fouls", od);
-        p = this.players_on_court[this.d][this.pick_player(ratios)];
+        p = this.playersOnCourt[this.d][this.pick_player(ratios)];
         this.record_stat(od, p, "pf");
     };
 
@@ -797,13 +797,13 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         var p, ratios;
 
         ratios = this.rating_array("turnovers", this.o);
-        p = this.players_on_court[this.o][this.pick_player(ratios)];
+        p = this.playersOnCourt[this.o][this.pick_player(ratios)];
         this.record_stat(this.o, p, "tov");
 
         // Steal?
         if (0.55 > Math.random()) {
             ratios = this.rating_array("steals", this.d);
-            p = this.players_on_court[this.d][this.pick_player(ratios)];
+            p = this.playersOnCourt[this.d][this.pick_player(ratios)];
             this.record_stat(this.d, p, "stl");
             this.log(this.team[this.d].player[p].name + " steals the ball<br><br>");
         } else {
@@ -816,7 +816,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
         array = [0, 0, 0, 0, 0];
         for (i = 0; i < 5; i++) {
-            p = this.players_on_court[t][i];
+            p = this.playersOnCourt[t][i];
             array[i] = this.team[t].player[p].compositeRating[rating];
         }
 

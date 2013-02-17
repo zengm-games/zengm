@@ -43,7 +43,6 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         this.id = gid;
         this.team = [team1, team2];  // If a team plays twice in a day, this needs to be a deep copy
         this.numTicks = 4;  // Analogous to the shot clock. A tick happens when any action occurs, like passing the ball or dribbling towards the basket.
-        this.discord = 0;  // Defensive discord. 0 = defense is comfortable. 1 = complete chaos.
         this.timeRemaining = 48 * 60;  // Length of the game, in seconds.
         this.playByPlay = "";  // String of HTML-formatted play-by-play for this game
 
@@ -143,9 +142,6 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             // Start with all players defended tightly
             this.initOpenness();
 
-            // Initialize defensive discord
-            this.discord = 0;
-
             // Keep track of the last person to pass the ball, used for assist tracking. -1 means no assist for a shot taken.
             this.passer = -1;
 
@@ -167,8 +163,6 @@ define(["util/helpers", "util/random"], function (helpers, random) {
                 } else if (outcome === "offReb") {
                     // Continue this possession
                     this.ticks = this.numTicks;  // Reset shot clock
-                    this.initDistances();
-                    this.initOpenness();
                     this.passer = -1;
                 }
             }
@@ -285,7 +279,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * 1 = completely open
      */
     GameSim.prototype.initOpenness = function () {
-        this.openness = [0, 0, 0, 0, 0];  // These correspond with this.playersOnCourt
+        this.openness = [0, 0, 0, 0, 0];  // These correspond with this.playersOnCourt for the offensive team
     };
 
     /**
@@ -332,52 +326,53 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * Calculates the expected points scored if the given player took a shot right now.
      *
      * @param {number} i An integer between 0 and 4 representing the index of this.playersOnCourt[this.o] for the player of interest. If undefined, then this.ballHandler is used.
-     * @param {number} discord A number between 0 and 1 representing defensive discord. If undefined, then this.discord is used.
+     * @param {Array.<number>} openness An array of numbers between 0 and 1 representing how open (0: none, 1: very) each offensive player is (same order as this.playersOnCourt). If undefined, then this.openness is used.
      * @param {number} ticks An integer representing the number of ticks left (similar to shot clock). If undefined, then this.ticks is used.
      * @return {number} Points, from 0 to 4.
      */
-    GameSim.prototype.expPtsShoot = function (i, discord, ticks) {
+    GameSim.prototype.expPtsShoot = function (i, openness, ticks) {
         var expPtsShoot, probFg, twoOrThree;
 
         i = i !== undefined ? i : this.ballHandler;
-        discord = discord !== undefined ? discord : this.discord;
+        openness = openness !== undefined ? openness : this.openness;
         ticks = ticks !== undefined ? ticks : this.ticks;
 
         twoOrThree = this.distances[i] === c.DISTANCE_THREE_POINTER ? 3 : 2;
 
-        probFg = this.probFg(i, discord, ticks);
+        probFg = this.probFg(i, openness, ticks);
         expPtsShoot = probFg * twoOrThree + this.probFt(i) * (probFg * this.probAndOne(i) + (1 - probFg) * this.probMissAndFoul(i));
-//console.log('shoot ' + i + ' at tick ' + ticks + ', discord ' + discord + ', expPtsShoot ' + expPtsShoot);
+//console.log('shoot ' + i + ' at tick ' + ticks + ', openness ' + openness[i] + ', expPtsShoot ' + expPtsShoot);
 
-        return random.uniform(0, 4 * this.noise) + expPtsShoot;
+//        return random.uniform(0, 4 * this.noise) + expPtsShoot;
+        return expPtsShoot;
     };
 
     /**
      * Calculates the expected points scored if the given player passed right now.
      *
      * @param {number} i An integer between 0 and 4 representing the index of this.playersOnCourt[this.o] for the player of interest. If undefined, then this.ballHandler is used.
-     * @param {number} discord A number between 0 and 1 representing defensive discord. If undefined, then this.discord is used.
+     * @param {Array.<number>} openness An array of numbers between 0 and 1 representing how open (0: none, 1: very) each offensive player is (same order as this.playersOnCourt). If undefined, then this.openness is used.
      * @param {number} ticks An integer representing the number of ticks left (similar to shot clock). If undefined, then this.ticks is used.
      * @return {number} An object containing "expPtsPass" which is points, from 0 to 4, and "passTo" the index of the player to pass to (like i).
      */
-    GameSim.prototype.expPtsPass = function (i, discord, ticks) {
+    GameSim.prototype.expPtsPass = function (i, openness, ticks) {
         var expPtsPass, expPtsPassTest, j, passTo, probFg;
 
         i = i !== undefined ? i : this.ballHandler;
-        discord = discord !== undefined ? discord : this.discord;
+        openness = openness !== undefined ? openness : this.openness;
         ticks = ticks !== undefined ? ticks : this.ticks;
 
         expPtsPass = 0;
         passTo = -1;  // Index of this.playersOnCourt[this.o], like i
 
-        discord = this.updateDiscord("pass", i, discord);
+        openness = this.updateOpenness("pass", i, openness, ticks, false);
 
         if (ticks > 1) { // If ticks is 1, then any move besides a shot will result in 0 points.
             // Try passing to each player, who will then dribble, pass or shoot
             for (j = 0; j < 5; j++) {
                 if (j !== i) {
                     // Pass to j, j shoots
-                    expPtsPassTest = this.expPtsShoot(j, discord, ticks - 1);
+                    expPtsPassTest = this.expPtsShoot(j, openness, ticks - 1);
                     if (expPtsPassTest > expPtsPass) {
                         expPtsPass = expPtsPassTest;
                         passTo = j;
@@ -385,14 +380,14 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
                     if (ticks > 2) {
                         // Pass to j, j passes
-                        expPtsPassTest = this.expPtsPass(j, discord, ticks - 1);
+                        expPtsPassTest = this.expPtsPass(j, openness, ticks - 1);
                         if (expPtsPassTest > expPtsPass) {
                             expPtsPass = expPtsPassTest;
                             passTo = j;
                         }
 
                         // Pass to j, j dribbles
-                        expPtsPassTest = this.expPtsDribble(j, discord, ticks - 1);
+                        expPtsPassTest = this.expPtsDribble(j, openness, ticks - 1);
                         if (expPtsPassTest > expPtsPass) {
                             expPtsPass = expPtsPassTest;
                             passTo = j;
@@ -401,7 +396,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
                 }
             }
         }
-//console.log('pass from ' + i + ' to ' + passTo + ' at tick ' + ticks + ', discord ' + discord + ', expPtsPass ' + expPtsPass);
+//console.log('pass from ' + i + ' to ' + passTo + ' at tick ' + ticks + ', openness ' + openness[i] + ', expPtsPass ' + expPtsPass);
 
         return {
             expPtsPass: expPtsPass,
@@ -413,43 +408,43 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * Calculates the expected points scored if the given player attacked off the dribble right now.
      *
      * @param {number} i An integer between 0 and 4 representing the index of this.playersOnCourt[this.o] for the player of interest. If undefined, then this.ballHandler is used.
-     * @param {number} discord A number between 0 and 1 representing defensive discord. If undefined, then this.discord is used.
+     * @param {Array.<number>} openness An array of numbers between 0 and 1 representing how open (0: none, 1: very) each offensive player is (same order as this.playersOnCourt). If undefined, then this.openness is used.
      * @param {number} ticks An integer representing the number of ticks left (similar to shot clock). If undefined, then this.ticks is used.
      * @return {number} Points, from 0 to 4.
      */
-    GameSim.prototype.expPtsDribble = function (i, discord, ticks) {
+    GameSim.prototype.expPtsDribble = function (i, openness, ticks) {
         var expPtsDribble, expPtsDribbleTest, pd, po;
 
         i = i !== undefined ? i : this.ballHandler;
-        discord = discord !== undefined ? discord : this.discord;
+        openness = openness !== undefined ? openness : this.openness;
         ticks = ticks !== undefined ? ticks : this.ticks;
 
         expPtsDribble = 0;
 
-        discord = this.updateDiscord("dribble", i, discord);
+        openness = this.updateOpenness("dribble", i, openness, ticks, false);
 
         if (ticks > 1) { // If ticks is 1, then any move besides a shot will result in 0 points.
             // Dribble, then shoot
-            expPtsDribbleTest = this.expPtsShoot(i, discord, ticks - 1);
+            expPtsDribbleTest = this.expPtsShoot(i, openness, ticks - 1);
             if (expPtsDribbleTest > expPtsDribble) {
                 expPtsDribble = expPtsDribbleTest;
             }
 
             if (ticks > 2) {
                 // Dribble, then pass
-                expPtsDribbleTest = this.expPtsPass(i, discord, ticks - 1);
+                expPtsDribbleTest = this.expPtsPass(i, openness, ticks - 1);
                 if (expPtsDribbleTest > expPtsDribble) {
                     expPtsDribble = expPtsDribbleTest;
                 }
 
                 // Dribble, then dribble more
-                expPtsDribbleTest = this.expPtsDribble(i, discord, ticks - 1);
+                expPtsDribbleTest = this.expPtsDribble(i, openness, ticks - 1);
                 if (expPtsDribbleTest > expPtsDribble) {
                     expPtsDribble = expPtsDribbleTest;
                 }
             }
         }
-//console.log('dribble ' + i + ' at tick ' + ticks + ', discord ' + discord + ', expPtsDribble ' + expPtsDribble);
+//console.log('dribble ' + i + ' at tick ' + ticks + ', openness ' + openness[i] + ', expPtsDribble ' + expPtsDribble);
 
         return expPtsDribble;
     };
@@ -460,15 +455,15 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * Calculates the probability of the current ball handler in the current situation making a shot if he takes one (situation-dependent field goal percentage).
      *
      * @param {number} i An integer between 0 and 4 representing the index of this.playersOnCourt[this.o] for the player of interest. If undefined, then this.ballHandler is used.
-     * @param {number} discord A number between 0 and 1 representing defensive discord. If undefined, then this.discord is used.
+     * @param {Array.<number>} openness An array of numbers between 0 and 1 representing how open (0: none, 1: very) each offensive player is (same order as this.playersOnCourt). If undefined, then this.openness is used.
      * @param {number} ticks An integer representing the number of ticks left (similar to shot clock). If undefined, then this.ticks is used.
      * @return {number} Probability from 0 to 1.
      */
-    GameSim.prototype.probFg = function (i, discord, ticks) {
+    GameSim.prototype.probFg = function (i, openness, ticks) {
         var d, p, P;
 
         i = i !== undefined ? i : this.ballHandler;
-        discord = discord !== undefined ? discord : this.discord;
+        openness = openness !== undefined ? openness : this.openness;
         ticks = ticks !== undefined ? ticks : this.ticks;
 
         p = this.playersOnCourt[this.o][i];
@@ -476,17 +471,17 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
         // Base probabilities
         if (d === c.DISTANCE_AT_RIM) {
-            P = this.team[this.o].player[p].compositeRating.shootingAtRim * 0.3 + 0.54;
+            P = this.team[this.o].player[p].compositeRating.shootingAtRim * 0.15 + 0.64;
         } else if (d === c.DISTANCE_LOW_POST) {
-            P = this.team[this.o].player[p].compositeRating.shootingLowPost * 0.3 + 0.39;
+            P = this.team[this.o].player[p].compositeRating.shootingLowPost * 0.15 + 0.49;
         } else if (d === c.DISTANCE_MID_RANGE) {
-            P = this.team[this.o].player[p].compositeRating.shootingMidRange * 0.3 + 0.31;
+            P = this.team[this.o].player[p].compositeRating.shootingMidRange * 0.15 + 0.41;
         } else if (d === c.DISTANCE_THREE_POINTER) {
-            P = 0.25 * this.team[this.o].player[p].compositeRating.shootingThreePointer;
+            P = 0.2 * this.team[this.o].player[p].compositeRating.shootingThreePointer;
         }
 
-        // Modulate by defensive discord
-        P = P + 0.1 * (discord - 0.1);
+        // Modulate by openness
+        P *= 1 + 0.9 * (openness[i] - 0.3);
 
         return this.bound(P, 0, 1);
     };
@@ -577,7 +572,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         var p, ratios;
 
         p = this.playersOnCourt[this.o][this.ballHandler];
-        this.log(this.team[this.o].player[p].name + " shoots from " + c.DISTANCES[this.distances[this.ballHandler]] + "... ");
+        this.log(this.team[this.o].player[p].name + " shoots " + c.DISTANCES[this.distances[this.ballHandler]] + "... ");
 
         // Blocked shot
         if (this.probBlk() > Math.random()) {
@@ -621,7 +616,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.movePass = function (passTo) {
         var p, p2;
 
-        this.discord = this.updateDiscord("pass");  // Important - call this before updating this.ballHandler
+        this.openness = this.updateOpenness("pass");  // Important - call this before updating this.ballHandler
 
         this.passer = this.ballHandler;
         this.ballHandler = passTo;
@@ -636,7 +631,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.moveDribble = function () {
         var p;
 
-        this.discord = this.updateDiscord("dribble");
+        this.openness = this.updateOpenness("dribble");
 
         this.passer = -1;  // No assist if the player dribbles first
 
@@ -647,29 +642,56 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     };
 
     /**
-     * Updates defensive discord in a predefined manner for dribbling or passsing.
+     * Updates openness in a predefined manner for dribbling or passsing.
      *
-     * @param {string} move Either "dribble" or "pass", which lets the function know which ratings to use to inform the updated discord.
+     * The general idea is that defenses respond to an attacking offense (dribbling or passing, basically) by rotating, helping, etc. A defensive player guarding a shitty offensive player will help more, leaving his man more open. A defensive player guarding a great offensive player will stay home.
+     *
+     * @param {string} move Either "dribble" or "pass", which lets the function know which ratings to use to inform the updated openness.
      * @param {number} i An integer between 0 and 4 representing the index of this.playersOnCourt[this.o] for the player of interest. If undefined, then this.ballHandler is used.
-     * @param {number} discord A number between 0 and 1 representing defensive discord. If undefined, then this.discord is used.
-     * @return {number} Probability from 0 to 1.
+     * @param {Array.<number>} openness An array of numbers between 0 and 1 representing how open (0: none, 1: very) each offensive player is (same order as this.playersOnCourt). If undefined, then this.openness is used.
+     * @param {number} ticks An integer representing the number of ticks left (similar to shot clock). If undefined, then this.ticks is used.
+     * @return {Array.<number>} Updated openness array, as described for the openness input.
      */
-    GameSim.prototype.updateDiscord = function (move, i, discord) {
-        var pd, po;
+    GameSim.prototype.updateOpenness = function (move, i, openness, ticks, noise) {
+        var discord, expPts, expPtsDribble, expPtsPass, expPtsShoot, j, order, pd, po, weights, x;
 
         i = i !== undefined ? i : this.ballHandler;
-        discord = discord !== undefined ? discord : this.discord;
+        openness = openness !== undefined ? openness : this.openness;
+        ticks = ticks !== undefined ? ticks : this.ticks;
+        noise = noise !== undefined ? noise : true;
 
         po = this.playersOnCourt[this.o][i];
         pd = this.playersOnCourt[this.d][i];
 
+        // Define "discord", the total amount that all elements of the openness array will collectively move
         if (move === "dribble") {
-            discord = this.bound(discord + 0.2 * (this.team[this.o].player[po].compositeRating.ballHandling - this.team[this.d].player[pd].compositeRating.defensePerimeter), 0, 1);
+            discord = this.bound(0.2 * (this.team[this.o].player[po].compositeRating.ballHandling - this.team[this.d].player[pd].compositeRating.defensePerimeter), 0, 1);
         } else if (move === "pass") {
-            discord = this.bound(discord + 0.2 * (this.team[this.o].player[po].compositeRating.passing - this.team[this.d].player[pd].compositeRating.defensePerimeter), 0, 1);
+            discord = this.bound(0.2 * (this.team[this.o].player[po].compositeRating.passing - this.team[this.d].player[pd].compositeRating.defensePerimeter), 0, 1);
         }
 
-        return discord;
+        // How much does the change in discord result in changes in openness? Weight by expected points.
+        expPts = [];
+        for (j = 0; j < 5; j++) {
+            // tick - 1 because that factors in a pass to this player
+            expPtsShoot = this.expPtsShoot(j, openness, ticks - 1);
+            expPts[j] = expPtsShoot;
+            //x = this.expPtsPass(j, openness, ticks - 1);
+            //expPtsPass = x.expPtsPass;
+            //expPtsDribble = this.expPtsDribble(j, openness, ticks - 1);
+            //expPts[j] = _.max([expPtsShoot, expPtsPass, expPtsDribble]);
+        }
+        weights = [0.02, 0.11, 0.21, 0.26, 0.4];
+        order = [0, 1, 2, 3, 4].sort(function (a, b) { return expPts[b] - expPts[a]; });
+
+        for (j = 0; j < 5; j++) {
+            if (noise) {
+                weights[j] *= random.uniform(1 - (0.2 * this.noise), 1 + (0.2 * this.noise));
+            }
+            openness[j] += weights[order[j]] * discord;
+        }
+
+        return openness;
     };
 
     GameSim.prototype.doReb = function () {
@@ -867,6 +889,22 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             return min;
         }
         return x;
+    };
+
+    GameSim.prototype.round = function (value, precision) {
+        var i;
+
+        precision = precision !== undefined ? parseInt(precision, 10) : 0;
+
+        if (value instanceof Array) {
+            for (i = 0; i < value.length; i++) {
+                value[i] = this.round(value[i], precision);
+            }
+
+            return value;
+        }
+
+        return parseFloat(value).toFixed(precision);
     };
 
     GameSim.prototype.log = function (msg) {

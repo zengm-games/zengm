@@ -2,8 +2,10 @@ main todo (before public beta)
 ------------------------------
 
 gameSimNew
-  Better discord: Each defender calculates expPtsShoot for his player, and changes "openness" based on that. The total change in "openness" is a function of the player with the ball (i.e., all changes should sum to what discord currently is)
-    "noise" in changes in openness to simulate different defensive reactions
+  As it is now, the worst players seem to end up shooting due to being left open. Why? It should balance by defenses adjusting dynamically with each move.
+    need a better way to debug this
+      in game log, visualize expPtShoot and openness for offensive players before each move
+      See which weight the person with the ball gets each move. Should be the lowest weight, in which case someone better should get a higher weight each move. If the initial high weight for the first person who gets the ball is too high, then add negative weights for the defense collapsing on the ball handler (the person who dribbles, or the person who is passed to).
   initial location of players based on expPtsShoot
   is there enough heterogeneity in shot locations?
 show record (w-l) on roster view - make it more like a summary, as in basketball-reference

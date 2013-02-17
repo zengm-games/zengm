@@ -60,6 +60,7 @@ define(["core/gameSimNew", "util/random"], function (gameSim, random) {
                 discord = Math.random();
 
                 gs = new gameSim.GameSim(0, teams[0], teams[1]);
+                gs.noise = 0;
 
                 for (gs.o = 0; gs.o < 2; gs.o++) {
                     gs.d = (gs.o === 1) ? 0 : 1;

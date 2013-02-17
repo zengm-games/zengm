@@ -15,11 +15,9 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * Args:
      *     team1: dict containing information about the home team. There are
      *         four top-level elements in this dict: id (team), defense (a
-     *         float containing the overall team defensive rating), pace (a
-     *         float containing the team's pace, which is the mean number of
-     *         possessions they like to have in a game), stat (a dict for
-     *         storing team stats), and player (a list of dicts, one for each
-     *         player on the team, ordered by roster_order). Each player's
+     *         float containing the overall team defensive rating), stat (a dict
+     *         for storing team stats), and player (a list of dicts, one for
+     *         each player on the team, ordered by roster_order). Each player's
      *         dict contains another four elements: id (player's unique ID
      *         number), ovr (overall rating, as stored in the DB),
      *         stat (a dict for storing player stats, similar to the one for
@@ -28,7 +26,6 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      *             {
      *                 "id": 0,
      *                 "defense": 0,
-     *                 "pace": 0,
      *                 "stat": {},
      *                 "player": [
      *                     {
@@ -50,6 +47,9 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         this.timeRemaining = 48 * 60;  // Length of the game, in seconds.
         this.playByPlay = "";  // String of HTML-formatted play-by-play for this game
 
+        // Amount of "noise" in decision making, where 0 means players are completely knowledgable and logical (of course, they still don't know if a shot will go in or not, but they know the odds for every situation) and 1 is meant to provide a reasonable amount of randomness.
+        this.noise = 1;
+
         // Starting lineups, which works because players are ordered by their roster_order
         this.players_on_court = [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]];
 
@@ -64,8 +64,8 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * Returns:
      *     A list of dicts, one for each team, similar to the inputs to
      *     __init__, but with both the team and player "stat" dicts filled in
-     *     and the extraneous data (defense, pace, ovr,
-     *     compositeRating) removed. In other words...
+     *     and the extraneous data (defense, ovr, compositeRating) removed.
+     *     In other words...
      *         {
      *             "gid": 0,
      *             "overtimes": 0,
@@ -104,7 +104,6 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         // Delete stuff that isn't needed before returning
         for (t = 0; t < 2; t++) {
             delete this.team[t].defense;
-            delete this.team[t].pace;
             for (p = 0; p < this.team[t].player.length; p++) {
                 delete this.team[t].player[p].ovr;
                 delete this.team[t].player[p].compositeRating;
@@ -177,7 +176,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             }
 
             // Convert ticks to seconds, and decrease timeRemaining by the number of ticks used
-            this.timeRemaining = this.timeRemaining - (this.numTicks - this.ticks) * 24 / this.numTicks;
+            this.timeRemaining = this.timeRemaining - (this.numTicks - this.ticks) * 16 / this.numTicks;
         }
     };
 
@@ -352,7 +351,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         expPtsShoot = probFg * twoOrThree + this.probFt(i) * (probFg * this.probAndOne(i) + (1 - probFg) * this.probMissAndFoul(i));
 //console.log('shoot ' + i + ' at tick ' + ticks + ', discord ' + discord + ', expPtsShoot ' + expPtsShoot);
 
-        return expPtsShoot;
+        return random.uniform(0, 4 * this.noise) + expPtsShoot;
     };
 
     /**

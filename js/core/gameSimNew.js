@@ -94,9 +94,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
         // Play overtime periods if necessary
         while (this.team[0].stat.pts === this.team[1].stat.pts) {
-            if (this.overtimes === 0) {
-                this.timeRemaining = 5 * 60;  // 5 minutes of overtime
-            }
+            this.timeRemaining = 5 * 60;  // 5 minutes of overtime
             this.overtimes += 1;
             this.simPossessions();
         }

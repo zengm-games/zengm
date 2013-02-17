@@ -45,7 +45,6 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     function GameSim(gid, team1, team2) {
         this.id = gid;
         this.team = [team1, team2];  // If a team plays twice in a day, this needs to be a deep copy
-        this.num_possessions = Math.round((this.team[0].pace + this.team[1].pace) / 2 * random.gauss(1, 0.03));
         this.numTicks = 4;  // Analogous to the shot clock. A tick happens when any action occurs, like passing the ball or dribbling towards the basket.
         this.discord = 0;  // Defensive discord. 0 = defense is comfortable. 1 = complete chaos.
         this.timeRemaining = 48 * 60;  // Length of the game, in seconds.
@@ -96,7 +95,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         // Play overtime periods if necessary
         while (this.team[0].stat.pts === this.team[1].stat.pts) {
             if (this.overtimes === 0) {
-                this.num_possessions = Math.round(this.num_possessions * 5 / 48);  // 5 minutes of possessions
+                this.timeRemaining = 5 * 60;  // 5 minutes of overtime
             }
             this.overtimes += 1;
             this.simPossessions();
@@ -116,15 +115,15 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     };
 
     /**
-     * Simulate this.num_possessions possessions. So to simulate regulation or
-     * overtime, just set this.num_possessions to appropriate values.
+     * Simulates possessions until this.timeRemaining is 0.
      */
     GameSim.prototype.simPossessions = function () {
-        var i, outcome;
+        var outcome;
 
         this.o = 0;
         this.d = 1;
         outcome = "";
+        this.timeOfSubstitution = this.timeRemaining;
 
         while (this.timeRemaining > 0) {
             // Possession change
@@ -132,7 +131,9 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             this.d = (this.o === 1) ? 0 : 1;
 
             this.ticks = this.numTicks;  // Reset shot clock
-            if (i % this.subs_every_n === 0) {
+
+            // Subs every 5 minutes
+            if (this.timeOfSubstitution - this.timeRemaining > 5 * 60) {
                 this.updatePlayersOnCourt();
             }
 
@@ -163,10 +164,11 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
                 this.ticks = this.ticks - 1;
 
-                // If the possession ended in a defensive rebound or a made shot, go to the next possession
                 if (outcome === "madeShot" || outcome === "defReb") {
+                    // Start a new possession for the other team
                     break;
                 } else if (outcome === "offReb") {
+                    // Continue this possession
                     this.ticks = this.numTicks;  // Reset shot clock
                     this.initDistances();
                     this.initOpenness();
@@ -206,10 +208,28 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.updatePlayersOnCourt = function () {
         var b, dt, i, ovrs, p, pp, t;
 
-        // Time elapsed
-        dt = (this.overtimes > 0 ? 5 : 48) / (2 * this.num_possessions) * this.subs_every_n;
+        // Time elapsed since last substitution
+        dt = (this.timeOfSubstitution - this.timeRemaining) / 60;  // [minutes]
 
         for (t = 0; t < 2; t++) {
+            // Update minutes (ovr, court, and bench)
+            for (p = 0; p < this.team[t].player.length; p++) {
+                if (this.players_on_court[t].indexOf(p) >= 0) {
+                    this.record_stat(t, p, "min", dt);
+                    this.record_stat(t, p, "court_time", dt);
+                    this.record_stat(t, p, "energy", -dt * 0.01);
+                    if (this.team[t].player[p].stat.energy < 0) {
+                        this.team[t].player[p].stat.energy = 0;
+                    }
+                } else {
+                    this.record_stat(t, p, "bench_time", dt);
+                    this.record_stat(t, p, "energy", dt * 0.2);
+                    if (this.team[t].player[p].stat.energy > 1) {
+                        this.team[t].player[p].stat.energy = 1;
+                    }
+                }
+            }
+
             // Overall ratings scaled by fatigue
             ovrs = [];
             for (i = 0; i < this.team[t].player.length; i++) {
@@ -234,25 +254,9 @@ define(["util/helpers", "util/random"], function (helpers, random) {
                 }
                 i += 1;
             }
-
-            // Update minutes (ovr, court, and bench)
-            for (p = 0; p < this.team[t].player.length; p++) {
-                if (this.players_on_court[t].indexOf(p) >= 0) {
-                    this.record_stat(t, p, "min", dt);
-                    this.record_stat(t, p, "court_time", dt);
-                    this.record_stat(t, p, "energy", -dt * 0.01);
-                    if (this.team[t].player[p].stat.energy < 0) {
-                        this.team[t].player[p].stat.energy = 0;
-                    }
-                } else {
-                    this.record_stat(t, p, "bench_time", dt);
-                    this.record_stat(t, p, "energy", dt * 0.2);
-                    if (this.team[t].player[p].stat.energy > 1) {
-                        this.team[t].player[p].stat.energy = 1;
-                    }
-                }
-            }
         }
+
+        this.timeOfSubstitution = this.timeRemaining;
 
         this.setMatchups();
     };
@@ -868,9 +872,8 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         return x;
     };
 
-
     GameSim.prototype.log = function (msg) {
-console.log(msg);
+//console.log(msg);
         this.playByPlay += msg;
     };
 

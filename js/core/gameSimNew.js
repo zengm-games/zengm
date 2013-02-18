@@ -291,7 +291,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         var expPtsDribble, expPtsPass, expPtsShoot, i, passTo, ratios, shooter, x;
 
         for (i = 0; i < 5; i++) {
-            this.log("---- " + this.team[this.o].player[this.playersOnCourt[this.o][i]].name + ": expPtsShoot " +  this.round(this.expPtsShoot(i), 3) + " openness " + this.round(this.openness[i], 3) + "<br>");
+            this.log("---- " + this.team[this.o].player[this.playersOnCourt[this.o][i]].name + ": expPtsShoot " +  this.round(this.expPtsShoot(i), 3) + ", openness " + this.round(this.openness[i], 3) + ", distance " + c.DISTANCES[this.distances[i]] + "<br>");
         }
 
 //console.log('Expected points for shooting');
@@ -433,7 +433,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
         expPtsDribble = 0;
 
-        openness = this.updateOpennessDribble(i, openness, ticks, false);
+        openness = this.updateOpennessDribble(i, openness.slice(), ticks, false);
 
         if (ticks > 1) { // If ticks is 1, then any move besides a shot will result in 0 points.
             // Dribble, then shoot
@@ -662,7 +662,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * @return {Array.<number>} Updated openness array, as described for the openness input.
      */
     GameSim.prototype.updateOpennessDribble = function (i, openness, ticks, noise) {
-        var discord, expPts, expPtsDribble, expPtsPass, expPtsShoot, j, order, pd, po, weights, x;
+        var defenseRating, discord, expPts, expPtsDribble, expPtsPass, expPtsShoot, expPtsSum, j, order, pd, po, weights, x;
 
         i = i !== undefined ? i : this.ballHandler;
         openness = openness !== undefined ? openness : this.openness;
@@ -672,28 +672,43 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         po = this.playersOnCourt[this.o][i];
         pd = this.playersOnCourt[this.d][i];
 
-        // Define "discord", the total amount that all elements of the openness array will collectively move
-        discord = this.bound(0.2 * (this.team[this.o].player[po].compositeRating.ballHandling - this.team[this.d].player[pd].compositeRating.defensePerimeter), 0, 1);
+        // Direct effect of dribbling - dribbler becomes more open
+        openness[i] = this.bound(2 * (this.team[this.o].player[po].compositeRating.ballHandling - this.team[this.d].player[pd].compositeRating.defensePerimeter), 0, 1);
 
-        // How much does the change in discord result in changes in openness? Weight by expected points.
+        // Defense's response to dribbling - off ball defensive attention shifts from non-dribblers to the dribbler
         expPts = [];
+        expPtsSum = 0;
         for (j = 0; j < 5; j++) {
-            // tick - 1 because that factors in a pass to this player
-            expPtsShoot = this.expPtsShoot(j, openness, ticks - 1);
-            expPts[j] = expPtsShoot;
-            //x = this.expPtsPass(j, openness, ticks - 1);
-            //expPtsPass = x.expPtsPass;
-            //expPtsDribble = this.expPtsDribble(j, openness, ticks - 1);
-            //expPts[j] = _.max([expPtsShoot, expPtsPass, expPtsDribble]);
+            if (i === j) {
+                expPts[j] = 0;
+            } else {
+                // tick - 1 because that factors in a pass to this player
+                expPtsShoot = this.expPtsShoot(j, openness, ticks - 1);
+                expPts[j] = expPtsShoot;
+                //x = this.expPtsPass(j, openness, ticks - 1);
+                //expPtsPass = x.expPtsPass;
+                //expPtsDribble = this.expPtsDribble(j, openness, ticks - 1);
+                //expPts[j] = _.max([expPtsShoot, expPtsPass, expPtsDribble]);
+            }
+            expPtsSum += Math.pow(expPts[j], 2);
         }
-        weights = [0.02, 0.11, 0.21, 0.26, 0.4];
-        order = [0, 1, 2, 3, 4].sort(function (a, b) { return expPts[b] - expPts[a]; });
+        weights = _.map(expPts,  function (num) { return Math.pow(num, 2) / expPtsSum; });
 
         for (j = 0; j < 5; j++) {
-            if (noise) {
-                weights[j] *= random.uniform(1 - (0.2 * this.noise), 1 + (0.2 * this.noise));
+            if (i !== j) {
+                if (noise) {
+                    weights[j] *= random.uniform(1 - (0.2 * this.noise), 1 + (0.2 * this.noise));
+                }
+
+                pd = this.playersOnCourt[this.d][j];
+                if (this.distances[j] <= c.DISTANCE_LOW_POST) {
+                    defenseRating = this.team[this.d].player[pd].compositeRating.defenseInterior;
+                } else {
+                    defenseRating = this.team[this.d].player[pd].compositeRating.defensePerimeter;
+                }
+                openness[j] = this.bound(openness[j] + 8 * weights[j] * (1 - defenseRating), 0, 1);
+                openness[i] = this.bound(openness[i] - 0.5 * weights[j] * (1 - defenseRating), 0, 1);
             }
-            openness[j] += weights[order[j]] * discord;
         }
 
         return openness;
@@ -717,32 +732,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         ticks = ticks !== undefined ? ticks : this.ticks;
         noise = noise !== undefined ? noise : true;
 
-        po = this.playersOnCourt[this.o][passer];
-        pd = this.playersOnCourt[this.d][passer];
 
-        // Define "discord", the total amount that all elements of the openness array will collectively move
-        discord = this.bound(0.2 * (this.team[this.o].player[po].compositeRating.passing - this.team[this.d].player[pd].compositeRating.defensePerimeter), 0, 1);
-
-        // How much does the change in discord result in changes in openness? Weight by expected points.
-        expPts = [];
-        for (j = 0; j < 5; j++) {
-            // tick - 1 because that factors in a pass to this player
-            expPtsShoot = this.expPtsShoot(j, openness, ticks - 1);
-            expPts[j] = expPtsShoot;
-            //x = this.expPtsPass(j, openness, ticks - 1);
-            //expPtsPass = x.expPtsPass;
-            //expPtsDribble = this.expPtsDribble(j, openness, ticks - 1);
-            //expPts[j] = _.max([expPtsShoot, expPtsPass, expPtsDribble]);
-        }
-        weights = [0.02, 0.11, 0.21, 0.26, 0.4];
-        order = [0, 1, 2, 3, 4].sort(function (a, b) { return expPts[b] - expPts[a]; });
-
-        for (j = 0; j < 5; j++) {
-            if (noise) {
-                weights[j] *= random.uniform(1 - (0.2 * this.noise), 1 + (0.2 * this.noise));
-            }
-            openness[j] += weights[order[j]] * discord;
-        }
 
         return openness;
     };

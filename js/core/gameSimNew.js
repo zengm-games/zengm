@@ -360,7 +360,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * @return {number} An object containing "expPtsPass" which is points, from 0 to 4, and "passTo" the index of the player to pass to (like i).
      */
     GameSim.prototype.expPtsPass = function (i, openness, ticks) {
-        var expPtsPass, expPtsPassTest, j, passTo, probFg;
+        var expPtsPass, expPtsPassTest, j, passTo, probFg, opennesses;
 
         i = i !== undefined ? i : this.ballHandler;
         openness = openness !== undefined ? openness : this.openness;
@@ -369,14 +369,22 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         expPtsPass = 0;
         passTo = -1;  // Index of this.playersOnCourt[this.o], like i
 
-        openness = this.updateOpenness("pass", i, openness, ticks, false);
+        // Openness for passing to each player
+        opennesses = [];
+        for (j = 0; j < 5; j++) {
+            if (i === j) {
+                opennesses[j] = NaN;
+            } else {
+                opennesses[j] = this.updateOpennessPass(i, j, openness.slice(), ticks, false);
+            }
+        }
 
         if (ticks > 1) { // If ticks is 1, then any move besides a shot will result in 0 points.
             // Try passing to each player, who will then dribble, pass or shoot
             for (j = 0; j < 5; j++) {
                 if (j !== i) {
                     // Pass to j, j shoots
-                    expPtsPassTest = this.expPtsShoot(j, openness, ticks - 1);
+                    expPtsPassTest = this.expPtsShoot(j, opennesses[j], ticks - 1);
                     if (expPtsPassTest > expPtsPass) {
                         expPtsPass = expPtsPassTest;
                         passTo = j;
@@ -384,14 +392,14 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
                     if (ticks > 2) {
                         // Pass to j, j passes
-                        expPtsPassTest = this.expPtsPass(j, openness, ticks - 1);
+                        expPtsPassTest = this.expPtsPass(j, opennesses[j], ticks - 1);
                         if (expPtsPassTest > expPtsPass) {
                             expPtsPass = expPtsPassTest;
                             passTo = j;
                         }
 
                         // Pass to j, j dribbles
-                        expPtsPassTest = this.expPtsDribble(j, openness, ticks - 1);
+                        expPtsPassTest = this.expPtsDribble(j, opennesses[j], ticks - 1);
                         if (expPtsPassTest > expPtsPass) {
                             expPtsPass = expPtsPassTest;
                             passTo = j;
@@ -425,7 +433,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
         expPtsDribble = 0;
 
-        openness = this.updateOpenness("dribble", i, openness, ticks, false);
+        openness = this.updateOpennessDribble(i, openness, ticks, false);
 
         if (ticks > 1) { // If ticks is 1, then any move besides a shot will result in 0 points.
             // Dribble, then shoot
@@ -620,10 +628,10 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.movePass = function (passTo) {
         var p, p2;
 
-        this.openness = this.updateOpenness("pass");  // Important - call this before updating this.ballHandler
-
         this.passer = this.ballHandler;
         this.ballHandler = passTo;
+
+        this.openness = this.updateOpennessPass();  // Important - call this after updating this.ballHandler and this.passer
 
         p = this.playersOnCourt[this.o][this.passer];
         p2 = this.playersOnCourt[this.o][this.ballHandler];
@@ -635,7 +643,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.moveDribble = function () {
         var p;
 
-        this.openness = this.updateOpenness("dribble");
+        this.openness = this.updateOpennessDribble();
 
         this.passer = -1;  // No assist if the player dribbles first
 
@@ -646,17 +654,14 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     };
 
     /**
-     * Updates openness in a predefined manner for dribbling or passsing.
+     * Updates openness after the ball handler dribbles.
      *
-     * The general idea is that defenses respond to an attacking offense (dribbling or passing, basically) by rotating, helping, etc. A defensive player guarding a shitty offensive player will help more, leaving his man more open. A defensive player guarding a great offensive player will stay home.
-     *
-     * @param {string} move Either "dribble" or "pass", which lets the function know which ratings to use to inform the updated openness.
      * @param {number} i An integer between 0 and 4 representing the index of this.playersOnCourt[this.o] for the player of interest. If undefined, then this.ballHandler is used.
      * @param {Array.<number>} openness An array of numbers between 0 and 1 representing how open (0: none, 1: very) each offensive player is (same order as this.playersOnCourt). If undefined, then this.openness is used.
      * @param {number} ticks An integer representing the number of ticks left (similar to shot clock). If undefined, then this.ticks is used.
      * @return {Array.<number>} Updated openness array, as described for the openness input.
      */
-    GameSim.prototype.updateOpenness = function (move, i, openness, ticks, noise) {
+    GameSim.prototype.updateOpennessDribble = function (i, openness, ticks, noise) {
         var discord, expPts, expPtsDribble, expPtsPass, expPtsShoot, j, order, pd, po, weights, x;
 
         i = i !== undefined ? i : this.ballHandler;
@@ -668,11 +673,55 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         pd = this.playersOnCourt[this.d][i];
 
         // Define "discord", the total amount that all elements of the openness array will collectively move
-        if (move === "dribble") {
-            discord = this.bound(0.2 * (this.team[this.o].player[po].compositeRating.ballHandling - this.team[this.d].player[pd].compositeRating.defensePerimeter), 0, 1);
-        } else if (move === "pass") {
-            discord = this.bound(0.2 * (this.team[this.o].player[po].compositeRating.passing - this.team[this.d].player[pd].compositeRating.defensePerimeter), 0, 1);
+        discord = this.bound(0.2 * (this.team[this.o].player[po].compositeRating.ballHandling - this.team[this.d].player[pd].compositeRating.defensePerimeter), 0, 1);
+
+        // How much does the change in discord result in changes in openness? Weight by expected points.
+        expPts = [];
+        for (j = 0; j < 5; j++) {
+            // tick - 1 because that factors in a pass to this player
+            expPtsShoot = this.expPtsShoot(j, openness, ticks - 1);
+            expPts[j] = expPtsShoot;
+            //x = this.expPtsPass(j, openness, ticks - 1);
+            //expPtsPass = x.expPtsPass;
+            //expPtsDribble = this.expPtsDribble(j, openness, ticks - 1);
+            //expPts[j] = _.max([expPtsShoot, expPtsPass, expPtsDribble]);
         }
+        weights = [0.02, 0.11, 0.21, 0.26, 0.4];
+        order = [0, 1, 2, 3, 4].sort(function (a, b) { return expPts[b] - expPts[a]; });
+
+        for (j = 0; j < 5; j++) {
+            if (noise) {
+                weights[j] *= random.uniform(1 - (0.2 * this.noise), 1 + (0.2 * this.noise));
+            }
+            openness[j] += weights[order[j]] * discord;
+        }
+
+        return openness;
+    };
+
+    /**
+     * Updates openness after the ball handler passes.
+     *
+     * @param {number} passer An integer between 0 and 4 representing the index of this.playersOnCourt[this.o] for the player who passes the ball. If undefined, then this.passer is used.
+     * @param {number} passTo An integer between 0 and 4 representing the index of this.playersOnCourt[this.o] for the player who the ball is passed to. If undefined, then this.ballHandler is used.
+     * @param {Array.<number>} openness An array of numbers between 0 and 1 representing how open (0: none, 1: very) each offensive player is (same order as this.playersOnCourt). If undefined, then this.openness is used.
+     * @param {number} ticks An integer representing the number of ticks left (similar to shot clock). If undefined, then this.ticks is used.
+     * @return {Array.<number>} Updated openness array, as described for the openness input.
+     */
+    GameSim.prototype.updateOpennessPass = function (passer, passTo, openness, ticks, noise) {
+        var discord, expPts, expPtsDribble, expPtsPass, expPtsShoot, j, order, pd, po, weights, x;
+
+        passer = passer !== undefined ? passer : this.passer;
+        passTo = passTo !== undefined ? passTo : this.ballHandler;
+        openness = openness !== undefined ? openness : this.openness;
+        ticks = ticks !== undefined ? ticks : this.ticks;
+        noise = noise !== undefined ? noise : true;
+
+        po = this.playersOnCourt[this.o][passer];
+        pd = this.playersOnCourt[this.d][passer];
+
+        // Define "discord", the total amount that all elements of the openness array will collectively move
+        discord = this.bound(0.2 * (this.team[this.o].player[po].compositeRating.passing - this.team[this.d].player[pd].compositeRating.defensePerimeter), 0, 1);
 
         // How much does the change in discord result in changes in openness? Weight by expected points.
         expPts = [];

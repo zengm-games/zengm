@@ -5,7 +5,13 @@ gameSimNew
   rethink this. what should be happening, mechanistically?
     dribbling should open up the player with the ball, passing shouldn't
     in all cases, the defense responds by addressing the immediate threat (guard the guy with the ball) and the secondary threat (don't let my man score easily). but it's a balance, not one at the exclusion of the other
-  Two critical questions: Why doesn't one player shoot every time, and why don't all players shoot equally?
+      ideal: defense knows how expPtsShoot changes as a function of openness and adjusts itself optimally
+    cutting - reporder positions of non-ball-handler randomly
+    dribbling should move ball handler closer to basket, if successful
+    initial positioning of players based on skills
+  Overall
+    Why doesn't one player shoot every time, and why don't all players shoot equally?
+    Fluidity is key. The underlying situation changes.
   initial location of players based on expPtsShoot
   is there enough heterogeneity in shot locations?
 show record (w-l) on roster view - make it more like a summary, as in basketball-reference

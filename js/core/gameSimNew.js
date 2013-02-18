@@ -46,6 +46,11 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         this.timeRemaining = 48 * 60;  // Length of the game, in seconds.
         this.playByPlay = "";  // String of HTML-formatted play-by-play for this game
 
+        // Tunable parameters
+        this.k = {
+            probFgOpenness: 0.4
+        };
+
         // Amount of "noise" in decision making, where 0 means players are completely knowledgable and logical (of course, they still don't know if a shot will go in or not, but they know the odds for every situation) and 1 is meant to provide a reasonable amount of randomness.
         this.noise = 1;
 
@@ -279,7 +284,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * 1 = completely open
      */
     GameSim.prototype.initOpenness = function () {
-        this.openness = [0, 0, 0, 0, 0];  // These correspond with this.playersOnCourt for the offensive team
+        this.openness = [0, 0.25, 0.25, 0.25, 0.25];  // These correspond with this.playersOnCourt for the offensive team
     };
 
     /**
@@ -343,7 +348,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
         twoOrThree = this.distances[i] === c.DISTANCE_THREE_POINTER ? 3 : 2;
 
-        probFg = this.probFg(i, openness, ticks);
+        probFg = this.probFg(i, openness.slice(), ticks);
         expPtsShoot = probFg * twoOrThree + this.probFt(i) * (probFg * this.probAndOne(i) + (1 - probFg) * this.probMissAndFoul(i));
 //console.log('shoot ' + i + ' at tick ' + ticks + ', openness ' + openness[i] + ', expPtsShoot ' + expPtsShoot);
 
@@ -437,20 +442,20 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
         if (ticks > 1) { // If ticks is 1, then any move besides a shot will result in 0 points.
             // Dribble, then shoot
-            expPtsDribbleTest = this.expPtsShoot(i, openness, ticks - 1);
+            expPtsDribbleTest = this.expPtsShoot(i, openness.slice(), ticks - 1);
             if (expPtsDribbleTest > expPtsDribble) {
                 expPtsDribble = expPtsDribbleTest;
             }
 
             if (ticks > 2) {
                 // Dribble, then pass
-                expPtsDribbleTest = this.expPtsPass(i, openness, ticks - 1);
+                expPtsDribbleTest = this.expPtsPass(i, openness.slice(), ticks - 1);
                 if (expPtsDribbleTest > expPtsDribble) {
                     expPtsDribble = expPtsDribbleTest;
                 }
 
                 // Dribble, then dribble more
-                expPtsDribbleTest = this.expPtsDribble(i, openness, ticks - 1);
+                expPtsDribbleTest = this.expPtsDribble(i, openness.slice(), ticks - 1);
                 if (expPtsDribbleTest > expPtsDribble) {
                     expPtsDribble = expPtsDribbleTest;
                 }
@@ -489,11 +494,11 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         } else if (d === c.DISTANCE_MID_RANGE) {
             P = this.team[this.o].player[p].compositeRating.shootingMidRange * 0.15 + 0.41;
         } else if (d === c.DISTANCE_THREE_POINTER) {
-            P = 0.2 * this.team[this.o].player[p].compositeRating.shootingThreePointer;
+            P = 0.25 * this.team[this.o].player[p].compositeRating.shootingThreePointer;
         }
 
         // Modulate by openness
-        P *= 1 + 0.9 * (openness[i] - 0.3);
+        P *= 1 + this.k.probFgOpenness * (openness[i] - 0.5);
 
         return this.bound(P, 0, 1);
     };
@@ -591,7 +596,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             ratios = this.rating_array("blocks", this.d);
             p = this.playersOnCourt[this.d][this.pick_player(ratios)];
             this.record_stat(this.d, p, "blk");
-            this.log("blocked by " + this.team[this.o].player[p].name + "!<br>");
+            this.log("blocked by " + this.team[this.d].player[p].name + "!<br>");
 
             p = this.playersOnCourt[this.d][this.ballHandler];
             this.record_stat(this.o, p, "fga");
@@ -662,7 +667,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * @return {Array.<number>} Updated openness array, as described for the openness input.
      */
     GameSim.prototype.updateOpennessDribble = function (i, openness, ticks, noise) {
-        var defenseRating, discord, expPts, expPtsDribble, expPtsPass, expPtsShoot, expPtsSum, j, order, pd, po, weights, x;
+        var defenseRating, delta, expPts, expPtsSum, helper, helperExpPts, j, k, opennessTemp, pd, po, threat, threatExpPts, weights;
 
         i = i !== undefined ? i : this.ballHandler;
         openness = openness !== undefined ? openness : this.openness;
@@ -673,43 +678,11 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         pd = this.playersOnCourt[this.d][i];
 
         // Direct effect of dribbling - dribbler becomes more open
-        openness[i] = this.bound(2 * (this.team[this.o].player[po].compositeRating.ballHandling - this.team[this.d].player[pd].compositeRating.defensePerimeter), 0, 1);
+        delta = 0.1;// * (this.team[this.o].player[po].compositeRating.ballHandling - this.team[this.d].player[pd].compositeRating.defensePerimeter);
+        openness[i] = this.bound(openness[i] + delta, 0, 1);
 
         // Defense's response to dribbling - off ball defensive attention shifts from non-dribblers to the dribbler
-        expPts = [];
-        expPtsSum = 0;
-        for (j = 0; j < 5; j++) {
-            if (i === j) {
-                expPts[j] = 0;
-            } else {
-                // tick - 1 because that factors in a pass to this player
-                expPtsShoot = this.expPtsShoot(j, openness, ticks - 1);
-                expPts[j] = expPtsShoot;
-                //x = this.expPtsPass(j, openness, ticks - 1);
-                //expPtsPass = x.expPtsPass;
-                //expPtsDribble = this.expPtsDribble(j, openness, ticks - 1);
-                //expPts[j] = _.max([expPtsShoot, expPtsPass, expPtsDribble]);
-            }
-            expPtsSum += Math.pow(expPts[j], 2);
-        }
-        weights = _.map(expPts,  function (num) { return Math.pow(num, 2) / expPtsSum; });
-
-        for (j = 0; j < 5; j++) {
-            if (i !== j) {
-                if (noise) {
-                    weights[j] *= random.uniform(1 - (0.2 * this.noise), 1 + (0.2 * this.noise));
-                }
-
-                pd = this.playersOnCourt[this.d][j];
-                if (this.distances[j] <= c.DISTANCE_LOW_POST) {
-                    defenseRating = this.team[this.d].player[pd].compositeRating.defenseInterior;
-                } else {
-                    defenseRating = this.team[this.d].player[pd].compositeRating.defensePerimeter;
-                }
-                openness[j] = this.bound(openness[j] + 8 * weights[j] * (1 - defenseRating), 0, 1);
-                openness[i] = this.bound(openness[i] - 0.5 * weights[j] * (1 - defenseRating), 0, 1);
-            }
-        }
+        openness = this.updateDefensiveRotations(i, openness.slice(), ticks, noise);
 
         return openness;
     };
@@ -724,7 +697,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * @return {Array.<number>} Updated openness array, as described for the openness input.
      */
     GameSim.prototype.updateOpennessPass = function (passer, passTo, openness, ticks, noise) {
-        var discord, expPts, expPtsDribble, expPtsPass, expPtsShoot, j, order, pd, po, weights, x;
+        var delta, expPts, expPtsDribble, expPtsPass, expPtsShoot, j, order, pd, pd2, po, po2, weights, x;
 
         passer = passer !== undefined ? passer : this.passer;
         passTo = passTo !== undefined ? passTo : this.ballHandler;
@@ -732,7 +705,73 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         ticks = ticks !== undefined ? ticks : this.ticks;
         noise = noise !== undefined ? noise : true;
 
+        po = this.playersOnCourt[this.o][passer];
+        po2 = this.playersOnCourt[this.o][passTo];
+        pd = this.playersOnCourt[this.d][passer];
+        pd2 = this.playersOnCourt[this.d][passTo];
 
+        // Direct effect of passing - the player the ball is passed to becomes less open
+        delta = 0.2;// * (this.team[this.o].player[po].compositeRating.passing - this.team[this.d].player[pd].compositeRating.defensePerimeter);
+        openness[passTo] = this.bound(openness[passTo] - delta, 0, 1);
+
+        // Defense's response to passing - off ball defensive attention shifts to the ball handler
+        openness = this.updateDefensiveRotations(passTo, openness.slice(), ticks, noise);
+
+        return openness;
+    };
+
+    GameSim.prototype.updateDefensiveRotations = function (i, openness, ticks, noise) {
+        var j, k, expPts, helper, helperExpPts, opennessTemp, threat, threatExpPts;
+
+        // Noise
+        if (noise) {
+            for (j = 0; j < 5; j++) {
+                openness[j] = this.bound(openness[j] + random.uniform(-(0.5 * this.noise), 0.5 * this.noise), 0, 1);
+            }
+        }
+
+        // Goal: adjust defense so that max(expPts) is minimized by simulating rotations
+        for (k = 0; k < 2; k++) {  // One rotations
+            // First-order approximation of expPts
+            expPts = [];
+            for (j = 0; j < 5; j++) {
+                if (i === j) {
+                    // Ball handler shoots next tick
+                    expPts[j] = this.expPtsShoot(j, openness.slice(), ticks - 1);
+                } else {
+                    // Pass to player j, shoots in 2 ticks
+                    //opennessTemp = this.updateOpennessPass(i, j, openness.slice(), ticks - 1, false);
+                    opennessTemp = openness.slice();
+                    expPts[j] = this.expPtsShoot(j, opennessTemp.slice(), ticks - 2);
+                }
+            }
+
+            // Highest expPts
+            threat = -1;
+            threatExpPts = -Infinity;
+
+            // Lowest expPts
+            helper = -1;
+            helperExpPts = Infinity;
+
+            for (j = 0; j < 5; j++) {
+                if (expPts[j] > threatExpPts) {
+                    threat = j;
+                    threatExpPts = expPts[j];
+                }
+                if (expPts[j] < helperExpPts) {
+                    helper = j;
+                    helperExpPts = expPts[j];
+                }
+            }
+
+            if (threat === helper) {
+                break;
+            }
+
+            openness[threat] = openness[threat] / 2;
+            openness[helper] = this.bound(openness[helper] + openness[threat], 0, 1);
+        }
 
         return openness;
     };
@@ -801,6 +840,8 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         if (outcome === "missedShot") {
             return this.doReb();  // offReb or defReb
         }
+
+        this.log("<br>");
 
         return outcome;
     };

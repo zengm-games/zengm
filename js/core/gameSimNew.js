@@ -288,7 +288,11 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * So, before calling this function, various things need to be set up, like matchups between offensive and defensive players, positioning of offensive players, who has the ball, etc.
      */
     GameSim.prototype.move = function () {
-        var expPtsDribble, expPtsPass, expPtsShoot, passTo, ratios, shooter, x;
+        var expPtsDribble, expPtsPass, expPtsShoot, i, passTo, ratios, shooter, x;
+
+        for (i = 0; i < 5; i++) {
+            this.log("---- " + this.team[this.o].player[this.playersOnCourt[this.o][i]].name + ": expPtsShoot " +  this.round(this.expPtsShoot(i), 3) + " openness " + this.round(this.openness[i], 3) + "<br>");
+        }
 
 //console.log('Expected points for shooting');
         // Expected points for shooting

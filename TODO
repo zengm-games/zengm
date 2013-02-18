@@ -6,6 +6,7 @@ gameSimNew
     need a better way to debug this
       in game log, visualize expPtShoot and openness for offensive players before each move
       See which weight the person with the ball gets each move. Should be the lowest weight, in which case someone better should get a higher weight each move. If the initial high weight for the first person who gets the ball is too high, then add negative weights for the defense collapsing on the ball handler (the person who dribbles, or the person who is passed to).
+        maybe multiply the openness of the ball handler by a factor after he recieves the ball or makes a move. how to implement elegantly?
   initial location of players based on expPtsShoot
   is there enough heterogeneity in shot locations?
 show record (w-l) on roster view - make it more like a summary, as in basketball-reference

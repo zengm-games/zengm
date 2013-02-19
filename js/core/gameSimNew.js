@@ -42,7 +42,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     function GameSim(gid, team1, team2) {
         this.id = gid;
         this.team = [team1, team2];  // If a team plays twice in a day, this needs to be a deep copy
-        this.numTicks = 4;  // Analogous to the shot clock. A tick happens when any action occurs, like passing the ball or dribbling towards the basket.
+        this.numTicks = 3;  // Analogous to the shot clock. A tick happens when any action occurs, like passing the ball or dribbling towards the basket.
         this.timeRemaining = 48 * 60;  // Length of the game, in seconds.
         this.playByPlay = "";  // String of HTML-formatted play-by-play for this game
 
@@ -336,20 +336,19 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      *
      * @param {number} i An integer between 0 and 4 representing the index of this.playersOnCourt[this.o] for the player of interest. If undefined, then this.ballHandler is used.
      * @param {Array.<number>} openness An array of numbers between 0 and 1 representing how open (0: none, 1: very) each offensive player is (same order as this.playersOnCourt). If undefined, then this.openness is used.
+     * @param {Array.<number>} distances An array of integers representing the distance of each offensive player from the basket (same order as this.playersOnCourt). If undefined, then this.distances is used.
      * @param {number} ticks An integer representing the number of ticks left (similar to shot clock). If undefined, then this.ticks is used.
      * @return {number} Points, from 0 to 4.
      */
-    GameSim.prototype.expPtsShoot = function (i, openness, ticks) {
+    GameSim.prototype.expPtsShoot = function (i, openness, distances, ticks) {
         var expPtsShoot, probFg, twoOrThree;
 
         i = i !== undefined ? i : this.ballHandler;
         openness = openness !== undefined ? openness : this.openness;
+        distances = distances !== undefined ? distances : this.distances;
         ticks = ticks !== undefined ? ticks : this.ticks;
-        if (ticks > 2) {
-            ticks = 3;
-        }
 
-        twoOrThree = this.distances[i] === c.DISTANCE_THREE_POINTER ? 3 : 2;
+        twoOrThree = distances[i] === c.DISTANCE_THREE_POINTER ? 3 : 2;
 
         probFg = this.probFg(i, openness.slice(), ticks);
         expPtsShoot = probFg * twoOrThree + this.probFt(i) * (probFg * this.probAndOne(i) + (1 - probFg) * this.probMissAndFoul(i));
@@ -364,30 +363,32 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      *
      * @param {number} i An integer between 0 and 4 representing the index of this.playersOnCourt[this.o] for the player of interest. If undefined, then this.ballHandler is used.
      * @param {Array.<number>} openness An array of numbers between 0 and 1 representing how open (0: none, 1: very) each offensive player is (same order as this.playersOnCourt). If undefined, then this.openness is used.
+     * @param {Array.<number>} distances An array of integers representing the distance of each offensive player from the basket (same order as this.playersOnCourt). If undefined, then this.distances is used.
      * @param {number} ticks An integer representing the number of ticks left (similar to shot clock). If undefined, then this.ticks is used.
      * @return {number} An object containing "expPtsPass" which is points, from 0 to 4, and "passTo" the index of the player to pass to (like i).
      */
-    GameSim.prototype.expPtsPass = function (i, openness, ticks) {
-        var expPtsPass, expPtsPassTest, j, passTo, probFg, opennesses;
+    GameSim.prototype.expPtsPass = function (i, openness, distances, ticks) {
+        var distanceses, expPtsPass, expPtsPassTest, j, passTo, probFg, opennesses;
 
         i = i !== undefined ? i : this.ballHandler;
         openness = openness !== undefined ? openness : this.openness;
+        distances = distances !== undefined ? distances : this.distances;
         ticks = ticks !== undefined ? ticks : this.ticks;
-        if (ticks > 2) {
-            ticks = 3;
-        }
 
         expPtsPass = 0;
         passTo = -1;  // Index of this.playersOnCourt[this.o], like i
 
-        // Openness for passing to each player
+        // Openness and distance for passing to each player
         opennesses = [];
+        distanceses = [];
         for (j = 0; j < 5; j++) {
             if (i === j) {
                 opennesses[j] = NaN;
             } else {
                 opennesses[j] = this.updateOpennessPass(i, j, openness.slice(), ticks, false);
             }
+
+            distanceses[j] = this.cut([i, j], distances.slice());
         }
 
         if (ticks > 1) { // If ticks is 1, then any move besides a shot will result in 0 points.
@@ -395,7 +396,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             for (j = 0; j < 5; j++) {
                 if (j !== i) {
                     // Pass to j, j shoots
-                    expPtsPassTest = this.expPtsShoot(j, opennesses[j], ticks - 1);
+                    expPtsPassTest = this.expPtsShoot(j, opennesses[j].slice(), distanceses[j].slice(), ticks - 1);
                     if (expPtsPassTest > expPtsPass) {
                         expPtsPass = expPtsPassTest;
                         passTo = j;
@@ -403,14 +404,14 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
                     if (ticks > 2) {
                         // Pass to j, j passes
-                        expPtsPassTest = this.expPtsPass(j, opennesses[j], ticks - 1);
+                        expPtsPassTest = this.expPtsPass(j, opennesses[j].slice(), distanceses[j].slice(), ticks - 1);
                         if (expPtsPassTest > expPtsPass) {
                             expPtsPass = expPtsPassTest;
                             passTo = j;
                         }
 
                         // Pass to j, j dribbles
-                        expPtsPassTest = this.expPtsDribble(j, opennesses[j], ticks - 1);
+                        expPtsPassTest = this.expPtsDribble(j, opennesses[j].slice(), distanceses[j].slice(), ticks - 1);
                         if (expPtsPassTest > expPtsPass) {
                             expPtsPass = expPtsPassTest;
                             passTo = j;
@@ -432,14 +433,16 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      *
      * @param {number} i An integer between 0 and 4 representing the index of this.playersOnCourt[this.o] for the player of interest. If undefined, then this.ballHandler is used.
      * @param {Array.<number>} openness An array of numbers between 0 and 1 representing how open (0: none, 1: very) each offensive player is (same order as this.playersOnCourt). If undefined, then this.openness is used.
+     * @param {Array.<number>} distances An array of integers representing the distance of each offensive player from the basket (same order as this.playersOnCourt). If undefined, then this.distances is used.
      * @param {number} ticks An integer representing the number of ticks left (similar to shot clock). If undefined, then this.ticks is used.
      * @return {number} Points, from 0 to 4.
      */
-    GameSim.prototype.expPtsDribble = function (i, openness, ticks) {
+    GameSim.prototype.expPtsDribble = function (i, openness, distances, ticks) {
         var expPtsDribble, expPtsDribbleTest, pd, po;
 
         i = i !== undefined ? i : this.ballHandler;
         openness = openness !== undefined ? openness : this.openness;
+        distances = distances !== undefined ? distances : this.distances;
         ticks = ticks !== undefined ? ticks : this.ticks;
         if (ticks > 2) {
             ticks = 3;
@@ -448,23 +451,24 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         expPtsDribble = 0;
 
         openness = this.updateOpennessDribble(i, openness.slice(), ticks, false);
+        distances = this.cut([i], distances.slice());
 
         if (ticks > 1) { // If ticks is 1, then any move besides a shot will result in 0 points.
             // Dribble, then shoot
-            expPtsDribbleTest = this.expPtsShoot(i, openness.slice(), ticks - 1);
+            expPtsDribbleTest = this.expPtsShoot(i, openness.slice(), distances.slice(), ticks - 1);
             if (expPtsDribbleTest > expPtsDribble) {
                 expPtsDribble = expPtsDribbleTest;
             }
 
             if (ticks > 2) {
                 // Dribble, then pass
-                expPtsDribbleTest = this.expPtsPass(i, openness.slice(), ticks - 1);
+                expPtsDribbleTest = this.expPtsPass(i, openness.slice(), distances.slice(), ticks - 1);
                 if (expPtsDribbleTest > expPtsDribble) {
                     expPtsDribble = expPtsDribbleTest;
                 }
 
                 // Dribble, then dribble more
-                expPtsDribbleTest = this.expPtsDribble(i, openness.slice(), ticks - 1);
+                expPtsDribbleTest = this.expPtsDribble(i, openness.slice(), distances.slice(), ticks - 1);
                 if (expPtsDribbleTest > expPtsDribble) {
                     expPtsDribble = expPtsDribbleTest;
                 }
@@ -651,7 +655,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         p2 = this.playersOnCourt[this.o][this.ballHandler];
         this.log(this.team[this.o].player[p].name + " passes to " + this.team[this.o].player[p2].name + "<br>");
 
-        this.cut([this.ballHandler, this.passer]);
+        this.distances = this.cut([this.ballHandler, this.passer]);
 
         return "pass";
     };
@@ -666,29 +670,42 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         p = this.playersOnCourt[this.o][this.ballHandler];
         this.log(this.team[this.o].player[p].name + " attacks his man off the dribble<br>");
 
-        this.cut([this.ballHandler]);
+        this.distances = this.cut([this.ballHandler]);
 
         return "dribble";
     };
 
-    GameSim.prototype.cut = function (exclude) {
+    /**
+     * Simulates players cutting off the ball.
+     *
+     * @param {Array.<number>} exclude An array of integers representing indices of playersOnCourt (i.e. from 0 to 4) to exclude from cutting. This currently is either the ball handler if no pass was made, or the ball handler plus the guy who passed to him if a pass was made.
+     * @param {Array.<number>} distances An array of integers representing the distance of each offensive player from the basket (same order as this.playersOnCourt). If undefined, then this.distances is used.
+     * @return {Array.<number>} Updated distances array, as described for the distances input.
+     */
+    GameSim.prototype.cut = function (exclude, distances) {
         var distancesOld, i, toCut;
 
-        distancesOld = this.distances.slice();
+        distances = distances !== undefined ? distances : this.distances;
+
+        distancesOld = distances.slice();
 
         toCut = [];
         for (i = 0; i < 5; i++) {
             if (exclude.indexOf(i) < 0) {
-                toCut.push(this.distances[i]);
+                toCut.push(distances[i]);
             }
         }
-        random.shuffle(toCut);
+
+        // Deterministic cutting - could be made more variable
+        toCut.push(toCut.shift());
 
         for (i = 0; i < 5; i++) {
             if (exclude.indexOf(i) < 0) {
-                this.distances[i] = toCut.shift();
+                distances[i] = toCut.shift();
             }
         }
+
+        return distances;
     };
 
     /**

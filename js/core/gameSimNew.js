@@ -295,8 +295,6 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.move = function () {
         var expPtsDribble, expPtsPass, expPtsShoot, i, passTo, ratios, shooter, x;
 
-        this.cut();
-
         for (i = 0; i < 5; i++) {
             this.log("---- " + this.team[this.o].player[this.playersOnCourt[this.o][i]].name + ": expPtsShoot " +  this.round(this.expPtsShoot(i), 3) + ", openness " + this.round(this.openness[i], 3) + ", distance " + c.DISTANCES[this.distances[i]] + "<br>");
         }
@@ -331,10 +329,6 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         // Dribble
 //console.log("DRIBBLE " + this.ballHandler);
         return this.moveDribble();  // dribble
-    };
-
-    GameSim.prototype.cut = function () {
-        random.shuffle(this.distances);
     };
 
     /**
@@ -613,7 +607,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             this.record_stat(this.d, p, "blk");
             this.log("blocked by " + this.team[this.d].player[p].name + "!<br>");
 
-            p = this.playersOnCourt[this.d][this.ballHandler];
+            p = this.playersOnCourt[this.o][this.ballHandler];
             this.record_stat(this.o, p, "fga");
 
             return this.doReb();  // offReb or defReb
@@ -657,6 +651,8 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         p2 = this.playersOnCourt[this.o][this.ballHandler];
         this.log(this.team[this.o].player[p].name + " passes to " + this.team[this.o].player[p2].name + "<br>");
 
+        this.cut([this.ballHandler, this.passer]);
+
         return "pass";
     };
 
@@ -670,7 +666,29 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         p = this.playersOnCourt[this.o][this.ballHandler];
         this.log(this.team[this.o].player[p].name + " attacks his man off the dribble<br>");
 
+        this.cut([this.ballHandler]);
+
         return "dribble";
+    };
+
+    GameSim.prototype.cut = function (exclude) {
+        var distancesOld, i, toCut;
+
+        distancesOld = this.distances.slice();
+
+        toCut = [];
+        for (i = 0; i < 5; i++) {
+            if (exclude.indexOf(i) < 0) {
+                toCut.push(this.distances[i]);
+            }
+        }
+        random.shuffle(toCut);
+
+        for (i = 0; i < 5; i++) {
+            if (exclude.indexOf(i) < 0) {
+                this.distances[i] = toCut.shift();
+            }
+        }
     };
 
     /**
@@ -739,11 +757,11 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         var j, k, expPts, helper, helperExpPts, opennessTemp, threat, threatExpPts;
 
         // Noise
-/*        if (noise) {
+        if (noise) {
             for (j = 0; j < 5; j++) {
                 openness[j] = this.bound(openness[j] + random.uniform(-(0.5 * this.noise), 0.5 * this.noise), 0, 1);
             }
-        }*/
+        }
 
         // Goal: adjust defense so that max(expPts) is minimized by simulating rotations
         for (k = 0; k < 2; k++) {  // One rotations
@@ -864,7 +882,6 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.doFg = function () {
         var d, p;
 
-//console.log("madeShot " + this.team[this.o].stat.fg / this.team[this.o].stat.fga);
         p = this.playersOnCourt[this.o][this.ballHandler];
         d = this.distances[this.ballHandler];
 

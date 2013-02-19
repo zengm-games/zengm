@@ -1,15 +1,20 @@
 main todo (before public beta)
 ------------------------------
 
+discrepancy between player listed in game log and player recorded in box score for shots
+"view play by play" and "view box score" links should use same abbrev from URL
+clicking a link from the game log makes RAM spike. is it because of the text logs? they need to be stored elsewhere maybe?
 gameSimNew
   rethink this. what should be happening, mechanistically?
     cutting - reorder positions of non-ball-handler randomly. this should happen before each move
       shouldn't be purely random
+      shouldn't be done at this time, as it fucks with expected point estimation
+      should have some probability of a cut to the rim
+    initial positioning of players based on skills, plus randomness
     dribbling should open up the player with the ball, passing shouldn't
     in all cases, the defense responds by addressing the immediate threat (guard the guy with the ball) and the secondary threat (don't let my man score easily). but it's a balance, not one at the exclusion of the other
       ideal: defense knows how expPtsShoot changes as a function of openness and adjusts itself optimally
     dribbling should move ball handler closer to basket, if successful
-    initial positioning of players based on skills
   Overall
     Why doesn't one player shoot every time, and why don't all players shoot equally?
     Fluidity is key. The underlying situation changes.

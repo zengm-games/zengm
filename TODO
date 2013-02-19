@@ -3,10 +3,11 @@ main todo (before public beta)
 
 gameSimNew
   rethink this. what should be happening, mechanistically?
+    cutting - reorder positions of non-ball-handler randomly. this should happen before each move
+      shouldn't be purely random
     dribbling should open up the player with the ball, passing shouldn't
     in all cases, the defense responds by addressing the immediate threat (guard the guy with the ball) and the secondary threat (don't let my man score easily). but it's a balance, not one at the exclusion of the other
       ideal: defense knows how expPtsShoot changes as a function of openness and adjusts itself optimally
-    cutting - reporder positions of non-ball-handler randomly
     dribbling should move ball handler closer to basket, if successful
     initial positioning of players based on skills
   Overall

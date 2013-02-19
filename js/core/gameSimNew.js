@@ -295,6 +295,8 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.move = function () {
         var expPtsDribble, expPtsPass, expPtsShoot, i, passTo, ratios, shooter, x;
 
+        this.cut();
+
         for (i = 0; i < 5; i++) {
             this.log("---- " + this.team[this.o].player[this.playersOnCourt[this.o][i]].name + ": expPtsShoot " +  this.round(this.expPtsShoot(i), 3) + ", openness " + this.round(this.openness[i], 3) + ", distance " + c.DISTANCES[this.distances[i]] + "<br>");
         }
@@ -331,6 +333,10 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         return this.moveDribble();  // dribble
     };
 
+    GameSim.prototype.cut = function () {
+        random.shuffle(this.distances);
+    };
+
     /**
      * Calculates the expected points scored if the given player took a shot right now.
      *
@@ -345,6 +351,9 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         i = i !== undefined ? i : this.ballHandler;
         openness = openness !== undefined ? openness : this.openness;
         ticks = ticks !== undefined ? ticks : this.ticks;
+        if (ticks > 2) {
+            ticks = 3;
+        }
 
         twoOrThree = this.distances[i] === c.DISTANCE_THREE_POINTER ? 3 : 2;
 
@@ -370,6 +379,9 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         i = i !== undefined ? i : this.ballHandler;
         openness = openness !== undefined ? openness : this.openness;
         ticks = ticks !== undefined ? ticks : this.ticks;
+        if (ticks > 2) {
+            ticks = 3;
+        }
 
         expPtsPass = 0;
         passTo = -1;  // Index of this.playersOnCourt[this.o], like i
@@ -435,6 +447,9 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         i = i !== undefined ? i : this.ballHandler;
         openness = openness !== undefined ? openness : this.openness;
         ticks = ticks !== undefined ? ticks : this.ticks;
+        if (ticks > 2) {
+            ticks = 3;
+        }
 
         expPtsDribble = 0;
 
@@ -724,11 +739,11 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         var j, k, expPts, helper, helperExpPts, opennessTemp, threat, threatExpPts;
 
         // Noise
-        if (noise) {
+/*        if (noise) {
             for (j = 0; j < 5; j++) {
                 openness[j] = this.bound(openness[j] + random.uniform(-(0.5 * this.noise), 0.5 * this.noise), 0, 1);
             }
-        }
+        }*/
 
         // Goal: adjust defense so that max(expPts) is minimized by simulating rotations
         for (k = 0; k < 2; k++) {  // One rotations

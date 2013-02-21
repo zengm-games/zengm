@@ -102,7 +102,7 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/se
                 that.cb();
             }
         };
-    }
+    };
 
     Game.prototype.writeTeamStats = function (t) {
         var t2, that;
@@ -437,7 +437,7 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/se
                         p.compositeRating.defenseInterior = _composite(rating, ['hgt', 'stre', 'spd', 'jmp'], [2, 1, 0.5, 0.5]);
                         p.compositeRating.defensePerimeter = _composite(rating, ['hgt', 'stre', 'spd', 'jmp'], [0.5, 1, 2, 0.5]);
 
-                        p.stat = {gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, court_time: 0, bench_time: 0, energy: 1};
+                        p.stat = {gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, courtTime: 0, benchTime: 0, energy: 1};
 
                         t.player.push(p);
                     }

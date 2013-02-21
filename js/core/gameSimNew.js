@@ -944,7 +944,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         var p, ratios;
 
         ratios = this.rating_array("fouls", od);
-        p = this.playersOnCourt[this.d][this.pick_player(ratios)];
+        p = this.playersOnCourt[od][this.pick_player(ratios)];
         this.record_stat(od, p, "pf");
     };
 

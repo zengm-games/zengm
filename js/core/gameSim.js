@@ -121,27 +121,40 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * overtime, just set this.num_possessions to appropriate values.
      */
     GameSim.prototype.simPossessions = function () {
-        var i, ratios, shooter;
+        var i, ratios, outcome, shooter;
 
-        for (this.o = 0; this.o < 2; this.o++) {
+        this.o = 0;
+        this.d = 1;
+
+        i = 0;
+        while (i < this.num_possessions * 2) {
+            // Possession change
+            this.o = (this.o === 1) ? 0 : 1;
             this.d = (this.o === 1) ? 0 : 1;
-            for (i = 0; i < this.num_possessions; i++) {
-                if (i % this.subs_every_n === 0) {
-                    this.update_players_on_court();
-                }
-                if (!this.is_turnover()) {
-                    // Shot if there is no turnover
-                    ratios = this.rating_array("usage", this.o);
-                    shooter = this.pick_player(ratios);
-                    if (!this.is_block()) {
-                        if (!this.is_free_throw(shooter)) {
-                            if (!this.is_made_shot(shooter)) {
-                                this.do_rebound();
+
+            if (i % this.subs_every_n === 0) {
+                this.update_players_on_court();
+            }
+            if (!this.is_turnover()) {
+                // Shot if there is no turnover
+                ratios = this.rating_array("usage", this.o);
+                shooter = this.pick_player(ratios);
+                if (!this.is_block()) {
+                    if (!this.is_free_throw(shooter)) {
+                        if (!this.is_made_shot(shooter)) {
+                            outcome = this.do_rebound();
+
+                            // Swap o and d so that o will get another possession when they are swapped again at the beginning of the loop.
+                            if (outcome === "orb") {
+                                this.o = (this.o === 1) ? 0 : 1;
+                                this.d = (this.o === 1) ? 0 : 1;
                             }
                         }
                     }
                 }
             }
+
+            i += 1;
         }
     };
 
@@ -387,11 +400,15 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             ratios = this.rating_array("rebounds", this.d);
             p = this.players_on_court[this.d][this.pick_player(ratios)];
             this.record_stat(this.d, p, "drb");
-        } else {
-            ratios = this.rating_array("rebounds", this.o);
-            p = this.players_on_court[this.o][this.pick_player(ratios)];
-            this.record_stat(this.o, p, "orb");
+
+            return "drb";
         }
+
+        ratios = this.rating_array("rebounds", this.o);
+        p = this.players_on_court[this.o][this.pick_player(ratios)];
+        this.record_stat(this.o, p, "orb");
+
+        return "orb";
     };
 
 

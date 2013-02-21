@@ -1,27 +1,46 @@
 main todo (before public beta)
 ------------------------------
 
-"view play by play" and "view box score" links should use same abbrev from URL
-clicking a link from the game log makes RAM spike. is it because of the text logs? they need to be stored elsewhere maybe?
-gameSimNew
-  rethink this. what should be happening, mechanistically?
-    cutting - reorder positions of non-ball-handler randomly. this should happen before each move
-      shouldn't be purely random
-      shouldn't be done at this time, as it fucks with expected point estimation
-      should have some probability of a cut to the rim
-      this introduces some error into expPts calculation. two options
-        make moves more arbitrary/hardcoded and less based on raw expPts values
-        do cuts deterministically, somehow, so that expPts* can still be calculated if distances is passed to it
-    initial positioning of players based on skills, plus randomness
-    dribbling should open up the player with the ball, passing shouldn't
-    in all cases, the defense responds by addressing the immediate threat (guard the guy with the ball) and the secondary threat (don't let my man score easily). but it's a balance, not one at the exclusion of the other
-      ideal: defense knows how expPtsShoot changes as a function of openness and adjusts itself optimally
-    dribbling should move ball handler closer to basket, if successful
-  Overall
-    Why doesn't one player shoot every time, and why don't all players shoot equally?
-    Fluidity is key. The underlying situation changes.
-  initial location of players based on expPtsShoot
-  is there enough heterogeneity in shot locations?
+go back to gameSim, but carefully rethink that with synergy in mind
+  what did i remove that gameSim needs?
+    pace
+  make gameSim more mechanistic
+    play by play sequential so turnovers/orebs are meaningful
+  assign "classes" to players based on ratings
+    Post Scoring (Po)
+    Mid Range Shooting (2)
+    Three Point Shooting (3)
+    Dribbling (D)
+    Passing (Ps)
+    Perimeter Defense (Dp)
+    Interior Defense (Di)
+    Quickness (Q)
+    Jumping (J)
+    Rebounding (R)
+  from these classes, come up with a "synergy bonus" on the scale of 0 to 1. Offense, defense, and rebounding:
+    Offensive synergy:
+      2 three point shooters (***)
+      3 three point shooters
+      4 three point shooters
+      3 two or three point shooters
+      4 two or three point shooters
+      1 dribbler (***)
+      2 dribblers
+      1 passer (***)
+      2 passers
+      3 passers
+      1 post scorer
+      3 quickness or jumping
+      4 quickness or jumping
+    Defensive synergy:
+      1 perimeter defender
+      1 interior defender (***)
+      3 quickness or jumping
+      4 quickness or jumping
+    Rebounding synergy:
+      1 rebounder (***)
+      2 rebounders
+    (*** means essential)
 show record (w-l) on roster view - make it more like a summary, as in basketball-reference
 free agents
   let free agents stay for 2 seasons before retiring, or make retirement probabilistic

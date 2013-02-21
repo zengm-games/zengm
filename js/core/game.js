@@ -391,7 +391,7 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/se
                 players = event.target.result;
                 players.sort(function (a, b) {  return a.rosterOrder - b.rosterOrder; });
                 realTid = players[0].tid;
-                t = {id: realTid, defense: 0, won: 0, lost: 0, cid: 0, did: 0, stat: {}, player: []};
+                t = {id: realTid, defense: 0, pace: 0, won: 0, lost: 0, cid: 0, did: 0, stat: {}, player: []};
                 transaction.objectStore("teams").get(realTid).onsuccess = function (event) {
                     var i, j, numPlayers, p, player, rating, team, teamSeason;
 
@@ -420,6 +420,7 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/se
 
                         p.ovr = rating.ovr;
 
+                        p.compositeRating.pace = _composite(rating, ['spd', 'jmp', 'dnk', 'tp', 'stl', 'drb', 'pss']);
                         p.compositeRating.usage = _composite(rating, ['ins', 'dnk', 'fg', 'tp']);
                         p.compositeRating.ballHandling = _composite(rating, ['drb', 'spd']);
                         p.compositeRating.passing = _composite(rating, ['drb', 'pss']);
@@ -441,13 +442,19 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/se
                         t.player.push(p);
                     }
 
-                    // Number of players to factor into defense rating calculation
+                    // Number of players to factor into pace and defense rating calculation
                     numPlayers = t.player.length;
                     if (numPlayers > 7) {
                         numPlayers = 7;
                     }
 
                     // Would be better if these were scaled by average min played and endurancence
+                    t.pace = 0;
+                    for (i = 0; i < numPlayers; i++) {
+                        t.pace += t.player[i].compositeRating.pace;
+                    }
+                    t.pace /= numPlayers;
+                    t.pace = t.pace * 50 + 90;  // Scale between 90 and 140
                     t.defense = 0;
                     for (i = 0; i < numPlayers; i++) {
                         t.defense += t.player[i].compositeRating.defenseInterior + t.player[i].compositeRating.defensePerimeter;

@@ -252,28 +252,28 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         this.record_stat(this.o, p, "fga");
 
         // Pick the type of shot and store the success rate (with no defense) in probMake and the probability of an and one in probAndOne
-        if (this.team[this.o].player[p].compositeRating.shootingThree > 0.4 && Math.random() < (0.25 * this.team[this.o].player[p].compositeRating.shootingThree)) {
+        if (this.team[this.o].player[p].compositeRating.shootingThreePointer > 0.4 && Math.random() < (0.25 * this.team[this.o].player[p].compositeRating.shootingThreePointer)) {
             // Three pointer
             this.record_stat(this.o, p, "tpa");
             type = 3;
-            probMake = this.team[this.o].player[p].compositeRating.shootingThree * 0.81;
+            probMake = this.team[this.o].player[p].compositeRating.shootingThreePointer * 0.81;
             probAndOne = 0.01;
         } else {
-            r1 = Math.random() * this.team[this.o].player[p].compositeRating.shootingTwo;
-            r2 = Math.random() * this.team[this.o].player[p].compositeRating.shootingDunk;
-            r3 = Math.random() * this.team[this.o].player[p].compositeRating.shootingPost;
+            r1 = Math.random() * this.team[this.o].player[p].compositeRating.shootingMidRange;
+            r2 = Math.random() * this.team[this.o].player[p].compositeRating.shootingAtRim;
+            r3 = Math.random() * this.team[this.o].player[p].compositeRating.shootingLowPost;
             if (r1 > r2 && r1 > r3) {
                 // Two point jumper
                 type = 2;
-                probMake = this.team[this.o].player[p].compositeRating.shootingTwo * 0.3 + 0.31;
+                probMake = this.team[this.o].player[p].compositeRating.shootingMidRange * 0.3 + 0.31;
                 probAndOne = 0.05;
             } else if (r2 > r3) {
                 // Dunk, fast break or half court
-                probMake = this.team[this.o].player[p].compositeRating.shootingPost * 0.3 + 0.54;
+                probMake = this.team[this.o].player[p].compositeRating.shootingLowPost * 0.3 + 0.54;
                 probAndOne = 0.2;
             } else {
                 // Post up
-                probMake = this.team[this.o].player[p].compositeRating.shootingPost * 0.3 + 0.39;
+                probMake = this.team[this.o].player[p].compositeRating.shootingLowPost * 0.3 + 0.39;
                 probAndOne = 0.2;
             }
         }
@@ -365,7 +365,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         var p, ratios;
 
         if (this.is_assist()) {
-            ratios = this.rating_array("assists", this.o);
+            ratios = this.rating_array("passing", this.o);
             p = this.players_on_court[this.o][this.pick_player(ratios, shooter)];
             this.record_stat(this.o, p, "ast");
         }

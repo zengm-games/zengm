@@ -250,7 +250,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * @return {number} Probability from 0 to 1.
      */
     GameSim.prototype.probTov = function () {
-        return 0.1 * this.team[this.d].compositeRating.defense / (0.5 * (this.team[this.o].compositeRating.dribbling + this.team[this.o].compositeRating.passing));
+        return 0.15 * this.team[this.d].compositeRating.defense / (0.5 * (this.team[this.o].compositeRating.dribbling + this.team[this.o].compositeRating.passing));
     };
 
     GameSim.prototype.doTov = function () {
@@ -291,11 +291,11 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         p = this.playersOnCourt[this.o][shooter];
 
         // Pick the type of shot and store the success rate (with no defense) in probMake and the probability of an and one in probAndOne
-        if (this.team[this.o].player[p].compositeRating.shootingThreePointer > 0.4 && Math.random() < (0.25 * this.team[this.o].player[p].compositeRating.shootingThreePointer)) {
+        if (this.team[this.o].player[p].compositeRating.shootingThreePointer > 0.4 && Math.random() < (0.35 * this.team[this.o].player[p].compositeRating.shootingThreePointer)) {
             // Three pointer
             type = 3;
             probMissAndFoul = 0.025;
-            probMake = this.team[this.o].player[p].compositeRating.shootingThreePointer * 0.81;
+            probMake = this.team[this.o].player[p].compositeRating.shootingThreePointer * 0.75;
             probAndOne = 0.01;
         } else {
             type = 2;
@@ -304,19 +304,19 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             r3 = Math.random() * this.team[this.o].player[p].compositeRating.shootingLowPost;
             if (r1 > r2 && r1 > r3) {
                 // Two point jumper
-                probMissAndFoul = 0.025;
+                probMissAndFoul = 0.1;
                 probMake = this.team[this.o].player[p].compositeRating.shootingMidRange * 0.3 + 0.31;
                 probAndOne = 0.05;
             } else if (r2 > r3) {
                 // Dunk, fast break or half court
-                probMissAndFoul = 0.2;
+                probMissAndFoul = 0.4;
                 probMake = this.team[this.o].player[p].compositeRating.shootingLowPost * 0.3 + 0.54;
-                probAndOne = 0.2;
+                probAndOne = 0.25;
             } else {
                 // Post up
-                probMissAndFoul = 0.1;
+                probMissAndFoul = 0.35;
                 probMake = this.team[this.o].player[p].compositeRating.shootingLowPost * 0.3 + 0.39;
-                probAndOne = 0.2;
+                probAndOne = 0.15;
             }
         }
 

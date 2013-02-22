@@ -458,7 +458,7 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/se
                         t.pace += t.player[i].compositeRating.pace;
                     }
                     t.pace /= numPlayers;
-                    t.pace = t.pace * 50 + 90;  // Scale between 90 and 140
+                    t.pace = t.pace * 15 + 100;  // Scale between 100 and 115
 
                     // Initialize team composite rating object
                     t.compositeRating = {};

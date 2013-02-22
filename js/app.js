@@ -70,10 +70,12 @@ requirejs(["api", "db", "views", "ui", "util/helpers"], function (api, db, views
             this.get("/l/:lid/negotiation", views.negotiationList);
             this.get("/l/:lid/negotiation/:pid", views.negotiation);
             this.post("/l/:lid/negotiation/:pid", views.negotiation);
-            this.get("/l/:lid/dist_player_stats", views.distPlayerStats);
-            this.get("/l/:lid/dist_player_stats/:season", views.distPlayerStats);
             this.get("/l/:lid/dist_player_ratings", views.distPlayerRatings);
             this.get("/l/:lid/dist_player_ratings/:season", views.distPlayerRatings);
+            this.get("/l/:lid/dist_player_stats", views.distPlayerStats);
+            this.get("/l/:lid/dist_player_stats/:season", views.distPlayerStats);
+            this.get("/l/:lid/dist_team_stats", views.distTeamStats);
+            this.get("/l/:lid/dist_team_stats/:season", views.distTeamStats);
         });
 
         $(document).ready(function () {

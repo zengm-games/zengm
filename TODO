@@ -13,9 +13,7 @@ game simulation realism
     don't round min/max of scale to integers, just let them be whatever they are
     player stats box plots - add NBA data for comparison - show as gray box plot in the background
       http://www.databasebasketball.com/stats_download.htm
-    team stats box plots
-      link from bottom of team stats page, like player ratings
-      add NBA data for comparison - show as gray box plot in the background
+    team stats box plots - add NBA data for comparison - show as gray box plot in the background
         http://www.databasebasketball.com/stats_download.htm
   separate composite ratings for shooting in different places (jumpshot, inside, fast break, three, etc)
     how do i know how many of each are shot? log it in some kind of game summary log

@@ -1758,7 +1758,7 @@ console.log(message);
                 stats = ["gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts"];
 
                 players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings);
-//console.log(players);
+console.log(players);
 
                 statsAll = _.reduce(players, function (memo, player) {
                     var stat;
@@ -1830,6 +1830,89 @@ console.log(message);
         });
     }
 
+    function distTeamStats(req) {
+        beforeLeague(req, function () {
+            var attributes, season, seasonAttributes, seasons, stats;
+
+            season = helpers.validateSeason(req.params.season);
+            seasons = helpers.getSeasons(season);
+
+            attributes = [];
+            stats = ["fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "oppPts"];
+            seasonAttributes = ["won", "lost"];
+            db.getTeams(null, season, attributes, stats, seasonAttributes, {}, function (teams) {
+                var data, statsAll;
+
+                statsAll = _.reduce(teams, function (memo, team) {
+                    var stat;
+                    for (stat in team) {
+                        if (team.hasOwnProperty(stat)) {
+                            if (memo.hasOwnProperty(stat)) {
+                                memo[stat].push(team[stat]);
+                            } else {
+                                memo[stat] = [team[stat]];
+                            }
+                        }
+                    }
+                    return memo;
+                }, {});
+
+                data = {
+                    container: "league_content",
+                    template: "distTeamStats",
+                    title: "Team Stat Distributions - " + season,
+                    vars: {season: season, seasons: seasons}
+                };
+                ui.update(data, function () {
+                    var scale, stat, tbody;
+
+                    tbody = $("#dist_team_stats tbody");
+
+                    // Scales for the box plots. This is not done dynamically so that the plots will be comparable across seasons.
+                    scale = {
+                        won: [0, 82],
+                        lost: [0, 82],
+                        fg: [30, 70],
+                        fga: [60, 140],
+                        fgp: [0, 100],
+                        tp: [0, 15],
+                        tpa: [0, 30],
+                        tpp: [0, 100],
+                        ft: [0, 25],
+                        fta: [0, 25],
+                        ftp: [0, 100],
+                        orb: [0, 30],
+                        drb: [30, 60],
+                        trb: [30, 90],
+                        ast: [20, 40],
+                        tov: [5, 20],
+                        stl: [0, 15],
+                        blk: [0, 15],
+                        pf: [5, 20],
+                        pts: [80, 130],
+                        oppPts: [80, 130]
+                    };
+
+                    for (stat in statsAll) {
+                        if (statsAll.hasOwnProperty(stat)) {
+                            tbody.append('<tr><td style="text-align: right; padding-right: 1em;">' + stat + '</td><td width="100%"><div id="' + stat + 'BoxPlot"></div></td></tr>');
+
+                            boxPlot.create({
+                                data: statsAll[stat],
+                                scale: scale[stat],
+                                container: stat + "BoxPlot"
+                            });
+                        }
+                    }
+
+                    if (req.raw.cb !== undefined) {
+                        req.raw.cb();
+                    }
+                });
+            });
+        });
+    }
+
     /**
      * Display a whole-page error message to the user.
      * 
@@ -1898,6 +1981,7 @@ console.log(message);
         negotiation: negotiation,
         distPlayerRatings: distPlayerRatings,
         distPlayerStats: distPlayerStats,
+        distTeamStats: distTeamStats,
 
         globalError: globalError,
         leagueError: leagueError

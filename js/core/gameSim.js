@@ -49,6 +49,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
         // Starting lineups, which works because players are ordered by their rosterOrder
         this.playersOnCourt = [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]];
+        this.updateTeamCompositeRatings();
 
         this.subsEveryN = 6;  // How many possessions to wait before doing substitutions
 
@@ -101,6 +102,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
         // Delete stuff that isn't needed before returning
         for (t = 0; t < 2; t++) {
+            delete this.team[t].compositeRating;
             delete this.team[t].defense;
             delete this.team[t].pace;
             for (p = 0; p < this.team[t].player.length; p++) {
@@ -198,6 +200,29 @@ define(["util/helpers", "util/random"], function (helpers, random) {
                 }
             }
         }
+
+        this.updateTeamCompositeRatings();
+    };
+
+    GameSim.prototype.updateTeamCompositeRatings = function () {
+        var i, p, rating, t;
+
+        for (t = 0; t < 2; t++) {
+            // Reset team composite ratings
+            for (rating in this.team[t].compositeRating) {
+                if (this.team[t].compositeRating.hasOwnProperty(rating)) {
+                    this.team[t].compositeRating[rating] = 0;
+
+
+                    for (i = 0; i < 5; i++) {
+                        p = this.playersOnCourt[t][i];
+                        this.team[t].compositeRating[rating] += this.team[t].player[p].compositeRating[rating];
+                    }
+
+                    this.team[t].compositeRating[rating] = this.team[t].compositeRating[rating] / 5;
+                }
+            }
+        }
     };
 
     /**
@@ -226,7 +251,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * @return {number} Probability from 0 to 1.
      */
     GameSim.prototype.probTov = function () {
-        return (0.1 + this.team[this.d].defense) * 0.35;
+        return (0.1 + this.team[this.d].defense / 2) * 0.35;
     };
 
     GameSim.prototype.doTov = function () {
@@ -254,7 +279,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.doStl = function () {
         var p, ratios;
 
-        ratios = this.ratingArray("steals", this.d);
+        ratios = this.ratingArray("stealing", this.d);
         p = this.playersOnCourt[this.d][this.pickPlayer(ratios)];
         this.recordStat(this.d, p, "stl");
 
@@ -296,7 +321,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             }
         }
 
-        probMake = probMake - this.team[this.d].defense * 0.5;
+        probMake = probMake - this.team[this.d].defense * 0.25;
 
         if (this.probBlk() > Math.random()) {
             return this.doBlk(shooter);  // orb or drb
@@ -334,13 +359,13 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.probBlk = function () {
         var p;
 
-        return (0.02 + this.team[this.d].defense) * 0.35;
+        return (0.02 + this.team[this.d].defense) * 0.15;
     };
 
     GameSim.prototype.doBlk = function (shooter) {
         var p, ratios;
 
-        ratios = this.ratingArray("blocks", this.d);
+        ratios = this.ratingArray("blocking", this.d);
         p = this.playersOnCourt[this.d][this.pickPlayer(ratios)];
         this.recordStat(this.d, p, "blk");
 
@@ -411,7 +436,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.doPf = function (od) {
         var p, ratios;
 
-        ratios = this.ratingArray("fouls", od);
+        ratios = this.ratingArray("fouling", od);
         p = this.playersOnCourt[od][this.pickPlayer(ratios)];
         this.recordStat(this.d, p, "pf");
         // Foul out
@@ -422,14 +447,14 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         var p, ratios;
 
         if (Math.random() < 0.8) {
-            ratios = this.ratingArray("rebounds", this.d);
+            ratios = this.ratingArray("rebounding", this.d);
             p = this.playersOnCourt[this.d][this.pickPlayer(ratios)];
             this.recordStat(this.d, p, "drb");
 
             return "drb";
         }
 
-        ratios = this.ratingArray("rebounds", this.o);
+        ratios = this.ratingArray("rebounding", this.o);
         p = this.playersOnCourt[this.o][this.pickPlayer(ratios)];
         this.recordStat(this.o, p, "orb");
 

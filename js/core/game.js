@@ -363,7 +363,7 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/se
 
             r = r + rcomp;
         }
-        
+
         r = r / (100.0 * components.length);  // Scale from 0 to 1
         r = Math.pow(r, power);
 
@@ -422,20 +422,20 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/se
 
                         p.compositeRating.pace = _composite(rating, ['spd', 'jmp', 'dnk', 'tp', 'stl', 'drb', 'pss']);
                         p.compositeRating.usage = _composite(rating, ['ins', 'dnk', 'fg', 'tp']);
-                        p.compositeRating.ballHandling = _composite(rating, ['drb', 'spd']);
                         p.compositeRating.passing = _composite(rating, ['drb', 'pss']);
-                        p.compositeRating.turnovers = _composite(rating, ['drb', 'pss', 'spd'], undefined, -1);
+                        p.compositeRating.turnovers = _composite(rating, ['drb', 'pss', 'spd', 'hgt', 'ins'], [1, 1, -1, 1, 1]);  // This should not influence whether a turnover occurs, it should just be used to assign players
                         p.compositeRating.shootingLowPost = _composite(rating, ['hgt', 'stre', 'spd', 'ins'], [1, 0.6, 0.2, 1]);  // Post scoring
                         p.compositeRating.shootingAtRim = _composite(rating, ['hgt', 'spd', 'jmp', 'dnk'], [1, 0.2, 0.6, 0.4]);  // Dunk or layup, fast break or half court
                         p.compositeRating.shootingMidRange = _composite(rating, ['hgt', 'fg'], [0.2, 1]);  // Two point jump shot
                         p.compositeRating.shootingThreePointer = _composite(rating, ['hgt', 'tp'], [0.2, 1]);  // Three point jump shot
                         p.compositeRating.shootingFT = _composite(rating, ['ft']);  // Free throw
-                        p.compositeRating.rebounds = _composite(rating, ['hgt', 'stre', 'jmp', 'reb'], [1, 0.1, 0.1, 0.2]);
-                        p.compositeRating.steals = _composite(rating, ['spd', 'stl']);
-                        p.compositeRating.blocks = _composite(rating, ['hgt', 'jmp', 'blk']);
-                        p.compositeRating.fouls = _composite(rating, ['spd'], undefined, -1);
-                        p.compositeRating.defenseInterior = _composite(rating, ['hgt', 'stre', 'spd', 'jmp'], [2, 1, 0.5, 0.5]);
-                        p.compositeRating.defensePerimeter = _composite(rating, ['hgt', 'stre', 'spd', 'jmp'], [0.5, 1, 2, 0.5]);
+                        p.compositeRating.rebounding = _composite(rating, ['hgt', 'stre', 'jmp', 'reb'], [1, 0.1, 0.1, 0.2]);
+                        p.compositeRating.stealing = _composite(rating, ['spd', 'stl']);
+                        p.compositeRating.blocking = _composite(rating, ['hgt', 'jmp', 'blk']);
+                        p.compositeRating.fouling = _composite(rating, ['hgt', 'blk', 'spd'], [1, 1, -2]);
+                        p.compositeRating.defense = _composite(rating, ['hgt', 'stre', 'spd', 'jmp', 'blk', 'stl'], [1, 1, 1, 0.5, 1, 1]);
+                        p.compositeRating.defenseInterior = _composite(rating, ['hgt', 'stre', 'spd', 'jmp', 'blk'], [2, 1, 0.5, 0.5, 1]);
+                        p.compositeRating.defensePerimeter = _composite(rating, ['hgt', 'stre', 'spd', 'jmp', 'stl'], [1, 1, 2, 0.5, 1]);
 
                         p.stat = {gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, courtTime: 0, benchTime: 0, energy: 1};
 
@@ -459,8 +459,7 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/se
                     for (i = 0; i < numPlayers; i++) {
                         t.defense += t.player[i].compositeRating.defenseInterior + t.player[i].compositeRating.defensePerimeter;
                     }
-                    t.defense /= numPlayers;
-                    t.defense /= 4;  // This gives the percentage pts subtracted from the other team's normal FG%
+                    t.defense = t.defense / (2 * numPlayers);
 
                     t.stat = {min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0};
                     teams.push(t);

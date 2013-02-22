@@ -1,43 +1,7 @@
 main todo (before public beta)
 ------------------------------
 
-go back to gameSim, but carefully rethink that with synergy in mind
-  assign "classes" to players based on ratings
-    Post Scoring (Po)
-    Mid Range Shooting (2)
-    Three Point Shooting (3)
-    Dribbling (D)
-    Passing (Ps)
-    Perimeter Defense (Dp)
-    Interior Defense (Di)
-    Quickness (Q)
-    Jumping (J)
-    Rebounding (R)
-  from these classes, come up with a "synergy bonus" on the scale of 0 to 1. Offense, defense, and rebounding:
-    Offensive synergy:
-      2 three point shooters (***)
-      3 three point shooters
-      4 three point shooters
-      3 two or three point shooters
-      4 two or three point shooters
-      1 dribbler (***)
-      2 dribblers
-      1 passer (***)
-      2 passers
-      3 passers
-      1 post scorer
-      3 quickness or jumping
-      4 quickness or jumping
-    Defensive synergy:
-      1 perimeter defender
-      1 interior defender (***)
-      3 quickness or jumping
-      4 quickness or jumping
-    Rebounding synergy:
-      1 rebounder (***)
-      2 rebounders
-    (*** means essential)
-show record (w-l) on roster view - make it more like a summary, as in basketball-reference
+w - make it more like a summary, as in basketball-reference
 free agents
   let free agents stay for 2 seasons before retiring, or make retirement probabilistic
     is retirement working for the first season, at all?
@@ -75,6 +39,66 @@ game simulation realism
         bad shooters should get more shots than they do now, e.g. noah
       smalls should have lower FG%, even with more shots
     if i make some fundamental change, i need to account for it in randomly generated players
+  more ratings influence on gameSim
+    in general.. need a quick function to add up the composite ratings of players on the floor in
+      maybe should be called when subs are made and have values cached? this.team[t].compositeRating
+    probTov composite rating
+      increase: team perimeter defense composite rating
+      decrease: team ball handling and passing composite ratings
+    doTov
+      turnovers should be made mainly by ball handlers and inside scorers
+    probStl
+      increase: team perimeter defense composite rating
+      decrease: team ball handling and passing composite ratings
+    probBlk
+      increase: team blocks composite rating, team defense (perimeter and interior) composite rating
+    doFg
+      assist
+        make this more biased towards "PG"
+        this should somehow result in higher FG% for assisted shots. not sure how
+    doReb
+      balance ord/drb odds based on team rebounding ratings
+    doShot
+      ???
+  rename compositeRating to compositeRatings (or something better)
+    other plural issues
+  synergy
+    assign "classes" to players based on ratings
+      Post Scoring (Po)
+      Mid Range Shooting (2)
+      Three Point Shooting (3)
+      Dribbling (D)
+      Passing (Ps)
+      Perimeter Defense (Dp)
+      Interior Defense (Di)
+      Quickness (Q)
+      Jumping (J)
+      Rebounding (R)
+    from these classes, come up with a "synergy bonus" on the scale of 0 to 1. Offense, defense, and rebounding:
+      Offensive synergy:
+        2 three point shooters (***)
+        3 three point shooters
+        4 three point shooters
+        3 two or three point shooters
+        4 two or three point shooters
+        1 dribbler (***)
+        2 dribblers
+        1 passer (***)
+        2 passers
+        3 passers
+        1 post scorer
+        3 quickness or jumping
+        4 quickness or jumping
+      Defensive synergy:
+        1 perimeter defender
+        1 interior defender (***)
+        3 quickness or jumping
+        4 quickness or jumping
+      Rebounding synergy:
+        1 rebounder (***)
+        2 rebounders
+      (*** means essential)
+  show record (w-l) on roster vie
   pgs should get more assists - increase prob for the "PG" (best ball handler and passer) on the floor
   more and better 3 point shooters
   smalls should get less blocks

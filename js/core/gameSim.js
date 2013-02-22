@@ -103,7 +103,6 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         // Delete stuff that isn't needed before returning
         for (t = 0; t < 2; t++) {
             delete this.team[t].compositeRating;
-            delete this.team[t].defense;
             delete this.team[t].pace;
             for (p = 0; p < this.team[t].player.length; p++) {
                 delete this.team[t].player[p].ovr;
@@ -251,7 +250,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * @return {number} Probability from 0 to 1.
      */
     GameSim.prototype.probTov = function () {
-        return (0.1 + this.team[this.d].defense / 2) * 0.35;
+        return (0.1 + this.team[this.d].compositeRating.defense / 2) * 0.35;
     };
 
     GameSim.prototype.doTov = function () {
@@ -321,7 +320,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             }
         }
 
-        probMake = probMake - this.team[this.d].defense * 0.25;
+        probMake = probMake - this.team[this.d].compositeRating.defense * 0.25;
 
         if (this.probBlk() > Math.random()) {
             return this.doBlk(shooter);  // orb or drb
@@ -359,7 +358,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.probBlk = function () {
         var p;
 
-        return (0.02 + this.team[this.d].defense) * 0.15;
+        return (0.02 + this.team[this.d].compositeRating.defense) * 0.15;
     };
 
     GameSim.prototype.doBlk = function (shooter) {

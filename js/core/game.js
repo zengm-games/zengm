@@ -455,11 +455,14 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/se
                     }
                     t.pace /= numPlayers;
                     t.pace = t.pace * 50 + 90;  // Scale between 90 and 140
-                    t.defense = 0;
-                    for (i = 0; i < numPlayers; i++) {
-                        t.defense += t.player[i].compositeRating.defenseInterior + t.player[i].compositeRating.defensePerimeter;
+
+                    // Initialize team composite rating object
+                    t.compositeRating = {};
+                    for (rating in p.compositeRating) {
+                        if (p.compositeRating.hasOwnProperty(rating)) {
+                            t.compositeRating[rating] = 0;
+                        }
                     }
-                    t.defense = t.defense / (2 * numPlayers);
 
                     t.stat = {min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0};
                     teams.push(t);

@@ -215,7 +215,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
                     for (i = 0; i < 5; i++) {
                         p = this.playersOnCourt[t][i];
-                        this.team[t].compositeRating[rating] += this.team[t].player[p].compositeRating[rating];
+                        this.team[t].compositeRating[rating] += this.team[t].player[p].compositeRating[rating] * this.fatigue(this.team[t].player[p].stat.energy);
                     }
 
                     this.team[t].compositeRating[rating] = this.team[t].compositeRating[rating] / 5;
@@ -466,7 +466,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         array = [0, 0, 0, 0, 0];
         for (i = 0; i < 5; i++) {
             p = this.playersOnCourt[t][i];
-            array[i] = this.team[t].player[p].compositeRating[rating];
+            array[i] = this.team[t].player[p].compositeRating[rating] * this.fatigue(this.team[t].player[p].stat.energy);
         }
 
         return array;

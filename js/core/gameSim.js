@@ -141,6 +141,9 @@ define(["util/helpers", "util/random"], function (helpers, random) {
                 this.d = (this.o === 1) ? 0 : 1;
             }
 
+            this.updatePlayingTime();
+            this.updateTeamCompositeRatings();
+
             i += 1;
         }
     };
@@ -151,9 +154,6 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      */
     GameSim.prototype.updatePlayersOnCourt = function () {
         var b, dt, i, ovrs, p, pp, t;
-
-        // Time elapsed
-        dt = (this.overtimes > 0 ? 5 : 48) / (2 * this.numPossessions) * this.subsEveryN;
 
         for (t = 0; t < 2; t++) {
             // Overall ratings scaled by fatigue
@@ -180,27 +180,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
                 }
                 i += 1;
             }
-
-            // Update minutes (ovr, court, and bench)
-            for (p = 0; p < this.team[t].player.length; p++) {
-                if (this.playersOnCourt[t].indexOf(p) >= 0) {
-                    this.recordStat(t, p, "min", dt);
-                    this.recordStat(t, p, "courtTime", dt);
-                    this.recordStat(t, p, "energy", -dt * 0.04 * (1 - this.team[t].player[p].compositeRating.endurance));
-                    if (this.team[t].player[p].stat.energy < 0) {
-                        this.team[t].player[p].stat.energy = 0;
-                    }
-                } else {
-                    this.recordStat(t, p, "benchTime", dt);
-                    this.recordStat(t, p, "energy", dt * 0.1);
-                    if (this.team[t].player[p].stat.energy > 1) {
-                        this.team[t].player[p].stat.energy = 1;
-                    }
-                }
-            }
         }
-
-        this.updateTeamCompositeRatings();
     };
 
     GameSim.prototype.updateTeamCompositeRatings = function () {
@@ -219,6 +199,34 @@ define(["util/helpers", "util/random"], function (helpers, random) {
                     }
 
                     this.team[t].compositeRating[rating] = this.team[t].compositeRating[rating] / 5;
+                }
+            }
+        }
+    };
+
+    // Call at end of every posession
+    GameSim.prototype.updatePlayingTime = function () {
+        var dt, p, t;
+
+        // Time elapsed
+        dt = (this.overtimes > 0 ? 5 : 48) / (2 * this.numPossessions);
+
+        for (t = 0; t < 2; t++) {
+            // Update minutes (ovr, court, and bench)
+            for (p = 0; p < this.team[t].player.length; p++) {
+                if (this.playersOnCourt[t].indexOf(p) >= 0) {
+                    this.recordStat(t, p, "min", dt);
+                    this.recordStat(t, p, "courtTime", dt);
+                    this.recordStat(t, p, "energy", -dt * 0.04 * (1 - this.team[t].player[p].compositeRating.endurance));
+                    if (this.team[t].player[p].stat.energy < 0) {
+                        this.team[t].player[p].stat.energy = 0;
+                    }
+                } else {
+                    this.recordStat(t, p, "benchTime", dt);
+                    this.recordStat(t, p, "energy", dt * 0.1);
+                    if (this.team[t].player[p].stat.energy > 1) {
+                        this.team[t].player[p].stat.energy = 1;
+                    }
                 }
             }
         }

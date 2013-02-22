@@ -340,7 +340,7 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/se
      * @return {number} Composite rating, a number between 0 and 1.
      */
     function _composite(rating, components, weights, power) {
-        var add, component, i, r, rcomp, rmax, sign, y;
+        var add, component, divideBy, i, r, rcomp, rmax, sign, y;
 
         power = power !== undefined ? power : 1;
         if (weights === undefined) {
@@ -353,6 +353,7 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/se
 
         r = 0;
         rmax = 0;
+        divideBy = 0;
         for (i = 0; i < components.length; i++) {
             component = components[i];
             // Sigmoidal transformation
@@ -362,9 +363,11 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/se
             rcomp = weights[i] * rating[component];
 
             r = r + rcomp;
+
+            divideBy = divideBy + 100 * weights[i];
         }
 
-        r = r / (100.0 * components.length);  // Scale from 0 to 1
+        r = r / divideBy;  // Scale from 0 to 1
         r = Math.pow(r, power);
 
         return r;
@@ -422,6 +425,7 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/se
 
                         p.compositeRating.pace = _composite(rating, ['spd', 'jmp', 'dnk', 'tp', 'stl', 'drb', 'pss']);
                         p.compositeRating.usage = _composite(rating, ['ins', 'dnk', 'fg', 'tp']);
+                        p.compositeRating.dribbling = _composite(rating, ['drb', 'spd']);
                         p.compositeRating.passing = _composite(rating, ['drb', 'pss']);
                         p.compositeRating.turnovers = _composite(rating, ['drb', 'pss', 'spd', 'hgt', 'ins'], [1, 1, -1, 1, 1]);  // This should not influence whether a turnover occurs, it should just be used to assign players
                         p.compositeRating.shootingLowPost = _composite(rating, ['hgt', 'stre', 'spd', 'ins'], [1, 0.6, 0.2, 1]);  // Post scoring
@@ -432,7 +436,7 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/se
                         p.compositeRating.rebounding = _composite(rating, ['hgt', 'stre', 'jmp', 'reb'], [1, 0.1, 0.1, 0.2]);
                         p.compositeRating.stealing = _composite(rating, ['spd', 'stl']);
                         p.compositeRating.blocking = _composite(rating, ['hgt', 'jmp', 'blk']);
-                        p.compositeRating.fouling = _composite(rating, ['hgt', 'blk', 'spd'], [1, 1, -2]);
+                        p.compositeRating.fouling = _composite(rating, ['hgt', 'blk', 'spd'], [1, 1, -1]);
                         p.compositeRating.defense = _composite(rating, ['hgt', 'stre', 'spd', 'jmp', 'blk', 'stl'], [1, 1, 1, 0.5, 1, 1]);
                         p.compositeRating.defenseInterior = _composite(rating, ['hgt', 'stre', 'spd', 'jmp', 'blk'], [2, 1, 0.5, 0.5, 1]);
                         p.compositeRating.defensePerimeter = _composite(rating, ['hgt', 'stre', 'spd', 'jmp', 'stl'], [1, 1, 2, 0.5, 1]);

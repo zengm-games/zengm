@@ -250,7 +250,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * @return {number} Probability from 0 to 1.
      */
     GameSim.prototype.probTov = function () {
-        return (0.1 + this.team[this.d].compositeRating.defense / 2) * 0.35;
+        return 0.1 * this.team[this.d].compositeRating.defense / (0.5 * (this.team[this.o].compositeRating.dribbling + this.team[this.o].compositeRating.passing));
     };
 
     GameSim.prototype.doTov = function () {
@@ -272,7 +272,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * @return {number} Probability from 0 to 1.
      */
     GameSim.prototype.probStl = function () {
-        return 0.55;
+        return 0.55 * this.team[this.d].compositeRating.defensePerimeter / (0.5 * (this.team[this.o].compositeRating.dribbling + this.team[this.o].compositeRating.passing));
     };
 
     GameSim.prototype.doStl = function () {
@@ -358,7 +358,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.probBlk = function () {
         var p;
 
-        return (0.02 + this.team[this.d].compositeRating.defense) * 0.15;
+        return 0.1 * this.team[this.d].compositeRating.blocking;
     };
 
     GameSim.prototype.doBlk = function (shooter) {
@@ -445,7 +445,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.doReb = function () {
         var p, ratios;
 
-        if (Math.random() < 0.8) {
+        if (0.8 * this.team[this.d].compositeRating.rebounding / this.team[this.o].compositeRating.rebounding > Math.random()) {
             ratios = this.ratingArray("rebounding", this.d);
             p = this.playersOnCourt[this.d][this.pickPlayer(ratios)];
             this.recordStat(this.d, p, "drb");

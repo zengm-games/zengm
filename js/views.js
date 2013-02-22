@@ -1841,7 +1841,7 @@ console.log(players);
             stats = ["fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "oppPts"];
             seasonAttributes = ["won", "lost"];
             db.getTeams(null, season, attributes, stats, seasonAttributes, {}, function (teams) {
-                var data, statsAll;
+                var data, nbaStatsAll, statsAll;
 
                 statsAll = _.reduce(teams, function (memo, team) {
                     var stat;
@@ -1856,6 +1856,10 @@ console.log(players);
                     }
                     return memo;
                 }, {});
+
+                nbaStatsAll = {
+                    fg: [38.4, 38.3, 38.7, 39.3, 37.4, 38.4, 39.6, 37, 38.1, 37.7, 37.4, 39, 36.6, 37.4, 38.2, 36, 38.3, 38.1, 36.8, 37.1, 37.2, 37.3, 36.9, 36, 35.2, 36.2, 35.9, 35.6, 35, 34.3]
+                };
 
                 data = {
                     container: "league_content",
@@ -1902,6 +1906,18 @@ console.log(players);
                                 scale: scale[stat],
                                 container: stat + "BoxPlot"
                             });
+
+                            if (nbaStatsAll.hasOwnProperty(stat)) {
+                                tbody.append('<tr><td></td><td width="100%"><div id="' + stat + 'BoxPlotNba" style="margin-top: -26px"></div></td></tr>');
+console.log('hi')
+                                boxPlot.create({
+                                    data: nbaStatsAll[stat],
+                                    scale: scale[stat],
+                                    container: stat + "BoxPlotNba",
+                                    color: "#0088cc",
+                                    labels: false
+                                });
+                            }
                         }
                     }
 

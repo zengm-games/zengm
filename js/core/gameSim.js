@@ -258,7 +258,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * @return {number} Probability from 0 to 1.
      */
     GameSim.prototype.probTov = function () {
-        return 0.15 * this.team[this.d].compositeRating.defense / (0.5 * (this.team[this.o].compositeRating.dribbling + this.team[this.o].compositeRating.passing));
+        return 0.15 * (1 + this.team[this.d].compositeRating.defense) / (1 + 0.5 * (this.team[this.o].compositeRating.dribbling + this.team[this.o].compositeRating.passing));
     };
 
     GameSim.prototype.doTov = function () {
@@ -294,9 +294,11 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     };
 
     GameSim.prototype.doShot = function (shooter) {
-        var p, probMake, probAndOne, probMissAndFoul, r1, r2, r3, type;
+        var fatigue, p, probMake, probAndOne, probMissAndFoul, r1, r2, r3, type;
 
         p = this.playersOnCourt[this.o][shooter];
+
+        fatigue = this.fatigue(this.team[this.o].player[p].stat.energy);
 
         // Pick the type of shot and store the success rate (with no defense) in probMake and the probability of an and one in probAndOne
         if (this.team[this.o].player[p].compositeRating.shootingThreePointer > 0.4 && Math.random() < (0.35 * this.team[this.o].player[p].compositeRating.shootingThreePointer)) {
@@ -328,7 +330,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             }
         }
 
-        probMake = probMake - this.team[this.d].compositeRating.defense * 0.25;
+        probMake = (probMake - this.team[this.d].compositeRating.defense * 0.25) * fatigue;
 
         if (this.probBlk() > Math.random()) {
             return this.doBlk(shooter);  // orb or drb
@@ -453,7 +455,12 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.doReb = function () {
         var p, ratios;
 
-        if (0.8 * (1 + this.team[this.d].compositeRating.rebounding) / (1 + this.team[this.o].compositeRating.rebounding) > Math.random()) {
+        // Shot goes out of bounds or something, no rebound
+        if (0.15 > Math.random()) {
+            return null;
+        }
+
+        if (0.8 * (2 + this.team[this.d].compositeRating.rebounding) / (2 + this.team[this.o].compositeRating.rebounding) > Math.random()) {
             ratios = this.ratingArray("rebounding", this.d);
             p = this.playersOnCourt[this.d][this.pickPlayer(ratios)];
             this.recordStat(this.d, p, "drb");
@@ -529,8 +536,8 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     /**
      * Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.
      * 
-     * @param {number} energy A player's energy level, from 0 to 1.
-     * @return {number} Fatigue, from 0 to 1.
+     * @param {number} energy A player's energy level, from 0 to 1 (0 = lots of energy, 1 = none).
+     * @return {number} Fatigue, from 0 to 1 (0 = lots of fatigue, 1 = none).
      */
     GameSim.prototype.fatigue = function (energy) {
         energy += 0.05;

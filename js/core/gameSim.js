@@ -158,8 +158,8 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         for (t = 0; t < 2; t++) {
             // Overall ratings scaled by fatigue
             ovrs = [];
-            for (i = 0; i < this.team[t].player.length; i++) {
-                ovrs.push(this.team[t].player[i].ovr * this.team[t].player[i].stat.energy * random.gauss(1, 0.04));
+            for (p = 0; p < this.team[t].player.length; p++) {
+                ovrs.push(this.team[t].player[p].ovr * this.fatigue(this.team[t].player[p].stat.energy) * random.uniform(0.9, 1.1));
             }
 
             // Loop through players on court (in inverse order of current roster position)
@@ -186,13 +186,13 @@ define(["util/helpers", "util/random"], function (helpers, random) {
                 if (this.playersOnCourt[t].indexOf(p) >= 0) {
                     this.recordStat(t, p, "min", dt);
                     this.recordStat(t, p, "courtTime", dt);
-                    this.recordStat(t, p, "energy", -dt * 0.01);
+                    this.recordStat(t, p, "energy", -dt * 0.04 * (1 - this.team[t].player[p].compositeRating.endurance));
                     if (this.team[t].player[p].stat.energy < 0) {
                         this.team[t].player[p].stat.energy = 0;
                     }
                 } else {
                     this.recordStat(t, p, "benchTime", dt);
-                    this.recordStat(t, p, "energy", dt * 0.2);
+                    this.recordStat(t, p, "energy", dt * 0.1);
                     if (this.team[t].player[p].stat.energy > 1) {
                         this.team[t].player[p].stat.energy = 1;
                     }
@@ -445,7 +445,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.doReb = function () {
         var p, ratios;
 
-        if (0.8 * this.team[this.d].compositeRating.rebounding / this.team[this.o].compositeRating.rebounding > Math.random()) {
+        if (0.8 * (1 + this.team[this.d].compositeRating.rebounding) / (1 + this.team[this.o].compositeRating.rebounding) > Math.random()) {
             ratios = this.ratingArray("rebounding", this.d);
             p = this.playersOnCourt[this.d][this.pickPlayer(ratios)];
             this.recordStat(this.d, p, "drb");
@@ -516,6 +516,21 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         if (s !== "gs" && s !== "courtTime" && s !== "benchTime" && s !== "energy") {
             this.team[t].stat[s] = this.team[t].stat[s] + amount;
         }
+    };
+
+    /**
+     * Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.
+     * 
+     * @param {number} energy A player's energy level, from 0 to 1.
+     * @return {number} Fatigue, from 0 to 1.
+     */
+    GameSim.prototype.fatigue = function (energy) {
+        energy += 0.05;
+        if (energy > 1) {
+            energy = 1;
+        }
+
+        return energy;
     };
 
     return {

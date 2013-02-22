@@ -1,32 +1,15 @@
 main todo (before public beta)
 ------------------------------
 
-w - make it more like a summary, as in basketball-reference
-free agents
-  let free agents stay for 2 seasons before retiring, or make retirement probabilistic
-    is retirement working for the first season, at all?
-  on new game, have enough free agents so the pool isn't totally depleted
 game simulation realism
-  playing time not adding up to 240?
   fatigue
+  playing time not adding up to 240?
   make pages that show stats and ratings as medians/quintiles, for a given season. this will help see how they evolve over time, respond to tweaking, etc.
     don't round min/max of scale to integers, just let them be whatever they are
     player stats box plots - add NBA data for comparison http://www.databasebasketball.com/stats_download.htm
   separate composite ratings for shooting in different places (jumpshot, inside, fast break, three, etc)
     how do i know how many of each are shot? log it in some kind of game summary log
     better shots (dunks/layups) should occur when created by other factors (defense, passing, etc)
-    model behavior in the presence of a shot clock. any player can shoot at any time, but he (typically) only does so when the expected value of him shooting is greater than the expected value of trying to get something better before the shot clock runs out. various ratings determine how open a player is and what kind of shot he has the opportunity to take.
-      player who starts with the ball is based on ball handling and/or passing
-      match up defenders with offensive players, 1 for 1
-      the player with the ball starts beyond the 3 point line. options are to shoot a contested 3, attack of the dribble, or pass. take action based somehow on expected value, factoring in defense as well
-      attack off the dribble and pass both include risk of turnover
-      if pass, pick player randomly based on ability. then, determine how open that player is based on team characteristics (number of shooters, etc; synergy!) and prior action that possession (at this point, basically just if someone attacked off the dribble previously) and determine their location based on player characteristics (3, midrange, post, basket)
-      then again: options are to shoot, dribble, or pass. repeat as above. but each time, have some bonus added to the "shoot" option due to the shot clock
-    other factors to include:
-      double teams
-      pick and roll
-      pick and pop
-      fast breaks
   height should matter a lot more - reevaluate aver redoing possession simulation as described above
     e.g.
       bigs should get more boards
@@ -43,6 +26,7 @@ game simulation realism
         this should somehow result in higher FG% for assisted shots. not sure how
     doShot
       ???
+      check distribution of shot locations
   rename compositeRating to compositeRatings (or something better)
     other plural issues
   synergy
@@ -82,13 +66,19 @@ game simulation realism
         1 rebounder (***)
         2 rebounders
       (*** means essential)
-  show record (w-l) on roster vie
   pgs should get more assists - increase prob for the "PG" (best ball handler and passer) on the floor
   more and better 3 point shooters
   smalls should get less blocks
   compare team and player stat distributions against reality
   home/away advantage
 contract negotiation - make increased demands more lenient
+show record (w-l) on roster view - make it more like a summary, as in basketball-reference
+  playoff results
+  payroll
+free agents
+  let free agents stay for 2 seasons before retiring, or make retirement probabilistic
+    is retirement working for the first season, at all?
+  on new game, have enough free agents so the pool isn't totally depleted
 put on play.basketball-gm.com, with splash page on basketball-gm.com
 free agent balance.. maybe increase salary cap?
 low ovr, high pot draft picks should develop better.

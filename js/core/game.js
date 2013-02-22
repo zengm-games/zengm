@@ -368,7 +368,13 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/se
         }
 
         r = r / divideBy;  // Scale from 0 to 1
-        r = Math.pow(r, power);
+        if (r > 1) {
+            r = 1;
+        } else if (r < 0) {
+            r = 0;
+        } else if (power !== 1) {
+            r = Math.pow(r, power);
+        }
 
         return r;
     }
@@ -440,6 +446,7 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/se
                         p.compositeRating.defense = _composite(rating, ['hgt', 'stre', 'spd', 'jmp', 'blk', 'stl'], [1, 1, 1, 0.5, 1, 1]);
                         p.compositeRating.defenseInterior = _composite(rating, ['hgt', 'stre', 'spd', 'jmp', 'blk'], [2, 1, 0.5, 0.5, 1]);
                         p.compositeRating.defensePerimeter = _composite(rating, ['hgt', 'stre', 'spd', 'jmp', 'stl'], [1, 1, 2, 0.5, 1]);
+                        p.compositeRating.endurance = _composite(rating, ['endu', 'hgt'], [1, -0.1]);
 
                         p.stat = {gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, courtTime: 0, benchTime: 0, energy: 1};
 
@@ -497,16 +504,16 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/se
         cbNoGames = function () {
             ui.updateStatus('Idle');
             db.setGameAttributes({gamesInProgress: false}, function () {
-               ui.updatePlayMenu(null, function () {
-                   // Check to see if the season is over
-                   if (g.phase < c.PHASE_PLAYOFFS) {
-                       season.getSchedule(null, 0, function (schedule) {
-                           if (schedule.length === 0) {
-                               season.newPhase(c.PHASE_PLAYOFFS);
-                           }
-                       });
-                   }
-               });
+                ui.updatePlayMenu(null, function () {
+                    // Check to see if the season is over
+                    if (g.phase < c.PHASE_PLAYOFFS) {
+                        season.getSchedule(null, 0, function (schedule) {
+                            if (schedule.length === 0) {
+                                season.newPhase(c.PHASE_PLAYOFFS);
+                            }
+                        });
+                    }
+                });
             });
         };
 

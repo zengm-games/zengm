@@ -1,7 +1,6 @@
 main todo (before public beta)
 ------------------------------
 
-stats for other team not shown in trade view?
 PER
   move advStats to util?
   shouldn't be recalculated for everyone in the playoffs, only active teams' players (also in the regular season, but that's less important)

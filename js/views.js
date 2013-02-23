@@ -983,7 +983,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                         playerStore.index("tid").getAll(otherTid).onsuccess = function (event) {
                             var i, otherRoster;
 
-                            otherRoster = db.getPlayers(event.target.result, g.season, g.userTid, attributes, stats, ratings, {showNoStats: true});
+                            otherRoster = db.getPlayers(event.target.result, g.season, otherTid, attributes, stats, ratings, {showNoStats: true});
                             for (i = 0; i < otherRoster.length; i++) {
                                 if (otherPids.indexOf(otherRoster[i].pid) >= 0) {
                                     otherRoster[i].selected = true;

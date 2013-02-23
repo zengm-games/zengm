@@ -911,7 +911,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
                 attributes = ["pid", "name", "pos", "age", "contractAmount", "contractExp", "freeAgentTimesAsked"];
                 ratings = ["ovr", "pot", "skills"];
-                stats = ["min", "pts", "trb", "ast"];
+                stats = ["min", "pts", "trb", "ast", "per"];
 
                 players = db.getPlayers(event.target.result, g.season, c.PLAYER_FREE_AGENT, attributes, stats, ratings, {oldStats: true, showNoStats: true});
 

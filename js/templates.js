@@ -555,6 +555,12 @@ function program1(depth0,data,depth1) {
   stack2 = {};
   foundHelper = helpers.round;
   stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = depth0.stats;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.per;
+  stack2 = {};
+  foundHelper = helpers.round;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
   buffer += escapeExpression(stack1) + "', '$";
   stack1 = depth0.contractAmount;
   stack2 = {};
@@ -585,7 +591,7 @@ function program1(depth0,data,depth1) {
   foundHelper = helpers.new_window;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.new_window; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "</h1>\n\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"free_agents\">\n<thead>\n  <tr><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall\">Ovr</th><th title=\"Potential\">Pot</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th>Asking for</th><th>Negotiate</th></tr>\n</thead>\n</table>\n";
+  buffer += escapeExpression(stack1) + "</h1>\n\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"free_agents\">\n<thead>\n  <tr><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall\">Ovr</th><th title=\"Potential\">Pot</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th><th>Asking for</th><th>Negotiate</th></tr>\n</thead>\n</table>\n";
   return buffer;});
 templates['leaders'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers; data = data || {};

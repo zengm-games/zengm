@@ -4,7 +4,7 @@ $(document).ready(function() {
 
     ui.datatableSinglePage($('#draft_results'), 0, [
         {{#players}}
-	          ['{{rnd}}-{{pick}}', '<a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>{{skills_block currentSkills}}', '{{pos}}', '<a href="/l/{{../lid}}/roster/{{draftAbbrev}}">{{draftAbbrev}}</a>', '{{draftAge}}', '{{draftOvr}}', '{{draftPot}}', '<a href="/l/{{../lid}}/roster/{{currentAbbrev}}">{{currentAbbrev}}</a>', '{{currentAge}}', '{{currentOvr}}', '{{currentPot}}', '{{round gp 0}}', '{{round min 1}}', '{{round pts 1}}', '{{round trb 1}}', '{{round ast 1}}'],
+	          ['{{rnd}}-{{pick}}', '<a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>', '{{pos}}', '<a href="/l/{{../lid}}/roster/{{draftAbbrev}}">{{draftAbbrev}}</a>', '{{draftAge}}', '{{draftOvr}}', '{{draftPot}}', '<span class="skills_alone">{{skills_block draftSkills}}</span>', '<a href="/l/{{../lid}}/roster/{{currentAbbrev}}">{{currentAbbrev}}</a>', '{{currentAge}}', '{{currentOvr}}', '{{currentPot}}', '<span class="skills_alone">{{skills_block currentSkills}}</span>', '{{round careerStats.gp 0}}', '{{round careerStats.min 1}}', '{{round careerStats.pts 1}}', '{{round careerStats.trb 1}}', '{{round careerStats.ast 1}}', '{{round careerStats.per 1}}'],
         {{/players}}
     ]);
 });
@@ -22,8 +22,8 @@ $(document).ready(function() {
 <p>
   <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="draft_results">
   <thead>
-    <tr><th colspan="3"></th><th colspan="4" style="text-align: center">At Draft</th><th colspan="4" style="text-align: center">Current</th><th colspan="5" style="text-align: center">Career Stats</th></tr>
-    <tr><th>Pick</th><th>Name</th><th title="Position">Pos</th><th>Team</th><th>Age</th><th title="Overall rating">Ovr</th><th title="Potential rating">Pot</th><th>Team</th><th>Age</th><th title="Overall rating">Ovr</th><th title="Potential rating">Pot</th><th title="Games Played">GP</th><th title="Minutes Per Game">Min</th><th title="Points Per Game">PPG</th><th title="Rebounds Per Game">Reb</th><th title="Assists Per Game">Ast</th></tr>
+    <tr><th colspan="3"></th><th colspan="5" style="text-align: center">At Draft</th><th colspan="5" style="text-align: center">Current</th><th colspan="5" style="text-align: center">Career Stats</th></tr>
+    <tr><th>Pick</th><th>Name</th><th title="Position">Pos</th><th>Team</th><th>Age</th><th title="Overall rating">Ovr</th><th title="Potential rating">Pot</th><th>Skills</th><th>Team</th><th>Age</th><th title="Overall rating">Ovr</th><th title="Potential rating">Pot</th><th>Skills</th><th title="Games Played">GP</th><th title="Minutes Per Game">Min</th><th title="Points Per Game">PPG</th><th title="Rebounds Per Game">Reb</th><th title="Assists Per Game">Ast</th><th title="Player Efficiency Rating">PER</th></tr>
   </thead>
   </table>
 </p>

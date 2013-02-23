@@ -286,12 +286,7 @@ function program1(depth0,data,depth1) {
   foundHelper = helpers.name;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.name; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "</a>";
-  stack1 = depth0.currentSkills;
-  stack2 = {};
-  foundHelper = helpers.skills_block;
-  stack1 = foundHelper ? foundHelper.call(depth0, stack1, {hash:stack2,data:data}) : helperMissing.call(depth0, "skills_block", stack1, {hash:stack2,data:data});
-  buffer += escapeExpression(stack1) + "', '";
+  buffer += escapeExpression(stack1) + "</a>', '";
   foundHelper = helpers.pos;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.pos; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
@@ -318,7 +313,12 @@ function program1(depth0,data,depth1) {
   foundHelper = helpers.draftPot;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.draftPot; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "', '<a href=\"/l/";
+  buffer += escapeExpression(stack1) + "', '<span class=\"skills_alone\">";
+  stack1 = depth0.draftSkills;
+  stack2 = {};
+  foundHelper = helpers.skills_block;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, {hash:stack2,data:data}) : helperMissing.call(depth0, "skills_block", stack1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "</span>', '<a href=\"/l/";
   stack1 = depth1.lid;
   stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1;
   buffer += escapeExpression(stack1) + "/roster/";
@@ -341,28 +341,44 @@ function program1(depth0,data,depth1) {
   foundHelper = helpers.currentPot;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.currentPot; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "', '";
-  stack1 = depth0.gp;
+  buffer += escapeExpression(stack1) + "', '<span class=\"skills_alone\">";
+  stack1 = depth0.currentSkills;
+  stack2 = {};
+  foundHelper = helpers.skills_block;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, {hash:stack2,data:data}) : helperMissing.call(depth0, "skills_block", stack1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "</span>', '";
+  stack1 = depth0.careerStats;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.gp;
   stack2 = {};
   foundHelper = helpers.round;
   stack1 = foundHelper ? foundHelper.call(depth0, stack1, 0, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 0, {hash:stack2,data:data});
   buffer += escapeExpression(stack1) + "', '";
-  stack1 = depth0.min;
+  stack1 = depth0.careerStats;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.min;
   stack2 = {};
   foundHelper = helpers.round;
   stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
   buffer += escapeExpression(stack1) + "', '";
-  stack1 = depth0.pts;
+  stack1 = depth0.careerStats;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.pts;
   stack2 = {};
   foundHelper = helpers.round;
   stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
   buffer += escapeExpression(stack1) + "', '";
-  stack1 = depth0.trb;
+  stack1 = depth0.careerStats;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.trb;
   stack2 = {};
   foundHelper = helpers.round;
   stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
   buffer += escapeExpression(stack1) + "', '";
-  stack1 = depth0.ast;
+  stack1 = depth0.careerStats;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.ast;
+  stack2 = {};
+  foundHelper = helpers.round;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = depth0.careerStats;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.per;
   stack2 = {};
   foundHelper = helpers.round;
   stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
@@ -414,7 +430,7 @@ function program4(depth0,data) {
   foundHelper = helpers.new_window;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.new_window; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "</h1>\n<p>\n  <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"draft_results\">\n  <thead>\n    <tr><th colspan=\"3\"></th><th colspan=\"4\" style=\"text-align: center\">At Draft</th><th colspan=\"4\" style=\"text-align: center\">Current</th><th colspan=\"5\" style=\"text-align: center\">Career Stats</th></tr>\n    <tr><th>Pick</th><th>Name</th><th title=\"Position\">Pos</th><th>Team</th><th>Age</th><th title=\"Overall rating\">Ovr</th><th title=\"Potential rating\">Pot</th><th>Team</th><th>Age</th><th title=\"Overall rating\">Ovr</th><th title=\"Potential rating\">Pot</th><th title=\"Games Played\">GP</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">PPG</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th></tr>\n  </thead>\n  </table>\n</p>\n";
+  buffer += escapeExpression(stack1) + "</h1>\n<p>\n  <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"draft_results\">\n  <thead>\n    <tr><th colspan=\"3\"></th><th colspan=\"5\" style=\"text-align: center\">At Draft</th><th colspan=\"5\" style=\"text-align: center\">Current</th><th colspan=\"5\" style=\"text-align: center\">Career Stats</th></tr>\n    <tr><th>Pick</th><th>Name</th><th title=\"Position\">Pos</th><th>Team</th><th>Age</th><th title=\"Overall rating\">Ovr</th><th title=\"Potential rating\">Pot</th><th>Skills</th><th>Team</th><th>Age</th><th title=\"Overall rating\">Ovr</th><th title=\"Potential rating\">Pot</th><th>Skills</th><th title=\"Games Played\">GP</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">PPG</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th></tr>\n  </thead>\n  </table>\n</p>\n";
   return buffer;});
 templates['leagueLayout'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers; data = data || {};
@@ -4877,7 +4893,7 @@ function program8(depth0,data) {
 function program10(depth0,data) {
   
   var buffer = "", stack1, stack2, foundHelper;
-  buffer += "<span style=\"margin-left: -5px\">";
+  buffer += "<span class=\"skills_alone\">";
   stack1 = depth0.currentRatings;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.skills;
   stack2 = {};

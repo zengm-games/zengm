@@ -16,7 +16,7 @@
       {{#if showContract}}
         {{#if freeAgent}}Asking for{{else}}Contract{{/if}}: ${{round player.contractAmount 2}}M/yr thru {{player.contractExp}}<br>
       {{/if}}
-      {{#unless retired}}<span style="margin-left: -5px">{{skills_block currentRatings.skills}}</span><br>{{/unless}}
+      {{#unless retired}}<span class="skills_alone">{{skills_block currentRatings.skills}}</span><br>{{/unless}}
     </div>
   </div>
   {{#unless retired}}

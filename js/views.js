@@ -1030,9 +1030,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             } else if (req.method  === "post" && req.params.propose !== undefined) {
                 // Propose trade
                 trade.propose(function (accepted, message) {
-console.log(message);
                     trade.getPlayers(function (userPids, otherPids) {
-console.log(message);
                         showTrade(userPids, otherPids, message);
                     });
                 });
@@ -1149,9 +1147,12 @@ console.log(message);
 
             // Show a summary of an old draft
             playerStore.index("draftYear").getAll(season).onsuccess = function (event) {
-                var currentAbbrev, currentPr, currentTid, data, draftAbbrev, draftPr, draftTid, i, j, pa, player, players, playersAll, ps;
+                var attributes, currentPr, data, draftPr, i, pa, player, players, playersAll, ratings, stats;
 
-                playersAll = event.target.result;
+                attributes = ["tid", "abbrev", "draftTid", "draftAbbrev", "pid", "name", "pos", "draftRound", "draftPick", "draftAge", "age"];
+                ratings = ["ovr", "pot", "skills"];
+                stats = ["gp", "min", "pts", "trb", "ast", "per"];  // This needs to be in the same order as categories
+                playersAll = db.getPlayers(event.target.result, null, null, attributes, stats, ratings);
 
                 players = [];
                 for (i = 0; i < playersAll.length; i++) {
@@ -1159,46 +1160,20 @@ console.log(message);
 
                     if (pa.draftRound === 1 || pa.draftRound === 2) {
                         // Attributes
-                        [currentTid, currentAbbrev] = helpers.validateTid(pa.tid);
-                        [draftTid, draftAbbrev] = helpers.validateTid(pa.draftTid);
-                        player = {pid: pa.pid, name: pa.name, pos: pa.pos, rnd: pa.draftRound, pick: pa.draftPick, draftAge: pa.draftYear - pa.bornYear, draftAbbrev: draftAbbrev, currentAge: g.season - pa.bornYear, currentAbbrev: currentAbbrev};
+                        player = {pid: pa.pid, name: pa.name, pos: pa.pos, rnd: pa.draftRound, pick: pa.draftPick, draftAge: pa.draftAge, draftAbbrev: pa.draftAbbrev, currentAge: pa.age, currentAbbrev: pa.abbrev};
 
                         // Ratings
                         draftPr = pa.ratings[0];
-                        currentPr = pa.ratings[pa.ratings.length - 1];
+                        currentPr = _.last(pa.ratings);
                         player.draftOvr = draftPr.ovr;
                         player.draftPot = draftPr.pot;
+                        player.draftSkills = draftPr.skills;
                         player.currentOvr = currentPr.ovr;
                         player.currentPot = currentPr.pot;
                         player.currentSkills = currentPr.skills;
 
                         // Stats
-                        player.gp = 0;
-                        player.min = 0;
-                        player.pts = 0;
-                        player.trb = 0;
-                        player.ast = 0;
-                        for (j = 0; j < pa.stats.length; j++) {
-                            if (pa.stats[j].playoffs === false) {
-                                ps = pa.stats[j];
-                                player.gp += ps.gp;
-                                player.min += ps.min;
-                                player.pts += ps.pts;
-                                player.trb += ps.trb;
-                                player.ast += ps.ast;
-                            }
-                        }
-                        if (ps !== undefined && ps.gp > 0) {
-                            player.min = player.min / player.gp;
-                            player.pts = player.pts / player.gp;
-                            player.trb = player.trb / player.gp;
-                            player.ast = player.ast / player.gp;
-                        } else {
-                            player.min = 0;
-                            player.pts = 0;
-                            player.trb = 0;
-                            player.ast = 0;
-                        }
+                        player.careerStats = pa.careerStats;
 
                         players.push(player);
                     }

@@ -178,6 +178,8 @@ console.log(event);
         for (j = 0; j < attributes.length; j++) {
             if (attributes[j] === "age") {
                 player.age = g.season - pa.bornYear;
+            } else if (attributes[j] === "draftAge") {
+                player.draftAge = pa.draftYear - pa.bornYear;
             } else if (attributes[j] === "hgtFt") {
                 player.hgtFt = Math.floor(pa.hgt / 12);
             } else if (attributes[j] === "hgtIn") {
@@ -386,6 +388,7 @@ console.log(event);
                 player.careerStats = {};
                 player.careerStats = filterStats(player.careerStats, pcs, stats);
                 player.careerStats.per = _.reduce(ps, function (memo, ps) { return memo + ps.per * ps.min; }, 0) / (player.careerStats.min * player.careerStats.gp); // Special case for PER - weight by minutes per season
+                if (isNaN(player.careerStats.per)) { player.careerStats.per = 0; }
             } else {
                 // Single seasons
                 player.stats = filterStats({}, ps, stats);

@@ -1,6 +1,7 @@
 main todo (before public beta)
 ------------------------------
 
+sort by draft pick in draft summary
 PER
   move advStats to util?
   shouldn't be recalculated for everyone in the playoffs, only active teams' players (also in the regular season, but that's less important)
@@ -21,7 +22,6 @@ game simulation realism
       probAst shouldn't be constant
       should somehow give higher FG% for assisted shots. not sure how
     doShot
-      ???
       check distribution of shot locations
   rename compositeRating to compositeRatings (or something better)
     other plural issues in gameSim
@@ -31,16 +31,14 @@ game simulation realism
     do i need all the player composite ratings?
     do i need all the team composite ratings?
 contract negotiation - make increased demands more lenient
-show record (w-l) on roster view - make it more like a summary, as in basketball-reference
-  playoff results
-  payroll
 free agents
   let free agents stay for 2 seasons before retiring, or make retirement probabilistic
     is retirement working for the first season, at all?
-  on new game, have enough free agents so the pool isn't totally depleted
+  balance
+    on new game, have enough free agents so the pool isn't totally depleted
+    do something to prevent so many free agents from being left over. lower salary demands? more aggressive decreases during the season?
 moved cities
 put on play.basketball-gm.com, with splash page on basketball-gm.com
-free agent balance.. maybe increase salary cap?
 low ovr, high pot draft picks should develop better.
 high ovr, low pot draft picks should develop worse?
 google analytics
@@ -204,6 +202,7 @@ advanced stats
   APM?
   shot charts?
 import/export stuff
+  https://unhosted.org/adventures/7/Adding-remote-storage-to-unhosted-web-apps.html
   data urls don't work with more than ~1 MB. downloadifydoesn't seem to work with more than several MBs of data. until a better solution comes (online sync?), wait.
   league names
     "Edit" button between "Export" and "Delete" - set in leaguesStore and gameAttributes
@@ -217,13 +216,10 @@ Web workers
 big picture gameplay
   some way to actually win/lose the game
   different market sizes in different cities, making it easier or harder
-
----
-
-handlebars templates -f js/templates.js
-
-TODO:
-only need handlebars.runtime.js
+show record (w-l) on roster view - make it more like a summary, as in basketball-reference
+  playoff results
+  payroll
+  anything else?
 
 ---
 

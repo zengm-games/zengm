@@ -42,6 +42,8 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      *                 ]
      *             }
      *     team2: Same as team1, but for the away team.
+     *
+     * @memberOf core.gameSim
      */
     function GameSim(gid, team1, team2) {
         this.id = gid;
@@ -237,6 +239,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     /**
      * Simulate a single possession.
      * 
+     * @memberOf core.gameSim
      * @return {string} Outcome of the possession, such as "tov", "drb", "orb", "fg", etc.
      */
     GameSim.prototype.simPossession = function () {
@@ -257,6 +260,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     /**
      * Probability of the current possession ending in a turnover.
      * 
+     * @memberOf core.gameSim
      * @return {number} Probability from 0 to 1.
      */
     GameSim.prototype.probTov = function () {
@@ -279,6 +283,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     /**
      * Probability that a turnover occurring in this possession is a steal.
      * 
+     * @memberOf core.gameSim
      * @return {number} Probability from 0 to 1.
      */
     GameSim.prototype.probStl = function () {
@@ -365,6 +370,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     /**
      * Probability that a shot taken this possession is blocked.
      * 
+     * @memberOf core.gameSim
      * @return {number} Probability from 0 to 1.
      */
     GameSim.prototype.probBlk = function () {
@@ -410,6 +416,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     /**
      * Probability that a shot taken this possession is assisted.
      * 
+     * @memberOf core.gameSim
      * @return {number} Probability from 0 to 1.
      */
     GameSim.prototype.probAst = function () {
@@ -442,6 +449,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     /**
      * Personal foul.
      *
+     * @memberOf core.gameSim
      * @param {number} od Either this.o or this.d for an offensive or defensive foul.
      */
     GameSim.prototype.doPf = function (od) {
@@ -538,6 +546,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     /**
      * Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.
      * 
+     * @memberOf core.gameSim
      * @param {number} energy A player's energy level, from 0 to 1 (0 = lots of energy, 1 = none).
      * @return {number} Fatigue, from 0 to 1 (0 = lots of fatigue, 1 = none).
      */

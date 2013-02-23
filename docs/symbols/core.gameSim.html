@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - util.random</title>
+		<title>JsDoc Reference - core.gameSim</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -230,7 +230,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Namespace util.random
+				Namespace core.gameSim
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -238,16 +238,16 @@ ul.inheritsList
 				
 				
 			
-				Module to emulate some of Python's random library.
+				Individual game simulation.
 				
 				
-					<br /><i>Defined in: </i> &lt;js/util/random.js&gt;.
+					<br /><i>Defined in: </i> &lt;js/core/gameSim.js&gt;.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class util.random.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class core.gameSim.">
 				<caption>Namespace Summary</caption>
 				<thead>
 					<tr>
@@ -260,7 +260,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/util.random.html#constructor">util.random</a></b>
+								<b><a href="../symbols/core.gameSim.html#constructor">core.gameSim</a></b>
 							</div>
 							<div class="description"></div>
 						</td>
@@ -276,7 +276,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class util.random.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class core.gameSim.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -289,36 +289,72 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">util.random.<b><a href="../symbols/util.random.html#.gauss">gauss</a></b>(mu, sigma)
+								<div class="fixedFont">core.gameSim.<b><a href="../symbols/core.gameSim.html#.GameSim">GameSim</a></b>(gid, team1, team2)
 								</div>
-								<div class="description">Returns a random number from an approximately Gaussian distribution.</div>
+								<div class="description">Initialize the two teams that are playing this game.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">util.random.<b><a href="../symbols/util.random.html#.randInt">randInt</a></b>(a, b)
+								<div class="fixedFont">core.gameSim.<b><a href="../symbols/core.gameSim.html#.GameSim#doPf">GameSim#doPf</a></b>(od)
 								</div>
-								<div class="description">Choose a random integer from [a, b]</div>
+								<div class="description">Personal foul.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">util.random.<b><a href="../symbols/util.random.html#.shuffle">shuffle</a></b>(list)
+								<div class="fixedFont">core.gameSim.<b><a href="../symbols/core.gameSim.html#.GameSim#fatigue">GameSim#fatigue</a></b>(energy)
 								</div>
-								<div class="description">Shuffles a list in place, returning nothing.</div>
+								<div class="description">Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">util.random.<b><a href="../symbols/util.random.html#.uniform">uniform</a></b>(a, b)
+								<div class="fixedFont">core.gameSim.<b><a href="../symbols/core.gameSim.html#.GameSim#probAst">GameSim#probAst</a></b>()
 								</div>
-								<div class="description">Get a random number selected from a uniform distribution.</div>
+								<div class="description">Probability that a shot taken this possession is assisted.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">core.gameSim.<b><a href="../symbols/core.gameSim.html#.GameSim#probBlk">GameSim#probBlk</a></b>()
+								</div>
+								<div class="description">Probability that a shot taken this possession is blocked.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">core.gameSim.<b><a href="../symbols/core.gameSim.html#.GameSim#probStl">GameSim#probStl</a></b>()
+								</div>
+								<div class="description">Probability that a turnover occurring in this possession is a steal.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">core.gameSim.<b><a href="../symbols/core.gameSim.html#.GameSim#probTov">GameSim#probTov</a></b>()
+								</div>
+								<div class="description">Probability of the current possession ending in a turnover.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">core.gameSim.<b><a href="../symbols/core.gameSim.html#.GameSim#simPossession">GameSim#simPossession</a></b>()
+								</div>
+								<div class="description">Simulate a single possession.</div>
 							</td>
 						</tr>
 					
@@ -339,7 +375,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>util.random</b>
+						<b>core.gameSim</b>
 				</div>
 				
 				<div class="description">
@@ -370,17 +406,50 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name=".gauss"> </a>
+					<a name=".GameSim"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
-					<span class="light">{number}</span>
-					<span class="light">util.random.</span><b>gauss</b>(mu, sigma)
+					
+					<span class="light">core.gameSim.</span><b>GameSim</b>(gid, team1, team2)
 					
 					</div>
 					<div class="description">
-						Returns a random number from an approximately Gaussian distribution.
+						Initialize the two teams that are playing this game.
 
-See: http://www.protonfish.com/random.shtml
+When an instance of this class is created, information about the two teams
+is passed to GameSim(). Then GameSim.run() will actually simulate a game and
+return the results (stats) of the simulation.
+
+Args:
+    team1: dict containing information about the home team. There are
+        four top-level elements in this dict: id (team), defense (a
+        float containing the overall team defensive rating), pace (a
+        float containing the team's pace, which is the mean number of
+        possessions they like to have in a game), stat (a dict for
+        storing team stats), and player (a list of dicts, one for each
+        player on the team, ordered by rosterOrder). Each player's
+        dict contains another four elements: id (player's unique ID
+        number), ovr (overall rating, as stored in the DB),
+        stat (a dict for storing player stats, similar to the one for
+        team stats), and compositeRatings (an object containing various
+        ratings used in the game simulation). In other words...
+            {
+                "id": 0,
+                "defense": 0,
+                "pace": 0,
+                "stat": {},
+                "player": [
+                    {
+                        "id": 0,
+                        "ovr": 0,
+                        "stat": {},
+                        "compositeRating": {},
+                        "skills": []
+                    },
+                    ...
+                ]
+            }
+    team2: Same as team1, but for the away team.
 						
 						
 					</div>
@@ -392,108 +461,22 @@ See: http://www.protonfish.com/random.shtml
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{number}</span> <b>mu</b>
+									<b>gid</b>
 									
 								</dt>
-								<dd>Mean (default: 0).</dd>
+								<dd></dd>
 							
 								<dt>
-									<span class="light fixedFont">{number}</span> <b>sigma</b>
+									<b>team1</b>
 									
 								</dt>
-								<dd>Standard deviation (default: 1).</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{number}</span> Random number from Gaussian distribution.</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name=".randInt"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{number}</span>
-					<span class="light">util.random.</span><b>randInt</b>(a, b)
-					
-					</div>
-					<div class="description">
-						Choose a random integer from [a, b]
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+								<dd></dd>
 							
 								<dt>
-									<span class="light fixedFont">{number}</span> <b>a</b>
+									<b>team2</b>
 									
 								</dt>
-								<dd>Minimum integer that can be returned.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{number}</span> <b>b</b>
-									
-								</dt>
-								<dd>Maximum integer that can be returned.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{number}</span> Random integer between a and b.</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name=".shuffle"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">util.random.</span><b>shuffle</b>(list)
-					
-					</div>
-					<div class="description">
-						Shuffles a list in place, returning nothing.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{array}</span> <b>list</b>
-									
-								</dt>
-								<dd>List to be shuffled in place.</dd>
+								<dd></dd>
 							
 							</dl>
 						
@@ -506,15 +489,15 @@ See: http://www.protonfish.com/random.shtml
 
 					<hr />
 				
-					<a name=".uniform"> </a>
+					<a name=".GameSim#doPf"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
-					<span class="light">{number}</span>
-					<span class="light">util.random.</span><b>uniform</b>(a, b)
+					
+					<span class="light">core.gameSim.</span><b>GameSim#doPf</b>(od)
 					
 					</div>
 					<div class="description">
-						Get a random number selected from a uniform distribution.
+						Personal foul.
 						
 						
 					</div>
@@ -526,16 +509,46 @@ See: http://www.protonfish.com/random.shtml
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{number}</span> <b>a</b>
+									<span class="light fixedFont">{number}</span> <b>od</b>
 									
 								</dt>
-								<dd>Minimum number that can be returned.</dd>
+								<dd>Either this.o or this.d for an offensive or defensive foul.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".GameSim#fatigue"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{number}</span>
+					<span class="light">core.gameSim.</span><b>GameSim#fatigue</b>(energy)
+					
+					</div>
+					<div class="description">
+						Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{number}</span> <b>b</b>
+									<span class="light fixedFont">{number}</span> <b>energy</b>
 									
 								</dt>
-								<dd>Maximum number that can be returned.</dd>
+								<dd>A player's energy level, from 0 to 1 (0 = lots of energy, 1 = none).</dd>
 							
 							</dl>
 						
@@ -546,7 +559,167 @@ See: http://www.protonfish.com/random.shtml
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{number}</span> Random number from uniform distribution.</dd>
+								<dd><span class="light fixedFont">{number}</span> Fatigue, from 0 to 1 (0 = lots of fatigue, 1 = none).</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".GameSim#probAst"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{number}</span>
+					<span class="light">core.gameSim.</span><b>GameSim#probAst</b>()
+					
+					</div>
+					<div class="description">
+						Probability that a shot taken this possession is assisted.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{number}</span> Probability from 0 to 1.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".GameSim#probBlk"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{number}</span>
+					<span class="light">core.gameSim.</span><b>GameSim#probBlk</b>()
+					
+					</div>
+					<div class="description">
+						Probability that a shot taken this possession is blocked.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{number}</span> Probability from 0 to 1.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".GameSim#probStl"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{number}</span>
+					<span class="light">core.gameSim.</span><b>GameSim#probStl</b>()
+					
+					</div>
+					<div class="description">
+						Probability that a turnover occurring in this possession is a steal.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{number}</span> Probability from 0 to 1.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".GameSim#probTov"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{number}</span>
+					<span class="light">core.gameSim.</span><b>GameSim#probTov</b>()
+					
+					</div>
+					<div class="description">
+						Probability of the current possession ending in a turnover.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{number}</span> Probability from 0 to 1.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".GameSim#simPossession"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{string}</span>
+					<span class="light">core.gameSim.</span><b>GameSim#simPossession</b>()
+					
+					</div>
+					<div class="description">
+						Simulate a single possession.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{string}</span> Outcome of the possession, such as "tov", "drb", "orb", "fg", etc.</dd>
 							
 							</dl>
 						
@@ -567,7 +740,7 @@ See: http://www.protonfish.com/random.shtml
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Fri Feb 22 2013 22:29:54 GMT-0500 (EST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Fri Feb 22 2013 22:29:53 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

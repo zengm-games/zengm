@@ -1,6 +1,19 @@
 main todo (before public beta)
 ------------------------------
 
+PER
+  move advStats to util?
+  shouldn't be recalculated for everyone in the playoffs, only active teams' players (also in the regular season, but that's less important)
+    maybe have a flag set when a player plays a game, that advanced stats need to be recalculated
+  slow, particularly after multiple seasons?
+  how to deal with players traded mid-season?
+    reevaluate this in general. stats don't seem to be showing after a trade in roster view and player view.
+  use for awards
+  add to...
+    draft summary view
+    trade view
+    free agents view
+    negotiations list view
 game simulation realism
   playing time not adding up to 240?
   make pages that show stats and ratings as medians/quintiles, for a given season. this will help see how they evolve over time, respond to tweaking, etc.
@@ -52,19 +65,6 @@ different market sizes in different cities, making it easier or harder
 some way to actually win/lose the game
 bootstrap 2.3
 web workers?
-PER
-  move advStats to util?
-  shouldn't be recalculated for everyone in the playoffs, only active teams' players (also in the regular season, but that's less important)
-    maybe have a flag set when a player plays a game, that advanced stats need to be recalculated
-  slow, particularly after multiple seasons?
-  how to deal with players traded mid-season?
-    reevaluate this in general. stats don't seem to be showing after a trade in roster view and player view.
-  use for awards
-  add to...
-    draft summary view
-    trade view
-    free agents view
-    negotiations list view
 help menu
   overview
   loading/saving games

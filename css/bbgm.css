@@ -198,6 +198,13 @@ select.season {
   width: 100px;
 }
 
+.skill {
+  cursor: default;
+  font-size: 10px;
+  line-height: 18px;
+  margin-left: 0.5em;
+}
+
 /* This is needed to keep the form fields the right size inside row-fluid after upgrading to Bootstrap 2.1. */
 .row-fluid input[class*="span"] {
     min-height: 28px;

@@ -35,6 +35,82 @@ define(["db", "util/random"], function (db, random) {
     }
 
     /**
+     * Assign "skills" based on ratings.
+     *
+     * "Skills" are discrete categories, like someone is a 3 point shooter or they aren't. These are displayed next to the player's name generally, and are also used in game simulation. The possible skills are:
+     * 
+     * * Three Point Shooter (3)
+     * * Athlete (A)
+     * * Ball Handler (B)
+     * * Interior Defender (Di)
+     * * Perimeter Defender (Dp)
+     * * Post Scorer (Po)
+     * * Passer (Ps)
+     * * Rebounder (R)
+     * 
+     * @memberOf core.player
+     * @param {Object.<string, number>} ratings Ratings object.
+     * @return {Array.<string>} Array of skill IDs.
+     */
+    function skills(ratings) {
+        var hasSkill, sk;
+
+        sk = [];
+
+        hasSkill = function (ratings, components, weights) {
+            var denominator, i, numerator;
+
+            if (weights === undefined) {
+                // Default: array of ones with same size as components
+                weights = [];
+                for (i = 0; i < components.length; i++) {
+                    weights.push(1);
+                }
+            }
+
+            numerator = 0;
+            denominator = 0;
+            for (i = 0; i < components.length; i++) {
+                numerator += ratings[components[i]] * weights[i];
+                denominator += 100 * weights[i];
+            }
+
+            if (numerator / denominator > 0.75) {
+                return true;
+            }
+            return false;
+        };
+
+        // Most of these use the same formulas as the composite rating definitions in core.game!
+        if (hasSkill(ratings, ['hgt', 'tp'], [0.2, 1])) {
+            sk.push("3");
+        }
+        if (hasSkill(ratings, ['stre', 'spd', 'jmp', 'endu', 'hgt'], [1, 1, 1, 0.2, 0.2])) {
+            sk.push("A");
+        }
+        if (hasSkill(ratings, ['drb', 'spd'])) {
+            sk.push("B");
+        }
+        if (hasSkill(ratings, ['hgt', 'stre', 'spd', 'jmp', 'blk'], [2, 1, 0.5, 0.5, 1])) {
+            sk.push("Di");
+        }
+        if (hasSkill(ratings, ['hgt', 'stre', 'spd', 'jmp', 'stl'], [1, 1, 2, 0.5, 1])) {
+            sk.push("Dp");
+        }
+        if (hasSkill(ratings, ['hgt', 'stre', 'spd', 'ins'], [1, 0.6, 0.2, 1])) {
+            sk.push("Po");
+        }
+        if (hasSkill(ratings, ['drb', 'pss'], [0.4, 1])) {
+            sk.push("Ps");
+        }
+        if (hasSkill(ratings, ['hgt', 'stre', 'jmp', 'reb'], [1, 0.1, 0.1, 0.7])) {
+            sk.push("R");
+        }
+
+        return sk;
+    }
+
+    /**
      * Generate a contract for a player.
      * 
      * @memberOf core.player
@@ -151,6 +227,9 @@ define(["db", "util/random"], function (db, random) {
             if (p.ratings[r].ovr > p.ratings[r].pot || age > 28) {
                 p.ratings[r].pot = p.ratings[r].ovr;
             }
+
+            // Skills
+            p.ratings[r].skills = skills(p.ratings[r]);
         }
 
         if (generate) {
@@ -297,6 +376,8 @@ define(["db", "util/random"], function (db, random) {
         ratings.season = season;
         ratings.ovr = ovr(ratings);
         ratings.pot = pot;
+
+        ratings.skills = skills(ratings);
 
         return ratings;
     }
@@ -529,6 +610,7 @@ define(["db", "util/random"], function (db, random) {
         develop: develop,
         generate: generate,
         ovr: ovr,
-        release: release
+        release: release,
+        skills: skills
     };
 });

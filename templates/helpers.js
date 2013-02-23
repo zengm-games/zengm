@@ -8,6 +8,7 @@ Handlebars.registerHelper("round", function (value, precision) {
 
 Handlebars.registerHelper("roundWinp", function (value) {
     "use strict";
+
     var output;
 
     output = parseFloat(value).toFixed(3);
@@ -26,6 +27,7 @@ Handlebars.registerHelper("roundWinp", function (value) {
 // It would be better if this took the series object directly, but handlebars doesn't like doing that
 Handlebars.registerHelper("matchup", function (i, j) {
     "use strict";
+
     var series, source, template;
 
     series = this.series[i][j];
@@ -54,4 +56,29 @@ Handlebars.registerHelper("new_window", function () {
     "use strict";
 
     return new Handlebars.SafeString('<a href="javascript:api.moveToNewWindow()" class="new_window" title="Move To New Window" data-no-davis="true"><img src="/ico/new_window.png" height="16" width="16"></a>');
+});
+
+
+Handlebars.registerHelper("skills_block", function (skills) {
+    "use strict";
+
+    var i, skillsHtml, tooltips;
+
+    tooltips = {
+        "3": "Three Point Shooter",
+        A: "Athlete",
+        B: "Ball Handler",
+        Di: "Interior Defender",
+        Dp: "Perimeter Defender",
+        Po: "Post Scorer",
+        Ps: "Passer",
+        R: "Rebounder"
+    }
+
+    skillsHtml = '';
+    for (i = 0; i < skills.length; i++) {
+        skillsHtml += '<span class="skill" title="' + tooltips[skills[i]] + '">' + skills[i] + '</span>';
+    }
+
+    return new Handlebars.SafeString(skillsHtml);
 });

@@ -432,14 +432,14 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/se
                         p.compositeRating.pace = _composite(rating, ['spd', 'jmp', 'dnk', 'tp', 'stl', 'drb', 'pss']);
                         p.compositeRating.usage = _composite(rating, ['ins', 'dnk', 'fg', 'tp']);
                         p.compositeRating.dribbling = _composite(rating, ['drb', 'spd']);
-                        p.compositeRating.passing = _composite(rating, ['drb', 'pss']);
+                        p.compositeRating.passing = _composite(rating, ['drb', 'pss'], [0.4, 1]);
                         p.compositeRating.turnovers = _composite(rating, ['drb', 'pss', 'spd', 'hgt', 'ins'], [1, 1, -1, 1, 1]);  // This should not influence whether a turnover occurs, it should just be used to assign players
                         p.compositeRating.shootingLowPost = _composite(rating, ['hgt', 'stre', 'spd', 'ins'], [1, 0.6, 0.2, 1]);  // Post scoring
                         p.compositeRating.shootingAtRim = _composite(rating, ['hgt', 'spd', 'jmp', 'dnk'], [1, 0.2, 0.6, 0.4]);  // Dunk or layup, fast break or half court
                         p.compositeRating.shootingMidRange = _composite(rating, ['hgt', 'fg'], [0.2, 1]);  // Two point jump shot
                         p.compositeRating.shootingThreePointer = _composite(rating, ['hgt', 'tp'], [0.2, 1]);  // Three point jump shot
                         p.compositeRating.shootingFT = _composite(rating, ['ft']);  // Free throw
-                        p.compositeRating.rebounding = _composite(rating, ['hgt', 'stre', 'jmp', 'reb'], [1, 0.1, 0.1, 0.2]);
+                        p.compositeRating.rebounding = _composite(rating, ['hgt', 'stre', 'jmp', 'reb'], [1, 0.1, 0.1, 0.7]);
                         p.compositeRating.stealing = _composite(rating, ['spd', 'stl']);
                         p.compositeRating.blocking = _composite(rating, ['hgt', 'jmp', 'blk']);
                         p.compositeRating.fouling = _composite(rating, ['hgt', 'blk', 'spd'], [1, 1, -1]);

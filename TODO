@@ -17,8 +17,6 @@ game simulation realism
       smalls should have lower FG%, even with more shots
     if i make some fundamental change, i need to account for it in randomly generated players
   more ratings influence on gameSim
-    turnovers, steals, blocks, rebounds: done! might need tuning
-      for tuning, need some way of specifying a larger or smaller effect of team differences. exponent?
     doFg
       assist
         make this more biased towards "PG"
@@ -29,42 +27,32 @@ game simulation realism
   rename compositeRating to compositeRatings (or something better)
     other plural issues
   synergy
-    calcualte in updateTeamCompositeRatings 
-    assign "classes" to players based on ratings
-      Post Scoring (Po)
-      Mid Range Shooting (2)
-      Three Point Shooting (3)
-      Dribbling (D)
-      Passing (Ps)
-      Perimeter Defense (Dp)
-      Interior Defense (Di)
-      Quickness (Q)
-      Jumping (J)
-      Rebounding (R)
-    from these classes, come up with a "synergy bonus" on the scale of 0 to 1. INFUSE EVERYWHERE! Offense, defense, and rebounding:
+    calcualte synergy in updateTeamCompositeRatings
+    assign "skills" at the beginning of each season and store in playerStore.ratings.skills
+    skills are displayed in roster view. need to show elsewhere too
+    from these skills, come up with a "synergy bonus" on the scale of 0 to 1. INFUSE EVERYWHERE! Offense, defense, and rebounding:
       Offensive synergy:
         2 three point shooters (***)
         3 three point shooters
         4 three point shooters
-        3 two or three point shooters
-        4 two or three point shooters
-        1 dribbler (***)
-        2 dribblers
+        1 ball handler (***)
+        2 ball handlers
         1 passer (***)
         2 passers
         3 passers
         1 post scorer
-        3 quickness or jumping
-        4 quickness or jumping
+        3 athlete
+        4 athlete
       Defensive synergy:
         1 perimeter defender
         1 interior defender (***)
-        3 quickness or jumping
-        4 quickness or jumping
+        3 athlete
+        4 athlete
       Rebounding synergy:
         1 rebounder (***)
         2 rebounders
       (*** means essential)
+    some UI showing the state of the team's synergy. maybe like an advisors screen that suggests what kind of player is needed to improve synergy
   pgs should get more assists - increase prob for the "PG" (best ball handler and passer) on the floor
   more and better 3 point shooters
   smalls should get less blocks
@@ -78,6 +66,7 @@ free agents
   let free agents stay for 2 seasons before retiring, or make retirement probabilistic
     is retirement working for the first season, at all?
   on new game, have enough free agents so the pool isn't totally depleted
+moved cities
 put on play.basketball-gm.com, with splash page on basketball-gm.com
 free agent balance.. maybe increase salary cap?
 low ovr, high pot draft picks should develop better.
@@ -351,21 +340,9 @@ take all ratings into account
   energy, etc
 blocks, assists (maybe other things) should not be so evenly distributed
 home and away games
-synergy
-  Gameplay bonuses when any of the following are true...
-    At least one player with dribbling > X
-    At least two players with shooting_three_pointers > X
-    At least three players with shooting_three_pointers > X
-    At least four players with shooting_three_pointers > X
-    At least one player with rebounding > X
-    At least one player with blocks > X
-    At least three players with steals > X
-    At least one player with inside_scoring > X
-    At least three players with speed > X and (shooting_layups > X or shooting_layups + jumping > X)
 
 UI
 --
-some indication of synergy
 in team stats tab, allow toggle to show opponent stats
 
 NBA

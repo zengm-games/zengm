@@ -771,7 +771,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
             }
 
             attributes = ["pid", "name", "pos", "age", "contractAmount", "contractExp", "cashOwed", "rosterOrder"];
-            ratings = ["ovr", "pot"];
+            ratings = ["ovr", "pot", "skills"];
             stats = ["min", "pts", "trb", "ast", "per"];
 
             if (season === g.season) {

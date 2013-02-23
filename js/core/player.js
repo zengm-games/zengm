@@ -85,7 +85,7 @@ define(["db", "util/random"], function (db, random) {
         if (hasSkill(ratings, ['hgt', 'tp'], [0.2, 1])) {
             sk.push("3");
         }
-        if (hasSkill(ratings, ['stre', 'spd', 'jmp', 'endu', 'hgt'], [1, 1, 1, 0.2, 0.2])) {
+        if (hasSkill(ratings, ['stre', 'spd', 'jmp', 'hgt'], [1, 1, 1, 0.5])) {
             sk.push("A");
         }
         if (hasSkill(ratings, ['drb', 'spd'])) {
@@ -353,10 +353,10 @@ define(["db", "util/random"], function (db, random) {
         }
 
         // Each row should sum to ~150
-        profiles = [[10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10,  10],  // Base 
-                    [-30, -10, 40,  15,  0,   0,   0,   10,  15,  0,   0,   20,  40,  40,  0],   // Point Guard
-                    [10,  10,  15,  15,  0,   0,   25,  15,  15,  5,   0,   10,  15,  0,   15],  // Wing
-                    [40,  30,  -10, -10, 10,  30,  30,  0,   -10, -20, 30,  0,   -10, -10, 30]];  // Big
+        profiles = [[10,  10,  10,  10,  10,  10,  10,  10,  10,  25,  10,  10,  10,  10,  10],  // Base 
+                    [-30, -10, 40,  15,  0,   0,   0,   10,  15,  15,   0,   20,  40,  40,  0],   // Point Guard
+                    [10,  10,  15,  15,  0,   0,   25,  15,  15,  20,   0,   10,  15,  0,   15],  // Wing
+                    [50,  35,  -10, -10, 0,  35,  35,  0,   -10, -15, 30,  0,   -10, -10, 35]];  // Big
         sigmas = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10];
         baseRating = random.gauss(baseRating, 5);
 

@@ -202,7 +202,7 @@ select.season {
   cursor: default;
   font-size: 10px;
   line-height: 18px;
-  margin-left: 0.5em;
+  margin-left: 5px;
 }
 
 /* This is needed to keep the form fields the right size inside row-fluid after upgrading to Bootstrap 2.1. */

@@ -3,48 +3,49 @@
     <h1>{{player.name}} {{new_window}}</h1>
     <div id="picture" class="player_picture">{{face player.face}}</div>
     <div style="float: left;">
-      <strong>{{player.teamRegion}} {{player.teamName}}</strong><br />
-      Height: {{player.hgtFt}}'{{player.hgtIn}}"<br />
-      Weight: {{player.weight}} lbs<br />
-      Age: {{player.age}}<br />
-      Born: {{player.bornYear}} - {{player.bornLoc}}<br />
+      <strong>{{player.teamRegion}} {{player.teamName}}</strong><br>
+      Height: {{player.hgtFt}}'{{player.hgtIn}}"<br>
+      Weight: {{player.weight}} lbs<br>
+      Age: {{player.age}}<br>
+      Born: {{player.bornYear}} - {{player.bornLoc}}<br>
       {{#if player.draftRound}}
-        Draft: {{player.draftYear}} - Round {{player.draftRound}} (Pick {{player.draftPick}}) by {{player.draftAbbrev}}<br />
+        Draft: {{player.draftYear}} - Round {{player.draftRound}} (Pick {{player.draftPick}}) by {{player.draftAbbrev}}<br>
       {{else}}
-        Undrafted: {{player.draftYear}}<br />
+        Undrafted: {{player.draftYear}}<br>
       {{/if}}
       {{#if showContract}}
-        {{#if freeAgent}}Asking for{{else}}Contract{{/if}}: ${{round player.contractAmount 2}}M/yr thru {{player.contractExp}}<br />
+        {{#if freeAgent}}Asking for{{else}}Contract{{/if}}: ${{round player.contractAmount 2}}M/yr thru {{player.contractExp}}<br>
       {{/if}}
+      {{#unless retired}}<span style="margin-left: -5px">{{skills_block currentRatings.skills}}</span><br>{{/unless}}
     </div>
   </div>
   {{#unless retired}}
     <div class="span6">
       <h2 class="pull-left">Overall: {{currentRatings.ovr}}</h2>
-      <h2 class="pull-right">Potential: {{currentRatings.pot}}</h2><br /><br /><br />
+      <h2 class="pull-right">Potential: {{currentRatings.pot}}</h2><br><br><br>
       <div class="row-fluid">
         <div class="span4">
           <strong>Physical</strong><br/ >
-          Height: {{currentRatings.hgt}}<br />
-          Strength: {{currentRatings.stre}}<br />
-          Speed: {{currentRatings.spd}}<br />
-          Jumping: {{currentRatings.jmp}}<br />
+          Height: {{currentRatings.hgt}}<br>
+          Strength: {{currentRatings.stre}}<br>
+          Speed: {{currentRatings.spd}}<br>
+          Jumping: {{currentRatings.jmp}}<br>
           Endurance: {{currentRatings.endu}}
         </div>
         <div class="span4">
           <strong>Shooting</strong><br/ >
-          Inside: {{currentRatings.ins}}<br />
-          Layups: {{currentRatings.dnk}}<br />
-          Free throws: {{currentRatings.ft}}<br />
-          Two pointers: {{currentRatings.fg}}<br />
+          Inside: {{currentRatings.ins}}<br>
+          Layups: {{currentRatings.dnk}}<br>
+          Free throws: {{currentRatings.ft}}<br>
+          Two pointers: {{currentRatings.fg}}<br>
           Three pointers: {{currentRatings.tp}}
         </div>
         <div class="span4">
           <strong>Skill</strong><br/ >
-          Blocks: {{currentRatings.blk}}<br />
-          Steals: {{currentRatings.stl}}<br />
-          Dribbling: {{currentRatings.drb}}<br />
-          Passing: {{currentRatings.pss}}<br />
+          Blocks: {{currentRatings.blk}}<br>
+          Steals: {{currentRatings.stl}}<br>
+          Dribbling: {{currentRatings.drb}}<br>
+          Passing: {{currentRatings.pss}}<br>
           Rebounding: {{currentRatings.reb}}
         </div>
       </div>

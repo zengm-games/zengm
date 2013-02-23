@@ -970,7 +970,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
                         attributes = ["pid", "name", "pos", "age", "contractAmount", "contractExp"];
                         ratings = ["ovr", "pot", "skills"];
-                        stats = ["min", "pts", "trb", "ast"];
+                        stats = ["min", "pts", "trb", "ast", "per"];
                         userRoster = db.getPlayers(event.target.result, g.season, g.userTid, attributes, stats, ratings, {showNoStats: true});
                         for (i = 0; i < userRoster.length; i++) {
                             if (userPids.indexOf(userRoster[i].pid) >= 0) {

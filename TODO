@@ -1,6 +1,7 @@
 main todo (before public beta)
 ------------------------------
 
+stats for other team not shown in trade view?
 PER
   move advStats to util?
   shouldn't be recalculated for everyone in the playoffs, only active teams' players (also in the regular season, but that's less important)
@@ -11,7 +12,6 @@ PER
   use for awards
   add to...
     draft summary view
-    trade view
 game simulation realism
   playing time not adding up to 240?
   make pages that show stats and ratings as medians/quintiles, for a given season. this will help see how they evolve over time, respond to tweaking, etc.

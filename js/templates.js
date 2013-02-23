@@ -1045,6 +1045,12 @@ function program1(depth0,data,depth1) {
   stack2 = {};
   foundHelper = helpers.round;
   stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = depth0.stats;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.per;
+  stack2 = {};
+  foundHelper = helpers.round;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
   buffer += escapeExpression(stack1) + "' ],\n    ";
   return buffer;}
 function program2(depth0,data) {
@@ -1130,6 +1136,12 @@ function program4(depth0,data,depth1) {
   stack2 = {};
   foundHelper = helpers.round;
   stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = depth0.stats;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.per;
+  stack2 = {};
+  foundHelper = helpers.round;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
   buffer += escapeExpression(stack1) + "' ],\n    ";
   return buffer;}
 function program5(depth0,data) {
@@ -1193,11 +1205,11 @@ function program8(depth0,data) {
   stack2 = {};
   if (!helpers.teams) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:stack2,inverse:self.noop,fn:self.program(7, program7, data),data:data}); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n      </select>\n      <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"roster_other\">\n      <thead>\n        <tr><th></th><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall Rating\">Ovr</th><th title=\"Potential Rating\">Pot</th><th>Contract</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th></tr>\n      </thead>\n      </table>\n      </p>\n\n      <h2>";
+  buffer += "\n      </select>\n      <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"roster_other\">\n      <thead>\n        <tr><th></th><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall Rating\">Ovr</th><th title=\"Potential Rating\">Pot</th><th>Contract</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th></tr>\n      </thead>\n      </table>\n      </p>\n\n      <h2>";
   foundHelper = helpers.userTeamName;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.userTeamName; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "</h2>\n      <p>\n      <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"roster_user\">\n      <thead>\n        <tr><th></th><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall Rating\">Ovr</th><th title=\"Potential Rating\">Pot</th><th>Contract</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th></tr>\n      </thead>\n      </table>\n      </p>\n    </form>\n  </div>\n  <div class=\"span5\" id=\"trade_summary\">\n    ";
+  buffer += escapeExpression(stack1) + "</h2>\n      <p>\n      <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"roster_user\">\n      <thead>\n        <tr><th></th><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall Rating\">Ovr</th><th title=\"Potential Rating\">Pot</th><th>Contract</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th></tr>\n      </thead>\n      </table>\n      </p>\n    </form>\n  </div>\n  <div class=\"span5\" id=\"trade_summary\">\n    ";
   foundHelper = helpers.tradeSummary;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.tradeSummary; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }

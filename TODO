@@ -26,14 +26,15 @@ game simulation realism
       check distribution of shot locations
   rename compositeRating to compositeRatings (or something better)
     other plural issues
-  synergy
-    INFUSE SYNERGY BONUS EVERYWHERE! Offense, defense, and rebounding:
-    some UI showing the state of the team's synergy. maybe like an advisors screen that suggests what kind of player is needed to improve synergy
   pgs should get more assists - increase prob for the "PG" (best ball handler and passer) on the floor
   more and better 3 point shooters
   smalls should get less blocks
   compare team and player stat distributions against reality
   home/away advantage
+    make sure home/away in playoffs is set right
+  do some kind of profiling, see if i can speed it up
+    do i need all the player composite ratings?
+    do i need all the team composite ratings?
 contract negotiation - make increased demands more lenient
 show record (w-l) on roster view - make it more like a summary, as in basketball-reference
   playoff results
@@ -227,6 +228,7 @@ import/export stuff
       move delete/edit/export under one button, "manage". have the 3 buttons pop out in place when you hit manage, then it functions as it does now. popped buttons can be colored too, then
   import league
     ignore old lid
+some UI showing the state of the team's synergy. maybe like an advisors screen that suggests what kind of player is needed to improve synergy
 
 ---
 

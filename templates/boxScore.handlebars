@@ -7,7 +7,7 @@
   </thead>
   <tbody>
   {{#players}}
-    <tr{{#if separator}} class="separator"{{/if}}><td><a href="/l/{{../../lid}}/player/{{pid}}">{{name}}</a></td><td>{{pos}}</td><td>{{round min 1}}</td><td>{{fg}}-{{fga}}</td><td>{{tp}}-{{tpa}}</td><td>{{ft}}-{{fta}}</td><td>{{orb}}</td><td>{{trb}}</td><td>{{ast}}</td><td>{{tov}}</td><td>{{stl}}</td><td>{{blk}}</td><td>{{pf}}</td><td>{{pts}}</td></tr>
+    <tr{{#if separator}} class="separator"{{/if}}><td><a href="/l/{{../../lid}}/player/{{pid}}">{{name}}</a>{{skills_block skills}}</td><td>{{pos}}</td><td>{{round min 1}}</td><td>{{fg}}-{{fga}}</td><td>{{tp}}-{{tpa}}</td><td>{{ft}}-{{fta}}</td><td>{{orb}}</td><td>{{trb}}</td><td>{{ast}}</td><td>{{tov}}</td><td>{{stl}}</td><td>{{blk}}</td><td>{{pf}}</td><td>{{pts}}</td></tr>
   {{/players}}
   </tbody>
   <tfoot>

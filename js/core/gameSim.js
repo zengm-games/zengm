@@ -35,7 +35,8 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      *                         "id": 0,
      *                         "ovr": 0,
      *                         "stat": {},
-     *                         "compositeRating": {}
+     *                         "compositeRating": {},
+     *                         "skills": []
      *                     },
      *                     ...
      *                 ]
@@ -76,7 +77,8 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      *                     "player": [
      *                         {
      *                             "id": 0,
-     *                             "stat": {}
+     *                             "stat": {},
+     *                             "skills": []
      *                         },
      *                         ...
      *                     ]

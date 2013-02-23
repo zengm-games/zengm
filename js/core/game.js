@@ -284,6 +284,7 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/se
                 }
                 gameStats.teams[t].players[p].trb = this.team[t].player[p].stat.orb + this.team[t].player[p].stat.drb;
                 gameStats.teams[t].players[p].pid = this.team[t].player[p].id;
+                gameStats.teams[t].players[p].skills = this.team[t].player[p].skills;
             }
         }
 
@@ -418,7 +419,7 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/se
 
                     for (i = 0; i < players.length; i++) {
                         player = players[i];
-                        p = {id: player.pid, name: player.name, pos: player.pos, ovr: 0, stat: {}, compositeRating: {}};
+                        p = {id: player.pid, name: player.name, pos: player.pos, ovr: 0, stat: {}, compositeRating: {}, skills: []};
 
                         for (j = 0; j < player.ratings.length; j++) {
                             if (player.ratings[j].season === g.season) {
@@ -426,6 +427,8 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/se
                                 break;
                             }
                         }
+
+                        p.skills = rating.skills;
 
                         p.ovr = rating.ovr;
 

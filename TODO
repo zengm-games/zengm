@@ -27,30 +27,7 @@ game simulation realism
   rename compositeRating to compositeRatings (or something better)
     other plural issues
   synergy
-    calcualte synergy in updateTeamCompositeRatings
-      skills are already available in player.skills in gameSim
-    from these skills, come up with a "synergy bonus" on the scale of 0 to 1. INFUSE EVERYWHERE! Offense, defense, and rebounding:
-      Offensive synergy:
-        2 three point shooters (***)
-        3 three point shooters
-        4 three point shooters
-        1 ball handler (***)
-        2 ball handlers
-        1 passer (***)
-        2 passers
-        3 passers
-        1 post scorer
-        3 athlete
-        4 athlete
-      Defensive synergy:
-        1 perimeter defender
-        1 interior defender (***)
-        3 athlete
-        4 athlete
-      Rebounding synergy:
-        1 rebounder (***)
-        2 rebounders
-      (*** means essential)
+    INFUSE SYNERGY BONUS EVERYWHERE! Offense, defense, and rebounding:
     some UI showing the state of the team's synergy. maybe like an advisors screen that suggests what kind of player is needed to improve synergy
   pgs should get more assists - increase prob for the "PG" (best ball handler and passer) on the floor
   more and better 3 point shooters
@@ -92,6 +69,27 @@ help menu
   loading/saving games
   stats (explain advanced stats)
   game simulation
+        Offensive synergy:
+        2 three point shooters (***)
+        3 three point shooters
+        4 three point shooters
+        1 ball handler (***)
+        2 ball handlers
+        1 passer (***)
+        2 passers
+        3 passers
+        1 post scorer
+        3 athlete
+        4 athlete
+      Defensive synergy:
+        1 perimeter defender
+        1 interior defender (***)
+        3 athlete
+        4 athlete
+      Rebounding synergy:
+        1 rebounder (***)
+        2 rebounders
+      (*** means essential)
 git tag as beta
 
 ---

@@ -211,18 +211,47 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     };
 
     GameSim.prototype.updateSynergy = function () {
-        var i, p, rating, t;
+        var allSkills, i, p, rating, t, skillsCount;
 
         for (t = 0; t < 2; t++) {
+            // Make a list with all the skills of the active players on a team (including duplicates)
+            allSkills = [];
+            for (i = 0; i < 5; i++) {
+                p = this.playersOnCourt[t][i];
+                allSkills.push(this.team[t].player[p].skills);
+            }
+            allSkills = _.flatten(allSkills);
+            skillsCount = _.countBy(allSkills);
+
+            // Just stick all players skills together in a list, then use _.countBy?
             // Offensive synergy
-            this.team[t].synergy.off = 6;
+            this.team[t].synergy.off = 0;
+            if (skillsCount["3"] >= 2) { this.team[t].synergy.off += 3; }
+            if (skillsCount["3"] >= 3) { this.team[t].synergy.off += 1; }
+            if (skillsCount["3"] >= 3) { this.team[t].synergy.off += 1; }
+            if (skillsCount.B >= 1) { this.team[t].synergy.off += 3; }
+            if (skillsCount.B >= 2) { this.team[t].synergy.off += 1; }
+            if (skillsCount.Ps >= 1) { this.team[t].synergy.off += 3; }
+            if (skillsCount.Ps >= 2) { this.team[t].synergy.off += 1; }
+            if (skillsCount.Ps >= 3) { this.team[t].synergy.off += 1; }
+            if (skillsCount.Po >= 1) { this.team[t].synergy.off += 1; }
+            if (skillsCount.A >= 3) { this.team[t].synergy.off += 1; }
+            if (skillsCount.A >= 4) { this.team[t].synergy.off += 1; }
+            this.team[t].synergy.off /= 17;
 
             // Defensive synergy
-            this.team[t].synergy.def = 6;
+            this.team[t].synergy.def = 0;
+            if (skillsCount.Dp >= 1) { this.team[t].synergy.def += 1; }
+            if (skillsCount.Di >= 1) { this.team[t].synergy.def += 3; }
+            if (skillsCount.A >= 3) { this.team[t].synergy.def += 1; }
+            if (skillsCount.A >= 4) { this.team[t].synergy.def += 1; }
+            this.team[t].synergy.def /= 6;
 
             // Rebounding synergy
-            this.team[t].synergy.reb = 6;
-console.log(this.team[t].synergy);
+            this.team[t].synergy.reb = 0;
+            if (skillsCount.R >= 1) { this.team[t].synergy.reb += 3; }
+            if (skillsCount.R >= 2) { this.team[t].synergy.reb += 1; }
+            this.team[t].synergy.reb /= 4;
         }
     };
 

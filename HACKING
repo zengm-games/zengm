@@ -26,7 +26,7 @@ Documentation is based on https://developers.google.com/closure/compiler/docs/js
 
 # Twitter Bootstrap
 
-Basketball GM currently uses Bootstrap 2.1 compiled without responsive parts and
+Basketball GM currently uses Bootstrap 2.2 compiled without responsive parts and
 with a few changes to make it work more like 2.0:
 
 * @baseFontSize set to 13px in variables.less
@@ -41,3 +41,23 @@ places.
 
 Abbreviations of stats should be done like basketball-reference.com stat pages.
 For instance, "defensive rebounds" is "drb".
+
+
+# Handlebars templates
+
+Any change made to one of the templates will not be processed until it is
+compiled, as described here <http://handlebarsjs.com/precompilation.html>.
+So after installing the Handlebars precompiler, run this command from this
+folder to update the templates:
+
+    handlebars templates -f js/templates.js
+
+
+# Documentation
+
+Code is documented as described in the Google Closure Compiler documentation:
+<https://developers.google.com/closure/compiler/docs/js-for-compiler>. Google
+Closure Compiler isn't actually used for anything (yet). To update the HTML-
+based documentation in the docs folder, install JsDoc Toolkit 2 (available
+in the Ubuntu repos as `jsdoc-toolkit`) and then run the `builddocs` script
+in this folder.

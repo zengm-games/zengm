@@ -8,42 +8,28 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     /**
      * Initialize the two teams that are playing this game.
      * 
-     * When an instance of this class is created, information about the two teams
-     * is passed to GameSim(). Then GameSim.run() will actually simulate a game and
-     * return the results (stats) of the simulation.
+     * When an instance of this class is created, information about the two teams is passed to GameSim. Then GameSim.run will actually simulate a game and return the results (i.e. stats) of the simulation. Also see core.game where the inputs to this function are generated.
      * 
-     * Args:
-     *     team1: dict containing information about the home team. There are
-     *         four top-level elements in this dict: id (team), defense (a
-     *         float containing the overall team defensive rating), pace (a
-     *         float containing the team's pace, which is the mean number of
-     *         possessions they like to have in a game), stat (a dict for
-     *         storing team stats), and player (a list of dicts, one for each
-     *         player on the team, ordered by rosterOrder). Each player's
-     *         dict contains another four elements: id (player's unique ID
-     *         number), ovr (overall rating, as stored in the DB),
-     *         stat (a dict for storing player stats, similar to the one for
-     *         team stats), and compositeRatings (an object containing various
-     *         ratings used in the game simulation). In other words...
+     * @memberOf core.gameSim
+     * @param {number} gid Integer game ID, which must be unique as it will serve as the primary key in the database when the game is saved.
+     * @param {Object} team1 Information about the home team. Top-level properties are: id (team ID number), defense (a number representing the overall team defensive rating), pace (the mean number of possessions the team likes to have in a game), stat (an for storing team stats), and player (a list of objects, one for each player on the team, ordered by rosterOrder). Each player's object contains: id (player's unique ID number), ovr (overall rating, as stored in the DB), stat (an object for storing player stats, similar to the one for team stats), and compositeRatings (an object containing various ratings used in the game simulation), and skills (a list of discrete skills a player has, as defined in core.player.skills, which influence game simulation). In other words...
+     *     {
+     *         "id": 0,
+     *         "defense": 0,
+     *         "pace": 0,
+     *         "stat": {},
+     *         "player": [
      *             {
      *                 "id": 0,
-     *                 "defense": 0,
-     *                 "pace": 0,
+     *                 "ovr": 0,
      *                 "stat": {},
-     *                 "player": [
-     *                     {
-     *                         "id": 0,
-     *                         "ovr": 0,
-     *                         "stat": {},
-     *                         "compositeRating": {},
-     *                         "skills": []
-     *                     },
-     *                     ...
-     *                 ]
-     *             }
-     *     team2: Same as team1, but for the away team.
-     *
-     * @memberOf core.gameSim
+     *                 "compositeRating": {},
+     *                 "skills": []
+     *             },
+     *             ...
+     *         ]
+     *     }
+     * @param {Object} team2 Same as team1, but for the away team.
      */
     function GameSim(gid, team1, team2) {
         this.id = gid;
@@ -62,35 +48,32 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         this.synergyFactor = 0.05;  // How important is synergy?
     }
 
-
-
     /**
      * Simulates the game and returns the results.
-     * 
-     * Returns:
-     *     A list of dicts, one for each team, similar to the inputs to
-     *     the class, but with both the team and player "stat" dicts filled in
-     *     and the extraneous data (defense, pace, ovr,
-     *     compositeRating) removed. In other words...
-     *         {
-     *             "gid": 0,
-     *             "overtimes": 0,
-     *             "team": [
-     *                 {
-     *                     "id": 0,
-     *                     "stat": {},
-     *                     "player": [
-     *                         {
-     *                             "id": 0,
-     *                             "stat": {},
-     *                             "skills": []
-     *                         },
-     *                         ...
-     *                     ]
-     *                 },
-     *             ...
-     *             ]
-     *         }
+     *
+     * Also see core.game where the outputs of this function are used.
+     *  
+     * @memberOf core.gameSim
+     * @returns {Array.<Object>} Game result object, an array of two objects similar to the inputs to GameSim, but with both the team and player "stat" objects filled in and the extraneous data (pace, ovr, compositeRating) removed. In other words...
+     *     {
+     *         "gid": 0,
+     *         "overtimes": 0,
+     *         "team": [
+     *             {
+     *                 "id": 0,
+     *                 "stat": {},
+     *                 "player": [
+     *                     {
+     *                         "id": 0,
+     *                         "stat": {},
+     *                         "skills": []
+     *                     },
+     *                     ...
+     *                 ]
+     *             },
+     *         ...
+     *         ]
+     *     }
      */
     GameSim.prototype.run = function () {
         var p, t;
@@ -121,8 +104,11 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     };
 
     /**
-     * Simulate this.numPossessions possessions. So to simulate regulation or
-     * overtime, just set this.numPossessions to appropriate values.
+     * Simulate this.numPossessions possessions.
+     *
+     * To simulate regulation or overtime, just set this.numPossessions to the appropriate value and call this function.
+     * 
+     * @memberOf core.gameSim
      */
     GameSim.prototype.simPossessions = function () {
         var i, outcome;
@@ -158,8 +144,11 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     };
 
     /**
-     * Do substitutions when appropriate, track energy levels, and record
-     * the number of minutes each player plays. This function is currently VERY SLOW.
+     * Perform appropriate substitutions.
+     *
+     * Can this be sped up?
+     * 
+     * @memberOf core.gameSim
      */
     GameSim.prototype.updatePlayersOnCourt = function () {
         var b, dt, i, ovrs, p, pp, t;
@@ -181,10 +170,10 @@ define(["util/helpers", "util/random"], function (helpers, random) {
                     if (this.playersOnCourt[t].indexOf(b) === -1 && this.team[t].player[p].stat.courtTime > 3 && this.team[t].player[b].stat.benchTime > 3 && ovrs[b] > ovrs[p]) {
                         // Substitute player
                         this.playersOnCourt[t][i] = b;
-                        this.team[t].player[b].stat.courtTime = random.gauss(0, 2);
-                        this.team[t].player[b].stat.benchTime = random.gauss(0, 2);
-                        this.team[t].player[p].stat.courtTime = random.gauss(0, 2);
-                        this.team[t].player[p].stat.benchTime = random.gauss(0, 2);
+                        this.team[t].player[b].stat.courtTime = random.uniform(-2, 2);
+                        this.team[t].player[b].stat.benchTime = random.uniform(-2, 2);
+                        this.team[t].player[p].stat.courtTime = random.uniform(-2, 2);
+                        this.team[t].player[p].stat.benchTime = random.uniform(-2, 2);
                     }
                 }
                 i += 1;
@@ -192,6 +181,13 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         }
     };
 
+    /**
+     * Update synergy.
+     *
+     * This should be called once every possession, after this.updatePlayersOnCourt as it influence output, to update the synergy object for each team.
+     * 
+     * @memberOf core.gameSim
+     */
     GameSim.prototype.updateSynergy = function () {
         var allSkills, i, p, rating, t, skillsCount;
 
@@ -237,6 +233,13 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         }
     };
 
+    /**
+     * Update team composite ratings.
+     *
+     * This should be called once every possession, after this.updatePlayersOnCourt and this.updateSynergy as they influence output, to update the team composite ratings based on the players currently on the court.
+     * 
+     * @memberOf core.gameSim
+     */
     GameSim.prototype.updateTeamCompositeRatings = function () {
         var i, p, rating, t;
 
@@ -263,7 +266,13 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         }
     };
 
-    // Call at end of every posession
+    /**
+     * Update playing time stats.
+     *
+     * This should be called once every possession, at the end, to record playing time and bench time for players.
+     * 
+     * @memberOf core.gameSim
+     */
     GameSim.prototype.updatePlayingTime = function () {
         var dt, p, t;
 
@@ -322,6 +331,12 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         return 0.15 * (1 + this.team[this.d].compositeRating.defense) / (1 + 0.5 * (this.team[this.o].compositeRating.dribbling + this.team[this.o].compositeRating.passing));
     };
 
+    /**
+     * Turnover.
+     * 
+     * @memberOf core.gameSim
+     * @return {string} Either "tov" or "stl" depending on whether the turnover was caused by a steal or not.
+     */
     GameSim.prototype.doTov = function () {
         var p, ratios;
 
@@ -345,6 +360,12 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         return 0.55 * this.team[this.d].compositeRating.defensePerimeter / (0.5 * (this.team[this.o].compositeRating.dribbling + this.team[this.o].compositeRating.passing));
     };
 
+    /**
+     * Steal.
+     * 
+     * @memberOf core.gameSim
+     * @return {string} Currently always returns "stl".
+     */
     GameSim.prototype.doStl = function () {
         var p, ratios;
 
@@ -355,6 +376,13 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         return "stl";
     };
 
+    /**
+     * Shot.
+     * 
+     * @memberOf core.gameSim
+     * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
+     * @return {string} Either "fg" or output of this.doReb, depending on make or miss and free throws.
+     */
     GameSim.prototype.doShot = function (shooter) {
         var fatigue, p, probMake, probAndOne, probMissAndFoul, r1, r2, r3, type;
 
@@ -372,7 +400,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         } else {
             type = 2;
             r1 = Math.random() * this.team[this.o].player[p].compositeRating.shootingMidRange;
-            r2 = Math.random() * this.team[this.o].player[p].compositeRating.shootingAtRim;
+            r2 = Math.random() * (this.team[this.o].player[p].compositeRating.shootingAtRim + this.synergyFactor * (this.team[this.o].synergy.off - this.team[this.d].synergy.def));  // Synergy makes easy shots either more likely or less likely
             r3 = Math.random() * this.team[this.o].player[p].compositeRating.shootingLowPost;
             if (r1 > r2 && r1 > r3) {
                 // Two point jumper
@@ -434,6 +462,13 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         return 0.1 * this.team[this.d].compositeRating.blocking;
     };
 
+    /**
+     * Blocked shot.
+     * 
+     * @memberOf core.gameSim
+     * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
+     * @return {string} Output of this.doReb.
+     */
     GameSim.prototype.doBlk = function (shooter) {
         var p, ratios;
 
@@ -447,6 +482,16 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         return this.doReb();  // orb or drb
     };
 
+    /**
+     * Field goal.
+     *
+     * Simulate a successful made field goal.
+     * 
+     * @memberOf core.gameSim
+     * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
+     * @param {number} type 2 for a two pointer, 3 for a three pointer.
+     * @return {string} Currently always returns "fg".
+     */
     GameSim.prototype.doFg = function (shooter, type) {
         var p, ratios;
 
@@ -478,6 +523,14 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         return 0.65;
     };
 
+    /**
+     * Free throw.
+     * 
+     * @memberOf core.gameSim
+     * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
+     * @param {number} amount Integer representing the number of free throws to shoot
+     * @return {string} "fg" if the last free throw is made; otherwise, this.doReb is called and its output is returned.
+     */
     GameSim.prototype.doFt = function (shooter, amount) {
         var i, outcome, p;
 
@@ -505,22 +558,29 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * Personal foul.
      *
      * @memberOf core.gameSim
-     * @param {number} od Either this.o or this.d for an offensive or defensive foul.
+     * @param {number} t Team (0 or 1, this.or or this.d).
      */
-    GameSim.prototype.doPf = function (od) {
+    GameSim.prototype.doPf = function (t) {
         var p, ratios;
 
-        ratios = this.ratingArray("fouling", od);
-        p = this.playersOnCourt[od][this.pickPlayer(ratios)];
+        ratios = this.ratingArray("fouling", t);
+        p = this.playersOnCourt[t][this.pickPlayer(ratios)];
         this.recordStat(this.d, p, "pf");
         // Foul out
         //if this.team[this.d].player[p].stat.pf >= 6 {
     };
 
+    /**
+     * Rebound.
+     *
+     * Simulates a rebound opportunity (e.g. after a missed shot).
+     * 
+     * @memberOf core.gameSim
+     * @return {string} "drb" for a defensive rebound, "orb" for an offensive rebound, null for no rebound (like if the ball goes out of bounds).
+     */
     GameSim.prototype.doReb = function () {
         var p, ratios;
 
-        // Shot goes out of bounds or something, no rebound
         if (0.15 > Math.random()) {
             return null;
         }
@@ -594,8 +654,13 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     };
 
     /**
-     * Increments a stat (s) for a player (p) on a team (t) by amount
-     * (default is 1).
+     * Increments a stat (s) for a player (p) on a team (t) by amount (default is 1).
+     *
+     * @memberOf core.gameSim
+     * @param {number} t Team (0 or 1, this.or or this.d).
+     * @param {number} p Integer index of this.team[t].player for the player of interest.
+     * @param {string} s Key for the property of this.team[t].player[p].stat to increment.
+     * @param {number} amount Amount to increment (default is 1).
      */
     GameSim.prototype.recordStat = function (t, p, s, amount) {
         amount = amount !== undefined ? amount : 1;

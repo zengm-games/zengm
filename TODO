@@ -27,9 +27,8 @@ game simulation realism
   rename compositeRating to compositeRatings (or something better)
     other plural issues
   synergy
+    cache and display skills in box score
     calcualte synergy in updateTeamCompositeRatings
-    assign "skills" at the beginning of each season and store in playerStore.ratings.skills
-    skills are displayed in roster view. need to show elsewhere too
     from these skills, come up with a "synergy bonus" on the scale of 0 to 1. INFUSE EVERYWHERE! Offense, defense, and rebounding:
       Offensive synergy:
         2 three point shooters (***)

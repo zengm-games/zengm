@@ -910,7 +910,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                 var attributes, data, i, players, ratings, stats;
 
                 attributes = ["pid", "name", "pos", "age", "contractAmount", "contractExp", "freeAgentTimesAsked"];
-                ratings = ["ovr", "pot"];
+                ratings = ["ovr", "pot", "skills"];
                 stats = ["min", "pts", "trb", "ast"];
 
                 players = db.getPlayers(event.target.result, g.season, c.PLAYER_FREE_AGENT, attributes, stats, ratings, {oldStats: true, showNoStats: true});
@@ -969,7 +969,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                         var attributes, i, ratings, stats, userRoster;
 
                         attributes = ["pid", "name", "pos", "age", "contractAmount", "contractExp"];
-                        ratings = ["ovr", "pot"];
+                        ratings = ["ovr", "pot", "skills"];
                         stats = ["min", "pts", "trb", "ast"];
                         userRoster = db.getPlayers(event.target.result, g.season, g.userTid, attributes, stats, ratings, {showNoStats: true});
                         for (i = 0; i < userRoster.length; i++) {
@@ -1094,6 +1094,7 @@ console.log(message);
                         pr = pa.ratings[0];
                         player.ovr = pr.ovr;
                         player.pot = pr.pot;
+                        player.skills = pr.skills;
 
                         undrafted.push(player);
                     }
@@ -1117,6 +1118,7 @@ console.log(message);
                                 pr = pa.ratings[0];
                                 player.ovr = pr.ovr;
                                 player.pot = pr.pot;
+                                player.skills = pr.skills;
 
                                 drafted.push(player);
                             }
@@ -1168,6 +1170,7 @@ console.log(message);
                         player.draftPot = draftPr.pot;
                         player.currentOvr = currentPr.ovr;
                         player.currentPot = currentPr.pot;
+                        player.currentSkills = currentPr.skills;
 
                         // Stats
                         player.gp = 0;
@@ -1350,7 +1353,7 @@ console.log(message);
                 categories.push({name: "Steals", stat: "Stl", title: "Steals Per Game", data: []});
 
                 attributes = ["pid", "name"];
-                ratings = [];
+                ratings = ["skills"];
                 stats = ["pts", "trb", "ast", "fgp", "blk", "stl", "abbrev"];  // This needs to be in the same order as categories
                 players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings);
 
@@ -1396,7 +1399,7 @@ console.log(message);
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
                 var attributes, data, i, players, ratings, stats;
                 attributes = ["pid", "name", "pos", "age"];
-                ratings = ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
+                ratings = ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills"];
                 stats = ["abbrev"];
 
                 players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings);
@@ -1427,7 +1430,7 @@ console.log(message);
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
                 var attributes, data, players, ratings, stats;
                 attributes = ["pid", "name", "pos", "age"];
-                ratings = [];
+                ratings = ["skills"];
                 stats = ["abbrev", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per"];
 
                 players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings, {showRookies: true});

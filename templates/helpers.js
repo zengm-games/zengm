@@ -73,11 +73,13 @@ Handlebars.registerHelper("skills_block", function (skills) {
         Po: "Post Scorer",
         Ps: "Passer",
         R: "Rebounder"
-    }
+    };
 
     skillsHtml = '';
-    for (i = 0; i < skills.length; i++) {
-        skillsHtml += '<span class="skill" title="' + tooltips[skills[i]] + '">' + skills[i] + '</span>';
+    if (skills !== undefined) {
+        for (i = 0; i < skills.length; i++) {
+            skillsHtml += '<span class="skill" title="' + tooltips[skills[i]] + '">' + skills[i] + '</span>';
+        }
     }
 
     return new Handlebars.SafeString(skillsHtml);

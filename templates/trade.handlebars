@@ -13,13 +13,13 @@ $(document).ready(function() {
 
   ui.datatableSinglePage($('#roster_user'), 5, [
     {{#userRoster}}
-      [ '<input name="user_pids" type="checkbox" value="{{pid}}"{{#if selected}} checked="checked"{{/if}}>', '<a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>', '{{pos}}', '{{age}}', '{{ratings.ovr}}', '{{ratings.pot}}', '${{round contractAmount 2}}M thru {{contractExp}}', '{{round stats.min 1}}', '{{round stats.pts 1}}', '{{round stats.trb 1}}', '{{round stats.ast 1}}' ],
+      [ '<input name="user_pids" type="checkbox" value="{{pid}}"{{#if selected}} checked="checked"{{/if}}>', '<a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>{{skills_block ratings.skills}}', '{{pos}}', '{{age}}', '{{ratings.ovr}}', '{{ratings.pot}}', '${{round contractAmount 2}}M thru {{contractExp}}', '{{round stats.min 1}}', '{{round stats.pts 1}}', '{{round stats.trb 1}}', '{{round stats.ast 1}}' ],
     {{/userRoster}}
   ]);
 
   ui.datatableSinglePage($('#roster_other'), 5, [
     {{#otherRoster}}
-      [ '<input name="other_pids" type="checkbox" value="{{pid}}"{{#if selected}} checked="checked"{{/if}}>', '<a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>', '{{pos}}', '{{age}}', '{{ratings.ovr}}', '{{ratings.pot}}', '${{round contractAmount 2}}M thru {{contractExp}}', '{{round stats.min 1}}', '{{round stats.pts 1}}', '{{round stats.trb 1}}', '{{round stats.ast 1}}' ],
+      [ '<input name="other_pids" type="checkbox" value="{{pid}}"{{#if selected}} checked="checked"{{/if}}>', '<a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>{{skills_block ratings.skills}}', '{{pos}}', '{{age}}', '{{ratings.ovr}}', '{{ratings.pot}}', '${{round contractAmount 2}}M thru {{contractExp}}', '{{round stats.min 1}}', '{{round stats.pts 1}}', '{{round stats.trb 1}}', '{{round stats.ast 1}}' ],
     {{/otherRoster}}
   ]);
 

@@ -281,7 +281,12 @@ function program1(depth0,data,depth1) {
   foundHelper = helpers.name;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.name; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "</a>', '";
+  buffer += escapeExpression(stack1) + "</a>";
+  stack1 = depth0.currentSkills;
+  stack2 = {};
+  foundHelper = helpers.skills_block;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, {hash:stack2,data:data}) : helperMissing.call(depth0, "skills_block", stack1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
   foundHelper = helpers.pos;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.pos; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
@@ -499,7 +504,13 @@ function program1(depth0,data,depth1) {
   foundHelper = helpers.name;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.name; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "</a></a>', '";
+  buffer += escapeExpression(stack1) + "</a></a>";
+  stack1 = depth0.ratings;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.skills;
+  stack2 = {};
+  foundHelper = helpers.skills_block;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, {hash:stack2,data:data}) : helperMissing.call(depth0, "skills_block", stack1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
   foundHelper = helpers.pos;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.pos; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
@@ -655,7 +666,13 @@ function program7(depth0,data,depth2) {
   foundHelper = helpers.name;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.name; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "</a>, <a href=\"/l/";
+  buffer += escapeExpression(stack1) + "</a>";
+  stack1 = depth0.ratings;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.skills;
+  stack2 = {};
+  foundHelper = helpers.skills_block;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, {hash:stack2,data:data}) : helperMissing.call(depth0, "skills_block", stack1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + ", <a href=\"/l/";
   stack1 = depth2.lid;
   stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1;
   buffer += escapeExpression(stack1) + "/roster/";
@@ -729,7 +746,13 @@ function program1(depth0,data,depth1) {
   foundHelper = helpers.name;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.name; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "</a>', '";
+  buffer += escapeExpression(stack1) + "</a>";
+  stack1 = depth0.ratings;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.skills;
+  stack2 = {};
+  foundHelper = helpers.skills_block;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, {hash:stack2,data:data}) : helperMissing.call(depth0, "skills_block", stack1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
   foundHelper = helpers.pos;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.pos; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
@@ -956,7 +979,13 @@ function program1(depth0,data,depth1) {
   foundHelper = helpers.name;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.name; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "</a>', '";
+  buffer += escapeExpression(stack1) + "</a>";
+  stack1 = depth0.ratings;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.skills;
+  stack2 = {};
+  foundHelper = helpers.skills_block;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, {hash:stack2,data:data}) : helperMissing.call(depth0, "skills_block", stack1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
   foundHelper = helpers.pos;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.pos; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
@@ -1035,7 +1064,13 @@ function program4(depth0,data,depth1) {
   foundHelper = helpers.name;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.name; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "</a>', '";
+  buffer += escapeExpression(stack1) + "</a>";
+  stack1 = depth0.ratings;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.skills;
+  stack2 = {};
+  foundHelper = helpers.skills_block;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, {hash:stack2,data:data}) : helperMissing.call(depth0, "skills_block", stack1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
   foundHelper = helpers.pos;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.pos; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
@@ -3716,11 +3751,11 @@ templates['deleteLeague'] = template(function (Handlebars,depth0,helpers,partial
   return buffer;});
 templates['playerRatings'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, foundHelper, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
+  var buffer = "", stack1, stack2, foundHelper, functionType="function", escapeExpression=this.escapeExpression, helperMissing=helpers.helperMissing, self=this, blockHelperMissing=helpers.blockHelperMissing;
 
 function program1(depth0,data,depth1) {
   
-  var buffer = "", stack1, foundHelper;
+  var buffer = "", stack1, stack2, foundHelper;
   buffer += "\n      ['<a href=\"/l/";
   stack1 = depth1.lid;
   stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1;
@@ -3732,7 +3767,13 @@ function program1(depth0,data,depth1) {
   foundHelper = helpers.name;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.name; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "</a>', '";
+  buffer += escapeExpression(stack1) + "</a>";
+  stack1 = depth0.ratings;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.skills;
+  stack2 = {};
+  foundHelper = helpers.skills_block;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, {hash:stack2,data:data}) : helperMissing.call(depth0, "skills_block", stack1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
   foundHelper = helpers.pos;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.pos; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
@@ -4543,7 +4584,7 @@ function program4(depth0,data,depth2) {
   return buffer;});
 templates['draft'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, foundHelper, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
+  var buffer = "", stack1, stack2, foundHelper, functionType="function", escapeExpression=this.escapeExpression, helperMissing=helpers.helperMissing, self=this, blockHelperMissing=helpers.blockHelperMissing;
 
 function program1(depth0,data) {
   
@@ -4568,7 +4609,12 @@ function program3(depth0,data,depth1) {
   foundHelper = helpers.name;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.name; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "</a></td><td>";
+  buffer += escapeExpression(stack1) + "</a>";
+  stack1 = depth0.skills;
+  stack2 = {};
+  foundHelper = helpers.skills_block;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, {hash:stack2,data:data}) : helperMissing.call(depth0, "skills_block", stack1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "</td><td>";
   foundHelper = helpers.pos;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.pos; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
@@ -4602,7 +4648,7 @@ function program4(depth0,data) {
 
 function program6(depth0,data,depth1) {
   
-  var buffer = "", stack1, foundHelper;
+  var buffer = "", stack1, stack2, foundHelper;
   buffer += "\n        <tr><td>";
   foundHelper = helpers.rnd;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
@@ -4634,7 +4680,12 @@ function program6(depth0,data,depth1) {
   foundHelper = helpers.name;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.name; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "</a></td><td>";
+  buffer += escapeExpression(stack1) + "</a>";
+  stack1 = depth0.skills;
+  stack2 = {};
+  foundHelper = helpers.skills_block;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, {hash:stack2,data:data}) : helperMissing.call(depth0, "skills_block", stack1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "</td><td>";
   foundHelper = helpers.pos;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.pos; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }

@@ -29,7 +29,7 @@ $(document).ready(function() {
       </thead>
       <tbody>
         {{#data}}
-          <tr{{#if userTeam}} class="alert-info"{{/if}}><td>{{i}}. <a href="/l/{{../../lid}}/player/{{pid}}">{{name}}</a>, <a href="/l/{{../../lid}}/roster/{{abbrev}}/{{../../season}}">{{abbrev}}</a></td><td>{{round stat 1}}</tr>
+          <tr{{#if userTeam}} class="alert-info"{{/if}}><td>{{i}}. <a href="/l/{{../../lid}}/player/{{pid}}">{{name}}</a>{{skills_block ratings.skills}}, <a href="/l/{{../../lid}}/roster/{{abbrev}}/{{../../season}}">{{abbrev}}</a></td><td>{{round stat 1}}</tr>
         {{/data}}
       </tbody>
       </table>

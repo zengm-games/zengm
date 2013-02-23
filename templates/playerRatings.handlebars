@@ -4,7 +4,7 @@ $(document).ready(function() {
 
   ui.datatable($('#player_ratings'), 4, [
     {{#players}}
-      ['<a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>', '{{pos}}', '<a href="/l/{{../lid}}/roster/{{stats.abbrev}}/{{../season}}">{{stats.abbrev}}</a>', '{{age}}', '{{ratings.ovr}}', '{{ratings.pot}}', '{{ratings.hgt}}', '{{ratings.stre}}', '{{ratings.spd}}', '{{ratings.jmp}}', '{{ratings.endu}}', '{{ratings.ins}}', '{{ratings.dnk}}', '{{ratings.ft}}', '{{ratings.fg}}', '{{ratings.tp}}', '{{ratings.blk}}', '{{ratings.stl}}', '{{ratings.drb}}', '{{ratings.pss}}', '{{ratings.reb}}'],
+      ['<a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>{{skills_block ratings.skills}}', '{{pos}}', '<a href="/l/{{../lid}}/roster/{{stats.abbrev}}/{{../season}}">{{stats.abbrev}}</a>', '{{age}}', '{{ratings.ovr}}', '{{ratings.pot}}', '{{ratings.hgt}}', '{{ratings.stre}}', '{{ratings.spd}}', '{{ratings.jmp}}', '{{ratings.endu}}', '{{ratings.ins}}', '{{ratings.dnk}}', '{{ratings.ft}}', '{{ratings.fg}}', '{{ratings.tp}}', '{{ratings.blk}}', '{{ratings.stl}}', '{{ratings.drb}}', '{{ratings.pss}}', '{{ratings.reb}}'],
     {{/players}}
   ]);
 });

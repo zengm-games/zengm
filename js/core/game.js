@@ -401,7 +401,7 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/se
                 players = event.target.result;
                 players.sort(function (a, b) {  return a.rosterOrder - b.rosterOrder; });
                 realTid = players[0].tid;
-                t = {id: realTid, defense: 0, pace: 0, won: 0, lost: 0, cid: 0, did: 0, stat: {}, player: []};
+                t = {id: realTid, defense: 0, pace: 0, won: 0, lost: 0, cid: 0, did: 0, stat: {}, player: [], synergy: {off: 0, def: 0, reb: 0}};
                 transaction.objectStore("teams").get(realTid).onsuccess = function (event) {
                     var i, j, numPlayers, p, player, rating, team, teamSeason;
 

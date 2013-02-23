@@ -137,6 +137,9 @@ define(["util/helpers", "util/random"], function (helpers, random) {
                 this.updatePlayersOnCourt();
             }
 
+            this.updateTeamCompositeRatings();
+            this.updateSynergy();
+
             outcome = this.simPossession();
 
             // Swap o and d so that o will get another possession when they are swapped again at the beginning of the loop.
@@ -146,7 +149,6 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             }
 
             this.updatePlayingTime();
-            this.updateTeamCompositeRatings();
 
             i += 1;
         }
@@ -205,6 +207,22 @@ define(["util/helpers", "util/random"], function (helpers, random) {
                     this.team[t].compositeRating[rating] = this.team[t].compositeRating[rating] / 5;
                 }
             }
+        }
+    };
+
+    GameSim.prototype.updateSynergy = function () {
+        var i, p, rating, t;
+
+        for (t = 0; t < 2; t++) {
+            // Offensive synergy
+            this.team[t].synergy.off = 6;
+
+            // Defensive synergy
+            this.team[t].synergy.def = 6;
+
+            // Rebounding synergy
+            this.team[t].synergy.reb = 6;
+console.log(this.team[t].synergy);
         }
     };
 

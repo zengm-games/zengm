@@ -1540,7 +1540,7 @@ console.log(message);
 
                     attributes = ["pid", "name", "pos", "age"];
                     stats = ["min", "pts", "trb", "ast", "per"];
-                    ratings = ["ovr", "pot"];
+                    ratings = ["ovr", "pot", "skills"];
 
                     players = db.getPlayers(playersSome, g.season, g.userTid, attributes, stats, ratings, {sortBy: "rosterOrder", showNoStats: true});
 

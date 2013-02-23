@@ -2,7 +2,7 @@
 $(document).ready(function() {
   ui.datatable($('#negotiation_list'), 4, [
     {{#players}}
-	    [ '<a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>', '{{pos}}', '{{age}}', '{{ratings.ovr}}', '{{ratings.pot}}', '{{round stats.min 1}}', '{{round stats.pts 1}}', '{{round stats.trb 1}}', '{{round stats.ast 1}}', '{{round stats.per 1}}', '${{round contractAmount 2}}M thru {{contractExp}}', '<a href="/l/{{../lid}}/negotiation/{{pid}}" class="btn btn-mini btn-primary">Negotiate</a>' ],
+	    [ '<a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>{{skills_block ratings.skills}}', '{{pos}}', '{{age}}', '{{ratings.ovr}}', '{{ratings.pot}}', '{{round stats.min 1}}', '{{round stats.pts 1}}', '{{round stats.trb 1}}', '{{round stats.ast 1}}', '{{round stats.per 1}}', '${{round contractAmount 2}}M thru {{contractExp}}', '<a href="/l/{{../lid}}/negotiation/{{pid}}" class="btn btn-mini btn-primary">Negotiate</a>' ],
     {{/players}}
   ]);
 } );

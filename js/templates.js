@@ -3607,7 +3607,13 @@ function program1(depth0,data,depth1) {
   foundHelper = helpers.name;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.name; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "</a>', '";
+  buffer += escapeExpression(stack1) + "</a>";
+  stack1 = depth0.ratings;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.skills;
+  stack2 = {};
+  foundHelper = helpers.skills_block;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, {hash:stack2,data:data}) : helperMissing.call(depth0, "skills_block", stack1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
   foundHelper = helpers.pos;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.pos; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }

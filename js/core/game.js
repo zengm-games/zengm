@@ -444,7 +444,7 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/se
                         p.compositeRating.shootingFT = _composite(rating, ['ft']);  // Free throw
                         p.compositeRating.rebounding = _composite(rating, ['hgt', 'stre', 'jmp', 'reb'], [1, 0.1, 0.1, 0.7]);
                         p.compositeRating.stealing = _composite(rating, ['spd', 'stl']);
-                        p.compositeRating.blocking = _composite(rating, ['hgt', 'jmp', 'blk']);
+                        p.compositeRating.blocking = _composite(rating, ['hgt', 'jmp', 'blk'], [1, 0.5, 0.5]);
                         p.compositeRating.fouling = _composite(rating, ['hgt', 'blk', 'spd'], [1, 1, -1]);
                         p.compositeRating.defense = _composite(rating, ['hgt', 'stre', 'spd', 'jmp', 'blk', 'stl'], [1, 1, 1, 0.5, 1, 1]);
                         p.compositeRating.defenseInterior = _composite(rating, ['hgt', 'stre', 'spd', 'jmp', 'blk'], [2, 1, 0.5, 0.5, 1]);

@@ -56,10 +56,6 @@ put on play.basketball-gm.com, with splash page on basketball-gm.com
 free agent balance.. maybe increase salary cap?
 low ovr, high pot draft picks should develop better.
 high ovr, low pot draft picks should develop worse?
-different market sizes in different cities, making it easier or harder
-some way to actually win/lose the game
-bootstrap 2.3
-web workers?
 help menu
   overview
   loading/saving games
@@ -224,6 +220,12 @@ import/export stuff
   import league
     ignore old lid
 some UI showing the state of the team's synergy. maybe like an advisors screen that suggests what kind of player is needed to improve synergy
+bootstrap 2.3
+Web workers
+  An implementation is in the webworkers branch. It kind of works, but it doesn't seem to play nice with IDB transactions, so I have to open a new transaction when the callback fires, so it is problematic to have multiple workers in parallel all trying to open readwrite transactions.
+big picture gameplay
+  some way to actually win/lose the game
+  different market sizes in different cities, making it easier or harder
 
 ---
 
@@ -242,8 +244,6 @@ g.dbl.transaction("gameAttributes").objectStore("gameAttributes").getAll().onsuc
 
 FUTURE:
 
-Web workers
-  An implementation is in the webworkers branch. It kind of works, but it doesn't seem to play nice with IDB transactions, so I have to open a new transaction when the callback fires, so it is problematic to have multiple workers in parallel all trying to open readwrite transactions.
 more sophisticatedrealtime data binding/updating
   ember.js
     data binding

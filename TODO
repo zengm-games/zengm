@@ -11,8 +11,7 @@ PER
   use for awards
 game simulation realism
   playing time not adding up to 240?
-  make pages that show stats and ratings as medians/quintiles, for a given season. this will help see how they evolve over time, respond to tweaking, etc.
-    don't round min/max of scale to integers, just let them be whatever they are
+  compare team and player stat distributions against reality
     player stats box plots - add NBA data for comparison http://www.databasebasketball.com/stats_download.htm
   separate composite ratings for shooting in different places (jumpshot, inside, fast break, three, etc)
     how do i know how many of each are shot? log it in some kind of game summary log
@@ -33,11 +32,7 @@ game simulation realism
       ???
       check distribution of shot locations
   rename compositeRating to compositeRatings (or something better)
-    other plural issues
-  pgs should get more assists - increase prob for the "PG" (best ball handler and passer) on the floor
-  more and better 3 point shooters
-  smalls should get less blocks
-  compare team and player stat distributions against reality
+    other plural issues in gameSim
   home/away advantage
     make sure home/away in playoffs is set right
   do some kind of profiling, see if i can speed it up
@@ -56,6 +51,10 @@ put on play.basketball-gm.com, with splash page on basketball-gm.com
 free agent balance.. maybe increase salary cap?
 low ovr, high pot draft picks should develop better.
 high ovr, low pot draft picks should develop worse?
+google analytics
+  https://developers.google.com/analytics/devguides/collection/gajs/asyncMigrationExamples#VirtualPageviews
+    is this needed if the url changes via pushstate? seems to be yes
+    https://github.com/olivernn/davis.js/blob/master/lib/plugins/davis.google_analytics.js
 help menu
   overview
   loading/saving games

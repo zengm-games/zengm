@@ -337,13 +337,11 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/se
      * @param {Object.<string, number>} ratings Player's ratings object.
      * @param {Array.<string>} components List of player ratings to include in the composite ratings
      * @param {Array.<number>=} weights Optional array of weights used in the linear combination of components. If undefined, then all weights are assumed to be 1. If defined, this must be the same size as components.
-     * @param {number=} power Power that the composite rating is raised to after the components are linearly combined by  the weights and scaled from 0 to 1. This can be used to introduce nonlinearities, like making a certain stat more uniform (power < 1) or more unevenly distributed (power > 1) or making a composite rating an inverse (power = -1). Default value is 1.
      * @return {number} Composite rating, a number between 0 and 1.
      */
-    function _composite(rating, components, weights, power) {
+    function _composite(rating, components, weights) {
         var add, component, divideBy, i, r, rcomp, rmax, sign, y;
 
-        power = power !== undefined ? power : 1;
         if (weights === undefined) {
             // Default: array of ones with same size as components
             weights = [];
@@ -373,8 +371,6 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/se
             r = 1;
         } else if (r < 0) {
             r = 0;
-        } else if (power !== 1) {
-            r = Math.pow(r, power);
         }
 
         return r;
@@ -444,7 +440,7 @@ define(["db", "ui", "core/advStats", "core/freeAgents", "core/gameSim", "core/se
                         p.compositeRating.shootingFT = _composite(rating, ['ft']);  // Free throw
                         p.compositeRating.rebounding = _composite(rating, ['hgt', 'stre', 'jmp', 'reb'], [1, 0.1, 0.1, 0.7]);
                         p.compositeRating.stealing = _composite(rating, ['spd', 'stl']);
-                        p.compositeRating.blocking = _composite(rating, ['hgt', 'jmp', 'blk'], [1, 0.5, 0.5]);
+                        p.compositeRating.blocking = _composite(rating, ['hgt', 'jmp', 'blk'], [1.5, 0.5, 0.5]);
                         p.compositeRating.fouling = _composite(rating, ['hgt', 'blk', 'spd'], [1, 1, -1]);
                         p.compositeRating.defense = _composite(rating, ['hgt', 'stre', 'spd', 'jmp', 'blk', 'stl'], [1, 1, 1, 0.5, 1, 1]);
                         p.compositeRating.defenseInterior = _composite(rating, ['hgt', 'stre', 'spd', 'jmp', 'blk'], [2, 1, 0.5, 0.5, 1]);

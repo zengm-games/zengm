@@ -437,7 +437,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.doBlk = function (shooter) {
         var p, ratios;
 
-        ratios = this.ratingArray("blocking", this.d);
+        ratios = this.ratingArray("blocking", this.d, 4);
         p = this.playersOnCourt[this.d][this.pickPlayer(ratios)];
         this.recordStat(this.d, p, "blk");
 
@@ -451,7 +451,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         var p, ratios;
 
         if (this.probAst() > Math.random()) {
-            ratios = this.ratingArray("passing", this.o);
+            ratios = this.ratingArray("passing", this.o, 2);
             p = this.playersOnCourt[this.o][this.pickPlayer(ratios, shooter)];
             this.recordStat(this.o, p, "ast");
         }
@@ -540,13 +540,24 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         return "orb";
     };
 
-    GameSim.prototype.ratingArray = function (rating, t) {
+    /**
+     * Generate an array of composite ratings.
+     * 
+     * @memberOf core.gameSim
+     * @param {string} rating Key of this.team[t].player[p].compositeRating to use.
+     * @param {number} t Team (0 or 1, this.or or this.d).
+     * @param {number=} power Power that the composite rating is raised to after the components are linearly combined by  the weights and scaled from 0 to 1. This can be used to introduce nonlinearities, like making a certain stat more uniform (power < 1) or more unevenly distributed (power > 1) or making a composite rating an inverse (power = -1). Default value is 1.
+     * @return {Array.<number>} Array of composite ratings of the players on the court for the given rating and team.
+     */
+    GameSim.prototype.ratingArray = function (rating, t, power) {
         var array, i, p;
+
+        power = power !== undefined ? power : 1;
 
         array = [0, 0, 0, 0, 0];
         for (i = 0; i < 5; i++) {
             p = this.playersOnCourt[t][i];
-            array[i] = this.team[t].player[p].compositeRating[rating] * this.fatigue(this.team[t].player[p].stat.energy);
+            array[i] = Math.pow(this.team[t].player[p].compositeRating[rating] * this.fatigue(this.team[t].player[p].stat.energy), power);
         }
 
         return array;
@@ -555,19 +566,15 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     /**
      * Pick a player to do something.
      * 
-     * Args:
-     *     ratios: 
-     *     exempt: An integer representing a player that can't be picked (i.e. you
-     *         can't assist your own shot, which is the only current use of
-     *         exempt). The value of exempt ranges from 0 to 4, corresponding to
-     *         the index of the player in this.playersOnCourt. This is *NOT* the
-     *         same value as the player ID *or* the index of the
-     *         this.team[t].player list. Yes, that's confusing.
+     * @memberOf core.gameSim
+     * @param {Array.<number>} ratios output of this.ratingArray.
+     * @param {number} exempt An integer representing a player that can't be picked (i.e. you can't assist your own shot, which is the only current use of exempt). The value of exempt ranges from 0 to 4, corresponding to the index of the player in this.playersOnCourt. This is *NOT* the same value as the player ID *or* the index of the this.team[t].player list. Yes, that's confusing.
      */
     GameSim.prototype.pickPlayer = function (ratios, exempt) {
         var pick, rand;
 
         exempt = exempt !== undefined ? exempt : false;
+
         if (exempt !== false) {
             ratios[exempt] = 0;
         }

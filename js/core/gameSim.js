@@ -241,21 +241,22 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * @memberOf core.gameSim
      */
     GameSim.prototype.updateTeamCompositeRatings = function () {
-        var i, p, rating, t;
+        var i, j, p, rating, t, toUpdate;
+
+        // Only update ones that are actually used
+        toUpdate = ["dribbling", "passing", "rebounding", "defense", "defensePerimeter", "blocking"];
 
         for (t = 0; t < 2; t++) {
-            // Reset team composite ratings
-            for (rating in this.team[t].compositeRating) {
-                if (this.team[t].compositeRating.hasOwnProperty(rating)) {
-                    this.team[t].compositeRating[rating] = 0;
+            for (j = 0; j < toUpdate.length; j++) {
+                rating = toUpdate[j];
+                this.team[t].compositeRating[rating] = 0;
 
-                    for (i = 0; i < 5; i++) {
-                        p = this.playersOnCourt[t][i];
-                        this.team[t].compositeRating[rating] += this.team[t].player[p].compositeRating[rating] * this.fatigue(this.team[t].player[p].stat.energy);
-                    }
-
-                    this.team[t].compositeRating[rating] = this.team[t].compositeRating[rating] / 5;
+                for (i = 0; i < 5; i++) {
+                    p = this.playersOnCourt[t][i];
+                    this.team[t].compositeRating[rating] += this.team[t].player[p].compositeRating[rating] * this.fatigue(this.team[t].player[p].stat.energy);
                 }
+
+                this.team[t].compositeRating[rating] = this.team[t].compositeRating[rating] / 5;
             }
 
             this.team[t].compositeRating.dribbling += this.synergyFactor * this.team[t].synergy.off;
@@ -263,6 +264,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             this.team[t].compositeRating.rebounding += this.synergyFactor * this.team[t].synergy.reb;
             this.team[t].compositeRating.defense += this.synergyFactor * this.team[t].synergy.def;
             this.team[t].compositeRating.defensePerimeter += this.synergyFactor * this.team[t].synergy.def;
+            this.team[t].compositeRating.blocking += this.synergyFactor * this.team[t].synergy.def;
         }
     };
 

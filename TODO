@@ -1,13 +1,6 @@
 main todo (before public beta)
 ------------------------------
 
-PER
-  shouldn't be recalculated for everyone in the playoffs, only active teams' players (also in the regular season, but that's less important)
-    maybe have a flag set when a player plays a game, that advanced stats need to be recalculated
-  slow, particularly after multiple seasons?
-  how to deal with players traded mid-season?
-    reevaluate this in general. stats don't seem to be showing after a trade in roster view and player view.
-  use for awards
 game simulation realism
   playing time not adding up to 240?
   compare team and player stat distributions against reality
@@ -35,10 +28,11 @@ free agents
   balance
     on new game, have enough free agents so the pool isn't totally depleted
     do something to prevent so many free agents from being left over. lower salary demands? more aggressive decreases during the season?
-moved cities
 put on play.basketball-gm.com, with splash page on basketball-gm.com
-low ovr, high pot draft picks should develop better.
-high ovr, low pot draft picks should develop worse?
+player development
+  low ovr, high pot draft picks should develop better.
+  high ovr, low pot draft picks should develop worse?
+  come up with a test script to run a bunch of random simulations, and tweak core.player.develop
 google analytics
   https://developers.google.com/analytics/devguides/collection/gajs/asyncMigrationExamples#VirtualPageviews
     is this needed if the url changes via pushstate? seems to be yes
@@ -199,6 +193,13 @@ advanced stats
   +/- and other stats needed to calculate above - track in game
   APM?
   shot charts?
+  PER
+    shouldn't be recalculated for everyone in the playoffs, only active teams' players (also in the regular season, but that's less important)
+      maybe have a flag set when a player plays a game, that advanced stats need to be recalculated
+    slow, particularly after multiple seasons?
+    how to deal with players traded mid-season?
+      reevaluate this in general. stats don't seem to be showing after a trade in roster view and player view.
+    use for awards, contracts
 import/export stuff
   https://unhosted.org/adventures/7/Adding-remote-storage-to-unhosted-web-apps.html
   data urls don't work with more than ~1 MB. downloadifydoesn't seem to work with more than several MBs of data. until a better solution comes (online sync?), wait.

@@ -223,7 +223,7 @@ define(["db", "util/random"], function (db, random) {
 
             // Update overall and potential
             p.ratings[r].ovr = ovr(p.ratings[r]);
-            p.ratings[r].pot += -2 + parseInt(random.gauss(0, 2), 10);
+            p.ratings[r].pot += -2 + Math.round(random.gauss(0, 2));
             if (p.ratings[r].ovr > p.ratings[r].pot || age > 28) {
                 p.ratings[r].pot = p.ratings[r].ovr;
             }

@@ -1,5 +1,5 @@
 /**
- * @name core.advStats
+ * @name util.advStats
  * @namespace Advanced stats (PER, WS, etc) that require some nontrivial calculations and thus are calculated and cached once each day.
  */
 define(["db"], function (db) {
@@ -10,7 +10,7 @@ define(["db"], function (db) {
      *
      * This is based on http://www.basketball-reference.com/about/per.html
      *
-     * @memberOf core.advStats
+     * @memberOf util.advStats
      * @param {function()} cb Callback function.
      */
     function calculatePER(cb) {
@@ -113,11 +113,20 @@ define(["db"], function (db) {
                             cb();
                         }
                     }
-                }
+                };
             };
         });
     }
 
+
+    /**
+     * Calcualte the advanced stats for each active player and write them to the database.
+     *
+     * Currently this is just PER.
+     *
+     * @memberOf util.advStats
+     * @param {function()} cb Callback function.
+     */
     function calculateAll(cb) {
         calculatePER(cb);
     }

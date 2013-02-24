@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - _global_</title>
+		<title>JsDoc Reference - util.advStats</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -230,7 +230,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Built-In Namespace _global_
+				Namespace util.advStats
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -238,12 +238,35 @@ ul.inheritsList
 				
 				
 			
+				Advanced stats (PER, WS, etc) that require some nontrivial calculations and thus are calculated and cached once each day.
 				
 				
+					<br /><i>Defined in: </i> &lt;js/util/advStats.js&gt;.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
+			
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class util.advStats.">
+				<caption>Namespace Summary</caption>
+				<thead>
+					<tr>
+						<th scope="col">Constructor Attributes</th>
+						<th scope="col">Constructor Name and Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="attributes">&nbsp;</td>
+						<td class="nameDescription" >
+							<div class="fixedFont">
+								<b><a href="../symbols/util.advStats.html#constructor">util.advStats</a></b>
+							</div>
+							<div class="description"></div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 			
 
 <!-- ============================== properties summary ===================== -->
@@ -253,7 +276,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class _global_.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class util.advStats.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -264,11 +287,20 @@ ul.inheritsList
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b>onsuccess</b>(event)
+								<div class="fixedFont">util.advStats.<b><a href="../symbols/util.advStats.html#.calculateAll">calculateAll</a></b>(cb)
 								</div>
-								<div class="description"></div>
+								<div class="description">Calcualte the advanced stats for each active player and write them to the database.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">util.advStats.<b><a href="../symbols/util.advStats.html#.calculatePER">calculatePER</a></b>(cb)
+								</div>
+								<div class="description">Calcualte the current season's Player Efficiency Rating (PER) for each active player and write it to the database.</div>
 							</td>
 						</tr>
 					
@@ -283,6 +315,33 @@ ul.inheritsList
 
 <!-- ============================== constructor details ==================== -->		
 			
+			<div class="details"><a name="constructor"> </a>
+				<div class="sectionTitle">
+					Namespace Detail
+				</div>
+				
+				<div class="fixedFont">
+						<b>util.advStats</b>
+				</div>
+				
+				<div class="description">
+					
+					
+				</div>
+				
+				
+				
+				
+					
+					
+					
+					
+					
+					
+					
+
+			</div>
+			
 
 <!-- ============================== field details ========================== -->		
 			
@@ -293,18 +352,17 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name="onsuccess"> </a>
-					<div class="fixedFont">
+					<a name=".calculateAll"> </a>
+					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<b>onsuccess</b>(event)
+					<span class="light">util.advStats.</span><b>calculateAll</b>(cb)
 					
 					</div>
 					<div class="description">
-						
-						
-							<br />
-							<i>Defined in: </i> &lt;js/util/advStats.js&gt;.
+						Calcualte the advanced stats for each active player and write them to the database.
+
+Currently this is just PER.
 						
 						
 					</div>
@@ -316,10 +374,48 @@ ul.inheritsList
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<b>event</b>
+									<span class="light fixedFont">{function()}</span> <b>cb</b>
 									
 								</dt>
-								<dd></dd>
+								<dd>Callback function.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".calculatePER"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">util.advStats.</span><b>calculatePER</b>(cb)
+					
+					</div>
+					<div class="description">
+						Calcualte the current season's Player Efficiency Rating (PER) for each active player and write it to the database.
+
+This is based on http://www.basketball-reference.com/about/per.html
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{function()}</span> <b>cb</b>
+									
+								</dt>
+								<dd>Callback function.</dd>
 							
 							</dl>
 						
@@ -344,7 +440,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sat Feb 23 2013 21:34:56 GMT-0500 (EST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sat Feb 23 2013 21:34:57 GMT-0500 (EST)
 		</div>
 	</body>
 </html>

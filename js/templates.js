@@ -5257,7 +5257,7 @@ function program20(depth0,data) {
 
 function program22(depth0,data,depth1) {
   
-  var buffer = "", stack1, foundHelper;
+  var buffer = "", stack1, stack2, foundHelper;
   buffer += "\n      <tr><td><a href=\"#\">";
   foundHelper = helpers.season;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
@@ -5349,7 +5349,12 @@ function program22(depth0,data,depth1) {
   foundHelper = helpers.reb;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.reb; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "</td></tr>\n    ";
+  buffer += escapeExpression(stack1) + "</td><td><span class=\"skills_alone\">";
+  stack1 = depth0.skills;
+  stack2 = {};
+  foundHelper = helpers.skills_block;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, {hash:stack2,data:data}) : helperMissing.call(depth0, "skills_block", stack1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "</span></td></tr>\n    ";
   return buffer;}
 
   buffer += "<div class=\"row-fluid\">\n  <div class=\"span6\">\n    <h1>";
@@ -5442,7 +5447,7 @@ function program22(depth0,data,depth1) {
   stack2 = {};
   stack1 = helpers['with'].call(depth0, stack1, {hash:stack2,inverse:self.noop,fn:self.program(20, program20, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  </tbody>\n</table>\n\n<h2>Ratings History</h2>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player_ratings\">\n  <thead>\n    <tr><th>Year</th><th>Team</th><th>Age</th><th title=\"Overall\">Ovr</th><th title=\"Potential\">Pot</th><th title=\"Height\">Hgt</th><th title=\"Strength\">Str</th><th title=\"Speed\">Spd</th><th title=\"Jumping\">Jmp</th><th title=\"Endurance\">End</th><th title=\"Inside Scoring\">Ins</th><th title=\"Dunks/Layups\">Dnk</th><th title=\"Free Throw Shooting\">FT</th><th title=\"Two-Point Shooting\">2Pt</th><th title=\"Three-Point Shooting\">3Pt</th><th title=\"Blocks\">Blk</th><th title=\"Steals\">Stl</th><th title=\"Dribbling\">Drb</th><th title=\"Passing\">Pss</th><th title=\"Rebounding\">Reb</th></tr>\n  </thead>\n  <tbody>\n    ";
+  buffer += "\n  </tbody>\n</table>\n\n<h2>Ratings History</h2>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player_ratings\">\n  <thead>\n    <tr><th>Year</th><th>Team</th><th>Age</th><th title=\"Overall\">Ovr</th><th title=\"Potential\">Pot</th><th title=\"Height\">Hgt</th><th title=\"Strength\">Str</th><th title=\"Speed\">Spd</th><th title=\"Jumping\">Jmp</th><th title=\"Endurance\">End</th><th title=\"Inside Scoring\">Ins</th><th title=\"Dunks/Layups\">Dnk</th><th title=\"Free Throw Shooting\">FT</th><th title=\"Two-Point Shooting\">2Pt</th><th title=\"Three-Point Shooting\">3Pt</th><th title=\"Blocks\">Blk</th><th title=\"Steals\">Stl</th><th title=\"Dribbling\">Drb</th><th title=\"Passing\">Pss</th><th title=\"Rebounding\">Reb</th><th>Skills</th></tr>\n  </thead>\n  <tbody>\n    ";
   stack1 = depth0.player;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.ratings;
   stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1;

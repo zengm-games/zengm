@@ -1,6 +1,9 @@
 main todo (before public beta)
 ------------------------------
 
+how can top players remain undrafted for so long?
+New Jersey still showing up?  
+why are drafted players all 19?
 game simulation realism
   playing time not adding up to 240?
   compare team and player stat distributions against reality
@@ -30,16 +33,10 @@ free agents
     on new game, have enough free agents so the pool isn't totally depleted
     do something to prevent so many free agents from being left over. lower salary demands? more aggressive decreases during the season?
 put on play.basketball-gm.com, with splash page on basketball-gm.com
-player development
-  low ovr, high pot draft picks should develop better.
-  high ovr, low pot draft picks should develop worse?
-  come up with a test script to run a bunch of random simulations, and tweak core.player.develop
 google analytics
-  is it actually recording anything?
-  add a flag to disable (basically.. dev/production flag)
+  make sure the filter to only track on basketball-gm.com is working
 IDB version updating? is the current version set right?
 git tag as beta
-get jslint running from some command line script
 
 ---
 
@@ -66,7 +63,8 @@ error during draft? - this might be fixed due to the double cb bugfix
 
 FUTURE FEATURES (i.e. not required for public beta, probably.. but go through the list again to check)
 
-jslint --plusplus --predef $ --predef Davis --predef requirejs --predef define --predef window --predef document --predef localStorage --predef IDBKeyRange --predef IDBTransaction --predef g --predef c js/core/draft.js
+get jslint running from some command line script
+  jslint --plusplus --predef $ --predef Davis --predef requirejs --predef define --predef window --predef document --predef localStorage --predef IDBKeyRange --predef IDBTransaction --predef g --predef c js/core/draft.js
   http://stackoverflow.com/questions/7425147/jslint-error-somefunction-was-used-before-it-was-defined
   http://stackoverflow.com/questions/6744692/jslint-should-we-tolerate-misordered-definitions
     http://javascript.crockford.com/code.html
@@ -196,6 +194,7 @@ show record (w-l) on roster view - make it more like a summary, as in basketball
   playoff results
   payroll
   anything else?
+https://github.com/nprapps/app-template
 
 ---
 

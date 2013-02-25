@@ -7,8 +7,8 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
         playerStore = g.dbl.transaction(["players"], "readwrite").objectStore("players");
         profiles = ["Point", "Wing", "Big", "Big", ""];
         for (i = 0; i < 70; i++) {
-            baseRating = random.randInt(0, 19);
-            pot = parseInt(random.gauss(45, 20), 10);
+            baseRating = random.randInt(8, 33);
+            pot = parseInt(random.gauss(50, 20), 10);
             if (pot < baseRating) {
                 pot = baseRating;
             }

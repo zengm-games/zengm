@@ -179,7 +179,7 @@ define(["db", "util/random"], function (db, random) {
      * @return {Object} Updated player object.
      */
     function develop(p, years, generate) {
-        var age, i, increase, j, key, ovrTemp, plusMinus, pot, r, ratingKeys;
+        var age, baseChange, i, j, ratingKeys, r, sigma;
 
         years = years !== undefined ? years : 1;
         generate = generate !== undefined ? generate : false;
@@ -195,30 +195,49 @@ define(["db", "util/random"], function (db, random) {
 
         for (i = 0; i < years; i++) {
             age += 1;
-            pot = random.gauss(p.ratings[r].pot, 5);
-            ovrTemp = p.ratings[r].ovr;
+
+            // Randomly make a big jump
+            if (Math.random() > 0.985 && age < 22) {
+                p.ratings[r].pot += 10;
+            }
+
+            // Variance of ratings change is proportional to the potential difference
+            sigma = (p.ratings[r].pot - p.ratings[r].ovr) / 10;
+
+            // 60% of the time, improve. 20%, regress. 20%, stay the same
+            baseChange = random.gauss(random.randInt(-1, 3), sigma);
+
+            // Bound possible changes
+            if (baseChange > 30) {
+                baseChange = 30;
+            } else if (baseChange < -5) {
+                baseChange = -5;
+            }
+            if (baseChange + p.ratings[r].pot > 95) {
+                baseChange = 95 - p.ratings[r].pot;
+            }
+
+            // Modulate by potential difference
+            baseChange *= 1 + (p.ratings[r].pot - p.ratings[r].ovr) / 8;
+
+            // Modulate by age
+            if (age > 23) {
+                baseChange /= 3;
+            }
+            if (age > 29) {
+                baseChange -= 1;
+            }
+            if (age > 31) {
+                baseChange -= 1;
+            }
+            if (age > 33) {
+                baseChange -= 1;
+            }
 
             ratingKeys = ['stre', 'spd', 'jmp', 'endu', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb'];
             for (j = 0; j < ratingKeys.length; j++) {
-                key = ratingKeys[j];
-                plusMinus = 28 - age;
-                if (plusMinus > 0) {
-                    if (pot > ovrTemp) {
-                        // Cap potential growth
-                        if (pot - ovrTemp < 20) {
-                            plusMinus *= (pot - ovrTemp) / 20.0 + 0.5;
-                        } else {
-                            plusMinus *= 1.5;
-                        }
-                    } else {
-                        plusMinus *= 0.5;
-                    }
-                } else {
-                    plusMinus *= 30.0 / pot;
-                }
-                increase = random.gauss(1, 2) * plusMinus;
                 //increase = plusMinus
-                p.ratings[r][key] = limitRating(p.ratings[r][key] + increase);
+                p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + random.gauss(1, 2) * baseChange);
             }
 
             // Update overall and potential

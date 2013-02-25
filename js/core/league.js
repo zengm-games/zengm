@@ -113,8 +113,8 @@ define(["db", "ui", "core/player", "core/season", "util/helpers", "util/random"]
                             // Generate new players
                             playerStore = transaction.objectStore("players");
                             profiles = ["Point", "Wing", "Big", ""];
-                            baseRatings = [30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 19, 19];
-                            pots = [70, 60, 50, 50, 55, 45, 65, 35, 50, 45, 55, 55, 40, 40];
+                            baseRatings = [37, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 26, 26, 26];
+                            pots = [75, 65, 55, 55, 60, 50, 70, 40, 55, 50, 60, 60, 45, 45];
 
                             done = 0;
                             for (t = -1; t < 30; t++) {

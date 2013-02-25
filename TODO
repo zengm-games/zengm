@@ -142,6 +142,7 @@ move to new window button, like gmail, that will open a view in a new window wit
   only the icon should be clickable, not the area above and below
   insert query string before # in URL when making popup in ui.moveToNewWindow. also, account for any other query string already there (although there currently aren't any others, AFAIK)
 team history view needs more love
+  dropdown for other teams
 auto-add players when AI teams are below limit (in season.js)
 AI modules that contain functions which are called to determine if players are resigned, etc.
 notifications (and log) from top right to display log of key events

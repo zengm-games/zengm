@@ -136,6 +136,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                     if (tid === g.userTid) {
                         helpers.error("Your team currently has more than the maximum number of players (15). You must release or buy out players (from the Roster page) before the season starts.");
                         userTeamSizeError = true;
+                        ui.updatePlayMenu();  // Otherwise the play menu will be blank
                     } else {
                         // Automatically drop lowest potential players until we reach 15
                         players = [];
@@ -153,6 +154,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                     if (tid === g.userTid) {
                         helpers.error("Your team currently has less than the minimum number of players (5). You must add players (through free agency or trades) before the season starts.");
                         userTeamSizeError = true;
+                        ui.updatePlayMenu();  // Otherwise the play menu will be blank
                     } else {
                         // Should auto-add players
                     }
@@ -494,7 +496,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
             return;
         }
 
-        // Prevent new phase from being clicked twice by deleting all options from the play menu. The options will be restored after the new phase is set.
+        // Prevent new phase from being clicked twice by deleting all options from the play menu. The options will be restored after the new phase is set or if there is an error by calling ui.updatePlayMenu.
         button = Handlebars.templates.playButton({options: []});
         playButtonElement = document.getElementById("playButton");
         if (playButtonElement) {

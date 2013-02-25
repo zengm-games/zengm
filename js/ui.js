@@ -54,7 +54,6 @@ define(["db", "util/lock"], function (db, lock) {
     function update(data, cb) {
         var leaguePage, rendered, result;
 
-console.log(g)
         data.vars.lid = g.lid;
         rendered = Handlebars.templates[data.template](data.vars);
         $("#" + data.container).html(rendered);
@@ -148,6 +147,11 @@ console.log(g)
      * @param {function()=} cb Optional callback that will run after the page updates.
      */
     function realtimeUpdate(cb) {
+        // If tracking is enabled, don't track realtime updates
+        if (Davis.Request.prototype.noTrack !== undefined) {
+            Davis.Request.prototype.noTrack();
+        }
+
         // Refresh standings if it's the current season standings and the phase is during the regular season
         Davis.location.replace(new Davis.Request(location.pathname, {cb: cb}));
     }

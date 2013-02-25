@@ -23,6 +23,8 @@ requirejs(["api", "db", "views", "ui", "util/helpers"], function (api, db, views
                 this.linkSelector = "a:not([data-no-davis=true])";
             });
 
+            this.use(Davis.googleAnalytics);
+
             this.bind("routeNotFound", function (req) {
                 helpers.error("Page not found.", req);
             });

@@ -35,9 +35,8 @@ player development
   high ovr, low pot draft picks should develop worse?
   come up with a test script to run a bunch of random simulations, and tweak core.player.develop
 google analytics
-  https://developers.google.com/analytics/devguides/collection/gajs/asyncMigrationExamples#VirtualPageviews
-    is this needed if the url changes via pushstate? seems to be yes
-    https://github.com/olivernn/davis.js/blob/master/lib/plugins/davis.google_analytics.js
+  is it actually recording anything?
+  add a flag to disable (basically.. dev/production flag)
 IDB version updating? is the current version set right?
 git tag as beta
 get jslint running from some command line script

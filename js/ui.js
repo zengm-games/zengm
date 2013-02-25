@@ -54,6 +54,7 @@ define(["db", "util/lock"], function (db, lock) {
     function update(data, cb) {
         var leaguePage, rendered, result;
 
+console.log(g)
         data.vars.lid = g.lid;
         rendered = Handlebars.templates[data.template](data.vars);
         $("#" + data.container).html(rendered);

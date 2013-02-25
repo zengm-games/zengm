@@ -23,6 +23,7 @@ game simulation realism
     do i need all the team composite ratings?
 contract negotiation - make increased demands (in response to wrong $ or time) more lenient
 free agents
+  at start of free agents phase (i.e. after the season), show stats from this year, not last year
   let free agents stay for 2 seasons before retiring, or make retirement probabilistic
     is retirement working for the first season, at all?
   balance
@@ -37,33 +38,9 @@ google analytics
   https://developers.google.com/analytics/devguides/collection/gajs/asyncMigrationExamples#VirtualPageviews
     is this needed if the url changes via pushstate? seems to be yes
     https://github.com/olivernn/davis.js/blob/master/lib/plugins/davis.google_analytics.js
-help menu
-  overview
-  loading/saving games
-  stats (explain advanced stats)
-  game simulation
-    Offensive synergy:
-      2 three point shooters (***)
-      3 three point shooters
-      4 three point shooters
-      1 ball handler (***)
-      2 ball handlers
-      1 passer (***)
-      2 passers
-      3 passers
-      1 post scorer
-      3 athlete
-      4 athlete
-    Defensive synergy:
-      1 perimeter defender
-      1 interior defender (***)
-      3 athlete
-      4 athlete
-    Rebounding synergy:
-      1 rebounder (***)
-      2 rebounders
-    (*** means essential)
+IDB version updating? is the current version set right?
 git tag as beta
+get jslint running from some command line script
 
 ---
 

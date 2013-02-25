@@ -237,6 +237,24 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         }
     }
 
+    function manual(req) {
+        var data, page;
+
+        beforeNonLeague();
+
+        page = req.params.page !== undefined ? req.params.page : "overview";
+
+        if (page === "overview") {
+            data = {
+                container: "content",
+                template: "manualOverview",
+                title: "Manual",
+                vars: {}
+            };
+        }
+        ui.update(data, req.raw.cb);
+    }
+
     function leagueDashboard(req) {
         beforeLeague(req, function () {
             var transaction, vars;
@@ -1972,6 +1990,7 @@ console.log(players);
         dashboard: dashboard,
         newLeague: newLeague,
         deleteLeague: deleteLeague,
+        manual: manual,
 
         leagueDashboard: leagueDashboard,
         standings: standings,

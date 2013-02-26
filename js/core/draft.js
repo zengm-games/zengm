@@ -74,7 +74,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
                         break;
                     }
 
-                    selection = Math.abs(Math.floor(random.gauss(0, 3)));  // 0=best prospect, 1=next best prospect, etc.
+                    selection = Math.floor(Math.abs(random.gauss(0, 2)));  // 0=best prospect, 1=next best prospect, etc.
                     pid = playersAll[selection].pid;
                     selectPlayer(pick, pid, playerStore);
 

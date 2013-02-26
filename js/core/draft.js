@@ -21,7 +21,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
             draftYear = g.season;
 
             p = player.generate(c.PLAYER_UNDRAFTED, 19, profile, baseRating, pot, draftYear);
-            p = player.develop(p, agingYears);
+            p = player.develop(p, agingYears, true);
 
             db.putPlayer(playerStore, p);
         }

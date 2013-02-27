@@ -1,8 +1,6 @@
 main todo (before public beta)
 ------------------------------
 
-save state like http://www.datatables.net/examples/basic_init/state_save.html
-  might need to pass a unique name for each table to sCookiePrefix. should this be unique within a league? will that create too many cookies? probably should ideally be global per-table, across leagues
 fix default sort order on column click
   text should be asc, numeric should be desc
   http://stackoverflow.com/questions/3725321/jquery-datatables-change-order-to-desc-when-it-sorts - but can it be set globally? maybe i can have ui.datatable automatically read columns and figure it out?

@@ -48,7 +48,6 @@ Davis.googleAnalytics = function () {
      */
     track: function () {
       if (_gaq) _gaq.push(['_trackPageview', this.path])
-console.log("TRACKED")
     }
   })
 }

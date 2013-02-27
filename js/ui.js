@@ -75,11 +75,19 @@ define(["db", "util/lock"], function (db, lock) {
     }
 
     // Data tables
+    // fnStateSave and fnStateLoad are based on http://www.datatables.net/blog/localStorage_for_state_saving except the id of the table is used in the key. This means that whatever you do to a table (sorting, viewing page, etc) will apply to every identical table in other leagues.
     function datatable(table, sort_col, data) {
         table.dataTable({
             aaData: data,
             aaSorting: [[sort_col, "desc"]],
             bDeferRender: true,
+            bStateSave: true,
+            fnStateSave: function (oSettings, oData) {
+                localStorage.setItem("DataTables_" + table[0].id, JSON.stringify(oData));
+            },
+            fnStateLoad: function (oSettings) {
+                return JSON.parse(localStorage.getItem("DataTables_" + table[0].id));
+            },
             sPaginationType: "bootstrap",
             oLanguage: {
                 sLengthMenu: "_MENU_ players per page",
@@ -95,7 +103,14 @@ define(["db", "util/lock"], function (db, lock) {
             aaSorting: [[sort_col, "desc"]],
             bFilter: false,
             bInfo: false,
-            bPaginate: false
+            bPaginate: false,
+            bStateSave: true,
+            fnStateSave: function (oSettings, oData) {
+                localStorage.setItem("DataTables_" + table[0].id, JSON.stringify(oData));
+            },
+            fnStateLoad: function (oSettings) {
+                return JSON.parse(localStorage.getItem("DataTables_" + table[0].id));
+            }
         });
     }
 

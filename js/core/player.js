@@ -251,6 +251,11 @@ define(["db", "util/random"], function (db, random) {
             p.ratings[r].skills = skills(p.ratings[r]);
         }
 
+        // If this isn't here outside the loop, then 19 year old players could still have ovr > pot
+        if (p.ratings[r].ovr > p.ratings[r].pot || age > 28) {
+            p.ratings[r].pot = p.ratings[r].ovr;
+        }
+
         if (generate) {
             if (g.hasOwnProperty("season")) {
                 age = g.season - p.bornYear + years;
@@ -276,7 +281,14 @@ define(["db", "util/random"], function (db, random) {
      * @return {Object} Updated player object.
      */
     function bonus(p, amount, randomizeExp) {
-        var cont, i, key, r, ratingKeys;
+        var age, cont, i, key, r, ratingKeys;
+
+        // Make sure age is always defined
+        if (g.hasOwnProperty("season")) {
+            age = g.season - p.bornYear;
+        } else {
+            age = g.startingSeason - p.bornYear;
+        }
 
         r = p.ratings.length - 1;
 
@@ -288,7 +300,7 @@ define(["db", "util/random"], function (db, random) {
 
         // Update overall and potential
         p.ratings[r].ovr = ovr(p.ratings[r]);
-        if (p.ratings[r].ovr > p.ratings[r].pot) {
+        if (p.ratings[r].ovr > p.ratings[r].pot || age > 28) {
             p.ratings[r].pot = p.ratings[r].ovr;
         }
 

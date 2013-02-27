@@ -217,8 +217,10 @@ define(["db", "util/random"], function (db, random) {
                 baseChange = 95 - p.ratings[r].pot;
             }
 
-            // Modulate by potential difference
-            baseChange *= 1 + (p.ratings[r].pot - p.ratings[r].ovr) / 8;
+            // Modulate by potential difference, but only for growth, not regression
+            if (baseChange > 0) {
+                baseChange *= 1 + (p.ratings[r].pot - p.ratings[r].ovr) / 8;
+            }
 
             // Modulate by age
             if (age > 23) {

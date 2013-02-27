@@ -67,6 +67,15 @@
 
 <p>There are no accounts, no passwords, no nothing. All the game data is stored locally on your computer using <a href="https://www.google.com/search?q=indexeddb">IndexedDB</a>. This has advantages and disadvantages. The main advantage is that it is really cheap to run this game, since simulations can occur in your web browser rather than a central server; this is what allows the game to be free and unlimited. The two main disadvantages are (1) doing simulations in your web browser incurs some performance restrictions (but it's not that bad), and (2) since the games are stored on your computer and not on a server, you can't access the same leagues on different computers (eventually this will be possible though).</p>
 
+<h2>Performance</h2>
+
+<p>Game simulation can be taxing on your computer, particularly as additional seasons are simulated and the database grows. There are a couple of tricks you can use to speed this up:</p>
+
+<ol>
+  <li>Don't open multiple windows/tabs viewing while you are simulating games. If you do, then all of the windows will try to update their content every day, which takes valuable computing resources away from actually simulating the games.</li>
+  <li>Don't have a complicated page open within your league when you simulate games. As the simulation progresses, the content of whatever you're viewing updates each day. If you're viewing something complex like the league dashboard, this can be a little slow. If you view something simple like the schedule, it will be faster.</li>
+</ol>
+
 <h2>Make Basketball GM better!</h2>
 
 <p>Basketball GM is open source. That means you can copy/edit/improve/redistribute the game. <a href="https://github.com/jdscheff/basketball-gm">The code is on GitHub</a>, avaliable under the <a href="http://www.gnu.org/licenses/agpl-3.0.html">GNU Affero General Public License</a>. If you want to help make Basketball GM better, there are tons of ways you can help. You can start hacking on anything you want or <a href="mailto:jdscheff@gmail.com">send me an email</a> if you want to discuss things first.</p>

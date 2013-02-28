@@ -1,4 +1,6 @@
-var g = {};
+var c, g;
+
+g = {};
 
 // If any of these things are supposed to change at any point, they should be stored in gameAttributes rather than here.
 g.ticketPrice = 30;  // [dollars]
@@ -12,30 +14,33 @@ g.minContract = 500;  // [thousands of dollars]
 g.notInDb = ["dbm", "dbl", "lid", "ticketPrice", "numTeams", "confs", "divs", "salaryCap", "minContract", "notInDb", "nickNames", "firstNames", "lastNames"];
 
 $.get("/data/nickNames.txt", function (data) {
-	var rows;
-	rows = data.split("\n");
-	g.nickNames = rows;
+    "use strict";
+    var rows;
+    rows = data.split("\n");
+    g.nickNames = rows;
 });
 
 $.get("/data/firstNames.txt", function (data) {
-	var rows;
-	rows = data.split("\n");
-	rows.forEach(function (element, index, array) {
-		array[index] = element.split(",");
-	});
-	g.firstNames = rows;
+    "use strict";
+    var rows;
+    rows = data.split("\n");
+    rows.forEach(function (element, index, array) {
+        array[index] = element.split(",");
+    });
+    g.firstNames = rows;
 });
 
 $.get("/data/lastNames.txt", function (data) {
-	var rows;
-	rows = data.split("\n");
-	rows.forEach(function (element, index, array) {
-		array[index] = element.split(",");
-	});
-	g.lastNames = rows;
+    "use strict";
+    var rows;
+    rows = data.split("\n");
+    rows.forEach(function (element, index, array) {
+        array[index] = element.split(",");
+    });
+    g.lastNames = rows;
 });
 
-var c = {};
+c = {};
 
 c.PHASE_PRESEASON = 0;
 c.PHASE_REGULAR_SEASON = 1;

@@ -22,11 +22,6 @@ game simulation realism
   do some kind of profiling, see if i can speed it up
     do i need all the player composite ratings?
     do i need all the team composite ratings?
-free agents
-  let free agents stay for 2 seasons before retiring, or make retirement probabilistic
-    is retirement working for the first season, at all?
-  balance
-    on new game, have enough free agents so the pool isn't totally depleted
 put on play.basketball-gm.com, with splash page on basketball-gm.com
 google analytics
   make sure the filter to only track on basketball-gm.com is working

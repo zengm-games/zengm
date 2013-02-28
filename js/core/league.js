@@ -37,7 +37,7 @@ define(["db", "ui", "core/player", "core/season", "util/helpers", "util/random"]
                     helpers.resetG();
 
                     db.setGameAttributes(gameAttributes, function () {
-                        var afterPlayerCreation, agingYears, baseRatings, contract, done, draftYear, goodNeutralBad, i, n, p, playerStore, pots, profile, profiles, randomizeExpiration, t, teamStore, transaction;
+                        var afterPlayerCreation, agingYears, baseRatings, contract, done, draftYear, goodNeutralBad, i, n, p, playerStore, pots, profile, profiles, randomizeExpiration, t, tid, teamStore, transaction;
 
                         // Probably is fastest to use this transaction for everything done to create a new league
                         transaction = g.dbl.transaction(["draftOrder", "players", "teams", "trade"], "readwrite");
@@ -117,7 +117,14 @@ define(["db", "ui", "core/player", "core/season", "util/helpers", "util/random"]
                             pots = [75, 65, 55, 55, 60, 50, 70, 40, 55, 50, 60, 60, 45, 45];
 
                             done = 0;
-                            for (t = -1; t < 30; t++) {
+                            for (t = -3; t < 30; t++) {
+                                // Create multiple "teams" worth of players for the free agent pool
+                                if (t < 0) {
+                                    tid = c.PLAYER_FREE_AGENT;
+                                } else {
+                                    tid = t;
+                                }
+
                                 goodNeutralBad = random.randInt(-1, 1);  // determines if this will be a good team or not
                                 random.shuffle(pots);
                                 for (n = 0; n < 14; n++) {
@@ -125,7 +132,7 @@ define(["db", "ui", "core/player", "core/season", "util/helpers", "util/random"]
                                     agingYears = random.randInt(0, 13);
                                     draftYear = g.startingSeason - 1 - agingYears;
 
-                                    p = player.generate(t, 19, profile, baseRatings[n], pots[n], draftYear, true);
+                                    p = player.generate(tid, 19, profile, baseRatings[n], pots[n], draftYear, true);
                                     p = player.develop(p, agingYears, true);
                                     if (n < 5) {
                                         p = player.bonus(p, goodNeutralBad * random.randInt(0, 20), true);

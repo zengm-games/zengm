@@ -430,6 +430,42 @@ define(["util/helpers"], function (helpers) {
         return players;
     }
 
+    /**
+     * Get the total payroll for a team.
+     * 
+     * This includes players who have been released but are still owed money from their old contracts.
+     * 
+     * @memberOf db
+     * @param {IDBTransaction|null} ot An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.
+     * @param {number} tid Team ID.
+     * @param {function(Array)} cb Callback whose first argument is the payroll in thousands of dollars.
+     */
+    function getPayroll(ot, tid, cb) {
+        var payroll, transaction;
+
+        transaction = getObjectStore(ot, ["players", "releasedPlayers"], null);
+        transaction.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
+            var i, pa, playersAll;
+
+            payroll = 0;
+            playersAll = event.target.result;
+            for (i = 0; i < playersAll.length; i++) {
+                pa = playersAll[i];
+                payroll += pa.contractAmount;
+            }
+
+            transaction.objectStore("releasedPlayers").index("tid").getAll(tid).onsuccess = function (event) {
+                var i, releasedPlayers;
+
+                releasedPlayers = event.target.result;
+                for (i = 0; i < releasedPlayers.length; i++) {
+                    payroll += releasedPlayers[i].contractAmount;
+                }
+
+                cb(parseInt(payroll, 10));
+            };
+        };
+    }
 
     /**
      * Get a filtered team object.
@@ -473,6 +509,7 @@ define(["util/helpers"], function (helpers) {
                     team.profit = (tsa.revenue - tsa.cost) / 1000;  // [millions of dollars]
                 } else if (seasonAttributes[j] === "payroll") {
                     // Handled later
+                    team.payroll = null;
                 } else if (seasonAttributes[j] === "lastTen") {
                     lastTenWon = _.reduce(tsa.lastTen, function (memo, num) { return memo + num; }, 0);
                     lastTenLost = tsa.lastTen.length - lastTenWon;
@@ -649,43 +686,6 @@ define(["util/helpers"], function (helpers) {
     }
 
     /**
-     * Get the total payroll for a team.
-     * 
-     * This includes players who have been released but are still owed money from their old contracts.
-     * 
-     * @memberOf db
-     * @param {IDBTransaction|null} ot An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.
-     * @param {number} tid Team ID.
-     * @param {function(Array)} cb Callback whose first argument is the payroll in thousands of dollars.
-     */
-    function getPayroll(ot, tid, cb) {
-        var payroll, transaction;
-
-        transaction = getObjectStore(ot, ["players", "releasedPlayers"], null);
-        transaction.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
-            var i, pa, playersAll;
-
-            payroll = 0;
-            playersAll = event.target.result;
-            for (i = 0; i < playersAll.length; i++) {
-                pa = playersAll[i];
-                payroll += pa.contractAmount;
-            }
-
-            transaction.objectStore("releasedPlayers").index("tid").getAll(tid).onsuccess = function (event) {
-                var i, releasedPlayers;
-
-                releasedPlayers = event.target.result;
-                for (i = 0; i < releasedPlayers.length; i++) {
-                    payroll += releasedPlayers[i].contractAmount;
-                }
-
-                cb(parseInt(payroll, 10));
-            };
-        };
-    }
-
-    /**
      * Sort a team's roster based on player ratings.
      * 
      * @memberOf db
@@ -729,8 +729,8 @@ define(["util/helpers"], function (helpers) {
                         cb();
                     }
                 }
-            }
-        }
+            };
+        };
     }
 
     function getDraftOrder(ot, cb) {

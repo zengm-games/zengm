@@ -47,6 +47,50 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
         });
     }
 
+    /* Callback is used when this is called to select a player for the user's team.*/
+    function selectPlayer(pick, pid, playerStore, cb) {
+/*
+        // Validate that tid should be picking now
+        r = g.dbex('SELECT tid, round, pick FROM draftResults WHERE season = :season AND pid = 0 ORDER BY round, pick ASC LIMIT 1', season=g.season);
+        tidNext, round, pick = r.fetchone();
+
+        if (tidNext != pick.tid) {
+            app.logger.debug('WARNING: Team %d tried to draft out of order' % (tid,));
+            return;
+*/
+
+        playerStore.openCursor(pid).onsuccess = function (event) {
+            var cursor, i, player, rookieSalaries, teams, years;
+
+            cursor = event.target.result;
+            player = cursor.value;
+
+            // Draft player
+            player.tid = pick.tid;
+            player.draftYear = g.season;
+            player.draftRound = pick.round;
+            player.draftPick = pick.pick;
+            player.draftTid = pick.tid;
+            teams = helpers.getTeams();
+            player.draftAbbrev = teams[pick.tid].abbrev;
+            player.draftTeamName = teams[pick.tid].name;
+            player.draftTeamRegion = teams[pick.tid].region;
+
+            // Contract
+            rookieSalaries = [5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500];
+            i = pick.pick - 1 + 30 * (pick.round - 1);
+            player.contractAmount = rookieSalaries[i];
+            years = 4 - pick.round;  // 2 years for 2nd round, 3 years for 1st round;
+            player.contractExp = g.season + years;
+
+            cursor.update(player);
+
+            if (cb !== undefined) {
+                cb(pid);
+            }
+        };
+    }
+
     /*Simulate draft picks until it's the user's turn or the draft is over.
 
     Returns:
@@ -93,50 +137,6 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
                     }
                 });
             });
-        };
-    }
-
-    /* Callback is used when this is called to select a player for the user's team.*/
-    function selectPlayer(pick, pid, playerStore, cb) {
-/*
-        // Validate that tid should be picking now
-        r = g.dbex('SELECT tid, round, pick FROM draftResults WHERE season = :season AND pid = 0 ORDER BY round, pick ASC LIMIT 1', season=g.season);
-        tidNext, round, pick = r.fetchone();
-
-        if (tidNext != pick.tid) {
-            app.logger.debug('WARNING: Team %d tried to draft out of order' % (tid,));
-            return;
-*/
-
-        playerStore.openCursor(pid).onsuccess = function (event) {
-            var cursor, i, player, rookieSalaries, teams, years;
-
-            cursor = event.target.result;
-            player = cursor.value;
-
-            // Draft player
-            player.tid = pick.tid;
-            player.draftYear = g.season;
-            player.draftRound = pick.round;
-            player.draftPick = pick.pick;
-            player.draftTid = pick.tid;
-            teams = helpers.getTeams();
-            player.draftAbbrev = teams[pick.tid].abbrev;
-            player.draftTeamName = teams[pick.tid].name;
-            player.draftTeamRegion = teams[pick.tid].region;
-
-            // Contract
-            rookieSalaries = [5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500];
-            i = pick.pick - 1 + 30 * (pick.round - 1);
-            player.contractAmount = rookieSalaries[i];
-            years = 4 - pick.round;  // 2 years for 2nd round, 3 years for 1st round;
-            player.contractExp = g.season + years;
-
-            cursor.update(player);
-
-            if (cb !== undefined) {
-                cb(pid);
-            }
         };
     }
 

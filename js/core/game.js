@@ -65,7 +65,7 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/advS
         this.writeGameStats();
     };
 
-    Game.prototype.writePlayerStats = function(t, p) {
+    Game.prototype.writePlayerStats = function (t, p) {
         var that;
 
         that = this;
@@ -619,8 +619,7 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/advS
                 if (start || !g.stopGames) {
                     if (g.stopGames) {
                         db.setGameAttributes({stopGames: false}, cbYetAnother);
-                    }
-                    else {
+                    } else {
                         cbYetAnother();
                     }
                 }
@@ -628,7 +627,7 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/advS
                 // If this is the last day, update play menu
                 cbNoGames();
             }
-        }
+        };
 
         // If this is a request to start a new simulation... are we allowed to do
         // that? If so, set the lock and update the play menu

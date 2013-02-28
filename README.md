@@ -50,7 +50,7 @@ If that URL doesn't work, try http://127.0.0.1:8080/
 ## Debugging and Problem Solving
 
 If something starts behaving weirdly (this is alpha software), you can reset you
-database by clicking the "Reset DB" link at the bottom of any page. If that
+database by clicking the "Reset DB" link in the debug menu at the top. If that
 still doesn't work (which unfortunately happens sometimes with a corrupted
 database), delete the folder named `http+++0.0.0.0+8080` within the `indexedDB`
 folder in your Firefox profile folder. That will delete all of the game's stored

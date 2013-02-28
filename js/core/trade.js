@@ -27,9 +27,6 @@ define(["db", "util/helpers"], function (db, helpers) {
             otherPids = [pid];
         }
 
-console.log(tid);
-console.log(pid);
-console.log(otherPids);
         cbStartTrade = function (tid) {
             g.dbl.transaction("trade", "readwrite").objectStore("trade").openCursor(0).onsuccess = function (event) { // Same key always, as there is only one trade allowed at a time
                 var cursor, tr;
@@ -45,7 +42,6 @@ console.log(otherPids);
 
         // Make sure tid is set and corresponds to pid, if (set;
         if (tid === undefined || tid === null || otherPids.length > 0) {
-console.log("hi")
             g.dbl.transaction("players").objectStore("players").get(pid).onsuccess = function (event) {
                 var p;
 
@@ -319,7 +315,7 @@ console.log("hi")
                     done = 0;
                     value = [0, 0];  // "Value" of the players offered by each team
                     for (i = 0; i < 2; i++) {
-                        !function (i) {
+                        (function (i) {
                             playerStore.index("tid").getAll(tids[i]).onsuccess = function (event) {
                                 var j, players;
 
@@ -331,11 +327,10 @@ console.log("hi")
                                 if (done === 2) {
                                     done = 0;
 
-console.log(value);
                                     if (value[0] > value[1] * 0.9) {
                                         // Trade players
                                         for (j = 0; j < 2; j++) {
-                                            !function (j) {
+                                            (function (j) {
                                                 var k, l;
 
                                                 if (j === 0) {
@@ -345,7 +340,7 @@ console.log(value);
                                                 }
 
                                                 for (l = 0; l < pids[j].length; l++) {
-                                                    !function (l) {
+                                                    (function (l) {
                                                         playerStore.openCursor(pids[j][l]).onsuccess = function (event) {
                                                             var cursor, p;
 
@@ -366,16 +361,16 @@ console.log(value);
                                                                 });
                                                             }
                                                         };
-                                                    }(l);
+                                                    }(l));
                                                 }
-                                            }(j);
+                                            }(j));
                                         }
                                     } else {
                                         cb(false, 'Trade rejected! "What, are you crazy?"');
                                     }
                                 }
                             };
-                        }(i);
+                        }(i));
                     }
                 });
             });

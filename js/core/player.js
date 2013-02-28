@@ -518,6 +518,55 @@ define(["db", "util/random"], function (db, random) {
         return position;
     }
 
+    /**
+     * Add a new row of ratings to a player object.
+     * 
+     * There should be one ratings row for each year a player is not retired, and a new row should be added for each non-retired player at the start of a season.
+     *
+     * @memberOf core.player
+     * @param {Object} p Player object.
+     * @return {Object} Updated player object.
+     */
+    function addRatingsRow(p) {
+        var key, newRatings, r;
+
+        newRatings = {};
+        r = p.ratings.length - 1; // Most recent ratings
+        for (key in p.ratings[r]) {
+            if (p.ratings[r].hasOwnProperty(key)) {
+                newRatings[key] = p.ratings[r][key];
+            }
+        }
+        newRatings.season = g.season;
+        p.ratings.push(newRatings);
+
+        return p;
+    }
+
+    /**
+     * Add a new row of stats to a player object.
+     * 
+     * A row contains stats for unique values of (team, season, playoffs). So new rows need to be added when a player joins a new team, when a new season starts, or when a player's team makes the playoffs. The team ID in p.tid will be used in the stats row, so if a player is changing teams, update p.tid before calling this.
+     *
+     * @memberOf core.player
+     * @param {Object} p Player object.
+     * @param {=boolean} playoffs Is this stats row for the playoffs or not? Default false.
+     * @param {=season} season The season for the stats row. Defaults to g.season. This option should probably be eliminated eventually, as g.season should always be set.
+     * @return {Object} Updated player object.
+     */
+    function addStatsRow(p, playoffs, season) {
+        var key, newStats;
+
+        playoffs = playoffs !== undefined ? playoffs : false;
+        season = season !== undefined ? season : g.season;
+
+        p.stats.push({season: season, tid: p.tid, playoffs: playoffs, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, per: 0});
+        p.statsTids.push(p.tid);
+        p.statsTids = _.uniq(p.statsTids);
+
+        return p;
+    }
+
     function generate(tid, age, profile, baseRating, pot, draftYear, newLeague) {
         var cont, maxHgt, minHgt, maxWeight, minWeight, nationality, p;
 
@@ -581,55 +630,6 @@ define(["db", "util/random"], function (db, random) {
         p.draftOvr = p.ratings[0].ovr;
 
         p.face = faces.generate();
-
-        return p;
-    }
-
-    /**
-     * Add a new row of ratings to a player object.
-     * 
-     * There should be one ratings row for each year a player is not retired, and a new row should be added for each non-retired player at the start of a season.
-     *
-     * @memberOf core.player
-     * @param {Object} p Player object.
-     * @return {Object} Updated player object.
-     */
-    function addRatingsRow(p) {
-        var key, newRatings, r;
-
-        newRatings = {};
-        r = p.ratings.length - 1; // Most recent ratings
-        for (key in p.ratings[r]) {
-            if (p.ratings[r].hasOwnProperty(key)) {
-                newRatings[key] = p.ratings[r][key];
-            }
-        }
-        newRatings.season = g.season;
-        p.ratings.push(newRatings);
-
-        return p;
-    }
-
-    /**
-     * Add a new row of stats to a player object.
-     * 
-     * A row contains stats for unique values of (team, season, playoffs). So new rows need to be added when a player joins a new team, when a new season starts, or when a player's team makes the playoffs. The team ID in p.tid will be used in the stats row, so if a player is changing teams, update p.tid before calling this.
-     *
-     * @memberOf core.player
-     * @param {Object} p Player object.
-     * @param {=boolean} playoffs Is this stats row for the playoffs or not? Default false.
-     * @param {=season} season The season for the stats row. Defaults to g.season. This option should probably be eliminated eventually, as g.season should always be set.
-     * @return {Object} Updated player object.
-     */
-    function addStatsRow(p, playoffs, season) {
-        var key, newStats;
-
-        playoffs = playoffs !== undefined ? playoffs : false;
-        season = season !== undefined ? season : g.season;
-
-        p.stats.push({season: season, tid: p.tid, playoffs: playoffs, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, per: 0});
-        p.statsTids.push(p.tid);
-        p.statsTids = _.uniq(p.statsTids);
 
         return p;
     }

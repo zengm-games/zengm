@@ -1,9 +1,6 @@
 main todo (before public beta)
 ------------------------------
 
-fix default sort order on column click
-  text should be asc, numeric should be desc
-  http://stackoverflow.com/questions/3725321/jquery-datatables-change-order-to-desc-when-it-sorts - but can it be set globally? maybe i can have ui.datatable automatically read columns and figure it out?
 don't use jdscheff email on bbgm website, have a forwarded one
 game simulation realism
   playing time not adding up to 240?
@@ -97,6 +94,9 @@ DataTables - need to rethink a lot of this, particularly how to make a decent UI
     add an option to db.getPlayers
   default to sort descending when column is clicked
     http://datatables.net/ref#asSorting will work. maybe pass it as an option to bbgm_datatable
+  fix default sort order on column click
+    text should be asc, numeric should be desc
+    http://stackoverflow.com/questions/3725321/jquery-datatables-change-order-to-desc-when-it-sorts - but can it be set globally? maybe i can have ui.datatable automatically read columns and figure it out?
 player.addStatsRow
   season parameter wouldn't be needed if g.season was already set. Set g.season early, then.
 league leaders

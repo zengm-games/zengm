@@ -4,7 +4,7 @@ main todo (before public beta)
 gameSim
   compare team and player stat distributions against reality
   separate composite ratings for shooting in different places (jumpshot, inside, fast break, three, etc)
-    how do i know how many of each are shot? log it in some kind of game summary log
+    how do i know how many of each are shot? log it in player/game stats
     better shots (dunks/layups) should occur when created by other factors (defense, passing, etc)
   more ratings influence on gameSim
     doFg

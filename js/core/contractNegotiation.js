@@ -134,21 +134,21 @@ define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui
             if (negotiation.numOffersMade <= negotiation.maxOffers) {
                 if (teamYears < negotiation.playerYears) {
                     negotiation.playerYears -= 1;
-                    negotiation.playerAmount *= 1.2;
+                    negotiation.playerAmount *= 1.1;
                 } else if (teamYears > negotiation.playerYears) {
                     negotiation.playerYears += 1;
-                    negotiation.playerAmount *= 1.2;
+                    negotiation.playerAmount *= 1.1;
                 }
                 if (teamAmount < negotiation.playerAmount && teamAmount > 0.7 * negotiation.playerAmount) {
                     negotiation.playerAmount = 0.75 * negotiation.playerAmount + 0.25 * teamAmount;
                 } else if (teamAmount < negotiation.playerAmount) {
-                    negotiation.playerAmount *= 1.1;
+                    negotiation.playerAmount *= 1.05;
                 }
                 if (teamAmount > negotiation.playerAmount) {
                     negotiation.playerAmount = teamAmount;
                 }
             } else {
-                negotiation.playerAmount = 1.05 * negotiation.playerAmount;
+                negotiation.playerAmount = 1.025 * negotiation.playerAmount;
             }
 
             negotiation.playerAmount = validAmount(negotiation.playerAmount);

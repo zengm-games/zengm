@@ -19,9 +19,10 @@ want to contribute.
 
 # JavaScript coding style
 
-Douglas Crockford is always right.
+Douglas Crockford is always right. Well, usually. See `runjslint` for details.
 
-Documentation is based on https://developers.google.com/closure/compiler/docs/js-for-compiler
+Documentation of functions is based on
+https://developers.google.com/closure/compiler/docs/js-for-compiler
 
 
 # Twitter Bootstrap

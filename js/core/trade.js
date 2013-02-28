@@ -27,6 +27,9 @@ define(["db", "util/helpers"], function (db, helpers) {
             otherPids = [pid];
         }
 
+console.log(tid);
+console.log(pid);
+console.log(otherPids);
         cbStartTrade = function (tid) {
             g.dbl.transaction("trade", "readwrite").objectStore("trade").openCursor(0).onsuccess = function (event) { // Same key always, as there is only one trade allowed at a time
                 var cursor, tr;
@@ -42,6 +45,7 @@ define(["db", "util/helpers"], function (db, helpers) {
 
         // Make sure tid is set and corresponds to pid, if (set;
         if (tid === undefined || tid === null || otherPids.length > 0) {
+console.log("hi")
             g.dbl.transaction("players").objectStore("players").get(pid).onsuccess = function (event) {
                 var p;
 

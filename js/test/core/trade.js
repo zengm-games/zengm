@@ -43,13 +43,13 @@ define(["db", "core/league", "core/trade"], function (db, league, trade) {
                 });
             });
             it("should create trade with player ID", function (done) {
-                trade.create(null, 52, function () {
-                    testCreateTrade(2, [], [52], done);
+                trade.create(null, 81, function () {
+                    testCreateTrade(2, [], [81], done);
                 });
             });
             it("should create trade with player ID overriding team ID", function (done) {
-                trade.create(6, 53, function () {
-                    testCreateTrade(2, [], [53], done);
+                trade.create(6, 82, function () {
+                    testCreateTrade(2, [], [82], done);
                 });
             });
         });
@@ -59,8 +59,8 @@ define(["db", "core/league", "core/trade"], function (db, league, trade) {
                 trade.create(3, null, function () {
                     var userPidsTest, otherPidsTest;
 
-                    userPidsTest = [16, 20];
-                    otherPidsTest = [63, 70];
+                    userPidsTest = [48, 50];
+                    otherPidsTest = [87, 97];
                     trade.updatePlayers(userPidsTest, otherPidsTest, function (userPids, otherPids) {
                         JSON.stringify(userPids).should.equal(JSON.stringify(userPidsTest));
                         JSON.stringify(otherPids).should.equal(JSON.stringify(otherPidsTest));
@@ -70,9 +70,9 @@ define(["db", "core/league", "core/trade"], function (db, league, trade) {
             });
             it("should filter out invalid players", function (done) {
                 trade.create(3, null, function () {
-                    trade.updatePlayers([1, 16, 20, 90], [12, 63, 70, 524], function (userPids, otherPids) {
-                        JSON.stringify(userPids).should.equal(JSON.stringify([16, 20]));
-                        JSON.stringify(otherPids).should.equal(JSON.stringify([63, 70]));
+                    trade.updatePlayers([1, 16, 20, 48, 50, 90], [12, 63, 70, 87, 97, 524], function (userPids, otherPids) {
+                        JSON.stringify(userPids).should.equal(JSON.stringify([48, 50]));
+                        JSON.stringify(otherPids).should.equal(JSON.stringify([87, 97]));
                         done();
                     });
                 });
@@ -81,8 +81,8 @@ define(["db", "core/league", "core/trade"], function (db, league, trade) {
                 trade.create(3, null, function () {
                     var userPidsTest, otherPidsTest;
 
-                    userPidsTest = [16, 20];
-                    otherPidsTest = [63, 70];
+                    userPidsTest = [48, 50];
+                    otherPidsTest = [87, 97];
                     trade.updatePlayers(userPidsTest, otherPidsTest, function (userPids, otherPids) {
                         JSON.stringify(userPids).should.equal(JSON.stringify(userPidsTest));
                         JSON.stringify(otherPids).should.equal(JSON.stringify(otherPidsTest));

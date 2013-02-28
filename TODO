@@ -3,7 +3,6 @@ main todo (before public beta)
 
 gameSim
   compare team and player stat distributions against reality
-    player stats box plots - add NBA data for comparison http://www.databasebasketball.com/stats_download.htm
   separate composite ratings for shooting in different places (jumpshot, inside, fast break, three, etc)
     how do i know how many of each are shot? log it in some kind of game summary log
     better shots (dunks/layups) should occur when created by other factors (defense, passing, etc)
@@ -17,7 +16,6 @@ gameSim
     do i need all the player composite ratings?
     do i need all the team composite ratings?
 check through the bugs and future features list one more time
-is commissioner@basketball-gm.com working?
 put on play.basketball-gm.com, with splash page on basketball-gm.com
   make sure the google analytics filter to only track on basketball-gm.com is working
 git tag as beta

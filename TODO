@@ -1,9 +1,7 @@
 main todo (before public beta)
 ------------------------------
 
-don't use jdscheff email on bbgm website, have a forwarded one
-game simulation realism
-  playing time not adding up to 240?
+gameSim
   compare team and player stat distributions against reality
     player stats box plots - add NBA data for comparison http://www.databasebasketball.com/stats_download.htm
   separate composite ratings for shooting in different places (jumpshot, inside, fast break, three, etc)
@@ -15,29 +13,19 @@ game simulation realism
       should somehow give higher FG% for assisted shots. not sure how
     doShot
       check distribution of shot locations
-  rename compositeRating to compositeRatings (or something better)
-    other plural issues in gameSim
-  home/away advantage
-    make sure home/away in playoffs is set right
   do some kind of profiling, see if i can speed it up
     do i need all the player composite ratings?
     do i need all the team composite ratings?
+check through the bugs and future features list one more time
+is commissioner@basketball-gm.com working?
 put on play.basketball-gm.com, with splash page on basketball-gm.com
-google analytics
-  make sure the filter to only track on basketball-gm.com is working
-IDB version updating? is the current version set right?
+  make sure the google analytics filter to only track on basketball-gm.com is working
 git tag as beta
 
 ---
 
 BUGS
 
-league database error when playoffs end
-  is it only the first year, and is it due to retiring players?
-game simulation stops when a link is clicked, but then restarts when another link is clicked? wtf
-  This seems to generally work now, but it's not perfect. If you do any action that writes to the database, such as reordering the roster, something bad could happen because IndexedDB doesn't like multiple writes going on at the same time
-sometimes deleting leagues or resetting db fails, i think because some open connection is blocking it, but i don't know why
-db error when switching to resign players phase?
 when full UI is open in two tabs, a "stop" command from one tab doesn't do anything to the other tab?
 In firefox, I can add this to the new league form:
    onclick="this.disabled=true; this.innerHTML='Generating league...';"
@@ -47,12 +35,17 @@ In firefox, I can add this to the new league form:
     https://github.com/olivernn/davis.js/issues/63
   full page reload should still work if i set up webpy to allow POST
 trading is glitchy in chrome
-error during draft? - this might be fixed due to the double cb bugfix
 
 ---
 
-FUTURE FEATURES (i.e. not required for public beta, probably.. but go through the list again to check)
+FUTURE FEATURES (i.e. not required for public beta)
 
+gameSim
+  home/away advantage
+    make sure home/away in playoffs is set right
+  rename compositeRating to compositeRatings (or something better)
+    other plural issues in gameSim
+  playing time not adding up to 240?
 get jslint running from some command line script
   jslint --plusplus --predef $ --predef Davis --predef requirejs --predef define --predef window --predef document --predef localStorage --predef IDBKeyRange --predef IDBTransaction --predef g --predef c js/core/draft.js
   http://stackoverflow.com/questions/7425147/jslint-error-somefunction-was-used-before-it-was-defined

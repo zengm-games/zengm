@@ -33,7 +33,6 @@ define(["util/helpers"], function (helpers) {
         request.onsuccess = function (event) {
             g.dbm = request.result;
             g.dbm.onerror = function (event) {
-console.log(event);
                 console.log("Meta database error: " + event.target.errorCode);
             };
             cb();

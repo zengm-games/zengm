@@ -170,7 +170,7 @@ define(["db", "util/helpers"], function (db, helpers) {
         done = 0;
         players = [[], []];
         for (i = 0; i < 2; i++) {
-            !function (i) {
+            (function (i) {
                 transaction.objectStore("players").index("tid").getAll(tids[i]).onsuccess = function (event) {
                     var j, k, overCap, overRosterLimit, ratios, teams;
 
@@ -209,7 +209,7 @@ define(["db", "util/helpers"], function (db, helpers) {
                                 ratios[j] = 100;
                             }
 
-                            !function (j) {
+                            (function (j) {
                                 db.getPayroll(transaction, tids[j], function (payroll) {
                                     var k;
 
@@ -250,11 +250,11 @@ define(["db", "util/helpers"], function (db, helpers) {
                                         cb(s);
                                     }
                                 });
-                            }(j);
+                            }(j));
                         }
                     }
                 };
-            }(i);
+            }(i));
         }
     }
 

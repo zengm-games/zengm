@@ -9,7 +9,7 @@
  *     2-2
  *     ...
  */
-jQuery.fn.dataTableExt.aTypes.unshift(
+$.fn.dataTableExt.aTypes.unshift(
     function (sData) {
         "use strict";
         var bDash, bDigitAfterDash, bDigitBeforeDash, Char, i, sValidChars;
@@ -51,7 +51,7 @@ jQuery.fn.dataTableExt.aTypes.unshift(
         return null;
     }
 );
-jQuery.fn.dataTableExt.oSort["numeric-dash-asc"] = function (a, b) {
+$.fn.dataTableExt.oSort["numeric-dash-asc"] = function (a, b) {
     "use strict";
     var x, y;
 
@@ -81,7 +81,7 @@ jQuery.fn.dataTableExt.oSort["numeric-dash-asc"] = function (a, b) {
     }
     return 0;
 };
-jQuery.fn.dataTableExt.oSort["numeric-dash-desc"] = function (a, b) {
+$.fn.dataTableExt.oSort["numeric-dash-desc"] = function (a, b) {
     "use strict";
     var x, y;
 
@@ -124,7 +124,7 @@ jQuery.fn.dataTableExt.oSort["numeric-dash-desc"] = function (a, b) {
  *     $2.6M
  *     ...
  */
-jQuery.fn.dataTableExt.aTypes.unshift(
+$.fn.dataTableExt.aTypes.unshift(
     function (sData) {
         "use strict";
         var bM, bSomething, Char, i, iDollarSign, sValidChars;
@@ -142,9 +142,8 @@ jQuery.fn.dataTableExt.aTypes.unshift(
             Char = sData.charAt(i);
             if (sValidChars.indexOf(Char) === -1) {
                 return null;
-            } else {
-                bSomething = true;
             }
+            bSomething = true;  // Didn't return, so something is there
 
             if (Char === "M") {
                 bM = true;
@@ -153,13 +152,13 @@ jQuery.fn.dataTableExt.aTypes.unshift(
         }
 
         if (bSomething && bM) {
-            return "money"
+            return "money";
         }
 
         return null;
     }
 );
-jQuery.fn.dataTableExt.oSort["money-asc"] = function (a, b) {
+$.fn.dataTableExt.oSort["money-asc"] = function (a, b) {
     "use strict";
     var x, y;
 
@@ -174,7 +173,7 @@ jQuery.fn.dataTableExt.oSort["money-asc"] = function (a, b) {
     }
     return 0;
 };
-jQuery.fn.dataTableExt.oSort["money-desc"] = function (a, b) {
+$.fn.dataTableExt.oSort["money-desc"] = function (a, b) {
     "use strict";
     var x, y;
 
@@ -199,7 +198,7 @@ jQuery.fn.dataTableExt.oSort["money-desc"] = function (a, b) {
  *     ...
  * Other content (like "skills" span) is allowed to appear after the name
  */
-jQuery.fn.dataTableExt.aTypes.unshift(
+$.fn.dataTableExt.aTypes.unshift(
     function (sData) {
         "use strict";
         var bM, bSomething, Char, i, iDollarSign, sValidChars;
@@ -211,7 +210,7 @@ jQuery.fn.dataTableExt.aTypes.unshift(
         return null;
     }
 );
-jQuery.fn.dataTableExt.oSort["name-asc"] = function (a, b) {
+$.fn.dataTableExt.oSort["name-asc"] = function (a, b) {
     "use strict";
     var x, xName, y, yName;
 
@@ -232,7 +231,7 @@ jQuery.fn.dataTableExt.oSort["name-asc"] = function (a, b) {
     }
     return 0;
 };
-jQuery.fn.dataTableExt.oSort["name-desc"] = function (a, b) {
+$.fn.dataTableExt.oSort["name-desc"] = function (a, b) {
     "use strict";
     var x, xName, y, yName;
 

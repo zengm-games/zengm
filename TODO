@@ -15,6 +15,7 @@ gameSim
   do some kind of profiling, see if i can speed it up
     do i need all the player composite ratings?
     do i need all the team composite ratings?
+    how does performance change/degrade as the years go on?
 check through the bugs and future features list one more time
 put on play.basketball-gm.com, with splash page on basketball-gm.com
   make sure the google analytics filter to only track on basketball-gm.com is working

@@ -412,7 +412,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             } else if (r2 > r3) {
                 // Dunk, fast break or half court
                 probMissAndFoul = 0.4;
-                probMake = this.team[this.o].player[p].compositeRating.shootingLowPost * 0.3 + 0.54;
+                probMake = this.team[this.o].player[p].compositeRating.shootingAtRim * 0.3 + 0.54;
                 probAndOne = 0.25;
             } else {
                 // Post up

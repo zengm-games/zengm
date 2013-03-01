@@ -579,6 +579,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                 }
             };
             tx.oncomplete = function () {
+                // This will only run after all the team and player stat rows have been saved to the database.
                 newPhaseCb(c.PHASE_PLAYOFFS, phaseText, function () {
                     if (cb !== undefined) {
                         cb();
@@ -590,12 +591,13 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
     }
 
     function newPhaseBeforeDraft(cb) {
-        var phaseText, releasedPlayersStore;
+        var phaseText, tx;
 
         phaseText = g.season + " before draft";
 
         // Check for retiring players
-        g.dbl.transaction("players", "readwrite").objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) { // All non-retired players
+        tx = g.dbl.transaction("players", "readwrite");
+        tx.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) { // All non-retired players
             var age, cont, cursor, excessAge, excessPot, i, maxAge, minPot, p, pot, update;
 
             update = false;
@@ -646,30 +648,35 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                     cursor.update(p);
                 }
                 cursor.continue();
-            } else {
-                // Remove released players' salaries from payrolls
-                releasedPlayersStore = g.dbl.transaction("releasedPlayers", "readwrite").objectStore("releasedPlayers");
-                releasedPlayersStore.index("contractExp").getAll(g.season).onsuccess = function (event) {
-                    var i, releasedPlayers;
-
-                    releasedPlayers = event.target.result;
-
-                    for (i = 0; i < releasedPlayers.length; i++) {
-                        releasedPlayersStore.delete(releasedPlayers[i].rid);
-                    }
-
-                    // Select winners of the season's awards
-                    // This needs to be inside the callback because of Firefox bug 763915
-                    awards(function () {
-                        newPhaseCb(c.PHASE_BEFORE_DRAFT, phaseText, function () {
-                            if (cb !== undefined) {
-                                cb();
-                            }
-                            Davis.location.assign(new Davis.Request("/l/" + g.lid + "/history"));
-                        });
-                    });
-                };
             }
+        };
+        tx.oncomplete = function () {
+            var releasedPlayersStore, tx;
+
+            // Remove released players' salaries from payrolls if their contract expired this year
+            tx = g.dbl.transaction("releasedPlayers", "readwrite");
+            releasedPlayersStore = tx.objectStore("releasedPlayers");
+            releasedPlayersStore.index("contractExp").getAll(g.season).onsuccess = function (event) {
+                var i, releasedPlayers;
+
+                releasedPlayers = event.target.result;
+
+                for (i = 0; i < releasedPlayers.length; i++) {
+                    releasedPlayersStore.delete(releasedPlayers[i].rid);
+                }
+            };
+            tx.oncomplete = function () {
+                // Select winners of the season's awards
+                // This needs to be inside the callback because of Firefox bug 763915
+                awards(function () {
+                    newPhaseCb(c.PHASE_BEFORE_DRAFT, phaseText, function () {
+                        if (cb !== undefined) {
+                            cb();
+                        }
+                        Davis.location.assign(new Davis.Request("/l/" + g.lid + "/history"));
+                    });
+                });
+            };
         };
     }
 

@@ -7,7 +7,11 @@ define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui
 
     /**
      * Start a new contract negotiation with a player.
-     * 
+     *
+     * If ot is null, then the callback will run only after the transaction finishes (i.e. only after the new negotiation is actually saved to the database). If ot is not null, then the callback might run earlier, so don't rely on the negotiation actually being in the database yet.
+     *
+     * So, ot should NOT be null if you're starting multiple negotiations as a component of some larger operation, but the presence of a particular negotiation in the database doesn't matter. ot should be null if you need to ensure that the roster order is updated before you do something that will read the roster order (like updating the UI). (WARNING: This means that there is actually a race condition for when this is called from season.newPhaseResignPlayers is the UI is updated before the user's teams negotiations are all saved to the database! In practice, this doesn't seem to be a problem now, but it could be eventually.)
+     *
      * @memberOf core.contractNegotiation
      * @param {IDBTransaction|null} ot An IndexedDB transaction on gameAttributes, negotiations, and players, readwrite; if null is passed, then a new transaction will be used.
      * @param {number} pid An integer that must correspond with the player ID of a free agent.
@@ -66,13 +70,26 @@ define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui
                         cursor.update(player);
                     }
 
-                    tx.objectStore("negotiations").add({pid: pid, teamAmount: playerAmount, teamYears: playerYears, playerAmount: playerAmount, playerYears: playerYears, numOffersMade: 0, maxOffers: maxOffers, resigning: resigning}).onsuccess = function (event) {
-                        ui.updateStatus("Contract negotiation in progress...");
-                        ui.updatePlayMenu(tx, cb);
+                    tx.objectStore("negotiations").add({pid: pid, teamAmount: playerAmount, teamYears: playerYears, playerAmount: playerAmount, playerYears: playerYears, numOffersMade: 0, maxOffers: maxOffers, resigning: resigning}).onsuccess = function () {
+                        if (ot !== null) {
+                            // This function doesn't have its own transaction, so we need to call the callback now even though the update and add might not have been processed yet (this will keep the transaction alive).
+                            if (cb !== undefined) {
+                                ui.updateStatus("Contract negotiation in progress...");
+                                ui.updatePlayMenu(tx, cb);
+                            }
+                        }
                     };
                 };
             };
         });
+
+        if (ot === null) {
+            // This function has its own transaction, so wait until it finishes before calling the callback.
+            tx.oncomplete = function () {
+                ui.updateStatus("Contract negotiation in progress...");
+                ui.updatePlayMenu(null, cb);
+            };
+        }
     }
 
     /**

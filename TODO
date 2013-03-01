@@ -4,7 +4,6 @@ main todo (before public beta)
 rosterAutoSort - sometimes it has its own transaction, sometimes not
 review every callback after a cursor.update, since that is async
   grep -r 'cursor.*\.update(' .
-    core/contractNegotiation
     core/season
     core/game
     test/core/contractNegotiation

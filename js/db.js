@@ -742,16 +742,16 @@ define(["util/helpers"], function (helpers) {
                 }
             };
 
-            // This function doesn't have its own transaction, so we need to call the callback now even though the update might not have been processed yet.
             if (ot !== null) {
+                // This function doesn't have its own transaction, so we need to call the callback now even though the update might not have been processed yet.
                 if (cb !== undefined) {
                     cb();
                 }
             }
         };
 
-        // This function has its own transaction, so wait until it finishes before calling the callback.
         if (ot === null) {
+            // This function has its own transaction, so wait until it finishes before calling the callback.
             tx.oncomplete = function () {
                 if (cb !== undefined) {
                     cb();

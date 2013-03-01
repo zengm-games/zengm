@@ -111,7 +111,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * @memberOf core.gameSim
      */
     GameSim.prototype.simPossessions = function () {
-        var i, outcome;
+        var i, outcome, substitutions;
 
         this.o = 0;
         this.d = 1;
@@ -123,8 +123,10 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             this.d = (this.o === 1) ? 0 : 1;
 
             if (i % this.subsEveryN === 0) {
-                this.updatePlayersOnCourt();
-                this.updateSynergy();
+                substitutions = this.updatePlayersOnCourt();
+                if (substitutions) {
+                    this.updateSynergy();
+                }
             }
 
             this.updateTeamCompositeRatings();
@@ -149,9 +151,12 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * Can this be sped up?
      * 
      * @memberOf core.gameSim
+     * @return {boolean} true if a substitution occurred, false otherwise.
      */
     GameSim.prototype.updatePlayersOnCourt = function () {
-        var b, dt, i, ovrs, p, pp, t;
+        var b, dt, i, ovrs, p, pp, substitutions, t;
+
+        substitutions = false;
 
         for (t = 0; t < 2; t++) {
             // Overall ratings scaled by fatigue
@@ -168,6 +173,8 @@ define(["util/helpers", "util/random"], function (helpers, random) {
                 // Loop through bench players (in order of current roster position) to see if any should be subbed in)
                 for (b = 0; b < this.team[t].player.length; b++) {
                     if (this.playersOnCourt[t].indexOf(b) === -1 && this.team[t].player[p].stat.courtTime > 3 && this.team[t].player[b].stat.benchTime > 3 && ovrs[b] > ovrs[p]) {
+                        substitutions = true;
+
                         // Substitute player
                         this.playersOnCourt[t][i] = b;
                         this.team[t].player[b].stat.courtTime = random.uniform(-2, 2);
@@ -179,6 +186,8 @@ define(["util/helpers", "util/random"], function (helpers, random) {
                 i += 1;
             }
         }
+
+        return substitutions;
     };
 
     /**

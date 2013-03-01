@@ -13,6 +13,6 @@
     <option value="random" selected="selected">Random Players</option>
     <option value="nba2012">2012 NBA Players</option>
   </select></label>--><br>
-  <button type="submit" class="btn">Create New League</button>  
+  <button type="submit" class="btn" onclick="this.disabled=true; this.innerHTML='Generating league...'; $(this.form).submit();">Create New League</button>  
 </form>
 </p>

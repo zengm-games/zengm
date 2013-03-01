@@ -404,27 +404,29 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         // Pick the type of shot and store the success rate (with no defense) in probMake and the probability of an and one in probAndOne
         if (this.team[this.o].player[p].compositeRating.shootingThreePointer > 0.4 && Math.random() < (0.35 * this.team[this.o].player[p].compositeRating.shootingThreePointer)) {
             // Three pointer
-            type = 3;
+            type = "threePointer";
             probMissAndFoul = 0.025;
             probMake = this.team[this.o].player[p].compositeRating.shootingThreePointer * 0.75;
             probAndOne = 0.01;
         } else {
-            type = 2;
             r1 = Math.random() * this.team[this.o].player[p].compositeRating.shootingMidRange;
             r2 = Math.random() * (this.team[this.o].player[p].compositeRating.shootingAtRim + this.synergyFactor * (this.team[this.o].synergy.off - this.team[this.d].synergy.def));  // Synergy makes easy shots either more likely or less likely
             r3 = Math.random() * this.team[this.o].player[p].compositeRating.shootingLowPost;
             if (r1 > r2 && r1 > r3) {
                 // Two point jumper
+                type = "midRange";
                 probMissAndFoul = 0.1;
                 probMake = this.team[this.o].player[p].compositeRating.shootingMidRange * 0.3 + 0.31;
                 probAndOne = 0.05;
             } else if (r2 > r3) {
                 // Dunk, fast break or half court
+                type = "atRim";
                 probMissAndFoul = 0.4;
                 probMake = this.team[this.o].player[p].compositeRating.shootingAtRim * 0.3 + 0.54;
                 probAndOne = 0.25;
             } else {
                 // Post up
+                type = "lowPost";
                 probMissAndFoul = 0.35;
                 probMake = this.team[this.o].player[p].compositeRating.shootingLowPost * 0.3 + 0.39;
                 probAndOne = 0.15;
@@ -455,7 +457,13 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         // Miss
         p = this.playersOnCourt[this.o][shooter];
         this.recordStat(this.o, p, "fga");
-        if (type === 3) {
+        if (type === "atRim") {
+            this.recordStat(this.o, p, "fgaAtRim");
+        } else if (type === "lowPost") {
+            this.recordStat(this.o, p, "fgaLowPost");
+        } else if (type === "midRange") {
+            this.recordStat(this.o, p, "fgaMidRange");
+        } else if (type === "threePointer") {
             this.recordStat(this.o, p, "tpa");
         }
         return this.doReb();  // orb or drb
@@ -515,7 +523,16 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         this.recordStat(this.o, p, "fg");
         this.recordStat(this.o, p, "fga");
         this.recordStat(this.o, p, "pts", 2);  // 2 points for 2's
-        if (type === 3) {
+        if (type === "atRim") {
+            this.recordStat(this.o, p, "fgAtRim");
+            this.recordStat(this.o, p, "fgaAtRim");
+        } else if (type === "lowPost") {
+            this.recordStat(this.o, p, "fgLowPost");
+            this.recordStat(this.o, p, "fgaLowPost");
+        } else if (type === "midRange") {
+            this.recordStat(this.o, p, "fgMidRange");
+            this.recordStat(this.o, p, "fgaMidRange");
+        } else if (type === "threePointer") {
             this.recordStat(this.o, p, "tp");
             this.recordStat(this.o, p, "tpa");
             this.recordStat(this.o, p, "pts");  // Extra point for 3's

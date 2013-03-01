@@ -697,6 +697,10 @@ define(["util/helpers"], function (helpers) {
 
     /**
      * Sort a team's roster based on player ratings.
+     *
+     * If ot is null, then the callback will run only after the transaction finishes (i.e. only after the updated roster order is actually saved to the database). If ot is not null, then the callback might run earlier, so don't rely on the updated roster order actually being in the database yet.
+     *
+     * So, ot should NOT be null if you're sorting multiple roster as a component of some larger operation, but the results of the sorts don't actually matter. ot should be null if you need to ensure that the roster order is updated before you do something that will read the roster order (like updating the UI).
      * 
      * @memberOf db
      * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on players readwrite; if null is passed, then a new transaction will be used.
@@ -737,13 +741,23 @@ define(["util/helpers"], function (helpers) {
                     cursor.continue();
                 }
             };
-        };
 
-        tx.oncomplete = function () {
-            if (cb !== undefined) {
-                cb();
+            // This function doesn't have its own transaction, so we need to call the callback now even though the update might not have been processed yet.
+            if (ot !== null) {
+                if (cb !== undefined) {
+                    cb();
+                }
             }
         };
+
+        // This function has its own transaction, so wait until it finishes before calling the callback.
+        if (ot === null) {
+            tx.oncomplete = function () {
+                if (cb !== undefined) {
+                    cb();
+                }
+            };
+        }
     }
 
     function getDraftOrder(cb) {

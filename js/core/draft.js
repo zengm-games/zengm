@@ -127,7 +127,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
     /**
      * Simulate draft picks until it's the user's turn or the draft is over.
      *
-     * This could be made faster by passing a transaction around, so all the writes for all the picks are done in one transaction. But when calling selectPlayer elsewhere (i.e. in testing or in response to the user's pick), it needs to be sure that the transaction is complete before continuing. So I would need to create a special case there to account for it. Given that this isn't really *that* slow now, that probably isn't worth the complexity.
+     * This could be made faster by passing a transaction around, so all the writes for all the picks are done in one transaction. But when calling selectPlayer elsewhere (i.e. in testing or in response to the user's pick), it needs to be sure that the transaction is complete before continuing. So I would need to create a special case there to account for it. Given that this isn't really *that* slow now, that probably isn't worth the complexity. Although... db.rosterAutoSort does precisely this... so maybe it would be a good idea...
      *
      * @memberOf core.draft
      * @param {function(Array.<Object>, Array.<number>)} cb Callback function. First argument is the list of draft picks (from db.getDraftOrder). Second argument is a list of player IDs who were drafted during this function call, in order.

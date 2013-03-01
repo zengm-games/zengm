@@ -456,7 +456,8 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                 done += 1;
                 if (done === g.numTeams && !userTeamSizeError) {
                     newSchedule(function (tids) {
-                        setSchedule(tids, function () { newPhaseCb(c.PHASE_REGULAR_SEASON, phaseText, cb, true); });
+                        // 4th parameter of newPhaseCb will reload the page when true. Don't do this if this is the first season, as that means the new league menu is still displayed (probably) and views.newLeague will handle a redirect to the league dashboard.
+                        setSchedule(tids, function () { newPhaseCb(c.PHASE_REGULAR_SEASON, phaseText, cb, g.season !== g.startingSeason); });
                     });
 
                     // Auto sort rosters (except player's team)

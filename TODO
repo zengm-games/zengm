@@ -1,14 +1,7 @@
 main todo (before public beta)
 ------------------------------
 
-review every callback after a cursor.update, since that is async
-  grep -r 'cursor.*\.update(' .
-    core/season
-      newPhasePreseason
-      newPhaseRegularSeason
-      newSchedulePlayoffsDay
-  http://stackoverflow.com/questions/15151242/running-code-only-after-an-object-is-updated-in-indexeddb-particularly-in-chrom
-review callback for every put/add and putPlayer
+for race conditions, review callback for every put/add and db.putPlayer, player.release.. every function that takes a transaction, basically
   or anywhere i was eagerly passing around objectStores or transactions
     do note that sharing a transaction increases performance
 gameSim

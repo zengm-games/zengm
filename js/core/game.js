@@ -604,7 +604,7 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/advS
                         });
                     });
                 } else {
-                    season.newSchedulePlayoffsDay(function (playoffsOver) {
+                    season.newSchedulePlayoffsDay(function () {
                         // If season.newSchedulePlayoffsDay didn't move the phase to c.PHASE_BEFORE_DRAFT, then the playoffs are still happening.
                         if (g.phase === c.PHASE_PLAYOFFS) {
                             playoffsContinue = true;

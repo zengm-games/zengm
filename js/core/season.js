@@ -829,12 +829,12 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
 
     /*Creates a single day's schedule for an in-progress playoffs.*/
     function newSchedulePlayoffsDay(cb) {
-        var transaction;
+        var tx;
 
-        transaction = g.dbl.transaction(["playoffSeries", "teams"], "readwrite");
+        tx = g.dbl.transaction(["playoffSeries", "teams"], "readwrite");
 
         // Make today's  playoff schedule
-        transaction.objectStore("playoffSeries").openCursor(g.season).onsuccess = function (event) {
+        tx.objectStore("playoffSeries").openCursor(g.season).onsuccess = function (event) {
             var cursor, i, matchup, nextRound, playoffSeries, rnd, series, tids, winners;
 
             cursor = event.target.result;
@@ -855,7 +855,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
 
                 // Record who won the league or conference championship
                 if (rnd === 3) {
-                    transaction.objectStore("teams").openCursor(series[rnd][0].home.tid).onsuccess = function (event) {
+                    tx.objectStore("teams").openCursor(series[rnd][0].home.tid).onsuccess = function (event) {
                         var cursor, t;
 
                         cursor = event.target.result;
@@ -866,7 +866,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                         }
                         cursor.update(t);
                     };
-                    transaction.objectStore("teams").openCursor(series[rnd][0].away.tid).onsuccess = function (event) {
+                    tx.objectStore("teams").openCursor(series[rnd][0].away.tid).onsuccess = function (event) {
                         var cursor, t;
 
                         cursor = event.target.result;
@@ -881,7 +881,9 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
 
                 // Are the whole playoffs over?
                 if (rnd === 3) {
-                    newPhase(c.PHASE_BEFORE_DRAFT, cb);
+                    tx.oncomplete = function () {
+                        newPhase(c.PHASE_BEFORE_DRAFT, cb);
+                    };
                 } else {
                     nextRound = [];
                     for (i = 0; i < series[rnd].length; i += 2) {
@@ -903,7 +905,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                     playoffSeries.currentRound += 1;
                     cursor.update(playoffSeries);
 
-                    cb();
+                    tx.oncomplete = cb;
                 }
             }
         };

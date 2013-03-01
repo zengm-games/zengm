@@ -104,7 +104,7 @@ define(["db", "util/helpers"], function (db, helpers) {
                 }
                 userPids = userPidsGood;
                 playerStore.index("tid").getAll(otherTid).onsuccess = function (event) {
-                    var i, j, players, otherPidsGood;
+                    var i, j, players, otherPidsGood, tx;
 
                     otherPidsGood = [];
                     players = event.target.result;
@@ -118,7 +118,8 @@ define(["db", "util/helpers"], function (db, helpers) {
                     }
                     otherPids = otherPidsGood;
 
-                    g.dbl.transaction("trade", "readwrite").objectStore("trade").openCursor(0).onsuccess = function (event) {
+                    tx = g.dbl.transaction("trade", "readwrite");
+                    tx.objectStore("trade").openCursor(0).onsuccess = function (event) {
                         var cursor, tr;
 
                         cursor = event.target.result;
@@ -126,6 +127,8 @@ define(["db", "util/helpers"], function (db, helpers) {
                         tr.userPids = userPids;
                         tr.otherPids = otherPids;
                         cursor.update(tr);
+                    };
+                    tx.oncomplete = function () {
                         cb(userPids, otherPids);
                     };
                 };
@@ -271,7 +274,10 @@ define(["db", "util/helpers"], function (db, helpers) {
      * @param {function()} cb Callback function.
      */
     function clear(cb) {
-        g.dbl.transaction("trade", "readwrite").objectStore("trade").openCursor(0).onsuccess = function (event) {
+        var tx;
+
+        tx = g.dbl.transaction("trade", "readwrite");
+        tx.objectStore("trade").openCursor(0).onsuccess = function (event) {
             var cursor, tr;
 
             cursor = event.target.result;
@@ -279,6 +285,9 @@ define(["db", "util/helpers"], function (db, helpers) {
             tr.userPids = [];
             tr.otherPids = [];
             cursor.update(tr);
+        };
+        // Get errors in Mocha if I pass cb directly. Not sure why.
+        tx.oncomplete = function () {
             cb();
         };
     }
@@ -308,14 +317,17 @@ define(["db", "util/helpers"], function (db, helpers) {
                 // that warning will already be pushed to the user so there is no need to
                 // return a redundant message here.
                 summary(otherTid, userPids, otherPids, function (s) {
-                    var done, i, playerStore, value;
+                    var done, i, outcome, playerStore, tx, value;
 
                     if (s.warning) {
                         cb(false, null);
                         return;
                     }
 
-                    playerStore = g.dbl.transaction("players", "readwrite").objectStore("players");
+                    outcome = "rejected"; // Default
+
+                    tx = g.dbl.transaction("players", "readwrite");
+                    playerStore = tx.objectStore("players");
 
                     done = 0;
                     value = [0, 0];  // "Value" of the players offered by each team
@@ -330,10 +342,9 @@ define(["db", "util/helpers"], function (db, helpers) {
 
                                 done += 1;
                                 if (done === 2) {
-                                    done = 0;
-
                                     if (value[0] > value[1] * 0.9) {
                                         // Trade players
+                                        outcome = "accepted";
                                         for (j = 0; j < 2; j++) {
                                             (function (j) {
                                                 var k, l;
@@ -353,30 +364,31 @@ define(["db", "util/helpers"], function (db, helpers) {
                                                             p = cursor.value;
                                                             p.tid = tids[k];
                                                             cursor.update(p);
-
-                                                            done += 1;
-                                                            if (done === pids[j].length + pids[k].length) {
-                                                                // Auto-sort CPU team roster
-                                                                db.rosterAutoSort(playerStore, tids[1], function () {
-                                                                    clear(function () {
-                                                                        db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                                                                            cb(true, 'Trade accepted! "Nice doing business with you!"');
-                                                                        });
-                                                                    });
-                                                                });
-                                                            }
                                                         };
                                                     }(l));
                                                 }
                                             }(j));
                                         }
-                                    } else {
-                                        cb(false, 'Trade rejected! "What, are you crazy?"');
                                     }
                                 }
                             };
                         }(i));
                     }
+
+                    tx.oncomplete = function () {
+                        if (outcome === "accepted") {
+                            // Auto-sort CPU team roster
+                            db.rosterAutoSort(null, tids[1], function () {
+                                clear(function () {
+                                    db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                                        cb(true, 'Trade accepted! "Nice doing business with you!"');
+                                    });
+                                });
+                            });
+                        } else {
+                            cb(false, 'Trade rejected! "What, are you crazy?"');
+                        }
+                    };
                 });
             });
         });

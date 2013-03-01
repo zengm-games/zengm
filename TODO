@@ -1,14 +1,12 @@
 main todo (before public beta)
 ------------------------------
 
-trading is glitchy in chrome - test it
 review every callback after a cursor.update, since that is async
   grep -r 'cursor.*\.update(' .
     core/draft.js
     core/freeAgents.js
     core/contractNegotiation
     core/season
-    core/trade
     core/game
     test/core/contractNegotiation
   should fix unit tests in chrome

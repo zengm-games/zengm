@@ -268,7 +268,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
      */
     function setSchedule(tids, cb) {
         helpers.getTeams(undefined, function (teams) {
-            var i, row, schedule, scheduleStore;
+            var i, row, schedule, scheduleStore, tx;
 
             schedule = [];
             for (i = 0; i < tids.length; i++) {
@@ -281,7 +281,9 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                 row.awayName = teams[row.awayTid].name;
                 schedule.push(row);
             }
-            scheduleStore = g.dbl.transaction(["schedule"], "readwrite").objectStore("schedule");
+
+            tx = g.dbl.transaction("schedule", "readwrite");
+            scheduleStore = tx.objectStore("schedule");
             scheduleStore.getAll().onsuccess = function (event) {
                 var currentSchedule, i;
 
@@ -293,9 +295,8 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                 for (i = 0; i < schedule.length; i++) {
                     scheduleStore.add(schedule[i]);
                 }
-
-                cb();
             };
+            tx.oncomplete = cb;
         });
     }
 
@@ -536,59 +537,62 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
             }
 
             row = {season: g.season, currentRound: 0, series: series};
-            g.dbl.transaction("playoffSeries", "readwrite").objectStore("playoffSeries").add(row);
-
-            // Add row to team stats and team season attributes
-            tx = g.dbl.transaction(["players", "teams"], "readwrite");
-            tx.objectStore("teams").openCursor().onsuccess = function (event) {
-                var cursor, i, key, playoffStats, seasonStats, t;
-
-                cursor = event.target.result;
-                if (cursor) {
-                    t = cursor.value;
-                    if (tidPlayoffs.indexOf(t.tid) >= 0) {
-                        for (i = 0; i < t.stats.length; i++) {
-                            if (t.stats[i].season === g.season) {
-                                seasonStats = t.stats[i];
-                                break;
-                            }
-                        }
-                        playoffStats = {};
-                        for (key in seasonStats) {
-                            if (seasonStats.hasOwnProperty(key)) {
-                                playoffStats[key] = 0;
-                            }
-                        }
-                        playoffStats.season = g.season;
-                        playoffStats.playoffs = true;
-                        t.stats.push(playoffStats);
-                        _.last(t.seasons).madePlayoffs = true;
-                        cursor.update(t);
-
-                        // Add row to player stats
-                        tx.objectStore("players").index("tid").openCursor(t.tid).onsuccess = function (event) {
-                            var cursorP, key, p, playerPlayoffStats;
-
-                            cursorP = event.target.result;
-                            if (cursorP) {
-                                p = cursorP.value;
-                                p = player.addStatsRow(p, true);
-                                cursorP.update(p);
-                                cursorP.continue();
-                            }
-                        };
-                    }
-                    cursor.continue();
-                }
-            };
+            tx = g.dbl.transaction("playoffSeries", "readwrite");
+            tx.objectStore("playoffSeries").add(row);
             tx.oncomplete = function () {
-                // This will only run after all the team and player stat rows have been saved to the database.
-                newPhaseCb(c.PHASE_PLAYOFFS, phaseText, function () {
-                    if (cb !== undefined) {
-                        cb();
+                var tx;
+                // Add row to team stats and team season attributes
+                tx = g.dbl.transaction(["players", "teams"], "readwrite");
+                tx.objectStore("teams").openCursor().onsuccess = function (event) {
+                    var cursor, i, key, playoffStats, seasonStats, t;
+
+                    cursor = event.target.result;
+                    if (cursor) {
+                        t = cursor.value;
+                        if (tidPlayoffs.indexOf(t.tid) >= 0) {
+                            for (i = 0; i < t.stats.length; i++) {
+                                if (t.stats[i].season === g.season) {
+                                    seasonStats = t.stats[i];
+                                    break;
+                                }
+                            }
+                            playoffStats = {};
+                            for (key in seasonStats) {
+                                if (seasonStats.hasOwnProperty(key)) {
+                                    playoffStats[key] = 0;
+                                }
+                            }
+                            playoffStats.season = g.season;
+                            playoffStats.playoffs = true;
+                            t.stats.push(playoffStats);
+                            _.last(t.seasons).madePlayoffs = true;
+                            cursor.update(t);
+
+                            // Add row to player stats
+                            tx.objectStore("players").index("tid").openCursor(t.tid).onsuccess = function (event) {
+                                var cursorP, key, p, playerPlayoffStats;
+
+                                cursorP = event.target.result;
+                                if (cursorP) {
+                                    p = cursorP.value;
+                                    p = player.addStatsRow(p, true);
+                                    cursorP.update(p);
+                                    cursorP.continue();
+                                }
+                            };
+                        }
+                        cursor.continue();
                     }
-                    Davis.location.assign(new Davis.Request("/l/" + g.lid + "/playoffs"));
-                });
+                };
+                tx.oncomplete = function () {
+                    // This will only run after all the team and player stat rows have been saved to the database.
+                    newPhaseCb(c.PHASE_PLAYOFFS, phaseText, function () {
+                        if (cb !== undefined) {
+                            cb();
+                        }
+                        Davis.location.assign(new Davis.Request("/l/" + g.lid + "/playoffs"));
+                    });
+                };
             };
         });
     }

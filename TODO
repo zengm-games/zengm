@@ -1,7 +1,7 @@
 main todo (before public beta)
 ------------------------------
 
-for race conditions, review callback for every put/add and db.putPlayer, player.release.. every function that takes a transaction, basically
+for race conditions, review callback for every add and db.putPlayer, player.release.. every function that takes a transaction, basically
   or anywhere i was eagerly passing around objectStores or transactions
     do note that sharing a transaction increases performance
 gameSim
@@ -167,6 +167,8 @@ disabling button for new league
   https://github.com/olivernn/davis.js/issues/63 firefox/chrome issues
   onclick="this.disabled=true; this.innerHTML='Generating league...'; $(this.form).submit();"
     this submits the form twice. why?
+race conditions associated with callbacks when passing around transactions
+  any put/add/update does not guarantee it's finished until the transaction finishes. but letting transactions finish is slow.
 
 ---
 

@@ -134,6 +134,8 @@ define(["util/helpers"], function (helpers) {
 
     /**
      * Add a new player to the database or update an existing player.
+     *
+     * There could be race conditions here if anything calling this relies on the player actually being added/updated in the database before the callback fires, as that is not guaranteed.
      * 
      * @memberOf db
      * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on players, readwrite; if null is passed, then a new transaction will be used.

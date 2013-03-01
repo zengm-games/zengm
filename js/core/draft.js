@@ -104,6 +104,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
             player.draftTid = pick.tid;
             teams = helpers.getTeams();
             player.draftAbbrev = teams[pick.tid].abbrev;
+            // draftTeamName and draftTeamRegion are currently not used, but they don't do much harm
             player.draftTeamName = teams[pick.tid].name;
             player.draftTeamRegion = teams[pick.tid].region;
 

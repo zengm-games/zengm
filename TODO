@@ -9,7 +9,6 @@ gameSim
     doFg
       probAst shouldn't be constant
       should somehow give higher FG% for assisted shots. not sure how
-check through the bugs and future features list one more time
 put on play.basketball-gm.com, with splash page on basketball-gm.com
   make sure the google analytics filter to only track on basketball-gm.com is working
 git tag as beta
@@ -18,6 +17,23 @@ git tag as beta
 
 FUTURE FEATURES (i.e. not required for public beta)
 
+database changes
+  store contract history/future with each player, and show in player view
+  store a list of awards/honors with each player
+  add activeYears multientry like statsTids use for:
+    league leaders
+    stats
+    ratings
+  cache payroll each year?
+    cache at the end of the playoffs
+    update cached value for this year whenever it changes
+      player is signed
+      trade happens
+      player is bought out
+      player is released
+    would simplify db.getTeams
+    would allow historical finances view
+    but is it worth it? would the cached values be meaningful?
 gameSim
   home/away advantage
     make sure home/away in playoffs is set right
@@ -31,6 +47,7 @@ gameSim
     how does performance change/degrade as the years go on?
 runjslint errors
   currently just "Don't make functions within a loop." and "JavaScript URL." which should all be fixed eventually
+  get rid of some of the global definitions via requirejs shim
 contract negotiation
   test all the error conditions and make sure callbacks are appropriately called (unit tests?)
   add free agent to the end of roster
@@ -40,7 +57,6 @@ db.getPlayers
   rename to helpers.filterPlayers?
   use for other access of players "playersAll"
   the special case attributes should generally be moved directly into the database.
-draftTeamName and draftTeamRegion needed for anything? If not, cut them.
 Replace showNoStats with a check of stats.length in db.getPlayer, at least in some cases? API is messy
 roster size check on new season
   cpu teams with < 5 players should automatically sign free agents
@@ -56,9 +72,8 @@ DataTables - need to rethink a lot of this, particularly how to make a decent UI
   per 36 stats in team/player stats view
     add a dropdown (maybe make the dropdown handling code more general?)
     add an option to db.getPlayers
-  default to sort descending when column is clicked
-    http://datatables.net/ref#asSorting will work. maybe pass it as an option to bbgm_datatable
   fix default sort order on column click
+    http://datatables.net/ref#asSorting will work. maybe pass it as an option to bbgm_datatable
     text should be asc, numeric should be desc
     http://stackoverflow.com/questions/3725321/jquery-datatables-change-order-to-desc-when-it-sorts - but can it be set globally? maybe i can have ui.datatable automatically read columns and figure it out?
 player.addStatsRow
@@ -80,22 +95,8 @@ internationalization
   league dashboard rankings should say 1st, 2nd, 3rd rather than 1th, 2th, 3th
 league dashboard
   next game should show something when active in playoffs, a message at least
-add activeYears multientry like statsTids use for:
-  league leaders
-  stats
-  ratings
 playoff stats in player view
   need a way to request only playoff stats from db.getPlayers - see all the playoffs === false stuff
-cache payroll each year?
-  cache at the end of the playoffs
-  update cached value for this year whenever it changes
-    player is signed
-    trade happens
-    player is bought out
-    player is released
-  would simplify db.getTeams
-  would allow historical finances view
-  but is it worth it? would the cached values be meaningful?
 don't block the UI in game simulation
   slide 81 http://www.slideshare.net/nzakas/high-performance-javascript-capitoljs-2011
     http://www.kryogenix.org/days/2009/07/03/not-blocking-the-ui-in-tight-javascript-loops
@@ -104,6 +105,7 @@ in lock functions, update g from database before using any potentially sensitive
 move to new window button, like gmail, that will open a view in a new window with a minimal UI
   only the icon should be clickable, not the area above and below
   insert query string before # in URL when making popup in ui.moveToNewWindow. also, account for any other query string already there (although there currently aren't any others, AFAIK)
+    does this matter?
 team history view needs more love
   dropdown for other teams
 auto-add players when AI teams are below limit (in season.js)
@@ -123,7 +125,8 @@ should all this stuff be always in g, or read dynamically from the database?
 player finder
   search by stats or ratings
   trade for button, or sign button if free agent
-free agent error message "You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process." is only displayed transiently before the free agent list is reloaded?
+free agent error message "You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process." - is this actually displayed?
+trading block
 online "locker" that you can sync saved games to
 customize which columns are shown in roster view (and possibly other summary views like trade, free agent, etc)
 hitting the phase twice shouldn't be possible. but if i, for instance, hit "until preseason" twice quickly, i skip a year

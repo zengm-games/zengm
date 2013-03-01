@@ -5,7 +5,7 @@ review every callback after a cursor.update, since that is async
   grep -r 'cursor.*\.update(' .
     core/season
   http://stackoverflow.com/questions/15151242/running-code-only-after-an-object-is-updated-in-indexeddb-particularly-in-chrom
-similarly, review callback for every put and putPlayer
+similarly, review callback for every put/add and putPlayer
   or anywhere i was eagerly passing around objectStores or transactions
     do note that sharing a transaction increases performance
 gameSim

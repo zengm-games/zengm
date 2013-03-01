@@ -328,7 +328,7 @@ define(["db", "util/random"], function (db, random) {
      * @param {?number} phase An integer representing the game phase to consider this transaction under (defaults to g.phase if null).
      * @param {function()} cb Callback function.
      */
-    function addToFreeAgents(transaction, p, phase, cb) {
+    function addToFreeAgents(ot, p, phase, cb) {
         var cont, expiration;
 
         phase = phase !== null ? phase : g.phase;
@@ -347,7 +347,7 @@ define(["db", "util/random"], function (db, random) {
 
         p.tid = c.PLAYER_FREE_AGENT;
 
-        db.putPlayer(transaction, p, cb);
+        db.putPlayer(ot, p, cb);
     }
 
     /**

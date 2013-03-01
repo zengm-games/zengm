@@ -745,13 +745,16 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
     }
 
     function newPhaseFreeAgency(cb) {
-        var phaseText, playerStore;
+        var phaseText;
 
         phaseText = g.season + " free agency";
 
         // Delete all current negotiations to resign players
         contractNegotiation.cancelAll(function () {
-            playerStore = g.dbl.transaction(["players"], "readwrite").objectStore("players");
+            var playerStore, tx;
+
+            tx = g.dbl.transaction("players", "readwrite");
+            playerStore = tx.objectStore("players");
 
             // Reset contract demands of current free agents
             // This IDBKeyRange only works because c.PLAYER_UNDRAFTED is -2 and c.PLAYER_FREE_AGENT is -1
@@ -764,14 +767,15 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                     player.addToFreeAgents(playerStore, p, c.PHASE_FREE_AGENCY);
                     cursor.update(p);
                     cursor.continue();
-                } else {
-                    newPhaseCb(c.PHASE_FREE_AGENCY, phaseText, function () {
-                        if (cb !== undefined) {
-                            cb();
-                        }
-                        Davis.location.assign(new Davis.Request("/l/" + g.lid + "/free_agents"));
-                    });
                 }
+            };
+            tx.oncomplete = function () {
+                newPhaseCb(c.PHASE_FREE_AGENCY, phaseText, function () {
+                    if (cb !== undefined) {
+                        cb();
+                    }
+                    Davis.location.assign(new Davis.Request("/l/" + g.lid + "/free_agents"));
+                });
             };
         });
     }

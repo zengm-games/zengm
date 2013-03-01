@@ -15,7 +15,7 @@ define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui
      * @param {function(string=)} cb Callback to be run only after a successful negotiation is started. If an error occurs, pass a string error message.
      */
     function create(ot, pid, resigning, cb) {
-        var transaction;
+        var tx;
 
         console.log("Trying to start new contract negotiation with player " + pid);
 
@@ -23,16 +23,16 @@ define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui
             return cb("You're not allowed to sign free agents now.");
         }
 
-        transaction = db.getObjectStore(ot, ["gameAttributes", "negotiations", "players"], null, true);
+        tx = db.getObjectStore(ot, ["gameAttributes", "negotiations", "players"], null, true);
 
-        lock.canStartNegotiation(transaction, function (canStartNegotiation) {
+        lock.canStartNegotiation(tx, function (canStartNegotiation) {
             var playerStore;
 
             if (!canStartNegotiation) {
                 return cb("You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process.");
             }
 
-            playerStore = transaction.objectStore("players");
+            playerStore = tx.objectStore("players");
             playerStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
                 var numPlayersOnRoster;
 
@@ -66,9 +66,9 @@ define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui
                         cursor.update(player);
                     }
 
-                    transaction.objectStore("negotiations").add({pid: pid, teamAmount: playerAmount, teamYears: playerYears, playerAmount: playerAmount, playerYears: playerYears, numOffersMade: 0, maxOffers: maxOffers, resigning: resigning}).onsuccess = function (event) {
+                    tx.objectStore("negotiations").add({pid: pid, teamAmount: playerAmount, teamYears: playerYears, playerAmount: playerAmount, playerYears: playerYears, numOffersMade: 0, maxOffers: maxOffers, resigning: resigning}).onsuccess = function (event) {
                         ui.updateStatus("Contract negotiation in progress...");
-                        ui.updatePlayMenu(transaction, cb);
+                        ui.updatePlayMenu(tx, cb);
                     };
                 };
             };
@@ -117,14 +117,15 @@ define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui
      * @param {function()=} cb Optional callback.
      */
     function offer(pid, teamAmount, teamYears, cb) {
-        var i, negotiation, negotiations;
+        var i, negotiation, negotiations, tx;
 
         console.log("User made contract offer for " + teamAmount + " over " + teamYears + " years to " + pid);
 
         teamAmount = validAmount(teamAmount);
         teamYears = validYears(teamYears);
 
-        g.dbl.transaction("negotiations", "readwrite").objectStore("negotiations").openCursor(pid).onsuccess = function (event) {
+        tx = g.dbl.transaction("negotiations", "readwrite");
+        tx.objectStore("negotiations").openCursor(pid).onsuccess = function (event) {
             var cursor, negotiation;
 
             cursor = event.target.result;
@@ -158,7 +159,8 @@ define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui
             negotiation.teamYears = teamYears;
 
             cursor.update(negotiation);
-
+        };
+        tx.oncomplete = function () {
             if (cb !== undefined) {
                 cb();
             }
@@ -227,6 +229,8 @@ define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui
             // If this contract brings team over the salary cap, it"s not a minimum;
             // contract, and it's not resigning a current player, ERROR!;
             db.getPayroll(null, g.userTid, function (payroll) {
+                var tx;
+
                 if (!negotiation.resigning && (payroll + negotiation.playerAmount > g.salaryCap && negotiation.playerAmount !== 500)) {
                     return cb("This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract, buy out a player currently on your roster, or cancel the negotiation.");
                 }
@@ -239,7 +243,8 @@ define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui
     /*            r = g.dbex("SELECT MAX(rosterOrder) + 1 FROM playerAttributes WHERE tid = :tid", tid = g.userTid);
                 rosterOrder, = r.fetchone();*/
 
-                g.dbl.transaction(["players"], "readwrite").objectStore("players").openCursor(pid).onsuccess = function (event) {
+                tx = g.dbl.transaction("players", "readwrite");
+                tx.objectStore("players").openCursor(pid).onsuccess = function (event) {
                     var cursor, p;
 
                     cursor = event.target.result;
@@ -254,7 +259,8 @@ define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui
                     p.contractExp = g.season + negotiation.playerYears;
 
                     cursor.update(p);
-
+                };
+                tx.oncomplete = function () {
                     cancel(pid);
 
                     console.log("User accepted contract proposal from " + pid);

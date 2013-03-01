@@ -49,7 +49,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
      * This is currently based on winning percentage (no lottery).
      *
      * @memberOf core.draft
-     * @param {function()} cb Optional callback function.
+     * @param {function()=} cb Optional callback function.
      */
     function setOrder(cb) {
         var attributes, draftOrder, i, round, seasonAttributes;
@@ -77,7 +77,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
      * @memberOf core.draft
      * @param {object} pick Pick object, like from db.getDraftOrder, that contains information like the team, round, etc.
      * @param {number} pid Integer player ID for the player to be drafted.
-     * @param {function(<number>)} cb Optional callback function. Argument is the player ID that was drafted (same as pid input.. probably this can be eliminated, then).
+     * @param {function(<number>)=} cb Optional callback function. Argument is the player ID that was drafted (same as pid input.. probably this can be eliminated, then).
      */
     function selectPlayer(pick, pid, cb) {
         var tx;

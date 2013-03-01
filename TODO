@@ -13,6 +13,8 @@ gameSim
     doShot
       check distribution of shot locations
   do some kind of profiling, see if i can speed it up
+    call updateSynergy only when the players on the court change - how much difference does this make?
+    any way to speed up PER? maybe break it up into smaller functions so they can be profiled
     do i need all the player composite ratings?
     do i need all the team composite ratings?
     how does performance change/degrade as the years go on?

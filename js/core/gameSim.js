@@ -124,9 +124,9 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
             if (i % this.subsEveryN === 0) {
                 this.updatePlayersOnCourt();
+                this.updateSynergy();
             }
 
-            this.updateSynergy();
             this.updateTeamCompositeRatings();
 
             outcome = this.simPossession();
@@ -184,7 +184,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     /**
      * Update synergy.
      *
-     * This should be called once every possession, after this.updatePlayersOnCourt as it influence output, to update the synergy object for each team.
+     * This should be called after this.updatePlayersOnCourt as it only produces different output when the players on the court change.
      * 
      * @memberOf core.gameSim
      */

@@ -1,10 +1,6 @@
 main todo (before public beta)
 ------------------------------
 
-for race conditions, review callback for every add and db.putPlayer.. every function that takes a transaction, basically
-  or anywhere i was eagerly passing around objectStores or transactions
-    do note that sharing a transaction increases performance
-schedule vs/at?
 gameSim
   compare team and player stat distributions against reality
   separate composite ratings for shooting in different places (jumpshot, inside, fast break, three, etc)

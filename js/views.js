@@ -842,7 +842,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
     function schedule(req) {
         beforeLeague(req, function () {
             season.getSchedule(null, 0, function (schedule_) {
-                var data, game, games, i, row, team0, team1, vsat;
+                var data, game, games, i, row, team0, team1;
 
                 games = [];
                 for (i = 0; i < schedule_.length; i++) {
@@ -851,11 +851,10 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                         team0 = {tid: game.homeTid, abbrev: game.homeAbbrev, region: game.homeRegion, name: game.homeName};
                         team1 = {tid: game.awayTid, abbrev: game.awayAbbrev, region: game.awayRegion, name: game.awayName};
                         if (g.userTid === game.homeTid) {
-                            vsat = "vs";
+                            row = {teams: [team1, team0], vsat: "vs"};
                         } else {
-                            vsat = "at";
+                            row = {teams: [team0, team1], vsat: "at"};
                         }
-                        row = {teams: [team0, team1], vsat: vsat};
                         games.push(row);
                     }
                 }

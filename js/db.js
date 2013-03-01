@@ -87,9 +87,9 @@ define(["util/helpers"], function (helpers) {
     }
 
     /**
-     * Get an object store based on input which may be the desired object store, a transaction to be used, or null.
+     * Get an object store or transaction based on input which may be the desired object store, a transaction to be used, or null.
      * 
-     * This allows the other db.* functions to use transactions or object stores that have already been defined, which often makes things a lot faster.
+     * This allows for the convenient use of transactions or object stores that have already been defined, which is often necessary.
      * 
      * @memberOf db
      * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction to be used; if null is passed, then a new transaction will be used.
@@ -101,21 +101,31 @@ define(["util/helpers"], function (helpers) {
     function getObjectStore(ot, transactionObjectStores, objectStore, readwrite) {
         readwrite = readwrite !== undefined ? readwrite : false;
 
-        if (ot instanceof IDBObjectStore) {
-            return ot;
-        }
         if (ot instanceof IDBTransaction) {
             if (objectStore !== null) {
                 return ot.objectStore(objectStore);
             }
             return ot; // Return original transaction
         }
+
+        // Return a transaction
         if (objectStore === null) {
+            if (ot instanceof IDBObjectStore) {
+                return ot.transaction;
+            }
+
             if (readwrite) {
                 return g.dbl.transaction(transactionObjectStores, "readwrite");
             }
             return g.dbl.transaction(transactionObjectStores);
         }
+
+        // ot is an objectStore already, and an objectStore was requested (not a transation)
+        if (ot instanceof IDBObjectStore) {
+            return ot;
+        }
+
+
         if (readwrite) {
             return g.dbl.transaction(transactionObjectStores, "readwrite").objectStore(objectStore);
         }

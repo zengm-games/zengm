@@ -3,6 +3,7 @@ main todo (before public beta)
 
 trading is glitchy in chrome - test it
 review every callback after a cursor.update, since that is async
+  ugh, going to have to fuck with db.getObjectStore
   grep -r 'cursor.*\.update(' .
     core/draft.js
     core/freeAgents.js

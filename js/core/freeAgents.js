@@ -105,7 +105,10 @@ define(["db", "core/player", "util/random"], function (db, player, random) {
      * @param {function()} cb Callback.
      */
     function decreaseDemands(cb) {
-        g.dbl.transaction("players", "readwrite").objectStore("players").index("tid").openCursor(c.PLAYER_FREE_AGENT).onsuccess = function (event) {
+        var tx;
+
+        tx = g.dbl.transaction("players", "readwrite");
+        tx.objectStore("players").index("tid").openCursor(c.PLAYER_FREE_AGENT).onsuccess = function (event) {
             var cursor, p;
 
             cursor = event.target.result;
@@ -133,10 +136,9 @@ define(["db", "core/player", "util/random"], function (db, player, random) {
 
                 cursor.update(p);
                 cursor.continue();
-            } else {
-                cb();
             }
         };
+        tx.oncomplete = cb;
     }
 
     return {

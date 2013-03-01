@@ -75,8 +75,12 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
     }
 
     function rosterReorder(sortedPids, cb) {
+        var tx;
+
+        tx = g.dbl.transaction("players", "readwrite");
+
         // Update rosterOrder
-        g.dbl.transaction("players", "readwrite").objectStore("players").index("tid").openCursor(g.userTid).onsuccess = function (event) {
+        tx.objectStore("players").index("tid").openCursor(g.userTid).onsuccess = function (event) {
             var cursor, i, p;
 
             cursor = event.target.result;
@@ -90,11 +94,13 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
                 }
                 cursor.update(p);
                 cursor.continue();
-            } else {
-                db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                    cb();
-                });
             }
+        };
+
+        tx.oncomplete = function () {
+            db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                cb();
+            });
         };
     }
 

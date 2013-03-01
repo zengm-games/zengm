@@ -28,7 +28,11 @@ define(["db", "util/helpers"], function (db, helpers) {
         }
 
         cbStartTrade = function (tid) {
-            g.dbl.transaction("trade", "readwrite").objectStore("trade").openCursor(0).onsuccess = function (event) { // Same key always, as there is only one trade allowed at a time
+            var tx;
+
+            tx = g.dbl.transaction("trade", "readwrite");
+
+            tx.objectStore("trade").openCursor(0).onsuccess = function (event) { // Same key always, as there is only one trade allowed at a time
                 var cursor, tr;
 
                 cursor = event.target.result;
@@ -36,8 +40,9 @@ define(["db", "util/helpers"], function (db, helpers) {
                 tr.otherTid = tid;
                 tr.otherPids = otherPids;
                 cursor.update(tr);
-                cb();
             };
+
+            tx.oncomplete = cb;
         };
 
         // Make sure tid is set and corresponds to pid, if (set;

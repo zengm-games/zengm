@@ -1,6 +1,20 @@
 main todo (before public beta)
 ------------------------------
 
+trading is glitchy in chrome - test it
+review every callback after a cursor.update, since that is async
+  grep -r 'cursor.*\.update(' .
+    core/draft.js
+    core/freeAgents.js
+    core/contractNegotiation
+    core/season
+    core/trade
+    core/game
+    db
+    util/advStats
+    test/core/contractNegotiation
+  should fix unit tests in chrome
+  http://stackoverflow.com/questions/15151242/running-code-only-after-an-object-is-updated-in-indexeddb-particularly-in-chrom
 gameSim
   compare team and player stat distributions against reality
   separate composite ratings for shooting in different places (jumpshot, inside, fast break, three, etc)
@@ -13,12 +27,6 @@ check through the bugs and future features list one more time
 put on play.basketball-gm.com, with splash page on basketball-gm.com
   make sure the google analytics filter to only track on basketball-gm.com is working
 git tag as beta
-
----
-
-BUGS
-
-trading is glitchy in chrome
 
 ---
 

@@ -4,6 +4,11 @@ main todo (before public beta)
 gameSim
   compare team and player stat distributions against reality
   separate composite ratings for shooting in different places (jumpshot, inside, fast break, three, etc)
+    add stats
+      fgAtRim
+      fgaAtRim
+      fgpAtRim
+      ..., for LowPost and MidRange as well
     how do i know how many of each are shot? log it in player/game stats
   more ratings influence on gameSim
     doFg

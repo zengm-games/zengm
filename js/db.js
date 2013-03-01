@@ -341,6 +341,24 @@ define(["util/helpers"], function (helpers) {
                         } else {
                             player.fgp = 0;
                         }
+                    } else if (stats[j] === "fgpAtRim") {
+                        if (ps.fgaAtRim > 0) {
+                            player.fgpAtRim = 100 * ps.fgAtRim / ps.fgaAtRim;
+                        } else {
+                            player.fgpAtRim = 0;
+                        }
+                    } else if (stats[j] === "fgpLowPost") {
+                        if (ps.fgaLowPost > 0) {
+                            player.fgpLowPost = 100 * ps.fgLowPost / ps.fgaLowPost;
+                        } else {
+                            player.fgpLowPost = 0;
+                        }
+                    } else if (stats[j] === "fgpMidRange") {
+                        if (ps.fgaMidRange > 0) {
+                            player.fgpMidRange = 100 * ps.fgMidRange / ps.fgaMidRange;
+                        } else {
+                            player.fgpMidRange = 0;
+                        }
                     } else if (stats[j] === "tpp") {
                         if (ps.tpa > 0) {
                             player.tpp = 100 * ps.tp / ps.tpa;
@@ -586,6 +604,24 @@ define(["util/helpers"], function (helpers) {
                             team.fgp = 100 * ts.fg / ts.fga;
                         } else {
                             team.fgp = 0;
+                        }
+                    } else if (stats[j] === "fgpAtRim") {
+                        if (ts.fgaAtRim > 0) {
+                            team.fgpAtRim = 100 * ts.fgAtRim / ts.fgaAtRim;
+                        } else {
+                            team.fgpAtRim = 0;
+                        }
+                    } else if (stats[j] === "fgpLowPost") {
+                        if (ts.fgaLowPost > 0) {
+                            team.fgpLowPost = 100 * ts.fgLowPost / ts.fgaLowPost;
+                        } else {
+                            team.fgpLowPost = 0;
+                        }
+                    } else if (stats[j] === "fgpMidRange") {
+                        if (ts.fgaMidRange > 0) {
+                            team.fgpMidRange = 100 * ts.fgMidRange / ts.fgaMidRange;
+                        } else {
+                            team.fgpMidRange = 0;
                         }
                     } else if (stats[j] === "tpp") {
                         if (ts.tpa > 0) {

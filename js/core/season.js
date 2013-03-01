@@ -89,7 +89,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
             stats = [];
             seasonAttributes = ["won", "lost", "winp"];
             db.getTeams(transaction, g.season, attributes, stats, seasonAttributes, {sortBy: "winp"}, function (teams) {
-                var i, foundEast, foundWest, t;
+                var i, foundEast, foundWest, t, tx;
 
                 for (i = 0; i < teams.length; i++) {
                     if (!foundEast && teams[i].cid === 0) {
@@ -106,9 +106,10 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                         break;
                     }
                 }
-                g.dbl.transaction("awards", "readwrite").objectStore("awards").add(awards);
 
-                cb();
+                tx = g.dbl.transaction("awards", "readwrite");
+                tx.objectStore("awards").add(awards);
+                tx.oncomplete = cb;
             });
         };
     }

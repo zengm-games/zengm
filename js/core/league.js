@@ -70,6 +70,7 @@ define(["db", "ui", "core/player", "core/season", "util/helpers", "util/random"]
                             userPids: []
                         });
 
+                        // This can't be in transaction.oncomplete because loading players from a json file is async and breaks the transaction.
                         afterPlayerCreation = function () {
                             // Make schedule, start season
                             season.newPhase(c.PHASE_REGULAR_SEASON, function () {

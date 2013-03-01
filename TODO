@@ -1,7 +1,7 @@
 main todo (before public beta)
 ------------------------------
 
-for race conditions, review callback for every add and db.putPlayer, player.release.. every function that takes a transaction, basically
+for race conditions, review callback for every add and db.putPlayer.. every function that takes a transaction, basically
   or anywhere i was eagerly passing around objectStores or transactions
     do note that sharing a transaction increases performance
 gameSim

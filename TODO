@@ -2,14 +2,17 @@ main todo (before public beta)
 ------------------------------
 
 gameSim
-  compare team and player stat distributions against reality
+  compare team and player stat distributions against reality, and tweak
   shot locations
     add stats
       fgAtRim
       fgaAtRim
       fgpAtRim
       ..., for LowPost and MidRange as well
-    how do i know how many of each are shot? log it in player/game stats
+    how to display?
+      in box score?
+      in player stats view?
+      in team stats view?
     boxplots for these stats from hoopdata?
   more ratings influence on gameSim
     doFg

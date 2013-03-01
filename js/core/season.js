@@ -325,14 +325,14 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
 
     function newPhasePreseason(cb) {
         db.setGameAttributes({season: g.season + 1}, function () {
-            var phaseText, transaction;
+            var phaseText, tx;
 
             phaseText = g.season + " preseason";
 
-            transaction = g.dbl.transaction(["players", "teams"], "readwrite");
+            tx = g.dbl.transaction(["players", "teams"], "readwrite");
 
             // Add row to team stats and season attributes
-            transaction.objectStore("teams").openCursor().onsuccess = function (event) {
+            tx.objectStore("teams").openCursor().onsuccess = function (event) {
                 var cursor, key, team, teamNewSeason, teamNewStats, teamSeason;
 
                 cursor = event.target.result;
@@ -379,7 +379,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                     cursor.continue();
                 } else {
                     // Loop through all non-retired players
-                    transaction.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) {
+                    tx.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) {
                         var cursorP, p;
 
                         cursorP = event.target.result;
@@ -397,14 +397,16 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
 
                             cursorP.update(p);
                             cursorP.continue();
-                        } else {
-                            // AI teams sign free agents
-                            freeAgents.autoSign(function () {
-                                newPhaseCb(c.PHASE_PRESEASON, phaseText, cb, true);
-                            });
                         }
                     };
                 }
+            };
+
+            tx.oncomplete = function () {
+                // AI teams sign free agents
+                freeAgents.autoSign(function () {
+                    newPhaseCb(c.PHASE_PRESEASON, phaseText, cb, true);
+                });
             };
         });
     }

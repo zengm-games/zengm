@@ -11,7 +11,6 @@ review every callback after a cursor.update, since that is async
     core/trade
     core/game
     db
-    util/advStats
     test/core/contractNegotiation
   should fix unit tests in chrome
   http://stackoverflow.com/questions/15151242/running-code-only-after-an-object-is-updated-in-indexeddb-particularly-in-chrom

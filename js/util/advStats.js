@@ -45,7 +45,7 @@ define(["db"], function (db) {
             // Total player stats (not per game averages) - min, tp, ast, fg, ft, tov, fga, fta, trb, orb, stl, blk, pf
             // Active players have tid >= 0
             g.dbl.transaction("players").objectStore("players").getAll(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
-                var aPER, attributes, drbp, factor, i, PER, players, ratings, stats, tid, uPER, vop;
+                var aPER, attributes, drbp, factor, i, PER, players, ratings, stats, tid, uPER, vop, tx;
                 attributes = ["pid", "tid"];
                 ratings = [];
                 stats = ["min", "tp", "ast", "fg", "ft", "tov", "fga", "fta", "trb", "orb", "stl", "blk", "pf"];
@@ -90,7 +90,8 @@ define(["db"], function (db) {
                 PER = _.map(aPER, function (num) { return num * (15 / league.aPER); });
 
                 // Save to database. Active players have tid >= 0
-                g.dbl.transaction("players", "readwrite").objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
+                tx = g.dbl.transaction("players", "readwrite");
+                tx.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
                     var cursor, i, p;
 
                     cursor = event.target.result;
@@ -108,10 +109,11 @@ define(["db"], function (db) {
                         }
 
                         cursor.continue();
-                    } else {
-                        if (cb !== undefined) {
-                            cb();
-                        }
+                    }
+                };
+                tx.oncomplete = function () {
+                    if (cb !== undefined) {
+                        cb();
                     }
                 };
             };

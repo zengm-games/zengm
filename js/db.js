@@ -704,9 +704,10 @@ define(["util/helpers"], function (helpers) {
      * @param {function()=} cb Optional callback.
      */
     function rosterAutoSort(ot, tid, cb) {
-        var players, playerStore;
+        var players, playerStore, tx;
 
-        playerStore = getObjectStore(ot, "players", "players", true);
+        tx = getObjectStore(ot, "players", null, true);
+        playerStore = tx.objectStore("players");
 
         // Get roster and sort by overall rating
         playerStore.index("tid").getAll(tid).onsuccess = function (event) {
@@ -734,12 +735,14 @@ define(["util/helpers"], function (helpers) {
                     }
                     cursor.update(p);
                     cursor.continue();
-                } else {
-                    if (cb !== undefined) {
-                        cb();
-                    }
                 }
             };
+        };
+
+        tx.oncomplete = function () {
+            if (cb !== undefined) {
+                cb();
+            }
         };
     }
 

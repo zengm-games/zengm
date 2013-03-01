@@ -560,7 +560,7 @@ define(["db", "util/random"], function (db, random) {
         playoffs = playoffs !== undefined ? playoffs : false;
         season = season !== undefined ? season : g.season;
 
-        p.stats.push({season: season, tid: p.tid, playoffs: playoffs, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, per: 0});
+        p.stats.push({season: season, tid: p.tid, playoffs: playoffs, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, per: 0});
         p.statsTids.push(p.tid);
         p.statsTids = _.uniq(p.statsTids);
 

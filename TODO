@@ -167,6 +167,10 @@ show record (w-l) on roster view - make it more like a summary, as in basketball
   payroll
   anything else?
 https://github.com/nprapps/app-template
+disabling button for new league
+  https://github.com/olivernn/davis.js/issues/63 firefox/chrome issues
+  onclick="this.disabled=true; this.innerHTML='Generating league...'; $(this.form).submit();"
+    this submits the form twice. why?
 
 ---
 

@@ -3357,7 +3357,7 @@ function program1(depth0,data) {
   stack2 = {};
   if (!helpers.teams) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:stack2,inverse:self.noop,fn:self.program(1, program1, data),data:data}); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  </select>\n  <!--<label><select name=\"players\">\n    <option value=\"random\" selected=\"selected\">Random Players</option>\n    <option value=\"nba2012\">2012 NBA Players</option>\n  </select></label>--><br>\n  <button type=\"submit\" class=\"btn\" onclick=\"this.disabled=true; this.innerHTML='Generating league...'; $(this.form).submit();\">Create New League</button>  \n</form>\n</p>";
+  buffer += "\n  </select>\n  <!--<label><select name=\"players\">\n    <option value=\"random\" selected=\"selected\">Random Players</option>\n    <option value=\"nba2012\">2012 NBA Players</option>\n  </select></label>--><br>\n  <button type=\"submit\" class=\"btn\">Create New League</button>  \n</form>\n</p>";
   return buffer;});
 templates['dashboard'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers; data = data || {};

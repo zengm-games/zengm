@@ -233,15 +233,13 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
 
         pid = parseInt(pid, 10);
 
-        transaction = g.dbl.transaction(["draftOrder", "players"], "readwrite");
-        db.getDraftOrder(transaction, function (draftOrder) {
+        db.getDraftOrder(function (draftOrder) {
             var pick, playerStore;
 
             pick = draftOrder.shift();
             if (pick.tid === g.userTid) {
-                playerStore = transaction.objectStore("players");
-                draft.selectPlayer(pick, pid, playerStore, function (pid) {
-                    db.setDraftOrder(transaction, draftOrder, function () {
+                draft.selectPlayer(pick, pid, function (pid) {
+                    db.setDraftOrder(draftOrder, function () {
                         cb(pid);
                     });
                 });

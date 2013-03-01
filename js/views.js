@@ -1142,7 +1142,7 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
 
                         started = drafted.length > 0;
 
-                        db.getDraftOrder(null, function (draftOrder) {
+                        db.getDraftOrder(function (draftOrder) {
                             var data, i, slot;
 
                             for (i = 0; i < draftOrder.length; i++) {

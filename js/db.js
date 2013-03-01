@@ -746,11 +746,8 @@ define(["util/helpers"], function (helpers) {
         };
     }
 
-    function getDraftOrder(ot, cb) {
-        var draftOrder, draftOrderStore;
-
-        draftOrderStore = getObjectStore(ot, "draftOrder", "draftOrder");
-        draftOrderStore.get(1).onsuccess = function (event) {
+    function getDraftOrder(cb) {
+        g.dbl.transaction("draftOrder").objectStore("draftOrder").get(0).onsuccess = function (event) {
             var draftOrder;
 
             draftOrder = event.target.result.draftOrder;
@@ -758,14 +755,15 @@ define(["util/helpers"], function (helpers) {
         };
     }
 
-    function setDraftOrder(ot, draftOrder, cb) {
-        var draftOrderStore;
+    function setDraftOrder(draftOrder, cb) {
+        var tx;
 
-        draftOrderStore = getObjectStore(ot, "draftOrder", "draftOrder", true);
-        draftOrderStore.put({
-            rid: 1,
+        tx = g.dbl.transaction("draftOrder", "readwrite");
+        tx.objectStore("draftOrder").put({
+            rid: 0,
             draftOrder: draftOrder
-        }).onsuccess = function (event) {
+        });
+        tx.oncomplete = function () {
             if (cb !== undefined) {
                 cb();
             }

@@ -30,27 +30,23 @@ define(["db", "core/draft", "core/league"], function (db, draft, league) {
         };
 
         testDraftUser = function (round, cb) {
-            var transaction;
-
-            transaction = g.dbl.transaction(["draftOrder", "players"], "readwrite");
-            db.getDraftOrder(transaction, function (draftOrder) {
-                var pick, playerStore;
+            db.getDraftOrder(function (draftOrder) {
+                var pick;
 
                 pick = draftOrder.shift();
                 pick.round.should.equal(round);
                 pick.pick.should.equal(5);
                 pick.tid.should.equal(g.userTid);
 
-                playerStore = transaction.objectStore("players");
-                playerStore.index("tid").get(c.PLAYER_UNDRAFTED).onsuccess = function (event) {
+                g.dbl.transaction("players").objectStore("players").index("tid").get(c.PLAYER_UNDRAFTED).onsuccess = function (event) {
                     var pidBefore;
 
                     pidBefore = event.target.result.pid;
-                    draft.selectPlayer(pick, pidBefore, playerStore, function (pidAfter) {
+                    draft.selectPlayer(pick, pidBefore, function (pidAfter) {
                         pidAfter.should.equal(pidBefore);
-                        playerStore.get(pidBefore).onsuccess = function (event) {
+                        g.dbl.transaction("players").objectStore("players").get(pidBefore).onsuccess = function (event) {
                             event.target.result.tid.should.equal(g.userTid);
-                            db.setDraftOrder(transaction, draftOrder, cb);
+                            db.setDraftOrder(draftOrder, cb);
                         };
                     });
                 };
@@ -71,7 +67,7 @@ define(["db", "core/draft", "core/league"], function (db, draft, league) {
         describe("#setOrder()", function () {
             it("should schedule 60 draft picks", function (done) {
                 draft.setOrder(function () {
-                    db.getDraftOrder(null, function (draftOrder) {
+                    db.getDraftOrder(function (draftOrder) {
                         draftOrder.length.should.equal(60);
                         done();
                     });

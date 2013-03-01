@@ -46,23 +46,23 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
                 }
             }
 
-            db.setDraftOrder(null, draftOrder, cb);
+            db.setDraftOrder(draftOrder, cb);
         });
     }
 
     /* Callback is used when this is called to select a player for the user's team.*/
-    function selectPlayer(pick, pid, playerStore, cb) {
-/*
-        // Validate that tid should be picking now
+    function selectPlayer(pick, pid, cb) {
+        var tx;
+/*        // Validate that tid should be picking now
         r = g.dbex('SELECT tid, round, pick FROM draftResults WHERE season = :season AND pid = 0 ORDER BY round, pick ASC LIMIT 1', season=g.season);
         tidNext, round, pick = r.fetchone();
 
         if (tidNext != pick.tid) {
             app.logger.debug('WARNING: Team %d tried to draft out of order' % (tid,));
-            return;
-*/
+            return;*/
 
-        playerStore.openCursor(pid).onsuccess = function (event) {
+        tx = g.dbl.transaction("players", "readwrite");
+        tx.objectStore("players").openCursor(pid).onsuccess = function (event) {
             var cursor, i, player, rookieSalaries, teams, years;
 
             cursor = event.target.result;
@@ -87,7 +87,9 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
             player.contractExp = g.season + years;
 
             cursor.update(player);
+        };
 
+        tx.oncomplete = function () {
             if (cb !== undefined) {
                 cb(pid);
             }
@@ -96,25 +98,66 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
 
     /*Simulate draft picks until it's the user's turn or the draft is over.
 
+    This could be made faster by passing a transaction around, so all the writes for all the picks are done in one transaction. But when calling selectPlayer elsewhere (i.e. in testing or in response to the user's pick), it needs to be sure that the transaction is complete before continuing. So I would need to create a special case there to account for it. Given that this isn't really *that* slow now, that probably isn't worth the complexity.
+
     Returns:
         A list of player IDs who were drafted.
     */
     function untilUserOrEnd(cb) {
-        var pids, playerStore, transaction;
+        var pids;
 
         pids = [];
-        transaction = g.dbl.transaction(["draftOrder", "players"], "readwrite");
-        playerStore = transaction.objectStore("players");
-        playerStore.index("tid").getAll(c.PLAYER_UNDRAFTED).onsuccess = function (event) {
+
+        g.dbl.transaction("players").objectStore("players").index("tid").getAll(c.PLAYER_UNDRAFTED).onsuccess = function (event) {
             var playersAll;
 
             playersAll = event.target.result;
             playersAll.sort(function (a, b) {  return (b.ratings[0].ovr + 2 * b.ratings[0].pot) - (a.ratings[0].ovr + 2 * a.ratings[0].pot); });
 
-            db.getDraftOrder(transaction, function (draftOrder) {
-                var pick, pid, selection;
+            db.getDraftOrder(function (draftOrder) {
+                var autoSelectPlayer, cbAfterDoneAuto, pick, pid, selection;
 
-                while (draftOrder.length > 0) {
+                // Called after either the draft is over or it's the user's pick
+                cbAfterDoneAuto = function (draftOrder, pids) {
+                    db.setDraftOrder(draftOrder, function () {
+                        // Is draft over?;
+                        if (draftOrder.length === 0) {
+                            season.newPhase(c.PHASE_AFTER_DRAFT, function () {
+                                cb(pids);
+                            });
+                        } else {
+                            cb(pids);
+                        }
+                    });
+                };
+
+                autoSelectPlayer = function () {
+                    var cb;
+
+                    if (draftOrder.length > 0) {
+                        pick = draftOrder.shift();
+                        if (pick.tid === g.userTid) {
+                            draftOrder.unshift(pick);
+                            cbAfterDoneAuto(draftOrder, pids);
+                            return;
+                        }
+
+                        selection = Math.floor(Math.abs(random.gauss(0, 2)));  // 0=best prospect, 1=next best prospect, etc.
+                        pid = playersAll[selection].pid;
+                        selectPlayer(pick, pid, function () {
+                            pids.push(pid);
+                            playersAll.splice(selection, 1);  // Delete from the list of undrafted players
+
+                            autoSelectPlayer();
+                        });
+                    } else {
+                        cbAfterDoneAuto(draftOrder, pids);
+                    }
+                };
+
+                autoSelectPlayer();
+
+/*                while (draftOrder.length > 0) {
                     pick = draftOrder.shift();
                     if (pick.tid === g.userTid) {
                         draftOrder.unshift(pick);
@@ -123,22 +166,11 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
 
                     selection = Math.floor(Math.abs(random.gauss(0, 2)));  // 0=best prospect, 1=next best prospect, etc.
                     pid = playersAll[selection].pid;
-                    selectPlayer(pick, pid, playerStore);
+                    selectPlayer(pick, pid);
 
                     pids.push(pid);
                     playersAll.splice(selection, 1);  // Delete from the list of undrafted players
-                }
-
-                db.setDraftOrder(transaction, draftOrder, function () {
-                    // Is draft over?;
-                    if (draftOrder.length === 0) {
-                        season.newPhase(c.PHASE_AFTER_DRAFT, function () {
-                            cb(pids);
-                        });
-                    } else {
-                        cb(pids);
-                    }
-                });
+                }*/
             });
         };
     }

@@ -1,6 +1,18 @@
+/**
+ * @name core.draft
+ * @namespace The annual draft of new prospects.
+ */
 define(["db", "core/player", "core/season", "util/helpers", "util/random"], function (db, player, season, helpers, random) {
     "use strict";
 
+    /**
+     * Generate a set of draft prospects.
+     *
+     * This is called before the draft occurs, otherwise there will be no one to draft!
+     *
+     * @memberOf core.draft
+     * @param {function()} cb Callback function.
+     */
     function generatePlayers(cb) {
         var agingYears, baseRating, draftYear, i, p, playerStore, pot, profile, profiles, tx;
 
@@ -31,7 +43,14 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
         tx.oncomplete = cb;
     }
 
-    /*Sets draft order based on winning percentage (no lottery).*/
+    /**
+     * Sets draft order and save it to the draftOrder object store.
+     *
+     * This is currently based on winning percentage (no lottery).
+     *
+     * @memberOf core.draft
+     * @param {function()} cb Optional callback function.
+     */
     function setOrder(cb) {
         var attributes, draftOrder, i, round, seasonAttributes;
 
@@ -50,7 +69,16 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
         });
     }
 
-    /* Callback is used when this is called to select a player for the user's team.*/
+    /**
+     * Select a player for the current drafting team.
+     *
+     * This can be called in response to the user clicking the "draft" button for a player, or by some other function like untilUserOrEnd.
+     *
+     * @memberOf core.draft
+     * @param {object} pick Pick object, like from db.getDraftOrder, that contains information like the team, round, etc.
+     * @param {number} pid Integer player ID for the player to be drafted.
+     * @param {function(<number>)} cb Optional callback function. Argument is the player ID that was drafted (same as pid input.. probably this can be eliminated, then).
+     */
     function selectPlayer(pick, pid, cb) {
         var tx;
 /*        // Validate that tid should be picking now
@@ -96,13 +124,14 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
         };
     }
 
-    /*Simulate draft picks until it's the user's turn or the draft is over.
-
-    This could be made faster by passing a transaction around, so all the writes for all the picks are done in one transaction. But when calling selectPlayer elsewhere (i.e. in testing or in response to the user's pick), it needs to be sure that the transaction is complete before continuing. So I would need to create a special case there to account for it. Given that this isn't really *that* slow now, that probably isn't worth the complexity.
-
-    Returns:
-        A list of player IDs who were drafted.
-    */
+    /**
+     * Simulate draft picks until it's the user's turn or the draft is over.
+     *
+     * This could be made faster by passing a transaction around, so all the writes for all the picks are done in one transaction. But when calling selectPlayer elsewhere (i.e. in testing or in response to the user's pick), it needs to be sure that the transaction is complete before continuing. So I would need to create a special case there to account for it. Given that this isn't really *that* slow now, that probably isn't worth the complexity.
+     *
+     * @memberOf core.draft
+     * @param {function(Array.<Object>, Array.<number>)} cb Callback function. First argument is the list of draft picks (from db.getDraftOrder). Second argument is a list of player IDs who were drafted during this function call, in order.
+     */
     function untilUserOrEnd(cb) {
         var pids;
 
@@ -131,6 +160,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
                     });
                 };
 
+                // This will actually draft "untilUserOrEnd"
                 autoSelectPlayer = function () {
                     var cb;
 
@@ -156,21 +186,6 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
                 };
 
                 autoSelectPlayer();
-
-/*                while (draftOrder.length > 0) {
-                    pick = draftOrder.shift();
-                    if (pick.tid === g.userTid) {
-                        draftOrder.unshift(pick);
-                        break;
-                    }
-
-                    selection = Math.floor(Math.abs(random.gauss(0, 2)));  // 0=best prospect, 1=next best prospect, etc.
-                    pid = playersAll[selection].pid;
-                    selectPlayer(pick, pid);
-
-                    pids.push(pid);
-                    playersAll.splice(selection, 1);  // Delete from the list of undrafted players
-                }*/
             });
         };
     }

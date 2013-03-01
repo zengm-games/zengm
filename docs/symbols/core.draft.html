@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - util.lock</title>
+		<title>JsDoc Reference - core.draft</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -232,7 +232,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Namespace util.lock
+				Namespace core.draft
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -240,16 +240,16 @@ ul.inheritsList
 				
 				
 			
-				These functions all deal with locking game state when there is some blocking action in progress. Like don't allow game simulations when a trade is being negotiated. For figuring out the current state, trust only the database.
+				The annual draft of new prospects.
 				
 				
-					<br /><i>Defined in: </i> &lt;js/util/lock.js&gt;.
+					<br /><i>Defined in: </i> &lt;js/core/draft.js&gt;.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class util.lock.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class core.draft.">
 				<caption>Namespace Summary</caption>
 				<thead>
 					<tr>
@@ -262,7 +262,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/util.lock.html#constructor">util.lock</a></b>
+								<b><a href="../symbols/core.draft.html#constructor">core.draft</a></b>
 							</div>
 							<div class="description"></div>
 						</td>
@@ -278,7 +278,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class util.lock.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class core.draft.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -291,44 +291,36 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">util.lock.<b><a href="../symbols/util.lock.html#.canStartGames">canStartGames</a></b>(ot, cb)
+								<div class="fixedFont">core.draft.<b><a href="../symbols/core.draft.html#.generatePlayers">generatePlayers</a></b>(cb)
 								</div>
-								<div class="description">Can new game simulations be started?
-
-Calls the callback function with either true or false.</div>
+								<div class="description">Generate a set of draft prospects.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">util.lock.<b><a href="../symbols/util.lock.html#.canStartNegotiation">canStartNegotiation</a></b>(ot, cb)
+								<div class="fixedFont">core.draft.<b><a href="../symbols/core.draft.html#.selectPlayer">selectPlayer</a></b>(pick, pid, cb)
 								</div>
-								<div class="description">Can a new contract negotiation be started?
-
-Calls the callback function with either true or false.</div>
+								<div class="description">Select a player for the current drafting team.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">util.lock.<b><a href="../symbols/util.lock.html#.gamesInProgress">gamesInProgress</a></b>(ot, cb)
+								<div class="fixedFont">core.draft.<b><a href="../symbols/core.draft.html#.setOrder">setOrder</a></b>(cb)
 								</div>
-								<div class="description">Is game simulation in progress?
-
-Calls the callback function with either true or false depending on whether there is a game simulation currently in progress.</div>
+								<div class="description">Sets draft order and save it to the draftOrder object store.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">util.lock.<b><a href="../symbols/util.lock.html#.negotiationInProgress">negotiationInProgress</a></b>(ot, cb)
+								<div class="fixedFont">core.draft.<b><a href="../symbols/core.draft.html#.untilUserOrEnd">untilUserOrEnd</a></b>(cb)
 								</div>
-								<div class="description">Is a negotiation in progress?
-
-Calls the callback function with either true or false depending on whether there is an ongoing negoation.</div>
+								<div class="description">Simulate draft picks until it's the user's turn or the draft is over.</div>
 							</td>
 						</tr>
 					
@@ -349,7 +341,7 @@ Calls the callback function with either true or false depending on whether there
 				</div>
 				
 				<div class="fixedFont">
-						<b>util.lock</b>
+						<b>core.draft</b>
 				</div>
 				
 				<div class="description">
@@ -380,17 +372,17 @@ Calls the callback function with either true or false depending on whether there
 					Method Detail
 				</div>
 				
-					<a name=".canStartGames"> </a>
+					<a name=".generatePlayers"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">util.lock.</span><b>canStartGames</b>(ot, cb)
+					<span class="light">core.draft.</span><b>generatePlayers</b>(cb)
 					
 					</div>
 					<div class="description">
-						Can new game simulations be started?
+						Generate a set of draft prospects.
 
-Calls the callback function with either true or false. If games are in progress or any contract negotiation is in progress, false.
+This is called before the draft occurs, otherwise there will be no one to draft!
 						
 						
 					</div>
@@ -402,16 +394,10 @@ Calls the callback function with either true or false. If games are in progress 
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{IDBObjectStore|IDBTransaction|null}</span> <b>ot</b>
+									<span class="light fixedFont">{function()}</span> <b>cb</b>
 									
 								</dt>
-								<dd>An IndexedDB object store or transaction on gameAttributes and negotiations; if null is passed, then a new transaction will be used.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{function(boolean)}</span> <b>cb</b>
-									
-								</dt>
-								<dd>Callback.</dd>
+								<dd>Callback function.</dd>
 							
 							</dl>
 						
@@ -424,17 +410,17 @@ Calls the callback function with either true or false. If games are in progress 
 
 					<hr />
 				
-					<a name=".canStartNegotiation"> </a>
+					<a name=".selectPlayer"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">util.lock.</span><b>canStartNegotiation</b>(ot, cb)
+					<span class="light">core.draft.</span><b>selectPlayer</b>(pick, pid, cb)
 					
 					</div>
 					<div class="description">
-						Can a new contract negotiation be started?
+						Select a player for the current drafting team.
 
-Calls the callback function with either true or false. If games are in progress or a free agent (not resigning!) is being negotiated with, false.
+This can be called in response to the user clicking the "draft" button for a player, or by some other function like untilUserOrEnd.
 						
 						
 					</div>
@@ -446,16 +432,22 @@ Calls the callback function with either true or false. If games are in progress 
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{IDBObjectStore|IDBTransaction|null}</span> <b>ot</b>
+									<span class="light fixedFont">{object}</span> <b>pick</b>
 									
 								</dt>
-								<dd>An IndexedDB object store or transaction on gameAttributes and negotiations; if null is passed, then a new transaction will be used.</dd>
+								<dd>Pick object, like from db.getDraftOrder, that contains information like the team, round, etc.</dd>
 							
 								<dt>
-									<span class="light fixedFont">{function(boolean)}</span> <b>cb</b>
+									<span class="light fixedFont">{number}</span> <b>pid</b>
 									
 								</dt>
-								<dd>Callback.</dd>
+								<dd>Integer player ID for the player to be drafted.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{function(<number>)}</span> <b>cb</b>
+									
+								</dt>
+								<dd>Optional callback function. Argument is the player ID that was drafted (same as pid input.. probably this can be eliminated, then).</dd>
 							
 							</dl>
 						
@@ -468,17 +460,17 @@ Calls the callback function with either true or false. If games are in progress 
 
 					<hr />
 				
-					<a name=".gamesInProgress"> </a>
+					<a name=".setOrder"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">util.lock.</span><b>gamesInProgress</b>(ot, cb)
+					<span class="light">core.draft.</span><b>setOrder</b>(cb)
 					
 					</div>
 					<div class="description">
-						Is game simulation in progress?
+						Sets draft order and save it to the draftOrder object store.
 
-Calls the callback function with either true or false depending on whether there is a game simulation currently in progress.
+This is currently based on winning percentage (no lottery).
 						
 						
 					</div>
@@ -490,16 +482,10 @@ Calls the callback function with either true or false depending on whether there
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{IDBObjectStore|IDBTransaction|null}</span> <b>ot</b>
+									<span class="light fixedFont">{function()}</span> <b>cb</b>
 									
 								</dt>
-								<dd>An IndexedDB object store or transaction on gameAttributes; if null is passed, then a new transaction will be used.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{function(boolean)}</span> <b>cb</b>
-									
-								</dt>
-								<dd>Callback.</dd>
+								<dd>Optional callback function.</dd>
 							
 							</dl>
 						
@@ -512,17 +498,17 @@ Calls the callback function with either true or false depending on whether there
 
 					<hr />
 				
-					<a name=".negotiationInProgress"> </a>
+					<a name=".untilUserOrEnd"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">util.lock.</span><b>negotiationInProgress</b>(ot, cb)
+					<span class="light">core.draft.</span><b>untilUserOrEnd</b>(cb)
 					
 					</div>
 					<div class="description">
-						Is a negotiation in progress?
+						Simulate draft picks until it's the user's turn or the draft is over.
 
-Calls the callback function with either true or false depending on whether there is an ongoing negoation.
+This could be made faster by passing a transaction around, so all the writes for all the picks are done in one transaction. But when calling selectPlayer elsewhere (i.e. in testing or in response to the user's pick), it needs to be sure that the transaction is complete before continuing. So I would need to create a special case there to account for it. Given that this isn't really *that* slow now, that probably isn't worth the complexity.
 						
 						
 					</div>
@@ -534,16 +520,10 @@ Calls the callback function with either true or false depending on whether there
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{IDBObjectStore|IDBTransaction|null}</span> <b>ot</b>
+									<span class="light fixedFont">{function(Array.<Object>|Array.<number>)}</span> <b>cb</b>
 									
 								</dt>
-								<dd>An IndexedDB object store or transaction on negotiations; if null is passed, then a new transaction will be used.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{function(boolean)}</span> <b>cb</b>
-									
-								</dt>
-								<dd>Callback.</dd>
+								<dd>Callback function. First argument is the list of draft picks (from db.getDraftOrder). Second argument is a list of player IDs who were drafted during this function call, in order.</dd>
 							
 							</dl>
 						

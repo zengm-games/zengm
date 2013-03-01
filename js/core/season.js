@@ -498,7 +498,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
         attributes = ["tid", "abbrev", "name", "cid"];
         seasonAttributes = ["winp"];
         db.getTeams(null, g.season, attributes, [], seasonAttributes, {sortBy: "winp"}, function (teams) {
-            var cid, i, j, row, series, teamsConf, tidPlayoffs;
+            var cid, i, j, row, series, teamsConf, tidPlayoffs, tx;
 
             // Add entry for wins for each team; delete winp, which was only needed for sorting
             for (i = 0; i < teams.length; i++) {
@@ -533,10 +533,11 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
             }
 
             row = {season: g.season, currentRound: 0, series: series};
-            g.dbl.transaction(["playoffSeries"], "readwrite").objectStore("playoffSeries").add(row);
+            g.dbl.transaction("playoffSeries", "readwrite").objectStore("playoffSeries").add(row);
 
             // Add row to team stats and team season attributes
-            g.dbl.transaction(["teams"], "readwrite").objectStore("teams").openCursor().onsuccess = function (event) {
+            tx = g.dbl.transaction(["players", "teams"], "readwrite");
+            tx.objectStore("teams").openCursor().onsuccess = function (event) {
                 var cursor, i, key, playoffStats, seasonStats, t;
 
                 cursor = event.target.result;
@@ -562,7 +563,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                         cursor.update(t);
 
                         // Add row to player stats
-                        g.dbl.transaction(["players"], "readwrite").objectStore("players").index("tid").openCursor(t.tid).onsuccess = function (event) {
+                        tx.objectStore("players").index("tid").openCursor(t.tid).onsuccess = function (event) {
                             var cursorP, key, p, playerPlayoffStats;
 
                             cursorP = event.target.result;
@@ -572,23 +573,18 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                                 cursorP.update(p);
                                 cursorP.continue();
                             }
-//                                else {
-//                                    cursor.continue();
-//                                }
                         };
                     }
-//                        else {
-// RACE CONDITION: Should only run after the players update above finishes. won't be a race condition if they use the same transaction?
                     cursor.continue();
-//                        }
-                } else {
-                    newPhaseCb(c.PHASE_PLAYOFFS, phaseText, function () {
-                        if (cb !== undefined) {
-                            cb();
-                        }
-                        Davis.location.assign(new Davis.Request("/l/" + g.lid + "/playoffs"));
-                    });
                 }
+            };
+            tx.oncomplete = function () {
+                newPhaseCb(c.PHASE_PLAYOFFS, phaseText, function () {
+                    if (cb !== undefined) {
+                        cb();
+                    }
+                    Davis.location.assign(new Davis.Request("/l/" + g.lid + "/playoffs"));
+                });
             };
         });
     }

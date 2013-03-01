@@ -489,6 +489,7 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/advS
      * 
      * This also handles the case where there are no more games to be played by switching the phase to either the playoffs or before the draft, as appropriate.
      * 
+     * @memberOf core.game
      * @param {number} numDays An integer representing the number of days to be simulated. If numDays is larger than the number of days remaining, then all games will be simulated up until either the end of the regular season or the end of the playoffs, whichever happens first.
      * @param {boolean} start Is this a new request from the user to play games (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed.
      */

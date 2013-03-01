@@ -122,12 +122,13 @@ define(["db", "core/contractNegotiation", "core/league"], function (db, contract
                     };
                 });
             });
+            // The use of transactions here might cause race conditions
             it("should not allow a negotiation to start if there are already 15 players on the user's roster, unless resigning is true", function (done) {
-                var transaction;
+                var tx;
 
-                transaction = g.dbl.transaction(["gameAttributes", "negotiations", "players"], "readwrite");
+                tx = g.dbl.transaction(["gameAttributes", "negotiations", "players"], "readwrite");
 
-                transaction.objectStore("players").openCursor(7).onsuccess = function (event) {
+                tx.objectStore("players").openCursor(7).onsuccess = function (event) {
                     var cursor, p;
 
                     cursor = event.target.result;
@@ -136,26 +137,26 @@ define(["db", "core/contractNegotiation", "core/league"], function (db, contract
 
                     cursor.update(p);
 
-                    contractNegotiation.create(transaction, 8, false, function (error) {
+                    contractNegotiation.create(tx, 8, false, function (error) {
                         error.should.equal("Your roster is full. Before you can sign a free agent, you'll have to buy out or release one of your current players.");
 
-                        transaction.objectStore("negotiations").getAll().onsuccess = function (event) {
+                        tx.objectStore("negotiations").getAll().onsuccess = function (event) {
                             var negotiations;
 
                             negotiations = event.target.result;
                             negotiations.length.should.equal(0);
 
-                            contractNegotiation.create(transaction, 8, true, function (error) {
+                            contractNegotiation.create(tx, 8, true, function (error) {
                                 (typeof error).should.equal("undefined");
 
-                                transaction.objectStore("negotiations").getAll().onsuccess = function (event) {
+                                tx.objectStore("negotiations").getAll().onsuccess = function (event) {
                                     var negotiations;
 
                                     negotiations = event.target.result;
                                     negotiations.length.should.equal(1);
                                     negotiations[0].pid.should.equal(8);
 
-                                    transaction.objectStore("players").openCursor(7).onsuccess = function (event) {
+                                    tx.objectStore("players").openCursor(7).onsuccess = function (event) {
                                         var cursor, p;
 
                                         cursor = event.target.result;

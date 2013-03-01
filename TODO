@@ -11,6 +11,7 @@ review every callback after a cursor.update, since that is async
     test/core/contractNegotiation
   should fix unit tests in chrome
   http://stackoverflow.com/questions/15151242/running-code-only-after-an-object-is-updated-in-indexeddb-particularly-in-chrom
+similarly, review callback for every put and putPlayer
 gameSim
   compare team and player stat distributions against reality
   separate composite ratings for shooting in different places (jumpshot, inside, fast break, three, etc)

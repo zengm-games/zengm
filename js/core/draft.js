@@ -2,9 +2,11 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
     "use strict";
 
     function generatePlayers(cb) {
-        var agingYears, baseRating, draftYear, i, p, playerStore, pot, profile, profiles;
+        var agingYears, baseRating, draftYear, i, p, playerStore, pot, profile, profiles, tx;
 
-        playerStore = g.dbl.transaction(["players"], "readwrite").objectStore("players");
+        tx = g.dbl.transaction(["players"], "readwrite");
+        playerStore = tx.objectStore("players");
+
         profiles = ["Point", "Wing", "Big", "Big", ""];
         for (i = 0; i < 70; i++) {
             baseRating = random.randInt(8, 33);
@@ -25,7 +27,8 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
 
             db.putPlayer(playerStore, p);
         }
-        cb();
+
+        tx.oncomplete = cb;
     }
 
     /*Sets draft order based on winning percentage (no lottery).*/

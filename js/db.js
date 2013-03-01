@@ -831,13 +831,11 @@ define(["util/helpers"], function (helpers) {
      *
      * Items stored in gameAttributes are globally available through the global variable g. If a value is a constant across all leagues/games/whatever, it should just be set in globals.js instead.
      * 
-     * This function is a little messy because the callback must only be called after everything in the database has been updated.
-     * 
      * @param {Object} gameAttributes Each property in the object will be inserted/updated in the database with the key of the object representing the key in the database.
      * @param {function()=} cb Optional callback.
      */
     function setGameAttributes(gameAttributes, cb) {
-        var gameAttributesStore, i, key, numUpdated, toUpdate;
+        var gameAttributesStore, i, key, toUpdate, tx;
 
         toUpdate = [];
         for (key in gameAttributes) {
@@ -848,30 +846,23 @@ define(["util/helpers"], function (helpers) {
             }
         }
 
-        gameAttributesStore = g.dbl.transaction("gameAttributes", "readwrite").objectStore("gameAttributes");
+        tx = g.dbl.transaction("gameAttributes", "readwrite");
+        gameAttributesStore = tx.objectStore("gameAttributes");
 
-        numUpdated = 0;
         for (i = 0; i < toUpdate.length; i++) {
             key = toUpdate[i];
             (function (key) {
                 gameAttributesStore.put({key: key, value: gameAttributes[key]}).onsuccess = function (event) {
                     g[key] = gameAttributes[key];
-
-                    numUpdated += 1;
-                    if (numUpdated === toUpdate.length) {
-                        if (cb !== undefined) {
-                            cb();
-                        }
-                    }
                 };
             }(key));
         }
 
-        if (numUpdated === 0 && toUpdate.length === 0) {
+        tx.oncomplete = function () {
             if (cb !== undefined) {
                 cb();
             }
-        }
+        };
     }
 
     return {

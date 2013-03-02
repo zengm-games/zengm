@@ -681,6 +681,8 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                             cb();
                         }
                         Davis.location.assign(new Davis.Request("/l/" + g.lid + "/history"));
+
+                        helpers.bbgmPing("season");
                     });
                 });
             };

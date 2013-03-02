@@ -20,6 +20,7 @@ gameSim
       should somehow give higher FG% for assisted shots. not sure how
 put on play.basketball-gm.com, with splash page on basketball-gm.com
   make sure the google analytics filter to only track on basketball-gm.com is working
+  display league/season counter on splash page
 git tag as beta
 
 ---

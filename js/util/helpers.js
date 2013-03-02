@@ -212,6 +212,19 @@ define([], function () {
         }
     }
 
+    /**
+     * Ping a counter at basketball-gm.com.
+     *
+     * @memberOf util.helpers
+     * @param {string} type Either "league" for a new league, or "season" for a completed season
+     */
+    function bbgmPing(type) {
+        var img;
+
+        img = document.createElement("img");
+        img.src = "http://www.basketball-gm.com/counter.php?type=" + type + "&season=" + g.season;
+    }
+
     return {
         validateAbbrev: validateAbbrev,
         getAbbrev: getAbbrev,
@@ -221,6 +234,7 @@ define([], function () {
         getTeams: getTeams,
         deepCopy: deepCopy,
         error: error,
-        resetG: resetG
+        resetG: resetG,
+        bbgmPing: bbgmPing
     };
 });

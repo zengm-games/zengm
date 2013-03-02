@@ -3584,7 +3584,7 @@ function program4(depth0,data) {
   
   return " selected=\"selected\"";}
 
-  buffer += "<script type=\"text/javascript\">\n$(document).ready(function() {\n  ui.dropdown($('#player_shot_locations_select_season'));\n\n  ui.datatable($('#player_shot_locations'), 1, [\n    ";
+  buffer += "<script type=\"text/javascript\">\n$(document).ready(function() {\n  ui.dropdown($('#player_shot_locations_select_season'));\n\n  ui.datatable($('#player_shot_locations'), 0, [\n    ";
   foundHelper = helpers.players;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},inverse:self.noop,fn:self.programWithDepth(program1, data, depth0),data:data}); }
   else { stack1 = depth0.players; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }

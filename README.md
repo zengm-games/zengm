@@ -23,12 +23,11 @@ details.
 You should have received a copy of the GNU Affero General Public License along
 with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-## Warning
-
-The game simulation code is undergoing a major rewrite now, and thus game
-simulation results are currently wacky.
-
 ## Installing and Running
+
+The easiest way to play is by going to http://play.basketball-gm.com/
+
+If you want to run your own copy...
 
 Basketball GM requires a web browser with IndexedDB support. Mozilla Firefox
 (any recent version) works best and is most thoroughly tested. Google Chrome
@@ -47,13 +46,20 @@ Finally, point your browser to http://0.0.0.0:8080/
 
 If that URL doesn't work, try http://127.0.0.1:8080/
 
+Alternatively, the mod_rewrite rules in .htaccess can be used to make Apache
+run Basketball GM. Everything should work if you just have a domain/subdomain
+point at this folder with mod_rewrite enabled.
+
 ## Debugging and Problem Solving
 
 If something starts behaving weirdly (this is alpha software), you can reset you
 database by clicking the "Reset DB" link in the debug menu at the top. If that
 still doesn't work (which unfortunately happens sometimes with a corrupted
-database), delete the folder named `http+++0.0.0.0+8080` within the `indexedDB`
-folder in your Firefox profile folder. That will delete all of the game's stored
-data.
+database), you might have to just delete everything and start fresh. In Firefox,
+go to the `indexedDB` folder in your Firefox profile folder and delete the
+folder corresponding to your copy of Basketball GM (such as
+`http+++0.0.0.0+8080` if you're running it locally through web.py, or
+`http+++play.basketball-gm.com` if you're playing on the official website). That
+will delete all of the game's stored data.
 
 To run the test suite, go to http://0.0.0.0:8080/test

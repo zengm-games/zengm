@@ -1,0 +1,22 @@
+#Action php54-cgi /php54.cgi
+#<FilesMatch \.php$>
+#  SetHandler php54-cgi
+#</FilesMatch>
+
+Options +FollowSymLinks
+RewriteEngine On
+RewriteBase /
+
+RewriteRule ^test$ test.html
+RewriteRule ^test_case$ test_case.html
+RewriteRule ^docs$ docs/
+
+RewriteCond %{REQUEST_URI} !^/css
+RewriteCond %{REQUEST_URI} !^/data
+RewriteCond %{REQUEST_URI} !^/docs
+RewriteCond %{REQUEST_URI} !^/ico
+RewriteCond %{REQUEST_URI} !^/img
+RewriteCond %{REQUEST_URI} !^/js
+RewriteCond %{REQUEST_URI} !^/templates
+RewriteCond %{REQUEST_URI} !^/test
+RewriteRule ^.*$ index.html

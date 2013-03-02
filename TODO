@@ -4,15 +4,7 @@ main todo (before public beta)
 gameSim
   compare team and player stat distributions against reality, and tweak
   shot locations
-    add stats
-      fgAtRim
-      fgaAtRim
-      fgpAtRim
-      ..., for LowPost and MidRange as well
-    how to display?
-      in box score?
     compare to reality
-      boxplots for these stats from hoopdata?
   more ratings influence on gameSim
     doFg
       probAst shouldn't be constant
@@ -26,6 +18,7 @@ git tag as beta
 
 FUTURE FEATURES (i.e. not required for public beta)
 
+boxplots for shot location stats, plus comparison to NBA data
 database changes
   store contract history/future with each player, and show in player view
   store a list of awards/honors with each player
@@ -75,6 +68,7 @@ trade refactoring
   validateSavedTids crap should be in trade.js.
   trade.summary stuff should be automatic and stored in tradeStore
 DataTables - need to rethink a lot of this, particularly how to make a decent UI
+  sorting of team name column in finances view is fucked up
   http://datatables.net/extras/ such as scroller, colreorder, colvis, ...
   add team dropdown to ratings and stats views - but should this refresh the view, or just filter the DataTable?
     could use something like http://www.datatables.net/extras/thirdparty/ColumnFilterWidgets/DataTables/extras/ColumnFilterWidgets/ to also filter on positions

@@ -3430,6 +3430,192 @@ function program1(depth0,data) {
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n\n  <li class=\"dashboard_league_new\"><a href=\"/new_league\" class=\"btn btn-primary league\"><h2 style=\"\">Create new league</h2></a></li>\n</ul>";
   return buffer;});
+templates['playerShotLocations'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  helpers = helpers || Handlebars.helpers; data = data || {};
+  var buffer = "", stack1, stack2, foundHelper, functionType="function", escapeExpression=this.escapeExpression, helperMissing=helpers.helperMissing, self=this, blockHelperMissing=helpers.blockHelperMissing;
+
+function program1(depth0,data,depth1) {
+  
+  var buffer = "", stack1, stack2, foundHelper;
+  buffer += "\n	    ['<a href=\"/l/";
+  stack1 = depth1.lid;
+  stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1;
+  buffer += escapeExpression(stack1) + "/player/";
+  foundHelper = helpers.pid;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
+  else { stack1 = depth0.pid; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
+  buffer += escapeExpression(stack1) + "\">";
+  foundHelper = helpers.name;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
+  else { stack1 = depth0.name; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
+  buffer += escapeExpression(stack1) + "</a>";
+  stack1 = depth0.ratings;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.skills;
+  stack2 = {};
+  foundHelper = helpers.skills_block;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, {hash:stack2,data:data}) : helperMissing.call(depth0, "skills_block", stack1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
+  foundHelper = helpers.pos;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
+  else { stack1 = depth0.pos; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
+  buffer += escapeExpression(stack1) + "', '<a href=\"/l/";
+  stack1 = depth1.lid;
+  stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1;
+  buffer += escapeExpression(stack1) + "/roster/";
+  stack1 = depth0.stats;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.abbrev;
+  stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1;
+  buffer += escapeExpression(stack1) + "/";
+  stack1 = depth1.season;
+  stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1;
+  buffer += escapeExpression(stack1) + "\">";
+  stack1 = depth0.stats;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.abbrev;
+  stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1;
+  buffer += escapeExpression(stack1) + "</a>', '";
+  stack1 = depth0.stats;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.gp;
+  stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1;
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = depth0.stats;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.gs;
+  stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1;
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = depth0.stats;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.min;
+  stack2 = {};
+  foundHelper = helpers.round;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = depth0.stats;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.fgAtRim;
+  stack2 = {};
+  foundHelper = helpers.round;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = depth0.stats;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.fgaAtRim;
+  stack2 = {};
+  foundHelper = helpers.round;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = depth0.stats;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.fgpAtRim;
+  stack2 = {};
+  foundHelper = helpers.round;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = depth0.stats;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.fgLowPost;
+  stack2 = {};
+  foundHelper = helpers.round;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = depth0.stats;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.fgaLowPost;
+  stack2 = {};
+  foundHelper = helpers.round;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = depth0.stats;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.fgpLowPost;
+  stack2 = {};
+  foundHelper = helpers.round;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = depth0.stats;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.fgMidRange;
+  stack2 = {};
+  foundHelper = helpers.round;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = depth0.stats;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.fgaMidRange;
+  stack2 = {};
+  foundHelper = helpers.round;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = depth0.stats;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.fgpMidRange;
+  stack2 = {};
+  foundHelper = helpers.round;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = depth0.stats;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.tp;
+  stack2 = {};
+  foundHelper = helpers.round;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = depth0.stats;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.tpa;
+  stack2 = {};
+  foundHelper = helpers.round;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = depth0.stats;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.tpp;
+  stack2 = {};
+  foundHelper = helpers.round;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "'],\n    ";
+  return buffer;}
+
+function program3(depth0,data) {
+  
+  var buffer = "", stack1, stack2, foundHelper;
+  buffer += "\n      <option value=\"";
+  foundHelper = helpers.season;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
+  else { stack1 = depth0.season; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
+  buffer += escapeExpression(stack1) + "\"";
+  stack1 = depth0.selected;
+  stack2 = {};
+  stack1 = helpers['if'].call(depth0, stack1, {hash:stack2,inverse:self.noop,fn:self.program(4, program4, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += ">";
+  foundHelper = helpers.season;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
+  else { stack1 = depth0.season; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
+  buffer += escapeExpression(stack1) + " season</option>\n    ";
+  return buffer;}
+function program4(depth0,data) {
+  
+  
+  return " selected=\"selected\"";}
+
+  buffer += "<script type=\"text/javascript\">\n$(document).ready(function() {\n  ui.dropdown($('#player_shot_locations_select_season'));\n\n  ui.datatable($('#player_shot_locations'), 1, [\n    ";
+  foundHelper = helpers.players;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},inverse:self.noop,fn:self.programWithDepth(program1, data, depth0),data:data}); }
+  else { stack1 = depth0.players; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
+  stack2 = {};
+  if (!helpers.players) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:stack2,inverse:self.noop,fn:self.programWithDepth(program1, data, depth0),data:data}); }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n  ]);\n});\n</script>\n\n<form action=\"/l/";
+  foundHelper = helpers.lid;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
+  else { stack1 = depth0.lid; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
+  buffer += escapeExpression(stack1) + "/player_shot_locations\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"player_shot_locations_select_season\" name=\"season\" class=\"season\">\n    ";
+  foundHelper = helpers.seasons;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data}); }
+  else { stack1 = depth0.seasons; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
+  stack2 = {};
+  if (!helpers.seasons) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:stack2,inverse:self.noop,fn:self.program(3, program3, data),data:data}); }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n  </select>\n</form>\n\n<h1>Player Shot Locations ";
+  foundHelper = helpers.new_window;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
+  else { stack1 = depth0.new_window; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
+  buffer += escapeExpression(stack1) + "</h1>\n<p>More: <a href=\"/l/";
+  foundHelper = helpers.lid;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
+  else { stack1 = depth0.lid; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
+  buffer += escapeExpression(stack1) + "/player_stats\">Main Stats</a> | <a href=\"/l/";
+  foundHelper = helpers.lid;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
+  else { stack1 = depth0.lid; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
+  buffer += escapeExpression(stack1) + "/dist_player_stats\">Stat Distributions</a></p>\n\n<p class=\"clearfix\">\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player_shot_locations\">\n<thead>\n  <tr><th colspan=\"6\"></th><th colspan=\"3\" style=\"text-align: center\" title=\"At Rim\">At Rim</th><th colspan=\"3\" style=\"text-align: center\" title=\"Low Post\">Low Post</th><th colspan=\"3\" style=\"text-align: center\" title=\"Mid-Range\">Mid-Range</th><th colspan=\"3\" style=\"text-align: center\" title=\"Three-Pointers\">3PT</th></tr>\n  <tr><th>Name</th><th title=\"Position\">Pos</th><th>Team</th><th title=\"Games Played\">GP</th><th title=\"Games Started\">GS</th><th title=\"Minutes\">Min</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th></tr>\n</thead>\n</table>\n</p>";
+  return buffer;});
 templates['negotiation'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers; data = data || {};
   var buffer = "", stack1, stack2, foundHelper, functionType="function", escapeExpression=this.escapeExpression, self=this, helperMissing=helpers.helperMissing;
@@ -5679,5 +5865,153 @@ function program26(depth0,data,depth1) {
   stack1 = blockHelperMissing.call(depth0, stack1, {hash:stack2,inverse:self.noop,fn:self.programWithDepth(program26, data, depth0),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n  </tbody>\n</table>";
+  return buffer;});
+templates['teamShotLocations'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  helpers = helpers || Handlebars.helpers; data = data || {};
+  var buffer = "", stack1, stack2, foundHelper, functionType="function", escapeExpression=this.escapeExpression, helperMissing=helpers.helperMissing, self=this, blockHelperMissing=helpers.blockHelperMissing;
+
+function program1(depth0,data,depth1) {
+  
+  var buffer = "", stack1, stack2, foundHelper;
+  buffer += "\n	    ['<a href=\"/l/";
+  stack1 = depth1.lid;
+  stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1;
+  buffer += escapeExpression(stack1) + "/roster/";
+  foundHelper = helpers.abbrev;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
+  else { stack1 = depth0.abbrev; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
+  buffer += escapeExpression(stack1) + "\">";
+  foundHelper = helpers.abbrev;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
+  else { stack1 = depth0.abbrev; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
+  buffer += escapeExpression(stack1) + "</a>', '";
+  foundHelper = helpers.gp;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
+  else { stack1 = depth0.gp; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
+  buffer += escapeExpression(stack1) + "', '";
+  foundHelper = helpers.won;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
+  else { stack1 = depth0.won; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
+  buffer += escapeExpression(stack1) + "', '";
+  foundHelper = helpers.lost;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
+  else { stack1 = depth0.lost; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = depth0.fgAtRim;
+  stack2 = {};
+  foundHelper = helpers.round;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = depth0.fgaAtRim;
+  stack2 = {};
+  foundHelper = helpers.round;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = depth0.fgpAtRim;
+  stack2 = {};
+  foundHelper = helpers.round;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = depth0.fgLowPost;
+  stack2 = {};
+  foundHelper = helpers.round;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = depth0.fgaLowPost;
+  stack2 = {};
+  foundHelper = helpers.round;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = depth0.fgpLowPost;
+  stack2 = {};
+  foundHelper = helpers.round;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = depth0.fgMidRange;
+  stack2 = {};
+  foundHelper = helpers.round;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = depth0.fgaMidRange;
+  stack2 = {};
+  foundHelper = helpers.round;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = depth0.fgpMidRange;
+  stack2 = {};
+  foundHelper = helpers.round;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = depth0.tp;
+  stack2 = {};
+  foundHelper = helpers.round;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = depth0.tpa;
+  stack2 = {};
+  foundHelper = helpers.round;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "', '";
+  stack1 = depth0.tpp;
+  stack2 = {};
+  foundHelper = helpers.round;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
+  buffer += escapeExpression(stack1) + "'],\n    ";
+  return buffer;}
+
+function program3(depth0,data) {
+  
+  var buffer = "", stack1, stack2, foundHelper;
+  buffer += "\n      <option value=\"";
+  foundHelper = helpers.season;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
+  else { stack1 = depth0.season; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
+  buffer += escapeExpression(stack1) + "\"";
+  stack1 = depth0.selected;
+  stack2 = {};
+  stack1 = helpers['if'].call(depth0, stack1, {hash:stack2,inverse:self.noop,fn:self.program(4, program4, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += ">";
+  foundHelper = helpers.season;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
+  else { stack1 = depth0.season; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
+  buffer += escapeExpression(stack1) + " season</option>\n    ";
+  return buffer;}
+function program4(depth0,data) {
+  
+  
+  return " selected=\"selected\"";}
+
+  buffer += "<script type=\"text/javascript\">\n$(document).ready(function() {\n  ui.dropdown($('#team_shot_locations_select_season'));\n\n  ui.datatableSinglePage($('#team_shot_locations'), 2, [\n    ";
+  foundHelper = helpers.teams;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},inverse:self.noop,fn:self.programWithDepth(program1, data, depth0),data:data}); }
+  else { stack1 = depth0.teams; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
+  stack2 = {};
+  if (!helpers.teams) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:stack2,inverse:self.noop,fn:self.programWithDepth(program1, data, depth0),data:data}); }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n  ]);\n});\n</script>\n\n<form action=\"/l/";
+  foundHelper = helpers.lid;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
+  else { stack1 = depth0.lid; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
+  buffer += escapeExpression(stack1) + "/team_shot_locations\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"team_stats_select_season\" name=\"season\" class=\"season\">\n    ";
+  foundHelper = helpers.seasons;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data}); }
+  else { stack1 = depth0.seasons; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
+  stack2 = {};
+  if (!helpers.seasons) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:stack2,inverse:self.noop,fn:self.program(3, program3, data),data:data}); }
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n  </select>\n</form>\n\n<h1>Team Shot Locations ";
+  foundHelper = helpers.new_window;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
+  else { stack1 = depth0.new_window; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
+  buffer += escapeExpression(stack1) + "</h1>\n<p>More: <a href=\"/l/";
+  foundHelper = helpers.lid;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
+  else { stack1 = depth0.lid; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
+  buffer += escapeExpression(stack1) + "/team_stats\">Main Stats</a> | <a href=\"/l/";
+  foundHelper = helpers.lid;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
+  else { stack1 = depth0.lid; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
+  buffer += escapeExpression(stack1) + "/dist_team_stats\">Stat Distributions</a></p>\n\n<p class=\"clearfix\">\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"team_shot_locations\">\n<thead>\n  <tr><th colspan=\"4\"></th><th colspan=\"3\" style=\"text-align: center\" title=\"At Rim\">At Rim</th><th colspan=\"3\" style=\"text-align: center\" title=\"Low Post\">Low Post</th><th colspan=\"3\" style=\"text-align: center\" title=\"Mid-Range\">Mid-Range</th><th colspan=\"3\" style=\"text-align: center\" title=\"Three-Pointers\">3PT</th></tr>\n  <tr><th>Team</th><th title=\"Games Played\">GP</th><th title=\"Won\">W</th><th title=\"Lost\">L</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th></tr>\n</thead>\n</table>\n</p>";
   return buffer;});
 })();

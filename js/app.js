@@ -80,6 +80,10 @@ requirejs(["api", "db", "views", "ui", "util/helpers"], function (api, db, views
             this.get("/l/:lid/dist_player_stats/:season", views.distPlayerStats);
             this.get("/l/:lid/dist_team_stats", views.distTeamStats);
             this.get("/l/:lid/dist_team_stats/:season", views.distTeamStats);
+            this.get("/l/:lid/player_shot_locations", views.playerShotLocations);
+            this.get("/l/:lid/player_shot_locations/:season", views.playerShotLocations);
+            this.get("/l/:lid/team_shot_locations", views.teamShotLocations);
+            this.get("/l/:lid/team_shot_locations/:season", views.teamShotLocations);
         });
 
         $(document).ready(function () {

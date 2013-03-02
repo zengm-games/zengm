@@ -1,0 +1,31 @@
+<script type="text/javascript">
+$(document).ready(function() {
+  ui.dropdown($('#player_shot_locations_select_season'));
+
+  ui.datatable($('#player_shot_locations'), 0, [
+    {{#players}}
+	    ['<a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>{{skills_block ratings.skills}}', '{{pos}}', '<a href="/l/{{../lid}}/roster/{{stats.abbrev}}/{{../season}}">{{stats.abbrev}}</a>', '{{stats.gp}}', '{{stats.gs}}', '{{round stats.min 1}}', '{{round stats.fgAtRim 1}}', '{{round stats.fgaAtRim 1}}', '{{round stats.fgpAtRim 1}}', '{{round stats.fgLowPost 1}}', '{{round stats.fgaLowPost 1}}', '{{round stats.fgpLowPost 1}}', '{{round stats.fgMidRange 1}}', '{{round stats.fgaMidRange 1}}', '{{round stats.fgpMidRange 1}}', '{{round stats.tp 1}}', '{{round stats.tpa 1}}', '{{round stats.tpp 1}}'],
+    {{/players}}
+  ]);
+});
+</script>
+
+<form action="/l/{{lid}}/player_shot_locations" method="GET" class="form-inline pull-right">
+  <select id="player_shot_locations_select_season" name="season" class="season">
+    {{#seasons}}
+      <option value="{{season}}"{{#if selected}} selected="selected"{{/if}}>{{season}} season</option>
+    {{/seasons}}
+  </select>
+</form>
+
+<h1>Player Shot Locations {{new_window}}</h1>
+<p>More: <a href="/l/{{lid}}/player_stats">Main Stats</a> | <a href="/l/{{lid}}/dist_player_stats">Stat Distributions</a></p>
+
+<p class="clearfix">
+<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="player_shot_locations">
+<thead>
+  <tr><th colspan="6"></th><th colspan="3" style="text-align: center" title="At Rim">At Rim</th><th colspan="3" style="text-align: center" title="Low Post">Low Post</th><th colspan="3" style="text-align: center" title="Mid-Range">Mid-Range</th><th colspan="3" style="text-align: center" title="Three-Pointers">3PT</th></tr>
+  <tr><th>Name</th><th title="Position">Pos</th><th>Team</th><th title="Games Played">GP</th><th title="Games Started">GS</th><th title="Minutes">Min</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th></tr>
+</thead>
+</table>
+</p>

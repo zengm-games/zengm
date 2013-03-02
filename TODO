@@ -11,11 +11,8 @@ gameSim
       ..., for LowPost and MidRange as well
     how to display?
       in box score?
-      in player stats view?
-        player_shot_locations
-      in team stats view?
-        team_shot_locations
-    boxplots for these stats from hoopdata?
+    compare to reality
+      boxplots for these stats from hoopdata?
   more ratings influence on gameSim
     doFg
       probAst shouldn't be constant
@@ -181,6 +178,9 @@ disabling button for new league
     this submits the form twice. why?
 race conditions associated with callbacks when passing around transactions
   any put/add/update does not guarantee it's finished until the transaction finishes. but letting transactions finish is slow.
+more handlebars helpers for things like...
+  team dropdown
+  season dropdown
 
 ---
 

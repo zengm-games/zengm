@@ -1976,6 +1976,56 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         });
     }
 
+    function playerShotLocations(req) {
+        beforeLeague(req, function () {
+            var season, seasons;
+
+            season = helpers.validateSeason(req.params.season);
+            seasons = helpers.getSeasons(season);
+
+            g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
+                var attributes, data, players, ratings, stats;
+                attributes = ["pid", "name", "pos", "age"];
+                ratings = ["skills"];
+                stats = ["abbrev", "gp", "gs", "min", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp"];
+
+                players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings, {showRookies: true});
+
+                data = {
+                    container: "league_content",
+                    template: "playerShotLocations",
+                    title: "Player Shot Locations - " + season,
+                    vars: {players: players, season: season, seasons: seasons}
+                };
+                ui.update(data, req.raw.cb);
+            };
+        });
+    }
+
+    function teamShotLocations(req) {
+        beforeLeague(req, function () {
+            var attributes, season, seasonAttributes, seasons, stats;
+
+            season = helpers.validateSeason(req.params.season);
+            seasons = helpers.getSeasons(season);
+
+            attributes = ["abbrev"];
+            stats = ["gp", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp"];
+            seasonAttributes = ["won", "lost"];
+            db.getTeams(null, season, attributes, stats, seasonAttributes, {}, function (teams) {
+                var data;
+
+                data = {
+                    container: "league_content",
+                    template: "teamShotLocations",
+                    title: "Team Shot Locations - " + season,
+                    vars: {teams: teams, season: season, seasons: seasons}
+                };
+                ui.update(data, req.raw.cb);
+            });
+        });
+    }
+
     /**
      * Display a whole-page error message to the user.
      * 
@@ -2046,6 +2096,8 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
         distPlayerRatings: distPlayerRatings,
         distPlayerStats: distPlayerStats,
         distTeamStats: distTeamStats,
+        playerShotLocations: playerShotLocations,
+        teamShotLocations: teamShotLocations,
 
         globalError: globalError,
         leagueError: leagueError

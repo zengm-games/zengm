@@ -12,7 +12,9 @@ gameSim
     how to display?
       in box score?
       in player stats view?
+        player_shot_locations
       in team stats view?
+        team_shot_locations
     boxplots for these stats from hoopdata?
   more ratings influence on gameSim
     doFg

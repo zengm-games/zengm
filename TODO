@@ -1,6 +1,7 @@
 main todo
 ---------
 
+move distPlayerRatings link to top like in statsTids
 minify and combine scripts
   all javascript in templates should be moved into js files
     grep script templates/*.handlebars

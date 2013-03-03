@@ -1969,7 +1969,9 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
                 ui.update(data, function () {
                     var rating, tbody;
 
-                    tbody = $("#dist_player_ratings tbody");
+                    ui.dropdown($("#dist-player-ratings-select-season"));
+
+                    tbody = $("#dist-player-ratings tbody");
 
                     for (rating in ratingsAll) {
                         if (ratingsAll.hasOwnProperty(rating)) {

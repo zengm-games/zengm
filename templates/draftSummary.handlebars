@@ -1,17 +1,5 @@
-<script type="text/javascript">
-$(document).ready(function() {
-    ui.dropdown($('#draft_select_season'));
-
-    ui.datatableSinglePage($('#draft_results'), 0, [
-        {{#players}}
-	          ['{{rnd}}-{{pick}}', '<a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>', '{{pos}}', '<a href="/l/{{../lid}}/roster/{{draftAbbrev}}">{{draftAbbrev}}</a>', '{{draftAge}}', '{{draftOvr}}', '{{draftPot}}', '<span class="skills_alone">{{skills_block draftSkills}}</span>', '<a href="/l/{{../lid}}/roster/{{currentAbbrev}}">{{currentAbbrev}}</a>', '{{currentAge}}', '{{currentOvr}}', '{{currentPot}}', '<span class="skills_alone">{{skills_block currentSkills}}</span>', '{{round careerStats.gp 0}}', '{{round careerStats.min 1}}', '{{round careerStats.pts 1}}', '{{round careerStats.trb 1}}', '{{round careerStats.ast 1}}', '{{round careerStats.per 1}}'],
-        {{/players}}
-    ]);
-});
-</script>
-
 <form action="/l/{{lid}}/draft" method="GET" class="form-inline pull-right">
-  <select id="draft_select_season" name="season" class="season">
+  <select id="draft-select-season" name="season" class="season">
     {{#seasons}}
       <option value="{{season}}"{{#if selected}} selected="selected"{{/if}}>{{season}} season</option>
     {{/seasons}}
@@ -20,7 +8,7 @@ $(document).ready(function() {
 
 <h1>Draft Summary {{new_window}}</h1>
 <p>
-  <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="draft_results">
+  <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="draft-results">
   <thead>
     <tr><th colspan="3"></th><th colspan="5" style="text-align: center">At Draft</th><th colspan="5" style="text-align: center">Current</th><th colspan="5" style="text-align: center">Career Stats</th></tr>
     <tr><th>Pick</th><th>Name</th><th title="Position">Pos</th><th>Team</th><th>Age</th><th title="Overall rating">Ovr</th><th title="Potential rating">Pot</th><th>Skills</th><th>Team</th><th>Age</th><th title="Overall rating">Ovr</th><th title="Potential rating">Pot</th><th>Skills</th><th title="Games Played">GP</th><th title="Minutes Per Game">Min</th><th title="Points Per Game">PPG</th><th title="Rebounds Per Game">Reb</th><th title="Assists Per Game">Ast</th><th title="Player Efficiency Rating">PER</th></tr>

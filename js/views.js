@@ -1315,9 +1315,19 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
                     container: "league_content",
                     template: "draftSummary",
                     title: "Draft Results - " + season,
-                    vars: {players: players, seasons: seasons}
+                    vars: {seasons: seasons}
                 };
-                ui.update(data, req.raw.cb);
+                ui.update(data, function () {
+                    ui.dropdown($('#draft-select-season'));
+
+                    ui.datatable($("#draft-results"), 0, _.map(players, function (p) {
+                        return [p.rnd + '-' + p.pick, '<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>', p.pos, '<a href="/l/' + g.lid + '/roster/' + p.draftAbbrev + '">' + p.draftAbbrev + '</a>', String(p.draftAge), String(p.draftOvr), String(p.draftPot), '<span class="skills_alone">' + helpers.skillsBlock(p.draftSkills) + '</span>', '<a href="/l/' + g.lid + '/roster/' + p.currentAbbrev + '">' + p.currentAbbrev + '</a>', String(p.currentAge), String(p.currentOvr), String(p.currentPot), '<span class="skills_alone">' + helpers.skillsBlock(p.currentSkills) + '</span>', helpers.round(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1)];
+                    }));
+
+                    if (req.raw.cb !== undefined) {
+                        req.raw.cb();
+                    }
+                });
             };
         });
     }

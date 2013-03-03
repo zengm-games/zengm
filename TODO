@@ -5,7 +5,7 @@ minify and combine scripts
   all javascript in templates should be moved into js files
     grep script templates/*.handlebars
     also get rid of _ while doing this
-  make templates/helpers.js just call js/util/helpers.js
+    make templates/helpers.js just call js/util/helpers.js for functions used in both places
   can everything be done through requirejs?
     http://requirejs.org/docs/api.html#config-shim
 display league/season counter on basketball-gm.com splash page

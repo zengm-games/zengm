@@ -967,9 +967,17 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
                     container: "league_content",
                     template: "freeAgents",
                     title: "Free Agents",
-                    vars: {players: players}
+                    vars: {}
                 };
-                ui.update(data, req.raw.cb);
+                ui.update(data, function () {
+                    ui.datatable($("#free-agents"), 4, _.map(players, function (p) {
+                        return ['<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>' + helpers.skillsBlock(p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), '$' + helpers.round(p.contractAmount, 2) + 'M thru ' + p.contractExp, '<form action="/l/' + g.lid + '/negotiation/' + p.pid + '" method="POST" style="margin: 0"><input type="hidden" name="new" value="1"><button type="submit" class="btn btn-mini btn-primary">Negotiate</button></form>'];
+                    }));
+
+                    if (req.raw.cb !== undefined) {
+                        req.raw.cb();
+                    }
+                });
             };
         });
     }

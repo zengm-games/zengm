@@ -688,9 +688,17 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
                     container: "league_content",
                     template: "finances",
                     title: "Finances",
-                    vars: {salaryCap: g.salaryCap / 1000, teams: teams}
+                    vars: {salaryCap: g.salaryCap / 1000}
                 };
-                ui.update(data, req.raw.cb);
+                ui.update(data, function () {
+                    ui.datatableSinglePage($("#finances"), 5, _.map(teams, function (t) {
+                        return ['<a href="/l/' + g.lid + '/roster/' + t.abbrev + '">' + t.region + ' ' + t.name + '</a>', helpers.round(t.att), '$' + helpers.round(t.revenue, 2) + 'M', '$' + helpers.round(t.profit, 2) + 'M', '$' + helpers.round(t.cash, 2) + 'M', '$' + helpers.round(t.payroll, 2) + 'M'];
+                    }));
+
+                    if (req.raw.cb !== undefined) {
+                        req.raw.cb();
+                    }
+                });
             });
         });
     }

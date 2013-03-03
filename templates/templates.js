@@ -3258,62 +3258,10 @@ function program3(depth0,data) {
   return buffer;});
 templates['finances'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, foundHelper, functionType="function", escapeExpression=this.escapeExpression, helperMissing=helpers.helperMissing, self=this, blockHelperMissing=helpers.blockHelperMissing;
+  var buffer = "", stack1, stack2, foundHelper, functionType="function", escapeExpression=this.escapeExpression, helperMissing=helpers.helperMissing;
 
-function program1(depth0,data,depth1) {
-  
-  var buffer = "", stack1, stack2, foundHelper;
-  buffer += "\n      [ '<a href=\"/l/";
-  stack1 = depth1.lid;
-  stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1;
-  buffer += escapeExpression(stack1) + "/roster/";
-  foundHelper = helpers.abbrev;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
-  else { stack1 = depth0.abbrev; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "\">";
-  foundHelper = helpers.region;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
-  else { stack1 = depth0.region; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + " ";
-  foundHelper = helpers.name;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
-  else { stack1 = depth0.name; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "</a>', '";
-  stack1 = depth0.att;
-  stack2 = {};
-  foundHelper = helpers.round;
-  stack1 = foundHelper ? foundHelper.call(depth0, stack1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, {hash:stack2,data:data});
-  buffer += escapeExpression(stack1) + "', '$";
-  stack1 = depth0.revenue;
-  stack2 = {};
-  foundHelper = helpers.round;
-  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 2, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 2, {hash:stack2,data:data});
-  buffer += escapeExpression(stack1) + "M', '$";
-  stack1 = depth0.profit;
-  stack2 = {};
-  foundHelper = helpers.round;
-  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 2, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 2, {hash:stack2,data:data});
-  buffer += escapeExpression(stack1) + "M', '$";
-  stack1 = depth0.cash;
-  stack2 = {};
-  foundHelper = helpers.round;
-  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 2, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 2, {hash:stack2,data:data});
-  buffer += escapeExpression(stack1) + "M', '$";
-  stack1 = depth0.payroll;
-  stack2 = {};
-  foundHelper = helpers.round;
-  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 2, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 2, {hash:stack2,data:data});
-  buffer += escapeExpression(stack1) + "M' ],\n    ";
-  return buffer;}
 
-  buffer += "<script type=\"text/javascript\">\n$(document).ready(function () {\n  ui.datatableSinglePage($('#finances'), 5, [\n    ";
-  foundHelper = helpers.teams;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},inverse:self.noop,fn:self.programWithDepth(program1, data, depth0),data:data}); }
-  else { stack1 = depth0.teams; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  stack2 = {};
-  if (!helpers.teams) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:stack2,inverse:self.noop,fn:self.programWithDepth(program1, data, depth0),data:data}); }
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  ]);\n});\n</script>\n\n<h1>Finances ";
+  buffer += "<h1>Finances ";
   foundHelper = helpers.new_window;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.new_window; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }

@@ -1,13 +1,3 @@
-<script type="text/javascript">
-$(document).ready(function () {
-  ui.datatableSinglePage($('#finances'), 5, [
-    {{#teams}}
-      [ '<a href="/l/{{../lid}}/roster/{{abbrev}}">{{region}} {{name}}</a>', '{{round att}}', '${{round revenue 2}}M', '${{round profit 2}}M', '${{round cash 2}}M', '${{round payroll 2}}M' ],
-    {{/teams}}
-  ]);
-});
-</script>
-
 <h1>Finances {{new_window}}</h1>
 
 <p>The current salary cap is <strong>${{round salaryCap 2}}M</strong>.</p>

@@ -1,4 +1,4 @@
-define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "core/season", "core/trade", "util/helpers"], function (db, ui, contractNegotiation, game, league, season, trade, helpers) {
+define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league", "core/season", "core/trade", "util/helpers"], function (api, db, ui, contractNegotiation, game, league, season, trade, helpers) {
     "use strict";
 
     function beforeLeague(req, cb) {
@@ -1021,9 +1021,90 @@ define(["db", "ui", "core/contractNegotiation", "core/game", "core/league", "cor
                                     container: "league_content",
                                     template: "trade",
                                     title: "Trade",
-                                    vars: {userRoster: userRoster, otherRoster: otherRoster, userPids: userPids, otherPids: otherPids, teams: teams, otherTid: otherTid, tradeSummary: tradeSummary, userTeamName: summary.teams[0].name}
+                                    vars: {userPids: userPids, otherPids: otherPids, teams: teams, otherTid: otherTid, tradeSummary: tradeSummary, userTeamName: summary.teams[0].name}
                                 };
-                                ui.update(data, req.raw.cb);
+                                ui.update(data, function () {
+                                    var i, rosterCheckboxesOther, rosterCheckboxesUser;
+
+                                    // Don't use the dropdown function because this needs to be a POST
+                                    $('#trade-select-team').change(function (event) {
+                                        Davis.location.replace(new Davis.Request({
+                                            abbrev: $("#trade-select-team").val(),
+                                            fullPath: "/l/" + g.lid + "/trade",
+                                            method: "post"
+                                        }));
+                                    });
+
+                                    ui.datatableSinglePage($("#roster-user"), 5, _.map(userRoster, function (p) {
+                                        var selected;
+
+                                        if (p.selected) {
+                                            selected = ' checked = "checked"';
+                                        }
+                                        return ['<input name="user-pids" type="checkbox" value="' + p.pid + '"' + selected + '>', '<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>' + helpers.skillsBlock(p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), '$' + helpers.round(p.contractAmount, 2) + 'M thru ' + p.contractExp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
+                                    }));
+
+                                    ui.datatableSinglePage($("#roster-other"), 5, _.map(otherRoster, function (p) {
+                                        var selected;
+
+                                        if (p.selected) {
+                                            selected = ' checked = "checked"';
+                                        }
+                                        return ['<input name="other-pids" type="checkbox" value="' + p.pid + '"' + selected + '>', '<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>' + helpers.skillsBlock(p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), '$' + helpers.round(p.contractAmount, 2) + 'M thru ' + p.contractExp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
+                                    }));
+
+                                    rosterCheckboxesUser = $("#roster-user input");
+                                    rosterCheckboxesOther = $("#roster-other input");
+
+                                    $('#rosters input[type="checkbox"]').click(function (event) {
+                                        var otherPids, serialized, userPids;
+
+                                        serialized = $("#rosters").serializeArray();
+                                        userPids = _.map(_.pluck(_.filter(serialized, function (o) { return o.name === "user-pids"; }), "value"), Math.floor);
+                                        otherPids = _.map(_.pluck(_.filter(serialized, function (o) { return o.name === "other-pids"; }), "value"), Math.floor);
+
+                                        $("#propose-trade button").attr("disabled", "disabled"); // Will be reenabled, if appropriate, when the summary is loaded
+                                        api.tradeUpdate(userPids, otherPids, function (summary, userPids, otherPids) {
+                                            var found, i, j;
+
+                                            $("#trade-summary").html(summary);
+                                            for (i = 0; i < rosterCheckboxesUser.length; i++) {
+                                                found = false;
+                                                for (j = 0; j < userPids.length; j++) {
+                                                    if (Math.floor(rosterCheckboxesUser[i].value) === userPids[j]) {
+                                                        rosterCheckboxesUser[i].checked = true;
+                                                        found = true;
+                                                        break;
+                                                    }
+                                                }
+                                                if (!found) {
+                                                    rosterCheckboxesUser[i].checked = false;
+                                                }
+                                            }
+                                            for (i = 0; i < rosterCheckboxesOther.length; i++) {
+                                                found = false;
+                                                for (j = 0; j < otherPids.length; j++) {
+                                                    if (Math.floor(rosterCheckboxesOther[i].value) === otherPids[j]) {
+                                                        rosterCheckboxesOther[i].checked = true;
+                                                        found = true;
+                                                        break;
+                                                    }
+                                                }
+                                                if (!found) {
+                                                    rosterCheckboxesOther[i].checked = false;
+                                                }
+                                            }
+                                        });
+                                    });
+
+                                    $("#propose-trade button").click(function (event) {
+                                        $("#propose-trade button").attr("disabled", "disabled");
+                                    });
+
+                                    if (req.raw.cb !== undefined) {
+                                        req.raw.cb();
+                                    }
+                                });
                             });
                         };
                     };

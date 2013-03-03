@@ -985,191 +985,9 @@ function program4(depth0,data) {
   return buffer;});
 templates['trade'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, foundHelper, functionType="function", escapeExpression=this.escapeExpression, self=this, helperMissing=helpers.helperMissing, blockHelperMissing=helpers.blockHelperMissing;
+  var buffer = "", stack1, stack2, foundHelper, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
 
-function program1(depth0,data,depth1) {
-  
-  var buffer = "", stack1, stack2, foundHelper;
-  buffer += "\n      [ '<input name=\"user_pids\" type=\"checkbox\" value=\"";
-  foundHelper = helpers.pid;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
-  else { stack1 = depth0.pid; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "\"";
-  stack1 = depth0.selected;
-  stack2 = {};
-  stack1 = helpers['if'].call(depth0, stack1, {hash:stack2,inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">', '<a href=\"/l/";
-  stack1 = depth1.lid;
-  stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1;
-  buffer += escapeExpression(stack1) + "/player/";
-  foundHelper = helpers.pid;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
-  else { stack1 = depth0.pid; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "\">";
-  foundHelper = helpers.name;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
-  else { stack1 = depth0.name; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "</a>";
-  stack1 = depth0.ratings;
-  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.skills;
-  stack2 = {};
-  foundHelper = helpers.skills_block;
-  stack1 = foundHelper ? foundHelper.call(depth0, stack1, {hash:stack2,data:data}) : helperMissing.call(depth0, "skills_block", stack1, {hash:stack2,data:data});
-  buffer += escapeExpression(stack1) + "', '";
-  foundHelper = helpers.pos;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
-  else { stack1 = depth0.pos; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "', '";
-  foundHelper = helpers.age;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
-  else { stack1 = depth0.age; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "', '";
-  stack1 = depth0.ratings;
-  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.ovr;
-  stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1;
-  buffer += escapeExpression(stack1) + "', '";
-  stack1 = depth0.ratings;
-  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.pot;
-  stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1;
-  buffer += escapeExpression(stack1) + "', '$";
-  stack1 = depth0.contractAmount;
-  stack2 = {};
-  foundHelper = helpers.round;
-  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 2, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 2, {hash:stack2,data:data});
-  buffer += escapeExpression(stack1) + "M thru ";
-  foundHelper = helpers.contractExp;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
-  else { stack1 = depth0.contractExp; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "', '";
-  stack1 = depth0.stats;
-  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.min;
-  stack2 = {};
-  foundHelper = helpers.round;
-  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
-  buffer += escapeExpression(stack1) + "', '";
-  stack1 = depth0.stats;
-  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.pts;
-  stack2 = {};
-  foundHelper = helpers.round;
-  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
-  buffer += escapeExpression(stack1) + "', '";
-  stack1 = depth0.stats;
-  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.trb;
-  stack2 = {};
-  foundHelper = helpers.round;
-  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
-  buffer += escapeExpression(stack1) + "', '";
-  stack1 = depth0.stats;
-  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.ast;
-  stack2 = {};
-  foundHelper = helpers.round;
-  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
-  buffer += escapeExpression(stack1) + "', '";
-  stack1 = depth0.stats;
-  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.per;
-  stack2 = {};
-  foundHelper = helpers.round;
-  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
-  buffer += escapeExpression(stack1) + "' ],\n    ";
-  return buffer;}
-function program2(depth0,data) {
-  
-  
-  return " checked=\"checked\"";}
-
-function program4(depth0,data,depth1) {
-  
-  var buffer = "", stack1, stack2, foundHelper;
-  buffer += "\n      [ '<input name=\"other_pids\" type=\"checkbox\" value=\"";
-  foundHelper = helpers.pid;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
-  else { stack1 = depth0.pid; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "\"";
-  stack1 = depth0.selected;
-  stack2 = {};
-  stack1 = helpers['if'].call(depth0, stack1, {hash:stack2,inverse:self.noop,fn:self.program(5, program5, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ">', '<a href=\"/l/";
-  stack1 = depth1.lid;
-  stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1;
-  buffer += escapeExpression(stack1) + "/player/";
-  foundHelper = helpers.pid;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
-  else { stack1 = depth0.pid; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "\">";
-  foundHelper = helpers.name;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
-  else { stack1 = depth0.name; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "</a>";
-  stack1 = depth0.ratings;
-  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.skills;
-  stack2 = {};
-  foundHelper = helpers.skills_block;
-  stack1 = foundHelper ? foundHelper.call(depth0, stack1, {hash:stack2,data:data}) : helperMissing.call(depth0, "skills_block", stack1, {hash:stack2,data:data});
-  buffer += escapeExpression(stack1) + "', '";
-  foundHelper = helpers.pos;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
-  else { stack1 = depth0.pos; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "', '";
-  foundHelper = helpers.age;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
-  else { stack1 = depth0.age; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "', '";
-  stack1 = depth0.ratings;
-  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.ovr;
-  stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1;
-  buffer += escapeExpression(stack1) + "', '";
-  stack1 = depth0.ratings;
-  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.pot;
-  stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1;
-  buffer += escapeExpression(stack1) + "', '$";
-  stack1 = depth0.contractAmount;
-  stack2 = {};
-  foundHelper = helpers.round;
-  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 2, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 2, {hash:stack2,data:data});
-  buffer += escapeExpression(stack1) + "M thru ";
-  foundHelper = helpers.contractExp;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
-  else { stack1 = depth0.contractExp; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "', '";
-  stack1 = depth0.stats;
-  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.min;
-  stack2 = {};
-  foundHelper = helpers.round;
-  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
-  buffer += escapeExpression(stack1) + "', '";
-  stack1 = depth0.stats;
-  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.pts;
-  stack2 = {};
-  foundHelper = helpers.round;
-  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
-  buffer += escapeExpression(stack1) + "', '";
-  stack1 = depth0.stats;
-  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.trb;
-  stack2 = {};
-  foundHelper = helpers.round;
-  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
-  buffer += escapeExpression(stack1) + "', '";
-  stack1 = depth0.stats;
-  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.ast;
-  stack2 = {};
-  foundHelper = helpers.round;
-  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
-  buffer += escapeExpression(stack1) + "', '";
-  stack1 = depth0.stats;
-  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.per;
-  stack2 = {};
-  foundHelper = helpers.round;
-  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
-  buffer += escapeExpression(stack1) + "' ],\n    ";
-  return buffer;}
-function program5(depth0,data) {
-  
-  
-  return " checked=\"checked\"";}
-
-function program7(depth0,data) {
+function program1(depth0,data) {
   
   var buffer = "", stack1, stack2, foundHelper;
   buffer += "\n          <option value=\"";
@@ -1179,7 +997,7 @@ function program7(depth0,data) {
   buffer += escapeExpression(stack1) + "\"";
   stack1 = depth0.selected;
   stack2 = {};
-  stack1 = helpers['if'].call(depth0, stack1, {hash:stack2,inverse:self.noop,fn:self.program(8, program8, data),data:data});
+  stack1 = helpers['if'].call(depth0, stack1, {hash:stack2,inverse:self.noop,fn:self.program(2, program2, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += ">";
   foundHelper = helpers.region;
@@ -1191,45 +1009,27 @@ function program7(depth0,data) {
   else { stack1 = depth0.name; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1) + "</option>\n        ";
   return buffer;}
-function program8(depth0,data) {
+function program2(depth0,data) {
   
   
   return " selected=\"selected\"";}
 
-  buffer += "<script type=\"text/javascript\">\n$(document).ready(function() {\n  var roster_checkboxes_other, roster_checkboxes_user;\n\n  // Don't use the dropdown function because this needs to be a POST\n  $('#trade_select_team').change(function(event) {\n    Davis.location.replace(new Davis.Request({\n      abbrev: $('#trade_select_team').val(),\n      fullPath: \"/l/";
-  foundHelper = helpers.lid;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
-  else { stack1 = depth0.lid; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "/trade\",\n      method: \"post\"\n    }));\n  });\n\n  ui.datatableSinglePage($('#roster_user'), 5, [\n    ";
-  foundHelper = helpers.userRoster;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},inverse:self.noop,fn:self.programWithDepth(program1, data, depth0),data:data}); }
-  else { stack1 = depth0.userRoster; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  stack2 = {};
-  if (!helpers.userRoster) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:stack2,inverse:self.noop,fn:self.programWithDepth(program1, data, depth0),data:data}); }
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  ]);\n\n  ui.datatableSinglePage($('#roster_other'), 5, [\n    ";
-  foundHelper = helpers.otherRoster;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},inverse:self.noop,fn:self.programWithDepth(program4, data, depth0),data:data}); }
-  else { stack1 = depth0.otherRoster; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  stack2 = {};
-  if (!helpers.otherRoster) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:stack2,inverse:self.noop,fn:self.programWithDepth(program4, data, depth0),data:data}); }
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  ]);\n\n  roster_checkboxes_user = $('#roster_user input');\n  roster_checkboxes_other = $('#roster_other input');\n\n  $('#rosters input[type=\"checkbox\"]').click(function(event) {\n    var otherPids, serialized, userPids;\n\n    serialized = $('#rosters').serializeArray();\n    userPids = _.map(_.pluck(_.filter(serialized, function (o) { return o.name === \"user_pids\"; }), \"value\"), Math.floor);\n    otherPids = _.map(_.pluck(_.filter(serialized, function (o) { return o.name === \"other_pids\"; }), \"value\"), Math.floor);\n\n    $('#propose_trade button').attr('disabled', 'disabled'); // Will be reenabled, if appropriate, when the summary is loaded\n    api.tradeUpdate(userPids, otherPids, function (summary, userPids, otherPids) {\n      var found, i, j;\n\n      $(\"#trade_summary\").html(summary);\n      for (i = 0; i < roster_checkboxes_user.length; i++) {\n        found = false;\n        for (j = 0; j < userPids.length; j++) {\n          if (Math.floor(roster_checkboxes_user[i].value) === userPids[j]) {\n            roster_checkboxes_user[i].checked = true;\n            found = true;\n            break;\n          }\n        }\n        if (!found) {\n          roster_checkboxes_user[i].checked = false;\n        }\n      }\n      for (i = 0; i < roster_checkboxes_other.length; i++) {\n        found = false;\n        for (j = 0; j < otherPids.length; j++) {\n          if (Math.floor(roster_checkboxes_other[i].value) === otherPids[j]) {\n            roster_checkboxes_other[i].checked = true;\n            found = true;\n            break;\n          }\n        }\n        if (!found) {\n          roster_checkboxes_other[i].checked = false;\n        }\n      }\n    });\n  });\n\n  $('#propose_trade button').click(function(event) {\n    $('#propose_trade button').attr('disabled', 'disabled');\n  });\n});\n</script>\n\n<h1>Trade ";
+  buffer += "<h1>Trade ";
   foundHelper = helpers.new_window;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.new_window; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "</h1>\n\n<div class=\"row-fluid\">\n  <div class=\"span7\">\n    <form id=\"rosters\">\n      <p><select id=\"trade_select_team\" name=\"team\" class=\"team form-inline\">\n        ";
+  buffer += escapeExpression(stack1) + "</h1>\n\n<div class=\"row-fluid\">\n  <div class=\"span7\">\n    <form id=\"rosters\">\n      <p><select id=\"trade-select-team\" name=\"team\" class=\"team form-inline\">\n        ";
   foundHelper = helpers.teams;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},inverse:self.noop,fn:self.program(7, program7, data),data:data}); }
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}); }
   else { stack1 = depth0.teams; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   stack2 = {};
-  if (!helpers.teams) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:stack2,inverse:self.noop,fn:self.program(7, program7, data),data:data}); }
+  if (!helpers.teams) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:stack2,inverse:self.noop,fn:self.program(1, program1, data),data:data}); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n      </select>\n      <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"roster_other\">\n      <thead>\n        <tr><th></th><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall Rating\">Ovr</th><th title=\"Potential Rating\">Pot</th><th>Contract</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th></tr>\n      </thead>\n      </table>\n      </p>\n\n      <h2>";
+  buffer += "\n      </select>\n      <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"roster-other\">\n      <thead>\n        <tr><th></th><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall Rating\">Ovr</th><th title=\"Potential Rating\">Pot</th><th>Contract</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th></tr>\n      </thead>\n      </table>\n      </p>\n\n      <h2>";
   foundHelper = helpers.userTeamName;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.userTeamName; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "</h2>\n      <p>\n      <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"roster_user\">\n      <thead>\n        <tr><th></th><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall Rating\">Ovr</th><th title=\"Potential Rating\">Pot</th><th>Contract</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th></tr>\n      </thead>\n      </table>\n      </p>\n    </form>\n  </div>\n  <div class=\"span5\" id=\"trade_summary\">\n    ";
+  buffer += escapeExpression(stack1) + "</h2>\n      <p>\n      <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"roster-user\">\n      <thead>\n        <tr><th></th><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall Rating\">Ovr</th><th title=\"Potential Rating\">Pot</th><th>Contract</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th></tr>\n      </thead>\n      </table>\n      </p>\n    </form>\n  </div>\n  <div class=\"span5\" id=\"trade-summary\">\n    ";
   foundHelper = helpers.tradeSummary;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.tradeSummary; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
@@ -1476,7 +1276,7 @@ function program13(depth0,data) {
   foundHelper = helpers.lid;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.lid; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "/trade\" method=\"POST\" id=\"propose_trade\">\n    <input type=\"hidden\" name=\"propose\" value=\"1\">\n    <button type=\"submit\" class=\"btn btn-large btn-primary\"";
+  buffer += escapeExpression(stack1) + "/trade\" method=\"POST\" id=\"propose-trade\">\n    <input type=\"hidden\" name=\"propose\" value=\"1\">\n    <button type=\"submit\" class=\"btn btn-large btn-primary\"";
   stack1 = depth0.summary;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.disablePropose;
   stack2 = {};
@@ -1486,7 +1286,7 @@ function program13(depth0,data) {
   foundHelper = helpers.lid;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.lid; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "/trade\" method=\"POST\" id=\"clear_trade\">\n    <input type=\"hidden\" name=\"clear\" value=\"1\">\n    <button type=\"submit\" class=\"btn\">Clear Trade</button>\n  </form>\n</center>\n";
+  buffer += escapeExpression(stack1) + "/trade\" method=\"POST\" id=\"clear-trade\">\n    <input type=\"hidden\" name=\"clear\" value=\"1\">\n    <button type=\"submit\" class=\"btn\">Clear Trade</button>\n  </form>\n</center>\n";
   return buffer;});
 templates['leagueDashboard'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers; data = data || {};

@@ -225,6 +225,37 @@ define([], function () {
         img.src = "http://www.basketball-gm.com/counter.php?type=" + type + "&season=" + g.season;
     }
 
+
+    function skillsBlock(skills) {
+        var i, skillsHtml, tooltips;
+
+        tooltips = {
+            "3": "Three Point Shooter",
+            A: "Athlete",
+            B: "Ball Handler",
+            Di: "Interior Defender",
+            Dp: "Perimeter Defender",
+            Po: "Post Scorer",
+            Ps: "Passer",
+            R: "Rebounder"
+        };
+
+        skillsHtml = '';
+        if (skills !== undefined) {
+            for (i = 0; i < skills.length; i++) {
+                skillsHtml += '<span class="skill" title="' + tooltips[skills[i]] + '">' + skills[i] + '</span>';
+            }
+        }
+
+        return skillsHtml;
+    }
+
+    function round(value, precision) {
+        precision = precision !== undefined ? parseInt(precision, 10) : 0;
+
+        return parseFloat(value).toFixed(precision);
+    }
+
     return {
         validateAbbrev: validateAbbrev,
         getAbbrev: getAbbrev,
@@ -235,6 +266,8 @@ define([], function () {
         deepCopy: deepCopy,
         error: error,
         resetG: resetG,
-        bbgmPing: bbgmPing
+        bbgmPing: bbgmPing,
+        skillsBlock: skillsBlock,
+        round: round
     };
 });

@@ -46,12 +46,12 @@
 {{/if}}
 
 <center>
-  <form action="/l/{{lid}}/trade" method="POST" id="propose_trade">
+  <form action="/l/{{lid}}/trade" method="POST" id="propose-trade">
     <input type="hidden" name="propose" value="1">
     <button type="submit" class="btn btn-large btn-primary"{{#if summary.disablePropose}} disabled="disabled"{{/if}}>Propose Trade</button>
   </form>
 
-  <form action="/l/{{lid}}/trade" method="POST" id="clear_trade">
+  <form action="/l/{{lid}}/trade" method="POST" id="clear-trade">
     <input type="hidden" name="clear" value="1">
     <button type="submit" class="btn">Clear Trade</button>
   </form>

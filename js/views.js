@@ -615,7 +615,13 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
                     title: "Playoffs - " + season,
                     vars: {finalMatchups: finalMatchups, series: series, seasons: seasons, season: season}
                 };
-                ui.update(data, req.raw.cb);
+                ui.update(data, function () {
+                    ui.dropdown($('#playoffs-select-season'));
+
+                    if (req.raw.cb !== undefined) {
+                        req.raw.cb();
+                    }
+                });
             }
 
             if (season === g.season && g.phase < c.PHASE_PLAYOFFS) {

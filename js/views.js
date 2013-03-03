@@ -588,7 +588,13 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
                     title: "Standings - " + season,
                     vars: {confs: confs, seasons: seasons, season: season}
                 };
-                ui.update(data, req.raw.cb);
+                ui.update(data, function () {
+                    ui.dropdown($('#standings-select-season'));
+
+                    if (req.raw.cb !== undefined) {
+                        req.raw.cb();
+                    }
+                });
             });
         });
     }

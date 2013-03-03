@@ -1,17 +1,5 @@
-<script type="text/javascript">
-$(document).ready(function() {
-  ui.dropdown($('#player_stats_select_season'));
-
-  ui.datatable($('#player_stats'), 23, [
-    {{#players}}
-	    ['<a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>{{skills_block ratings.skills}}', '{{pos}}', '<a href="/l/{{../lid}}/roster/{{stats.abbrev}}/{{../season}}">{{stats.abbrev}}</a>', '{{stats.gp}}', '{{stats.gs}}', '{{round stats.min 1}}', '{{round stats.fg 1}}', '{{round stats.fga 1}}', '{{round stats.fgp 1}}', '{{round stats.tp 1}}', '{{round stats.tpa 1}}', '{{round stats.tpp 1}}', '{{round stats.ft 1}}', '{{round stats.fta 1}}', '{{round stats.ftp 1}}', '{{round stats.orb 1}}', '{{round stats.drb 1}}', '{{round stats.trb 1}}', '{{round stats.ast 1}}', '{{round stats.tov 1}}', '{{round stats.stl 1}}', '{{round stats.blk 1}}', '{{round stats.pf 1}}', '{{round stats.pts 1}}', '{{round stats.per 1}}'],
-    {{/players}}
-  ]);
-});
-</script>
-
 <form action="/l/{{lid}}/player_stats" method="GET" class="form-inline pull-right">
-  <select id="player_stats_select_season" name="season" class="season">
+  <select id="player-stats-select-season" name="season" class="season">
     {{#seasons}}
       <option value="{{season}}"{{#if selected}} selected="selected"{{/if}}>{{season}} season</option>
     {{/seasons}}
@@ -22,7 +10,7 @@ $(document).ready(function() {
 <p>More: <a href="/l/{{lid}}/player_shot_locations">Shot Locations</a> | <a href="/l/{{lid}}/dist_player_stats">Stat Distributions</a></p>
 
 <p class="clearfix">
-<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="player_stats">
+<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="player-stats">
 <thead>
   <tr><th colspan="6"></th><th colspan="3" style="text-align: center" title="Field Goals">FG</th><th colspan="3" style="text-align: center" title="Three-Pointers">3PT</th><th colspan="3" style="text-align: center" title="Free Throws">FT</th><th colspan="3" style="text-align: center" title="Rebounds">Reb</th><th colspan="6"></th></tr>
   <tr><th>Name</th><th title="Position">Pos</th><th>Team</th><th title="Games Played">GP</th><th title="Games Started">GS</th><th title="Minutes">Min</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Offensive">Off</th><th title="Defensive">Def</th><th title="Total">Tot</th><th title="Assists">Ast</th><th title="Turnovers">TO</th><th title="Steals">Stl</th><th title="Blocks">Blk</th><th title="Personal Fouls">PF</th><th title="Points">Pts</th><th title="Player Efficiency Rating">PER</th></tr>

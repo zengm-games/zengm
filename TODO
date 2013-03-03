@@ -3,6 +3,7 @@ main todo
 
 minify and combine scripts
   all javascript in templates should be moved into js files
+    grep script templates/*.handlebars
     also get rid of _ while doing this
   make templates/helpers.js just call js/util/helpers.js
   can everything be done through requirejs?

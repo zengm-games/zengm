@@ -1,11 +1,13 @@
-# Basketball GM 3.0.0-alpha
+# Basketball GM 3.0.0-beta
 
 A single-player basketball simulation game. Make trades, set rosters, draft
 players, and try to build the next dynasty, all from within your web browser.
 The game is implemented entirely in client-side JavaScript, backed by
 IndexedDB.
 
-* Website: https://github.com/jdscheff/basketball-gm
+* Website: http://www.basketball-gm.com/
+
+* Development website: https://github.com/jdscheff/basketball-gm
 
 * Main developer: Jeremy Scheff <jdscheff@gmail.com>
 
@@ -52,7 +54,7 @@ point at this folder with mod_rewrite enabled.
 
 ## Debugging and Problem Solving
 
-If something starts behaving weirdly (this is alpha software), you can reset you
+If something starts behaving weirdly (this is beta software), you can reset you
 database by clicking the "Reset DB" link in the debug menu at the top. If that
 still doesn't work (which unfortunately happens sometimes with a corrupted
 database), you might have to just delete everything and start fresh. In Firefox,

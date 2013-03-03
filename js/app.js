@@ -12,8 +12,6 @@ requirejs(["db", "views", "ui", "util/helpers"], function (db, views, ui, helper
         return;
     }
 
-    window.ui = ui;
-
     db.connectMeta(function () {
         var app = new Davis(function () {
             this.configure(function () {

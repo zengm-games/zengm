@@ -5,10 +5,6 @@ gameSim
   compare team and player stat distributions against reality, and tweak
   shot locations
     compare to reality
-  more ratings influence on gameSim
-    doFg
-      probAst shouldn't be constant
-      should somehow give higher FG% for assisted shots. not sure how
 put on play.basketball-gm.com, with splash page on basketball-gm.com
   make sure the google analytics filter to only track on basketball-gm.com is working
   display league/season counter on splash page
@@ -175,6 +171,12 @@ race conditions associated with callbacks when passing around transactions
 more handlebars helpers for things like...
   team dropdown
   season dropdown
+too easy to do the "be bad, get draft picks, keep payroll low, sign free agents, be good" pattern
+  draft lottery
+    do a dramatic presentation?
+  minimum payroll, to make really bad teams not economically viable
+  free agents are less willing to sign with bad teams
+  user can't just sign all the free agents before AI teams
 
 ---
 

@@ -1,3 +1,5 @@
+# This should be kept in sync with runserver.py so either can be used
+
 #Action php54-cgi /php54.cgi
 #<FilesMatch \.php$>
 #  SetHandler php54-cgi

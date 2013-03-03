@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# This should be kept in sync with .htaccess so either can be used
+
 import web
 
 urls = (

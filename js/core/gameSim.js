@@ -395,11 +395,18 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * @return {string} Either "fg" or output of this.doReb, depending on make or miss and free throws.
      */
     GameSim.prototype.doShot = function (shooter) {
-        var fatigue, p, probMake, probAndOne, probMissAndFoul, r1, r2, r3, type;
+        var fatigue, p, passer, probMake, probAndOne, probMissAndFoul, r1, r2, r3, ratios, type;
 
         p = this.playersOnCourt[this.o][shooter];
 
         fatigue = this.fatigue(this.team[this.o].player[p].stat.energy);
+
+        // Is this an "assisted" attempt (i.e. an assist will be recorded if it's made)
+        passer = -1;
+        if (this.probAst() > Math.random()) {
+            ratios = this.ratingArray("passing", this.o, 2);
+            passer = this.pickPlayer(ratios, shooter);
+        }
 
         // Pick the type of shot and store the success rate (with no defense) in probMake and the probability of an and one in probAndOne
         if (this.team[this.o].player[p].compositeRating.shootingThreePointer > 0.4 && Math.random() < (0.35 * this.team[this.o].player[p].compositeRating.shootingThreePointer)) {
@@ -435,6 +442,11 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
         probMake = (probMake - 0.25 * this.team[this.d].compositeRating.defense + this.synergyFactor * (this.team[this.o].synergy.off - this.team[this.d].synergy.def)) * fatigue;
 
+        // Assisted shots are easier
+        if (passer >= 0) {
+            probMake += 0.025;
+        }
+
         if (this.probBlk() > Math.random()) {
             return this.doBlk(shooter);  // orb or drb
         }
@@ -443,10 +455,10 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         if (probMake > Math.random()) {
             // And 1
             if (probAndOne > Math.random()) {
-                this.doFg(shooter, type);
+                this.doFg(shooter, passer, type);
                 return this.doFt(shooter, 1);  // fg, orb, or drb
             }
-            return this.doFg(shooter, type);  // fg
+            return this.doFg(shooter, passer, type);  // fg
         }
 
         // Miss, but fouled
@@ -508,17 +520,18 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * 
      * @memberOf core.gameSim
      * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
+     * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the passing player, who will get an assist. -1 if no assist.
      * @param {number} type 2 for a two pointer, 3 for a three pointer.
      * @return {string} Currently always returns "fg".
      */
-    GameSim.prototype.doFg = function (shooter, type) {
-        var p, ratios;
+    GameSim.prototype.doFg = function (shooter, passer, type) {
+        var p;
 
-        if (this.probAst() > Math.random()) {
-            ratios = this.ratingArray("passing", this.o, 2);
-            p = this.playersOnCourt[this.o][this.pickPlayer(ratios, shooter)];
+        if (passer >= 0) {
+            p = this.playersOnCourt[this.o][passer];
             this.recordStat(this.o, p, "ast");
         }
+
         p = this.playersOnCourt[this.o][shooter];
         this.recordStat(this.o, p, "fg");
         this.recordStat(this.o, p, "fga");
@@ -548,7 +561,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * @return {number} Probability from 0 to 1.
      */
     GameSim.prototype.probAst = function () {
-        return 0.65;
+        return 0.65 * (1 + this.team[this.o].compositeRating.passing) / (1 + this.team[this.d].compositeRating.defense);
     };
 
     /**

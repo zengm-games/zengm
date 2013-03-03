@@ -135,7 +135,7 @@ define(["db", "util/lock"], function (db, lock) {
                 league_root_url = result[1];
                 league_page = result[2];
                 url = "/l/" + g.lid + "/" + league_page + "/" + select1.val() + "/" + select2.val();
-                if (extraParam !== undefined && extraParam.length > 0) {
+                if (extraParam !== undefined && extraParam !== null) {
                     url += "/" + extraParam;
                 }
                 Davis.location.assign(new Davis.Request(url));
@@ -147,7 +147,7 @@ define(["db", "util/lock"], function (db, lock) {
                 league_root_url = result[1];
                 league_page = result[2];
                 url = "/l/" + g.lid + "/" + league_page + "/" + select1.val() + "/" + select2.val();
-                if (extraParam !== undefined && extraParam.length > 0) {
+                if (extraParam !== undefined && extraParam !== null) {
                     url += "/" + extraParam;
                 }
                 Davis.location.assign(new Davis.Request(url));

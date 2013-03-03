@@ -1,16 +1,10 @@
-<script type="text/javascript">
-$(document).ready(function () {
-  ui.dropdown($("#game_log_select_team"), $("#game_log_select_season"), "{{gid}}");
-});
-</script>
-
 <form action="/l/{{lid}}/game_log" method="GET" class="form-inline pull-right">
-  <select id="game_log_select_team" name="team" class="team">
+  <select id="game-log-select-team" name="team" class="team">
     {{#teams}}
       <option value="{{abbrev}}"{{#if selected}} selected="selected"{{/if}}}>{{region}} {{name}}</option>
     {{/teams}}
   </select>
-  <select id="game_log_select_season" name="season" class="season">
+  <select id="game-log-select-season" name="season" class="season">
     {{#seasons}}
       <option value="{{season}}"{{#if selected}} selected="selected"{{/if}}>{{season}} season</option>
     {{/seasons}}

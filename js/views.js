@@ -1420,9 +1420,15 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
                     container: "league_content",
                     template: "gameLog",
                     title: "Game Log",
-                    vars: {boxScore: contentGameInfo, gameLogList: contentGameLogList, gid: gid, teams: teams, seasons: seasons}
+                    vars: {boxScore: contentGameInfo, gameLogList: contentGameLogList, teams: teams, seasons: seasons}
                 };
-                ui.update(data, req.raw.cb);
+                ui.update(data, function () {
+                    ui.dropdown($("#game-log-select-team"), $("#game-log-select-season"), gid);
+
+                    if (req.raw.cb !== undefined) {
+                        req.raw.cb();
+                    }
+                });
             };
 
             cbGameLogList(abbrev, season, function (contentGameLogList) {

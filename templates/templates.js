@@ -1599,11 +1599,11 @@ function program2(depth0,data) {
   
   return " selected=\"selected\"";}
 
-  buffer += "<script type=\"text/javascript\">\n$(document).ready(function() {\n  ui.dropdown($(\"#dist_team_stats_select_season\"));\n});\n</script>\n\n<form action=\"/l/";
+  buffer += "<form action=\"/l/";
   foundHelper = helpers.lid;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.lid; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "/dist_team_stats\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"dist_team_stats_select_season\" name=\"season\" class=\"season\">\n    ";
+  buffer += escapeExpression(stack1) + "/dist_team_stats\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"dist-team-stats-select-season\" name=\"season\" class=\"season\">\n    ";
   foundHelper = helpers.seasons;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}); }
   else { stack1 = depth0.seasons; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
@@ -1622,7 +1622,7 @@ function program2(depth0,data) {
   foundHelper = helpers.lid;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.lid; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "/team_shot_locations\">Shot Locations</a></p>\n\n<p>These <a href=\"http://en.wikipedia.org/wiki/Box_plot\">box plots</a> show the league-wide distributions of team stats for the selected season. Black plots are for this league and blue plots are from the 2010-2011 NBA season, for comparison. The five vertical lines in each plot represent the minimum of the scale, the minimum, the first <a href=\"http://en.wikipedia.org/wiki/Quartile\">quartile</a>, the median, the third quartile, the maximum, and the maximum of the scale.</p>\n\n<p>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" id=\"dist_team_stats\">\n  <tbody></tbody>\n</table>\n</p>\n";
+  buffer += escapeExpression(stack1) + "/team_shot_locations\">Shot Locations</a></p>\n\n<p>These <a href=\"http://en.wikipedia.org/wiki/Box_plot\">box plots</a> show the league-wide distributions of team stats for the selected season. Black plots are for this league and blue plots are from the 2010-2011 NBA season, for comparison. The five vertical lines in each plot represent the minimum of the scale, the minimum, the first <a href=\"http://en.wikipedia.org/wiki/Quartile\">quartile</a>, the median, the third quartile, the maximum, and the maximum of the scale.</p>\n\n<p>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" id=\"dist-team-stats\">\n  <tbody></tbody>\n</table>\n</p>\n";
   return buffer;});
 templates['standings'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers; data = data || {};

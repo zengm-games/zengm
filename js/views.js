@@ -2174,7 +2174,9 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
                 ui.update(data, function () {
                     var scale, stat, tbody;
 
-                    tbody = $("#dist_team_stats tbody");
+                    ui.dropdown($("#dist-team-stats-select-season"));
+
+                    tbody = $("#dist-team-stats tbody");
 
                     // Scales for the box plots. This is not done dynamically so that the plots will be comparable across seasons.
                     scale = {

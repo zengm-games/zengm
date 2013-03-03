@@ -351,7 +351,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
     GameSim.prototype.doTov = function () {
         var p, ratios;
 
-        ratios = this.ratingArray("turnovers", this.o);
+        ratios = this.ratingArray("turnovers", this.o, 0.5);
         p = this.playersOnCourt[this.o][this.pickPlayer(ratios)];
         this.recordStat(this.o, p, "tov");
         if (this.probStl() > Math.random()) {
@@ -412,8 +412,8 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         if (this.team[this.o].player[p].compositeRating.shootingThreePointer > 0.4 && Math.random() < (0.35 * this.team[this.o].player[p].compositeRating.shootingThreePointer)) {
             // Three pointer
             type = "threePointer";
-            probMissAndFoul = 0.025;
-            probMake = this.team[this.o].player[p].compositeRating.shootingThreePointer * 0.75;
+            probMissAndFoul = 0.02;
+            probMake = this.team[this.o].player[p].compositeRating.shootingThreePointer * 0.68;
             probAndOne = 0.01;
         } else {
             r1 = Math.random() * this.team[this.o].player[p].compositeRating.shootingMidRange;
@@ -422,20 +422,20 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             if (r1 > r2 && r1 > r3) {
                 // Two point jumper
                 type = "midRange";
-                probMissAndFoul = 0.1;
-                probMake = this.team[this.o].player[p].compositeRating.shootingMidRange * 0.3 + 0.31;
+                probMissAndFoul = 0.07;
+                probMake = this.team[this.o].player[p].compositeRating.shootingMidRange * 0.3 + 0.29;
                 probAndOne = 0.05;
             } else if (r2 > r3) {
                 // Dunk, fast break or half court
                 type = "atRim";
-                probMissAndFoul = 0.4;
-                probMake = this.team[this.o].player[p].compositeRating.shootingAtRim * 0.3 + 0.54;
+                probMissAndFoul = 0.37;
+                probMake = this.team[this.o].player[p].compositeRating.shootingAtRim * 0.3 + 0.52;
                 probAndOne = 0.25;
             } else {
                 // Post up
                 type = "lowPost";
-                probMissAndFoul = 0.35;
-                probMake = this.team[this.o].player[p].compositeRating.shootingLowPost * 0.3 + 0.39;
+                probMissAndFoul = 0.33;
+                probMake = this.team[this.o].player[p].compositeRating.shootingLowPost * 0.3 + 0.37;
                 probAndOne = 0.15;
             }
         }
@@ -463,7 +463,11 @@ define(["util/helpers", "util/random"], function (helpers, random) {
 
         // Miss, but fouled
         if (probMissAndFoul > Math.random()) {
-            return this.doFt(shooter, type);  // fg, orb, or drb
+            if (type === "threePointer") {
+                return this.doFt(shooter, 3);  // fg, orb, or drb
+            } else {
+                return this.doFt(shooter, 2);  // fg, orb, or drb
+            }
         }
 
         // Miss
@@ -561,7 +565,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
      * @return {number} Probability from 0 to 1.
      */
     GameSim.prototype.probAst = function () {
-        return 0.65 * (1 + this.team[this.o].compositeRating.passing) / (1 + this.team[this.d].compositeRating.defense);
+        return 0.6 * (2 + this.team[this.o].compositeRating.passing) / (2 + this.team[this.d].compositeRating.defense);
     };
 
     /**
@@ -626,7 +630,7 @@ define(["util/helpers", "util/random"], function (helpers, random) {
             return null;
         }
 
-        if (0.8 * (2 + this.team[this.d].compositeRating.rebounding) / (2 + this.team[this.o].compositeRating.rebounding) > Math.random()) {
+        if (0.75 * (2 + this.team[this.d].compositeRating.rebounding) / (2 + this.team[this.o].compositeRating.rebounding) > Math.random()) {
             ratios = this.ratingArray("rebounding", this.d);
             p = this.playersOnCourt[this.d][this.pickPlayer(ratios)];
             this.recordStat(this.d, p, "drb");

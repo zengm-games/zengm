@@ -1,10 +1,6 @@
 main todo (before public beta)
 ------------------------------
 
-gameSim
-  compare team and player stat distributions against reality, and tweak
-  shot locations
-    compare to reality
 put on play.basketball-gm.com, with splash page on basketball-gm.com
   make sure the google analytics filter to only track on basketball-gm.com is working
   display league/season counter on splash page

@@ -1,11 +1,5 @@
-<script type="text/javascript">
-$(document).ready(function() {
-  ui.dropdown($("#leaders_select_season"));
-});
-</script>
-
 <form action="/l/{{lid}}/leaders" method="GET" class="form-inline pull-right">
-  <select id="leaders_select_season" name="season" class="season">
+  <select id="leaders-select-season" name="season" class="season">
     {{#seasons}}
       <option value="{{season}}"{{#if selected}} selected="selected"{{/if}}>{{season}} season</option>
     {{/seasons}}

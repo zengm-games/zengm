@@ -1483,7 +1483,13 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
                     title: "League Leaders - " + season,
                     vars: {categories: categories, season: season, seasons: seasons}
                 };
-                ui.update(data, req.raw.cb);
+                ui.update(data, function () {
+                    ui.dropdown($('#leaders-select-season'));
+
+                    if (req.raw.cb !== undefined) {
+                        req.raw.cb();
+                    }
+                });
             };
         });
     }

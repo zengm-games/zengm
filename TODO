@@ -1,6 +1,9 @@
-main todo (before public beta)
-------------------------------
+main todo
+---------
 
+minify and combine scripts
+  all javascript in templates should be moved into js files
+  can everything be done through requirejs?
 display league/season counter on basketball-gm.com splash page
 
 ---
@@ -85,6 +88,7 @@ money display
     league dashboard
 internationalization
   league dashboard rankings should say 1st, 2nd, 3rd rather than 1th, 2th, 3th
+  http://requirejs.org/docs/api.html#i18n
 league dashboard
   next game should show something when active in playoffs, a message at least
 playoff stats in player view

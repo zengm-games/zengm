@@ -2362,11 +2362,11 @@ function program10(depth0,data,depth1) {
   buffer += escapeExpression(stack1) + ")<br>\n    ";
   return buffer;}
 
-  buffer += "<script type=\"text/javascript\">\n$(document).ready(function() {\n  ui.dropdown($('#history_select_season'));\n});\n</script>\n\n<form action=\"/l/";
+  buffer += "<form action=\"/l/";
   foundHelper = helpers.lid;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.lid; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "/history\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"history_select_season\" name=\"season\" class=\"season\">\n    ";
+  buffer += escapeExpression(stack1) + "/history\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"history-select-season\" name=\"season\" class=\"season\">\n    ";
   foundHelper = helpers.seasons;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}); }
   else { stack1 = depth0.seasons; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }

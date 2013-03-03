@@ -743,7 +743,13 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
                             title: "Season Summary - " + season,
                             vars: {awards: awards, champ: champ, retiredPlayers: retiredPlayers, seasons: seasons, season: season}
                         };
-                        ui.update(data, req.raw.cb);
+                        ui.update(data, function () {
+                            ui.dropdown($('#history-select-season'));
+
+                            if (req.raw.cb !== undefined) {
+                                req.raw.cb();
+                            }
+                        });
                     });
                 };
             };

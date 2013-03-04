@@ -1365,7 +1365,58 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
                                 title: "Draft",
                                 vars: {undrafted: undrafted, drafted: drafted, started: started}
                             };
-                            ui.update(data, req.raw.cb);
+                            ui.update(data, function () {
+                                var draftUntilUserOrEnd, updateDraftTables;
+
+                                updateDraftTables = function (pids) {
+                                    var draftedPlayer, draftedRows, i, j, undraftedTds;
+
+                                    for (i = 0; i < pids.length; i++) {
+                                        draftedPlayer = new Array(5);
+                                        // Find row in undrafted players table, get metadata, delete row
+                                        undraftedTds = $("#undrafted-" + pids[i] + " td");
+                                        for (j = 0; j < 5; j++) {
+                                            draftedPlayer[j] = undraftedTds[j].innerHTML;
+                                        }
+
+                                        // Find correct row (first blank row) in drafted players table, write metadata
+                                        draftedRows = $("#drafted tbody tr");
+                                        for (j = 0; j < draftedRows.length; j++) {
+                                            if (draftedRows[j].children[3].innerHTML.length === 0) {
+                                                $("#undrafted-" + pids[i]).remove();
+                                                draftedRows[j].children[2].innerHTML = draftedPlayer[0];
+                                                draftedRows[j].children[3].innerHTML = draftedPlayer[1];
+                                                draftedRows[j].children[4].innerHTML = draftedPlayer[2];
+                                                draftedRows[j].children[5].innerHTML = draftedPlayer[3];
+                                                draftedRows[j].children[6].innerHTML = draftedPlayer[4];
+                                                break;
+                                            }
+                                        }
+                                    }
+                                };
+
+                                draftUntilUserOrEnd = function () {
+                                    api.draftUntilUserOrEnd(function (pids, done) {
+                                        updateDraftTables(pids);
+                                        if (!done) {
+                                            $("#undrafted button").removeAttr("disabled");
+                                        }
+                                    });
+                                };
+
+                                $("#start-draft").click(function (event) {
+                                    $($("#start-draft").parent()).hide();
+                                    draftUntilUserOrEnd();
+                                });
+
+                                $("#undrafted button").click(function (event) {
+                                    $("#undrafted button").attr("disabled", "disabled");
+                                    api.draftUser(this.getAttribute("data-player-id"), function (pid) {
+                                        updateDraftTables([pid]);
+                                        draftUntilUserOrEnd();
+                                    });
+                                });
+                            });
                         });
                     };
                 };
@@ -1413,9 +1464,9 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
                     vars: {seasons: seasons}
                 };
                 ui.update(data, function () {
-                    ui.dropdown($('#draft-select-season'));
+                    ui.dropdown($("#draft-select-season"));
 
-                    ui.datatable($("#draft-results"), 0, _.map(players, function (p) {
+                    ui.datatableSinglePage($("#draft-results"), 0, _.map(players, function (p) {
                         return [p.rnd + '-' + p.pick, '<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>', p.pos, '<a href="/l/' + g.lid + '/roster/' + p.draftAbbrev + '">' + p.draftAbbrev + '</a>', String(p.draftAge), String(p.draftOvr), String(p.draftPot), '<span class="skills_alone">' + helpers.skillsBlock(p.draftSkills) + '</span>', '<a href="/l/' + g.lid + '/roster/' + p.currentAbbrev + '">' + p.currentAbbrev + '</a>', String(p.currentAge), String(p.currentOvr), String(p.currentPot), '<span class="skills_alone">' + helpers.skillsBlock(p.currentSkills) + '</span>', helpers.round(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1)];
                     }));
 

@@ -1,61 +1,8 @@
-<script type="text/javascript">
-$(document).ready(function() {
-    function updateDraftTables(pids) {
-        for (var i=0; i<pids.length; i++) {
-            var draftedPlayer = new Array(5);
-            // Find row in undrafted players table, get metadata, delete row
-            var undraftedTds = $('#undrafted_' + pids[i] + ' td')
-            for (var j=0; j<5; j++) {
-                draftedPlayer[j] = undraftedTds[j].innerHTML;
-            }
-
-            // Find correct row (first blank row) in drafted players table, write metadata
-            var draftedRows = $('#drafted tbody tr');
-            for (var j=0; j<draftedRows.length; j++) {
-                if (draftedRows[j].children[3].innerHTML.length == 0) {
-                    $('#undrafted_' + pids[i]).remove();
-                    draftedRows[j].children[2].innerHTML = draftedPlayer[0];
-                    draftedRows[j].children[3].innerHTML = draftedPlayer[1];
-                    draftedRows[j].children[4].innerHTML = draftedPlayer[2];
-                    draftedRows[j].children[5].innerHTML = draftedPlayer[3];
-                    draftedRows[j].children[6].innerHTML = draftedPlayer[4];
-                    break;
-                }
-            }
-        }
-    }
-
-    
-
-    function draftUntilUserOrEnd() {
-        api.draftUntilUserOrEnd(function (pids, done) {
-          updateDraftTables(pids);
-          if (!done) {
-              $('#undrafted button').removeAttr('disabled');
-          }
-      });
-    }
-
-    $('#start_draft').click(function(event) {
-        $($('#start_draft').parent()).hide()
-        draftUntilUserOrEnd();
-    });
-
-    $('#undrafted button').click(function(event) {
-        $('#undrafted button').attr('disabled', 'disabled');
-        api.draftUser(this.getAttribute('data-player-id'), function (pid) {
-            updateDraftTables([pid]);
-            draftUntilUserOrEnd();
-        });
-    });
-});
-</script>
-
 <h1>Draft {{new_window}}</h1>
 
 <p>When your turn in the draft comes up, select from the list of available players on the left.</p>
 
-<p{{#if started}} style="display: none;"{{/if}}><button class="btn btn-large btn-primary" id="start_draft">Start draft</button></p>
+<p{{#if started}} style="display: none;"{{/if}}><button class="btn btn-large btn-primary" id="start-draft">Start draft</button></p>
 
 <div class="row-fluid">
   <div class="span6">
@@ -66,7 +13,7 @@ $(document).ready(function() {
     </thead>
     <tbody>
       {{#undrafted}}
-        <tr id="undrafted_{{pid}}"><td><a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>{{skills_block skills}}</td><td>{{pos}}</td><td>{{age}}<td>{{ovr}}</td><td>{{pot}}</td><td><button class="btn btn-mini btn-primary" data-player-id="{{pid}}"{{#unless ../started}} disabled="disabled"{{/unless}}>Draft</button></td></tr>
+        <tr id="undrafted-{{pid}}"><td><a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>{{skills_block skills}}</td><td>{{pos}}</td><td>{{age}}<td>{{ovr}}</td><td>{{pot}}</td><td><button class="btn btn-mini btn-primary" data-player-id="{{pid}}"{{#unless ../started}} disabled="disabled"{{/unless}}>Draft</button></td></tr>
       {{/undrafted}}
     </tbody>
     </table>

@@ -3698,7 +3698,7 @@ function program1(depth0,data) {
 function program3(depth0,data,depth1) {
   
   var buffer = "", stack1, stack2, foundHelper;
-  buffer += "\n        <tr id=\"undrafted_";
+  buffer += "\n        <tr id=\"undrafted-";
   foundHelper = helpers.pid;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.pid; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
@@ -3808,7 +3808,7 @@ function program6(depth0,data,depth1) {
   buffer += escapeExpression(stack1) + "</td></tr>\n      ";
   return buffer;}
 
-  buffer += "<script type=\"text/javascript\">\n$(document).ready(function() {\n    function updateDraftTables(pids) {\n        for (var i=0; i<pids.length; i++) {\n            var draftedPlayer = new Array(5);\n            // Find row in undrafted players table, get metadata, delete row\n            var undraftedTds = $('#undrafted_' + pids[i] + ' td')\n            for (var j=0; j<5; j++) {\n                draftedPlayer[j] = undraftedTds[j].innerHTML;\n            }\n\n            // Find correct row (first blank row) in drafted players table, write metadata\n            var draftedRows = $('#drafted tbody tr');\n            for (var j=0; j<draftedRows.length; j++) {\n                if (draftedRows[j].children[3].innerHTML.length == 0) {\n                    $('#undrafted_' + pids[i]).remove();\n                    draftedRows[j].children[2].innerHTML = draftedPlayer[0];\n                    draftedRows[j].children[3].innerHTML = draftedPlayer[1];\n                    draftedRows[j].children[4].innerHTML = draftedPlayer[2];\n                    draftedRows[j].children[5].innerHTML = draftedPlayer[3];\n                    draftedRows[j].children[6].innerHTML = draftedPlayer[4];\n                    break;\n                }\n            }\n        }\n    }\n\n    \n\n    function draftUntilUserOrEnd() {\n        api.draftUntilUserOrEnd(function (pids, done) {\n          updateDraftTables(pids);\n          if (!done) {\n              $('#undrafted button').removeAttr('disabled');\n          }\n      });\n    }\n\n    $('#start_draft').click(function(event) {\n        $($('#start_draft').parent()).hide()\n        draftUntilUserOrEnd();\n    });\n\n    $('#undrafted button').click(function(event) {\n        $('#undrafted button').attr('disabled', 'disabled');\n        api.draftUser(this.getAttribute('data-player-id'), function (pid) {\n            updateDraftTables([pid]);\n            draftUntilUserOrEnd();\n        });\n    });\n});\n</script>\n\n<h1>Draft ";
+  buffer += "<h1>Draft ";
   foundHelper = helpers.new_window;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.new_window; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
@@ -3817,7 +3817,7 @@ function program6(depth0,data,depth1) {
   stack2 = {};
   stack1 = helpers['if'].call(depth0, stack1, {hash:stack2,inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "><button class=\"btn btn-large btn-primary\" id=\"start_draft\">Start draft</button></p>\n\n<div class=\"row-fluid\">\n  <div class=\"span6\">\n    <h2>Undrafted Players</h2>\n    <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"undrafted\">\n    <thead>\n      <tr><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall rating\">Ovr</th><th title=\"Potential rating\">Pot</th><th>Draft</th></tr>\n    </thead>\n    <tbody>\n      ";
+  buffer += "><button class=\"btn btn-large btn-primary\" id=\"start-draft\">Start draft</button></p>\n\n<div class=\"row-fluid\">\n  <div class=\"span6\">\n    <h2>Undrafted Players</h2>\n    <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"undrafted\">\n    <thead>\n      <tr><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall rating\">Ovr</th><th title=\"Potential rating\">Pot</th><th>Draft</th></tr>\n    </thead>\n    <tbody>\n      ";
   foundHelper = helpers.undrafted;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},inverse:self.noop,fn:self.programWithDepth(program3, data, depth0),data:data}); }
   else { stack1 = depth0.undrafted; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }

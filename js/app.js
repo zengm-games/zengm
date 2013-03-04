@@ -1,4 +1,4 @@
-requirejs(["api", "db", "views", "ui", "util/helpers"], function (api, db, views, ui, helpers) {
+requirejs(["db", "views", "ui", "util/helpers"], function (db, views, ui, helpers) {
     "use strict";
 
     if (indexedDB === undefined) {
@@ -11,9 +11,6 @@ requirejs(["api", "db", "views", "ui", "util/helpers"], function (api, db, views
         ui.update(data);
         return;
     }
-
-    window.api = api;
-    window.ui = ui;
 
     db.connectMeta(function () {
         var app = new Davis(function () {

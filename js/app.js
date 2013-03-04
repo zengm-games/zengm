@@ -7,6 +7,7 @@ requirejs.config({
             deps: ["lib/raphael"],
             exports: "faces"
         },
+        "lib/IndexedDB-getAll-shim": {},
         "lib/raphael": {
             exports: "Raphael"
         },
@@ -16,7 +17,8 @@ requirejs.config({
     }
 });
 
-requirejs(["db", "views", "ui", "util/helpers"], function (db, views, ui, helpers) {
+// lib/IndexedDB-getAll-shim doesn't export anything, so it's at the end
+requirejs(["db", "views", "ui", "util/helpers", "lib/IndexedDB-getAll-shim"], function (db, views, ui, helpers) {
     "use strict";
 
     if (indexedDB === undefined) {

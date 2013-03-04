@@ -5,6 +5,7 @@ requirejs.config({
             deps: ["lib/raphael"],
             exports: "faces"
         },
+        "lib/IndexedDB-getAll-shim": {},
         "lib/raphael": {
             exports: "Raphael"
         },
@@ -14,7 +15,8 @@ requirejs.config({
     }
 });
 
-requirejs(["lib/chai", "views"], function (chai, views) {
+// lib/IndexedDB-getAll-shim doesn't export anything, so it's at the end
+requirejs(["lib/chai", "views", "lib/IndexedDB-getAll-shim"], function (chai, views) {
     "use strict";
 
     mocha.setup({

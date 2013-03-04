@@ -4,7 +4,11 @@ requirejs.config({
             exports: "boxPlot"
         },
         "lib/faces": {
+            deps: ["lib/raphael"],
             exports: "faces"
+        },
+        "lib/raphael": {
+            exports: "Raphael"
         },
         "lib/underscore": {
             exports: "_"

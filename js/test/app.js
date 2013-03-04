@@ -2,7 +2,11 @@ requirejs.config({
     baseUrl: "/js",
     shim: {
         "lib/faces": {
+            deps: ["lib/raphael"],
             exports: "faces"
+        },
+        "lib/raphael": {
+            exports: "Raphael"
         },
         "lib/underscore": {
             exports: "_"

@@ -1,5 +1,10 @@
-require.config({
-    baseUrl: "/js"
+requirejs.config({
+    baseUrl: "/js",
+    shim: {
+        "lib/underscore": {
+            exports: "_"
+        }
+    }
 });
 
 requirejs(["lib/chai", "views"], function (chai, views) {

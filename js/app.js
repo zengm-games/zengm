@@ -1,10 +1,13 @@
 requirejs.config({
     shim: {
-        "lib/underscore": {
-            exports: "_"
-        },
         "lib/boxPlot": {
             exports: "boxPlot"
+        },
+        "lib/faces": {
+            exports: "faces"
+        },
+        "lib/underscore": {
+            exports: "_"
         }
     }
 });

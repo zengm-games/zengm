@@ -1,6 +1,9 @@
 requirejs.config({
     baseUrl: "/js",
     shim: {
+        "lib/faces": {
+            exports: "faces"
+        },
         "lib/underscore": {
             exports: "_"
         }

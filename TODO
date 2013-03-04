@@ -5,6 +5,10 @@ move distPlayerRatings link to top like in statsTids
 minify and combine scripts
   can everything be done through requirejs?
     http://requirejs.org/docs/api.html#config-shim
+      remove from index.html, test.html
+      add to both shims in app.js (test and normal)
+      test
+      delete from runjslint
 display league/season counter on basketball-gm.com splash page
 
 ---

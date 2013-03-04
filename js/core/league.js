@@ -2,7 +2,7 @@
  * @name core.league
  * @namespace Creating and removing leagues.
  */
-define(["db", "ui", "core/player", "core/season", "util/helpers", "util/random"], function (db, ui, player, season, helpers, random) {
+define(["db", "ui", "core/player", "core/season", "lib/faces", "util/helpers", "util/random"], function (db, ui, player, season, faces, helpers, random) {
     "use strict";
 
     /**

@@ -1637,9 +1637,19 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
                     container: "league_content",
                     template: "playerRatings",
                     title: "Player Ratings - " + season,
-                    vars: {players: players, season: season, seasons: seasons}
+                    vars: {season: season, seasons: seasons}
                 };
-                ui.update(data, req.raw.cb);
+                ui.update(data, function () {
+                    ui.dropdown($('#player-ratings-select-season'));
+
+                    ui.datatable($("#player-ratings"), 4, _.map(players, function (p) {
+                        return ['<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>' + helpers.skillsBlock(p.ratings.skills), p.pos, '<a href="/l/' + g.lid + '/roster/' + p.stats.abbrev + '/' + season + '">' + p.stats.abbrev + '</a>', String(p.age), String(p.ratings.ovr), String(p.ratings.pot), String(p.ratings.hgt), String(p.ratings.stre), String(p.ratings.spd), String(p.ratings.jmp), String(p.ratings.endu), String(p.ratings.ins), String(p.ratings.dnk), String(p.ratings.ft), String(p.ratings.fg), String(p.ratings.tp), String(p.ratings.blk), String(p.ratings.stl), String(p.ratings.drb), String(p.ratings.pss), String(p.ratings.reb)];
+                    }));
+
+                    if (req.raw.cb !== undefined) {
+                        req.raw.cb();
+                    }
+                });
             };
         });
     }

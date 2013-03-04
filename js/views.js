@@ -1812,9 +1812,17 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
                         container: "league_content",
                         template: "negotiationList",
                         title: "Resign Players",
-                        vars: {players: players}
+                        vars: {}
                     };
-                    ui.update(data, req.raw.cb);
+                    ui.update(data, function () {
+                        ui.datatable($("#negotiation-list"), 4, _.map(players, function (p) {
+                            return ['<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>' + helpers.skillsBlock(p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), '$' + helpers.round(p.contractAmount, 2) + 'M thru ' + p.contractExp, '<a href="/l/' + g.lid + '/negotiation/' + p.pid + '}" class="btn btn-mini btn-primary">Negotiate</a>'];
+                        }));
+
+                        if (req.raw.cb !== undefined) {
+                            req.raw.cb();
+                        }
+                    });
                 };
             };
         });

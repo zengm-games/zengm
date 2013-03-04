@@ -2921,102 +2921,10 @@ templates['finances'] = template(function (Handlebars,depth0,helpers,partials,da
   return buffer;});
 templates['negotiationList'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, foundHelper, functionType="function", escapeExpression=this.escapeExpression, helperMissing=helpers.helperMissing, self=this, blockHelperMissing=helpers.blockHelperMissing;
-
-function program1(depth0,data,depth1) {
   
-  var buffer = "", stack1, stack2, foundHelper;
-  buffer += "\n	    [ '<a href=\"/l/";
-  stack1 = depth1.lid;
-  stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1;
-  buffer += escapeExpression(stack1) + "/player/";
-  foundHelper = helpers.pid;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
-  else { stack1 = depth0.pid; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "\">";
-  foundHelper = helpers.name;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
-  else { stack1 = depth0.name; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "</a>";
-  stack1 = depth0.ratings;
-  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.skills;
-  stack2 = {};
-  foundHelper = helpers.skills_block;
-  stack1 = foundHelper ? foundHelper.call(depth0, stack1, {hash:stack2,data:data}) : helperMissing.call(depth0, "skills_block", stack1, {hash:stack2,data:data});
-  buffer += escapeExpression(stack1) + "', '";
-  foundHelper = helpers.pos;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
-  else { stack1 = depth0.pos; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "', '";
-  foundHelper = helpers.age;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
-  else { stack1 = depth0.age; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "', '";
-  stack1 = depth0.ratings;
-  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.ovr;
-  stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1;
-  buffer += escapeExpression(stack1) + "', '";
-  stack1 = depth0.ratings;
-  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.pot;
-  stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1;
-  buffer += escapeExpression(stack1) + "', '";
-  stack1 = depth0.stats;
-  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.min;
-  stack2 = {};
-  foundHelper = helpers.round;
-  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
-  buffer += escapeExpression(stack1) + "', '";
-  stack1 = depth0.stats;
-  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.pts;
-  stack2 = {};
-  foundHelper = helpers.round;
-  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
-  buffer += escapeExpression(stack1) + "', '";
-  stack1 = depth0.stats;
-  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.trb;
-  stack2 = {};
-  foundHelper = helpers.round;
-  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
-  buffer += escapeExpression(stack1) + "', '";
-  stack1 = depth0.stats;
-  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.ast;
-  stack2 = {};
-  foundHelper = helpers.round;
-  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
-  buffer += escapeExpression(stack1) + "', '";
-  stack1 = depth0.stats;
-  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.per;
-  stack2 = {};
-  foundHelper = helpers.round;
-  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 1, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 1, {hash:stack2,data:data});
-  buffer += escapeExpression(stack1) + "', '$";
-  stack1 = depth0.contractAmount;
-  stack2 = {};
-  foundHelper = helpers.round;
-  stack1 = foundHelper ? foundHelper.call(depth0, stack1, 2, {hash:stack2,data:data}) : helperMissing.call(depth0, "round", stack1, 2, {hash:stack2,data:data});
-  buffer += escapeExpression(stack1) + "M thru ";
-  foundHelper = helpers.contractExp;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
-  else { stack1 = depth0.contractExp; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "', '<a href=\"/l/";
-  stack1 = depth1.lid;
-  stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1;
-  buffer += escapeExpression(stack1) + "/negotiation/";
-  foundHelper = helpers.pid;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
-  else { stack1 = depth0.pid; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "\" class=\"btn btn-mini btn-primary\">Negotiate</a>' ],\n    ";
-  return buffer;}
 
-  buffer += "<script type=\"text/javascript\">\n$(document).ready(function() {\n  ui.datatable($('#negotiation_list'), 4, [\n    ";
-  foundHelper = helpers.players;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},inverse:self.noop,fn:self.programWithDepth(program1, data, depth0),data:data}); }
-  else { stack1 = depth0.players; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  stack2 = {};
-  if (!helpers.players) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:stack2,inverse:self.noop,fn:self.programWithDepth(program1, data, depth0),data:data}); }
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  ]);\n} );\n</script>\n\n<h1>Players With Expiring Contracts</h1>\n\n<p>You are allowed to go over the salary cap to resign your players before they become free agents. If you do not resign them before free agency begins, they will be free to sign with any team, and you won't be able to go over the salary cap to sign them.</p>\n\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"negotiation_list\">\n<thead>\n  <tr><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall\">Ovr</th><th title=\"Potential\">Pot</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th><th>Asking for</th><th>Negotiate</th></tr>\n</thead>\n</table>";
-  return buffer;});
+
+  return "<h1>Players With Expiring Contracts</h1>\n\n<p>You are allowed to go over the salary cap to resign your players before they become free agents. If you do not resign them before free agency begins, they will be free to sign with any team, and you won't be able to go over the salary cap to sign them.</p>\n\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"negotiation-list\">\n<thead>\n  <tr><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall\">Ovr</th><th title=\"Potential\">Pot</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th><th>Asking for</th><th>Negotiate</th></tr>\n</thead>\n</table>";});
 templates['distPlayerRatings'] = template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers; data = data || {};
   var buffer = "", stack1, stack2, foundHelper, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;

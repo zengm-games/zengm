@@ -3,10 +3,6 @@ main todo
 
 move distPlayerRatings link to top like in statsTids
 minify and combine scripts
-  all javascript in templates should be moved into js files
-    grep script templates/*.handlebars
-    also get rid of _ while doing this
-    make templates/helpers.js just call js/util/helpers.js for functions used in both places
   can everything be done through requirejs?
     http://requirejs.org/docs/api.html#config-shim
 display league/season counter on basketball-gm.com splash page
@@ -45,7 +41,7 @@ gameSim
     do i need all the team composite ratings?
     how does performance change/degrade as the years go on?
 runjslint errors
-  currently just "Don't make functions within a loop." and "JavaScript URL." which should all be fixed eventually
+  currently just "Don't make functions within a loop." which should all be fixed eventually
   get rid of some of the global definitions via requirejs shim
 contract negotiation
   test all the error conditions and make sure callbacks are appropriately called (unit tests?)

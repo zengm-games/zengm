@@ -2493,42 +2493,20 @@ templates['playButton'] = template(function (Handlebars,depth0,helpers,partials,
 
 function program1(depth0,data) {
   
-  var buffer = "", stack1, stack2, foundHelper;
-  buffer += "\n        ";
-  foundHelper = helpers.normal_link;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},inverse:self.program(4, program4, data),fn:self.program(2, program2, data),data:data}); }
-  else { stack1 = depth0.normal_link; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  stack2 = {};
-  if (!helpers.normal_link) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:stack2,inverse:self.program(4, program4, data),fn:self.program(2, program2, data),data:data}); }
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n      ";
-  return buffer;}
-function program2(depth0,data) {
-  
   var buffer = "", stack1, foundHelper;
-  buffer += "\n          <li><a href=\"";
+  buffer += "\n        <li><a href=\"";
   foundHelper = helpers.url;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.url; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
+  buffer += escapeExpression(stack1) + "\" id=\"";
+  foundHelper = helpers.id;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
+  else { stack1 = depth0.id; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1) + "\">";
   foundHelper = helpers.label;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.label; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "</a></li>\n        ";
-  return buffer;}
-
-function program4(depth0,data) {
-  
-  var buffer = "", stack1, foundHelper;
-  buffer += "\n          <li><a onclick=\"";
-  foundHelper = helpers.url;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
-  else { stack1 = depth0.url; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "\" href=\"javascript:void(0);\">";
-  foundHelper = helpers.label;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},data:data}); }
-  else { stack1 = depth0.label; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
-  buffer += escapeExpression(stack1) + "</a></li>\n        ";
+  buffer += escapeExpression(stack1) + "</a></li>\n      ";
   return buffer;}
 
   buffer += "<ul class=\"nav btn btn-primary\">\n  <li class=\"dropdown\">\n    <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">Play <b class=\"caret\"></b></a>\n    <ul class=\"dropdown-menu\">\n      ";

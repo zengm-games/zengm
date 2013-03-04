@@ -465,9 +465,8 @@ define(["util/helpers", "util/random"], function (helpers, random) {
         if (probMissAndFoul > Math.random()) {
             if (type === "threePointer") {
                 return this.doFt(shooter, 3);  // fg, orb, or drb
-            } else {
-                return this.doFt(shooter, 2);  // fg, orb, or drb
             }
+            return this.doFt(shooter, 2);  // fg, orb, or drb
         }
 
         // Miss

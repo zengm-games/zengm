@@ -177,58 +177,58 @@ define(["db", "util/lock"], function (db, lock) {
     function updatePlayMenu(ot, cb) {
         var allOptions, button, i, ids, j, keys, playButtonElement, someOptions;
 
-        allOptions = [{id: "stop", url: 'javascript:api.play("stop");', label: "Stop", normal_link: false},
-                      {id: "day", url: 'javascript:api.play("day");', label: "One day", normal_link: false},
-                      {id: "week", url: 'javascript:api.play("week");', label: "One week", normal_link: false},
-                      {id: "month", url: 'javascript:api.play("month");', label: "One month", normal_link: false},
-                      {id: "until_playoffs", url: 'javascript:api.play("until_playoffs");', label: "Until playoffs", normal_link: false},
-                      {id: "through_playoffs", url: 'javascript:api.play("through_playoffs");', label: "Through playoffs", normal_link: false},
-                      {id: "until_draft", url: 'javascript:api.play("until_draft");', label: "Until draft", normal_link: false},
-                      {id: "view_draft", url: "/l/" + g.lid + "/draft", label: "View draft", normal_link: true},
-                      {id: "until_resign_players", url: 'javascript:api.play("until_resign_players");', label: "Resign players with expiring contracts", normal_link: false},
-                      {id: "until_free_agency", url: 'javascript:api.play("until_free_agency");', label: "Until free agency", normal_link: false},
-                      {id: "until_preseason", url: 'javascript:api.play("until_preseason");', label: "Until preseason", normal_link: false},
-                      {id: "until_regular_season", url: 'javascript:api.play("until_regular_season");', label: "Until regular season", normal_link: false},
-                      {id: "contract_negotiation", url: "/l/" + g.lid + "/negotiation", label: "Continue contract negotiation", normal_link: true},
-                      {id: "contract_negotiation_list", url: "/l/" + g.lid + "/negotiation", label: "Continue resigning players", normal_link: true}];
+        allOptions = [{id: "play-menu-stop", label: "Stop"},
+                      {id: "play-menu-day", label: "One day"},
+                      {id: "play-menu-week", label: "One week"},
+                      {id: "play-menu-month", label: "One month"},
+                      {id: "play-menu-until-playoffs", label: "Until playoffs"},
+                      {id: "play-menu-through-playoffs", label: "Through playoffs"},
+                      {id: "play-menu-until-draft", label: "Until draft"},
+                      {id: "play-menu-view-draft", url: "/l/" + g.lid + "/draft", label: "View draft"},
+                      {id: "play-menu-until-resign-players", label: "Resign players with expiring contracts"},
+                      {id: "play-menu-until-free-agency", label: "Until free agency"},
+                      {id: "play-menu-until-preseason", label: "Until preseason"},
+                      {id: "play-menu-until-regular-season", label: "Until regular season"},
+                      {id: "play-menu-contract-negotiation", url: "/l/" + g.lid + "/negotiation", label: "Continue contract negotiation"},
+                      {id: "play-menu-contract-negotiation-list", url: "/l/" + g.lid + "/negotiation", label: "Continue resigning players"}];
 
         if (g.phase === c.PHASE_PRESEASON) {
             // Preseason
-            keys = ["until_regular_season"];
+            keys = ["play-menu-until-regular-season"];
         } else if (g.phase === c.PHASE_REGULAR_SEASON) {
             // Regular season - pre trading deadline
-            keys = ["day", "week", "month", "until_playoffs"];
+            keys = ["play-menu-day", "play-menu-week", "play-menu-month", "play-menu-until-playoffs"];
         } else if (g.phase === c.PHASE_AFTER_TRADE_DEADLINE) {
             // Regular season - post trading deadline
-            keys = ["day", "week", "month", "until_playoffs"];
+            keys = ["play-menu-day", "play-menu-week", "play-menu-month", "play-menu-until-playoffs"];
         } else if (g.phase === c.PHASE_PLAYOFFS) {
             // Playoffs
-            keys = ["day", "week", "month", "through_playoffs"];
+            keys = ["play-menu-day", "play-menu-week", "play-menu-month", "play-menu-through-playoffs"];
         } else if (g.phase === c.PHASE_BEFORE_DRAFT) {
             // Offseason - pre draft
-            keys = ["until_draft"];
+            keys = ["play-menu-until-draft"];
         } else if (g.phase === c.PHASE_DRAFT) {
             // Draft
-            keys = ["view_draft"];
+            keys = ["play-menu-view-draft"];
         } else if (g.phase === c.PHASE_AFTER_DRAFT) {
             // Offseason - post draft
-            keys = ["until_resign_players"];
+            keys = ["play-menu-until-resign-players"];
         } else if (g.phase === c.PHASE_RESIGN_PLAYERS) {
             // Offseason - resign players
-            keys = ["contract_negotiation_list", "until_free_agency"];
+            keys = ["play-menu-contract-negotiation-list", "play-menu-until-free-agency"];
         } else if (g.phase === c.PHASE_FREE_AGENCY) {
             // Offseason - free agency
-            keys = ["until_preseason"];
+            keys = ["play-menu-until-preseason"];
         }
 
         lock.gamesInProgress(ot, function (gamesInProgress) {
             if (gamesInProgress) {
-                keys = ["stop"];
+                keys = ["play-menu-stop"];
             }
 
             lock.negotiationInProgress(ot, function (negotiationInProgress) {
                 if (negotiationInProgress && g.phase !== c.PHASE_RESIGN_PLAYERS) {
-                    keys = ["contract_negotiation"];
+                    keys = ["play-menu-contract-negotiation"];
                 }
 
                 // This code is very ugly. Basically I just want to filter all_options into
@@ -252,6 +252,8 @@ define(["db", "util/lock"], function (db, lock) {
                 if (playButtonElement) {
                     playButtonElement.innerHTML = button;
                 }
+
+                require("api").playMenuHandlers();  // Because of circular dependency
 
                 if (cb !== undefined) {
                     cb();

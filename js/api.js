@@ -8,7 +8,7 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
     function play(amount) {
         var numDays;
 
-        if (['day', 'week', 'month', 'through_playoffs'].indexOf(amount) >= 0) {
+        if (['day', 'week', 'month', 'throughPlayoffs'].indexOf(amount) >= 0) {
             // Start playing games
             if (amount === "day") {
                 numDays = 1;
@@ -16,12 +16,12 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
                 numDays = 7;
             } else if (amount === "month") {
                 numDays = 30;
-            } else if (amount === "through_playoffs") {
+            } else if (amount === "throughPlayoffs") {
                 numDays = 100;  // There aren't 100 days in the playoffs, so 100 will cover all the games and the sim stops when the playoffs end
             }
 
             game.play(numDays, true);
-        } else if (amount === "until_playoffs") {
+        } else if (amount === "untilPlayoffs") {
             if (g.phase < c.PHASE_PLAYOFFS) {
 /*                season.getSchedule(null, 0, function (schedule) {
                     numDays = Math.floor(2 * schedule.length / (g.numTeams));
@@ -35,7 +35,7 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
                 ui.updateStatus('Idle');
                 db.setGameAttributes({gamesInProgress: false}, ui.updatePlayMenu);
             });
-        } else if (amount === "until_draft") {
+        } else if (amount === "untilDraft") {
             if (g.phase === c.PHASE_BEFORE_DRAFT) {
                 season.newPhase(c.PHASE_DRAFT, function () {
                     draft.generatePlayers(function () {
@@ -45,25 +45,72 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
                     });
                 });
             }
-        } else if (amount === "until_resign_players") {
+        } else if (amount === "untilResignPlayers") {
             if (g.phase === c.PHASE_AFTER_DRAFT) {
                 season.newPhase(c.PHASE_RESIGN_PLAYERS);
             }
-        } else if (amount === "until_free_agency") {
+        } else if (amount === "untilFreeAgency") {
             if (g.phase === c.PHASE_RESIGN_PLAYERS) {
                 season.newPhase(c.PHASE_FREE_AGENCY, function () {
                     ui.updateStatus("Idle");
                 });
             }
-        } else if (amount === "until_preseason") {
+        } else if (amount === "untilPreseason") {
             if (g.phase === c.PHASE_FREE_AGENCY) {
                 season.newPhase(c.PHASE_PRESEASON);
             }
-        } else if (amount === "until_regular_season") {
+        } else if (amount === "untilRegularSeason") {
             if (g.phase === c.PHASE_PRESEASON) {
                 season.newPhase(c.PHASE_REGULAR_SEASON);
             }
         }
+    }
+
+    function playMenuHandlers() {
+        $("#play-menu-stop").click(function () {
+            play("stop");
+            return false;
+        });
+        $("#play-menu-day").click(function () {
+            play("day");
+            return false;
+        });
+        $("#play-menu-week").click(function () {
+            play("week");
+            return false;
+        });
+        $("#play-menu-month").click(function () {
+            play("month");
+            return false;
+        });
+        $("#play-menu-until-playoffs").click(function () {
+            play("untilPlayoffs");
+            return false;
+        });
+        $("#play-menu-through-playoffs").click(function () {
+            play("through{layoffs");
+            return false;
+        });
+        $("#play-menu-until-draft").click(function () {
+            play("untilDraft");
+            return false;
+        });
+        $("#play-menu-until-resign-players").click(function () {
+            play("untilResignPlayers");
+            return false;
+        });
+        $("#play-menu-until-free-agency").click(function () {
+            play("untilFreeAgency");
+            return false;
+        });
+        $("#play-menu-until-preseason").click(function () {
+            play("untilPreseason");
+            return false;
+        });
+        $("#play-menu-until-regular-season").click(function () {
+            play("untilRegularSeason");
+            return false;
+        });
     }
 
     function rosterAutoSort(cb) {
@@ -255,6 +302,7 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
 
     return {
         play: play,
+        playMenuHandlers: playMenuHandlers,
         rosterAutoSort: rosterAutoSort,
         rosterReorder: rosterReorder,
         rosterRelease: rosterRelease,

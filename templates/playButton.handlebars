@@ -3,11 +3,7 @@
     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Play <b class="caret"></b></a>
     <ul class="dropdown-menu">
       {{#options}}
-        {{#normal_link}}
-          <li><a href="{{url}}">{{label}}</a></li>
-        {{^}}
-          <li><a onclick="{{url}}" href="javascript:void(0);">{{label}}</a></li>
-        {{/normal_link}}
+        <li><a href="{{url}}" id="{{id}}">{{label}}</a></li>
       {{/options}}
     </ul>
   </li>

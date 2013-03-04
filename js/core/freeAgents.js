@@ -2,7 +2,7 @@
  * @name core.freeAgents
  * @namespace Functions related to free agents that didn't make sense to put anywhere else.
  */
-define(["db", "core/player", "util/random"], function (db, player, random) {
+define(["db", "core/player", "lib/underscore", "util/random"], function (db, player, _, random) {
     "use strict";
 
     /**

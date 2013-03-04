@@ -2,7 +2,7 @@
  * @name db
  * @namespace Functions that directly access an IndexedDB database.
  */
-define(["util/helpers"], function (helpers) {
+define(["lib/underscore", "util/helpers"], function (_, helpers) {
     "use strict";
 
     function connectMeta(cb) {

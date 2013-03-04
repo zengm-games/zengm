@@ -1,4 +1,4 @@
-define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league", "core/season", "core/trade", "util/helpers"], function (api, db, ui, contractNegotiation, game, league, season, trade, helpers) {
+define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league", "core/season", "core/trade", "lib/underscore", "util/helpers"], function (api, db, ui, contractNegotiation, game, league, season, trade, _, helpers) {
     "use strict";
 
     function beforeLeague(req, cb) {

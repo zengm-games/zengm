@@ -1,3 +1,11 @@
+requirejs.config({
+    shim: {
+        'lib/underscore': {
+            exports: '_'
+        }
+    }
+});
+
 requirejs(["db", "views", "ui", "util/helpers"], function (db, views, ui, helpers) {
     "use strict";
 

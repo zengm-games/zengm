@@ -2,7 +2,7 @@
  * @name core.gameSim
  * @namespace Individual game simulation.
  */
-define(["util/helpers", "util/random"], function (helpers, random) {
+define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, random) {
     "use strict";
 
     /**

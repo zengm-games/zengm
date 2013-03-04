@@ -2,7 +2,7 @@
  * @name api
  * @namespace Functions called directly in response to user action (clicking a button, etc).
  */
-define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/season", "core/trade", "util/lock"], function (db, views, ui, draft, game, player, season, trade, lock) {
+define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/season", "core/trade", "lib/underscore", "util/lock"], function (db, views, ui, draft, game, player, season, trade, _, lock) {
     "use strict";
 
     function play(amount) {
@@ -88,7 +88,7 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
             return false;
         });
         $("#play-menu-through-playoffs").click(function () {
-            play("through{layoffs");
+            play("throughPlayoffs");
             return false;
         });
         $("#play-menu-until-draft").click(function () {

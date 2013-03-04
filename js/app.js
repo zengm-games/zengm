@@ -1,13 +1,38 @@
 requirejs.config({
     shim: {
+        "lib/bootstrap-dropdown": {
+            deps: ["lib/jquery"]
+        },
         "lib/boxPlot": {
             exports: "boxPlot"
+        },
+        "lib/davis": {
+            deps: ["lib/jquery"],
+            exports: "Davis"
+        },
+        "lib/davis.google_analytics": {
+            deps: ["lib/davis"]
         },
         "lib/faces": {
             deps: ["lib/raphael"],
             exports: "faces"
         },
         "lib/IndexedDB-getAll-shim": {},
+        "lib/jquery-ui": {
+            deps: ["lib/jquery"]
+        },
+        "lib/jquery.dataTables": {
+            deps: ["lib/jquery"]
+        },
+        "lib/jquery.dataTables.bbgmSorting": {
+            deps: ["lib/jquery", "lib/jquery.dataTables"]
+        },
+        "lib/jquery.dataTables.bootstrap": {
+            deps: ["lib/jquery", "lib/jquery.dataTables"]
+        },
+        "lib/jquery.tabSlideOut": {
+            deps: ["lib/jquery"]
+        },
         "lib/raphael": {
             exports: "Raphael"
         },
@@ -18,9 +43,16 @@ requirejs.config({
 });
 
 // lib/IndexedDB-getAll-shim doesn't export anything, so it's at the end
-requirejs(["db", "views", "ui", "util/helpers", "lib/IndexedDB-getAll-shim"], function (db, views, ui, helpers) {
+requirejs(["db", "views", "ui", "util/helpers", "lib/bootstrap-dropdown", "lib/davis", "lib/davis.google_analytics", "lib/IndexedDB-getAll-shim", "lib/jquery-ui", "lib/jquery.dataTables", "lib/jquery.dataTables.bbgmSorting", "lib/jquery.dataTables.bootstrap", "lib/jquery.tabSlideOut"], function (db, views, ui, helpers) {
     "use strict";
 
+    // "Feedback" slider
+    $(".slide-out").tabSlideOut({
+        tabHandle: ".slide-out-handle",
+        rightPos: "20px"
+    });
+
+    // Can't proceed any further without IndexedDB support
     if (indexedDB === undefined) {
         var data = {
             container: "content",

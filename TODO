@@ -5,11 +5,16 @@ move distPlayerRatings link to top like in statsTids
 minify and combine scripts
   can everything be done through requirejs?
     http://requirejs.org/docs/api.html#config-shim
-      "For "modules" that are just jQuery or Backbone plugins that do not need to export any module value, the shim config can just be an array of dependencies:"
       remove from index.html, test.html
       add to both shims in app.js (test and normal)
       test
       delete from runjslint
+    jquery
+      get rid of javascript in index.html
+        tabSlideOut
+      make globals a module, somehow
+      get rid of include of jquery.js in index.html (should work after fixing the above two issues)
+      move shims out of app.js and to the appropriate places
     requirejs optimizer
       http://stackoverflow.com/questions/11323414/i-am-struggling-with-the-requirejs-optimizer-and-non-amd-modules/11454409#11454409
 display league/season counter on basketball-gm.com splash page

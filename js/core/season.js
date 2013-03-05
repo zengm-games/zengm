@@ -2,7 +2,7 @@
  * @name core.season
  * @namespace Somewhat of a hodgepodge. Basically, this is for anything related to a single season that doesn't deserve to be broken out into its own file. Currently, this includes things that happen when moving between phases of the season (i.e. regular season to playoffs) and scheduling. As I write this, I realize that it might make more sense to break up those two classes of functions into two separate modules, but oh well.
  */
-define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player", "lib/davis", "lib/handlebars.runtime", "lib/underscore", "util/helpers", "util/random"], function (db, ui, contractNegotiation, freeAgents, player, Davis, Handlebars, _, helpers, random) {
+define(["db", "globals", "ui", "core/contractNegotiation", "core/freeAgents", "core/player", "lib/davis", "lib/handlebars.runtime", "lib/underscore", "util/helpers", "util/random"], function (db, g, ui, contractNegotiation, freeAgents, player, Davis, Handlebars, _, helpers, random) {
     "use strict";
 
     /**

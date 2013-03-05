@@ -2,7 +2,7 @@
  * @name util.lock
  * @namespace These functions all deal with locking game state when there is some blocking action in progress. Like don't allow game simulations when a trade is being negotiated. For figuring out the current state, trust only the database.
  */
-define(["db"], function (db) {
+define(["db", "globals"], function (db, g) {
     "use strict";
 
     /**

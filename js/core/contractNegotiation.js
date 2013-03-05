@@ -2,7 +2,7 @@
  * @name core.contractNegotiation
  * @namespace All aspects of contract negotiation.
  */
-define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui, player, lock, random) {
+define(["db", "globals", "ui", "core/player", "util/lock", "util/random"], function (db, g, ui, player, lock, random) {
     "use strict";
 
     /**

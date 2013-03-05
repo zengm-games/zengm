@@ -2,7 +2,7 @@
  * @name test.core.trade
  * @namespace Tests for core.trade.
  */
-define(["db", "core/league", "core/trade"], function (db, league, trade) {
+define(["db", "globals", "core/league", "core/trade"], function (db, g, league, trade) {
     "use strict";
 
     describe("core/trade", function () {

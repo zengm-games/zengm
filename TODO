@@ -3,20 +3,9 @@ main todo
 
 move distPlayerRatings link to top like in statsTids
 minify and combine scripts
-  can everything be done through requirejs?
-    http://requirejs.org/docs/api.html#config-shim
-      remove from index.html, test.html
-      add to both shims in app.js (test and normal)
-      test
-      delete from runjslint
-    globals.js
-      if i make this a module somehow, move name stuff from ui.init back to globals.js and delete the call to ui.init from test/app.js
-      just merge c and g, no need for difference
-        except all the weird interactions between g and database. maybe revisit these..
-          g file has all uses of g.something. are they all valid?
-    requirejs optimizer
-      http://stackoverflow.com/questions/11323414/i-am-struggling-with-the-requirejs-optimizer-and-non-amd-modules/11454409#11454409
-      retain a way to easily switch between optimized and non-optimized javascript
+  requirejs optimizer
+    http://stackoverflow.com/questions/11323414/i-am-struggling-with-the-requirejs-optimizer-and-non-amd-modules/11454409#11454409
+    retain a way to easily switch between optimized and non-optimized javascript
 display league/season counter on basketball-gm.com splash page
 handlebars helper functions should call util.helpers for any heavy lifting or duplication
 make templates/helpers.js into real rjs module?

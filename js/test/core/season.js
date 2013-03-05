@@ -2,7 +2,7 @@
  * @name test.core.season
  * @namespace Tests for core.season.
  */
-define(["db", "core/season", "util/helpers", "test/helpers"], function (db, season, helpers, testHelpers) {
+define(["db", "globals", "core/season", "util/helpers", "test/helpers"], function (db, g, season, helpers, testHelpers) {
     "use strict";
 
     describe("core/season", function () {

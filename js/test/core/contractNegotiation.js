@@ -2,7 +2,7 @@
  * @name test.core.contractNegotiation
  * @namespace Tests for core.contractNegotiation.
  */
-define(["db", "core/contractNegotiation", "core/league"], function (db, contractNegotiation, league) {
+define(["db", "globals", "core/contractNegotiation", "core/league"], function (db, g, contractNegotiation, league) {
     "use strict";
 
     describe("core/contractNegotiation", function () {

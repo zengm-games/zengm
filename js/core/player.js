@@ -2,7 +2,7 @@
  * @name core.player
  * @namespace Functions operating on player objects, or parts of player objects.
  */
-define(["db", "lib/faces", "lib/underscore", "util/random"], function (db, faces, _, random) {
+define(["db", "globals", "lib/faces", "lib/underscore", "util/random"], function (db, g, faces, _, random) {
     "use strict";
 
     /**

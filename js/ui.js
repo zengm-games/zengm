@@ -2,7 +2,7 @@
  * @name ui
  * @namespace Anything that directly updates the UI.
  */
-define(["db", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "util/lock"], function (db, Davis, Handlebars, $, lock) {
+define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "util/lock"], function (db, g, Davis, Handlebars, $, lock) {
     "use strict";
 
     // Things to do on initial page load

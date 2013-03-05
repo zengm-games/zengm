@@ -2,7 +2,7 @@
  * @name core.game
  * @namespace Everything about games except the actual simulation. So, loading the schedule, loading the teams, saving the results, and handling multi-day simulations and what happens when there are no games left to play.
  */
-define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/advStats", "util/lock", "util/random"], function (db, ui, freeAgents, gameSim, season, advStats, lock, random) {
+define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/advStats", "util/lock", "util/random"], function (db, g, ui, freeAgents, gameSim, season, advStats, lock, random) {
     "use strict";
 
     function Game() {

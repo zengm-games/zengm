@@ -2,7 +2,7 @@
  * @name core.draft
  * @namespace The annual draft of new prospects.
  */
-define(["db", "core/player", "core/season", "util/helpers", "util/random"], function (db, player, season, helpers, random) {
+define(["db", "globals", "core/player", "core/season", "util/helpers", "util/random"], function (db, g, player, season, helpers, random) {
     "use strict";
 
     /**

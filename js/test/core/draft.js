@@ -2,7 +2,7 @@
  * @name test.core.draft
  * @namespace Tests for core.draft.
  */
-define(["db", "core/draft", "core/league"], function (db, draft, league) {
+define(["db", "globals", "core/draft", "core/league"], function (db, g, draft, league) {
     "use strict";
 
     describe("core/draft", function () {

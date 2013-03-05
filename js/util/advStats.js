@@ -2,7 +2,7 @@
  * @name util.advStats
  * @namespace Advanced stats (PER, WS, etc) that require some nontrivial calculations and thus are calculated and cached once each day.
  */
-define(["db", "lib/underscore"], function (db, _) {
+define(["db", "globals", "lib/underscore"], function (db, g, _) {
     "use strict";
 
     /**

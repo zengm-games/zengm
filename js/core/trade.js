@@ -2,7 +2,7 @@
  * @name core.trade
  * @namespace Trades between the user's team and other teams.
  */
-define(["db", "lib/underscore", "util/helpers"], function (db, _, helpers) {
+define(["db", "globals", "lib/underscore", "util/helpers"], function (db, g, _, helpers) {
     "use strict";
 
     /**

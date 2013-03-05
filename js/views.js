@@ -1,4 +1,4 @@
-define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league", "core/season", "core/trade", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers"], function (api, db, ui, contractNegotiation, game, league, season, trade, boxPlot, Davis, Handlebars, $, _, helpers) {
+define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "core/league", "core/season", "core/trade", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers"], function (api, db, g, ui, contractNegotiation, game, league, season, trade, boxPlot, Davis, Handlebars, $, _, helpers) {
     "use strict";
 
     function beforeLeague(req, cb) {

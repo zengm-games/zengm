@@ -18,9 +18,9 @@
 
         profile = profiles[random.randInt(0, profiles.length - 1)];
         agingYears = 12;
-        draftYear = g.season;
+        draftYear = 2013;
 
-        p = player.generate(g.PLAYER.UNDRAFTED, 19, profile, baseRating, pot, draftYear);
+        p = player.generate(-2, 19, profile, baseRating, pot, draftYear);
         console.log(p.ratings[0].ovr + " " + p.ratings[0].pot);
 
         p = player.develop(p, agingYears, true);

@@ -4,8 +4,7 @@ main todo
 move distPlayerRatings link to top like in statsTids
 minify and combine scripts
   requirejs optimizer
-    http://stackoverflow.com/questions/11323414/i-am-struggling-with-the-requirejs-optimizer-and-non-amd-modules/11454409#11454409
-    retain a way to easily switch between optimized and non-optimized javascript
+    closure compiler?
 display league/season counter on basketball-gm.com splash page
 handlebars helper functions should call util.helpers for any heavy lifting or duplication
 make templates/helpers.js into real rjs module?

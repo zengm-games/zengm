@@ -1,4 +1,5 @@
 requirejs.config({
+    baseUrl: "/js",
     shim: {
         "lib/bootstrap-dropdown": {
             deps: ["lib/jquery"]

@@ -10,7 +10,16 @@
     <link href="/css/bbgm.css" rel="stylesheet">
     <link href="/css/DT_bootstrap.css" rel="stylesheet">
 
-    <script data-main="/js/app.js" src="/js/lib/require.js"></script>
+    <script src="/js/lib/require.js"></script>
+    <script>
+        require.config({
+            paths: {
+                // Comment the following line to use unminified and unmerged JavaScript files
+                "/js/app": "/js/app-built"
+            }
+        });
+        require(["/js/app"]);
+    </script>
 
     <link rel="shortcut icon" href="/ico/favicon.ico">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/ico/apple-touch-icon-114-precomposed.png">

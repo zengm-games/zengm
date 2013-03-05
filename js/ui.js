@@ -2,7 +2,7 @@
  * @name ui
  * @namespace Anything that directly updates the UI.
  */
-define(["db", "util/lock"], function (db, lock) {
+define(["db", "lib/davis", "lib/jquery", "util/lock"], function (db, Davis, $, lock) {
     "use strict";
 
     function highlightNav(leaguePage) {

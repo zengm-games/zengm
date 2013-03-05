@@ -45,8 +45,7 @@ requirejs.config({
     }
 });
 
-// lib/IndexedDB-getAll-shim doesn't export anything, so it's at the end
-requirejs(["db", "views", "ui", "lib/jquery", "util/helpers", "lib/bootstrap-dropdown", "lib/davis", "lib/davis.google_analytics", "lib/IndexedDB-getAll-shim", "lib/jquery-ui", "lib/jquery.dataTables", "lib/jquery.dataTables.bbgmSorting", "lib/jquery.dataTables.bootstrap", "lib/jquery.tabSlideOut"], function (db, views, ui, $, helpers) {
+requirejs(["db", "views", "ui", "lib/davis", "lib/jquery", "util/helpers", "lib/bootstrap-dropdown", "lib/davis.google_analytics", "lib/IndexedDB-getAll-shim", "lib/jquery-ui", "lib/jquery.dataTables", "lib/jquery.dataTables.bbgmSorting", "lib/jquery.dataTables.bootstrap", "lib/jquery.tabSlideOut"], function (db, views, ui, Davis, $, helpers) {
     "use strict";
 
     // "Feedback" slider

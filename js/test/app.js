@@ -15,7 +15,6 @@ requirejs.config({
     }
 });
 
-// lib/IndexedDB-getAll-shim doesn't export anything, so it's at the end
 requirejs(["lib/chai", "views", "lib/IndexedDB-getAll-shim"], function (chai, views) {
     "use strict";
 

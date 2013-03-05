@@ -1,4 +1,6 @@
 (function ($) {
+    "use strict";
+
     /**
      * Based on http://www.datatables.net/examples/plug-ins/sorting_plugin.html
      *
@@ -12,7 +14,6 @@
      */
     $.fn.dataTableExt.aTypes.unshift(
         function (sData) {
-            "use strict";
             var bDash, bDigitAfterDash, bDigitBeforeDash, Char, i, sValidChars;
 
             bDash = false;
@@ -53,7 +54,6 @@
         }
     );
     $.fn.dataTableExt.oSort["numeric-dash-asc"] = function (a, b) {
-        "use strict";
         var x, y;
 
         x = a.split("-");
@@ -83,7 +83,6 @@
         return 0;
     };
     $.fn.dataTableExt.oSort["numeric-dash-desc"] = function (a, b) {
-        "use strict";
         var x, y;
 
         x = a.split("-");
@@ -127,7 +126,6 @@
      */
     $.fn.dataTableExt.aTypes.unshift(
         function (sData) {
-            "use strict";
             var bM, bSomething, Char, i, iDollarSign, sValidChars;
 
             iDollarSign = sData.indexOf("$");
@@ -160,7 +158,6 @@
         }
     );
     $.fn.dataTableExt.oSort["money-asc"] = function (a, b) {
-        "use strict";
         var x, y;
 
         x = parseFloat(a.substring(a.indexOf("$") + 1, a.indexOf("M")));
@@ -175,7 +172,6 @@
         return 0;
     };
     $.fn.dataTableExt.oSort["money-desc"] = function (a, b) {
-        "use strict";
         var x, y;
 
         x = parseFloat(a.substring(a.indexOf("$") + 1, a.indexOf("M")));
@@ -201,7 +197,6 @@
      */
     $.fn.dataTableExt.aTypes.unshift(
         function (sData) {
-            "use strict";
             var bM, bSomething, Char, i, iDollarSign, sValidChars;
 
             if (sData.match(/[A-Z][a-z]+ [A-Z][A-Z|a-z]+/)) {
@@ -212,7 +207,6 @@
         }
     );
     $.fn.dataTableExt.oSort["name-asc"] = function (a, b) {
-        "use strict";
         var x, xName, y, yName;
 
         x = a.match(/[A-Z][a-z]+ [A-Z][A-Z|a-z]+/)[0].split(' ');
@@ -233,7 +227,6 @@
         return 0;
     };
     $.fn.dataTableExt.oSort["name-desc"] = function (a, b) {
-        "use strict";
         var x, xName, y, yName;
 
         x = a.match(/[A-Z][a-z]+ [A-Z][A-Z|a-z]+/)[0].split(' ');

@@ -2,7 +2,7 @@
  * @name core.season
  * @namespace Somewhat of a hodgepodge. Basically, this is for anything related to a single season that doesn't deserve to be broken out into its own file. Currently, this includes things that happen when moving between phases of the season (i.e. regular season to playoffs) and scheduling. As I write this, I realize that it might make more sense to break up those two classes of functions into two separate modules, but oh well.
  */
-define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player", "lib/davis", "lib/underscore", "util/helpers", "util/random"], function (db, ui, contractNegotiation, freeAgents, player, Davis, _, helpers, random) {
+define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player", "lib/davis", "lib/handlebars.runtime", "lib/underscore", "util/helpers", "util/random"], function (db, ui, contractNegotiation, freeAgents, player, Davis, Handlebars, _, helpers, random) {
     "use strict";
 
     /**
@@ -799,7 +799,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
      * @param {function()=} cb Optional callback run after the phase change is completed.
      */
     function newPhase(phase, cb) {
-        var button, playButtonElement;
+        var playButtonElement;
 
         // Prevent code running twice
         if (phase === g.phase) {
@@ -807,10 +807,9 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
         }
 
         // Prevent new phase from being clicked twice by deleting all options from the play menu. The options will be restored after the new phase is set or if there is an error by calling ui.updatePlayMenu.
-        button = Handlebars.templates.playButton({options: []});
         playButtonElement = document.getElementById("playButton");
         if (playButtonElement) {
-            playButtonElement.innerHTML = button;
+            playButtonElement.innerHTML = Handlebars.templates.playButton({options: []});
         }
 
         if (phase === c.PHASE_PRESEASON) {

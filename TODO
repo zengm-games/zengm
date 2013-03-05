@@ -16,6 +16,7 @@ minify and combine scripts
       retain a way to easily switch between optimized and non-optimized javascript
 display league/season counter on basketball-gm.com splash page
 handlebars helper functions should call util.helpers for any heavy lifting or duplication
+make templates/helpers.js into real rjs module?
 
 ---
 

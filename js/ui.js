@@ -2,7 +2,7 @@
  * @name ui
  * @namespace Anything that directly updates the UI.
  */
-define(["db", "lib/davis", "lib/jquery", "util/lock"], function (db, Davis, $, lock) {
+define(["db", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "util/lock"], function (db, Davis, Handlebars, $, lock) {
     "use strict";
 
     // Things to do on initial page load
@@ -212,7 +212,7 @@ define(["db", "lib/davis", "lib/jquery", "util/lock"], function (db, Davis, $, l
     to client. ot is passed on to the lock functions.
     */
     function updatePlayMenu(ot, cb) {
-        var allOptions, button, i, ids, j, keys, playButtonElement, someOptions;
+        var allOptions, keys;
 
         allOptions = [{id: "play-menu-stop", label: "Stop"},
                       {id: "play-menu-day", label: "One day"},
@@ -264,6 +264,8 @@ define(["db", "lib/davis", "lib/jquery", "util/lock"], function (db, Davis, $, l
             }
 
             lock.negotiationInProgress(ot, function (negotiationInProgress) {
+                var i, ids, j, playButtonElement, someOptions;
+
                 if (negotiationInProgress && g.phase !== c.PHASE_RESIGN_PLAYERS) {
                     keys = ["play-menu-contract-negotiation"];
                 }
@@ -284,10 +286,9 @@ define(["db", "lib/davis", "lib/jquery", "util/lock"], function (db, Davis, $, l
                     }
                 }
 
-                button = Handlebars.templates.playButton({options: someOptions});
                 playButtonElement = document.getElementById("playButton");
                 if (playButtonElement) {
-                    playButtonElement.innerHTML = button;
+                    playButtonElement.innerHTML = Handlebars.templates.playButton({options: someOptions});
                 }
 
                 require("api").playMenuHandlers();  // Because of circular dependency

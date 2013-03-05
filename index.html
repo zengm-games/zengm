@@ -12,13 +12,9 @@
 
     <script src="/js/lib/require.js"></script>
     <script>
-        require.config({
-            paths: {
-                // Comment the following line to use unminified and unmerged JavaScript files
-                "/js/app": "/js/app-built"
-            }
-        });
-        require(["/js/app"]);
+        // "/gen/app.js" - minified
+        // "/js/app.js" - unminified
+        require(["/gen/app.js"]);
     </script>
 
     <link rel="shortcut icon" href="/ico/favicon.ico">

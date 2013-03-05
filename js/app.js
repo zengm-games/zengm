@@ -1,6 +1,9 @@
 requirejs.config({
     baseUrl: "/js",
     shim: {
+        "../gen/templates": {
+            deps: ["lib/handlebars.runtime", "templates/helpers"]
+        },
         "lib/bootstrap-dropdown": {
             deps: ["lib/jquery"]
         },
@@ -43,9 +46,6 @@ requirejs.config({
         "lib/raphael": {
             exports: "Raphael"
         },
-        "templates/compiled": {
-            deps: ["lib/handlebars.runtime", "templates/helpers"]
-        },
         "templates/helpers": {
             deps: ["lib/handlebars.runtime"]
         },
@@ -55,7 +55,7 @@ requirejs.config({
     }
 });
 
-requirejs(["db", "views", "ui", "lib/davis", "lib/jquery", "util/helpers", "lib/bootstrap-dropdown", "lib/davis.google_analytics", "lib/IndexedDB-getAll-shim", "lib/jquery-ui", "lib/jquery.dataTables", "lib/jquery.dataTables.bbgmSorting", "lib/jquery.dataTables.bootstrap", "lib/jquery.tabSlideOut", "templates/compiled"], function (db, views, ui, Davis, $, helpers) {
+requirejs(["db", "views", "ui", "lib/davis", "lib/jquery", "util/helpers", "../gen/templates", "lib/bootstrap-dropdown", "lib/davis.google_analytics", "lib/IndexedDB-getAll-shim", "lib/jquery-ui", "lib/jquery.dataTables", "lib/jquery.dataTables.bbgmSorting", "lib/jquery.dataTables.bootstrap", "lib/jquery.tabSlideOut"], function (db, views, ui, Davis, $, helpers) {
     "use strict";
 
     ui.init();

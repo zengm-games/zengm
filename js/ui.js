@@ -229,31 +229,31 @@ define(["db", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "util/lock"],
                       {id: "play-menu-contract-negotiation", url: "/l/" + g.lid + "/negotiation", label: "Continue contract negotiation"},
                       {id: "play-menu-contract-negotiation-list", url: "/l/" + g.lid + "/negotiation", label: "Continue resigning players"}];
 
-        if (g.phase === c.PHASE_PRESEASON) {
+        if (g.phase === g.PHASE.PRESEASON) {
             // Preseason
             keys = ["play-menu-until-regular-season"];
-        } else if (g.phase === c.PHASE_REGULAR_SEASON) {
+        } else if (g.phase === g.PHASE.REGULAR_SEASON) {
             // Regular season - pre trading deadline
             keys = ["play-menu-day", "play-menu-week", "play-menu-month", "play-menu-until-playoffs"];
-        } else if (g.phase === c.PHASE_AFTER_TRADE_DEADLINE) {
+        } else if (g.phase === g.PHASE.AFTER_TRADE_DEADLINE) {
             // Regular season - post trading deadline
             keys = ["play-menu-day", "play-menu-week", "play-menu-month", "play-menu-until-playoffs"];
-        } else if (g.phase === c.PHASE_PLAYOFFS) {
+        } else if (g.phase === g.PHASE.PLAYOFFS) {
             // Playoffs
             keys = ["play-menu-day", "play-menu-week", "play-menu-month", "play-menu-through-playoffs"];
-        } else if (g.phase === c.PHASE_BEFORE_DRAFT) {
+        } else if (g.phase === g.PHASE.BEFORE_DRAFT) {
             // Offseason - pre draft
             keys = ["play-menu-until-draft"];
-        } else if (g.phase === c.PHASE_DRAFT) {
+        } else if (g.phase === g.PHASE.DRAFT) {
             // Draft
             keys = ["play-menu-view-draft"];
-        } else if (g.phase === c.PHASE_AFTER_DRAFT) {
+        } else if (g.phase === g.PHASE.AFTER_DRAFT) {
             // Offseason - post draft
             keys = ["play-menu-until-resign-players"];
-        } else if (g.phase === c.PHASE_RESIGN_PLAYERS) {
+        } else if (g.phase === g.PHASE.RESIGN_PLAYERS) {
             // Offseason - resign players
             keys = ["play-menu-contract-negotiation-list", "play-menu-until-free-agency"];
-        } else if (g.phase === c.PHASE_FREE_AGENCY) {
+        } else if (g.phase === g.PHASE.FREE_AGENCY) {
             // Offseason - free agency
             keys = ["play-menu-until-preseason"];
         }
@@ -266,7 +266,7 @@ define(["db", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "util/lock"],
             lock.negotiationInProgress(ot, function (negotiationInProgress) {
                 var i, ids, j, playButtonElement, someOptions;
 
-                if (negotiationInProgress && g.phase !== c.PHASE_RESIGN_PLAYERS) {
+                if (negotiationInProgress && g.phase !== g.PHASE.RESIGN_PLAYERS) {
                     keys = ["play-menu-contract-negotiation"];
                 }
 

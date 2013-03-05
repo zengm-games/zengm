@@ -400,7 +400,7 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
                                     }
                                 }
 
-                                g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) {
+                                g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(g.PLAYER.RETIRED, true)).onsuccess = function (event) {
                                     var attributes, i, freeAgents, leagueLeaders, players, ratings, stats, userPlayers;
 
                                     attributes = ["pid", "name", "abbrev", "tid", "age", "contractAmount", "contractExp", "rosterOrder"];
@@ -437,7 +437,7 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
                                     vars.expiring = [];
                                     for (i = 0; i < userPlayers.length; i++) {
                                         // Show contracts expiring this year, or next year if we're already in free agency
-                                        if (userPlayers[i].contractExp === g.season || (g.phase >= c.PHASE_RESIGN_PLAYERS && userPlayers[i].contractExp === g.season + 1)) {
+                                        if (userPlayers[i].contractExp === g.season || (g.phase >= g.PHASE.RESIGN_PLAYERS && userPlayers[i].contractExp === g.season + 1)) {
                                             vars.expiring.push({
                                                 pid: userPlayers[i].pid,
                                                 name: userPlayers[i].name,
@@ -451,7 +451,7 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
                                     }
 
                                     // Free agents
-                                    freeAgents = _.filter(players, function (p) { return p.tid === c.PLAYER_FREE_AGENT; });
+                                    freeAgents = _.filter(players, function (p) { return p.tid === g.PLAYER.FREE_AGENT; });
                                     freeAgents.sort(function (a, b) {  return (b.ratings.ovr + b.ratings.pot) - (a.ratings.ovr + a.ratings.pot); });
                                     vars.freeAgents = [];
                                     if (freeAgents.length > 0) {
@@ -478,7 +478,7 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
 
                                         playoffSeries = event.target.result;
                                         vars.showPlayoffSeries = false;
-                                        vars.playoffsStarted = g.phase >= c.PHASE_PLAYOFFS;
+                                        vars.playoffsStarted = g.phase >= g.PHASE.PLAYOFFS;
                                         if (playoffSeries !== undefined) {
                                             series = playoffSeries.series;
                                             found = false;
@@ -624,7 +624,7 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
                 });
             }
 
-            if (season === g.season && g.phase < c.PHASE_PLAYOFFS) {
+            if (season === g.season && g.phase < g.PHASE.PLAYOFFS) {
                 // In the current season, before playoffs start, display projected matchups
                 finalMatchups = false;
                 attributes = ["tid", "cid", "abbrev", "name"];
@@ -710,7 +710,7 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
             season = helpers.validateSeason(req.params.season);
 
             // If playoffs aren't over, season awards haven't been set
-            if (g.phase <= c.PHASE_PLAYOFFS) {
+            if (g.phase <= g.PHASE.PLAYOFFS) {
                 // View last season by default
                 if (season === g.season) {
                     season -= 1;
@@ -1034,8 +1034,8 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
 
     function freeAgents(req) {
         beforeLeague(req, function () {
-            if (g.phase >= c.PHASE_AFTER_TRADE_DEADLINE && g.phase <= c.PHASE_RESIGN_PLAYERS) {
-                if (g.phase === c.PHASE_RESIGN_PLAYERS) {
+            if (g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.RESIGN_PLAYERS) {
+                if (g.phase === g.PHASE.RESIGN_PLAYERS) {
                     Davis.location.assign(new Davis.Request("/l/" + g.lid + "/negotiation"));
                     return;
                 }
@@ -1044,14 +1044,14 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
                 return;
             }
 
-            g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(c.PLAYER_FREE_AGENT).onsuccess = function (event) {
+            g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
                 var attributes, data, i, players, ratings, stats;
 
                 attributes = ["pid", "name", "pos", "age", "contractAmount", "contractExp", "freeAgentTimesAsked"];
                 ratings = ["ovr", "pot", "skills"];
                 stats = ["min", "pts", "trb", "ast", "per"];
 
-                players = db.getPlayers(event.target.result, g.season, c.PLAYER_FREE_AGENT, attributes, stats, ratings, {oldStats: true, showNoStats: true});
+                players = db.getPlayers(event.target.result, g.season, g.PLAYER.FREE_AGENT, attributes, stats, ratings, {oldStats: true, showNoStats: true});
 
                 for (i = 0; i < players.length; i++) {
                     players[i].contractAmount = players[i].contractAmount * (1 + players[i].freeAgentTimesAsked / 10);
@@ -1081,7 +1081,7 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
         beforeLeague(req, function () {
             var abbrev, newOtherTid, out, pid, showTrade, validateSavedPids;
 
-            if (g.phase >= c.PHASE_AFTER_TRADE_DEADLINE && g.phase <= c.PHASE_PLAYOFFS) {
+            if (g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.PLAYOFFS) {
                 helpers.error("You're not allowed to make trades now.", req);
                 return;
             }
@@ -1285,7 +1285,7 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
             season = helpers.validateSeason(req.params.season);
 
             // Draft hasn't happened yet this year
-            if (g.phase < c.PHASE_DRAFT) {
+            if (g.phase < g.PHASE.DRAFT) {
                 // View last season by default
                 if (season === g.season) {
                     season -= 1;
@@ -1302,8 +1302,8 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
 
             playerStore = g.dbl.transaction(["players"]).objectStore("players");
             // Active draft
-            if (g.phase === c.PHASE_DRAFT && season === g.season) {
-                playerStore.index("tid").getAll(c.PLAYER_UNDRAFTED).onsuccess = function (event) {
+            if (g.phase === g.PHASE.DRAFT && season === g.season) {
+                playerStore.index("tid").getAll(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
                     var i, pa, player, playersAll, pr, undrafted;
                     playersAll = event.target.result;
                     playersAll.sort(function (a, b) {  return (b.ratings[0].ovr + 2 * b.ratings[0].pot) - (a.ratings[0].ovr + 2 * a.ratings[0].pot); }); // Can use ratings[0] because pre-draft rookies only have one ratings entry
@@ -1334,7 +1334,7 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
                         for (i = 0; i < playersAll.length; i++) {
                             pa = playersAll[i];
 
-                            if (pa.tid !== c.PLAYER_UNDRAFTED) {
+                            if (pa.tid !== g.PLAYER.UNDRAFTED) {
                                 // Attributes
                                 result = helpers.validateTid(pa.draftTid);
                                 draftTid = result[0];
@@ -1793,7 +1793,7 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
                 player = db.getPlayer(event.target.result, null, null, attributes, stats, ratings);
 
                 // Account for extra free agent demands
-                if (player.tid === c.PLAYER_FREE_AGENT) {
+                if (player.tid === g.PLAYER.FREE_AGENT) {
                     player.contractAmount = player.contractAmount * (1 + player.freeAgentTimesAsked / 10);
                 }
 
@@ -1803,7 +1803,7 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
                     container: "league_content",
                     template: "player",
                     title: player.name,
-                    vars: {player: player, currentRatings: currentRatings, showTradeFor: player.tid !== g.userTid && player.tid >= 0, freeAgent: player.tid === c.PLAYER_FREE_AGENT, retired: player.tid === c.PLAYER_RETIRED, showContract: player.tid !== c.PLAYER_UNDRAFTED && player.tid !== c.PLAYER_RETIRED}
+                    vars: {player: player, currentRatings: currentRatings, showTradeFor: player.tid !== g.userTid && player.tid >= 0, freeAgent: player.tid === g.PLAYER.FREE_AGENT, retired: player.tid === g.PLAYER.RETIRED, showContract: player.tid !== g.PLAYER.UNDRAFTED && player.tid !== g.PLAYER.RETIRED}
                 };
                 ui.update(data, req.raw.cb);
             };
@@ -1825,13 +1825,13 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
                     return;
                 }
 
-                if (g.phase !== c.PHASE_RESIGN_PLAYERS) {
+                if (g.phase !== g.PHASE.RESIGN_PLAYERS) {
                     helpers.error("Something bad happened.", req);
                     return;
                 }
 
                 // Get all free agents, filter array based on negotiations data, pass to db.getPlayers, augment with contract data from negotiations
-                g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(c.PLAYER_FREE_AGENT).onsuccess = function (event) {
+                g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
                     var attributes, data, i, j, players, playersAll, playersSome, ratings, stats;
 
                     playersAll = event.target.result;
@@ -1909,7 +1909,7 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
                     negotiation.teamAmount /= 1000;
                     negotiation.playerExpiration = negotiation.playerYears + g.season;
                     // Adjust to account for in-season signings;
-                    if (g.phase <= c.PHASE_AFTER_TRADE_DEADLINE) {
+                    if (g.phase <= g.PHASE.AFTER_TRADE_DEADLINE) {
                         negotiation.playerExpiration -= 1;
                     }
 

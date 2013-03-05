@@ -18,7 +18,7 @@ define(["db", "core/player", "lib/underscore", "util/random"], function (db, pla
 
         transaction = g.dbl.transaction(["players", "releasedPlayers"], "readwrite");
 
-        transaction.objectStore("players").index("tid").getAll(c.PLAYER_FREE_AGENT).onsuccess = function (event) {
+        transaction.objectStore("players").index("tid").getAll(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
             var i, numPlayersOnRoster, players, signTeam, tids;
 
             // List of free agents, sorted by value
@@ -108,7 +108,7 @@ define(["db", "core/player", "lib/underscore", "util/random"], function (db, pla
         var tx;
 
         tx = g.dbl.transaction("players", "readwrite");
-        tx.objectStore("players").index("tid").openCursor(c.PLAYER_FREE_AGENT).onsuccess = function (event) {
+        tx.objectStore("players").index("tid").openCursor(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
             var cursor, p;
 
             cursor = event.target.result;

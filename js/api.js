@@ -22,7 +22,7 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
 
             game.play(numDays, true);
         } else if (amount === "untilPlayoffs") {
-            if (g.phase < c.PHASE_PLAYOFFS) {
+            if (g.phase < g.PHASE.PLAYOFFS) {
 /*                season.getSchedule(null, 0, function (schedule) {
                     numDays = Math.floor(2 * schedule.length / (g.numTeams));
                     game.play(numDays, true);
@@ -36,8 +36,8 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
                 db.setGameAttributes({gamesInProgress: false}, ui.updatePlayMenu);
             });
         } else if (amount === "untilDraft") {
-            if (g.phase === c.PHASE_BEFORE_DRAFT) {
-                season.newPhase(c.PHASE_DRAFT, function () {
+            if (g.phase === g.PHASE.BEFORE_DRAFT) {
+                season.newPhase(g.PHASE.DRAFT, function () {
                     draft.generatePlayers(function () {
                         draft.setOrder(function () {
                             Davis.location.assign(new Davis.Request("/l/" + g.lid + "/draft"));
@@ -46,22 +46,22 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
                 });
             }
         } else if (amount === "untilResignPlayers") {
-            if (g.phase === c.PHASE_AFTER_DRAFT) {
-                season.newPhase(c.PHASE_RESIGN_PLAYERS);
+            if (g.phase === g.PHASE.AFTER_DRAFT) {
+                season.newPhase(g.PHASE.RESIGN_PLAYERS);
             }
         } else if (amount === "untilFreeAgency") {
-            if (g.phase === c.PHASE_RESIGN_PLAYERS) {
-                season.newPhase(c.PHASE_FREE_AGENCY, function () {
+            if (g.phase === g.PHASE.RESIGN_PLAYERS) {
+                season.newPhase(g.PHASE.FREE_AGENCY, function () {
                     ui.updateStatus("Idle");
                 });
             }
         } else if (amount === "untilPreseason") {
-            if (g.phase === c.PHASE_FREE_AGENCY) {
-                season.newPhase(c.PHASE_PRESEASON);
+            if (g.phase === g.PHASE.FREE_AGENCY) {
+                season.newPhase(g.PHASE.PRESEASON);
             }
         } else if (amount === "untilRegularSeason") {
-            if (g.phase === c.PHASE_PRESEASON) {
-                season.newPhase(c.PHASE_REGULAR_SEASON);
+            if (g.phase === g.PHASE.PRESEASON) {
+                season.newPhase(g.PHASE.REGULAR_SEASON);
             }
         }
     }
@@ -267,7 +267,7 @@ define(["db", "views", "ui", "core/draft", "core/game", "core/player", "core/sea
         ui.updateStatus('Draft in progress...');
         var pids = draft.untilUserOrEnd(function (pids) {
             var done = false;
-            if (g.phase === c.PHASE_AFTER_DRAFT) {
+            if (g.phase === g.PHASE.AFTER_DRAFT) {
                 done = true;
                 ui.updateStatus('Idle');
             }

@@ -1,4 +1,6 @@
-var c, g;
+// The way this works is... any "global" variables that need to be widely available are stored in g. Some of these are constants, like the ones defined below. Some others are dynamic, like the year of the current season, and are stored in the gameAttributes object store. The dynamic components of g are retrieved/updated/synced elsewhere. Yes, it's kind of confusing and arbitrary.
+
+var g;
 
 g = {};
 
@@ -15,31 +17,26 @@ g.nickNames = [];
 g.firstNames = [];
 g.lastNames = [];
 
+// Constants in all caps
+g.PHASE = {
+    PRESEASON: 0,
+    REGULAR_SEASON: 1,
+    AFTER_TRADE_DEADLINE: 2,
+    PLAYOFFS: 3,
+    BEFORE_DRAFT: 4,
+    DRAFT: 5,
+    AFTER_DRAFT: 6,
+    RESIGN_PLAYERS: 7,
+    FREE_AGENCY: 8
+};
+g.PLAYER = {
+    FREE_AGENT: -1,
+    UNDRAFTED: -2,
+    RETIRED: -3
+};
+
 // THIS MUST BE ACCURATE OR BAD STUFF WILL HAPPEN
-g.notInDb = ["dbm", "dbl", "lid", "ticketPrice", "numTeams", "confs", "divs", "salaryCap", "minContract", "notInDb", "nickNames", "firstNames", "lastNames"];
-
-c = {};
-
-c.PHASE_PRESEASON = 0;
-c.PHASE_REGULAR_SEASON = 1;
-c.PHASE_AFTER_TRADE_DEADLINE = 2;
-c.PHASE_PLAYOFFS = 3;
-c.PHASE_BEFORE_DRAFT = 4;
-c.PHASE_DRAFT = 5;
-c.PHASE_AFTER_DRAFT = 6;
-c.PHASE_RESIGN_PLAYERS = 7;
-c.PHASE_FREE_AGENCY = 8;
-
-c.PLAYER_FREE_AGENT = -1;
-c.PLAYER_UNDRAFTED = -2;
-c.PLAYER_RETIRED = -3;
-
-c.DISTANCE_AT_RIM = 0;
-c.DISTANCE_LOW_POST = 1;
-c.DISTANCE_MID_RANGE = 2;
-c.DISTANCE_THREE_POINTER = 3;
-c.DISTANCES = ["at the rim", "from the low post", "a mid-range jumper", "a three pointer"];
-
+g.notInDb = ["dbm", "dbl", "lid", "ticketPrice", "numTeams", "confs", "divs", "salaryCap", "minContract", "notInDb", "nickNames", "firstNames", "lastNames", "PHASE", "PLAYER"];
 
 window.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
 window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange;

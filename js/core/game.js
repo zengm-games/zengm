@@ -506,10 +506,10 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/advS
             db.setGameAttributes({gamesInProgress: false}, function () {
                 ui.updatePlayMenu(null, function () {
                     // Check to see if the season is over
-                    if (g.phase < c.PHASE_PLAYOFFS) {
+                    if (g.phase < g.PHASE.PLAYOFFS) {
                         season.getSchedule(null, 0, function (schedule) {
                             if (schedule.length === 0) {
-                                season.newPhase(c.PHASE_PLAYOFFS);
+                                season.newPhase(g.PHASE.PLAYOFFS);
                             }
                         });
                     }
@@ -546,7 +546,7 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/advS
                             if (i < schedule.length) {
                                 gs = new gameSim.GameSim(schedule[i].gid, teams[schedule[i].homeTid], teams[schedule[i].awayTid]);
                                 results = gs.run();
-                                doSaveResults(i, results, g.phase === c.PHASE_PLAYOFFS);
+                                doSaveResults(i, results, g.phase === g.PHASE.PLAYOFFS);
                             }
                         };
                         doSaveResults = function (i, results, playoffs) {
@@ -596,7 +596,7 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/advS
             // This is called if there are remaining days to simulate
             cbYetAnother = function () {
                 // Check if it's the playoffs and do some special stuff if it is or isn't
-                if (g.phase !== c.PHASE_PLAYOFFS) {
+                if (g.phase !== g.PHASE.PLAYOFFS) {
                     // Decrease free agent demands and let AI teams sign them
                     freeAgents.decreaseDemands(function () {
                         freeAgents.autoSign(function () {
@@ -605,8 +605,8 @@ define(["db", "ui", "core/freeAgents", "core/gameSim", "core/season", "util/advS
                     });
                 } else {
                     season.newSchedulePlayoffsDay(function () {
-                        // If season.newSchedulePlayoffsDay didn't move the phase to c.PHASE_BEFORE_DRAFT, then the playoffs are still happening.
-                        if (g.phase === c.PHASE_PLAYOFFS) {
+                        // If season.newSchedulePlayoffsDay didn't move the phase to g.PHASE.BEFORE_DRAFT, then the playoffs are still happening.
+                        if (g.phase === g.PHASE.PLAYOFFS) {
                             playoffsContinue = true;
                         }
                         cbPlayGames();

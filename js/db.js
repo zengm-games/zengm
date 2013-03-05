@@ -212,11 +212,11 @@ define(["lib/underscore", "util/helpers"], function (_, helpers) {
                 if (pa.tid >= 0) {
                     teams = helpers.getTeams();
                     player.teamName = teams[pa.tid].name;
-                } else if (pa.tid === c.PLAYER_FREE_AGENT) {
+                } else if (pa.tid === g.PLAYER.FREE_AGENT) {
                     player.teamName = "Free Agent";
-                } else if (pa.tid === c.PLAYER_UNDRAFTED) {
+                } else if (pa.tid === g.PLAYER.UNDRAFTED) {
                     player.teamName = "Draft Prospect";
-                } else if (pa.tid === c.PLAYER_RETIRED) {
+                } else if (pa.tid === g.PLAYER.RETIRED) {
                     player.teamName = "Retired";
                 }
             } else {

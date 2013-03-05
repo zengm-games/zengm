@@ -20,7 +20,7 @@
         agingYears = 12;
         draftYear = g.season;
 
-        p = player.generate(c.PLAYER_UNDRAFTED, 19, profile, baseRating, pot, draftYear);
+        p = player.generate(g.PLAYER.UNDRAFTED, 19, profile, baseRating, pot, draftYear);
         console.log(p.ratings[0].ovr + " " + p.ratings[0].pot);
 
         p = player.develop(p, agingYears, true);

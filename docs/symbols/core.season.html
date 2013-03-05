@@ -486,7 +486,7 @@ The awards are saved to the "awards" object store.
 					<div class="description">
 						Set a new phase of the game.
 
-This function is called to do all the crap that must be done during transitions between phases of the game, such as moving from the regular season to the playoffs. Phases are defined in the c.PHASE_* global variables. The phase update may happen asynchronously if the database must be accessed, so do not rely on g.phase being updated immediately after this function is called. Instead, pass a callback.
+This function is called to do all the crap that must be done during transitions between phases of the game, such as moving from the regular season to the playoffs. Phases are defined in the g.PHASE.* global variables. The phase update may happen asynchronously if the database must be accessed, so do not rely on g.phase being updated immediately after this function is called. Instead, pass a callback.
 						
 						
 					</div>
@@ -501,7 +501,7 @@ This function is called to do all the crap that must be done during transitions 
 									<span class="light fixedFont">{number}</span> <b>phase</b>
 									
 								</dt>
-								<dd>Numeric phase ID. This should always be one of the c.PHASE_* variables defined in globals.js.</dd>
+								<dd>Numeric phase ID. This should always be one of the g.PHASE.* variables defined in globals.js.</dd>
 							
 								<dt>
 									<span class="light fixedFont">{function()=}</span> <b>cb</b>

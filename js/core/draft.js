@@ -34,7 +34,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
             agingYears = random.randInt(0, 3);
             draftYear = g.season;
 
-            p = player.generate(c.PLAYER_UNDRAFTED, 19, profile, baseRating, pot, draftYear);
+            p = player.generate(g.PLAYER.UNDRAFTED, 19, profile, baseRating, pot, draftYear);
             p = player.develop(p, agingYears, true);
 
             db.putPlayer(playerStore, p);
@@ -138,7 +138,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
 
         pids = [];
 
-        g.dbl.transaction("players").objectStore("players").index("tid").getAll(c.PLAYER_UNDRAFTED).onsuccess = function (event) {
+        g.dbl.transaction("players").objectStore("players").index("tid").getAll(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
             var playersAll;
 
             playersAll = event.target.result;
@@ -152,7 +152,7 @@ define(["db", "core/player", "core/season", "util/helpers", "util/random"], func
                     db.setDraftOrder(draftOrder, function () {
                         // Is draft over?;
                         if (draftOrder.length === 0) {
-                            season.newPhase(c.PHASE_AFTER_DRAFT, function () {
+                            season.newPhase(g.PHASE.AFTER_DRAFT, function () {
                                 cb(pids);
                             });
                         } else {

@@ -19,7 +19,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
         transaction = g.dbl.transaction(["players", "releasedPlayers", "teams"]);
 
         // Any non-retired player can win an award
-        transaction.objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) {
+        transaction.objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(g.PLAYER.RETIRED, true)).onsuccess = function (event) {
             var attributes, awards, i, p, players, ratings, seasonAttributes, stats;
 
             awards = {season: g.season};
@@ -381,7 +381,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                     cursor.continue();
                 } else {
                     // Loop through all non-retired players
-                    tx.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) {
+                    tx.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(g.PLAYER.RETIRED, true)).onsuccess = function (event) {
                         var cursorP, p;
 
                         cursorP = event.target.result;
@@ -407,7 +407,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
             tx.oncomplete = function () {
                 // AI teams sign free agents
                 freeAgents.autoSign(function () {
-                    newPhaseCb(c.PHASE_PRESEASON, phaseText, cb, true);
+                    newPhaseCb(g.PHASE.PRESEASON, phaseText, cb, true);
                 });
             };
         });
@@ -461,7 +461,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                 if (done === g.numTeams && !userTeamSizeError) {
                     newSchedule(function (tids) {
                         // 4th parameter of newPhaseCb will reload the page when true. Don't do this if this is the first season, as that means the new league menu is still displayed (probably) and views.newLeague will handle a redirect to the league dashboard.
-                        setSchedule(tids, function () { newPhaseCb(c.PHASE_REGULAR_SEASON, phaseText, cb, g.season !== g.startingSeason); });
+                        setSchedule(tids, function () { newPhaseCb(g.PHASE.REGULAR_SEASON, phaseText, cb, g.season !== g.startingSeason); });
                     });
 
                     // Auto sort rosters (except player's team)
@@ -490,7 +490,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
         var phaseText;
 
         phaseText = g.season + " regular season, after trade deadline";
-        newPhaseCb(c.PHASE_AFTER_TRADE_DEADLINE, phaseText, cb);
+        newPhaseCb(g.PHASE.AFTER_TRADE_DEADLINE, phaseText, cb);
     }
 
     function newPhasePlayoffs(cb) {
@@ -586,7 +586,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                 };
                 tx.oncomplete = function () {
                     // This will only run after all the team and player stat rows have been saved to the database.
-                    newPhaseCb(c.PHASE_PLAYOFFS, phaseText, function () {
+                    newPhaseCb(g.PHASE.PLAYOFFS, phaseText, function () {
                         if (cb !== undefined) {
                             cb();
                         }
@@ -604,7 +604,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
 
         // Check for retiring players
         tx = g.dbl.transaction("players", "readwrite");
-        tx.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(c.PLAYER_RETIRED, true)).onsuccess = function (event) { // All non-retired players
+        tx.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(g.PLAYER.RETIRED, true)).onsuccess = function (event) { // All non-retired players
             var age, cont, cursor, excessAge, excessPot, i, maxAge, minPot, p, pot, update;
 
             update = false;
@@ -622,13 +622,13 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
 
                 if (age > maxAge || pot < minPot) {
                     excessAge = 0;
-                    if (age > 34 || p.tid === c.PLAYER_FREE_AGENT) {  // Only players older than 34 or without a contract will retire
+                    if (age > 34 || p.tid === g.PLAYER.FREE_AGENT) {  // Only players older than 34 or without a contract will retire
                         if (age > 34) {
                             excessAge = (age - 34) / 20;  // 0.05 for each year beyond 34
                         }
                         excessPot = (40 - pot) / 50.0;  // 0.02 for each potential rating below 40 (this can be negative)
                         if (excessAge + excessPot + random.gauss(0, 1) > 0) {
-                            p.tid = c.PLAYER_RETIRED;
+                            p.tid = g.PLAYER.RETIRED;
                             p.retiredYear = g.season;
                             update = true;
                         }
@@ -636,9 +636,9 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                 }
 
                 // Update "free agent years" counter and retire players who have been free agents for more than one years
-                if (p.tid === c.PLAYER_FREE_AGENT) {
+                if (p.tid === g.PLAYER.FREE_AGENT) {
                     if (p.yearsFreeAgent >= 1) {
-                        p.tid = c.PLAYER_RETIRED;
+                        p.tid = g.PLAYER.RETIRED;
                         p.retiredYear = g.season;
                     } else {
                         p.yearsFreeAgent += 1;
@@ -676,7 +676,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                 // Select winners of the season's awards
                 // This needs to be inside the callback because of Firefox bug 763915
                 awards(function () {
-                    newPhaseCb(c.PHASE_BEFORE_DRAFT, phaseText, function () {
+                    newPhaseCb(g.PHASE.BEFORE_DRAFT, phaseText, function () {
                         if (cb !== undefined) {
                             cb();
                         }
@@ -693,14 +693,14 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
         var phaseText;
 
         phaseText = g.season + " draft";
-        newPhaseCb(c.PHASE_DRAFT, phaseText, cb);
+        newPhaseCb(g.PHASE.DRAFT, phaseText, cb);
     }
 
     function newPhaseAfterDraft(cb) {
         var phaseText;
 
         phaseText = g.season + " after draft";
-        newPhaseCb(c.PHASE_AFTER_DRAFT, phaseText, cb, true);
+        newPhaseCb(g.PHASE.AFTER_DRAFT, phaseText, cb, true);
     }
 
     function newPhaseResignPlayers(cb) {
@@ -727,11 +727,11 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                             p.contractExp = cont.exp;
                             cursor.update(p); // Other endpoints include calls to addToFreeAgents, which handles updating the database
                         } else {
-                            player.addToFreeAgents(playerStore, p, c.PHASE_RESIGN_PLAYERS);
+                            player.addToFreeAgents(playerStore, p, g.PHASE.RESIGN_PLAYERS);
                         }
                     } else {
                         // Add to free agents first, to generate a contract demand
-                        player.addToFreeAgents(playerStore, p, c.PHASE_RESIGN_PLAYERS, function () {
+                        player.addToFreeAgents(playerStore, p, g.PHASE.RESIGN_PLAYERS, function () {
                             // Open negotiations with player
                             contractNegotiation.create(transaction, p.pid, true, function (error) {
                                 if (error !== undefined && error) {
@@ -743,7 +743,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                 }
                 cursor.continue();
             } else {
-                newPhaseCb(c.PHASE_RESIGN_PLAYERS, phaseText, function () {
+                newPhaseCb(g.PHASE.RESIGN_PLAYERS, phaseText, function () {
                     if (cb !== undefined) {
                         cb();
                     }
@@ -766,20 +766,20 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
             playerStore = tx.objectStore("players");
 
             // Reset contract demands of current free agents
-            // This IDBKeyRange only works because c.PLAYER_UNDRAFTED is -2 and c.PLAYER_FREE_AGENT is -1
-            playerStore.index("tid").openCursor(IDBKeyRange.bound(c.PLAYER_UNDRAFTED, c.PLAYER_FREE_AGENT)).onsuccess = function (event) {
+            // This IDBKeyRange only works because g.PLAYER.UNDRAFTED is -2 and g.PLAYER.FREE_AGENT is -1
+            playerStore.index("tid").openCursor(IDBKeyRange.bound(g.PLAYER.UNDRAFTED, g.PLAYER.FREE_AGENT)).onsuccess = function (event) {
                 var cursor, p;
 
                 cursor = event.target.result;
                 if (cursor) {
                     p = cursor.value;
-                    player.addToFreeAgents(playerStore, p, c.PHASE_FREE_AGENCY);
+                    player.addToFreeAgents(playerStore, p, g.PHASE.FREE_AGENCY);
                     cursor.update(p);
                     cursor.continue();
                 }
             };
             tx.oncomplete = function () {
-                newPhaseCb(c.PHASE_FREE_AGENCY, phaseText, function () {
+                newPhaseCb(g.PHASE.FREE_AGENCY, phaseText, function () {
                     if (cb !== undefined) {
                         cb();
                     }
@@ -792,10 +792,10 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
     /**
      * Set a new phase of the game.
      *
-     * This function is called to do all the crap that must be done during transitions between phases of the game, such as moving from the regular season to the playoffs. Phases are defined in the c.PHASE_* global variables. The phase update may happen asynchronously if the database must be accessed, so do not rely on g.phase being updated immediately after this function is called. Instead, pass a callback.
+     * This function is called to do all the crap that must be done during transitions between phases of the game, such as moving from the regular season to the playoffs. Phases are defined in the g.PHASE.* global variables. The phase update may happen asynchronously if the database must be accessed, so do not rely on g.phase being updated immediately after this function is called. Instead, pass a callback.
      * 
      * @memberOf core.season
-     * @param {number} phase Numeric phase ID. This should always be one of the c.PHASE_* variables defined in globals.js.
+     * @param {number} phase Numeric phase ID. This should always be one of the g.PHASE.* variables defined in globals.js.
      * @param {function()=} cb Optional callback run after the phase change is completed.
      */
     function newPhase(phase, cb) {
@@ -812,23 +812,23 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
             playButtonElement.innerHTML = Handlebars.templates.playButton({options: []});
         }
 
-        if (phase === c.PHASE_PRESEASON) {
+        if (phase === g.PHASE.PRESEASON) {
             newPhasePreseason(cb);
-        } else if (phase === c.PHASE_REGULAR_SEASON) {
+        } else if (phase === g.PHASE.REGULAR_SEASON) {
             newPhaseRegularSeason(cb);
-        } else if (phase === c.PHASE_AFTER_TRADE_DEADLINE) {
+        } else if (phase === g.PHASE.AFTER_TRADE_DEADLINE) {
             newPhaseAfterTradeDeadline(cb);
-        } else if (phase === c.PHASE_PLAYOFFS) {
+        } else if (phase === g.PHASE.PLAYOFFS) {
             newPhasePlayoffs(cb);
-        } else if (phase === c.PHASE_BEFORE_DRAFT) {
+        } else if (phase === g.PHASE.BEFORE_DRAFT) {
             newPhaseBeforeDraft(cb);
-        } else if (phase === c.PHASE_DRAFT) {
+        } else if (phase === g.PHASE.DRAFT) {
             newPhaseDraft(cb);
-        } else if (phase === c.PHASE_AFTER_DRAFT) {
+        } else if (phase === g.PHASE.AFTER_DRAFT) {
             newPhaseAfterDraft(cb);
-        } else if (phase === c.PHASE_RESIGN_PLAYERS) {
+        } else if (phase === g.PHASE.RESIGN_PLAYERS) {
             newPhaseResignPlayers(cb);
-        } else if (phase === c.PHASE_FREE_AGENCY) {
+        } else if (phase === g.PHASE.FREE_AGENCY) {
             newPhaseFreeAgency(cb);
         }
     }
@@ -888,7 +888,7 @@ define(["db", "ui", "core/contractNegotiation", "core/freeAgents", "core/player"
                 // Are the whole playoffs over?
                 if (rnd === 3) {
                     tx.oncomplete = function () {
-                        newPhase(c.PHASE_BEFORE_DRAFT, cb);
+                        newPhase(g.PHASE.BEFORE_DRAFT, cb);
                     };
                 } else {
                     nextRound = [];

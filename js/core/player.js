@@ -341,11 +341,11 @@ define(["db", "lib/faces", "lib/underscore", "util/random"], function (db, faces
 
         // During regular season, or before season starts, allow contracts for
         // just this year.
-        if (g.phase > c.PHASE_AFTER_TRADE_DEADLINE) {
+        if (g.phase > g.PHASE.AFTER_TRADE_DEADLINE) {
             p.contractExp += 1;
         }
 
-        p.tid = c.PLAYER_FREE_AGENT;
+        p.tid = g.PLAYER.FREE_AGENT;
 
         db.putPlayer(ot, p, cb);
     }

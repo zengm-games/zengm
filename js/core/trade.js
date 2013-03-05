@@ -301,7 +301,7 @@ define(["db", "lib/underscore", "util/helpers"], function (db, _, helpers) {
      * @param {function(boolean, string)} cb Callback function. The first argument is a boolean for whether the trade was accepted or not. The second argumetn is a string containing a message to be dispalyed to the user.
      */
     function propose(cb) {
-        if (g.phase >= c.PHASE_AFTER_TRADE_DEADLINE && g.phase <= c.PHASE_PLAYOFFS) {
+        if (g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.PLAYOFFS) {
             cb(false, "Error! You're not allowed to make trades now.");
             return;
         }

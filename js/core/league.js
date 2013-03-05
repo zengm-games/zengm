@@ -73,14 +73,14 @@ define(["db", "ui", "core/player", "core/season", "lib/faces", "lib/jquery", "ut
                         // This can't be in transaction.oncomplete because loading players from a json file is async and breaks the transaction.
                         afterPlayerCreation = function () {
                             // Make schedule, start season
-                            season.newPhase(c.PHASE_REGULAR_SEASON, function () {
+                            season.newPhase(g.PHASE.REGULAR_SEASON, function () {
                                 var lid;
 
                                 ui.updateStatus('Idle');
 
                                 lid = g.lid;  // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer now the league ID
 
-                                // Auto sort player's roster (other teams will be done in season.newPhase(c.PHASE_REGULAR_SEASON))
+                                // Auto sort player's roster (other teams will be done in season.newPhase(g.PHASE.REGULAR_SEASON))
                                 db.rosterAutoSort(null, g.userTid, function () { cb(lid); });
 
                                 helpers.bbgmPing("league");
@@ -99,7 +99,7 @@ define(["db", "ui", "core/player", "core/season", "lib/faces", "lib/jquery", "ut
                                     p = players[i];
                                     p.ratings[0].ovr = player.ovr(p.ratings[0]);
                                     p.face = faces.generate();
-                                    if (p.tid === c.PLAYER_FREE_AGENT) {
+                                    if (p.tid === g.PLAYER.FREE_AGENT) {
                                         cont = player.contract(p.ratings[0]);
                                         p.contractAmount = cont.amount;
                                         p.contractExp = cont.exp;
@@ -123,7 +123,7 @@ define(["db", "ui", "core/player", "core/season", "lib/faces", "lib/jquery", "ut
                             for (t = -3; t < 30; t++) {
                                 // Create multiple "teams" worth of players for the free agent pool
                                 if (t < 0) {
-                                    tid = c.PLAYER_FREE_AGENT;
+                                    tid = g.PLAYER.FREE_AGENT;
                                 } else {
                                     tid = t;
                                 }

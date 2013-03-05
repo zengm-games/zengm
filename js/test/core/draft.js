@@ -22,7 +22,7 @@ define(["db", "core/draft", "core/league"], function (db, draft, league) {
         testDraftUntilUserOrEnd = function (numNow, numTotal, cb) {
             draft.untilUserOrEnd(function (pids) {
                 pids.length.should.equal(numNow);
-                g.dbl.transaction("players").objectStore("players").index("tid").getAll(c.PLAYER_UNDRAFTED).onsuccess = function (event) {
+                g.dbl.transaction("players").objectStore("players").index("tid").getAll(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
                     event.target.result.length.should.equal(70 - numTotal);
                     cb();
                 };
@@ -38,7 +38,7 @@ define(["db", "core/draft", "core/league"], function (db, draft, league) {
                 pick.pick.should.equal(5);
                 pick.tid.should.equal(g.userTid);
 
-                g.dbl.transaction("players").objectStore("players").index("tid").get(c.PLAYER_UNDRAFTED).onsuccess = function (event) {
+                g.dbl.transaction("players").objectStore("players").index("tid").get(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
                     var pidBefore;
 
                     pidBefore = event.target.result.pid;

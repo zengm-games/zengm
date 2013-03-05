@@ -161,7 +161,7 @@ define(["db", "core/contractNegotiation", "core/league"], function (db, contract
 
                                         cursor = event.target.result;
                                         p = cursor.value;
-                                        p.tid = c.PLAYER_FREE_AGENT;
+                                        p.tid = g.PLAYER.FREE_AGENT;
 
                                         cursor.update(p);
 

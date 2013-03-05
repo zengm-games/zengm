@@ -23,7 +23,7 @@ define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui
 
         console.log("Trying to start new contract negotiation with player " + pid);
 
-        if ((g.phase >= c.PHASE_AFTER_TRADE_DEADLINE && g.phase <= c.PHASE_AFTER_DRAFT) && !resigning) {
+        if ((g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.AFTER_DRAFT) && !resigning) {
             return cb("You're not allowed to sign free agents now.");
         }
 
@@ -50,7 +50,7 @@ define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui
 
                     cursor = event.target.result;
                     player = cursor.value;
-                    if (player.tid !== c.PLAYER_FREE_AGENT) {
+                    if (player.tid !== g.PLAYER.FREE_AGENT) {
                         return cb("Player " + pid + " is not a free agent.");
                     }
 
@@ -58,7 +58,7 @@ define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui
                     playerAmount = player.contractAmount * (1 + player.freeAgentTimesAsked / 10);
                     playerYears = player.contractExp - g.season;
                     // Adjust to account for in-season signings;
-                    if (g.phase <= c.PHASE_AFTER_TRADE_DEADLINE) {
+                    if (g.phase <= g.PHASE.AFTER_TRADE_DEADLINE) {
                         playerYears += 1;
                     }
 
@@ -253,7 +253,7 @@ define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui
                 }
 
                 // Adjust to account for in-season signings;
-                if (g.phase <= c.PHASE_AFTER_TRADE_DEADLINE) {
+                if (g.phase <= g.PHASE.AFTER_TRADE_DEADLINE) {
                     negotiation.playerYears -= 1;
                 }
 
@@ -269,7 +269,7 @@ define(["db", "ui", "core/player", "util/lock", "util/random"], function (db, ui
 
                     // Handle stats if the season is in progress
                     p.tid = g.userTid;
-                    if (g.phase <= c.PHASE_PLAYOFFS) { // Resigning your own players happens after this
+                    if (g.phase <= g.PHASE.PLAYOFFS) { // Resigning your own players happens after this
                         p = player.addStatsRow(p);
                     }
                     p.contractAmount = negotiation.playerAmount;

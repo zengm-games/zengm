@@ -29,9 +29,15 @@ npm). Then, just run:
 (Running  just `make` will run the RequireJS optimizer and compile templates as
 described in the following section.)
 
-Alternatively, to use the normal unminified uncombined JavaScript files, just
-change "gen/app.js" to "js/app.js" in index.html. This is convenient for
-development.
+Alternatively, to use the unminified uncombined JavaScript files, just change
+
+	<script src="/gen/app.js"></script>
+
+to
+
+	<script data-main="/js/app.js" src="/js/lib/require.js"></script>
+
+in index.html. This is convenient for development.
 
 
 # Handlebars templates

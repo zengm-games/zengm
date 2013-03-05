@@ -20,7 +20,7 @@ lint:
 
 # target: clean - Run the RequireJS optimizer to merge and minify all JavaScript files.
 build-requirejs:
-	r.js -o baseUrl=js name=app mainConfigFile=js/app.js out=gen/app.js
+	r.js -o baseUrl=js paths.requireLib=lib/require name=app include=requireLib mainConfigFile=js/app.js out=gen/app.js
 
 # target: build-templates - Precompile Handlebars templates.
 build-templates:

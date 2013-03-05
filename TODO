@@ -7,6 +7,8 @@ minify and combine scripts
     closure compiler?
   any processing/minification of templates or css?
     how does webassets do it?
+  can i bring in text files from data folder with requirejs?
+    seems so: http://requirejs.org/docs/download.html#text
 display league/season counter on basketball-gm.com splash page
 handlebars helper functions should call util.helpers for any heavy lifting or duplication
 make templates/helpers.js into real rjs module?

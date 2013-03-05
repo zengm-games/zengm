@@ -9,10 +9,14 @@ minify and combine scripts
       add to both shims in app.js (test and normal)
       test
       delete from runjslint
+    globals.js
+      if i make this a module somehow, move name stuff from ui.init back to globals.js and delete the call to ui.init from test/app.js
     requirejs optimizer
       http://stackoverflow.com/questions/11323414/i-am-struggling-with-the-requirejs-optimizer-and-non-amd-modules/11454409#11454409
       retain a way to easily switch between optimized and non-optimized javascript
 display league/season counter on basketball-gm.com splash page
+handlebars helper functions should call util.helpers for any heavy lifting or duplication
+git rid of calls to Handlebars and only use the small version of the library
 
 ---
 

@@ -12,8 +12,6 @@ minify and combine scripts
     jquery
       get rid of javascript in index.html
         tabSlideOut
-      make globals a module, somehow
-      get rid of include of jquery.js in index.html (should work after fixing the above two issues)
       move shims out of app.js and to the appropriate places
     requirejs optimizer
       http://stackoverflow.com/questions/11323414/i-am-struggling-with-the-requirejs-optimizer-and-non-amd-modules/11454409#11454409
@@ -24,6 +22,8 @@ display league/season counter on basketball-gm.com splash page
 
 FUTURE FEATURES (i.e. not required for public beta)
 
+negotiation is annoying
+  come up with an "anger meter" to display the odds of the player demanding more
 boxplots for shot location stats, plus comparison to NBA data
 database changes
   store contract history/future with each player, and show in player view

@@ -10,35 +10,13 @@ g.divs = [{did: 0, cid: 0, name: "Atlantic"}, {did: 1, cid: 0, name: "Central"},
 g.salaryCap = 60000;  // [thousands of dollars]
 g.minContract = 500;  // [thousands of dollars]
 
+// These will be set later
+g.nickNames = [];
+g.firstNames = [];
+g.lastNames = [];
+
 // THIS MUST BE ACCURATE OR BAD STUFF WILL HAPPEN
 g.notInDb = ["dbm", "dbl", "lid", "ticketPrice", "numTeams", "confs", "divs", "salaryCap", "minContract", "notInDb", "nickNames", "firstNames", "lastNames"];
-
-$.get("/data/nickNames.txt", function (data) {
-    "use strict";
-    var rows;
-    rows = data.split("\n");
-    g.nickNames = rows;
-});
-
-$.get("/data/firstNames.txt", function (data) {
-    "use strict";
-    var rows;
-    rows = data.split("\n");
-    rows.forEach(function (element, index, array) {
-        array[index] = element.split(",");
-    });
-    g.firstNames = rows;
-});
-
-$.get("/data/lastNames.txt", function (data) {
-    "use strict";
-    var rows;
-    rows = data.split("\n");
-    rows.forEach(function (element, index, array) {
-        array[index] = element.split(",");
-    });
-    g.lastNames = rows;
-});
 
 c = {};
 

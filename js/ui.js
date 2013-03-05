@@ -5,6 +5,43 @@
 define(["db", "lib/davis", "lib/jquery", "util/lock"], function (db, Davis, $, lock) {
     "use strict";
 
+    // Things to do on initial page load
+    function init() {
+        var slideOut;
+
+        // "Feedback" slider
+        slideOut = $(".slide-out");
+        if (slideOut.length > 0) {
+            slideOut.tabSlideOut({
+                tabHandle: ".slide-out-handle",
+                rightPos: "20px"
+            });
+        }
+
+        // Save some data for later use
+        $.get("/data/nickNames.txt", function (data) {
+            var rows;
+            rows = data.split("\n");
+            g.nickNames = rows;
+        });
+        $.get("/data/firstNames.txt", function (data) {
+            var rows;
+            rows = data.split("\n");
+            rows.forEach(function (element, index, array) {
+                array[index] = element.split(",");
+            });
+            g.firstNames = rows;
+        });
+        $.get("/data/lastNames.txt", function (data) {
+            var rows;
+            rows = data.split("\n");
+            rows.forEach(function (element, index, array) {
+                array[index] = element.split(",");
+            });
+            g.lastNames = rows;
+        });
+    }
+
     function highlightNav(leaguePage) {
         if (leaguePage === "") {
             leaguePage = "league_dashboard";
@@ -351,6 +388,7 @@ define(["db", "lib/davis", "lib/jquery", "util/lock"], function (db, Davis, $, l
     });
 
     return {
+        init: init,
         datatable: datatable,
         datatableSinglePage: datatableSinglePage,
         dropdown: dropdown,

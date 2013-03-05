@@ -48,34 +48,7 @@ requirejs.config({
 requirejs(["db", "views", "ui", "lib/davis", "lib/jquery", "util/helpers", "lib/bootstrap-dropdown", "lib/davis.google_analytics", "lib/IndexedDB-getAll-shim", "lib/jquery-ui", "lib/jquery.dataTables", "lib/jquery.dataTables.bbgmSorting", "lib/jquery.dataTables.bootstrap", "lib/jquery.tabSlideOut"], function (db, views, ui, Davis, $, helpers) {
     "use strict";
 
-    // "Feedback" slider
-    $(".slide-out").tabSlideOut({
-        tabHandle: ".slide-out-handle",
-        rightPos: "20px"
-    });
-
-    // Save some data for later use
-    $.get("/data/nickNames.txt", function (data) {
-        var rows;
-        rows = data.split("\n");
-        g.nickNames = rows;
-    });
-    $.get("/data/firstNames.txt", function (data) {
-        var rows;
-        rows = data.split("\n");
-        rows.forEach(function (element, index, array) {
-            array[index] = element.split(",");
-        });
-        g.firstNames = rows;
-    });
-    $.get("/data/lastNames.txt", function (data) {
-        var rows;
-        rows = data.split("\n");
-        rows.forEach(function (element, index, array) {
-            array[index] = element.split(",");
-        });
-        g.lastNames = rows;
-    });
+    ui.init();
 
     // Can't proceed any further without IndexedDB support
     if (indexedDB === undefined) {

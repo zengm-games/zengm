@@ -9,10 +9,6 @@ minify and combine scripts
       add to both shims in app.js (test and normal)
       test
       delete from runjslint
-    jquery
-      get rid of javascript in index.html
-        tabSlideOut
-      move shims out of app.js and to the appropriate places
     requirejs optimizer
       http://stackoverflow.com/questions/11323414/i-am-struggling-with-the-requirejs-optimizer-and-non-amd-modules/11454409#11454409
       retain a way to easily switch between optimized and non-optimized javascript

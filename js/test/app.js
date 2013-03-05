@@ -1,11 +1,18 @@
 requirejs.config({
     baseUrl: "/js",
     shim: {
+        "lib/davis": {
+            deps: ["lib/jquery"],
+            exports: "Davis"
+        },
         "lib/faces": {
             deps: ["lib/raphael"],
             exports: "faces"
         },
         "lib/IndexedDB-getAll-shim": {},
+        "lib/jquery": {
+            exports: "$"
+        },
         "lib/raphael": {
             exports: "Raphael"
         },
@@ -15,8 +22,10 @@ requirejs.config({
     }
 });
 
-requirejs(["lib/chai", "views", "lib/IndexedDB-getAll-shim"], function (chai, views) {
+requirejs(["ui", "views", "lib/chai", "lib/jquery", "lib/IndexedDB-getAll-shim"], function (ui, views, chai, $) {
     "use strict";
+
+    ui.init();
 
     mocha.setup({
         ui: "bdd",

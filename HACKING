@@ -19,7 +19,7 @@ want to contribute.
 
 # JavaScript coding style
 
-Douglas Crockford is always right. Well, usually. See `runjslint` for details.
+Douglas Crockford is always right. Well, usually. See `make lint` for details.
 
 Documentation of functions is based on
 https://developers.google.com/closure/compiler/docs/js-for-compiler
@@ -48,10 +48,10 @@ For instance, "defensive rebounds" is "drb".
 
 Any change made to one of the templates will not be processed until it is
 compiled, as described here <http://handlebarsjs.com/precompilation.html>.
-So after installing the Handlebars precompiler, run this command from this
+After installing the Handlebars precompiler, run this command from this
 folder to update the templates:
 
-    handlebars templates -f js/templates.js
+    make compile-templates
 
 
 # Documentation
@@ -60,5 +60,5 @@ Code is documented as described in the Google Closure Compiler documentation:
 <https://developers.google.com/closure/compiler/docs/js-for-compiler>. Google
 Closure Compiler isn't actually used for anything (yet). To update the HTML-
 based documentation in the docs folder, install JsDoc Toolkit 2 (available
-in the Ubuntu repos as `jsdoc-toolkit`) and then run the `builddocs` script
-in this folder.
+in the Ubuntu repos as `jsdoc-toolkit`) and then run `make docs`, which will
+generate documentation and stick it in the docs folder.

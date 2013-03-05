@@ -9,6 +9,12 @@ minify and combine scripts
 display league/season counter on basketball-gm.com splash page
 handlebars helper functions should call util.helpers for any heavy lifting or duplication
 make templates/helpers.js into real rjs module?
+move my shell scripts into makefile (also handlebars crap)
+  https://gist.github.com/rc1/1256166
+  https://github.com/miohtama/require-js-mooapp-tutorial/blob/master/Makefile
+  https://github.com/olivernn/lunr.js/blob/master/Makefile
+  get inspiration from python webassets for minification crap
+    css?
 
 ---
 

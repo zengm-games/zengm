@@ -1,3 +1,0 @@
-#!/bin/bash
-
-jsdoc -d=docs -s js js/core js/util

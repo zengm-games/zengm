@@ -1325,7 +1325,7 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
                     }
 
                     playerStore.index("draftYear").getAll(g.season).onsuccess = function (event) {
-                        var drafted, draftAbbrev, draftTid, i, pa, player, playersAll, pr, started;
+                        var drafted, draftAbbrev, draftTid, i, pa, player, playersAll, pr, result, started;
 
                         playersAll = event.target.result;
                         playersAll.sort(function (a, b) {  return (g.numTeams * (a.draftRound - 1) + a.draftPick) - (g.numTeams * (b.draftRound - 1) + b.draftPick); });
@@ -1336,7 +1336,9 @@ define(["api", "db", "ui", "core/contractNegotiation", "core/game", "core/league
 
                             if (pa.tid !== c.PLAYER_UNDRAFTED) {
                                 // Attributes
-                                [draftTid, draftAbbrev] = helpers.validateTid(pa.draftTid);
+                                result = helpers.validateTid(pa.draftTid);
+                                draftTid = result[0];
+                                draftAbbrev = result[1];
                                 player = {pid: pa.pid, name: pa.name, pos: pa.pos, age: g.season - pa.bornYear, abbrev: draftAbbrev, rnd: pa.draftRound, pick: pa.draftPick};
 
                                 // Ratings

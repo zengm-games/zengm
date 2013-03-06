@@ -3,15 +3,14 @@ main todo
 
 move distPlayerRatings link to top like in statsTids
 minify and combine scripts
-  requirejs optimizer
-    closure compiler?
-  any processing/minification of templates or css?
-    how does webassets do it?
+  any processing/minification of templates?
   can i bring in text files from data folder with requirejs?
     seems so: http://requirejs.org/docs/download.html#text
 display league/season counter on basketball-gm.com splash page
-handlebars helper functions should call util.helpers for any heavy lifting or duplication
-make templates/helpers.js into real rjs module?
+js/templates/helpers.js
+  handlebars helper functions should call util.helpers for any heavy lifting or duplication
+  rename to util/templateHelpers
+  make into real requirejs module?
 
 ---
 
@@ -95,6 +94,7 @@ money display
     https://www.google.com/search?q=site%3Adatatables.net+conditional+formatting&ie=utf-8&oe=utf-8&client=ubuntu&channel=fs
     finances
     league dashboard
+worth it to switch to closure library? http://stackoverflow.com/questions/10782612/what-is-the-sturdiest-way-to-get-the-closure-compilers-type-safety-together-wit
 internationalization
   league dashboard rankings should say 1st, 2nd, 3rd rather than 1th, 2th, 3th
   http://requirejs.org/docs/api.html#i18n

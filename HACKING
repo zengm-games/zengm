@@ -26,8 +26,8 @@ npm). Then, just run:
 
 	make build-requirejs
 
-(Running  just `make` will run the RequireJS optimizer and compile templates as
-described in the following section.)
+(Running  just `make` will run the RequireJS optimizer, compile templates and
+minify CSS.)
 
 Alternatively, to use the unminified uncombined JavaScript files, just change
 
@@ -49,15 +49,32 @@ folder to update the templates:
 
     make build-templates
 
-(Running  just `make` will compile templates and run the RequireJS optimizer.)
+(Running  just `make` will run the RequireJS optimizer, compile templates and
+minify CSS.)
+
+
+# CSS
+
+By default, a minified CSS file is used. This is done using YUI Compressor
+(which is available in Ubuntu via `sudo apt-get install yui-compressor` - for
+other OSes, Google for install instructions). To update the minified CSS file,
+run:
+
+    make build-css
+
+(Running  just `make` will run the RequireJS optimizer, compile templates and
+minify CSS.)
+
+Alternatively, you can use the unminified CSS files by switching a couple
+comments in index.html.
 
 
 # Documentation
 
 Code is documented as described in the Google Closure Compiler documentation:
 <https://developers.google.com/closure/compiler/docs/js-for-compiler>. Google
-Closure Compiler isn't actually used for anything (yet). To update the HTML-
-based documentation in the docs folder, install JsDoc Toolkit 2 (available
+Closure Compiler itself isn't actually used for anything (yet). To update the
+HTML-based documentation in the docs folder, install JsDoc Toolkit 2 (available
 in the Ubuntu repos as `jsdoc-toolkit`) and then run `make docs`, which will
 generate documentation and stick it in the docs folder.
 

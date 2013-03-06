@@ -36,13 +36,13 @@ Handlebars.registerHelper("matchup", function (i, j) {
     if (series && series.home.name) {
         if (series.home.wonSeries) { source += '<strong>'; }
         source += series.home.seed + '. <a href="/l/' + this.lid + '/roster/' + series.home.abbrev + '/' + this.season + '">' + series.home.name + '</a>';
-        if (series.home.won) { source += ' ' + series.home.won; }
+        if (series.home.hasOwnProperty("won")) { source += ' ' + series.home.won; }
         if (series.home.wonSeries) { source += '</strong>'; }
         source += '<br>';
 
         if (series.away.wonSeries) { source += '<strong>'; }
         source += series.away.seed + '. <a href="/l/' + this.lid + '/roster/' + series.away.abbrev + '/' + this.season + '">' + series.away.name + '</a>';
-        if (series.away.won) { source += ' ' + series.away.won; }
+        if (series.away.hasOwnProperty("won")) { source += ' ' + series.away.won; }
         if (series.away.wonSeries) { source += '</strong>'; }
     }
 

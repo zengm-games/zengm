@@ -1,10 +1,6 @@
 main todo
 ---------
 
-link problems..
-  new window link doesn't work
-    initialize it just like play menu links
-  fix debug menu
 Web workers
   An implementation is in the webworkers branch. It kind of works, but it doesn't seem to play nice with IDB transactions, so I have to open a new transaction when the callback fires, so it is problematic to have multiple workers in parallel all trying to open readwrite transactions.
   strategy
@@ -20,7 +16,8 @@ js/templates/helpers.js
   handlebars helper functions should call util.helpers for any heavy lifting or duplication
   rename to util/templateHelpers
   make into real requirejs module?
-game log - show most recent games at top
+new window link doesn't work
+  initialize it just like play menu links, or make it uglier like debug menu
 
 ---
 

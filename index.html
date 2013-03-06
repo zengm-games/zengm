@@ -53,9 +53,9 @@
               <li class="dropdown">
                 <a data-toggle="dropdown" class="dropdown-toggle" href="#">Debug Menu <b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                  <li><a href="javascript:(function () { season = require('core/season'); season.newPhase(g.PHASE.PLAYOFFS); })()">Skip To Playoffs</a></li>
-                  <li><a href="javascript:(function () { season = require('core/season'); season.newPhase(g.PHASE.BEFORE_DRAFT); })()">Skip To Before Draft</a></li>
-                  <li><a href="javascript:(function () { season = require('core/season'); season.newPhase(g.PHASE.RESIGN_PLAYERS); })()">Skip To Resign Players</a></li>
+                  <li><a href="javascript:(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.PLAYOFFS); })()">Skip To Playoffs</a></li>
+                  <li><a href="javascript:(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.BEFORE_DRAFT); })()">Skip To Before Draft</a></li>
+                  <li><a href="javascript:(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.RESIGN_PLAYERS); })()">Skip To Resign Players</a></li>
                   <li class="divider"></li>
                   <li><a href="/init_db">Reset DB</a></li>
                 </ul>

@@ -540,7 +540,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season",
                     } else {
                         scheduleStore = tx.objectStore("schedule");
                         for (j = 0; j < gidsFinished.length; j++) {
-                            scheduleStore.delete(gidsFinished[i]);
+                            scheduleStore.delete(gidsFinished[j]);
                         }
                     }
                 });
@@ -585,22 +585,22 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season",
             season.getSchedule(tx, 1, function (schedule) {
                 var tid;
 
-                // Load all teams, for now. Would be more efficient to load only some of them, I suppose.
-                loadTeams(tx, function (teams) {
-                    teams.sort(function (a, b) {  return a.id - b.id; });  // Order teams by tid
-
-                    // Play games
-                    if (schedule.length > 0 || playoffsContinue) {
-                        // Will loop through schedule and simulate all games
-                        cbSimGames(schedule, teams);
-                    } else if (playoffsContinue) {
-                        // In the playoffs, keep going even if there is no more schedule set.
-                        play(numDays - 1);
-                    }
-                });
-
                 if (schedule.length === 0 && !playoffsContinue) {
                     cbNoGames();
+                } else {
+                    // Load all teams, for now. Would be more efficient to load only some of them, I suppose.
+                    loadTeams(tx, function (teams) {
+                        teams.sort(function (a, b) {  return a.id - b.id; });  // Order teams by tid
+
+                        // Play games
+                        if (schedule.length > 0) {
+                            // Will loop through schedule and simulate all games
+                            cbSimGames(schedule, teams);
+                        } else if (playoffsContinue) {
+                            // In the playoffs, keep going even if there is no more schedule set.
+                            play(numDays - 1);
+                        }
+                    });
                 }
             });
         };

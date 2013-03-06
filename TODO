@@ -12,7 +12,10 @@ Web workers
     reduce is run on an array of outputs of map - so this array is of the same size as data, and the elements are ordered the same
     cb is called after reduce finishes
   https://github.com/adambom/parallel.js looks like it's working towards something like idealParallelFunction in the new-syntax branch
-
+  remove js/core/gameWorker if it's not used
+some kind of advanced options panel showing things like..
+  number of web workers
+  reload views daily or not
 give bbgm website its own version of bootstrap (only with components needed)
 move distPlayerRatings link to top like in statsTids
 display league/season counter on basketball-gm.com splash page

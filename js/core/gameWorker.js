@@ -1,20 +1,23 @@
 importScripts("../lib/require.js");
 
-require({baseUrl: "../"}, ["core/gameSim"], function (gameSim) {
+require.config({
+    baseUrl: "../",
+    shim: {
+        "lib/underscore": {
+            exports: "_"
+        }
+    }
+});
+
+require(["core/gameSim"], function (gameSim) {
     "use strict";
 
     self.addEventListener("message", function (e) {
-        var gs, i, results, schedule, teams;
+        var gs;
 
-        schedule = e.data.schedule;
-        teams = e.data.teams;
-        results = [];
-
-        // Should this be a loop, or should we assume only one game was passed? Depends on structure of what calls this.
-        for (i = 0; i < schedule.length; i++) {
-            gs = new gameSim.GameSim(schedule[i].gid, teams[schedule[i].homeTid], teams[schedule[i].awayTid]);
-            results.push(gs.run());
-        }
-        self.postMessage(results);
+        gs = new gameSim.GameSim(e.data.gid, e.data.homeTeam, e.data.awayTeam);
+        self.postMessage(gs.run());
     }, false);
+
+    self.postMessage("Ready!");
 });

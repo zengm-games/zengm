@@ -10,6 +10,10 @@ requirejs.config({
         "lib/boxPlot": {
             exports: "boxPlot"
         },
+        "lib/communist": {
+            deps: ["lib/rsvp"],
+            exports: "communist"
+        },
         "lib/davis": {
             deps: ["lib/jquery"],
             exports: "Davis"
@@ -46,11 +50,14 @@ requirejs.config({
         "lib/raphael": {
             exports: "Raphael"
         },
-        "templates/helpers": {
-            deps: ["lib/handlebars.runtime"]
+        "lib/rsvp": {
+            exports: "RSVP"
         },
         "lib/underscore": {
             exports: "_"
+        },
+        "templates/helpers": {
+            deps: ["lib/handlebars.runtime"]
         }
     }
 });

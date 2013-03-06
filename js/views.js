@@ -1542,6 +1542,8 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                         }
                     }
 
+                    games.reverse();  // Show most recent games at top
+
                     content = Handlebars.templates.gameLogList({lid: g.lid, abbrev: abbrev, games: games, season: season});
                     cb(content);
                 };

@@ -98,7 +98,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season",
             cursor.update(player);
 
             that.playersRemaining -= 1;
-            if (that.playersRemaining === 0 && that.teamsRemaining === 0) {
+            if (that.playersRemaining === 0 && that.teamsRemaining === 0 && that.cb !== undefined) {
                 that.cb();
             }
         };
@@ -254,7 +254,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season",
                 cursor.update(team);
 
                 that.teamsRemaining -= 1;
-                if (that.playersRemaining === 0 && that.teamsRemaining === 0) {
+                if (that.playersRemaining === 0 && that.teamsRemaining === 0 && that.cb !== undefined) {
                     that.cb();
                 }
             };
@@ -382,7 +382,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season",
      * The team objects contain all the information needed to simulate games. It would be more efficient if it only loaded team data for teams that are actually playing, particularly in the playoffs.
      * 
      * @memberOf core.game
-     * @param {IDBTransaction} transaction A readwrite IndexedDB transaction on games, players, playoffSeries, releasedPlayers, schedule, and teams.
+     * @param {IDBTransaction} transaction An IndexedDB transaction on players and teams.
      * @param {function(Array)} cb Callback function that takes the array of team objects as its only argument.
      */
     function loadTeams(transaction, cb) {
@@ -519,65 +519,70 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season",
 
         // Simulates a day of games. If there are no games left, it calls cbNoGames.
         cbPlayGames = function () {
-            var transaction;
+            var tx;
 
             ui.updateStatus("Playing games (" + numDays + " days remaining)...");
 
             // This transaction is used for a day's simulations, first reading data from it and then writing the game results
-            transaction = g.dbl.transaction(["games", "players", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
+            tx = g.dbl.transaction(["players", "schedule", "teams"]);
 
             // Get the schedule for today
-            season.getSchedule(transaction, 1, function (schedule) {
+            season.getSchedule(tx, 1, function (schedule) {
                 var tid;
 
                 // Load all teams, for now. Would be more efficient to load only some of them, I suppose.
-                loadTeams(transaction, function (teams) {
-                    var doGameSim, doSaveResults, gamesRemaining, gidsFinished;
+                loadTeams(tx, function (teams) {
+                    var doGameSim, doSaveResults, gamesRemaining;
 
                     teams.sort(function (a, b) {  return a.id - b.id; });  // Order teams by tid
 
                     // Play games
                     if ((schedule && schedule.length > 0) || playoffsContinue) {
                         gamesRemaining = schedule.length;
-                        gidsFinished = [];
-                        doGameSim = function (i) {
-                            var gs, results;
+                        doGameSim = function (schedule, teams) {
+                            var i, gs, results;
 
-                            if (i < schedule.length) {
+                            results = [];
+
+                            for (i = 0; i < schedule.length; i++) {
                                 gs = new gameSim.GameSim(schedule[i].gid, teams[schedule[i].homeTid], teams[schedule[i].awayTid]);
-                                results = gs.run();
-                                doSaveResults(i, results, g.phase === g.PHASE.PLAYOFFS);
+                                results.push(gs.run());
                             }
+
+                            doSaveResults(results, g.phase === g.PHASE.PLAYOFFS);
                         };
-                        doSaveResults = function (i, results, playoffs) {
-                            var gm;
+                        doSaveResults = function (results, playoffs) {
+                            var gidsFinished, gm, i, scheduleStore, tx;
 
-                            gm = new Game();
-                            gm.load(results, playoffs);
-                            gm.writeStats(transaction, function () {
-                                var j, scheduleStore;
+                            tx = g.dbl.transaction(["games", "players", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
 
-                                gamesRemaining -= 1;
-                                gidsFinished.push(results.gid);
-                                if (gamesRemaining === 0) {
-                                    scheduleStore = transaction.objectStore("schedule");
-                                    for (j = 0; j < gidsFinished.length; j++) {
-                                        scheduleStore.delete(gidsFinished[j]);
-                                    }
+                            gidsFinished = [];
 
-                                    advStats.calculateAll(function () {  // Update all advanced stats every day
-                                        ui.realtimeUpdate(function () {
-                                            db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                                                play(numDays - 1);
-                                            });
+                            for (i = 0; i < results.length; i++) {
+                                gm = new Game();
+                                gm.load(results[i], playoffs);
+                                gm.writeStats(tx);
+                                gidsFinished.push(results[i].gid);
+                            }
+
+                            scheduleStore = tx.objectStore("schedule");
+                            for (i = 0; i < gidsFinished.length; i++) {
+                                scheduleStore.delete(gidsFinished[i]);
+                            }
+
+                            tx.oncomplete = function () {
+                                advStats.calculateAll(function () {  // Update all advanced stats every day
+                                    ui.realtimeUpdate(function () {
+                                        db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                                            play(numDays - 1);
                                         });
                                     });
-                                } else {
-                                    doGameSim(i + 1);
-                                }
-                            });
+                                });
+                            };
                         };
-                        doGameSim(0); // Will loop through schedule and simulate all games
+                        doGameSim(schedule, teams);  // Will loop through schedule and simulate all games
+
+                        // In the playoffs, keep going even if there is no more schedule set.
                         if (schedule.length === 0 && playoffsContinue) {
                             play(numDays - 1);
                         }

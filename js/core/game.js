@@ -518,24 +518,35 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season",
         };
 
         // Saves a vector of results objects for a day, as is output from cbSimGames
-        cbSaveResults = function (results, playoffs) {
-            var gidsFinished, gm, i, scheduleStore, tx;
+        cbSaveResults = function (results) {
+            var cbSaveResult, gidsFinished, gm, i, playoffs, tx;
+
+            gidsFinished = [];
+            playoffs = g.phase === g.PHASE.PLAYOFFS;
 
             tx = g.dbl.transaction(["games", "players", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
 
-            gidsFinished = [];
+            cbSaveResult = function (i) {
+                // Save the game ID so it can be deleted from the schedule below
+                gidsFinished.push(results[i].gid);
 
-            for (i = 0; i < results.length; i++) {
                 gm = new Game();
                 gm.load(results[i], playoffs);
-                gm.writeStats(tx);
-                gidsFinished.push(results[i].gid);
-            }
+                gm.writeStats(tx, function () {
+                    var j, scheduleStore;
 
-            scheduleStore = tx.objectStore("schedule");
-            for (i = 0; i < gidsFinished.length; i++) {
-                scheduleStore.delete(gidsFinished[i]);
-            }
+                    if (i > 0) {
+                        cbSaveResult(i - 1);
+                    } else {
+                        scheduleStore = tx.objectStore("schedule");
+                        for (j = 0; j < gidsFinished.length; j++) {
+                            scheduleStore.delete(gidsFinished[i]);
+                        }
+                    }
+                });
+            };
+
+            cbSaveResult(results.length - 1);
 
             tx.oncomplete = function () {
                 advStats.calculateAll(function () {  // Update all advanced stats every day
@@ -559,7 +570,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season",
                 results.push(gs.run());
             }
 
-            cbSaveResults(results, g.phase === g.PHASE.PLAYOFFS);
+            cbSaveResults(results);
         };
 
         // Simulates a day of games. If there are no games left, it calls cbNoGames.

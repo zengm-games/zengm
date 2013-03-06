@@ -3,9 +3,8 @@ main todo
 
 move distPlayerRatings link to top like in statsTids
 minify and combine scripts
-  any processing/minification of templates?
   can i bring in text files from data folder with requirejs?
-    seems so: http://requirejs.org/docs/download.html#text
+    convert to JS data structure and just put it in a data module
 display league/season counter on basketball-gm.com splash page
 js/templates/helpers.js
   handlebars helper functions should call util.helpers for any heavy lifting or duplication
@@ -18,6 +17,7 @@ FUTURE FEATURES (i.e. not required for public beta)
 
 negotiation is annoying
   come up with an "anger meter" to display the odds of the player demanding more
+  shouldn't be so aggressive/adversarial
 boxplots for shot location stats, plus comparison to NBA data
 database changes
   store contract history/future with each player, and show in player view

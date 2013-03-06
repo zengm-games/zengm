@@ -1,4 +1,4 @@
-define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "core/league", "core/season", "core/trade", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers"], function (api, db, g, ui, contractNegotiation, game, league, season, trade, boxPlot, Davis, Handlebars, $, _, helpers) {
+define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "core/league", "core/season", "core/trade", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/data", "util/helpers"], function (api, db, g, ui, contractNegotiation, game, league, season, trade, boxPlot, Davis, Handlebars, $, _, data, helpers) {
     "use strict";
 
     function beforeLeague(req, cb) {
@@ -166,7 +166,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
         beforeNonLeague();
 
         // Pick a random league name, either for the GET or POST phase
-        randomName = g.nickNames[Math.floor(Math.random() * g.nickNames.length)];
+        randomName = data.nickNames[Math.floor(Math.random() * data.nickNames.length)];
 
         if (req.method === "get") {
             g.dbm.transaction("teams").objectStore("teams").getAll().onsuccess = function (event) {

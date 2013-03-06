@@ -17,16 +17,6 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
                 rightPos: "20px"
             });
         }
-
-        // Save some data for later use
-        $.get("/data/lastNames.txt", function (data) {
-            var rows;
-            rows = data.split("\n");
-            rows.forEach(function (element, index, array) {
-                array[index] = element.split(",");
-            });
-            g.lastNames = rows;
-        });
     }
 
     function highlightNav(leaguePage) {

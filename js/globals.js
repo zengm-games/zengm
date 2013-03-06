@@ -19,9 +19,6 @@ define([], function () {
     g.salaryCap = 60000;  // [thousands of dollars]
     g.minContract = 500;  // [thousands of dollars]
 
-    // These will be set later
-    g.lastNames = [];
-
     // Constants in all caps
     g.PHASE = {
         PRESEASON: 0,
@@ -41,7 +38,7 @@ define([], function () {
     };
 
     // THIS MUST BE ACCURATE OR BAD STUFF WILL HAPPEN
-    g.notInDb = ["dbm", "dbl", "lid", "ticketPrice", "numTeams", "confs", "divs", "salaryCap", "minContract", "notInDb", "lastNames", "PHASE", "PLAYER"];
+    g.notInDb = ["dbm", "dbl", "lid", "ticketPrice", "numTeams", "confs", "divs", "salaryCap", "minContract", "notInDb", "PHASE", "PLAYER"];
 
     return g;
 });

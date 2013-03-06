@@ -421,7 +421,6 @@ define(["db", "globals", "lib/faces", "lib/underscore", "util/data", "util/rando
         // First name
         fnRand = random.uniform(0, 90.04);
         for (i = 0; i < data.firstNames.length; i++) {
-            //if row[4].upper() == nationality.upper():
             if (data.firstNames[i][1] >= fnRand) {
                 break;
             }
@@ -431,18 +430,12 @@ define(["db", "globals", "lib/faces", "lib/underscore", "util/data", "util/rando
 
         // Last name
         lnRand = random.uniform(0, 77.48);
-        for (i = 0; i < g.lastNames.length; i++) {
-            //if row[4].upper() == nationality.upper():
-            if (g.lastNames[i][2] >= lnRand) {
+        for (i = 0; i < data.lastNames.length; i++) {
+            if (data.lastNames[i][1] >= lnRand) {
                 break;
             }
         }
-        ln = g.lastNames[i][0];
-        ln = ln.charAt(0).toUpperCase() + ln.substring(1).toLowerCase();
-        // McWhatever
-        if (ln.substring(0, 2) === 'Mc') {
-            ln = ln.substring(0, 2) + ln.charAt(2).toUpperCase() + ln.substring(3);
-        }
+        ln = data.lastNames[i][0];
 
         return fn + " " + ln;
     }

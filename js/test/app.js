@@ -25,8 +25,6 @@ requirejs.config({
 requirejs(["ui", "views", "lib/chai", "lib/jquery", "lib/IndexedDB-getAll-shim"], function (ui, views, chai, $) {
     "use strict";
 
-    ui.init();
-
     mocha.setup({
         ui: "bdd",
         globals: ["console"],

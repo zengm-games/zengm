@@ -2,10 +2,6 @@ main todo
 ---------
 
 move distPlayerRatings link to top like in statsTids
-minify and combine scripts
-  can i bring in text files from data folder with requirejs?
-    convert to JS data structure and just put it in a data module
-    remove ui.init call from test/app.js
 display league/season counter on basketball-gm.com splash page
 js/templates/helpers.js
   handlebars helper functions should call util.helpers for any heavy lifting or duplication

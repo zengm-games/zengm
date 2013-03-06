@@ -20,7 +20,6 @@ define([], function () {
     g.minContract = 500;  // [thousands of dollars]
 
     // These will be set later
-    g.firstNames = [];
     g.lastNames = [];
 
     // Constants in all caps
@@ -42,7 +41,7 @@ define([], function () {
     };
 
     // THIS MUST BE ACCURATE OR BAD STUFF WILL HAPPEN
-    g.notInDb = ["dbm", "dbl", "lid", "ticketPrice", "numTeams", "confs", "divs", "salaryCap", "minContract", "notInDb", "firstNames", "lastNames", "PHASE", "PLAYER"];
+    g.notInDb = ["dbm", "dbl", "lid", "ticketPrice", "numTeams", "confs", "divs", "salaryCap", "minContract", "notInDb", "lastNames", "PHASE", "PLAYER"];
 
     return g;
 });

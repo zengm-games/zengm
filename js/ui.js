@@ -19,14 +19,6 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
         }
 
         // Save some data for later use
-        $.get("/data/firstNames.txt", function (data) {
-            var rows;
-            rows = data.split("\n");
-            rows.forEach(function (element, index, array) {
-                array[index] = element.split(",");
-            });
-            g.firstNames = rows;
-        });
         $.get("/data/lastNames.txt", function (data) {
             var rows;
             rows = data.split("\n");

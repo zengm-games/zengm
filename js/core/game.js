@@ -494,7 +494,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season",
      * @param {boolean} start Is this a new request from the user to play games (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed.
      */
     function play(numDays, start) {
-        var cbNoGames, cbPlayGames, cbRunDay, playoffsContinue;
+        var cbNoGames, cbPlayGames, cbSaveResults, cbSimGames, cbRunDay, playoffsContinue;
 
         start = start !== undefined ? start : false;
 
@@ -517,13 +517,57 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season",
             });
         };
 
+        // Saves a vector of results objects for a day, as is output from cbSimGames
+        cbSaveResults = function (results, playoffs) {
+            var gidsFinished, gm, i, scheduleStore, tx;
+
+            tx = g.dbl.transaction(["games", "players", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
+
+            gidsFinished = [];
+
+            for (i = 0; i < results.length; i++) {
+                gm = new Game();
+                gm.load(results[i], playoffs);
+                gm.writeStats(tx);
+                gidsFinished.push(results[i].gid);
+            }
+
+            scheduleStore = tx.objectStore("schedule");
+            for (i = 0; i < gidsFinished.length; i++) {
+                scheduleStore.delete(gidsFinished[i]);
+            }
+
+            tx.oncomplete = function () {
+                advStats.calculateAll(function () {  // Update all advanced stats every day
+                    ui.realtimeUpdate(function () {
+                        db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                            play(numDays - 1);
+                        });
+                    });
+                });
+            };
+        };
+
+        // Simulates a day of games (whatever is in schedule) and passes the results to cbSaveResults
+        cbSimGames = function (schedule, teams) {
+            var i, gs, results;
+
+            results = [];
+
+            for (i = 0; i < schedule.length; i++) {
+                gs = new gameSim.GameSim(schedule[i].gid, teams[schedule[i].homeTid], teams[schedule[i].awayTid]);
+                results.push(gs.run());
+            }
+
+            cbSaveResults(results, g.phase === g.PHASE.PLAYOFFS);
+        };
+
         // Simulates a day of games. If there are no games left, it calls cbNoGames.
         cbPlayGames = function () {
             var tx;
 
             ui.updateStatus("Playing games (" + numDays + " days remaining)...");
 
-            // This transaction is used for a day's simulations, first reading data from it and then writing the game results
             tx = g.dbl.transaction(["players", "schedule", "teams"]);
 
             // Get the schedule for today
@@ -532,62 +576,18 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season",
 
                 // Load all teams, for now. Would be more efficient to load only some of them, I suppose.
                 loadTeams(tx, function (teams) {
-                    var doGameSim, doSaveResults, gamesRemaining;
-
                     teams.sort(function (a, b) {  return a.id - b.id; });  // Order teams by tid
 
                     // Play games
-                    if ((schedule && schedule.length > 0) || playoffsContinue) {
-                        gamesRemaining = schedule.length;
-                        doGameSim = function (schedule, teams) {
-                            var i, gs, results;
-
-                            results = [];
-
-                            for (i = 0; i < schedule.length; i++) {
-                                gs = new gameSim.GameSim(schedule[i].gid, teams[schedule[i].homeTid], teams[schedule[i].awayTid]);
-                                results.push(gs.run());
-                            }
-
-                            doSaveResults(results, g.phase === g.PHASE.PLAYOFFS);
-                        };
-                        doSaveResults = function (results, playoffs) {
-                            var gidsFinished, gm, i, scheduleStore, tx;
-
-                            tx = g.dbl.transaction(["games", "players", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
-
-                            gidsFinished = [];
-
-                            for (i = 0; i < results.length; i++) {
-                                gm = new Game();
-                                gm.load(results[i], playoffs);
-                                gm.writeStats(tx);
-                                gidsFinished.push(results[i].gid);
-                            }
-
-                            scheduleStore = tx.objectStore("schedule");
-                            for (i = 0; i < gidsFinished.length; i++) {
-                                scheduleStore.delete(gidsFinished[i]);
-                            }
-
-                            tx.oncomplete = function () {
-                                advStats.calculateAll(function () {  // Update all advanced stats every day
-                                    ui.realtimeUpdate(function () {
-                                        db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                                            play(numDays - 1);
-                                        });
-                                    });
-                                });
-                            };
-                        };
-                        doGameSim(schedule, teams);  // Will loop through schedule and simulate all games
-
+                    if (schedule.length > 0 || playoffsContinue) {
+                        // Will loop through schedule and simulate all games
+                        cbSimGames(schedule, teams);
+                    } else if (playoffsContinue) {
                         // In the playoffs, keep going even if there is no more schedule set.
-                        if (schedule.length === 0 && playoffsContinue) {
-                            play(numDays - 1);
-                        }
+                        play(numDays - 1);
                     }
                 });
+
                 if (schedule.length === 0 && !playoffsContinue) {
                     cbNoGames();
                 }

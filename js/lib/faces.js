@@ -1,3 +1,5 @@
+/*global Raphael: false */
+
 var faces = (function (Raphael) {
     "use strict";
 

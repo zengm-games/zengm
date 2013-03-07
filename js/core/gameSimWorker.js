@@ -1,3 +1,5 @@
+/*global importScripts: false, self: false */
+
 importScripts("../lib/require.js");
 
 require.config({

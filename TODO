@@ -52,9 +52,8 @@ gameSim
     do i need all the player composite ratings?
     do i need all the team composite ratings?
     how does performance change/degrade as the years go on?
-runjslint errors
+jslint errors
   currently just "Don't make functions within a loop." which should all be fixed eventually
-  get rid of some of the global definitions via requirejs shim
 contract negotiation
   test all the error conditions and make sure callbacks are appropriately called (unit tests?)
   add free agent to the end of roster

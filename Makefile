@@ -12,7 +12,7 @@ docs:
 
 # target: lint - Run jslint on all source files except third-party libraries.
 lint:
-	jslint --nomen --plusplus --predef requirejs --predef require --predef define --predef mocha --predef describe --predef it --predef window --predef document --predef console --predef alert --predef location --predef setTimeout --predef localStorage --predef indexedDB --predef IDBKeyRange --predef IDBTransaction --predef IDBObjectStore --predef bbgm --predef before --predef beforeEach --predef after --predef afterEach --predef Raphael js/core/*.js js/test/*.js js/test/core/*.js js/util/*.js js/*.js js/templates/helpers.js js/lib/IndexedDB-getAll-shim.js js/lib/boxPlot.js js/lib/faces.js js/lib/jquery.dataTables.bbgmSorting.js
+	jslint --nomen --plusplus --predef requirejs --predef require --predef define --predef mocha --predef describe --predef it --predef window --predef document --predef console --predef alert --predef location --predef setTimeout --predef localStorage --predef indexedDB --predef IDBKeyRange --predef IDBTransaction --predef IDBObjectStore --predef before --predef beforeEach --predef after --predef afterEach js/core/*.js js/test/*.js js/test/core/*.js js/util/*.js js/*.js js/templates/helpers.js js/lib/IndexedDB-getAll-shim.js js/lib/boxPlot.js js/lib/faces.js js/lib/jquery.dataTables.bbgmSorting.js
 
 
 

@@ -10,7 +10,10 @@ js/templates/helpers.js
   handlebars helper functions should call util.helpers for any heavy lifting or duplication
   rename to util/templateHelpers
   make into real requirejs module?
-make lint - move exceptions to comments in files? will that also work in sublime?
+negotiation is annoying
+  come up with an "anger meter" to display the odds of the player demanding more
+  shouldn't be so aggressive/adversarial
+  make calculation of demand to display DRY - or any change, be careful
 
 ---
 
@@ -20,9 +23,6 @@ Web workers
   don't seem to actually help performance. maybe help responsiveness
   benchmark?
   would it be worth it to parallelize advstats?
-negotiation is annoying
-  come up with an "anger meter" to display the odds of the player demanding more
-  shouldn't be so aggressive/adversarial
 boxplots for shot location stats, plus comparison to NBA data
 database changes
   store contract history/future with each player, and show in player view

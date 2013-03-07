@@ -32,7 +32,7 @@ requirejs(["ui", "views", "lib/chai", "lib/jquery", "lib/IndexedDB-getAll-shim"]
     });
     chai.should();
 
-    require(["test/core/contractNegotiation", "test/core/draft", "test/core/player", "test/core/season", "test/core/trade"], function (testContractNegotiation, testDraft, testPlayer, testSeason, testTrade) {
+    require(["test/core/contractNegotiation", "test/core/draft", "test/core/league", "test/core/player", "test/core/season", "test/core/trade"], function (testContractNegotiation, testDraft, testLeague, testPlayer, testSeason, testTrade) {
         mocha.run();
     });
 });

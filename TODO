@@ -1,6 +1,9 @@
 CURRENT PRIORITIES
 ------------------
 
+bbgmPing should only work in production
+  no "test" in url
+  basketball-gm.com in url
 jslint errors
   currently just "Don't make functions within a loop." which should all be fixed eventually
 give bbgm website its own version of bootstrap (only with components needed)
@@ -12,6 +15,9 @@ js/templates/helpers.js
 league dashboard
   next game should show something when active in playoffs, a message at least
 more unit tests
+  error cases for league.create - invalid inputs, etc
+player.addStatsRow
+  season parameter wouldn't be needed if g.season was already set. Set g.season early, then.
 
 BEFORE 3.0.0
 ------------
@@ -74,6 +80,7 @@ player stats
   how to handle aggregating stats for players who played for more than one team in a season? add them all up in ps in db.getPlayers
 db.getPlayers
   rename to helpers.filterPlayers?
+    make db.getTeams consistent with this
   use for other access of players "playersAll"
   the special case attributes should generally be moved directly into the database.
 Replace showNoStats with a check of stats.length in db.getPlayer, at least in some cases? API is messy
@@ -92,8 +99,6 @@ DataTables - need to rethink a lot of this, particularly how to make a decent UI
     http://datatables.net/ref#asSorting will work. maybe pass it as an option to bbgm_datatable
     text should be asc, numeric should be desc
     http://stackoverflow.com/questions/3725321/jquery-datatables-change-order-to-desc-when-it-sorts - but can it be set globally? maybe i can have ui.datatable automatically read columns and figure it out?
-player.addStatsRow
-  season parameter wouldn't be needed if g.season was already set. Set g.season early, then.
 league leaders
   minimum minutes played to show?
   also, somehow make a toggle to apply this criteria to season stats

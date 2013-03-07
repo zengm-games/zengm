@@ -76,9 +76,9 @@ define(["db", "globals", "ui", "core/player", "core/season", "lib/faces", "lib/j
                             season.newPhase(g.PHASE.REGULAR_SEASON, function () {
                                 var lid;
 
-                                ui.updateStatus('Idle');
+                                ui.updateStatus("Idle");
 
-                                lid = g.lid;  // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer now the league ID
+                                lid = g.lid;  // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
 
                                 // Auto sort player's roster (other teams will be done in season.newPhase(g.PHASE.REGULAR_SEASON))
                                 db.rosterAutoSort(null, g.userTid, function () { cb(lid); });

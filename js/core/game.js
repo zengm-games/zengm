@@ -2,7 +2,7 @@
  * @name core.game
  * @namespace Everything about games except the actual simulation. So, loading the schedule, loading the teams, saving the results, and handling multi-day simulations and what happens when there are no games left to play.
  */
-define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season", "lib/communist", "util/advStats", "util/lock", "util/random"], function (db, g, ui, freeAgents, gameSim, season, communist, advStats, lock, random) {
+define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season", "lib/underscore", "util/advStats", "util/lock", "util/random"], function (db, g, ui, freeAgents, gameSim, season, _, advStats, lock, random) {
     "use strict";
 
     function Game() {
@@ -561,57 +561,56 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season",
 
         // Simulates a day of games (whatever is in schedule) and passes the results to cbSaveResults
         cbSimGames = function (schedule, teams) {
-            var data, i, gs, results, scheduleNew;
+            var cbWorker, data, numWorkersFinished, i, gs, numWorkers, results, schedules;
 
-            // Format scheduleNew as an array where each element is an object with all the information needed to run gameSim.GameSim.
-            scheduleNew = [];
+            numWorkers = g.gameSimWorkers.length;
+            numWorkersFinished = 0;
+
+console.log("Starting simulations...");
+            // Separate results and schedules for each worker
+            schedules = [];
+            results = [];
+            for (i = 0; i < numWorkers; i++) {
+                schedules.push([]);
+                results.push([]);
+            }
+
+            // Divide schedule evenly among workers
             for (i = 0; i < schedule.length; i++) {
-                scheduleNew[i] = {
+                // all the information needed to run gameSim.GameSim
+                schedules[i % numWorkers].push({
                     gid: schedule[i].gid,
                     homeTeam: teams[schedule[i].homeTid],
                     awayTeam: teams[schedule[i].awayTid]
-                };
+                });
             }
 
+console.log("Starting workers...");
+            for (i = 0; i < numWorkers; i++) {
+                // Set callback for worker
+                console.log(i);
+                g.gameSimWorkers[i].onmessage = (function (i) {
+                    return function (event) {
+                        results[i].push(event.data);
+                        numWorkersFinished += 1;
+                        if (numWorkersFinished === numWorkers) {
+console.log("Finished");
+                            cbSaveResults(_.flatten(results));
+                        }
+                    };
+                }(i));
+
+                // Send data to worker
+                g.gameSimWorkers[i].postMessage(schedules[i]);
+            }
+
+/*console.log("Starting simulations...");
             results = [];
-
-            var worker = new Worker('/js/core/gameWorker.js');
-            var done = 0;
-            worker.onmessage = function(event) {
-//                console.log("Called back by the worker!");
-
-                // Save all outputs except the first, which is just for initialization
-                if (done !== 0) {
-                    results.push(event.data);
-                }
-
-                if (done < scheduleNew.length) {
-//                    console.log("Sending data...");
-                    worker.postMessage(scheduleNew[done]);
-                    done += 1;
-                } else {
-//                    console.log('ALL DONE');
-//                    console.log(results);
-                    cbSaveResults(results);
-                }
-            };
-
-/*            communist(1)
-                .data(scheduleNew)
-                .map("/js/core/gameWorker.js")
-                .reduce(function (a, b) {
-                    return [].concat(a).concat(b);
-                }).then(function (result) {
-                    console.log(result);
-                });*/
-
-/*            results = [];
-
             for (i = 0; i < schedule.length; i++) {
                 gs = new gameSim.GameSim(schedule[i].gid, teams[schedule[i].homeTid], teams[schedule[i].awayTid]);
                 results.push(gs.run());
             }
-
+console.log("Finished");
             cbSaveResults(results);*/
         };
 

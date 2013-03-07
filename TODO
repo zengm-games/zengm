@@ -2,19 +2,9 @@ main todo
 ---------
 
 Web workers
-  An implementation is in the webworkers branch. It kind of works, but it doesn't seem to play nice with IDB transactions, so I have to open a new transaction when the callback fires, so it is problematic to have multiple workers in parallel all trying to open readwrite transactions.
-  idealParallelFunction(N, data, map, reduce, cb);
-    N is the number of workers to use
-    data is an array
-    map is run on each element of that array by N workers
-      can be done either by pulling from queue when an element is finished
-      or, by splitting the data up into roughly-equal chunks and sending them to the workers
-    reduce is run on an array of outputs of map - so this array is of the same size as data, and the elements are ordered the same
-    cb is called after reduce finishes
-  https://github.com/adambom/parallel.js looks like it's working towards something like idealParallelFunction in the new-syntax branch
-  remove js/core/gameWorker if it's not used
+  don't seem to actually help performance. maybe help responsiveness
+  benchmark?
 some kind of advanced options panel showing things like..
-  number of web workers
   reload views daily or not
 give bbgm website its own version of bootstrap (only with components needed)
 move distPlayerRatings link to top like in statsTids

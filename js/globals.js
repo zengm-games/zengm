@@ -7,7 +7,7 @@ define([], function () {
 
     // The way this works is... any "global" variables that need to be widely available are stored in g. Some of these are constants, like the ones defined below. Some others are dynamic, like the year of the current season, and are stored in the gameAttributes object store. The dynamic components of g are retrieved/updated/synced elsewhere. Yes, it's kind of confusing and arbitrary.
 
-    var g;
+    var g, i;
 
     g = {};
 
@@ -37,8 +37,16 @@ define([], function () {
         RETIRED: -3
     };
 
+    // Web workers - create only if we're not already inside a web worker!
+    g.gameSimWorkers = [];
+    if (typeof document !== "undefined") {
+        for (i = 0; i < 1; i++) {
+            g.gameSimWorkers[i] = new Worker("/js/core/gameWorker.js");
+        }
+    }
+
     // THIS MUST BE ACCURATE OR BAD STUFF WILL HAPPEN
-    g.notInDb = ["dbm", "dbl", "lid", "ticketPrice", "numTeams", "confs", "divs", "salaryCap", "minContract", "notInDb", "PHASE", "PLAYER"];
+    g.notInDb = ["dbm", "dbl", "lid", "ticketPrice", "numTeams", "confs", "divs", "salaryCap", "minContract", "notInDb", "PHASE", "PLAYER", "gameSimWorkers"];
 
     return g;
 });

@@ -13,11 +13,14 @@ require(["core/gameSim"], function (gameSim) {
     "use strict";
 
     self.addEventListener("message", function (e) {
-        var gs;
+        var gs, i, results;
 
-        gs = new gameSim.GameSim(e.data.gid, e.data.homeTeam, e.data.awayTeam);
-        self.postMessage(gs.run());
+        results = [];
+        for (i = 0; i < e.data.length; i++) {
+            gs = new gameSim.GameSim(e.data[i].gid, e.data[i].homeTeam, e.data[i].awayTeam);
+            results.push(gs.run());
+        }
+
+        self.postMessage(results);
     }, false);
-
-    self.postMessage("Ready!");
 });

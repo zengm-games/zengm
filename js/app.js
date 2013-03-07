@@ -10,10 +10,6 @@ requirejs.config({
         "lib/boxPlot": {
             exports: "boxPlot"
         },
-        "lib/communist": {
-            deps: ["lib/rsvp"],
-            exports: "communist"
-        },
         "lib/davis": {
             deps: ["lib/jquery"],
             exports: "Davis"
@@ -49,9 +45,6 @@ requirejs.config({
         },
         "lib/raphael": {
             exports: "Raphael"
-        },
-        "lib/rsvp": {
-            exports: "RSVP"
         },
         "lib/underscore": {
             exports: "_"

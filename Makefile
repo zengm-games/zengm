@@ -18,7 +18,7 @@ lint:
 
 ### Targets below here are generally just called from the targets above.
 
-# target: build-css - Concatenate main CSS files and run YUI compressor
+# target: build-css - Concatenate main CSS files and run YUI compressor.
 build-css:
 	cat css/bootstrap.css css/bbgm-responsive.css css/bbgm.css css/DT_bootstrap.css | yui-compressor --type css -o gen/bbgm.css
 
@@ -26,7 +26,7 @@ build-css:
 build-js:
 	r.js -o baseUrl=js paths.requireLib=lib/require name=app include=requireLib mainConfigFile=js/app.js out=gen/app.js
 
-# target: build-templates - Precompile Handlebars templates.
+# target: build-templates - Precompile Handlebars templates. Note that if you do not subsequently run the build-js target, then this won't be in the minified JavaScript.
 build-templates:
 	handlebars templates -f gen/templates.js
 

@@ -1,10 +1,7 @@
 main todo
 ---------
 
-some kind of advanced options panel showing things like..
-  reload views daily or not
 give bbgm website its own version of bootstrap (only with components needed)
-move distPlayerRatings link to top like in statsTids
 display league/season counter on basketball-gm.com splash page
 js/templates/helpers.js
   handlebars helper functions should call util.helpers for any heavy lifting or duplication
@@ -12,6 +9,7 @@ js/templates/helpers.js
   make into real requirejs module?
 negotiation is annoying
   come up with an "anger meter" to display the odds of the player demanding more
+    initialize with some value based on if it's a resigning or not, and wins the previous season
   shouldn't be so aggressive/adversarial
   make calculation of demand to display DRY - or any change, be careful
 

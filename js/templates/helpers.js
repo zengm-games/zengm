@@ -64,7 +64,7 @@ Handlebars.registerHelper("face", function (face) {
 Handlebars.registerHelper("new_window", function () {
     "use strict";
 
-    return new Handlebars.SafeString('<a href="javascript:api.moveToNewWindow()" class="new_window" title="Move To New Window" data-no-davis="true"><img src="/ico/new_window.png" height="16" width="16"></a>');
+    return new Handlebars.SafeString('<a href="javascript:(function () { api = require(\'api\'); api.moveToNewWindow(); }())" class="new_window" title="Move To New Window" data-no-davis="true"><img src="/ico/new_window.png" height="16" width="16"></a>');
 });
 
 

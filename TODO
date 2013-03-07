@@ -10,8 +10,7 @@ js/templates/helpers.js
   handlebars helper functions should call util.helpers for any heavy lifting or duplication
   rename to util/templateHelpers
   make into real requirejs module?
-new window link doesn't work
-  initialize it just like play menu links, or make it uglier like debug menu
+make lint - move exceptions to comments in files? will that also work in sublime?
 
 ---
 
@@ -108,9 +107,6 @@ league dashboard
   next game should show something when active in playoffs, a message at least
 playoff stats in player view
   need a way to request only playoff stats from db.getPlayers - see all the playoffs === false stuff
-don't block the UI in game simulation
-  slide 81 http://www.slideshare.net/nzakas/high-performance-javascript-capitoljs-2011
-    http://www.kryogenix.org/days/2009/07/03/not-blocking-the-ui-in-tight-javascript-loops
 in lock functions, update g from database before using any potentially sensitive values
   or should these g.whatever variables be set at all if they're sensitive? lid doesn't change obviously, but the others?
 move to new window button, like gmail, that will open a view in a new window with a minimal UI

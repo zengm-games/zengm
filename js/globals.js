@@ -18,6 +18,7 @@ define([], function () {
     g.divs = [{did: 0, cid: 0, name: "Atlantic"}, {did: 1, cid: 0, name: "Central"}, {did: 2, cid: 0, name: "Southeast"}, {did: 3, cid: 1, name: "Southwest"}, {did: 4, cid: 1, name: "Northwest"}, {did: 5, cid: 1, name: "Pacific"}];
     g.salaryCap = 60000;  // [thousands of dollars]
     g.minContract = 500;  // [thousands of dollars]
+    g.realtimeUpdate = true;
 
     // Constants in all caps
     g.PHASE = {
@@ -46,7 +47,7 @@ define([], function () {
     }*/
 
     // THIS MUST BE ACCURATE OR BAD STUFF WILL HAPPEN
-    g.notInDb = ["dbm", "dbl", "lid", "ticketPrice", "numTeams", "confs", "divs", "salaryCap", "minContract", "notInDb", "PHASE", "PLAYER", "gameSimWorkers"];
+    g.notInDb = ["dbm", "dbl", "lid", "ticketPrice", "numTeams", "confs", "divs", "salaryCap", "minContract", "realtimeUpdate", "notInDb", "PHASE", "PLAYER", "gameSimWorkers"];
 
     return g;
 });

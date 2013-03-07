@@ -5,6 +5,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
         var checkDbChange, leagueMenu, popup;
 
         g.lid = parseInt(req.params.lid, 10);
+        g.realtimeUpdate = true;  // This is the default. It is set to false in views where appropriate
 
         popup = req.params.w === "popup";
 
@@ -531,6 +532,10 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
             season = helpers.validateSeason(req.params.season);
             seasons = helpers.getSeasons(season);
 
+            if (season < g.season) {
+                g.realtimeUpdate = false;
+            }
+
             // Calculate the number of games that team is behind team0
             gb = function (team0, team) {
                 return ((team0.won - team0.lost) - (team.won - team.lost)) / 2;
@@ -605,6 +610,10 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
             season = helpers.validateSeason(req.params.season);
             seasons = helpers.getSeasons(season);
+
+            if (season < g.season) {
+                g.realtimeUpdate = false;
+            }
 
             function cb(finalMatchups, series) {
                 var data;
@@ -709,6 +718,8 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
             season = helpers.validateSeason(req.params.season);
 
+            g.realtimeUpdate = false;
+
             // If playoffs aren't over, season awards haven't been set
             if (g.phase <= g.PHASE.PLAYOFFS) {
                 // View last season by default
@@ -774,6 +785,10 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
             season = helpers.validateSeason(req.params.season);
             seasons = helpers.getSeasons(season);
             teams = helpers.getTeams(tid);
+
+            if (season < g.season) {
+                g.realtimeUpdate = false;
+            }
 
             sortable = false;
 
@@ -1426,6 +1441,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
             }
 
             // Show a summary of an old draft
+            g.realtimeUpdate = false;
             playerStore.index("draftYear").getAll(season).onsuccess = function (event) {
                 var attributes, currentPr, data, draftPr, i, pa, player, players, playersAll, ratings, stats;
 
@@ -1491,6 +1507,10 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
             seasons = helpers.getSeasons(season);
             teams = helpers.getTeams(tid);
             gid = req.params.gid !== undefined ? parseInt(req.params.gid, 10) : null;
+
+            if (season < g.season) {
+                g.realtimeUpdate = false;
+            }
 
             cbGameLogList = function (abbrev, season, cb) {
                 var games, out, tid;
@@ -1612,6 +1632,10 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
             season = helpers.validateSeason(req.params.season);
             seasons = helpers.getSeasons(season);
 
+            if (season < g.season) {
+                g.realtimeUpdate = false;
+            }
+
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
                 var attributes, categories, data, i, j, players, ratings, stats, userAbbrev;
 
@@ -1675,6 +1699,10 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
             season = helpers.validateSeason(req.params.season);
             seasons = helpers.getSeasons(season);
 
+            if (season < g.season) {
+                g.realtimeUpdate = false;
+            }
+
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
                 var attributes, data, i, players, ratings, stats;
                 attributes = ["pid", "name", "pos", "age"];
@@ -1716,6 +1744,10 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
             season = helpers.validateSeason(req.params.season);
             seasons = helpers.getSeasons(season);
 
+            if (season < g.season) {
+                g.realtimeUpdate = false;
+            }
+
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
                 var attributes, data, players, ratings, stats;
                 attributes = ["pid", "name", "pos", "age"];
@@ -1751,6 +1783,10 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
             season = helpers.validateSeason(req.params.season);
             seasons = helpers.getSeasons(season);
+
+            if (season < g.season) {
+                g.realtimeUpdate = false;
+            }
 
             attributes = ["abbrev"];
             stats = ["gp", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "oppPts"];
@@ -1793,6 +1829,10 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                 stats = ["season", "abbrev", "age", "gp", "gs", "min", "fg", "fga", "fgp", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per"];
 
                 player = db.getPlayer(event.target.result, null, null, attributes, stats, ratings);
+
+                if (player.tid === g.PLAYER.RETIRED) {
+                    g.realtimeUpdate = false;
+                }
 
                 // Account for extra free agent demands
                 if (player.tid === g.PLAYER.FREE_AGENT) {
@@ -2010,6 +2050,10 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
             season = helpers.validateSeason(req.params.season);
             seasons = helpers.getSeasons(season);
 
+            if (season < g.season) {
+                g.realtimeUpdate = false;
+            }
+
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
                 var attributes, data, players, ratings, ratingsAll, stats;
                 attributes = [];
@@ -2072,6 +2116,10 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
             season = helpers.validateSeason(req.params.season);
             seasons = helpers.getSeasons(season);
+
+            if (season < g.season) {
+                g.realtimeUpdate = false;
+            }
 
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
                 var attributes, data, nbaQuartiles, players, ratings, stats, statsAll;
@@ -2194,6 +2242,10 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
             season = helpers.validateSeason(req.params.season);
             seasons = helpers.getSeasons(season);
 
+            if (season < g.season) {
+                g.realtimeUpdate = false;
+            }
+
             attributes = [];
             stats = ["fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "oppPts"];
             seasonAttributes = ["won", "lost"];
@@ -2314,6 +2366,10 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
             season = helpers.validateSeason(req.params.season);
             seasons = helpers.getSeasons(season);
 
+            if (season < g.season) {
+                g.realtimeUpdate = false;
+            }
+
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
                 var attributes, data, players, ratings, stats;
                 attributes = ["pid", "name", "pos", "age"];
@@ -2349,6 +2405,10 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
             season = helpers.validateSeason(req.params.season);
             seasons = helpers.getSeasons(season);
+
+            if (season < g.season) {
+                g.realtimeUpdate = false;
+            }
 
             attributes = ["abbrev"];
             stats = ["gp", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp"];

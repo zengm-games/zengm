@@ -561,12 +561,12 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season",
 
         // Simulates a day of games (whatever is in schedule) and passes the results to cbSaveResults
         cbSimGames = function (schedule, teams) {
-            var cbWorker, data, numWorkersFinished, i, gs, numWorkers, results, schedules;
+            var gs, i, results;
+/*            var cbWorker, data, numWorkersFinished, i, gs, numWorkers, results, schedules;
 
             numWorkers = g.gameSimWorkers.length;
             numWorkersFinished = 0;
 
-console.log("Starting simulations...");
             // Separate results and schedules for each worker
             schedules = [];
             results = [];
@@ -585,16 +585,13 @@ console.log("Starting simulations...");
                 });
             }
 
-console.log("Starting workers...");
             for (i = 0; i < numWorkers; i++) {
                 // Set callback for worker
-                console.log(i);
                 g.gameSimWorkers[i].onmessage = (function (i) {
                     return function (event) {
                         results[i].push(event.data);
                         numWorkersFinished += 1;
                         if (numWorkersFinished === numWorkers) {
-console.log("Finished");
                             cbSaveResults(_.flatten(results));
                         }
                     };
@@ -602,16 +599,14 @@ console.log("Finished");
 
                 // Send data to worker
                 g.gameSimWorkers[i].postMessage(schedules[i]);
-            }
+            }*/
 
-/*console.log("Starting simulations...");
             results = [];
             for (i = 0; i < schedule.length; i++) {
                 gs = new gameSim.GameSim(schedule[i].gid, teams[schedule[i].homeTid], teams[schedule[i].awayTid]);
                 results.push(gs.run());
             }
-console.log("Finished");
-            cbSaveResults(results);*/
+            cbSaveResults(results);
         };
 
         // Simulates a day of games. If there are no games left, it calls cbNoGames.

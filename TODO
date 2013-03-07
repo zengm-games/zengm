@@ -1,9 +1,6 @@
 main todo
 ---------
 
-Web workers
-  don't seem to actually help performance. maybe help responsiveness
-  benchmark?
 some kind of advanced options panel showing things like..
   reload views daily or not
 give bbgm website its own version of bootstrap (only with components needed)
@@ -20,6 +17,10 @@ new window link doesn't work
 
 FUTURE FEATURES (i.e. not required for public beta)
 
+Web workers
+  don't seem to actually help performance. maybe help responsiveness
+  benchmark?
+  would it be worth it to parallelize advstats?
 negotiation is annoying
   come up with an "anger meter" to display the odds of the player demanding more
   shouldn't be so aggressive/adversarial

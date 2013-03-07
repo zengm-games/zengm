@@ -37,13 +37,13 @@ define([], function () {
         RETIRED: -3
     };
 
-    // Web workers - create only if we're not already inside a web worker!
+/*    // Web workers - create only if we're not already inside a web worker!
     g.gameSimWorkers = [];
     if (typeof document !== "undefined") {
         for (i = 0; i < 1; i++) {
-            g.gameSimWorkers[i] = new Worker("/js/core/gameWorker.js");
+            g.gameSimWorkers[i] = new Worker("/js/core/gameSimWorker.js");
         }
-    }
+    }*/
 
     // THIS MUST BE ACCURATE OR BAD STUFF WILL HAPPEN
     g.notInDb = ["dbm", "dbl", "lid", "ticketPrice", "numTeams", "confs", "divs", "salaryCap", "minContract", "notInDb", "PHASE", "PLAYER", "gameSimWorkers"];

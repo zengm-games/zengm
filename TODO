@@ -1,28 +1,33 @@
-main todo
----------
+CURRENT PRIORITIES
+------------------
 
+jslint errors
+  currently just "Don't make functions within a loop." which should all be fixed eventually
 give bbgm website its own version of bootstrap (only with components needed)
 display league/season counter on basketball-gm.com splash page
 js/templates/helpers.js
   handlebars helper functions should call util.helpers for any heavy lifting or duplication
   rename to util/templateHelpers
   make into real requirejs module?
-negotiation is annoying
-  come up with an "anger meter" to display the odds of the player demanding more
-    initialize with some value based on if it's a resigning or not, and wins the previous season
-  shouldn't be so aggressive/adversarial
-  make calculation of demand to display DRY - or any change, be careful
+league dashboard
+  next game should show something when active in playoffs, a message at least
+more unit tests
 
----
+BEFORE 3.0.0
+------------
 
-FUTURE FEATURES (i.e. not required for public beta)
-
-Web workers
-  don't seem to actually help performance. maybe help responsiveness
-  benchmark?
-  would it be worth it to parallelize advstats?
-boxplots for shot location stats, plus comparison to NBA data
 database changes
+  KEEP TRACK OF THESE
+  fan engagement
+    0.1-1, a multiplier on how many fans attend each game
+    increase when the team's performance increases
+    decrease a little when performance decreases
+    decrease a lot 
+  negotiation is annoying
+    come up with an "anger meter" to display the odds of the player demanding more
+      initialize with some value based on if it's a resigning or not, and wins the previous season
+    shouldn't be so aggressive/adversarial
+    make calculation of demand to display DRY - or any change, be careful
   store contract history/future with each player, and show in player view
   store a list of awards/honors with each player
   add activeYears multientry like statsTids use for:
@@ -39,6 +44,18 @@ database changes
     would simplify db.getTeams
     would allow historical finances view
     but is it worth it? would the cached values be meaningful?
+  message from the owner every year
+    warning about being fired, or congratulations
+  big picture gameplay
+    some way to actually lose the game
+      get fired by owner if X
+    final score, hall of fame
+    difficulty level from 1-10, which influences..
+      starting $
+      starting roster
+      fan engagement
+        all of the above should be functions of the city's population!
+      also, final score
 gameSim
   home/away advantage
     make sure home/away in playoffs is set right
@@ -50,8 +67,6 @@ gameSim
     do i need all the player composite ratings?
     do i need all the team composite ratings?
     how does performance change/degrade as the years go on?
-jslint errors
-  currently just "Don't make functions within a loop." which should all be fixed eventually
 contract negotiation
   test all the error conditions and make sure callbacks are appropriately called (unit tests?)
   add free agent to the end of roster
@@ -62,10 +77,6 @@ db.getPlayers
   use for other access of players "playersAll"
   the special case attributes should generally be moved directly into the database.
 Replace showNoStats with a check of stats.length in db.getPlayer, at least in some cases? API is messy
-roster size check on new season
-  cpu teams with < 5 players should automatically sign free agents
-retired players
-  test
 trade refactoring
   validateSavedTids crap should be in trade.js.
   trade.summary stuff should be automatic and stored in tradeStore
@@ -85,31 +96,26 @@ player.addStatsRow
   season parameter wouldn't be needed if g.season was already set. Set g.season early, then.
 league leaders
   minimum minutes played to show?
+  also, somehow make a toggle to apply this criteria to season stats
 commas for thousands
   number of games played in delete league view
   attendance in finances
   attendance in league dashboard
-transaction log (free agent signings, etc)
 money display
   -$, not $-. Might need a new handlebars function to do this
   conditional formatting to show negative dollars in red
     https://www.google.com/search?q=site%3Adatatables.net+conditional+formatting&ie=utf-8&oe=utf-8&client=ubuntu&channel=fs
     finances
     league dashboard
-worth it to switch to closure library? http://stackoverflow.com/questions/10782612/what-is-the-sturdiest-way-to-get-the-closure-compilers-type-safety-together-wit
 internationalization
   league dashboard rankings should say 1st, 2nd, 3rd rather than 1th, 2th, 3th
   http://requirejs.org/docs/api.html#i18n
-league dashboard
-  next game should show something when active in playoffs, a message at least
 playoff stats in player view
   need a way to request only playoff stats from db.getPlayers - see all the playoffs === false stuff
 in lock functions, update g from database before using any potentially sensitive values
   or should these g.whatever variables be set at all if they're sensitive? lid doesn't change obviously, but the others?
 move to new window button, like gmail, that will open a view in a new window with a minimal UI
   only the icon should be clickable, not the area above and below
-  insert query string before # in URL when making popup in ui.moveToNewWindow. also, account for any other query string already there (although there currently aren't any others, AFAIK)
-    does this matter?
 team history view needs more love
   dropdown for other teams
 auto-add players when AI teams are below limit (in season.js)
@@ -118,6 +124,8 @@ notifications (and log) from top right to display log of key events
   game results from user's team
   players retiring from user's team
   league champions
+  trades
+  free agent signings
 show an option to upload a data file for rosters
   nba roster
     define file format for external player sources
@@ -132,35 +140,16 @@ player finder
 free agent error message "You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process." - is this actually displayed?
 trading block
 eliminate jquery UI dependency? it's only used for roster reordering currently
-online "locker" that you can sync saved games to
 customize which columns are shown in roster view (and possibly other summary views like trade, free agent, etc)
-hitting the phase twice shouldn't be possible. but if i, for instance, hit "until preseason" twice quickly, i skip a year
-  maybe have something like lock.phaseChangeInProgress? but some timeout would be needed to reset
-advanced stats
-  WS - http://www.basketball-reference.com/about/ws.html requires Basketball on Paper - http://www.sports-reference.com/cbb/about/ws.html is simpler
-  +/- and other stats needed to calculate above - track in game
-  APM?
-  shot charts?
-  PER
-    shouldn't be recalculated for everyone in the playoffs, only active teams' players (also in the regular season, but that's less important)
-      maybe have a flag set when a player plays a game, that advanced stats need to be recalculated
-    slow, particularly after multiple seasons?
-    how to deal with players traded mid-season?
-      reevaluate this in general. stats don't seem to be showing after a trade in roster view and player view.
-    use for awards, contracts
-import/export stuff
-  https://unhosted.org/adventures/7/Adding-remote-storage-to-unhosted-web-apps.html
-  data urls don't work with more than ~1 MB. downloadifydoesn't seem to work with more than several MBs of data. until a better solution comes (online sync?), wait.
-  league names
-    "Edit" button between "Export" and "Delete" - set in leaguesStore and gameAttributes
-      move delete/edit/export under one button, "manage". have the 3 buttons pop out in place when you hit manage, then it functions as it does now. popped buttons can be colored too, then
-  import league
-    ignore old lid
+PER
+  shouldn't be recalculated for everyone in the playoffs, only active teams' players (also in the regular season, but that's less important)
+    maybe have a flag set when a player plays a game, that advanced stats need to be recalculated
+  slow, particularly after multiple seasons?
+  how to deal with players traded mid-season?
+    reevaluate this in general. stats don't seem to be showing after a trade in roster view and player view.
+  use for awards, contracts
 some UI showing the state of the team's synergy. maybe like an advisors screen that suggests what kind of player is needed to improve synergy
 bootstrap 2.3
-big picture gameplay
-  some way to actually win/lose the game
-  different market sizes in different cities, making it easier or harder
 show record (w-l) on roster view - make it more like a summary, as in basketball-reference
   playoff results
   payroll
@@ -182,6 +171,40 @@ too easy to do the "be bad, get draft picks, keep payroll low, sign free agents,
   free agents are less willing to sign with bad teams
   user can't just sign all the free agents before AI teams
 
+FUTURE (after 3.0.0)
+--------------------
+
+more sophisticatedrealtime data binding/updating
+  ember.js
+    data binding
+    uses handlebars
+  knockoutjs is too flaky. try just a naive approach first, and use something better later
+  angularjs
+    seems nice and widely used. would need to build some kind of signal system on top of this, basically to update the UI data variables from indexeddb when appropriate
+Web workers
+  don't seem to actually help performance. maybe help responsiveness
+  benchmark?
+  would it be worth it to parallelize advstats?
+boxplots for shot location stats, plus comparison to NBA data
+import/export stuff
+  online "locker" that you can sync saved games to
+  https://unhosted.org/adventures/7/Adding-remote-storage-to-unhosted-web-apps.html
+  data urls don't work with more than ~1 MB. downloadifydoesn't seem to work with more than several MBs of data. until a better solution comes (online sync?), wait.
+  league names
+    "Edit" button between "Export" and "Delete" - set in leaguesStore and gameAttributes
+      move delete/edit/export under one button, "manage". have the 3 buttons pop out in place when you hit manage, then it functions as it does now. popped buttons can be colored too, then
+  import league
+    ignore old lid
+other advanced stats
+  WS - http://www.basketball-reference.com/about/ws.html requires Basketball on Paper - http://www.sports-reference.com/cbb/about/ws.html is simpler
+  +/- and other stats needed to calculate above - track in game
+  APM?
+hitting the phase twice shouldn't be possible. but if i, for instance, hit "until preseason" twice quickly, i skip a year
+  maybe have something like lock.phaseChangeInProgress? but some timeout would be needed to reset
+worth it to switch to closure library? http://stackoverflow.com/questions/10782612/what-is-the-sturdiest-way-to-get-the-closure-compilers-type-safety-together-wit
+roster size check on new season
+  cpu teams with < 5 players should automatically sign free agents
+
 ---
 
 g.dbl.transaction("players").objectStore("players").get(476).onsuccess = function (event) { console.log(event.target.result); };
@@ -189,19 +212,6 @@ g.dbl.transaction("players").objectStore("players").get(476).onsuccess = functio
 g.dbl.transaction("gameAttributes").objectStore("gameAttributes").getAll().onsuccess = function (event) { console.dir(event.target.result); };
 
 ---
-
-FUTURE:
-
-more sophisticatedrealtime data binding/updating
-  ember.js
-    data binding
-    uses handlebars
-  knockoutjs is too flaky. try just a naive approach first, and use something better later
-  be smarter about things that don't change, like old box scores, stats from old seasons, etc
-  handle deeper content, like pagination/sorting in tables and tabs in player view
-  angularjs
-    seems nice and widely used. would need to build some kind of signal system on top of this, basically to update the UI data variables from indexeddb when appropriate
-
 
 
 

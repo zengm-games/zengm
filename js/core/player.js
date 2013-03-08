@@ -153,11 +153,7 @@ define(["db", "globals", "lib/faces", "lib/underscore", "util/data", "util/rando
             years = random.randInt(1, years);
         }
 
-        if (g.hasOwnProperty("season")) {
-            expiration = g.season + years - 1;
-        } else {
-            expiration = g.startingSeason + years - 1;
-        }
+        expiration = g.season + years - 1;
         if (amount < minAmount) {
             amount = minAmount;
         } else if (amount > maxAmount) {
@@ -186,12 +182,7 @@ define(["db", "globals", "lib/faces", "lib/underscore", "util/data", "util/rando
 
         r = p.ratings.length - 1;
 
-        // Make sure age is always defined
-        if (g.hasOwnProperty("season")) {
-            age = g.season - p.bornYear;
-        } else {
-            age = g.startingSeason - p.bornYear;
-        }
+        age = g.season - p.bornYear;
 
         for (i = 0; i < years; i++) {
             age += 1;
@@ -259,13 +250,7 @@ define(["db", "globals", "lib/faces", "lib/underscore", "util/data", "util/rando
         }
 
         if (generate) {
-            if (g.hasOwnProperty("season")) {
-                age = g.season - p.bornYear + years;
-                p.bornYear = g.season - age;
-            } else {
-                age = g.startingSeason - p.bornYear + years;
-                p.bornYear = g.startingSeason - age;
-            }
+            age = g.season - p.bornYear + years;
         }
 
         return p;
@@ -286,11 +271,7 @@ define(["db", "globals", "lib/faces", "lib/underscore", "util/data", "util/rando
         var age, cont, i, key, r, ratingKeys;
 
         // Make sure age is always defined
-        if (g.hasOwnProperty("season")) {
-            age = g.season - p.bornYear;
-        } else {
-            age = g.startingSeason - p.bornYear;
-        }
+        age = g.season - p.bornYear;
 
         r = p.ratings.length - 1;
 
@@ -543,16 +524,14 @@ define(["db", "globals", "lib/faces", "lib/underscore", "util/data", "util/rando
      * @memberOf core.player
      * @param {Object} p Player object.
      * @param {=boolean} playoffs Is this stats row for the playoffs or not? Default false.
-     * @param {=season} season The season for the stats row. Defaults to g.season. This option should probably be eliminated eventually, as g.season should always be set.
      * @return {Object} Updated player object.
      */
-    function addStatsRow(p, playoffs, season) {
+    function addStatsRow(p, playoffs) {
         var key, newStats;
 
         playoffs = playoffs !== undefined ? playoffs : false;
-        season = season !== undefined ? season : g.season;
 
-        p.stats.push({season: season, tid: p.tid, playoffs: playoffs, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, per: 0});
+        p.stats.push({season: g.season, tid: p.tid, playoffs: playoffs, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, per: 0});
         p.statsTids.push(p.tid);
         p.statsTids = _.uniq(p.statsTids);
 
@@ -569,8 +548,8 @@ define(["db", "globals", "lib/faces", "lib/underscore", "util/data", "util/rando
         p.statsTids = [];
         p.stats = [];
         if (tid >= 0) {
-            // This only happens when generating random players for a new league, so g.startingSeason can be safely used rather than g.draftYear
-            addStatsRow(p, false, g.startingSeason);
+            // This only happens when generating random players for a new league, as otherwis tid would be negative (draft prospect)
+            addStatsRow(p, false);
         }
         p.rosterOrder = 666;  // Will be set later
         p.ratings = [];
@@ -590,11 +569,7 @@ define(["db", "globals", "lib/faces", "lib/underscore", "util/data", "util/rando
         p.pos = pos(p.ratings[0]);  // Position (PG, SG, SF, PF, C, G, GF, FC)
         p.hgt = parseInt(random.gauss(1, 0.02) * (p.ratings[0].hgt * (maxHgt - minHgt) / 100 + minHgt), 10);  // Height in inches (from minHgt to maxHgt)
         p.weight = parseInt(random.gauss(1, 0.02) * ((p.ratings[0].hgt + 0.5 * p.ratings[0].stre) * (maxWeight - minWeight) / 150 + minWeight), 10);  // Weight in pounds (from minWeight to maxWeight)
-        if (g.hasOwnProperty('season')) {
-            p.bornYear = g.season - age;
-        } else {
-            p.bornYear = g.startingSeason - age;
-        }
+        p.bornYear = g.season - age;
 
         // Randomly choose nationality  
         nationality = 'USA';

@@ -1,6 +1,7 @@
 CURRENT PRIORITIES
 ------------------
 
+get rid of callback in helpers.getTeams
 bbgmPing should only work in production
   make sure it still works next time i update play.basketball-gm.com
 give bbgm website its own version of bootstrap (only with components needed)

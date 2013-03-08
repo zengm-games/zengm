@@ -215,14 +215,18 @@ define(["globals"], function (g) {
     /**
      * Ping a counter at basketball-gm.com.
      *
+     * This should only do something if it isn't being run from a unit test and it's actually on basketball-gm.com.
+     *
      * @memberOf util.helpers
      * @param {string} type Either "league" for a new league, or "season" for a completed season
      */
     function bbgmPing(type) {
         var img;
 
-        img = document.createElement("img");
-        img.src = "http://www.basketball-gm.com/counter.php?type=" + type + "&season=" + g.season;
+        if (location.host.indexOf("basketball-gm.com") >= 0 && location.pathname.indexOf("/test") === -1) {
+            img = document.createElement("img");
+            img.src = "http://www.basketball-gm.com/counter.php?type=" + type + "&season=" + g.season;
+        }
     }
 
 

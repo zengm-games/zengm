@@ -2,10 +2,7 @@ CURRENT PRIORITIES
 ------------------
 
 bbgmPing should only work in production
-  no "test" in url
-  basketball-gm.com in url
-jslint errors
-  currently just "Don't make functions within a loop." which should all be fixed eventually
+  make sure it still works next time i update play.basketball-gm.com
 give bbgm website its own version of bootstrap (only with components needed)
 display league/season counter on basketball-gm.com splash page
 more unit tests
@@ -170,6 +167,8 @@ too easy to do the "be bad, get draft picks, keep payroll low, sign free agents,
 FUTURE (after 3.0.0)
 --------------------
 
+jslint errors
+  currently just "Don't make functions within a loop." which should all be fixed eventually
 more sophisticatedrealtime data binding/updating
   ember.js
     data binding

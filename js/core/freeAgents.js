@@ -42,15 +42,15 @@ define(["db", "globals", "core/player", "lib/underscore", "util/random"], functi
 
                 tid = tids[ti];
 
-                // Skip the user's team
-                if (tid === g.userTid && ti <= tids.length) {
-                    signTeam(ti + 1);
-                    return;
-                }
-
                 // Run callback when all teams have had a turn to sign players. This extra iteration of signTeam is required in case the user's team is the last one.
                 if (ti === tids.length) {
                     cb();
+                    return;
+                }
+
+                // Skip the user's team
+                if (tid === g.userTid) {
+                    signTeam(ti + 1);
                     return;
                 }
 

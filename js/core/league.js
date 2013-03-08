@@ -19,145 +19,143 @@ define(["db", "globals", "ui", "core/player", "core/season", "lib/faces", "lib/j
         l = {name: name, tid: tid, phaseText: ""};
         leagueStore = g.dbm.transaction("leagues", "readwrite").objectStore("leagues");
         leagueStore.add(l).onsuccess = function (event) {
+            var teams;
+
             g.lid = event.target.result;
 
-            g.dbm.transaction("teams").objectStore("teams").getAll().onsuccess = function (event) {
-                var teams;
+            teams = helpers.getTeams();
 
-                teams = event.target.result;
+            // Create new league database
+            db.connectLeague(g.lid, function () {
+                var gameAttributes, key, startingSeason;
 
-                // Create new league database
-                db.connectLeague(g.lid, function () {
-                    var gameAttributes, key, startingSeason;
+                startingSeason = 2013;
+                gameAttributes = {userTid: tid, season: startingSeason, startingSeason: startingSeason, phase: 0, gamesInProgress: false, stopGames: false, lastDbChange: 0, leagueName: name};
 
-                    startingSeason = 2013;
-                    gameAttributes = {userTid: tid, season: startingSeason, startingSeason: startingSeason, phase: 0, gamesInProgress: false, stopGames: false, lastDbChange: 0, leagueName: name};
+                // Clear old game attributes from g, to make sure the new ones are saved to the db in db.setGameAttributes
+                helpers.resetG();
 
-                    // Clear old game attributes from g, to make sure the new ones are saved to the db in db.setGameAttributes
-                    helpers.resetG();
+                db.setGameAttributes(gameAttributes, function () {
+                    var afterPlayerCreation, agingYears, baseRatings, contract, done, draftYear, goodNeutralBad, i, n, p, playerStore, pots, profile, profiles, randomizeExpiration, t, t2, teamStore, transaction;
 
-                    db.setGameAttributes(gameAttributes, function () {
-                        var afterPlayerCreation, agingYears, baseRatings, contract, done, draftYear, goodNeutralBad, i, n, p, playerStore, pots, profile, profiles, randomizeExpiration, t, t2, teamStore, transaction;
+                    // Probably is fastest to use this transaction for everything done to create a new league
+                    transaction = g.dbl.transaction(["draftOrder", "players", "teams", "trade"], "readwrite");
 
-                        // Probably is fastest to use this transaction for everything done to create a new league
-                        transaction = g.dbl.transaction(["draftOrder", "players", "teams", "trade"], "readwrite");
+                    // Initialize draft order object store for later use
+                    transaction.objectStore("draftOrder").add({
+                        rid: 1,
+                        draftOrder: []
+                    });
 
-                        // Initialize draft order object store for later use
-                        transaction.objectStore("draftOrder").add({
-                            rid: 1,
-                            draftOrder: []
+                    // teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league.
+                    teamStore = transaction.objectStore("teams");
+                    for (i = 0; i < teams.length; i++) {
+                        teamStore.add({
+                            tid: teams[i].tid,
+                            cid: teams[i].cid,
+                            did: teams[i].did,
+                            region: teams[i].region,
+                            name: teams[i].name,
+                            abbrev: teams[i].abbrev,
+                            stats: [{season: g.startingSeason, playoffs: false, gp: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, oppPts: 0}], // Things recorded both in and out of playoffs
+                            seasons: [{season: g.startingSeason, gp: 0, att: 0, revenue: 0, cost: 0, cash: 10000, won: 0, lost: 0, wonHome: 0, lostHome: 0, wonAway: 0, lostAway: 0, wonDiv: 0, lostDiv: 0, wonConf: 0, lostConf: 0, lastTen: [], streak: 0, madePlayoffs: false, confChamps: false, leagueChamps: false}] // Things that only have one value per season
                         });
+                    }
 
-                        // teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league.
-                        teamStore = transaction.objectStore("teams");
-                        for (i = 0; i < teams.length; i++) {
-                            teamStore.add({
-                                tid: teams[i].tid,
-                                cid: teams[i].cid,
-                                did: teams[i].did,
-                                region: teams[i].region,
-                                name: teams[i].name,
-                                abbrev: teams[i].abbrev,
-                                stats: [{season: g.startingSeason, playoffs: false, gp: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, oppPts: 0}], // Things recorded both in and out of playoffs
-                                seasons: [{season: g.startingSeason, gp: 0, att: 0, revenue: 0, cost: 0, cash: 10000, won: 0, lost: 0, wonHome: 0, lostHome: 0, wonAway: 0, lostAway: 0, wonDiv: 0, lostDiv: 0, wonConf: 0, lostConf: 0, lastTen: [], streak: 0, madePlayoffs: false, confChamps: false, leagueChamps: false}] // Things that only have one value per season
-                            });
-                        }
+                    transaction.objectStore("trade").add({
+                        rid: 0,
+                        otherTid: tid === 0 ? 1 : 0,  // Load initial trade view with the lowest-numbered non-user team (so, either 0 or 1)
+                        otherPids: [],
+                        userPids: []
+                    });
 
-                        transaction.objectStore("trade").add({
-                            rid: 0,
-                            otherTid: tid === 0 ? 1 : 0,  // Load initial trade view with the lowest-numbered non-user team (so, either 0 or 1)
-                            otherPids: [],
-                            userPids: []
+                    // This can't be in transaction.oncomplete because loading players from a json file is async and breaks the transaction.
+                    afterPlayerCreation = function () {
+                        // Make schedule, start season
+                        season.newPhase(g.PHASE.REGULAR_SEASON, function () {
+                            var lid;
+
+                            ui.updateStatus("Idle");
+
+                            lid = g.lid;  // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
+
+                            // Auto sort player's roster (other teams will be done in season.newPhase(g.PHASE.REGULAR_SEASON))
+                            db.rosterAutoSort(null, g.userTid, function () { cb(lid); });
+
+                            helpers.bbgmPing("league");
                         });
+                    };
 
-                        // This can't be in transaction.oncomplete because loading players from a json file is async and breaks the transaction.
-                        afterPlayerCreation = function () {
-                            // Make schedule, start season
-                            season.newPhase(g.PHASE.REGULAR_SEASON, function () {
-                                var lid;
+                    if (playerGeneration === "nba2012") {
+                        // Load players from file
+                        $.getJSON("/data/nba2012.json", function (players) {
+                            var cont, i, p, playerStore;
 
-                                ui.updateStatus("Idle");
-
-                                lid = g.lid;  // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
-
-                                // Auto sort player's roster (other teams will be done in season.newPhase(g.PHASE.REGULAR_SEASON))
-                                db.rosterAutoSort(null, g.userTid, function () { cb(lid); });
-
-                                helpers.bbgmPing("league");
-                            });
-                        };
-
-                        if (playerGeneration === "nba2012") {
-                            // Load players from file
-                            $.getJSON("/data/nba2012.json", function (players) {
-                                var cont, i, p, playerStore;
-
-                                playerStore = g.dbl.transaction("players", "readwrite").objectStore("players");  // Transaction used above is closed by now
-
-                                done = 0;
-                                for (i = 0; i < players.length; i++) {
-                                    p = players[i];
-                                    p.ratings[0].ovr = player.ovr(p.ratings[0]);
-                                    p.face = faces.generate();
-                                    if (p.tid === g.PLAYER.FREE_AGENT) {
-                                        cont = player.contract(p.ratings[0]);
-                                        p.contractAmount = cont.amount;
-                                        p.contractExp = cont.exp;
-                                    }
-                                    db.putPlayer(playerStore, p, function () {
-                                        done += 1;
-                                        if (done === players.length) {
-                                            afterPlayerCreation();
-                                        }
-                                    });
-                                }
-                            });
-                        } else {
-                            // Generate new players
-                            playerStore = transaction.objectStore("players");
-                            profiles = ["Point", "Wing", "Big", ""];
-                            baseRatings = [37, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 26, 26, 26];
-                            pots = [75, 65, 55, 55, 60, 50, 70, 40, 55, 50, 60, 60, 45, 45];
+                            playerStore = g.dbl.transaction("players", "readwrite").objectStore("players");  // Transaction used above is closed by now
 
                             done = 0;
-                            for (t = -3; t < 30; t++) {
-                                // Create multiple "teams" worth of players for the free agent pool
-                                if (t < 0) {
-                                    t2 = g.PLAYER.FREE_AGENT;
+                            for (i = 0; i < players.length; i++) {
+                                p = players[i];
+                                p.ratings[0].ovr = player.ovr(p.ratings[0]);
+                                p.face = faces.generate();
+                                if (p.tid === g.PLAYER.FREE_AGENT) {
+                                    cont = player.contract(p.ratings[0]);
+                                    p.contractAmount = cont.amount;
+                                    p.contractExp = cont.exp;
+                                }
+                                db.putPlayer(playerStore, p, function () {
+                                    done += 1;
+                                    if (done === players.length) {
+                                        afterPlayerCreation();
+                                    }
+                                });
+                            }
+                        });
+                    } else {
+                        // Generate new players
+                        playerStore = transaction.objectStore("players");
+                        profiles = ["Point", "Wing", "Big", ""];
+                        baseRatings = [37, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 26, 26, 26];
+                        pots = [75, 65, 55, 55, 60, 50, 70, 40, 55, 50, 60, 60, 45, 45];
+
+                        done = 0;
+                        for (t = -3; t < 30; t++) {
+                            // Create multiple "teams" worth of players for the free agent pool
+                            if (t < 0) {
+                                t2 = g.PLAYER.FREE_AGENT;
+                            } else {
+                                t2 = t;
+                            }
+
+                            goodNeutralBad = random.randInt(-1, 1);  // determines if this will be a good team or not
+                            random.shuffle(pots);
+                            for (n = 0; n < 14; n++) {
+                                profile = profiles[random.randInt(0, profiles.length - 1)];
+                                agingYears = random.randInt(0, 13);
+                                draftYear = g.startingSeason - 1 - agingYears;
+
+                                p = player.generate(t2, 19, profile, baseRatings[n], pots[n], draftYear, true);
+                                p = player.develop(p, agingYears, true);
+                                if (n < 5) {
+                                    p = player.bonus(p, goodNeutralBad * random.randInt(0, 20), true);
                                 } else {
-                                    t2 = t;
+                                    p = player.bonus(p, 0, true);
+                                }
+                                if (t === -1) {  // Free agents
+                                    p = player.bonus(p, -15, false);
                                 }
 
-                                goodNeutralBad = random.randInt(-1, 1);  // determines if this will be a good team or not
-                                random.shuffle(pots);
-                                for (n = 0; n < 14; n++) {
-                                    profile = profiles[random.randInt(0, profiles.length - 1)];
-                                    agingYears = random.randInt(0, 13);
-                                    draftYear = g.startingSeason - 1 - agingYears;
-
-                                    p = player.generate(t2, 19, profile, baseRatings[n], pots[n], draftYear, true);
-                                    p = player.develop(p, agingYears, true);
-                                    if (n < 5) {
-                                        p = player.bonus(p, goodNeutralBad * random.randInt(0, 20), true);
-                                    } else {
-                                        p = player.bonus(p, 0, true);
+                                db.putPlayer(playerStore, p, function () {
+                                    done += 1;
+                                    if (done === 31 * 14) {
+                                        afterPlayerCreation();
                                     }
-                                    if (t === -1) {  // Free agents
-                                        p = player.bonus(p, -15, false);
-                                    }
-
-                                    db.putPlayer(playerStore, p, function () {
-                                        done += 1;
-                                        if (done === 31 * 14) {
-                                            afterPlayerCreation();
-                                        }
-                                    });
-                                }
+                                });
                             }
                         }
-                    });
+                    }
                 });
-            };
+            });
         };
     }
 

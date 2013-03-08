@@ -1,6 +1,9 @@
 CURRENT PRIORITIES
 ------------------
 
+ui.update takes data, but data is a module
+  make ui.data just take an unnamed varaible like in view.newLeague
+is dbm.teams needed?
 bbgmPing should only work in production
   make sure it still works next time i update play.basketball-gm.com
 give bbgm website its own version of bootstrap (only with components needed)

@@ -162,7 +162,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     }
 
     function newLeague(req) {
-        var name, randomName, tid;
+        var name, randomName, tid, teams;
 
         beforeNonLeague();
 
@@ -170,19 +170,14 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
         randomName = data.nickNames[Math.floor(Math.random() * data.nickNames.length)];
 
         if (req.method === "get") {
-            g.dbm.transaction("teams").objectStore("teams").getAll().onsuccess = function (event) {
-                var data, teams;
+            teams = helpers.getTeams();
 
-                teams = event.target.result;
-
-                data = {
-                    container: "content",
-                    template: "newLeague",
-                    title: "Create New League",
-                    vars: {teams: teams, randomName: randomName}
-                };
-                ui.update(data);
-            };
+            ui.update({
+                container: "content",
+                template: "newLeague",
+                title: "Create New League",
+                vars: {teams: teams, randomName: randomName}
+            });
         } else if (req.method === "post") {
             tid = Math.floor(req.params.tid);
             name = req.params.name.length > 0 ? req.params.name : randomName;

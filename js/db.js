@@ -21,14 +21,6 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
             g.dbm = event.target.result;
 
             leagueStore = g.dbm.createObjectStore("leagues", {keyPath: "lid", autoIncrement: true});
-            teamStore = g.dbm.createObjectStore("teams", {keyPath: "tid"});
-            teamStore.createIndex("cid", "cid", {unique: false});
-            teamStore.createIndex("did", "did", {unique: false});
-
-            teams = helpers.getTeams();
-            for (i = 0; i < teams.length; i++) {
-                teamStore.add(teams[i]);
-            }
         };
         request.onsuccess = function (event) {
             g.dbm = request.result;

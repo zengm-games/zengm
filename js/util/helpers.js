@@ -93,7 +93,6 @@ define(["globals"], function (g) {
         return seasons;
     }
 
-    /*Returns a list of all the teams. If selectedTid is passed, then the "selected" property will be added to each team, true only for selectedTid and false otherwise. If cb is passed, it is run with the teams array as an argument. Otherwise, the teams array is returned.*/
     /**
      * Get list of teams, along with some metadata
      *
@@ -108,11 +107,10 @@ define(["globals"], function (g) {
      *     selected: If selectedTid is defined, this is a boolean representing whether this team is "selected" or not (see below).
      * 
      * @memberOf util.helpers
-     * @param {number} selectedTid A team ID for a team that should be "selected" (as in, from a drop down menu).
-     * @param  {Function} cb          [description]
+     * @param {number} selectedTid A team ID for a team that should be "selected" (as in, from a drop down menu). This will add the "selected" key to each team object, as described above.
      * @return {Array.Object} All teams.
      */
-    function getTeams(selectedTid, cb) {
+    function getTeams(selectedTid) {
         var i, teams;
 
         selectedTid = selectedTid !== undefined ? selectedTid : -1;
@@ -156,11 +154,7 @@ define(["globals"], function (g) {
             teams[selectedTid].selected = true;
         }
 
-        if (cb !== undefined) {
-            cb(teams);
-        } else {
-            return teams;
-        }
+        return teams;
     }
 
     /**

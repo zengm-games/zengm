@@ -1,6 +1,6 @@
 /**
  * @name util.templateHelpers
- * @namespace Handlebars helper functions.
+ * @namespace Handlebars helper functions. Any new helpers added here should be added to the handlebars call in the Makefile.
  */
 define(["lib/handlebars.runtime", "util/helpers"], function (Handlebars, helpers) {
     "use strict";

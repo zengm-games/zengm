@@ -8,15 +8,18 @@ display league/season counter on basketball-gm.com splash page
 more unit tests
 PER calculation doesn't take playoffs into account. it should.
   only update active players, and use playoff stats
+stat views
+  playoff/regular season toggle in team/player stats, league leaders
+  player stats: toggle to only show players > 2000 minutes http://www.nba.com/leader_requirements.html
+  per 36 stats in team/player stats view, league leaders
+    add a dropdown (maybe make the dropdown handling code more general?)
+last year's stats not displaying in free agents view? revisit how this is done.
+different city populations, which influence attendance
+  in concert with fan engagement
 
 BEFORE 3.0.0
 ------------
 
-stat views
-  playoff/regular season toggle in team/player stats
-  player stats: toggle to only show players > 2000 minutes http://www.nba.com/leader_requirements.html
-  per 36 stats in team/player stats view
-    add a dropdown (maybe make the dropdown handling code more general?)
 database changes
   KEEP TRACK OF THESE CHANGES so i can upgrade
   injuries
@@ -24,7 +27,7 @@ database changes
     0.1-1, a multiplier on how many fans attend each game
     increase when the team's performance increases
     decrease a little when performance decreases
-    decrease a lot 
+    decrease a lot
   negotiation is annoying
     come up with an "anger meter" to display the odds of the player demanding more
       initialize with some value based on if it's a resigning or not, and wins the previous season
@@ -52,12 +55,7 @@ database changes
     some way to actually lose the game
       get fired by owner if X
     final score, hall of fame
-    difficulty level from 1-10, which influences..
-      starting $
-      starting roster
-      fan engagement
-        all of the above should be functions of the city's population!
-      also, final score
+      influenced by size of city
 gameSim
   home/away advantage
     make sure home/away in playoffs is set right
@@ -76,11 +74,11 @@ player stats
   how to handle aggregating stats for players who played for more than one team in a season? add them all up in ps in db.getPlayers
 db.getPlayers
   way way way too messy
-  rename to helpers.filterPlayers?
+  rename to helpers.filterPlayers? or player.filter and player.filterAll?
     make db.getTeams consistent with this
   use for other access of players "playersAll"
-  the special case attributes should generally be moved directly into the database.
-Replace showNoStats with a check of stats.length in db.getPlayer, at least in some cases? API is messy
+  the special case attributes should generally be moved directly into the database?
+  Replace showNoStats with a check of stats.length in db.getPlayer, at least in some cases? API is messy
 trade refactoring
   validateSavedTids crap should be in trade.js.
   trade.summary stuff should be automatic and stored in tradeStore

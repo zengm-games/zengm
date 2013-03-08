@@ -1,5 +1,5 @@
 /**
- * @name templates.helpers
+ * @name util.templateHelpers
  * @namespace Handlebars helper functions.
  */
 define(["lib/handlebars.runtime"], function (Handlebars) {

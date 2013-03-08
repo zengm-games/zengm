@@ -2,7 +2,7 @@ requirejs.config({
     baseUrl: "/js",
     shim: {
         "../gen/templates": {
-            deps: ["lib/handlebars.runtime", "templates/helpers"]
+            deps: ["lib/handlebars.runtime", "util/templateHelpers"]
         },
         "lib/bootstrap-dropdown": {
             deps: ["lib/jquery"]

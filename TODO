@@ -10,7 +10,6 @@ give bbgm website its own version of bootstrap (only with components needed)
 display league/season counter on basketball-gm.com splash page
 js/templates/helpers.js
   handlebars helper functions should call util.helpers for any heavy lifting or duplication
-  rename to util/templateHelpers
 more unit tests
 
 BEFORE 3.0.0

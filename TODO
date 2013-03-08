@@ -14,8 +14,36 @@ stat views
   per 36 stats in team/player stats view, league leaders
     add a dropdown (maybe make the dropdown handling code more general?)
 last year's stats not displaying in free agents view? revisit how this is done.
-different city populations, which influence attendance
-  in concert with fan engagement
+financial stuff
+  WILL REQUIRE NEW OBJECTSTORE - or new entries in gameAttributes?
+    {
+      fanEngagement: number,
+      pop: number,
+      tvContractAmount: number,
+      tvContractExp: number,
+      nationalTvContractAmount: number,
+      merchandisingAmount: number,
+      sponsorshipAmount: number
+    }
+  fan engagement
+    0.1-1, a multiplier on how many fans attend each game
+    increase when the team's performance increases
+    decrease a little when performance decreases
+    decrease a lot
+  attendance = f(population, fan engagement, ticket price)
+  sources of revenue http://nbahoopsonline.com/Articles/2007-08/NBArevinuesharing.html
+    local tv contract - $10 million
+      will be a deal from 3 to 5 years in length
+      based on...
+        region population
+        "fan engagement"
+        random noise
+        "random event" - competition between two networks, Sports TV and The Basketball Channel
+    national tv contract - same amount to every team - $30 million
+    merchandising ($5 million), sponsorships ($25 million) - based on fan engagement and region population, get some income
+    ticket sales - $30 million
+  add "team finances" view to allow tweaking of business crap
+    move ticket price to gameAttributes rather than making it a constant
 
 BEFORE 3.0.0
 ------------
@@ -23,11 +51,6 @@ BEFORE 3.0.0
 database changes
   KEEP TRACK OF THESE CHANGES so i can upgrade
   injuries
-  fan engagement
-    0.1-1, a multiplier on how many fans attend each game
-    increase when the team's performance increases
-    decrease a little when performance decreases
-    decrease a lot
   negotiation is annoying
     come up with an "anger meter" to display the odds of the player demanding more
       initialize with some value based on if it's a resigning or not, and wins the previous season

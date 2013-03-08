@@ -48,9 +48,6 @@ requirejs.config({
         },
         "lib/underscore": {
             exports: "_"
-        },
-        "templates/helpers": {
-            deps: ["lib/handlebars.runtime"]
         }
     }
 });

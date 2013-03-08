@@ -168,16 +168,15 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
      * @param {Array.<string>} attributes List of player attributes to include in output.
      * @param {Array.<string>} stats List of player stats to include in output.
      * @param {Array.<string>} ratings List of player ratings to include in output.
-    * @param {Object} options Object containing various options. Possible keys include...  "totals": Boolean representing whether to return total stats (true) or per-game averages (false); default is false. Other keys should eventually be documented.
+    * @param {Object} options Object containing various options. Possible keys include...  "totals": Boolean representing whether to return total stats (true) or per-game averages (false); default is false. "playoffs": Boolean representing whether to return playoff stats (statsPlayoffs and careerStatsPlayoffs) or not; default is false. Other keys should eventually be documented.
      * @return {Object} Filtered object containing the requested information for the player.
      */
     function getPlayer(pa, season, tid, attributes, stats, ratings, options) {
-        var i, j, k, key, ignoredKeys, player, pcs, pr, ps, teams, tidTemp;
+        var i, j, k, key, ignoredKeys, player, pcs, pcsp, pr, ps, psp, teams, tidTemp;
 
         options = options !== undefined ? options : {};
-        if (!options.hasOwnProperty("totals")) {
-            options.totals = false;
-        }
+        options.totals = options.totals !== undefined ? options.totals : false;
+        options.playoffs = options.playoffs !== undefined ? options.playoffs : false;
 
         if (stats.length === 0) {
             options.showNoStats = true;
@@ -274,13 +273,17 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
         // Stats
         if (stats.length > 0) {
             if (season !== null) {
+                ps = {};  // Regular season
+                psp = {};  // Playoffs
                 // Single season
                 if (tid !== null) {
                     // Get stats for a single team
                     for (j = 0; j < pa.stats.length; j++) {
                         if (pa.stats[j].season === season && pa.stats[j].playoffs === false && pa.stats[j].tid === tid) {
                             ps = pa.stats[j];
-                            break;
+                        }
+                        if (options.playoffs && pa.stats[j].season === season && pa.stats[j].playoffs === true && pa.stats[j].tid === tid) {
+                            psp = pa.stats[j];
                         }
                     }
                 } else {
@@ -288,7 +291,9 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
                     for (j = 0; j < pa.stats.length; j++) {
                         if (pa.stats[j].season === season && pa.stats[j].playoffs === false) {
                             ps = pa.stats[j];
-                            break;
+                        }
+                        if (options.playoffs && pa.stats[j].season === season && pa.stats[j].playoffs === true) {
+                            psp = pa.stats[j];
                         }
                     }
                 }
@@ -298,20 +303,26 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
                     for (j = 0; j < pa.stats.length; j++) {
                         if (pa.stats[j].season === g.season - 1 && pa.stats[j].playoffs === false) {
                             ps = pa.stats[j];
-                            break;
+                        }
+                        if (options.playoffs && pa.stats[j].season === g.season - 1 && pa.stats[j].playoffs === true) {
+                            psp = pa.stats[j];
                         }
                     }
                 }
             } else {
                 // Multiple seasons
-                ps = [];
+                ps = [];  // Regular season
+                psp = [];  // Playoffs
                 for (j = 0; j < pa.stats.length; j++) {
                     if (pa.stats[j].playoffs === false) {
                         ps.push(pa.stats[j]);
+                    } else if (options.playoffs) {
+                        psp.push(pa.stats[j]);
                     }
                 }
                 // Career totals
-                pcs = {};
+                pcs = {};  // Regular season
+                pcsp = {};  // Playoffs
                 if (ps.length > 0) {
                     // Either aggregate stats or ignore annual crap
                     ignoredKeys = ["age", "playoffs", "season", "tid"];
@@ -319,6 +330,9 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
                         if (ps[0].hasOwnProperty(key)) {
                             if (ignoredKeys.indexOf(key) < 0) {
                                 pcs[key] = _.reduce(_.pluck(ps, key), function (memo, num) { return memo + num; }, 0);
+                                if (options.playoffs) {
+                                    pcsp[key] = _.reduce(_.pluck(psp, key), function (memo, num) { return memo + num; }, 0);
+                                }
                             }
                         }
                     }
@@ -407,20 +421,32 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
         // Only show a player if they have a stats entry for this team and season, or if they are rookies who have just been drafted and the current roster is being viewed.
         if ((options.showRookies && pa.draftYear === g.season && season === g.season) || ps !== undefined || options.showNoStats) {
             if (ps !== undefined && ps.length >= 0) {
-                player.stats = [];
                 // Multiple seasons
+                player.stats = [];
                 for (i = 0; i < ps.length; i++) {
-                    player.stats.push({});
-                    player.stats[i] = filterStats(player.stats[i], ps[i], stats);
+                    player.stats.push(filterStats({}, ps[i], stats));
+                }
+                if (options.playoffs) {
+                    player.statsPlayoffs = [];
+                    for (i = 0; i < psp.length; i++) {
+                        player.statsPlayoffs.push(filterStats({}, psp[i], stats));
+                    }
                 }
                 // Career totals
-                player.careerStats = {};
-                player.careerStats = filterStats(player.careerStats, pcs, stats);
+                player.careerStats = filterStats({}, pcs, stats);
                 player.careerStats.per = _.reduce(ps, function (memo, ps) { return memo + ps.per * ps.min; }, 0) / (player.careerStats.min * player.careerStats.gp); // Special case for PER - weight by minutes per season
                 if (isNaN(player.careerStats.per)) { player.careerStats.per = 0; }
+                if (options.playoffs) {
+                    player.careerStatsPlayoffs = filterStats({}, pcsp, stats);
+                    player.careerStatsPlayoffs.per = _.reduce(psp, function (memo, psp) { return memo + psp.per * psp.min; }, 0) / (player.careerStatsPlayoffs.min * player.careerStatsPlayoffs.gp); // Special case for PER - weight by minutes per season
+                    if (isNaN(player.careerStatsPlayoffs.per)) { player.careerStatsPlayoffs.per = 0; }
+                }
             } else {
                 // Single seasons
                 player.stats = filterStats({}, ps, stats);
+                if (options.playoffs) {
+                    player.statsPlayoffs = filterStats({}, psp, stats);
+                }
             }
         } else {
             player = null;
@@ -441,9 +467,6 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
         var i, player, players;
 
         options = options !== undefined ? options : {};
-        if (!options.hasOwnProperty("totals")) {
-            options.totals = false;
-        }
 
         players = [];
         for (i = 0; i < playersAll.length; i++) {

@@ -1859,7 +1859,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                 ratings = ["season", "abbrev", "age", "ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills"];
                 stats = ["season", "abbrev", "age", "gp", "gs", "min", "fg", "fga", "fgp", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per"];
 
-                player = db.getPlayer(event.target.result, null, null, attributes, stats, ratings);
+                player = db.getPlayer(event.target.result, null, null, attributes, stats, ratings, {playoffs: true});
 
                 if (player.tid === g.PLAYER.RETIRED) {
                     g.realtimeUpdate = false;

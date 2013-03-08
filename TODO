@@ -6,11 +6,17 @@ bbgmPing should only work in production
 give bbgm website its own version of bootstrap (only with components needed)
 display league/season counter on basketball-gm.com splash page
 more unit tests
+PER calculation doesn't take playoffs into account. it should.
+  only update active players, and use playoff stats
 
 BEFORE 3.0.0
 ------------
 
-player stats: toggle to only show players > 2000 minutes http://www.nba.com/leader_requirements.html
+stat views
+  playoff/regular season toggle in team/player stats
+  player stats: toggle to only show players > 2000 minutes http://www.nba.com/leader_requirements.html
+  per 36 stats in team/player stats view
+    add a dropdown (maybe make the dropdown handling code more general?)
 database changes
   KEEP TRACK OF THESE CHANGES so i can upgrade
   injuries
@@ -69,6 +75,7 @@ contract negotiation
 player stats
   how to handle aggregating stats for players who played for more than one team in a season? add them all up in ps in db.getPlayers
 db.getPlayers
+  way way way too messy
   rename to helpers.filterPlayers?
     make db.getTeams consistent with this
   use for other access of players "playersAll"
@@ -82,9 +89,6 @@ DataTables - need to rethink a lot of this, particularly how to make a decent UI
   http://datatables.net/extras/ such as scroller, colreorder, colvis, ...
   add team dropdown to ratings and stats views - but should this refresh the view, or just filter the DataTable?
     could use something like http://www.datatables.net/extras/thirdparty/ColumnFilterWidgets/DataTables/extras/ColumnFilterWidgets/ to also filter on positions
-  per 36 stats in team/player stats view
-    add a dropdown (maybe make the dropdown handling code more general?)
-    add an option to db.getPlayers
   fix default sort order on column click
     http://datatables.net/ref#asSorting will work. maybe pass it as an option to bbgm_datatable
     text should be asc, numeric should be desc
@@ -102,8 +106,6 @@ money display
 internationalization
   league dashboard rankings should say 1st, 2nd, 3rd rather than 1th, 2th, 3th
   http://requirejs.org/docs/api.html#i18n
-playoff stats in player view
-  need a way to request only playoff stats from db.getPlayers - see all the playoffs === false stuff
 in lock functions, update g from database before using any potentially sensitive values
   or should these g.whatever variables be set at all if they're sensitive? lid doesn't change obviously, but the others?
 move to new window button, like gmail, that will open a view in a new window with a minimal UI

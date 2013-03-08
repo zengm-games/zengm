@@ -6,9 +6,6 @@ bbgmPing should only work in production
 give bbgm website its own version of bootstrap (only with components needed)
 display league/season counter on basketball-gm.com splash page
 more unit tests
-league leaders
-  minimum minutes played to show should use team GP to scale, not player (this won't matter until injuries are implemented, basically)
-  add more categories http://www.nba.com/leader_requirements.html
 
 BEFORE 3.0.0
 ------------
@@ -166,6 +163,8 @@ too easy to do the "be bad, get draft picks, keep payroll low, sign free agents,
   minimum payroll, to make really bad teams not economically viable
   free agents are less willing to sign with bad teams
   user can't just sign all the free agents before AI teams
+league leaders
+  minimum minutes played to show should use team GP to scale, not player (this won't matter until injuries are implemented, basically)
 
 FUTURE (after 3.0.0)
 --------------------

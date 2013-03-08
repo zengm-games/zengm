@@ -1647,12 +1647,16 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                 categories.push({name: "Rebounds", stat: "Reb", title: "Rebounds Per Game", data: [], minStats: ["gp", "trb"], minValue: [70, 800]});
                 categories.push({name: "Assists", stat: "Ast", title: "Assists Per Game", data: [], minStats: ["gp", "ast"], minValue: [70, 400]});
                 categories.push({name: "Field Goal Percentage", stat: "FG%", title: "Field Goal Percentage", data: [], minStats: ["fg"], minValue: [300]});
+                categories.push({name: "Three-Pointer Percentage", stat: "3PT%", title: "Three-Pointer Percentage", data: [], minStats: ["tp"], minValue: [55]});
+                categories.push({name: "Free Throw Percentage", stat: "FT%", title: "Free Throw Percentage", data: [], minStats: ["ft"], minValue: [125]});
                 categories.push({name: "Blocks", stat: "Blk", title: "Blocks Per Game", data: [], minStats: ["gp", "blk"], minValue: [70, 100]});
                 categories.push({name: "Steals", stat: "Stl", title: "Steals Per Game", data: [], minStats: ["gp", "stl"], minValue: [70, 125]});
+                categories.push({name: "Minutes", stat: "Min", title: "Minutes Per Game", data: [], minStats: ["gp", "min"], minValue: [70, 2000]});
+                categories.push({name: "Player Efficiency Rating", stat: "PER", title: "Player Efficiency Rating", data: [], minStats: ["min"], minValue: [2000]});
 
                 attributes = ["pid", "name"];
                 ratings = ["skills"];
-                stats = ["pts", "trb", "ast", "fgp", "blk", "stl", "gp", "fg", "abbrev"];  // This needs to be in the same order as categories (at least, initially)
+                stats = ["pts", "trb", "ast", "fgp", "tpp", "ftp", "blk", "stl", "min", "per", "gp", "fg", "tp", "ft", "abbrev"];  // This needs to be in the same order as categories (at least, initially)
                 players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings);
 
                 for (i = 0; i < categories.length; i++) {
@@ -1694,7 +1698,8 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                             break;
                         }
                     }
-                    if (i === 3) {
+
+                    if (i % 3 === 0 && i > 0) {
                         categories[i].newRow = true;
                     } else {
                         categories[i].newRow = false;

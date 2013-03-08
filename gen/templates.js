@@ -478,7 +478,7 @@ function program8(depth0,data) {
   if (stack1 = helpers.new_window) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.new_window; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
-    + "</h1>\n\n<p></p>\n<div class=\"row-fluid\">\n  ";
+    + "</h1>\n\n<p>Only eligible players are shown (a player shooting 2 for 2 on the season is not eligible for the league lead in FG%).</p>\n\n<p></p>\n<div class=\"row-fluid\">\n  ";
   options = {hash:{},inverse:self.noop,fn:self.programWithDepth(program4, data, depth0),data:data};
   if (stack1 = helpers.categories) { stack1 = stack1.call(depth0, options); }
   else { stack1 = depth0.categories; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }

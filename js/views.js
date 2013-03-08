@@ -203,6 +203,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
                 select = $("select[name='tid']");
                 select.change(updatePopText);
+                select.keyup(updatePopText);
 
                 updatePopText();
             });

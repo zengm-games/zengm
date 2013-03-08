@@ -54,7 +54,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * Also see core.game where the outputs of this function are used.
      *  
      * @memberOf core.gameSim
-     * @returns {Array.<Object>} Game result object, an array of two objects similar to the inputs to GameSim, but with both the team and player "stat" objects filled in and the extraneous data (pace, ovr, compositeRating) removed. In other words...
+     * @return {Array.<Object>} Game result object, an array of two objects similar to the inputs to GameSim, but with both the team and player "stat" objects filled in and the extraneous data (pace, ovr, compositeRating) removed. In other words...
      *     {
      *         "gid": 0,
      *         "overtimes": 0,

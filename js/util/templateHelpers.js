@@ -2,14 +2,10 @@
  * @name util.templateHelpers
  * @namespace Handlebars helper functions.
  */
-define(["lib/handlebars.runtime"], function (Handlebars) {
+define(["lib/handlebars.runtime", "util/helpers"], function (Handlebars, helpers) {
     "use strict";
 
-    Handlebars.registerHelper("round", function (value, precision) {
-        precision = precision !== undefined ? parseInt(precision, 10) : 0;
-
-        return parseFloat(value).toFixed(precision);
-    });
+    Handlebars.registerHelper("round", helpers.round);
 
     Handlebars.registerHelper("roundWinp", function (value) {
         var output;
@@ -66,26 +62,6 @@ define(["lib/handlebars.runtime"], function (Handlebars) {
 
 
     Handlebars.registerHelper("skills_block", function (skills) {
-        var i, skillsHtml, tooltips;
-
-        tooltips = {
-            "3": "Three Point Shooter",
-            A: "Athlete",
-            B: "Ball Handler",
-            Di: "Interior Defender",
-            Dp: "Perimeter Defender",
-            Po: "Post Scorer",
-            Ps: "Passer",
-            R: "Rebounder"
-        };
-
-        skillsHtml = '';
-        if (skills !== undefined) {
-            for (i = 0; i < skills.length; i++) {
-                skillsHtml += '<span class="skill" title="' + tooltips[skills[i]] + '">' + skills[i] + '</span>';
-            }
-        }
-
-        return new Handlebars.SafeString(skillsHtml);
+        return new Handlebars.SafeString(helpers.skillsBlock(skills));
     });
 });

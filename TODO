@@ -8,8 +8,6 @@ jslint errors
   currently just "Don't make functions within a loop." which should all be fixed eventually
 give bbgm website its own version of bootstrap (only with components needed)
 display league/season counter on basketball-gm.com splash page
-js/templates/helpers.js
-  handlebars helper functions should call util.helpers for any heavy lifting or duplication
 more unit tests
 
 BEFORE 3.0.0

@@ -10,7 +10,6 @@ more unit tests
 BEFORE 3.0.0
 ------------
 
-player shouldn't get a "gp" stat unless he actually plays
 player stats: toggle to only show players > 2000 minutes http://www.nba.com/leader_requirements.html
 database changes
   KEEP TRACK OF THESE CHANGES so i can upgrade

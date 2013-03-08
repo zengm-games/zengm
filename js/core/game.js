@@ -89,9 +89,12 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season",
             for (i = 0; i < keys.length; i++) {
                 playerStats[keys[i]] += that.team[t].player[p].stat[keys[i]];
             }
-            playerStats.gp += 1;
-            if (p < 5) {
-                playerStats.gs += 1;
+            // Only count a game played if the player recorded minutes
+            if (playerStats.min > 0) {
+                playerStats.gp += 1;
+                if (p < 5) {
+                    playerStats.gs += 1;
+                }
             }
             playerStats.trb += that.team[t].player[p].stat.orb + that.team[t].player[p].stat.drb;
 

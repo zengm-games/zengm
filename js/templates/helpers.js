@@ -34,16 +34,16 @@ Handlebars.registerHelper("matchup", function (i, j) {
 
     source = '';
     if (series && series.home.name) {
-        if (series.home.wonSeries) { source += '<strong>'; }
+        if (series.home.won === 4) { source += '<strong>'; }
         source += series.home.seed + '. <a href="/l/' + this.lid + '/roster/' + series.home.abbrev + '/' + this.season + '">' + series.home.name + '</a>';
         if (series.home.hasOwnProperty("won")) { source += ' ' + series.home.won; }
-        if (series.home.wonSeries) { source += '</strong>'; }
+        if (series.home.won === 4) { source += '</strong>'; }
         source += '<br>';
 
-        if (series.away.wonSeries) { source += '<strong>'; }
+        if (series.away.won === 4) { source += '<strong>'; }
         source += series.away.seed + '. <a href="/l/' + this.lid + '/roster/' + series.away.abbrev + '/' + this.season + '">' + series.away.name + '</a>';
         if (series.away.hasOwnProperty("won")) { source += ' ' + series.away.won; }
-        if (series.away.wonSeries) { source += '</strong>'; }
+        if (series.away.won === 4) { source += '</strong>'; }
     }
 
     return new Handlebars.SafeString(source);

@@ -12,8 +12,6 @@ js/templates/helpers.js
   handlebars helper functions should call util.helpers for any heavy lifting or duplication
   rename to util/templateHelpers
   make into real requirejs module?
-league dashboard
-  next game should show something when active in playoffs, a message at least
 more unit tests
 
 BEFORE 3.0.0

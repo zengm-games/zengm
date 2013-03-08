@@ -1,15 +1,15 @@
 /**
- * @name util.data
- * @namespace Static data; currently first names, last names, and nick names.
+ * @name data.names
+ * @namespace First names, last names, and nick names.
  */
 define([], function () {
     "use strict";
 
-    var firstNames, lastNames, nickNames;
+    var first, last, nick;
 
     // http://www.census.gov/genealogy/www/data/1990surnames/names_files.html
     // Name, Cumulative Frequency
-    firstNames = [
+    first = [
         ["James", 3.318],
         ["John", 6.589],
         ["Robert", 9.732],
@@ -1233,7 +1233,7 @@ define([], function () {
 
     // http://www.census.gov/genealogy/www/data/1990surnames/names_files.html
     // Name, Cumulative Frequency
-    lastNames = [
+    last = [
         ["Smith", 1.006],
         ["Johnson", 1.816],
         ["Williams", 2.515],
@@ -20076,7 +20076,7 @@ define([], function () {
     ];
 
     // http://en.wikipedia.org/wiki/List_of_nicknames_used_in_basketball on 2012-02-02
-    nickNames = [
+    nick = [
         "Cap",
         "Ray Ray",
         "Sugar Ray",
@@ -20399,8 +20399,8 @@ define([], function () {
     ];
 
     return {
-        firstNames: firstNames,
-        lastNames: lastNames,
-        nickNames: nickNames
+        first: first,
+        last: last,
+        nick: nick
     };
 });

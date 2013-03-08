@@ -2,7 +2,7 @@
  * @name core.player
  * @namespace Functions operating on player objects, or parts of player objects.
  */
-define(["db", "globals", "lib/faces", "lib/underscore", "util/data", "util/random"], function (db, g, faces, _, data, random) {
+define(["db", "globals", "data/names", "lib/faces", "lib/underscore", "util/random"], function (db, g, names, faces, _, random) {
     "use strict";
 
     /**
@@ -401,22 +401,22 @@ define(["db", "globals", "lib/faces", "lib/underscore", "util/data", "util/rando
 
         // First name
         fnRand = random.uniform(0, 90.04);
-        for (i = 0; i < data.firstNames.length; i++) {
-            if (data.firstNames[i][1] >= fnRand) {
+        for (i = 0; i < names.first.length; i++) {
+            if (names.first[i][1] >= fnRand) {
                 break;
             }
         }
-        fn = data.firstNames[i][0];
+        fn = names.first[i][0];
 
 
         // Last name
         lnRand = random.uniform(0, 77.48);
-        for (i = 0; i < data.lastNames.length; i++) {
-            if (data.lastNames[i][1] >= lnRand) {
+        for (i = 0; i < names.last.length; i++) {
+            if (names.last[i][1] >= lnRand) {
                 break;
             }
         }
-        ln = data.lastNames[i][0];
+        ln = names.last[i][0];
 
         return fn + " " + ln;
     }

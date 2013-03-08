@@ -1,4 +1,4 @@
-define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "core/league", "core/season", "core/trade", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/data", "util/helpers"], function (api, db, g, ui, contractNegotiation, game, league, season, trade, boxPlot, Davis, Handlebars, $, _, data, helpers) {
+define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "core/league", "core/season", "core/trade", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers"], function (api, db, g, ui, contractNegotiation, game, league, season, trade, names, boxPlot, Davis, Handlebars, $, _, helpers) {
     "use strict";
 
     function beforeLeague(req, cb) {
@@ -162,22 +162,23 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     }
 
     function newLeague(req) {
-        var name, randomName, tid, teams;
+        var data, name, randomName, tid, teams;
 
         beforeNonLeague();
 
         // Pick a random league name, either for the GET or POST phase
-        randomName = data.nickNames[Math.floor(Math.random() * data.nickNames.length)];
+        randomName = names.nick[Math.floor(Math.random() * names.nick.length)];
 
         if (req.method === "get") {
             teams = helpers.getTeams();
 
-            ui.update({
+            data = {
                 container: "content",
                 template: "newLeague",
                 title: "Create New League",
                 vars: {teams: teams, randomName: randomName}
-            });
+            };
+            ui.update(data);
         } else if (req.method === "post") {
             tid = Math.floor(req.params.tid);
             name = req.params.name.length > 0 ? req.params.name : randomName;

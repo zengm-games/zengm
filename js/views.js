@@ -1637,35 +1637,61 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
             }
 
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
-                var attributes, categories, data, i, j, players, ratings, stats, userAbbrev;
+                var attributes, categories, data, i, j, k, leader, pass, players, ratings, stats, userAbbrev, playerValue;
 
                 userAbbrev = helpers.getAbbrev(g.userTid);
 
+                // minStats and minValues are the NBA requirements to be a league leader for each stat http://www.nba.com/leader_requirements.html. If any requirement is met, the player can appear in the league leaders
                 categories = [];
-                categories.push({name: "Points", stat: "Pts", title: "Points Per Game", data: []});
-                categories.push({name: "Rebounds", stat: "Reb", title: "Rebounds Per Game", data: []});
-                categories.push({name: "Assists", stat: "Ast", title: "Assists Per Game", data: []});
-                categories.push({name: "Field Goal Percentage", stat: "FG%", title: "Field Goal Percentage", data: []});
-                categories.push({name: "Blocks", stat: "Blk", title: "Blocks Per Game", data: []});
-                categories.push({name: "Steals", stat: "Stl", title: "Steals Per Game", data: []});
+                categories.push({name: "Points", stat: "Pts", title: "Points Per Game", data: [], minStats: ["gp", "pts"], minValue: [70, 1400]});
+                categories.push({name: "Rebounds", stat: "Reb", title: "Rebounds Per Game", data: [], minStats: ["gp", "trb"], minValue: [70, 800]});
+                categories.push({name: "Assists", stat: "Ast", title: "Assists Per Game", data: [], minStats: ["gp", "ast"], minValue: [70, 400]});
+                categories.push({name: "Field Goal Percentage", stat: "FG%", title: "Field Goal Percentage", data: [], minStats: ["fg"], minValue: [300]});
+                categories.push({name: "Blocks", stat: "Blk", title: "Blocks Per Game", data: [], minStats: ["gp", "blk"], minValue: [70, 100]});
+                categories.push({name: "Steals", stat: "Stl", title: "Steals Per Game", data: [], minStats: ["gp", "stl"], minValue: [70, 125]});
 
                 attributes = ["pid", "name"];
                 ratings = ["skills"];
-                stats = ["pts", "trb", "ast", "fgp", "blk", "stl", "abbrev"];  // This needs to be in the same order as categories
+                stats = ["pts", "trb", "ast", "fgp", "blk", "stl", "gp", "fg", "abbrev"];  // This needs to be in the same order as categories (at least, initially)
                 players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings);
 
                 for (i = 0; i < categories.length; i++) {
                     players.sort(function (a, b) { return b.stats[stats[i]] - a.stats[stats[i]]; });
-                    for (j = 0; j < 10; j++) {
-                        categories[i].data[j] = helpers.deepCopy(players[j]);
-                        categories[i].data[j].i = j + 1;
-                        categories[i].data[j].stat = categories[i].data[j].stats[stats[i]];
-                        categories[i].data[j].abbrev = categories[i].data[j].stats.abbrev;
-                        delete categories[i].data[j].stats;
-                        if (userAbbrev === categories[i].data[j].abbrev) {
-                            categories[i].data[j].userTeam = true;
-                        } else {
-                            categories[i].data[j].userTeam = false;
+                    for (j = 0; j < players.length; j++) {
+                        // Test if the player meets the minimum statistical requirements for this category
+                        pass = true;
+                        for (k = 0; k < categories[i].minStats.length; k++) {
+                            // Everything except gp is a per-game average, so we need to scale them by games played
+                            if (categories[i].minStats[k] === "gp") {
+                                playerValue = players[j].stats[categories[i].minStats[k]];
+                            } else {
+                                playerValue = players[j].stats[categories[i].minStats[k]] * players[j].stats.gp;
+                            }
+
+                            // On the following line, players[j].stats.gp should be team games played
+                            if (playerValue < Math.ceil(categories[i].minValue[k] * players[j].stats.gp / 82)) {
+                                pass = false;
+                                break;  // If one is false, don't need to check the others
+                            }
+                        }
+
+                        if (pass) {
+                            leader = helpers.deepCopy(players[j]);
+                            leader.i = categories[i].data.length + 1;
+                            leader.stat = leader.stats[stats[i]];
+                            leader.abbrev = leader.stats.abbrev;
+                            delete leader.stats;
+                            if (userAbbrev === leader.abbrev) {
+                                leader.userTeam = true;
+                            } else {
+                                leader.userTeam = false;
+                            }
+                            categories[i].data.push(leader);
+                        }
+
+                        // Stop when we found 10
+                        if (categories[i].data.length === 10) {
+                            break;
                         }
                     }
                     if (i === 3) {

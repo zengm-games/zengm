@@ -6,12 +6,18 @@ bbgmPing should only work in production
 give bbgm website its own version of bootstrap (only with components needed)
 display league/season counter on basketball-gm.com splash page
 more unit tests
+league leaders
+  minimum minutes played to show should use team GP to scale, not player (this won't matter until injuries are implemented, basically)
+  add more categories http://www.nba.com/leader_requirements.html
 
 BEFORE 3.0.0
 ------------
 
+player shouldn't get a "gp" stat unless he actually plays
+player stats: toggle to only show players > 2000 minutes http://www.nba.com/leader_requirements.html
 database changes
-  KEEP TRACK OF THESE
+  KEEP TRACK OF THESE CHANGES so i can upgrade
+  injuries
   fan engagement
     0.1-1, a multiplier on how many fans attend each game
     increase when the team's performance increases
@@ -87,9 +93,6 @@ DataTables - need to rethink a lot of this, particularly how to make a decent UI
     http://datatables.net/ref#asSorting will work. maybe pass it as an option to bbgm_datatable
     text should be asc, numeric should be desc
     http://stackoverflow.com/questions/3725321/jquery-datatables-change-order-to-desc-when-it-sorts - but can it be set globally? maybe i can have ui.datatable automatically read columns and figure it out?
-league leaders
-  minimum minutes played to show?
-  also, somehow make a toggle to apply this criteria to season stats
 commas for thousands
   number of games played in delete league view
   attendance in finances

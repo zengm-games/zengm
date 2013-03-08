@@ -56,7 +56,7 @@ database changes
     some way to actually lose the game
       get fired by owner if X
     final score, hall of fame
-      influenced by size of city
+      influenced by size of city (see: difficulty in views.newLeague)
 gameSim
   home/away advantage
     make sure home/away in playoffs is set right

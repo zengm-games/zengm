@@ -1,18 +1,21 @@
 <h1>Create New League</h1>
 <p>
 <form action="/new_league" method="POST">
-  <label>League name</label>
-  <input type="text" name="name" value="{{randomName}}" />
-  <label>Which team do you want to manage?</label>
-  <select name="tid">
-    {{#teams}}
-      <option value="{{tid}}">{{region}} {{name}}</option>
-    {{/teams}}
-  </select>
-  <!--<label><select name="players">
-    <option value="random" selected="selected">Random Players</option>
-    <option value="nba2012">2012 NBA Players</option>
-  </select></label>--><br>
-  <button type="submit" class="btn">Create New League</button>  
+  <fieldset>
+    <label>League name</label>
+    <input type="text" name="name" value="{{randomName}}"><br><br>
+    <label>Which team do you want to manage?</label>
+    <select name="tid">
+      {{#teams}}
+        <option value="{{tid}}">{{region}} {{name}}</option>
+      {{/teams}}
+    </select>
+   <span class="help-block" id="pop-text"></span><br>
+    <!--<label><select name="players">
+      <option value="random" selected="selected">Random Players</option>
+      <option value="nba2012">2012 NBA Players</option>
+    </select></label><br>-->
+    <button type="submit" class="btn">Create New League</button>
+  </fieldset>
 </form>
 </p>

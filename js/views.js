@@ -178,7 +178,34 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                 title: "Create New League",
                 vars: {teams: teams, randomName: randomName}
             };
-            ui.update(data);
+            ui.update(data, function () {
+                var select, updatePopText;
+
+                updatePopText = function () {
+                    var difficulty, team;
+
+                    team = teams[select.val()];
+
+                    if (team.popRank <= 5) {
+                        difficulty = "very easy";
+                    } else if (team.popRank <= 13) {
+                        difficulty = "easy";
+                    } else if (team.popRank <= 16) {
+                        difficulty = "normal";
+                    } else if (team.popRank <= 23) {
+                        difficulty = "hard";
+                    } else {
+                        difficulty = "very hard";
+                    }
+
+                    $("#pop-text").html("Region population: " + team.pop + " million, #" + team.popRank + " leaguewide<br>Difficulty: " + difficulty);
+                };
+
+                select = $("select[name='tid']");
+                select.change(updatePopText);
+
+                updatePopText();
+            });
         } else if (req.method === "post") {
             tid = Math.floor(req.params.tid);
             name = req.params.name.length > 0 ? req.params.name : randomName;

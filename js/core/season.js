@@ -120,9 +120,9 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/freeAgents", "c
      * This makes an NBA-like schedule in terms of conference matchups, division matchups, and home/away games.
      * 
      * @memberOf core.season
-     * @param {function(Array)} cb Callback to run after the schedule is generated. The argument is a list of all the season's games, where each entry in the list is a list of the home team ID and the away team ID.
+     * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
      */
-    function newSchedule(cb) {
+    function newSchedule() {
         var cid, days, dids, game, games, good, i, ii, iters, j, jj, jMax, k, matchup, matchups, n, newMatchup, t, team, teams, teamsAll, tids, tidsByConf, tidsInDays, tryNum, used;
 
         teamsAll = helpers.getTeams();
@@ -254,7 +254,8 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/freeAgents", "c
         }
         random.shuffle(days);  // Otherwise the most dense days will be at the beginning and the least dense days will be at the end
         tids = _.flatten(days, true);
-        cb(tids);
+
+        return tids;
     }
 
     /**
@@ -424,7 +425,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/freeAgents", "c
         userTeamSizeError = false;
         checkRosterSize = function (tid) {
             playerStore.index("tid").getAll(tid).onsuccess = function (event) {
-                var i, numPlayersOnRoster, players, playersAll;
+                var i, numPlayersOnRoster, players, playersAll, tids;
 
                 playersAll = event.target.result;
                 numPlayersOnRoster = playersAll.length;
@@ -458,10 +459,9 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/freeAgents", "c
 
                 done += 1;
                 if (done === g.numTeams && !userTeamSizeError) {
-                    newSchedule(function (tids) {
-                        // 4th parameter of newPhaseCb will reload the page when true. Don't do this if this is the first season, as that means the new league menu is still displayed (probably) and views.newLeague will handle a redirect to the league dashboard.
-                        setSchedule(tids, function () { newPhaseCb(g.PHASE.REGULAR_SEASON, phaseText, cb, g.season !== g.startingSeason); });
-                    });
+                    tids = newSchedule();
+                    // 4th parameter of newPhaseCb will reload the page when true. Don't do this if this is the first season, as that means the new league menu is still displayed (probably) and views.newLeague will handle a redirect to the league dashboard.
+                    setSchedule(tids, function () { newPhaseCb(g.PHASE.REGULAR_SEASON, phaseText, cb, g.season !== g.startingSeason); });
 
                     // Auto sort rosters (except player's team)
                     for (tid = 0; tid < g.numTeams; tid++) {

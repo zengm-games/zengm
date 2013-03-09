@@ -102,6 +102,7 @@ financial stuff
       base on g.nationalTvContractAmount
     localTvRevenue
       base on tvContractAmount, tvContractExp
+like on team finances page, anywhere else to add help popups?
 
 DATABASE CHANGES since 3.0.0beta
 --------------------------------

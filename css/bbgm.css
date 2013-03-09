@@ -235,7 +235,13 @@ select.season {
 }
 
 .bar-graph-small {
-  height: 100px;
+  height: 40px;
+}
+.bar-graph-medium {
+  height: 60px;
+}
+.bar-graph-large {
+  height: 80px;
 }
 
 .bar-graph-1 {

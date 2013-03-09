@@ -60,7 +60,8 @@ financial stuff
                 bar-graph-1
                 bar-graph-2
                 ...
-              also have them "glow" on hover
+              also have them "glow" on hover?
+              different color for negative value? only for non-stacked
             positioning
               x: assume evenly spaced bars, completely filling the range from 0% to 100% width (1px border between?)
               y: specified by ylim

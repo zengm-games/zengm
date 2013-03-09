@@ -42,56 +42,36 @@ financial stuff
       payroll limits, salary tax
     move ticket price to gameAttributes rather than making it a constant
     bar plots showing how these things changed over time
-      hype
-        one solid color
-        no box
-        years on hover, not xlabel
-        TRY WRITING MY OWN
-          $.barPlot(container, data, ylim, labels)
-            inputs
-              container
-                a div. contant width and height are not required, as all bars will be scalable
-              data is either..
-                (1) an array [54, 14, 243] of bar plot heights. Can have negative values!
-                (2) an array of arrays of heights [[53, 214, 43], [9, 53, 64]]. Cannot have negative values!
-              ylim
-                [ymin, ymax], scale for y
-              labels - OPTIONAL
-                for case (1), labels is of the same size and shows on hover
-                for case (2), labels is an array with labels for the two dimensions. so for my use, it would be like [[2013, 2012, 2011], ["component 1", "component 2"]]
-            colors
-              have default colors which can be overwritten by css
-                bar-graph-1
-                bar-graph-2
-                ...
-              also have them "glow" on hover?
-              different color for negative value? only for non-stacked
-            positioning
-              x: assume evenly spaced bars, completely filling the range from 0% to 100% width (1px border between?)
-              y: specified by ylim. if not specified, then set it to min-10%, max+10% with the condition that if 0 is not in that range, one of the bounds becomes 0
-            missing data
-              if you see a null instead of a number, then don't even make a div for that bar piece
-            label display
-              for stacked, display like "2012 component 2: VALUE" on hover of component
-          gap should be a percentage
-          blog/gist
-      population
-      attendance
-      payroll
-      wins
-      revenue, a stacked bar plot:
-        ticket
-        tv contract amount
-        national tv contract amount
-        merchandising
-        sponsorship
-      expenses
-        salaryPaid
-        luxuryTaxPaid
-        minTaxPaid
-      profit
-      cash
-    compare against league averages
+      TRY WRITING MY OWN
+        $.barPlot(container, data, ylim, labels)
+          inputs
+            container
+              a div. contant width and height are not required, as all bars will be scalable
+            data is either..
+              (1) an array [54, 14, 243] of bar plot heights. Can have negative values!
+              (2) an array of arrays of heights [[53, 214, 43], [9, 53, 64]]. Cannot have negative values!
+            ylim
+              [ymin, ymax], scale for y
+            labels - OPTIONAL
+              for case (1), labels is of the same size and shows on hover
+              for case (2), labels is an array with labels for the two dimensions. so for my use, it would be like [[2013, 2012, 2011], ["component 1", "component 2"]]
+          colors
+            have default colors which can be overwritten by css
+              bar-graph-1
+              bar-graph-2
+              ...
+            also have them "glow" on hover?
+            different color for negative value? only for non-stacked
+          positioning
+            x: assume evenly spaced bars, completely filling the range from 0% to 100% width (1px border between?)
+            y: specified by ylim. if not specified, then set it to min-10%, max+10% with the condition that if 0 is not in that range, one of the bounds becomes 0
+          missing data
+            if you see a null instead of a number, then don't even make a div for that bar piece
+          label display
+            for stacked, display like "2012 component 2: VALUE" on hover of component
+        gap should be a percentage
+        blog/gist
+    compare against league averages?
     how many years to show? maybe.. all of them? or have that be an option, how many years, past 10 or all?
   realistic update formulas for
     attendance = f(population, hype, ticket price)

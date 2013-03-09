@@ -44,6 +44,11 @@
             max = 0;
         }
 
+        // For stacked plots, min is always 0
+        if (stacked) {
+            min = 0;
+        }
+
         return [min, max];
     }
 
@@ -118,12 +123,13 @@
 
         // Draw bars
         if (!stacked) {
+            // Not stacked
             for (i = 0; i < data.length; i++) {
                 if (data[i] !== null && data[i] !== undefined) {
                     // Fix for negative values
                     if (data[i] >= 0) {
                         bottom = scale(0, ylim);
-                        height = scaled[i];
+                        height = scaled[i] - scale(0, ylim);
                         cssClass = "bar-graph-1";
                     } else {
                         bottom = scaled[i];
@@ -144,6 +150,10 @@
                 }
             }
         } else {
+            // Stacked
+console.log(scaled[0]);
+console.log(scale(0, ylim))
+console.log(ylim);
             offsets = [];
             for (j = 0; j < data.length; j++) {
                 for (i = 0; i < data[j].length; i++) {

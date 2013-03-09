@@ -738,7 +738,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
                         payroll = season === g.season ? t.payroll : t.salaryPaid;  // Display the current actual payroll for this season, or the salary actually paid out for prior seasons
 
-                        return ['<a href="/l/' + g.lid + '/roster/' + t.abbrev + '">' + t.region + ' ' + t.name + '</a>', helpers.round(t.att), '$' + helpers.round(t.revenue, 2) + 'M', '$' + helpers.round(t.profit, 2) + 'M', '$' + helpers.round(t.cash, 2) + 'M', '$' + helpers.round(payroll, 2) + 'M'];
+                        return ['<a href="/l/' + g.lid + '/team_finances/' + t.abbrev + '">' + t.region + ' ' + t.name + '</a>', helpers.round(t.att), '$' + helpers.round(t.revenue, 2) + 'M', '$' + helpers.round(t.profit, 2) + 'M', '$' + helpers.round(t.cash, 2) + 'M', '$' + helpers.round(payroll, 2) + 'M'];
                     }));
 
                     if (req.raw.cb !== undefined) {
@@ -1045,7 +1045,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
     function teamFinances(req) {
         beforeLeague(req, function () {
-            var abbrev, attributes, out, season, seasons, seasonAttributes, teams, tid;
+            var abbrev, out, season, seasons, teams, tid;
 
             out = helpers.validateAbbrev(req.params.abbrev);
             tid = out[0];
@@ -1058,8 +1058,6 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                 g.realtimeUpdate = false;
             }
 
-            attributes = ["tid", "abbrev", "region", "name"];
-            seasonAttributes = ["att", "revenue", "profit", "cash", "payroll", "salaryPaid"];
             g.dbl.transaction("teams").objectStore("teams").get(tid).onsuccess = function (event) {
                 var barData, barSeasons, data, i, keys, team, teamAll;
 
@@ -1067,7 +1065,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                 team.seasons.reverse();  // Most recent season first
 console.log(team.seasons)
 
-                keys = ["won", "hype", "pop", "att", "cash", "merchRevenue", "sponsorRevenue", "ticketRevenue", "localTvRevenue", "nationalTvRevenue"];
+                keys = ["won", "hype", "pop", "att", "cash", "merchRevenue", "sponsorRevenue", "ticketRevenue", "localTvRevenue", "nationalTvRevenue", "salaryPaid", "luxuryTaxPaid", "minTaxPaid"];
                 barData = {};
                 for (i = 0; i < keys.length; i++) {
                     barData[keys[i]] = helpers.nullPad(_.pluck(team.seasons, keys[i]), 10);
@@ -1075,7 +1073,7 @@ console.log(team.seasons)
 
                 // Process some values
                 barData.att = _.map(barData.att, function (num, i) { if (team.seasons[i] !== undefined) { return num / team.seasons[i].gp; } });  // per game
-                keys = ["cash", "merchRevenue", "sponsorRevenue", "ticketRevenue", "localTvRevenue", "nationalTvRevenue"];
+                keys = ["cash", "merchRevenue", "sponsorRevenue", "ticketRevenue", "localTvRevenue", "nationalTvRevenue", "salaryPaid", "luxuryTaxPaid", "minTaxPaid"];
                 for (i = 0; i < keys.length; i++) {
                     barData[keys[i]] = _.map(barData[keys[i]], function (num) { return num / 1000; });  // convert to millions
                 }
@@ -1105,17 +1103,28 @@ console.dir(barData);
 
                     $.barGraph(
                         $("#bar-graph-revenue"),
-                        [barData.merchRevenue, barData.sponsorRevenue, barData.ticketRevenue, barData.localTvRevenue, barData.nationalTvRevenue],
+                        [barData.nationalTvRevenue, barData.localTvRevenue, barData.ticketRevenue, barData.sponsorRevenue, barData.merchRevenue],
                         undefined,
                         [
                             barSeasons,
-                            ["merchandising revenue", "corporate sponsorship revenue", "ticket revenue", "local TV revenue", "national TV revenue"]
+                            ["national TV revenue", "local TV revenue", "ticket revenue",  "corporate sponsorship revenue", "merchandising revenue"]
                         ],
                         function (val) {
-                            return helpers.round(val, 2);
+                            return "$" + helpers.round(val, 1) + "M";
                         }
                     );
-                    $.barGraph($("#bar-graph-expenses"), [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()], undefined, barSeasons);
+                    $.barGraph(
+                        $("#bar-graph-expenses"),
+                        [barData.salaryPaid, barData.minTaxPaid, barData.luxuryTaxPaid],
+                        undefined,
+                        [
+                            barSeasons,
+                            ["player salaries", "minimum payroll tax", "luxury tax"]
+                        ],
+                        function (val) {
+                            return "$" + helpers.round(val, 1) + "M";
+                        }
+                    );
                     $.barGraph($("#bar-graph-cash"), barData.cash, undefined, barSeasons, function (val) {
                         return "$" + helpers.round(val, 1) + "M";
                     });

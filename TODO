@@ -86,6 +86,10 @@ changed "cost" to "expenses" in seasonAttributes
 MANUAL CHANGES TODO since 3.0.0beta
 -----------------------------------
 luxury tax, minimum payroll tax
+  what are they
+  what are cutoffs
+  percentages
+  applied at end of regular season
 
 BEFORE 3.0.0
 ------------

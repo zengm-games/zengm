@@ -537,6 +537,11 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
                     break;
                 }
             }
+
+            // Revenue and expenses calculation
+            tsa.revenue = tsa.merchRevenue + tsa.sponsorRevenue + tsa.ticketRevenue + tsa.nationalTvRevenue + tsa.localTvRevenue;
+            tsa.expenses = tsa.salaryPaid + tsa.luxuryTaxPaid + tsa.minTaxPaid;
+
             for (j = 0; j < seasonAttributes.length; j++) {
                 if (seasonAttributes[j] === "winp") {
                     team.winp = 0;

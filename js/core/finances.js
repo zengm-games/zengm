@@ -11,17 +11,19 @@ define(["db", "globals"], function (db, g) {
      * @param {function()} cb Callback function.
      */
     function assesPayrollMinLuxury(cb) {
-        var i, payrolls, tx;
+        var i, getPayroll, payrolls, tx;
+
+        payrolls = [];
+        getPayroll = function (tx, tid) {
+            db.getPayroll(tx, tid, function (payroll) {
+                payrolls[tid] = payroll;
+            });
+        };
 
         // First, get all the current payrolls
-        payrolls = [];
         tx = g.dbl.transaction(["players", "releasedPlayers"]);
         for (i = 0; i < g.numTeams; i++) {
-            (function (tid) {
-                db.getPayroll(tx, tid, function (payroll) {
-                    payrolls[tid] = payroll;
-                });
-            }(i));
+            getPayroll(tx, i);
         }
         tx.oncomplete = function () {
             var tx;

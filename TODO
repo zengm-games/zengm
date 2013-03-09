@@ -52,8 +52,8 @@ financial stuff
               container
                 a div. contant width and height are not required, as all bars will be scalable
               data is either..
-                (1) an array [54, 14, 243] of bar plot heights
-                (2) an array of arrays of heights [[53, 214, 43], [9, 53, 64]]
+                (1) an array [54, 14, 243] of bar plot heights. Can have negative values!
+                (2) an array of arrays of heights [[53, 214, 43], [9, 53, 64]]. Cannot have negative values!
               ylim
                 [ymin, ymax], scale for y
               labels - OPTIONAL
@@ -68,12 +68,12 @@ financial stuff
               different color for negative value? only for non-stacked
             positioning
               x: assume evenly spaced bars, completely filling the range from 0% to 100% width (1px border between?)
-              y: specified by ylim
+              y: specified by ylim. if not specified, then set it to min-10%, max+10% with the condition that if 0 is not in that range, one of the bounds becomes 0
             missing data
               if you see a null instead of a number, then don't even make a div for that bar piece
             label display
               for stacked, display like "2012 component 2: VALUE" on hover of component
-          remove flot file and references to it, from the commit with "flot" in it
+          gap should be a percentage
           blog/gist
       population
       attendance

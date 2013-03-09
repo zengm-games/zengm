@@ -1081,7 +1081,7 @@ console.log(team.seasons)
                 barData.att = _.map(barData.att, function (num, i) { return num / team.seasons[i].gp; });  // per game
                 barData.cash = _.map(barData.cash, function (num) { return num / 1000; });  // convert to millions
                 for (i = 0; i < keys.length; i++) {
-                    // If this was done earlier, then the map above would turn nulls into 0s
+                    // If this was done earlier, then the map above would turn nulls into 0s (does this really matter??)
                     barData[keys[i]] = helpers.nullPad(barData[keys[i]], 10);
                 }
 console.dir(barData);
@@ -1117,7 +1117,7 @@ console.dir(barData);
                             [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()],
                             [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()]
                         ],
-                        [-0.5, 5],
+                        undefined,
                         [
                             barSeasons,
                             ["merchandising revenue", "corporate sponsorship revenue", "ticket revenue", "local TV revenue", "national TV revenue"]
@@ -1126,8 +1126,8 @@ console.dir(barData);
                             return helpers.round(val, 2);
                         }
                     );
-                    $.barGraph($("#bar-graph-expenses"), [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()], [-0.1, 1], barSeasons);
-                    $.barGraph($("#bar-graph-cash"), barData.cash, [-10, 10], barSeasons, function (val) {
+                    $.barGraph($("#bar-graph-expenses"), [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()], undefined, barSeasons);
+                    $.barGraph($("#bar-graph-cash"), barData.cash, undefined, barSeasons, function (val) {
                         return "$" + helpers.round(val, 1) + "M";
                     });
 

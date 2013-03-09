@@ -3,6 +3,50 @@
 (function ($) {
     "use strict";
 
+    // Default scale for bar chart. This finds the max and min values in the data, adds 10% in each direction so you don't end up with tiny slivers, and then expands the upper/lower lims to 0 if 0 wasn't already in the range.
+    function defaultYlim(data, stacked) {
+        var i, j, min, max, x;
+
+        min = Infinity;
+        max = -Infinity;
+
+        // If stacked, add up all the components
+        x = [];
+        if (stacked) {
+            for (i = 0; i < data[0].length; i++) {
+                x[i] = 0;
+                for (j = 0; j < data.length; j++) {
+                    x[i] += data[j][i];
+                }
+            }
+        } else {
+            x = data;
+        }
+
+        for (i = 0; i < x.length; i++) {
+            if (x[i] < min) {
+                min = x[i];
+            }
+            if (x[i] > max) {
+                max = x[i];
+            }
+        }
+
+        // Add on some padding
+        min = min - 0.1 * (max - min);
+        max = max + 0.1 * (max - min);
+
+        // Make sure 0 is in range
+        if (min > 0) {
+            min = 0;
+        }
+        if (max < 0) {
+            max = 0;
+        }
+
+        return [min, max];
+    }
+
     function setWidths(container, data, gap) {
         var numBars;
 
@@ -10,15 +54,18 @@
         container
             .children()
             .each(function () {
-                var bar, width;
+                var bar, num, width;
 
                 bar = $(this);
-                width = (container.width() + gap) / numBars; // Width factoring in N-1 gaps
+                num = bar.data("num");  // Index of the bar (0 for first, 1 for next, etc.). All bars have a value here.
+                if (num >= 0) {
+                    width = (container.width() + gap) / numBars; // Width factoring in N-1 gaps
 
-                bar.css({
-                    left: bar.data("num") * width,
-                    width: width - gap
-                });
+                    bar.css({
+                        left: num * width,
+                        width: width - gap
+                    });
+                }
             });
     }
 
@@ -33,7 +80,7 @@
     }
 
     $.barGraph = function (container, data, ylim, labels, labelFn) {
-        var i, j, gap, offsets, scaled, stacked;
+        var bottom, cssClass, height, i, j, gap, offsets, scaled, stacked;
 
         labelFn = labelFn !== undefined ? labelFn : function (val) { return val; };
 
@@ -44,6 +91,11 @@
             stacked = true;
         } else {
             stacked = false;
+        }
+
+        // ylim specified or not?
+        if (ylim === undefined) {
+            ylim = defaultYlim(data, stacked);
         }
 
         container.data("numBars", stacked ? data[0].length : data.length)
@@ -64,16 +116,39 @@
             }
         }
 
+        // Draw horizontal line at 0
+        $("<div></div>", {"class": "bar-graph-1"})
+            .css({
+                position: "absolute",
+                bottom: scale(0, ylim) + "%",
+                height: "2.5%",
+                width: "100%"
+            })
+            .appendTo(container);
+
         // Draw bars
         if (!stacked) {
+console.log(container)
+console.log(data);
+console.log(scaled);
             for (i = 0; i < data.length; i++) {
                 if (data[i] !== null && data[i] !== undefined) {
-                    $("<div></div>", {"class": "bar-graph-1"})
+                    // Fix for negative values
+                    if (data[i] >= 0) {
+                        bottom = scale(0, ylim);
+                        height = scaled[i];
+                        cssClass = "bar-graph-1";
+                    } else {
+                        bottom = scaled[i];
+                        height = scale(0, ylim) - scaled[i];
+                        cssClass = "bar-graph-3";
+                    }
+                    $("<div></div>", {"class": cssClass})
                         .data("num", i)
                         .css({
                             position: "absolute",
-                            bottom: 0,
-                            height: scaled[i] + "%"
+                            bottom: bottom + "%",
+                            height: height + "%"
                         })
                         .tooltip({
                             title: labels[i] + ": " + labelFn(data[i])
@@ -111,4 +186,4 @@
         setWidths(container, data, gap);
         $(window).resize(function () { setWidths(container, data, gap); });
     };
-}(jQuery));
+}($));

@@ -1,4 +1,5 @@
 // Written for Basketball GM, but could be used elsewhere easily.
+// Dependences, jQuery and bootstrap-tooltips
 (function ($) {
     "use strict";
 
@@ -10,7 +11,6 @@
 
                 bar = $(this);
                 width = (container.width() + gap) / data.length; // Width factoring in N-1 gaps
-console.log($(this).data("num"));
                 bar.css({
                     left: bar.data("num") * width,
                     width: width - gap
@@ -49,15 +49,21 @@ console.log($(this).data("num"));
             }
             // Draw bars
             for (i = data.length - 1; i >= 0; i--) {  // Count down so the ones on the left are drawn on top so the borders show
-                $("<div></div>", {"class": "bar-graph-1"})
-                    .data("num", i)
-                    .css({
-                        position: "absolute",
-                        left: barWidth * i + "%",
-                        bottom: 0,
-                        width: barWidth + "%",
-                        height: data[i] + "%"
-                    }).appendTo(container);
+                if (data[i] !== null && data[i] !== undefined) {
+                    $("<div></div>", {"class": "bar-graph-1"})
+                        .data("num", i)
+                        .css({
+                            position: "absolute",
+                            left: barWidth * i + "%",
+                            bottom: 0,
+                            width: barWidth + "%",
+                            height: data[i] + "%"
+                        })
+                        .tooltip({
+                            title: labels[i] + ": " + data[i]
+                        })
+                        .appendTo(container);
+                }
             }
         }
 

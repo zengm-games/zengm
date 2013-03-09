@@ -1078,7 +1078,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                 ui.update(data, function () {
                     ui.dropdown($("#team-finances-select-team"), $("#team-finances-select-season"));
 
-                    $.barGraph($("#bar-graph-hype"), [1, 2, 3, 4], [0, 5]);
+                    $.barGraph($("#bar-graph-hype"), [1, 2, 3, null, 4], [0, 5], [2013, 2012, 2011, 2010, 2009]);
 
                     if (req.raw.cb !== undefined) {
                         req.raw.cb();

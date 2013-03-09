@@ -67,9 +67,7 @@ financial stuff
             missing data
               if you see a null instead of a number, then don't even make a div for that bar piece
             label display
-              for non-stacked, display label on hover like "2012: VALUE"
               for stacked, display like "2012 component 2: VALUE" on hover of component
-              or multiline like http://www.forbes.com/teams/new-york-knicks/
           remove flot file and references to it, from the commit with "flot" in it
           blog/gist
       population

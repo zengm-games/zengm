@@ -7,6 +7,9 @@ requirejs.config({
         "lib/bootstrap-dropdown": {
             deps: ["lib/jquery"]
         },
+        "lib/bootstrap-tooltip": {
+            deps: ["lib/jquery"]
+        },
         "lib/boxPlot": {
             exports: "boxPlot"
         },
@@ -32,7 +35,7 @@ requirejs.config({
             exports: "$"
         },
         "lib/jquery.barGraph": {
-            deps: ["lib/jquery"]
+            deps: ["lib/bootstrap-tooltip", "lib/jquery"]
         },
         "lib/jquery.dataTables": {
             deps: ["lib/jquery"]

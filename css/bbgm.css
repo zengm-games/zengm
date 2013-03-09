@@ -235,12 +235,11 @@ select.season {
 }
 
 .bar-graph-small {
-  background-color: black;
   height: 100px;
 }
 
 .bar-graph-1 {
-  background-color: yellow;
+  background-color: blue;
 }
 
 .bar-graph-2 {

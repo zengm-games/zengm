@@ -118,9 +118,6 @@
 
         // Draw bars
         if (!stacked) {
-console.log(container)
-console.log(data);
-console.log(scaled);
             for (i = 0; i < data.length; i++) {
                 if (data[i] !== null && data[i] !== undefined) {
                     // Fix for negative values

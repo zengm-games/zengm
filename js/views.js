@@ -1061,28 +1061,23 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
             attributes = ["tid", "abbrev", "region", "name"];
             seasonAttributes = ["att", "revenue", "profit", "cash", "payroll", "salaryPaid"];
             g.dbl.transaction("teams").objectStore("teams").get(tid).onsuccess = function (event) {
-                var barData, barSeasons, barYlim, data, i, keys, team, teamAll;
+                var barData, barSeasons, data, i, keys, team, teamAll;
 
                 team = event.target.result;
                 team.seasons.reverse();  // Most recent season first
 console.log(team.seasons)
 
-                keys = ["won", "hype", "pop", "att", "cash"];
+                keys = ["won", "hype", "pop", "att", "cash", "merchRevenue", "sponsorRevenue", "ticketRevenue", "localTvRevenue", "nationalTvRevenue"];
                 barData = {};
                 for (i = 0; i < keys.length; i++) {
-                    barData[keys[i]] = _.pluck(team.seasons, keys[i]);
-/*                    barData[keys[i]] = _.pluck(team.seasons, keys[i]);
-                    barYlim[keys[i]] = [_.min(barData[keys[i]]), _.max(barData[keys[i]])];
-                    barData[keys[i]] = helpers.nullPad(barData[keys[i]], 10); // nullPad after _.min, or null turns up as 0
-                    barYlim[keys[i]][0] += 0.15 * (barYlim[keys[i]][0] - barYlim[keys[i]][1]);  // Add 15% on to the minimum, otherwise, small bars will be too small*/
-
-//                    range = _.max()
+                    barData[keys[i]] = helpers.nullPad(_.pluck(team.seasons, keys[i]), 10);
                 }
-                barData.att = _.map(barData.att, function (num, i) { return num / team.seasons[i].gp; });  // per game
-                barData.cash = _.map(barData.cash, function (num) { return num / 1000; });  // convert to millions
+
+                // Process some values
+                barData.att = _.map(barData.att, function (num, i) { if (team.seasons[i] !== undefined) { return num / team.seasons[i].gp; } });  // per game
+                keys = ["cash", "merchRevenue", "sponsorRevenue", "ticketRevenue", "localTvRevenue", "nationalTvRevenue"];
                 for (i = 0; i < keys.length; i++) {
-                    // If this was done earlier, then the map above would turn nulls into 0s (does this really matter??)
-                    barData[keys[i]] = helpers.nullPad(barData[keys[i]], 10);
+                    barData[keys[i]] = _.map(barData[keys[i]], function (num) { return num / 1000; });  // convert to millions
                 }
 console.dir(barData);
 
@@ -1106,17 +1101,11 @@ console.dir(barData);
                     $.barGraph($("#bar-graph-pop"), barData.pop, [0, 20], barSeasons, function (val) {
                         return helpers.round(val, 1) + "M";
                     });
-                    $.barGraph($("#bar-graph-att"), barData.att, [0, 25000], barSeasons);
+                    $.barGraph($("#bar-graph-att"), barData.att, [0, 25000], barSeasons, helpers.round);
 
                     $.barGraph(
                         $("#bar-graph-revenue"),
-                        [
-                            [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()],
-                            [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()],
-                            [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()],
-                            [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()],
-                            [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()]
-                        ],
+                        [barData.merchRevenue, barData.sponsorRevenue, barData.ticketRevenue, barData.localTvRevenue, barData.nationalTvRevenue],
                         undefined,
                         [
                             barSeasons,

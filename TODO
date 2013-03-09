@@ -37,8 +37,45 @@ financial stuff
   add "team finances" view to allow tweaking of business crap
     warning about minimum/luxury tax
     move ticket price to gameAttributes rather than making it a constant
+    flot
+      stacked bar plots http://jsfiddle.net/ryleyb/kKdxt/ or http://www.flotcharts.org/flot/examples/stacking/index.html
+      lines with steps http://www.flotcharts.org/flot/examples/stacking/index.html
+      floating labels http://www.flotcharts.org/flot/examples/interacting/index.html
     bar plots showing how these things changed over time
       hype
+        one solid color
+        no box
+        years on hover, not xlabel
+        TRY WRITING MY OWN
+          $.barPlot(container, data, ylim, labels)
+            inputs
+              container
+                a div. contant width and height are not required, as all bars will be scalable
+              data is either..
+                (1) an array [54, 14, 243] of bar plot heights
+                (2) an array of arrays of heights [[53, 214, 43], [9, 53, 64]]
+              ylim
+                [ymin, ymax], scale for y
+              labels - OPTIONAL
+                for case (1), labels is of the same size and shows on hover
+                for case (2), labels is an array with labels for the two dimensions. so for my use, it would be like [[2013, 2012, 2011], ["component 1", "component 2"]]
+            colors
+              have default colors which can be overwritten by css
+                bar-plot-1
+                bar-plot-2
+                ...
+              also have them "glow" on hover
+            positioning
+              x: assume evenly spaced bars, completely filling the range from 0% to 100% width
+              y: specified by ylim
+            missing data
+              if you see a null instead of a number, then don't even make a div for that bar piece
+            label display
+              for non-stacked, display label on hover like "2012: VALUE"
+              for stacked, display like "2012 component 2: VALUE" on hover of component
+              or multiline like http://www.forbes.com/teams/new-york-knicks/
+          remove flot file and references to it, from the commit with "flot" in it
+          blog/gist
       population
       attendance
       payroll

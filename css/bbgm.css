@@ -234,6 +234,11 @@ select.season {
           border-bottom-right-radius: 0;
 }
 
+.bar-chart-small {
+  height: 100px;
+  width: 600px;
+}
+
 
 /* From bootstrap-responsive.css, force big size */
   .row {

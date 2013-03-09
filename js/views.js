@@ -1047,14 +1047,12 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
         beforeLeague(req, function () {
             var abbrev, attributes, out, season, seasons, seasonAttributes, teams, tid;
 
-console.log(req.params.abbrev)
             out = helpers.validateAbbrev(req.params.abbrev);
             tid = out[0];
             abbrev = out[1];
             season = helpers.validateSeason(req.params.season);
             seasons = helpers.getSeasons(season);
             teams = helpers.getTeams(tid);
-console.log(abbrev)
 
             if (season < g.season) {
                 g.realtimeUpdate = false;
@@ -1080,13 +1078,28 @@ console.log(abbrev)
                 ui.update(data, function () {
                     ui.dropdown($("#team-finances-select-team"), $("#team-finances-select-season"));
 
-                    ui.datatableSinglePage($("#team-finances"), 5, _.map(fuck, function (t) {
-                        var payroll;
-
-                        payroll = season === g.season ? t.payroll : t.salaryPaid;  // Display the current actual payroll for this season, or the salary actually paid out for prior seasons
-
-                        return ['<a href="/l/' + g.lid + '/roster/' + t.abbrev + '">' + t.region + ' ' + t.name + '</a>', helpers.round(t.att), '$' + helpers.round(t.revenue, 2) + 'M', '$' + helpers.round(t.profit, 2) + 'M', '$' + helpers.round(t.cash, 2) + 'M', '$' + helpers.round(payroll, 2) + 'M'];
-                    }));
+                    $.plot($("#bar-chart-hype"), [[[0, Math.random()], [1, Math.random()], [2, Math.random()], [3, Math.random()], [4, Math.random()], [5, Math.random()], [6, Math.random()], [7, Math.random()], [8, Math.random()], [9, Math.random()]]], {
+                        series: {
+                            lines: {
+                                show: false,
+                                fill: true,
+                                steps: true
+                            },
+                            bars: {
+                                show: true,
+                                barWidth: 1
+                            }
+                        },
+                        yaxis: {
+                            min: 0,
+                            max: 1,
+                            ticks: false
+                        },
+                        xaxis: {
+                            ticks: [[0.5, 2013], [1.5, 2012], [2.5, 2011], [3.5, 2010], [4.5, 2009], [5.5, 2008], [6.5, 2007], [7.5, 2006], [8.5, 2005], [9.5, 2004]],
+                            tickLength: 0
+                        }
+                    });
 
                     if (req.raw.cb !== undefined) {
                         req.raw.cb();

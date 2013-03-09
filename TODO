@@ -15,13 +15,6 @@ stat views
     add a dropdown (maybe make the dropdown handling code more general?)
 last year's stats not displaying in free agents view? revisit how this is done.
 financial stuff
-  new finance variables to update continuously
-    hype
-      0.1-1, a multiplier on how many fans attend each game
-      increase when the team's performance increases
-      decrease a little when performance decreases
-      decrease a lot
-      update within season!
   sources of revenue http://nbahoopsonline.com/Articles/2007-08/NBArevinuesharing.html
     local tv contract - $10 million
       will be a deal from 3 to 5 years in length
@@ -55,25 +48,16 @@ financial stuff
             labels - OPTIONAL
               for case (1), labels is of the same size and shows on hover
               for case (2), labels is an array with labels for the two dimensions. so for my use, it would be like [[2013, 2012, 2011], ["component 1", "component 2"]]
-          colors
-            have default colors which can be overwritten by css
-              bar-graph-1
-              bar-graph-2
-              ...
-            also have them "glow" on hover?
-            different color for negative value? only for non-stacked
-          positioning
-            x: assume evenly spaced bars, completely filling the range from 0% to 100% width (1px border between?)
-            y: specified by ylim. if not specified, then set it to min-10%, max+10% with the condition that if 0 is not in that range, one of the bounds becomes 0
-          missing data
-            if you see a null instead of a number, then don't even make a div for that bar piece
-          label display
-            for stacked, display like "2012 component 2: VALUE" on hover of component
-        gap should be a percentage
         blog/gist
     compare against league averages?
     how many years to show? maybe.. all of them? or have that be an option, how many years, past 10 or all?
   realistic update formulas for
+    hype
+      0.1-1, a multiplier on how many fans attend each game
+      increase when the team's performance increases
+      decrease a little when performance decreases
+      decrease a lot
+      update within season!
     attendance = f(population, hype, ticket price)
     merchRevenue
     sponsorRevenue

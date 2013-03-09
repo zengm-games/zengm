@@ -13,7 +13,7 @@
 
 <h1>{{team.region}} {{team.name}} Finances {{new_window}}</h1>
 
-<p>The current payroll (<strong>${{round payroll}}M</strong>) is {{aboveBelow.minPayroll}} the minimum payroll limit (<strong>${{round minPayroll}}M</strong>), {{aboveBelow.salaryCap}} the salary cap (<strong>${{round salaryCap}}M</strong>), and {{aboveBelow.luxuryPayroll}} the luxury tax limit (<strong>${{round luxuryPayroll}}M</strong>). <i class="icon-question-sign" id="help-payroll-limits"></i></p>
+<p class="clearfix">The current payroll (<strong>${{round payroll}}M</strong>) is {{aboveBelow.minPayroll}} the minimum payroll limit (<strong>${{round minPayroll}}M</strong>), {{aboveBelow.salaryCap}} the salary cap (<strong>${{round salaryCap}}M</strong>), and {{aboveBelow.luxuryPayroll}} the luxury tax limit (<strong>${{round luxuryPayroll}}M</strong>). <i class="icon-question-sign" id="help-payroll-limits"></i></p>
 
 <div class="row-fluid">
   <div class="span2">
@@ -36,3 +36,16 @@
       <div id="bar-graph-cash" class="bar-graph-medium"></div>
   </div>
 </div>
+<p class="clearfix"></p>
+
+<h2>Player Salaries</h2>
+
+<p>You can release or buy out players from <a href="/l/{{lid}}/roster">your roster</a>.</p>
+
+<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="roster">
+<thead>
+  <tr><th>Name</th><th>{{salariesSeasons.[0]}}</th><th>{{salariesSeasons.[1]}}</th><th>{{salariesSeasons.[2]}}</th><th>{{salariesSeasons.[3]}}</th><th>{{salariesSeasons.[4]}}</th><th>{{salariesSeasons.[5]}}</th></tr>
+</thead>
+<tbody>
+</tbody>
+</table>

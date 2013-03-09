@@ -1987,7 +1987,7 @@ function program4(depth0,data) {
     + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + " Finances "
     + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n\n<p>The current payroll (<strong>$"
+    + "</h1>\n\n<p class=\"clearfix\">The current payroll (<strong>$"
     + escapeExpression(helpers.round.call(depth0, depth0.payroll, {hash:{},data:data}))
     + "M</strong>) is "
     + escapeExpression(((stack1 = ((stack1 = depth0.aboveBelow),stack1 == null || stack1 === false ? stack1 : stack1.minPayroll)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
@@ -2001,7 +2001,21 @@ function program4(depth0,data) {
     + escapeExpression(((stack1 = ((stack1 = depth0.aboveBelow),stack1 == null || stack1 === false ? stack1 : stack1.luxuryPayroll)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + " the luxury tax limit (<strong>$"
     + escapeExpression(helpers.round.call(depth0, depth0.luxuryPayroll, {hash:{},data:data}))
-    + "M</strong>). <i class=\"icon-question-sign\" id=\"help-payroll-limits\"></i></p>\n\n<div class=\"row-fluid\">\n  <div class=\"span2\">\n    <h4>Wins</h4>\n    <div id=\"bar-graph-won\" class=\"bar-graph-small\"></div><br><br>\n    <span class=\"clickover\"><h4>Hype <i class=\"icon-question-sign\" id=\"help-hype\"></i></h4></span>\n    <div id=\"bar-graph-hype\" class=\"bar-graph-small\"></div><br><br>\n    <h4>Region Population</h4>\n    <div id=\"bar-graph-pop\" class=\"bar-graph-small\"></div><br><br>\n    <h4>Average Attendance</h4>\n    <div id=\"bar-graph-att\" class=\"bar-graph-small\"></div>\n  </div>\n  <div class=\"span10\">\n    <div class=\"row-fluid\">\n      <h3>Revenue</h3>\n      <div id=\"bar-graph-revenue\" class=\"bar-graph-large\"></div><br><br>\n      <h3>Expenses</h3>\n      <div id=\"bar-graph-expenses\" class=\"bar-graph-large\"></div><br><br>\n      <h3>Cash</h3>\n      <div id=\"bar-graph-cash\" class=\"bar-graph-medium\"></div>\n  </div>\n</div>";
+    + "M</strong>). <i class=\"icon-question-sign\" id=\"help-payroll-limits\"></i></p>\n\n<div class=\"row-fluid\">\n  <div class=\"span2\">\n    <h4>Wins</h4>\n    <div id=\"bar-graph-won\" class=\"bar-graph-small\"></div><br><br>\n    <span class=\"clickover\"><h4>Hype <i class=\"icon-question-sign\" id=\"help-hype\"></i></h4></span>\n    <div id=\"bar-graph-hype\" class=\"bar-graph-small\"></div><br><br>\n    <h4>Region Population</h4>\n    <div id=\"bar-graph-pop\" class=\"bar-graph-small\"></div><br><br>\n    <h4>Average Attendance</h4>\n    <div id=\"bar-graph-att\" class=\"bar-graph-small\"></div>\n  </div>\n  <div class=\"span10\">\n    <div class=\"row-fluid\">\n      <h3>Revenue</h3>\n      <div id=\"bar-graph-revenue\" class=\"bar-graph-large\"></div><br><br>\n      <h3>Expenses</h3>\n      <div id=\"bar-graph-expenses\" class=\"bar-graph-large\"></div><br><br>\n      <h3>Cash</h3>\n      <div id=\"bar-graph-cash\" class=\"bar-graph-medium\"></div>\n  </div>\n</div>\n<p class=\"clearfix\"></p>\n\n<h2>Player Salaries</h2>\n\n<p>You can release or buy out players from <a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/roster\">your roster</a>.</p>\n\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"roster\">\n<thead>\n  <tr><th>Name</th><th>"
+    + escapeExpression(((stack1 = ((stack1 = depth0.salariesSeasons),stack1 == null || stack1 === false ? stack1 : stack1[0])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</th><th>"
+    + escapeExpression(((stack1 = ((stack1 = depth0.salariesSeasons),stack1 == null || stack1 === false ? stack1 : stack1[1])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</th><th>"
+    + escapeExpression(((stack1 = ((stack1 = depth0.salariesSeasons),stack1 == null || stack1 === false ? stack1 : stack1[2])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</th><th>"
+    + escapeExpression(((stack1 = ((stack1 = depth0.salariesSeasons),stack1 == null || stack1 === false ? stack1 : stack1[3])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</th><th>"
+    + escapeExpression(((stack1 = ((stack1 = depth0.salariesSeasons),stack1 == null || stack1 === false ? stack1 : stack1[4])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</th><th>"
+    + escapeExpression(((stack1 = ((stack1 = depth0.salariesSeasons),stack1 == null || stack1 === false ? stack1 : stack1[5])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</th></tr>\n</thead>\n<tbody>\n</tbody>\n</table>";
   return buffer;
   });
 templates['roster'] = template(function (Handlebars,depth0,helpers,partials,data) {

@@ -1045,7 +1045,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
     function teamFinances(req) {
         beforeLeague(req, function () {
-            var abbrev, out, show, shows, teams, tid;
+            var abbrev, out, salariesSeasons, show, shows, teams, tid;
 
             show = req.params.show !== undefined ? req.params.show : "10";
             out = helpers.validateAbbrev(req.params.abbrev);
@@ -1070,6 +1070,8 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
             } else {
                 show = parseInt(show, 10);
             }
+
+            salariesSeasons = [g.season, g.season + 1, g.season + 2, g.season + 3, g.season + 4, g.season + 5];
 
             db.getPayroll(null, tid, function (payroll) {
                 var aboveBelow;
@@ -1109,7 +1111,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                         container: "league_content",
                         template: "teamFinances",
                         title: team.region + " " + team.name + " " + "Finances - " + season,
-                        vars: {payroll: payroll, aboveBelow: aboveBelow, salaryCap: g.salaryCap / 1000, minPayroll: g.minPayroll / 1000, luxuryPayroll: g.luxuryPayroll / 1000, luxuryTax: g.luxuryTax, shows: shows, team: {region: team.region, name: team.name}, teams: teams}
+                        vars: {payroll: payroll, aboveBelow: aboveBelow, salaryCap: g.salaryCap / 1000, minPayroll: g.minPayroll / 1000, luxuryPayroll: g.luxuryPayroll / 1000, luxuryTax: g.luxuryTax, salariesSeasons: salariesSeasons, shows: shows, team: {region: team.region, name: team.name}, teams: teams}
                     };
                     ui.update(data, function () {
                         ui.dropdown($("#team-finances-select-team"), $("#team-finances-select-show"));

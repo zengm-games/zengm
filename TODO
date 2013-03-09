@@ -29,6 +29,7 @@ financial stuff
     ticket sales - $30 million
   team finances view
     salaries table like hoopshype, including released players
+      similar to db.getpayroll. unify?
     compare bar graphs against league averages?
   realistic update formulas for
     hype

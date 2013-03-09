@@ -1084,9 +1084,26 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                     $.barGraph($("#bar-graph-att"), [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()], [-0.1, 1], [2013, 2012, 2011, 2010, 2009, 2008, 2007, 2006, 2005, 2004]);
                     $.barGraph($("#bar-graph-payroll"), [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()], [-0.1, 1], [2013, 2012, 2011, 2010, 2009, 2008, 2007, 2006, 2005, 2004]);
                     $.barGraph($("#bar-graph-profit"), [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()], [-0.1, 1], [2013, 2012, 2011, 2010, 2009, 2008, 2007, 2006, 2005, 2004]);
-                    $.barGraph($("#bar-graph-cash"), [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()], [-0.1, 1], [2013, 2012, 2011, 2010, 2009, 2008, 2007, 2006, 2005, 2004]);
-                    $.barGraph($("#bar-graph-revenue"), [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()], [-0.1, 1], [2013, 2012, 2011, 2010, 2009, 2008, 2007, 2006, 2005, 2004]);
+                    $.barGraph(
+                        $("#bar-graph-revenue"),
+                        [
+                            [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()],
+                            [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()],
+                            [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()],
+                            [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()],
+                            [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()]
+                        ],
+                        [-0.5, 5],
+                        [
+                            [2013, 2012, 2011, 2010, 2009, 2008, 2007, 2006, 2005, 2004],
+                            ["merchandising revenue", "corporate sponsorship revenue", "ticket revenue", "local TV revenue", "national TV revenue"]
+                        ],
+                        function (val) {
+                            return helpers.round(val, 2);
+                        }
+                    );
                     $.barGraph($("#bar-graph-expenses"), [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()], [-0.1, 1], [2013, 2012, 2011, 2010, 2009, 2008, 2007, 2006, 2005, 2004]);
+                    $.barGraph($("#bar-graph-cash"), [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()], [-0.1, 1], [2013, 2012, 2011, 2010, 2009, 2008, 2007, 2006, 2005, 2004]);
 
                     if (req.raw.cb !== undefined) {
                         req.raw.cb();

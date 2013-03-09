@@ -244,16 +244,27 @@ select.season {
   height: 80px;
 }
 
+/* From bootstrap */
 .bar-graph-1 {
-  background-color: blue;
+  background-color: #049cdb;
 }
-
 .bar-graph-2 {
-  background-color: red;
+  background-color: #f89406;
 }
-
 .bar-graph-3 {
-  background-color: green;
+  background-color: #9d261d;
+}
+.bar-graph-4 {
+  background-color: #ffc40d;
+}
+.bar-graph-5 {
+  background-color: #7a43b6;
+}
+.bar-graph-6 {
+  background-color: #46a546;
+}
+.bar-graph-7 {
+  background-color: #c3325f;
 }
 
 

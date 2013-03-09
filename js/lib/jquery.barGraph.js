@@ -4,13 +4,16 @@
     "use strict";
 
     function setWidths(container, data, gap) {
+        var numBars;
+
+        numBars = container.data("numBars");
         container
             .children()
             .each(function () {
                 var bar, width;
 
                 bar = $(this);
-                width = (container.width() + gap) / data.length; // Width factoring in N-1 gaps
+                width = (container.width() + gap) / numBars; // Width factoring in N-1 gaps
 
                 bar.css({
                     left: bar.data("num") * width,
@@ -19,8 +22,20 @@
             });
     }
 
-    $.barGraph = function (container, data, ylim, labels) {
-        var bar, barWidth, i, gap, scaled, stacked;
+    function scale(val, ylim) {
+        if (val > ylim[1]) {
+            return 100;
+        }
+        if (val < ylim[0]) {
+            return 0;
+        }
+        return (val - ylim[0]) / (ylim[1] - ylim[0]) * 100;
+    }
+
+    $.barGraph = function (container, data, ylim, labels, labelFn) {
+        var i, j, gap, offsets, scaled, stacked;
+
+        labelFn = labelFn !== undefined ? labelFn : function (val) { return val; };
 
         gap = 2;  // Gap between bars, in pixels
 
@@ -31,28 +46,27 @@
             stacked = false;
         }
 
-        // Width of each bar, as a fraction of the container width
-        barWidth = 1 / data.length;
+        container.data("numBars", stacked ? data[0].length : data.length)
+            .css({
+                position: "relative"
+            });
 
-        container.css({
-            position: "relative"
-        });
-
-        if (!stacked) {
-            // Convert heights to percentages
-            scaled = [];
-            for (i = 0; i < data.length; i++) {
-                if (data[i] > ylim[1]) {
-                    scaled[i] = 100;
-                } else if (data[i] < ylim[0]) {
-                    scaled[i] = 0;
-                } else {
-                    scaled[i] = (data[i] - ylim[0]) / (ylim[1] - ylim[0]) * 100;
+        // Convert heights to percentages
+        scaled = [];
+        for (i = 0; i < data.length; i++) {
+            if (!stacked) {
+                scaled[i] = scale(data[i], ylim);
+            } else {
+                scaled[i] = [];
+                for (j = 0; j < data[i].length; j++) {
+                    scaled[i][j] = scale(data[i][j], ylim);
                 }
             }
+        }
 
-            // Draw bars
-            for (i = data.length - 1; i >= 0; i--) {  // Count down so the ones on the left are drawn on top so the borders show
+        // Draw bars
+        if (!stacked) {
+            for (i = 0; i < data.length; i++) {
                 if (data[i] !== null && data[i] !== undefined) {
                     $("<div></div>", {"class": "bar-graph-1"})
                         .data("num", i)
@@ -65,6 +79,30 @@
                             title: labels[i] + ": " + data[i]
                         })
                         .appendTo(container);
+                }
+            }
+        } else {
+            offsets = [];
+            for (j = 0; j < data.length; j++) {
+                for (i = 0; i < data[j].length; i++) {
+                    if (j === 0) {
+                        offsets[i] = 0;
+                    } else {
+                        offsets[i] += scaled[j - 1][i];
+                    }
+                    if (data[j][i] !== null && data[j][i] !== undefined) {
+                        $("<div></div>", {"class": "bar-graph-" + (j + 1)})
+                            .data("num", i)
+                            .css({
+                                position: "absolute",
+                                bottom: offsets[i] + "%",
+                                height: scaled[j][i] + "%"
+                            })
+                            .tooltip({
+                                title: labels[0][i] + " " + labels[1][j] + ": " + labelFn(data[j][i])
+                            })
+                            .appendTo(container);
+                    }
                 }
             }
         }

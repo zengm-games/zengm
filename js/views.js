@@ -1078,28 +1078,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                 ui.update(data, function () {
                     ui.dropdown($("#team-finances-select-team"), $("#team-finances-select-season"));
 
-                    $.plot($("#bar-chart-hype"), [[[0, Math.random()], [1, Math.random()], [2, Math.random()], [3, Math.random()], [4, Math.random()], [5, Math.random()], [6, Math.random()], [7, Math.random()], [8, Math.random()], [9, Math.random()]]], {
-                        series: {
-                            lines: {
-                                show: false,
-                                fill: true,
-                                steps: true
-                            },
-                            bars: {
-                                show: true,
-                                barWidth: 1
-                            }
-                        },
-                        yaxis: {
-                            min: 0,
-                            max: 1,
-                            ticks: false
-                        },
-                        xaxis: {
-                            ticks: [[0.5, 2013], [1.5, 2012], [2.5, 2011], [3.5, 2010], [4.5, 2009], [5.5, 2008], [6.5, 2007], [7.5, 2006], [8.5, 2005], [9.5, 2004]],
-                            tickLength: 0
-                        }
-                    });
+                    $.barGraph($("#bar-graph-hype"), [1, 2, 3, 4], [0, 5]);
 
                     if (req.raw.cb !== undefined) {
                         req.raw.cb();

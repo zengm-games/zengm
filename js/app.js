@@ -31,6 +31,9 @@ requirejs.config({
         "lib/jquery": {
             exports: "$"
         },
+        "lib/jquery.barGraph": {
+            deps: ["lib/jquery"]
+        },
         "lib/jquery.dataTables": {
             deps: ["lib/jquery"]
         },
@@ -39,9 +42,6 @@ requirejs.config({
         },
         "lib/jquery.dataTables.bootstrap": {
             deps: ["lib/jquery", "lib/jquery.dataTables"]
-        },
-        "lib/jquery.flot": {
-            deps: ["lib/jquery"]
         },
         "lib/jquery.tabSlideOut": {
             deps: ["lib/jquery"]
@@ -55,7 +55,7 @@ requirejs.config({
     }
 });
 
-requirejs(["db", "views", "ui", "lib/davis", "lib/jquery", "util/helpers", "../gen/templates", "lib/bootstrap-dropdown", "lib/davis.google_analytics", "lib/IndexedDB-getAll-shim", "lib/jquery-ui", "lib/jquery.dataTables", "lib/jquery.dataTables.bbgmSorting", "lib/jquery.dataTables.bootstrap", "lib/jquery.flot", "lib/jquery.tabSlideOut"], function (db, views, ui, Davis, $, helpers) {
+requirejs(["db", "views", "ui", "lib/davis", "lib/jquery", "util/helpers", "../gen/templates", "lib/bootstrap-dropdown", "lib/davis.google_analytics", "lib/IndexedDB-getAll-shim", "lib/jquery-ui", "lib/jquery.barGraph", "lib/jquery.dataTables", "lib/jquery.dataTables.bbgmSorting", "lib/jquery.dataTables.bootstrap", "lib/jquery.tabSlideOut"], function (db, views, ui, Davis, $, helpers) {
     "use strict";
 
     ui.init();

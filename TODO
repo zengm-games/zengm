@@ -37,10 +37,6 @@ financial stuff
   add "team finances" view to allow tweaking of business crap
     warning about minimum/luxury tax
     move ticket price to gameAttributes rather than making it a constant
-    flot
-      stacked bar plots http://jsfiddle.net/ryleyb/kKdxt/ or http://www.flotcharts.org/flot/examples/stacking/index.html
-      lines with steps http://www.flotcharts.org/flot/examples/stacking/index.html
-      floating labels http://www.flotcharts.org/flot/examples/interacting/index.html
     bar plots showing how these things changed over time
       hype
         one solid color
@@ -61,12 +57,12 @@ financial stuff
                 for case (2), labels is an array with labels for the two dimensions. so for my use, it would be like [[2013, 2012, 2011], ["component 1", "component 2"]]
             colors
               have default colors which can be overwritten by css
-                bar-plot-1
-                bar-plot-2
+                bar-graph-1
+                bar-graph-2
                 ...
               also have them "glow" on hover
             positioning
-              x: assume evenly spaced bars, completely filling the range from 0% to 100% width
+              x: assume evenly spaced bars, completely filling the range from 0% to 100% width (1px border between?)
               y: specified by ylim
             missing data
               if you see a null instead of a number, then don't even make a div for that bar piece

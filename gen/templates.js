@@ -1995,7 +1995,7 @@ function program4(depth0,data) {
     + escapeExpression(helpers.round.call(depth0, depth0.luxuryPayroll, {hash:{},data:data}))
     + "M</strong> (teams with payrolls above this limit will be assessed a fine equal to "
     + escapeExpression(((stack1 = depth0.luxuryTax),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " times the difference at the end of the season)\n</p>\n\n<p>\n  <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" id=\"team-finances\">\n    <tbody>\n      <tr><td style=\"text-align: right; padding-right: 1em;\">Hype</td><td width=\"100%\"><div id=\"bar-chart-hype\" class=\"bar-chart-small\"></div></td></tr>\n    </tbody>\n  </table>\n</p>";
+    + " times the difference at the end of the season)\n</p>\n\n<p>\n  <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" id=\"team-finances\">\n    <tbody>\n      <tr><td style=\"text-align: right; padding-right: 1em;\">Hype</td><td width=\"100%\"><div id=\"bar-graph-hype\" class=\"bar-graph-small\"></div></td></tr>\n    </tbody>\n  </table>\n</p>";
   return buffer;
   });
 templates['roster'] = template(function (Handlebars,depth0,helpers,partials,data) {

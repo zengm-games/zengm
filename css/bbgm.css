@@ -253,6 +253,16 @@ select.season {
 .bar-graph-6 { background-color: #46a546; }
 .bar-graph-7 { background-color: #c3325f; }
 
+.icon-question-sign {
+  cursor: pointer;
+}
+
+/* Stupid fix for popover in h4 */
+.popover-content {
+  font-size: 13px;
+  font-weight: normal;
+}
+
 
 /* From bootstrap-responsive.css, force big size */
   .row {

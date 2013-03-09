@@ -30,26 +30,7 @@ financial stuff
   add "team finances" view to allow tweaking of business crap
     warning about minimum/luxury tax at the top
       update for prior seasons, past tense
-    help tooltips to explain..
-      hype
-      payroll limits, salary tax
-    move ticket price to gameAttributes rather than making it a constant
-    bar plots showing how these things changed over time
-      TRY WRITING MY OWN
-        $.barPlot(container, data, ylim, labels)
-          inputs
-            container
-              a div. contant width and height are not required, as all bars will be scalable
-            data is either..
-              (1) an array [54, 14, 243] of bar plot heights. Can have negative values!
-              (2) an array of arrays of heights [[53, 214, 43], [9, 53, 64]]. Cannot have negative values!
-            ylim
-              [ymin, ymax], scale for y
-            labels - OPTIONAL
-              for case (1), labels is of the same size and shows on hover
-              for case (2), labels is an array with labels for the two dimensions. so for my use, it would be like [[2013, 2012, 2011], ["component 1", "component 2"]]
-        blog/gist
-    compare against league averages?
+    compare bar graphs against league averages?
     how many years to show? maybe.. all of them? or have that be an option, how many years, past 10 or all?
   realistic update formulas for
     hype
@@ -235,6 +216,7 @@ too easy to do the "be bad, get draft picks, keep payroll low, sign free agents,
 league leaders
   minimum minutes played to show should use team GP to scale, not player (this won't matter until injuries are implemented, basically)
 other potential knobs
+  move ticket price to gameAttributes rather than making it a constant
   scouting budget - decrease "fuzz" added to displayed ratings
   coaching budget - influence player development
   health budget - influence injuries

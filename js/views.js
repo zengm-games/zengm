@@ -1063,7 +1063,6 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
                 team = event.target.result;
                 team.seasons.reverse();  // Most recent season first
-console.log(team.seasons)
 
                 keys = ["won", "hype", "pop", "att", "cash", "merchRevenue", "sponsorRevenue", "ticketRevenue", "localTvRevenue", "nationalTvRevenue", "salaryPaid", "luxuryTaxPaid", "minTaxPaid"];
                 barData = {};
@@ -1077,7 +1076,6 @@ console.log(team.seasons)
                 for (i = 0; i < keys.length; i++) {
                     barData[keys[i]] = _.map(barData[keys[i]], function (num) { return num / 1000; });  // convert to millions
                 }
-console.dir(barData);
 
                 barSeasons = [];
                 for (i = 0; i < 10; i++) {
@@ -1091,6 +1089,19 @@ console.dir(barData);
                 };
                 ui.update(data, function () {
                     ui.dropdown($("#team-finances-select-team"), $("#team-finances-select-season"));
+
+                    $("#help-payroll-limits").clickover({
+                        title: "Payroll Limits",
+                        content: "The salary cap is a soft cap, meaning that you can exceed it to resign your own players or to sign free agents to minimum contracts ($" + g.minContract + "/year); however, you cannot exceed the salary cap to sign a free agent for more than the minimum. Teams with payrolls below the minimum payroll limit will be assessed a fine equal to the difference at the end of the season. Teams with payrolls above the luxury tax limit will be assessed a fine equal to " + g.luxuryTax + " times the difference at the end of the season",
+                        placement: "bottom"
+                    });
+
+                    $("#help-hype").clickover({
+                        title: "Hype",
+                        content: "\"Hype\" refers to fans' interest in your team. For instance, if your team is improving or you signed a big name free agent or you drafted a popular prospect, then hype increases; if your team is losing or stagnating or you traded away a popular veteran, then hype decreases. The more hype your team has, the more revenue it will generate.",
+                        placement: "bottom",
+                        container: "body"
+                    });
 
                     $.barGraph($("#bar-graph-won"), barData.won, [0, 82], barSeasons);
                     $.barGraph($("#bar-graph-hype"), barData.hype, [0, 1], barSeasons, function (val) {

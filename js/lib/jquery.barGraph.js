@@ -116,16 +116,6 @@
             }
         }
 
-        // Draw horizontal line at 0
-        $("<div></div>", {"class": "bar-graph-1"})
-            .css({
-                position: "absolute",
-                bottom: scale(0, ylim) + "%",
-                height: "2.5%",
-                width: "100%"
-            })
-            .appendTo(container);
-
         // Draw bars
         if (!stacked) {
 console.log(container)

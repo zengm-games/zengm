@@ -30,11 +30,6 @@ financial stuff
   team finances view
     salaries table like hoopshype, including released players
       accurate for newly signed players, free agents?
-      verify it works for released players
-        skills
-        highlight
-      similar to db.getpayroll
-        make a db.getcontracts that getpayroll calls?
     compare bar graphs against league averages?
   realistic update formulas for
     hype

@@ -1071,10 +1071,10 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                 show = parseInt(show, 10);
             }
 
-            salariesSeasons = [g.season, g.season + 1, g.season + 2, g.season + 3, g.season + 4, g.season + 5];
+            salariesSeasons = [g.season, g.season + 1, g.season + 2, g.season + 3, g.season + 4];
 
             db.getPayroll(null, tid, function (payroll, contracts) {
-                var aboveBelow, contractTotals, i, j;
+                var aboveBelow, contractTotals, i, j, season;
 
                 aboveBelow = {
                     minPayroll: payroll > g.minPayroll ? "above" : "below",
@@ -1084,20 +1084,22 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
                 payroll /= 1000;
 
-console.log(contracts);
-                contractTotals = [0, 0, 0, 0, 0, 0];
                 // Convert contract objects into table rows
+                contractTotals = [0, 0, 0, 0, 0];
+                season = g.season;
+                if (g.phase >= g.PHASE.DRAFT) {
+                    // AFter the draft, don't show old contract year
+                    season += 1;
+                }
                 for (i = 0; i < contracts.length; i++) {
                     contracts[i].amounts = [];
-                    for (j = g.season; j <= contracts[i].exp; j++) {
+                    for (j = season; j <= contracts[i].exp; j++) {
                         contracts[i].amounts.push(contracts[i].amount / 1000);
-                        contractTotals[j - g.season] += contracts[i].amount / 1000;
+                        contractTotals[j - season] += contracts[i].amount / 1000;
                     }
                     delete contracts[i].amount;
                     delete contracts[i].exp;
                 }
-console.log(contracts);
-console.log(contractTotals);
 
                 g.dbl.transaction("teams").objectStore("teams").get(tid).onsuccess = function (event) {
                     var barData, barSeasons, data, i, keys, team, teamAll;
@@ -1134,11 +1136,17 @@ console.log(contractTotals);
                         ui.datatableSinglePage($("#player-salaries"), 1, _.map(contracts, function (p) {
                             var i, output;
                             output = ['<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>' + helpers.skillsBlock(p.skills)];
-                            for (i = 0; i < 6; i++) {
+                            if (p.released) {
+                                output[0] = "<i>" + output[0] + "</i>";
+                            }
+                            for (i = 0; i < 5; i++) {
                                 if (p.amounts[i]) {
                                     output.push("$" + helpers.round(p.amounts[i], 2) + "M");
                                 } else {
                                     output.push("");
+                                }
+                                if (p.released) {
+                                    output[i + 1] = "<i>" + output[i + 1] + "</i>";
                                 }
                             }
                             return output;

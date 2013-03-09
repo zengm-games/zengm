@@ -346,6 +346,8 @@ define(["db", "globals", "data/names", "lib/faces", "lib/underscore", "util/rand
         transaction.objectStore("releasedPlayers").add({
             pid: p.pid,
             tid: p.tid,
+            name: p.name,
+            skills: _.last(p.ratings).skills,
             contractAmount: p.contractAmount,
             contractExp: p.contractExp
         });

@@ -500,7 +500,8 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
                     name: players[i].name,
                     skills: _.last(players[i].ratings).skills,
                     amount: players[i].contractAmount,
-                    exp: players[i].contractExp
+                    exp: players[i].contractExp,
+                    released: false
                 });
             }
 
@@ -512,9 +513,10 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
                     contracts.push({
                         pid: releasedPlayers[i].pid,
                         name: releasedPlayers[i].name,
-                        skills: _.last(releasedPlayers[i].ratings).skills,
+                        skills: releasedPlayers[i].skills,
                         amount: releasedPlayers[i].contractAmount,
-                        exp: releasedPlayers[i].contractExp
+                        exp: releasedPlayers[i].contractExp,
+                        released: true
                     });
                 }
 

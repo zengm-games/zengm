@@ -2003,7 +2003,7 @@ function program4(depth0,data) {
     + escapeExpression(helpers.round.call(depth0, depth0.luxuryPayroll, {hash:{},data:data}))
     + "M</strong>). <i class=\"icon-question-sign\" id=\"help-payroll-limits\"></i></p>\n\n<div class=\"row-fluid\">\n  <div class=\"span2\">\n    <h4>Wins</h4>\n    <div id=\"bar-graph-won\" class=\"bar-graph-small\"></div><br><br>\n    <span class=\"clickover\"><h4>Hype <i class=\"icon-question-sign\" id=\"help-hype\"></i></h4></span>\n    <div id=\"bar-graph-hype\" class=\"bar-graph-small\"></div><br><br>\n    <h4>Region Population</h4>\n    <div id=\"bar-graph-pop\" class=\"bar-graph-small\"></div><br><br>\n    <h4>Average Attendance</h4>\n    <div id=\"bar-graph-att\" class=\"bar-graph-small\"></div>\n  </div>\n  <div class=\"span10\">\n    <div class=\"row-fluid\">\n      <h3>Revenue</h3>\n      <div id=\"bar-graph-revenue\" class=\"bar-graph-large\"></div><br><br>\n      <h3>Expenses</h3>\n      <div id=\"bar-graph-expenses\" class=\"bar-graph-large\"></div><br><br>\n      <h3>Cash</h3>\n      <div id=\"bar-graph-cash\" class=\"bar-graph-medium\"></div>\n  </div>\n</div>\n<p class=\"clearfix\"></p>\n\n<h2>Player Salaries</h2>\n\n<p>You can release or buy out players from <a href=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/roster\">your roster</a>.</p>\n\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player-salaries\">\n<thead>\n  <tr><th>Name</th><th>"
+    + "/roster\">your roster</a>. Released players who are still owed money are <i>shown in italics</i>.</p>\n\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player-salaries\">\n<thead>\n  <tr><th>Name</th><th>"
     + escapeExpression(((stack1 = ((stack1 = depth0.salariesSeasons),stack1 == null || stack1 === false ? stack1 : stack1[0])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</th><th>"
     + escapeExpression(((stack1 = ((stack1 = depth0.salariesSeasons),stack1 == null || stack1 === false ? stack1 : stack1[1])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
@@ -2013,8 +2013,6 @@ function program4(depth0,data) {
     + escapeExpression(((stack1 = ((stack1 = depth0.salariesSeasons),stack1 == null || stack1 === false ? stack1 : stack1[3])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</th><th>"
     + escapeExpression(((stack1 = ((stack1 = depth0.salariesSeasons),stack1 == null || stack1 === false ? stack1 : stack1[4])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</th><th>"
-    + escapeExpression(((stack1 = ((stack1 = depth0.salariesSeasons),stack1 == null || stack1 === false ? stack1 : stack1[5])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</th></tr>\n</thead>\n<tbody>\n</tbody>\n<tfoot>\n  <tr><th>Totals</th><th>$"
     + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.contractTotals),stack1 == null || stack1 === false ? stack1 : stack1[0]), 2, {hash:{},data:data}))
     + "M</th><th>$"
@@ -2025,8 +2023,6 @@ function program4(depth0,data) {
     + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.contractTotals),stack1 == null || stack1 === false ? stack1 : stack1[3]), 2, {hash:{},data:data}))
     + "M</th><th>$"
     + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.contractTotals),stack1 == null || stack1 === false ? stack1 : stack1[4]), 2, {hash:{},data:data}))
-    + "M</th><th>$"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.contractTotals),stack1 == null || stack1 === false ? stack1 : stack1[5]), 2, {hash:{},data:data}))
     + "M</th></tr>\n</tfoot>\n</table>";
   return buffer;
   });

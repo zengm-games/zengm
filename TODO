@@ -28,8 +28,7 @@ financial stuff
     merchandising ($5 million), sponsorships ($25 million) - based on hype and region population, get some income
     ticket sales - $30 million
   add "team finances" view to allow tweaking of business crap
-    warning about minimum/luxury tax at the top
-      update for prior seasons, past tense
+    salaries table like hoopshype, including released players
     compare bar graphs against league averages?
     how many years to show? maybe.. all of them? or have that be an option, how many years, past 10 or all?
   realistic update formulas for
@@ -48,6 +47,7 @@ financial stuff
     localTvRevenue
       base on tvContractAmount, tvContractExp
 like on team finances page, anywhere else to add help popups?
+  should this be abstracted rather than just inline in views?
 
 DATABASE CHANGES since 3.0.0beta
 --------------------------------
@@ -222,6 +222,10 @@ other potential knobs
   health budget - influence injuries
   facilities budget - influence free agent demeanor
   stadium budget - influence attendance
+trades
+  draft picks
+  cash
+  drop players as part of trade, to free up roster space
 
 FUTURE (after 3.0.0)
 --------------------
@@ -396,7 +400,3 @@ multi-team trades... how can i make a good UI for that?
 advanced stats (+/-, PER, etc)
 punishment for going in debt: if cash is less than $10M, can't sign any new contracts
 advisors
-trades
-  draft picks
-  cash
-  drop players as part of trade, to free up roster space

@@ -1058,93 +1058,105 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                 g.realtimeUpdate = false;
             }
 
-            g.dbl.transaction("teams").objectStore("teams").get(tid).onsuccess = function (event) {
-                var barData, barSeasons, data, i, keys, team, teamAll;
+            db.getPayroll(null, tid, function (payroll) {
+                var aboveBelow;
 
-                team = event.target.result;
-                team.seasons.reverse();  // Most recent season first
-
-                keys = ["won", "hype", "pop", "att", "cash", "merchRevenue", "sponsorRevenue", "ticketRevenue", "localTvRevenue", "nationalTvRevenue", "salaryPaid", "luxuryTaxPaid", "minTaxPaid"];
-                barData = {};
-                for (i = 0; i < keys.length; i++) {
-                    barData[keys[i]] = helpers.nullPad(_.pluck(team.seasons, keys[i]), 10);
-                }
-
-                // Process some values
-                barData.att = _.map(barData.att, function (num, i) { if (team.seasons[i] !== undefined) { return num / team.seasons[i].gp; } });  // per game
-                keys = ["cash", "merchRevenue", "sponsorRevenue", "ticketRevenue", "localTvRevenue", "nationalTvRevenue", "salaryPaid", "luxuryTaxPaid", "minTaxPaid"];
-                for (i = 0; i < keys.length; i++) {
-                    barData[keys[i]] = _.map(barData[keys[i]], function (num) { return num / 1000; });  // convert to millions
-                }
-
-                barSeasons = [];
-                for (i = 0; i < 10; i++) {
-                    barSeasons[i] = g.season - i;
-                }
-                data = {
-                    container: "league_content",
-                    template: "teamFinances",
-                    title: team.region + " " + team.name + " " + "Finances - " + season,
-                    vars: {salaryCap: g.salaryCap / 1000, minPayroll: g.minPayroll / 1000, luxuryPayroll: g.luxuryPayroll / 1000, luxuryTax: g.luxuryTax, seasons: seasons, team: {region: team.region, name: team.name}, teams: teams}
+                aboveBelow = {
+                    minPayroll: payroll > g.minPayroll ? "above" : "below",
+                    salaryCap: payroll > g.salaryCap ? "above" : "below",
+                    luxuryPayroll: payroll > g.luxuryPayroll ? "above" : "below"
                 };
-                ui.update(data, function () {
-                    ui.dropdown($("#team-finances-select-team"), $("#team-finances-select-season"));
 
-                    $("#help-payroll-limits").clickover({
-                        title: "Payroll Limits",
-                        content: "The salary cap is a soft cap, meaning that you can exceed it to resign your own players or to sign free agents to minimum contracts ($" + g.minContract + "/year); however, you cannot exceed the salary cap to sign a free agent for more than the minimum. Teams with payrolls below the minimum payroll limit will be assessed a fine equal to the difference at the end of the season. Teams with payrolls above the luxury tax limit will be assessed a fine equal to " + g.luxuryTax + " times the difference at the end of the season",
-                        placement: "bottom"
-                    });
+                payroll /= 1000;
 
-                    $("#help-hype").clickover({
-                        title: "Hype",
-                        content: "\"Hype\" refers to fans' interest in your team. For instance, if your team is improving or you signed a big name free agent or you drafted a popular prospect, then hype increases; if your team is losing or stagnating or you traded away a popular veteran, then hype decreases. The more hype your team has, the more revenue it will generate.",
-                        placement: "bottom",
-                        container: "body"
-                    });
+                g.dbl.transaction("teams").objectStore("teams").get(tid).onsuccess = function (event) {
+                    var barData, barSeasons, data, i, keys, team, teamAll;
 
-                    $.barGraph($("#bar-graph-won"), barData.won, [0, 82], barSeasons);
-                    $.barGraph($("#bar-graph-hype"), barData.hype, [0, 1], barSeasons, function (val) {
-                        return helpers.round(val, 2);
-                    });
-                    $.barGraph($("#bar-graph-pop"), barData.pop, [0, 20], barSeasons, function (val) {
-                        return helpers.round(val, 1) + "M";
-                    });
-                    $.barGraph($("#bar-graph-att"), barData.att, [0, 25000], barSeasons, helpers.round);
+                    team = event.target.result;
+                    team.seasons.reverse();  // Most recent season first
 
-                    $.barGraph(
-                        $("#bar-graph-revenue"),
-                        [barData.nationalTvRevenue, barData.localTvRevenue, barData.ticketRevenue, barData.sponsorRevenue, barData.merchRevenue],
-                        undefined,
-                        [
-                            barSeasons,
-                            ["national TV revenue", "local TV revenue", "ticket revenue",  "corporate sponsorship revenue", "merchandising revenue"]
-                        ],
-                        function (val) {
-                            return "$" + helpers.round(val, 1) + "M";
-                        }
-                    );
-                    $.barGraph(
-                        $("#bar-graph-expenses"),
-                        [barData.salaryPaid, barData.minTaxPaid, barData.luxuryTaxPaid],
-                        undefined,
-                        [
-                            barSeasons,
-                            ["player salaries", "minimum payroll tax", "luxury tax"]
-                        ],
-                        function (val) {
-                            return "$" + helpers.round(val, 1) + "M";
-                        }
-                    );
-                    $.barGraph($("#bar-graph-cash"), barData.cash, undefined, barSeasons, function (val) {
-                        return "$" + helpers.round(val, 1) + "M";
-                    });
-
-                    if (req.raw.cb !== undefined) {
-                        req.raw.cb();
+                    keys = ["won", "hype", "pop", "att", "cash", "merchRevenue", "sponsorRevenue", "ticketRevenue", "localTvRevenue", "nationalTvRevenue", "salaryPaid", "luxuryTaxPaid", "minTaxPaid"];
+                    barData = {};
+                    for (i = 0; i < keys.length; i++) {
+                        barData[keys[i]] = helpers.nullPad(_.pluck(team.seasons, keys[i]), 10);
                     }
-                });
-            };
+
+                    // Process some values
+                    barData.att = _.map(barData.att, function (num, i) { if (team.seasons[i] !== undefined) { return num / team.seasons[i].gp; } });  // per game
+                    keys = ["cash", "merchRevenue", "sponsorRevenue", "ticketRevenue", "localTvRevenue", "nationalTvRevenue", "salaryPaid", "luxuryTaxPaid", "minTaxPaid"];
+                    for (i = 0; i < keys.length; i++) {
+                        barData[keys[i]] = _.map(barData[keys[i]], function (num) { return num / 1000; });  // convert to millions
+                    }
+
+                    barSeasons = [];
+                    for (i = 0; i < 10; i++) {
+                        barSeasons[i] = g.season - i;
+                    }
+                    data = {
+                        container: "league_content",
+                        template: "teamFinances",
+                        title: team.region + " " + team.name + " " + "Finances - " + season,
+                        vars: {payroll: payroll, aboveBelow: aboveBelow, salaryCap: g.salaryCap / 1000, minPayroll: g.minPayroll / 1000, luxuryPayroll: g.luxuryPayroll / 1000, luxuryTax: g.luxuryTax, seasons: seasons, team: {region: team.region, name: team.name}, teams: teams}
+                    };
+                    ui.update(data, function () {
+                        ui.dropdown($("#team-finances-select-team"), $("#team-finances-select-season"));
+
+                        $("#help-payroll-limits").clickover({
+                            title: "Payroll Limits",
+                            content: "The salary cap is a soft cap, meaning that you can exceed it to resign your own players or to sign free agents to minimum contracts ($" + g.minContract + "/year); however, you cannot exceed the salary cap to sign a free agent for more than the minimum. Teams with payrolls below the minimum payroll limit will be assessed a fine equal to the difference at the end of the season. Teams with payrolls above the luxury tax limit will be assessed a fine equal to " + g.luxuryTax + " times the difference at the end of the season",
+                            placement: "bottom"
+                        });
+
+                        $("#help-hype").clickover({
+                            title: "Hype",
+                            content: "\"Hype\" refers to fans' interest in your team. For instance, if your team is improving or you signed a big name free agent or you drafted a popular prospect, then hype increases; if your team is losing or stagnating or you traded away a popular veteran, then hype decreases. The more hype your team has, the more revenue it generates.",
+                            placement: "bottom",
+                            container: "body"
+                        });
+
+                        $.barGraph($("#bar-graph-won"), barData.won, [0, 82], barSeasons);
+                        $.barGraph($("#bar-graph-hype"), barData.hype, [0, 1], barSeasons, function (val) {
+                            return helpers.round(val, 2);
+                        });
+                        $.barGraph($("#bar-graph-pop"), barData.pop, [0, 20], barSeasons, function (val) {
+                            return helpers.round(val, 1) + "M";
+                        });
+                        $.barGraph($("#bar-graph-att"), barData.att, [0, 25000], barSeasons, helpers.round);
+
+                        $.barGraph(
+                            $("#bar-graph-revenue"),
+                            [barData.nationalTvRevenue, barData.localTvRevenue, barData.ticketRevenue, barData.sponsorRevenue, barData.merchRevenue],
+                            undefined,
+                            [
+                                barSeasons,
+                                ["national TV revenue", "local TV revenue", "ticket revenue",  "corporate sponsorship revenue", "merchandising revenue"]
+                            ],
+                            function (val) {
+                                return "$" + helpers.round(val, 1) + "M";
+                            }
+                        );
+                        $.barGraph(
+                            $("#bar-graph-expenses"),
+                            [barData.salaryPaid, barData.minTaxPaid, barData.luxuryTaxPaid],
+                            undefined,
+                            [
+                                barSeasons,
+                                ["player salaries", "minimum payroll tax", "luxury tax"]
+                            ],
+                            function (val) {
+                                return "$" + helpers.round(val, 1) + "M";
+                            }
+                        );
+                        $.barGraph($("#bar-graph-cash"), barData.cash, undefined, barSeasons, function (val) {
+                            return "$" + helpers.round(val, 1) + "M";
+                        });
+
+                        if (req.raw.cb !== undefined) {
+                            req.raw.cb();
+                        }
+                    });
+                };
+            });
         });
     }
 

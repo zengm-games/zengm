@@ -1987,17 +1987,21 @@ function program4(depth0,data) {
     + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + " Finances "
     + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n\n<p>The "
-    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.region)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " "
-    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " current payroll (<strong>$???M</strong>) is above the minimum payroll limit (<strong>$"
+    + "</h1>\n\n<p>The current payroll (<strong>$"
+    + escapeExpression(helpers.round.call(depth0, depth0.payroll, {hash:{},data:data}))
+    + "M</strong>) is "
+    + escapeExpression(((stack1 = ((stack1 = depth0.aboveBelow),stack1 == null || stack1 === false ? stack1 : stack1.minPayroll)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " the minimum payroll limit (<strong>$"
     + escapeExpression(helpers.round.call(depth0, depth0.minPayroll, {hash:{},data:data}))
-    + "M</strong>), below the salary cap (<strong>$"
+    + "M</strong>), "
+    + escapeExpression(((stack1 = ((stack1 = depth0.aboveBelow),stack1 == null || stack1 === false ? stack1 : stack1.salaryCap)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " the salary cap (<strong>$"
     + escapeExpression(helpers.round.call(depth0, depth0.salaryCap, {hash:{},data:data}))
-    + "M</strong>), and below the luxury tax limit (<strong>$"
+    + "M</strong>), and "
+    + escapeExpression(((stack1 = ((stack1 = depth0.aboveBelow),stack1 == null || stack1 === false ? stack1 : stack1.luxuryPayroll)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " the luxury tax limit (<strong>$"
     + escapeExpression(helpers.round.call(depth0, depth0.luxuryPayroll, {hash:{},data:data}))
-    + "M</strong>). HELP? <i class=\"icon-question-sign\" id=\"help-payroll-limits\"></i></p>\n\n<div class=\"row-fluid\">\n  <div class=\"span2\">\n    <h4>Wins</h4>\n    <div id=\"bar-graph-won\" class=\"bar-graph-small\"></div><br><br>\n    <span class=\"clickover\"><h4>Hype <i class=\"icon-question-sign\" id=\"help-hype\"></i></h4></span>\n    <div id=\"bar-graph-hype\" class=\"bar-graph-small\"></div><br><br>\n    <h4>Region Population</h4>\n    <div id=\"bar-graph-pop\" class=\"bar-graph-small\"></div><br><br>\n    <h4>Average Attendance</h4>\n    <div id=\"bar-graph-att\" class=\"bar-graph-small\"></div>\n  </div>\n  <div class=\"span10\">\n    <div class=\"row-fluid\">\n      <h3>Revenue</h3>\n      <div id=\"bar-graph-revenue\" class=\"bar-graph-large\"></div><br><br>\n      <h3>Expenses</h3>\n      <div id=\"bar-graph-expenses\" class=\"bar-graph-large\"></div><br><br>\n      <h3>Cash</h3>\n      <div id=\"bar-graph-cash\" class=\"bar-graph-medium\"></div>\n  </div>\n</div>";
+    + "M</strong>). <i class=\"icon-question-sign\" id=\"help-payroll-limits\"></i></p>\n\n<div class=\"row-fluid\">\n  <div class=\"span2\">\n    <h4>Wins</h4>\n    <div id=\"bar-graph-won\" class=\"bar-graph-small\"></div><br><br>\n    <span class=\"clickover\"><h4>Hype <i class=\"icon-question-sign\" id=\"help-hype\"></i></h4></span>\n    <div id=\"bar-graph-hype\" class=\"bar-graph-small\"></div><br><br>\n    <h4>Region Population</h4>\n    <div id=\"bar-graph-pop\" class=\"bar-graph-small\"></div><br><br>\n    <h4>Average Attendance</h4>\n    <div id=\"bar-graph-att\" class=\"bar-graph-small\"></div>\n  </div>\n  <div class=\"span10\">\n    <div class=\"row-fluid\">\n      <h3>Revenue</h3>\n      <div id=\"bar-graph-revenue\" class=\"bar-graph-large\"></div><br><br>\n      <h3>Expenses</h3>\n      <div id=\"bar-graph-expenses\" class=\"bar-graph-large\"></div><br><br>\n      <h3>Cash</h3>\n      <div id=\"bar-graph-cash\" class=\"bar-graph-medium\"></div>\n  </div>\n</div>";
   return buffer;
   });
 templates['roster'] = template(function (Handlebars,depth0,helpers,partials,data) {

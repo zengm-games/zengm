@@ -13,7 +13,7 @@
 
 <h1>{{team.region}} {{team.name}} Finances {{new_window}}</h1>
 
-<p>The {{team.region}} {{team.name}} current payroll (<strong>$???M</strong>) is above the minimum payroll limit (<strong>${{round minPayroll}}M</strong>), below the salary cap (<strong>${{round salaryCap}}M</strong>), and below the luxury tax limit (<strong>${{round luxuryPayroll}}M</strong>). <i class="icon-question-sign" id="help-payroll-limits"></i></p>
+<p>The current payroll (<strong>${{round payroll}}M</strong>) is {{aboveBelow.minPayroll}} the minimum payroll limit (<strong>${{round minPayroll}}M</strong>), {{aboveBelow.salaryCap}} the salary cap (<strong>${{round salaryCap}}M</strong>), and {{aboveBelow.luxuryPayroll}} the luxury tax limit (<strong>${{round luxuryPayroll}}M</strong>). <i class="icon-question-sign" id="help-payroll-limits"></i></p>
 
 <div class="row-fluid">
   <div class="span2">

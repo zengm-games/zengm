@@ -102,8 +102,8 @@ requirejs(["db", "views", "ui", "lib/davis", "lib/jquery", "util/helpers", "../g
             this.get("/l/:lid/standings/:season", views.standings);
             this.get("/l/:lid/playoffs", views.playoffs);
             this.get("/l/:lid/playoffs/:season", views.playoffs);
-            this.get("/l/:lid/finances", views.finances);
-            this.get("/l/:lid/finances/:season", views.finances);
+            this.get("/l/:lid/league_finances", views.leagueFinances);
+            this.get("/l/:lid/league_finances/:season", views.leagueFinances);
             this.get("/l/:lid/history", views.history);
             this.get("/l/:lid/history/:season", views.history);
             this.get("/l/:lid/roster", views.roster);

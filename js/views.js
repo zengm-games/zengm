@@ -704,7 +704,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
         });
     }
 
-    function finances(req) {
+    function leagueFinances(req) {
         beforeLeague(req, function () {
             var attributes, season, seasons, seasonAttributes;
 
@@ -726,14 +726,14 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
                 data = {
                     container: "league_content",
-                    template: "finances",
-                    title: "Finances",
+                    template: "leagueFinances",
+                    title: "League Finances",
                     vars: {salaryCap: g.salaryCap / 1000, season: season, seasons: seasons}
                 };
                 ui.update(data, function () {
-                    ui.dropdown($("#finances-select-season"));
+                    ui.dropdown($("#league-finances-select-season"));
 
-                    ui.datatableSinglePage($("#finances"), 5, _.map(teams, function (t) {
+                    ui.datatableSinglePage($("#league-finances"), 5, _.map(teams, function (t) {
                         var payroll;
 
                         payroll = season === g.season ? t.payroll : t.salaryPaid;  // Display the current actual payroll for this season, or the salary actually paid out for prior seasons
@@ -2556,7 +2556,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
         leagueDashboard: leagueDashboard,
         standings: standings,
         playoffs: playoffs,
-        finances: finances,
+        leagueFinances: leagueFinances,
         history: history,
         roster: roster,
         schedule: schedule,

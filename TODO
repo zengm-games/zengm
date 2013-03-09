@@ -29,6 +29,10 @@ financial stuff
     ticket sales - $30 million
   team finances view
     salaries table like hoopshype, including released players
+      sort by first year salary
+      verify it works for released players
+        skills
+        highlight
       similar to db.getpayroll
         make a db.getcontracts that getpayroll calls?
     compare bar graphs against league averages?

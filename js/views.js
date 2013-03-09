@@ -1073,8 +1073,8 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
             salariesSeasons = [g.season, g.season + 1, g.season + 2, g.season + 3, g.season + 4, g.season + 5];
 
-            db.getPayroll(null, tid, function (payroll) {
-                var aboveBelow;
+            db.getPayroll(null, tid, function (payroll, contracts) {
+                var aboveBelow, i, j;
 
                 aboveBelow = {
                     minPayroll: payroll > g.minPayroll ? "above" : "below",
@@ -1083,6 +1083,18 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                 };
 
                 payroll /= 1000;
+
+console.log(contracts);
+                // Convert contract objects into table rows
+                for (i = 0; i < contracts.length; i++) {
+                    contracts[i].amounts = [];
+                    for (j = g.season; j <= contracts[i].exp; j++) {
+                        contracts[i].amounts.push(contracts[i].amount / 1000);
+                    }
+                    delete contracts[i].amount;
+                    delete contracts[i].exp;
+                }
+console.log(contracts);
 
                 g.dbl.transaction("teams").objectStore("teams").get(tid).onsuccess = function (event) {
                     var barData, barSeasons, data, i, keys, team, teamAll;
@@ -1111,10 +1123,12 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                         container: "league_content",
                         template: "teamFinances",
                         title: team.region + " " + team.name + " " + "Finances - " + season,
-                        vars: {payroll: payroll, aboveBelow: aboveBelow, salaryCap: g.salaryCap / 1000, minPayroll: g.minPayroll / 1000, luxuryPayroll: g.luxuryPayroll / 1000, luxuryTax: g.luxuryTax, salariesSeasons: salariesSeasons, shows: shows, team: {region: team.region, name: team.name}, teams: teams}
+                        vars: {payroll: payroll, aboveBelow: aboveBelow, salaryCap: g.salaryCap / 1000, minPayroll: g.minPayroll / 1000, luxuryPayroll: g.luxuryPayroll / 1000, luxuryTax: g.luxuryTax, salariesSeasons: salariesSeasons, shows: shows, team: {region: team.region, name: team.name}, teams: teams, contracts: contracts}
                     };
                     ui.update(data, function () {
                         ui.dropdown($("#team-finances-select-team"), $("#team-finances-select-show"));
+
+                        ui.datatableSinglePage($("#player-salaries"), 1);
 
                         $("#help-payroll-limits").clickover({
                             title: "Payroll Limits",

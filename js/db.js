@@ -496,7 +496,9 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
             players = event.target.result;
             for (i = 0; i < players.length; i++) {
                 contracts.push({
+                    pid: players[i].pid,
                     name: players[i].name,
+                    skills: _.last(players[i].ratings).skills,
                     amount: players[i].contractAmount,
                     exp: players[i].contractExp
                 });
@@ -508,7 +510,9 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
                 releasedPlayers = event.target.result;
                 for (i = 0; i < releasedPlayers.length; i++) {
                     contracts.push({
+                        pid: releasedPlayers[i].pid,
                         name: releasedPlayers[i].name,
+                        skills: _.last(releasedPlayers[i].ratings).skills,
                         amount: releasedPlayers[i].contractAmount,
                         exp: releasedPlayers[i].contractExp
                     });
@@ -527,7 +531,7 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
      * @memberOf db
      * @param {IDBTransaction|null} ot An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.
      * @param {number} tid Team ID.
-     * @param {function(number)} cb Callback whose first argument is the payroll in thousands of dollars.
+     * @param {function(number, Array=)} cb Callback; first argument is the payroll in thousands of dollars, second argument is the list of contract objects from getContracts.
      */
     function getPayroll(ot, tid, cb) {
         getContracts(ot, tid, function (contracts) {
@@ -538,7 +542,7 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
                 payroll += contracts[i].amount;  // No need to check exp, since anyone without a contract for the current season will not have an entry
             }
 
-            cb(payroll);
+            cb(payroll, contracts);
         });
     }
 

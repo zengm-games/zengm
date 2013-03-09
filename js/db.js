@@ -476,6 +476,50 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
     }
 
     /**
+     * Gets all the contracts a team owes.
+     * 
+     * This includes contracts for players who have been released but are still owed money.
+     * 
+     * @memberOf db
+     * @param {IDBTransaction|null} ot An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.
+     * @param {number} tid Team ID.
+     * @param {function(Array)} cb Callback whose first argument is an array of objects containing contract information.
+     */
+    function getContracts(ot, tid, cb) {
+        var contracts, transaction;
+
+        transaction = getObjectStore(ot, ["players", "releasedPlayers"], null);
+        transaction.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
+            var i, players;
+
+            contracts = [];
+            players = event.target.result;
+            for (i = 0; i < players.length; i++) {
+                contracts.push({
+                    name: players[i].name,
+                    amount: players[i].contractAmount,
+                    exp: players[i].contractExp
+                });
+            }
+
+            transaction.objectStore("releasedPlayers").index("tid").getAll(tid).onsuccess = function (event) {
+                var i, releasedPlayers;
+
+                releasedPlayers = event.target.result;
+                for (i = 0; i < releasedPlayers.length; i++) {
+                    contracts.push({
+                        name: releasedPlayers[i].name,
+                        amount: releasedPlayers[i].contractAmount,
+                        exp: releasedPlayers[i].contractExp
+                    });
+                }
+
+                cb(contracts);
+            };
+        };
+    }
+
+    /**
      * Get the total payroll for a team.
      * 
      * This includes players who have been released but are still owed money from their old contracts.
@@ -486,30 +530,16 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
      * @param {function(number)} cb Callback whose first argument is the payroll in thousands of dollars.
      */
     function getPayroll(ot, tid, cb) {
-        var payroll, transaction;
-
-        transaction = getObjectStore(ot, ["players", "releasedPlayers"], null);
-        transaction.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
-            var i, pa, playersAll;
+        getContracts(ot, tid, function (contracts) {
+            var i, payroll;
 
             payroll = 0;
-            playersAll = event.target.result;
-            for (i = 0; i < playersAll.length; i++) {
-                pa = playersAll[i];
-                payroll += pa.contractAmount;
+            for (i = 0; i < contracts.length; i++) {
+                payroll += contracts[i].amount;  // No need to check exp, since anyone without a contract for the current season will not have an entry
             }
 
-            transaction.objectStore("releasedPlayers").index("tid").getAll(tid).onsuccess = function (event) {
-                var i, releasedPlayers;
-
-                releasedPlayers = event.target.result;
-                for (i = 0; i < releasedPlayers.length; i++) {
-                    payroll += releasedPlayers[i].contractAmount;
-                }
-
-                cb(payroll);
-            };
-        };
+            cb(payroll);
+        });
     }
 
     /**

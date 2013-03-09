@@ -43,11 +43,9 @@ define(["db", "globals"], function (db, g) {
                     if (payrolls[team.tid] < g.minPayroll) {
                         team.seasons[i].minTaxPaid = g.minPayroll - payrolls[team.tid];
                         team.seasons[i].cash -= team.seasons[i].minTaxPaid;
-                        team.seasons[i].expenses += team.seasons[i].minTaxPaid;
                     } else if (payrolls[team.tid] > g.luxuryPayroll) {
                         team.seasons[i].luxuryTaxPaid = g.luxuryTax * (payrolls[team.tid] - g.luxuryPayroll);
                         team.seasons[i].cash -= team.seasons[i].luxuryTaxPaid;
-                        team.seasons[i].expenses += team.seasons[i].luxuryTaxPaid;
                     }
 
                     cursor.update(team);

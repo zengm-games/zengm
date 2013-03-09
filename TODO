@@ -18,18 +18,14 @@ financial stuff
   new finance variables to update annually
     tvContractAmount, tvContractExp - think about it
   new finance variables to update continuously
-    merchAmount, sponsorAmount - same as attendance, update every game
     hype
       0.1-1, a multiplier on how many fans attend each game
       increase when the team's performance increases
       decrease a little when performance decreases
       decrease a lot
       update within season!
-    salaryPaid - see where "expenses" are totalled now. actually
-    revenue/cash - make sure i'm drawing in all the new sources of income
-      local tv, national tv, merch, sponsor, tickets
-  attendance = f(population, hype, ticket price)
-  can i delete seasonAttributes.revenue and expenses? just calculate them on demand from other variables?
+  delete seasonAttributes.revenue and expenses
+    done everywhere except db.getTeams
   sources of revenue http://nbahoopsonline.com/Articles/2007-08/NBArevinuesharing.html
     local tv contract - $10 million
       will be a deal from 3 to 5 years in length
@@ -58,12 +54,19 @@ financial stuff
         merchandising
         sponsorship
       expenses
-        salary
-        luxury tax
-        minimum tax
+        salaryPaid
+        luxuryTaxPaid
+        minTaxPaid
       profit
       cash
     compare against league averages
+  realistic update formulas for
+    attendance = f(population, hype, ticket price)
+    merchRevenue
+    sponsorRevenue
+    ticketRevenue
+    nationalTvRevenue
+    localTvRevenue
 
 DATABASE CHANGES since 3.0.0beta
 --------------------------------

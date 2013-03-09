@@ -58,7 +58,7 @@ define(["db", "globals", "ui", "core/player", "core/season", "lib/faces", "lib/j
                             name: teams[i].name,
                             abbrev: teams[i].abbrev,
                             stats: [{season: g.startingSeason, playoffs: false, gp: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, oppPts: 0}], // Things recorded both in and out of playoffs
-                            seasons: [{season: g.startingSeason, gp: 0, att: 0, revenue: 0, expenses: 0, cash: 10000, won: 0, lost: 0, wonHome: 0, lostHome: 0, wonAway: 0, lostAway: 0, wonDiv: 0, lostDiv: 0, wonConf: 0, lostConf: 0, lastTen: [], streak: 0, madePlayoffs: false, confChamps: false, leagueChamps: false, hype: Math.random(), pop: teams[i].pop, tvContractAmount: 0, tvContractExp: 0, merchAmount: 0, sponsorAmount: 0, payrollEndOfSeason: -1, salaryPaid: 0, luxuryTaxPaid: 0, minTaxPaid: 0}] // Things that only have one value per season
+                            seasons: [{season: g.startingSeason, gp: 0, att: 0, cash: 10000, won: 0, lost: 0, wonHome: 0, lostHome: 0, wonAway: 0, lostAway: 0, wonDiv: 0, lostDiv: 0, wonConf: 0, lostConf: 0, lastTen: [], streak: 0, madePlayoffs: false, confChamps: false, leagueChamps: false, hype: Math.random(), pop: teams[i].pop, tvContractAmount: 0, tvContractExp: 0, merchRevenue: 0, sponsorRevenue: 0, ticketRevenue: 0, nationalTvRevenue: 0, localTvRevenue: 0, payrollEndOfSeason: -1, salaryPaid: 0, luxuryTaxPaid: 0, minTaxPaid: 0}] // Things that only have one value per season
                         });
                     }
 

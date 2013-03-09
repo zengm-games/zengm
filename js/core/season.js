@@ -347,8 +347,6 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                     teamNewSeason.season = g.season;
                     teamNewSeason.gp = 0;
                     teamNewSeason.att = 0;
-                    teamNewSeason.revenue = 0;
-                    teamNewSeason.expenses = 0;
                     teamNewSeason.won = 0;
                     teamNewSeason.lost = 0;
                     teamNewSeason.wonHome = 0;
@@ -365,8 +363,11 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                     teamNewSeason.confChamps = false;
                     teamNewSeason.leagueChamps = false;
                     teamNewSeason.pop *= random.uniform(0.98, 1.02);  // Mean population should stay constant, otherwise the economics change too much
-                    teamNewSeason.merchAmount = 0;
-                    teamNewSeason.sponsorAmount = 0;
+                    teamNewSeason.merchRevenue = 0;
+                    teamNewSeason.sponsorRevenue = 0;
+                    teamNewSeason.ticketRevenue = 0;
+                    teamNewSeason.nationalTvRevenue = 0;
+                    teamNewSeason.localTvRevenue = 0;
                     teamNewSeason.payrollEndOfSeason = -1;
                     teamNewSeason.salaryPaid = 0;
                     teamNewSeason.luxuryTaxPaid = 0;

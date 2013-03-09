@@ -156,15 +156,19 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season",
         }
 
         db.getPayroll(this.transaction, that.team[t].id, function (payroll) {
-            var expenses, revenue;
+            var expenses, localTvRevenue, merchRevenue, nationalTvRevenue, revenue, salaryPaid, sponsorRevenue, ticketRevenue;
 
             // Only pay player salaries for regular season games.
-            expenses = 0;
+            salaryPaid = 0;
             if (!that.playoffs) {
-                expenses = payroll / 82;  // [thousands of dollars]
+                salaryPaid = payroll / 82;  // [thousands of dollars]
             }
 
-            revenue = g.ticketPrice * that.att / 1000;  // [thousands of dollars]
+            merchRevenue = 1.1 * that.att / 1000;
+            sponsorRevenue = 10 * that.att / 1000;
+            ticketRevenue = g.ticketPrice * that.att / 1000;  // [thousands of dollars]
+            nationalTvRevenue = 10 * that.att / 1000;
+            localTvRevenue = 1.2 * that.att / 1000;
 
             // Team stats
             that.transaction.objectStore("teams").openCursor(that.team[t].id).onsuccess = function (event) {
@@ -191,11 +195,17 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season",
                     won = false;
                 }
 
-                teamSeason.cash = teamSeason.cash + revenue - expenses;
+                revenue = ticketRevenue;
+                expenses = salaryPaid;
+                teamSeason.cash += revenue - expenses;
                 teamSeason.att += that.att;
                 teamSeason.gp += 1;
-                teamSeason.revenue += revenue;
-                teamSeason.expenses += expenses;
+                teamSeason.merchRevenue += merchRevenue;
+                teamSeason.sponsorRevenue += sponsorRevenue;
+                teamSeason.ticketRevenue += ticketRevenue;
+                teamSeason.nationalTvRevenue += nationalTvRevenue;
+                teamSeason.localTvRevenue += localTvRevenue;
+                teamSeason.salaryPaid += salaryPaid;
 
                 keys = ['min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
                 for (i = 0; i < keys.length; i++) {

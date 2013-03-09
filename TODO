@@ -17,7 +17,6 @@ last year's stats not displaying in free agents view? revisit how this is done.
 financial stuff
   new finance variables to update annually
     tvContractAmount, tvContractExp - think about it
-    payrollEndOfSeason, luxuryTaxPaid, minTaxPaid - newPhasePlayoffs
   new finance variables to update continuously
     merchAmount, sponsorAmount - same as attendance, update every game
     hype
@@ -51,6 +50,8 @@ financial stuff
       hype
       population
       attendance
+      payroll
+      wins
       revenue, a stacked bar plot:
         tv contract amount
         national tv contract amount
@@ -59,6 +60,7 @@ financial stuff
       expenses
         salary
         luxury tax
+        minimum tax
       profit
       cash
     compare against league averages
@@ -77,6 +79,10 @@ added to seasonAttributes for each team:
       luxuryTaxPaid: number,  // this shoudl be set at the end of the season
       minTaxPaid: number  // this shoudl be set at the end of the season
 changed "cost" to "expenses" in seasonAttributes
+
+MANUAL CHANGES TODO since 3.0.0beta
+-----------------------------------
+luxury tax, minimum payroll tax
 
 BEFORE 3.0.0
 ------------
@@ -267,7 +273,9 @@ expansion teams (add population growth, expand when certain conditions are met)
 
 ---
 
-g.dbl.transaction("players").objectStore("players").get(476).onsuccess = function (event) { console.log(event.target.result); };
+g = require("globals"); g.dbl.transaction("players").objectStore("players").get(476).onsuccess = function (event) { console.log(event.target.result); };
+
+g = require("globals"); g.dbl.transaction("teams").objectStore("teams").get(3).onsuccess = function (event) { console.log(event.target.result.seasons[0]); }
 
 g.dbl.transaction("gameAttributes").objectStore("gameAttributes").getAll().onsuccess = function (event) { console.dir(event.target.result); };
 

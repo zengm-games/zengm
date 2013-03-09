@@ -1,3 +1,11 @@
+<form action="/l/{{lid}}/finances" method="GET" class="form-inline pull-right">
+  <select id="finances-select-season" name="season" class="season">
+    {{#seasons}}
+      <option value="{{season}}"{{#if selected}} selected="selected"{{/if}}>{{season}} season</option>
+    {{/seasons}}
+  </select>
+</form>
+
 <h1>Finances {{new_window}}</h1>
 
 <p>The current salary cap is <strong>${{round salaryCap 2}}M</strong>.</p>

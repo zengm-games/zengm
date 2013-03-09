@@ -557,6 +557,8 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
                     team.revenue = tsa.revenue / 1000;  // [millions of dollars]
                 } else if (seasonAttributes[j] === "profit") {
                     team.profit = (tsa.revenue - tsa.expenses) / 1000;  // [millions of dollars]
+                } else if (seasonAttributes[j] === "salaryPaid") {
+                    team.salaryPaid = tsa.salaryPaid / 1000;  // [millions of dollars]
                 } else if (seasonAttributes[j] === "payroll") {
                     // Handled later
                     team.payroll = null;
@@ -735,7 +737,8 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
                 }
             }
 
-            if (seasonAttributes.indexOf("payroll") < 0) {
+            // If payroll for the current season was requested, find the current payroll for each team. Otherwise, don't.
+            if (seasonAttributes.indexOf("payroll") < 0 || season !== g.season) {
                 cb(teams);
             } else {
                 savePayroll = function (i) {

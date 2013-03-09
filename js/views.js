@@ -706,11 +706,18 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
     function finances(req) {
         beforeLeague(req, function () {
-            var attributes, seasonAttributes;
+            var attributes, season, seasons, seasonAttributes;
+
+            season = helpers.validateSeason(req.params.season);
+            seasons = helpers.getSeasons(season);
+
+            if (season < g.season) {
+                g.realtimeUpdate = false;
+            }
 
             attributes = ["tid", "abbrev", "region", "name"];
-            seasonAttributes = ["att", "revenue", "profit", "cash", "payroll"];
-            db.getTeams(null, g.season, attributes, [], seasonAttributes, {}, function (teams) {
+            seasonAttributes = ["att", "revenue", "profit", "cash", "payroll", "salaryPaid"];
+            db.getTeams(null, season, attributes, [], seasonAttributes, {}, function (teams) {
                 var data, i;
 
                 for (i = 0; i < teams.length; i++) {
@@ -721,11 +728,17 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                     container: "league_content",
                     template: "finances",
                     title: "Finances",
-                    vars: {salaryCap: g.salaryCap / 1000}
+                    vars: {salaryCap: g.salaryCap / 1000, season: season, seasons: seasons}
                 };
                 ui.update(data, function () {
+                    ui.dropdown($("#finances-select-season"));
+
                     ui.datatableSinglePage($("#finances"), 5, _.map(teams, function (t) {
-                        return ['<a href="/l/' + g.lid + '/roster/' + t.abbrev + '">' + t.region + ' ' + t.name + '</a>', helpers.round(t.att), '$' + helpers.round(t.revenue, 2) + 'M', '$' + helpers.round(t.profit, 2) + 'M', '$' + helpers.round(t.cash, 2) + 'M', '$' + helpers.round(t.payroll, 2) + 'M'];
+                        var payroll;
+
+                        payroll = season === g.season ? t.payroll : t.salaryPaid;  // Display the current actual payroll for this season, or the salary actually paid out for prior seasons
+
+                        return ['<a href="/l/' + g.lid + '/roster/' + t.abbrev + '">' + t.region + ' ' + t.name + '</a>', helpers.round(t.att), '$' + helpers.round(t.revenue, 2) + 'M', '$' + helpers.round(t.profit, 2) + 'M', '$' + helpers.round(t.cash, 2) + 'M', '$' + helpers.round(payroll, 2) + 'M'];
                     }));
 
                     if (req.raw.cb !== undefined) {
@@ -787,7 +800,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                             vars: {awards: awards, champ: champ, retiredPlayers: retiredPlayers, seasons: seasons, season: season}
                         };
                         ui.update(data, function () {
-                            ui.dropdown($('#history-select-season'));
+                            ui.dropdown($("#history-select-season"));
 
                             if (req.raw.cb !== undefined) {
                                 req.raw.cb();
@@ -1778,7 +1791,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                     vars: {season: season, seasons: seasons}
                 };
                 ui.update(data, function () {
-                    ui.dropdown($('#player-ratings-select-season'));
+                    ui.dropdown($("#player-ratings-select-season"));
 
                     ui.datatable($("#player-ratings"), 4, _.map(players, function (p) {
                         return ['<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>' + helpers.skillsBlock(p.ratings.skills), p.pos, '<a href="/l/' + g.lid + '/roster/' + p.stats.abbrev + '/' + season + '">' + p.stats.abbrev + '</a>', String(p.age), String(p.ratings.ovr), String(p.ratings.pot), String(p.ratings.hgt), String(p.ratings.stre), String(p.ratings.spd), String(p.ratings.jmp), String(p.ratings.endu), String(p.ratings.ins), String(p.ratings.dnk), String(p.ratings.ft), String(p.ratings.fg), String(p.ratings.tp), String(p.ratings.blk), String(p.ratings.stl), String(p.ratings.drb), String(p.ratings.pss), String(p.ratings.reb)];

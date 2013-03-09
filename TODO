@@ -24,8 +24,6 @@ financial stuff
       decrease a little when performance decreases
       decrease a lot
       update within season!
-  delete seasonAttributes.revenue and expenses
-    done everywhere except db.getTeams
   sources of revenue http://nbahoopsonline.com/Articles/2007-08/NBArevinuesharing.html
     local tv contract - $10 million
       will be a deal from 3 to 5 years in length
@@ -38,7 +36,8 @@ financial stuff
       when renegotiating and really bad, the guy pretends not to know you - "Atlanta Herons? Is that the team from the Mexican/Canadian/Arena/Indoor/Xtreme Volleyball/Soccer/Tennis/Racing/Curling/MudWrestling League?"
     merchandising ($5 million), sponsorships ($25 million) - based on hype and region population, get some income
     ticket sales - $30 million
-  spruce up league finances view with all this information
+  league finances
+    /l/1/league_finances
   add "team finances" view to allow tweaking of business crap
     warning about minimum/luxury tax
     move ticket price to gameAttributes rather than making it a constant
@@ -96,6 +95,7 @@ BEFORE 3.0.0
 
 database changes
   KEEP TRACK OF THESE CHANGES so i can upgrade
+  should money stored be in millions? are thousands actually outputted anywhere? would there be a loss of accuracy?
   injuries
   negotiation is annoying
     come up with an "anger meter" to display the odds of the player demanding more

@@ -76,7 +76,7 @@
                             height: scaled[i] + "%"
                         })
                         .tooltip({
-                            title: labels[i] + ": " + data[i]
+                            title: labels[i] + ": " + labelFn(data[i])
                         })
                         .appendTo(container);
                 }

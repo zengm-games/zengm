@@ -35,7 +35,11 @@ financial stuff
     merchandising ($5 million), sponsorships ($25 million) - based on hype and region population, get some income
     ticket sales - $30 million
   add "team finances" view to allow tweaking of business crap
-    warning about minimum/luxury tax
+    warning about minimum/luxury tax at the top
+      update for prior seasons, past tense
+    help tooltips to explain..
+      hype
+      payroll limits, salary tax
     move ticket price to gameAttributes rather than making it a constant
     bar plots showing how these things changed over time
       hype
@@ -88,6 +92,7 @@ financial stuff
       profit
       cash
     compare against league averages
+    how many years to show? maybe.. all of them? or have that be an option, how many years, past 10 or all?
   realistic update formulas for
     attendance = f(population, hype, ticket price)
     merchRevenue

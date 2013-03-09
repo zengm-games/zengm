@@ -1060,30 +1060,53 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
             attributes = ["tid", "abbrev", "region", "name"];
             seasonAttributes = ["att", "revenue", "profit", "cash", "payroll", "salaryPaid"];
-            db.getTeams(null, season, attributes, [], seasonAttributes, {}, function (fuck) {
-                var data, i, team;
+            g.dbl.transaction("teams").objectStore("teams").get(tid).onsuccess = function (event) {
+                var barData, barSeasons, barYlim, data, i, keys, team, teamAll;
 
-                for (i = 0; i < teams.length; i++) {
-                    fuck[i].cash /= 1000;  // [millions of dollars]
+                team = event.target.result;
+                team.seasons.reverse();  // Most recent season first
+console.log(team.seasons)
+
+                keys = ["won", "hype", "pop", "att"];
+                barData = {};
+                for (i = 0; i < keys.length; i++) {
+                    barData[keys[i]] = _.pluck(team.seasons, keys[i]);
+/*                    barData[keys[i]] = _.pluck(team.seasons, keys[i]);
+                    barYlim[keys[i]] = [_.min(barData[keys[i]]), _.max(barData[keys[i]])];
+                    barData[keys[i]] = helpers.nullPad(barData[keys[i]], 10); // nullPad after _.min, or null turns up as 0
+                    barYlim[keys[i]][0] += 0.15 * (barYlim[keys[i]][0] - barYlim[keys[i]][1]);  // Add 15% on to the minimum, otherwise, small bars will be too small*/
+
+//                    range = _.max()
                 }
+                barData.att = _.map(barData.att, function (num, i) { return num / team.seasons[i].gp; });
+                for (i = 0; i < keys.length; i++) {
+                    // If this was done earlier, then the map above would turn nulls into 0s
+                    barData[keys[i]] = helpers.nullPad(barData[keys[i]], 10);
+                }
+console.dir(barData);
 
-                team = fuck[tid];
-
+                barSeasons = [];
+                for (i = 0; i < 10; i++) {
+                    barSeasons[i] = g.season - i;
+                }
                 data = {
                     container: "league_content",
                     template: "teamFinances",
                     title: team.region + " " + team.name + " " + "Finances - " + season,
-                    vars: {salaryCap: g.salaryCap / 1000, minPayroll: g.minPayroll / 1000, luxuryPayroll: g.luxuryPayroll / 1000, luxuryTax: g.luxuryTax, seasons: seasons, team: team, teams: teams}
+                    vars: {salaryCap: g.salaryCap / 1000, minPayroll: g.minPayroll / 1000, luxuryPayroll: g.luxuryPayroll / 1000, luxuryTax: g.luxuryTax, seasons: seasons, team: {region: team.region, name: team.name}, teams: teams}
                 };
                 ui.update(data, function () {
                     ui.dropdown($("#team-finances-select-team"), $("#team-finances-select-season"));
 
-                    $.barGraph($("#bar-graph-won"), [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()], [-0.1, 1], [2013, 2012, 2011, 2010, 2009, 2008, 2007, 2006, 2005, 2004]);
-                    $.barGraph($("#bar-graph-hype"), [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()], [-0.1, 1], [2013, 2012, 2011, 2010, 2009, 2008, 2007, 2006, 2005, 2004]);
-                    $.barGraph($("#bar-graph-pop"), [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()], [-0.1, 1], [2013, 2012, 2011, 2010, 2009, 2008, 2007, 2006, 2005, 2004]);
-                    $.barGraph($("#bar-graph-att"), [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()], [-0.1, 1], [2013, 2012, 2011, 2010, 2009, 2008, 2007, 2006, 2005, 2004]);
-                    $.barGraph($("#bar-graph-payroll"), [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()], [-0.1, 1], [2013, 2012, 2011, 2010, 2009, 2008, 2007, 2006, 2005, 2004]);
-                    $.barGraph($("#bar-graph-profit"), [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()], [-0.1, 1], [2013, 2012, 2011, 2010, 2009, 2008, 2007, 2006, 2005, 2004]);
+                    $.barGraph($("#bar-graph-won"), barData.won, [0, 82], barSeasons);
+                    $.barGraph($("#bar-graph-hype"), barData.hype, [-0.1, 1], barSeasons, function (val) {
+                        return helpers.round(val, 2);
+                    });
+                    $.barGraph($("#bar-graph-pop"), barData.pop, [0, 20], barSeasons, function (val) {
+                        return helpers.round(val, 1) + "M";
+                    });
+                    $.barGraph($("#bar-graph-att"), barData.att, [0, 25000], barSeasons);
+
                     $.barGraph(
                         $("#bar-graph-revenue"),
                         [
@@ -1095,21 +1118,23 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                         ],
                         [-0.5, 5],
                         [
-                            [2013, 2012, 2011, 2010, 2009, 2008, 2007, 2006, 2005, 2004],
+                            barSeasons,
                             ["merchandising revenue", "corporate sponsorship revenue", "ticket revenue", "local TV revenue", "national TV revenue"]
                         ],
                         function (val) {
                             return helpers.round(val, 2);
                         }
                     );
-                    $.barGraph($("#bar-graph-expenses"), [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()], [-0.1, 1], [2013, 2012, 2011, 2010, 2009, 2008, 2007, 2006, 2005, 2004]);
-                    $.barGraph($("#bar-graph-cash"), [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()], [-0.1, 1], [2013, 2012, 2011, 2010, 2009, 2008, 2007, 2006, 2005, 2004]);
+                    $.barGraph($("#bar-graph-expenses"), [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()], [-0.1, 1], barSeasons);
+                    $.barGraph($("#bar-graph-cash"), [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()], [-0.1, 1], barSeasons, function (val) {
+                        return "$" + helpers.round(val, 1) + "M";
+                    });
 
                     if (req.raw.cb !== undefined) {
                         req.raw.cb();
                     }
                 });
-            });
+            };
         });
     }
 

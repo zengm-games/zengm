@@ -13,18 +13,12 @@
 
 <h1>{{team.region}} {{team.name}} Finances {{new_window}}</h1>
 
-<p>
-  Salary cap: <strong>${{round salaryCap}}M</strong> (teams over this amount cannot sign free agents for more than the minimum contract)<br>
-  Minimum payroll limit: <strong>${{round minPayroll}}M</strong> (teams with payrolls below this limit will be assessed a fine equal to the difference at the end of the season)<br>
-  Luxury tax limit: <strong>${{round luxuryPayroll}}M</strong> (teams with payrolls above this limit will be assessed a fine equal to {{luxuryTax}} times the difference at the end of the season)
-</p>
+<p>The {{team.region}} {{team.name}} current payroll (<strong>$???M</strong>) is above the minimum payroll limit (<strong>${{round minPayroll}}M</strong>), below the salary cap (<strong>${{round salaryCap}}M</strong>), and below the luxury tax limit (<strong>${{round luxuryPayroll}}M</strong>). HELP?</p>
 
 <div class="row-fluid">
   <div class="span2">
     <h4>Wins</h4>
     <div id="bar-graph-won" class="bar-graph-small"></div><br><br>
-    <h4>Payroll</h4>
-    <div id="bar-graph-payroll" class="bar-graph-small"></div><br><br>
     <h4>Hype</h4>
     <div id="bar-graph-hype" class="bar-graph-small"></div><br><br>
     <h4>Region Population</h4>
@@ -39,6 +33,6 @@
       <h3>Expenses</h3>
       <div id="bar-graph-expenses" class="bar-graph-large"></div><br><br>
       <h3>Cash</h3>
-      <div id="bar-graph-profit" class="bar-graph-medium"></div>
+      <div id="bar-graph-cash" class="bar-graph-medium"></div>
   </div>
 </div>

@@ -273,6 +273,25 @@ define(["globals"], function (g) {
         return parseFloat(value).toFixed(precision);
     }
 
+    /**
+     * Pad an array with nulls or truncate it so that it has a fixed length.
+     * 
+     * @param {Array} array Input array.
+     * @param {number} length Desired length.
+     * @return {Array} Original array padded with null or truncated so that it has the required length.
+     */
+    function nullPad(array, length) {
+        if (array.length > length) {
+            return array.slice(0, length);
+        }
+
+        while (array.length < length) {
+            array.push(null);
+        }
+
+        return array;
+    }
+
     return {
         validateAbbrev: validateAbbrev,
         getAbbrev: getAbbrev,
@@ -285,6 +304,7 @@ define(["globals"], function (g) {
         resetG: resetG,
         bbgmPing: bbgmPing,
         skillsBlock: skillsBlock,
-        round: round
+        round: round,
+        nullPad: nullPad
     };
 });

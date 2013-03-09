@@ -47,8 +47,5 @@
   <tr><th>Name</th><th>{{salariesSeasons.[0]}}</th><th>{{salariesSeasons.[1]}}</th><th>{{salariesSeasons.[2]}}</th><th>{{salariesSeasons.[3]}}</th><th>{{salariesSeasons.[4]}}</th><th>{{salariesSeasons.[5]}}</th></tr>
 </thead>
 <tbody>
-  {{#contracts}}
-    <tr><td><a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>{{skills_block skills}}</td><td>${{round amounts.[0] 2}}M</td><td>{{#if amounts.[1]}}${{round amounts.[1] 2}}M{{/if}}</td><td>{{#if amounts.[2]}}${{round amounts.[2] 2}}M{{/if}}</td><td>{{#if amounts.[3]}}${{round amounts.[3] 2}}M{{/if}}</td><td>{{#if amounts.[4]}}${{round amounts.[4] 2}}M{{/if}}</td><td>{{#if amounts.[5]}}${{round amounts.[5] 2}}M{{/if}}</td></tr>
-  {{/contracts}}
 </tbody>
 </table>

@@ -1123,12 +1123,24 @@ console.log(contracts);
                         container: "league_content",
                         template: "teamFinances",
                         title: team.region + " " + team.name + " " + "Finances - " + season,
-                        vars: {payroll: payroll, aboveBelow: aboveBelow, salaryCap: g.salaryCap / 1000, minPayroll: g.minPayroll / 1000, luxuryPayroll: g.luxuryPayroll / 1000, luxuryTax: g.luxuryTax, salariesSeasons: salariesSeasons, shows: shows, team: {region: team.region, name: team.name}, teams: teams, contracts: contracts}
+                        vars: {payroll: payroll, aboveBelow: aboveBelow, salaryCap: g.salaryCap / 1000, minPayroll: g.minPayroll / 1000, luxuryPayroll: g.luxuryPayroll / 1000, luxuryTax: g.luxuryTax, salariesSeasons: salariesSeasons, shows: shows, team: {region: team.region, name: team.name}, teams: teams}
                     };
                     ui.update(data, function () {
                         ui.dropdown($("#team-finances-select-team"), $("#team-finances-select-show"));
 
-                        ui.datatableSinglePage($("#player-salaries"), 1);
+//    <tr><td><a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>{{skills_block skills}}</td><td>{{#if amounts.[0]}}${{round amounts.[0] 2}}M{{/if}}0 </td><td>{{#if amounts.[1]}}${{round amounts.[1] 2}}M{{/if}}0 </td><td>{{#if amounts.[2]}}${{round amounts.[2] 2}}M{{/if}}0 </td><td>{{#if amounts.[3]}}${{round amounts.[3] 2}}M{{/if}}0 </td><td>{{#if amounts.[4]}}${{round amounts.[4] 2}}M{{/if}}0 </td><td>{{#if amounts.[5]}}${{round amounts.[5] 2}}M{{/if}}0 </td></tr>
+                        ui.datatableSinglePage($("#player-salaries"), 1, _.map(contracts, function (p) {
+                            var i, output;
+                            output = ['<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>' + helpers.skillsBlock(p.skills)];
+                            for (i = 0; i < 6; i++) {
+                                if (p.amounts[i]) {
+                                    output.push("$" + helpers.round(p.amounts[i], 2) + "M");
+                                } else {
+                                    output.push("");
+                                }
+                            }
+                            return output;
+                        }));
 
                         $("#help-payroll-limits").clickover({
                             title: "Payroll Limits",

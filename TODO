@@ -29,7 +29,8 @@ financial stuff
     ticket sales - $30 million
   team finances view
     salaries table like hoopshype, including released players
-      sort by first year salary
+      total row at bottom
+      accurate for newly signed players, free agents?
       verify it works for released players
         skills
         highlight

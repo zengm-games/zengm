@@ -1984,31 +1984,32 @@ function program6(depth0,data,depth1) {
     + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</a>"
     + escapeExpression(helpers.skills_block.call(depth0, depth0.skills, {hash:{},data:data}))
-    + "</td><td>$"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.amounts),stack1 == null || stack1 === false ? stack1 : stack1[0]), 2, {hash:{},data:data}))
-    + "M</td><td>";
-  stack2 = helpers['if'].call(depth0, ((stack1 = depth0.amounts),stack1 == null || stack1 === false ? stack1 : stack1[1]), {hash:{},inverse:self.noop,fn:self.program(7, program7, data),data:data});
+    + "</td><td>";
+  stack2 = helpers['if'].call(depth0, ((stack1 = depth0.amounts),stack1 == null || stack1 === false ? stack1 : stack1[0]), {hash:{},inverse:self.noop,fn:self.program(7, program7, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "</td><td>";
-  stack2 = helpers['if'].call(depth0, ((stack1 = depth0.amounts),stack1 == null || stack1 === false ? stack1 : stack1[2]), {hash:{},inverse:self.noop,fn:self.program(9, program9, data),data:data});
+  buffer += "0 </td><td>";
+  stack2 = helpers['if'].call(depth0, ((stack1 = depth0.amounts),stack1 == null || stack1 === false ? stack1 : stack1[1]), {hash:{},inverse:self.noop,fn:self.program(9, program9, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "</td><td>";
-  stack2 = helpers['if'].call(depth0, ((stack1 = depth0.amounts),stack1 == null || stack1 === false ? stack1 : stack1[3]), {hash:{},inverse:self.noop,fn:self.program(11, program11, data),data:data});
+  buffer += "0 </td><td>";
+  stack2 = helpers['if'].call(depth0, ((stack1 = depth0.amounts),stack1 == null || stack1 === false ? stack1 : stack1[2]), {hash:{},inverse:self.noop,fn:self.program(11, program11, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "</td><td>";
-  stack2 = helpers['if'].call(depth0, ((stack1 = depth0.amounts),stack1 == null || stack1 === false ? stack1 : stack1[4]), {hash:{},inverse:self.noop,fn:self.program(13, program13, data),data:data});
+  buffer += "0 </td><td>";
+  stack2 = helpers['if'].call(depth0, ((stack1 = depth0.amounts),stack1 == null || stack1 === false ? stack1 : stack1[3]), {hash:{},inverse:self.noop,fn:self.program(13, program13, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "</td><td>";
-  stack2 = helpers['if'].call(depth0, ((stack1 = depth0.amounts),stack1 == null || stack1 === false ? stack1 : stack1[5]), {hash:{},inverse:self.noop,fn:self.program(15, program15, data),data:data});
+  buffer += "0 </td><td>";
+  stack2 = helpers['if'].call(depth0, ((stack1 = depth0.amounts),stack1 == null || stack1 === false ? stack1 : stack1[4]), {hash:{},inverse:self.noop,fn:self.program(15, program15, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "</td></tr>\n  ";
+  buffer += "0 </td><td>";
+  stack2 = helpers['if'].call(depth0, ((stack1 = depth0.amounts),stack1 == null || stack1 === false ? stack1 : stack1[5]), {hash:{},inverse:self.noop,fn:self.program(17, program17, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "0 </td></tr>\n  ";
   return buffer;
   }
 function program7(depth0,data) {
   
   var buffer = "", stack1;
   buffer += "$"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.amounts),stack1 == null || stack1 === false ? stack1 : stack1[1]), 2, {hash:{},data:data}))
+    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.amounts),stack1 == null || stack1 === false ? stack1 : stack1[0]), 2, {hash:{},data:data}))
     + "M";
   return buffer;
   }
@@ -2017,7 +2018,7 @@ function program9(depth0,data) {
   
   var buffer = "", stack1;
   buffer += "$"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.amounts),stack1 == null || stack1 === false ? stack1 : stack1[2]), 2, {hash:{},data:data}))
+    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.amounts),stack1 == null || stack1 === false ? stack1 : stack1[1]), 2, {hash:{},data:data}))
     + "M";
   return buffer;
   }
@@ -2026,7 +2027,7 @@ function program11(depth0,data) {
   
   var buffer = "", stack1;
   buffer += "$"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.amounts),stack1 == null || stack1 === false ? stack1 : stack1[3]), 2, {hash:{},data:data}))
+    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.amounts),stack1 == null || stack1 === false ? stack1 : stack1[2]), 2, {hash:{},data:data}))
     + "M";
   return buffer;
   }
@@ -2035,12 +2036,21 @@ function program13(depth0,data) {
   
   var buffer = "", stack1;
   buffer += "$"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.amounts),stack1 == null || stack1 === false ? stack1 : stack1[4]), 2, {hash:{},data:data}))
+    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.amounts),stack1 == null || stack1 === false ? stack1 : stack1[3]), 2, {hash:{},data:data}))
     + "M";
   return buffer;
   }
 
 function program15(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "$"
+    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.amounts),stack1 == null || stack1 === false ? stack1 : stack1[4]), 2, {hash:{},data:data}))
+    + "M";
+  return buffer;
+  }
+
+function program17(depth0,data) {
   
   var buffer = "", stack1;
   buffer += "$"

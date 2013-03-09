@@ -343,12 +343,12 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/freeAgents", "c
 
                     teamSeason = team.seasons[team.seasons.length - 1]; // Previous season
                     teamNewSeason = helpers.deepCopy(teamSeason);
-                    // Reset everything except cash. Cash rolls over.
+                    // Reset everything except cash, tvContract* (which roll over) and population (which is updated).
                     teamNewSeason.season = g.season;
                     teamNewSeason.gp = 0;
                     teamNewSeason.att = 0;
                     teamNewSeason.revenue = 0;
-                    teamNewSeason.cost = 0;
+                    teamNewSeason.expenses = 0;
                     teamNewSeason.won = 0;
                     teamNewSeason.lost = 0;
                     teamNewSeason.wonHome = 0;
@@ -364,6 +364,13 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/freeAgents", "c
                     teamNewSeason.madePlayoffs = false;
                     teamNewSeason.confChamps = false;
                     teamNewSeason.leagueChamps = false;
+                    teamNewSeason.pop *= random.uniform(0.98, 1.02);  // Mean population should stay constant, otherwise the economics change too much
+                    teamNewSeason.merchAmount = 0;
+                    teamNewSeason.sponsorAmount = 0;
+                    teamNewSeason.payrollEndOfSeason = -1;
+                    teamNewSeason.salaryPaid = 0;
+                    teamNewSeason.luxuryTaxPaid = 0;
+                    teamNewSeason.minTaxPaid = 0;
                     team.seasons.push(teamNewSeason);
 
                     teamNewStats = {};

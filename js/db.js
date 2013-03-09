@@ -483,7 +483,7 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
      * @memberOf db
      * @param {IDBTransaction|null} ot An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.
      * @param {number} tid Team ID.
-     * @param {function(Array)} cb Callback whose first argument is the payroll in thousands of dollars.
+     * @param {function(number)} cb Callback whose first argument is the payroll in thousands of dollars.
      */
     function getPayroll(ot, tid, cb) {
         var payroll, transaction;
@@ -507,7 +507,7 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
                     payroll += releasedPlayers[i].contractAmount;
                 }
 
-                cb(parseInt(payroll, 10));
+                cb(payroll);
             };
         };
     }
@@ -551,7 +551,7 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
                 } else if (seasonAttributes[j] === "revenue") {
                     team.revenue = tsa.revenue / 1000;  // [millions of dollars]
                 } else if (seasonAttributes[j] === "profit") {
-                    team.profit = (tsa.revenue - tsa.cost) / 1000;  // [millions of dollars]
+                    team.profit = (tsa.revenue - tsa.expenses) / 1000;  // [millions of dollars]
                 } else if (seasonAttributes[j] === "payroll") {
                     // Handled later
                     team.payroll = null;

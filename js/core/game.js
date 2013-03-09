@@ -156,12 +156,12 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season",
         }
 
         db.getPayroll(this.transaction, that.team[t].id, function (payroll) {
-            var cost, revenue;
+            var expenses, revenue;
 
             // Only pay player salaries for regular season games.
-            cost = 0;
+            expenses = 0;
             if (!that.playoffs) {
-                cost = payroll / 82;  // [thousands of dollars]
+                expenses = payroll / 82;  // [thousands of dollars]
             }
 
             revenue = g.ticketPrice * that.att / 1000;  // [thousands of dollars]
@@ -191,11 +191,11 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season",
                     won = false;
                 }
 
-                teamSeason.cash = teamSeason.cash + revenue - cost;
+                teamSeason.cash = teamSeason.cash + revenue - expenses;
                 teamSeason.att += that.att;
                 teamSeason.gp += 1;
                 teamSeason.revenue += revenue;
-                teamSeason.cost += cost;
+                teamSeason.expenses += expenses;
 
                 keys = ['min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
                 for (i = 0; i < keys.length; i++) {

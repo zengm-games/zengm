@@ -15,35 +15,68 @@ stat views
     add a dropdown (maybe make the dropdown handling code more general?)
 last year's stats not displaying in free agents view? revisit how this is done.
 financial stuff
-  WILL REQUIRE NEW OBJECTSTORE - or new entries in gameAttributes?
-    {
-      fanEngagement: number,
-      pop: number,
-      tvContractAmount: number,
-      tvContractExp: number,
-      nationalTvContractAmount: number,
-      merchandisingAmount: number,
-      sponsorshipAmount: number
-    }
-  fan engagement
-    0.1-1, a multiplier on how many fans attend each game
-    increase when the team's performance increases
-    decrease a little when performance decreases
-    decrease a lot
-  attendance = f(population, fan engagement, ticket price)
+  new finance variables to update annually
+    tvContractAmount, tvContractExp - think about it
+    payrollEndOfSeason, luxuryTaxPaid, minTaxPaid - newPhasePlayoffs
+  new finance variables to update continuously
+    merchAmount, sponsorAmount - same as attendance, update every game
+    hype
+      0.1-1, a multiplier on how many fans attend each game
+      increase when the team's performance increases
+      decrease a little when performance decreases
+      decrease a lot
+      update within season!
+    salaryPaid - see where "expenses" are totalled now. actually
+    revenue/cash - make sure i'm drawing in all the new sources of income
+      local tv, national tv, merch, sponsor, tickets
+  attendance = f(population, hype, ticket price)
+  can i delete seasonAttributes.revenue and expenses? just calculate them on demand from other variables?
   sources of revenue http://nbahoopsonline.com/Articles/2007-08/NBArevinuesharing.html
     local tv contract - $10 million
       will be a deal from 3 to 5 years in length
       based on...
         region population
-        "fan engagement"
+        "hype"
         random noise
         "random event" - competition between two networks, Sports TV and The Basketball Channel
-    national tv contract - same amount to every team - $30 million
-    merchandising ($5 million), sponsorships ($25 million) - based on fan engagement and region population, get some income
+    national tv contract - same amount to every team - $30 million (add to g.nationalTvContractAmount)
+      when renegotiating and really bad, the guy pretends not to know you - "Atlanta Herons? Is that the team from the Mexican/Canadian/Arena/Indoor/Xtreme Volleyball/Soccer/Tennis/Racing/Curling/MudWrestling League?"
+    merchandising ($5 million), sponsorships ($25 million) - based on hype and region population, get some income
     ticket sales - $30 million
+  spruce up league finances view with all this information
   add "team finances" view to allow tweaking of business crap
+    warning about minimum/luxury tax
     move ticket price to gameAttributes rather than making it a constant
+    bar plots showing how these things changed over time
+      hype
+      population
+      attendance
+      revenue, a stacked bar plot:
+        tv contract amount
+        national tv contract amount
+        merchandising
+        sponsorship
+      expenses
+        salary
+        luxury tax
+      profit
+      cash
+    compare against league averages
+
+DATABASE CHANGES since 3.0.0beta
+--------------------------------
+added to seasonAttributes for each team:
+      hype: number,
+      pop: number,
+      tvContractAmount: number,
+      tvContractExp: number,
+      merchAmount: number,
+      sponsorAmount: number,
+      payrollEndOfSeason: number,  // Fill this in at the end of the regular season. before that, use db.getPayroll
+      salaryPaid: number,  // Each game, add based on current roster
+      luxuryTaxPaid: number,  // this shoudl be set at the end of the season
+      minTaxPaid: number  // this shoudl be set at the end of the season
+changed "cost" to "expenses" in seasonAttributes
 
 BEFORE 3.0.0
 ------------
@@ -187,6 +220,12 @@ too easy to do the "be bad, get draft picks, keep payroll low, sign free agents,
   user can't just sign all the free agents before AI teams
 league leaders
   minimum minutes played to show should use team GP to scale, not player (this won't matter until injuries are implemented, basically)
+other potential knobs
+  scouting budget - decrease "fuzz" added to displayed ratings
+  coaching budget - influence player development
+  health budget - influence injuries
+  facilities budget - influence free agent demeanor
+  stadium budget - influence attendance
 
 FUTURE (after 3.0.0)
 --------------------
@@ -223,6 +262,8 @@ hitting the phase twice shouldn't be possible. but if i, for instance, hit "unti
 worth it to switch to closure library? http://stackoverflow.com/questions/10782612/what-is-the-sturdiest-way-to-get-the-closure-compilers-type-safety-together-wit
 roster size check on new season
   cpu teams with < 5 players should automatically sign free agents
+moving to other cities
+expansion teams (add population growth, expand when certain conditions are met)
 
 ---
 
@@ -349,7 +390,6 @@ AI teams release/buy out players to sign a better free agent
 
 FEATURES
 --------
-injuries
 opponent GM trade AI based on their team's status: contending or rebuilding
 change prices of tickets, concessions, etc
 hire coaches to influence development

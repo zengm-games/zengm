@@ -4,10 +4,10 @@
       <option value="{{abbrev}}"{{#if selected}} selected="selected"{{/if}}}>{{region}} {{name}}</option>
     {{/teams}}
   </select>
-  <select id="team-finances-select-season" name="season" class="season">
-    {{#seasons}}
-      <option value="{{season}}"{{#if selected}} selected="selected"{{/if}}>{{season}} season</option>
-    {{/seasons}}
+  <select id="team-finances-select-show" name="show" class="season">
+    {{#shows}}
+      <option value="{{show}}"{{#if selected}} selected="selected"{{/if}}>{{text}}</option>
+    {{/shows}}
   </select>
 </form>
 

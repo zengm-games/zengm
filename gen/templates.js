@@ -1963,13 +1963,13 @@ function program4(depth0,data) {
   
   var buffer = "", stack1, stack2;
   buffer += "\n      <option value=\""
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = depth0.show),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\"";
   stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += ">"
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " season</option>\n    ";
+    + escapeExpression(((stack1 = depth0.text),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</option>\n    ";
   return buffer;
   }
 
@@ -1978,8 +1978,8 @@ function program4(depth0,data) {
     + "/team_finances\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"team-finances-select-team\" name=\"team\" class=\"team\">\n    ";
   stack2 = ((stack1 = ((stack1 = depth0.teams),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </select>\n  <select id=\"team-finances-select-season\" name=\"season\" class=\"season\">\n    ";
-  stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data}));
+  buffer += "\n  </select>\n  <select id=\"team-finances-select-show\" name=\"show\" class=\"season\">\n    ";
+  stack2 = ((stack1 = ((stack1 = depth0.shows),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data}));
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "\n  </select>\n</form>\n\n<h1>"
     + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.region)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))

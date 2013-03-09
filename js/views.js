@@ -1045,17 +1045,30 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
     function teamFinances(req) {
         beforeLeague(req, function () {
-            var abbrev, out, season, seasons, teams, tid;
+            var abbrev, out, show, shows, teams, tid;
 
+            show = req.params.show !== undefined ? req.params.show : "10";
             out = helpers.validateAbbrev(req.params.abbrev);
             tid = out[0];
             abbrev = out[1];
-            season = helpers.validateSeason(req.params.season);
-            seasons = helpers.getSeasons(season);
             teams = helpers.getTeams(tid);
 
-            if (season < g.season) {
-                g.realtimeUpdate = false;
+            shows = [
+                {
+                    text: "Past 10 seasons",
+                    show: "10",
+                    selected: req.params.show === "10"
+                },
+                {
+                    text: "All seasons",
+                    show: "all",
+                    selected: req.params.show === "all"
+                }
+            ];
+            if (show === "all") {
+                show = g.season - g.startingSeason + 1;
+            } else {
+                show = parseInt(show, 10);
             }
 
             db.getPayroll(null, tid, function (payroll) {
@@ -1078,7 +1091,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                     keys = ["won", "hype", "pop", "att", "cash", "merchRevenue", "sponsorRevenue", "ticketRevenue", "localTvRevenue", "nationalTvRevenue", "salaryPaid", "luxuryTaxPaid", "minTaxPaid"];
                     barData = {};
                     for (i = 0; i < keys.length; i++) {
-                        barData[keys[i]] = helpers.nullPad(_.pluck(team.seasons, keys[i]), 10);
+                        barData[keys[i]] = helpers.nullPad(_.pluck(team.seasons, keys[i]), show);
                     }
 
                     // Process some values
@@ -1089,17 +1102,17 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                     }
 
                     barSeasons = [];
-                    for (i = 0; i < 10; i++) {
+                    for (i = 0; i < show; i++) {
                         barSeasons[i] = g.season - i;
                     }
                     data = {
                         container: "league_content",
                         template: "teamFinances",
                         title: team.region + " " + team.name + " " + "Finances - " + season,
-                        vars: {payroll: payroll, aboveBelow: aboveBelow, salaryCap: g.salaryCap / 1000, minPayroll: g.minPayroll / 1000, luxuryPayroll: g.luxuryPayroll / 1000, luxuryTax: g.luxuryTax, seasons: seasons, team: {region: team.region, name: team.name}, teams: teams}
+                        vars: {payroll: payroll, aboveBelow: aboveBelow, salaryCap: g.salaryCap / 1000, minPayroll: g.minPayroll / 1000, luxuryPayroll: g.luxuryPayroll / 1000, luxuryTax: g.luxuryTax, shows: shows, team: {region: team.region, name: team.name}, teams: teams}
                     };
                     ui.update(data, function () {
-                        ui.dropdown($("#team-finances-select-team"), $("#team-finances-select-season"));
+                        ui.dropdown($("#team-finances-select-team"), $("#team-finances-select-show"));
 
                         $("#help-payroll-limits").clickover({
                             title: "Payroll Limits",

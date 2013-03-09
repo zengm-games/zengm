@@ -727,8 +727,8 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                 data = {
                     container: "league_content",
                     template: "leagueFinances",
-                    title: "League Finances",
-                    vars: {salaryCap: g.salaryCap / 1000, minPayroll: g.minPayroll / 1000, luxuryPayroll: g.luxuryPayroll / 1000, luxuryTax: g.luxuryTax, season: season, seasons: seasons}
+                    title: "League Finances - " + season,
+                    vars: {salaryCap: g.salaryCap / 1000, minPayroll: g.minPayroll / 1000, luxuryPayroll: g.luxuryPayroll / 1000, luxuryTax: g.luxuryTax, seasons: seasons}
                 };
                 ui.update(data, function () {
                     ui.dropdown($("#league-finances-select-season"));
@@ -1039,6 +1039,59 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                     vars: {games: games}
                 };
                 ui.update(data, req.raw.cb);
+            });
+        });
+    }
+
+    function teamFinances(req) {
+        beforeLeague(req, function () {
+            var abbrev, attributes, out, season, seasons, seasonAttributes, teams, tid;
+
+console.log(req.params.abbrev)
+            out = helpers.validateAbbrev(req.params.abbrev);
+            tid = out[0];
+            abbrev = out[1];
+            season = helpers.validateSeason(req.params.season);
+            seasons = helpers.getSeasons(season);
+            teams = helpers.getTeams(tid);
+console.log(abbrev)
+
+            if (season < g.season) {
+                g.realtimeUpdate = false;
+            }
+
+            attributes = ["tid", "abbrev", "region", "name"];
+            seasonAttributes = ["att", "revenue", "profit", "cash", "payroll", "salaryPaid"];
+            db.getTeams(null, season, attributes, [], seasonAttributes, {}, function (fuck) {
+                var data, i, team;
+
+                for (i = 0; i < teams.length; i++) {
+                    fuck[i].cash /= 1000;  // [millions of dollars]
+                }
+
+                team = fuck[tid];
+
+                data = {
+                    container: "league_content",
+                    template: "teamFinances",
+                    title: team.region + " " + team.name + " " + "Finances - " + season,
+                    vars: {salaryCap: g.salaryCap / 1000, minPayroll: g.minPayroll / 1000, luxuryPayroll: g.luxuryPayroll / 1000, luxuryTax: g.luxuryTax, seasons: seasons, team: team, teams: teams}
+                };
+                ui.update(data, function () {
+                    ui.dropdown($("#team-finances-select-team"), $("#team-finances-select-season"));
+
+                    ui.datatableSinglePage($("#team-finances"), 5, _.map(fuck, function (t) {
+                        var payroll;
+
+                        payroll = season === g.season ? t.payroll : t.salaryPaid;  // Display the current actual payroll for this season, or the salary actually paid out for prior seasons
+
+                        return ['<a href="/l/' + g.lid + '/roster/' + t.abbrev + '">' + t.region + ' ' + t.name + '</a>', helpers.round(t.att), '$' + helpers.round(t.revenue, 2) + 'M', '$' + helpers.round(t.profit, 2) + 'M', '$' + helpers.round(t.cash, 2) + 'M', '$' + helpers.round(payroll, 2) + 'M'];
+                    }));
+
+                    if (req.raw.cb !== undefined) {
+                        req.raw.cb();
+                    }
+                });
             });
         });
     }
@@ -2560,6 +2613,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
         history: history,
         roster: roster,
         schedule: schedule,
+        teamFinances: teamFinances,
         teamHistory: teamHistory,
         freeAgents: freeAgents,
         trade: trade_,

@@ -188,7 +188,7 @@ helpers = helpers || Handlebars.helpers; data = data || {};
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "/standings\">Standings</a></li>\n      <li id=\"nav_playoffs\"><a href=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/playoffs\">Playoffs</a></li>\n      <li id=\"nav_finances\"><a href=\"/l/"
+    + "/playoffs\">Playoffs</a></li>\n      <li id=\"nav_league_finances\"><a href=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "/league_finances\">Finances</a></li>\n      <li id=\"nav_history\"><a href=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
@@ -196,7 +196,9 @@ helpers = helpers || Handlebars.helpers; data = data || {};
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "/roster\">Roster</a></li>\n      <li id=\"nav_schedule\"><a href=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/schedule\">Schedule</a></li>\n      <li id=\"nav_team_history\"><a href=\"/l/"
+    + "/schedule\">Schedule</a></li>\n      <li id=\"nav_team_finances\"><a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/team_finances\">Finances</a></li>\n      <li id=\"nav_team_history\"><a href=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "/team_history\">History</a></li>\n      <li class=\"nav-header\">Players</li>\n      <li id=\"nav_free_agents\"><a href=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
@@ -1940,6 +1942,27 @@ function program1(depth0,data) {
   
   var buffer = "", stack1, stack2;
   buffer += "\n      <option value=\""
+    + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\"";
+  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += ">"
+    + escapeExpression(((stack1 = depth0.region),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " "
+    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</option>\n    ";
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  
+  return " selected=\"selected\"";
+  }
+
+function program4(depth0,data) {
+  
+  var buffer = "", stack1, stack2;
+  buffer += "\n      <option value=\""
     + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\"";
   stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
@@ -1949,28 +1972,30 @@ function program1(depth0,data) {
     + " season</option>\n    ";
   return buffer;
   }
-function program2(depth0,data) {
-  
-  
-  return " selected=\"selected\"";
-  }
 
   buffer += "<form action=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/league_finances\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"league-finances-select-season\" name=\"season\" class=\"season\">\n    ";
-  stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
+    + "/team_finances\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"team-finances-select-team\" name=\"team\" class=\"team\">\n    ";
+  stack2 = ((stack1 = ((stack1 = depth0.teams),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </select>\n</form>\n\n<h1>League Finances "
+  buffer += "\n  </select>\n  <select id=\"team-finances-select-season\" name=\"season\" class=\"season\">\n    ";
+  stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data}));
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n  </select>\n</form>\n\n<h1>"
+    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.region)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " "
+    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " Finances "
     + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n\n<p>Salary cap: <strong>$"
-    + escapeExpression(helpers.round.call(depth0, depth0.salaryCap, 2, {hash:{},data:data}))
-    + "M</strong> (teams over this amount cannot sign free agents for more than the minimum contract)</p>\n<p>Minimum payroll limit: <strong>$"
-    + escapeExpression(helpers.round.call(depth0, depth0.minPayroll, 2, {hash:{},data:data}))
-    + "M</strong> (teams with payrolls below this limit will be assessed a fine equal to the difference at the end of the season)</p>\n<p>Luxury tax limit: <strong>$"
-    + escapeExpression(helpers.round.call(depth0, depth0.luxuryPayroll, 2, {hash:{},data:data}))
+    + "</h1>\n\n<p>\n  Salary cap: <strong>$"
+    + escapeExpression(helpers.round.call(depth0, depth0.salaryCap, {hash:{},data:data}))
+    + "M</strong> (teams over this amount cannot sign free agents for more than the minimum contract)<br>\n  Minimum payroll limit: <strong>$"
+    + escapeExpression(helpers.round.call(depth0, depth0.minPayroll, {hash:{},data:data}))
+    + "M</strong> (teams with payrolls below this limit will be assessed a fine equal to the difference at the end of the season)<br>\n  Luxury tax limit: <strong>$"
+    + escapeExpression(helpers.round.call(depth0, depth0.luxuryPayroll, {hash:{},data:data}))
     + "M</strong> (teams with payrolls above this limit will be assessed a fine equal to "
     + escapeExpression(((stack1 = depth0.luxuryTax),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " times the difference at the end of the season)</p>\n\n<p>\n  <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"league-finances\">\n  <thead>\n    <tr><th>Team</th><th>Avg Attendance</th><th>Revenue (YTD)</th><th>Profit (YTD)</th><th>Cash</th><th>Payroll</th></tr>\n  </thead>\n  </table>\n</p>";
+    + " times the difference at the end of the season)\n</p>\n\n<p>\n  <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"team-finances\">\n  <thead>\n    <tr><th>Team</th><th>Avg Attendance</th><th>Revenue (YTD)</th><th>Profit (YTD)</th><th>Cash</th><th>Payroll</th></tr>\n  </thead>\n  </table>\n</p>";
   return buffer;
   });
 templates['roster'] = template(function (Handlebars,depth0,helpers,partials,data) {

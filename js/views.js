@@ -1074,7 +1074,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
             salariesSeasons = [g.season, g.season + 1, g.season + 2, g.season + 3, g.season + 4, g.season + 5];
 
             db.getPayroll(null, tid, function (payroll, contracts) {
-                var aboveBelow, i, j;
+                var aboveBelow, contractTotals, i, j;
 
                 aboveBelow = {
                     minPayroll: payroll > g.minPayroll ? "above" : "below",
@@ -1085,16 +1085,19 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                 payroll /= 1000;
 
 console.log(contracts);
+                contractTotals = [0, 0, 0, 0, 0, 0];
                 // Convert contract objects into table rows
                 for (i = 0; i < contracts.length; i++) {
                     contracts[i].amounts = [];
                     for (j = g.season; j <= contracts[i].exp; j++) {
                         contracts[i].amounts.push(contracts[i].amount / 1000);
+                        contractTotals[j - g.season] += contracts[i].amount / 1000;
                     }
                     delete contracts[i].amount;
                     delete contracts[i].exp;
                 }
 console.log(contracts);
+console.log(contractTotals);
 
                 g.dbl.transaction("teams").objectStore("teams").get(tid).onsuccess = function (event) {
                     var barData, barSeasons, data, i, keys, team, teamAll;
@@ -1123,12 +1126,11 @@ console.log(contracts);
                         container: "league_content",
                         template: "teamFinances",
                         title: team.region + " " + team.name + " " + "Finances - " + season,
-                        vars: {payroll: payroll, aboveBelow: aboveBelow, salaryCap: g.salaryCap / 1000, minPayroll: g.minPayroll / 1000, luxuryPayroll: g.luxuryPayroll / 1000, luxuryTax: g.luxuryTax, salariesSeasons: salariesSeasons, shows: shows, team: {region: team.region, name: team.name}, teams: teams}
+                        vars: {payroll: payroll, aboveBelow: aboveBelow, salaryCap: g.salaryCap / 1000, minPayroll: g.minPayroll / 1000, luxuryPayroll: g.luxuryPayroll / 1000, luxuryTax: g.luxuryTax, salariesSeasons: salariesSeasons, shows: shows, team: {region: team.region, name: team.name}, teams: teams, contractTotals: contractTotals}
                     };
                     ui.update(data, function () {
                         ui.dropdown($("#team-finances-select-team"), $("#team-finances-select-show"));
 
-//    <tr><td><a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>{{skills_block skills}}</td><td>{{#if amounts.[0]}}${{round amounts.[0] 2}}M{{/if}}0 </td><td>{{#if amounts.[1]}}${{round amounts.[1] 2}}M{{/if}}0 </td><td>{{#if amounts.[2]}}${{round amounts.[2] 2}}M{{/if}}0 </td><td>{{#if amounts.[3]}}${{round amounts.[3] 2}}M{{/if}}0 </td><td>{{#if amounts.[4]}}${{round amounts.[4] 2}}M{{/if}}0 </td><td>{{#if amounts.[5]}}${{round amounts.[5] 2}}M{{/if}}0 </td></tr>
                         ui.datatableSinglePage($("#player-salaries"), 1, _.map(contracts, function (p) {
                             var i, output;
                             output = ['<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>' + helpers.skillsBlock(p.skills)];

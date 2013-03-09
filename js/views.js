@@ -1067,7 +1067,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                 team.seasons.reverse();  // Most recent season first
 console.log(team.seasons)
 
-                keys = ["won", "hype", "pop", "att"];
+                keys = ["won", "hype", "pop", "att", "cash"];
                 barData = {};
                 for (i = 0; i < keys.length; i++) {
                     barData[keys[i]] = _.pluck(team.seasons, keys[i]);
@@ -1078,7 +1078,8 @@ console.log(team.seasons)
 
 //                    range = _.max()
                 }
-                barData.att = _.map(barData.att, function (num, i) { return num / team.seasons[i].gp; });
+                barData.att = _.map(barData.att, function (num, i) { return num / team.seasons[i].gp; });  // per game
+                barData.cash = _.map(barData.cash, function (num) { return num / 1000; });  // convert to millions
                 for (i = 0; i < keys.length; i++) {
                     // If this was done earlier, then the map above would turn nulls into 0s
                     barData[keys[i]] = helpers.nullPad(barData[keys[i]], 10);
@@ -1099,7 +1100,7 @@ console.dir(barData);
                     ui.dropdown($("#team-finances-select-team"), $("#team-finances-select-season"));
 
                     $.barGraph($("#bar-graph-won"), barData.won, [0, 82], barSeasons);
-                    $.barGraph($("#bar-graph-hype"), barData.hype, [-0.1, 1], barSeasons, function (val) {
+                    $.barGraph($("#bar-graph-hype"), barData.hype, [0, 1], barSeasons, function (val) {
                         return helpers.round(val, 2);
                     });
                     $.barGraph($("#bar-graph-pop"), barData.pop, [0, 20], barSeasons, function (val) {
@@ -1126,7 +1127,7 @@ console.dir(barData);
                         }
                     );
                     $.barGraph($("#bar-graph-expenses"), [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()], [-0.1, 1], barSeasons);
-                    $.barGraph($("#bar-graph-cash"), [Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random(), Math.random()], [-0.1, 1], barSeasons, function (val) {
+                    $.barGraph($("#bar-graph-cash"), barData.cash, [-10, 10], barSeasons, function (val) {
                         return "$" + helpers.round(val, 1) + "M";
                     });
 

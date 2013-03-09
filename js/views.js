@@ -728,7 +728,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                     container: "league_content",
                     template: "leagueFinances",
                     title: "League Finances",
-                    vars: {salaryCap: g.salaryCap / 1000, season: season, seasons: seasons}
+                    vars: {salaryCap: g.salaryCap / 1000, minPayroll: g.minPayroll / 1000, luxuryPayroll: g.luxuryPayroll / 1000, luxuryTax: g.luxuryTax, season: season, seasons: seasons}
                 };
                 ui.update(data, function () {
                     ui.dropdown($("#league-finances-select-season"));

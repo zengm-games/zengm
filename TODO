@@ -15,8 +15,6 @@ stat views
     add a dropdown (maybe make the dropdown handling code more general?)
 last year's stats not displaying in free agents view? revisit how this is done.
 financial stuff
-  new finance variables to update annually
-    tvContractAmount, tvContractExp - think about it
   new finance variables to update continuously
     hype
       0.1-1, a multiplier on how many fans attend each game
@@ -32,7 +30,7 @@ financial stuff
         "hype"
         random noise
         "random event" - competition between two networks, Sports TV and The Basketball Channel
-    national tv contract - same amount to every team - $30 million (add to g.nationalTvContractAmount)
+    national tv contract - same amount to every team - $30 million (add to )
       when renegotiating and really bad, the guy pretends not to know you - "Atlanta Herons? Is that the team from the Mexican/Canadian/Arena/Indoor/Xtreme Volleyball/Soccer/Tennis/Racing/Curling/MudWrestling League?"
     merchandising ($5 million), sponsorships ($25 million) - based on hype and region population, get some income
     ticket sales - $30 million
@@ -63,7 +61,9 @@ financial stuff
     sponsorRevenue
     ticketRevenue
     nationalTvRevenue
+      base on g.nationalTvContractAmount
     localTvRevenue
+      base on tvContractAmount, tvContractExp
 
 DATABASE CHANGES since 3.0.0beta
 --------------------------------
@@ -78,7 +78,7 @@ added to seasonAttributes for each team:
       salaryPaid: number,  // Each game, add based on current roster
       luxuryTaxPaid: number,  // this shoudl be set at the end of the season
       minTaxPaid: number  // this shoudl be set at the end of the season
-changed "cost" to "expenses" in seasonAttributes
+removed "cost" and "revenue" from seasonAttributes
 
 MANUAL CHANGES TODO since 3.0.0beta
 -----------------------------------

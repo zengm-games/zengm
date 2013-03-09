@@ -1,6 +1,7 @@
 CURRENT PRIORITIES
 ------------------
 
+free agent abbrev showing up as undefined in player ratings view? isn't it supposed to be FA?
 bbgmPing should only work in production
   make sure it still works next time i update play.basketball-gm.com
 give bbgm website its own version of bootstrap (only with components needed)
@@ -27,10 +28,6 @@ financial stuff
       when renegotiating and really bad, the guy pretends not to know you - "Atlanta Herons? Is that the team from the Mexican/Canadian/Arena/Indoor/Xtreme Volleyball/Soccer/Tennis/Racing/Curling/MudWrestling League?"
     merchandising ($5 million), sponsorships ($25 million) - based on hype and region population, get some income
     ticket sales - $30 million
-  team finances view
-    salaries table like hoopshype, including released players
-      accurate for newly signed players, free agents?
-    compare bar graphs against league averages?
   realistic update formulas for
     hype
       0.1-1, a multiplier on how many fans attend each game
@@ -264,6 +261,8 @@ roster size check on new season
   cpu teams with < 5 players should automatically sign free agents
 moving to other cities
 expansion teams (add population growth, expand when certain conditions are met)
+team finances view
+  compare bar graphs against league averages?
 
 ---
 

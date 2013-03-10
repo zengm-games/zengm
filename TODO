@@ -14,7 +14,6 @@ stat views
   player stats: toggle to only show players > 2000 minutes http://www.nba.com/leader_requirements.html
   per 36 stats in team/player stats view, league leaders
     add a dropdown (maybe make the dropdown handling code more general?)
-last year's stats not displaying in free agents view? revisit how this is done.
 financial stuff
   sources of revenue http://nbahoopsonline.com/Articles/2007-08/NBArevinuesharing.html
     local tv contract - $10 million
@@ -47,6 +46,7 @@ financial stuff
       base on tvContractAmount, tvContractExp
 like on team finances page, anywhere else to add help popups?
   should this be abstracted rather than just inline in views?
+  should stay open through page reload, somehow
 
 DATABASE CHANGES since 3.0.0beta
 --------------------------------

@@ -291,7 +291,7 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
                 }
 
                 // Load previous season if no stats this year
-                if (options.oldStats && ps === undefined) {
+                if (options.oldStats && _.isEmpty(ps)) {
                     for (j = 0; j < pa.stats.length; j++) {
                         if (pa.stats[j].season === g.season - 1 && pa.stats[j].playoffs === false) {
                             ps = pa.stats[j];
@@ -335,7 +335,7 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
         function filterStats(player, ps, stats) {
             var j;
 
-            if (ps !== undefined && ps.gp > 0) {
+            if (!_.isEmpty(ps) && ps.gp > 0) {
                 for (j = 0; j < stats.length; j++) {
                     if (stats[j] === "gp") {
                         player.gp = ps.gp;
@@ -412,7 +412,7 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
 
         // Only show a player if they have a stats entry for this team and season, or if they are rookies who have just been drafted and the current roster is being viewed.
         if ((options.showRookies && pa.draftYear === g.season && season === g.season) || !_.isEmpty(ps) || options.showNoStats) {
-            if (ps !== undefined && ps.length >= 0) {
+            if (!_.isEmpty(ps) && ps.length >= 0) {
                 // Multiple seasons
                 player.stats = [];
                 for (i = 0; i < ps.length; i++) {

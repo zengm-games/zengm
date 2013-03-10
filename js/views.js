@@ -1045,7 +1045,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
     function teamFinances(req) {
         beforeLeague(req, function () {
-            var abbrev, out, salariesSeasons, show, shows, teams, tid;
+            var abbrev, out, show, shows, teams, tid;
 
             show = req.params.show !== undefined ? req.params.show : "10";
             out = helpers.validateAbbrev(req.params.abbrev);
@@ -1071,10 +1071,8 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                 show = parseInt(show, 10);
             }
 
-            salariesSeasons = [g.season, g.season + 1, g.season + 2, g.season + 3, g.season + 4];
-
             db.getPayroll(null, tid, function (payroll, contracts) {
-                var aboveBelow, contractTotals, i, j, season;
+                var aboveBelow, contractTotals, i, j, salariesSeasons, season;
 
                 aboveBelow = {
                     minPayroll: payroll > g.minPayroll ? "above" : "below",
@@ -1100,6 +1098,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                     delete contracts[i].amount;
                     delete contracts[i].exp;
                 }
+                salariesSeasons = [season, season + 1, season + 2, season + 3, season + 4];
 
                 g.dbl.transaction("teams").objectStore("teams").get(tid).onsuccess = function (event) {
                     var barData, barSeasons, data, i, keys, team, teamAll;
@@ -1264,7 +1263,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                 return;
             }
 
-            g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
+            g.dbl.transaction("players").objectStore("players").index("tid").getAll(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
                 var attributes, data, i, players, ratings, stats;
 
                 attributes = ["pid", "name", "pos", "age", "contractAmount", "contractExp", "freeAgentTimesAsked"];

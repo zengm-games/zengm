@@ -5,38 +5,38 @@
     <h5>Trade Away:</h5>
     <ul>
       {{#summary.teams.0.trade}}
-        <li><a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a> (${{round contractAmount 2}}M)</li>
+        <li><a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a> ({{currency contractAmount "M"}})</li>
       {{/summary.teams.0.trade}}
-      <li>${{round summary.teams.0.total 2}}M Total</li>
+      <li>{{currency summary.teams.0.total "M"}} Total</li>
     </ul>
     <h5>Receive:</h5>
     <ul>
       {{#summary.teams.1.trade}}
-        <li><a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a> (${{round contractAmount 2}}M)</li>
+        <li><a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a> ({{currency contractAmount "M"}})</li>
       {{/summary.teams.1.trade}}
-      <li>${{round summary.teams.1.total 2}}M Total</li>
+      <li>{{currency summary.teams.1.total "M"}} Total</li>
     </ul>
-    <h5>Payroll after trade: ${{round summary.teams.0.payrollAfterTrade 2}}M</h5>
-    <h5>Salary cap: ${{round summary.salaryCap 2}}M</h5>
+    <h5>Payroll after trade: {{currency summary.teams.0.payrollAfterTrade "M"}}</h5>
+    <h5>Salary cap: {{currency summary.salaryCap "M"}}</h5>
   </div>
   <div class="span6">
     <h4>{{summary.teams.1.name}}</h4>
     <h5>Trade Away:</h5>
     <ul>
       {{#summary.teams.1.trade}}
-        <li><a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a> (${{round contractAmount 2}}M)</li>
+        <li><a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a> ({{currency contractAmount "M"}})</li>
       {{/summary.teams.1.trade}}
-      <li>${{round summary.teams.1.total 2}}M Total</li>
+      <li>{{currency summary.teams.1.total "M"}} Total</li>
     </ul>
     <h5>Receive:</h5>
     <ul>
       {{#summary.teams.0.trade}}
-        <li><a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a> (${{round contractAmount 2}}M)</li>
+        <li><a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a> ({{currency contractAmount "M"}})</li>
       {{/summary.teams.0.trade}}
-      <li>${{round summary.teams.0.total 2}}M Total</li>
+      <li>{{currency summary.teams.0.total "M"}} Total</li>
     </ul>
-    <h5>Payroll after trade: ${{round summary.teams.1.payrollAfterTrade 2}}M</h5>
-    <h5>Salary cap: ${{round summary.salaryCap 2}}M</h5>
+    <h5>Payroll after trade: {{currency summary.teams.1.payrollAfterTrade "M"}}</h5>
+    <h5>Salary cap: {{currency summary.salaryCap "M"}}</h5>
   </div>
 </div>
 

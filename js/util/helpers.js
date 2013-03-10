@@ -377,16 +377,20 @@ define(["globals"], function (g) {
      * Format a number as currency, correctly handling negative values.
      *
      * @memberOf util.helpers
-     * @param {number} amount Input value.
+     * @param {number|string} amount Input value.
      * @param {string=} append Suffix to append to the number, like "M" for things like $2M.
+     * @param {number|string|undefined} precision Number of decimal places. Default is 2 (like $17.62).
      * @return {string} Formatted currency string.
      */
-    function formatCurrency(amount, append) {
+    function formatCurrency(amount, append, precision) {
+        // Can't check for undefined because Handlebars does weird stuff
         append = typeof append === "string" ? append : "";
+        precision = typeof precision === "number" || typeof precision === "string" ? precision : 2;
+
         if (amount < 0) {
-            return "-$" + round(Math.abs(amount), 2) + append;
+            return "-$" + round(Math.abs(amount), precision) + append;
         }
-        return "$" + round(amount, 2) + append;
+        return "$" + round(amount, precision) + append;
     }
 
     return {

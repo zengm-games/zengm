@@ -9,8 +9,8 @@
 <div class="row-fluid">
   <div class="span6">
     <h2>{{team.region}} {{team.name}}</h2>
-    <p>Current Payroll: ${{round payroll 2}}M</p>
-    <p>Salary Cap: ${{round salaryCap 2}}M</p>
+    <p>Current Payroll: {{currency payroll "M"}}</p>
+    <p>Salary Cap: {{currency salaryCap "M"}}</p>
     <h2>Your Proposal</h2>
     <form action="/l/{{lid}}/negotiation/{{player.pid}}" class="form-horizontal" method="POST">
       <input type="text" name="teamYears" id="teamYears" class="span1" value="{{negotiation.teamYears}}"> years

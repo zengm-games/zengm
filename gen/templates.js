@@ -425,9 +425,9 @@ function program1(depth0,data,depth1) {
     + escapeExpression(((stack1 = depth0.pid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\">"
     + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a> ($"
-    + escapeExpression(helpers.round.call(depth0, depth0.contractAmount, 2, {hash:{},data:data}))
-    + "M)</li>\n      ";
+    + "</a> ("
+    + escapeExpression(helpers.currency.call(depth0, depth0.contractAmount, "M", {hash:{},data:data}))
+    + ")</li>\n      ";
   return buffer;
   }
 
@@ -460,34 +460,34 @@ function program7(depth0,data) {
     + "</h4>\n    <h5>Trade Away:</h5>\n    <ul>\n      ";
   stack2 = ((stack1 = ((stack1 = ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[0])),stack1 == null || stack1 === false ? stack1 : stack1.trade)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program1, data, depth0),data:data}));
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n      <li>$"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[0])),stack1 == null || stack1 === false ? stack1 : stack1.total), 2, {hash:{},data:data}))
-    + "M Total</li>\n    </ul>\n    <h5>Receive:</h5>\n    <ul>\n      ";
+  buffer += "\n      <li>"
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[0])),stack1 == null || stack1 === false ? stack1 : stack1.total), "M", {hash:{},data:data}))
+    + " Total</li>\n    </ul>\n    <h5>Receive:</h5>\n    <ul>\n      ";
   stack2 = ((stack1 = ((stack1 = ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[1])),stack1 == null || stack1 === false ? stack1 : stack1.trade)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program1, data, depth0),data:data}));
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n      <li>$"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[1])),stack1 == null || stack1 === false ? stack1 : stack1.total), 2, {hash:{},data:data}))
-    + "M Total</li>\n    </ul>\n    <h5>Payroll after trade: $"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[0])),stack1 == null || stack1 === false ? stack1 : stack1.payrollAfterTrade), 2, {hash:{},data:data}))
-    + "M</h5>\n    <h5>Salary cap: $"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.salaryCap), 2, {hash:{},data:data}))
-    + "M</h5>\n  </div>\n  <div class=\"span6\">\n    <h4>"
+  buffer += "\n      <li>"
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[1])),stack1 == null || stack1 === false ? stack1 : stack1.total), "M", {hash:{},data:data}))
+    + " Total</li>\n    </ul>\n    <h5>Payroll after trade: "
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[0])),stack1 == null || stack1 === false ? stack1 : stack1.payrollAfterTrade), "M", {hash:{},data:data}))
+    + "</h5>\n    <h5>Salary cap: "
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.salaryCap), "M", {hash:{},data:data}))
+    + "</h5>\n  </div>\n  <div class=\"span6\">\n    <h4>"
     + escapeExpression(((stack1 = ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[1])),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</h4>\n    <h5>Trade Away:</h5>\n    <ul>\n      ";
   stack2 = ((stack1 = ((stack1 = ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[1])),stack1 == null || stack1 === false ? stack1 : stack1.trade)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program1, data, depth0),data:data}));
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n      <li>$"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[1])),stack1 == null || stack1 === false ? stack1 : stack1.total), 2, {hash:{},data:data}))
-    + "M Total</li>\n    </ul>\n    <h5>Receive:</h5>\n    <ul>\n      ";
+  buffer += "\n      <li>"
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[1])),stack1 == null || stack1 === false ? stack1 : stack1.total), "M", {hash:{},data:data}))
+    + " Total</li>\n    </ul>\n    <h5>Receive:</h5>\n    <ul>\n      ";
   stack2 = ((stack1 = ((stack1 = ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[0])),stack1 == null || stack1 === false ? stack1 : stack1.trade)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program1, data, depth0),data:data}));
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n      <li>$"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[0])),stack1 == null || stack1 === false ? stack1 : stack1.total), 2, {hash:{},data:data}))
-    + "M Total</li>\n    </ul>\n    <h5>Payroll after trade: $"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[1])),stack1 == null || stack1 === false ? stack1 : stack1.payrollAfterTrade), 2, {hash:{},data:data}))
-    + "M</h5>\n    <h5>Salary cap: $"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.salaryCap), 2, {hash:{},data:data}))
-    + "M</h5>\n  </div>\n</div>\n\n<br>\n";
+  buffer += "\n      <li>"
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[0])),stack1 == null || stack1 === false ? stack1 : stack1.total), "M", {hash:{},data:data}))
+    + " Total</li>\n    </ul>\n    <h5>Payroll after trade: "
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[1])),stack1 == null || stack1 === false ? stack1 : stack1.payrollAfterTrade), "M", {hash:{},data:data}))
+    + "</h5>\n    <h5>Salary cap: "
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.salaryCap), "M", {hash:{},data:data}))
+    + "</h5>\n  </div>\n</div>\n\n<br>\n";
   stack2 = helpers['if'].call(depth0, ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.warning), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "\n";
@@ -1610,11 +1610,11 @@ function program3(depth0,data) {
     + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.region)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + " "
     + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</h2>\n    <p>Current Payroll: $"
-    + escapeExpression(helpers.round.call(depth0, depth0.payroll, 2, {hash:{},data:data}))
-    + "M</p>\n    <p>Salary Cap: $"
-    + escapeExpression(helpers.round.call(depth0, depth0.salaryCap, 2, {hash:{},data:data}))
-    + "M</p>\n    <h2>Your Proposal</h2>\n    <form action=\"/l/"
+    + "</h2>\n    <p>Current Payroll: "
+    + escapeExpression(helpers.currency.call(depth0, depth0.payroll, "M", {hash:{},data:data}))
+    + "</p>\n    <p>Salary Cap: "
+    + escapeExpression(helpers.currency.call(depth0, depth0.salaryCap, "M", {hash:{},data:data}))
+    + "</p>\n    <h2>Your Proposal</h2>\n    <form action=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "/negotiation/"
     + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.pid)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
@@ -2017,17 +2017,17 @@ function program4(depth0,data) {
     + escapeExpression(((stack1 = ((stack1 = depth0.salariesSeasons),stack1 == null || stack1 === false ? stack1 : stack1[3])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</th><th>"
     + escapeExpression(((stack1 = ((stack1 = depth0.salariesSeasons),stack1 == null || stack1 === false ? stack1 : stack1[4])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</th></tr>\n</thead>\n<tbody>\n</tbody>\n<tfoot>\n  <tr><th>Totals</th><th>$"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.contractTotals),stack1 == null || stack1 === false ? stack1 : stack1[0]), 2, {hash:{},data:data}))
-    + "M</th><th>$"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.contractTotals),stack1 == null || stack1 === false ? stack1 : stack1[1]), 2, {hash:{},data:data}))
-    + "M</th><th>$"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.contractTotals),stack1 == null || stack1 === false ? stack1 : stack1[2]), 2, {hash:{},data:data}))
-    + "M</th><th>$"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.contractTotals),stack1 == null || stack1 === false ? stack1 : stack1[3]), 2, {hash:{},data:data}))
-    + "M</th><th>$"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.contractTotals),stack1 == null || stack1 === false ? stack1 : stack1[4]), 2, {hash:{},data:data}))
-    + "M</th></tr>\n</tfoot>\n</table>";
+    + "</th></tr>\n</thead>\n<tbody>\n</tbody>\n<tfoot>\n  <tr><th>Totals</th><th>"
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.contractTotals),stack1 == null || stack1 === false ? stack1 : stack1[0]), "M", {hash:{},data:data}))
+    + "</th><th>"
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.contractTotals),stack1 == null || stack1 === false ? stack1 : stack1[1]), "M", {hash:{},data:data}))
+    + "</th><th>"
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.contractTotals),stack1 == null || stack1 === false ? stack1 : stack1[2]), "M", {hash:{},data:data}))
+    + "</th><th>"
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.contractTotals),stack1 == null || stack1 === false ? stack1 : stack1[3]), "M", {hash:{},data:data}))
+    + "</th><th>"
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.contractTotals),stack1 == null || stack1 === false ? stack1 : stack1[4]), "M", {hash:{},data:data}))
+    + "</th></tr>\n</tfoot>\n</table>";
   return buffer;
   });
 templates['roster'] = template(function (Handlebars,depth0,helpers,partials,data) {
@@ -2075,13 +2075,13 @@ function program6(depth0,data) {
   var buffer = "", stack1;
   buffer += "\n  <p>"
     + escapeExpression(((stack1 = depth0.numRosterSpots),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " open roster spots<br>\n  Payroll: $"
-    + escapeExpression(helpers.round.call(depth0, depth0.payroll, 2, {hash:{},data:data}))
-    + "M<br>\n  Salary cap: $"
-    + escapeExpression(helpers.round.call(depth0, depth0.salaryCap, 2, {hash:{},data:data}))
-    + "M<br>\n  Cash: $"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.cash), 2, {hash:{},data:data}))
-    + "M (used for buying out players)</p>\n";
+    + " open roster spots<br>\n  Payroll: "
+    + escapeExpression(helpers.currency.call(depth0, depth0.payroll, "M", {hash:{},data:data}))
+    + "<br>\n  Salary cap: "
+    + escapeExpression(helpers.currency.call(depth0, depth0.salaryCap, "M", {hash:{},data:data}))
+    + "<br>\n  Cash: "
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.cash), "M", {hash:{},data:data}))
+    + " (used for buying out players)</p>\n";
   return buffer;
   }
 
@@ -2178,9 +2178,9 @@ function program21(depth0,data) {
 function program23(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "<td>$"
-    + escapeExpression(helpers.round.call(depth0, depth0.contractAmount, 2, {hash:{},data:data}))
-    + "M thru "
+  buffer += "<td>"
+    + escapeExpression(helpers.currency.call(depth0, depth0.contractAmount, "M", {hash:{},data:data}))
+    + " thru "
     + escapeExpression(((stack1 = depth0.contractExp),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</td>";
   return buffer;
@@ -2494,9 +2494,9 @@ function program5(depth0,data) {
   buffer += "\n        ";
   stack1 = helpers['if'].call(depth0, depth0.freeAgent, {hash:{},inverse:self.program(8, program8, data),fn:self.program(6, program6, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += ": $"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.contractAmount), 2, {hash:{},data:data}))
-    + "M/yr thru "
+  buffer += ": "
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.contractAmount), "M", {hash:{},data:data}))
+    + "/yr thru "
     + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.contractExp)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "<br>\n      ";
   return buffer;

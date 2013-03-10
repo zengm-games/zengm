@@ -838,7 +838,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                                     }
                                 } else if (this.dataset.action === "buyOut") {
                                     if (team.cash > this.dataset.cashOwed) {
-                                        if (window.confirm("Are you sure you want to buy out " + this.dataset.playerName + "? You will have to pay him the $" + this.dataset.cashOwed + "M remaining on his contract from your current cash reserves of $" + helpers.round(team.cash, 2) + "M. He will then become a free agent and his contract will no longer count towards your salary cap.")) {
+                                        if (window.confirm("Are you sure you want to buy out " + this.dataset.playerName + "? You will have to pay him the $" + this.dataset.cashOwed + "M remaining on his contract from your current cash reserves of " + helpers.formatCurrency(team.cash, "M") + ". He will then become a free agent and his contract will no longer count towards your salary cap.")) {
                                             tr = this.parentNode.parentNode;
                                             api.rosterBuyOut(this.dataset.playerId, function (error) {
                                                 if (error) {
@@ -849,7 +849,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                                             });
                                         }
                                     } else {
-                                        alert("Error: You only have $" + helpers.round(team.cash, 2) + "M in cash, but it would take $" + this.dataset.cashOwed + "M to buy out " + this.dataset.playerName + ".");
+                                        alert("Error: You only have " + helpers.formatCurrency(team.cash, "M") + " in cash, but it would take $" + this.dataset.cashOwed + "M to buy out " + this.dataset.playerName + ".");
                                     }
                                 }/* else if (this.dataset.action === "tradeFor") {
 
@@ -1043,7 +1043,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                             }
                             for (i = 0; i < 5; i++) {
                                 if (p.amounts[i]) {
-                                    output.push("$" + helpers.round(p.amounts[i], 2) + "M");
+                                    output.push(helpers.formatCurrency(p.amounts[i], "M"));
                                 } else {
                                     output.push("");
                                 }
@@ -1093,7 +1093,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                                 ["national TV revenue", "local TV revenue", "ticket revenue",  "corporate sponsorship revenue", "merchandising revenue"]
                             ],
                             function (val) {
-                                return "$" + helpers.round(val, 1) + "M";
+                                return helpers.formatCurrency(val, "M", 1);
                             }
                         );
                         $.barGraph(
@@ -1105,11 +1105,11 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                                 ["player salaries", "minimum payroll tax", "luxury tax", "other expenses"]
                             ],
                             function (val) {
-                                return "$" + helpers.round(val, 1) + "M";
+                                return helpers.formatCurrency(val, "M", 1);
                             }
                         );
                         $.barGraph($("#bar-graph-cash"), barData.cash, undefined, barSeasons, function (val) {
-                            return "$" + helpers.round(val, 1) + "M";
+                            return helpers.formatCurrency(val, "M", 1);
                         });
 
                         if (req.raw.cb !== undefined) {
@@ -1196,7 +1196,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                 };
                 ui.update(data, function () {
                     ui.datatable($("#free-agents"), 4, _.map(players, function (p) {
-                        return ['<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>' + helpers.skillsBlock(p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), '$' + helpers.round(p.contractAmount, 2) + 'M thru ' + p.contractExp, '<form action="/l/' + g.lid + '/negotiation/' + p.pid + '" method="POST" style="margin: 0"><input type="hidden" name="new" value="1"><button type="submit" class="btn btn-mini btn-primary">Negotiate</button></form>'];
+                        return ['<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>' + helpers.skillsBlock(p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), helpers.formatCurrency(p.contractAmount, "M") + ' thru ' + p.contractExp, '<form action="/l/' + g.lid + '/negotiation/' + p.pid + '" method="POST" style="margin: 0"><input type="hidden" name="new" value="1"><button type="submit" class="btn btn-mini btn-primary">Negotiate</button></form>'];
                     }));
 
                     if (req.raw.cb !== undefined) {
@@ -1300,7 +1300,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                                         if (p.selected) {
                                             selected = ' checked = "checked"';
                                         }
-                                        return ['<input name="user-pids" type="checkbox" value="' + p.pid + '"' + selected + '>', '<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>' + helpers.skillsBlock(p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), '$' + helpers.round(p.contractAmount, 2) + 'M thru ' + p.contractExp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
+                                        return ['<input name="user-pids" type="checkbox" value="' + p.pid + '"' + selected + '>', '<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>' + helpers.skillsBlock(p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contractAmount, "M") + ' thru ' + p.contractExp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
                                     }));
 
                                     ui.datatableSinglePage($("#roster-other"), 5, _.map(otherRoster, function (p) {
@@ -1309,7 +1309,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                                         if (p.selected) {
                                             selected = ' checked = "checked"';
                                         }
-                                        return ['<input name="other-pids" type="checkbox" value="' + p.pid + '"' + selected + '>', '<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>' + helpers.skillsBlock(p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), '$' + helpers.round(p.contractAmount, 2) + 'M thru ' + p.contractExp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
+                                        return ['<input name="other-pids" type="checkbox" value="' + p.pid + '"' + selected + '>', '<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>' + helpers.skillsBlock(p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contractAmount, "M") + ' thru ' + p.contractExp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
                                     }));
 
                                     rosterCheckboxesUser = $("#roster-user input");
@@ -2057,7 +2057,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                     };
                     ui.update(data, function () {
                         ui.datatable($("#negotiation-list"), 4, _.map(players, function (p) {
-                            return ['<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>' + helpers.skillsBlock(p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), '$' + helpers.round(p.contractAmount, 2) + 'M thru ' + p.contractExp, '<a href="/l/' + g.lid + '/negotiation/' + p.pid + '}" class="btn btn-mini btn-primary">Negotiate</a>'];
+                            return ['<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>' + helpers.skillsBlock(p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), helpers.formatCurrency(p.contractAmount, "M") + ' thru ' + p.contractExp, '<a href="/l/' + g.lid + '/negotiation/' + p.pid + '}" class="btn btn-mini btn-primary">Negotiate</a>'];
                         }));
 
                         if (req.raw.cb !== undefined) {

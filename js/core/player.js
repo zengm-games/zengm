@@ -251,6 +251,7 @@ define(["db", "globals", "data/names", "lib/faces", "lib/underscore", "util/rand
 
         if (generate) {
             age = g.season - p.bornYear + years;
+            p.bornYear = g.season - age;
         }
 
         return p;

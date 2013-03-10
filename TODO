@@ -30,15 +30,13 @@ financial stuff
     ticket sales - $30 million
   realistic update formulas for
     hype
-      0.1-1, a multiplier on how many fans attend each game
+      0 to 1
       increase when the team's performance increases
       decrease a little when performance decreases
-      decrease a lot
+      increase/decrease a lot for discrete events
+        making/missing the playoffs
+        other stuff in the help in team finances
       update within season!
-    attendance = f(population, hype, ticket price)
-    merchRevenue
-    sponsorRevenue
-    ticketRevenue
     nationalTvRevenue
       base on g.nationalTvContractAmount
     localTvRevenue
@@ -60,6 +58,7 @@ added to seasonAttributes for each team:
       luxuryTaxPaid: number,  // this shoudl be set at the end of the season
       minTaxPaid: number  // this shoudl be set at the end of the season
 removed "cost" and "revenue" from seasonAttributes
+changes to retiredPlayers
 
 MANUAL CHANGES TODO since 3.0.0beta
 -----------------------------------
@@ -100,10 +99,11 @@ database changes
   message from the owner every year
     warning about being fired, or congratulations
   big picture gameplay
-    some way to actually lose the game
+    some way to actually win/lose the game
       get fired by owner if X
     final score, hall of fame
       influenced by size of city (see: difficulty in views.newLeague)
+    some consequence of having negative cash
 gameSim
   home/away advantage
     make sure home/away in playoffs is set right
@@ -212,8 +212,9 @@ too easy to do the "be bad, get draft picks, keep payroll low, sign free agents,
   user can't just sign all the free agents before AI teams
 league leaders
   minimum minutes played to show should use team GP to scale, not player (this won't matter until injuries are implemented, basically)
-other potential knobs
+other potential knobs - add these to a new right column on the team finances view
   move ticket price to gameAttributes rather than making it a constant
+    then, make attendance dependent on this
   scouting budget - decrease "fuzz" added to displayed ratings
   coaching budget - influence player development
   health budget - influence injuries
@@ -263,6 +264,7 @@ moving to other cities
 expansion teams (add population growth, expand when certain conditions are met)
 team finances view
   compare bar graphs against league averages?
+different size stadiums, building new stadiums
 
 ---
 

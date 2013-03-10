@@ -372,6 +372,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                     teamNewSeason.salaryPaid = 0;
                     teamNewSeason.luxuryTaxPaid = 0;
                     teamNewSeason.minTaxPaid = 0;
+                    teamNewSeason.otherPaid = 0;
                     team.seasons.push(teamNewSeason);
 
                     teamNewStats = {};

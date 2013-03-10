@@ -1107,7 +1107,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                     team = event.target.result;
                     team.seasons.reverse();  // Most recent season first
 
-                    keys = ["won", "hype", "pop", "att", "cash", "merchRevenue", "sponsorRevenue", "ticketRevenue", "localTvRevenue", "nationalTvRevenue", "salaryPaid", "luxuryTaxPaid", "minTaxPaid"];
+                    keys = ["won", "hype", "pop", "att", "cash", "merchRevenue", "sponsorRevenue", "ticketRevenue", "localTvRevenue", "nationalTvRevenue", "salaryPaid", "luxuryTaxPaid", "minTaxPaid", "otherPaid"];
                     barData = {};
                     for (i = 0; i < keys.length; i++) {
                         barData[keys[i]] = helpers.nullPad(_.pluck(team.seasons, keys[i]), show);
@@ -1115,7 +1115,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
                     // Process some values
                     barData.att = _.map(barData.att, function (num, i) { if (team.seasons[i] !== undefined) { return num / team.seasons[i].gp; } });  // per game
-                    keys = ["cash", "merchRevenue", "sponsorRevenue", "ticketRevenue", "localTvRevenue", "nationalTvRevenue", "salaryPaid", "luxuryTaxPaid", "minTaxPaid"];
+                    keys = ["cash", "merchRevenue", "sponsorRevenue", "ticketRevenue", "localTvRevenue", "nationalTvRevenue", "salaryPaid", "luxuryTaxPaid", "minTaxPaid", "otherPaid"];
                     for (i = 0; i < keys.length; i++) {
                         barData[keys[i]] = _.map(barData[keys[i]], function (num) { return num / 1000; });  // convert to millions
                     }
@@ -1188,11 +1188,11 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                         );
                         $.barGraph(
                             $("#bar-graph-expenses"),
-                            [barData.salaryPaid, barData.minTaxPaid, barData.luxuryTaxPaid],
+                            [barData.salaryPaid, barData.minTaxPaid, barData.luxuryTaxPaid, barData.otherPaid],
                             undefined,
                             [
                                 barSeasons,
-                                ["player salaries", "minimum payroll tax", "luxury tax"]
+                                ["player salaries", "minimum payroll tax", "luxury tax", "other expenses"]
                             ],
                             function (val) {
                                 return "$" + helpers.round(val, 1) + "M";

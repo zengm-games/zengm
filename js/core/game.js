@@ -18,7 +18,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season",
         this.overtimes = results.overtimes;
         this.home = [true, false];
 
-        // What is the attendance of the game?
+/*        // What is the attendance of the game?
         winp = 0;
         gp = this.team[0].won + this.team[0].lost + this.team[1].won + this.team[1].lost;
         if (gp > 0) {
@@ -33,7 +33,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season",
             this.att = 25000;
         } else if (this.att < 10000) {
             this.att = 10000;
-        }
+        }*/
 
         // Are the teams in the same conference/division?
         this.sameConf = false;
@@ -156,38 +156,15 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season",
         }
 
         db.getPayroll(this.transaction, that.team[t].id, function (payroll) {
-            var expenses, localTvRevenue, merchRevenue, nationalTvRevenue, revenue, salaryPaid, sponsorRevenue, ticketRevenue;
-
-            // Only pay player salaries for regular season games.
-            salaryPaid = 0;
-            if (!that.playoffs) {
-                salaryPaid = payroll / 82;  // [thousands of dollars]
-            }
-
-            merchRevenue = 1.1 * that.att / 1000;
-            sponsorRevenue = 10 * that.att / 1000;
-            ticketRevenue = g.ticketPrice * that.att / 1000;  // [thousands of dollars]
-            nationalTvRevenue = 10 * that.att / 1000;
-            localTvRevenue = 1.2 * that.att / 1000;
-
             // Team stats
             that.transaction.objectStore("teams").openCursor(that.team[t].id).onsuccess = function (event) {
-                var cursor, i, keys, team, teamSeason, teamStats, won;
+                var att, count, cursor, expenses, i, keys, localTvRevenue, merchRevenue, nationalTvRevenue, otherPaid, revenue, salaryPaid, sponsorRevenue, team, teamSeason, teamStats, ticketRevenue, winp, winpOld, won;
 
                 cursor = event.target.result;
                 team = cursor.value;
-                for (i = 0; i < team.seasons.length; i++) {
-                    if (team.seasons[i].season === g.season) {
-                        teamSeason = team.seasons[i];
-                        break;
-                    }
-                }
-                for (i = 0; i < team.stats.length; i++) {
-                    if (team.stats[i].season === g.season && team.stats[i].playoffs === that.playoffs) {
-                        teamStats = team.stats[i];
-                        break;
-                    }
-                }
+
+                teamSeason = _.last(team.seasons);
+                teamStats = _.last(team.stats);
 
                 if (that.team[t].stat.pts > that.team[t2].stat.pts) {
                     won = true;
@@ -195,17 +172,71 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season",
                     won = false;
                 }
 
-                revenue = ticketRevenue;
-                expenses = salaryPaid;
+                // Only pay player salaries for regular season games.
+                salaryPaid = 0;
+                if (!that.playoffs) {
+                    salaryPaid = payroll / 82;  // [thousands of dollars]
+                }
+                otherPaid = 400;
+
+                // Attendance - base calculation now, which is used for other revenue estimates
+                att = 2500 + (0.1 + 0.9 * teamSeason.hype) * Math.pow(teamSeason.pop, 1 / 3) * 1000000 * 0.02;  // Base attendance - between 3% and 0.3% of the region. sqrt is a fudge.
+                if (that.playoffs) {
+                    att *= 1.5;  // Playoff bonus
+                }
+
+                merchRevenue = 3 * att / 1000;  // [thousands of dollars]
+                sponsorRevenue = 10 * att / 1000;  // [thousands of dollars]
+                nationalTvRevenue = 250;  // [thousands of dollars]
+                localTvRevenue = 100;  // [thousands of dollars]
+
+                // Attendance - final estimate
+                att = random.gauss(att, 1000);
+                if (att > 25000) {
+                    att = 25000;
+                } else if (att < 10000) {
+                    att = 10000;
+                }
+                ticketRevenue = g.ticketPrice * att / 1000;  // [thousands of dollars]
+
+                // Hype - relative to the expectations of prior seasons
+                if (teamSeason.gp > 5) {
+                    winp = teamSeason.won / (teamSeason.won + teamSeason.lost);
+                    winpOld = 0;
+                    count = 0;
+                    for (i = team.seasons.length - 2; i >= 0; i--) { // Start at last season, go back
+                        winpOld += team.seasons[i].won / (team.seasons[i].won + team.seasons[i].lost);
+                        count++;
+                        if (count === 4) {
+                            break;  // Max 4 seasons
+                        }
+                    }
+                    if (count > 0) {
+                        winpOld /= count;
+                    } else {
+                        winpOld = 0.5;  // Default for new games
+                    }
+
+                    teamSeason.hype = teamSeason.hype + 0.02 * (winp - 0.4) + 0.03 * (winp - winpOld);
+                    if (teamSeason.hype > 1) {
+                        teamSeason.hype = 1;
+                    } else if (teamSeason.hype < 0) {
+                        teamSeason.hype = 0;
+                    }
+                }
+
+                revenue = merchRevenue + sponsorRevenue + nationalTvRevenue + localTvRevenue + ticketRevenue;
+                expenses = salaryPaid + otherPaid;
                 teamSeason.cash += revenue - expenses;
-                teamSeason.att += that.att;
+                teamSeason.att += att;
                 teamSeason.gp += 1;
                 teamSeason.merchRevenue += merchRevenue;
                 teamSeason.sponsorRevenue += sponsorRevenue;
-                teamSeason.ticketRevenue += ticketRevenue;
                 teamSeason.nationalTvRevenue += nationalTvRevenue;
                 teamSeason.localTvRevenue += localTvRevenue;
+                teamSeason.ticketRevenue += ticketRevenue;
                 teamSeason.salaryPaid += salaryPaid;
+                teamSeason.otherPaid += otherPaid;
 
                 keys = ['min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
                 for (i = 0; i < keys.length; i++) {

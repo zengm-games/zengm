@@ -5,16 +5,15 @@
 define(["globals"], function (g) {
     "use strict";
 
-    /*Validate that the given abbreviation corresponds to a valid team.
-
-    If an invalid abbreviation is passed, the user's team will be used.
-
-    Args:
-        abbrev: Three-letter all-caps string containing a team's
-            abbreviation.
-    Returns:
-        A two element list of the validated team ID and abbreviation.
-    */
+    /**
+     * Validate that a given abbreviation corresponds to a team.
+     *
+     * If the abbreviation is not valid, then g.userTid and its correspodning abbreviation will be returned.
+     *
+     * @memberOf util.helpers
+     * @param  {string} abbrev Three-letter team abbreviation, like "ATL".
+     * @return {Array} Array with two elements, the team ID and the validated abbreviation.
+     */
     function validateAbbrev(abbrev) {
         var abbrevs, tid;
 
@@ -29,7 +28,15 @@ define(["globals"], function (g) {
         return [tid, abbrev];
     }
 
-    /* Same as validateAbbrev, but for tid. */
+    /**
+     * Validate that a given team ID corresponds to a team.
+     *
+     * If the team ID is not valid, then g.userTid and its correspodning abbreviation will be returned.
+     *
+     * @memberOf util.helpers
+     * @param {number|string} tid Integer team ID.
+     * @return {Array} Array with two elements, the validated team ID and the corresponding abbreviation.
+     */
     function validateTid(tid) {
         var abbrev, abbrevs;
 
@@ -44,7 +51,15 @@ define(["globals"], function (g) {
         return [tid, abbrev];
     }
 
-    /* Same as validateTid, but returns only the abbrev. */
+    /**
+     * Get the team abbreviation for a team ID.
+     *
+     * For instance, team ID 0 is Atlanta, which has an abbreviation of ATL. This is a convenience wrapper around validateTid.
+     *
+     * @memberOf util.helpers
+     * @param {number} tid Integer team ID.
+     * @return {string} Abbreviation
+     */
     function getAbbrev(tid) {
         var abbrev, result;
 
@@ -55,29 +70,34 @@ define(["globals"], function (g) {
         return abbrev;
     }
 
-    /*Validate that the given season is valid.
-
-    A valid season is the current season or one of the past seasons. If an
-    invalid season is passed, the current will be used.
-
-    Args:
-        season: An integer containing the year of the season.
-    Returns:
-        An integer containing the argument, if valid, or the year of the current
-        season.
-    */
+    /**
+     * Validate the given season.
+     *
+     * Currently this doesn't really do anything except replace "undefined" with g.season.
+     *
+     * @memberOf util.helpers
+     * @param {number|string|undefined} season The year of the season to validate. If undefined, then g.season is used.
+     * @return {number} Validated season (same as input unless input is undefined, currently).
+     */
     function validateSeason(season) {
         if (!season) {
             season = g.season;
         } else {
             // Make sure there is an entry for the supplied season in the DB somewhere
-            season = parseInt(season, 10);
+            season = Math.floor(season);
         }
 
         return season;
     }
 
-    /*Returns a list of all the seasons, past and present.*/
+    /**
+     * Get a list of all seasons that have been played so far, including the current one.
+     *
+     * @memberOf util.helpers
+     * @param {number=} selectedSeason If defined, then a season matching this year will have its "selected" property set to true.
+     * @param {number=} ignoredSeason If defined, then a season matching this year will not be present in the output. This is useful if you need a list of seasons that doesn't include the current season, for instance.
+     * @return {Array.<Object>} List of seasons. Each element in the list is an object with with two properties: "season" which contains the year, and "selectedSeason" which is a boolean for whether the year matched selectedSeason.
+     */
     function getSeasons(selectedSeason, ignoredSeason) {
         var season, seasons;
 
@@ -242,7 +262,13 @@ define(["globals"], function (g) {
         }
     }
 
-
+    /**
+     * Generate a block of HTML with a player's skill labels.
+     *
+     * @memberOf util.helpers
+     * @param {Array.<string>} skills Array of skill labels, like "R" for "Rebounder", etc. See: core.player.skills.
+     * @return {string} String of HTML-formatted skill labels, ready for output.
+     */
     function skillsBlock(skills) {
         var i, skillsHtml, tooltips;
 
@@ -267,6 +293,14 @@ define(["globals"], function (g) {
         return skillsHtml;
     }
 
+    /**
+     * Round a number to a certain number of decimal places.
+     * 
+     * @memberOf util.helpers
+     * @param {number} value Number to round.
+     * @param {number=} precision Number of decimal places. Default is 0 (round to integer).
+     * @return {number} Rounded number.
+     */
     function round(value, precision) {
         precision = precision !== undefined ? parseInt(precision, 10) : 0;
 
@@ -276,6 +310,7 @@ define(["globals"], function (g) {
     /**
      * Pad an array with nulls or truncate it so that it has a fixed length.
      * 
+     * @memberOf util.helpers
      * @param {Array} array Input array.
      * @param {number} length Desired length.
      * @return {Array} Original array padded with null or truncated so that it has the required length.

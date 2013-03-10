@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - core.league</title>
+		<title>JsDoc Reference - core.finances</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -238,7 +238,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Namespace core.league
+				Namespace core.finances
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -246,16 +246,16 @@ ul.inheritsList
 				
 				
 			
-				Creating and removing leagues.
+				Anything related to budget/finances.
 				
 				
-					<br /><i>Defined in: </i> &lt;js/core/league.js&gt;.
+					<br /><i>Defined in: </i> &lt;js/core/finances.js&gt;.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class core.league.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class core.finances.">
 				<caption>Namespace Summary</caption>
 				<thead>
 					<tr>
@@ -268,7 +268,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/core.league.html#constructor">core.league</a></b>
+								<b><a href="../symbols/core.finances.html#constructor">core.finances</a></b>
 							</div>
 							<div class="description"></div>
 						</td>
@@ -282,51 +282,6 @@ ul.inheritsList
 
 <!-- ============================== methods summary ======================== -->
 			
-				
-				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class core.league.">
-					<caption>Method Summary</caption>
-					<thead>
-						<tr>
-							<th scope="col">Method Attributes</th>
-							<th scope="col">Method Name and Description</th>
-						</tr>
-					</thead>
-					<tbody>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">core.league.<b><a href="../symbols/core.league.html#.create">create</a></b>(name, tid, playerGeneration, cb)
-								</div>
-								<div class="description">Create a new league.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">core.league.<b><a href="../symbols/core.league.html#.export_">export_</a></b>(lid, cb)
-								</div>
-								<div class="description">Export an existing league.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">core.league.<b><a href="../symbols/core.league.html#.remove">remove</a></b>(lid, cb)
-								</div>
-								<div class="description">Delete an existing league.</div>
-							</td>
-						</tr>
-					
-					</tbody>
-				</table>
-				
-				
-				
-			
 <!-- ============================== events summary ======================== -->
 			
 
@@ -338,7 +293,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>core.league</b>
+						<b>core.finances</b>
 				</div>
 				
 				<div class="description">
@@ -364,149 +319,6 @@ ul.inheritsList
 			
 
 <!-- ============================== method details ========================= -->		
-			
-				<div class="sectionTitle">
-					Method Detail
-				</div>
-				
-					<a name=".create"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">core.league.</span><b>create</b>(name, tid, playerGeneration, cb)
-					
-					</div>
-					<div class="description">
-						Create a new league.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{string}</span> <b>name</b>
-									
-								</dt>
-								<dd>The name of the league.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{number}</span> <b>tid</b>
-									
-								</dt>
-								<dd>The team ID for the team the user wants to manage.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{string}</span> <b>playerGeneration</b>
-									
-								</dt>
-								<dd>Either "random" to generate random players or "nba2012" to load NBA rosters.</dd>
-							
-								<dt>
-									<b>cb</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".export_"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">core.league.</span><b>export_</b>(lid, cb)
-					
-					</div>
-					<div class="description">
-						Export an existing league.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{number}</span> <b>lid</b>
-									
-								</dt>
-								<dd>League ID.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{function(Object)}</span> <b>cb</b>
-									
-								</dt>
-								<dd>Callback whose first argument contains all the exported league data.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".remove"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">core.league.</span><b>remove</b>(lid, cb)
-					
-					</div>
-					<div class="description">
-						Delete an existing league.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{number}</span> <b>lid</b>
-									
-								</dt>
-								<dd>League ID.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{function()=}</span> <b>cb</b>
-									
-								</dt>
-								<dd>Optional callback.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					
-				
 			
 			
 <!-- ============================== event details ========================= -->		

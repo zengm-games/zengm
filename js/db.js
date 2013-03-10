@@ -412,7 +412,7 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
 
         // Only show a player if they have a stats entry for this team and season, or if they are rookies who have just been drafted and the current roster is being viewed.
         if ((options.showRookies && pa.draftYear === g.season && season === g.season) || !_.isEmpty(ps) || options.showNoStats) {
-            if (!_.isEmpty(ps) && ps.length >= 0) {
+            if (season === null) {
                 // Multiple seasons
                 player.stats = [];
                 for (i = 0; i < ps.length; i++) {
@@ -426,6 +426,7 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
                 }
                 // Career totals
                 player.careerStats = filterStats({}, pcs, stats);
+console.log(player.careerStats)
                 player.careerStats.per = _.reduce(ps, function (memo, ps) { return memo + ps.per * ps.min; }, 0) / (player.careerStats.min * player.careerStats.gp); // Special case for PER - weight by minutes per season
                 if (isNaN(player.careerStats.per)) { player.careerStats.per = 0; }
                 if (options.playoffs) {

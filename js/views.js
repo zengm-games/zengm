@@ -1945,7 +1945,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                 ratings = ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills"];
                 stats = ["abbrev"];
 
-                players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings);
+                players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings, {showNoStats: true});
 
                 // Fix ages
                 for (i = 0; i < players.length; i++) {

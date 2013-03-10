@@ -845,7 +845,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                             break;
                         }
                     }
-                    team = {region: teamAll.region, name: teamAll.name, cash: teamSeason.cash / 1000};
+                    team = {region: teamAll.region, name: teamAll.name, abbrev: teamAll.abbrev, cash: teamSeason.cash / 1000};
 
                     for (j = 0; j < players.length; j++) {
                         if (players.length > 5) {
@@ -1128,7 +1128,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                         container: "league_content",
                         template: "teamFinances",
                         title: team.region + " " + team.name + " " + "Finances - " + season,
-                        vars: {payroll: payroll, aboveBelow: aboveBelow, salaryCap: g.salaryCap / 1000, minPayroll: g.minPayroll / 1000, luxuryPayroll: g.luxuryPayroll / 1000, luxuryTax: g.luxuryTax, salariesSeasons: salariesSeasons, shows: shows, team: {region: team.region, name: team.name}, teams: teams, contractTotals: contractTotals}
+                        vars: {payroll: payroll, aboveBelow: aboveBelow, salaryCap: g.salaryCap / 1000, minPayroll: g.minPayroll / 1000, luxuryPayroll: g.luxuryPayroll / 1000, luxuryTax: g.luxuryTax, salariesSeasons: salariesSeasons, shows: shows, team: {region: team.region, name: team.name, abbrev: team.abbrev}, teams: teams, contractTotals: contractTotals}
                     };
                     ui.update(data, function () {
                         ui.dropdown($("#team-finances-select-team"), $("#team-finances-select-show"));
@@ -1271,7 +1271,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                 ratings = ["ovr", "pot", "skills"];
                 stats = ["min", "pts", "trb", "ast", "per"];
 
-                players = db.getPlayers(event.target.result, g.season, g.PLAYER.FREE_AGENT, attributes, stats, ratings, {oldStats: true, showNoStats: true});
+                players = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings, {oldStats: true, showNoStats: true});
 
                 for (i = 0; i < players.length; i++) {
                     players[i].contractAmount = players[i].contractAmount * (1 + players[i].freeAgentTimesAsked / 10);

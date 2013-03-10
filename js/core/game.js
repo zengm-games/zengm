@@ -217,7 +217,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season",
                         winpOld = 0.5;  // Default for new games
                     }
 
-                    teamSeason.hype = teamSeason.hype + 0.02 * (winp - 0.4) + 0.03 * (winp - winpOld);
+                    teamSeason.hype = teamSeason.hype + 0.01 * (winp - 0.55) + 0.015 * (winp - winpOld);
                     if (teamSeason.hype > 1) {
                         teamSeason.hype = 1;
                     } else if (teamSeason.hype < 0) {

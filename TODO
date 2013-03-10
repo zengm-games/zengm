@@ -31,10 +31,14 @@ financial stuff
   realistic update formulas for
     hype
       0 to 1
-      increase when the team's performance increases
-      decrease a little when performance decreases
       increase/decrease a lot for discrete events
         making/missing the playoffs
+        winning a round in the playoffs
+        winning a title
+        having a long tenured star leave
+        winning a rare draft lottery
+        sign a star
+        trade for a star
         other stuff in the help in team finances
       update within season!
     nationalTvRevenue

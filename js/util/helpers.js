@@ -202,6 +202,54 @@ define(["globals"], function (g) {
     }
 
     /**
+     * Display a whole-page error message to the user.
+     * 
+     * @memberOf util.helpers
+     * @param {Object} req Object with parameter "params" containing another object with a string representing the error message in the parameter "error".
+     */
+    function globalError(req) {
+        var data, ui, viewHelpers;
+
+        ui = require("ui");
+        viewHelpers = require("util/viewHelpers");
+
+        viewHelpers.beforeNonLeague();
+
+        data = {
+            container: "content",
+            template: "error",
+            title: "Error",
+            vars: {error: req.params.error}
+        };
+        ui.update(data, req.raw.cb);
+    }
+
+    /**
+     * Display a whole-page error message to the user, while retaining the league menu.
+     * 
+     * @memberOf util.helpers
+     * @param {Object} req Object with parameter "params" containing another object with a string representing the error message in the parameter "error" and an integer league ID in "lid".
+     */
+    function leagueError(req) {
+        var ui, viewHelpers;
+
+        ui = require("ui");
+        viewHelpers = require("util/viewHelpers");
+
+        viewHelpers.beforeLeague(req, function () {
+            var data;
+
+            data = {
+                container: "league_content",
+                template: "error",
+                title: "Error",
+                vars: {error: req.params.error}
+            };
+            ui.update(data, req.raw.cb);
+        });
+    }
+
+    /**
      * Display a whole-page error message to the user by calling either views.leagueError or views.globalError as appropriate.
      * 
      * @memberOf util.helpers
@@ -209,9 +257,7 @@ define(["globals"], function (g) {
      * @param {Object} req Optional Davis.js request object, containing the callback function and any other metadata
      */
     function error(errorText, req) {
-        var lid, views;
-
-        views = require("views");
+        var lid;
 
         if (req !== undefined) {
             req.params.error = errorText;
@@ -222,9 +268,9 @@ define(["globals"], function (g) {
         lid = location.pathname.split("/")[2]; // lid derived from URL
         if (/^\d+$/.test(lid)) {
             req.params.lid = parseInt(lid, 10);
-            views.leagueError(req);
+            leagueError(req);
         } else {
-            views.globalError(req);
+            globalError(req);
         }
     }
 

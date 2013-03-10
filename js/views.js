@@ -1,4 +1,4 @@
-define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "core/league", "core/season", "core/trade", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers",], function (api, db, g, ui, contractNegotiation, game, league, season, trade, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers) {
+define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "core/league", "core/season", "core/trade", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers"], function (api, db, g, ui, contractNegotiation, game, league, season, trade, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers) {
     "use strict";
 
     function initDb(req) {
@@ -2583,46 +2583,6 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
         });
     }
 
-    /**
-     * Display a whole-page error message to the user.
-     * 
-     * @memberOf views
-     * @param {Object} req Object with parameter "params" containing another object with a string representing the error message in the parameter "error".
-     */
-    function globalError(req) {
-        var data;
-
-        viewHelpers.beforeNonLeague();
-
-        data = {
-            container: "content",
-            template: "error",
-            title: "Error",
-            vars: {error: req.params.error}
-        };
-        ui.update(data, req.raw.cb);
-    }
-
-    /**
-     * Display a whole-page error message to the user, while retaining the league menu.
-     * 
-     * @memberOf views
-     * @param {Object} req Object with parameter "params" containing another object with a string representing the error message in the parameter "error" and an integer league ID in "lid".
-     */
-    function leagueError(req) {
-        viewHelpers.beforeLeague(req, function () {
-            var data;
-
-            data = {
-                container: "league_content",
-                template: "error",
-                title: "Error",
-                vars: {error: req.params.error}
-            };
-            ui.update(data, req.raw.cb);
-        });
-    }
-
     return {
         initDb: initDb,
 
@@ -2655,9 +2615,6 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
         distPlayerStats: distPlayerStats,
         distTeamStats: distTeamStats,
         playerShotLocations: playerShotLocations,
-        teamShotLocations: teamShotLocations,
-
-        globalError: globalError,
-        leagueError: leagueError
+        teamShotLocations: teamShotLocations
     };
 });

@@ -1,6 +1,7 @@
 CURRENT PRIORITIES
 ------------------
 
+why are AI teams accumulating released players? e.g. http://localhost/l/44/team_finances/NYK/10
 free agent abbrev showing up as undefined in player ratings view? isn't it supposed to be FA?
 bbgmPing should only work in production
   make sure it still works next time i update play.basketball-gm.com
@@ -275,6 +276,7 @@ different size stadiums, building new stadiums
 g = require("globals"); g.dbl.transaction("players").objectStore("players").get(476).onsuccess = function (event) { console.log(event.target.result); };
 
 g = require("globals"); g.dbl.transaction("teams").objectStore("teams").get(3).onsuccess = function (event) { console.log(event.target.result.seasons[0]); }
+g = require("globals"); g.dbl.transaction("releasedPlayers").objectStore("releasedPlayers").getAll().onsuccess = function (event) { console.log(event.target.result); }
 
 g.dbl.transaction("gameAttributes").objectStore("gameAttributes").getAll().onsuccess = function (event) { console.dir(event.target.result); };
 

@@ -411,7 +411,7 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
         }
 
         // Only show a player if they have a stats entry for this team and season, or if they are rookies who have just been drafted and the current roster is being viewed.
-        if ((options.showRookies && pa.draftYear === g.season && season === g.season) || ps !== undefined || options.showNoStats) {
+        if ((options.showRookies && pa.draftYear === g.season && season === g.season) || !_.isEmpty(ps) || options.showNoStats) {
             if (ps !== undefined && ps.length >= 0) {
                 // Multiple seasons
                 player.stats = [];

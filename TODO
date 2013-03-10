@@ -78,16 +78,6 @@ database changes
     league leaders
     stats
     ratings
-  cache payroll each year?
-    cache at the end of the playoffs
-    update cached value for this year whenever it changes
-      player is signed
-      trade happens
-      player is bought out
-      player is released
-    would simplify db.getTeams
-    would allow historical finances view
-    but is it worth it? would the cached values be meaningful?
   message from the owner every year
     warning about being fired, or congratulations
   big picture gameplay
@@ -155,8 +145,6 @@ should all this stuff be always in g, or read dynamically from the database?
 player finder
   search by stats or ratings
   trade for button, or sign button if free agent
-free agent error message "You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process." - is this actually displayed?
-trading block
 eliminate jquery UI dependency? it's only used for roster reordering currently
 customize which columns are shown in roster view (and possibly other summary views like trade, free agent, etc)
 PER
@@ -265,6 +253,7 @@ refactor views.js
     separate "init" and "update" functions or whatever?
     meta-views for similar views?
     modularize and build testable functions that generate the data for the UI
+trading block
 
 ---
 

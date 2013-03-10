@@ -1,14 +1,6 @@
 CURRENT PRIORITIES
 ------------------
 
-refactor views.js
-  IS IT WORTH DOING THIS BEFORE SWITCHING TO something like knockout?
-  where to call beforeleague/nonleague? can this be automatic?
-  how to structure?
-    separate "init" and "update" functions or whatever?
-    meta-views for similar views?
-    modularize and build testable functions that generate the data for the UI
-free agent abbrev showing up as undefined in player ratings view? isn't it supposed to be FA?
 bbgmPing should only work in production
   make sure it still works next time i update play.basketball-gm.com
 give bbgm website its own version of bootstrap (only with components needed)
@@ -118,8 +110,6 @@ gameSim
 contract negotiation
   test all the error conditions and make sure callbacks are appropriately called (unit tests?)
   add free agent to the end of roster
-player stats
-  how to handle aggregating stats for players who played for more than one team in a season? add them all up in ps in db.getPlayers
 db.getPlayers
   way way way too messy
   rename to helpers.filterPlayers? or player.filter and player.filterAll?
@@ -174,8 +164,6 @@ trading block
 eliminate jquery UI dependency? it's only used for roster reordering currently
 customize which columns are shown in roster view (and possibly other summary views like trade, free agent, etc)
 PER
-  shouldn't be recalculated for everyone in the playoffs, only active teams' players (also in the regular season, but that's less important)
-    maybe have a flag set when a player plays a game, that advanced stats need to be recalculated
   slow, particularly after multiple seasons?
   how to deal with players traded mid-season?
     reevaluate this in general. stats don't seem to be showing after a trade in roster view and player view.
@@ -197,7 +185,6 @@ more handlebars helpers for things like...
 too easy to do the "be bad, get draft picks, keep payroll low, sign free agents, be good" pattern
   draft lottery
     do a dramatic presentation?
-  minimum payroll, to make really bad teams not economically viable
   free agents are less willing to sign with bad teams
   user can't just sign all the free agents before AI teams
 league leaders
@@ -269,6 +256,19 @@ stat views
     add a dropdown (maybe make the dropdown handling code more general?)
 bootstrap 2.3
 https://github.com/nprapps/app-template
+player stats
+  how to handle aggregating stats for players who played for more than one team in a season? add them all up in ps in db.getPlayers
+    should be an option, somehow. Possible desired cases:
+      for roster, want just a player's stats with this team this season
+      for player stats view, want total among all teams for one season
+      for player view, want separate rows in careerStats without fucking up totals (including PER)
+refactor views.js
+  IS IT WORTH DOING THIS BEFORE SWITCHING TO something like knockout?
+  where to call beforeleague/nonleague? can this be automatic?
+  how to structure?
+    separate "init" and "update" functions or whatever?
+    meta-views for similar views?
+    modularize and build testable functions that generate the data for the UI
 
 ---
 

@@ -719,6 +719,11 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
         viewHelpers.beforeLeague(req, function () {
             var abbrev, attributes, currentSeason, out, ratings, season, seasons, sortable, stats, teams, tid, transaction;
 
+            // Fix broken links
+            if (req.params.abbrev === "FA") {
+                return Davis.location.assign(new Davis.Request("/l/" + g.lid + "/free_agents"));
+            }
+
             out = helpers.validateAbbrev(req.params.abbrev);
             tid = out[0];
             abbrev = out[1];
@@ -1851,9 +1856,9 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
                 var attributes, data, i, players, ratings, stats;
-                attributes = ["pid", "name", "pos", "age"];
+                attributes = ["pid", "name", "pos", "age", "abbrev"];
                 ratings = ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills"];
-                stats = ["abbrev"];
+                stats = [];
 
                 players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings, {showNoStats: true});
 
@@ -1872,7 +1877,8 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                     ui.dropdown($("#player-ratings-select-season"));
 
                     ui.datatable($("#player-ratings"), 4, _.map(players, function (p) {
-                        return ['<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>' + helpers.skillsBlock(p.ratings.skills), p.pos, '<a href="/l/' + g.lid + '/roster/' + p.stats.abbrev + '/' + season + '">' + p.stats.abbrev + '</a>', String(p.age), String(p.ratings.ovr), String(p.ratings.pot), String(p.ratings.hgt), String(p.ratings.stre), String(p.ratings.spd), String(p.ratings.jmp), String(p.ratings.endu), String(p.ratings.ins), String(p.ratings.dnk), String(p.ratings.ft), String(p.ratings.fg), String(p.ratings.tp), String(p.ratings.blk), String(p.ratings.stl), String(p.ratings.drb), String(p.ratings.pss), String(p.ratings.reb)];
+                        var teamUrl;
+                        return ['<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>' + helpers.skillsBlock(p.ratings.skills), p.pos, '<a href="/l/' + g.lid + '/roster/' + p.abbrev + '/' + season + '">' + p.abbrev + '</a>', String(p.age), String(p.ratings.ovr), String(p.ratings.pot), String(p.ratings.hgt), String(p.ratings.stre), String(p.ratings.spd), String(p.ratings.jmp), String(p.ratings.endu), String(p.ratings.ins), String(p.ratings.dnk), String(p.ratings.ft), String(p.ratings.fg), String(p.ratings.tp), String(p.ratings.blk), String(p.ratings.stl), String(p.ratings.drb), String(p.ratings.pss), String(p.ratings.reb)];
                     }));
 
                     if (req.raw.cb !== undefined) {

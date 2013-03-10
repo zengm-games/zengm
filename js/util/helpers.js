@@ -54,7 +54,7 @@ define(["globals"], function (g) {
     /**
      * Get the team abbreviation for a team ID.
      *
-     * For instance, team ID 0 is Atlanta, which has an abbreviation of ATL. This is a convenience wrapper around validateTid.
+     * For instance, team ID 0 is Atlanta, which has an abbreviation of ATL. This is a convenience wrapper around validateTid, excpet it will return "FA" if you pass g.PLAYER.FREE_AGENT.
      *
      * @memberOf util.helpers
      * @param {number} tid Integer team ID.
@@ -63,6 +63,9 @@ define(["globals"], function (g) {
     function getAbbrev(tid) {
         var abbrev, result;
 
+        if (tid === g.PLAYER.FREE_AGENT) {
+            return "FA";
+        }
         result = validateTid(tid);
         tid = result[0];
         abbrev = result[1];

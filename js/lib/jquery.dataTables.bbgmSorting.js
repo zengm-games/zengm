@@ -120,7 +120,7 @@
      *     $19.50M thru 2022
      *     ...
      * or just an amount of money
-     *     $-15.2M
+     *     -$15.2M
      *     $2.6M
      *     ...
      */
@@ -163,6 +163,10 @@
         x = parseFloat(a.substring(a.indexOf("$") + 1, a.indexOf("M")));
         y = parseFloat(b.substring(b.indexOf("$") + 1, b.indexOf("M")));
 
+        // Fix for negative signs before the dollar sign
+        if (a[a.indexOf("$") - 1] === "-") { x = -x; }
+        if (b[b.indexOf("$") - 1] === "-") { y = -y; }
+
         if (x > y) {
             return 1;
         }
@@ -176,6 +180,10 @@
 
         x = parseFloat(a.substring(a.indexOf("$") + 1, a.indexOf("M")));
         y = parseFloat(b.substring(b.indexOf("$") + 1, b.indexOf("M")));
+
+        // Fix for negative signs before the dollar sign
+        if (a[a.indexOf("$") - 1] === "-") { x = -x; }
+        if (b[b.indexOf("$") - 1] === "-") { y = -y; }
 
         if (x > y) {
             return -1;

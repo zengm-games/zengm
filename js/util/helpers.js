@@ -382,7 +382,7 @@ define(["globals"], function (g) {
      * @return {string} Formatted currency string.
      */
     function formatCurrency(amount, append) {
-        append = append !== undefined ? append : "";
+        append = typeof append === "string" ? append : "";
         if (amount < 0) {
             return "-$" + round(Math.abs(amount), 2) + append;
         }

@@ -711,9 +711,9 @@ function program31(depth0,data,depth1) {
     + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</a>: "
     + escapeExpression(((stack1 = depth0.age),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " yo, $"
-    + escapeExpression(helpers.round.call(depth0, depth0.contractAmount, 2, {hash:{},data:data}))
-    + "M<br>\n        <span style=\"margin-left: 2em\">"
+    + " yo, "
+    + escapeExpression(helpers.currency.call(depth0, depth0.contractAmount, "M", {hash:{},data:data}))
+    + "<br>\n        <span style=\"margin-left: 2em\">"
     + escapeExpression(helpers.round.call(depth0, depth0.pts, 1, {hash:{},data:data}))
     + " pts, "
     + escapeExpression(((stack1 = depth0.ovr),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
@@ -858,17 +858,17 @@ function program31(depth0,data,depth1) {
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "/player_stats\">» Player Stats</a>\n    </p>\n  </div>\n  <div class=\"span4\">\n    <h3>Finances</h3>\n    <p>\n      Avg Attendance: "
     + escapeExpression(helpers.round.call(depth0, depth0.att, {hash:{},data:data}))
-    + "<br>\n      Revenue (YTD): $"
-    + escapeExpression(helpers.round.call(depth0, depth0.revenue, 2, {hash:{},data:data}))
-    + "M<br>\n      Profit (YTD): $"
-    + escapeExpression(helpers.round.call(depth0, depth0.profit, 2, {hash:{},data:data}))
-    + "M<br>\n      Cash: $"
-    + escapeExpression(helpers.round.call(depth0, depth0.cash, 2, {hash:{},data:data}))
-    + "M<br>\n      Payroll: $"
-    + escapeExpression(helpers.round.call(depth0, depth0.payroll, 2, {hash:{},data:data}))
-    + "M<br>\n      Salary Cap: $"
-    + escapeExpression(helpers.round.call(depth0, depth0.salaryCap, 2, {hash:{},data:data}))
-    + "M<br>\n      <a href=\"/l/"
+    + "<br>\n      Revenue (YTD): "
+    + escapeExpression(helpers.currency.call(depth0, depth0.revenue, "M", {hash:{},data:data}))
+    + "<br>\n      Profit (YTD): "
+    + escapeExpression(helpers.currency.call(depth0, depth0.profit, "M", {hash:{},data:data}))
+    + "<br>\n      Cash: "
+    + escapeExpression(helpers.currency.call(depth0, depth0.cash, "M", {hash:{},data:data}))
+    + "<br>\n      Payroll: "
+    + escapeExpression(helpers.currency.call(depth0, depth0.payroll, "M", {hash:{},data:data}))
+    + "<br>\n      Salary Cap: "
+    + escapeExpression(helpers.currency.call(depth0, depth0.salaryCap, "M", {hash:{},data:data}))
+    + "<br>\n      <a href=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "/finances\">» League Finances</a>\n    </p>\n\n    <h3>Top Free Agents</h3>\n    <p>\n      ";
   stack2 = helpers.unless.call(depth0, depth0.freeAgents, {hash:{},inverse:self.noop,fn:self.program(27, program27, data),data:data});

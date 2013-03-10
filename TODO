@@ -5,7 +5,6 @@ money display
   -$, not $-
   have a "currency" handlebars function, which also takes another parameter for a suffix (e.g. "M"). if it notices a negative number, appropriately format the minus sign
     make sure to use this where money can be negative. finances, dashboard.
-    make sure sorting can handle this
   add to makefile if used in handlebars
 refactor views.js
   IS IT WORTH DOING THIS BEFORE SWITCHING TO something like knockout?

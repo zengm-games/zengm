@@ -2,6 +2,7 @@ CURRENT PRIORITIES
 ------------------
 
 refactor views.js
+  IS IT WORTH DOING THIS BEFORE SWITCHING TO something like knockout?
   where to call beforeleague/nonleague? can this be automatic?
   how to structure?
     separate "init" and "update" functions or whatever?
@@ -30,11 +31,18 @@ update formulas
     for now, just make it a function of attendance
 knobs to control team finances
   IMPLEMENT BOTH THE BACKEND TO CHANGE THESE, AS WELL AS THEIR EFFECTS
+    BACKEND
+      scoutingPaid, etc variables in teamSeason
+      scoutingBudget in root of teams object
+  disable forms when game simulation is in progress
+  enable save button only when a form was changed
+  how should changes in budget effect things?
+    performance is based on cumulative (this year) rank relative to other teams
   move ticket price to gameAttributes rather than making it a constant
     post-revenue-calculation attendance should depend on ticket price. so should hype, but only slightly
   scouting budget - decrease "fuzz" added to displayed ratings
   coaching budget - influence player development
-  health budget - influence injuries
+  health budget - influence injuries, both rate and recovery
   facilities budget - influence free agent demeanor, player development
   stadium budget - influence attendance
 like on team finances page, anywhere else to add help popups?
@@ -179,12 +187,10 @@ PER
     reevaluate this in general. stats don't seem to be showing after a trade in roster view and player view.
   use for awards, contracts
 some UI showing the state of the team's synergy. maybe like an advisors screen that suggests what kind of player is needed to improve synergy
-bootstrap 2.3
 show record (w-l) on roster view - make it more like a summary, as in basketball-reference
   playoff results
   payroll
   anything else?
-https://github.com/nprapps/app-template
 disabling button for new league
   https://github.com/olivernn/davis.js/issues/63 firefox/chrome issues
   onclick="this.disabled=true; this.innerHTML='Generating league...'; $(this.form).submit();"
@@ -267,6 +273,8 @@ stat views
   player stats: toggle to only show players > 2000 minutes http://www.nba.com/leader_requirements.html
   per 36 stats in team/player stats view, league leaders
     add a dropdown (maybe make the dropdown handling code more general?)
+bootstrap 2.3
+https://github.com/nprapps/app-template
 
 ---
 

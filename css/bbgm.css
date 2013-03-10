@@ -276,6 +276,11 @@ select.past-x {
   line-height: 26px;
   padding-left: 1em;
 }
+.finances-settings-text-small {
+  font-size: 11px;
+  line-height: 14px;
+  padding-left: 1em;
+}
 .finances-settings-field {
 }
 .ticket-price {

@@ -1,15 +1,20 @@
 define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "core/league", "core/season", "core/trade", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers",], function (api, db, g, ui, contractNegotiation, game, league, season, trade, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers) {
     "use strict";
 
-    function init_db(req) {
+    function initDb(req) {
         viewHelpers.beforeNonLeague();
 
         // Delete any current league databases
         console.log("Deleting any current league databases...");
-        g.dbm.transaction(["leagues"]).objectStore("leagues").getAll().onsuccess = function (event) {
+        g.dbm.transaction("leagues").objectStore("leagues").getAll().onsuccess = function (event) {
             var data, done, i, leagues, request;
 
             leagues = event.target.result;
+
+            if (leagues.length === 0) {
+                console.log('No leagues found.');
+                Davis.location.assign(new Davis.Request("/"));
+            }
 
             done = 0;
             for (i = 0; i < leagues.length; i++) {
@@ -2619,7 +2624,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     }
 
     return {
-        init_db: init_db,
+        initDb: initDb,
 
         dashboard: dashboard,
         newLeague: newLeague,

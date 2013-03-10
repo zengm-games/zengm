@@ -641,7 +641,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
                         payroll = season === g.season ? t.payroll : t.salaryPaid;  // Display the current actual payroll for this season, or the salary actually paid out for prior seasons
 
-                        return ['<a href="/l/' + g.lid + '/team_finances/' + t.abbrev + '">' + t.region + ' ' + t.name + '</a>', helpers.round(t.att), helpers.formatCurrency(t.revenue, "M"), helpers.formatCurrency(t.profit, "M"), helpers.formatCurrency(t.cash, "M"), helpers.formatCurrency(t.payroll, "M")];
+                        return ['<a href="/l/' + g.lid + '/team_finances/' + t.abbrev + '">' + t.region + ' ' + t.name + '</a>', helpers.numberWithCommas(helpers.round(t.att)), helpers.formatCurrency(t.revenue, "M"), helpers.formatCurrency(t.profit, "M"), helpers.formatCurrency(t.cash, "M"), helpers.formatCurrency(t.payroll, "M")];
                     }));
 
                     if (req.raw.cb !== undefined) {
@@ -1087,7 +1087,9 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                         $.barGraph($("#bar-graph-pop"), barData.pop, [0, 20], barSeasons, function (val) {
                             return helpers.round(val, 1) + "M";
                         });
-                        $.barGraph($("#bar-graph-att"), barData.att, [0, 25000], barSeasons, helpers.round);
+                        $.barGraph($("#bar-graph-att"), barData.att, [0, 25000], barSeasons, function (val) {
+                            return helpers.numberWithCommas(helpers.round(val));
+                        });
 
                         $.barGraph(
                             $("#bar-graph-revenue"),

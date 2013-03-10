@@ -66,4 +66,6 @@ define(["lib/handlebars.runtime", "util/helpers"], function (Handlebars, helpers
     });
 
     Handlebars.registerHelper("currency", helpers.formatCurrency);
+
+    Handlebars.registerHelper("numberWithCommas", helpers.numberWithCommas);
 });

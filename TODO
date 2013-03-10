@@ -127,10 +127,6 @@ DataTables - need to rethink a lot of this, particularly how to make a decent UI
     http://datatables.net/ref#asSorting will work. maybe pass it as an option to bbgm_datatable
     text should be asc, numeric should be desc
     http://stackoverflow.com/questions/3725321/jquery-datatables-change-order-to-desc-when-it-sorts - but can it be set globally? maybe i can have ui.datatable automatically read columns and figure it out?
-commas for thousands
-  number of games played in delete league view
-  attendance in finances
-  attendance in league dashboard
 internationalization
   league dashboard rankings should say 1st, 2nd, 3rd rather than 1th, 2th, 3th
   http://requirejs.org/docs/api.html#i18n

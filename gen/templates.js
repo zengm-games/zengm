@@ -857,7 +857,7 @@ function program31(depth0,data,depth1) {
     + "/leaders\">» League Leaders</a><br>\n      <a href=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "/player_stats\">» Player Stats</a>\n    </p>\n  </div>\n  <div class=\"span4\">\n    <h3>Finances</h3>\n    <p>\n      Avg Attendance: "
-    + escapeExpression(helpers.round.call(depth0, depth0.att, {hash:{},data:data}))
+    + escapeExpression(helpers.numberWithCommas.call(depth0, depth0.att, {hash:{},data:data}))
     + "<br>\n      Revenue (YTD): "
     + escapeExpression(helpers.currency.call(depth0, depth0.revenue, "M", {hash:{},data:data}))
     + "<br>\n      Profit (YTD): "
@@ -1706,9 +1706,9 @@ helpers = helpers || Handlebars.helpers; data = data || {};
     + "? You will <em>permanently</em> lose any record of all "
     + escapeExpression(((stack1 = depth0.numSeasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + " seasons, "
-    + escapeExpression(((stack1 = depth0.numPlayers),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(helpers.numberWithCommas.call(depth0, depth0.numPlayers, {hash:{},data:data}))
     + " players, and "
-    + escapeExpression(((stack1 = depth0.numGames),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(helpers.numberWithCommas.call(depth0, depth0.numGames, {hash:{},data:data}))
     + " games from this league (well... unless you have backup somewhere).</p>\n\n<form action=\"/delete_league\" method=\"post\" style=\"float: left; margin-right: 1em\">\n  <input type=\"hidden\" name=\"lid\" value=\""
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\">\n  <input type=\"hidden\" name=\"confirm\" value=\"1\">\n  <button class=\"btn btn-danger\">Yes, I am sure! Delete League "

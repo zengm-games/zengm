@@ -395,6 +395,19 @@ define(["globals"], function (g) {
         }
         return "$" + round(amount, precision) + append;
     }
+    /**
+     * Format a number with commas in the thousands places.
+     *
+     * Also, rounds the number first.
+     * 
+     * @memberOf util.helpers
+     * @param {number|string} x Input number.
+     * @return {string} Formatted number.
+     */
+    function numberWithCommas(x) {
+        x = round(x);
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
 
     return {
         validateAbbrev: validateAbbrev,
@@ -410,6 +423,7 @@ define(["globals"], function (g) {
         skillsBlock: skillsBlock,
         round: round,
         nullPad: nullPad,
-        formatCurrency: formatCurrency
+        formatCurrency: formatCurrency,
+        numberWithCommas: numberWithCommas
     };
 });

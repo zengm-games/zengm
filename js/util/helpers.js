@@ -343,9 +343,9 @@ define(["globals"], function (g) {
      * Round a number to a certain number of decimal places.
      * 
      * @memberOf util.helpers
-     * @param {number} value Number to round.
+     * @param {number|string} value Number to round.
      * @param {number=} precision Number of decimal places. Default is 0 (round to integer).
-     * @return {number} Rounded number.
+     * @return {string} Rounded number.
      */
     function round(value, precision) {
         precision = precision !== undefined ? parseInt(precision, 10) : 0;
@@ -373,6 +373,22 @@ define(["globals"], function (g) {
         return array;
     }
 
+    /**
+     * Format a number as currency, correctly handling negative values.
+     *
+     * @memberOf util.helpers
+     * @param {number} amount Input value.
+     * @param {string=} append Suffix to append to the number, like "M" for things like $2M.
+     * @return {string} Formatted currency string.
+     */
+    function formatCurrency(amount, append) {
+        append = append !== undefined ? append : "";
+        if (amount < 0) {
+            return "-$" + round(Math.abs(amount), 2) + append;
+        }
+        return "$" + round(amount, 2) + append;
+    }
+
     return {
         validateAbbrev: validateAbbrev,
         getAbbrev: getAbbrev,
@@ -386,6 +402,7 @@ define(["globals"], function (g) {
         bbgmPing: bbgmPing,
         skillsBlock: skillsBlock,
         round: round,
-        nullPad: nullPad
+        nullPad: nullPad,
+        formatCurrency: formatCurrency
     };
 });

@@ -641,7 +641,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
                         payroll = season === g.season ? t.payroll : t.salaryPaid;  // Display the current actual payroll for this season, or the salary actually paid out for prior seasons
 
-                        return ['<a href="/l/' + g.lid + '/team_finances/' + t.abbrev + '">' + t.region + ' ' + t.name + '</a>', helpers.round(t.att), '$' + helpers.round(t.revenue, 2) + 'M', '$' + helpers.round(t.profit, 2) + 'M', '$' + helpers.round(t.cash, 2) + 'M', '$' + helpers.round(payroll, 2) + 'M'];
+                        return ['<a href="/l/' + g.lid + '/team_finances/' + t.abbrev + '">' + t.region + ' ' + t.name + '</a>', helpers.round(t.att), helpers.formatCurrency(t.revenue, "M"), helpers.formatCurrency(t.profit, "M"), helpers.formatCurrency(t.cash, "M"), helpers.formatCurrency(t.payroll, "M")];
                     }));
 
                     if (req.raw.cb !== undefined) {

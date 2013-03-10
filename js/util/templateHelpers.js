@@ -64,4 +64,6 @@ define(["lib/handlebars.runtime", "util/helpers"], function (Handlebars, helpers
     Handlebars.registerHelper("skills_block", function (skills) {
         return new Handlebars.SafeString(helpers.skillsBlock(skills));
     });
+
+    Handlebars.registerHelper("currency", helpers.formatCurrency);
 });

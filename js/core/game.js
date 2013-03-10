@@ -180,7 +180,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season",
                 otherPaid = 400;
 
                 // Attendance - base calculation now, which is used for other revenue estimates
-                att = 2500 + (0.1 + 0.9 * teamSeason.hype) * Math.pow(teamSeason.pop, 1 / 3) * 1000000 * 0.02;  // Base attendance - between 3% and 0.3% of the region. sqrt is a fudge.
+                att = 10000 + (0.1 + 0.9 * Math.pow(teamSeason.hype, 2)) * teamSeason.pop * 1000000 * 0.01;  // Base attendance - between 2% and 0.2% of the region
                 if (that.playoffs) {
                     att *= 1.5;  // Playoff bonus
                 }
@@ -194,8 +194,8 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season",
                 att = random.gauss(att, 1000);
                 if (att > 25000) {
                     att = 25000;
-                } else if (att < 10000) {
-                    att = 10000;
+                } else if (att < 0) {
+                    att = 0;
                 }
                 ticketRevenue = g.ticketPrice * att / 1000;  // [thousands of dollars]
 

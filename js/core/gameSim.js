@@ -46,7 +46,38 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
         // Parameters
         this.synergyFactor = 0.05;  // How important is synergy?
+
+        this.homeCourtAdvantage();
     }
+
+    //
+    /**
+     * Home court advantage.
+     *
+     * Scales composite ratings, giving home players bonuses and away players penalties.
+     *
+     * @memberOf core.gameSim
+     */
+    GameSim.prototype.homeCourtAdvantage = function () {
+        var factor, p, r, t;
+
+        for (t = 0; t < 2; t++) {
+            if (t === 0) {
+                factor = 1.025;  // Bonus for home team
+            } else {
+                factor = 0.975;  // Penalty for away team
+            }
+
+            for (p = 0; p < this.team[t].player.length; p++) {
+                for (r in this.team[t].player[p].compositeRating) {
+                    if (this.team[t].player[p].compositeRating.hasOwnProperty(r)) {
+                        this.team[t].player[p].compositeRating[r] *= factor;
+                    }
+                }
+            }
+        }
+    };
+
 
     /**
      * Simulates the game and returns the results.

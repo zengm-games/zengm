@@ -1,6 +1,10 @@
 CURRENT PRIORITIES
 ------------------
 
+hide feedback div by default, only show when page is loaded
+home court advantage
+  set home/away for playoff series correctly, since there is a difference now
+increase AI resigning probability
 bbgmPing should only work in production
   make sure it still works next time i update play.basketball-gm.com
 give bbgm website its own version of bootstrap (only with components needed)
@@ -87,8 +91,6 @@ database changes
       influenced by size of city (see: difficulty in views.newLeague)
     some consequence of having negative cash
 gameSim
-  home/away advantage
-    make sure home/away in playoffs is set right
   rename compositeRating to compositeRatings (or something better)
     other plural issues in gameSim
   playing time not adding up to 240?
@@ -343,7 +345,6 @@ GAMESIM
 take all ratings into account
   energy, etc
 blocks, assists (maybe other things) should not be so evenly distributed
-home and away games
 
 UI
 --

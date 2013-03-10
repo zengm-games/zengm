@@ -15,21 +15,8 @@ stat views
   per 36 stats in team/player stats view, league leaders
     add a dropdown (maybe make the dropdown handling code more general?)
 financial stuff
-  sources of revenue http://nbahoopsonline.com/Articles/2007-08/NBArevinuesharing.html
-    local tv contract - $10 million
-      will be a deal from 3 to 5 years in length
-      based on...
-        region population
-        "hype"
-        random noise
-        "random event" - competition between two networks, Sports TV and The Basketball Channel
-    national tv contract - same amount to every team - $30 million (add to )
-      when renegotiating and really bad, the guy pretends not to know you - "Atlanta Herons? Is that the team from the Mexican/Canadian/Arena/Indoor/Xtreme Volleyball/Soccer/Tennis/Racing/Curling/MudWrestling League?"
-    merchandising ($5 million), sponsorships ($25 million) - based on hype and region population, get some income
-    ticket sales - $30 million
   realistic update formulas for
     hype
-      0 to 1
       increase/decrease a lot for discrete events
         making/missing the playoffs
         winning a round in the playoffs
@@ -39,11 +26,19 @@ financial stuff
         sign a star
         trade for a star
         other stuff in the help in team finances
-      update within season!
     nationalTvRevenue
-      base on g.nationalTvContractAmount
+      base on g.nationalTvContractAmount, for now a constant
     localTvRevenue
-      base on tvContractAmount, tvContractExp
+      for now, just make it a function of attendance
+knobs to control team finances
+  IMPLEMENT BOTH THE BACKEND TO CHANGE THESE, AS WELL AS THEIR EFFECTS
+  move ticket price to gameAttributes rather than making it a constant
+    post-revenue-calculation attendance should depend on ticket price. so should hype, but only slightly
+  scouting budget - decrease "fuzz" added to displayed ratings
+  coaching budget - influence player development
+  health budget - influence injuries
+  facilities budget - influence free agent demeanor, player development
+  stadium budget - influence attendance
 like on team finances page, anywhere else to add help popups?
   should this be abstracted rather than just inline in views?
   should stay open through page reload, somehow
@@ -216,14 +211,6 @@ too easy to do the "be bad, get draft picks, keep payroll low, sign free agents,
   user can't just sign all the free agents before AI teams
 league leaders
   minimum minutes played to show should use team GP to scale, not player (this won't matter until injuries are implemented, basically)
-other potential knobs - add these to a new right column on the team finances view
-  move ticket price to gameAttributes rather than making it a constant
-    then, make attendance dependent on this
-  scouting budget - decrease "fuzz" added to displayed ratings
-  coaching budget - influence player development
-  health budget - influence injuries
-  facilities budget - influence free agent demeanor
-  stadium budget - influence attendance
 trades
   draft picks
   cash
@@ -269,6 +256,16 @@ expansion teams (add population growth, expand when certain conditions are met)
 team finances view
   compare bar graphs against league averages?
 different size stadiums, building new stadiums
+tv revenue as a variable
+  local tv contract - $10 million
+    base on tvContractAmount, tvContractExp
+    will be a deal from 3 to 5 years in length
+    based on...
+      region population
+      "hype"
+      random noise
+      "random event" - competition between two networks, Sports TV and The Basketball Channel
+    when renegotiating and really bad, the guy pretends not to know you - "Atlanta Herons? Is that the team from the Mexican/Canadian/Arena/Indoor/Xtreme Volleyball/Soccer/Tennis/Racing/Curling/MudWrestling League?"
 
 ---
 

@@ -4,7 +4,7 @@
       <option value="{{abbrev}}"{{#if selected}} selected="selected"{{/if}}}>{{region}} {{name}}</option>
     {{/teams}}
   </select>
-  <select id="team-finances-select-show" name="show" class="season">
+  <select id="team-finances-select-show" name="show" class="past-x">
     {{#shows}}
       <option value="{{show}}"{{#if selected}} selected="selected"{{/if}}>{{text}}</option>
     {{/shows}}
@@ -14,27 +14,77 @@
 <h1>{{team.region}} {{team.name}} Finances {{new_window}}</h1>
 <p>More: <a href="/l/{{lid}}/roster/{{team.abbrev}}">Roster</a></p>
 
-<p class="clearfix">The current payroll (<strong>${{round payroll}}M</strong>) is {{aboveBelow.minPayroll}} the minimum payroll limit (<strong>${{round minPayroll}}M</strong>), {{aboveBelow.salaryCap}} the salary cap (<strong>${{round salaryCap}}M</strong>), and {{aboveBelow.luxuryPayroll}} the luxury tax limit (<strong>${{round luxuryPayroll}}M</strong>). <i class="icon-question-sign" id="help-payroll-limits"></i></p>
+<p class="clearfix">The current payroll (<strong>${{round payroll}}M</strong>) is {{aboveBelow.minPayroll}} the minimum payroll limit (<strong>${{round minPayroll}}M</strong>), {{aboveBelow.salaryCap}} the salary cap (<strong>${{round salaryCap}}M</strong>), and {{aboveBelow.luxuryPayroll}} the luxury tax limit (<strong>${{round luxuryPayroll}}M</strong>). <i class="icon-question-sign" id="help-payroll-limits" data-placement="bottom"></i></p>
 
 <div class="row-fluid">
   <div class="span2">
     <h4>Wins</h4>
     <div id="bar-graph-won" class="bar-graph-small"></div><br><br>
-    <span class="clickover"><h4>Hype <i class="icon-question-sign" id="help-hype"></i></h4></span>
+    <span class="clickover"><h4>Hype <i class="icon-question-sign" id="help-hype" data-placement="right"></i></h4></span>
     <div id="bar-graph-hype" class="bar-graph-small"></div><br><br>
     <h4>Region Population</h4>
     <div id="bar-graph-pop" class="bar-graph-small"></div><br><br>
     <h4>Average Attendance</h4>
     <div id="bar-graph-att" class="bar-graph-small"></div>
   </div>
-  <div class="span10">
+  <div class="span6">
     <div class="row-fluid">
-      <h3>Revenue</h3>
+      <h4>Revenue</h4>
       <div id="bar-graph-revenue" class="bar-graph-large"></div><br><br>
-      <h3>Expenses</h3>
+      <h4>Expenses</h4>
       <div id="bar-graph-expenses" class="bar-graph-large"></div><br><br>
-      <h3>Cash</h3>
+      <h4>Cash</h4>
       <div id="bar-graph-cash" class="bar-graph-medium"></div>
+    </div>
+  </div>
+  <div class="span4">
+    <h4>Revenue Settings <i class="icon-question-sign" id="help-revenue-settings" data-placement="bottom"></i></h4>
+    <p></p>
+    <div class="row">
+      <div class="pull-left finances-settings-label">Ticket Price</div>
+      <div class="input-prepend pull-left finances-settings-field">
+        <span class="add-on">$</span><input type="text" name="ticket-price" class="ticket-price" value="">
+      </div>
+      <div class="pull-left finances-settings-text">(#5 leaguewide)</div>
+    </div>
+    <p></p>
+    <h4>Expense Settings <i class="icon-question-sign" id="help-expense-settings" data-placement="bottom"></i></h4>
+    <p></p>
+    <div class="row">
+      <div class="pull-left finances-settings-label">Scouting</div>
+      <div class="input-prepend input-append pull-left finances-settings-field">
+        <span class="add-on">$</span><input type="text" name="budget-scouting" class="ticket-price" value=""><span class="add-on">M</span>
+      </div>
+      <div class="pull-left finances-settings-text">(#5 leaguewide)</div>
+    </div>
+    <div class="row">
+      <div class="pull-left finances-settings-label">Coaching</div>
+      <div class="input-prepend input-append pull-left finances-settings-field">
+        <span class="add-on">$</span><input type="text" name="budget-coaching" class="ticket-price" value=""><span class="add-on">M</span>
+      </div>
+      <div class="pull-left finances-settings-text">(#5 leaguewide)</div>
+    </div>
+    <div class="row">
+      <div class="pull-left finances-settings-label">Health</div>
+      <div class="input-prepend input-append pull-left finances-settings-field">
+        <span class="add-on">$</span><input type="text" name="budget-health" class="ticket-price" value=""><span class="add-on">M</span>
+      </div>
+      <div class="pull-left finances-settings-text">(#5 leaguewide)</div>
+    </div>
+    <div class="row">
+      <div class="pull-left finances-settings-label">Facilities</div>
+      <div class="input-prepend input-append pull-left finances-settings-field">
+        <span class="add-on">$</span><input type="text" name="budget-facilities" class="ticket-price" value=""><span class="add-on">M</span>
+      </div>
+      <div class="pull-left finances-settings-text">(#5 leaguewide)</div>
+    </div>
+    <div class="row">
+      <div class="pull-left finances-settings-label">Stadium</div>
+      <div class="input-prepend input-append pull-left finances-settings-field">
+        <span class="add-on">$</span><input type="text" name="budget-stadium" class="ticket-price" value=""><span class="add-on">M</span>
+      </div>
+      <div class="pull-left finances-settings-text">(#5 leaguewide)</div>
+    </div>
   </div>
 </div>
 <p class="clearfix"></p>

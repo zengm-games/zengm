@@ -1153,15 +1153,23 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
                         $("#help-payroll-limits").clickover({
                             title: "Payroll Limits",
-                            content: "The salary cap is a soft cap, meaning that you can exceed it to resign your own players or to sign free agents to minimum contracts ($" + g.minContract + "/year); however, you cannot exceed the salary cap to sign a free agent for more than the minimum. Teams with payrolls below the minimum payroll limit will be assessed a fine equal to the difference at the end of the season. Teams with payrolls above the luxury tax limit will be assessed a fine equal to " + g.luxuryTax + " times the difference at the end of the season",
-                            placement: "bottom"
+                            content: "The salary cap is a soft cap, meaning that you can exceed it to resign your own players or to sign free agents to minimum contracts ($" + g.minContract + "/year); however, you cannot exceed the salary cap to sign a free agent for more than the minimum. Teams with payrolls below the minimum payroll limit will be assessed a fine equal to the difference at the end of the season. Teams with payrolls above the luxury tax limit will be assessed a fine equal to " + g.luxuryTax + " times the difference at the end of the season"
                         });
 
                         $("#help-hype").clickover({
                             title: "Hype",
-                            content: "\"Hype\" refers to fans' interest in your team. For instance, if your team is improving or you signed a big name free agent or you drafted a popular prospect, then hype increases; if your team is losing or stagnating or you traded away a popular veteran, then hype decreases. The more hype your team has, the more revenue it generates.",
-                            placement: "bottom",
-                            container: "body"
+                            content: "\"Hype\" refers to fans' interest in your team. For instance, if your team is improving or you signed a big name free agent or you drafted a popular prospect, then hype increases; if your team is losing or stagnating or you traded away a popular veteran, then hype decreases. The more hype your team has, the more revenue it generates."
+                        });
+
+                        $("#help-revenue-settings").clickover({
+                            title: "Revenue Settings",
+                            content: "Set your ticket price too high, and attendance will decrease and some fans will resent you for it. Set it too low, and you're not maximizing your profit."
+                        });
+
+                        $("#help-expense-settings").clickover({
+                            title: "Expense Settings",
+                            html: true,
+                            content: "<p>Scouting: Controls the accuracy of displayed player ratings.<p></p>Coaching: Better coaches mean better player development.</p><p>Health: A good team of doctors speeds recovery from injuries.</p><p>Facilities: Better training facilities make your players happier and more eager to train.</p><p style=\"margin-bottom: 0\">Stadium: Improvements to your stadium increase attendance.</p>"
                         });
 
                         $.barGraph($("#bar-graph-won"), barData.won, [0, 82], barSeasons);

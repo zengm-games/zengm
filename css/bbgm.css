@@ -183,6 +183,9 @@ table#game_log_list tbody tr:hover td {
 select.season {
   width: 120px;
 }
+select.past-x {
+  width: 135px;
+}
 
 #trade-select_team {
   margin: 9px 0 0 0;
@@ -263,6 +266,21 @@ select.season {
   font-weight: normal;
 }
 
+.finances-settings-label {
+  line-height: 26px;
+  padding-right: 1em;
+  text-align: right;
+  width: 100px;
+}
+.finances-settings-text {
+  line-height: 26px;
+  padding-left: 1em;
+}
+.finances-settings-field {
+}
+.ticket-price {
+  width: 2em;
+}
 
 /* From bootstrap-responsive.css, force big size */
   .row {

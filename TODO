@@ -8,8 +8,6 @@ bbgmPing should only work in production
 give bbgm website its own version of bootstrap (only with components needed)
 display league/season counter on basketball-gm.com splash page
 more unit tests
-PER calculation doesn't take playoffs into account. it should.
-  only update active players, and use playoff stats
 stat views
   playoff/regular season toggle in team/player stats, league leaders
   player stats: toggle to only show players > 2000 minutes http://www.nba.com/leader_requirements.html

@@ -160,7 +160,7 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
      * @param {Array.<string>} attributes List of player attributes to include in output.
      * @param {Array.<string>} stats List of player stats to include in output.
      * @param {Array.<string>} ratings List of player ratings to include in output.
-    * @param {Object} options Object containing various options. Possible keys include...  "totals": Boolean representing whether to return total stats (true) or per-game averages (false); default is false. "playoffs": Boolean representing whether to return playoff stats (statsPlayoffs and careerStatsPlayoffs) or not; default is false. Other keys should eventually be documented.
+    * @param {Object} options Object containing various options. Possible keys include...  "totals": Boolean representing whether to return total stats (true) or per-game averages (false); default is false. "playoffs": Boolean representing whether to return playoff stats (statsPlayoffs and careerStatsPlayoffs) or not; default is false. "showNoStats": Boolean, when true players are returned with zeroed stats objects even if they have accumulated no stats for a team (such as newly drafted players, or players who were just traded for, etc.); this applies only for regular season stats. Other keys should eventually be documented.
      * @return {Object} Filtered object containing the requested information for the player.
      */
     function getPlayer(pa, season, tid, attributes, stats, ratings, options) {
@@ -437,7 +437,11 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
                 // Single seasons
                 player.stats = filterStats({}, ps, stats);
                 if (options.playoffs) {
-                    player.statsPlayoffs = filterStats({}, psp, stats);
+                    if (!_.isEmpty(psp)) {
+                        player.statsPlayoffs = filterStats({}, psp, stats);
+                    } else {
+                        player.statsPlayoffs = {};
+                    }
                 }
             }
         } else {
@@ -558,6 +562,8 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
     function getTeam(ta, season, attributes, stats, seasonAttributes, options) {
         var i, j, lastTenLost, lastTenWon, team, ts, tsa;
 
+        options.playoffs = options.playoffs !== undefined ? options.playoffs : false;
+
         team = {};
 
         // Attributes
@@ -634,7 +640,7 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
             if (season !== null) {
                 // Single season
                 for (j = 0; j < ta.stats.length; j++) {
-                    if (ta.stats[j].season === season && ta.stats[j].playoffs === false) {
+                    if (ta.stats[j].season === season && ta.stats[j].playoffs === options.playoffs) {
                         ts = ta.stats[j];
                         break;
                     }
@@ -643,7 +649,7 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
                 // Multiple seasons
                 ts = [];
                 for (j = 0; j < ta.stats.length; j++) {
-                    if (ta.stats[j].playoffs === false) {
+                    if (ta.stats[j].playoffs === options.playoffs) {
                         ts.push(ta.stats[j]);
                     }
                 }
@@ -740,7 +746,7 @@ define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
      * @param {Array.<string>} attributes List of non-seasonal attributes (such as team name) to include in output.
      * @param {Array.<string>} stats List of team stats to include in output.
      * @param {Array.<string>} seasonAttributes List of seasonal attributes (such as won or lost) to include in output.
-     * @param {Object} options Object containing various options. Possible keys include... "sortBy": String represeting the sorting method; "winp" sorts by descending winning percentage, "winpAsc" does the opposite, default is sort by team ID. "totals": Boolean representing whether to return total stats (true) or per-game averages (false); default is false.
+     * @param {Object} options Object containing various options. Possible keys include... "sortBy": String represeting the sorting method; "winp" sorts by descending winning percentage, "winpAsc" does the opposite, default is sort by team ID. "totals": Boolean representing whether to return total stats (true) or per-game averages (false); default is false. "playoffs": Boolean that, when true, replaces the resturned stats with playoff stats (it doesn't return both like db.getPlayer).
      * @param {string|null} sortBy String represeting the sorting method. "winp" sorts by descending winning percentage, "winpAsc" does the opposite.
      * @param {function(Array)} cb Callback whose first argument is an array of all the team objects.
      */

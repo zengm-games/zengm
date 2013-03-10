@@ -10,6 +10,8 @@ define(["db", "globals", "lib/underscore"], function (db, g, _) {
      *
      * This is based on http://www.basketball-reference.com/about/per.html
      *
+     * In the playoffs, only playoff stats are used.
+     *
      * @memberOf util.advStats
      * @param {function()} cb Callback function.
      */
@@ -19,7 +21,7 @@ define(["db", "globals", "lib/underscore"], function (db, g, _) {
 
         attributes = ["tid"];
         stats = ["gp", "ft", "pf", "ast", "fg", "pts", "fga", "orb", "tov", "fta", "trb", "oppPts"];
-        db.getTeams(null, g.season, attributes, stats, [], {totals: true}, function (teams) {
+        db.getTeams(null, g.season, attributes, stats, [], {totals: true, playoffs: g.PHASE.PLAYOFFS === g.phase}, function (teams) {
             var i, league, leagueStats;
 
             // Total league stats (not per game averages) - gp, ft, pf, ast, fg, pts, fga, orb, tov, fta, trb
@@ -50,14 +52,24 @@ define(["db", "globals", "lib/underscore"], function (db, g, _) {
                 ratings = [];
                 stats = ["min", "tp", "ast", "fg", "ft", "tov", "fga", "fta", "trb", "orb", "stl", "blk", "pf"];
 
-                players = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings, {totals: true});
+                players = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings, {totals: true, playoffs: g.PHASE.PLAYOFFS === g.phase});
 
                 aPER = [];
                 league.aPER = 0;
                 for (i = 0; i < players.length; i++) {
                     tid = players[i].tid;
 
-                    if (tid >= 0) {  // No need to calculate for non-active players
+                    // Is the player active?
+                    players[i].active = true;  // Assume all players are active, since the IndexedDB query above only takes tid >= 0
+                    if (g.PHASE.PLAYOFFS === g.phase) {
+                        players[i].active = false;
+                        if (!_.isEmpty(players[i].statsPlayoffs)) {
+                            players[i].active = true;
+                            players[i].stats = players[i].statsPlayoffs;
+                        }
+                    }
+
+                    if (players[i].active) {  // No need to calculate for non-active players
                         factor = (2 / 3) - (0.5 * (league.ast / league.fg)) / (2 * (league.fg / league.ft));
                         vop = league.pts / (league.fga - league.orb + league.tov + 0.44 * league.fta);
                         drbp = (league.trb - league.orb) / league.trb;  // DRB%
@@ -99,8 +111,8 @@ define(["db", "globals", "lib/underscore"], function (db, g, _) {
                         p = cursor.value;
 
                         for (i = 0; i < players.length; i++) {
-                            if (players[i].pid === p.pid) {
-                                _.last(p.stats).per = PER[i];
+                            if (PER[i] !== undefined && !isNaN(PER[i]) && players[i].pid === p.pid) {
+                                _.last(p.stats).per = PER[i];  // This will be either playoffs or regular season, as appropriate
 
                                 cursor.update(p);
 

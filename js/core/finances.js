@@ -8,6 +8,7 @@ define(["db", "globals"], function (db, g) {
     /**
      * Assess the payroll and apply minimum and luxury taxes.
      *
+     * @memberOf core.finances
      * @param {function()} cb Callback function.
      */
     function assesPayrollMinLuxury(cb) {

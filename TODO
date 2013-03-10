@@ -1,7 +1,6 @@
 CURRENT PRIORITIES
 ------------------
 
-"roster is full" negotiation error refreshes to "No negotiation with player 41 in progress." and status is set to negotiation in progress even though it's not
 free agent abbrev showing up as undefined in player ratings view? isn't it supposed to be FA?
 bbgmPing should only work in production
   make sure it still works next time i update play.basketball-gm.com

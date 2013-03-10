@@ -19,9 +19,10 @@ define(["db", "globals", "ui", "core/player", "util/lock", "util/random"], funct
      * @param {function(string=)} cb Callback to be run only after a successful negotiation is started. If an error occurs, pass a string error message.
      */
     function create(ot, pid, resigning, cb) {
-        var tx;
+        var success, tx;
 
         console.log("Trying to start new contract negotiation with player " + pid);
+        success = false;
 
         if ((g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.AFTER_DRAFT) && !resigning) {
             return cb("You're not allowed to sign free agents now.");
@@ -71,6 +72,7 @@ define(["db", "globals", "ui", "core/player", "util/lock", "util/random"], funct
                     }
 
                     tx.objectStore("negotiations").add({pid: pid, teamAmount: playerAmount, teamYears: playerYears, playerAmount: playerAmount, playerYears: playerYears, numOffersMade: 0, maxOffers: maxOffers, resigning: resigning}).onsuccess = function () {
+                        success = true;
                         if (ot !== null) {
                             // This function doesn't have its own transaction, so we need to call the callback now even though the update and add might not have been processed yet (this will keep the transaction alive).
                             if (cb !== undefined) {
@@ -86,8 +88,10 @@ define(["db", "globals", "ui", "core/player", "util/lock", "util/random"], funct
         if (ot === null) {
             // This function has its own transaction, so wait until it finishes before calling the callback.
             tx.oncomplete = function () {
-                ui.updateStatus("Contract negotiation in progress...");
-                ui.updatePlayMenu(null, cb);
+                if (success) {
+                    ui.updateStatus("Contract negotiation in progress...");
+                    ui.updatePlayMenu(null, cb);
+                }
             };
         }
     }

@@ -46,7 +46,7 @@ define(["db", "globals", "lib/underscore"], function (db, g, _) {
 
             // Total player stats (not per game averages) - min, tp, ast, fg, ft, tov, fga, fta, trb, orb, stl, blk, pf
             // Active players have tid >= 0
-            g.dbl.transaction("players").objectStore("players").getAll(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
+            g.dbl.transaction("players").objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
                 var aPER, attributes, drbp, factor, i, PER, players, ratings, stats, tid, uPER, vop, tx;
                 attributes = ["pid", "tid"];
                 ratings = [];

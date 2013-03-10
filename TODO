@@ -1,33 +1,30 @@
 CURRENT PRIORITIES
 ------------------
 
+refactor views.js - separate file?
+  where to call beforeleague/nonleague?
+  separate "init" and "update" functions or whatever?
 free agent abbrev showing up as undefined in player ratings view? isn't it supposed to be FA?
 bbgmPing should only work in production
   make sure it still works next time i update play.basketball-gm.com
 give bbgm website its own version of bootstrap (only with components needed)
 display league/season counter on basketball-gm.com splash page
 more unit tests
-stat views
-  playoff/regular season toggle in team/player stats, league leaders
-  player stats: toggle to only show players > 2000 minutes http://www.nba.com/leader_requirements.html
-  per 36 stats in team/player stats view, league leaders
-    add a dropdown (maybe make the dropdown handling code more general?)
-financial stuff
-  realistic update formulas for
-    hype
-      increase/decrease a lot for discrete events
-        making/missing the playoffs
-        winning a round in the playoffs
-        winning a title
-        having a long tenured star leave
-        winning a rare draft lottery
-        sign a star
-        trade for a star
-        other stuff in the help in team finances
-    nationalTvRevenue
-      base on g.nationalTvContractAmount, for now a constant
-    localTvRevenue
-      for now, just make it a function of attendance
+update formulas
+  hype
+    increase/decrease a lot for discrete events
+      making/missing the playoffs
+      winning a round in the playoffs
+      winning a title
+      having a long tenured star leave
+      winning a rare draft lottery
+      sign a star
+      trade for a star
+      other stuff in the help in team finances
+  nationalTvRevenue
+    base on g.nationalTvContractAmount, for now a constant
+  localTvRevenue
+    for now, just make it a function of attendance
 knobs to control team finances
   IMPLEMENT BOTH THE BACKEND TO CHANGE THESE, AS WELL AS THEIR EFFECTS
   move ticket price to gameAttributes rather than making it a constant
@@ -59,11 +56,6 @@ changes to retiredPlayers
 
 MANUAL CHANGES TODO since 3.0.0beta
 -----------------------------------
-luxury tax, minimum payroll tax
-  what are they
-  what are cutoffs
-  percentages
-  applied at end of regular season
 
 BEFORE 3.0.0
 ------------
@@ -130,8 +122,6 @@ trade refactoring
 DataTables - need to rethink a lot of this, particularly how to make a decent UI
   sorting of team name column in finances view is fucked up
   http://datatables.net/extras/ such as scroller, colreorder, colvis, ...
-  add team dropdown to ratings and stats views - but should this refresh the view, or just filter the DataTable?
-    could use something like http://www.datatables.net/extras/thirdparty/ColumnFilterWidgets/DataTables/extras/ColumnFilterWidgets/ to also filter on positions
   fix default sort order on column click
     http://datatables.net/ref#asSorting will work. maybe pass it as an option to bbgm_datatable
     text should be asc, numeric should be desc
@@ -213,6 +203,9 @@ trades
   draft picks
   cash
   drop players as part of trade, to free up roster space
+go through future list
+  anything that should be here?
+  keep in mind db changes..
 
 FUTURE (after 3.0.0)
 --------------------
@@ -264,6 +257,13 @@ tv revenue as a variable
       random noise
       "random event" - competition between two networks, Sports TV and The Basketball Channel
     when renegotiating and really bad, the guy pretends not to know you - "Atlanta Herons? Is that the team from the Mexican/Canadian/Arena/Indoor/Xtreme Volleyball/Soccer/Tennis/Racing/Curling/MudWrestling League?"
+stat views
+  add team dropdown to ratings and stats views - but should this refresh the view, or just filter the DataTable?
+    could use something like http://www.datatables.net/extras/thirdparty/ColumnFilterWidgets/DataTables/extras/ColumnFilterWidgets/ to also filter on positions
+  playoff/regular season toggle in team/player stats, league leaders
+  player stats: toggle to only show players > 2000 minutes http://www.nba.com/leader_requirements.html
+  per 36 stats in team/player stats view, league leaders
+    add a dropdown (maybe make the dropdown handling code more general?)
 
 ---
 
@@ -340,7 +340,6 @@ game log
 
 Minor bugs:
 
-Lottery should be for the 14 teams not in the playoffs, which isn't necessarily the same as the 14 worst teams.
 Don't allow sort from first column of trade window
 
 ---

@@ -1,110 +1,8 @@
-define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "core/league", "core/season", "core/trade", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers"], function (api, db, g, ui, contractNegotiation, game, league, season, trade, names, boxPlot, Davis, Handlebars, $, _, helpers) {
+define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "core/league", "core/season", "core/trade", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers",], function (api, db, g, ui, contractNegotiation, game, league, season, trade, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers) {
     "use strict";
 
-    function beforeLeague(req, cb) {
-        var checkDbChange, leagueMenu, popup;
-
-        g.lid = parseInt(req.params.lid, 10);
-        g.realtimeUpdate = true;  // This is the default. It is set to false in views where appropriate
-
-        popup = req.params.w === "popup";
-
-        checkDbChange = function (lid) {
-            var oldLastDbChange;
-
-            // Stop if the league isn't viewed anymore
-            if (lid !== g.lid) {
-                return;
-            }
-
-            oldLastDbChange = g.lastDbChange;
-
-            db.loadGameAttribute(null, "lastDbChange", function () {
-                if (g.lastDbChange !== oldLastDbChange) {
-                    db.loadGameAttributes(function () {
-                        ui.realtimeUpdate(function () {
-                            ui.updatePlayMenu(null, function () {
-                                ui.updatePhase();
-                                ui.updateStatus();
-                                setTimeout(checkDbChange, 3000, g.lid);
-                            });
-                        });
-                    });
-                } else {
-                    setTimeout(checkDbChange, 3000, g.lid);
-                }
-            });
-        };
-
-        // Make sure league exists
-
-
-        // Make sure league template FOR THE CURRENT LEAGUE is showing
-        leagueMenu = document.getElementById("league_menu");
-        if (leagueMenu === null || parseInt(leagueMenu.dataset.lid, 10) !== g.lid) {
-            // Clear old game attributes from g, to make sure the new ones are saved to the db in db.setGameAttributes
-            helpers.resetG();
-
-            // Connect to league database
-            db.connectLeague(g.lid, function () {
-                db.loadGameAttributes(function () {
-                    var css, data;
-
-                    data = {
-                        container: "content",
-                        template: "leagueLayout",
-                        vars: {}
-                    };
-                    ui.update(data);
-
-                    // Set up the display for a popup: menus hidden, margins decreased, and new window links removed
-                    if (popup) {
-                        $("#top_menu").hide();
-                        $("#league_menu").hide();
-                        $("#league_content").css("margin-left", 0);
-                        $("body").css("padding-top", "4px");
-
-                        css = document.createElement("style");
-                        css.type = "text/css";
-                        css.innerHTML = ".new_window { display: none }";
-                        document.body.appendChild(css);
-                    }
-
-                    // Update play menu
-                    ui.updateStatus();
-                    ui.updatePhase();
-                    ui.updatePlayMenu(null, function () {
-                        cb();
-                        checkDbChange(g.lid);
-                    });
-                });
-            });
-        } else {
-            cb();
-        }
-    }
-
-    function beforeNonLeague() {
-        var playButtonElement, playPhaseElement, playStatusElement;
-
-        g.lid = null;
-
-        playButtonElement = document.getElementById("playButton");
-        if (playButtonElement) {
-            playButtonElement.innerHTML = "";
-        }
-        playPhaseElement = document.getElementById("playPhase");
-        if (playPhaseElement) {
-            playPhaseElement.innerHTML = "";
-        }
-        playStatusElement = document.getElementById("playStatus");
-        if (playStatusElement) {
-            playStatusElement.innerHTML = "";
-        }
-    }
-
     function init_db(req) {
-        beforeNonLeague();
+        viewHelpers.beforeNonLeague();
 
         // Delete any current league databases
         console.log("Deleting any current league databases...");
@@ -137,7 +35,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     }
 
     function dashboard(req) {
-        beforeNonLeague();
+        viewHelpers.beforeNonLeague();
 
         g.dbm.transaction("leagues").objectStore("leagues").getAll().onsuccess = function (event) {
             var data, i, leagues, teams;
@@ -164,7 +62,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     function newLeague(req) {
         var data, name, randomName, tid, teams;
 
-        beforeNonLeague();
+        viewHelpers.beforeNonLeague();
 
         // Pick a random league name, either for the GET or POST phase
         randomName = names.nick[Math.floor(Math.random() * names.nick.length)];
@@ -265,7 +163,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     function manual(req) {
         var data, page;
 
-        beforeNonLeague();
+        viewHelpers.beforeNonLeague();
 
         page = req.params.page !== undefined ? req.params.page : "overview";
 
@@ -281,7 +179,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     }
 
     function leagueDashboard(req) {
-        beforeLeague(req, function () {
+        viewHelpers.beforeLeague(req, function () {
             var transaction, vars;
 
             vars = {};
@@ -550,7 +448,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     }
 
     function standings(req) {
-        beforeLeague(req, function () {
+        viewHelpers.beforeLeague(req, function () {
             var attributes, gb, season, seasonAttributes, seasons;
 
             season = helpers.validateSeason(req.params.season);
@@ -629,7 +527,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     }
 
     function playoffs(req) {
-        beforeLeague(req, function () {
+        viewHelpers.beforeLeague(req, function () {
             var attributes, finalMatchups, season, seasonAttributes, seasons;
 
             season = helpers.validateSeason(req.params.season);
@@ -705,7 +603,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     }
 
     function leagueFinances(req) {
-        beforeLeague(req, function () {
+        viewHelpers.beforeLeague(req, function () {
             var attributes, season, seasons, seasonAttributes;
 
             season = helpers.validateSeason(req.params.season);
@@ -750,7 +648,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     }
 
     function history(req) {
-        beforeLeague(req, function () {
+        viewHelpers.beforeLeague(req, function () {
             var attributes, season, seasonAttributes, seasons;
 
             season = helpers.validateSeason(req.params.season);
@@ -813,7 +711,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     }
 
     function roster(req) {
-        beforeLeague(req, function () {
+        viewHelpers.beforeLeague(req, function () {
             var abbrev, attributes, currentSeason, out, ratings, season, seasons, sortable, stats, teams, tid, transaction;
 
             out = helpers.validateAbbrev(req.params.abbrev);
@@ -1013,7 +911,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     }
 
     function schedule(req) {
-        beforeLeague(req, function () {
+        viewHelpers.beforeLeague(req, function () {
             season.getSchedule(null, 0, function (schedule_) {
                 var data, game, games, i, row, team0, team1;
 
@@ -1044,7 +942,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     }
 
     function teamFinances(req) {
-        beforeLeague(req, function () {
+        viewHelpers.beforeLeague(req, function () {
             var abbrev, out, show, shows, teams, tid;
 
             show = req.params.show !== undefined ? req.params.show : "10";
@@ -1219,7 +1117,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     }
 
     function teamHistory(req) {
-        beforeLeague(req, function () {
+        viewHelpers.beforeLeague(req, function () {
             g.dbl.transaction("teams").objectStore("teams").get(g.userTid).onsuccess = function (event) {
                 var abbrev, data, extraText, history, i, userTeam, userTeamSeason;
 
@@ -1260,7 +1158,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     }
 
     function freeAgents(req) {
-        beforeLeague(req, function () {
+        viewHelpers.beforeLeague(req, function () {
             if (g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.RESIGN_PLAYERS) {
                 if (g.phase === g.PHASE.RESIGN_PLAYERS) {
                     Davis.location.assign(new Davis.Request("/l/" + g.lid + "/negotiation"));
@@ -1305,7 +1203,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     }
 
     function trade_(req) {
-        beforeLeague(req, function () {
+        viewHelpers.beforeLeague(req, function () {
             var abbrev, newOtherTid, out, pid, showTrade, validateSavedPids;
 
             if (g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.PLAYOFFS) {
@@ -1506,7 +1404,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     }
 
     function draft(req) {
-        beforeLeague(req, function () {
+        viewHelpers.beforeLeague(req, function () {
             var playerStore, season, seasons;
 
             season = helpers.validateSeason(req.params.season);
@@ -1709,7 +1607,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     }
 
     function gameLog(req) {
-        beforeLeague(req, function () {
+        viewHelpers.beforeLeague(req, function () {
             var abbrev, cbBoxScore, cbDisplay, cbGameLogList, gid, out, season, seasons, teams, tid;
 
             out = helpers.validateAbbrev(req.params.abbrev);
@@ -1838,7 +1736,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     }
 
     function leaders(req) {
-        beforeLeague(req, function () {
+        viewHelpers.beforeLeague(req, function () {
             var season, seasons;
 
             season = helpers.validateSeason(req.params.season);
@@ -1936,7 +1834,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     }
 
     function playerRatings(req) {
-        beforeLeague(req, function () {
+        viewHelpers.beforeLeague(req, function () {
             var season, seasons;
 
             season = helpers.validateSeason(req.params.season);
@@ -1981,7 +1879,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     }
 
     function playerStats(req) {
-        beforeLeague(req, function () {
+        viewHelpers.beforeLeague(req, function () {
             var season, seasons;
 
             season = helpers.validateSeason(req.params.season);
@@ -2021,7 +1919,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     }
 
     function teamStats(req) {
-        beforeLeague(req, function () {
+        viewHelpers.beforeLeague(req, function () {
             var attributes, season, seasonAttributes, seasons, stats;
 
             season = helpers.validateSeason(req.params.season);
@@ -2059,7 +1957,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     }
 
     function player_(req) {
-        beforeLeague(req, function () {
+        viewHelpers.beforeLeague(req, function () {
             var pid;
 
             pid = req.params.pid !== undefined ? parseInt(req.params.pid, 10) : undefined;
@@ -2096,7 +1994,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     }
 
     function negotiationList(req) {
-        beforeLeague(req, function () {
+        viewHelpers.beforeLeague(req, function () {
             var negotiations;
 
             // If there is only one active negotiation with a free agent, go to it
@@ -2167,7 +2065,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     }
 
     function negotiation(req) {
-        beforeLeague(req, function () {
+        viewHelpers.beforeLeague(req, function () {
             var cbDisplayNegotiation, cbRedirectNegotiationOrRoster, found, i, pid, teamAmountNew, teamYearsNew;
 
             pid = parseInt(req.params.pid, 10);
@@ -2287,7 +2185,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     }
 
     function distPlayerRatings(req) {
-        beforeLeague(req, function () {
+        viewHelpers.beforeLeague(req, function () {
             var season, seasons;
 
             season = helpers.validateSeason(req.params.season);
@@ -2354,7 +2252,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     }
 
     function distPlayerStats(req) {
-        beforeLeague(req, function () {
+        viewHelpers.beforeLeague(req, function () {
             var season, seasons;
 
             season = helpers.validateSeason(req.params.season);
@@ -2479,7 +2377,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     }
 
     function distTeamStats(req) {
-        beforeLeague(req, function () {
+        viewHelpers.beforeLeague(req, function () {
             var attributes, season, seasonAttributes, seasons, stats;
 
             season = helpers.validateSeason(req.params.season);
@@ -2603,7 +2501,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     }
 
     function playerShotLocations(req) {
-        beforeLeague(req, function () {
+        viewHelpers.beforeLeague(req, function () {
             var season, seasons;
 
             season = helpers.validateSeason(req.params.season);
@@ -2643,7 +2541,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     }
 
     function teamShotLocations(req) {
-        beforeLeague(req, function () {
+        viewHelpers.beforeLeague(req, function () {
             var attributes, season, seasonAttributes, seasons, stats;
 
             season = helpers.validateSeason(req.params.season);
@@ -2689,7 +2587,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     function globalError(req) {
         var data;
 
-        beforeNonLeague();
+        viewHelpers.beforeNonLeague();
 
         data = {
             container: "content",
@@ -2707,7 +2605,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
      * @param {Object} req Object with parameter "params" containing another object with a string representing the error message in the parameter "error" and an integer league ID in "lid".
      */
     function leagueError(req) {
-        beforeLeague(req, function () {
+        viewHelpers.beforeLeague(req, function () {
             var data;
 
             data = {

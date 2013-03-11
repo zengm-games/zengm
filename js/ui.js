@@ -12,7 +12,9 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
         // "Feedback" slider
         slideOut = $(".slide-out");
         if (slideOut.length > 0) {
-            slideOut.tabSlideOut({
+            slideOut.css({
+                visibility: "visible"
+            }).tabSlideOut({
                 tabHandle: ".slide-out-handle",
                 rightPos: "20px"
             });

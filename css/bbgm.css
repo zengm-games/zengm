@@ -217,6 +217,7 @@ select.past-x {
 }
 
 .slide-out {
+  visibility: hidden;
   padding: 20px;
   width: 200px;
   background: #f5f5f5;

@@ -1,7 +1,12 @@
 CURRENT PRIORITIES
 ------------------
 
-hide feedback div by default, only show when page is loaded
+DataTables - need to rethink a lot of this, particularly how to make a decent UI
+  sorting of team name column in finances view is fucked up
+  fix default sort order on column click
+    http://datatables.net/ref#asSorting will work. maybe pass it as an option to bbgm_datatable
+    text should be asc, numeric should be desc
+    http://stackoverflow.com/questions/3725321/jquery-datatables-change-order-to-desc-when-it-sorts - but can it be set globally? maybe i can have ui.datatable automatically read columns and figure it out?
 increase AI resigning probability
 bbgmPing should only work in production
   make sure it still works next time i update play.basketball-gm.com
@@ -26,10 +31,11 @@ update formulas
 knobs to control team finances
   IMPLEMENT BOTH THE BACKEND TO CHANGE THESE, AS WELL AS THEIR EFFECTS
     BACKEND
-      scoutingPaid, etc variables in teamSeason
-      scoutingBudget in root of teams object
+      scoutingPaid, scoutingPaidRank etc variables in teamSeason
+      scoutingBudget, scoutingBudgetRank in root of teams object
   how should changes in budget effect things?
     performance is based on cumulative (this year) rank relative to other teams
+      have functions in core.finances to calculate and cache these ranks, so it can be done daily during the regular season, or when the user makes a change
   move ticket price to gameAttributes rather than making it a constant
     post-revenue-calculation attendance should depend on ticket price. so should hype, but only slightly
   scouting budget - decrease "fuzz" added to displayed ratings
@@ -105,13 +111,6 @@ db.getPlayers
 trade refactoring
   validateSavedTids crap should be in trade.js.
   trade.summary stuff should be automatic and stored in tradeStore
-DataTables - need to rethink a lot of this, particularly how to make a decent UI
-  sorting of team name column in finances view is fucked up
-  http://datatables.net/extras/ such as scroller, colreorder, colvis, ...
-  fix default sort order on column click
-    http://datatables.net/ref#asSorting will work. maybe pass it as an option to bbgm_datatable
-    text should be asc, numeric should be desc
-    http://stackoverflow.com/questions/3725321/jquery-datatables-change-order-to-desc-when-it-sorts - but can it be set globally? maybe i can have ui.datatable automatically read columns and figure it out?
 internationalization
   league dashboard rankings should say 1st, 2nd, 3rd rather than 1th, 2th, 3th
   http://requirejs.org/docs/api.html#i18n
@@ -122,7 +121,13 @@ move to new window button, like gmail, that will open a view in a new window wit
 team history view needs more love
   dropdown for other teams
 auto-add players when AI teams are below limit (in season.js)
-AI modules that contain functions which are called to determine if players are resigned, etc.
+AI modules that contain functions which are called to determine actions
+  mode: rebuild or contend
+  things to regulate...
+    draft picks
+    signing free agents
+    resigning players
+    budget items (like from team finances view)
 notifications (and log) from top right to display log of key events
   game results from user's team
   players retiring from user's team
@@ -141,6 +146,7 @@ player finder
   search by stats or ratings
   trade for button, or sign button if free agent
 customize which columns are shown in roster view (and possibly other summary views like trade, free agent, etc)
+  http://datatables.net/extras/colvis/
 PER
   slow, particularly after multiple seasons?
   how to deal with players traded mid-season?

@@ -600,6 +600,7 @@ define(["db", "globals", "data/names", "lib/faces", "lib/underscore", "util/rand
         p.draftOvr = p.ratings[0].ovr;
 
         p.face = faces.generate();
+        p.injury = {type: "Healthy", gamesRemaining: 0};
 
         return p;
     }

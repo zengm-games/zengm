@@ -98,6 +98,7 @@ define(["db", "globals", "ui", "core/player", "core/season", "lib/faces", "lib/j
                                 p = players[i];
                                 p.ratings[0].ovr = player.ovr(p.ratings[0]);
                                 p.face = faces.generate();
+                                p.injury = {type: "Healthy", gamesRemaining: 0};
                                 if (p.tid === g.PLAYER.FREE_AGENT) {
                                     cont = player.contract(p.ratings[0]);
                                     p.contractAmount = cont.amount;

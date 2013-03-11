@@ -70,6 +70,7 @@ MANUAL CHANGES TODO since 3.0.0beta
 BEFORE 3.0.0
 ------------
 
+any raw data files should go in the data folder, ideally with a script to convert them to however they're used here
 database changes
   KEEP TRACK OF THESE CHANGES so i can upgrade
   should money stored be in millions? are thousands actually outputted anywhere? would there be a loss of accuracy?

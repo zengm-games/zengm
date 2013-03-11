@@ -1487,7 +1487,7 @@ function program1(depth0,data) {
     + "\"><br><br>\n    <label>Which team do you want to manage?</label>\n    <select name=\"tid\">\n      ";
   stack2 = ((stack1 = ((stack1 = depth0.teams),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n    </select>\n   <span class=\"help-block\" id=\"pop-text\"></span><br>\n    <!--<label><select name=\"players\">\n      <option value=\"random\" selected=\"selected\">Random Players</option>\n      <option value=\"nba2012\">2012 NBA Players</option>\n    </select></label><br>-->\n    <button type=\"submit\" class=\"btn\">Create New League</button>\n  </fieldset>\n</form>\n</p>";
+  buffer += "\n    </select>\n   <span class=\"help-block\" id=\"pop-text\"></span><br>\n    <!--<label><select name=\"players\">\n      <option value=\"random\" selected=\"selected\">Random Players</option>\n      <option value=\"nba2012\">2012 NBA Players</option>\n    </select></label><br>-->\n    <button type=\"submit\" class=\"btn\" id=\"create-new-league\">Create New League</button>\n  </fieldset>\n</form>\n</p>";
   return buffer;
   });
 templates['dashboard'] = template(function (Handlebars,depth0,helpers,partials,data) {

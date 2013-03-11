@@ -111,6 +111,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                 updatePopText();
             });
         } else if (req.method === "post") {
+            $("#create-new-league").attr("disabled", "disabled");  // Disable button
             tid = Math.floor(req.params.tid);
             name = req.params.name.length > 0 ? req.params.name : randomName;
             if (tid >= 0 && tid <= 29) {

@@ -157,10 +157,6 @@ show record (w-l) on roster view - make it more like a summary, as in basketball
   playoff results
   payroll
   anything else?
-disabling button for new league
-  https://github.com/olivernn/davis.js/issues/63 firefox/chrome issues
-  onclick="this.disabled=true; this.innerHTML='Generating league...'; $(this.form).submit();"
-    this submits the form twice. why?
 more handlebars helpers for things like...
   team dropdown
   season dropdown

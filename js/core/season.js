@@ -850,7 +850,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
 
         // Make today's  playoff schedule
         tx.objectStore("playoffSeries").openCursor(g.season).onsuccess = function (event) {
-            var cursor, i, matchup, nextRound, playoffSeries, rnd, series, tids, winners;
+            var cursor, i, matchup, nextRound, numGames, playoffSeries, rnd, series, tids, winners;
 
             cursor = event.target.result;
             playoffSeries = cursor.value;
@@ -860,7 +860,13 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
 
             for (i = 0; i < series[rnd].length; i++) {
                 if (series[rnd][i].home.won < 4 && series[rnd][i].away.won < 4) {
-                    tids.push([series[rnd][i].home.tid, series[rnd][i].away.tid]);
+                    // Make sure to set home/away teams correctly! Home for the lower seed is 1st, 2nd, 5th, and 7th games.
+                    numGames = series[rnd][i].home.won + series[rnd][i].away.won;
+                    if (numGames === 0 || numGames === 1 || numGames === 4 || numGames === 6) {
+                        tids.push([series[rnd][i].home.tid, series[rnd][i].away.tid]);
+                    } else {
+                        tids.push([series[rnd][i].away.tid, series[rnd][i].home.tid]);
+                    }
                 }
             }
             if (tids.length > 0) {
@@ -920,7 +926,9 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                     playoffSeries.currentRound += 1;
                     cursor.update(playoffSeries);
 
-                    tx.oncomplete = cb;
+                    tx.oncomplete = function () {
+                        cb();
+                    };
                 }
             }
         };

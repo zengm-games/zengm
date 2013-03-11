@@ -3,7 +3,7 @@ CURRENT PRIORITIES
 
 hide feedback div by default, only show when page is loaded
 home court advantage
-  set home/away for playoff series correctly, since there is a difference now
+  set home/away teams correctly in new playoff rounds (after round 1)
 increase AI resigning probability
 bbgmPing should only work in production
   make sure it still works next time i update play.basketball-gm.com

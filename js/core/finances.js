@@ -14,19 +14,7 @@ define(["db", "globals"], function (db, g) {
     function assesPayrollMinLuxury(cb) {
         var i, getPayroll, payrolls, tx;
 
-        payrolls = [];
-        getPayroll = function (tx, tid) {
-            db.getPayroll(tx, tid, function (payroll) {
-                payrolls[tid] = payroll;
-            });
-        };
-
-        // First, get all the current payrolls
-        tx = g.dbl.transaction(["players", "releasedPlayers"]);
-        for (i = 0; i < g.numTeams; i++) {
-            getPayroll(tx, i);
-        }
-        tx.oncomplete = function () {
+        db.getPayrolls(function (payrolls) {
             var tx;
 
             // Update teams object store
@@ -58,8 +46,7 @@ define(["db", "globals"], function (db, g) {
             tx.oncomplete = function () {
                 cb();
             };
-        };
-
+        });
     }
 
     return {

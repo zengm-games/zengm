@@ -554,6 +554,32 @@ console.log(player.careerStats)
     }
 
     /**
+     * Get the total payroll for every team team.
+     * 
+     * @memberOf db
+     * @param {function(Array.<number>)} cb Callback whose first argument is an array of payrolls, ordered by team id.
+     */
+    function getPayrolls(cb) {
+        var i, localGetPayroll, payrolls, tx;
+
+        payrolls = [];
+        localGetPayroll = function (tx, tid) {
+            getPayroll(tx, tid, function (payroll) {
+                payrolls[tid] = payroll;
+            });
+        };
+
+        // First, get all the current payrolls
+        tx = g.dbl.transaction(["players", "releasedPlayers"]);
+        for (i = 0; i < g.numTeams; i++) {
+            localGetPayroll(tx, i);
+        }
+        tx.oncomplete = function () {
+            cb(payrolls);
+        };
+    }
+
+    /**
      * Get a filtered team object.
      *
      * See db.getTeams for documentation.
@@ -988,6 +1014,7 @@ console.log(player.careerStats)
         getTeam: getTeam,
         getTeams: getTeams,
         getPayroll: getPayroll,
+        getPayrolls: getPayrolls,
         rosterAutoSort: rosterAutoSort,
         getDraftOrder: getDraftOrder,
         setDraftOrder: setDraftOrder,

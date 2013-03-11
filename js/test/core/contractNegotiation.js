@@ -2,7 +2,7 @@
  * @name test.core.contractNegotiation
  * @namespace Tests for core.contractNegotiation.
  */
-define(["db", "globals", "core/contractNegotiation", "core/league"], function (db, g, contractNegotiation, league) {
+define(["db", "globals", "core/contractNegotiation", "core/league", "core/player"], function (db, g, contractNegotiation, league, player) {
     "use strict";
 
     describe("core/contractNegotiation", function () {
@@ -172,6 +172,33 @@ define(["db", "globals", "core/contractNegotiation", "core/league"], function (d
                         };
                     });
                 };
+            });
+            it("should not allow signing non-minimum contracts that cause team to exceed the salary cap", function (done) {
+                var i, tx;
+
+                tx = g.dbl.transaction(["gameAttributes", "negotiations", "players"], "readwrite");
+                contractNegotiation.create(tx, 8, false, function (error) {
+                    var errorUndefined;
+
+                    errorUndefined = error === undefined;
+                    errorUndefined.should.be.true;
+
+                    // Force a minimum contract
+                    tx.objectStore("negotiations").openCursor().onsuccess = function (event) {
+                        var cursor, negotiation;
+
+                        cursor = event.target.result;
+                        negotiation = cursor.value;
+                        negotiation.playerAmount = 60000;
+                        cursor.update(negotiation);
+
+                        contractNegotiation.accept(8, function (error) {
+                            error.should.equal("This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract, buy out a player currently on your roster, or cancel the negotiation.");
+
+                            done();
+                        });
+                    };
+                });
             });
         });
     });

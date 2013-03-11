@@ -515,7 +515,6 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
             // Add entry for wins for each team; delete winp, which was only needed for sorting
             for (i = 0; i < teams.length; i++) {
                 teams[i].won = 0;
-                delete teams[i].winp;
             }
 
             tidPlayoffs = [];
@@ -850,7 +849,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
 
         // Make today's  playoff schedule
         tx.objectStore("playoffSeries").openCursor(g.season).onsuccess = function (event) {
-            var cursor, i, matchup, nextRound, numGames, playoffSeries, rnd, series, tids, winners;
+            var cursor, i, matchup, nextRound, numGames, playoffSeries, rnd, series, team1, team2, tids, winners;
 
             cursor = event.target.result;
             playoffSeries = cursor.value;
@@ -898,27 +897,31 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                         }
                         cursor.update(t);
                     };
-                }
-
-                // Are the whole playoffs over?
-                if (rnd === 3) {
                     tx.oncomplete = function () {
                         newPhase(g.PHASE.BEFORE_DRAFT, cb);
                     };
                 } else {
                     nextRound = [];
                     for (i = 0; i < series[rnd].length; i += 2) {
-                        matchup = {home: {}, away: {}};
+                        // Find the two winning teams
                         if (series[rnd][i].home.won === 4) {
-                            matchup.home = helpers.deepCopy(series[rnd][i].home);
+                            team1 = helpers.deepCopy(series[rnd][i].home);
                         } else {
-                            matchup.home = helpers.deepCopy(series[rnd][i].away);
+                            team1 = helpers.deepCopy(series[rnd][i].away);
                         }
                         if (series[rnd][i + 1].home.won === 4) {
-                            matchup.away = helpers.deepCopy(series[rnd][i + 1].home);
+                            team2 = helpers.deepCopy(series[rnd][i + 1].home);
                         } else {
-                            matchup.away = helpers.deepCopy(series[rnd][i + 1].away);
+                            team2 = helpers.deepCopy(series[rnd][i + 1].away);
                         }
+
+                        // Set home/away in the next round
+                        if (team1.winp > team2.winp) {
+                            matchup = {home: team1, away: team2};
+                        } else {
+                            matchup = {home: team2, away: team1};
+                        }
+
                         matchup.home.won = 0;
                         matchup.away.won = 0;
                         series[rnd + 1][i / 2] = matchup;

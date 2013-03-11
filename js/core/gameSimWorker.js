@@ -1,4 +1,4 @@
-/*global importScripts: false, self: false */
+/*global importScripts, self */
 
 importScripts("../lib/require.js");
 

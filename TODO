@@ -46,6 +46,7 @@ knobs to control team finances
 like on team finances page, anywhere else to add help popups?
   should this be abstracted rather than just inline in views?
   should stay open through page reload, somehow
+  inline anything from the manual?
 
 DATABASE CHANGES since 3.0.0beta
 --------------------------------
@@ -170,7 +171,7 @@ league leaders
 trades
   draft picks
   cash
-  drop players as part of trade, to free up roster space
+  allow trades to go over the roster limit, but show a warning. also factor into AI logic that they would have to drop a player
 go through future list
   anything that should be here?
   keep in mind db changes..
@@ -185,6 +186,7 @@ more sophisticatedrealtime data binding/updating
     data binding
     uses handlebars
   knockoutjs is too flaky. try just a naive approach first, and use something better later
+    try again?
   angularjs
     seems nice and widely used. would need to build some kind of signal system on top of this, basically to update the UI data variables from indexeddb when appropriate
 Web workers

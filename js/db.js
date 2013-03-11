@@ -426,7 +426,6 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
                 }
                 // Career totals
                 player.careerStats = filterStats({}, pcs, stats);
-console.log(player.careerStats)
                 player.careerStats.per = _.reduce(ps, function (memo, ps) { return memo + ps.per * ps.min; }, 0) / (player.careerStats.min * player.careerStats.gp); // Special case for PER - weight by minutes per season
                 if (isNaN(player.careerStats.per)) { player.careerStats.per = 0; }
                 if (options.playoffs) {

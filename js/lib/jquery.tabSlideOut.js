@@ -1,4 +1,5 @@
 // Based on tabSlideOUt v1.3 by William Paoli http://wpaoli.building58.com but with cleaned up (and less general) code.
+/*global jQuery */
 (function ($) {
     "use strict";
 

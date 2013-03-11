@@ -1,3 +1,4 @@
+/*global jQuery */
 (function ($) {
     "use strict";
 
@@ -254,4 +255,4 @@
         }
         return 0;
     };
-}(window.$));
+}(jQuery));

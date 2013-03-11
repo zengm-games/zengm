@@ -47,6 +47,7 @@
  * 
  *     $.barGraph($("my-plot"), [[1, 5, 2], [5, 3, 1]]);
  */
+/*global jQuery */
 (function ($) {
     "use strict";
 
@@ -235,4 +236,4 @@
         setWidths(container, data, gap);
         $(window).resize(function () { setWidths(container, data, gap); });
     };
-}($));
+}(jQuery));

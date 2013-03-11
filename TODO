@@ -95,9 +95,6 @@ gameSim
     do i need all the player composite ratings?
     do i need all the team composite ratings?
     how does performance change/degrade as the years go on?
-contract negotiation
-  test all the error conditions and make sure callbacks are appropriately called (unit tests?)
-  add free agent to the end of roster
 db.getPlayers
   way way way too messy
   rename to helpers.filterPlayers? or player.filter and player.filterAll?
@@ -143,7 +140,6 @@ should all this stuff be always in g, or read dynamically from the database?
 player finder
   search by stats or ratings
   trade for button, or sign button if free agent
-eliminate jquery UI dependency? it's only used for roster reordering currently
 customize which columns are shown in roster view (and possibly other summary views like trade, free agent, etc)
 PER
   slow, particularly after multiple seasons?
@@ -252,6 +248,9 @@ refactor views.js
 trading block
 race conditions associated with callbacks when passing around transactions
   any put/add/update does not guarantee it's finished until the transaction finishes. but letting transactions finish is slow.
+contract negotiation
+  add free agent to the end of roster
+eliminate jquery UI dependency? it's only used for roster reordering currently
 
 ---
 

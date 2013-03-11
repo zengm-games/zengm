@@ -173,6 +173,9 @@ define(["db", "globals", "core/contractNegotiation", "core/league", "core/player
                     });
                 };
             });
+        });
+
+        describe("#accept()", function () {
             it("should not allow signing non-minimum contracts that cause team to exceed the salary cap", function (done) {
                 var i, tx;
 
@@ -181,7 +184,7 @@ define(["db", "globals", "core/contractNegotiation", "core/league", "core/player
                     var errorUndefined;
 
                     errorUndefined = error === undefined;
-                    errorUndefined.should.be.true;
+                    errorUndefined.should.equal(true);
 
                     // Force a minimum contract
                     tx.objectStore("negotiations").openCursor().onsuccess = function (event) {

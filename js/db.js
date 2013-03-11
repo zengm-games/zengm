@@ -2,7 +2,7 @@
  * @name db
  * @namespace Functions that directly access an IndexedDB database.
  */
-define(["globals", "lib/underscore", "util/helpers"], function (g, _, helpers) {
+define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g, $, _, helpers) {
     "use strict";
 
     function connectMeta(cb) {
@@ -959,6 +959,15 @@ console.log(player.careerStats)
                 gameAttributesStore.put({key: key, value: gameAttributes[key]}).onsuccess = function (event) {
                     g[key] = gameAttributes[key];
                 };
+
+                // Trigger a signal for the team finances view. This is stupid.
+                if (key === "gamesInProgress") {
+                    if (gameAttributes[key]) {
+                        $("#finances-settings").trigger("gameSimulationStart");
+                    } else {
+                        $("#finances-settings").trigger("gameSimulationStop");
+                    }
+                }
             }(key));
         }
 

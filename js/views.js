@@ -1038,6 +1038,8 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                         vars: {payroll: payroll, aboveBelow: aboveBelow, salaryCap: g.salaryCap / 1000, minPayroll: g.minPayroll / 1000, luxuryPayroll: g.luxuryPayroll / 1000, luxuryTax: g.luxuryTax, salariesSeasons: salariesSeasons, shows: shows, team: {region: team.region, name: team.name, abbrev: team.abbrev}, teams: teams, contractTotals: contractTotals}
                     };
                     ui.update(data, function () {
+                        var disableFinanceSettings, enableFinanceSettings;
+
                         ui.dropdown($("#team-finances-select-team"), $("#team-finances-select-show"));
 
                         ui.datatableSinglePage($("#player-salaries"), 1, _.map(contracts, function (p) {
@@ -1077,7 +1079,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                         $("#help-expense-settings").clickover({
                             title: "Expense Settings",
                             html: true,
-                            content: "<p>Scouting: Controls the accuracy of displayed player ratings.<p></p>Coaching: Better coaches mean better player development.</p><p>Health: A good team of doctors speeds recovery from injuries.</p><p>Facilities: Better training facilities make your players happier and more eager to train.</p><p style=\"margin-bottom: 0\">Stadium: Improvements to your stadium increase attendance.</p>"
+                            content: "<p>Scouting: Controls the accuracy of displayed player ratings.<p></p>Coaching: Better coaches mean better player development.</p><p>Health: A good team of doctors speeds recovery from injuries.</p><p>Facilities: Better training facilities make your players happier and more eager to train.</p>Stadium: Improvements to your stadium increase attendance."
                         });
 
                         $.barGraph($("#bar-graph-won"), barData.won, [0, 82], barSeasons);
@@ -1118,6 +1120,21 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                         $.barGraph($("#bar-graph-cash"), barData.cash, undefined, barSeasons, function (val) {
                             return helpers.formatCurrency(val, "M", 1);
                         });
+
+                        // Form enabling/disabling
+                        disableFinanceSettings = function () {
+                            $("#finances-settings input, button").attr("disabled", "disabled");
+                            $("#finances-settings .text-error").html("Stop game simulation to edit.");
+                        };
+                        enableFinanceSettings = function () {
+                            $("#finances-settings input, button").removeAttr("disabled");
+                            $("#finances-settings .text-error").html("");
+                        };
+                        $("#finances-settings").on("gameSimulationStart", disableFinanceSettings);
+                        $("#finances-settings").on("gameSimulationStop", enableFinanceSettings);
+                        if (g.gamesInProgress) {
+                            disableFinanceSettings();
+                        }
 
                         if (req.raw.cb !== undefined) {
                             req.raw.cb();

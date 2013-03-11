@@ -28,8 +28,6 @@ knobs to control team finances
     BACKEND
       scoutingPaid, etc variables in teamSeason
       scoutingBudget in root of teams object
-  disable forms when game simulation is in progress
-  enable save button only when a form was changed
   how should changes in budget effect things?
     performance is based on cumulative (this year) rank relative to other teams
   move ticket price to gameAttributes rather than making it a constant
@@ -161,8 +159,6 @@ disabling button for new league
   https://github.com/olivernn/davis.js/issues/63 firefox/chrome issues
   onclick="this.disabled=true; this.innerHTML='Generating league...'; $(this.form).submit();"
     this submits the form twice. why?
-race conditions associated with callbacks when passing around transactions
-  any put/add/update does not guarantee it's finished until the transaction finishes. but letting transactions finish is slow.
 more handlebars helpers for things like...
   team dropdown
   season dropdown
@@ -254,6 +250,8 @@ refactor views.js
     meta-views for similar views?
     modularize and build testable functions that generate the data for the UI
 trading block
+race conditions associated with callbacks when passing around transactions
+  any put/add/update does not guarantee it's finished until the transaction finishes. but letting transactions finish is slow.
 
 ---
 

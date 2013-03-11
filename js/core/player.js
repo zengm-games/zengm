@@ -2,7 +2,7 @@
  * @name core.player
  * @namespace Functions operating on player objects, or parts of player objects.
  */
-define(["db", "globals", "data/names", "lib/faces", "lib/underscore", "util/random"], function (db, g, names, faces, _, random) {
+define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/underscore", "util/random"], function (db, g, injuries, names, faces, _, random) {
     "use strict";
 
     /**
@@ -605,6 +605,26 @@ define(["db", "globals", "data/names", "lib/faces", "lib/underscore", "util/rand
         return p;
     }
 
+    /**
+     * Pick injury type and duration.
+     *
+     * @return {Object} Injury object (type and gamesRemaining)
+     */
+    function injury() {
+        var gamesRemaining, i, rand, type;
+
+        rand = random.uniform(0, 10882);
+        for (i = 0; i < injuries.cumSum.length; i++) {
+            if (injuries.cumSum[i] >= rand) {
+                break;
+            }
+        }
+        return {
+            type: injuries.types[i],
+            gamesRemaining: Math.round(random.uniform(0.5, 2) * injuries.gamesRemainings[i])
+        };
+    }
+
     return {
         addRatingsRow: addRatingsRow,
         addStatsRow: addStatsRow,
@@ -612,6 +632,7 @@ define(["db", "globals", "data/names", "lib/faces", "lib/underscore", "util/rand
         bonus: bonus,
         contract: contract,
         develop: develop,
+        injury: injury,
         generate: generate,
         ovr: ovr,
         release: release,

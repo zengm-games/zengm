@@ -2,7 +2,7 @@
  * @name core.game
  * @namespace Everything about games except the actual simulation. So, loading the schedule, loading the teams, saving the results, and handling multi-day simulations and what happens when there are no games left to play.
  */
-define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season", "lib/underscore", "util/advStats", "util/lock", "util/random"], function (db, g, ui, freeAgents, gameSim, season, _, advStats, lock, random) {
+define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/player", "core/season", "lib/underscore", "util/advStats", "util/lock", "util/random"], function (db, g, ui, freeAgents, gameSim, player, season, _, advStats, lock, random) {
     "use strict";
 
     function Game() {
@@ -71,15 +71,15 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season",
         that = this;
 
         this.transaction.objectStore("players").openCursor(that.team[t].player[p].id).onsuccess = function (event) {
-            var cursor, i, keys, player, playerStats;
+            var cursor, i, keys, player_, playerStats;
 
             cursor = event.target.result;
-            player = cursor.value;
+            player_ = cursor.value;
 
             // Find the correct row of stats
-            for (i = 0; i < player.stats.length; i++) {
-                if (player.stats[i].season === g.season && player.stats[i].playoffs === that.playoffs) {
-                    playerStats = player.stats[i];
+            for (i = 0; i < player_.stats.length; i++) {
+                if (player_.stats[i].season === g.season && player_.stats[i].playoffs === that.playoffs) {
+                    playerStats = player_.stats[i];
                     break;
                 }
             }
@@ -98,7 +98,20 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season",
             }
             playerStats.trb += that.team[t].player[p].stat.orb + that.team[t].player[p].stat.drb;
 
-            cursor.update(player);
+            // Injury crap - assign injury type if player does not already have an injury in the database
+//console.log(that.team[t].player[p].id + " " + that.team[t].player[p].injured + " " + player_.injury.type);
+            if (that.team[t].player[p].injured && player_.injury.type === "Healthy") {
+                player_.injury = player.injury();
+console.log(that.team[t].player[p].id + " " + player_.injury.type + " " + player_.injury.gamesRemaining);
+                // Is it already over?
+                if (player_.injury.gamesRemaining === 0) {
+                    player_.injury.type = "Healthy";
+                }
+console.log(that.team[t].player[p].id + " " + player_.injury.type + " " + player_.injury.gamesRemaining);
+            }
+//console.log(that.team[t].player[p].id + " " + that.team[t].player[p].injured + " " + player_.injury.type);
+
+            cursor.update(player_);
 
             that.playersRemaining -= 1;
             if (that.playersRemaining === 0 && that.teamsRemaining === 0 && that.cb !== undefined) {
@@ -459,7 +472,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/season",
 
                     for (i = 0; i < players.length; i++) {
                         player = players[i];
-                        p = {id: player.pid, name: player.name, pos: player.pos, ovr: 0, stat: {}, compositeRating: {}, skills: []};
+                        p = {id: player.pid, name: player.name, pos: player.pos, ovr: 0, stat: {}, compositeRating: {}, skills: [], injured: false};
 
                         for (j = 0; j < player.ratings.length; j++) {
                             if (player.ratings[j].season === g.season) {

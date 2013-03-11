@@ -1,6 +1,16 @@
 CURRENT PRIORITIES
 ------------------
 
+injury
+  core.player.injury
+    influence from health budget
+  in core.game, if a player has injured: true but is healthy in the database, pick the type of injury. make sure to set the number of games missed based on data, the health budget, and randomness.
+  handling injured players
+    injured players show at bottom of roster, with no handle for sorting
+    injured players are passed to gameSim, but with injured: true
+      does this cause any problem with recording starters, if a starter is injured?
+    display injured badge (icon-plus-sign from glyphicons, make white one red - Colors -> Colorify in GIMP) along with player skills (abstract into function nameBlock or something). on hover, show games remaining (if it exceeds playoffs, just say "end of season". if it exceeds playoffs and offseason, estimate like "early next year" or whatever)
+  each game, decrement player.injury.gamesRemaining. at end of season, decrease by X to simulate offseason.
 DataTables - need to rethink a lot of this, particularly how to make a decent UI
   sorting of team name column in finances view is fucked up
   fix default sort order on column click
@@ -63,6 +73,7 @@ added to seasonAttributes for each team:
       minTaxPaid: number  // this shoudl be set at the end of the season
 removed "cost" and "revenue" from seasonAttributes
 changes to retiredPlayers
+added "injury" to player
 
 MANUAL CHANGES TODO since 3.0.0beta
 -----------------------------------
@@ -70,6 +81,7 @@ MANUAL CHANGES TODO since 3.0.0beta
 BEFORE 3.0.0
 ------------
 
+box score (and any historical view) should show cached injury/skills statuses
 any raw data files should go in the data folder, ideally with a script to convert them to however they're used here
 database changes
   KEEP TRACK OF THESE CHANGES so i can upgrade
@@ -259,7 +271,7 @@ eliminate jquery UI dependency? it's only used for roster reordering currently
 
 ---
 
-g = require("globals"); g.dbl.transaction("players").objectStore("players").get(476).onsuccess = function (event) { console.log(event.target.result); };
+g = require("globals"); g.dbl.transaction("players").objectStore("players").get(184).onsuccess = function (event) { console.log(event.target.result); };
 
 g = require("globals"); g.dbl.transaction("teams").objectStore("teams").get(3).onsuccess = function (event) { console.log(event.target.result.seasons[0]); }
 g = require("globals"); g.dbl.transaction("releasedPlayers").objectStore("releasedPlayers").getAll().onsuccess = function (event) { console.log(event.target.result); }

@@ -24,7 +24,8 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      *                 "ovr": 0,
      *                 "stat": {},
      *                 "compositeRating": {},
-     *                 "skills": []
+     *                 "skills": [],
+     *                 "injured": false
      *             },
      *             ...
      *         ]
@@ -36,7 +37,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         this.team = [team1, team2];  // If a team plays twice in a day, this needs to be a deep copy
         this.numPossessions = Math.round((this.team[0].pace + this.team[1].pace) / 2 * random.uniform(0.9, 1.1));
 
-        // Starting lineups, which works because players are ordered by their rosterOrder
+        // Starting lineups, which will be reset by updatePlayersOnCourt. This must be done because of injured players in the top 5.
         this.playersOnCourt = [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]];
         this.updateTeamCompositeRatings();
 
@@ -50,7 +51,6 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         this.homeCourtAdvantage();
     }
 
-    //
     /**
      * Home court advantage.
      *
@@ -97,7 +97,8 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      *                     {
      *                         "id": 0,
      *                         "stat": {},
-     *                         "skills": []
+     *                         "skills": [],
+     *                         "injured": false
      *                     },
      *                     ...
      *                 ]
@@ -131,7 +132,11 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             }
         }
 
-        return {"gid": this.id, "overtimes": this.overtimes, "team": this.team};
+        return {
+            gid: this.id,
+            overtimes: this.overtimes,
+            team: this.team
+        };
     };
 
     /**
@@ -172,6 +177,8 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
             this.updatePlayingTime();
 
+            this.injuries();
+
             i += 1;
         }
     };
@@ -193,7 +200,12 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             // Overall ratings scaled by fatigue
             ovrs = [];
             for (p = 0; p < this.team[t].player.length; p++) {
-                ovrs.push(this.team[t].player[p].ovr * this.fatigue(this.team[t].player[p].stat.energy) * random.uniform(0.9, 1.1));
+                // Injured players can't play
+                if (this.team[t].player[p].injured) {
+                    ovrs[p] = -Infinity;
+                } else {
+                    ovrs[p] = this.team[t].player[p].ovr * this.fatigue(this.team[t].player[p].stat.energy) * random.uniform(0.9, 1.1);
+                }
             }
 
             // Loop through players on court (in inverse order of current roster position)
@@ -339,6 +351,37 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                     }
                 }
             }
+        }
+    };
+
+    /**
+     * See if any injuries occurred this possession, and handle the consequences.
+     *
+     * This doesn't actually compute the type of injury, it just determines if a player is injured bad enough to miss the rest of the game.
+     * 
+     * @memberOf core.gameSim
+     */
+    GameSim.prototype.injuries = function () {
+        var newInjury, p, t;
+
+        newInjury = false;
+
+        for (t = 0; t < 2; t++) {
+            for (p = 0; p < this.team[t].player.length; p++) {
+                // Only players on the court can be injured
+                if (this.playersOnCourt[t].indexOf(p) >= 0) {
+                    // According to data/injuries.ods, 0.25 injuries occur every game. Divided over 10 players and ~100 possessions, that means each player on the court has P = 0.25 / 10 / 100 = 0.00025 probability of being injured this play.
+                    if (Math.random() < 0.00025) {
+                        this.team[t].player[p].injured = true;
+                        newInjury = true;
+                    }
+                }
+            }
+        }
+
+        // Sub out injured player
+        if (newInjury) {
+            this.updatePlayersOnCourt();
         }
     };
 

@@ -43,7 +43,7 @@ define(["globals"], function (g) {
         abbrevs = ["ATL", "BOS", "BK", "CHA", "CHI", "CLE", "DAL", "DEN", "DET", "GSW", "HOU", "IND", "LAC", "LAL", "MEM", "MIA", "MIL", "MIN", "NOR", "NYK", "OKC", "ORL", "PHI", "PHO", "POR", "SAC", "SAS", "TOR", "UTA", "WAS"];
         tid = parseInt(tid, 10);
 
-        if (tid < 0 || tid >= abbrevs.length) {
+        if (tid < 0 || tid >= abbrevs.length || isNaN(tid)) {
             tid = g.userTid;
         }
         abbrev = abbrevs[tid];
@@ -57,7 +57,7 @@ define(["globals"], function (g) {
      * For instance, team ID 0 is Atlanta, which has an abbreviation of ATL. This is a convenience wrapper around validateTid, excpet it will return "FA" if you pass g.PLAYER.FREE_AGENT.
      *
      * @memberOf util.helpers
-     * @param {number} tid Integer team ID.
+     * @param {number|string} tid Integer team ID.
      * @return {string} Abbreviation
      */
     function getAbbrev(tid) {
@@ -84,10 +84,13 @@ define(["globals"], function (g) {
      */
     function validateSeason(season) {
         if (!season) {
-            season = g.season;
-        } else {
-            // Make sure there is an entry for the supplied season in the DB somewhere
-            season = Math.floor(season);
+            return g.season;
+        }
+
+        season = Math.floor(season);
+
+        if (isNaN(season)) {
+            return g.season;
         }
 
         return season;
@@ -395,6 +398,7 @@ define(["globals"], function (g) {
         }
         return "$" + round(amount, precision) + append;
     }
+
     /**
      * Format a number with commas in the thousands places.
      *

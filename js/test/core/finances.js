@@ -1,13 +1,11 @@
 /**
- * @name test.core.league
- * @namespace Tests for core.league.
+ * @name test.core.finances
+ * @namespace Tests for core.finances.
  */
 define(["db", "globals", "core/league", "core/finances"], function (db, g, league, finances) {
     "use strict";
 
     describe("core/finances", function () {
-        var testDraftUntilUserOrEnd, testDraftUser;
-
         before(function (done) {
             db.connectMeta(function () {
                 league.create("Test", 0, "random", function () {

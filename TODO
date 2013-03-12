@@ -3,6 +3,7 @@ CURRENT PRIORITIES
 
 link to game log from team roster/finances views
 injury
+  gs and gp being correctly set for injured players?
   box score - display injured players at bottom
   how to deal with a team that drops below 5 active players, factoring in injuries?
     should allow them to exceed roster limit while injury exists

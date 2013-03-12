@@ -1718,12 +1718,20 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
                         game = event.target.result;
                         for (i = 0; i < game.teams.length; i++) {
+
+                            // Fix the total minutes calculation, which is usually fucked up for some unknown reason
+                            game.teams[i].min = 240 + 25 * game.overtimes;
+
+                            // Put injured players at the bottom, then sort by GS and roster position
+                            game.teams[i].players.sort(function (a, b) {
+                                // This sorts by starters first and minutes second, since .min is always far less than 1000 and gs is either 1 or 0.
+                                return b.gs * 1000 + b.min > a.gs * 1000 + a.min;
+                            });
+
                             game.teams[i].players[4].separator = true;
                             _.last(game.teams[i].players).separator = true;
-
-                            // Fix the total minutes calculation, because JavaScript only has floats so it gets fucked up
-                            game.teams[i].min = 240 + 25 * game.overtimes;
                         }
+
 
                         if (game.overtimes === 1) {
                             overtime = " (OT)";

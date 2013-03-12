@@ -2512,7 +2512,7 @@ function program8(depth0,data) {
 function program10(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n      ";
+  buffer += "\n\n      ";
   stack1 = helpers['if'].call(depth0, depth0.injured, {hash:{},inverse:self.program(13, program13, data),fn:self.program(11, program11, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += escapeExpression(helpers.skillsBlock.call(depth0, ((stack1 = depth0.currentRatings),stack1 == null || stack1 === false ? stack1 : stack1.skills), {hash:{},data:data}))
@@ -2522,11 +2522,13 @@ function program10(depth0,data) {
 function program11(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "<i class=\"icon-plus-sign icon-white\" title=\""
+  buffer += "<span class=\"label label-important label-injury\" title=\""
     + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.injury)),stack1 == null || stack1 === false ? stack1 : stack1.type)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + " (out "
     + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.injury)),stack1 == null || stack1 === false ? stack1 : stack1.gamesRemaining)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " more games)\"></i><span class=\"skills_block\">";
+    + " more games)\" style=\"margin-left: 0\">"
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.injury)),stack1 == null || stack1 === false ? stack1 : stack1.gamesRemaining)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</i><span class=\"skills_block\">";
   return buffer;
   }
 

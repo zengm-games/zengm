@@ -288,8 +288,12 @@ select.past-x {
   width: 2em;
 }
 
-.injury-label {
-  margin-left: 3px;
+.label-injury {
+  cursor: default;
+  font-size: 8px;
+  line-height: 8px;
+  margin-left: 5px;
+  vertical-align: 20%;
 }
 
 /* From bootstrap-responsive.css, force big size */

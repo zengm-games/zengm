@@ -68,7 +68,7 @@ added to seasonAttributes for each team:
       luxuryTaxPaid: number,  // this shoudl be set at the end of the season
       minTaxPaid: number  // this shoudl be set at the end of the season
 removed "cost" and "revenue" from seasonAttributes
-changes to retiredPlayers
+changes to retiredPlayers, but that's just removing stuff that isn't needed anymore, so no problem
 added "injury" to player
 
 MANUAL CHANGES TODO since 3.0.0beta

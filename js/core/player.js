@@ -347,8 +347,6 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
         transaction.objectStore("releasedPlayers").add({
             pid: p.pid,
             tid: p.tid,
-            name: p.name,
-            skills: _.last(p.ratings).skills,
             contractAmount: p.contractAmount,
             contractExp: p.contractExp
         });

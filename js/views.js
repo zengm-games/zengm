@@ -1045,7 +1045,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
                         ui.datatableSinglePage($("#player-salaries"), 1, _.map(contracts, function (p) {
                             var i, output;
-                            output = ['<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>' + helpers.skillsBlock(p.skills)];
+                            output = [helpers.playerNameLabels(p.pid, p.name, p.injury, p.skills)];
                             if (p.released) {
                                 output[0] = "<i>" + output[0] + "</i>";
                             }

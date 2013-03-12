@@ -4,14 +4,10 @@ CURRENT PRIORITIES
 injury
   core.player.injury
     influence from health budget
-  handling injured players
-    helpers.util.playerNameLabels
-      problems with usage
-        box score: cache injury at time of game (are skills cached already?)
-          box score (and any historical view) should show cached injury/skills statuses
-        team finances: rethink putting skills in releasedPlayers?
-  player.injury.gamesRemaining
-    don't worry too much about improving tracking this until we have a real calendar system in place
+  helpers.util.playerNameLabels
+    problems with usage
+      box score: cache injury at time of game (are skills cached already?)
+        box score (and any historical view) should show cached injury/skills statuses
   how to deal with a team that drops below 5 active players, factoring in injuries?
     should allow them to exceed roster limit while injury exists
     should not allow play when below 5
@@ -273,6 +269,8 @@ race conditions associated with callbacks when passing around transactions
 contract negotiation
   add free agent to the end of roster
 eliminate jquery UI dependency? it's only used for roster reordering currently
+real calendar
+  player.injury.gamesRemaining
 
 ---
 

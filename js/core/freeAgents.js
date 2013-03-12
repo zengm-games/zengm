@@ -134,6 +134,13 @@ define(["db", "globals", "core/player", "lib/underscore", "util/random"], functi
                     p.freeAgentTimesAsked = 0;
                 }
 
+                // Also, heal.
+                if (p.injury.gamesRemaining > 0) {
+                    p.injury.gamesRemaining -= 1;
+                } else {
+                    p.injury = {type: "Healthy", gamesRemaining: 0};
+                }
+
                 cursor.update(p);
                 cursor.continue();
             }

@@ -74,7 +74,6 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/player",
             }
             // Only count a game played if the player recorded minutes
             if (that.team[t].player[p].stat.min > 0) {
-                console.log("gp");
                 playerStats.gp += 1;
             }
             playerStats.trb += that.team[t].player[p].stat.orb + that.team[t].player[p].stat.drb;

@@ -495,6 +495,8 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
         var contracts, transaction;
 
         transaction = getObjectStore(ot, ["players", "releasedPlayers"], null);
+
+        // First, get players currently on the roster
         transaction.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
             var i, players;
 
@@ -505,28 +507,45 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
                     pid: players[i].pid,
                     name: players[i].name,
                     skills: _.last(players[i].ratings).skills,
+                    injury: players[i].injury,
                     amount: players[i].contractAmount,
                     exp: players[i].contractExp,
                     released: false
                 });
             }
 
+            // Then, get any released players still owed money
             transaction.objectStore("releasedPlayers").index("tid").getAll(tid).onsuccess = function (event) {
                 var i, releasedPlayers;
 
                 releasedPlayers = event.target.result;
-                for (i = 0; i < releasedPlayers.length; i++) {
-                    contracts.push({
-                        pid: releasedPlayers[i].pid,
-                        name: releasedPlayers[i].name,
-                        skills: releasedPlayers[i].skills,
-                        amount: releasedPlayers[i].contractAmount,
-                        exp: releasedPlayers[i].contractExp,
-                        released: true
-                    });
+
+                if (releasedPlayers.length === 0) {
+                    return cb(contracts);
                 }
 
-                cb(contracts);
+                for (i = 0; i < releasedPlayers.length; i++) {
+                    (function (i) {
+                        transaction.objectStore("players").get(releasedPlayers[i].pid).onsuccess = function (event) {
+                            var player;
+
+                            player = event.target.result;
+                            contracts.push({
+                                pid: player.pid,
+                                name: player.name,
+                                skills: _.last(player.ratings).skills,
+                                injury: player.injury,
+                                amount: player.contractAmount,
+                                exp: player.contractExp,
+                                released: true
+                            });
+
+                            if (contracts.length === players.length + releasedPlayers.length) {
+                                cb(contracts);
+                            }
+                        };
+                    }(i));
+                }
             };
         };
     }

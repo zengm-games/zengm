@@ -61,11 +61,15 @@ define(["lib/handlebars.runtime", "util/helpers"], function (Handlebars, helpers
     });
 
 
-    Handlebars.registerHelper("skills_block", function (skills) {
+    Handlebars.registerHelper("skillsBlock", function (skills) {
         return new Handlebars.SafeString(helpers.skillsBlock(skills));
     });
 
     Handlebars.registerHelper("currency", helpers.formatCurrency);
 
     Handlebars.registerHelper("numberWithCommas", helpers.numberWithCommas);
+
+    Handlebars.registerHelper("playerNameLabels", function (pid, name, injury, skills) {
+        return new Handlebars.SafeString(helpers.playerNameLabels(pid, name, injury, skills));
+    });
 });

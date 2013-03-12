@@ -13,7 +13,7 @@
     </thead>
     <tbody>
       {{#undrafted}}
-        <tr id="undrafted-{{pid}}"><td><a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>{{skills_block skills}}</td><td>{{pos}}</td><td>{{age}}<td>{{ovr}}</td><td>{{pot}}</td><td><button class="btn btn-mini btn-primary" data-player-id="{{pid}}"{{#unless ../started}} disabled="disabled"{{/unless}}>Draft</button></td></tr>
+        <tr id="undrafted-{{pid}}"><td>{{playerNameLabels pid name injury skills}}</td><td>{{pos}}</td><td>{{age}}<td>{{ovr}}</td><td>{{pot}}</td><td><button class="btn btn-mini btn-primary" data-player-id="{{pid}}"{{#unless ../started}} disabled="disabled"{{/unless}}>Draft</button></td></tr>
       {{/undrafted}}
     </tbody>
     </table>
@@ -26,7 +26,7 @@
     </thead>
     <tbody>
       {{#drafted}}
-        <tr><td>{{rnd}}-{{pick}}</td><td><a href="/l/{{../lid}}/roster/{{abbrev}}">{{abbrev}}</a></td><td><a href="/l/{{lid}}/player/{{pid}}">{{name}}</a>{{skills_block skills}}</td><td>{{pos}}</td><td>{{age}}<td>{{ovr}}</td><td>{{pot}}</td></tr>
+        <tr><td>{{rnd}}-{{pick}}</td><td><a href="/l/{{../lid}}/roster/{{abbrev}}">{{abbrev}}</a></td><td>{{#if injury}}{{playerNameLabels pid name injury skills}}{{/if}}</td><td>{{pos}}</td><td>{{age}}<td>{{ovr}}</td><td>{{pot}}</td></tr>
       {{/drafted}}
     </tbody>
     </table>

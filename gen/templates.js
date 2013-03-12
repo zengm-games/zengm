@@ -67,7 +67,7 @@ function program2(depth0,data,depth2) {
     + "\">"
     + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</a>"
-    + escapeExpression(helpers.skills_block.call(depth0, depth0.skills, {hash:{},data:data}))
+    + escapeExpression(helpers.skillsBlock.call(depth0, depth0.skills, {hash:{},data:data}))
     + "</td><td>"
     + escapeExpression(((stack1 = depth0.pos),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</td><td>"
@@ -286,14 +286,8 @@ function program7(depth0,data,depth2) {
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "><td>"
     + escapeExpression(((stack1 = depth0['i']),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + ". <a href=\"/l/"
-    + escapeExpression(((stack1 = depth2.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/player/"
-    + escapeExpression(((stack1 = depth0.pid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a>"
-    + escapeExpression(helpers.skills_block.call(depth0, ((stack1 = depth0.ratings),stack1 == null || stack1 === false ? stack1 : stack1.skills), {hash:{},data:data}))
+    + ". "
+    + escapeExpression(helpers.playerNameLabels.call(depth0, depth0.pid, depth0.name, depth0.injury, ((stack1 = depth0.ratings),stack1 == null || stack1 === false ? stack1 : stack1.skills), {hash:{},data:data}))
     + ", <a href=\"/l/"
     + escapeExpression(((stack1 = depth2.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "/roster/"
@@ -2126,14 +2120,8 @@ function program18(depth0,data,depth1) {
   buffer += ">";
   stack2 = helpers['if'].call(depth0, depth1.sortable, {hash:{},inverse:self.noop,fn:self.program(21, program21, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "<td><a href=\"/l/"
-    + escapeExpression(((stack1 = depth1.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/player/"
-    + escapeExpression(((stack1 = depth0.pid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a>"
-    + escapeExpression(helpers.skills_block.call(depth0, ((stack1 = depth0.ratings),stack1 == null || stack1 === false ? stack1 : stack1.skills), {hash:{},data:data}))
+  buffer += "<td>"
+    + escapeExpression(helpers.playerNameLabels.call(depth0, depth0.pid, depth0.name, depth0.injury, ((stack1 = depth0.ratings),stack1 == null || stack1 === false ? stack1 : stack1.skills), {hash:{},data:data}))
     + "</td><td>"
     + escapeExpression(((stack1 = depth0.pos),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</td><td>"
@@ -2344,14 +2332,8 @@ function program3(depth0,data,depth1) {
   var buffer = "", stack1, stack2;
   buffer += "\n        <tr id=\"undrafted-"
     + escapeExpression(((stack1 = depth0.pid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"><td><a href=\"/l/"
-    + escapeExpression(((stack1 = depth1.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/player/"
-    + escapeExpression(((stack1 = depth0.pid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a>"
-    + escapeExpression(helpers.skills_block.call(depth0, depth0.skills, {hash:{},data:data}))
+    + "\"><td>"
+    + escapeExpression(helpers.playerNameLabels.call(depth0, depth0.pid, depth0.name, depth0.injury, depth0.skills, {hash:{},data:data}))
     + "</td><td>"
     + escapeExpression(((stack1 = depth0.pos),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</td><td>"
@@ -2376,7 +2358,7 @@ function program4(depth0,data) {
 
 function program6(depth0,data,depth1) {
   
-  var buffer = "", stack1;
+  var buffer = "", stack1, stack2;
   buffer += "\n        <tr><td>"
     + escapeExpression(((stack1 = depth0.rnd),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "-"
@@ -2387,15 +2369,10 @@ function program6(depth0,data,depth1) {
     + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\">"
     + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a></td><td><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/player/"
-    + escapeExpression(((stack1 = depth0.pid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a>"
-    + escapeExpression(helpers.skills_block.call(depth0, depth0.skills, {hash:{},data:data}))
-    + "</td><td>"
+    + "</a></td><td>";
+  stack2 = helpers['if'].call(depth0, depth0.injury, {hash:{},inverse:self.noop,fn:self.program(7, program7, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "</td><td>"
     + escapeExpression(((stack1 = depth0.pos),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</td><td>"
     + escapeExpression(((stack1 = depth0.age),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
@@ -2405,6 +2382,11 @@ function program6(depth0,data,depth1) {
     + escapeExpression(((stack1 = depth0.pot),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</td></tr>\n      ";
   return buffer;
+  }
+function program7(depth0,data) {
+  
+  
+  return escapeExpression(helpers.playerNameLabels.call(depth0, depth0.pid, depth0.name, depth0.injury, depth0.skills, {hash:{},data:data}));
   }
 
   buffer += "<h1>Draft "
@@ -2517,7 +2499,7 @@ function program10(depth0,data) {
   
   var buffer = "", stack1;
   buffer += "<span class=\"skills_alone\">"
-    + escapeExpression(helpers.skills_block.call(depth0, ((stack1 = depth0.currentRatings),stack1 == null || stack1 === false ? stack1 : stack1.skills), {hash:{},data:data}))
+    + escapeExpression(helpers.skillsBlock.call(depth0, ((stack1 = depth0.currentRatings),stack1 == null || stack1 === false ? stack1 : stack1.skills), {hash:{},data:data}))
     + "</span><br>";
   return buffer;
   }
@@ -2835,7 +2817,7 @@ function program26(depth0,data,depth1) {
     + "</td><td>"
     + escapeExpression(((stack1 = depth0.reb),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</td><td><span class=\"skills_alone\">"
-    + escapeExpression(helpers.skills_block.call(depth0, depth0.skills, {hash:{},data:data}))
+    + escapeExpression(helpers.skillsBlock.call(depth0, depth0.skills, {hash:{},data:data}))
     + "</span></td></tr>\n    ";
   return buffer;
   }

@@ -16,7 +16,7 @@
       {{#if showContract}}
         {{#if freeAgent}}Asking for{{else}}Contract{{/if}}: {{currency player.contractAmount "M"}}/yr thru {{player.contractExp}}<br>
       {{/if}}
-      {{#unless retired}}<span class="skills_alone">{{skills_block currentRatings.skills}}</span><br>{{/unless}}
+      {{#unless retired}}<span class="skills_alone">{{skillsBlock currentRatings.skills}}</span><br>{{/unless}}
     </div>
   </div>
   {{#unless retired}}
@@ -135,7 +135,7 @@
   </thead>
   <tbody>
     {{#player.ratings}}
-      <tr><td><a href="#">{{season}}</a></td><td><a href="/l/{{../lid}}/roster/{{abbrev}}/{{season}}">{{abbrev}}</a></td><td>{{age}}</td><td>{{ovr}}</td><td>{{pot}}</td><td>{{hgt}}</td><td>{{stre}}</td><td>{{spd}}</td><td>{{jmp}}</td><td>{{endu}}</td><td>{{ins}}</td><td>{{dnk}}</td><td>{{ft}}</td><td>{{fg}}</td><td>{{tp}}</td><td>{{blk}}</td><td>{{stl}}</td><td>{{drb}}</td><td>{{pss}}</td><td>{{reb}}</td><td><span class="skills_alone">{{skills_block skills}}</span></td></tr>
+      <tr><td><a href="#">{{season}}</a></td><td><a href="/l/{{../lid}}/roster/{{abbrev}}/{{season}}">{{abbrev}}</a></td><td>{{age}}</td><td>{{ovr}}</td><td>{{pot}}</td><td>{{hgt}}</td><td>{{stre}}</td><td>{{spd}}</td><td>{{jmp}}</td><td>{{endu}}</td><td>{{ins}}</td><td>{{dnk}}</td><td>{{ft}}</td><td>{{fg}}</td><td>{{tp}}</td><td>{{blk}}</td><td>{{stl}}</td><td>{{drb}}</td><td>{{pss}}</td><td>{{reb}}</td><td><span class="skills_alone">{{skillsBlock skills}}</span></td></tr>
     {{/player.ratings}}
   </tbody>
 </table>

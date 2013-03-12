@@ -870,7 +870,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                 };
             }
 
-            attributes = ["pid", "name", "pos", "age", "contractAmount", "contractExp", "cashOwed", "rosterOrder"];
+            attributes = ["pid", "name", "pos", "age", "contractAmount", "contractExp", "cashOwed", "rosterOrder", "injury"];
             ratings = ["ovr", "pot", "skills"];
             stats = ["min", "pts", "trb", "ast", "per"];
 
@@ -1202,7 +1202,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
             g.dbl.transaction("players").objectStore("players").index("tid").getAll(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
                 var attributes, data, i, players, ratings, stats;
 
-                attributes = ["pid", "name", "pos", "age", "contractAmount", "contractExp", "freeAgentTimesAsked"];
+                attributes = ["pid", "name", "pos", "age", "contractAmount", "contractExp", "freeAgentTimesAsked", "injury"];
                 ratings = ["ovr", "pot", "skills"];
                 stats = ["min", "pts", "trb", "ast", "per"];
 
@@ -1221,7 +1221,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                 };
                 ui.update(data, function () {
                     ui.datatable($("#free-agents"), 4, _.map(players, function (p) {
-                        return ['<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>' + helpers.skillsBlock(p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), helpers.formatCurrency(p.contractAmount, "M") + ' thru ' + p.contractExp, '<form action="/l/' + g.lid + '/negotiation/' + p.pid + '" method="POST" style="margin: 0"><input type="hidden" name="new" value="1"><button type="submit" class="btn btn-mini btn-primary">Negotiate</button></form>'];
+                        return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), helpers.formatCurrency(p.contractAmount, "M") + ' thru ' + p.contractExp, '<form action="/l/' + g.lid + '/negotiation/' + p.pid + '" method="POST" style="margin: 0"><input type="hidden" name="new" value="1"><button type="submit" class="btn btn-mini btn-primary">Negotiate</button></form>'];
                     }));
 
                     if (req.raw.cb !== undefined) {
@@ -1269,7 +1269,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                     playerStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
                         var attributes, i, ratings, stats, userRoster;
 
-                        attributes = ["pid", "name", "pos", "age", "contractAmount", "contractExp"];
+                        attributes = ["pid", "name", "pos", "age", "contractAmount", "contractExp", "injury"];
                         ratings = ["ovr", "pot", "skills"];
                         stats = ["min", "pts", "trb", "ast", "per"];
                         userRoster = db.getPlayers(event.target.result, g.season, g.userTid, attributes, stats, ratings, {showNoStats: true});
@@ -1325,7 +1325,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                                         if (p.selected) {
                                             selected = ' checked = "checked"';
                                         }
-                                        return ['<input name="user-pids" type="checkbox" value="' + p.pid + '"' + selected + '>', '<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>' + helpers.skillsBlock(p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contractAmount, "M") + ' thru ' + p.contractExp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
+                                        return ['<input name="user-pids" type="checkbox" value="' + p.pid + '"' + selected + '>', helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contractAmount, "M") + ' thru ' + p.contractExp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
                                     }));
 
                                     ui.datatableSinglePage($("#roster-other"), 5, _.map(otherRoster, function (p) {
@@ -1334,7 +1334,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                                         if (p.selected) {
                                             selected = ' checked = "checked"';
                                         }
-                                        return ['<input name="other-pids" type="checkbox" value="' + p.pid + '"' + selected + '>', '<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>' + helpers.skillsBlock(p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contractAmount, "M") + ' thru ' + p.contractExp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
+                                        return ['<input name="other-pids" type="checkbox" value="' + p.pid + '"' + selected + '>', helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contractAmount, "M") + ' thru ' + p.contractExp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
                                     }));
 
                                     rosterCheckboxesUser = $("#roster-user input");
@@ -1468,7 +1468,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                         pa = playersAll[i];
 
                         // Attributes
-                        player = {pid: pa.pid, name: pa.name, pos: pa.pos, age: g.season - pa.bornYear};
+                        player = {pid: pa.pid, name: pa.name, pos: pa.pos, age: g.season - pa.bornYear, injury: pa.injury};
 
                         // Ratings
                         pr = pa.ratings[0];
@@ -1494,7 +1494,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                                 result = helpers.validateTid(pa.draftTid);
                                 draftTid = result[0];
                                 draftAbbrev = result[1];
-                                player = {pid: pa.pid, name: pa.name, pos: pa.pos, age: g.season - pa.bornYear, abbrev: draftAbbrev, rnd: pa.draftRound, pick: pa.draftPick};
+                                player = {pid: pa.pid, name: pa.name, pos: pa.pos, age: g.season - pa.bornYear, abbrev: draftAbbrev, rnd: pa.draftRound, pick: pa.draftPick, injury: pa.injury};
 
                                 // Ratings
                                 pr = pa.ratings[0];
@@ -1794,7 +1794,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                 categories.push({name: "Minutes", stat: "Min", title: "Minutes Per Game", data: [], minStats: ["gp", "min"], minValue: [70, 2000]});
                 categories.push({name: "Player Efficiency Rating", stat: "PER", title: "Player Efficiency Rating", data: [], minStats: ["min"], minValue: [2000]});
 
-                attributes = ["pid", "name"];
+                attributes = ["pid", "name", "injury"];
                 ratings = ["skills"];
                 stats = ["pts", "trb", "ast", "fgp", "tpp", "ftp", "blk", "stl", "min", "per", "gp", "fg", "tp", "ft", "abbrev"];  // This needs to be in the same order as categories (at least, initially)
                 players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings);
@@ -1922,7 +1922,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
                 var attributes, data, players, ratings, stats;
-                attributes = ["pid", "name", "pos", "age"];
+                attributes = ["pid", "name", "pos", "age", "injury"];
                 ratings = ["skills"];
                 stats = ["abbrev", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per"];
 
@@ -1938,7 +1938,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                     ui.dropdown($('#player-stats-select-season'));
 
                     ui.datatable($("#player-stats"), 2, _.map(players, function (p) {
-                        return ['<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>' + helpers.skillsBlock(p.ratings.skills), p.pos, '<a href="/l/' + g.lid + '/roster/' + p.stats.abbrev + '/' + season + '">' + p.stats.abbrev + '</a>', String(p.stats.gp), String(p.stats.gs), helpers.round(p.stats.min, 1), helpers.round(p.stats.fg, 1), helpers.round(p.stats.fga, 1), helpers.round(p.stats.fgp, 1), helpers.round(p.stats.tp, 1), helpers.round(p.stats.tpa, 1), helpers.round(p.stats.tpp, 1), helpers.round(p.stats.ft, 1), helpers.round(p.stats.fta, 1), helpers.round(p.stats.ftp, 1), helpers.round(p.stats.orb, 1), helpers.round(p.stats.drb, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.tov, 1), helpers.round(p.stats.stl, 1), helpers.round(p.stats.blk, 1), helpers.round(p.stats.pf, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.per, 1)];
+                        return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, '<a href="/l/' + g.lid + '/roster/' + p.stats.abbrev + '/' + season + '">' + p.stats.abbrev + '</a>', String(p.stats.gp), String(p.stats.gs), helpers.round(p.stats.min, 1), helpers.round(p.stats.fg, 1), helpers.round(p.stats.fga, 1), helpers.round(p.stats.fgp, 1), helpers.round(p.stats.tp, 1), helpers.round(p.stats.tpa, 1), helpers.round(p.stats.tpp, 1), helpers.round(p.stats.ft, 1), helpers.round(p.stats.fta, 1), helpers.round(p.stats.ftp, 1), helpers.round(p.stats.orb, 1), helpers.round(p.stats.drb, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.tov, 1), helpers.round(p.stats.stl, 1), helpers.round(p.stats.blk, 1), helpers.round(p.stats.pf, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.per, 1)];
                     }));
 
                     if (req.raw.cb !== undefined) {
@@ -2059,7 +2059,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                         }
                     }
 
-                    attributes = ["pid", "name", "pos", "age"];
+                    attributes = ["pid", "name", "pos", "age", "injury"];
                     stats = ["min", "pts", "trb", "ast", "per"];
                     ratings = ["ovr", "pot", "skills"];
 
@@ -2083,7 +2083,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                     };
                     ui.update(data, function () {
                         ui.datatable($("#negotiation-list"), 4, _.map(players, function (p) {
-                            return ['<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>' + helpers.skillsBlock(p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), helpers.formatCurrency(p.contractAmount, "M") + ' thru ' + p.contractExp, '<a href="/l/' + g.lid + '/negotiation/' + p.pid + '}" class="btn btn-mini btn-primary">Negotiate</a>'];
+                            return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), helpers.formatCurrency(p.contractAmount, "M") + ' thru ' + p.contractExp, '<a href="/l/' + g.lid + '/negotiation/' + p.pid + '}" class="btn btn-mini btn-primary">Negotiate</a>'];
                         }));
 
                         if (req.raw.cb !== undefined) {
@@ -2544,7 +2544,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
                 var attributes, data, players, ratings, stats;
-                attributes = ["pid", "name", "pos", "age"];
+                attributes = ["pid", "name", "pos", "age", "injury"];
                 ratings = ["skills"];
                 stats = ["abbrev", "gp", "gs", "min", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp"];
 
@@ -2560,7 +2560,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                     ui.dropdown($('#player-shot-locations-select-season'));
 
                     ui.datatable($("#player-shot-locations"), 0, _.map(players, function (p) {
-                        return ['<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>' + helpers.skillsBlock(p.ratings.skills), p.pos, '<a href="/l/' + g.lid + '/roster/' + p.stats.abbrev + '/' + season + '">' + p.stats.abbrev + '</a>', String(p.stats.gp), String(p.stats.gs), helpers.round(p.stats.min, 1), helpers.round(p.stats.fgAtRim, 1), helpers.round(p.stats.fgaAtRim, 1), helpers.round(p.stats.fgpAtRim, 1), helpers.round(p.stats.fgLowPost, 1), helpers.round(p.stats.fgaLowPost, 1), helpers.round(p.stats.fgpLowPost, 1), helpers.round(p.stats.fgMidRange, 1), helpers.round(p.stats.fgaMidRange, 1), helpers.round(p.stats.fgpMidRange, 1), helpers.round(p.stats.tp, 1), helpers.round(p.stats.tpa, 1), helpers.round(p.stats.tpp, 1)];
+                        return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, '<a href="/l/' + g.lid + '/roster/' + p.stats.abbrev + '/' + season + '">' + p.stats.abbrev + '</a>', String(p.stats.gp), String(p.stats.gs), helpers.round(p.stats.min, 1), helpers.round(p.stats.fgAtRim, 1), helpers.round(p.stats.fgaAtRim, 1), helpers.round(p.stats.fgpAtRim, 1), helpers.round(p.stats.fgLowPost, 1), helpers.round(p.stats.fgaLowPost, 1), helpers.round(p.stats.fgpLowPost, 1), helpers.round(p.stats.fgMidRange, 1), helpers.round(p.stats.fgaMidRange, 1), helpers.round(p.stats.fgpMidRange, 1), helpers.round(p.stats.tp, 1), helpers.round(p.stats.tpa, 1), helpers.round(p.stats.tpp, 1)];
                     }));
 
                     if (req.raw.cb !== undefined) {

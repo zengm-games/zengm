@@ -2,17 +2,19 @@ CURRENT PRIORITIES
 ------------------
 
 injury
-  display injury in player view, somehow
+  do injured players actually not play?
   core.player.injury
     influence from health budget
-  in core.game, if a player has injured: true but is healthy in the database, pick the type of injury. make sure to set the number of games missed based on data, the health budget, and randomness.
   handling injured players
     injured players show at bottom of roster, with no handle for sorting
     any problem with recording starters, if a starter is injured?
     helpers.util.playerNameLabels
       tooltip: just say "end of season". if it exceeds playoffs and offseason, estimate like "early next year" or whatever
-      use everywhere skills are shown
-      rethink putting skills in releasedPlayers?
+      problems with usage
+        display injury in player view, somehow
+        team finances: rethink putting skills in releasedPlayers?
+        box score: cache injury at time of game?
+        viewing old seasons: db.getPlayers should return no injury if season < g.season
   each game, decrement player.injury.gamesRemaining. at end of season, decrease by X to simulate offseason.
 DataTables - need to rethink a lot of this, particularly how to make a decent UI
   sorting of team name column in finances view is fucked up

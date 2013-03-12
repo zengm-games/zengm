@@ -360,7 +360,7 @@ define(["globals", "lib/jquery"], function (g, $) {
 
         html = '<a href="/l/' + g.lid + '/player/' + pid + '">' + name + '</a>';
         if (injury.gamesRemaining > 0) {
-            html += '<i class="icon-plus-sign icon-white" style="margin-left: 3px" title="' + injury.type + '(out ' + injury.gamesRemaining + ' more games)"></i>';
+            html += '<i class="icon-plus-sign icon-white injury-label" title="' + injury.type + '(out ' + injury.gamesRemaining + ' more games)"></i>';
         }
         html += skillsBlock(skills);
 

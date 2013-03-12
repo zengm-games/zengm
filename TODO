@@ -57,9 +57,7 @@ negotiation is annoying
     initialize with some value based on if it's a resigning or not, and wins the previous season
   shouldn't be so aggressive/adversarial
   make calculation of demand to display DRY - or any change, be careful
-league leaders
-  minimum minutes played to show should use team GP to scale, not player (this won't matter until injuries are implemented, basically)
-    it matters now! not rare to see a guy who played 1 game and hit 1 3 leading the league
+tweak gameSim for stats again
 
 DATABASE CHANGES since 3.0.0-beta
 ---------------------------------

@@ -658,6 +658,16 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                     update = true;
                 }
 
+                // Heal injures
+                if (p.injury.type !== "Healthy") {
+                    if (p.injury.gamesRemaining <= 82) {
+                        p.injury = {type: "Healthy", gamesRemaining: 0};
+                    } else {
+                        p.injury.gamesRemaining -= 82;
+                    }
+                    update = true;
+                }
+
                 // Update player in DB, if necessary
                 if (update) {
                     cursor.update(p);

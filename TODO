@@ -6,15 +6,12 @@ injury
     influence from health budget
   handling injured players
     helpers.util.playerNameLabels
-      tooltip: just say "end of season". if it exceeds playoffs and offseason, estimate like "early next year" or whatever
-        so, need to abstract this to a function, including where the icon is displayed in player view
       problems with usage
         box score: cache injury at time of game (are skills cached already?)
           box score (and any historical view) should show cached injury/skills statuses
         team finances: rethink putting skills in releasedPlayers?
   player.injury.gamesRemaining
-    at end of season, decrease by X to simulate offseason.
-    don't worry too much about improving this until we have a real calendar system in place
+    don't worry too much about improving tracking this until we have a real calendar system in place
   how to deal with a team that drops below 5 active players, factoring in injuries?
     should allow them to exceed roster limit while injury exists
     should not allow play when below 5

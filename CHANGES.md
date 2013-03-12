@@ -1,6 +1,6 @@
 This is a list of only the major changes in each version.
 
-# 3.0.0-beta2
+# 3.0.0-beta.2
 
 ## Gameplay and UI
 
@@ -18,7 +18,7 @@ This is a list of only the major changes in each version.
 
 - Settings to control various budget items, such as ticket price, scouting budget, etc.
 
-- ...
+- See TODO
 
 ## Backend
 
@@ -30,7 +30,7 @@ This is a list of only the major changes in each version.
 
 ### Still in progress
 
-- ...
+- See TODO
 
 # 3.0.0-beta
 

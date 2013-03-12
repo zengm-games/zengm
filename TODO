@@ -1,11 +1,13 @@
-CURRENT PRIORITIES
-------------------
+BEFORE 3.0.0-beta.2
+-------------------
 
 injury
-  how to deal with a team that drops below 5 active players, factoring in injuries?
-    should allow them to exceed roster limit while injury exists
-    should not allow play when below 5
-    should use same logic/functions as core.season that checks on new season.
+  would it be better to have a numerical icon to show number of games left?
+how to deal with a team that drops below 5 active players, factoring in injuries?
+  should allow them to exceed roster limit while injury exists
+  should not allow play when below 5
+  should use same logic/functions as core.season that checks on new season.
+    first, add support for auto-add players when AI teams are below limit (in season.js)
 DataTables - need to rethink a lot of this, particularly how to make a decent UI
   sorting of team name column in finances view is fucked up
   fix default sort order on column click
@@ -52,26 +54,39 @@ like on team finances page, anywhere else to add help popups?
   should this be abstracted rather than just inline in views?
   should stay open through page reload, somehow
   inline anything from the manual?
+store contract history/future with each player, and show in player view
+store a list of awards/honors with each player, and show in player view
+negotiation is annoying
+  come up with an "anger meter" to display the odds of the player demanding more
+    initialize with some value based on if it's a resigning or not, and wins the previous season
+  shouldn't be so aggressive/adversarial
+  make calculation of demand to display DRY - or any change, be careful
+league leaders
+  minimum minutes played to show should use team GP to scale, not player (this won't matter until injuries are implemented, basically)
+    it matters now! not rare to see a guy who played 1 game and hit 1 3 leading the league
 
-DATABASE CHANGES since 3.0.0beta
---------------------------------
+DATABASE CHANGES since 3.0.0-beta
+---------------------------------
+
+ON DB UPGRADE show a message explaining new features!!
+
 added to seasonAttributes for each team:
-      hype: number,
-      pop: number,
-      tvContractAmount: number,
-      tvContractExp: number,
-      merchAmount: number,
-      sponsorAmount: number,
-      payrollEndOfSeason: number,  // Fill this in at the end of the regular season. before that, use db.getPayroll
-      salaryPaid: number,  // Each game, add based on current roster
-      luxuryTaxPaid: number,  // this shoudl be set at the end of the season
-      minTaxPaid: number  // this shoudl be set at the end of the season
+  hype: number,
+  pop: number,
+  tvContractAmount: number,
+  tvContractExp: number,
+  merchAmount: number,
+  sponsorAmount: number,
+  payrollEndOfSeason: number,  // Fill this in at the end of the regular season. before that, use db.getPayroll
+  salaryPaid: number,  // Each game, add based on current roster
+  luxuryTaxPaid: number,  // this shoudl be set at the end of the season
+  minTaxPaid: number  // this shoudl be set at the end of the season
 removed "cost" and "revenue" from seasonAttributes
 changes to retiredPlayers, but that's just removing stuff that isn't needed anymore, so no problem
 added "injury" to player
 
-MANUAL CHANGES TODO since 3.0.0beta
------------------------------------
+MANUAL CHANGES TODO since 3.0.0-beta
+------------------------------------
 
 BEFORE 3.0.0
 ------------
@@ -80,13 +95,6 @@ any raw data files should go in the data folder, ideally with a script to conver
 database changes
   KEEP TRACK OF THESE CHANGES so i can upgrade
   should money stored be in millions? are thousands actually outputted anywhere? would there be a loss of accuracy?
-  negotiation is annoying
-    come up with an "anger meter" to display the odds of the player demanding more
-      initialize with some value based on if it's a resigning or not, and wins the previous season
-    shouldn't be so aggressive/adversarial
-    make calculation of demand to display DRY - or any change, be careful
-  store contract history/future with each player, and show in player view
-  store a list of awards/honors with each player
   add activeYears multientry like statsTids use for:
     league leaders
     stats
@@ -127,7 +135,6 @@ move to new window button, like gmail, that will open a view in a new window wit
   only the icon should be clickable, not the area above and below
 team history view needs more love
   dropdown for other teams
-auto-add players when AI teams are below limit (in season.js)
 AI modules that contain functions which are called to determine actions
   mode: rebuild or contend
   things to regulate...
@@ -148,7 +155,6 @@ show an option to upload a data file for rosters
     nba player potential ratings
     if necessary, scale everything down a bit to make it comparable to normal players
     free agents are way overrated. is this roster file legit?
-should all this stuff be always in g, or read dynamically from the database?
 player finder
   search by stats or ratings
   trade for button, or sign button if free agent
@@ -160,6 +166,7 @@ PER
     reevaluate this in general. stats don't seem to be showing after a trade in roster view and player view.
   use for awards, contracts
 some UI showing the state of the team's synergy. maybe like an advisors screen that suggests what kind of player is needed to improve synergy
+  also can respond to budget changes
 show record (w-l) on roster view - make it more like a summary, as in basketball-reference
   playoff results
   payroll
@@ -172,9 +179,6 @@ too easy to do the "be bad, get draft picks, keep payroll low, sign free agents,
     do a dramatic presentation?
   free agents are less willing to sign with bad teams
   user can't just sign all the free agents before AI teams
-league leaders
-  minimum minutes played to show should use team GP to scale, not player (this won't matter until injuries are implemented, basically)
-    it matters now! not rare to see a guy who played 1 game and hit 1 3 leading the league
 trades
   draft picks
   cash

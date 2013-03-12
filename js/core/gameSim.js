@@ -39,7 +39,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
         // Starting lineups, which will be reset by updatePlayersOnCourt. This must be done because of injured players in the top 5.
         this.playersOnCourt = [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]];
-        this.updateTeamCompositeRatings();
+        this.startersRecorded = false;  // Used to track whether the *real* starters have been recorded or not.
 
         this.subsEveryN = 6;  // How many possessions to wait before doing substitutions
 
@@ -224,10 +224,24 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                         this.team[t].player[b].stat.benchTime = random.uniform(-2, 2);
                         this.team[t].player[p].stat.courtTime = random.uniform(-2, 2);
                         this.team[t].player[p].stat.benchTime = random.uniform(-2, 2);
+
+                        break;  // First better player off the bench goes in. So, roster order matters.
                     }
                 }
                 i += 1;
             }
+        }
+
+        // Record starters if that hasn't been done yet. This should run the first time this function is called, and never again.
+        if (!this.startersRecorded) {
+            for (t = 0; t < 2; t++) {
+                for (p = 0; p < this.team[t].player.length; p++) {
+                    if (this.playersOnCourt[t].indexOf(p) >= 0) {
+                        this.recordStat(t, p, "gs");
+                    }
+                }
+            }
+            this.startersRecorded = 1;
         }
 
         return substitutions;

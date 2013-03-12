@@ -1,16 +1,16 @@
 CURRENT PRIORITIES
 ------------------
 
+PLay -> stop doesn't always set status to idle
 injury
-  gp still recorded even though 0 minutes and injured?
   core.player.injury
     influence from health budget
   handling injured players
-    any problem with recording starters, if a starter is injured?
     helpers.util.playerNameLabels
       tooltip: just say "end of season". if it exceeds playoffs and offseason, estimate like "early next year" or whatever
       problems with usage
         box score: cache injury at time of game (are skills cached already?)
+          box score (and any historical view) should show cached injury/skills statuses
         team finances: rethink putting skills in releasedPlayers?
         viewing old seasons: db.getPlayers should return no injury if season < g.season
   player.injury.gamesRemaining
@@ -91,12 +91,10 @@ MANUAL CHANGES TODO since 3.0.0beta
 BEFORE 3.0.0
 ------------
 
-box score (and any historical view) should show cached injury/skills statuses
 any raw data files should go in the data folder, ideally with a script to convert them to however they're used here
 database changes
   KEEP TRACK OF THESE CHANGES so i can upgrade
   should money stored be in millions? are thousands actually outputted anywhere? would there be a loss of accuracy?
-  injuries
   negotiation is annoying
     come up with an "anger meter" to display the odds of the player demanding more
       initialize with some value based on if it's a resigning or not, and wins the previous season
@@ -191,6 +189,7 @@ too easy to do the "be bad, get draft picks, keep payroll low, sign free agents,
   user can't just sign all the free agents before AI teams
 league leaders
   minimum minutes played to show should use team GP to scale, not player (this won't matter until injuries are implemented, basically)
+    it matters now! not rare to see a guy who played 1 game and hit 1 3 leading the league
 trades
   draft picks
   cash

@@ -220,12 +220,11 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
                         // Substitute player
                         this.playersOnCourt[t][i] = b;
+                        p = b;
                         this.team[t].player[b].stat.courtTime = random.uniform(-2, 2);
                         this.team[t].player[b].stat.benchTime = random.uniform(-2, 2);
                         this.team[t].player[p].stat.courtTime = random.uniform(-2, 2);
                         this.team[t].player[p].stat.benchTime = random.uniform(-2, 2);
-
-                        break;  // First better player off the bench goes in. So, roster order matters.
                     }
                 }
                 i += 1;

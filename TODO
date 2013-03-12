@@ -3,7 +3,7 @@ CURRENT PRIORITIES
 
 link to game log from team roster/finances views
 injury
-  at least some injured players are still playing some - top starter?
+  box score - display injured players at bottom
   how to deal with a team that drops below 5 active players, factoring in injuries?
     should allow them to exceed roster limit while injury exists
     should not allow play when below 5

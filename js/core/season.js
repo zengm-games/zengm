@@ -551,28 +551,32 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                 // Add row to team stats and team season attributes
                 tx = g.dbl.transaction(["players", "teams"], "readwrite");
                 tx.objectStore("teams").openCursor().onsuccess = function (event) {
-                    var cursor, i, key, playoffStats, seasonStats, t;
+                    var cursor, i, key, playoffStats, t, teamSeason, teamStats;
 
                     cursor = event.target.result;
                     if (cursor) {
                         t = cursor.value;
+                        teamSeason = _.last(t.seasons);
+                        teamStats = _.last(t.stats);
                         if (tidPlayoffs.indexOf(t.tid) >= 0) {
-                            for (i = 0; i < t.stats.length; i++) {
-                                if (t.stats[i].season === g.season) {
-                                    seasonStats = t.stats[i];
-                                    break;
-                                }
-                            }
                             playoffStats = {};
-                            for (key in seasonStats) {
-                                if (seasonStats.hasOwnProperty(key)) {
+                            for (key in teamStats) {
+                                if (teamStats.hasOwnProperty(key)) {
                                     playoffStats[key] = 0;
                                 }
                             }
                             playoffStats.season = g.season;
                             playoffStats.playoffs = true;
                             t.stats.push(playoffStats);
-                            _.last(t.seasons).madePlayoffs = true;
+
+                            teamSeason.madePlayoffs = true;
+
+                            // More hype for making the playoffs
+                            teamSeason.hype += 0.05;
+                            if (teamSeason.hype > 1) {
+                                teamSeason.hype = 1;
+                            }
+
                             cursor.update(t);
 
                             // Add row to player stats
@@ -587,6 +591,14 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                                     cursorP.continue();
                                 }
                             };
+                        } else {
+                            // Less hype for missing the playoffs
+                            teamSeason.hype -= 0.05;
+                            if (teamSeason.hype < 0) {
+                                teamSeason.hype = 0;
+                            }
+
+                            cursor.update(t);
                         }
                         cursor.continue();
                     }

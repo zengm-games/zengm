@@ -19,14 +19,13 @@ more tests
 update formulas
   hype
     increase/decrease a lot for discrete events
-      making/missing the playoffs
       winning a round in the playoffs
-      winning a title
       having a long tenured star leave
       winning a rare draft lottery
       sign a star
       trade for a star
       other stuff in the help in team finances
+    update info text in team finances, make sure it's accurate
   nationalTvRevenue
     base on g.nationalTvContractAmount, for now a constant
   localTvRevenue
@@ -53,6 +52,7 @@ knobs to control team finances
 like on team finances page, anywhere else to add help popups?
   should this be abstracted rather than just inline in views?
   inline anything from the manual?
+  release and buy out menus
 store contract history/future with each player, and show in player view
   replace contractAmount and contractExp with contracts, a {amount: 5235, exp: 2052} object in player.stats.
     it's not well normalized in player.stats, but that should make it easy to access however it's needed

@@ -739,7 +739,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                 if (p.contractExp <= g.season) {
                     if (p.tid !== g.userTid) {
                         // Automatically negotiate with teams
-                        if (Math.random() > 0.5) { // Should eventually be smarter than a coin flip
+                        if (Math.random() > _.last(p.ratings).ovr / 100) { // Should eventually be smarter than a coin flip
                             cont = player.contract(_.last(p.ratings));
                             p.contractAmount = cont.amount;
                             p.contractExp = cont.exp;

@@ -12,7 +12,6 @@ DataTables - need to rethink a lot of this, particularly how to make a decent UI
     http://datatables.net/ref#asSorting will work. maybe pass it as an option to bbgm_datatable
     text should be asc, numeric should be desc
     http://stackoverflow.com/questions/3725321/jquery-datatables-change-order-to-desc-when-it-sorts - but can it be set globally? maybe i can have ui.datatable automatically read columns and figure it out?
-increase AI resigning probability
 bbgmPing should only work in production
   make sure it still works next time i update play.basketball-gm.com
 give bbgm website its own version of bootstrap (only with components needed)
@@ -53,6 +52,7 @@ like on team finances page, anywhere else to add help popups?
   should stay open through page reload, somehow
   inline anything from the manual?
 store contract history/future with each player, and show in player view
+  replace contractAmount and contractExp with contracts, a list of {amount: 5235, exp: 2052} objects.
 store a list of awards/honors with each player, and show in player view
 negotiation is annoying
   come up with an "anger meter" to display the odds of the player demanding more

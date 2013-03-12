@@ -308,7 +308,7 @@ function program8(depth0,data) {
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "\n  </select>\n</form>\n\n<h1>League Leaders "
     + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n\n<p>Only eligible players are shown (a player shooting 2 for 2 on the season is not eligible for the league lead in FG%).</p>\n\n<p></p>\n<div class=\"row-fluid\">\n  ";
+    + "</h1>\n\n<p>Only eligible players are shown (<i>e.g.</i> a player shooting 2 for 2 on the season is not eligible for the league lead in FG%).</p>\n\n<p></p>\n<div class=\"row-fluid\">\n  ";
   stack2 = ((stack1 = ((stack1 = depth0.categories),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program4, data, depth0),data:data}));
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "\n</div>";
@@ -2528,7 +2528,7 @@ function program11(depth0,data) {
     + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.injury)),stack1 == null || stack1 === false ? stack1 : stack1.gamesRemaining)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + " more games)\" style=\"margin-left: 0\">"
     + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.injury)),stack1 == null || stack1 === false ? stack1 : stack1.gamesRemaining)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</i><span class=\"skills_block\">";
+    + "</span><span class=\"skills_block\">";
   return buffer;
   }
 

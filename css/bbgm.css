@@ -206,9 +206,11 @@ select.past-x {
   font-size: 10px;
   line-height: 18px;
   margin-left: 5px;
+  vertical-align: 2%;
 }
 .skills_alone {
   margin-left: -5px;
+  vertical-align: 2%;
 }
 
 /* This is needed to keep the form fields the right size inside row-fluid after upgrading to Bootstrap 2.1. */

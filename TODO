@@ -6,16 +6,16 @@ how to deal with a team that drops below 5 active players, factoring in injuries
   should not allow play when below 5
   should use same logic/functions as core.season that checks on new season.
     first, add support for auto-add players when AI teams are below limit (in season.js)
-DataTables - need to rethink a lot of this, particularly how to make a decent UI
-  fix default sort order on column click
-    http://datatables.net/ref#asSorting will work. maybe pass it as an option to bbgm_datatable
-    text should be asc, numeric should be desc
-    http://stackoverflow.com/questions/3725321/jquery-datatables-change-order-to-desc-when-it-sorts - but can it be set globally? maybe i can have ui.datatable automatically read columns and figure it out?
+DataTables - fix default sort order on column click
+  http://datatables.net/ref#asSorting will work. maybe pass it as an option to bbgm_datatable
+  text should be asc, numeric should be desc
+  http://stackoverflow.com/questions/3725321/jquery-datatables-change-order-to-desc-when-it-sorts - but can it be set globally? maybe i can have ui.datatable automatically read columns and figure it out?
 bbgmPing should only work in production
   make sure it still works next time i update play.basketball-gm.com
 give bbgm website its own version of bootstrap (only with components needed)
 display league/season counter on basketball-gm.com splash page
-more unit tests
+more tests
+  https://github.com/gotwarlost/istanbul
 update formulas
   hype
     increase/decrease a lot for discrete events
@@ -42,6 +42,10 @@ knobs to control team finances
   move ticket price to gameAttributes rather than making it a constant
     post-revenue-calculation attendance should depend on ticket price. so should hype, but only slightly
   scouting budget - decrease "fuzz" added to displayed ratings
+    fuzz
+      for each player, calculate a randn(0, scoutingPaidRank/10) with max/min of +/- 5
+      calculate a new one each year and add it to 1/2 of the previous one
+      displayed "skills" should include fuzz. ones used in gameSim shouldn't.
   coaching budget - influence player development
   health budget - influence injuries, both rate and severity (rate is defined in core.gameSim, severity is defined in core.player.injury)
   facilities budget - influence free agent demeanor, player development
@@ -50,7 +54,8 @@ like on team finances page, anywhere else to add help popups?
   should this be abstracted rather than just inline in views?
   inline anything from the manual?
 store contract history/future with each player, and show in player view
-  replace contractAmount and contractExp with contracts, a list of {amount: 5235, exp: 2052} objects.
+  replace contractAmount and contractExp with contracts, a {amount: 5235, exp: 2052} object in player.stats.
+    it's not well normalized in player.stats, but that should make it easy to access however it's needed
 store a list of awards/honors with each player, and show in player view
 negotiation is annoying
   come up with an "anger meter" to display the odds of the player demanding more
@@ -263,6 +268,8 @@ contract negotiation
 eliminate jquery UI dependency? it's only used for roster reordering currently
 real calendar
   player.injury.gamesRemaining
+core.gameSim.updateSynergy should produce continuous output
+  no big difference between a 80 rating and 79 rating, or whatever
 
 ---
 
@@ -364,22 +371,11 @@ real contract rules (max/min, etc.)
 allow contracts that aren't the same $ every year
 team and player options
 releasing players - see the salary cap wiki page for complicated rule
-luxury tax: (team_salary - 65mil) penalty if team salary is > 65mil
 trading deadline
-
-BACKEND
--------
-archive stats as averages - this will make the end of season awards feasible, and make the stats view faster/easier
-uncertainty in rating - for each player, calculate a randn(0, 3) with max/min of +/- 5
-    calculate a new one each year and add it to 1/2 of the previous one
-teams should be smart in resigning players (now it's just random)
-use constants for phase #'s, other things.  maybe create a dict CONST in common.py?
-    confirm that teams always have at least 5 players
 
 AI (NON-GAMESIM)
 ----------------
 trade
-  mechanism similar to free_agent_times_asked to prevent prolonged negotiations
   AI teams trade with each other
   opponent GM trade AI based on their team's status: contending or rebuilding
   record player value for contending and rebuilding teams in player_attributes, so opposing GMs can more easily suggest trades (i.e. "i'll make the deal if you throw in X")
@@ -391,10 +387,4 @@ AI teams release/buy out players to sign a better free agent
 FEATURES
 --------
 opponent GM trade AI based on their team's status: contending or rebuilding
-change prices of tickets, concessions, etc
-hire coaches to influence development
-different sized cities with differently passionate fanbases - affects attendance and home court advantage
 multi-team trades... how can i make a good UI for that?
-advanced stats (+/-, PER, etc)
-punishment for going in debt: if cash is less than $10M, can't sign any new contracts
-advisors

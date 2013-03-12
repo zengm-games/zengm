@@ -1921,7 +1921,7 @@ function program4(depth0,data) {
     + "\">Roster</a> | <a href=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "/team_finances/"
-    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\">Finances</a></p>\n\n<p>\n<div class=\"row-fluid\">\n  <div class=\"span9\">\n    ";
   stack2 = ((stack1 = depth0.boxScore),typeof stack1 === functionType ? stack1.apply(depth0) : stack1);
   if(stack2 || stack2 === 0) { buffer += stack2; }

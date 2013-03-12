@@ -1,7 +1,6 @@
 BEFORE 3.0.0-beta.2
 -------------------
 
-link from game log to finances is broken
 how to deal with a team that drops below 5 active players, factoring in injuries?
   should allow them to exceed roster limit while injury exists
   should not allow play when below 5

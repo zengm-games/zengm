@@ -99,17 +99,15 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/player",
             playerStats.trb += that.team[t].player[p].stat.orb + that.team[t].player[p].stat.drb;
 
             // Injury crap - assign injury type if player does not already have an injury in the database
-//console.log(that.team[t].player[p].id + " " + that.team[t].player[p].injured + " " + player_.injury.type);
             if (that.team[t].player[p].injured && player_.injury.type === "Healthy") {
                 player_.injury = player.injury();
-console.log(that.team[t].player[p].id + " " + player_.injury.type + " " + player_.injury.gamesRemaining);
-                // Is it already over?
-                if (player_.injury.gamesRemaining === 0) {
-                    player_.injury.type = "Healthy";
-                }
-console.log(that.team[t].player[p].id + " " + player_.injury.type + " " + player_.injury.gamesRemaining);
+            } else if (player_.injury.gamesRemaining > 0) {
+                player_.injury.gamesRemaining -= 1;
             }
-//console.log(that.team[t].player[p].id + " " + that.team[t].player[p].injured + " " + player_.injury.type);
+            // Is it already over?
+            if (player_.injury.gamesRemaining <= 0) {
+                player_.injury = {type: "Healthy", gamesRemaining: 0};
+            }
 
             cursor.update(player_);
 
@@ -472,7 +470,7 @@ console.log(that.team[t].player[p].id + " " + player_.injury.type + " " + player
 
                     for (i = 0; i < players.length; i++) {
                         player = players[i];
-                        p = {id: player.pid, name: player.name, pos: player.pos, ovr: 0, stat: {}, compositeRating: {}, skills: [], injured: false};
+                        p = {id: player.pid, name: player.name, pos: player.pos, ovr: 0, stat: {}, compositeRating: {}, skills: [], injured: player.injury.type !== "Healthy"};
 
                         for (j = 0; j < player.ratings.length; j++) {
                             if (player.ratings[j].season === g.season) {

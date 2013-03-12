@@ -215,7 +215,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                 this.playersOnCourt[t][i] = p;
                 // Loop through bench players (in order of current roster position) to see if any should be subbed in)
                 for (b = 0; b < this.team[t].player.length; b++) {
-                    if (this.playersOnCourt[t].indexOf(b) === -1 && this.team[t].player[p].stat.courtTime > 3 && this.team[t].player[b].stat.benchTime > 3 && ovrs[b] > ovrs[p]) {
+                    if (this.playersOnCourt[t].indexOf(b) === -1 && ((this.team[t].player[p].stat.courtTime > 3 && this.team[t].player[b].stat.benchTime > 3 && ovrs[b] > ovrs[p]) || this.team[t].player[p].injured)) {
                         substitutions = true;
 
                         // Substitute player
@@ -370,8 +370,8 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             for (p = 0; p < this.team[t].player.length; p++) {
                 // Only players on the court can be injured
                 if (this.playersOnCourt[t].indexOf(p) >= 0) {
-                    // According to data/injuries.ods, 0.25 injuries occur every game. Divided over 10 players and ~100 possessions, that means each player on the court has P = 0.25 / 10 / 100 = 0.00025 probability of being injured this play.
-                    if (Math.random() < 0.00025) {
+                    // According to data/injuries.ods, 0.25 injuries occur every game. Divided over 10 players and ~200 possessions, that means each player on the court has P = 0.25 / 10 / 200 = 0.000125 probability of being injured this play.
+                    if (Math.random() < 0.000125) {
                         this.team[t].player[p].injured = true;
                         newInjury = true;
                     }

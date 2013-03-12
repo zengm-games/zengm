@@ -621,7 +621,7 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
         }
         return {
             type: injuries.types[i],
-            gamesRemaining: Math.round(random.uniform(0.5, 2) * injuries.gamesRemainings[i])
+            gamesRemaining: Math.round(random.uniform(0.25, 1.75) * injuries.gamesRemainings[i])
         };
     }
 

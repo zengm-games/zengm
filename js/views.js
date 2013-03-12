@@ -1876,7 +1876,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
                 var attributes, data, i, players, ratings, stats;
-                attributes = ["pid", "name", "pos", "age", "abbrev"];
+                attributes = ["pid", "name", "pos", "age", "abbrev", "injury"];
                 ratings = ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills"];
                 stats = [];
 
@@ -1898,7 +1898,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
                     ui.datatable($("#player-ratings"), 4, _.map(players, function (p) {
                         var teamUrl;
-                        return ['<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>' + helpers.skillsBlock(p.ratings.skills), p.pos, '<a href="/l/' + g.lid + '/roster/' + p.abbrev + '/' + season + '">' + p.abbrev + '</a>', String(p.age), String(p.ratings.ovr), String(p.ratings.pot), String(p.ratings.hgt), String(p.ratings.stre), String(p.ratings.spd), String(p.ratings.jmp), String(p.ratings.endu), String(p.ratings.ins), String(p.ratings.dnk), String(p.ratings.ft), String(p.ratings.fg), String(p.ratings.tp), String(p.ratings.blk), String(p.ratings.stl), String(p.ratings.drb), String(p.ratings.pss), String(p.ratings.reb)];
+                        return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, '<a href="/l/' + g.lid + '/roster/' + p.abbrev + '/' + season + '">' + p.abbrev + '</a>', String(p.age), String(p.ratings.ovr), String(p.ratings.pot), String(p.ratings.hgt), String(p.ratings.stre), String(p.ratings.spd), String(p.ratings.jmp), String(p.ratings.endu), String(p.ratings.ins), String(p.ratings.dnk), String(p.ratings.ft), String(p.ratings.fg), String(p.ratings.tp), String(p.ratings.blk), String(p.ratings.stl), String(p.ratings.drb), String(p.ratings.pss), String(p.ratings.reb)];
                     }));
 
                     if (req.raw.cb !== undefined) {

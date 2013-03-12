@@ -2,7 +2,7 @@
  * @name util.helpers
  * @namespace Various utility functions that don't have anywhere else to go.
  */
-define(["globals"], function (g) {
+define(["globals", "lib/jquery"], function (g, $) {
     "use strict";
 
     /**
@@ -346,6 +346,28 @@ define(["globals"], function (g) {
     }
 
     /**
+     * Generate a block of HTML with a player's name, skill labels.
+     *
+     * @memberOf util.helpers
+     * @param {number} pid Player ID number.
+     * @param {string} name Player name.
+     * @param {object} object Injury object (properties: type and gamesRemaining).
+     * @param {Array.<string>} skills Array of skill labels, like "R" for "Rebounder", etc. See: core.player.skills.
+     * @return {string} String of HTML-formatted skill labels, ready for output.
+     */
+    function playerNameLabels(pid, name, injury, skills) {
+        var html;
+
+        html = '<a href="/l/' + g.lid + '/player/' + pid + '">' + name + '</a>';
+        if (injury.gamesRemaining > 0) {
+            html += '<i class="icon-plus-sign icon-white" style="margin-left: 3px" title="' + injury.type + '(out ' + injury.gamesRemaining + ' more games)"></i>';
+        }
+        html += skillsBlock(skills);
+
+        return html;
+    }
+
+    /**
      * Round a number to a certain number of decimal places.
      * 
      * @memberOf util.helpers
@@ -425,6 +447,7 @@ define(["globals"], function (g) {
         resetG: resetG,
         bbgmPing: bbgmPing,
         skillsBlock: skillsBlock,
+        playerNameLabels: playerNameLabels,
         round: round,
         nullPad: nullPad,
         formatCurrency: formatCurrency,

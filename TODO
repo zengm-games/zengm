@@ -2,14 +2,17 @@ CURRENT PRIORITIES
 ------------------
 
 injury
+  display injury in player view, somehow
   core.player.injury
     influence from health budget
   in core.game, if a player has injured: true but is healthy in the database, pick the type of injury. make sure to set the number of games missed based on data, the health budget, and randomness.
   handling injured players
     injured players show at bottom of roster, with no handle for sorting
-    injured players are passed to gameSim, but with injured: true
-      does this cause any problem with recording starters, if a starter is injured?
-    display injured badge (icon-plus-sign from glyphicons, make white one red - Colors -> Colorify in GIMP) along with player skills (abstract into function nameBlock or something). on hover, show games remaining (if it exceeds playoffs, just say "end of season". if it exceeds playoffs and offseason, estimate like "early next year" or whatever)
+    any problem with recording starters, if a starter is injured?
+    helpers.util.playerNameLabels
+      tooltip: just say "end of season". if it exceeds playoffs and offseason, estimate like "early next year" or whatever
+      use everywhere skills are shown
+      rethink putting skills in releasedPlayers?
   each game, decrement player.injury.gamesRemaining. at end of season, decrease by X to simulate offseason.
 DataTables - need to rethink a lot of this, particularly how to make a decent UI
   sorting of team name column in finances view is fucked up
@@ -20,6 +23,7 @@ DataTables - need to rethink a lot of this, particularly how to make a decent UI
 increase AI resigning probability
 bbgmPing should only work in production
   make sure it still works next time i update play.basketball-gm.com
+
 give bbgm website its own version of bootstrap (only with components needed)
 display league/season counter on basketball-gm.com splash page
 more unit tests

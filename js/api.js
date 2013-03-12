@@ -32,7 +32,7 @@ define(["db", "globals", "views", "ui", "core/draft", "core/game", "core/player"
         } else if (amount === "stop") {
             db.setGameAttributes({stopGames: true}, function () {
                 // This is needed because we can't be sure if core.game.play will be called again
-                ui.updateStatus('Idle');
+                ui.updateStatus("Idle");
                 db.setGameAttributes({gamesInProgress: false}, ui.updatePlayMenu);
             });
         } else if (amount === "untilDraft") {

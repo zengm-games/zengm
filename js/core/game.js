@@ -18,23 +18,6 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/player",
         this.overtimes = results.overtimes;
         this.home = [true, false];
 
-/*        // What is the attendance of the game?
-        winp = 0;
-        gp = this.team[0].won + this.team[0].lost + this.team[1].won + this.team[1].lost;
-        if (gp > 0) {
-            winp = (this.team[0].won + this.team[1].won) / gp;
-        }
-        if (gp < 5) {
-            this.att = random.gauss(22000 + gp * 1000, 1000);
-        } else {
-            this.att = random.gauss(winp * 36000, 1000);
-        }
-        if (this.att > 25000) {
-            this.att = 25000;
-        } else if (this.att < 10000) {
-            this.att = 10000;
-        }*/
-
         // Are the teams in the same conference/division?
         this.sameConf = false;
         this.sameDiv = false;
@@ -555,7 +538,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/player",
 
         // This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season or the end of the playoffs.
         cbNoGames = function () {
-            ui.updateStatus('Idle');
+            ui.updateStatus("Idle");
             db.setGameAttributes({gamesInProgress: false}, function () {
                 ui.updatePlayMenu(null, function () {
                     // Check to see if the season is over
@@ -566,6 +549,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/player",
                             }
                         });
                     }
+                    ui.updateStatus("Idle");  // Just to be sure..
                 });
             });
         };

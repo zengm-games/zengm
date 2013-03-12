@@ -1,13 +1,13 @@
 CURRENT PRIORITIES
 ------------------
 
-PLay -> stop doesn't always set status to idle
 injury
   core.player.injury
     influence from health budget
   handling injured players
     helpers.util.playerNameLabels
       tooltip: just say "end of season". if it exceeds playoffs and offseason, estimate like "early next year" or whatever
+        so, need to abstract this to a function, including where the icon is displayed in player view
       problems with usage
         box score: cache injury at time of game (are skills cached already?)
           box score (and any historical view) should show cached injury/skills statuses

@@ -7,7 +7,6 @@ how to deal with a team that drops below 5 active players, factoring in injuries
   should use same logic/functions as core.season that checks on new season.
     first, add support for auto-add players when AI teams are below limit (in season.js)
 DataTables - need to rethink a lot of this, particularly how to make a decent UI
-  sorting of team name column in finances view is fucked up
   fix default sort order on column click
     http://datatables.net/ref#asSorting will work. maybe pass it as an option to bbgm_datatable
     text should be asc, numeric should be desc
@@ -49,7 +48,6 @@ knobs to control team finances
   stadium budget - influence attendance
 like on team finances page, anywhere else to add help popups?
   should this be abstracted rather than just inline in views?
-  should stay open through page reload, somehow
   inline anything from the manual?
 store contract history/future with each player, and show in player view
   replace contractAmount and contractExp with contracts, a list of {amount: 5235, exp: 2052} objects.
@@ -191,6 +189,7 @@ FUTURE (after 3.0.0)
 jslint errors
   currently just "Don't make functions within a loop." which should all be fixed eventually
 more sophisticatedrealtime data binding/updating
+  one usability advantage would be keeping help popups, dropdown menus, etc. open even as the content refreshes.
   ember.js
     data binding
     uses handlebars

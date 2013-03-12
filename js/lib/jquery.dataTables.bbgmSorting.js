@@ -208,7 +208,8 @@
         function (sData) {
             var bM, bSomething, Char, i, iDollarSign, sValidChars;
 
-            if (sData.match(/[A-Z][a-z]+ [A-Z][A-Z|a-z]+/)) {
+            // This is kind of messy... the first condition is to match anything that looks like a name. The second is to catch a series of Three Capitalized Words that occur inside an HTML tag, as in a list of team names ("New York Knights").
+            if (sData.match(/[A-Z][a-z]+ [A-Z][A-Z|a-z]+/) && !sData.match(/>[A-Z][a-z]+ [A-Z][A-Z|a-z]+ [A-Z][a-z]+/)) {
                 return "name";
             }
 

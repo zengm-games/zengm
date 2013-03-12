@@ -1,13 +1,9 @@
 CURRENT PRIORITIES
 ------------------
 
+link to game log from team roster/finances views
 injury
-  core.player.injury
-    influence from health budget
-  helpers.util.playerNameLabels
-    problems with usage
-      box score: cache injury at time of game (are skills cached already?)
-        box score (and any historical view) should show cached injury/skills statuses
+  at least some injured players are still playing some - top starter?
   how to deal with a team that drops below 5 active players, factoring in injuries?
     should allow them to exceed roster limit while injury exists
     should not allow play when below 5
@@ -21,7 +17,6 @@ DataTables - need to rethink a lot of this, particularly how to make a decent UI
 increase AI resigning probability
 bbgmPing should only work in production
   make sure it still works next time i update play.basketball-gm.com
-
 give bbgm website its own version of bootstrap (only with components needed)
 display league/season counter on basketball-gm.com splash page
 more unit tests
@@ -52,7 +47,7 @@ knobs to control team finances
     post-revenue-calculation attendance should depend on ticket price. so should hype, but only slightly
   scouting budget - decrease "fuzz" added to displayed ratings
   coaching budget - influence player development
-  health budget - influence injuries, both rate and recovery
+  health budget - influence injuries, both rate and severity (rate is defined in core.gameSim, severity is defined in core.player.injury)
   facilities budget - influence free agent demeanor, player development
   stadium budget - influence attendance
 like on team finances page, anywhere else to add help popups?

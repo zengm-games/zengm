@@ -361,6 +361,9 @@ define(["globals", "lib/jquery"], function (g, $) {
         html = '<a href="/l/' + g.lid + '/player/' + pid + '">' + name + '</a>';
         if (injury.gamesRemaining > 0) {
             html += '<i class="icon-plus-sign icon-white injury-label" title="' + injury.type + '(out ' + injury.gamesRemaining + ' more games)"></i>';
+        } else if (injury.gamesRemaining === -1) {
+            // This is used in box scores, where it would be confusing to display "out X more games" in old box scores
+            html += '<i class="icon-plus-sign icon-white injury-label"></i>';
         }
         html += skillsBlock(skills);
 

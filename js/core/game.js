@@ -320,6 +320,11 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/player",
                 gameStats.teams[t].players[p].trb = this.team[t].player[p].stat.orb + this.team[t].player[p].stat.drb;
                 gameStats.teams[t].players[p].pid = this.team[t].player[p].id;
                 gameStats.teams[t].players[p].skills = this.team[t].player[p].skills;
+                if (this.team[t].player[p].injured) {
+                    gameStats.teams[t].players[p].injury = {type: "Injured", gamesRemaining: -1};
+                } else {
+                    gameStats.teams[t].players[p].injury = {type: "Healthy", gamesRemaining: 0};
+                }
             }
         }
 

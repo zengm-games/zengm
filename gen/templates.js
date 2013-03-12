@@ -3,7 +3,7 @@
 templates['boxScore'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, self=this, functionType="function", escapeExpression=this.escapeExpression, blockHelperMissing=helpers.blockHelperMissing;
+  var buffer = "", stack1, stack2, self=this, escapeExpression=this.escapeExpression, functionType="function", blockHelperMissing=helpers.blockHelperMissing;
 
 function program1(depth0,data,depth1) {
   
@@ -19,7 +19,7 @@ function program1(depth0,data,depth1) {
     + " "
     + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</a></h2>\n  <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\">\n  <thead>\n    <tr><th>Name</th><th>Pos</th><th>Min</th><th>FG</th><th>3Pt</th><th>FT</th><th>Off</th><th>Reb</th><th>Ast</th><th>TO</th><th>Stl</th><th>Blk</th><th>PF</th><th>Pts</th></tr>\n  </thead>\n  <tbody>\n  ";
-  stack2 = ((stack1 = ((stack1 = depth0.players),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program2, data, depth1),data:data}));
+  stack2 = ((stack1 = ((stack1 = depth0.players),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data}));
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "\n  </tbody>\n  <tfoot>\n    <tr><td>Total</td><td></td><td>"
     + escapeExpression(((stack1 = depth0.min),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
@@ -54,20 +54,14 @@ function program1(depth0,data,depth1) {
     + "</td></tr>\n  </tfoot>\n  </table>\n";
   return buffer;
   }
-function program2(depth0,data,depth2) {
+function program2(depth0,data) {
   
   var buffer = "", stack1;
   buffer += "\n    <tr";
   stack1 = helpers['if'].call(depth0, depth0.separator, {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "><td><a href=\"/l/"
-    + escapeExpression(((stack1 = depth2.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/player/"
-    + escapeExpression(((stack1 = depth0.pid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a>"
-    + escapeExpression(helpers.skillsBlock.call(depth0, depth0.skills, {hash:{},data:data}))
+  buffer += "><td>"
+    + escapeExpression(helpers.playerNameLabels.call(depth0, depth0.pid, depth0.name, depth0.injury, depth0.skills, {hash:{},data:data}))
     + "</td><td>"
     + escapeExpression(((stack1 = depth0.pos),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</td><td>"

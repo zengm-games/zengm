@@ -191,7 +191,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/player",
                 ticketRevenue = g.ticketPrice * att / 1000;  // [thousands of dollars]
 
                 // Hype - relative to the expectations of prior seasons
-                if (teamSeason.gp > 5) {
+                if (teamSeason.gp > 5 && !that.playoffs) {
                     winp = teamSeason.won / (teamSeason.won + teamSeason.lost);
                     winpOld = 0;
                     count = 0;

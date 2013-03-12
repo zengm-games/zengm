@@ -309,13 +309,9 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/player",
 
             for (p = 0; p < this.team[t].player.length; p++) {
                 gameStats.teams[t].players[p] = {name: this.team[t].player[p].name, pos: this.team[t].player[p].pos};
+                keys.unshift("gs");  // Also record starters, in addition to other stats
                 for (i = 0; i < keys.length; i++) {
                     gameStats.teams[t].players[p][keys[i]] = this.team[t].player[p].stat[keys[i]];
-                }
-                if (p < 5) {
-                    gameStats.teams[t].players[p].gs = 1;
-                } else {
-                    gameStats.teams[t].players[p].gs = 0;
                 }
                 gameStats.teams[t].players[p].trb = this.team[t].player[p].stat.orb + this.team[t].player[p].stat.drb;
                 gameStats.teams[t].players[p].pid = this.team[t].player[p].id;

@@ -1,7 +1,6 @@
 CURRENT PRIORITIES
 ------------------
 
-link to game log from team roster/finances views
 injury
   how to deal with a team that drops below 5 active players, factoring in injuries?
     should allow them to exceed roster limit while injury exists

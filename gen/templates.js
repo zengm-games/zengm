@@ -1912,7 +1912,17 @@ function program4(depth0,data) {
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "\n  </select>\n</form>\n\n<h1>Game Log "
     + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n\n<p>\n<div class=\"row-fluid\">\n  <div class=\"span9\">\n    ";
+    + "</h1>\n<p>More: <a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/roster/"
+    + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/"
+    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">Roster</a> | <a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/team_finances/"
+    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">Finances</a></p>\n\n<p>\n<div class=\"row-fluid\">\n  <div class=\"span9\">\n    ";
   stack2 = ((stack1 = depth0.boxScore),typeof stack1 === functionType ? stack1.apply(depth0) : stack1);
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "\n  </div>\n\n  <div class=\"span3\">\n    ";
@@ -1979,7 +1989,11 @@ function program4(depth0,data) {
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "/roster/"
     + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">Roster</a></p>\n\n<p class=\"clearfix\">The current payroll (<strong>$"
+    + "\">Roster</a> | <a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/game_log/"
+    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">Game Log</a></p>\n\n<p class=\"clearfix\">The current payroll (<strong>$"
     + escapeExpression(helpers.round.call(depth0, depth0.payroll, {hash:{},data:data}))
     + "M</strong>) is "
     + escapeExpression(((stack1 = ((stack1 = depth0.aboveBelow),stack1 == null || stack1 === false ? stack1 : stack1.minPayroll)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
@@ -2227,7 +2241,13 @@ function program28(depth0,data,depth1,depth2) {
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "/team_finances/"
     + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">Finances</a></p>\n\n";
+    + "\">Finances</a> | <a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/game_log/"
+    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/"
+    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">Game Log</a></p>\n\n";
   stack2 = helpers['if'].call(depth0, depth0.currentSeason, {hash:{},inverse:self.noop,fn:self.program(6, program6, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "\n\n";

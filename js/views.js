@@ -769,7 +769,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                         container: "league_content",
                         template: "roster",
                         title: team.region + " " + team.name + " " + "Roster - " + season,
-                        vars: {teams: teams, seasons: seasons, sortable: sortable, currentSeason: currentSeason, showTradeFor: currentSeason && tid !== g.userTid, players: players, numRosterSpots: 15 - players.length, team: team, payroll: payroll, salaryCap: g.salaryCap / 1000}
+                        vars: {teams: teams, seasons: seasons, season: season, sortable: sortable, currentSeason: currentSeason, showTradeFor: currentSeason && tid !== g.userTid, players: players, numRosterSpots: 15 - players.length, team: team, payroll: payroll, salaryCap: g.salaryCap / 1000}
                     };
                     ui.update(data, function () {
                         var fixHelper, highlightHandles;
@@ -1756,7 +1756,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                     container: "league_content",
                     template: "gameLog",
                     title: "Game Log",
-                    vars: {boxScore: contentGameInfo, gameLogList: contentGameLogList, teams: teams, seasons: seasons}
+                    vars: {boxScore: contentGameInfo, gameLogList: contentGameLogList, teams: teams, seasons: seasons, season: season, abbrev: abbrev}
                 };
                 ui.update(data, function () {
                     ui.dropdown($("#game-log-select-team"), $("#game-log-select-season"), gid);

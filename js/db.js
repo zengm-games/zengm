@@ -210,6 +210,8 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
                 } else if (pa.tid === g.PLAYER.RETIRED) {
                     player.teamName = "Retired";
                 }
+            } else if (attributes[j] === "injury" && season !== null && season < g.season) {
+                player.injury = {type: "Healthy", gamesRemaining: 0};
             } else {
                 player[attributes[j]] = pa[attributes[j]];
             }

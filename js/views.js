@@ -2,7 +2,16 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
     "use strict";
 
     function initDb(req) {
+        var key;
+
         viewHelpers.beforeNonLeague();
+
+        // localStorage, which is just use for table sorting currently
+        for (key in localStorage) {
+            if (localStorage.hasOwnProperty(key)) {
+                localStorage.removeItem(key);
+            }
+        }
 
         // Delete any current league databases
         console.log("Deleting any current league databases...");

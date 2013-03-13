@@ -66,7 +66,7 @@ tweak gameSim for stats again
 DATABASE CHANGES since 3.0.0-beta
 ---------------------------------
 
-ON DB UPGRADE show a message explaining new features!!
+ON meta DB UPGRADE show a message explaining new features!!
 
 added to seasonAttributes for each team:
   hype: number,

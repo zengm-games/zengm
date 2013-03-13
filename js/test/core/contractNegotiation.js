@@ -187,21 +187,23 @@ define(["db", "globals", "core/contractNegotiation", "core/league", "core/player
                     errorUndefined.should.equal(true);
 
                     // Force a minimum contract
-                    tx.objectStore("negotiations").openCursor().onsuccess = function (event) {
+                    tx.objectStore("negotiations").openCursor(8).onsuccess = function (event) {
                         var cursor, negotiation;
 
                         cursor = event.target.result;
                         negotiation = cursor.value;
                         negotiation.playerAmount = 60000;
                         cursor.update(negotiation);
-
-                        contractNegotiation.accept(8, function (error) {
-                            error.should.equal("This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract, buy out a player currently on your roster, or cancel the negotiation.");
-
-                            done();
-                        });
                     };
                 });
+
+                tx.oncomplete = function () {
+                    contractNegotiation.accept(8, function (error) {
+                        error.should.equal("This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract, buy out a player currently on your roster, or cancel the negotiation.");
+
+                        done();
+                    });
+                };
             });
         });
     });

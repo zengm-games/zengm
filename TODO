@@ -1,7 +1,6 @@
 BEFORE 3.0.0-beta.2
 -------------------
 
-test fail in chrome http://localhost/test?grep=^core/contractNegotiation
 how to deal with a team that drops below 5 active players, factoring in injuries?
   should allow them to exceed roster limit while injury exists
   should not allow play when below 5
@@ -43,10 +42,6 @@ knobs to control team finances
   health budget - influence injuries, both rate and severity (rate is defined in core.gameSim, severity is defined in core.player.injury)
   facilities budget - influence free agent demeanor, player development
   stadium budget - influence attendance
-like on team finances page, anywhere else to add help popups?
-  should this be abstracted rather than just inline in views?
-  inline anything from the manual?
-  release and buy out menus
 negotiation is annoying
   come up with an "anger meter" to display the odds of the player demanding more
     initialize with some value based on if it's a resigning or not, and wins the previous season
@@ -72,7 +67,7 @@ added to seasonAttributes for each team:
   minTaxPaid: number  // this shoudl be set at the end of the season
 removed "cost" and "revenue" from seasonAttributes
 changes to retiredPlayers, but that's just removing stuff that isn't needed anymore, so no problem
-added "injury" to player
+added "injury", "awards", and "contracts" to player
 
 MANUAL CHANGES TODO since 3.0.0-beta
 ------------------------------------
@@ -181,6 +176,9 @@ DataTables - fix default sort order on column click
   but can it be set globally, based on column type? can have ui.datatable automatically read columns and figure it out?
 more tests
   https://github.com/gotwarlost/istanbul
+like on team finances page, anywhere else to add help popups?
+  should this be abstracted rather than just inline in views?
+  inline anything from the manual?
 
 FUTURE (after 3.0.0)
 --------------------

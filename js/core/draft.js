@@ -91,31 +91,33 @@ define(["db", "globals", "core/player", "core/season", "util/helpers", "util/ran
 
         tx = g.dbl.transaction("players", "readwrite");
         tx.objectStore("players").openCursor(pid).onsuccess = function (event) {
-            var cursor, i, player, rookieSalaries, teams, years;
+            var cursor, i, p, rookieSalaries, teams, years;
 
             cursor = event.target.result;
-            player = cursor.value;
+            p = cursor.value;
 
             // Draft player
-            player.tid = pick.tid;
-            player.draftYear = g.season;
-            player.draftRound = pick.round;
-            player.draftPick = pick.pick;
-            player.draftTid = pick.tid;
+            p.tid = pick.tid;
+            p.draftYear = g.season;
+            p.draftRound = pick.round;
+            p.draftPick = pick.pick;
+            p.draftTid = pick.tid;
             teams = helpers.getTeams();
-            player.draftAbbrev = teams[pick.tid].abbrev;
+            p.draftAbbrev = teams[pick.tid].abbrev;
             // draftTeamName and draftTeamRegion are currently not used, but they don't do much harm
-            player.draftTeamName = teams[pick.tid].name;
-            player.draftTeamRegion = teams[pick.tid].region;
+            p.draftTeamName = teams[pick.tid].name;
+            p.draftTeamRegion = teams[pick.tid].region;
 
             // Contract
             rookieSalaries = [5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500];
             i = pick.pick - 1 + 30 * (pick.round - 1);
-            player.contractAmount = rookieSalaries[i];
             years = 4 - pick.round;  // 2 years for 2nd round, 3 years for 1st round;
-            player.contractExp = g.season + years;
+            p = player.setContract(p, player.genContract({
+                amount: rookieSalaries[i],
+                exp: g.season + years
+            }), true);
 
-            cursor.update(player);
+            cursor.update(p);
         };
 
         tx.oncomplete = function () {

@@ -610,7 +610,7 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
      * 
      * @memberOf db
      */
-    function getTeam(ta, season, attributes, stats, seasonAttributes, options) {
+    function getTeam(ta, season, attributes, stats, seasonAttributes, options, cb) {
         var i, j, lastTenLost, lastTenWon, team, ts, tsa;
 
         options.playoffs = options.playoffs !== undefined ? options.playoffs : false;
@@ -785,7 +785,11 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
             team = filterStats(team, ts, stats);
         }
 
-        return team;
+        if (cb !== undefined) {
+            cb(team);
+        } else {
+            return team;
+        }
     }
 
     /**

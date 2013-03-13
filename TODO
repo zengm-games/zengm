@@ -13,25 +13,30 @@ display league/season counter on basketball-gm.com splash page
 update formulas
   hype
     increase/decrease a lot for discrete events
-      having a long tenured star leave
-      winning a rare draft lottery
-      sign a star
-      trade for a star
-      other stuff in the help in team finances
-    update info text in team finances, make sure it's accurate
+      when a player joins/leaves roster, increase/decrease hype somehow proportional to ovr and pot
   nationalTvRevenue
     base on g.nationalTvContractAmount, for now a constant
   localTvRevenue
     for now, just make it a function of attendance
 knobs to control team finances
-  IMPLEMENT BOTH THE BACKEND TO CHANGE THESE, AS WELL AS THEIR EFFECTS
-    BACKEND
-      scoutingPaid, scoutingPaidRank etc variables in teamSeason
-      scoutingBudget, scoutingBudgetRank in root of teams object
+  use an object to store budget items in database. it's too messy as is.
+  team finances template
+    editable
+      on form button press..
+      get all values
+      covert M to k
+      round to nearest 10k (or $1 for ticket price)
+      update budgets in database (function in core.finances)
+      recalculate budget ranks (function in core.finances)
+    handlebars helper for form DRY
+    minimum width for form column
+  updating *Paid and *PaidRank
+    spread out spending over 82 regular-season games, in core.game
+    rank updating (paidrankg and budgetrank) should happen somewhere in core.game where all the teams are loaded already, if possible
   how should changes in budget effect things?
     performance is based on cumulative (this year) rank relative to other teams
       have functions in core.finances to calculate and cache these ranks, so it can be done daily during the regular season, or when the user makes a change
-  move ticket price to gameAttributes rather than making it a constant
+  move ticket price to team object rather than making it a constant
     post-revenue-calculation attendance should depend on ticket price. so should hype, but only slightly
   scouting budget - decrease "fuzz" added to displayed ratings
     fuzz
@@ -42,12 +47,17 @@ knobs to control team finances
   health budget - influence injuries, both rate and severity (rate is defined in core.gameSim, severity is defined in core.player.injury)
   facilities budget - influence free agent demeanor, player development
   stadium budget - influence attendance
+  new phase updating of variables
+  initial values for *Budgets and ticket prices
+    base on population
+  AI updating of *Budgets and ticket prices
+    maybe not necessary at this stage?
 negotiation is annoying
   come up with an "anger meter" to display the odds of the player demanding more
     initialize with some value based on if it's a resigning or not, and wins the previous season
   shouldn't be so aggressive/adversarial
   make calculation of demand to display DRY - or any change, be careful
-tweak gameSim for stats again
+make sure finances are reasonable
 
 DATABASE CHANGES since 3.0.0-beta
 ---------------------------------
@@ -61,10 +71,32 @@ added to seasonAttributes for each team:
   tvContractExp: number,
   merchAmount: number,
   sponsorAmount: number,
-  payrollEndOfSeason: number,  // Fill this in at the end of the regular season. before that, use db.getPayroll
-  salaryPaid: number,  // Each game, add based on current roster
-  luxuryTaxPaid: number,  // this shoudl be set at the end of the season
-  minTaxPaid: number  // this shoudl be set at the end of the season
+  payrollEndOfSeason: number,
+  salaryPaid: number,
+  luxuryTaxPaid: number,
+  minTaxPaid: number,
+  scoutingPaid: number,
+  scoutingPaidRank: number,
+  coachingPaid: number,
+  coachingPaidRank: number,
+  healthPaid: number,
+  healthPaidRank: number,
+  facilitiesPaid: number,
+  facilitiesPaidRank: number,
+  stadiumPaid: number,
+  stadiumPaidRank: number,
+added to root of each team:
+  ticketPrice: number,
+  scoutingBudget: number,
+  scoutingBudgetRank: number,
+  coachingBudget: number,
+  coachingBudgetRank: number,
+  healthBudget: number,
+  healthBudgetRank: number,
+  facilitiesBudget: number,
+  facilitiesBudgetRank: number,
+  stadiumBudget: number,
+  stadiumBudgetRank: number
 removed "cost" and "revenue" from seasonAttributes
 changes to retiredPlayers, but that's just removing stuff that isn't needed anymore, so no problem
 added "injury", "awards", and "contracts" to player
@@ -161,6 +193,7 @@ more handlebars helpers for things like...
 too easy to do the "be bad, get draft picks, keep payroll low, sign free agents, be good" pattern
   draft lottery
     do a dramatic presentation?
+    increase hype for teams that exceed expectations
   free agents are less willing to sign with bad teams
   user can't just sign all the free agents before AI teams
 trades
@@ -176,9 +209,11 @@ DataTables - fix default sort order on column click
   but can it be set globally, based on column type? can have ui.datatable automatically read columns and figure it out?
 more tests
   https://github.com/gotwarlost/istanbul
+  https://github.com/metagriffin/indexeddb-js can i improve this and run tests outside of browser?
 like on team finances page, anywhere else to add help popups?
   should this be abstracted rather than just inline in views?
   inline anything from the manual?
+tweak gameSim for stats again
 
 FUTURE (after 3.0.0)
 --------------------

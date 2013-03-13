@@ -1041,114 +1041,122 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                     for (i = 0; i < show; i++) {
                         barSeasons[i] = g.season - i;
                     }
-                    data = {
-                        container: "league_content",
-                        template: "teamFinances",
-                        title: team.region + " " + team.name + " " + "Finances - " + season,
-                        vars: {payroll: payroll, aboveBelow: aboveBelow, salaryCap: g.salaryCap / 1000, minPayroll: g.minPayroll / 1000, luxuryPayroll: g.luxuryPayroll / 1000, luxuryTax: g.luxuryTax, salariesSeasons: salariesSeasons, shows: shows, team: {region: team.region, name: team.name, abbrev: team.abbrev}, teams: teams, contractTotals: contractTotals}
-                    };
-                    ui.update(data, function () {
-                        var disableFinanceSettings, enableFinanceSettings;
 
-                        ui.dropdown($("#team-finances-select-team"), $("#team-finances-select-show"));
+                    // Get stuff for the finances form
+                    db.getTeam(team, g.season, ["region", "name", "abbrev", "ticketPrice", "ticketPriceRank", "scoutingBudget", "scoutingBudgetRank", "coachingBudget", "coachingBudgetRank", "healthBudget", "healthBudgetRank", "facilitiesBudget", "facilitiesBudgetRank", "stadiumBudget", "stadiumBudgetRank"], [], ["scoutingPaidRank", "coachingPaidRank", "healthPaidRank", "facilitiesPaidRank", "stadiumPaidRank"], {}, function (team) {
+                        data = {
+                            container: "league_content",
+                            template: "teamFinances",
+                            title: team.region + " " + team.name + " " + "Finances - " + season,
+                            vars: {payroll: payroll, aboveBelow: aboveBelow, salaryCap: g.salaryCap / 1000, minPayroll: g.minPayroll / 1000, luxuryPayroll: g.luxuryPayroll / 1000, luxuryTax: g.luxuryTax, salariesSeasons: salariesSeasons, shows: shows, team: team, teams: teams, contractTotals: contractTotals}
+                        };
+                        ui.update(data, function () {
+                            var disableFinanceSettings, enableFinanceSettings;
 
-                        ui.datatableSinglePage($("#player-salaries"), 1, _.map(contracts, function (p) {
-                            var i, output;
-                            output = [helpers.playerNameLabels(p.pid, p.name, p.injury, p.skills)];
-                            if (p.released) {
-                                output[0] = "<i>" + output[0] + "</i>";
-                            }
-                            for (i = 0; i < 5; i++) {
-                                if (p.amounts[i]) {
-                                    output.push(helpers.formatCurrency(p.amounts[i], "M"));
-                                } else {
-                                    output.push("");
-                                }
+                            ui.dropdown($("#team-finances-select-team"), $("#team-finances-select-show"));
+
+                            ui.datatableSinglePage($("#player-salaries"), 1, _.map(contracts, function (p) {
+                                var i, output;
+                                output = [helpers.playerNameLabels(p.pid, p.name, p.injury, p.skills)];
                                 if (p.released) {
-                                    output[i + 1] = "<i>" + output[i + 1] + "</i>";
+                                    output[0] = "<i>" + output[0] + "</i>";
                                 }
-                            }
-                            return output;
-                        }));
+                                for (i = 0; i < 5; i++) {
+                                    if (p.amounts[i]) {
+                                        output.push(helpers.formatCurrency(p.amounts[i], "M"));
+                                    } else {
+                                        output.push("");
+                                    }
+                                    if (p.released) {
+                                        output[i + 1] = "<i>" + output[i + 1] + "</i>";
+                                    }
+                                }
+                                return output;
+                            }));
 
-                        $("#help-payroll-limits").clickover({
-                            title: "Payroll Limits",
-                            content: "The salary cap is a soft cap, meaning that you can exceed it to resign your own players or to sign free agents to minimum contracts ($" + g.minContract + "/year); however, you cannot exceed the salary cap to sign a free agent for more than the minimum. Teams with payrolls below the minimum payroll limit will be assessed a fine equal to the difference at the end of the season. Teams with payrolls above the luxury tax limit will be assessed a fine equal to " + g.luxuryTax + " times the difference at the end of the season"
-                        });
+                            $("#help-payroll-limits").clickover({
+                                title: "Payroll Limits",
+                                content: "The salary cap is a soft cap, meaning that you can exceed it to resign your own players or to sign free agents to minimum contracts ($" + g.minContract + "/year); however, you cannot exceed the salary cap to sign a free agent for more than the minimum. Teams with payrolls below the minimum payroll limit will be assessed a fine equal to the difference at the end of the season. Teams with payrolls above the luxury tax limit will be assessed a fine equal to " + g.luxuryTax + " times the difference at the end of the season"
+                            });
 
-                        $("#help-hype").clickover({
-                            title: "Hype",
-                            content: "\"Hype\" refers to fans' interest in your team. For instance, if your team is improving or you signed a big name free agent or you drafted a popular prospect, then hype increases; if your team is losing or stagnating or you traded away a popular veteran, then hype decreases. The more hype your team has, the more revenue it generates."
-                        });
+                            $("#help-hype").clickover({
+                                title: "Hype",
+                                content: "\"Hype\" refers to fans' interest in your team. For instance, if your team is improving or you signed a big name free agent or you drafted a popular prospect, then hype increases; if your team is losing or stagnating or you traded away a popular veteran, then hype decreases. The more hype your team has, the more revenue it generates."
+                            });
 
-                        $("#help-revenue-settings").clickover({
-                            title: "Revenue Settings",
-                            content: "Set your ticket price too high, and attendance will decrease and some fans will resent you for it. Set it too low, and you're not maximizing your profit."
-                        });
+                            $("#help-revenue-settings").clickover({
+                                title: "Revenue Settings",
+                                content: "Set your ticket price too high, and attendance will decrease and some fans will resent you for it. Set it too low, and you're not maximizing your profit."
+                            });
 
-                        $("#help-expense-settings").clickover({
-                            title: "Expense Settings",
-                            html: true,
-                            content: "<p>Scouting: Controls the accuracy of displayed player ratings.<p></p>Coaching: Better coaches mean better player development.</p><p>Health: A good team of doctors speeds recovery from injuries.</p><p>Facilities: Better training facilities make your players happier and more eager to train.</p>Stadium: Improvements to your stadium increase attendance."
-                        });
+                            $("#help-expense-settings").clickover({
+                                title: "Expense Settings",
+                                html: true,
+                                content: "<p>Scouting: Controls the accuracy of displayed player ratings.<p></p>Coaching: Better coaches mean better player development.</p><p>Health: A good team of doctors speeds recovery from injuries.</p><p>Facilities: Better training facilities make your players happier and more eager to train.</p>Stadium: Improvements to your stadium increase attendance."
+                            });
 
-                        $.barGraph($("#bar-graph-won"), barData.won, [0, 82], barSeasons);
-                        $.barGraph($("#bar-graph-hype"), barData.hype, [0, 1], barSeasons, function (val) {
-                            return helpers.round(val, 2);
-                        });
-                        $.barGraph($("#bar-graph-pop"), barData.pop, [0, 20], barSeasons, function (val) {
-                            return helpers.round(val, 1) + "M";
-                        });
-                        $.barGraph($("#bar-graph-att"), barData.att, [0, 25000], barSeasons, function (val) {
-                            return helpers.numberWithCommas(helpers.round(val));
-                        });
+                            $.barGraph($("#bar-graph-won"), barData.won, [0, 82], barSeasons);
+                            $.barGraph($("#bar-graph-hype"), barData.hype, [0, 1], barSeasons, function (val) {
+                                return helpers.round(val, 2);
+                            });
+                            $.barGraph($("#bar-graph-pop"), barData.pop, [0, 20], barSeasons, function (val) {
+                                return helpers.round(val, 1) + "M";
+                            });
+                            $.barGraph($("#bar-graph-att"), barData.att, [0, 25000], barSeasons, function (val) {
+                                return helpers.numberWithCommas(helpers.round(val));
+                            });
 
-                        $.barGraph(
-                            $("#bar-graph-revenue"),
-                            [barData.nationalTvRevenue, barData.localTvRevenue, barData.ticketRevenue, barData.sponsorRevenue, barData.merchRevenue],
-                            undefined,
-                            [
-                                barSeasons,
-                                ["national TV revenue", "local TV revenue", "ticket revenue",  "corporate sponsorship revenue", "merchandising revenue"]
-                            ],
-                            function (val) {
+                            $.barGraph(
+                                $("#bar-graph-revenue"),
+                                [barData.nationalTvRevenue, barData.localTvRevenue, barData.ticketRevenue, barData.sponsorRevenue, barData.merchRevenue],
+                                undefined,
+                                [
+                                    barSeasons,
+                                    ["national TV revenue", "local TV revenue", "ticket revenue",  "corporate sponsorship revenue", "merchandising revenue"]
+                                ],
+                                function (val) {
+                                    return helpers.formatCurrency(val, "M", 1);
+                                }
+                            );
+                            $.barGraph(
+                                $("#bar-graph-expenses"),
+                                [barData.salaryPaid, barData.minTaxPaid, barData.luxuryTaxPaid, barData.otherPaid],
+                                undefined,
+                                [
+                                    barSeasons,
+                                    ["player salaries", "minimum payroll tax", "luxury tax", "other expenses"]
+                                ],
+                                function (val) {
+                                    return helpers.formatCurrency(val, "M", 1);
+                                }
+                            );
+                            $.barGraph($("#bar-graph-cash"), barData.cash, undefined, barSeasons, function (val) {
                                 return helpers.formatCurrency(val, "M", 1);
+                            });
+
+                            // Form enabling/disabling
+                            disableFinanceSettings = function () {
+                                $("#finances-settings input, button").attr("disabled", "disabled");
+                                $("#finances-settings .text-error").html("Stop game simulation to edit.");
+                            };
+                            enableFinanceSettings = function () {
+                                $("#finances-settings input, button").removeAttr("disabled");
+                                $("#finances-settings .text-error").html("");
+                            };
+                            $("#finances-settings").on("gameSimulationStart", disableFinanceSettings);
+                            $("#finances-settings").on("gameSimulationStop", enableFinanceSettings);
+                            if (g.gamesInProgress) {
+                                disableFinanceSettings();
                             }
-                        );
-                        $.barGraph(
-                            $("#bar-graph-expenses"),
-                            [barData.salaryPaid, barData.minTaxPaid, barData.luxuryTaxPaid, barData.otherPaid],
-                            undefined,
-                            [
-                                barSeasons,
-                                ["player salaries", "minimum payroll tax", "luxury tax", "other expenses"]
-                            ],
-                            function (val) {
-                                return helpers.formatCurrency(val, "M", 1);
+
+                            $("#finances-settings-save").click(function () {
+                                console.log("SAVE");
+                            });
+
+                            if (req.raw.cb !== undefined) {
+                                req.raw.cb();
                             }
-                        );
-                        $.barGraph($("#bar-graph-cash"), barData.cash, undefined, barSeasons, function (val) {
-                            return helpers.formatCurrency(val, "M", 1);
                         });
-
-                        // Form enabling/disabling
-                        disableFinanceSettings = function () {
-                            $("#finances-settings input, button").attr("disabled", "disabled");
-                            $("#finances-settings .text-error").html("Stop game simulation to edit.");
-                        };
-                        enableFinanceSettings = function () {
-                            $("#finances-settings input, button").removeAttr("disabled");
-                            $("#finances-settings .text-error").html("");
-                        };
-                        $("#finances-settings").on("gameSimulationStart", disableFinanceSettings);
-                        $("#finances-settings").on("gameSimulationStop", enableFinanceSettings);
-                        if (g.gamesInProgress) {
-                            disableFinanceSettings();
-                        }
-
-                        if (req.raw.cb !== undefined) {
-                            req.raw.cb();
-                        }
                     });
                 };
             });

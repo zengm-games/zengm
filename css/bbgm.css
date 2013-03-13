@@ -143,6 +143,9 @@ div#playButton ul li a.dropdown-toggle .caret {
 .table-bordered thead tr:last-child th {
   border-bottom: 1px solid #888;
 }
+.table-bordered tfoot tr:first-child th {
+  border-top: 1px solid #888;
+}
 
 table#roster td.roster_handle {
   cursor: move;
@@ -177,6 +180,10 @@ table#game_log_list tbody tr:hover td {
   border-color: #bce8f1;
   color: #3a87ad;
   text-decoration: none;
+}
+
+.table-nonfluid {
+   width: auto;
 }
 
 

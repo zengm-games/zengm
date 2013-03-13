@@ -142,13 +142,16 @@
 </table>
 
 <h2>Salaries</h2>
-<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="player-salaries">
+<table cellpadding="0" cellspacing="0" border="0" class="table table-nonfluid table-striped table-bordered table-condensed" id="player-salaries">
   <thead>
     <tr><th>Season</th><th>Amount</th></tr>
   </thead>
   <tbody>
     {{#player.salaries}}
-      <tr><td>{{season}}</td><td>{{amount}}</td></tr>
+      <tr><td>{{season}}</td><td>{{currency amount "M" 2}}</td></tr>
     {{/player.salaries}}
   </tbody>
+  <tfoot>
+    <tr><th>Total</th><th>{{currency player.salariesTotal "M" 2}}</th></tr>
+  </tfoot>
 </table>

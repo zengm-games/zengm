@@ -212,6 +212,10 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
                 }
             } else if (attributes[j] === "injury" && season !== null && season < g.season) {
                 player.injury = {type: "Healthy", gamesRemaining: 0};
+            } else if (attributes[j] === "salaries") {
+                player.salaries = _.map(pa.salaries, function (salary) { salary.amount /= 1000; return salary; });
+            } else if (attributes[j] === "salariesTotal") {
+                player.salariesTotal = _.reduce(player.salaries, function (memo, salary) { return memo + salary.amount; }, 0);;
             } else {
                 player[attributes[j]] = pa[attributes[j]];
             }

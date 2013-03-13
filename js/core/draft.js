@@ -112,10 +112,10 @@ define(["db", "globals", "core/player", "core/season", "util/helpers", "util/ran
             rookieSalaries = [5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500];
             i = pick.pick - 1 + 30 * (pick.round - 1);
             years = 4 - pick.round;  // 2 years for 2nd round, 3 years for 1st round;
-            p = player.setContract(p, player.genContract({
+            p = player.setContract(p, {
                 amount: rookieSalaries[i],
                 exp: g.season + years
-            }), true);
+            }, true);
 
             cursor.update(p);
         };

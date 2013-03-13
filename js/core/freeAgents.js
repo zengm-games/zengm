@@ -68,6 +68,10 @@ define(["db", "globals", "core/player", "lib/underscore", "util/random"], functi
                                     p = players.shift();
                                     p.tid = tid;
                                     p = player.addStatsRow(p);
+                                    p = player.setContract(p, {
+                                        amount: p.contractAmount,
+                                        exp: p.contractExp
+                                    }, true);
                                     db.putPlayer(transaction, p, function () {
                                         db.rosterAutoSort(transaction, tid, function () {
                                             if (ti <= tids.length) {

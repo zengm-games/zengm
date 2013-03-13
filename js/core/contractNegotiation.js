@@ -276,10 +276,10 @@ define(["db", "globals", "ui", "core/player", "util/lock", "util/random"], funct
                     if (g.phase <= g.PHASE.PLAYOFFS) { // Resigning your own players happens after this
                         p = player.addStatsRow(p);
                     }
-                    p = player.setContract(p, player.genContract({
+                    p = player.setContract(p, {
                         amount: negotiation.playerAmount,
                         exp: g.season + negotiation.playerYears
-                    }), true);
+                    }, true);
 
                     cursor.update(p);
                 };

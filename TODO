@@ -2,9 +2,6 @@ BEFORE 3.0.0-beta.2
 -------------------
 
 test fail in chrome http://localhost/test?grep=^core/contractNegotiation
-store contract history/future with each player, and show in player view
-  test
-  how does this handle released/resigned players?
 how to deal with a team that drops below 5 active players, factoring in injuries?
   should allow them to exceed roster limit while injury exists
   should not allow play when below 5

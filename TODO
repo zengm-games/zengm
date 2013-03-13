@@ -47,7 +47,6 @@ like on team finances page, anywhere else to add help popups?
   should this be abstracted rather than just inline in views?
   inline anything from the manual?
   release and buy out menus
-store a list of awards/honors with each player, and show in player view
 negotiation is annoying
   come up with an "anger meter" to display the odds of the player demanding more
     initialize with some value based on if it's a resigning or not, and wins the previous season

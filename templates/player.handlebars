@@ -74,10 +74,12 @@
   {{#player.stats}}
     <tr><td><a href="#">{{season}}</a></td><td><a href="/l/{{../lid}}/roster/{{abbrev}}/{{season}}">{{abbrev}}</a></td><td>{{age}}</td><td>{{gp}}</td><td>{{gs}}</td><td>{{round min 1}}</td><td>{{round fg 1}}</td><td>{{round fga 1}}</td><td>{{round fgp 1}}</td><td>{{round tp 1}}</td><td>{{round tpa 1}}</td><td>{{round tpp 1}}</td><td>{{round ft 1}}</td><td>{{round fta 1}}</td><td>{{round ftp 1}}</td><td>{{round orb 1}}</td><td>{{round drb 1}}</td><td>{{round trb 1}}</td><td>{{round ast 1}}</td><td>{{round tov 1}}</td><td>{{round stl 1}}</td><td>{{round blk 1}}</td><td>{{round pf 1}}</td><td>{{round pts 1}}</td><td>{{round per 1}}</td></tr>
   {{/player.stats}}
-  {{#with player.careerStats}}
-    <tr><td>Career</td><td></td><td></td><td>{{gp}}</td><td>{{gs}}</td><td>{{round min 1}}</td><td>{{round fg 1}}</td><td>{{round fga 1}}</td><td>{{round fgp 1}}</td><td>{{round tp 1}}</td><td>{{round tpa 1}}</td><td>{{round tpp 1}}</td><td>{{round ft 1}}</td><td>{{round fta 1}}</td><td>{{round ftp 1}}</td><td>{{round orb 1}}</td><td>{{round drb 1}}</td><td>{{round trb 1}}</td><td>{{round ast 1}}</td><td>{{round tov 1}}</td><td>{{round stl 1}}</td><td>{{round blk 1}}</td><td>{{round pf 1}}</td><td>{{round pts 1}}</td><td>{{round per 1}}</td></tr>
-  {{/with}}
   </tbody>
+  <tfoot>
+  {{#with player.careerStats}}
+    <tr><th>Career</th><th></th><th></th><th>{{gp}}</th><th>{{gs}}</th><th>{{round min 1}}</th><th>{{round fg 1}}</th><th>{{round fga 1}}</th><th>{{round fgp 1}}</th><th>{{round tp 1}}</th><th>{{round tpa 1}}</th><th>{{round tpp 1}}</th><th>{{round ft 1}}</th><th>{{round fta 1}}</th><th>{{round ftp 1}}</th><th>{{round orb 1}}</th><th>{{round drb 1}}</th><th>{{round trb 1}}</th><th>{{round ast 1}}</th><th>{{round tov 1}}</th><th>{{round stl 1}}</th><th>{{round blk 1}}</th><th>{{round pf 1}}</th><th>{{round pts 1}}</th><th>{{round per 1}}</th></tr>
+  {{/with}}
+  </tfoot>
 </table>
 
 <h3>Shot Locations</h3>
@@ -90,10 +92,12 @@
   {{#player.stats}}
     <tr><td><a href="#">{{season}}</a></td><td><a href="/l/{{../lid}}/roster/{{abbrev}}/{{season}}">{{abbrev}}</a></td><td>{{age}}</td><td>{{gp}}</td><td>{{gs}}</td><td>{{round min 1}}</td><td>{{round fgAtRim 1}}</td><td>{{round fgaAtRim 1}}</td><td>{{round fgpAtRim 1}}</td><td>{{round fgLowPost 1}}</td><td>{{round fgaLowPost 1}}</td><td>{{round fgpLowPost 1}}</td><td>{{round fgMidRange 1}}</td><td>{{round fgaMidRange 1}}</td><td>{{round fgpMidRange 1}}</td><td>{{round tp 1}}</td><td>{{round tpa 1}}</td><td>{{round tpp 1}}</td></tr>
   {{/player.stats}}
-  {{#with player.careerStats}}
-    <tr><td>Career</td><td></td><td></td><td>{{gp}}</td><td>{{gs}}</td><td>{{round min 1}}</td><td>{{round fgAtRim 1}}</td><td>{{round fgaAtRim 1}}</td><td>{{round fgpAtRim 1}}</td><td>{{round fgLowPost 1}}</td><td>{{round fgaLowPost 1}}</td><td>{{round fgpLowPost 1}}</td><td>{{round fgMidRange 1}}</td><td>{{round fgaMidRange 1}}</td><td>{{round fgpMidRange 1}}</td><td>{{round tp 1}}</td><td>{{round tpa 1}}</td><td>{{round tpp 1}}</td></tr>
-  {{/with}}
   </tbody>
+  <tfoot>
+  {{#with player.careerStats}}
+    <tr><th>Career</th><th></th><th></th><th>{{gp}}</th><th>{{gs}}</th><th>{{round min 1}}</th><th>{{round fgAtRim 1}}</th><th>{{round fgaAtRim 1}}</th><th>{{round fgpAtRim 1}}</th><th>{{round fgLowPost 1}}</th><th>{{round fgaLowPost 1}}</th><th>{{round fgpLowPost 1}}</th><th>{{round fgMidRange 1}}</th><th>{{round fgaMidRange 1}}</th><th>{{round fgpMidRange 1}}</th><th>{{round tp 1}}</th><th>{{round tpa 1}}</th><th>{{round tpp 1}}</th></tr>
+  {{/with}}
+  </tfoot>
 </table>
 
 <h2>Playoffs</h2>
@@ -107,10 +111,12 @@
   {{#player.statsPlayoffs}}
     <tr><td><a href="#">{{season}}</a></td><td><a href="/l/{{../lid}}/roster/{{abbrev}}/{{season}}">{{abbrev}}</a></td><td>{{age}}</td><td>{{gp}}</td><td>{{gs}}</td><td>{{round min 1}}</td><td>{{round fg 1}}</td><td>{{round fga 1}}</td><td>{{round fgp 1}}</td><td>{{round tp 1}}</td><td>{{round tpa 1}}</td><td>{{round tpp 1}}</td><td>{{round ft 1}}</td><td>{{round fta 1}}</td><td>{{round ftp 1}}</td><td>{{round orb 1}}</td><td>{{round drb 1}}</td><td>{{round trb 1}}</td><td>{{round ast 1}}</td><td>{{round tov 1}}</td><td>{{round stl 1}}</td><td>{{round blk 1}}</td><td>{{round pf 1}}</td><td>{{round pts 1}}</td><td>{{round per 1}}</td></tr>
   {{/player.statsPlayoffs}}
-  {{#with player.careerStatsPlayoffs}}
-    <tr><td>Career</td><td></td><td></td><td>{{gp}}</td><td>{{gs}}</td><td>{{round min 1}}</td><td>{{round fg 1}}</td><td>{{round fga 1}}</td><td>{{round fgp 1}}</td><td>{{round tp 1}}</td><td>{{round tpa 1}}</td><td>{{round tpp 1}}</td><td>{{round ft 1}}</td><td>{{round fta 1}}</td><td>{{round ftp 1}}</td><td>{{round orb 1}}</td><td>{{round drb 1}}</td><td>{{round trb 1}}</td><td>{{round ast 1}}</td><td>{{round tov 1}}</td><td>{{round stl 1}}</td><td>{{round blk 1}}</td><td>{{round pf 1}}</td><td>{{round pts 1}}</td><td>{{round per 1}}</td></tr>
-  {{/with}}
   </tbody>
+  <tfoot>
+  {{#with player.careerStatsPlayoffs}}
+    <tr><th>Career</th><th></th><th></th><th>{{gp}}</th><th>{{gs}}</th><th>{{round min 1}}</th><th>{{round fg 1}}</th><th>{{round fga 1}}</th><th>{{round fgp 1}}</th><th>{{round tp 1}}</th><th>{{round tpa 1}}</th><th>{{round tpp 1}}</th><th>{{round ft 1}}</th><th>{{round fta 1}}</th><th>{{round ftp 1}}</th><th>{{round orb 1}}</th><th>{{round drb 1}}</th><th>{{round trb 1}}</th><th>{{round ast 1}}</th><th>{{round tov 1}}</th><th>{{round stl 1}}</th><th>{{round blk 1}}</th><th>{{round pf 1}}</th><th>{{round pts 1}}</th><th>{{round per 1}}</th></tr>
+  {{/with}}
+  </tfoot>
 </table>
 
 <h3>Shot Locations</h3>
@@ -123,10 +129,12 @@
   {{#player.statsPlayoffs}}
     <tr><td><a href="#">{{season}}</a></td><td><a href="/l/{{../lid}}/roster/{{abbrev}}/{{season}}">{{abbrev}}</a></td><td>{{age}}</td><td>{{gp}}</td><td>{{gs}}</td><td>{{round min 1}}</td><td>{{round fgAtRim 1}}</td><td>{{round fgaAtRim 1}}</td><td>{{round fgpAtRim 1}}</td><td>{{round fgLowPost 1}}</td><td>{{round fgaLowPost 1}}</td><td>{{round fgpLowPost 1}}</td><td>{{round fgMidRange 1}}</td><td>{{round fgaMidRange 1}}</td><td>{{round fgpMidRange 1}}</td><td>{{round tp 1}}</td><td>{{round tpa 1}}</td><td>{{round tpp 1}}</td></tr>
   {{/player.statsPlayoffs}}
-  {{#with player.careerStatsPlayoffs}}
-    <tr><td>Career</td><td></td><td></td><td>{{gp}}</td><td>{{gs}}</td><td>{{round min 1}}</td><td>{{round fgAtRim 1}}</td><td>{{round fgaAtRim 1}}</td><td>{{round fgpAtRim 1}}</td><td>{{round fgLowPost 1}}</td><td>{{round fgaLowPost 1}}</td><td>{{round fgpLowPost 1}}</td><td>{{round fgMidRange 1}}</td><td>{{round fgaMidRange 1}}</td><td>{{round fgpMidRange 1}}</td><td>{{round tp 1}}</td><td>{{round tpa 1}}</td><td>{{round tpp 1}}</td></tr>
-  {{/with}}
   </tbody>
+  <tfoot>
+  {{#with player.careerStatsPlayoffs}}
+    <tr><th>Career</th><th></th><th></th><th>{{gp}}</th><th>{{gs}}</th><th>{{round min 1}}</th><th>{{round fgAtRim 1}}</th><th>{{round fgaAtRim 1}}</th><th>{{round fgpAtRim 1}}</th><th>{{round fgLowPost 1}}</th><th>{{round fgaLowPost 1}}</th><th>{{round fgpLowPost 1}}</th><th>{{round fgMidRange 1}}</th><th>{{round fgaMidRange 1}}</th><th>{{round fgpMidRange 1}}</th><th>{{round tp 1}}</th><th>{{round tpa 1}}</th><th>{{round tpp 1}}</th></tr>
+  {{/with}}
+  </tfoot>
 </table>
 
 <h2>Ratings</h2>
@@ -140,6 +148,22 @@
     {{/player.ratings}}
   </tbody>
 </table>
+
+<h2>Awards</h2>
+{{#if player.awards}}
+<table cellpadding="0" cellspacing="0" border="0" class="table table-nonfluid table-striped table-bordered table-condensed" id="player-awards">
+  <thead>
+    <tr><th>Season</th><th>Award</th></tr>
+  </thead>
+  <tbody>
+    {{#player.awards}}
+      <tr><td>{{season}}</td><td>{{type}}</td></tr>
+    {{/player.awards}}
+  </tbody>
+</table>
+{{else}}
+<p>None.</p>
+{{/if}}
 
 <h2>Salaries</h2>
 <table cellpadding="0" cellspacing="0" border="0" class="table table-nonfluid table-striped table-bordered table-condensed" id="player-salaries">

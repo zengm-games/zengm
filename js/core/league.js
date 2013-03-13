@@ -99,6 +99,7 @@ define(["db", "globals", "ui", "core/player", "core/season", "lib/faces", "lib/j
                                 p.ratings[0].ovr = player.ovr(p.ratings[0]);
                                 p.face = faces.generate();
                                 p.injury = {type: "Healthy", gamesRemaining: 0};
+                                p.awards = [];
                                 if (p.tid === g.PLAYER.FREE_AGENT) {
                                     p = player.setContract(p, player.genContract(p.ratings[0]), false);
                                 }

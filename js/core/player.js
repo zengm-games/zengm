@@ -610,6 +610,8 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
         p.salaries = [];
         p = setContract(p, genContract(p.ratings[0]), false);
 
+        p.awards = [];
+
         p.freeAgentTimesAsked = 0;
         p.yearsFreeAgent = 0;
         p.retiredYear = null;

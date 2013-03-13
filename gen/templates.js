@@ -2667,51 +2667,51 @@ function program21(depth0,data,depth1) {
 function program23(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n    <tr><td>Career</td><td></td><td></td><td>"
+  buffer += "\n    <tr><th>Career</th><th></th><th></th><th>"
     + escapeExpression(((stack1 = depth0.gp),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(((stack1 = depth0.gs),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.min, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.fg, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.fga, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.fgp, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.tp, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.tpa, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.tpp, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.ft, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.fta, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.ftp, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.orb, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.drb, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.trb, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.ast, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.tov, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.stl, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.blk, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.pf, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.pts, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.per, 1, {hash:{},data:data}))
-    + "</td></tr>\n  ";
+    + "</th></tr>\n  ";
   return buffer;
   }
 
@@ -2767,37 +2767,37 @@ function program25(depth0,data,depth1) {
 function program27(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n    <tr><td>Career</td><td></td><td></td><td>"
+  buffer += "\n    <tr><th>Career</th><th></th><th></th><th>"
     + escapeExpression(((stack1 = depth0.gp),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(((stack1 = depth0.gs),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.min, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.fgAtRim, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.fgaAtRim, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.fgpAtRim, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.fgLowPost, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.fgaLowPost, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.fgpLowPost, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.fgMidRange, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.fgaMidRange, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.fgpMidRange, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.tp, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.tpa, 1, {hash:{},data:data}))
-    + "</td><td>"
+    + "</th><th>"
     + escapeExpression(helpers.round.call(depth0, depth0.tpp, 1, {hash:{},data:data}))
-    + "</td></tr>\n  ";
+    + "</th></tr>\n  ";
   return buffer;
   }
 
@@ -2858,6 +2858,32 @@ function program29(depth0,data,depth1) {
 
 function program31(depth0,data) {
   
+  var buffer = "", stack1, stack2;
+  buffer += "\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-nonfluid table-striped table-bordered table-condensed\" id=\"player-awards\">\n  <thead>\n    <tr><th>Season</th><th>Award</th></tr>\n  </thead>\n  <tbody>\n    ";
+  stack2 = ((stack1 = ((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.awards)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(32, program32, data),data:data}));
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n  </tbody>\n</table>\n";
+  return buffer;
+  }
+function program32(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n      <tr><td>"
+    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</td><td>"
+    + escapeExpression(((stack1 = depth0.type),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</td></tr>\n    ";
+  return buffer;
+  }
+
+function program34(depth0,data) {
+  
+  
+  return "\n<p>None.</p>\n";
+  }
+
+function program36(depth0,data) {
+  
   var buffer = "", stack1;
   buffer += "\n      <tr><td>"
     + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
@@ -2910,32 +2936,35 @@ function program31(depth0,data) {
   buffer += "\n\n<h2>Regular Season</h2>\n<h3>Stats</h3>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player_stats\">\n  <thead>\n    <tr><th colspan=\"6\"></th><th colspan=\"3\" style=\"text-align: center\" title=\"Field Goals\">FG</th><th colspan=\"3\" style=\"text-align: center\" title=\"Three-Pointers\">3PT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Free Throws\">FT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Rebounds\">Reb</th><th colspan=\"6\"></th></tr>\n    <tr><th>Year</th><th>Team</th><th>Age</th><th title=\"Games Played\">GP</th><th title=\"Games Started\">GS</th><th title=\"Minutes\">Min</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Offensive\">Off</th><th title=\"Defensive\">Def</th><th title=\"Total\">Tot</th><th title=\"Assists\">Ast</th><th title=\"Turnovers\">TO</th><th title=\"Steals\">Stl</th><th title=\"Blocks\">Blk</th><th title=\"Personal Fouls\">PF</th><th title=\"Points\">Pts</th><th title=\"Player Efficiency Rating\">PER</th></tr>\n  </thead>\n  <tbody>\n  ";
   stack2 = ((stack1 = ((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.stats)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program21, data, depth0),data:data}));
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  ";
+  buffer += "\n  </tbody>\n  <tfoot>\n  ";
   stack2 = helpers['with'].call(depth0, ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.careerStats), {hash:{},inverse:self.noop,fn:self.program(23, program23, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </tbody>\n</table>\n\n<h3>Shot Locations</h3>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player_stats\">\n  <thead>\n    <tr><th colspan=\"6\"></th><th colspan=\"3\" style=\"text-align: center\" title=\"At Rim\">At Rim</th><th colspan=\"3\" style=\"text-align: center\" title=\"Low Post\">Low Post</th><th colspan=\"3\" style=\"text-align: center\" title=\"Mid-Range\">Mid-Range</th><th colspan=\"3\" style=\"text-align: center\" title=\"Three-Pointers\">3PT</th></tr>\n    <tr><th>Year</th><th>Team</th><th>Age</th><th title=\"Games Played\">GP</th><th title=\"Games Started\">GS</th><th title=\"Minutes\">Min</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th></tr>\n  </thead>\n  <tbody>\n  ";
+  buffer += "\n  </tfoot>\n</table>\n\n<h3>Shot Locations</h3>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player_stats\">\n  <thead>\n    <tr><th colspan=\"6\"></th><th colspan=\"3\" style=\"text-align: center\" title=\"At Rim\">At Rim</th><th colspan=\"3\" style=\"text-align: center\" title=\"Low Post\">Low Post</th><th colspan=\"3\" style=\"text-align: center\" title=\"Mid-Range\">Mid-Range</th><th colspan=\"3\" style=\"text-align: center\" title=\"Three-Pointers\">3PT</th></tr>\n    <tr><th>Year</th><th>Team</th><th>Age</th><th title=\"Games Played\">GP</th><th title=\"Games Started\">GS</th><th title=\"Minutes\">Min</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th></tr>\n  </thead>\n  <tbody>\n  ";
   stack2 = ((stack1 = ((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.stats)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program25, data, depth0),data:data}));
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  ";
+  buffer += "\n  </tbody>\n  <tfoot>\n  ";
   stack2 = helpers['with'].call(depth0, ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.careerStats), {hash:{},inverse:self.noop,fn:self.program(27, program27, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </tbody>\n</table>\n\n<h2>Playoffs</h2>\n<h3>Stats</h3>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player_stats\">\n  <thead>\n    <tr><th colspan=\"6\"></th><th colspan=\"3\" style=\"text-align: center\" title=\"Field Goals\">FG</th><th colspan=\"3\" style=\"text-align: center\" title=\"Three-Pointers\">3PT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Free Throws\">FT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Rebounds\">Reb</th><th colspan=\"6\"></th></tr>\n    <tr><th>Year</th><th>Team</th><th>Age</th><th title=\"Games Played\">GP</th><th title=\"Games Started\">GS</th><th title=\"Minutes\">Min</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Offensive\">Off</th><th title=\"Defensive\">Def</th><th title=\"Total\">Tot</th><th title=\"Assists\">Ast</th><th title=\"Turnovers\">TO</th><th title=\"Steals\">Stl</th><th title=\"Blocks\">Blk</th><th title=\"Personal Fouls\">PF</th><th title=\"Points\">Pts</th><th title=\"Player Efficiency Rating\">PER</th></tr>\n  </thead>\n  <tbody>\n  ";
+  buffer += "\n  </tfoot>\n</table>\n\n<h2>Playoffs</h2>\n<h3>Stats</h3>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player_stats\">\n  <thead>\n    <tr><th colspan=\"6\"></th><th colspan=\"3\" style=\"text-align: center\" title=\"Field Goals\">FG</th><th colspan=\"3\" style=\"text-align: center\" title=\"Three-Pointers\">3PT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Free Throws\">FT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Rebounds\">Reb</th><th colspan=\"6\"></th></tr>\n    <tr><th>Year</th><th>Team</th><th>Age</th><th title=\"Games Played\">GP</th><th title=\"Games Started\">GS</th><th title=\"Minutes\">Min</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Offensive\">Off</th><th title=\"Defensive\">Def</th><th title=\"Total\">Tot</th><th title=\"Assists\">Ast</th><th title=\"Turnovers\">TO</th><th title=\"Steals\">Stl</th><th title=\"Blocks\">Blk</th><th title=\"Personal Fouls\">PF</th><th title=\"Points\">Pts</th><th title=\"Player Efficiency Rating\">PER</th></tr>\n  </thead>\n  <tbody>\n  ";
   stack2 = ((stack1 = ((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.statsPlayoffs)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program21, data, depth0),data:data}));
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  ";
+  buffer += "\n  </tbody>\n  <tfoot>\n  ";
   stack2 = helpers['with'].call(depth0, ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.careerStatsPlayoffs), {hash:{},inverse:self.noop,fn:self.program(23, program23, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </tbody>\n</table>\n\n<h3>Shot Locations</h3>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player_stats\">\n  <thead>\n    <tr><th colspan=\"6\"></th><th colspan=\"3\" style=\"text-align: center\" title=\"At Rim\">At Rim</th><th colspan=\"3\" style=\"text-align: center\" title=\"Low Post\">Low Post</th><th colspan=\"3\" style=\"text-align: center\" title=\"Mid-Range\">Mid-Range</th><th colspan=\"3\" style=\"text-align: center\" title=\"Three-Pointers\">3PT</th></tr>\n    <tr><th>Year</th><th>Team</th><th>Age</th><th title=\"Games Played\">GP</th><th title=\"Games Started\">GS</th><th title=\"Minutes\">Min</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th></tr>\n  </thead>\n  <tbody>\n  ";
+  buffer += "\n  </tfoot>\n</table>\n\n<h3>Shot Locations</h3>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player_stats\">\n  <thead>\n    <tr><th colspan=\"6\"></th><th colspan=\"3\" style=\"text-align: center\" title=\"At Rim\">At Rim</th><th colspan=\"3\" style=\"text-align: center\" title=\"Low Post\">Low Post</th><th colspan=\"3\" style=\"text-align: center\" title=\"Mid-Range\">Mid-Range</th><th colspan=\"3\" style=\"text-align: center\" title=\"Three-Pointers\">3PT</th></tr>\n    <tr><th>Year</th><th>Team</th><th>Age</th><th title=\"Games Played\">GP</th><th title=\"Games Started\">GS</th><th title=\"Minutes\">Min</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th></tr>\n  </thead>\n  <tbody>\n  ";
   stack2 = ((stack1 = ((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.statsPlayoffs)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program25, data, depth0),data:data}));
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  ";
+  buffer += "\n  </tbody>\n  <tfoot>\n  ";
   stack2 = helpers['with'].call(depth0, ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.careerStatsPlayoffs), {hash:{},inverse:self.noop,fn:self.program(27, program27, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </tbody>\n</table>\n\n<h2>Ratings</h2>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player_ratings\">\n  <thead>\n    <tr><th>Year</th><th>Team</th><th>Age</th><th title=\"Overall\">Ovr</th><th title=\"Potential\">Pot</th><th title=\"Height\">Hgt</th><th title=\"Strength\">Str</th><th title=\"Speed\">Spd</th><th title=\"Jumping\">Jmp</th><th title=\"Endurance\">End</th><th title=\"Inside Scoring\">Ins</th><th title=\"Dunks/Layups\">Dnk</th><th title=\"Free Throw Shooting\">FT</th><th title=\"Two-Point Shooting\">2Pt</th><th title=\"Three-Point Shooting\">3Pt</th><th title=\"Blocks\">Blk</th><th title=\"Steals\">Stl</th><th title=\"Dribbling\">Drb</th><th title=\"Passing\">Pss</th><th title=\"Rebounding\">Reb</th><th>Skills</th></tr>\n  </thead>\n  <tbody>\n    ";
+  buffer += "\n  </tfoot>\n</table>\n\n<h2>Ratings</h2>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player_ratings\">\n  <thead>\n    <tr><th>Year</th><th>Team</th><th>Age</th><th title=\"Overall\">Ovr</th><th title=\"Potential\">Pot</th><th title=\"Height\">Hgt</th><th title=\"Strength\">Str</th><th title=\"Speed\">Spd</th><th title=\"Jumping\">Jmp</th><th title=\"Endurance\">End</th><th title=\"Inside Scoring\">Ins</th><th title=\"Dunks/Layups\">Dnk</th><th title=\"Free Throw Shooting\">FT</th><th title=\"Two-Point Shooting\">2Pt</th><th title=\"Three-Point Shooting\">3Pt</th><th title=\"Blocks\">Blk</th><th title=\"Steals\">Stl</th><th title=\"Dribbling\">Drb</th><th title=\"Passing\">Pss</th><th title=\"Rebounding\">Reb</th><th>Skills</th></tr>\n  </thead>\n  <tbody>\n    ";
   stack2 = ((stack1 = ((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.ratings)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program29, data, depth0),data:data}));
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </tbody>\n</table>\n\n<h2>Salaries</h2>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-nonfluid table-striped table-bordered table-condensed\" id=\"player-salaries\">\n  <thead>\n    <tr><th>Season</th><th>Amount</th></tr>\n  </thead>\n  <tbody>\n    ";
-  stack2 = ((stack1 = ((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.salaries)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(31, program31, data),data:data}));
+  buffer += "\n  </tbody>\n</table>\n\n<h2>Awards</h2>\n";
+  stack2 = helpers['if'].call(depth0, ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.awards), {hash:{},inverse:self.program(34, program34, data),fn:self.program(31, program31, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n\n<h2>Salaries</h2>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-nonfluid table-striped table-bordered table-condensed\" id=\"player-salaries\">\n  <thead>\n    <tr><th>Season</th><th>Amount</th></tr>\n  </thead>\n  <tbody>\n    ";
+  stack2 = ((stack1 = ((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.salaries)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(36, program36, data),data:data}));
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "\n  </tbody>\n  <tfoot>\n    <tr><th>Total</th><th>"
     + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.salariesTotal), "M", 2, {hash:{},data:data}))

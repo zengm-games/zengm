@@ -14,13 +14,47 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
      * @param {function()} cb Callback function run after the database operations finish.
      */
     function awards(cb) {
-        var transaction;
+        var awardsByPlayer, cbAwardsByPlayer, transaction;
+
+        // [{pid, type}]
+        awardsByPlayer = [];
+
+        cbAwardsByPlayer = function (awardsByPlayer, cb) {
+            var i, pids, tx;
+
+            pids = _.uniq(_.pluck(awardsByPlayer, "pid"));
+
+            tx = g.dbl.transaction("players", "readwrite");
+            for (i = 0; i < pids.length; i++) {
+                tx.objectStore("players").openCursor(pids[i]).onsuccess = function (event) {
+                    var cursor, i, p, updated;
+
+                    cursor = event.target.result;
+                    p = cursor.value;
+
+                    updated = false;
+                    for (i = 0; i < awardsByPlayer.length; i++) {
+                        if (p.pid === awardsByPlayer[i].pid) {
+                            p.awards.push({season: g.season, type: awardsByPlayer[i].type});
+                            updated = true;
+                        }
+                    }
+
+                    if (updated) {
+                        cursor.update(p);
+                    }
+                };
+            }
+            tx.oncomplete = function () {
+                cb();
+            };
+        };
 
         transaction = g.dbl.transaction(["players", "releasedPlayers", "teams"]);
 
         // Any non-retired player can win an award
         transaction.objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(g.PLAYER.RETIRED, true)).onsuccess = function (event) {
-            var attributes, awards, i, p, players, ratings, seasonAttributes, stats;
+            var attributes, awards, i, p, players, ratings, seasonAttributes, stats, type;
 
             awards = {season: g.season};
 
@@ -33,6 +67,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
             players.sort(function (a, b) {  return (0.75 * b.stats.pts + b.stats.ast + b.stats.trb) - (0.75 * a.stats.pts + a.stats.ast + a.stats.trb); });
             p = players[0];
             awards.mvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
+            awardsByPlayer.push({pid: p.pid, type: "Most Valuable Player"});
 
             // Sixth Man of the Year - same sort as MVP
             for (i = 0; i < players.length; i++) {
@@ -43,6 +78,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
             }
             p = players[i];
             awards.smoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
+            awardsByPlayer.push({pid: p.pid, type: "Sixth Man of the Year"});
 
             // Rookie of the Year - same sort as MVP
             for (i = 0; i < players.length; i++) {
@@ -55,34 +91,44 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
             if (p !== undefined) { // I suppose there could be no rookies at all..
                 awards.roy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
             }
+            awardsByPlayer.push({pid: p.pid, type: "Rookie of the Year"});
 
             // All League Team - same sort as MVP
             awards.allLeague = [{title: "First Team", players: []}];
+            type = "First Team All-League";
             for (i = 0; i < 15; i++) {
                 p = players[i];
                 if (i === 5) {
                     awards.allLeague.push({title: "Second Team", players: []});
+                    type = "Second Team All-League";
                 } else if (i === 10) {
                     awards.allLeague.push({title: "Third Team", players: []});
+                    type = "Third Team All-League";
                 }
                 _.last(awards.allLeague).players.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast});
+                awardsByPlayer.push({pid: p.pid, type: type});
             }
 
             // Defensive Player of the Year
             players.sort(function (a, b) {  return (b.stats.trb + 5 * b.stats.blk + 5 * b.stats.stl) - (a.stats.trb + 5 * a.stats.blk + 5 * a.stats.stl); });
             p = players[0];
             awards.dpoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.stats.trb, blk: p.stats.blk, stl: p.stats.stl};
+            awardsByPlayer.push({pid: p.pid, type: "Defensive Player of the Year"});
 
             // All Defensive Team - same sort as DPOY
             awards.allDefensive = [{title: "First Team", players: []}];
+            type = "First Team All-Defensive";
             for (i = 0; i < 15; i++) {
                 p = players[i];
                 if (i === 5) {
                     awards.allDefensive.push({title: "Second Team", players: []});
+                    type = "Second Team All-Defensive";
                 } else if (i === 10) {
                     awards.allDefensive.push({title: "Third Team", players: []});
+                    type = "Third Team All-Defensive";
                 }
                 _.last(awards.allDefensive).players.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.stats.trb, blk: p.stats.blk, stl: p.stats.stl});
+                awardsByPlayer.push({pid: p.pid, type: type});
             }
 
             attributes = ["tid", "abbrev", "region", "name", "cid"];
@@ -109,7 +155,9 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
 
                 tx = g.dbl.transaction("awards", "readwrite");
                 tx.objectStore("awards").add(awards);
-                tx.oncomplete = cb;
+                tx.oncomplete = function () {
+                    cbAwardsByPlayer(awardsByPlayer, cb);
+                };
             });
         };
     }

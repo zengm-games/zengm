@@ -118,7 +118,7 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
      * @param {boolean} randomizeExp If true, then it is assumed that some random amount of years has elapsed since the contract was signed, thus decreasing the expiration date. This is used when generating players in a new league.
      * @return {Object.<string, number>} Object containing two properties with integer values, "amount" with the contract amount in thousands of dollars and "exp" with the contract expiration year.
      */
-    function contract(ratings, randomizeExp) {
+    function genContract(ratings, randomizeExp) {
         var amount, expiration, maxAmount, minAmount, potentialDifference, years;
 
         randomizeExp = randomizeExp !== undefined ? randomizeExp : false;
@@ -269,7 +269,7 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
      * @return {Object} Updated player object.
      */
     function bonus(p, amount, randomizeExp) {
-        var age, cont, i, key, r, ratingKeys;
+        var age, contract, i, key, r, ratingKeys;
 
         // Make sure age is always defined
         age = g.season - p.bornYear;
@@ -289,9 +289,9 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
         }
 
         // Update contract based on development
-        cont = contract(p.ratings[r], randomizeExp);
-        p.contractAmount = cont.amount;
-        p.contractExp = cont.exp;
+        contract = genContract(p.ratings[r], randomizeExp);
+        p.contractAmount = contract.amount;
+        p.contractExp = contract.exp;
 
         return p;
     }
@@ -311,13 +311,13 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
      * @param {function()} cb Callback function.
      */
     function addToFreeAgents(ot, p, phase, cb) {
-        var cont, expiration;
+        var contract, expiration;
 
         phase = phase !== null ? phase : g.phase;
 
-        cont = contract(p.ratings[p.ratings.length - 1]);
-        p.contractAmount = cont.amount;
-        p.contractExp = cont.exp;
+        contract = genContract(p.ratings[p.ratings.length - 1]);
+        p.contractAmount = contract.amount;
+        p.contractExp = contract.exp;
 
         p.freeAgentTimesAsked = 0;
 
@@ -354,7 +354,7 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
         addToFreeAgents(transaction, p, g.phase, cb);
     }
 
-    function generateRatings(profile, baseRating, pot, season) {
+    function genRatings(profile, baseRating, pot, season) {
         var i, key, profileId, profiles, ratingKeys, ratings, rawRating, rawRatings, sigmas;
 
         if (profile === 'Point') {
@@ -540,7 +540,7 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
     }
 
     function generate(tid, age, profile, baseRating, pot, draftYear, newLeague) {
-        var cont, maxHgt, minHgt, maxWeight, minWeight, nationality, p;
+        var contract, maxHgt, minHgt, maxWeight, minWeight, nationality, p;
 
         newLeague = newLeague !== undefined ? newLeague : false;
 
@@ -556,10 +556,10 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
         p.ratings = [];
         if (newLeague) {
             // Create player for new league
-            p.ratings.push(generateRatings(profile, baseRating, pot, g.startingSeason));
+            p.ratings.push(genRatings(profile, baseRating, pot, g.startingSeason));
         } else {
             // Create player to be drafted
-            p.ratings.push(generateRatings(profile, baseRating, pot, draftYear));
+            p.ratings.push(genRatings(profile, baseRating, pot, draftYear));
         }
 
         minHgt = 69;  // 5'9"
@@ -586,9 +586,9 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
         p.draftAbbrev = null;
         p.draftTeamName = null;
         p.draftTeamRegion = null;
-        cont = contract(p.ratings[0]);
-        p.contractAmount = cont.amount;
-        p.contractExp = cont.exp;
+        contract = genContract(p.ratings[0]);
+        p.contractAmount = contract.amount;
+        p.contractExp = contract.exp;
 
         p.freeAgentTimesAsked = 0;
         p.yearsFreeAgent = 0;
@@ -628,7 +628,7 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
         addStatsRow: addStatsRow,
         addToFreeAgents: addToFreeAgents,
         bonus: bonus,
-        contract: contract,
+        genContract: genContract,
         develop: develop,
         injury: injury,
         generate: generate,

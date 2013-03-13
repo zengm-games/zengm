@@ -1,21 +1,20 @@
 BEFORE 3.0.0-beta.2
 -------------------
 
+store contract history/future with each player, and show in player view
+  keep current contractAmount and contractExp
+  add "contracts" to player root, an object with "season" and "amount" properties
+  create players.setContract(p, amount, exp) which updates all these variables
+  player.contract() -> player.genContract()
 how to deal with a team that drops below 5 active players, factoring in injuries?
   should allow them to exceed roster limit while injury exists
   should not allow play when below 5
   should use same logic/functions as core.season that checks on new season.
     first, add support for auto-add players when AI teams are below limit (in season.js)
-DataTables - fix default sort order on column click
-  http://datatables.net/ref#asSorting will work. maybe pass it as an option to bbgm_datatable
-  text should be asc, numeric should be desc
-  http://stackoverflow.com/questions/3725321/jquery-datatables-change-order-to-desc-when-it-sorts - but can it be set globally? maybe i can have ui.datatable automatically read columns and figure it out?
 bbgmPing should only work in production
   make sure it still works next time i update play.basketball-gm.com
 give bbgm website its own version of bootstrap (only with components needed)
 display league/season counter on basketball-gm.com splash page
-more tests
-  https://github.com/gotwarlost/istanbul
 update formulas
   hype
     increase/decrease a lot for discrete events
@@ -52,9 +51,6 @@ like on team finances page, anywhere else to add help popups?
   should this be abstracted rather than just inline in views?
   inline anything from the manual?
   release and buy out menus
-store contract history/future with each player, and show in player view
-  replace contractAmount and contractExp with contracts, a {amount: 5235, exp: 2052} object in player.stats.
-    it's not well normalized in player.stats, but that should make it easy to access however it's needed
 store a list of awards/honors with each player, and show in player view
 negotiation is annoying
   come up with an "anger meter" to display the odds of the player demanding more
@@ -184,6 +180,12 @@ trades
 go through future list
   anything that should be here?
   keep in mind db changes..
+DataTables - fix default sort order on column click
+  text should be asc, numeric should be desc (except draft picks)
+  http://datatables.net/ref#asSorting will work. maybe pass it as an option to bbgm_datatable
+  but can it be set globally, based on column type? can have ui.datatable automatically read columns and figure it out?
+more tests
+  https://github.com/gotwarlost/istanbul
 
 FUTURE (after 3.0.0)
 --------------------

@@ -743,7 +743,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
 
         // Resign players or they become free agents
         playerStore.index("tid").openCursor(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
-            var cont, cursor, i, p;
+            var contract, cursor, i, p;
 
             cursor = event.target.result;
             if (cursor) {
@@ -752,9 +752,9 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                     if (p.tid !== g.userTid) {
                         // Automatically negotiate with teams
                         if (Math.random() > _.last(p.ratings).ovr / 100) { // Should eventually be smarter than a coin flip
-                            cont = player.contract(_.last(p.ratings));
-                            p.contractAmount = cont.amount;
-                            p.contractExp = cont.exp;
+                            contract = player.genContract(_.last(p.ratings));
+                            p.contractAmount = contract.amount;
+                            p.contractExp = contract.exp;
                             cursor.update(p); // Other endpoints include calls to addToFreeAgents, which handles updating the database
                         } else {
                             player.addToFreeAgents(playerStore, p, g.PHASE.RESIGN_PLAYERS);

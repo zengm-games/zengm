@@ -89,7 +89,7 @@ define(["db", "globals", "ui", "core/player", "core/season", "lib/faces", "lib/j
                     if (playerGeneration === "nba2012") {
                         // Load players from file
                         $.getJSON("/data/nba2012.json", function (players) {
-                            var cont, i, p, playerStore;
+                            var contract, i, p, playerStore;
 
                             playerStore = g.dbl.transaction("players", "readwrite").objectStore("players");  // Transaction used above is closed by now
 
@@ -100,9 +100,9 @@ define(["db", "globals", "ui", "core/player", "core/season", "lib/faces", "lib/j
                                 p.face = faces.generate();
                                 p.injury = {type: "Healthy", gamesRemaining: 0};
                                 if (p.tid === g.PLAYER.FREE_AGENT) {
-                                    cont = player.contract(p.ratings[0]);
-                                    p.contractAmount = cont.amount;
-                                    p.contractExp = cont.exp;
+                                    contract = player.genContract(p.ratings[0]);
+                                    p.contractAmount = contract.amount;
+                                    p.contractExp = contract.exp;
                                 }
                                 db.putPlayer(playerStore, p, function () {
                                     done += 1;

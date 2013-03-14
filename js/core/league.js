@@ -2,7 +2,7 @@
  * @name core.league
  * @namespace Creating and removing leagues.
  */
-define(["db", "globals", "ui", "core/player", "core/season", "lib/faces", "lib/jquery", "util/helpers", "util/random"], function (db, g, ui, player, season, faces, $, helpers, random) {
+define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/faces", "lib/jquery", "util/helpers", "util/random"], function (db, g, ui, player, season, team, faces, $, helpers, random) {
     "use strict";
 
     /**
@@ -50,99 +50,7 @@ define(["db", "globals", "ui", "core/player", "core/season", "lib/faces", "lib/j
                     // teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league.
                     teamStore = transaction.objectStore("teams");
                     for (i = 0; i < teams.length; i++) {
-                        teamStore.add({
-                            tid: teams[i].tid,
-                            cid: teams[i].cid,
-                            did: teams[i].did,
-                            region: teams[i].region,
-                            name: teams[i].name,
-                            abbrev: teams[i].abbrev,
-                            stats: [{ // Recorded separately in and out of playoffs
-                                season: g.startingSeason,
-                                playoffs: false,
-                                gp: 0,
-                                min: 0,
-                                fg: 0,
-                                fga: 0,
-                                fgAtRim: 0,
-                                fgaAtRim: 0,
-                                fgLowPost: 0,
-                                fgaLowPost: 0,
-                                fgMidRange: 0,
-                                fgaMidRange: 0,
-                                tp: 0,
-                                tpa: 0,
-                                ft: 0,
-                                fta: 0,
-                                orb: 0,
-                                drb: 0,
-                                trb: 0,
-                                ast: 0,
-                                tov: 0,
-                                stl: 0,
-                                blk: 0,
-                                pf: 0,
-                                pts: 0,
-                                oppPts: 0
-                            }],
-                            seasons: [{ // Things that have one value per season
-                                season: g.startingSeason,
-                                gp: 0,
-                                att: 0,
-                                cash: 10000,
-                                won: 0,
-                                lost: 0,
-                                wonHome: 0,
-                                lostHome: 0,
-                                wonAway: 0,
-                                lostAway: 0,
-                                wonDiv: 0,
-                                lostDiv: 0,
-                                wonConf: 0,
-                                lostConf: 0,
-                                lastTen: [],
-                                streak: 0,
-                                madePlayoffs: false,
-                                confChamps: false,
-                                leagueChamps: false,
-                                hype: Math.random(),
-                                pop: teams[i].pop,
-                                tvContractAmount: 0,
-                                tvContractExp: 0,
-                                merchRevenue: 0,
-                                sponsorRevenue: 0,
-                                ticketRevenue: 0,
-                                nationalTvRevenue: 0,
-                                localTvRevenue: 0,
-                                payrollEndOfSeason: -1,
-                                salaryPaid: 0,
-                                luxuryTaxPaid: 0,
-                                minTaxPaid: 0,
-                                otherPaid: 0,
-                                scoutingPaid: 0,
-                                scoutingPaidRank: 0,
-                                coachingPaid: 0,
-                                coachingPaidRank: 0,
-                                healthPaid: 0,
-                                healthPaidRank: 0,
-                                facilitiesPaid: 0,
-                                facilitiesPaidRank: 0,
-                                stadiumPaid: 0,
-                                stadiumPaidRank: 0
-                            }],
-                            ticketPrice: helpers.round(25 + 25 * (30 - teams[i].popRank) / 29, 2),
-                            ticketPriceRank: teams[i].popRank,
-                            scoutingBudget: helpers.round(200 + 300 * (30 - teams[i].popRank) / 29) * 10,
-                            scoutingBudgetRank: teams[i].popRank,
-                            coachingBudget: helpers.round(200 + 300 * (30 - teams[i].popRank) / 29) * 10,
-                            coachingBudgetRank: teams[i].popRank,
-                            healthBudget: helpers.round(200 + 300 * (30 - teams[i].popRank) / 29) * 10,
-                            healthBudgetRank: teams[i].popRank,
-                            facilitiesBudget: helpers.round(200 + 300 * (30 - teams[i].popRank) / 29) * 10,
-                            facilitiesBudgetRank: teams[i].popRank,
-                            stadiumBudget: helpers.round(200 + 300 * (30 - teams[i].popRank) / 29) * 10,
-                            stadiumBudgetRank: teams[i].popRank
-                        });
+                        teamStore.add(team.generate(teams[i]));
                     }
 
                     transaction.objectStore("trade").add({

@@ -2,7 +2,7 @@
  * @name core.season
  * @namespace Somewhat of a hodgepodge. Basically, this is for anything related to a single season that doesn't deserve to be broken out into its own file. Currently, this includes things that happen when moving between phases of the season (i.e. regular season to playoffs) and scheduling. As I write this, I realize that it might make more sense to break up those two classes of functions into two separate modules, but oh well.
  */
-define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "core/freeAgents", "core/player", "lib/davis", "lib/handlebars.runtime", "lib/underscore", "util/helpers", "util/random"], function (db, g, ui, contractNegotiation, finances, freeAgents, player, Davis, Handlebars, _, helpers, random) {
+define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "core/freeAgents", "core/player", "core/team", "lib/davis", "lib/handlebars.runtime", "lib/underscore", "util/helpers", "util/random"], function (db, g, ui, contractNegotiation, finances, freeAgents, player, team, Davis, Handlebars, _, helpers, random) {
     "use strict";
 
     /**
@@ -599,23 +599,14 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                 // Add row to team stats and team season attributes
                 tx = g.dbl.transaction(["players", "teams"], "readwrite");
                 tx.objectStore("teams").openCursor().onsuccess = function (event) {
-                    var cursor, i, key, playoffStats, t, teamSeason, teamStats;
+                    var cursor, i, key, playoffStats, t, teamSeason;
 
                     cursor = event.target.result;
                     if (cursor) {
                         t = cursor.value;
                         teamSeason = _.last(t.seasons);
-                        teamStats = _.last(t.stats);
                         if (tidPlayoffs.indexOf(t.tid) >= 0) {
-                            playoffStats = {};
-                            for (key in teamStats) {
-                                if (teamStats.hasOwnProperty(key)) {
-                                    playoffStats[key] = 0;
-                                }
-                            }
-                            playoffStats.season = g.season;
-                            playoffStats.playoffs = true;
-                            t.stats.push(playoffStats);
+                            t = team.addStatsRow(t, true);
 
                             teamSeason.madePlayoffs = true;
 

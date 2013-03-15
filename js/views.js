@@ -2115,13 +2115,11 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                 negotiations = event.target.result;
 
                 if (negotiations.length === 1) {
-                    Davis.location.assign(new Davis.Request("/l/" + g.lid + "/negotiation/" + negotiations[0].pid));
-                    return;
+                    return Davis.location.assign(new Davis.Request("/l/" + g.lid + "/negotiation/" + negotiations[0].pid));
                 }
 
                 if (g.phase !== g.PHASE.RESIGN_PLAYERS) {
-                    helpers.error("Something bad happened.", req);
-                    return;
+                    return helpers.error("Something bad happened.", req);
                 }
 
                 // Get all free agents, filter array based on negotiations data, pass to db.getPlayers, augment with contract data from negotiations
@@ -2148,6 +2146,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                     for (i = 0; i < players.length; i++) {
                         for (j = 0; j < negotiations.length; j++) {
                             if (players[i].pid === negotiations[j].pid) {
+                                players[i].contract = {};
                                 players[i].contract.amount = negotiations[j].playerAmount / 1000;
                                 players[i].contract.exp = g.season + negotiations[j].playerYears;
                                 break;

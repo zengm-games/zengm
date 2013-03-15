@@ -1,7 +1,6 @@
 BEFORE 3.0.0-beta.2
 -------------------
 
-add another color for bar graph (for expenses)
 move most db functions into core.whatever. db should just be about initializing/upgrading
 db version upgrades
   see https://github.com/superfeedr/indexeddb-backbonejs-adapter/blob/master/backbone-indexeddb.js

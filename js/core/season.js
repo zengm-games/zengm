@@ -58,7 +58,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
 
             awards = {season: g.season};
 
-            attributes = ["pid", "name", "tid", "abbrev", "draftYear"];
+            attributes = ["pid", "name", "tid", "abbrev", "draft"];
             stats = ["gp", "gs", "min", "pts", "trb", "ast", "blk", "stl"];
             ratings = [];
             players = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings);
@@ -83,7 +83,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
             // Rookie of the Year - same sort as MVP
             for (i = 0; i < players.length; i++) {
                 // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
-                if (players[i].draftYear === g.season - 1) {
+                if (players[i].draft.year === g.season - 1) {
                     break;
                 }
             }

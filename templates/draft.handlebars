@@ -26,7 +26,7 @@
     </thead>
     <tbody>
       {{#drafted}}
-        <tr><td>{{rnd}}-{{pick}}</td><td><a href="/l/{{../lid}}/roster/{{abbrev}}">{{abbrev}}</a></td><td>{{#if injury}}{{playerNameLabels pid name injury skills}}{{/if}}</td><td>{{pos}}</td><td>{{age}}<td>{{ovr}}</td><td>{{pot}}</td></tr>
+        <tr><td>{{draft.round}}-{{draft.pick}}</td><td><a href="/l/{{../lid}}/roster/{{draft.abbrev}}">{{draft.abbrev}}</a></td><td>{{#if injury}}{{playerNameLabels pid name injury skills}}{{/if}}</td><td>{{pos}}</td><td>{{age}}<td>{{ovr}}</td><td>{{pot}}</td></tr>
       {{/drafted}}
     </tbody>
     </table>

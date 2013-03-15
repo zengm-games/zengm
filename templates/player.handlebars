@@ -8,10 +8,10 @@
       Weight: {{player.weight}} lbs<br>
       Age: {{player.age}}<br>
       Born: {{player.bornYear}} - {{player.bornLoc}}<br>
-      {{#if player.draftRound}}
-        Draft: {{player.draftYear}} - Round {{player.draftRound}} (Pick {{player.draftPick}}) by {{player.draftAbbrev}}<br>
+      {{#if player.draft.ound}}
+        Draft: {{player.draft.year}} - Round {{player.draft.round}} (Pick {{player.draft.pick}}) by {{player.draft.abbrev}}<br>
       {{else}}
-        Undrafted: {{player.draftYear}}<br>
+        Undrafted: {{player.draft.year}}<br>
       {{/if}}
       {{#if showContract}}
         {{#if freeAgent}}Asking for{{else}}Contract{{/if}}: {{currency player.contractAmount "M"}}/yr thru {{player.contractExp}}<br>

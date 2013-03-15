@@ -1496,11 +1496,11 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                         undrafted.push(player);
                     }
 
-                    playerStore.index("draftYear").getAll(g.season).onsuccess = function (event) {
-                        var drafted, draftAbbrev, draftTid, i, pa, player, playersAll, pr, result, started;
+                    playerStore.index("draft.year").getAll(g.season).onsuccess = function (event) {
+                        var drafted, i, pa, player, playersAll, pr, result, started;
 
                         playersAll = event.target.result;
-                        playersAll.sort(function (a, b) {  return (g.numTeams * (a.draftRound - 1) + a.draftPick) - (g.numTeams * (b.draftRound - 1) + b.draftPick); });
+                        playersAll.sort(function (a, b) {  return (g.numTeams * (a.draft.round - 1) + a.draft.pick) - (g.numTeams * (b.draft.round - 1) + b.draft.pick); });
 
                         drafted = [];
                         for (i = 0; i < playersAll.length; i++) {
@@ -1508,10 +1508,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
                             if (pa.tid !== g.PLAYER.UNDRAFTED) {
                                 // Attributes
-                                result = helpers.validateTid(pa.draftTid);
-                                draftTid = result[0];
-                                draftAbbrev = result[1];
-                                player = {pid: pa.pid, name: pa.name, pos: pa.pos, age: g.season - pa.bornYear, abbrev: draftAbbrev, rnd: pa.draftRound, pick: pa.draftPick, injury: pa.injury};
+                                player = {pid: pa.pid, name: pa.name, pos: pa.pos, age: g.season - pa.bornYear, draft: pa.draft, injury: pa.injury};
 
                                 // Ratings
                                 pr = pa.ratings[0];
@@ -1530,7 +1527,11 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
                             for (i = 0; i < draftOrder.length; i++) {
                                 slot = draftOrder[i];
-                                drafted.push({abbrev: slot.abbrev, rnd: slot.round, pick: slot.pick});
+                                drafted.push({draft: {
+                                    abbrev: slot.abbrev,
+                                    round: slot.round,
+                                    pick: slot.pick
+                                }});
                             }
 
                             data = {
@@ -1599,10 +1600,10 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
             // Show a summary of an old draft
             g.realtimeUpdate = false;
-            playerStore.index("draftYear").getAll(season).onsuccess = function (event) {
+            playerStore.index("draft.year").getAll(season).onsuccess = function (event) {
                 var attributes, currentPr, data, draftPr, i, pa, player, players, playersAll, ratings, stats;
 
-                attributes = ["tid", "abbrev", "draftTid", "draftAbbrev", "pid", "name", "pos", "draftRound", "draftPick", "draftAge", "age"];
+                attributes = ["tid", "abbrev", "draft", "pid", "name", "pos", "age"];
                 ratings = ["ovr", "pot", "skills"];
                 stats = ["gp", "min", "pts", "trb", "ast", "per"];  // This needs to be in the same order as categories
                 playersAll = db.getPlayers(event.target.result, null, null, attributes, stats, ratings, {showNoStats: true});
@@ -1611,16 +1612,14 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                 for (i = 0; i < playersAll.length; i++) {
                     pa = playersAll[i];
 
-                    if (pa.draftRound === 1 || pa.draftRound === 2) {
+                    if (pa.draft.round === 1 || pa.draft.round === 2) {
                         // Attributes
-                        player = {pid: pa.pid, name: pa.name, pos: pa.pos, rnd: pa.draftRound, pick: pa.draftPick, draftAge: pa.draftAge, draftAbbrev: pa.draftAbbrev, currentAge: pa.age, currentAbbrev: pa.abbrev};
+                        player = {pid: pa.pid, name: pa.name, pos: pa.pos, draft: pa.draft, currentAge: pa.age, currentAbbrev: pa.abbrev};
 
                         // Ratings
                         draftPr = pa.ratings[0];
                         currentPr = _.last(pa.ratings);
-                        player.draftOvr = draftPr.ovr;
-                        player.draftPot = draftPr.pot;
-                        player.draftSkills = draftPr.skills;
+                        player.draftSkills = pa.ratings[0].skills;
                         player.currentOvr = currentPr.ovr;
                         player.currentPot = currentPr.pot;
                         player.currentSkills = currentPr.skills;
@@ -1642,7 +1641,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                     ui.dropdown($("#draft-select-season"));
 
                     ui.datatableSinglePage($("#draft-results"), 0, _.map(players, function (p) {
-                        return [p.rnd + '-' + p.pick, '<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>', p.pos, '<a href="/l/' + g.lid + '/roster/' + p.draftAbbrev + '">' + p.draftAbbrev + '</a>', String(p.draftAge), String(p.draftOvr), String(p.draftPot), '<span class="skills_alone">' + helpers.skillsBlock(p.draftSkills) + '</span>', '<a href="/l/' + g.lid + '/roster/' + p.currentAbbrev + '">' + p.currentAbbrev + '</a>', String(p.currentAge), String(p.currentOvr), String(p.currentPot), '<span class="skills_alone">' + helpers.skillsBlock(p.currentSkills) + '</span>', helpers.round(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1)];
+                        return [p.draft.round + '-' + p.draft.pick, '<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>', p.pos, '<a href="/l/' + g.lid + '/roster/' + p.draft.abbrev + '">' + p.draft.abbrev + '</a>', String(p.draft.age), String(p.draft.ovr), String(p.draft.pot), '<span class="skills_alone">' + helpers.skillsBlock(p.draftSkills) + '</span>', '<a href="/l/' + g.lid + '/roster/' + p.currentAbbrev + '">' + p.currentAbbrev + '</a>', String(p.currentAge), String(p.currentOvr), String(p.currentPot), '<span class="skills_alone">' + helpers.skillsBlock(p.currentSkills) + '</span>', helpers.round(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1)];
                     }));
 
                     if (req.raw.cb !== undefined) {
@@ -2035,12 +2034,11 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
             g.dbl.transaction(["players"]).objectStore("players").get(pid).onsuccess = function (event) {
                 var attributes, currentRatings, data, player, ratings, stats;
 
-                attributes = ["pid", "name", "tid", "abbrev", "teamRegion", "teamName", "pos", "age", "hgtFt", "hgtIn", "weight", "bornYear", "bornLoc", "contractAmount", "contractExp", "draftYear", "draftRound", "draftPick", "draftAbbrev", "face", "freeAgentTimesAsked", "injury", "salaries", "salariesTotal", "awards"];
+                attributes = ["pid", "name", "tid", "abbrev", "teamRegion", "teamName", "pos", "age", "hgtFt", "hgtIn", "weight", "bornYear", "bornLoc", "contractAmount", "contractExp", "draft", "face", "freeAgentTimesAsked", "injury", "salaries", "salariesTotal", "awards"];
                 ratings = ["season", "abbrev", "age", "ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills"];
                 stats = ["season", "abbrev", "age", "gp", "gs", "min", "fg", "fga", "fgp", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per"];
 
                 player = db.getPlayer(event.target.result, null, null, attributes, stats, ratings, {playoffs: true, showNoStats: true});
-console.log(player);
 
                 if (player.tid === g.PLAYER.RETIRED) {
                     g.realtimeUpdate = false;

@@ -180,8 +180,9 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
         for (j = 0; j < attributes.length; j++) {
             if (attributes[j] === "age") {
                 player.age = g.season - pa.bornYear;
-            } else if (attributes[j] === "draftAge") {
-                player.draftAge = pa.draftYear - pa.bornYear;
+            } else if (attributes[j] === "draft") {
+                player.draft = pa.draft;
+                player.draft.age = pa.draft.year - pa.bornYear;
             } else if (attributes[j] === "hgtFt") {
                 player.hgtFt = Math.floor(pa.hgt / 12);
             } else if (attributes[j] === "hgtIn") {
@@ -417,7 +418,7 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
         }
 
         // Only show a player if they have a stats entry for this team and season, or if they are rookies who have just been drafted and the current roster is being viewed.
-        if ((options.showRookies && pa.draftYear === g.season && season === g.season) || !_.isEmpty(ps) || options.showNoStats) {
+        if ((options.showRookies && pa.draft.year === g.season && season === g.season) || !_.isEmpty(ps) || options.showNoStats) {
             if (season === null) {
                 // Multiple seasons
                 player.stats = [];

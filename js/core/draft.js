@@ -98,15 +98,19 @@ define(["db", "globals", "core/player", "core/season", "util/helpers", "util/ran
 
             // Draft player
             p.tid = pick.tid;
-            p.draftYear = g.season;
-            p.draftRound = pick.round;
-            p.draftPick = pick.pick;
-            p.draftTid = pick.tid;
             teams = helpers.getTeams();
-            p.draftAbbrev = teams[pick.tid].abbrev;
-            // draftTeamName and draftTeamRegion are currently not used, but they don't do much harm
-            p.draftTeamName = teams[pick.tid].name;
-            p.draftTeamRegion = teams[pick.tid].region;
+            p.draft = {
+                round: pick.round,
+                pick: pick.pick,
+                tid: pick.tid,
+                year: g.season,
+                abbrev: teams[pick.tid].abbrev,
+                // draftTeamName and draftTeamRegion are currently not used, but they don't do much harm
+                teamName: teams[pick.tid].name,
+                teamRegion: teams[pick.tid].region,
+                pot: p.ratings[0].pot,
+                ovr: p.ratings[0].ovr
+            };
 
             // Contract
             rookieSalaries = [5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500];

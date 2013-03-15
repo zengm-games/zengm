@@ -56,7 +56,7 @@ define(["db", "globals", "core/draft", "core/league"], function (db, g, draft, l
         describe("#generatePlayers()", function () {
             it("should generate 70 players for the draft", function (done) {
                 draft.generatePlayers(function () {
-                    g.dbl.transaction("players").objectStore("players").index("draftYear").count(g.season).onsuccess = function (event) {
+                    g.dbl.transaction("players").objectStore("players").index("draft.year").count(g.season).onsuccess = function (event) {
                         event.target.result.should.equal(70);
                         done();
                     };

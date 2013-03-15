@@ -2418,15 +2418,15 @@ function program6(depth0,data,depth1) {
   
   var buffer = "", stack1, stack2;
   buffer += "\n        <tr><td>"
-    + escapeExpression(((stack1 = depth0.rnd),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = depth0.draft),stack1 == null || stack1 === false ? stack1 : stack1.round)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "-"
-    + escapeExpression(((stack1 = depth0.pick),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = depth0.draft),stack1 == null || stack1 === false ? stack1 : stack1.pick)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</td><td><a href=\"/l/"
     + escapeExpression(((stack1 = depth1.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "/roster/"
-    + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = depth0.draft),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\">"
-    + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = depth0.draft),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</a></td><td>";
   stack2 = helpers['if'].call(depth0, depth0.injury, {hash:{},inverse:self.noop,fn:self.program(7, program7, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
@@ -2508,13 +2508,13 @@ function program1(depth0,data) {
   
   var buffer = "", stack1;
   buffer += "\n        Draft: "
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.draftYear)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.draft)),stack1 == null || stack1 === false ? stack1 : stack1.year)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + " - Round "
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.draftRound)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.draft)),stack1 == null || stack1 === false ? stack1 : stack1.round)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + " (Pick "
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.draftPick)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.draft)),stack1 == null || stack1 === false ? stack1 : stack1.pick)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + ") by "
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.draftAbbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.draft)),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "<br>\n      ";
   return buffer;
   }
@@ -2523,7 +2523,7 @@ function program3(depth0,data) {
   
   var buffer = "", stack1;
   buffer += "\n        Undrafted: "
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.draftYear)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.draft)),stack1 == null || stack1 === false ? stack1 : stack1.year)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "<br>\n      ";
   return buffer;
   }
@@ -2960,7 +2960,7 @@ function program36(depth0,data) {
     + " - "
     + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.bornLoc)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "<br>\n      ";
-  stack2 = helpers['if'].call(depth0, ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.draftRound), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
+  stack2 = helpers['if'].call(depth0, ((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.draft)),stack1 == null || stack1 === false ? stack1 : stack1.ound), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "\n      ";
   stack2 = helpers['if'].call(depth0, depth0.showContract, {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});

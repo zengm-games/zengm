@@ -88,10 +88,10 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                 }
             }
             p = players[i];
-            if (p !== undefined) { // I suppose there could be no rookies at all..
+            if (p !== undefined) { // I suppose there could be no rookies at all.. which actually does happen when skip the draft from the debug menu
                 awards.roy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
+                awardsByPlayer.push({pid: p.pid, type: "Rookie of the Year"});
             }
-            awardsByPlayer.push({pid: p.pid, type: "Rookie of the Year"});
 
             // All League Team - same sort as MVP
             awards.allLeague = [{title: "First Team", players: []}];

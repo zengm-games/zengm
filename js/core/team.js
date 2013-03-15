@@ -2,7 +2,7 @@
  * @name core.team
  * @namespace Functions operating on team objects, or parts of team objects.
  */
-define(["globals", "util/helpers"], function (g, helpers) {
+define(["globals", "util/helpers", "util/random"], function (g, helpers, random) {
     "use strict";
 
     /**
@@ -19,65 +19,62 @@ define(["globals", "util/helpers"], function (g, helpers) {
 
         s = t.seasons.length - 1; // Most recent ratings
 
-        if (s === -1) {
-            // Initial entry
-            newSeason = {
-                season: g.season,
-                gp: 0,
-                att: 0,
-                cash: 10000,
-                won: 0,
-                lost: 0,
-                wonHome: 0,
-                lostHome: 0,
-                wonAway: 0,
-                lostAway: 0,
-                wonDiv: 0,
-                lostDiv: 0,
-                wonConf: 0,
-                lostConf: 0,
-                lastTen: [],
-                streak: 0,
-                madePlayoffs: false,
-                confChamps: false,
-                leagueChamps: false,
-                hype: Math.random(),
-                pop: 0,  // Needs to be set somewhere!
-                popRank: 0,  // Needs to be set somewhere!
-                tvContract: {
-                    amount: 0,
-                    exp: 0
-                },
-                merchRevenue: 0,
-                sponsorRevenue: 0,
-                ticketRevenue: 0,
-                nationalTvRevenue: 0,
-                localTvRevenue: 0,
-                payrollEndOfSeason: -1,
-                salaryPaid: 0,
-                luxuryTaxPaid: 0,
-                minTaxPaid: 0,
-                otherPaid: 0,
-                scoutingPaid: 0,
-                scoutingPaidRank: 0,
-                coachingPaid: 0,
-                coachingPaidRank: 0,
-                healthPaid: 0,
-                healthPaidRank: 0,
-                facilitiesPaid: 0,
-                facilitiesPaidRank: 0,
-                stadiumPaid: 0,
-                stadiumPaidRank: 0
-            };
-        } else {
-            // New season, carrying over some values from the first season
-            newSeason = {};
-            for (key in t.seasons[s]) {
-                if (t.seasons[s].hasOwnProperty(key)) {
-                    newSeason[key] = t.seasons[s][key];
-                }
-            }
-            newSeason.season = g.season;
+        // Initial entry
+        newSeason = {
+            season: g.season,
+            gp: 0,
+            att: 0,
+            cash: 10000,
+            won: 0,
+            lost: 0,
+            wonHome: 0,
+            lostHome: 0,
+            wonAway: 0,
+            lostAway: 0,
+            wonDiv: 0,
+            lostDiv: 0,
+            wonConf: 0,
+            lostConf: 0,
+            lastTen: [],
+            streak: 0,
+            madePlayoffs: false,
+            confChamps: false,
+            leagueChamps: false,
+            hype: Math.random(),
+            pop: 0,  // Needs to be set somewhere!
+            popRank: 0,  // Needs to be set somewhere!
+            tvContract: {
+                amount: 0,
+                exp: 0
+            },
+            merchRevenue: 0,
+            sponsorRevenue: 0,
+            ticketRevenue: 0,
+            nationalTvRevenue: 0,
+            localTvRevenue: 0,
+            payrollEndOfSeason: -1,
+            salaryPaid: 0,
+            luxuryTaxPaid: 0,
+            minTaxPaid: 0,
+            otherPaid: 0,
+            scoutingPaid: 0,
+            scoutingPaidRank: 0,
+            coachingPaid: 0,
+            coachingPaidRank: 0,
+            healthPaid: 0,
+            healthPaidRank: 0,
+            facilitiesPaid: 0,
+            facilitiesPaidRank: 0,
+            stadiumPaid: 0,
+            stadiumPaidRank: 0
+        };
+
+        if (s >= 0) {
+            // New season, carrying over some values from the previous season
+            newSeason.pop = t.seasons[s].pop * random.uniform(0.98, 1.02);  // Mean population should stay constant, otherwise the economics change too much
+            newSeason.hype = t.seasons[s].hype;
+            newSeason.cash = t.seasons[s].cash;
+            newSeason.tvContract = t.seasons[s].tvContract;
         }
 
         t.seasons.push(newSeason);

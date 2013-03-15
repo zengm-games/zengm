@@ -1,12 +1,6 @@
 BEFORE 3.0.0-beta.2
 -------------------
 
-core.team with..
-  generate, to create objects as in core.league.create
-  addStatsRow like in core.player
-    core.season on new preseason
-  addSeasonRow like in core.player
-    core.season on new preseason
 db changes
   team object
     root: "budget" object. keys are "scouting", "facilities", etc. properties are objects {amount: X, rank: X}

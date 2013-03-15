@@ -1023,7 +1023,7 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
             (function (key) {
                 gameAttributesStore.put({key: key, value: gameAttributes[key]}).onsuccess = function (event) {
                     g[key] = gameAttributes[key];
-                };
+                };gameAttributes[key]
 
                 // Trigger a signal for the team finances view. This is stupid.
                 if (key === "gamesInProgress") {
@@ -1037,6 +1037,13 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
         }
 
         tx.oncomplete = function () {
+            // Trigger signal for the team finances view again, or else sometimes it gets stuck. This is even more stupid.
+            if (gameAttributes.hasOwnProperty("gamesInProgress") && gameAttributes.gamesInProgress) {
+                $("#finances-settings").trigger("gameSimulationStart");
+            } else if (gameAttributes.hasOwnProperty("gamesInProgress") && !gameAttributes.gamesInProgress) {
+                $("#finances-settings").trigger("gameSimulationStop");
+            }
+
             if (cb !== undefined) {
                 cb();
             }

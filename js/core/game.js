@@ -98,10 +98,10 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/player",
         };
     };
 
-    Game.prototype.writeTeamStats = function (t) {
+    Game.prototype.writeTeamStats = function (t1) {
         var t2, that;
 
-        if (t === 0) {
+        if (t1 === 0) {
             t2 = 1;
         } else {
             t2 = 0;
@@ -109,7 +109,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/player",
         that = this;
 
         // Record progress of playoff series, if appropriate
-        if (this.playoffs && t === 0) {
+        if (this.playoffs && t1 === 0) {
             this.transaction.objectStore("playoffSeries").openCursor(g.season).onsuccess = function (event) {
                 var cursor, i, playoffRound, playoffSeries, series, won0;
 
@@ -118,7 +118,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/player",
                 playoffRound = playoffSeries.series[playoffSeries.currentRound];
 
                 // Did the home (true) or away (false) team win this game? Here, "home" refers to this game, not the team which has homecourt advnatage in the playoffs, which is what series.home refers to below.
-                if (that.team[t].stat.pts > that.team[t2].stat.pts) {
+                if (that.team[t1].stat.pts > that.team[t2].stat.pts) {
                     won0 = true;
                 } else {
                     won0 = false;
@@ -127,13 +127,13 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/player",
                 for (i = 0; i < playoffRound.length; i++) {
                     series = playoffRound[i];
 
-                    if (series.home.tid === that.team[t].id) {
+                    if (series.home.tid === that.team[t1].id) {
                         if (won0) {
                             series.home.won += 1;
                         } else {
                             series.away.won += 1;
                         }
-                    } else if (series.away.tid === that.team[t].id) {
+                    } else if (series.away.tid === that.team[t1].id) {
                         if (won0) {
                             series.away.won += 1;
                         } else {
@@ -146,18 +146,18 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/player",
             };
         }
 
-        db.getPayroll(this.transaction, that.team[t].id, function (payroll) {
+        db.getPayroll(this.transaction, that.team[t1].id, function (payroll) {
             // Team stats
-            that.transaction.objectStore("teams").openCursor(that.team[t].id).onsuccess = function (event) {
-                var att, coachingPaid, count, cursor, expenses, facilitiesPaid, healthPaid, i, keys, localTvRevenue, merchRevenue, nationalTvRevenue, revenue, salaryPaid, scoutingPaid, sponsorRevenue, stadiumPaid, team, teamSeason, teamStats, ticketRevenue, winp, winpOld, won;
+            that.transaction.objectStore("teams").openCursor(that.team[t1].id).onsuccess = function (event) {
+                var att, coachingPaid, count, cursor, expenses, facilitiesPaid, healthPaid, i, keys, localTvRevenue, merchRevenue, nationalTvRevenue, revenue, salaryPaid, scoutingPaid, sponsorRevenue, stadiumPaid, t, teamSeason, teamStats, ticketRevenue, winp, winpOld, won;
 
                 cursor = event.target.result;
-                team = cursor.value;
+                t = cursor.value;
 
-                teamSeason = _.last(team.seasons);
-                teamStats = _.last(team.stats);
+                teamSeason = _.last(t.seasons);
+                teamStats = _.last(t.stats);
 
-                if (that.team[t].stat.pts > that.team[t2].stat.pts) {
+                if (that.team[t1].stat.pts > that.team[t2].stat.pts) {
                     won = true;
                 } else {
                     won = false;
@@ -183,11 +183,11 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/player",
                 if (!that.playoffs) {
                     // All in [thousands of dollars]
                     salaryPaid = payroll / 82;  
-                    scoutingPaid = 100;
-                    coachingPaid = 100;
-                    healthPaid = 100;
-                    facilitiesPaid = 100;
-                    stadiumPaid = 100;
+                    scoutingPaid = t.budget.scouting.amount / 82;
+                    coachingPaid = t.budget.coaching.amount / 82;
+                    healthPaid = t.budget.health.amount / 82;
+                    facilitiesPaid = t.budget.facilities.amount / 82;
+                    stadiumPaid = t.budget.stadium.amount / 82;
                     merchRevenue = 3 * att / 1000;
                     sponsorRevenue = 10 * att / 1000;
                     nationalTvRevenue = 250;
@@ -202,15 +202,15 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/player",
                 } else if (att < 0) {
                     att = 0;
                 }
-                ticketRevenue = g.ticketPrice * att / 1000;  // [thousands of dollars]
+                ticketRevenue = t.budget.ticketPrice.amount * att / 1000;  // [thousands of dollars]
 
                 // Hype - relative to the expectations of prior seasons
                 if (teamSeason.gp > 5 && !that.playoffs) {
                     winp = teamSeason.won / (teamSeason.won + teamSeason.lost);
                     winpOld = 0;
                     count = 0;
-                    for (i = team.seasons.length - 2; i >= 0; i--) { // Start at last season, go back
-                        winpOld += team.seasons[i].won / (team.seasons[i].won + team.seasons[i].lost);
+                    for (i = t.seasons.length - 2; i >= 0; i--) { // Start at last season, go back
+                        winpOld += t.seasons[i].won / (t.seasons[i].won + t.seasons[i].lost);
                         count++;
                         if (count === 4) {
                             break;  // Max 4 seasons
@@ -249,10 +249,10 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/player",
 
                 keys = ['min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
                 for (i = 0; i < keys.length; i++) {
-                    teamStats[keys[i]] += that.team[t].stat[keys[i]];
+                    teamStats[keys[i]] += that.team[t1].stat[keys[i]];
                 }
                 teamStats.gp += 1;
-                teamStats.trb += that.team[t].stat.orb + that.team[t].stat.drb;
+                teamStats.trb += that.team[t1].stat.orb + that.team[t1].stat.drb;
                 teamStats.oppPts += that.team[t2].stat.pts;
 
                 if (teamSeason.lastTen.length === 10) {
@@ -304,7 +304,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/player",
                     }
                 }
 
-                cursor.update(team);
+                cursor.update(t);
 
                 that.teamsRemaining -= 1;
                 if (that.playersRemaining === 0 && that.teamsRemaining === 0 && that.cb !== undefined) {

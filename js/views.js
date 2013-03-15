@@ -1163,7 +1163,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                                 undefined,
                                 [
                                     barSeasons,
-                                    ["player salaries", "minimum payroll tax", "luxury tax", "other expenses", "scouting", "coaching", "health", "facilities", "stadium"]
+                                    ["player salaries", "minimum payroll tax", "luxury tax", "scouting", "coaching", "health", "facilities", "stadium"]
                                 ],
                                 function (val) {
                                     return helpers.formatCurrency(val / 1000, "M", 1);

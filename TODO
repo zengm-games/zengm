@@ -29,7 +29,7 @@ knobs to control team finances
     on POST
         recalculate budget ranks (function in core.finances?)
     template
-      handlebars helper for form DRY
+      handlebars helper for form DRY?
       minimum width for form column
   updating expenses
     spread out spending over 82 regular-season games, in core.game, based on budget items

@@ -61,7 +61,7 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
             gameAttributesStore = g.dbl.createObjectStore("gameAttributes", {keyPath: "key"});
 
             playerStore.createIndex("tid", "tid", {unique: false});
-            playerStore.createIndex("draftYear", "draftYear", {unique: false});
+            playerStore.createIndex("draft.year", "draft.year", {unique: false});
             playerStore.createIndex("retiredYear", "retiredYear", {unique: false});
             playerStore.createIndex("statsTids", "statsTids", {unique: false, multiEntry: true});
 //            gameStore.createIndex("tid", "tid", {unique: false}); // Not used because it's useless without oppTid checking too

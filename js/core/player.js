@@ -597,15 +597,7 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
 
         p.bornLoc = nationality;
         p.name = name(nationality);
-
-        p.college = 0;
-        p.draftRound = 0;
-        p.draftPick = 0;
-        p.draftTid = 0;
-        p.draftYear = draftYear;
-        p.draftAbbrev = null;
-        p.draftTeamName = null;
-        p.draftTeamRegion = null;
+        p.college = "";
 
         p.salaries = [];
         p = setContract(p, genContract(p.ratings[0]), false);
@@ -616,8 +608,17 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
         p.yearsFreeAgent = 0;
         p.retiredYear = null;
 
-        p.draftPot = pot;
-        p.draftOvr = p.ratings[0].ovr;
+        p.draft = {
+            round: 0,
+            pick: 0,
+            tid: -1,
+            year: draftYear,
+            abbrev: null,
+            teamName: null,
+            teamRegion: null,
+            pot: pot,
+            ovr: p.ratings[0].ovr
+        };
 
         p.face = faces.generate();
         p.injury = {type: "Healthy", gamesRemaining: 0};

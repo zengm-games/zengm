@@ -6,8 +6,6 @@ db changes
     root: "budget" object. keys are "scouting", "facilities", etc. properties are objects {amount: X, rank: X}
     seasons: "expenses" object. keys are all the *Paid things, with properties as above.
   player object
-    merge draft* into a single object
-    college should be string
     look at an actual player object and see if there are any other things worth changing
 move most db functions into core.whatever. db should just be about initializing/upgrading
 db version upgrades
@@ -112,7 +110,10 @@ added to root of each team:
   stadiumBudgetRank: number
 removed "cost" and "revenue" from seasonAttributes
 changes to retiredPlayers, but that's just removing stuff that isn't needed anymore, so no problem
-added "injury", "awards", and "contracts" to player
+player
+  added "injury", "awards", and "contracts"
+  "college" is an empty string
+  draft* properties are now inside another object
 
 MANUAL CHANGES TODO since 3.0.0-beta
 ------------------------------------

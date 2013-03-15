@@ -141,7 +141,9 @@ AI modules that contain functions which are called to determine actions
     draft picks
     signing free agents
     resigning players
+    trades
     budget items (like from team finances view)
+    releasing/buying out players when over limit
 notifications (and log) from top right to display log of key events
   game results from user's team
   players retiring from user's team
@@ -304,8 +306,6 @@ g.dbl.transaction("gameAttributes").objectStore("gameAttributes").getAll().onsuc
 
 player view
   next, previous buttons (also active on left/right arrows)
-  link to team roster if player is on a team
-  for retired players, either don't show ratings, or show ratings from best year
 
 roster
   highlight handle on hover, like button
@@ -336,24 +336,13 @@ security
     http://flask.pocoo.org/snippets/3/
     even for ajax https://docs.djangoproject.com/en/1.2/releases/1.2.5/#csrf-exception-for-ajax-requests
 
-playoffs
-  on playoffs start, automatically switch to playoffs view
-
 # Then
-
-trades
-  allow trades that go over roster limit, but require players to be cut or traded to meet limit before game simulation continues
 
 self-contained game simulation code, to allow other people to hack on it easily. automatically make charts and stuff.
 
 warning when window is closed and game simulation is in progress
   http://stackoverflow.com/questions/1244535/alert-when-browser-window-closed-accidentally
   https://developer.mozilla.org/en/DOM/window.onbeforeunload
-
-abstract opposing team AI: make it a class with various methods to determine actions at different time points
-
-game log
-  pushstate for individual box scores as well as teams and seasons, somehow?
 
 # BELOW IS OLD STUFF
 
@@ -366,12 +355,6 @@ Don't allow sort from first column of trade window
 ======
 FUTURE
 ======
-
-GAMESIM
--------
-take all ratings into account
-  energy, etc
-blocks, assists (maybe other things) should not be so evenly distributed
 
 UI
 --
@@ -399,5 +382,4 @@ AI teams release/buy out players to sign a better free agent
 
 FEATURES
 --------
-opponent GM trade AI based on their team's status: contending or rebuilding
 multi-team trades... how can i make a good UI for that?

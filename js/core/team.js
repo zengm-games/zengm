@@ -148,18 +148,32 @@ define(["globals", "util/helpers", "util/random"], function (g, helpers, random)
             abbrev: tm.abbrev,
             stats: [],
             seasons: [],
-            ticketPrice: helpers.round(25 + 25 * (30 - tm.popRank) / 29, 2),
-            ticketPriceRank: tm.popRank,
-            scoutingBudget: helpers.round(200 + 300 * (30 - tm.popRank) / 29) * 10,
-            scoutingBudgetRank: tm.popRank,
-            coachingBudget: helpers.round(200 + 300 * (30 - tm.popRank) / 29) * 10,
-            coachingBudgetRank: tm.popRank,
-            healthBudget: helpers.round(200 + 300 * (30 - tm.popRank) / 29) * 10,
-            healthBudgetRank: tm.popRank,
-            facilitiesBudget: helpers.round(200 + 300 * (30 - tm.popRank) / 29) * 10,
-            facilitiesBudgetRank: tm.popRank,
-            stadiumBudget: helpers.round(200 + 300 * (30 - tm.popRank) / 29) * 10,
-            stadiumBudgetRank: tm.popRank
+            budget: {
+                ticketPrice: {
+                    amount: helpers.round(25 + 25 * (30 - tm.popRank) / 29, 2),
+                    rank: tm.popRank
+                },
+                scouting: {
+                    amount: helpers.round(200 + 300 * (30 - tm.popRank) / 29) * 10,
+                    rank: tm.popRank
+                },
+                coaching: {
+                    amount: helpers.round(200 + 300 * (30 - tm.popRank) / 29) * 10,
+                    rank: tm.popRank
+                },
+                health: {
+                    amount: helpers.round(200 + 300 * (30 - tm.popRank) / 29) * 10,
+                    rank: tm.popRank
+                },
+                facilities: {
+                    amount: helpers.round(200 + 300 * (30 - tm.popRank) / 29) * 10,
+                    rank: tm.popRank
+                },
+                stadium: {
+                    amount: helpers.round(200 + 300 * (30 - tm.popRank) / 29) * 10,
+                    rank: tm.popRank
+                }
+            }
         };
 
         t = addSeasonRow(t);

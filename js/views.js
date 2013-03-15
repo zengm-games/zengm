@@ -1043,7 +1043,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                     }
 
                     // Get stuff for the finances form
-                    db.getTeam(team, g.season, ["region", "name", "abbrev", "ticketPrice", "ticketPriceRank", "scoutingBudget", "scoutingBudgetRank", "coachingBudget", "coachingBudgetRank", "healthBudget", "healthBudgetRank", "facilitiesBudget", "facilitiesBudgetRank", "stadiumBudget", "stadiumBudgetRank"], [], ["scoutingPaidRank", "coachingPaidRank", "healthPaidRank", "facilitiesPaidRank", "stadiumPaidRank"], {}, function (team) {
+                    db.getTeam(team, g.season, ["region", "name", "abbrev", "budget"], [], ["scoutingPaidRank", "coachingPaidRank", "healthPaidRank", "facilitiesPaidRank", "stadiumPaidRank"], {}, function (team) {
                         data = {
                             container: "league_content",
                             template: "teamFinances",

@@ -1975,37 +1975,37 @@ function program6(depth0,data) {
   
   var buffer = "", stack1;
   buffer += "\n    <h4>Revenue Settings <i class=\"icon-question-sign\" id=\"help-revenue-settings\" data-placement=\"bottom\"></i></h4>\n    <p class=\"text-error\"></p>\n    <div class=\"row\">\n      <div class=\"pull-left finances-settings-label\">Ticket Price</div>\n      <div class=\"input-prepend pull-left finances-settings-field\">\n        <span class=\"add-on\">$</span><input type=\"text\" name=\"ticket-price\" class=\"ticket-price\" value=\""
-    + escapeExpression(((stack1 = depth0.ticketPrice),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.ticketPrice)),stack1 == null || stack1 === false ? stack1 : stack1.amount)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\">\n      </div>\n      <div class=\"pull-left finances-settings-text\">(#"
-    + escapeExpression(((stack1 = depth0.ticketPriceRank),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.ticketPrice)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + " leaguewide)</div>\n    </div>\n    <p></p>\n    <h4>Expense Settings <i class=\"icon-question-sign\" id=\"help-expense-settings\" data-placement=\"bottom\"></i></h4>\n    <p class=\"text-error\"></p>\n    <div class=\"row\">\n      <div class=\"pull-left finances-settings-label\">Scouting</div>\n      <div class=\"input-prepend input-append pull-left finances-settings-field\">\n        <span class=\"add-on\">$</span><input type=\"text\" name=\"budget-scouting\" class=\"ticket-price\" value=\""
-    + escapeExpression(((stack1 = depth0.scoutingBudget),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.scouting)),stack1 == null || stack1 === false ? stack1 : stack1.amount)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\"><span class=\"add-on\">M</span>\n      </div>\n      <div class=\"pull-left finances-settings-text-small\">Current spending rate: #"
-    + escapeExpression(((stack1 = depth0.scoutingBudgetRank),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.scouting)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "<br>Spent this season: #"
     + escapeExpression(((stack1 = depth0.scoutingPaidRank),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</div>\n    </div>\n    <div class=\"row\">\n      <div class=\"pull-left finances-settings-label\">Coaching</div>\n      <div class=\"input-prepend input-append pull-left finances-settings-field\">\n        <span class=\"add-on\">$</span><input type=\"text\" name=\"budget-coaching\" class=\"ticket-price\" value=\""
-    + escapeExpression(((stack1 = depth0.coachingBudget),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.coaching)),stack1 == null || stack1 === false ? stack1 : stack1.amount)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\"><span class=\"add-on\">M</span>\n      </div>\n      <div class=\"pull-left finances-settings-text-small\">Current spending rate: #"
-    + escapeExpression(((stack1 = depth0.coachingBudgetRank),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.coaching)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "<br>Spent this season: #"
     + escapeExpression(((stack1 = depth0.coachingPaidRank),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</div>\n    </div>\n    <div class=\"row\">\n      <div class=\"pull-left finances-settings-label\">Health</div>\n      <div class=\"input-prepend input-append pull-left finances-settings-field\">\n        <span class=\"add-on\">$</span><input type=\"text\" name=\"budget-health\" class=\"ticket-price\" value=\""
-    + escapeExpression(((stack1 = depth0.healthBudget),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.health)),stack1 == null || stack1 === false ? stack1 : stack1.amount)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\"><span class=\"add-on\">M</span>\n      </div>\n      <div class=\"pull-left finances-settings-text-small\">Current spending rate: #"
-    + escapeExpression(((stack1 = depth0.healthBudgetRank),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.health)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "<br>Spent this season: #"
     + escapeExpression(((stack1 = depth0.healthPaidRank),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</div>\n    </div>\n    <div class=\"row\">\n      <div class=\"pull-left finances-settings-label\">Facilities</div>\n      <div class=\"input-prepend input-append pull-left finances-settings-field\">\n        <span class=\"add-on\">$</span><input type=\"text\" name=\"budget-facilities\" class=\"ticket-price\" value=\""
-    + escapeExpression(((stack1 = depth0.facilitiesBudget),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.facilities)),stack1 == null || stack1 === false ? stack1 : stack1.amount)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\"><span class=\"add-on\">M</span>\n      </div>\n      <div class=\"pull-left finances-settings-text-small\">Current spending rate: #"
-    + escapeExpression(((stack1 = depth0.facilitiesBudgetRank),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.facilities)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "<br>Spent this season: #"
     + escapeExpression(((stack1 = depth0.facilitiesPaidRank),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</div>\n    </div>\n    <div class=\"row\">\n      <div class=\"pull-left finances-settings-label\">Stadium</div>\n      <div class=\"input-prepend input-append pull-left finances-settings-field\">\n        <span class=\"add-on\">$</span><input type=\"text\" name=\"budget-stadium\" class=\"ticket-price\" value=\""
-    + escapeExpression(((stack1 = depth0.stadiumBudget),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.stadium)),stack1 == null || stack1 === false ? stack1 : stack1.amount)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\"><span class=\"add-on\">M</span>\n      </div>\n      <div class=\"pull-left finances-settings-text-small\">Current spending rate: #"
-    + escapeExpression(((stack1 = depth0.stadiumBudgetRank),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.stadium)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "<br>Spent this season: #"
     + escapeExpression(((stack1 = depth0.stadiumPaidRank),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</div>\n    </div>\n    <br>\n    <p align=\"center\"><button class=\"btn btn-large btn-primary\" id=\"finances-settings-save\" style=\"line-height: 1.5em\">Save Revenue and<br> Expense Settings</button></p>\n    ";

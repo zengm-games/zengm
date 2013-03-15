@@ -4,10 +4,12 @@ BEFORE 3.0.0-beta.2
 db changes
   team object
     root: "budget" object. keys are "scouting", "facilities", etc. properties are objects {amount: X, rank: X}
-    seasons: "expenses" object. keys are all the *Paid things, with properties as above.
-  player object
-    look at an actual player object and see if there are any other things worth changing
+      ticket price too!
+    seasons
+      "expenses" object. keys are all the *Paid objects; {amount: X, rank: X}
+      "revenues" object. keys are all the *Paid objects; {amount: X, rank: X}
 move most db functions into core.whatever. db should just be about initializing/upgrading
+is core.finances needed?
 db version upgrades
   see https://github.com/superfeedr/indexeddb-backbonejs-adapter/blob/master/backbone-indexeddb.js
 how to deal with a team that drops below 5 active players, factoring in injuries?

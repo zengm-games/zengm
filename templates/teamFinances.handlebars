@@ -44,9 +44,9 @@
     <div class="row">
       <div class="pull-left finances-settings-label">Ticket Price</div>
       <div class="input-prepend pull-left finances-settings-field">
-        <span class="add-on">$</span><input type="text" name="ticket-price" class="ticket-price" value="{{ticketPrice}}">
+        <span class="add-on">$</span><input type="text" name="ticket-price" class="ticket-price" value="{{budget.ticketPrice.amount}}">
       </div>
-      <div class="pull-left finances-settings-text">(#{{ticketPriceRank}} leaguewide)</div>
+      <div class="pull-left finances-settings-text">(#{{budget.ticketPrice.rank}} leaguewide)</div>
     </div>
     <p></p>
     <h4>Expense Settings <i class="icon-question-sign" id="help-expense-settings" data-placement="bottom"></i></h4>
@@ -54,37 +54,37 @@
     <div class="row">
       <div class="pull-left finances-settings-label">Scouting</div>
       <div class="input-prepend input-append pull-left finances-settings-field">
-        <span class="add-on">$</span><input type="text" name="budget-scouting" class="ticket-price" value="{{scoutingBudget}}"><span class="add-on">M</span>
+        <span class="add-on">$</span><input type="text" name="budget-scouting" class="ticket-price" value="{{budget.scouting.amount}}"><span class="add-on">M</span>
       </div>
-      <div class="pull-left finances-settings-text-small">Current spending rate: #{{scoutingBudgetRank}}<br>Spent this season: #{{scoutingPaidRank}}</div>
+      <div class="pull-left finances-settings-text-small">Current spending rate: #{{budget.scouting.rank}}<br>Spent this season: #{{scoutingPaidRank}}</div>
     </div>
     <div class="row">
       <div class="pull-left finances-settings-label">Coaching</div>
       <div class="input-prepend input-append pull-left finances-settings-field">
-        <span class="add-on">$</span><input type="text" name="budget-coaching" class="ticket-price" value="{{coachingBudget}}"><span class="add-on">M</span>
+        <span class="add-on">$</span><input type="text" name="budget-coaching" class="ticket-price" value="{{budget.coaching.amount}}"><span class="add-on">M</span>
       </div>
-      <div class="pull-left finances-settings-text-small">Current spending rate: #{{coachingBudgetRank}}<br>Spent this season: #{{coachingPaidRank}}</div>
+      <div class="pull-left finances-settings-text-small">Current spending rate: #{{budget.coaching.rank}}<br>Spent this season: #{{coachingPaidRank}}</div>
     </div>
     <div class="row">
       <div class="pull-left finances-settings-label">Health</div>
       <div class="input-prepend input-append pull-left finances-settings-field">
-        <span class="add-on">$</span><input type="text" name="budget-health" class="ticket-price" value="{{healthBudget}}"><span class="add-on">M</span>
+        <span class="add-on">$</span><input type="text" name="budget-health" class="ticket-price" value="{{budget.health.amount}}"><span class="add-on">M</span>
       </div>
-      <div class="pull-left finances-settings-text-small">Current spending rate: #{{healthBudgetRank}}<br>Spent this season: #{{healthPaidRank}}</div>
+      <div class="pull-left finances-settings-text-small">Current spending rate: #{{budget.health.rank}}<br>Spent this season: #{{healthPaidRank}}</div>
     </div>
     <div class="row">
       <div class="pull-left finances-settings-label">Facilities</div>
       <div class="input-prepend input-append pull-left finances-settings-field">
-        <span class="add-on">$</span><input type="text" name="budget-facilities" class="ticket-price" value="{{facilitiesBudget}}"><span class="add-on">M</span>
+        <span class="add-on">$</span><input type="text" name="budget-facilities" class="ticket-price" value="{{budget.facilities.amount}}"><span class="add-on">M</span>
       </div>
-      <div class="pull-left finances-settings-text-small">Current spending rate: #{{facilitiesBudgetRank}}<br>Spent this season: #{{facilitiesPaidRank}}</div>
+      <div class="pull-left finances-settings-text-small">Current spending rate: #{{budget.facilities.rank}}<br>Spent this season: #{{facilitiesPaidRank}}</div>
     </div>
     <div class="row">
       <div class="pull-left finances-settings-label">Stadium</div>
       <div class="input-prepend input-append pull-left finances-settings-field">
-        <span class="add-on">$</span><input type="text" name="budget-stadium" class="ticket-price" value="{{stadiumBudget}}"><span class="add-on">M</span>
+        <span class="add-on">$</span><input type="text" name="budget-stadium" class="ticket-price" value="{{budget.stadium.amount}}"><span class="add-on">M</span>
       </div>
-      <div class="pull-left finances-settings-text-small">Current spending rate: #{{stadiumBudgetRank}}<br>Spent this season: #{{stadiumPaidRank}}</div>
+      <div class="pull-left finances-settings-text-small">Current spending rate: #{{budget.stadium.rank}}<br>Spent this season: #{{stadiumPaidRank}}</div>
     </div>
     <br>
     <p align="center"><button class="btn btn-large btn-primary" id="finances-settings-save" style="line-height: 1.5em">Save Revenue and<br> Expense Settings</button></p>

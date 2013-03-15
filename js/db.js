@@ -635,7 +635,7 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
 
             // Revenue and expenses calculation
             tsa.revenue = _.reduce(tsa.revenues, function(memo, revenue){ return memo + revenue.amount; }, 0);
-            tsa.expenses = tsa.salaryPaid + tsa.luxuryTaxPaid + tsa.minTaxPaid + tsa.otherPaid;
+            tsa.expense = _.reduce(tsa.expenses, function(memo, expense){ return memo + expense.amount; }, 0);
 
             for (j = 0; j < seasonAttributes.length; j++) {
                 if (seasonAttributes[j] === "winp") {
@@ -651,9 +651,9 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
                 } else if (seasonAttributes[j] === "revenue") {
                     team.revenue = tsa.revenue / 1000;  // [millions of dollars]
                 } else if (seasonAttributes[j] === "profit") {
-                    team.profit = (tsa.revenue - tsa.expenses) / 1000;  // [millions of dollars]
+                    team.profit = (tsa.revenue - tsa.expense) / 1000;  // [millions of dollars]
                 } else if (seasonAttributes[j] === "salaryPaid") {
-                    team.salaryPaid = tsa.salaryPaid / 1000;  // [millions of dollars]
+                    team.salaryPaid = tsa.expense.salary / 1000;  // [millions of dollars]
                 } else if (seasonAttributes[j] === "payroll") {
                     // Handled later
                     team.payroll = null;

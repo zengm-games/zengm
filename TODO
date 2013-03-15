@@ -1,10 +1,7 @@
 BEFORE 3.0.0-beta.2
 -------------------
 
-db changes
-  team object
-    seasons
-      "expenses" object. keys are all the *Paid objects; {amount: X, rank: X}
+add another color for bar graph (for expenses)
 move most db functions into core.whatever. db should just be about initializing/upgrading
 is core.finances needed?
 db version upgrades

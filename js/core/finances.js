@@ -32,11 +32,11 @@ define(["db", "globals"], function (db, g) {
 
                     // Assess minimum payroll tax and luxury tax
                     if (payrolls[team.tid] < g.minPayroll) {
-                        team.seasons[i].minTaxPaid = g.minPayroll - payrolls[team.tid];
-                        team.seasons[i].cash -= team.seasons[i].minTaxPaid;
+                        team.seasons[i].expenses.minTax.amount = g.minPayroll - payrolls[team.tid];
+                        team.seasons[i].cash -= team.seasons[i].expenses.minTax.amount;
                     } else if (payrolls[team.tid] > g.luxuryPayroll) {
-                        team.seasons[i].luxuryTaxPaid = g.luxuryTax * (payrolls[team.tid] - g.luxuryPayroll);
-                        team.seasons[i].cash -= team.seasons[i].luxuryTaxPaid;
+                        team.seasons[i].expenses.luxuryTax.amount = g.luxuryTax * (payrolls[team.tid] - g.luxuryPayroll);
+                        team.seasons[i].cash -= team.seasons[i].expenses.luxuryTax.amount;
                     }
 
                     cursor.update(team);

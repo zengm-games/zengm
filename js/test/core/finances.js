@@ -29,15 +29,15 @@ define(["db", "globals", "core/league", "core/finances"], function (db, g, leagu
                             teams[i].seasons[0].payrollEndOfSeason.should.be.above(0);
 
                             if (teams[i].seasons[0].payrollEndOfSeason > g.luxuryPayroll) {
-                                teams[i].seasons[0].luxuryTaxPaid.should.equal(g.luxuryTax * (teams[i].seasons[0].payrollEndOfSeason - g.luxuryPayroll));
+                                teams[i].seasons[0].expenses.luxuryTax.amount.should.equal(g.luxuryTax * (teams[i].seasons[0].payrollEndOfSeason - g.luxuryPayroll));
                             } else {
-                                teams[i].seasons[0].luxuryTaxPaid.should.equal(0);
+                                teams[i].seasons[0].expenses.luxuryTax.amount.should.equal(0);
                             }
 
                             if (teams[i].seasons[0].payrollEndOfSeason < g.minPayroll) {
-                                teams[i].seasons[0].minTaxPaid.should.equal(g.minPayroll - teams[i].seasons[0].payrollEndOfSeason);
+                                teams[i].seasons[0].expenses.minTax.amount.should.equal(g.minPayroll - teams[i].seasons[0].payrollEndOfSeason);
                             } else {
-                                teams[i].seasons[0].minTaxPaid.should.equal(0);
+                                teams[i].seasons[0].expenses.minTax.amount.should.equal(0);
                             }
                         }
 

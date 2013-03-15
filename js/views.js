@@ -1024,7 +1024,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                     team = event.target.result;
                     team.seasons.reverse();  // Most recent season first
 
-                    keys = ["won", "hype", "pop", "att", "cash", "revenues", "salaryPaid", "luxuryTaxPaid", "minTaxPaid", "otherPaid"];
+                    keys = ["won", "hype", "pop", "att", "cash", "revenues", "expenses"];
                     barData = {};
                     for (i = 0; i < keys.length; i++) {
                         if (typeof team.seasons[0][keys[i]] !== "object") {
@@ -1041,7 +1041,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
                     // Process some values
                     barData.att = _.map(barData.att, function (num, i) { if (team.seasons[i] !== undefined) { return num / team.seasons[i].gp; } });  // per game
-                    keys = ["cash", "salaryPaid", "luxuryTaxPaid", "minTaxPaid", "otherPaid"];
+                    keys = ["cash"];
                     for (i = 0; i < keys.length; i++) {
                         barData[keys[i]] = _.map(barData[keys[i]], function (num) { return num / 1000; });  // convert to millions
                     }
@@ -1052,7 +1052,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                     }
 
                     // Get stuff for the finances form
-                    db.getTeam(team, g.season, ["region", "name", "abbrev", "budget"], [], ["scoutingPaidRank", "coachingPaidRank", "healthPaidRank", "facilitiesPaidRank", "stadiumPaidRank"], {}, function (team) {
+                    db.getTeam(team, g.season, ["region", "name", "abbrev", "budget"], [], ["expenses"], {}, function (team) {
                         data = {
                             container: "league_content",
                             template: "teamFinances",
@@ -1129,14 +1129,14 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                             );
                             $.barGraph(
                                 $("#bar-graph-expenses"),
-                                [barData.salaryPaid, barData.minTaxPaid, barData.luxuryTaxPaid, barData.otherPaid],
+                                [barData.expenses.salary, barData.expenses.minTax, barData.expenses.luxuryTax, barData.expenses.scouting, barData.expenses.coaching, barData.expenses.health, barData.expenses.facilities, barData.expenses.stadium],
                                 undefined,
                                 [
                                     barSeasons,
-                                    ["player salaries", "minimum payroll tax", "luxury tax", "other expenses"]
+                                    ["player salaries", "minimum payroll tax", "luxury tax", "other expenses", "scouting", "coaching", "health", "facilities", "stadium"]
                                 ],
                                 function (val) {
-                                    return helpers.formatCurrency(val, "M", 1);
+                                    return helpers.formatCurrency(val / 1000, "M", 1);
                                 }
                             );
                             $.barGraph($("#bar-graph-cash"), barData.cash, undefined, barSeasons, function (val) {

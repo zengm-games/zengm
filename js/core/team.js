@@ -68,21 +68,41 @@ define(["globals", "util/helpers", "util/random"], function (g, helpers, random)
                     rank: 0
                 }
             },
-            payrollEndOfSeason: -1,
-            salaryPaid: 0,
-            luxuryTaxPaid: 0,
-            minTaxPaid: 0,
-            otherPaid: 0,
-            scoutingPaid: 0,
-            scoutingPaidRank: 0,
-            coachingPaid: 0,
-            coachingPaidRank: 0,
-            healthPaid: 0,
-            healthPaidRank: 0,
-            facilitiesPaid: 0,
-            facilitiesPaidRank: 0,
-            stadiumPaid: 0,
-            stadiumPaidRank: 0
+            expenses: {
+                salary: {
+                    amount: 0,
+                    rank: 0
+                },
+                luxuryTax: {
+                    amount: 0,
+                    rank: 0
+                },
+                minTax: {
+                    amount: 0,
+                    rank: 0
+                },
+                scouting: {
+                    amount: 0,
+                    rank: 0
+                },
+                coaching: {
+                    amount: 0,
+                    rank: 0
+                },
+                health: {
+                    amount: 0,
+                    rank: 0
+                },
+                facilities: {
+                    amount: 0,
+                    rank: 0
+                },
+                stadium: {
+                    amount: 0,
+                    rank: 0
+                },
+            },
+            payrollEndOfSeason: -1
         };
 
         if (s >= 0) {

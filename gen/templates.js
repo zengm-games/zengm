@@ -414,7 +414,7 @@ function program1(depth0,data,depth1) {
     + "\">"
     + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</a> ("
-    + escapeExpression(helpers.currency.call(depth0, depth0.contractAmount, "M", {hash:{},data:data}))
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.contract),stack1 == null || stack1 === false ? stack1 : stack1.amount), "M", {hash:{},data:data}))
     + ")</li>\n      ";
   return buffer;
   }
@@ -2219,9 +2219,9 @@ function program23(depth0,data) {
   
   var buffer = "", stack1;
   buffer += "<td>"
-    + escapeExpression(helpers.currency.call(depth0, depth0.contractAmount, "M", {hash:{},data:data}))
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.contract),stack1 == null || stack1 === false ? stack1 : stack1.amount), "M", {hash:{},data:data}))
     + " thru "
-    + escapeExpression(((stack1 = depth0.contractExp),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = depth0.contract),stack1 == null || stack1 === false ? stack1 : stack1.exp)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</td>";
   return buffer;
   }
@@ -2234,7 +2234,7 @@ function program25(depth0,data) {
     + "\" data-player-name=\""
     + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\" data-contract-expiration=\""
-    + escapeExpression(((stack1 = depth0.contractExp),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = depth0.contract),stack1 == null || stack1 === false ? stack1 : stack1.exp)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\"";
   stack2 = helpers.unless.call(depth0, depth0.canRelease, {hash:{},inverse:self.noop,fn:self.program(26, program26, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
@@ -2535,9 +2535,9 @@ function program5(depth0,data) {
   stack1 = helpers['if'].call(depth0, depth0.freeAgent, {hash:{},inverse:self.program(8, program8, data),fn:self.program(6, program6, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += ": "
-    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.contractAmount), "M", {hash:{},data:data}))
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.contract)),stack1 == null || stack1 === false ? stack1 : stack1.amount), "M", {hash:{},data:data}))
     + "/yr thru "
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.contractExp)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.contract)),stack1 == null || stack1 === false ? stack1 : stack1.exp)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "<br>\n      ";
   return buffer;
   }

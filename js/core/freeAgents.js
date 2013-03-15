@@ -64,14 +64,11 @@ define(["db", "globals", "core/player", "lib/underscore", "util/random"], functi
 
                         if (numPlayersOnRoster < 15) {
                             for (i = 0; i < players.length; i++) {
-                                if (players[0].contractAmount + payroll <= g.salaryCap || players[0].contractAmount === g.minContract) {
+                                if (players[0].contract.amount + payroll <= g.salaryCap || players[0].contract.amount === g.minContract) {
                                     p = players.shift();
                                     p.tid = tid;
                                     p = player.addStatsRow(p);
-                                    p = player.setContract(p, {
-                                        amount: p.contractAmount,
-                                        exp: p.contractExp
-                                    }, true);
+                                    p = player.setContract(p, p.contract, true);
                                     db.putPlayer(transaction, p, function () {
                                         db.rosterAutoSort(transaction, tid, function () {
                                             if (ti <= tids.length) {
@@ -80,7 +77,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/random"], functi
                                         });
                                     });
                                     numPlayersOnRoster += 1;
-                                    payroll += p.contractAmount;
+                                    payroll += p.contract.amount;
                                     foundPlayer = true;
                                     break;  // Only add one free agent
                                 }
@@ -120,15 +117,15 @@ define(["db", "globals", "core/player", "lib/underscore", "util/random"], functi
                 p = cursor.value;
 
                 // Decrease free agent demands
-                p.contractAmount -= 50;
-                if (p.contractAmount < 500) {
-                    p.contractAmount = 500;
+                p.contract.amount -= 50;
+                if (p.contract.amount < 500) {
+                    p.contract.amount = 500;
                 }
                 // Since this is called after the season has already started, ask for a short contract
-                if (p.contractAmount < 1000) {
-                    p.contractExp = g.season;
+                if (p.contract.amount < 1000) {
+                    p.contract.exp = g.season;
                 } else {
-                    p.contractExp = g.season + 1;
+                    p.contract.exp = g.season + 1;
                 }
 
                 // Free agents' resistance to previous signing attempts by player decays

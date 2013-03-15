@@ -5,14 +5,14 @@
     <h5>Trade Away:</h5>
     <ul>
       {{#summary.teams.0.trade}}
-        <li><a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a> ({{currency contractAmount "M"}})</li>
+        <li><a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a> ({{currency contract.amount "M"}})</li>
       {{/summary.teams.0.trade}}
       <li>{{currency summary.teams.0.total "M"}} Total</li>
     </ul>
     <h5>Receive:</h5>
     <ul>
       {{#summary.teams.1.trade}}
-        <li><a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a> ({{currency contractAmount "M"}})</li>
+        <li><a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a> ({{currency contract.amount "M"}})</li>
       {{/summary.teams.1.trade}}
       <li>{{currency summary.teams.1.total "M"}} Total</li>
     </ul>
@@ -24,14 +24,14 @@
     <h5>Trade Away:</h5>
     <ul>
       {{#summary.teams.1.trade}}
-        <li><a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a> ({{currency contractAmount "M"}})</li>
+        <li><a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a> ({{currency contract.amount "M"}})</li>
       {{/summary.teams.1.trade}}
       <li>{{currency summary.teams.1.total "M"}} Total</li>
     </ul>
     <h5>Receive:</h5>
     <ul>
       {{#summary.teams.0.trade}}
-        <li><a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a> ({{currency contractAmount "M"}})</li>
+        <li><a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a> ({{currency contract.amount "M"}})</li>
       {{/summary.teams.0.trade}}
       <li>{{currency summary.teams.0.total "M"}} Total</li>
     </ul>

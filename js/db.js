@@ -67,7 +67,7 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
 //            gameStore.createIndex("tid", "tid", {unique: false}); // Not used because it's useless without oppTid checking too
             gameStore.createIndex("season", "season", {unique: false});
             releasedPlayersStore.createIndex("tid", "tid", {unique: false});
-            releasedPlayersStore.createIndex("contractExp", "contractExp", {unique: false});
+            releasedPlayersStore.createIndex("contract.exp", "contract.exp", {unique: false});
         };
         request.onsuccess = function (event) {
             g.dbl = request.result;
@@ -187,10 +187,11 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
                 player.hgtFt = Math.floor(pa.hgt / 12);
             } else if (attributes[j] === "hgtIn") {
                 player.hgtIn = pa.hgt - 12 * Math.floor(pa.hgt / 12);
-            } else if (attributes[j] === "contractAmount") {
-                player.contractAmount = pa.contractAmount / 1000;  // [millions of dollars]
+            } else if (attributes[j] === "contract") {
+                player.contract = pa.contract;  // [millions of dollars]
+                player.contract.amount = player.contract.amount / 1000;  // [millions of dollars]
             } else if (attributes[j] === "cashOwed") {
-                player.cashOwed = ((1 + pa.contractExp - g.season) * pa.contractAmount - (1 - options.numGamesRemaining / 82) * pa.contractAmount) / 1000;  // [millions of dollars]
+                player.cashOwed = ((1 + pa.contract.exp - g.season) * pa.contract.amount - (1 - options.numGamesRemaining / 82) * pa.contract.amount) / 1000;  // [millions of dollars]
             } else if (attributes[j] === "abbrev") {
                 player.abbrev = helpers.getAbbrev(pa.tid);
             } else if (attributes[j] === "teamRegion") {
@@ -513,8 +514,8 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
                     name: players[i].name,
                     skills: _.last(players[i].ratings).skills,
                     injury: players[i].injury,
-                    amount: players[i].contractAmount,
-                    exp: players[i].contractExp,
+                    amount: players[i].contract.amount,
+                    exp: players[i].contract.exp,
                     released: false
                 });
             }
@@ -540,8 +541,8 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
                                 name: player.name,
                                 skills: _.last(player.ratings).skills,
                                 injury: player.injury,
-                                amount: player.contractAmount,
-                                exp: player.contractExp,
+                                amount: releasedPlayers[i].contract.amount,
+                                exp: releasedPlayers[i].contract.exp,
                                 released: true
                             });
 

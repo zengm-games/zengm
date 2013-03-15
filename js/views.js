@@ -341,7 +341,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                                 g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(g.PLAYER.RETIRED, true)).onsuccess = function (event) {
                                     var attributes, i, freeAgents, leagueLeaders, players, ratings, stats, userPlayers;
 
-                                    attributes = ["pid", "name", "abbrev", "tid", "age", "contractAmount", "contractExp", "rosterOrder"];
+                                    attributes = ["pid", "name", "abbrev", "tid", "age", "contract", "rosterOrder"];
                                     ratings = ["ovr", "pot"];
                                     stats = ["pts", "trb", "ast"];  // This is also used later to find team/league leaders for these player stats
                                     players = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings, {showNoStats: true});
@@ -375,13 +375,13 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                                     vars.expiring = [];
                                     for (i = 0; i < userPlayers.length; i++) {
                                         // Show contracts expiring this year, or next year if we're already in free agency
-                                        if (userPlayers[i].contractExp === g.season || (g.phase >= g.PHASE.RESIGN_PLAYERS && userPlayers[i].contractExp === g.season + 1)) {
+                                        if (userPlayers[i].contract.exp === g.season || (g.phase >= g.PHASE.RESIGN_PLAYERS && userPlayers[i].contract.exp === g.season + 1)) {
                                             vars.expiring.push({
                                                 pid: userPlayers[i].pid,
                                                 name: userPlayers[i].name,
                                                 age: userPlayers[i].age,
                                                 pts: userPlayers[i].stats.pts,
-                                                contractAmount: userPlayers[i].contractAmount,
+                                                contractAmount: userPlayers[i].contract.amount,
                                                 ovr: userPlayers[i].ratings.ovr,
                                                 pot: userPlayers[i].ratings.pot
                                             });
@@ -879,7 +879,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                 };
             }
 
-            attributes = ["pid", "name", "pos", "age", "contractAmount", "contractExp", "cashOwed", "rosterOrder", "injury"];
+            attributes = ["pid", "name", "pos", "age", "contract", "cashOwed", "rosterOrder", "injury"];
             ratings = ["ovr", "pot", "skills"];
             stats = ["min", "pts", "trb", "ast", "per"];
 
@@ -1219,14 +1219,14 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
             g.dbl.transaction("players").objectStore("players").index("tid").getAll(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
                 var attributes, data, i, players, ratings, stats;
 
-                attributes = ["pid", "name", "pos", "age", "contractAmount", "contractExp", "freeAgentTimesAsked", "injury"];
+                attributes = ["pid", "name", "pos", "age", "contract", "freeAgentTimesAsked", "injury"];
                 ratings = ["ovr", "pot", "skills"];
                 stats = ["min", "pts", "trb", "ast", "per"];
 
                 players = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings, {oldStats: true, showNoStats: true});
 
                 for (i = 0; i < players.length; i++) {
-                    players[i].contractAmount = players[i].contractAmount * (1 + players[i].freeAgentTimesAsked / 10);
+                    players[i].contract.amount = players[i].contract.amount * (1 + players[i].freeAgentTimesAsked / 10);
                     delete players[i].freeAgentTimesAsked;
                 }
 
@@ -1238,7 +1238,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                 };
                 ui.update(data, function () {
                     ui.datatable($("#free-agents"), 4, _.map(players, function (p) {
-                        return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), helpers.formatCurrency(p.contractAmount, "M") + ' thru ' + p.contractExp, '<form action="/l/' + g.lid + '/negotiation/' + p.pid + '" method="POST" style="margin: 0"><input type="hidden" name="new" value="1"><button type="submit" class="btn btn-mini btn-primary">Negotiate</button></form>'];
+                        return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, '<form action="/l/' + g.lid + '/negotiation/' + p.pid + '" method="POST" style="margin: 0"><input type="hidden" name="new" value="1"><button type="submit" class="btn btn-mini btn-primary">Negotiate</button></form>'];
                     }));
 
                     if (req.raw.cb !== undefined) {
@@ -1286,7 +1286,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                     playerStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
                         var attributes, i, ratings, stats, userRoster;
 
-                        attributes = ["pid", "name", "pos", "age", "contractAmount", "contractExp", "injury"];
+                        attributes = ["pid", "name", "pos", "age", "contract", "injury"];
                         ratings = ["ovr", "pot", "skills"];
                         stats = ["min", "pts", "trb", "ast", "per"];
                         userRoster = db.getPlayers(event.target.result, g.season, g.userTid, attributes, stats, ratings, {showNoStats: true});
@@ -1342,7 +1342,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                                         if (p.selected) {
                                             selected = ' checked = "checked"';
                                         }
-                                        return ['<input name="user-pids" type="checkbox" value="' + p.pid + '"' + selected + '>', helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contractAmount, "M") + ' thru ' + p.contractExp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
+                                        return ['<input name="user-pids" type="checkbox" value="' + p.pid + '"' + selected + '>', helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
                                     }));
 
                                     ui.datatableSinglePage($("#roster-other"), 5, _.map(otherRoster, function (p) {
@@ -1351,7 +1351,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                                         if (p.selected) {
                                             selected = ' checked = "checked"';
                                         }
-                                        return ['<input name="other-pids" type="checkbox" value="' + p.pid + '"' + selected + '>', helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contractAmount, "M") + ' thru ' + p.contractExp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
+                                        return ['<input name="other-pids" type="checkbox" value="' + p.pid + '"' + selected + '>', helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
                                     }));
 
                                     rosterCheckboxesUser = $("#roster-user input");
@@ -2032,7 +2032,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
             g.dbl.transaction(["players"]).objectStore("players").get(pid).onsuccess = function (event) {
                 var attributes, currentRatings, data, player, ratings, stats;
 
-                attributes = ["pid", "name", "tid", "abbrev", "teamRegion", "teamName", "pos", "age", "hgtFt", "hgtIn", "weight", "born", "contractAmount", "contractExp", "draft", "face", "freeAgentTimesAsked", "injury", "salaries", "salariesTotal", "awards"];
+                attributes = ["pid", "name", "tid", "abbrev", "teamRegion", "teamName", "pos", "age", "hgtFt", "hgtIn", "weight", "born", "contract", "draft", "face", "freeAgentTimesAsked", "injury", "salaries", "salariesTotal", "awards"];
                 ratings = ["season", "abbrev", "age", "ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills"];
                 stats = ["season", "abbrev", "age", "gp", "gs", "min", "fg", "fga", "fgp", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per"];
 
@@ -2044,7 +2044,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
                 // Account for extra free agent demands
                 if (player.tid === g.PLAYER.FREE_AGENT) {
-                    player.contractAmount = player.contractAmount * (1 + player.freeAgentTimesAsked / 10);
+                    player.contract.amount = player.contract.amount * (1 + player.freeAgentTimesAsked / 10);
                 }
 
                 currentRatings = player.ratings[player.ratings.length - 1];
@@ -2104,8 +2104,8 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                     for (i = 0; i < players.length; i++) {
                         for (j = 0; j < negotiations.length; j++) {
                             if (players[i].pid === negotiations[j].pid) {
-                                players[i].contractAmount = negotiations[j].playerAmount / 1000;
-                                players[i].contractExp = g.season + negotiations[j].playerYears;
+                                players[i].contract.amount = negotiations[j].playerAmount / 1000;
+                                players[i].contract.exp = g.season + negotiations[j].playerYears;
                                 break;
                             }
                         }
@@ -2119,7 +2119,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                     };
                     ui.update(data, function () {
                         ui.datatable($("#negotiation-list"), 4, _.map(players, function (p) {
-                            return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), helpers.formatCurrency(p.contractAmount, "M") + ' thru ' + p.contractExp, '<a href="/l/' + g.lid + '/negotiation/' + p.pid + '}" class="btn btn-mini btn-primary">Negotiate</a>'];
+                            return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, '<a href="/l/' + g.lid + '/negotiation/' + p.pid + '}" class="btn btn-mini btn-primary">Negotiate</a>'];
                         }));
 
                         if (req.raw.cb !== undefined) {

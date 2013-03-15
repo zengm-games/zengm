@@ -14,7 +14,7 @@
         Undrafted: {{player.draft.year}}<br>
       {{/if}}
       {{#if showContract}}
-        {{#if freeAgent}}Asking for{{else}}Contract{{/if}}: {{currency player.contractAmount "M"}}/yr thru {{player.contractExp}}<br>
+        {{#if freeAgent}}Asking for{{else}}Contract{{/if}}: {{currency player.contract.amount "M"}}/yr thru {{player.contract.exp}}<br>
       {{/if}}
       {{#unless retired}}
 

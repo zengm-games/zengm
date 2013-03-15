@@ -182,9 +182,9 @@ define(["db", "globals", "lib/underscore", "util/helpers"], function (db, g, _, 
                 transaction.objectStore("players").index("tid").getAll(tids[i]).onsuccess = function (event) {
                     var j, k, overCap, overRosterLimit, ratios, teams;
 
-                    players[i] = db.getPlayers(event.target.result, g.season, tids[i], ["pid", "name", "contractAmount"], [], []);
+                    players[i] = db.getPlayers(event.target.result, g.season, tids[i], ["pid", "name", "contract"], [], []);
                     s.teams[i].trade = _.filter(players[i], function (player) { return pids[i].indexOf(player.pid) >= 0; });
-                    s.teams[i].total = _.reduce(s.teams[i].trade, function (memo, player) { return memo + player.contractAmount; }, 0);
+                    s.teams[i].total = _.reduce(s.teams[i].trade, function (memo, player) { return memo + player.contract.amount; }, 0);
 
                     done += 1;
                     if (done === 2) {
@@ -336,9 +336,9 @@ define(["db", "globals", "lib/underscore", "util/helpers"], function (db, g, _, 
                             playerStore.index("tid").getAll(tids[i]).onsuccess = function (event) {
                                 var j, players;
 
-                                players = db.getPlayers(event.target.result, g.season, tids[i], ["pid", "contractAmount", "age"], [], ["ovr", "pot"]);
+                                players = db.getPlayers(event.target.result, g.season, tids[i], ["pid", "contract", "age"], [], ["ovr", "pot"]);
                                 players = _.filter(players, function (player) { return pids[i].indexOf(player.pid) >= 0; });
-                                value[i] = _.reduce(players, function (memo, player) { return memo + player.ratings.pot / 10 + player.ratings.ovr / 20 - player.age / 10 - player.contractAmount / 15; }, 0);
+                                value[i] = _.reduce(players, function (memo, player) { return memo + player.ratings.pot / 10 + player.ratings.ovr / 20 - player.age / 10 - player.contract.amount / 15; }, 0);
 
                                 done += 1;
                                 if (done === 2) {

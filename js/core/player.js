@@ -177,11 +177,10 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
     function setContract(p, contract, signed) {
         var i;
 
-        p.contractAmount = contract.amount;
-        p.contractExp = contract.exp;
+        p.contract = contract;
 
         if (signed) {
-            for (i = g.season; i <= p.contractExp; i++) {
+            for (i = g.season; i <= p.contract.exp; i++) {
                 p.salaries.push({season: i, amount: contract.amount});
             }
         }
@@ -344,7 +343,7 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
         // During regular season, or before season starts, allow contracts for
         // just this year.
         if (g.phase > g.PHASE.AFTER_TRADE_DEADLINE) {
-            p.contractExp += 1;
+            p.contract.exp += 1;
         }
 
         p.tid = g.PLAYER.FREE_AGENT;
@@ -363,12 +362,12 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
      * @param {function()} cb Callback function.
      */
     function release(transaction, p, cb) {
+console.log(p.contract);
         // Keep track of player salary even when he's off the team
         transaction.objectStore("releasedPlayers").add({
             pid: p.pid,
             tid: p.tid,
-            contractAmount: p.contractAmount,
-            contractExp: p.contractExp
+            contract: p.contract
         });
 
         addToFreeAgents(transaction, p, g.phase, cb);

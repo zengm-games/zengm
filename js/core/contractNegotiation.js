@@ -56,8 +56,8 @@ define(["db", "globals", "ui", "core/player", "util/lock", "util/random"], funct
                     }
 
                     // Initial player proposal;
-                    playerAmount = player.contractAmount * (1 + player.freeAgentTimesAsked / 10);
-                    playerYears = player.contractExp - g.season;
+                    playerAmount = player.contract.amount * (1 + player.freeAgentTimesAsked / 10);
+                    playerYears = player.contract.exp - g.season;
                     // Adjust to account for in-season signings;
                     if (g.phase <= g.PHASE.AFTER_TRADE_DEADLINE) {
                         playerYears += 1;

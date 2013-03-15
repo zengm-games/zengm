@@ -219,7 +219,7 @@ define(["db", "globals", "views", "ui", "core/draft", "core/game", "core/player"
                             }
                         }
 
-                        cashOwed = ((1 + p.contractExp - g.season) * p.contractAmount - (1 - numGamesRemaining / 82) * p.contractAmount);  // [thousands of dollars]
+                        cashOwed = ((1 + p.contract.exp - g.season) * p.contract.amount - (1 - numGamesRemaining / 82) * p.contract.amount);  // [thousands of dollars]
 
                         transaction.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
                             var cash, cursor, t;

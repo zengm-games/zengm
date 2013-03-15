@@ -660,7 +660,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                     } else {
                         p.yearsFreeAgent += 1;
                     }
-                    p.contractExp += 1;
+                    p.contract.exp += 1;
                     update = true;
                 } else if (p.tid >= 0 && p.yearsFreeAgent > 0) {
                     p.yearsFreeAgent = 0;
@@ -690,7 +690,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
             // Remove released players' salaries from payrolls if their contract expired this year
             tx = g.dbl.transaction("releasedPlayers", "readwrite");
             releasedPlayersStore = tx.objectStore("releasedPlayers");
-            releasedPlayersStore.index("contractExp").getAll(IDBKeyRange.upperBound(g.season)).onsuccess = function (event) {
+            releasedPlayersStore.index("contract.exp").getAll(IDBKeyRange.upperBound(g.season)).onsuccess = function (event) {
                 var i, releasedPlayers;
 
                 releasedPlayers = event.target.result;
@@ -745,7 +745,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
             cursor = event.target.result;
             if (cursor) {
                 p = cursor.value;
-                if (p.contractExp <= g.season) {
+                if (p.contract.exp <= g.season) {
                     if (p.tid !== g.userTid) {
                         // Automatically negotiate with teams
                         if (Math.random() > _.last(p.ratings).ovr / 100) { // Should eventually be smarter than a coin flip

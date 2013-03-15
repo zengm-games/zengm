@@ -7,7 +7,6 @@ db changes
     seasons: "expenses" object. keys are all the *Paid things, with properties as above.
   player object
     look at an actual player object and see if there are any other things worth changing
-    contract to object
 move most db functions into core.whatever. db should just be about initializing/upgrading
 db version upgrades
   see https://github.com/superfeedr/indexeddb-backbonejs-adapter/blob/master/backbone-indexeddb.js
@@ -117,6 +116,7 @@ player
   draft* properties are now inside another object
     now includes pot, ovr, and skills
   bornYear and bornLoc are born.year and born.loc
+  contract to object (also in releasedPlayers)
 
 MANUAL CHANGES TODO since 3.0.0-beta
 ------------------------------------

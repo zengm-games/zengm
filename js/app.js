@@ -123,6 +123,7 @@ requirejs(["db", "views", "ui", "lib/davis", "lib/jquery", "util/helpers", "../g
             this.get("/l/:lid/roster/:abbrev/:season", views.roster);
             this.get("/l/:lid/schedule", views.schedule);
             this.get("/l/:lid/team_finances", views.teamFinances);
+            this.post("/l/:lid/team_finances", views.teamFinances);
             this.get("/l/:lid/team_finances/:abbrev", views.teamFinances);
             this.get("/l/:lid/team_finances/:abbrev/:show", views.teamFinances);
             this.get("/l/:lid/team_history", views.teamHistory);

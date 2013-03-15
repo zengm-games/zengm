@@ -972,6 +972,35 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
             abbrev = out[1];
             teams = helpers.getTeams(tid);
 
+            // First, handle any changes to the finances form
+            if (req.method === "post") {
+                g.dbl.transaction("teams", "readwrite").objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
+                    var budget, cursor, i, key, t;
+
+                    cursor = event.target.result;
+                    t = cursor.value;
+
+                    budget = req.params.budget;
+
+                    for (key in budget) {
+                        if (budget.hasOwnProperty(key)) {
+                            if (key === "ticketPrice") {
+                                // Already in [dollars]
+                                budget[key] = helpers.round(budget[key], 2);
+                            } else {
+                                // Convert from [millions of dollars] to [thousands of dollars] rounded to the nearest $10k
+                                budget[key] = helpers.round(budget[key] * 100) * 10;
+                            }
+                            t.budget[key].amount = budget[key];
+                        }
+                    }
+
+                    cursor.update(t);
+
+                    return Davis.location.assign(new Davis.Request("/l/" + g.lid + "/team_finances"));
+                };
+            }
+
             shows = [
                 {
                     text: "Past 10 seasons",
@@ -1158,10 +1187,6 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                             if (g.gamesInProgress) {
                                 disableFinanceSettings();
                             }
-
-                            $("#finances-settings-save").click(function () {
-                                console.log("SAVE");
-                            });
 
                             if (req.raw.cb !== undefined) {
                                 req.raw.cb();

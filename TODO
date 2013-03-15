@@ -3,7 +3,6 @@ BEFORE 3.0.0-beta.2
 
 add another color for bar graph (for expenses)
 move most db functions into core.whatever. db should just be about initializing/upgrading
-is core.finances needed?
 db version upgrades
   see https://github.com/superfeedr/indexeddb-backbonejs-adapter/blob/master/backbone-indexeddb.js
 how to deal with a team that drops below 5 active players, factoring in injuries?
@@ -27,19 +26,16 @@ update formulas
 knobs to control team finances
   use an object to store budget items in database. it's too messy as is.
     any other db updates?
-  team finances template
-    editable
-      on form button press..
-      get all values
-      covert M to k
-      round to nearest 10k (or $1 for ticket price)
-      update budgets in database (function in core.finances)
-      recalculate budget ranks (function in core.finances)
-    handlebars helper for form DRY
-    minimum width for form column
-  updating *Paid and *PaidRank
-    spread out spending over 82 regular-season games, in core.game
-    rank updating (paidrankg and budgetrank) should happen somewhere in core.game where all the teams are loaded already, if possible
+  team finances view
+    on POST
+        recalculate budget ranks (function in core.finances?)
+    template
+      handlebars helper for form DRY
+      minimum width for form column
+      only show editable form when viewing user team
+  updating expenses
+    spread out spending over 82 regular-season games, in core.game, based on budget items
+    expense and revenue rank updating should happen somewhere in core.game where all the teams are loaded already, if possible
   how should changes in budget effect things?
     performance is based on cumulative (this year) rank relative to other teams
       have functions in core.finances to calculate and cache these ranks (also ticketPrice, pop, etc), so it can be done daily during the regular season, or when the user makes a change

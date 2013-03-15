@@ -1019,20 +1019,29 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                 salariesSeasons = [season, season + 1, season + 2, season + 3, season + 4];
 
                 g.dbl.transaction("teams").objectStore("teams").get(tid).onsuccess = function (event) {
-                    var barData, barSeasons, data, i, keys, team, teamAll;
+                    var barData, barSeasons, data, i, keys, team, teamAll, tempData;
 
                     team = event.target.result;
                     team.seasons.reverse();  // Most recent season first
 
-                    keys = ["won", "hype", "pop", "att", "cash", "merchRevenue", "sponsorRevenue", "ticketRevenue", "localTvRevenue", "nationalTvRevenue", "salaryPaid", "luxuryTaxPaid", "minTaxPaid", "otherPaid"];
+                    keys = ["won", "hype", "pop", "att", "cash", "revenues", "salaryPaid", "luxuryTaxPaid", "minTaxPaid", "otherPaid"];
                     barData = {};
                     for (i = 0; i < keys.length; i++) {
-                        barData[keys[i]] = helpers.nullPad(_.pluck(team.seasons, keys[i]), show);
+                        if (typeof team.seasons[0][keys[i]] !== "object") {
+                            barData[keys[i]] = helpers.nullPad(_.pluck(team.seasons, keys[i]), show);
+                        } else {
+                            // Handle an object in the database
+                            barData[keys[i]] = {};
+                            tempData = _.pluck(team.seasons, keys[i]);
+                            _.each(tempData[0], function (value, key, obj) {
+                                barData[keys[i]][key] = helpers.nullPad(_.pluck(_.pluck(tempData, key), "amount"), show);
+                            })
+                        }
                     }
 
                     // Process some values
                     barData.att = _.map(barData.att, function (num, i) { if (team.seasons[i] !== undefined) { return num / team.seasons[i].gp; } });  // per game
-                    keys = ["cash", "merchRevenue", "sponsorRevenue", "ticketRevenue", "localTvRevenue", "nationalTvRevenue", "salaryPaid", "luxuryTaxPaid", "minTaxPaid", "otherPaid"];
+                    keys = ["cash", "salaryPaid", "luxuryTaxPaid", "minTaxPaid", "otherPaid"];
                     for (i = 0; i < keys.length; i++) {
                         barData[keys[i]] = _.map(barData[keys[i]], function (num) { return num / 1000; });  // convert to millions
                     }
@@ -1108,14 +1117,14 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
                             $.barGraph(
                                 $("#bar-graph-revenue"),
-                                [barData.nationalTvRevenue, barData.localTvRevenue, barData.ticketRevenue, barData.sponsorRevenue, barData.merchRevenue],
+                                [barData.revenues.nationalTv, barData.revenues.localTv, barData.revenues.ticket, barData.revenues.sponsor, barData.revenues.merch],
                                 undefined,
                                 [
                                     barSeasons,
                                     ["national TV revenue", "local TV revenue", "ticket revenue",  "corporate sponsorship revenue", "merchandising revenue"]
                                 ],
                                 function (val) {
-                                    return helpers.formatCurrency(val, "M", 1);
+                                    return helpers.formatCurrency(val / 1000, "M", 1);
                                 }
                             );
                             $.barGraph(

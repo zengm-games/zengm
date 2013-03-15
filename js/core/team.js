@@ -46,11 +46,28 @@ define(["globals", "util/helpers", "util/random"], function (g, helpers, random)
                 amount: 0,
                 exp: 0
             },
-            merchRevenue: 0,
-            sponsorRevenue: 0,
-            ticketRevenue: 0,
-            nationalTvRevenue: 0,
-            localTvRevenue: 0,
+            revenues: {
+                merch: {
+                    amount: 0,
+                    rank: 0
+                },
+                sponsor: {
+                    amount: 0,
+                    rank: 0
+                },
+                ticket: {
+                    amount: 0,
+                    rank: 0
+                },
+                nationalTv: {
+                    amount: 0,
+                    rank: 0
+                },
+                localTv: {
+                    amount: 0,
+                    rank: 0
+                }
+            },
             payrollEndOfSeason: -1,
             salaryPaid: 0,
             luxuryTaxPaid: 0,

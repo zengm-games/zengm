@@ -221,11 +221,11 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/player",
                 teamSeason.cash += revenue - expenses;
                 teamSeason.att += att;
                 teamSeason.gp += 1;
-                teamSeason.merchRevenue += merchRevenue;
-                teamSeason.sponsorRevenue += sponsorRevenue;
-                teamSeason.nationalTvRevenue += nationalTvRevenue;
-                teamSeason.localTvRevenue += localTvRevenue;
-                teamSeason.ticketRevenue += ticketRevenue;
+                teamSeason.revenues.merch.amount += merchRevenue;
+                teamSeason.revenues.sponsor.amount += sponsorRevenue;
+                teamSeason.revenues.nationalTv.amount += nationalTvRevenue;
+                teamSeason.revenues.localTv.amount += localTvRevenue;
+                teamSeason.revenues.ticket.amount += ticketRevenue;
                 teamSeason.salaryPaid += salaryPaid;
                 teamSeason.otherPaid += otherPaid;
 

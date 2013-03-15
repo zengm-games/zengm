@@ -5,7 +5,6 @@ db changes
   team object
     seasons
       "expenses" object. keys are all the *Paid objects; {amount: X, rank: X}
-      "revenues" object. keys are all the *Paid objects; {amount: X, rank: X}
 move most db functions into core.whatever. db should just be about initializing/upgrading
 is core.finances needed?
 db version upgrades

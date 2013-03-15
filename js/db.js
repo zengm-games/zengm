@@ -634,7 +634,7 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
             }
 
             // Revenue and expenses calculation
-            tsa.revenue = tsa.merchRevenue + tsa.sponsorRevenue + tsa.ticketRevenue + tsa.nationalTvRevenue + tsa.localTvRevenue;
+            tsa.revenue = _.reduce(tsa.revenues, function(memo, revenue){ return memo + revenue.amount; }, 0);
             tsa.expenses = tsa.salaryPaid + tsa.luxuryTaxPaid + tsa.minTaxPaid + tsa.otherPaid;
 
             for (j = 0; j < seasonAttributes.length; j++) {

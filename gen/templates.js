@@ -2956,9 +2956,9 @@ function program36(depth0,data) {
     + " lbs<br>\n      Age: "
     + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.age)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "<br>\n      Born: "
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.bornYear)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.born)),stack1 == null || stack1 === false ? stack1 : stack1.year)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + " - "
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.bornLoc)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.born)),stack1 == null || stack1 === false ? stack1 : stack1.loc)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "<br>\n      ";
   stack2 = helpers['if'].call(depth0, ((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.draft)),stack1 == null || stack1 === false ? stack1 : stack1.ound), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }

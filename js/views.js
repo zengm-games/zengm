@@ -1485,7 +1485,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                         pa = playersAll[i];
 
                         // Attributes
-                        player = {pid: pa.pid, name: pa.name, pos: pa.pos, age: g.season - pa.bornYear, injury: pa.injury};
+                        player = {pid: pa.pid, name: pa.name, pos: pa.pos, age: g.season - pa.born.year, injury: pa.injury};
 
                         // Ratings
                         pr = pa.ratings[0];
@@ -1508,7 +1508,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
                             if (pa.tid !== g.PLAYER.UNDRAFTED) {
                                 // Attributes
-                                player = {pid: pa.pid, name: pa.name, pos: pa.pos, age: g.season - pa.bornYear, draft: pa.draft, injury: pa.injury};
+                                player = {pid: pa.pid, name: pa.name, pos: pa.pos, age: g.season - pa.born.year, draft: pa.draft, injury: pa.injury};
 
                                 // Ratings
                                 pr = pa.ratings[0];
@@ -2032,7 +2032,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
             g.dbl.transaction(["players"]).objectStore("players").get(pid).onsuccess = function (event) {
                 var attributes, currentRatings, data, player, ratings, stats;
 
-                attributes = ["pid", "name", "tid", "abbrev", "teamRegion", "teamName", "pos", "age", "hgtFt", "hgtIn", "weight", "bornYear", "bornLoc", "contractAmount", "contractExp", "draft", "face", "freeAgentTimesAsked", "injury", "salaries", "salariesTotal", "awards"];
+                attributes = ["pid", "name", "tid", "abbrev", "teamRegion", "teamName", "pos", "age", "hgtFt", "hgtIn", "weight", "born", "contractAmount", "contractExp", "draft", "face", "freeAgentTimesAsked", "injury", "salaries", "salariesTotal", "awards"];
                 ratings = ["season", "abbrev", "age", "ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills"];
                 stats = ["season", "abbrev", "age", "gp", "gs", "min", "fg", "fga", "fgp", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per"];
 

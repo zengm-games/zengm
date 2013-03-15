@@ -634,7 +634,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
             if (cursor) {
                 p = cursor.value;
 
-                age = g.season - p.bornYear;
+                age = g.season - p.born.year;
                 pot = _.last(p.ratings).pot;
 
                 if (age > maxAge || pot < minPot) {

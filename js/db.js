@@ -179,10 +179,10 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
         // Attributes
         for (j = 0; j < attributes.length; j++) {
             if (attributes[j] === "age") {
-                player.age = g.season - pa.bornYear;
+                player.age = g.season - pa.born.year;
             } else if (attributes[j] === "draft") {
                 player.draft = pa.draft;
-                player.draft.age = pa.draft.year - pa.bornYear;
+                player.draft.age = pa.draft.year - pa.born.year;
             } else if (attributes[j] === "hgtFt") {
                 player.hgtFt = Math.floor(pa.hgt / 12);
             } else if (attributes[j] === "hgtIn") {
@@ -249,7 +249,7 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
                     player.ratings[k] = {};
                     for (j = 0; j < ratings.length; j++) {
                         if (ratings[j] === "age") {
-                            player.ratings[k].age = pa.ratings[k].season - pa.bornYear;
+                            player.ratings[k].age = pa.ratings[k].season - pa.born.year;
                         } else if (ratings[j] === "abbrev") {
                             // Find the last stats entry for that season, and use that to determine the team
                             for (i = 0; i < pa.stats.length; i++) {
@@ -387,7 +387,7 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
                     } else if (stats[j] === "season") {
                         player.season = ps.season;
                     } else if (stats[j] === "age") {
-                        player.age = ps.season - pa.bornYear;
+                        player.age = ps.season - pa.born.year;
                     } else if (stats[j] === "abbrev") {
                         player.abbrev = helpers.getAbbrev(ps.tid);
                     } else if (stats[j] === "per") {
@@ -405,7 +405,7 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
                     if (stats[j] === "season") {
                         player.season = ps.season;
                     } else if (stats[j] === "age") {
-                        player.age = ps.season - pa.bornYear;
+                        player.age = ps.season - pa.born.year;
                     } else if (stats[j] === "abbrev") {
                         player.abbrev = helpers.getAbbrev(ps.tid);
                     } else {

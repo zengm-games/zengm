@@ -206,7 +206,7 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
 
         r = p.ratings.length - 1;
 
-        age = g.season - p.bornYear;
+        age = g.season - p.born.year;
 
         for (i = 0; i < years; i++) {
             age += 1;
@@ -274,8 +274,8 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
         }
 
         if (generate) {
-            age = g.season - p.bornYear + years;
-            p.bornYear = g.season - age;
+            age = g.season - p.born.year + years;
+            p.born.year = g.season - age;
         }
 
         return p;
@@ -296,7 +296,7 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
         var age, i, key, r, ratingKeys;
 
         // Make sure age is always defined
-        age = g.season - p.bornYear;
+        age = g.season - p.born.year;
 
         r = p.ratings.length - 1;
 
@@ -590,12 +590,14 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
         p.pos = pos(p.ratings[0]);  // Position (PG, SG, SF, PF, C, G, GF, FC)
         p.hgt = parseInt(random.gauss(1, 0.02) * (p.ratings[0].hgt * (maxHgt - minHgt) / 100 + minHgt), 10);  // Height in inches (from minHgt to maxHgt)
         p.weight = parseInt(random.gauss(1, 0.02) * ((p.ratings[0].hgt + 0.5 * p.ratings[0].stre) * (maxWeight - minWeight) / 150 + minWeight), 10);  // Weight in pounds (from minWeight to maxWeight)
-        p.bornYear = g.season - age;
 
         // Randomly choose nationality  
         nationality = 'USA';
+        p.born = {
+            year: g.season - age,
+            loc: nationality
+        };
 
-        p.bornLoc = nationality;
         p.name = name(nationality);
         p.college = "";
 

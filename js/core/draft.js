@@ -109,7 +109,8 @@ define(["db", "globals", "core/player", "core/season", "util/helpers", "util/ran
                 teamName: teams[pick.tid].name,
                 teamRegion: teams[pick.tid].region,
                 pot: p.ratings[0].pot,
-                ovr: p.ratings[0].ovr
+                ovr: p.ratings[0].ovr,
+                skills: p.ratings[0].skills
             };
 
             // Contract

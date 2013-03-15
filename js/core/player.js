@@ -617,7 +617,8 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
             teamName: null,
             teamRegion: null,
             pot: pot,
-            ovr: p.ratings[0].ovr
+            ovr: p.ratings[0].ovr,
+            skills: p.ratings[0].skills
         };
 
         p.face = faces.generate();

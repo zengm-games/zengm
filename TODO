@@ -118,6 +118,7 @@ player
   added "injury", "awards", and "contracts"
   "college" is an empty string
   draft* properties are now inside another object
+    now includes pot, ovr, and skills
 
 MANUAL CHANGES TODO since 3.0.0-beta
 ------------------------------------

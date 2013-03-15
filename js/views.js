@@ -1601,7 +1601,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
             // Show a summary of an old draft
             g.realtimeUpdate = false;
             playerStore.index("draft.year").getAll(season).onsuccess = function (event) {
-                var attributes, currentPr, data, draftPr, i, pa, player, players, playersAll, ratings, stats;
+                var attributes, currentPr, data, i, pa, player, players, playersAll, ratings, stats;
 
                 attributes = ["tid", "abbrev", "draft", "pid", "name", "pos", "age"];
                 ratings = ["ovr", "pot", "skills"];
@@ -1617,9 +1617,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                         player = {pid: pa.pid, name: pa.name, pos: pa.pos, draft: pa.draft, currentAge: pa.age, currentAbbrev: pa.abbrev};
 
                         // Ratings
-                        draftPr = pa.ratings[0];
                         currentPr = _.last(pa.ratings);
-                        player.draftSkills = pa.ratings[0].skills;
                         player.currentOvr = currentPr.ovr;
                         player.currentPot = currentPr.pot;
                         player.currentSkills = currentPr.skills;
@@ -1641,7 +1639,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                     ui.dropdown($("#draft-select-season"));
 
                     ui.datatableSinglePage($("#draft-results"), 0, _.map(players, function (p) {
-                        return [p.draft.round + '-' + p.draft.pick, '<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>', p.pos, '<a href="/l/' + g.lid + '/roster/' + p.draft.abbrev + '">' + p.draft.abbrev + '</a>', String(p.draft.age), String(p.draft.ovr), String(p.draft.pot), '<span class="skills_alone">' + helpers.skillsBlock(p.draftSkills) + '</span>', '<a href="/l/' + g.lid + '/roster/' + p.currentAbbrev + '">' + p.currentAbbrev + '</a>', String(p.currentAge), String(p.currentOvr), String(p.currentPot), '<span class="skills_alone">' + helpers.skillsBlock(p.currentSkills) + '</span>', helpers.round(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1)];
+                        return [p.draft.round + '-' + p.draft.pick, '<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>', p.pos, '<a href="/l/' + g.lid + '/roster/' + p.draft.abbrev + '">' + p.draft.abbrev + '</a>', String(p.draft.age), String(p.draft.ovr), String(p.draft.pot), '<span class="skills_alone">' + helpers.skillsBlock(p.draft.skills) + '</span>', '<a href="/l/' + g.lid + '/roster/' + p.currentAbbrev + '">' + p.currentAbbrev + '</a>', String(p.currentAge), String(p.currentOvr), String(p.currentPot), '<span class="skills_alone">' + helpers.skillsBlock(p.currentSkills) + '</span>', helpers.round(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1)];
                     }));
 
                     if (req.raw.cb !== undefined) {

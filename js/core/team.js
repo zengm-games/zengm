@@ -42,7 +42,6 @@ define(["globals", "util/helpers", "util/random"], function (g, helpers, random)
             leagueChamps: false,
             hype: Math.random(),
             pop: 0,  // Needs to be set somewhere!
-            popRank: 0,  // Needs to be set somewhere!
             tvContract: {
                 amount: 0,
                 exp: 0
@@ -180,7 +179,6 @@ define(["globals", "util/helpers", "util/random"], function (g, helpers, random)
         t = addStatsRow(t);
 
         t.seasons[0].pop = tm.pop;
-        t.seasons[0].popRank = tm.popRank;
 
         return t;
     }

@@ -3,8 +3,6 @@ BEFORE 3.0.0-beta.2
 
 db changes
   team object
-    root: "budget" object. keys are "scouting", "facilities", etc. properties are objects {amount: X, rank: X}
-      ticket price too!
     seasons
       "expenses" object. keys are all the *Paid objects; {amount: X, rank: X}
       "revenues" object. keys are all the *Paid objects; {amount: X, rank: X}
@@ -98,18 +96,7 @@ added to seasonAttributes for each team:
   facilitiesPaidRank: number,
   stadiumPaid: number,
   stadiumPaidRank: number,
-added to root of each team:
-  ticketPrice: number,
-  scoutingBudget: number,
-  scoutingBudgetRank: number,
-  coachingBudget: number,
-  coachingBudgetRank: number,
-  healthBudget: number,
-  healthBudgetRank: number,
-  facilitiesBudget: number,
-  facilitiesBudgetRank: number,
-  stadiumBudget: number,
-  stadiumBudgetRank: number
+added to root of each team: budget
 removed "cost" and "revenue" from seasonAttributes
 changes to retiredPlayers, but that's just removing stuff that isn't needed anymore, so no problem
 player

@@ -188,7 +188,7 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
             } else if (attributes[j] === "hgtIn") {
                 player.hgtIn = pa.hgt - 12 * Math.floor(pa.hgt / 12);
             } else if (attributes[j] === "contract") {
-                player.contract = pa.contract;  // [millions of dollars]
+                player.contract = helpers.deepCopy(pa.contract);  // [millions of dollars]
                 player.contract.amount = player.contract.amount / 1000;  // [millions of dollars]
             } else if (attributes[j] === "cashOwed") {
                 player.cashOwed = ((1 + pa.contract.exp - g.season) * pa.contract.amount - (1 - options.numGamesRemaining / 82) * pa.contract.amount) / 1000;  // [millions of dollars]

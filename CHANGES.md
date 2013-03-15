@@ -12,12 +12,13 @@ This is a list of only the major changes in each version.
 - Team finances view, which includes a lot of information that was not previously accessible
 - "Hype" for a team governs things like attendance and revenue
 - Different population sizes for different regions, which influences revenue and thus game difficulty
+- Awards and salaries from previous seasons displayed in player view
 - Many small bug fixes and UI improvements
 
 ### Still in progress
 
 - Settings to control various budget items, such as ticket price, scouting budget, etc.
-- "Fuzz" in displayed player ratings: the more spent on scouting, the more accurate the displayed ratings
+- "Fuzz" in displayed player ratings view: the more spent on scouting, the more accurate the displayed ratings
 - More historical information in player view: previous contracts and awards won
 - See TODO
 

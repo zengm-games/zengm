@@ -100,7 +100,7 @@ define(["globals", "util/helpers", "util/random"], function (g, helpers, random)
                 stadium: {
                     amount: 0,
                     rank: 0
-                },
+                }
             },
             payrollEndOfSeason: -1
         };

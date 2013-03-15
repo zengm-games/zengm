@@ -163,6 +163,12 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/player",
                     won = false;
                 }
 
+                // Attendance - base calculation now, which is used for other revenue estimates
+                att = 10000 + (0.1 + 0.9 * Math.pow(teamSeason.hype, 2)) * teamSeason.pop * 1000000 * 0.01;  // Base attendance - between 2% and 0.2% of the region
+                if (that.playoffs) {
+                    att *= 1.5;  // Playoff bonus
+                }
+
                 // Some things are only paid for regular season games.
                 salaryPaid = 0;
                 scoutingPaid = 0;
@@ -186,12 +192,6 @@ define(["db", "globals", "ui", "core/freeAgents", "core/gameSim", "core/player",
                     sponsorRevenue = 10 * att / 1000;
                     nationalTvRevenue = 250;
                     localTvRevenue = 100;
-                }
-
-                // Attendance - base calculation now, which is used for other revenue estimates
-                att = 10000 + (0.1 + 0.9 * Math.pow(teamSeason.hype, 2)) * teamSeason.pop * 1000000 * 0.01;  // Base attendance - between 2% and 0.2% of the region
-                if (that.playoffs) {
-                    att *= 1.5;  // Playoff bonus
                 }
 
 

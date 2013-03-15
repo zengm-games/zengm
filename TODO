@@ -74,24 +74,10 @@ ON meta DB UPGRADE show a message explaining new features!!
 added to seasonAttributes for each team:
   hype: number,
   pop: number,
-  tvContractAmount: number,
-  tvContractExp: number,
-  merchAmount: number,
-  sponsorAmount: number,
-  payrollEndOfSeason: number,
-  salaryPaid: number,
-  luxuryTaxPaid: number,
-  minTaxPaid: number,
-  scoutingPaid: number,
-  scoutingPaidRank: number,
-  coachingPaid: number,
-  coachingPaidRank: number,
-  healthPaid: number,
-  healthPaidRank: number,
-  facilitiesPaid: number,
-  facilitiesPaidRank: number,
-  stadiumPaid: number,
-  stadiumPaidRank: number,
+  tvContract: {},
+  revenues: {}
+  expenses: {}
+  payrollEndOfSeason: number
 added to root of each team: budget
 removed "cost" and "revenue" from seasonAttributes
 changes to retiredPlayers, but that's just removing stuff that isn't needed anymore, so no problem

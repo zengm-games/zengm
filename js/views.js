@@ -906,6 +906,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                         var i, players;
 
                         players = db.getPlayers(event.target.result, season, tid, attributes, stats, ratings, {numGamesRemaining: numGamesRemaining, showRookies: true, sortBy: "rosterOrder", showNoStats: true});
+
                         db.getPayroll(transaction, tid, function (payroll) {
                             cb(players, payroll / 1000);
                         });

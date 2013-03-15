@@ -296,6 +296,9 @@ select.past-x {
 .ticket-price {
   width: 36px;
 }
+.finances-settings button {
+  display: none;
+}
 
 .label-injury {
   cursor: default;

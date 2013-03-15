@@ -1176,16 +1176,25 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
                             // Form enabling/disabling
                             disableFinanceSettings = function () {
                                 $("#finances-settings input, button").attr("disabled", "disabled");
-                                $("#finances-settings .text-error").html("Stop game simulation to edit.");
+                                if (tid === g.userTid) {
+                                    $("#finances-settings .text-error").html("Stop game simulation to edit.");
+                                } else {
+                                    $("#finances-settings button").hide();
+                                }
                             };
                             enableFinanceSettings = function () {
-                                $("#finances-settings input, button").removeAttr("disabled");
+                                if (tid === g.userTid) {
+                                    $("#finances-settings input, button").removeAttr("disabled");
+                                }
                                 $("#finances-settings .text-error").html("");
+                                $("#finances-settings button").show();
                             };
                             $("#finances-settings").on("gameSimulationStart", disableFinanceSettings);
                             $("#finances-settings").on("gameSimulationStop", enableFinanceSettings);
                             if (g.gamesInProgress) {
                                 disableFinanceSettings();
+                            } else {
+                                enableFinanceSettings();
                             }
 
                             if (req.raw.cb !== undefined) {

@@ -32,7 +32,6 @@ knobs to control team finances
     template
       handlebars helper for form DRY
       minimum width for form column
-      only show editable form when viewing user team
   updating expenses
     spread out spending over 82 regular-season games, in core.game, based on budget items
     expense and revenue rank updating should happen somewhere in core.game where all the teams are loaded already, if possible
@@ -40,6 +39,7 @@ knobs to control team finances
     performance is based on cumulative (this year) rank relative to other teams
       have functions in core.finances to calculate and cache these ranks (also ticketPrice, pop, etc), so it can be done daily during the regular season, or when the user makes a change
   move ticket price to team object rather than making it a constant
+    it's already there. but g.ticketPrice needs to be replaced
     post-revenue-calculation attendance should depend on ticket price. so should hype, but only slightly
   scouting budget - decrease "fuzz" added to displayed ratings
     fuzz

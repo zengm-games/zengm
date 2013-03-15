@@ -621,7 +621,16 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
 
         // Attributes
         for (j = 0; j < attributes.length; j++) {
-            team[attributes[j]] = ta[attributes[j]];
+            if (attributes[j] === "budget") {
+                team.budget = helpers.deepCopy(ta.budget);
+                _.each(team.budget, function (value, key) {
+                    if (key !== "ticketPrice") {  // ticketPrice is the only thing in dollars always
+                        value.amount /= 1000;
+                    }
+                });
+            } else {
+                team[attributes[j]] = ta[attributes[j]];
+            }
         }
 
         // Season attributes

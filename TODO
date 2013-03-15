@@ -1,6 +1,7 @@
 BEFORE 3.0.0-beta.2
 -------------------
 
+show cap space on free agents view
 move most db functions into core.whatever. db should just be about initializing/upgrading
 db version upgrades
   see https://github.com/superfeedr/indexeddb-backbonejs-adapter/blob/master/backbone-indexeddb.js

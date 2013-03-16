@@ -37,8 +37,9 @@ knobs to control team finances
       for each player, calculate a randn(0, scoutingPaidRank/10) with max/min of +/- 5
       calculate a new one each year and add it to 1/2 of the previous one
       displayed "skills" should include fuzz. ones used in gameSim shouldn't.
-  facilities budget - influence free agent demeanor, player development
-  stadium budget - influence attendance
+  facilities budget
+    influence attendance
+    influence free agent demeanor
   new phase updating of variables
   AI updating of *Budgets and ticket prices
     maybe not necessary at this stage?

@@ -149,7 +149,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
         db.getPayroll(this.transaction, that.team[t1].id, function (payroll) {
             // Team stats
             that.transaction.objectStore("teams").openCursor(that.team[t1].id).onsuccess = function (event) {
-                var att, coachingPaid, count, cursor, expenses, facilitiesPaid, healthPaid, i, keys, localTvRevenue, merchRevenue, nationalTvRevenue, revenue, salaryPaid, scoutingPaid, sponsorRevenue, stadiumPaid, t, teamSeason, teamStats, ticketRevenue, winp, winpOld, won;
+                var att, coachingPaid, count, cursor, expenses, facilitiesPaid, healthPaid, i, keys, localTvRevenue, merchRevenue, nationalTvRevenue, revenue, salaryPaid, scoutingPaid, sponsorRevenue, t, teamSeason, teamStats, ticketRevenue, winp, winpOld, won;
 
                 cursor = event.target.result;
                 t = cursor.value;
@@ -175,7 +175,6 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
                 coachingPaid = 0;
                 healthPaid = 0;
                 facilitiesPaid = 0;
-                stadiumPaid = 0;
                 merchRevenue = 0;
                 sponsorRevenue = 0;
                 nationalTvRevenue = 0;
@@ -187,7 +186,6 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
                     coachingPaid = t.budget.coaching.amount / 82;
                     healthPaid = t.budget.health.amount / 82;
                     facilitiesPaid = t.budget.facilities.amount / 82;
-                    stadiumPaid = t.budget.stadium.amount / 82;
                     merchRevenue = 3 * att / 1000;
                     sponsorRevenue = 10 * att / 1000;
                     nationalTvRevenue = 250;
@@ -232,7 +230,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
                 }
 
                 revenue = merchRevenue + sponsorRevenue + nationalTvRevenue + localTvRevenue + ticketRevenue;
-                expenses = salaryPaid + scoutingPaid + coachingPaid + healthPaid + facilitiesPaid + stadiumPaid;
+                expenses = salaryPaid + scoutingPaid + coachingPaid + healthPaid + facilitiesPaid;
                 teamSeason.cash += revenue - expenses;
                 teamSeason.att += att;
                 teamSeason.gp += 1;
@@ -246,7 +244,6 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
                 teamSeason.expenses.coaching.amount += coachingPaid;
                 teamSeason.expenses.health.amount += healthPaid;
                 teamSeason.expenses.facilities.amount += facilitiesPaid;
-                teamSeason.expenses.stadium.amount += stadiumPaid;
 
                 keys = ['min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
                 for (i = 0; i < keys.length; i++) {

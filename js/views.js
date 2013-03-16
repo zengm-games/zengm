@@ -1135,7 +1135,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                             $("#help-expense-settings").clickover({
                                 title: "Expense Settings",
                                 html: true,
-                                content: "<p>Scouting: Controls the accuracy of displayed player ratings.<p></p>Coaching: Better coaches mean better player development.</p><p>Health: A good team of doctors speeds recovery from injuries.</p><p>Facilities: Better training facilities make your players happier and more eager to train.</p>Stadium: Improvements to your stadium increase attendance."
+                                content: "<p>Scouting: Controls the accuracy of displayed player ratings.<p></p>Coaching: Better coaches mean better player development.</p><p>Health: A good team of doctors speeds recovery from injuries.</p>Facilities: Better training facilities make your players happer, and stadium renovations increase attendance."
                             });
 
                             $.barGraph($("#bar-graph-won"), barData.won, [0, 82], barSeasons);
@@ -1163,11 +1163,11 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                             );
                             $.barGraph(
                                 $("#bar-graph-expenses"),
-                                [barData.expenses.salary, barData.expenses.minTax, barData.expenses.luxuryTax, barData.expenses.scouting, barData.expenses.coaching, barData.expenses.health, barData.expenses.facilities, barData.expenses.stadium],
+                                [barData.expenses.salary, barData.expenses.minTax, barData.expenses.luxuryTax, barData.expenses.scouting, barData.expenses.coaching, barData.expenses.health, barData.expenses.facilities],
                                 undefined,
                                 [
                                     barSeasons,
-                                    ["player salaries", "minimum payroll tax", "luxury tax", "scouting", "coaching", "health", "facilities", "stadium"]
+                                    ["player salaries", "minimum payroll tax", "luxury tax", "scouting", "coaching", "health", "facilities"]
                                 ],
                                 function (val) {
                                     return helpers.formatCurrency(val / 1000, "M", 1);

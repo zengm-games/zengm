@@ -96,10 +96,6 @@ define(["globals", "util/helpers", "util/random"], function (g, helpers, random)
                 facilities: {
                     amount: 0,
                     rank: 0
-                },
-                stadium: {
-                    amount: 0,
-                    rank: 0
                 }
             },
             payrollEndOfSeason: -1
@@ -202,10 +198,6 @@ define(["globals", "util/helpers", "util/random"], function (g, helpers, random)
                     rank: tm.popRank
                 },
                 facilities: {
-                    amount: helpers.round(200 + 300 * (30 - tm.popRank) / 29) * 10,
-                    rank: tm.popRank
-                },
-                stadium: {
                     amount: helpers.round(200 + 300 * (30 - tm.popRank) / 29) * 10,
                     rank: tm.popRank
                 }

@@ -1,491 +1,5 @@
 (function() {
   var template = Handlebars.template, templates = Handlebars.templates = Handlebars.templates || {};
-templates['error'] = template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
-helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression;
-
-
-  buffer += "<h1>Error</h1>\n\n"
-    + escapeExpression(((stack1 = depth0.error),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\n";
-  return buffer;
-  });
-templates['negotiation'] = template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
-helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n  <p>You are allowed to go over the salary cap to make this deal because you are resigning <a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/player/"
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.pid)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a> to a contract extension. <strong>If you do not come to an agreement here, <a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/player/"
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.pid)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a> will become a free agent.</strong> He will then be able to sign with any team, and you won't be able to go over the salary cap to sign him.</p>\n";
-  return buffer;
-  }
-
-function program3(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n  <p>You are not allowed to go over the salary cap to make this deal because <a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/player/"
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.pid)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a> is a free agent.</p>\n";
-  return buffer;
-  }
-
-  buffer += "<h1>Contract Negotiation "
-    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n\n";
-  stack1 = helpers['if'].call(depth0, depth0.resigning, {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n\n<div class=\"row-fluid\">\n  <div class=\"span6\">\n    <h2>"
-    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.region)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " "
-    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</h2>\n    <p>Current Payroll: "
-    + escapeExpression(helpers.currency.call(depth0, depth0.payroll, "M", {hash:{},data:data}))
-    + "</p>\n    <p>Salary Cap: "
-    + escapeExpression(helpers.currency.call(depth0, depth0.salaryCap, "M", {hash:{},data:data}))
-    + "</p>\n    <h2>Your Proposal</h2>\n    <form action=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/negotiation/"
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.pid)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" class=\"form-horizontal\" method=\"POST\">\n      <input type=\"text\" name=\"teamYears\" id=\"teamYears\" class=\"span1\" value=\""
-    + escapeExpression(((stack1 = ((stack1 = depth0.negotiation),stack1 == null || stack1 === false ? stack1 : stack1.teamYears)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"> years\n      <p><div class=\"input-prepend input-append\">\n        <span class=\"add-on\">$</span><input type=\"text\" name=\"teamAmount\" id=\"teamAmount\" class=\"span5\" value=\""
-    + escapeExpression(((stack1 = ((stack1 = depth0.negotiation),stack1 == null || stack1 === false ? stack1 : stack1.teamAmount)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"><span class=\"add-on\">M</span> per year\n      </div></p>\n      <button type=\"submit\" class=\"btn btn-large btn-primary\">Submit Proposal</button>  \n    </form>\n\n    <form action=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/negotiation/"
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.pid)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" class=\"form-horizontal\" method=\"POST\">\n      <input type=\"hidden\" name=\"cancel\" value=\"1\">\n      <button type=\"submit\" class=\"btn btn-danger\">Can't reach a deal? End negotiation</button>\n    </form>\n\n  </div>\n  <div class=\"span6\">\n    <h2><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/player/"
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.pid)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a></h2>\n    <p>Overal: "
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.ovr)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</p>\n    <p>Potential: "
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.pot)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</p>\n    <h2>Player Proposal</h2>\n    <p>"
-    + escapeExpression(((stack1 = ((stack1 = depth0.negotiation),stack1 == null || stack1 === false ? stack1 : stack1.playerYears)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " years (through "
-    + escapeExpression(((stack1 = ((stack1 = depth0.negotiation),stack1 == null || stack1 === false ? stack1 : stack1.playerExpiration)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + ")</p>\n    <p>$"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.negotiation),stack1 == null || stack1 === false ? stack1 : stack1.playerAmount), 3, {hash:{},data:data}))
-    + "M per year</p>\n    <form action=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/negotiation/"
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.pid)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" class=\"form-horizontal\" method=\"POST\">\n      <input type=\"hidden\" name=\"accept\" value=\"1\">\n      <button type=\"submit\" class=\"btn btn-large btn-primary\" id=\"accept\">Accept Player Proposal</button>\n    </form>\n  </div>\n</div>\n";
-  return buffer;
-  });
-templates['distTeamStats'] = template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
-helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n      <option value=\""
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"";
-  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">"
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " season</option>\n    ";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  
-  return " selected=\"selected\"";
-  }
-
-  buffer += "<form action=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/dist_team_stats\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"dist-team-stats-select-season\" name=\"season\" class=\"season\">\n    ";
-  stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </select>\n</form>\n\n<h1>Team Stat Distributions "
-    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n<p>More: <a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/team_stats\">Main Stats</a> | <a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/team_shot_locations\">Shot Locations</a></p>\n\n<p>These <a href=\"http://en.wikipedia.org/wiki/Box_plot\">box plots</a> show the league-wide distributions of team stats for the selected season. Black plots are for this league and blue plots are from the 2010-2011 NBA season, for comparison. The five vertical lines in each plot represent the minimum of the scale, the minimum, the first <a href=\"http://en.wikipedia.org/wiki/Quartile\">quartile</a>, the median, the third quartile, the maximum, and the maximum of the scale.</p>\n\n<p>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" id=\"dist-team-stats\">\n  <tbody></tbody>\n</table>\n</p>\n";
-  return buffer;
-  });
-templates['negotiationList'] = template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
-helpers = helpers || Handlebars.helpers; data = data || {};
-  
-
-
-  return "<h1>Players With Expiring Contracts</h1>\n\n<p>You are allowed to go over the salary cap to resign your players before they become free agents. If you do not resign them before free agency begins, they will be free to sign with any team, and you won't be able to go over the salary cap to sign them.</p>\n\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"negotiation-list\">\n<thead>\n  <tr><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall\">Ovr</th><th title=\"Potential\">Pot</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th><th>Asking for</th><th>Negotiate</th></tr>\n</thead>\n</table>";
-  });
-templates['teamFinances'] = template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
-helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n      <option value=\""
-    + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"";
-  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">"
-    + escapeExpression(((stack1 = depth0.region),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " "
-    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</option>\n    ";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  
-  return " selected=\"selected\"";
-  }
-
-function program4(depth0,data) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n      <option value=\""
-    + escapeExpression(((stack1 = depth0.show),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"";
-  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">"
-    + escapeExpression(((stack1 = depth0.text),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</option>\n    ";
-  return buffer;
-  }
-
-function program6(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n      <h4>Revenue Settings <i class=\"icon-question-sign\" id=\"help-revenue-settings\" data-placement=\"bottom\"></i></h4>\n      <p class=\"text-error\"></p>\n      <div class=\"row\">\n        <div class=\"pull-left finances-settings-label\">Ticket Price</div>\n        <div class=\"input-prepend pull-left finances-settings-field\">\n          <span class=\"add-on\">$</span><input type=\"text\" name=\"budget[ticketPrice]\" class=\"ticket-price\" value=\""
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.ticketPrice)),stack1 == null || stack1 === false ? stack1 : stack1.amount)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" disabled=\"disabled\">\n        </div>\n        <div class=\"pull-left finances-settings-text\">(#"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.ticketPrice)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " leaguewide)</div>\n      </div>\n      <p></p>\n      <h4>Expense Settings <i class=\"icon-question-sign\" id=\"help-expense-settings\" data-placement=\"bottom\"></i></h4>\n      <p class=\"text-error\"></p>\n      <div class=\"row\">\n        <div class=\"pull-left finances-settings-label\">Scouting</div>\n        <div class=\"input-prepend input-append pull-left finances-settings-field\">\n          <span class=\"add-on\">$</span><input type=\"text\" name=\"budget[scouting]\" class=\"ticket-price\" value=\""
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.scouting)),stack1 == null || stack1 === false ? stack1 : stack1.amount)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" disabled=\"disabled\"><span class=\"add-on\">M</span>\n        </div>\n        <div class=\"pull-left finances-settings-text-small\">Current spending rate: #"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.scouting)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "<br>Spent this season: #"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.expenses),stack1 == null || stack1 === false ? stack1 : stack1.scouting)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</div>\n      </div>\n      <div class=\"row\">\n        <div class=\"pull-left finances-settings-label\">Coaching</div>\n        <div class=\"input-prepend input-append pull-left finances-settings-field\">\n          <span class=\"add-on\">$</span><input type=\"text\" name=\"budget[coaching]\" class=\"ticket-price\" value=\""
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.coaching)),stack1 == null || stack1 === false ? stack1 : stack1.amount)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" disabled=\"disabled\"><span class=\"add-on\">M</span>\n        </div>\n        <div class=\"pull-left finances-settings-text-small\">Current spending rate: #"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.coaching)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "<br>Spent this season: #"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.expenses),stack1 == null || stack1 === false ? stack1 : stack1.coaching)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</div>\n      </div>\n      <div class=\"row\">\n        <div class=\"pull-left finances-settings-label\">Health</div>\n        <div class=\"input-prepend input-append pull-left finances-settings-field\">\n          <span class=\"add-on\">$</span><input type=\"text\" name=\"budget[health]\" class=\"ticket-price\" value=\""
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.health)),stack1 == null || stack1 === false ? stack1 : stack1.amount)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" disabled=\"disabled\"><span class=\"add-on\">M</span>\n        </div>\n        <div class=\"pull-left finances-settings-text-small\">Current spending rate: #"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.health)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "<br>Spent this season: #"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.expenses),stack1 == null || stack1 === false ? stack1 : stack1.health)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</div>\n      </div>\n      <div class=\"row\">\n        <div class=\"pull-left finances-settings-label\">Facilities</div>\n        <div class=\"input-prepend input-append pull-left finances-settings-field\">\n          <span class=\"add-on\">$</span><input type=\"text\" name=\"budget[facilities]\" class=\"ticket-price\" value=\""
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.facilities)),stack1 == null || stack1 === false ? stack1 : stack1.amount)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" disabled=\"disabled\"><span class=\"add-on\">M</span>\n        </div>\n        <div class=\"pull-left finances-settings-text-small\">Current spending rate: #"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.facilities)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "<br>Spent this season: #"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.expenses),stack1 == null || stack1 === false ? stack1 : stack1.facilities)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</div>\n      </div>\n      <div class=\"row\">\n        <div class=\"pull-left finances-settings-label\">Stadium</div>\n        <div class=\"input-prepend input-append pull-left finances-settings-field\">\n          <span class=\"add-on\">$</span><input type=\"text\" name=\"budget[stadium]\" class=\"ticket-price\" value=\""
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.stadium)),stack1 == null || stack1 === false ? stack1 : stack1.amount)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" disabled=\"disabled\"><span class=\"add-on\">M</span>\n        </div>\n        <div class=\"pull-left finances-settings-text-small\">Current spending rate: #"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.stadium)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "<br>Spent this season: #"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.expenses),stack1 == null || stack1 === false ? stack1 : stack1.stadium)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</div>\n      </div>\n      <br>\n      <p align=\"center\"><button class=\"btn btn-large btn-primary\" style=\"line-height: 1.5em\">Save Revenue and<br> Expense Settings</button></p>\n      ";
-  return buffer;
-  }
-
-  buffer += "<form action=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/team_finances\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"team-finances-select-team\" name=\"team\" class=\"team\">\n    ";
-  stack2 = ((stack1 = ((stack1 = depth0.teams),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </select>\n  <select id=\"team-finances-select-show\" name=\"show\" class=\"past-x\">\n    ";
-  stack2 = ((stack1 = ((stack1 = depth0.shows),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </select>\n</form>\n\n<h1>"
-    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.region)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " "
-    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " Finances "
-    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n<p>More: <a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/roster/"
-    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">Roster</a> | <a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/game_log/"
-    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">Game Log</a></p>\n\n<p class=\"clearfix\">The current payroll (<strong>$"
-    + escapeExpression(helpers.round.call(depth0, depth0.payroll, {hash:{},data:data}))
-    + "M</strong>) is "
-    + escapeExpression(((stack1 = ((stack1 = depth0.aboveBelow),stack1 == null || stack1 === false ? stack1 : stack1.minPayroll)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " the minimum payroll limit (<strong>$"
-    + escapeExpression(helpers.round.call(depth0, depth0.minPayroll, {hash:{},data:data}))
-    + "M</strong>), "
-    + escapeExpression(((stack1 = ((stack1 = depth0.aboveBelow),stack1 == null || stack1 === false ? stack1 : stack1.salaryCap)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " the salary cap (<strong>$"
-    + escapeExpression(helpers.round.call(depth0, depth0.salaryCap, {hash:{},data:data}))
-    + "M</strong>), and "
-    + escapeExpression(((stack1 = ((stack1 = depth0.aboveBelow),stack1 == null || stack1 === false ? stack1 : stack1.luxuryPayroll)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " the luxury tax limit (<strong>$"
-    + escapeExpression(helpers.round.call(depth0, depth0.luxuryPayroll, {hash:{},data:data}))
-    + "M</strong>). <i class=\"icon-question-sign\" id=\"help-payroll-limits\" data-placement=\"bottom\"></i></p>\n\n<div class=\"row-fluid\">\n  <div class=\"span2\">\n    <h4>Wins</h4>\n    <div id=\"bar-graph-won\" class=\"bar-graph-small\"></div><br><br>\n    <span class=\"clickover\"><h4>Hype <i class=\"icon-question-sign\" id=\"help-hype\" data-placement=\"right\"></i></h4></span>\n    <div id=\"bar-graph-hype\" class=\"bar-graph-small\"></div><br><br>\n    <h4>Region Population</h4>\n    <div id=\"bar-graph-pop\" class=\"bar-graph-small\"></div><br><br>\n    <h4>Average Attendance</h4>\n    <div id=\"bar-graph-att\" class=\"bar-graph-small\"></div>\n  </div>\n  <div class=\"span5\">\n    <div class=\"row-fluid\">\n      <h4>Revenue</h4>\n      <div id=\"bar-graph-revenue\" class=\"bar-graph-large\"></div><br><br>\n      <h4>Expenses</h4>\n      <div id=\"bar-graph-expenses\" class=\"bar-graph-large\"></div><br><br>\n      <h4>Cash</h4>\n      <div id=\"bar-graph-cash\" class=\"bar-graph-medium\"></div>\n    </div>\n  </div>\n  <div class=\"span5\">\n    <form action=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/team_finances\" method=\"POST\" id=\"finances-settings\">\n      ";
-  stack2 = helpers['with'].call(depth0, depth0.team, {hash:{},inverse:self.noop,fn:self.program(6, program6, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n    </form>\n  </div>\n</div>\n<p class=\"clearfix\"></p>\n\n<h2>Player Salaries</h2>\n\n<p>You can release or buy out players from <a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/roster\">your roster</a>. Released players who are still owed money are <i>shown in italics</i>.</p>\n\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player-salaries\">\n<thead>\n  <tr><th>Name</th><th>"
-    + escapeExpression(((stack1 = ((stack1 = depth0.salariesSeasons),stack1 == null || stack1 === false ? stack1 : stack1[0])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</th><th>"
-    + escapeExpression(((stack1 = ((stack1 = depth0.salariesSeasons),stack1 == null || stack1 === false ? stack1 : stack1[1])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</th><th>"
-    + escapeExpression(((stack1 = ((stack1 = depth0.salariesSeasons),stack1 == null || stack1 === false ? stack1 : stack1[2])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</th><th>"
-    + escapeExpression(((stack1 = ((stack1 = depth0.salariesSeasons),stack1 == null || stack1 === false ? stack1 : stack1[3])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</th><th>"
-    + escapeExpression(((stack1 = ((stack1 = depth0.salariesSeasons),stack1 == null || stack1 === false ? stack1 : stack1[4])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</th></tr>\n</thead>\n<tbody>\n</tbody>\n<tfoot>\n  <tr><th>Totals</th><th>"
-    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.contractTotals),stack1 == null || stack1 === false ? stack1 : stack1[0]), "M", {hash:{},data:data}))
-    + "</th><th>"
-    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.contractTotals),stack1 == null || stack1 === false ? stack1 : stack1[1]), "M", {hash:{},data:data}))
-    + "</th><th>"
-    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.contractTotals),stack1 == null || stack1 === false ? stack1 : stack1[2]), "M", {hash:{},data:data}))
-    + "</th><th>"
-    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.contractTotals),stack1 == null || stack1 === false ? stack1 : stack1[3]), "M", {hash:{},data:data}))
-    + "</th><th>"
-    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.contractTotals),stack1 == null || stack1 === false ? stack1 : stack1[4]), "M", {hash:{},data:data}))
-    + "</th></tr>\n</tfoot>\n</table>";
-  return buffer;
-  });
-templates['leaders'] = template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
-helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n      <option value=\""
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"";
-  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">"
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " season</option>\n    ";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  
-  return " selected=\"selected\"";
-  }
-
-function program4(depth0,data,depth1) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n    ";
-  stack1 = helpers['if'].call(depth0, depth0.newRow, {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n    <div class=\"span4\">\n      <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed leaders\">\n      <thead>\n        <tr><th>"
-    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</th><th title=\""
-    + escapeExpression(((stack1 = depth0.title),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = depth0.stat),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</th></tr>\n      </thead>\n      <tbody>\n        ";
-  stack2 = ((stack1 = ((stack1 = depth0.data),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program7, data, depth1),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n      </tbody>\n      </table>\n    </div>\n  ";
-  return buffer;
-  }
-function program5(depth0,data) {
-  
-  
-  return "\n</div>\n<p></p>\n<div class=\"row-fluid\">\n    ";
-  }
-
-function program7(depth0,data,depth2) {
-  
-  var buffer = "", stack1;
-  buffer += "\n          <tr";
-  stack1 = helpers['if'].call(depth0, depth0.userTeam, {hash:{},inverse:self.noop,fn:self.program(8, program8, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "><td>"
-    + escapeExpression(((stack1 = depth0['i']),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + ". "
-    + escapeExpression(helpers.playerNameLabels.call(depth0, depth0.pid, depth0.name, depth0.injury, ((stack1 = depth0.ratings),stack1 == null || stack1 === false ? stack1 : stack1.skills), {hash:{},data:data}))
-    + ", <a href=\"/l/"
-    + escapeExpression(((stack1 = depth2.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/roster/"
-    + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/"
-    + escapeExpression(((stack1 = depth2.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a></td><td>"
-    + escapeExpression(helpers.round.call(depth0, depth0.stat, 1, {hash:{},data:data}))
-    + "</tr>\n        ";
-  return buffer;
-  }
-function program8(depth0,data) {
-  
-  
-  return " class=\"alert-info\"";
-  }
-
-  buffer += "<form action=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/leaders\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"leaders-select-season\" name=\"season\" class=\"season\">\n    ";
-  stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </select>\n</form>\n\n<h1>League Leaders "
-    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n\n<p>Only eligible players are shown (<i>e.g.</i> a player shooting 2 for 2 on the season is not eligible for the league lead in FG%).</p>\n\n<p></p>\n<div class=\"row-fluid\">\n  ";
-  stack2 = ((stack1 = ((stack1 = depth0.categories),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program4, data, depth0),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n</div>";
-  return buffer;
-  });
-templates['leagueLayout'] = template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
-helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression;
-
-
-  buffer += "<div id=\"contentwrapper\">\n  <div id=\"league_content\">\n  </div>\n</div>\n\n<div id=\"league_menu\" data-lid=\""
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">\n  <div class=\"well sidebar-nav\">\n    <ul class=\"nav nav-list\" id=\"league_sidebar\">\n      <li id=\"nav_league_dashboard\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">Dashboard</a></li>\n      <li class=\"nav-header\">League</li>\n      <li id=\"nav_standings\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/standings\">Standings</a></li>\n      <li id=\"nav_playoffs\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/playoffs\">Playoffs</a></li>\n      <li id=\"nav_league_finances\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/league_finances\">Finances</a></li>\n      <li id=\"nav_history\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/history\">History</a></li>\n      <li class=\"nav-header\">Team</li>\n      <li id=\"nav_roster\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/roster\">Roster</a></li>\n      <li id=\"nav_schedule\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/schedule\">Schedule</a></li>\n      <li id=\"nav_team_finances\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/team_finances\">Finances</a></li>\n      <li id=\"nav_team_history\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/team_history\">History</a></li>\n      <li class=\"nav-header\">Players</li>\n      <li id=\"nav_free_agents\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/free_agents\">Free Agents</a></li>\n      <li id=\"nav_trade\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/trade\">Trade</a></li>\n      <li id=\"nav_draft\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/draft\">Draft</a></li>\n      <li class=\"nav-header\">Stats</li>\n      <li id=\"nav_game_log\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/game_log\">Game Log</a></li>\n      <li id=\"nav_leaders\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/leaders\">League Leaders</a></li>\n      <li id=\"nav_player_ratings\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/player_ratings\">Player Ratings</a></li>\n      <li id=\"nav_player_stats\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/player_stats\">Player Stats</a></li>\n      <li id=\"nav_team_stats\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/team_stats\">Team Stats</a></li>\n    </ul>\n  </div>\n</div>\n";
-  return buffer;
-  });
-templates['playButton'] = template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
-helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n        <li><a href=\""
-    + escapeExpression(((stack1 = depth0.url),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" id=\""
-    + escapeExpression(((stack1 = depth0.id),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = depth0.label),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a></li>\n      ";
-  return buffer;
-  }
-
-  buffer += "<ul class=\"nav btn btn-primary\">\n  <li class=\"dropdown\">\n    <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">Play <b class=\"caret\"></b></a>\n    <ul class=\"dropdown-menu\">\n      ";
-  stack2 = ((stack1 = ((stack1 = depth0.options),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n    </ul>\n  </li>\n</ul>\n";
-  return buffer;
-  });
-templates['playerShotLocations'] = template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
-helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n      <option value=\""
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"";
-  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">"
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " season</option>\n    ";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  
-  return " selected=\"selected\"";
-  }
-
-  buffer += "<form action=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/player_shot_locations\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"player-shot-locations-select-season\" name=\"season\" class=\"season\">\n    ";
-  stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </select>\n</form>\n\n<h1>Player Shot Locations "
-    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n<p>More: <a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/player_stats\">Main Stats</a> | <a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/dist_player_stats\">Stat Distributions</a></p>\n\n<p class=\"clearfix\">\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player-shot-locations\">\n<thead>\n  <tr><th colspan=\"6\"></th><th colspan=\"3\" style=\"text-align: center\" title=\"At Rim\">At Rim</th><th colspan=\"3\" style=\"text-align: center\" title=\"Low Post\">Low Post</th><th colspan=\"3\" style=\"text-align: center\" title=\"Mid-Range\">Mid-Range</th><th colspan=\"3\" style=\"text-align: center\" title=\"Three-Pointers\">3PT</th></tr>\n  <tr><th>Name</th><th title=\"Position\">Pos</th><th>Team</th><th title=\"Games Played\">GP</th><th title=\"Games Started\">GS</th><th title=\"Minutes\">Min</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th></tr>\n</thead>\n</table>\n</p>";
-  return buffer;
-  });
 templates['boxScore'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
@@ -620,94 +134,195 @@ function program3(depth0,data) {
   buffer += "\n";
   return buffer;
   });
-templates['draft'] = template(function (Handlebars,depth0,helpers,partials,data) {
+templates['draftSummary'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
   var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
 
 function program1(depth0,data) {
   
-  
-  return " style=\"display: none;\"";
-  }
-
-function program3(depth0,data,depth1) {
-  
   var buffer = "", stack1, stack2;
-  buffer += "\n        <tr id=\"undrafted-"
-    + escapeExpression(((stack1 = depth0.pid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"><td>"
-    + escapeExpression(helpers.playerNameLabels.call(depth0, depth0.pid, depth0.name, depth0.injury, depth0.skills, {hash:{},data:data}))
-    + "</td><td>"
-    + escapeExpression(((stack1 = depth0.pos),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td><td>"
-    + escapeExpression(((stack1 = depth0.age),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "<td>"
-    + escapeExpression(((stack1 = depth0.ovr),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td><td>"
-    + escapeExpression(((stack1 = depth0.pot),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td><td><button class=\"btn btn-mini btn-primary\" data-player-id=\""
-    + escapeExpression(((stack1 = depth0.pid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+  buffer += "\n      <option value=\""
+    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\"";
-  stack2 = helpers.unless.call(depth0, depth1.started, {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
+  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">Draft</button></td></tr>\n      ";
+  buffer += ">"
+    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " season</option>\n    ";
   return buffer;
   }
-function program4(depth0,data) {
+function program2(depth0,data) {
   
   
-  return " disabled=\"disabled\"";
+  return " selected=\"selected\"";
   }
 
-function program6(depth0,data,depth1) {
+  buffer += "<form action=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/draft\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"draft-select-season\" name=\"season\" class=\"season\">\n    ";
+  stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n  </select>\n</form>\n\n<h1>Draft Summary "
+    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
+    + "</h1>\n<p>\n  <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"draft-results\">\n  <thead>\n    <tr><th colspan=\"3\"></th><th colspan=\"5\" style=\"text-align: center\">At Draft</th><th colspan=\"5\" style=\"text-align: center\">Current</th><th colspan=\"5\" style=\"text-align: center\">Career Stats</th></tr>\n    <tr><th>Pick</th><th>Name</th><th title=\"Position\">Pos</th><th>Team</th><th>Age</th><th title=\"Overall rating\">Ovr</th><th title=\"Potential rating\">Pot</th><th>Skills</th><th>Team</th><th>Age</th><th title=\"Overall rating\">Ovr</th><th title=\"Potential rating\">Pot</th><th>Skills</th><th title=\"Games Played\">GP</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">PPG</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th></tr>\n  </thead>\n  </table>\n</p>\n";
+  return buffer;
+  });
+templates['leagueLayout'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
+helpers = helpers || Handlebars.helpers; data = data || {};
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression;
+
+
+  buffer += "<div id=\"contentwrapper\">\n  <div id=\"league_content\">\n  </div>\n</div>\n\n<div id=\"league_menu\" data-lid=\""
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">\n  <div class=\"well sidebar-nav\">\n    <ul class=\"nav nav-list\" id=\"league_sidebar\">\n      <li id=\"nav_league_dashboard\"><a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">Dashboard</a></li>\n      <li class=\"nav-header\">League</li>\n      <li id=\"nav_standings\"><a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/standings\">Standings</a></li>\n      <li id=\"nav_playoffs\"><a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/playoffs\">Playoffs</a></li>\n      <li id=\"nav_league_finances\"><a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/league_finances\">Finances</a></li>\n      <li id=\"nav_history\"><a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/history\">History</a></li>\n      <li class=\"nav-header\">Team</li>\n      <li id=\"nav_roster\"><a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/roster\">Roster</a></li>\n      <li id=\"nav_schedule\"><a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/schedule\">Schedule</a></li>\n      <li id=\"nav_team_finances\"><a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/team_finances\">Finances</a></li>\n      <li id=\"nav_team_history\"><a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/team_history\">History</a></li>\n      <li class=\"nav-header\">Players</li>\n      <li id=\"nav_free_agents\"><a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/free_agents\">Free Agents</a></li>\n      <li id=\"nav_trade\"><a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/trade\">Trade</a></li>\n      <li id=\"nav_draft\"><a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/draft\">Draft</a></li>\n      <li class=\"nav-header\">Stats</li>\n      <li id=\"nav_game_log\"><a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/game_log\">Game Log</a></li>\n      <li id=\"nav_leaders\"><a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/leaders\">League Leaders</a></li>\n      <li id=\"nav_player_ratings\"><a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/player_ratings\">Player Ratings</a></li>\n      <li id=\"nav_player_stats\"><a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/player_stats\">Player Stats</a></li>\n      <li id=\"nav_team_stats\"><a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/team_stats\">Team Stats</a></li>\n    </ul>\n  </div>\n</div>\n";
+  return buffer;
+  });
+templates['freeAgents'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
+helpers = helpers || Handlebars.helpers; data = data || {};
+  var buffer = "", escapeExpression=this.escapeExpression;
+
+
+  buffer += "<h1>Free Agents "
+    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
+    + "</h1>\n\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"free-agents\">\n<thead>\n  <tr><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall\">Ovr</th><th title=\"Potential\">Pot</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th><th>Asking for</th><th>Negotiate</th></tr>\n</thead>\n</table>\n";
+  return buffer;
+  });
+templates['leaders'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
+helpers = helpers || Handlebars.helpers; data = data || {};
+  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
+
+function program1(depth0,data) {
   
   var buffer = "", stack1, stack2;
-  buffer += "\n        <tr><td>"
-    + escapeExpression(((stack1 = ((stack1 = depth0.draft),stack1 == null || stack1 === false ? stack1 : stack1.round)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "-"
-    + escapeExpression(((stack1 = ((stack1 = depth0.draft),stack1 == null || stack1 === false ? stack1 : stack1.pick)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td><td><a href=\"/l/"
-    + escapeExpression(((stack1 = depth1.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/roster/"
-    + escapeExpression(((stack1 = ((stack1 = depth0.draft),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = ((stack1 = depth0.draft),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a></td><td>";
-  stack2 = helpers['if'].call(depth0, depth0.injury, {hash:{},inverse:self.noop,fn:self.program(7, program7, data),data:data});
+  buffer += "\n      <option value=\""
+    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\"";
+  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "</td><td>"
-    + escapeExpression(((stack1 = depth0.pos),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td><td>"
-    + escapeExpression(((stack1 = depth0.age),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "<td>"
-    + escapeExpression(((stack1 = depth0.ovr),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td><td>"
-    + escapeExpression(((stack1 = depth0.pot),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td></tr>\n      ";
+  buffer += ">"
+    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " season</option>\n    ";
   return buffer;
   }
-function program7(depth0,data) {
+function program2(depth0,data) {
   
   
-  return escapeExpression(helpers.playerNameLabels.call(depth0, depth0.pid, depth0.name, depth0.injury, depth0.skills, {hash:{},data:data}));
+  return " selected=\"selected\"";
   }
 
-  buffer += "<h1>Draft "
-    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n\n<p>When your turn in the draft comes up, select from the list of available players on the left.</p>\n\n<p";
-  stack1 = helpers['if'].call(depth0, depth0.started, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+function program4(depth0,data,depth1) {
+  
+  var buffer = "", stack1, stack2;
+  buffer += "\n    ";
+  stack1 = helpers['if'].call(depth0, depth0.newRow, {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "><button class=\"btn btn-large btn-primary\" id=\"start-draft\">Start draft</button></p>\n\n<div class=\"row-fluid\">\n  <div class=\"span6\">\n    <h2>Undrafted Players</h2>\n    <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"undrafted\">\n    <thead>\n      <tr><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall rating\">Ovr</th><th title=\"Potential rating\">Pot</th><th>Draft</th></tr>\n    </thead>\n    <tbody>\n      ";
-  stack2 = ((stack1 = ((stack1 = depth0.undrafted),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program3, data, depth0),data:data}));
+  buffer += "\n    <div class=\"span4\">\n      <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed leaders\">\n      <thead>\n        <tr><th>"
+    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</th><th title=\""
+    + escapeExpression(((stack1 = depth0.title),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">"
+    + escapeExpression(((stack1 = depth0.stat),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</th></tr>\n      </thead>\n      <tbody>\n        ";
+  stack2 = ((stack1 = ((stack1 = depth0.data),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program7, data, depth1),data:data}));
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n    </tbody>\n    </table>\n  </div>\n  <div class=\"span6\">\n    <h2>Draft Results</h2>\n    <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"drafted\">\n    <thead>\n      <tr><th>Pick</th><th>Team</th><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall rating\">Ovr</th><th title=\"Potential rating\">Pot</th></tr>\n    </thead>\n    <tbody>\n      ";
-  stack2 = ((stack1 = ((stack1 = depth0.drafted),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program6, data, depth0),data:data}));
+  buffer += "\n      </tbody>\n      </table>\n    </div>\n  ";
+  return buffer;
+  }
+function program5(depth0,data) {
+  
+  
+  return "\n</div>\n<p></p>\n<div class=\"row-fluid\">\n    ";
+  }
+
+function program7(depth0,data,depth2) {
+  
+  var buffer = "", stack1;
+  buffer += "\n          <tr";
+  stack1 = helpers['if'].call(depth0, depth0.userTeam, {hash:{},inverse:self.noop,fn:self.program(8, program8, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "><td>"
+    + escapeExpression(((stack1 = depth0['i']),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + ". "
+    + escapeExpression(helpers.playerNameLabels.call(depth0, depth0.pid, depth0.name, depth0.injury, ((stack1 = depth0.ratings),stack1 == null || stack1 === false ? stack1 : stack1.skills), {hash:{},data:data}))
+    + ", <a href=\"/l/"
+    + escapeExpression(((stack1 = depth2.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/roster/"
+    + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/"
+    + escapeExpression(((stack1 = depth2.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">"
+    + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</a></td><td>"
+    + escapeExpression(helpers.round.call(depth0, depth0.stat, 1, {hash:{},data:data}))
+    + "</tr>\n        ";
+  return buffer;
+  }
+function program8(depth0,data) {
+  
+  
+  return " class=\"alert-info\"";
+  }
+
+  buffer += "<form action=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/leaders\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"leaders-select-season\" name=\"season\" class=\"season\">\n    ";
+  stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n    </tbody>\n    </table>\n  </div>\n</div>\n";
+  buffer += "\n  </select>\n</form>\n\n<h1>League Leaders "
+    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
+    + "</h1>\n\n<p>Only eligible players are shown (<i>e.g.</i> a player shooting 2 for 2 on the season is not eligible for the league lead in FG%).</p>\n\n<p></p>\n<div class=\"row-fluid\">\n  ";
+  stack2 = ((stack1 = ((stack1 = depth0.categories),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program4, data, depth0),data:data}));
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n</div>";
   return buffer;
   });
-templates['teamShotLocations'] = template(function (Handlebars,depth0,helpers,partials,data) {
+templates['browserError'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
+helpers = helpers || Handlebars.helpers; data = data || {};
+  
+
+
+  return "<h1>Error</h1>\n\n<p>Your browser is not modern enough to run Basketball GM.</p>\n\n<p>Currently, <a href=\"http://www.firefox.com/\">Mozilla Firefox</a> and <a href=\"http://www.google.com/chrome/\">Google Chrome</a> work best with Basketball GM.</p>";
+  });
+templates['playerStats'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
   var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
@@ -733,19 +348,19 @@ function program2(depth0,data) {
 
   buffer += "<form action=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/team_shot_locations\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"team-shot-locations-select-season\" name=\"season\" class=\"season\">\n    ";
+    + "/player_stats\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"player-stats-select-season\" name=\"season\" class=\"season\">\n    ";
   stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </select>\n</form>\n\n<h1>Team Shot Locations "
+  buffer += "\n  </select>\n</form>\n\n<h1>Player Stats "
     + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
     + "</h1>\n<p>More: <a href=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/team_stats\">Main Stats</a> | <a href=\"/l/"
+    + "/player_shot_locations\">Shot Locations</a> | <a href=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/dist_team_stats\">Stat Distributions</a></p>\n\n<p class=\"clearfix\">\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"team-shot-locations\">\n<thead>\n  <tr><th colspan=\"4\"></th><th colspan=\"3\" style=\"text-align: center\" title=\"At Rim\">At Rim</th><th colspan=\"3\" style=\"text-align: center\" title=\"Low Post\">Low Post</th><th colspan=\"3\" style=\"text-align: center\" title=\"Mid-Range\">Mid-Range</th><th colspan=\"3\" style=\"text-align: center\" title=\"Three-Pointers\">3PT</th></tr>\n  <tr><th>Team</th><th title=\"Games Played\">GP</th><th title=\"Won\">W</th><th title=\"Lost\">L</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th></tr>\n</thead>\n</table>\n</p>";
+    + "/dist_player_stats\">Stat Distributions</a></p>\n\n<p class=\"clearfix\">\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player-stats\">\n<thead>\n  <tr><th colspan=\"6\"></th><th colspan=\"3\" style=\"text-align: center\" title=\"Field Goals\">FG</th><th colspan=\"3\" style=\"text-align: center\" title=\"Three-Pointers\">3PT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Free Throws\">FT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Rebounds\">Reb</th><th colspan=\"6\"></th></tr>\n  <tr><th>Name</th><th title=\"Position\">Pos</th><th>Team</th><th title=\"Games Played\">GP</th><th title=\"Games Started\">GS</th><th title=\"Minutes\">Min</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Offensive\">Off</th><th title=\"Defensive\">Def</th><th title=\"Total\">Tot</th><th title=\"Assists\">Ast</th><th title=\"Turnovers\">TO</th><th title=\"Steals\">Stl</th><th title=\"Blocks\">Blk</th><th title=\"Personal Fouls\">PF</th><th title=\"Points\">Pts</th><th title=\"Player Efficiency Rating\">PER</th></tr>\n</thead>\n</table>\n</p>";
   return buffer;
   });
-templates['playerRatings'] = template(function (Handlebars,depth0,helpers,partials,data) {
+templates['trade'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
   var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
@@ -753,85 +368,7 @@ helpers = helpers || Handlebars.helpers; data = data || {};
 function program1(depth0,data) {
   
   var buffer = "", stack1, stack2;
-  buffer += "\n      <option value=\""
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"";
-  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">"
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " season</option>\n    ";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  
-  return " selected=\"selected\"";
-  }
-
-  buffer += "<form action=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/player_ratings\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"player-ratings-select-season\" name=\"season\" class=\"season\">\n    ";
-  stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </select>\n</form>\n\n<h1>Player Ratings "
-    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n<p>More: <a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/dist_player_ratings\">Rating Distributions</a></p>\n\n\n<p class=\"clearfix\">\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player-ratings\">\n<thead>\n  <tr><th>Name</th><th title=\"Position\">Pos</th><th>Team</th><th>Age</th><th title=\"Overall\">Ovr</th><th title=\"Potential\">Pot</th><th title=\"Height\">Hgt</th><th title=\"Strength\">Str</th><th title=\"Speed\">Spd</th><th title=\"Jumping\">Jmp</th><th title=\"Endurance\">End</th><th title=\"Inside Scoring\">Ins</th><th title=\"Dunks/Layups\">Dnk</th><th title=\"Free Throw Shooting\">FT</th><th title=\"Two-Point Shooting\">2Pt</th><th title=\"Three-Point Shooting\">3Pt</th><th title=\"Blocks\">Blk</th><th title=\"Steals\">Stl</th><th title=\"Dribbling\">Drb</th><th title=\"Passing\">Pss</th><th title=\"Rebounding\">Reb</th></tr>\n</thead>\n</table>\n</p>";
-  return buffer;
-  });
-templates['leagueFinances'] = template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
-helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n      <option value=\""
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"";
-  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">"
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " season</option>\n    ";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  
-  return " selected=\"selected\"";
-  }
-
-  buffer += "<form action=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/league_finances\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"league-finances-select-season\" name=\"season\" class=\"season\">\n    ";
-  stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </select>\n</form>\n\n<h1>League Finances "
-    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n\n<p>\n  Salary cap: <strong>$"
-    + escapeExpression(helpers.round.call(depth0, depth0.salaryCap, {hash:{},data:data}))
-    + "M</strong> (teams over this amount cannot sign free agents for more than the minimum contract)<br>\n  Minimum payroll limit: <strong>$"
-    + escapeExpression(helpers.round.call(depth0, depth0.minPayroll, {hash:{},data:data}))
-    + "M</strong> (teams with payrolls below this limit will be assessed a fine equal to the difference at the end of the season)<br>\n  Luxury tax limit: <strong>$"
-    + escapeExpression(helpers.round.call(depth0, depth0.luxuryPayroll, {hash:{},data:data}))
-    + "M</strong> (teams with payrolls above this limit will be assessed a fine equal to "
-    + escapeExpression(((stack1 = depth0.luxuryTax),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " times the difference at the end of the season)\n</p>\n\n<p>\n  <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"league-finances\">\n  <thead>\n    <tr><th>Team</th><th>Avg Attendance</th><th>Revenue (YTD)</th><th>Profit (YTD)</th><th>Cash</th><th>Payroll</th></tr>\n  </thead>\n  </table>\n</p>";
-  return buffer;
-  });
-templates['roster'] = template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
-helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n      <option value=\""
+  buffer += "\n          <option value=\""
     + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\"";
   stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
@@ -840,7 +377,7 @@ function program1(depth0,data) {
     + escapeExpression(((stack1 = depth0.region),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + " "
     + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</option>\n    ";
+    + "</option>\n        ";
   return buffer;
   }
 function program2(depth0,data) {
@@ -849,289 +386,109 @@ function program2(depth0,data) {
   return " selected=\"selected\"";
   }
 
-function program4(depth0,data) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n      <option value=\""
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"";
-  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  buffer += "<h1>Trade "
+    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
+    + "</h1>\n\n<div class=\"row-fluid\">\n  <div class=\"span7\">\n    <form id=\"rosters\">\n      <p><select id=\"trade-select-team\" name=\"team\" class=\"team form-inline\">\n        ";
+  stack2 = ((stack1 = ((stack1 = depth0.teams),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">"
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " season</option>\n    ";
+  buffer += "\n      </select>\n      <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"roster-other\">\n      <thead>\n        <tr><th></th><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall Rating\">Ovr</th><th title=\"Potential Rating\">Pot</th><th>Contract</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th></tr>\n      </thead>\n      </table>\n      </p>\n\n      <h2>"
+    + escapeExpression(((stack1 = depth0.userTeamName),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</h2>\n      <p>\n      <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"roster-user\">\n      <thead>\n        <tr><th></th><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall Rating\">Ovr</th><th title=\"Potential Rating\">Pot</th><th>Contract</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th></tr>\n      </thead>\n      </table>\n      </p>\n    </form>\n  </div>\n  <div class=\"span5\" id=\"trade-summary\">\n    ";
+  stack2 = ((stack1 = depth0.tradeSummary),typeof stack1 === functionType ? stack1.apply(depth0) : stack1);
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n  </div>\n</div>";
   return buffer;
-  }
+  });
+templates['tradeSummary'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
+helpers = helpers || Handlebars.helpers; data = data || {};
+  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
 
-function program6(depth0,data) {
+function program1(depth0,data,depth1) {
   
   var buffer = "", stack1;
-  buffer += "\n  <p>"
-    + escapeExpression(((stack1 = depth0.numRosterSpots),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " open roster spots<br>\n  Payroll: "
-    + escapeExpression(helpers.currency.call(depth0, depth0.payroll, "M", {hash:{},data:data}))
-    + "<br>\n  Salary cap: "
-    + escapeExpression(helpers.currency.call(depth0, depth0.salaryCap, "M", {hash:{},data:data}))
-    + "<br>\n  Cash: "
-    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.cash), "M", {hash:{},data:data}))
-    + " (used for buying out players)</p>\n";
-  return buffer;
-  }
-
-function program8(depth0,data) {
-  
-  
-  return "\n  <p>Drag and drop row handles to move players between the starting lineup (<span class=\"roster_gs\">&#9632;</span>) and the bench (<span class=\"roster_bench\">&#9632;</span>).</p>\n  <p><button class=\"btn\" id=\"roster-auto-sort\">Auto sort roster</button></p>\n";
-  }
-
-function program10(depth0,data) {
-  
-  
-  return "<th></th>";
-  }
-
-function program12(depth0,data) {
-  
-  
-  return "<th>Contract</th>";
-  }
-
-function program14(depth0,data) {
-  
-  
-  return "<th>Release</th><th>Buy out</th>";
-  }
-
-function program16(depth0,data) {
-  
-  
-  return "<th>Trade For</th>";
-  }
-
-function program18(depth0,data,depth1) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n    <tr id=\"roster_"
+  buffer += "\n        <li><a href=\"/l/"
+    + escapeExpression(((stack1 = depth1.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/player/"
     + escapeExpression(((stack1 = depth0.pid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"";
-  stack2 = helpers['if'].call(depth0, depth0.separator, {hash:{},inverse:self.noop,fn:self.program(19, program19, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">";
-  stack2 = helpers['if'].call(depth0, depth1.sortable, {hash:{},inverse:self.noop,fn:self.program(21, program21, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "<td>"
-    + escapeExpression(helpers.playerNameLabels.call(depth0, depth0.pid, depth0.name, depth0.injury, ((stack1 = depth0.ratings),stack1 == null || stack1 === false ? stack1 : stack1.skills), {hash:{},data:data}))
-    + "</td><td>"
-    + escapeExpression(((stack1 = depth0.pos),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td><td>"
-    + escapeExpression(((stack1 = depth0.age),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td><td>"
-    + escapeExpression(((stack1 = ((stack1 = depth0.ratings),stack1 == null || stack1 === false ? stack1 : stack1.ovr)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td><td>"
-    + escapeExpression(((stack1 = ((stack1 = depth0.ratings),stack1 == null || stack1 === false ? stack1 : stack1.pot)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td>";
-  stack2 = helpers['if'].call(depth0, depth1.currentSeason, {hash:{},inverse:self.noop,fn:self.program(23, program23, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "<td>"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.stats),stack1 == null || stack1 === false ? stack1 : stack1.min), 1, {hash:{},data:data}))
-    + "</td><td>"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.stats),stack1 == null || stack1 === false ? stack1 : stack1.pts), 1, {hash:{},data:data}))
-    + "</td><td>"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.stats),stack1 == null || stack1 === false ? stack1 : stack1.trb), 1, {hash:{},data:data}))
-    + "</td><td>"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.stats),stack1 == null || stack1 === false ? stack1 : stack1.ast), 1, {hash:{},data:data}))
-    + "</td><td>"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.stats),stack1 == null || stack1 === false ? stack1 : stack1.per), 1, {hash:{},data:data}))
-    + "</td>";
-  stack2 = helpers['if'].call(depth0, depth1.sortable, {hash:{},inverse:self.noop,fn:self.program(25, program25, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  stack2 = helpers['if'].call(depth0, depth1.showTradeFor, {hash:{},inverse:self.noop,fn:self.programWithDepth(program28, data, depth0, depth1),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "</tr>\n  ";
-  return buffer;
-  }
-function program19(depth0,data) {
-  
-  
-  return " class=\"separator\"";
-  }
-
-function program21(depth0,data) {
-  
-  
-  return "<td class=\"roster_handle\"></td>";
-  }
-
-function program23(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "<td>"
+    + "\">"
+    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</a> ("
     + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.contract),stack1 == null || stack1 === false ? stack1 : stack1.amount), "M", {hash:{},data:data}))
-    + " thru "
-    + escapeExpression(((stack1 = ((stack1 = depth0.contract),stack1 == null || stack1 === false ? stack1 : stack1.exp)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td>";
+    + ")</li>\n      ";
   return buffer;
   }
 
-function program25(depth0,data) {
+function program3(depth0,data) {
   
-  var buffer = "", stack1, stack2;
-  buffer += "<td><button class=\"btn btn-mini\" data-action=\"release\" data-player-id=\""
-    + escapeExpression(((stack1 = depth0.pid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" data-player-name=\""
-    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" data-contract-expiration=\""
-    + escapeExpression(((stack1 = ((stack1 = depth0.contract),stack1 == null || stack1 === false ? stack1 : stack1.exp)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"";
-  stack2 = helpers.unless.call(depth0, depth0.canRelease, {hash:{},inverse:self.noop,fn:self.program(26, program26, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">Release</button></td><td><button class=\"btn btn-mini\" data-action=\"buyOut\" data-player-id=\""
-    + escapeExpression(((stack1 = depth0.pid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" data-player-name=\""
-    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" data-cash-owed=\""
-    + escapeExpression(helpers.round.call(depth0, depth0.cashOwed, 2, {hash:{},data:data}))
-    + "\"";
-  stack2 = helpers.unless.call(depth0, depth0.canBuyOut, {hash:{},inverse:self.noop,fn:self.program(26, program26, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">Buy out</button></td>";
+  var buffer = "", stack1;
+  buffer += "<p class=\"alert alert-error\"><strong>Warning!</strong> "
+    + escapeExpression(((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.warning)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</p>";
   return buffer;
   }
-function program26(depth0,data) {
+
+function program5(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "<p class=\"alert alert-info\">"
+    + escapeExpression(((stack1 = depth0.message),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</p>\n";
+  return buffer;
+  }
+
+function program7(depth0,data) {
   
   
   return " disabled=\"disabled\"";
   }
 
-function program28(depth0,data,depth1,depth2) {
-  
-  var buffer = "", stack1;
-  buffer += "<td><form action=\"/l/"
-    + escapeExpression(((stack1 = depth2.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/trade\" method=\"POST\" style=\"margin: 0\"><input type=\"hidden\" name=\"pid\" value=\""
-    + escapeExpression(((stack1 = depth1.pid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"><button type=\"submit\" class=\"btn btn-mini\">Trade For</button></form></td>";
-  return buffer;
-  }
-
-  buffer += "<form action=\"/l/"
+  buffer += "<h3>Trade Summary</h3>\n<div class=\"row-fluid\">\n  <div class=\"span6\">\n    <h4>"
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[0])),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</h4>\n    <h5>Trade Away:</h5>\n    <ul>\n      ";
+  stack2 = ((stack1 = ((stack1 = ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[0])),stack1 == null || stack1 === false ? stack1 : stack1.trade)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program1, data, depth0),data:data}));
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n      <li>"
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[0])),stack1 == null || stack1 === false ? stack1 : stack1.total), "M", {hash:{},data:data}))
+    + " Total</li>\n    </ul>\n    <h5>Receive:</h5>\n    <ul>\n      ";
+  stack2 = ((stack1 = ((stack1 = ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[1])),stack1 == null || stack1 === false ? stack1 : stack1.trade)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program1, data, depth0),data:data}));
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n      <li>"
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[1])),stack1 == null || stack1 === false ? stack1 : stack1.total), "M", {hash:{},data:data}))
+    + " Total</li>\n    </ul>\n    <h5>Payroll after trade: "
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[0])),stack1 == null || stack1 === false ? stack1 : stack1.payrollAfterTrade), "M", {hash:{},data:data}))
+    + "</h5>\n    <h5>Salary cap: "
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.salaryCap), "M", {hash:{},data:data}))
+    + "</h5>\n  </div>\n  <div class=\"span6\">\n    <h4>"
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[1])),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</h4>\n    <h5>Trade Away:</h5>\n    <ul>\n      ";
+  stack2 = ((stack1 = ((stack1 = ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[1])),stack1 == null || stack1 === false ? stack1 : stack1.trade)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program1, data, depth0),data:data}));
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n      <li>"
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[1])),stack1 == null || stack1 === false ? stack1 : stack1.total), "M", {hash:{},data:data}))
+    + " Total</li>\n    </ul>\n    <h5>Receive:</h5>\n    <ul>\n      ";
+  stack2 = ((stack1 = ((stack1 = ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[0])),stack1 == null || stack1 === false ? stack1 : stack1.trade)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program1, data, depth0),data:data}));
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n      <li>"
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[0])),stack1 == null || stack1 === false ? stack1 : stack1.total), "M", {hash:{},data:data}))
+    + " Total</li>\n    </ul>\n    <h5>Payroll after trade: "
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[1])),stack1 == null || stack1 === false ? stack1 : stack1.payrollAfterTrade), "M", {hash:{},data:data}))
+    + "</h5>\n    <h5>Salary cap: "
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.salaryCap), "M", {hash:{},data:data}))
+    + "</h5>\n  </div>\n</div>\n\n<br>\n";
+  stack2 = helpers['if'].call(depth0, ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.warning), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n";
+  stack2 = helpers['if'].call(depth0, depth0.message, {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n\n<center>\n  <form action=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/roster\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"roster-select-team\" name=\"team\" class=\"team\">\n    ";
-  stack2 = ((stack1 = ((stack1 = depth0.teams),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
+    + "/trade\" method=\"POST\" id=\"propose-trade\">\n    <input type=\"hidden\" name=\"propose\" value=\"1\">\n    <button type=\"submit\" class=\"btn btn-large btn-primary\"";
+  stack2 = helpers['if'].call(depth0, ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.disablePropose), {hash:{},inverse:self.noop,fn:self.program(7, program7, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </select>\n  <select id=\"roster-select-season\" name=\"season\" class=\"season\">\n    ";
-  stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </select>\n</form>\n\n<h1>"
-    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.region)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " "
-    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " Roster "
-    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n<p>More: <a href=\"/l/"
+  buffer += ">Propose Trade</button>\n  </form>\n\n  <form action=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/team_finances/"
-    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">Finances</a> | <a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/game_log/"
-    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/"
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">Game Log</a></p>\n\n";
-  stack2 = helpers['if'].call(depth0, depth0.currentSeason, {hash:{},inverse:self.noop,fn:self.program(6, program6, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n\n";
-  stack2 = helpers['if'].call(depth0, depth0.sortable, {hash:{},inverse:self.noop,fn:self.program(8, program8, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n\n<p>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"roster\">\n<thead>\n  <tr>";
-  stack2 = helpers['if'].call(depth0, depth0.sortable, {hash:{},inverse:self.noop,fn:self.program(10, program10, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "<th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall Rating\">Ovr</th><th title=\"Potential Rating\">Pot</th>";
-  stack2 = helpers['if'].call(depth0, depth0.currentSeason, {hash:{},inverse:self.noop,fn:self.program(12, program12, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "<th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th>";
-  stack2 = helpers['if'].call(depth0, depth0.sortable, {hash:{},inverse:self.noop,fn:self.program(14, program14, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  stack2 = helpers['if'].call(depth0, depth0.showTradeFor, {hash:{},inverse:self.noop,fn:self.program(16, program16, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "</tr>\n</thead>\n<tbody>\n  ";
-  stack2 = ((stack1 = ((stack1 = depth0.players),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program18, data, depth0),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n</tbody>\n</table>\n</p>\n";
-  return buffer;
-  });
-templates['playoffs'] = template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
-helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n      <option value=\""
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"";
-  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">"
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " season</option>\n    ";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  
-  return " selected=\"selected\"";
-  }
-
-function program4(depth0,data) {
-  
-  
-  return "<p>This is what the playoff matchups would be if the season ended right now.</p>";
-  }
-
-  buffer += "<form action=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/playoffs\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"playoffs-select-season\" name=\"season\" class=\"season\">\n    ";
-  stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </select>\n</form>\n\n<h1>Playoffs "
-    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n\n";
-  stack2 = helpers.unless.call(depth0, depth0.finalMatchups, {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n\n<p>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table-condensed\" width=\"100%\">\n<tbody>\n  <tr>\n    <td width=\"14.28%\">\n      "
-    + escapeExpression(helpers.matchup.call(depth0, 0, 0, {hash:{},data:data}))
-    + "\n    </td>\n    <td rowspan=\"2\" width=\"14.28%\">\n      "
-    + escapeExpression(helpers.matchup.call(depth0, 1, 0, {hash:{},data:data}))
-    + "\n    </td>\n    <td rowspan=\"4\" width=\"14.28%\">\n      "
-    + escapeExpression(helpers.matchup.call(depth0, 2, 0, {hash:{},data:data}))
-    + "\n    </td>\n    <td rowspan=\"4\" width=\"14.28%\">\n      "
-    + escapeExpression(helpers.matchup.call(depth0, 3, 0, {hash:{},data:data}))
-    + "\n    </td>\n    <td rowspan=\"4\" width=\"14.28%\">\n      "
-    + escapeExpression(helpers.matchup.call(depth0, 2, 1, {hash:{},data:data}))
-    + "\n    </td>\n    <td rowspan=\"2\" width=\"14.28%\">\n      "
-    + escapeExpression(helpers.matchup.call(depth0, 1, 2, {hash:{},data:data}))
-    + "\n    </td>\n    <td width=\"14.28%\">\n      "
-    + escapeExpression(helpers.matchup.call(depth0, 0, 4, {hash:{},data:data}))
-    + "\n    </td>\n  </tr>\n  <tr>\n    <td>\n      "
-    + escapeExpression(helpers.matchup.call(depth0, 0, 1, {hash:{},data:data}))
-    + "\n    </td>\n    <td>\n      "
-    + escapeExpression(helpers.matchup.call(depth0, 0, 5, {hash:{},data:data}))
-    + "\n    </td>\n  </tr>\n  <tr>\n    <td>\n      "
-    + escapeExpression(helpers.matchup.call(depth0, 0, 2, {hash:{},data:data}))
-    + "\n    </td>\n    <td rowspan=\"2\">\n      "
-    + escapeExpression(helpers.matchup.call(depth0, 1, 1, {hash:{},data:data}))
-    + "\n    </td>\n    <td rowspan=\"2\">\n      "
-    + escapeExpression(helpers.matchup.call(depth0, 1, 3, {hash:{},data:data}))
-    + "\n    </td>\n    <td>\n      "
-    + escapeExpression(helpers.matchup.call(depth0, 0, 6, {hash:{},data:data}))
-    + "\n    </td>\n  </tr>\n  <tr>\n    <td>\n      "
-    + escapeExpression(helpers.matchup.call(depth0, 0, 3, {hash:{},data:data}))
-    + "\n    </td>\n    <td>\n      "
-    + escapeExpression(helpers.matchup.call(depth0, 0, 7, {hash:{},data:data}))
-    + "\n    </td>\n  </tr>\n</tbody>\n</table>\n</p>\n";
+    + "/trade\" method=\"POST\" id=\"clear-trade\">\n    <input type=\"hidden\" name=\"clear\" value=\"1\">\n    <button type=\"submit\" class=\"btn\">Clear Trade</button>\n  </form>\n</center>\n";
   return buffer;
   });
 templates['leagueDashboard'] = template(function (Handlebars,depth0,helpers,partials,data) {
@@ -1522,7 +879,7 @@ function program31(depth0,data,depth1) {
     + "/roster\">» Full Roster</a>\n    </p>\n  </div>\n</div>";
   return buffer;
   });
-templates['teamStats'] = template(function (Handlebars,depth0,helpers,partials,data) {
+templates['distTeamStats'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
   var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
@@ -1548,408 +905,16 @@ function program2(depth0,data) {
 
   buffer += "<form action=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/team_stats\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"team-stats-select-season\" name=\"season\" class=\"season\">\n    ";
+    + "/dist_team_stats\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"dist-team-stats-select-season\" name=\"season\" class=\"season\">\n    ";
   stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </select>\n</form>\n\n<h1>Team Stats "
+  buffer += "\n  </select>\n</form>\n\n<h1>Team Stat Distributions "
     + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
     + "</h1>\n<p>More: <a href=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/team_shot_locations\">Shot Locations</a> | <a href=\"/l/"
+    + "/team_stats\">Main Stats</a> | <a href=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/dist_team_stats\">Stat Distributions</a></p>\n\n<p class=\"clearfix\">\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"team-stats\">\n<thead>\n  <tr><th colspan=\"4\"></th><th colspan=\"3\" style=\"text-align: center\" title=\"Field Goals\">FG</th><th colspan=\"3\" style=\"text-align: center\" title=\"Three-Pointers\">3PT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Free Throws\">FT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Rebounds\">Reb</th><th colspan=\"7\"></th></tr>\n  <tr><th>Team</th><th title=\"Games Played\">GP</th><th title=\"Won\">W</th><th title=\"Lost\">L</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Offensive\">Off</th><th title=\"Defensive\">Def</th><th title=\"Total\">Tot</th><th title=\"Assists\">Ast</th><th title=\"Turnovers\">TO</th><th title=\"Steals\">Stl</th><th title=\"Blocks\">Blk</th><th title=\"Personal Fouls\">PF</th><th title=\"Points\">Pts</th><th title=\"Opponent's Points\">OPts</th></tr>\n</thead>\n</table>\n</p>";
-  return buffer;
-  });
-templates['gameLogList'] = template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
-helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, self=this, functionType="function", escapeExpression=this.escapeExpression, blockHelperMissing=helpers.blockHelperMissing;
-
-function program1(depth0,data,depth1) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n    <tr";
-  stack1 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "><td><a href=\"/l/"
-    + escapeExpression(((stack1 = depth1.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/game_log/"
-    + escapeExpression(((stack1 = depth1.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/"
-    + escapeExpression(((stack1 = depth1.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/"
-    + escapeExpression(((stack1 = depth0.gid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">";
-  stack2 = helpers.unless.call(depth0, depth0.home, {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += escapeExpression(((stack1 = depth0.oppAbbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a></td><td><a href=\"/l/"
-    + escapeExpression(((stack1 = depth1.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/game_log/"
-    + escapeExpression(((stack1 = depth1.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/"
-    + escapeExpression(((stack1 = depth1.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/"
-    + escapeExpression(((stack1 = depth0.gid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">";
-  stack2 = helpers['if'].call(depth0, depth0.won, {hash:{},inverse:self.program(8, program8, data),fn:self.program(6, program6, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "</a></td><td><a href=\"/l/"
-    + escapeExpression(((stack1 = depth1.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/game_log/"
-    + escapeExpression(((stack1 = depth1.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/"
-    + escapeExpression(((stack1 = depth1.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/"
-    + escapeExpression(((stack1 = depth0.gid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = depth0.pts),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "-"
-    + escapeExpression(((stack1 = depth0.oppPts),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + escapeExpression(((stack1 = depth0.overtime),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a></td></tr>\n  ";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  
-  return " class=\"alert-info\"";
-  }
-
-function program4(depth0,data) {
-  
-  
-  return "@";
-  }
-
-function program6(depth0,data) {
-  
-  
-  return "W";
-  }
-
-function program8(depth0,data) {
-  
-  
-  return "L";
-  }
-
-  buffer += "<table id=\"game_log_list\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\">\n<thead>\n  <tr><th>Opp</th><th>W/L</th><th>Score</th></tr>\n</thead>\n<tbody>\n  ";
-  stack2 = ((stack1 = ((stack1 = depth0.games),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program1, data, depth0),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n</tbody>\n</table>\n";
-  return buffer;
-  });
-templates['tradeSummary'] = template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
-helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
-
-function program1(depth0,data,depth1) {
-  
-  var buffer = "", stack1;
-  buffer += "\n        <li><a href=\"/l/"
-    + escapeExpression(((stack1 = depth1.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/player/"
-    + escapeExpression(((stack1 = depth0.pid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a> ("
-    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.contract),stack1 == null || stack1 === false ? stack1 : stack1.amount), "M", {hash:{},data:data}))
-    + ")</li>\n      ";
-  return buffer;
-  }
-
-function program3(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "<p class=\"alert alert-error\"><strong>Warning!</strong> "
-    + escapeExpression(((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.warning)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</p>";
-  return buffer;
-  }
-
-function program5(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "<p class=\"alert alert-info\">"
-    + escapeExpression(((stack1 = depth0.message),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</p>\n";
-  return buffer;
-  }
-
-function program7(depth0,data) {
-  
-  
-  return " disabled=\"disabled\"";
-  }
-
-  buffer += "<h3>Trade Summary</h3>\n<div class=\"row-fluid\">\n  <div class=\"span6\">\n    <h4>"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[0])),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</h4>\n    <h5>Trade Away:</h5>\n    <ul>\n      ";
-  stack2 = ((stack1 = ((stack1 = ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[0])),stack1 == null || stack1 === false ? stack1 : stack1.trade)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program1, data, depth0),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n      <li>"
-    + escapeExpression(helpers.currency.call(depth0, ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[0])),stack1 == null || stack1 === false ? stack1 : stack1.total), "M", {hash:{},data:data}))
-    + " Total</li>\n    </ul>\n    <h5>Receive:</h5>\n    <ul>\n      ";
-  stack2 = ((stack1 = ((stack1 = ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[1])),stack1 == null || stack1 === false ? stack1 : stack1.trade)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program1, data, depth0),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n      <li>"
-    + escapeExpression(helpers.currency.call(depth0, ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[1])),stack1 == null || stack1 === false ? stack1 : stack1.total), "M", {hash:{},data:data}))
-    + " Total</li>\n    </ul>\n    <h5>Payroll after trade: "
-    + escapeExpression(helpers.currency.call(depth0, ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[0])),stack1 == null || stack1 === false ? stack1 : stack1.payrollAfterTrade), "M", {hash:{},data:data}))
-    + "</h5>\n    <h5>Salary cap: "
-    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.salaryCap), "M", {hash:{},data:data}))
-    + "</h5>\n  </div>\n  <div class=\"span6\">\n    <h4>"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[1])),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</h4>\n    <h5>Trade Away:</h5>\n    <ul>\n      ";
-  stack2 = ((stack1 = ((stack1 = ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[1])),stack1 == null || stack1 === false ? stack1 : stack1.trade)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program1, data, depth0),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n      <li>"
-    + escapeExpression(helpers.currency.call(depth0, ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[1])),stack1 == null || stack1 === false ? stack1 : stack1.total), "M", {hash:{},data:data}))
-    + " Total</li>\n    </ul>\n    <h5>Receive:</h5>\n    <ul>\n      ";
-  stack2 = ((stack1 = ((stack1 = ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[0])),stack1 == null || stack1 === false ? stack1 : stack1.trade)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program1, data, depth0),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n      <li>"
-    + escapeExpression(helpers.currency.call(depth0, ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[0])),stack1 == null || stack1 === false ? stack1 : stack1.total), "M", {hash:{},data:data}))
-    + " Total</li>\n    </ul>\n    <h5>Payroll after trade: "
-    + escapeExpression(helpers.currency.call(depth0, ((stack1 = ((stack1 = ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.teams)),stack1 == null || stack1 === false ? stack1 : stack1[1])),stack1 == null || stack1 === false ? stack1 : stack1.payrollAfterTrade), "M", {hash:{},data:data}))
-    + "</h5>\n    <h5>Salary cap: "
-    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.salaryCap), "M", {hash:{},data:data}))
-    + "</h5>\n  </div>\n</div>\n\n<br>\n";
-  stack2 = helpers['if'].call(depth0, ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.warning), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n";
-  stack2 = helpers['if'].call(depth0, depth0.message, {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n\n<center>\n  <form action=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/trade\" method=\"POST\" id=\"propose-trade\">\n    <input type=\"hidden\" name=\"propose\" value=\"1\">\n    <button type=\"submit\" class=\"btn btn-large btn-primary\"";
-  stack2 = helpers['if'].call(depth0, ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.disablePropose), {hash:{},inverse:self.noop,fn:self.program(7, program7, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">Propose Trade</button>\n  </form>\n\n  <form action=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/trade\" method=\"POST\" id=\"clear-trade\">\n    <input type=\"hidden\" name=\"clear\" value=\"1\">\n    <button type=\"submit\" class=\"btn\">Clear Trade</button>\n  </form>\n</center>\n";
-  return buffer;
-  });
-templates['freeAgents'] = template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
-helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", escapeExpression=this.escapeExpression;
-
-
-  buffer += "<h1>Free Agents "
-    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"free-agents\">\n<thead>\n  <tr><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall\">Ovr</th><th title=\"Potential\">Pot</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th><th>Asking for</th><th>Negotiate</th></tr>\n</thead>\n</table>\n";
-  return buffer;
-  });
-templates['teamHistory'] = template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
-helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
-
-function program1(depth0,data) {
-  
-  
-  return "None yet.";
-  }
-
-function program3(depth0,data,depth1) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n    <a href=\"/l/"
-    + escapeExpression(((stack1 = depth1.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/roster/"
-    + escapeExpression(((stack1 = depth1.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/"
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a>: <a href=\"/l/"
-    + escapeExpression(((stack1 = depth1.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/standings/"
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = depth0.won),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "-"
-    + escapeExpression(((stack1 = depth0.lost),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a>";
-  stack2 = helpers['if'].call(depth0, depth0.extraText, {hash:{},inverse:self.noop,fn:self.programWithDepth(program4, data, depth1),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "<br>\n  ";
-  return buffer;
-  }
-function program4(depth0,data,depth2) {
-  
-  var buffer = "", stack1;
-  buffer += ", <a href=\"/l/"
-    + escapeExpression(((stack1 = depth2.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/playoffs/"
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = depth0.extraText),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a>";
-  return buffer;
-  }
-
-  buffer += "<h1>Team History "
-    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n\n<p>\n  ";
-  stack1 = helpers.unless.call(depth0, depth0.history, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  ";
-  stack2 = ((stack1 = ((stack1 = depth0.history),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program3, data, depth0),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n</p>";
-  return buffer;
-  });
-templates['schedule'] = template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
-helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
-
-function program1(depth0,data,depth1) {
-  
-  var buffer = "", stack1;
-  buffer += "\n  <li><a href=\"/l/"
-    + escapeExpression(((stack1 = depth1.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/roster/"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.teams),stack1 == null || stack1 === false ? stack1 : stack1[0])),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.teams),stack1 == null || stack1 === false ? stack1 : stack1[0])),stack1 == null || stack1 === false ? stack1 : stack1.region)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " "
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.teams),stack1 == null || stack1 === false ? stack1 : stack1[0])),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a>\n  "
-    + escapeExpression(((stack1 = depth0.vsat),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\n  <a href=\"/l/"
-    + escapeExpression(((stack1 = depth1.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/roster/"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.teams),stack1 == null || stack1 === false ? stack1 : stack1[1])),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.teams),stack1 == null || stack1 === false ? stack1 : stack1[1])),stack1 == null || stack1 === false ? stack1 : stack1.region)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " "
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.teams),stack1 == null || stack1 === false ? stack1 : stack1[1])),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a>\n";
-  return buffer;
-  }
-
-  buffer += "<h1>Upcoming Schedule "
-    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n\n<ol>\n";
-  stack2 = ((stack1 = ((stack1 = depth0.games),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program1, data, depth0),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n</ol>\n";
-  return buffer;
-  });
-templates['newLeague'] = template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
-helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n        <option value=\""
-    + escapeExpression(((stack1 = depth0.tid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = depth0.region),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " "
-    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</option>\n      ";
-  return buffer;
-  }
-
-  buffer += "<h1>Create New League</h1>\n<p>\n<form action=\"/new_league\" method=\"POST\">\n  <fieldset>\n    <label>League name</label>\n    <input type=\"text\" name=\"name\" value=\""
-    + escapeExpression(((stack1 = depth0.randomName),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"><br><br>\n    <label>Which team do you want to manage?</label>\n    <select name=\"tid\">\n      ";
-  stack2 = ((stack1 = ((stack1 = depth0.teams),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n    </select>\n   <span class=\"help-block\" id=\"pop-text\"></span><br>\n    <!--<label><select name=\"players\">\n      <option value=\"random\" selected=\"selected\">Random Players</option>\n      <option value=\"nba2012\">2012 NBA Players</option>\n    </select></label><br>-->\n    <button type=\"submit\" class=\"btn\" id=\"create-new-league\">Create New League</button>\n  </fieldset>\n</form>\n</p>";
-  return buffer;
-  });
-templates['trade'] = template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
-helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n          <option value=\""
-    + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"";
-  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">"
-    + escapeExpression(((stack1 = depth0.region),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " "
-    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</option>\n        ";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  
-  return " selected=\"selected\"";
-  }
-
-  buffer += "<h1>Trade "
-    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n\n<div class=\"row-fluid\">\n  <div class=\"span7\">\n    <form id=\"rosters\">\n      <p><select id=\"trade-select-team\" name=\"team\" class=\"team form-inline\">\n        ";
-  stack2 = ((stack1 = ((stack1 = depth0.teams),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n      </select>\n      <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"roster-other\">\n      <thead>\n        <tr><th></th><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall Rating\">Ovr</th><th title=\"Potential Rating\">Pot</th><th>Contract</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th></tr>\n      </thead>\n      </table>\n      </p>\n\n      <h2>"
-    + escapeExpression(((stack1 = depth0.userTeamName),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</h2>\n      <p>\n      <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"roster-user\">\n      <thead>\n        <tr><th></th><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall Rating\">Ovr</th><th title=\"Potential Rating\">Pot</th><th>Contract</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th></tr>\n      </thead>\n      </table>\n      </p>\n    </form>\n  </div>\n  <div class=\"span5\" id=\"trade-summary\">\n    ";
-  stack2 = ((stack1 = depth0.tradeSummary),typeof stack1 === functionType ? stack1.apply(depth0) : stack1);
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </div>\n</div>";
-  return buffer;
-  });
-templates['browserError'] = template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
-helpers = helpers || Handlebars.helpers; data = data || {};
-  
-
-
-  return "<h1>Error</h1>\n\n<p>Your browser is not modern enough to run Basketball GM.</p>\n\n<p>Currently, <a href=\"http://www.firefox.com/\">Mozilla Firefox</a> and <a href=\"http://www.google.com/chrome/\">Google Chrome</a> work best with Basketball GM.</p>";
-  });
-templates['distPlayerStats'] = template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
-helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n      <option value=\""
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"";
-  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">"
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " season</option>\n    ";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  
-  return " selected=\"selected\"";
-  }
-
-  buffer += "<form action=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/dist_player_stats\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"dist-player-stats-select-season\" name=\"season\" class=\"season\">\n    ";
-  stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </select>\n</form>\n\n<h1>Player Stat Distributions "
-    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n<p>More: <a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/player_stats\">Main Stats</a> | <a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/player_shot_locations\">Shot Locations</a></p>\n\n<p>These <a href=\"http://en.wikipedia.org/wiki/Box_plot\">box plots</a> show the league-wide distributions of player stats for all active players in the selected season. Black plots are for this league and blue plots are from the 2009-2010 NBA season, for comparison. NBA data was generously provided by <a href=\"http://www.databasebasketball.com/stats_download.htm\">databaseBasketball.com</a>. The five vertical lines in each plot represent the minimum of the scale, the minimum, the first <a href=\"http://en.wikipedia.org/wiki/Quartile\">quartile</a>, the median, the third quartile, the maximum, and the maximum of the scale.</p>\n\n<p>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" id=\"dist-player-stats\">\n  <tbody></tbody>\n</table>\n</p>\n";
+    + "/team_shot_locations\">Shot Locations</a></p>\n\n<p>These <a href=\"http://en.wikipedia.org/wiki/Box_plot\">box plots</a> show the league-wide distributions of team stats for the selected season. Black plots are for this league and blue plots are from the 2010-2011 NBA season, for comparison. The five vertical lines in each plot represent the minimum of the scale, the minimum, the first <a href=\"http://en.wikipedia.org/wiki/Quartile\">quartile</a>, the median, the third quartile, the maximum, and the maximum of the scale.</p>\n\n<p>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" id=\"dist-team-stats\">\n  <tbody></tbody>\n</table>\n</p>\n";
   return buffer;
   });
 templates['standings'] = template(function (Handlebars,depth0,helpers,partials,data) {
@@ -2080,6 +1045,125 @@ function program9(depth0,data) {
   stack2 = ((stack1 = ((stack1 = depth0.confs),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program4, data, depth0),data:data}));
   if(stack2 || stack2 === 0) { buffer += stack2; }
   return buffer;
+  });
+templates['playoffs'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
+helpers = helpers || Handlebars.helpers; data = data || {};
+  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, stack2;
+  buffer += "\n      <option value=\""
+    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\"";
+  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += ">"
+    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " season</option>\n    ";
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  
+  return " selected=\"selected\"";
+  }
+
+function program4(depth0,data) {
+  
+  
+  return "<p>This is what the playoff matchups would be if the season ended right now.</p>";
+  }
+
+  buffer += "<form action=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/playoffs\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"playoffs-select-season\" name=\"season\" class=\"season\">\n    ";
+  stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n  </select>\n</form>\n\n<h1>Playoffs "
+    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
+    + "</h1>\n\n";
+  stack2 = helpers.unless.call(depth0, depth0.finalMatchups, {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n\n<p>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table-condensed\" width=\"100%\">\n<tbody>\n  <tr>\n    <td width=\"14.28%\">\n      "
+    + escapeExpression(helpers.matchup.call(depth0, 0, 0, {hash:{},data:data}))
+    + "\n    </td>\n    <td rowspan=\"2\" width=\"14.28%\">\n      "
+    + escapeExpression(helpers.matchup.call(depth0, 1, 0, {hash:{},data:data}))
+    + "\n    </td>\n    <td rowspan=\"4\" width=\"14.28%\">\n      "
+    + escapeExpression(helpers.matchup.call(depth0, 2, 0, {hash:{},data:data}))
+    + "\n    </td>\n    <td rowspan=\"4\" width=\"14.28%\">\n      "
+    + escapeExpression(helpers.matchup.call(depth0, 3, 0, {hash:{},data:data}))
+    + "\n    </td>\n    <td rowspan=\"4\" width=\"14.28%\">\n      "
+    + escapeExpression(helpers.matchup.call(depth0, 2, 1, {hash:{},data:data}))
+    + "\n    </td>\n    <td rowspan=\"2\" width=\"14.28%\">\n      "
+    + escapeExpression(helpers.matchup.call(depth0, 1, 2, {hash:{},data:data}))
+    + "\n    </td>\n    <td width=\"14.28%\">\n      "
+    + escapeExpression(helpers.matchup.call(depth0, 0, 4, {hash:{},data:data}))
+    + "\n    </td>\n  </tr>\n  <tr>\n    <td>\n      "
+    + escapeExpression(helpers.matchup.call(depth0, 0, 1, {hash:{},data:data}))
+    + "\n    </td>\n    <td>\n      "
+    + escapeExpression(helpers.matchup.call(depth0, 0, 5, {hash:{},data:data}))
+    + "\n    </td>\n  </tr>\n  <tr>\n    <td>\n      "
+    + escapeExpression(helpers.matchup.call(depth0, 0, 2, {hash:{},data:data}))
+    + "\n    </td>\n    <td rowspan=\"2\">\n      "
+    + escapeExpression(helpers.matchup.call(depth0, 1, 1, {hash:{},data:data}))
+    + "\n    </td>\n    <td rowspan=\"2\">\n      "
+    + escapeExpression(helpers.matchup.call(depth0, 1, 3, {hash:{},data:data}))
+    + "\n    </td>\n    <td>\n      "
+    + escapeExpression(helpers.matchup.call(depth0, 0, 6, {hash:{},data:data}))
+    + "\n    </td>\n  </tr>\n  <tr>\n    <td>\n      "
+    + escapeExpression(helpers.matchup.call(depth0, 0, 3, {hash:{},data:data}))
+    + "\n    </td>\n    <td>\n      "
+    + escapeExpression(helpers.matchup.call(depth0, 0, 7, {hash:{},data:data}))
+    + "\n    </td>\n  </tr>\n</tbody>\n</table>\n</p>\n";
+  return buffer;
+  });
+templates['teamStats'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
+helpers = helpers || Handlebars.helpers; data = data || {};
+  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, stack2;
+  buffer += "\n      <option value=\""
+    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\"";
+  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += ">"
+    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " season</option>\n    ";
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  
+  return " selected=\"selected\"";
+  }
+
+  buffer += "<form action=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/team_stats\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"team-stats-select-season\" name=\"season\" class=\"season\">\n    ";
+  stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n  </select>\n</form>\n\n<h1>Team Stats "
+    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
+    + "</h1>\n<p>More: <a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/team_shot_locations\">Shot Locations</a> | <a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/dist_team_stats\">Stat Distributions</a></p>\n\n<p class=\"clearfix\">\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"team-stats\">\n<thead>\n  <tr><th colspan=\"4\"></th><th colspan=\"3\" style=\"text-align: center\" title=\"Field Goals\">FG</th><th colspan=\"3\" style=\"text-align: center\" title=\"Three-Pointers\">3PT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Free Throws\">FT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Rebounds\">Reb</th><th colspan=\"7\"></th></tr>\n  <tr><th>Team</th><th title=\"Games Played\">GP</th><th title=\"Won\">W</th><th title=\"Lost\">L</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Offensive\">Off</th><th title=\"Defensive\">Def</th><th title=\"Total\">Tot</th><th title=\"Assists\">Ast</th><th title=\"Turnovers\">TO</th><th title=\"Steals\">Stl</th><th title=\"Blocks\">Blk</th><th title=\"Personal Fouls\">PF</th><th title=\"Points\">Pts</th><th title=\"Opponent's Points\">OPts</th></tr>\n</thead>\n</table>\n</p>";
+  return buffer;
+  });
+templates['manualOverview'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
+helpers = helpers || Handlebars.helpers; data = data || {};
+  
+
+
+  return "<h1>Basketball GM Manual</h1>\n\n<p>Basketball GM is a completely free sports management simulation game. You are the general manager of a basketball team, tasked with building your roster to compete for a championship while managing your finances. As of now, your goal can be whatever you want: winning the most championships, making the most profit, developing players from rookies to stars, etc. You can make an unlimited number of different leagues from <a href=\"/\">the dashboard</a>, each one with a different set of random players.</p>\n\n<h2>User Interface</h2>\n\n<p>From within a league, the most important user interface element is the Play Menu, which you can access with the big blue Play button at the top of the screen. Any context-dependent action, like playing a game or moving from one phase to another, is done from the Play Menu. Everything else about the user interface should (hopefully) be self-explanitory.</p>\n\n<h2>Gameplay Overview</h2>\n\n<p>Each season of the game is divided into several phases:</p>\n\n<ul>\n  <li><b>Preaseason.</b> Players develop/age (<i>i.e.</i> their ratings change). Young players tend to get better, old players tend to get worse.</li>\n  <li><b>Regular season.</b> Regular season games are played, at the pace you choose through the Play menu.</li>\n  <li><b>Playoffs.</b> Teams that made the playoffs (top 8 in each conference) progress through the bracket playing best-of-7 series until a champion emerges.</li>\n  <li><b>Pre-draft.</b> After the playoffs end, you have one more chance to make changes to your roster before the draft, such as releasing a player to make room on your roster for a new player.</li>\n  <li><b>Draft.</b> Similar to the NBA draft (although there is no lottery), teams are ordered from worst to best for two rounds.</li>\n  <li><b>Post-draft.</b> After the draft, you have one more chance to make changes to your roster before free agency.</li>\n  <li><b>Free agency.</b> Contracts expire. For players on your team, you will have the chance to negotiate a new contract with each player whose contract expires. Otherwise, players with expiring contracts become free agents. The same thing happens for the other teams, so the free agents list is most richly populated at this time.</li>\n</ul>\n\n<h2>League Rules</h2>\n\n<p>League rules are generally modeled on the NBA, but simplified.</p>\n\n<h3>Salary cap</h3>\n\n<p>The salary cap is $60 million. This is a soft cap, in the sense that even if you are over the salary cap, you can still:</p>\n\n<ul>\n  <li>Draft players and add their salaries</li>\n  <li>Resign your current players (like the <a href=\"http://en.wikipedia.org/wiki/NBA_salary_cap#Larry_Bird_exception\">Larry Bird exception</a>)</li>\n  <li>Sign free agents to minimum contracts ($500k)</li>\n</ul>\n\n<h3>Contracts</h3>\n\n<p>The maximum contract amount is $20 million per year and the maximum contract length is 5 years.</p>\n\n<p>The minimum contract amount is $500 thousand per year and the minimum contract length is 1 year (or, until the end of the season, if the season is already in progress).</p>\n\n<p>When a contract expires, you have the opportunity to negotiate a new contract with the player. If you don't come to an agreement, the player becomes a free agent. This is important because, based on the salary cap rules, you can go over the cap to resign your own players but you can't go over the cap to sign a free agent.</p>\n\n<h3>Roster</h3>\n\n<p>The maximum roster size is 15. You can never exceed this, except during the draft. But right after that, you'll have to release or buy out enough players to get under the limit.</p>\n\n<p>The minimum roster size is 5. You must be above this limit to play games.</p>\n\n<h2>Player Ratings</h2>\n\n<p>Player ratings for a variety of categories (shooting, rebounding, passing, dribbling, etc.) are on a scale from 0-100. The whole scale is used, so a typical value for a rating is 50. Roughly, the overall (average) player ratings mean:</p>\n\n<ul>\n  <li><b>90s:</b> All-time great</li>\n  <li><b>80s:</b> MVP candidate</li>\n  <li><b>70s:</b> All League candidate</li>\n  <li><b>60s:</b> Good starter</li>\n  <li><b>50s:</b> Role player</li>\n  <li><b>40s and lower:</b> Bench</li>\n</ul>\n\n<p>However, the overall ratings aren't a guarantee of performance. The particular mix of ratings plays into success (<i>e.g.</i> a short player having a 100 shot blocking rating doesn't do much), as do a player's teammates (<i>e.g.</i> a good rebounder doesn't help your team as much if you already have a few other good rebounders).</p>\n\n<h2>How does it work?</h2>\n\n<p>There are no accounts, no passwords, no nothing. All the game data is stored locally on your computer using <a href=\"https://www.google.com/search?q=indexeddb\">IndexedDB</a>. This has advantages and disadvantages. The main advantage is that it is really cheap to run this game, since simulations can occur in your web browser rather than a central server; this is what allows the game to be free and unlimited. The two main disadvantages are (1) doing simulations in your web browser incurs some performance restrictions (but it's not that bad), and (2) since the games are stored on your computer and not on a server, you can't access the same leagues on different computers (eventually this will be possible though).</p>\n\n<h2>Performance</h2>\n\n<p>Game simulation can be taxing on your computer, particularly as additional seasons are simulated and the database grows. There are a couple of tricks you can use to speed this up:</p>\n\n<ol>\n  <li>Don't open multiple windows/tabs viewing while you are simulating games. If you do, then all of the windows will try to update their content every day, which takes valuable computing resources away from actually simulating the games.</li>\n  <li>Don't have a complicated page (such as the league dashboard) open when you simulate games. As the simulation progresses, the content of whatever you're viewing updates each day. If you're viewing something complex, this can be a little slow. For the fastest performance, view something old like the standings from a previous season which does not have to update ever.</li>\n</ol>\n\n<h2>Make Basketball GM better!</h2>\n\n<p>Basketball GM is open source. That means you can copy/edit/improve/redistribute the game. <a href=\"https://github.com/jdscheff/basketball-gm\">The code is on GitHub</a>, avaliable under the <a href=\"http://www.gnu.org/licenses/agpl-3.0.html\">GNU Affero General Public License</a>. If you want to help make Basketball GM better, there are tons of ways you can help. You can start hacking on anything you want or <a href=\"mailto:jdscheff@gmail.com\">send me an email</a> if you want to discuss things first.</p>\n\n<h2>Still not sure about something?</h2>\n\n<p>If you have a question or think you found a bug or you want to request a feature, either <a href=\"mailto:commissioner@basketball-gm.com\">send an email</a> (commissioner@basketball-gm.com) or <a href=\"https://github.com/jdscheff/basketball-gm/issues\">submit an issue on GitHub</a>.</p>";
   });
 templates['history'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
@@ -2295,7 +1379,142 @@ function program7(depth0,data,depth1) {
   buffer += "\n  </div>\n</div>";
   return buffer;
   });
-templates['playerStats'] = template(function (Handlebars,depth0,helpers,partials,data) {
+templates['playButton'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
+helpers = helpers || Handlebars.helpers; data = data || {};
+  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n        <li><a href=\""
+    + escapeExpression(((stack1 = depth0.url),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\" id=\""
+    + escapeExpression(((stack1 = depth0.id),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">"
+    + escapeExpression(((stack1 = depth0.label),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</a></li>\n      ";
+  return buffer;
+  }
+
+  buffer += "<ul class=\"nav btn btn-primary\">\n  <li class=\"dropdown\">\n    <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">Play <b class=\"caret\"></b></a>\n    <ul class=\"dropdown-menu\">\n      ";
+  stack2 = ((stack1 = ((stack1 = depth0.options),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n    </ul>\n  </li>\n</ul>\n";
+  return buffer;
+  });
+templates['schedule'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
+helpers = helpers || Handlebars.helpers; data = data || {};
+  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
+
+function program1(depth0,data,depth1) {
+  
+  var buffer = "", stack1;
+  buffer += "\n  <li><a href=\"/l/"
+    + escapeExpression(((stack1 = depth1.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/roster/"
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.teams),stack1 == null || stack1 === false ? stack1 : stack1[0])),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">"
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.teams),stack1 == null || stack1 === false ? stack1 : stack1[0])),stack1 == null || stack1 === false ? stack1 : stack1.region)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " "
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.teams),stack1 == null || stack1 === false ? stack1 : stack1[0])),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</a>\n  "
+    + escapeExpression(((stack1 = depth0.vsat),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\n  <a href=\"/l/"
+    + escapeExpression(((stack1 = depth1.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/roster/"
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.teams),stack1 == null || stack1 === false ? stack1 : stack1[1])),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">"
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.teams),stack1 == null || stack1 === false ? stack1 : stack1[1])),stack1 == null || stack1 === false ? stack1 : stack1.region)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " "
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.teams),stack1 == null || stack1 === false ? stack1 : stack1[1])),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</a>\n";
+  return buffer;
+  }
+
+  buffer += "<h1>Upcoming Schedule "
+    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
+    + "</h1>\n\n<ol>\n";
+  stack2 = ((stack1 = ((stack1 = depth0.games),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program1, data, depth0),data:data}));
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n</ol>\n";
+  return buffer;
+  });
+templates['error'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
+helpers = helpers || Handlebars.helpers; data = data || {};
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression;
+
+
+  buffer += "<h1>Error</h1>\n\n"
+    + escapeExpression(((stack1 = depth0.error),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\n";
+  return buffer;
+  });
+templates['newLeague'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
+helpers = helpers || Handlebars.helpers; data = data || {};
+  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n        <option value=\""
+    + escapeExpression(((stack1 = depth0.tid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">"
+    + escapeExpression(((stack1 = depth0.region),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " "
+    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</option>\n      ";
+  return buffer;
+  }
+
+  buffer += "<h1>Create New League</h1>\n<p>\n<form action=\"/new_league\" method=\"POST\">\n  <fieldset>\n    <label>League name</label>\n    <input type=\"text\" name=\"name\" value=\""
+    + escapeExpression(((stack1 = depth0.randomName),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\"><br><br>\n    <label>Which team do you want to manage?</label>\n    <select name=\"tid\">\n      ";
+  stack2 = ((stack1 = ((stack1 = depth0.teams),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n    </select>\n   <span class=\"help-block\" id=\"pop-text\"></span><br>\n    <!--<label><select name=\"players\">\n      <option value=\"random\" selected=\"selected\">Random Players</option>\n      <option value=\"nba2012\">2012 NBA Players</option>\n    </select></label><br>-->\n    <button type=\"submit\" class=\"btn\" id=\"create-new-league\">Create New League</button>\n  </fieldset>\n</form>\n</p>";
+  return buffer;
+  });
+templates['dashboard'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
+helpers = helpers || Handlebars.helpers; data = data || {};
+  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n    <li>\n      <a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\" class=\"btn league\" title=\""
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + ". "
+    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\"><strong>"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + ". "
+    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "<br></strong><span class=\"clearfix\">"
+    + escapeExpression(((stack1 = depth0.region),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " "
+    + escapeExpression(((stack1 = depth0.teamName),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "<br></span><span class=\"clearfix\">"
+    + escapeExpression(((stack1 = depth0.phaseText),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</span></a>\n      <form action=\"/delete_league\" method=\"POST\" class=\"delete\"><input type=\"hidden\" name=\"lid\" value=\""
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\"><button class=\"btn btn-mini\">Delete</button></form>\n    </li>\n  ";
+  return buffer;
+  }
+
+  buffer += "<ul class=\"dashboard_league\">\n  ";
+  stack2 = ((stack1 = ((stack1 = depth0.leagues),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n\n  <li class=\"dashboard_league_new\"><a href=\"/new_league\" class=\"btn btn-primary league\"><h2 style=\"\">Create new league</h2></a></li>\n</ul>";
+  return buffer;
+  });
+templates['playerShotLocations'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
   var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
@@ -2321,59 +1540,110 @@ function program2(depth0,data) {
 
   buffer += "<form action=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/player_stats\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"player-stats-select-season\" name=\"season\" class=\"season\">\n    ";
+    + "/player_shot_locations\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"player-shot-locations-select-season\" name=\"season\" class=\"season\">\n    ";
   stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </select>\n</form>\n\n<h1>Player Stats "
+  buffer += "\n  </select>\n</form>\n\n<h1>Player Shot Locations "
     + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
     + "</h1>\n<p>More: <a href=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/player_shot_locations\">Shot Locations</a> | <a href=\"/l/"
+    + "/player_stats\">Main Stats</a> | <a href=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/dist_player_stats\">Stat Distributions</a></p>\n\n<p class=\"clearfix\">\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player-stats\">\n<thead>\n  <tr><th colspan=\"6\"></th><th colspan=\"3\" style=\"text-align: center\" title=\"Field Goals\">FG</th><th colspan=\"3\" style=\"text-align: center\" title=\"Three-Pointers\">3PT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Free Throws\">FT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Rebounds\">Reb</th><th colspan=\"6\"></th></tr>\n  <tr><th>Name</th><th title=\"Position\">Pos</th><th>Team</th><th title=\"Games Played\">GP</th><th title=\"Games Started\">GS</th><th title=\"Minutes\">Min</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Offensive\">Off</th><th title=\"Defensive\">Def</th><th title=\"Total\">Tot</th><th title=\"Assists\">Ast</th><th title=\"Turnovers\">TO</th><th title=\"Steals\">Stl</th><th title=\"Blocks\">Blk</th><th title=\"Personal Fouls\">PF</th><th title=\"Points\">Pts</th><th title=\"Player Efficiency Rating\">PER</th></tr>\n</thead>\n</table>\n</p>";
+    + "/dist_player_stats\">Stat Distributions</a></p>\n\n<p class=\"clearfix\">\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player-shot-locations\">\n<thead>\n  <tr><th colspan=\"6\"></th><th colspan=\"3\" style=\"text-align: center\" title=\"At Rim\">At Rim</th><th colspan=\"3\" style=\"text-align: center\" title=\"Low Post\">Low Post</th><th colspan=\"3\" style=\"text-align: center\" title=\"Mid-Range\">Mid-Range</th><th colspan=\"3\" style=\"text-align: center\" title=\"Three-Pointers\">3PT</th></tr>\n  <tr><th>Name</th><th title=\"Position\">Pos</th><th>Team</th><th title=\"Games Played\">GP</th><th title=\"Games Started\">GS</th><th title=\"Minutes\">Min</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th></tr>\n</thead>\n</table>\n</p>";
   return buffer;
   });
-templates['draftSummary'] = template(function (Handlebars,depth0,helpers,partials,data) {
+templates['negotiation'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
 
 function program1(depth0,data) {
   
-  var buffer = "", stack1, stack2;
-  buffer += "\n      <option value=\""
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"";
-  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">"
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " season</option>\n    ";
+  var buffer = "", stack1;
+  buffer += "\n  <p>You are allowed to go over the salary cap to make this deal because you are resigning <a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/player/"
+    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.pid)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">"
+    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</a> to a contract extension. <strong>If you do not come to an agreement here, <a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/player/"
+    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.pid)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">"
+    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</a> will become a free agent.</strong> He will then be able to sign with any team, and you won't be able to go over the salary cap to sign him.</p>\n";
   return buffer;
-  }
-function program2(depth0,data) {
-  
-  
-  return " selected=\"selected\"";
   }
 
-  buffer += "<form action=\"/l/"
+function program3(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n  <p>You are not allowed to go over the salary cap to make this deal because <a href=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/draft\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"draft-select-season\" name=\"season\" class=\"season\">\n    ";
-  stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </select>\n</form>\n\n<h1>Draft Summary "
+    + "/player/"
+    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.pid)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">"
+    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</a> is a free agent.</p>\n";
+  return buffer;
+  }
+
+  buffer += "<h1>Contract Negotiation "
     + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n<p>\n  <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"draft-results\">\n  <thead>\n    <tr><th colspan=\"3\"></th><th colspan=\"5\" style=\"text-align: center\">At Draft</th><th colspan=\"5\" style=\"text-align: center\">Current</th><th colspan=\"5\" style=\"text-align: center\">Career Stats</th></tr>\n    <tr><th>Pick</th><th>Name</th><th title=\"Position\">Pos</th><th>Team</th><th>Age</th><th title=\"Overall rating\">Ovr</th><th title=\"Potential rating\">Pot</th><th>Skills</th><th>Team</th><th>Age</th><th title=\"Overall rating\">Ovr</th><th title=\"Potential rating\">Pot</th><th>Skills</th><th title=\"Games Played\">GP</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">PPG</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th></tr>\n  </thead>\n  </table>\n</p>\n";
+    + "</h1>\n\n";
+  stack1 = helpers['if'].call(depth0, depth0.resigning, {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n\n<div class=\"row-fluid\">\n  <div class=\"span6\">\n    <h2>"
+    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.region)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " "
+    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</h2>\n    <p>Current Payroll: "
+    + escapeExpression(helpers.currency.call(depth0, depth0.payroll, "M", {hash:{},data:data}))
+    + "</p>\n    <p>Salary Cap: "
+    + escapeExpression(helpers.currency.call(depth0, depth0.salaryCap, "M", {hash:{},data:data}))
+    + "</p>\n    <h2>Your Proposal</h2>\n    <form action=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/negotiation/"
+    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.pid)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\" class=\"form-horizontal\" method=\"POST\">\n      <input type=\"text\" name=\"teamYears\" id=\"teamYears\" class=\"span1\" value=\""
+    + escapeExpression(((stack1 = ((stack1 = depth0.negotiation),stack1 == null || stack1 === false ? stack1 : stack1.teamYears)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\"> years\n      <p><div class=\"input-prepend input-append\">\n        <span class=\"add-on\">$</span><input type=\"text\" name=\"teamAmount\" id=\"teamAmount\" class=\"span5\" value=\""
+    + escapeExpression(((stack1 = ((stack1 = depth0.negotiation),stack1 == null || stack1 === false ? stack1 : stack1.teamAmount)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\"><span class=\"add-on\">M</span> per year\n      </div></p>\n      <button type=\"submit\" class=\"btn btn-large btn-primary\">Submit Proposal</button>  \n    </form>\n\n    <form action=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/negotiation/"
+    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.pid)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\" class=\"form-horizontal\" method=\"POST\">\n      <input type=\"hidden\" name=\"cancel\" value=\"1\">\n      <button type=\"submit\" class=\"btn btn-danger\">Can't reach a deal? End negotiation</button>\n    </form>\n\n  </div>\n  <div class=\"span6\">\n    <h2><a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/player/"
+    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.pid)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">"
+    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</a></h2>\n    <p>Overal: "
+    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.ovr)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</p>\n    <p>Potential: "
+    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.pot)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</p>\n    <h2>Player Proposal</h2>\n    <p>"
+    + escapeExpression(((stack1 = ((stack1 = depth0.negotiation),stack1 == null || stack1 === false ? stack1 : stack1.playerYears)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " years (through "
+    + escapeExpression(((stack1 = ((stack1 = depth0.negotiation),stack1 == null || stack1 === false ? stack1 : stack1.playerExpiration)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + ")</p>\n    <p>$"
+    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.negotiation),stack1 == null || stack1 === false ? stack1 : stack1.playerAmount), 3, {hash:{},data:data}))
+    + "M per year</p>\n    <form action=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/negotiation/"
+    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.pid)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\" class=\"form-horizontal\" method=\"POST\">\n      <input type=\"hidden\" name=\"accept\" value=\"1\">\n      <button type=\"submit\" class=\"btn btn-large btn-primary\" id=\"accept\">Accept Player Proposal</button>\n    </form>\n  </div>\n</div>\n";
   return buffer;
   });
-templates['manualOverview'] = template(function (Handlebars,depth0,helpers,partials,data) {
+templates['negotiationList'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
   
 
 
-  return "<h1>Basketball GM Manual</h1>\n\n<p>Basketball GM is a completely free sports management simulation game. You are the general manager of a basketball team, tasked with building your roster to compete for a championship while managing your finances. As of now, your goal can be whatever you want: winning the most championships, making the most profit, developing players from rookies to stars, etc. You can make an unlimited number of different leagues from <a href=\"/\">the dashboard</a>, each one with a different set of random players.</p>\n\n<h2>User Interface</h2>\n\n<p>From within a league, the most important user interface element is the Play Menu, which you can access with the big blue Play button at the top of the screen. Any context-dependent action, like playing a game or moving from one phase to another, is done from the Play Menu. Everything else about the user interface should (hopefully) be self-explanitory.</p>\n\n<h2>Gameplay Overview</h2>\n\n<p>Each season of the game is divided into several phases:</p>\n\n<ul>\n  <li><b>Preaseason.</b> Players develop/age (<i>i.e.</i> their ratings change). Young players tend to get better, old players tend to get worse.</li>\n  <li><b>Regular season.</b> Regular season games are played, at the pace you choose through the Play menu.</li>\n  <li><b>Playoffs.</b> Teams that made the playoffs (top 8 in each conference) progress through the bracket playing best-of-7 series until a champion emerges.</li>\n  <li><b>Pre-draft.</b> After the playoffs end, you have one more chance to make changes to your roster before the draft, such as releasing a player to make room on your roster for a new player.</li>\n  <li><b>Draft.</b> Similar to the NBA draft (although there is no lottery), teams are ordered from worst to best for two rounds.</li>\n  <li><b>Post-draft.</b> After the draft, you have one more chance to make changes to your roster before free agency.</li>\n  <li><b>Free agency.</b> Contracts expire. For players on your team, you will have the chance to negotiate a new contract with each player whose contract expires. Otherwise, players with expiring contracts become free agents. The same thing happens for the other teams, so the free agents list is most richly populated at this time.</li>\n</ul>\n\n<h2>League Rules</h2>\n\n<p>League rules are generally modeled on the NBA, but simplified.</p>\n\n<h3>Salary cap</h3>\n\n<p>The salary cap is $60 million. This is a soft cap, in the sense that even if you are over the salary cap, you can still:</p>\n\n<ul>\n  <li>Draft players and add their salaries</li>\n  <li>Resign your current players (like the <a href=\"http://en.wikipedia.org/wiki/NBA_salary_cap#Larry_Bird_exception\">Larry Bird exception</a>)</li>\n  <li>Sign free agents to minimum contracts ($500k)</li>\n</ul>\n\n<h3>Contracts</h3>\n\n<p>The maximum contract amount is $20 million per year and the maximum contract length is 5 years.</p>\n\n<p>The minimum contract amount is $500 thousand per year and the minimum contract length is 1 year (or, until the end of the season, if the season is already in progress).</p>\n\n<p>When a contract expires, you have the opportunity to negotiate a new contract with the player. If you don't come to an agreement, the player becomes a free agent. This is important because, based on the salary cap rules, you can go over the cap to resign your own players but you can't go over the cap to sign a free agent.</p>\n\n<h3>Roster</h3>\n\n<p>The maximum roster size is 15. You can never exceed this, except during the draft. But right after that, you'll have to release or buy out enough players to get under the limit.</p>\n\n<p>The minimum roster size is 5. You must be above this limit to play games.</p>\n\n<h2>Player Ratings</h2>\n\n<p>Player ratings for a variety of categories (shooting, rebounding, passing, dribbling, etc.) are on a scale from 0-100. The whole scale is used, so a typical value for a rating is 50. Roughly, the overall (average) player ratings mean:</p>\n\n<ul>\n  <li><b>90s:</b> All-time great</li>\n  <li><b>80s:</b> MVP candidate</li>\n  <li><b>70s:</b> All League candidate</li>\n  <li><b>60s:</b> Good starter</li>\n  <li><b>50s:</b> Role player</li>\n  <li><b>40s and lower:</b> Bench</li>\n</ul>\n\n<p>However, the overall ratings aren't a guarantee of performance. The particular mix of ratings plays into success (<i>e.g.</i> a short player having a 100 shot blocking rating doesn't do much), as do a player's teammates (<i>e.g.</i> a good rebounder doesn't help your team as much if you already have a few other good rebounders).</p>\n\n<h2>How does it work?</h2>\n\n<p>There are no accounts, no passwords, no nothing. All the game data is stored locally on your computer using <a href=\"https://www.google.com/search?q=indexeddb\">IndexedDB</a>. This has advantages and disadvantages. The main advantage is that it is really cheap to run this game, since simulations can occur in your web browser rather than a central server; this is what allows the game to be free and unlimited. The two main disadvantages are (1) doing simulations in your web browser incurs some performance restrictions (but it's not that bad), and (2) since the games are stored on your computer and not on a server, you can't access the same leagues on different computers (eventually this will be possible though).</p>\n\n<h2>Performance</h2>\n\n<p>Game simulation can be taxing on your computer, particularly as additional seasons are simulated and the database grows. There are a couple of tricks you can use to speed this up:</p>\n\n<ol>\n  <li>Don't open multiple windows/tabs viewing while you are simulating games. If you do, then all of the windows will try to update their content every day, which takes valuable computing resources away from actually simulating the games.</li>\n  <li>Don't have a complicated page (such as the league dashboard) open when you simulate games. As the simulation progresses, the content of whatever you're viewing updates each day. If you're viewing something complex, this can be a little slow. For the fastest performance, view something old like the standings from a previous season which does not have to update ever.</li>\n</ol>\n\n<h2>Make Basketball GM better!</h2>\n\n<p>Basketball GM is open source. That means you can copy/edit/improve/redistribute the game. <a href=\"https://github.com/jdscheff/basketball-gm\">The code is on GitHub</a>, avaliable under the <a href=\"http://www.gnu.org/licenses/agpl-3.0.html\">GNU Affero General Public License</a>. If you want to help make Basketball GM better, there are tons of ways you can help. You can start hacking on anything you want or <a href=\"mailto:jdscheff@gmail.com\">send me an email</a> if you want to discuss things first.</p>\n\n<h2>Still not sure about something?</h2>\n\n<p>If you have a question or think you found a bug or you want to request a feature, either <a href=\"mailto:commissioner@basketball-gm.com\">send an email</a> (commissioner@basketball-gm.com) or <a href=\"https://github.com/jdscheff/basketball-gm/issues\">submit an issue on GitHub</a>.</p>";
+  return "<h1>Players With Expiring Contracts</h1>\n\n<p>You are allowed to go over the salary cap to resign your players before they become free agents. If you do not resign them before free agency begins, they will be free to sign with any team, and you won't be able to go over the salary cap to sign them.</p>\n\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"negotiation-list\">\n<thead>\n  <tr><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall\">Ovr</th><th title=\"Potential\">Pot</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th><th>Asking for</th><th>Negotiate</th></tr>\n</thead>\n</table>";
   });
 templates['distPlayerRatings'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
@@ -2411,40 +1681,818 @@ function program2(depth0,data) {
     + "/player_ratings\">Main Ratings</a></p>\n\n<p>These <a href=\"http://en.wikipedia.org/wiki/Box_plot\">box plots</a> show the league-wide distributions of player ratings for all active players in the selected season. The five vertical lines in each plot represent the minimum of the scale (0), the minimum, the first <a href=\"http://en.wikipedia.org/wiki/Quartile\">quartile</a>, the median, the third quartile, the maximum, and the maximum of the scale (100).</p>\n\n<p>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" id=\"dist-player-ratings\">\n  <tbody></tbody>\n</table>\n</p>\n";
   return buffer;
   });
-templates['dashboard'] = template(function (Handlebars,depth0,helpers,partials,data) {
+templates['deleteLeague'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
+helpers = helpers || Handlebars.helpers; data = data || {};
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression;
+
+
+  buffer += "<h1>Delete League "
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "?</h1>\n\n<p>Are you <em>absolutely</em> sure you want to delete League "
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "? You will <em>permanently</em> lose any record of all "
+    + escapeExpression(((stack1 = depth0.numSeasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " seasons, "
+    + escapeExpression(helpers.numberWithCommas.call(depth0, depth0.numPlayers, {hash:{},data:data}))
+    + " players, and "
+    + escapeExpression(helpers.numberWithCommas.call(depth0, depth0.numGames, {hash:{},data:data}))
+    + " games from this league (well... unless you have backup somewhere).</p>\n\n<form action=\"/delete_league\" method=\"post\" style=\"float: left; margin-right: 1em\">\n  <input type=\"hidden\" name=\"lid\" value=\""
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">\n  <input type=\"hidden\" name=\"confirm\" value=\"1\">\n  <button class=\"btn btn-danger\">Yes, I am sure! Delete League "
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + ".</button>\n</form>\n<form action=\"/\" method=\"get\">\n  <button class=\"btn\">Cancel</button>\n</form>";
+  return buffer;
+  });
+templates['playerRatings'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
   var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
 
 function program1(depth0,data) {
   
-  var buffer = "", stack1;
-  buffer += "\n    <li>\n      <a href=\"/l/"
+  var buffer = "", stack1, stack2;
+  buffer += "\n      <option value=\""
+    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\"";
+  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += ">"
+    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " season</option>\n    ";
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  
+  return " selected=\"selected\"";
+  }
+
+  buffer += "<form action=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" class=\"btn league\" title=\""
+    + "/player_ratings\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"player-ratings-select-season\" name=\"season\" class=\"season\">\n    ";
+  stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n  </select>\n</form>\n\n<h1>Player Ratings "
+    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
+    + "</h1>\n<p>More: <a href=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + ". "
-    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"><strong>"
+    + "/dist_player_ratings\">Rating Distributions</a></p>\n\n\n<p class=\"clearfix\">\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player-ratings\">\n<thead>\n  <tr><th>Name</th><th title=\"Position\">Pos</th><th>Team</th><th>Age</th><th title=\"Overall\">Ovr</th><th title=\"Potential\">Pot</th><th title=\"Height\">Hgt</th><th title=\"Strength\">Str</th><th title=\"Speed\">Spd</th><th title=\"Jumping\">Jmp</th><th title=\"Endurance\">End</th><th title=\"Inside Scoring\">Ins</th><th title=\"Dunks/Layups\">Dnk</th><th title=\"Free Throw Shooting\">FT</th><th title=\"Two-Point Shooting\">2Pt</th><th title=\"Three-Point Shooting\">3Pt</th><th title=\"Blocks\">Blk</th><th title=\"Steals\">Stl</th><th title=\"Dribbling\">Drb</th><th title=\"Passing\">Pss</th><th title=\"Rebounding\">Reb</th></tr>\n</thead>\n</table>\n</p>";
+  return buffer;
+  });
+templates['gameLogList'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
+helpers = helpers || Handlebars.helpers; data = data || {};
+  var buffer = "", stack1, stack2, self=this, functionType="function", escapeExpression=this.escapeExpression, blockHelperMissing=helpers.blockHelperMissing;
+
+function program1(depth0,data,depth1) {
+  
+  var buffer = "", stack1, stack2;
+  buffer += "\n    <tr";
+  stack1 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "><td><a href=\"/l/"
+    + escapeExpression(((stack1 = depth1.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/game_log/"
+    + escapeExpression(((stack1 = depth1.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/"
+    + escapeExpression(((stack1 = depth1.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/"
+    + escapeExpression(((stack1 = depth0.gid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">";
+  stack2 = helpers.unless.call(depth0, depth0.home, {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += escapeExpression(((stack1 = depth0.oppAbbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</a></td><td><a href=\"/l/"
+    + escapeExpression(((stack1 = depth1.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/game_log/"
+    + escapeExpression(((stack1 = depth1.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/"
+    + escapeExpression(((stack1 = depth1.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/"
+    + escapeExpression(((stack1 = depth0.gid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">";
+  stack2 = helpers['if'].call(depth0, depth0.won, {hash:{},inverse:self.program(8, program8, data),fn:self.program(6, program6, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "</a></td><td><a href=\"/l/"
+    + escapeExpression(((stack1 = depth1.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/game_log/"
+    + escapeExpression(((stack1 = depth1.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/"
+    + escapeExpression(((stack1 = depth1.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/"
+    + escapeExpression(((stack1 = depth0.gid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">"
+    + escapeExpression(((stack1 = depth0.pts),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "-"
+    + escapeExpression(((stack1 = depth0.oppPts),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = depth0.overtime),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</a></td></tr>\n  ";
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  
+  return " class=\"alert-info\"";
+  }
+
+function program4(depth0,data) {
+  
+  
+  return "@";
+  }
+
+function program6(depth0,data) {
+  
+  
+  return "W";
+  }
+
+function program8(depth0,data) {
+  
+  
+  return "L";
+  }
+
+  buffer += "<table id=\"game_log_list\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\">\n<thead>\n  <tr><th>Opp</th><th>W/L</th><th>Score</th></tr>\n</thead>\n<tbody>\n  ";
+  stack2 = ((stack1 = ((stack1 = depth0.games),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program1, data, depth0),data:data}));
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n</tbody>\n</table>\n";
+  return buffer;
+  });
+templates['leagueFinances'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
+helpers = helpers || Handlebars.helpers; data = data || {};
+  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, stack2;
+  buffer += "\n      <option value=\""
+    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\"";
+  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += ">"
+    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " season</option>\n    ";
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  
+  return " selected=\"selected\"";
+  }
+
+  buffer += "<form action=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + ". "
-    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "<br></strong><span class=\"clearfix\">"
+    + "/league_finances\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"league-finances-select-season\" name=\"season\" class=\"season\">\n    ";
+  stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n  </select>\n</form>\n\n<h1>League Finances "
+    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
+    + "</h1>\n\n<p>\n  Salary cap: <strong>$"
+    + escapeExpression(helpers.round.call(depth0, depth0.salaryCap, {hash:{},data:data}))
+    + "M</strong> (teams over this amount cannot sign free agents for more than the minimum contract)<br>\n  Minimum payroll limit: <strong>$"
+    + escapeExpression(helpers.round.call(depth0, depth0.minPayroll, {hash:{},data:data}))
+    + "M</strong> (teams with payrolls below this limit will be assessed a fine equal to the difference at the end of the season)<br>\n  Luxury tax limit: <strong>$"
+    + escapeExpression(helpers.round.call(depth0, depth0.luxuryPayroll, {hash:{},data:data}))
+    + "M</strong> (teams with payrolls above this limit will be assessed a fine equal to "
+    + escapeExpression(((stack1 = depth0.luxuryTax),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " times the difference at the end of the season)\n</p>\n\n<p>\n  <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"league-finances\">\n  <thead>\n    <tr><th>Team</th><th>Avg Attendance</th><th>Revenue (YTD)</th><th>Profit (YTD)</th><th>Cash</th><th>Payroll</th></tr>\n  </thead>\n  </table>\n</p>";
+  return buffer;
+  });
+templates['gameLog'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
+helpers = helpers || Handlebars.helpers; data = data || {};
+  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, stack2;
+  buffer += "\n      <option value=\""
+    + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\"";
+  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += ">"
     + escapeExpression(((stack1 = depth0.region),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + " "
-    + escapeExpression(((stack1 = depth0.teamName),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "<br></span><span class=\"clearfix\">"
-    + escapeExpression(((stack1 = depth0.phaseText),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</span></a>\n      <form action=\"/delete_league\" method=\"POST\" class=\"delete\"><input type=\"hidden\" name=\"lid\" value=\""
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"><button class=\"btn btn-mini\">Delete</button></form>\n    </li>\n  ";
+    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</option>\n    ";
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  
+  return " selected=\"selected\"";
+  }
+
+function program4(depth0,data) {
+  
+  var buffer = "", stack1, stack2;
+  buffer += "\n      <option value=\""
+    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\"";
+  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += ">"
+    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " season</option>\n    ";
   return buffer;
   }
 
-  buffer += "<ul class=\"dashboard_league\">\n  ";
-  stack2 = ((stack1 = ((stack1 = depth0.leagues),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
+  buffer += "<form action=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/game_log\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"game-log-select-team\" name=\"team\" class=\"team\">\n    ";
+  stack2 = ((stack1 = ((stack1 = depth0.teams),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n\n  <li class=\"dashboard_league_new\"><a href=\"/new_league\" class=\"btn btn-primary league\"><h2 style=\"\">Create new league</h2></a></li>\n</ul>";
+  buffer += "\n  </select>\n  <select id=\"game-log-select-season\" name=\"season\" class=\"season\">\n    ";
+  stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data}));
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n  </select>\n</form>\n\n<h1>Game Log "
+    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
+    + "</h1>\n<p>More: <a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/roster/"
+    + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/"
+    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">Roster</a> | <a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/team_finances/"
+    + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">Finances</a></p>\n\n<p>\n<div class=\"row-fluid\">\n  <div class=\"span9\">\n    ";
+  stack2 = ((stack1 = depth0.boxScore),typeof stack1 === functionType ? stack1.apply(depth0) : stack1);
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n  </div>\n\n  <div class=\"span3\">\n    ";
+  stack2 = ((stack1 = depth0.gameLogList),typeof stack1 === functionType ? stack1.apply(depth0) : stack1);
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n  </div>\n</div>\n</p>\n";
+  return buffer;
+  });
+templates['teamFinances'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
+helpers = helpers || Handlebars.helpers; data = data || {};
+  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, stack2;
+  buffer += "\n      <option value=\""
+    + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\"";
+  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += ">"
+    + escapeExpression(((stack1 = depth0.region),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " "
+    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</option>\n    ";
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  
+  return " selected=\"selected\"";
+  }
+
+function program4(depth0,data) {
+  
+  var buffer = "", stack1, stack2;
+  buffer += "\n      <option value=\""
+    + escapeExpression(((stack1 = depth0.show),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\"";
+  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += ">"
+    + escapeExpression(((stack1 = depth0.text),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</option>\n    ";
+  return buffer;
+  }
+
+function program6(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n      <h4>Revenue Settings <i class=\"icon-question-sign\" id=\"help-revenue-settings\" data-placement=\"bottom\"></i></h4>\n      <p class=\"text-error\"></p>\n      <div class=\"row\">\n        <div class=\"pull-left finances-settings-label\">Ticket Price</div>\n        <div class=\"input-prepend pull-left finances-settings-field\">\n          <span class=\"add-on\">$</span><input type=\"text\" name=\"budget[ticketPrice]\" class=\"ticket-price\" value=\""
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.ticketPrice)),stack1 == null || stack1 === false ? stack1 : stack1.amount)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\" disabled=\"disabled\">\n        </div>\n        <div class=\"pull-left finances-settings-text\">(#"
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.ticketPrice)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " leaguewide)</div>\n      </div>\n      <p></p>\n      <h4>Expense Settings <i class=\"icon-question-sign\" id=\"help-expense-settings\" data-placement=\"bottom\"></i></h4>\n      <p class=\"text-error\"></p>\n      <div class=\"row\">\n        <div class=\"pull-left finances-settings-label\">Scouting</div>\n        <div class=\"input-prepend input-append pull-left finances-settings-field\">\n          <span class=\"add-on\">$</span><input type=\"text\" name=\"budget[scouting]\" class=\"ticket-price\" value=\""
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.scouting)),stack1 == null || stack1 === false ? stack1 : stack1.amount)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\" disabled=\"disabled\"><span class=\"add-on\">M</span>\n        </div>\n        <div class=\"pull-left finances-settings-text-small\">Current spending rate: #"
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.scouting)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "<br>Spent this season: #"
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.expenses),stack1 == null || stack1 === false ? stack1 : stack1.scouting)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</div>\n      </div>\n      <div class=\"row\">\n        <div class=\"pull-left finances-settings-label\">Coaching</div>\n        <div class=\"input-prepend input-append pull-left finances-settings-field\">\n          <span class=\"add-on\">$</span><input type=\"text\" name=\"budget[coaching]\" class=\"ticket-price\" value=\""
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.coaching)),stack1 == null || stack1 === false ? stack1 : stack1.amount)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\" disabled=\"disabled\"><span class=\"add-on\">M</span>\n        </div>\n        <div class=\"pull-left finances-settings-text-small\">Current spending rate: #"
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.coaching)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "<br>Spent this season: #"
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.expenses),stack1 == null || stack1 === false ? stack1 : stack1.coaching)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</div>\n      </div>\n      <div class=\"row\">\n        <div class=\"pull-left finances-settings-label\">Health</div>\n        <div class=\"input-prepend input-append pull-left finances-settings-field\">\n          <span class=\"add-on\">$</span><input type=\"text\" name=\"budget[health]\" class=\"ticket-price\" value=\""
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.health)),stack1 == null || stack1 === false ? stack1 : stack1.amount)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\" disabled=\"disabled\"><span class=\"add-on\">M</span>\n        </div>\n        <div class=\"pull-left finances-settings-text-small\">Current spending rate: #"
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.health)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "<br>Spent this season: #"
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.expenses),stack1 == null || stack1 === false ? stack1 : stack1.health)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</div>\n      </div>\n      <div class=\"row\">\n        <div class=\"pull-left finances-settings-label\">Facilities</div>\n        <div class=\"input-prepend input-append pull-left finances-settings-field\">\n          <span class=\"add-on\">$</span><input type=\"text\" name=\"budget[facilities]\" class=\"ticket-price\" value=\""
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.facilities)),stack1 == null || stack1 === false ? stack1 : stack1.amount)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\" disabled=\"disabled\"><span class=\"add-on\">M</span>\n        </div>\n        <div class=\"pull-left finances-settings-text-small\">Current spending rate: #"
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.facilities)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "<br>Spent this season: #"
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.expenses),stack1 == null || stack1 === false ? stack1 : stack1.facilities)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</div>\n      </div>\n      <br>\n      <p align=\"center\"><button class=\"btn btn-large btn-primary\" style=\"line-height: 1.5em\">Save Revenue and<br> Expense Settings</button></p>\n      ";
+  return buffer;
+  }
+
+  buffer += "<form action=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/team_finances\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"team-finances-select-team\" name=\"team\" class=\"team\">\n    ";
+  stack2 = ((stack1 = ((stack1 = depth0.teams),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n  </select>\n  <select id=\"team-finances-select-show\" name=\"show\" class=\"past-x\">\n    ";
+  stack2 = ((stack1 = ((stack1 = depth0.shows),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data}));
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n  </select>\n</form>\n\n<h1>"
+    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.region)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " "
+    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " Finances "
+    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
+    + "</h1>\n<p>More: <a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/roster/"
+    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">Roster</a> | <a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/game_log/"
+    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">Game Log</a></p>\n\n<p class=\"clearfix\">The current payroll (<strong>$"
+    + escapeExpression(helpers.round.call(depth0, depth0.payroll, {hash:{},data:data}))
+    + "M</strong>) is "
+    + escapeExpression(((stack1 = ((stack1 = depth0.aboveBelow),stack1 == null || stack1 === false ? stack1 : stack1.minPayroll)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " the minimum payroll limit (<strong>$"
+    + escapeExpression(helpers.round.call(depth0, depth0.minPayroll, {hash:{},data:data}))
+    + "M</strong>), "
+    + escapeExpression(((stack1 = ((stack1 = depth0.aboveBelow),stack1 == null || stack1 === false ? stack1 : stack1.salaryCap)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " the salary cap (<strong>$"
+    + escapeExpression(helpers.round.call(depth0, depth0.salaryCap, {hash:{},data:data}))
+    + "M</strong>), and "
+    + escapeExpression(((stack1 = ((stack1 = depth0.aboveBelow),stack1 == null || stack1 === false ? stack1 : stack1.luxuryPayroll)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " the luxury tax limit (<strong>$"
+    + escapeExpression(helpers.round.call(depth0, depth0.luxuryPayroll, {hash:{},data:data}))
+    + "M</strong>). <i class=\"icon-question-sign\" id=\"help-payroll-limits\" data-placement=\"bottom\"></i></p>\n\n<div class=\"row-fluid\">\n  <div class=\"span2\">\n    <h4>Wins</h4>\n    <div id=\"bar-graph-won\" class=\"bar-graph-small\"></div><br><br>\n    <span class=\"clickover\"><h4>Hype <i class=\"icon-question-sign\" id=\"help-hype\" data-placement=\"right\"></i></h4></span>\n    <div id=\"bar-graph-hype\" class=\"bar-graph-small\"></div><br><br>\n    <h4>Region Population</h4>\n    <div id=\"bar-graph-pop\" class=\"bar-graph-small\"></div><br><br>\n    <h4>Average Attendance</h4>\n    <div id=\"bar-graph-att\" class=\"bar-graph-small\"></div>\n  </div>\n  <div class=\"span5\">\n    <div class=\"row-fluid\">\n      <h4>Revenue</h4>\n      <div id=\"bar-graph-revenue\" class=\"bar-graph-large\"></div><br><br>\n      <h4>Expenses</h4>\n      <div id=\"bar-graph-expenses\" class=\"bar-graph-large\"></div><br><br>\n      <h4>Cash</h4>\n      <div id=\"bar-graph-cash\" class=\"bar-graph-medium\"></div>\n    </div>\n  </div>\n  <div class=\"span5\">\n    <form action=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/team_finances\" method=\"POST\" id=\"finances-settings\">\n      ";
+  stack2 = helpers['with'].call(depth0, depth0.team, {hash:{},inverse:self.noop,fn:self.program(6, program6, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n    </form>\n  </div>\n</div>\n<p class=\"clearfix\"></p>\n\n<h2>Player Salaries</h2>\n\n<p>You can release or buy out players from <a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/roster\">your roster</a>. Released players who are still owed money are <i>shown in italics</i>.</p>\n\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player-salaries\">\n<thead>\n  <tr><th>Name</th><th>"
+    + escapeExpression(((stack1 = ((stack1 = depth0.salariesSeasons),stack1 == null || stack1 === false ? stack1 : stack1[0])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</th><th>"
+    + escapeExpression(((stack1 = ((stack1 = depth0.salariesSeasons),stack1 == null || stack1 === false ? stack1 : stack1[1])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</th><th>"
+    + escapeExpression(((stack1 = ((stack1 = depth0.salariesSeasons),stack1 == null || stack1 === false ? stack1 : stack1[2])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</th><th>"
+    + escapeExpression(((stack1 = ((stack1 = depth0.salariesSeasons),stack1 == null || stack1 === false ? stack1 : stack1[3])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</th><th>"
+    + escapeExpression(((stack1 = ((stack1 = depth0.salariesSeasons),stack1 == null || stack1 === false ? stack1 : stack1[4])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</th></tr>\n</thead>\n<tbody>\n</tbody>\n<tfoot>\n  <tr><th>Totals</th><th>"
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.contractTotals),stack1 == null || stack1 === false ? stack1 : stack1[0]), "M", {hash:{},data:data}))
+    + "</th><th>"
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.contractTotals),stack1 == null || stack1 === false ? stack1 : stack1[1]), "M", {hash:{},data:data}))
+    + "</th><th>"
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.contractTotals),stack1 == null || stack1 === false ? stack1 : stack1[2]), "M", {hash:{},data:data}))
+    + "</th><th>"
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.contractTotals),stack1 == null || stack1 === false ? stack1 : stack1[3]), "M", {hash:{},data:data}))
+    + "</th><th>"
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.contractTotals),stack1 == null || stack1 === false ? stack1 : stack1[4]), "M", {hash:{},data:data}))
+    + "</th></tr>\n</tfoot>\n</table>";
+  return buffer;
+  });
+templates['roster'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
+helpers = helpers || Handlebars.helpers; data = data || {};
+  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, stack2;
+  buffer += "\n      <option value=\""
+    + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\"";
+  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += ">"
+    + escapeExpression(((stack1 = depth0.region),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " "
+    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</option>\n    ";
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  
+  return " selected=\"selected\"";
+  }
+
+function program4(depth0,data) {
+  
+  var buffer = "", stack1, stack2;
+  buffer += "\n      <option value=\""
+    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\"";
+  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += ">"
+    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " season</option>\n    ";
+  return buffer;
+  }
+
+function program6(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n  <p>"
+    + escapeExpression(((stack1 = depth0.numRosterSpots),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " open roster spots<br>\n  Payroll: "
+    + escapeExpression(helpers.currency.call(depth0, depth0.payroll, "M", {hash:{},data:data}))
+    + "<br>\n  Salary cap: "
+    + escapeExpression(helpers.currency.call(depth0, depth0.salaryCap, "M", {hash:{},data:data}))
+    + "<br>\n  Cash: "
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.cash), "M", {hash:{},data:data}))
+    + " (used for buying out players)</p>\n";
+  return buffer;
+  }
+
+function program8(depth0,data) {
+  
+  
+  return "\n  <p>Drag and drop row handles to move players between the starting lineup (<span class=\"roster_gs\">&#9632;</span>) and the bench (<span class=\"roster_bench\">&#9632;</span>).</p>\n  <p><button class=\"btn\" id=\"roster-auto-sort\">Auto sort roster</button></p>\n";
+  }
+
+function program10(depth0,data) {
+  
+  
+  return "<th></th>";
+  }
+
+function program12(depth0,data) {
+  
+  
+  return "<th>Contract</th>";
+  }
+
+function program14(depth0,data) {
+  
+  
+  return "<th>Release</th><th>Buy out</th>";
+  }
+
+function program16(depth0,data) {
+  
+  
+  return "<th>Trade For</th>";
+  }
+
+function program18(depth0,data,depth1) {
+  
+  var buffer = "", stack1, stack2;
+  buffer += "\n    <tr id=\"roster_"
+    + escapeExpression(((stack1 = depth0.pid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\"";
+  stack2 = helpers['if'].call(depth0, depth0.separator, {hash:{},inverse:self.noop,fn:self.program(19, program19, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += ">";
+  stack2 = helpers['if'].call(depth0, depth1.sortable, {hash:{},inverse:self.noop,fn:self.program(21, program21, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "<td>"
+    + escapeExpression(helpers.playerNameLabels.call(depth0, depth0.pid, depth0.name, depth0.injury, ((stack1 = depth0.ratings),stack1 == null || stack1 === false ? stack1 : stack1.skills), {hash:{},data:data}))
+    + "</td><td>"
+    + escapeExpression(((stack1 = depth0.pos),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</td><td>"
+    + escapeExpression(((stack1 = depth0.age),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</td><td>"
+    + escapeExpression(((stack1 = ((stack1 = depth0.ratings),stack1 == null || stack1 === false ? stack1 : stack1.ovr)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</td><td>"
+    + escapeExpression(((stack1 = ((stack1 = depth0.ratings),stack1 == null || stack1 === false ? stack1 : stack1.pot)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</td>";
+  stack2 = helpers['if'].call(depth0, depth1.currentSeason, {hash:{},inverse:self.noop,fn:self.program(23, program23, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "<td>"
+    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.stats),stack1 == null || stack1 === false ? stack1 : stack1.min), 1, {hash:{},data:data}))
+    + "</td><td>"
+    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.stats),stack1 == null || stack1 === false ? stack1 : stack1.pts), 1, {hash:{},data:data}))
+    + "</td><td>"
+    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.stats),stack1 == null || stack1 === false ? stack1 : stack1.trb), 1, {hash:{},data:data}))
+    + "</td><td>"
+    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.stats),stack1 == null || stack1 === false ? stack1 : stack1.ast), 1, {hash:{},data:data}))
+    + "</td><td>"
+    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.stats),stack1 == null || stack1 === false ? stack1 : stack1.per), 1, {hash:{},data:data}))
+    + "</td>";
+  stack2 = helpers['if'].call(depth0, depth1.sortable, {hash:{},inverse:self.noop,fn:self.program(25, program25, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  stack2 = helpers['if'].call(depth0, depth1.showTradeFor, {hash:{},inverse:self.noop,fn:self.programWithDepth(program28, data, depth0, depth1),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "</tr>\n  ";
+  return buffer;
+  }
+function program19(depth0,data) {
+  
+  
+  return " class=\"separator\"";
+  }
+
+function program21(depth0,data) {
+  
+  
+  return "<td class=\"roster_handle\"></td>";
+  }
+
+function program23(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "<td>"
+    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.contract),stack1 == null || stack1 === false ? stack1 : stack1.amount), "M", {hash:{},data:data}))
+    + " thru "
+    + escapeExpression(((stack1 = ((stack1 = depth0.contract),stack1 == null || stack1 === false ? stack1 : stack1.exp)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</td>";
+  return buffer;
+  }
+
+function program25(depth0,data) {
+  
+  var buffer = "", stack1, stack2;
+  buffer += "<td><button class=\"btn btn-mini\" data-action=\"release\" data-player-id=\""
+    + escapeExpression(((stack1 = depth0.pid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\" data-player-name=\""
+    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\" data-contract-expiration=\""
+    + escapeExpression(((stack1 = ((stack1 = depth0.contract),stack1 == null || stack1 === false ? stack1 : stack1.exp)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\"";
+  stack2 = helpers.unless.call(depth0, depth0.canRelease, {hash:{},inverse:self.noop,fn:self.program(26, program26, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += ">Release</button></td><td><button class=\"btn btn-mini\" data-action=\"buyOut\" data-player-id=\""
+    + escapeExpression(((stack1 = depth0.pid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\" data-player-name=\""
+    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\" data-cash-owed=\""
+    + escapeExpression(helpers.round.call(depth0, depth0.cashOwed, 2, {hash:{},data:data}))
+    + "\"";
+  stack2 = helpers.unless.call(depth0, depth0.canBuyOut, {hash:{},inverse:self.noop,fn:self.program(26, program26, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += ">Buy out</button></td>";
+  return buffer;
+  }
+function program26(depth0,data) {
+  
+  
+  return " disabled=\"disabled\"";
+  }
+
+function program28(depth0,data,depth1,depth2) {
+  
+  var buffer = "", stack1;
+  buffer += "<td><form action=\"/l/"
+    + escapeExpression(((stack1 = depth2.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/trade\" method=\"POST\" style=\"margin: 0\"><input type=\"hidden\" name=\"pid\" value=\""
+    + escapeExpression(((stack1 = depth1.pid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\"><button type=\"submit\" class=\"btn btn-mini\">Trade For</button></form></td>";
+  return buffer;
+  }
+
+  buffer += "<form action=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/roster\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"roster-select-team\" name=\"team\" class=\"team\">\n    ";
+  stack2 = ((stack1 = ((stack1 = depth0.teams),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n  </select>\n  <select id=\"roster-select-season\" name=\"season\" class=\"season\">\n    ";
+  stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data}));
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n  </select>\n</form>\n\n<h1>"
+    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.region)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " "
+    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " Roster "
+    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
+    + "</h1>\n<p>More: <a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/team_finances/"
+    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">Finances</a> | <a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/game_log/"
+    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/"
+    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">Game Log</a></p>\n\n";
+  stack2 = helpers['if'].call(depth0, depth0.currentSeason, {hash:{},inverse:self.noop,fn:self.program(6, program6, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n\n";
+  stack2 = helpers['if'].call(depth0, depth0.sortable, {hash:{},inverse:self.noop,fn:self.program(8, program8, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n\n<p>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"roster\">\n<thead>\n  <tr>";
+  stack2 = helpers['if'].call(depth0, depth0.sortable, {hash:{},inverse:self.noop,fn:self.program(10, program10, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "<th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall Rating\">Ovr</th><th title=\"Potential Rating\">Pot</th>";
+  stack2 = helpers['if'].call(depth0, depth0.currentSeason, {hash:{},inverse:self.noop,fn:self.program(12, program12, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "<th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th>";
+  stack2 = helpers['if'].call(depth0, depth0.sortable, {hash:{},inverse:self.noop,fn:self.program(14, program14, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  stack2 = helpers['if'].call(depth0, depth0.showTradeFor, {hash:{},inverse:self.noop,fn:self.program(16, program16, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "</tr>\n</thead>\n<tbody>\n  ";
+  stack2 = ((stack1 = ((stack1 = depth0.players),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program18, data, depth0),data:data}));
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n</tbody>\n</table>\n</p>\n";
+  return buffer;
+  });
+templates['teamHistory'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
+helpers = helpers || Handlebars.helpers; data = data || {};
+  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
+
+function program1(depth0,data) {
+  
+  
+  return "None yet.";
+  }
+
+function program3(depth0,data,depth1) {
+  
+  var buffer = "", stack1, stack2;
+  buffer += "\n    <a href=\"/l/"
+    + escapeExpression(((stack1 = depth1.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/roster/"
+    + escapeExpression(((stack1 = depth1.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/"
+    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">"
+    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</a>: <a href=\"/l/"
+    + escapeExpression(((stack1 = depth1.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/standings/"
+    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">"
+    + escapeExpression(((stack1 = depth0.won),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "-"
+    + escapeExpression(((stack1 = depth0.lost),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</a>";
+  stack2 = helpers['if'].call(depth0, depth0.extraText, {hash:{},inverse:self.noop,fn:self.programWithDepth(program4, data, depth1),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "<br>\n  ";
+  return buffer;
+  }
+function program4(depth0,data,depth2) {
+  
+  var buffer = "", stack1;
+  buffer += ", <a href=\"/l/"
+    + escapeExpression(((stack1 = depth2.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/playoffs/"
+    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">"
+    + escapeExpression(((stack1 = depth0.extraText),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</a>";
+  return buffer;
+  }
+
+  buffer += "<h1>Team History "
+    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
+    + "</h1>\n\n<p>\n  ";
+  stack1 = helpers.unless.call(depth0, depth0.history, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n  ";
+  stack2 = ((stack1 = ((stack1 = depth0.history),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program3, data, depth0),data:data}));
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n</p>";
+  return buffer;
+  });
+templates['draft'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
+helpers = helpers || Handlebars.helpers; data = data || {};
+  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
+
+function program1(depth0,data) {
+  
+  
+  return " style=\"display: none;\"";
+  }
+
+function program3(depth0,data,depth1) {
+  
+  var buffer = "", stack1, stack2;
+  buffer += "\n        <tr id=\"undrafted-"
+    + escapeExpression(((stack1 = depth0.pid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\"><td>"
+    + escapeExpression(helpers.playerNameLabels.call(depth0, depth0.pid, depth0.name, depth0.injury, depth0.skills, {hash:{},data:data}))
+    + "</td><td>"
+    + escapeExpression(((stack1 = depth0.pos),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</td><td>"
+    + escapeExpression(((stack1 = depth0.age),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "<td>"
+    + escapeExpression(((stack1 = depth0.ovr),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</td><td>"
+    + escapeExpression(((stack1 = depth0.pot),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</td><td><button class=\"btn btn-mini btn-primary\" data-player-id=\""
+    + escapeExpression(((stack1 = depth0.pid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\"";
+  stack2 = helpers.unless.call(depth0, depth1.started, {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += ">Draft</button></td></tr>\n      ";
+  return buffer;
+  }
+function program4(depth0,data) {
+  
+  
+  return " disabled=\"disabled\"";
+  }
+
+function program6(depth0,data,depth1) {
+  
+  var buffer = "", stack1, stack2;
+  buffer += "\n        <tr><td>"
+    + escapeExpression(((stack1 = ((stack1 = depth0.draft),stack1 == null || stack1 === false ? stack1 : stack1.round)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "-"
+    + escapeExpression(((stack1 = ((stack1 = depth0.draft),stack1 == null || stack1 === false ? stack1 : stack1.pick)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</td><td><a href=\"/l/"
+    + escapeExpression(((stack1 = depth1.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/roster/"
+    + escapeExpression(((stack1 = ((stack1 = depth0.draft),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">"
+    + escapeExpression(((stack1 = ((stack1 = depth0.draft),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</a></td><td>";
+  stack2 = helpers['if'].call(depth0, depth0.injury, {hash:{},inverse:self.noop,fn:self.program(7, program7, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "</td><td>"
+    + escapeExpression(((stack1 = depth0.pos),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</td><td>"
+    + escapeExpression(((stack1 = depth0.age),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "<td>"
+    + escapeExpression(((stack1 = depth0.ovr),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</td><td>"
+    + escapeExpression(((stack1 = depth0.pot),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</td></tr>\n      ";
+  return buffer;
+  }
+function program7(depth0,data) {
+  
+  
+  return escapeExpression(helpers.playerNameLabels.call(depth0, depth0.pid, depth0.name, depth0.injury, depth0.skills, {hash:{},data:data}));
+  }
+
+  buffer += "<h1>Draft "
+    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
+    + "</h1>\n\n<p>When your turn in the draft comes up, select from the list of available players on the left.</p>\n\n<p";
+  stack1 = helpers['if'].call(depth0, depth0.started, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "><button class=\"btn btn-large btn-primary\" id=\"start-draft\">Start draft</button></p>\n\n<div class=\"row-fluid\">\n  <div class=\"span6\">\n    <h2>Undrafted Players</h2>\n    <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"undrafted\">\n    <thead>\n      <tr><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall rating\">Ovr</th><th title=\"Potential rating\">Pot</th><th>Draft</th></tr>\n    </thead>\n    <tbody>\n      ";
+  stack2 = ((stack1 = ((stack1 = depth0.undrafted),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program3, data, depth0),data:data}));
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n    </tbody>\n    </table>\n  </div>\n  <div class=\"span6\">\n    <h2>Draft Results</h2>\n    <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"drafted\">\n    <thead>\n      <tr><th>Pick</th><th>Team</th><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall rating\">Ovr</th><th title=\"Potential rating\">Pot</th></tr>\n    </thead>\n    <tbody>\n      ";
+  stack2 = ((stack1 = ((stack1 = depth0.drafted),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program6, data, depth0),data:data}));
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n    </tbody>\n    </table>\n  </div>\n</div>\n";
+  return buffer;
+  });
+templates['distPlayerStats'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
+helpers = helpers || Handlebars.helpers; data = data || {};
+  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, stack2;
+  buffer += "\n      <option value=\""
+    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\"";
+  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += ">"
+    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " season</option>\n    ";
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  
+  return " selected=\"selected\"";
+  }
+
+  buffer += "<form action=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/dist_player_stats\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"dist-player-stats-select-season\" name=\"season\" class=\"season\">\n    ";
+  stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n  </select>\n</form>\n\n<h1>Player Stat Distributions "
+    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
+    + "</h1>\n<p>More: <a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/player_stats\">Main Stats</a> | <a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/player_shot_locations\">Shot Locations</a></p>\n\n<p>These <a href=\"http://en.wikipedia.org/wiki/Box_plot\">box plots</a> show the league-wide distributions of player stats for all active players in the selected season. Black plots are for this league and blue plots are from the 2009-2010 NBA season, for comparison. NBA data was generously provided by <a href=\"http://www.databasebasketball.com/stats_download.htm\">databaseBasketball.com</a>. The five vertical lines in each plot represent the minimum of the scale, the minimum, the first <a href=\"http://en.wikipedia.org/wiki/Quartile\">quartile</a>, the median, the third quartile, the maximum, and the maximum of the scale.</p>\n\n<p>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" id=\"dist-player-stats\">\n  <tbody></tbody>\n</table>\n</p>\n";
   return buffer;
   });
 templates['player'] = template(function (Handlebars,depth0,helpers,partials,data) {
@@ -2963,56 +3011,12 @@ function program36(depth0,data) {
     + "</th></tr>\n  </tfoot>\n</table>";
   return buffer;
   });
-templates['deleteLeague'] = template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
-helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression;
-
-
-  buffer += "<h1>Delete League "
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "?</h1>\n\n<p>Are you <em>absolutely</em> sure you want to delete League "
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "? You will <em>permanently</em> lose any record of all "
-    + escapeExpression(((stack1 = depth0.numSeasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " seasons, "
-    + escapeExpression(helpers.numberWithCommas.call(depth0, depth0.numPlayers, {hash:{},data:data}))
-    + " players, and "
-    + escapeExpression(helpers.numberWithCommas.call(depth0, depth0.numGames, {hash:{},data:data}))
-    + " games from this league (well... unless you have backup somewhere).</p>\n\n<form action=\"/delete_league\" method=\"post\" style=\"float: left; margin-right: 1em\">\n  <input type=\"hidden\" name=\"lid\" value=\""
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">\n  <input type=\"hidden\" name=\"confirm\" value=\"1\">\n  <button class=\"btn btn-danger\">Yes, I am sure! Delete League "
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + ".</button>\n</form>\n<form action=\"/\" method=\"get\">\n  <button class=\"btn\">Cancel</button>\n</form>";
-  return buffer;
-  });
-templates['gameLog'] = template(function (Handlebars,depth0,helpers,partials,data) {
+templates['teamShotLocations'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
   var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
 
 function program1(depth0,data) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n      <option value=\""
-    + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"";
-  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">"
-    + escapeExpression(((stack1 = depth0.region),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " "
-    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</option>\n    ";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  
-  return " selected=\"selected\"";
-  }
-
-function program4(depth0,data) {
   
   var buffer = "", stack1, stack2;
   buffer += "\n      <option value=\""
@@ -3025,34 +3029,24 @@ function program4(depth0,data) {
     + " season</option>\n    ";
   return buffer;
   }
+function program2(depth0,data) {
+  
+  
+  return " selected=\"selected\"";
+  }
 
   buffer += "<form action=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/game_log\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"game-log-select-team\" name=\"team\" class=\"team\">\n    ";
-  stack2 = ((stack1 = ((stack1 = depth0.teams),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
+    + "/team_shot_locations\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"team-shot-locations-select-season\" name=\"season\" class=\"season\">\n    ";
+  stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </select>\n  <select id=\"game-log-select-season\" name=\"season\" class=\"season\">\n    ";
-  stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </select>\n</form>\n\n<h1>Game Log "
+  buffer += "\n  </select>\n</form>\n\n<h1>Team Shot Locations "
     + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
     + "</h1>\n<p>More: <a href=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/roster/"
-    + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/"
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">Roster</a> | <a href=\"/l/"
+    + "/team_stats\">Main Stats</a> | <a href=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/team_finances/"
-    + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">Finances</a></p>\n\n<p>\n<div class=\"row-fluid\">\n  <div class=\"span9\">\n    ";
-  stack2 = ((stack1 = depth0.boxScore),typeof stack1 === functionType ? stack1.apply(depth0) : stack1);
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </div>\n\n  <div class=\"span3\">\n    ";
-  stack2 = ((stack1 = depth0.gameLogList),typeof stack1 === functionType ? stack1.apply(depth0) : stack1);
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </div>\n</div>\n</p>\n";
+    + "/dist_team_stats\">Stat Distributions</a></p>\n\n<p class=\"clearfix\">\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"team-shot-locations\">\n<thead>\n  <tr><th colspan=\"4\"></th><th colspan=\"3\" style=\"text-align: center\" title=\"At Rim\">At Rim</th><th colspan=\"3\" style=\"text-align: center\" title=\"Low Post\">Low Post</th><th colspan=\"3\" style=\"text-align: center\" title=\"Mid-Range\">Mid-Range</th><th colspan=\"3\" style=\"text-align: center\" title=\"Three-Pointers\">3PT</th></tr>\n  <tr><th>Team</th><th title=\"Games Played\">GP</th><th title=\"Won\">W</th><th title=\"Lost\">L</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th></tr>\n</thead>\n</table>\n</p>";
   return buffer;
   });
 })();

@@ -375,9 +375,11 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
 
     function newPhasePreseason(cb) {
         db.setGameAttributes({season: g.season + 1}, function () {
-            var phaseText, tx;
+            var coachingRanks, phaseText, tx;
 
             phaseText = g.season + " preseason";
+
+            coachingRanks = [];
 
             tx = g.dbl.transaction(["players", "teams"], "readwrite");
 
@@ -388,6 +390,9 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                 cursor = event.target.result;
                 if (cursor) {
                     t = cursor.value;
+
+                    // Save the coaching rank for later
+                    coachingRanks[t.tid] = _.last(t.seasons).expenses.coaching.rank;
 
                     t = team.addSeasonRow(t);
                     t = team.addStatsRow(t);
@@ -405,7 +410,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
 
                             // Update ratings
                             p = player.addRatingsRow(p);
-                            p = player.develop(p);
+                            p = player.develop(p, 1, false, coachingRanks[p.tid]);
 
                             // Add row to player stats if they are on a team
                             if (p.tid >= 0) {

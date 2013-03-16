@@ -193,15 +193,17 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
      * 
      * @memberOf core.player
      * @param {Object} p Player object.
-     * @param {number} years Number of years to develop (default 1).
-     * @param {generate} generate Generating a new player? (default false). If true, then the player's age is also updated based on years.
+     * @param {number=} years Number of years to develop (default 1).
+     * @param {boolean=} generate Generating a new player? (default false). If true, then the player's age is also updated based on years.
+     * @param {number=} coachingRank From 1 to 30, where 1 is best coaching staff and 30 is worst. Default is 15.5
      * @return {Object} Updated player object.
      */
-    function develop(p, years, generate) {
+    function develop(p, years, generate, coachingRank) {
         var age, baseChange, i, j, ratingKeys, r, sigma;
 
         years = years !== undefined ? years : 1;
         generate = generate !== undefined ? generate : false;
+        coachingRank = coachingRank !== undefined ? coachingRank : 15.5;
 
         r = p.ratings.length - 1;
 
@@ -249,6 +251,9 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
             if (age > 33) {
                 baseChange -= 1;
             }
+
+            // Modulate by coaching
+            baseChange *= ((coachingRank - 1) * 0.5 / 29 + 0.75);
 
             ratingKeys = ['stre', 'spd', 'jmp', 'endu', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb'];
             for (j = 0; j < ratingKeys.length; j++) {

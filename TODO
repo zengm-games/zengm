@@ -31,7 +31,6 @@ knobs to control team finances
       minimum width for form column
   how should changes in budget effect things?
     performance is based on cumulative expense (this year) rank relative to other teams
-  post-revenue-calculation attendance should depend on ticket price. so should hype, but only slightly
   scouting budget - decrease "fuzz" added to displayed ratings
     fuzz
       for each player, calculate a randn(0, scoutingPaidRank/10) with max/min of +/- 5

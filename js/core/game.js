@@ -197,6 +197,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
 
                 // Attendance - final estimate
                 att = random.gauss(att, 1000);
+                att *= 37.5 / t.budget.ticketPrice.amount;  // Attendance depends on ticket price. Not sure if this formula is reasonable.
                 if (att > 25000) {
                     att = 25000;
                 } else if (att < 0) {

@@ -27,8 +27,7 @@ knobs to control team finances
   use an object to store budget items in database. it's too messy as is.
     any other db updates?
   team finances view
-    on POST
-        recalculate budget ranks (function in core.finances?)
+    have some indication of submitted/updated for form. otherwise it's hard to tell if it worked
     template
       handlebars helper for form DRY?
       minimum width for form column
@@ -36,7 +35,7 @@ knobs to control team finances
     expense and revenue rank updating should happen somewhere in core.game where all the teams are loaded already, if possible
   how should changes in budget effect things?
     performance is based on cumulative (this year) rank relative to other teams
-      have functions in core.finances to calculate and cache these ranks (also ticketPrice, pop, etc), so it can be done daily during the regular season, or when the user makes a change
+      have functions in core.finances (updateExpensesRevenuesRanks) to calculate and cache these ranks (also ticketPrice, pop, etc), so it can be done daily during the regular season, or when the user makes a change
   post-revenue-calculation attendance should depend on ticket price. so should hype, but only slightly
   scouting budget - decrease "fuzz" added to displayed ratings
     fuzz
@@ -52,6 +51,7 @@ knobs to control team finances
     base on population
   AI updating of *Budgets and ticket prices
     maybe not necessary at this stage?
+    call core.finances.updateBudgetRanks() after
 negotiation is annoying
   come up with an "anger meter" to display the odds of the player demanding more
     initialize with some value based on if it's a resigning or not, and wins the previous season

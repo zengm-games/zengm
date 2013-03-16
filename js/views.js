@@ -1,4 +1,4 @@
-define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "core/league", "core/season", "core/trade", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers"], function (api, db, g, ui, contractNegotiation, game, league, season, trade, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers) {
+define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances", "core/game", "core/league", "core/season", "core/trade", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers"], function (api, db, g, ui, contractNegotiation, finances, game, league, season, trade, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers) {
     "use strict";
 
     function initDb(req) {
@@ -964,7 +964,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
     function teamFinances(req) {
         viewHelpers.beforeLeague(req, function () {
-            var abbrev, out, show, shows, teams, tid;
+            var abbrev, out, show, shows, teams, tid, tx;
 
             show = req.params.show !== undefined ? req.params.show : "10";
             out = helpers.validateAbbrev(req.params.abbrev);
@@ -974,7 +974,8 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
             // First, handle any changes to the finances form
             if (req.method === "post") {
-                g.dbl.transaction("teams", "readwrite").objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
+                tx = g.dbl.transaction("teams", "readwrite");
+                tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
                     var budget, cursor, i, key, t;
 
                     cursor = event.target.result;
@@ -997,8 +998,11 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/game", "
 
                     cursor.update(t);
 
-                    return Davis.location.assign(new Davis.Request("/l/" + g.lid + "/team_finances"));
+                    finances.updateBudgetRanks(tx, function () {
+                        Davis.location.assign(new Davis.Request("/l/" + g.lid + "/team_finances"));
+                    });
                 };
+                return;
             }
 
             shows = [

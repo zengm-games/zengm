@@ -80,7 +80,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
 
             // Injury crap - assign injury type if player does not already have an injury in the database
             if (that.team[t].player[p].injured && player_.injury.type === "Healthy") {
-                player_.injury = player.injury();
+                player_.injury = player.injury(that.team[t].healthRank);
             } else if (player_.injury.gamesRemaining > 0) {
                 player_.injury.gamesRemaining -= 1;
             }
@@ -466,6 +466,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
                     t.lost = teamSeason.lost;
                     t.cid = team.cid;
                     t.did = team.did;
+                    t.healthRank = teamSeason.expenses.health.rank;
 
                     for (i = 0; i < players.length; i++) {
                         player = players[i];

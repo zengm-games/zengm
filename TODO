@@ -38,12 +38,10 @@ knobs to control team finances
       calculate a new one each year and add it to 1/2 of the previous one
       displayed "skills" should include fuzz. ones used in gameSim shouldn't.
   coaching budget - influence player development
-  health budget - influence injuries, both rate and severity (rate is defined in core.gameSim, severity is defined in core.player.injury)
+    this should be based on the total spent the previous season, right before player rating updates occur in transition to preseason phase
   facilities budget - influence free agent demeanor, player development
   stadium budget - influence attendance
   new phase updating of variables
-  initial values for *Budgets and ticket prices
-    base on population
   AI updating of *Budgets and ticket prices
     maybe not necessary at this stage?
     call core.finances.updateBudgetRanks() after

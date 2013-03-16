@@ -631,9 +631,12 @@ console.log(p.contract);
     /**
      * Pick injury type and duration.
      *
+     * This depends on core.data.injuries, health expenses, and randomness.
+     *
+     * @param {number} healthRank From 1-30, 1 if the player's team has the highest health spending this season and 30 if the player's team has the lowest.
      * @return {Object} Injury object (type and gamesRemaining)
      */
-    function injury() {
+    function injury(healthRank) {
         var gamesRemaining, i, rand, type;
 
         rand = random.uniform(0, 10882);
@@ -644,7 +647,7 @@ console.log(p.contract);
         }
         return {
             type: injuries.types[i],
-            gamesRemaining: Math.round(random.uniform(0.25, 1.75) * injuries.gamesRemainings[i])
+            gamesRemaining: Math.round(((healthRank - 1) / 29 + 0.5)  * random.uniform(0.25, 1.75) * injuries.gamesRemainings[i])
         };
     }
 

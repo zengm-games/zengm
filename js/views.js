@@ -998,7 +998,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
 
                     cursor.update(t);
 
-                    finances.updateBudgetRanks(tx, function () {
+                    finances.updateRanks(tx, ["budget"], function () {
                         Davis.location.assign(new Davis.Request("/l/" + g.lid + "/team_finances"));
                     });
                 };

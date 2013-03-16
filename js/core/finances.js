@@ -50,30 +50,79 @@ define(["db", "globals", "lib/underscore"], function (db, g, _) {
     }
 
     /**
-     * Update the rankings of team budgets.
+     * Update the rankings of team budgets, expenses, and revenue sources.
      *
-     * This should be called after *any* team updates *any* budget item.
+     * Budget ranks should be updated after *any* team updates *any* budget item.
+     * 
+     * Revenue and expenses ranks should be updated any time any revenue or expense occurs - so basically, after every game.
      *
      * @memberOf core.finances
-     * @param {IDBTransaction} tx An IndexedDB object store or transaction on teams readwrite.
-     * @param {function()} cb Callback function.
+     * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on teams, readwrite; if null is passed, then a new transaction will be used.
+     * @param {Array.<string>} type The types of ranks to update - some combination of "budget", "expenses", and "revenues"
+     * @param {function()=} cb Optional callback function.
      */
-    function updateBudgetRanks(tx, cb) {
-        tx.objectStore("teams").getAll().onsuccess = function (event) {
-            var budgetsByItem, budgetsByTeam, item, teams;
+    function updateRanks(ot, types, cb) {
+        var getByItem, sortFn, teamStore, updateObj;
+
+        sortFn = function (a, b) {
+            return b.amount - a.amount;
+        };
+
+        getByItem = function (byTeam) {
+            var byItem, item;
+            byItem = {};
+            for (item in byTeam[0]) {
+                if (byTeam[0].hasOwnProperty(item)) {
+                    byItem[item] = _.pluck(byTeam, item);
+                    byItem[item].sort(sortFn);
+                }
+            }
+            return byItem;
+        };
+
+        updateObj = function (obj, byItem) {
+            var i, item;
+            for (item in obj) {
+                if (obj.hasOwnProperty(item)) {
+                    for (i = 0; i < byItem[item].length; i++) {
+                        if (byItem[item][i].amount === obj[item].amount) {
+                            obj[item].rank = i + 1;
+                            break;
+                        }
+                    }
+                }
+            }
+        };
+
+        teamStore = db.getObjectStore(ot, "teams", "teams", true);
+
+        teamStore.getAll().onsuccess = function (event) {
+            var budgetsByItem, budgetsByTeam, expensesByItem, expensesByTeam, i, revenuesByItem, revenuesByTeam, s, teams;
 
             teams = event.target.result;
 
-            budgetsByTeam = _.pluck(teams, "budget");
-            budgetsByItem = {};
-            for (item in budgetsByTeam[0]) {
-                if (budgetsByTeam[0].hasOwnProperty(item)) {
-                    budgetsByItem[item] = _.pluck(budgetsByTeam, item);
-                    budgetsByItem[item].sort(function (a, b) { return b.amount - a.amount; });
+            if (types.indexOf("budget") >= 0) {
+                budgetsByTeam = _.pluck(teams, "budget");
+                budgetsByItem = getByItem(budgetsByTeam);
+            }
+            if (types.indexOf("expenses") >= 0) {
+                s = teams[0].seasons.length - 1;
+                expensesByTeam = [];
+                for (i = 0; i < teams.length; i++) {
+                    expensesByTeam[i] = teams[i].seasons[s].expenses;
                 }
+                expensesByItem = getByItem(expensesByTeam);
+            }
+            if (types.indexOf("revenues") >= 0) {
+                s = teams[0].seasons.length - 1;
+                revenuesByTeam = [];
+                for (i = 0; i < teams.length; i++) {
+                    revenuesByTeam[i] = teams[i].seasons[s].revenues;
+                }
+                revenuesByItem = getByItem(revenuesByTeam);
             }
 
-            tx.objectStore("teams").openCursor().onsuccess = function (event) {
+            teamStore.openCursor().onsuccess = function (event) {
                 var cursor, i, item, t;
 
                 cursor = event.target.result;
@@ -81,33 +130,27 @@ define(["db", "globals", "lib/underscore"], function (db, g, _) {
                 if (cursor) {
                     t = cursor.value;
 
-                    for (item in t.budget) {
-                        if (t.budget.hasOwnProperty(item)) {
-                            for (i = 0; i < budgetsByItem[item].length; i++) {
-                                if (budgetsByItem[item][i].amount === t.budget[item].amount) {
-                                    t.budget[item].rank = i + 1;
-                                    break;
-                                }
-                            }
-                        }
+                    if (types.indexOf("budget") >= 0) {
+                        updateObj(t.budget, budgetsByItem);
+                    }
+                    if (types.indexOf("expenses") >= 0) {
+                        updateObj(t.seasons[s].expenses, expensesByItem);
+                    }
+                    if (types.indexOf("revenues") >= 0) {
+                        updateObj(t.seasons[s].revenues, revenuesByItem);
                     }
 
                     cursor.update(t);
                     cursor.continue();
-                } else {
+                } else if (cb !== undefined) {
                     cb();
                 }
             };
         };
     }
 
-    function updateExpensesRevenuesRanks() {
-        
-    }
-
     return {
         assesPayrollMinLuxury: assesPayrollMinLuxury,
-        updateBudgetRanks: updateBudgetRanks,
-        updateExpensesRevenuesRanks: updateExpensesRevenuesRanks
+        updateRanks: updateRanks
     };
 });

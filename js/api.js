@@ -154,7 +154,7 @@ define(["db", "globals", "views", "ui", "core/draft", "core/game", "core/player"
     function rosterRelease(pid, cb) {
         var playerStore, transaction;
 
-        transaction = g.dbl.transaction(["players", "releasedPlayers"], "readwrite");
+        transaction = g.dbl.transaction(["players", "releasedPlayers", "teams"], "readwrite");
         playerStore = transaction.objectStore("players");
 
         playerStore.index("tid").count(g.userTid).onsuccess = function (event) {

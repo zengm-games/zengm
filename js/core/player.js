@@ -365,7 +365,7 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
                 baseMoods[i] += 0.2 * (1 - teams[i].seasons[s].pop / 10);
 
                 // Randomness
-                baseMoods[i] += random.gauss(0, 0.2);
+                baseMoods[i] += random.gauss(-0.1, 0.3);
 
                 if (baseMoods[i] > 1) {
                     baseMoods[i] = 1;
@@ -408,8 +408,6 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
             // The better a player is, the more moody he is
             return mood * (pr.ovr + pr.pot) / 200;
         });
-console.log(pr.ovr + " " + pr.pot);
-console.log(p.freeAgentMood);
 
         // During regular season, or before season starts, allow contracts for
         // just this year.
@@ -428,7 +426,7 @@ console.log(p.freeAgentMood);
      * This keeps track of what the player's current team owes him, and then calls player.addToFreeAgents.
      * 
      * @memberOf core.player
-     * @param {IDBTransaction} transaction An IndexedDB transaction on players and releasedPlayers, readwrite.
+     * @param {IDBTransaction} transaction An IndexedDB transaction on players, releasedPlayers, and teams, readwrite.
      * @param {Object} p Player object.
      * @param {function()} cb Callback function.
      */
@@ -440,7 +438,9 @@ console.log(p.freeAgentMood);
             contract: p.contract
         });
 
-        addToFreeAgents(transaction, p, g.phase, cb);
+        genBaseMoods(transaction, function (baseMoods) {
+            addToFreeAgents(transaction, p, g.phase, baseMoods, cb);
+        });
     }
 
     function genRatings(profile, baseRating, pot, season) {

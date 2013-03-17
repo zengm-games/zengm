@@ -2224,7 +2224,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                         } else if (p.freeAgentMood[g.userTid] < 0.75) {
                             player.mood = '<span class="text-warning"><b>Annoyed at you.</b></span>';
                         } else {
-                            player.mood = '<span class="text-error"><b>Insulted by your offers.</b></span>';
+                            player.mood = '<span class="text-error"><b>Insulted by your presence.</b></span>';
                         }
 
                         // Ratings

@@ -3,8 +3,14 @@ BEFORE 3.0.0-beta.2
 
 store "freeAgentMood" variable on scale of 0 to 1, replacing freeAgentTimesAsked
   should actually be a vector with a different value for every team
-  initialize with some value based on hype, population, and facilities
-    from 0 to 0.75 or something. values over 0.4 or something means the player won't even start a negotiation with you
+  initialize with some value based on hype, population, and facilities in player.addToFreeAgents
+    components
+      hype: 0.5 * (1 - hype)
+      facilities: mean of ranks last 2 seasons, scaled so that 0.1 is max
+      population: 0.2 * (1 - pop/10)
+      random.gauss(0, 0.2)
+    values over 0.4 or something means the player won't even start a negotiation with you
+    should these values from the teams object store be passed to player.addToFreeAgents, or generated inside there each time?
   players should have moods towards AI teams, which should affect their signings
 show cap space on free agents view
 move most db functions into core.whatever. db should just be about initializing/upgrading

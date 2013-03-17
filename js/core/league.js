@@ -36,7 +36,7 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/f
                 helpers.resetG();
 
                 db.setGameAttributes(gameAttributes, function () {
-                    var afterPlayerCreation, agingYears, baseRatings, contract, done, draftYear, goodNeutralBad, i, n, p, playerStore, pots, profile, profiles, randomizeExpiration, t, t2, teamStore, transaction;
+                    var afterPlayerCreation, agingYears, baseRatings, cbAfterEachPlayer, contract, draftYear, goodNeutralBad, i, n, numLeft, p, playerStore, pots, profile, profiles, randomizeExpiration, t, t2, teamStore, transaction;
 
                     // Probably is fastest to use this transaction for everything done to create a new league
                     transaction = g.dbl.transaction(["draftOrder", "players", "teams", "trade"], "readwrite");
@@ -77,6 +77,13 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/f
                         });
                     };
 
+                    cbAfterEachPlayer = function () {
+                        numLeft -= 1;
+                        if (numLeft === 0) {
+                            afterPlayerCreation();
+                        }
+                    };
+
                     if (playerGeneration === "nba2012") {
                         // Load players from file
                         $.getJSON("/data/nba2012.json", function (players) {
@@ -84,7 +91,7 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/f
 
                             playerStore = g.dbl.transaction("players", "readwrite").objectStore("players");  // Transaction used above is closed by now
 
-                            done = 0;
+                            numLeft = players.length;
                             for (i = 0; i < players.length; i++) {
                                 p = players[i];
                                 p.ratings[0].ovr = player.ovr(p.ratings[0]);
@@ -94,12 +101,12 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/f
                                 if (p.tid === g.PLAYER.FREE_AGENT) {
                                     p = player.setContract(p, player.genContract(p.ratings[0]), false);
                                 }
-                                db.putPlayer(playerStore, p, function () {
-                                    done += 1;
-                                    if (done === players.length) {
-                                        afterPlayerCreation();
-                                    }
-                                });
+
+                                if (p.tid === g.PLAYER.FREE_AGENT) {
+                                    player.addToFreeAgents(playerStore, p, null, cbAfterEachPlayer);
+                                } else {
+                                    db.putPlayer(playerStore, p, cbAfterEachPlayer);
+                                }
                             }
                         });
                     } else {
@@ -109,7 +116,7 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/f
                         baseRatings = [37, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 26, 26, 26];
                         pots = [75, 65, 55, 55, 60, 50, 70, 40, 55, 50, 60, 60, 45, 45];
 
-                        done = 0;
+                        numLeft = 33 * 14;
                         for (t = -3; t < 30; t++) {
                             // Create multiple "teams" worth of players for the free agent pool
                             if (t < 0) {
@@ -132,16 +139,15 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/f
                                 } else {
                                     p = player.bonus(p, 0, true);
                                 }
-                                if (t === -1) {  // Free agents
+                                if (t2 === g.PLAYER.FREE_AGENT) {  // Free agents
                                     p = player.bonus(p, -15, false);
                                 }
 
-                                db.putPlayer(playerStore, p, function () {
-                                    done += 1;
-                                    if (done === 31 * 14) {
-                                        afterPlayerCreation();
-                                    }
-                                });
+                                if (t2 === g.PLAYER.FREE_AGENT) {
+                                    player.addToFreeAgents(playerStore, p, null, cbAfterEachPlayer);
+                                } else {
+                                    db.putPlayer(playerStore, p, cbAfterEachPlayer);
+                                }
                             }
                         }
                     }

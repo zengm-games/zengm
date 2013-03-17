@@ -326,9 +326,7 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
      * Adds player to the free agents list.
      * 
      * This should be THE ONLY way that players are added to the free agents
-     * list, because this will also calculate their demanded contract. But
-     * currently, the free agents generated at the beginning of the game don't
-     * use this function.
+     * list, because this will also calculate their demanded contract and mood.
      * 
      * @memberOf core.player
      * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on players readwrite; if null is passed, then a new transaction will be used.
@@ -344,6 +342,7 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
         p = setContract(p, genContract(_.last(p.ratings)), false);
 
         p.freeAgentMood = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+console.log(p.freeAgentMood);
 
         // During regular season, or before season starts, allow contracts for
         // just this year.

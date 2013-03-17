@@ -2193,7 +2193,8 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                             if (freeAgents.refuseToNegotiate(p.contract.amount * 1000, p.freeAgentMood[g.userTid])) {
                                 negotiateButton = "Refuses!";
                             } else {
-                                negotiateButton = '<form action="/l/' + g.lid + '/negotiation/' + p.pid + '" method="POST" style="margin: 0"><input type="hidden" name="new" value="1"><button type="submit" class="btn btn-mini btn-primary">Negotiate</button></form>';
+                                // This can be a plain link because the negotiation has already been started at this point.
+                                negotiateButton = '<a href="/l/' + g.lid + '/negotiation/' + p.pid + '}" class="btn btn-mini btn-primary">Negotiate</a>';
                             }
                             return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, negotiateButton];
                         }));

@@ -323,6 +323,53 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
     }
 
     /**
+     * Calculates the base "mood" factor for any free agent towards a team.
+     *
+     * This base mood is then modulated for an individual player in addToFreeAgents.
+     * 
+     * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on teams; if null is passed, then a new transaction will be used.
+     * @return {function(Array.<number>)} Callback function whose argument is an array of base moods, one for each team.
+     */
+    function genBaseMoods(ot, cb) {
+        var teamStore, baseMoods;
+
+        baseMoods = [];
+
+        teamStore = db.getObjectStore(ot, "teams", "teams");
+        teamStore.getAll().onsuccess = function (event) {
+            var facilitiesRank, i, s, t, teams;
+
+            teams = event.target.result;
+
+            s = teams[0].seasons.length - 1;  // Most recent season index
+
+            for (i = 0; i < teams.length; i++) {
+                baseMoods[i] = 0;
+
+                // Hype
+                baseMoods[i] += 0.5 * (1 - teams[0].seasons[s].hype);
+
+                // Facilities
+                if (s > 1) {
+                    // Use three seasons if possible
+                    facilitiesRank = teams[0].seasons[s].expenses.facilities.rank + teams[0].seasons[s - 1].expenses.facilities.rank + teams[0].seasons[s - 2].expenses.facilities.rank;
+                } else if (s > 0) {
+                    // Use two seasons if possible
+                    facilitiesRank = teams[0].seasons[s].expenses.facilities.rank + teams[0].seasons[s - 1].expenses.facilities.rank;
+                } else {
+                    facilitiesRank = teams[0].seasons[s].expenses.facilities.rank;
+                }
+                baseMoods[i] += 0.1 * (1 - (facilitiesRank - 1) / 29);
+
+                // Population
+                baseMoods[i] += 0.2 * (1 - teams[0].seasons[s].pop / 10);
+            }
+
+            cb(baseMoods);
+        };
+    }
+
+    /**
      * Adds player to the free agents list.
      * 
      * This should be THE ONLY way that players are added to the free agents
@@ -366,7 +413,6 @@ console.log(p.freeAgentMood);
      * @param {function()} cb Callback function.
      */
     function release(transaction, p, cb) {
-console.log(p.contract);
         // Keep track of player salary even when he's off the team
         transaction.objectStore("releasedPlayers").add({
             pid: p.pid,
@@ -658,6 +704,7 @@ console.log(p.contract);
     return {
         addRatingsRow: addRatingsRow,
         addStatsRow: addStatsRow,
+        genBaseMoods: genBaseMoods,
         addToFreeAgents: addToFreeAgents,
         bonus: bonus,
         genContract: genContract,

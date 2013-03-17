@@ -1119,7 +1119,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
 
                             $("#help-payroll-limits").clickover({
                                 title: "Payroll Limits",
-                                content: "The salary cap is a soft cap, meaning that you can exceed it to resign your own players or to sign free agents to minimum contracts ($" + g.minContract + "/year); however, you cannot exceed the salary cap to sign a free agent for more than the minimum. Teams with payrolls below the minimum payroll limit will be assessed a fine equal to the difference at the end of the season. Teams with payrolls above the luxury tax limit will be assessed a fine equal to " + g.luxuryTax + " times the difference at the end of the season"
+                                content: "The salary cap is a soft cap, meaning that you can exceed it to resign your own players or to sign free agents to minimum contracts ($" + g.minContract + "k/year); however, you cannot exceed the salary cap to sign a free agent for more than the minimum. Teams with payrolls below the minimum payroll limit will be assessed a fine equal to the difference at the end of the season. Teams with payrolls above the luxury tax limit will be assessed a fine equal to " + g.luxuryTax + " times the difference at the end of the season."
                             });
 
                             $("#help-hype").clickover({
@@ -1264,36 +1264,51 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                 return;
             }
 
-            g.dbl.transaction("players").objectStore("players").index("tid").getAll(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
-                var attributes, data, i, players, ratings, stats;
+            db.getPayroll(null, g.userTid, function (payroll, contracts) {
+                var capSpace;
 
-                attributes = ["pid", "name", "pos", "age", "contract", "freeAgentMood", "injury"];
-                ratings = ["ovr", "pot", "skills"];
-                stats = ["min", "pts", "trb", "ast", "per"];
-
-                players = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings, {oldStats: true, showNoStats: true});
-
-                for (i = 0; i < players.length; i++) {
-                    players[i].contract.amount = freeAgents.amountWithMood(players[i].contract.amount, players[i].freeAgentMood[g.userTid]);
-                    delete players[i].freeAgentMood;
+                capSpace = (g.salaryCap - payroll) / 1000;
+                if (capSpace < 0) {
+                    capSpace = 0;
                 }
 
-                data = {
-                    container: "league_content",
-                    template: "freeAgents",
-                    title: "Free Agents",
-                    vars: {}
-                };
-                ui.update(data, function () {
-                    ui.datatable($("#free-agents"), 4, _.map(players, function (p) {
-                        return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, '<form action="/l/' + g.lid + '/negotiation/' + p.pid + '" method="POST" style="margin: 0"><input type="hidden" name="new" value="1"><button type="submit" class="btn btn-mini btn-primary">Negotiate</button></form>'];
-                    }));
+                g.dbl.transaction("players").objectStore("players").index("tid").getAll(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
+                    var attributes, data, i, players, ratings, stats;
 
-                    if (req.raw.cb !== undefined) {
-                        req.raw.cb();
+                    attributes = ["pid", "name", "pos", "age", "contract", "freeAgentMood", "injury"];
+                    ratings = ["ovr", "pot", "skills"];
+                    stats = ["min", "pts", "trb", "ast", "per"];
+
+                    players = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings, {oldStats: true, showNoStats: true});
+
+                    for (i = 0; i < players.length; i++) {
+                        players[i].contract.amount = freeAgents.amountWithMood(players[i].contract.amount, players[i].freeAgentMood[g.userTid]);
+                        delete players[i].freeAgentMood;
                     }
-                });
-            };
+
+                    data = {
+                        container: "league_content",
+                        template: "freeAgents",
+                        title: "Free Agents",
+                        vars: {capSpace: capSpace}
+                    };
+                    ui.update(data, function () {
+                        ui.datatable($("#free-agents"), 4, _.map(players, function (p) {
+                            return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, '<form action="/l/' + g.lid + '/negotiation/' + p.pid + '" method="POST" style="margin: 0"><input type="hidden" name="new" value="1"><button type="submit" class="btn btn-mini btn-primary">Negotiate</button></form>'];
+                        }));
+
+                        $("#help-salary-cap").clickover({
+                            title: "Cap Space",
+                            html: true,
+                            content: "<p>\"Cap space\" is the difference between your current payroll and the salary cap. You can sign a free agent to any valid contract as long as you don't go over the cap.</p>You can only exceed the salary cap to sign free agents to minimum contracts ($" + g.minContract + "k/year)."
+                        });
+
+                        if (req.raw.cb !== undefined) {
+                            req.raw.cb();
+                        }
+                    });
+                };
+            });
         });
     }
 

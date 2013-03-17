@@ -221,7 +221,9 @@ helpers = helpers || Handlebars.helpers; data = data || {};
 
   buffer += "<h1>Free Agents "
     + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"free-agents\">\n<thead>\n  <tr><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall\">Ovr</th><th title=\"Potential\">Pot</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th><th>Asking for</th><th>Negotiate</th></tr>\n</thead>\n</table>\n";
+    + "</h1>\n\n<p>You currently have <strong>$"
+    + escapeExpression(helpers.round.call(depth0, depth0.capSpace, {hash:{},data:data}))
+    + "M</strong> in cap space. <i class=\"icon-question-sign\" id=\"help-salary-cap\" data-placement=\"bottom\"></i></p>\n\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"free-agents\">\n<thead>\n  <tr><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall\">Ovr</th><th title=\"Potential\">Pot</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th><th>Asking for</th><th>Negotiate</th></tr>\n</thead>\n</table>\n";
   return buffer;
   });
 templates['leaders'] = template(function (Handlebars,depth0,helpers,partials,data) {
@@ -2031,21 +2033,21 @@ function program6(depth0,data) {
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "/game_log/"
     + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">Game Log</a></p>\n\n<p class=\"clearfix\">The current payroll (<strong>$"
-    + escapeExpression(helpers.round.call(depth0, depth0.payroll, {hash:{},data:data}))
-    + "M</strong>) is "
+    + "\">Game Log</a></p>\n\n<p class=\"clearfix\">The current payroll (<strong>"
+    + escapeExpression(helpers.currency.call(depth0, depth0.payroll, "M", {hash:{},data:data}))
+    + "</strong>) is "
     + escapeExpression(((stack1 = ((stack1 = depth0.aboveBelow),stack1 == null || stack1 === false ? stack1 : stack1.minPayroll)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " the minimum payroll limit (<strong>$"
-    + escapeExpression(helpers.round.call(depth0, depth0.minPayroll, {hash:{},data:data}))
-    + "M</strong>), "
+    + " the minimum payroll limit (<strong>"
+    + escapeExpression(helpers.currency.call(depth0, depth0.minPayroll, "M", {hash:{},data:data}))
+    + "</strong>), "
     + escapeExpression(((stack1 = ((stack1 = depth0.aboveBelow),stack1 == null || stack1 === false ? stack1 : stack1.salaryCap)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " the salary cap (<strong>$"
-    + escapeExpression(helpers.round.call(depth0, depth0.salaryCap, {hash:{},data:data}))
-    + "M</strong>), and "
+    + " the salary cap (<strong>"
+    + escapeExpression(helpers.currency.call(depth0, depth0.salaryCap, "M", {hash:{},data:data}))
+    + "</strong>), and "
     + escapeExpression(((stack1 = ((stack1 = depth0.aboveBelow),stack1 == null || stack1 === false ? stack1 : stack1.luxuryPayroll)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " the luxury tax limit (<strong>$"
-    + escapeExpression(helpers.round.call(depth0, depth0.luxuryPayroll, {hash:{},data:data}))
-    + "M</strong>). <i class=\"icon-question-sign\" id=\"help-payroll-limits\" data-placement=\"bottom\"></i></p>\n\n<div class=\"row-fluid\">\n  <div class=\"span2\">\n    <h4>Wins</h4>\n    <div id=\"bar-graph-won\" class=\"bar-graph-small\"></div><br><br>\n    <span class=\"clickover\"><h4>Hype <i class=\"icon-question-sign\" id=\"help-hype\" data-placement=\"right\"></i></h4></span>\n    <div id=\"bar-graph-hype\" class=\"bar-graph-small\"></div><br><br>\n    <h4>Region Population</h4>\n    <div id=\"bar-graph-pop\" class=\"bar-graph-small\"></div><br><br>\n    <h4>Average Attendance</h4>\n    <div id=\"bar-graph-att\" class=\"bar-graph-small\"></div>\n  </div>\n  <div class=\"span4\">\n    <div class=\"row-fluid\">\n      <h4>Revenue</h4>\n      <div id=\"bar-graph-revenue\" class=\"bar-graph-large\"></div><br><br>\n      <h4>Expenses</h4>\n      <div id=\"bar-graph-expenses\" class=\"bar-graph-large\"></div><br><br>\n      <h4>Cash</h4>\n      <div id=\"bar-graph-cash\" class=\"bar-graph-medium\"></div>\n    </div>\n  </div>\n  <div class=\"span6\">\n    <form action=\"/l/"
+    + " the luxury tax limit (<strong>"
+    + escapeExpression(helpers.currency.call(depth0, depth0.luxuryPayroll, "M", {hash:{},data:data}))
+    + "</strong>). <i class=\"icon-question-sign\" id=\"help-payroll-limits\" data-placement=\"bottom\"></i></p>\n\n<div class=\"row-fluid\">\n  <div class=\"span2\">\n    <h4>Wins</h4>\n    <div id=\"bar-graph-won\" class=\"bar-graph-small\"></div><br><br>\n    <span class=\"clickover\"><h4>Hype <i class=\"icon-question-sign\" id=\"help-hype\" data-placement=\"right\"></i></h4></span>\n    <div id=\"bar-graph-hype\" class=\"bar-graph-small\"></div><br><br>\n    <h4>Region Population</h4>\n    <div id=\"bar-graph-pop\" class=\"bar-graph-small\"></div><br><br>\n    <h4>Average Attendance</h4>\n    <div id=\"bar-graph-att\" class=\"bar-graph-small\"></div>\n  </div>\n  <div class=\"span4\">\n    <div class=\"row-fluid\">\n      <h4>Revenue</h4>\n      <div id=\"bar-graph-revenue\" class=\"bar-graph-large\"></div><br><br>\n      <h4>Expenses</h4>\n      <div id=\"bar-graph-expenses\" class=\"bar-graph-large\"></div><br><br>\n      <h4>Cash</h4>\n      <div id=\"bar-graph-cash\" class=\"bar-graph-medium\"></div>\n    </div>\n  </div>\n  <div class=\"span6\">\n    <form action=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "/team_finances\" method=\"POST\" id=\"finances-settings\">\n      ";
   stack2 = helpers['with'].call(depth0, depth0.team, {hash:{},inverse:self.noop,fn:self.program(6, program6, data),data:data});

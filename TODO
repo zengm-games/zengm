@@ -30,14 +30,14 @@ knobs to control team finances
     have some indication of submitted/updated for form. otherwise it's hard to tell if it worked
     template: handlebars helper for form DRY?
   scouting budget - decrease "fuzz" added to displayed ratings
+    use core.finances.getRankLastThree
     fuzz
       for each player, calculate a randn(0, scoutingPaidRank/10) with max/min of +/- 5
       calculate a new one each year and add it to 1/2 of the previous one
       displayed "skills" should include fuzz. ones used in gameSim shouldn't.
-    should these things be functions of the past two seasons, maybe? see core.player.genBaseMoods, maybe abstract that
   facilities budget
+    use core.finances.getRankLastThree
     influence attendance
-    should these things be functions of the past two seasons, maybe? see core.player.genBaseMoods, maybe abstract that
 make sure finances are reasonable
 
 DATABASE CHANGES since 3.0.0-beta

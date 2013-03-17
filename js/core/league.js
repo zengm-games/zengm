@@ -63,7 +63,6 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/f
                     player.genBaseMoods(transaction, function (baseMoods) {
                         var afterPlayerCreation, agingYears, baseRatings, cbAfterEachPlayer, contract, draftYear, goodNeutralBad, n, numLeft, p, playerStore, pots, profile, profiles, randomizeExpiration, t, t2;
 
-console.log(baseMoods);
                         // This can't be in transaction.oncomplete because loading players from a json file is async and breaks the transaction.
                         afterPlayerCreation = function () {
                             // Make schedule, start season

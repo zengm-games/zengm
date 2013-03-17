@@ -149,8 +149,35 @@ define(["db", "globals", "lib/underscore"], function (db, g, _) {
         };
     }
 
+    /**
+     * Gets the rank of some financial thing over the past 3 seasons, if available.
+     *
+     * If only 1 or 2 seasons are available, assume 15.5 (average) for the other seasons
+     * 
+     * @param {Object} t Team object
+     * @param {string} category Currently either "expenses" or "revenues", but could be extended to allow "budget" if needed.
+     * @param {string} item Item inside the category
+     * @return {number} Rank, from 1 to 30
+     */
+    function getRankLastThree(t, category, item) {
+        var s;
+
+        s = t.seasons.length - 1;  // Most recent season index
+
+        if (s > 1) {
+            // Use three seasons if possible
+            return (t.seasons[s][category][item].rank + t.seasons[s - 1][category][item].rank + t.seasons[s - 2][category][item].rank) / 3;
+        }
+        if (s > 0) {
+            // Use two seasons if possible
+            return (t.seasons[s][category][item].rank + t.seasons[s - 1][category][item].rank + 15.5) / 3;
+        }
+        return (t.seasons[s][category][item].rank + 15.5 + 15.5) / 3;
+    }
+
     return {
         assesPayrollMinLuxury: assesPayrollMinLuxury,
-        updateRanks: updateRanks
+        updateRanks: updateRanks,
+        getRankLastThree: getRankLastThree
     };
 });

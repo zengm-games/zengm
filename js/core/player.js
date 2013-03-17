@@ -2,7 +2,7 @@
  * @name core.player
  * @namespace Functions operating on player objects, or parts of player objects.
  */
-define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/underscore", "util/random"], function (db, g, injuries, names, faces, _, random) {
+define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/faces", "lib/underscore", "util/random"], function (db, g, finances, injuries, names, faces, _, random) {
     "use strict";
 
     /**
@@ -337,7 +337,7 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
 
         teamStore = db.getObjectStore(ot, "teams", "teams");
         teamStore.getAll().onsuccess = function (event) {
-            var facilitiesRank, i, s, t, teams;
+            var facilitiesRank, i, s, teams;
 
             teams = event.target.result;
 
@@ -350,16 +350,7 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
                 baseMoods[i] += 0.5 * (1 - teams[i].seasons[s].hype);
 
                 // Facilities
-                if (s > 1) {
-                    // Use three seasons if possible
-                    facilitiesRank = teams[i].seasons[s].expenses.facilities.rank + teams[i].seasons[s - 1].expenses.facilities.rank + teams[i].seasons[s - 2].expenses.facilities.rank;
-                } else if (s > 0) {
-                    // Use two seasons if possible
-                    facilitiesRank = teams[i].seasons[s].expenses.facilities.rank + teams[i].seasons[s - 1].expenses.facilities.rank;
-                } else {
-                    facilitiesRank = teams[i].seasons[s].expenses.facilities.rank;
-                }
-                baseMoods[i] += 0.1 * (1 - (facilitiesRank - 1) / 29);
+                baseMoods[i] += 0.1 * (1 - (finances.getRankLastThree(teams[i], "expenses", "facilities") - 1) / 29);
 
                 // Population
                 baseMoods[i] += 0.2 * (1 - teams[i].seasons[s].pop / 10);

@@ -181,7 +181,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
                 localTvRevenue = 0;
                 if (!that.playoffs) {
                     // All in [thousands of dollars]
-                    salaryPaid = payroll / 82;  
+                    salaryPaid = payroll / 82;
                     scoutingPaid = t.budget.scouting.amount / 82;
                     coachingPaid = t.budget.coaching.amount / 82;
                     healthPaid = t.budget.health.amount / 82;
@@ -196,6 +196,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
                 // Attendance - final estimate
                 att = random.gauss(att, 1000);
                 att *= 37.5 / t.budget.ticketPrice.amount;  // Attendance depends on ticket price. Not sure if this formula is reasonable.
+                att *= 1 + 0.075 * (30 - finances.getRankLastThree(t, "expenses", "facilities")) / 29;  // Attendance depends on facilities. Not sure if this formula is reasonable.
                 if (att > 25000) {
                     att = 25000;
                 } else if (att < 0) {

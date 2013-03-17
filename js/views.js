@@ -974,6 +974,8 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
 
             // First, handle any changes to the finances form
             if (req.method === "post") {
+                $("#finances-settings button").attr("disabled", "disabled").html("Saving...");
+
                 tx = g.dbl.transaction("teams", "readwrite");
                 tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
                     var budget, cursor, i, key, t;

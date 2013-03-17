@@ -3,7 +3,8 @@ BEFORE 3.0.0-beta.2
 
 contractNegotiation
   if a player originally wants $1m/year, and the team pisses him off with bad offers but then offers him $3m/year, he should accept that
-  how to determine if a player won't even talk to a team? should only be for elite players
+    basically.. player demand should also depend on original amount
+  how to determine if a player won't even talk to a team? should only be for elite players. maybe.. mood * contractAmount > 13000
 db version upgrades
   see https://github.com/superfeedr/indexeddb-backbonejs-adapter/blob/master/backbone-indexeddb.js
 how to deal with a team that drops below 5 active players, factoring in injuries?
@@ -26,9 +27,7 @@ update formulas
     for now, just make it a function of attendance
     eventually, t.seasons[0].tvContract
 knobs to control team finances
-  team finances view
-    have some indication of submitted/updated for form. otherwise it's hard to tell if it worked
-    template: handlebars helper for form DRY?
+  team finances template: handlebars helper for form DRY?
   scouting budget - decrease "fuzz" added to displayed ratings
     use core.finances.getRankLastThree
     fuzz

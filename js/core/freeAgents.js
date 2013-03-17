@@ -159,7 +159,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
      * @return {number} Contract amoung adjusted for mood.
      */
     function amountWithMood(amount, mood) {
-        amount *= 1 + mood / 3;
+        amount *= 1 + 0.2 * mood;
         if (amount >= g.minContract) {
             return helpers.round(amount / 10) * 10;  // Round to nearest 10k, assuming units are thousands
         }

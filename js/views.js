@@ -2210,18 +2210,27 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                         negotiation.player.expiration -= 1;
                     }
 
-                    g.dbl.transaction(["players"]).objectStore("players").get(pid).onsuccess = function (event) {
-                        var data, j, pa, payroll, player, pr, team, teams;
+                    g.dbl.transaction("players").objectStore("players").get(pid).onsuccess = function (event) {
+                        var data, j, p, payroll, player, pr, team, teams;
 
-                        pa = event.target.result;
+                        p = event.target.result;
 
                         // Attributes
-                        player = {pid: pid, name: pa.name};
+                        player = {pid: pid, name: p.name};
+                        if (p.freeAgentMood[g.userTid] < 0.25) {
+                            player.mood = '<span class="text-success"><b>Eager to reach an agreement.</b></span>';
+                        } else if (p.freeAgentMood[g.userTid] < 0.5) {
+                            player.mood = '<b>Willing to sign for the right price.</b>';
+                        } else if (p.freeAgentMood[g.userTid] < 0.75) {
+                            player.mood = '<span class="text-warning"><b>Growing annoyed with the prolonged negotiations.</b></span>';
+                        } else {
+                            player.mood = '<span class="text-error"><b>Insulted by your negotiating tactics.</b></span>';
+                        }
 
                         // Ratings
-                        for (j = 0; j < pa.ratings.length; j++) {
-                            if (pa.ratings[j].season === g.season) {
-                                pr = pa.ratings[j];
+                        for (j = 0; j < p.ratings.length; j++) {
+                            if (p.ratings[j].season === g.season) {
+                                pr = p.ratings[j];
                                 break;
                             }
                         }

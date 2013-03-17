@@ -155,6 +155,9 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/helpers",
 
             mood = p.freeAgentMood[g.userTid];
             p.freeAgentMood[g.userTid] += random.uniform(0, 0.15);
+            if (p.freeAgentMood[g.userTid] > 1) {
+                p.freeAgentMood[g.userTid] = 1;
+            }
 
             cursor.update(p);
 

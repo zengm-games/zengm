@@ -164,31 +164,20 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/helpers",
             tx.objectStore("negotiations").openCursor(pid).onsuccess = function (event) {
                 var cursor, diffPlayerOrig, diffTeamOrig, negotiation;
 
-console.log(mood);
                 cursor = event.target.result;
                 negotiation = cursor.value;
 
                 // Player responds based on their mood
-                if (mood < 0.25) {
-
-                } else if (mood < 0.5) {
-
-                } else if (mood < 0.75) {
-
-                } else {
-
-                }
-
                 if (negotiation.orig.amount >= 18000) {
                     // Expensive guys don't negotiate
-                    negotiation.player.amount *= 1;
+                    negotiation.player.amount *= 1 + 0.05 * mood;
                 } else {
                     if (teamYears === negotiation.player.years) {
                         // Team and player agree on years, so just update amount
                         if (teamAmount > negotiation.player.amount) {
                             negotiation.player.amount = teamAmount;
                         } else if (teamAmount > 0.7 * negotiation.player.amount) {
-                            negotiation.player.amount = 0.5 * negotiation.player.amount + 0.5 * teamAmount;
+                            negotiation.player.amount = (0.5 * (1 + mood)) * negotiation.player.amount + (0.5 * (1 - mood)) * teamAmount;
                         } else {
                             negotiation.player.amount *= 1.05;
                         }
@@ -210,7 +199,7 @@ console.log(mood);
                         if (teamAmount > negotiation.player.amount) {
                             negotiation.player.amount = teamAmount;
                         } else if (teamAmount > 0.85 * negotiation.player.amount) {
-                            negotiation.player.amount = 0.5 * negotiation.player.amount + 0.5 * teamAmount;
+                            negotiation.player.amount = (0.5 * (1 + mood)) * negotiation.player.amount + (0.5 * (1 - mood)) * teamAmount;
                         } else {
                             negotiation.player.amount *= 1.05;
                         }
@@ -233,6 +222,11 @@ console.log(mood);
                         } else {
                             negotiation.player.amount *= 1.15;
                         }
+                    }
+
+                    // General punishment from angry players
+                    if (mood > 0.25) {
+                        negotiation.player.amount *= 1 + 0.1 * mood;
                     }
                 }
 
@@ -316,13 +310,13 @@ console.log(mood);
             db.getPayroll(null, g.userTid, function (payroll) {
                 var tx;
 
-                if (!negotiation.resigning && (payroll + negotiation.playerAmount > g.salaryCap && negotiation.playerAmount !== 500)) {
+                if (!negotiation.resigning && (payroll + negotiation.player.amount > g.salaryCap && negotiation.player.amount !== 500)) {
                     return cb("This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract, buy out a player currently on your roster, or cancel the negotiation.");
                 }
 
                 // Adjust to account for in-season signings;
                 if (g.phase <= g.PHASE.AFTER_TRADE_DEADLINE) {
-                    negotiation.playerYears -= 1;
+                    negotiation.player.years -= 1;
                 }
 
     /*            r = g.dbex("SELECT MAX(rosterOrder) + 1 FROM playerAttributes WHERE tid = :tid", tid = g.userTid);
@@ -341,8 +335,8 @@ console.log(mood);
                         p = player.addStatsRow(p);
                     }
                     p = player.setContract(p, {
-                        amount: negotiation.playerAmount,
-                        exp: g.season + negotiation.playerYears
+                        amount: negotiation.player.amount,
+                        exp: g.season + negotiation.player.years
                     }, true);
 
                     cursor.update(p);

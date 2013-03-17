@@ -14,6 +14,7 @@ This is a list of only the major changes in each version.
 - Different population sizes for different regions, which influences revenue and thus game difficulty
 - Awards and salaries from previous seasons displayed in player view
 - Many small bug fixes and UI improvements
+- More sane and less adversarial contract negotiations, with more direct feedback about what the player is thinking
 
 ### Still in progress
 

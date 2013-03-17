@@ -1124,7 +1124,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
 
                             $("#help-hype").clickover({
                                 title: "Hype",
-                                content: "\"Hype\" refers to fans' interest in your team. For instance, if your team is improving or you signed a big name free agent or you drafted a popular prospect, then hype increases; if your team is losing or stagnating or you traded away a popular veteran, then hype decreases. The more hype your team has, the more revenue it generates."
+                                content: "\"Hype\" refers to fans' interest in your team. For instance, if your team is improving or you signed a big name free agent or you drafted a popular prospect, then hype increases; if your team is losing or stagnating or you traded away a popular veteran, then hype decreases. Hype influences attendance, various revenue sources such as mercahndising, and the attitude players have towards your organization."
                             });
 
                             $("#help-revenue-settings").clickover({
@@ -1135,7 +1135,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                             $("#help-expense-settings").clickover({
                                 title: "Expense Settings",
                                 html: true,
-                                content: "<p>Scouting: Controls the accuracy of displayed player ratings.<p></p>Coaching: Better coaches mean better player development.</p><p>Health: A good team of doctors speeds recovery from injuries.</p>Facilities: Better training facilities make your players happer, and stadium renovations increase attendance."
+                                content: "<p>Scouting: Controls the accuracy of displayed player ratings.<p></p>Coaching: Better coaches mean better player development.</p><p>Health: A good team of doctors speeds recovery from injuries.</p>Facilities: Better training facilities make your players happier and other players envious; stadium renovations increase attendance."
                             });
 
                             $.barGraph($("#bar-graph-won"), barData.won, [0, 82], barSeasons);

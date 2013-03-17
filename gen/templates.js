@@ -1594,8 +1594,8 @@ function program3(depth0,data) {
   buffer += "<h1>Contract Negotiation "
     + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
     + "</h1>\n\n";
-  stack1 = helpers['if'].call(depth0, depth0.resigning, {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
+  stack2 = helpers['if'].call(depth0, ((stack1 = depth0.negotiation),stack1 == null || stack1 === false ? stack1 : stack1.resigning), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "\n\n<div class=\"row-fluid\">\n  <div class=\"span6\">\n    <h2>"
     + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.region)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + " "

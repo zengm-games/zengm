@@ -1,6 +1,6 @@
 <h1>Contract Negotiation {{new_window}}</h1>
 
-{{#if resigning}}
+{{#if negotiation.resigning}}
   <p>You are allowed to go over the salary cap to make this deal because you are resigning <a href="/l/{{lid}}/player/{{player.pid}}">{{player.name}}</a> to a contract extension. <strong>If you do not come to an agreement here, <a href="/l/{{lid}}/player/{{player.pid}}">{{player.name}}</a> will become a free agent.</strong> He will then be able to sign with any team, and you won't be able to go over the salary cap to sign him.</p>
 {{else}}
   <p>You are not allowed to go over the salary cap to make this deal because <a href="/l/{{lid}}/player/{{player.pid}}">{{player.name}}</a> is a free agent.</p>

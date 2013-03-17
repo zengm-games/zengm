@@ -2,7 +2,6 @@ BEFORE 3.0.0-beta.2
 -------------------
 
 contractNegotiation
-  "You are not allowed to go over the salary cap to make this deal because"... is wrong. should instead say that if you end negotiation, he becomes free agent
   shouldn't be able to start negotiation with GET, as it was before this commit in the negotiations list
   if a player originally wants $1m/year, and the team pisses him off with bad offers but then offers him $3m/year, he should accept that
     basically.. player demand should also depend on original amount. same with compromising half way.. should be relative to original amount and years deviation?

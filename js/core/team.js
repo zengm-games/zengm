@@ -49,53 +49,53 @@ define(["globals", "util/helpers", "util/random"], function (g, helpers, random)
             revenues: {
                 merch: {
                     amount: 0,
-                    rank: 0
+                    rank: 15.5
                 },
                 sponsor: {
                     amount: 0,
-                    rank: 0
+                    rank: 15.5
                 },
                 ticket: {
                     amount: 0,
-                    rank: 0
+                    rank: 15.5
                 },
                 nationalTv: {
                     amount: 0,
-                    rank: 0
+                    rank: 15.5
                 },
                 localTv: {
                     amount: 0,
-                    rank: 0
+                    rank: 15.5
                 }
             },
             expenses: {
                 salary: {
                     amount: 0,
-                    rank: 0
+                    rank: 15.5
                 },
                 luxuryTax: {
                     amount: 0,
-                    rank: 0
+                    rank: 15.5
                 },
                 minTax: {
                     amount: 0,
-                    rank: 0
+                    rank: 15.5
                 },
                 scouting: {
                     amount: 0,
-                    rank: 0
+                    rank: 15.5
                 },
                 coaching: {
                     amount: 0,
-                    rank: 0
+                    rank: 15.5
                 },
                 health: {
                     amount: 0,
-                    rank: 0
+                    rank: 15.5
                 },
                 facilities: {
                     amount: 0,
-                    rank: 0
+                    rank: 15.5
                 }
             },
             payrollEndOfSeason: -1

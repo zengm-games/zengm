@@ -76,16 +76,16 @@ ul.dashboard_league li.dashboard_league_new h2 {
   padding: 9px 0;
 }
 
-#contentwrapper{
+#contentwrapper {
   float: left;
   width: 100%;
 }
-#league_content{
- margin-left: 145px; /*Set left margin to LeftColumnWidth*/
+#league_content {
+ margin-left: 145px;
 }
-#league_menu{
+#league_menu {
   float: left;
-  width: 125px; /*Width of left column*/
+  width: 125px;
   margin-left: -100%;
 }
 
@@ -254,7 +254,7 @@ select.past-x {
   height: 60px;
 }
 .bar-graph-large {
-  height: 80px;
+  height: 100px;
 }
 
 /* From bootstrap */

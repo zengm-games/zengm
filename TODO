@@ -1,6 +1,19 @@
 BEFORE 3.0.0-beta.2
 -------------------
 
+negotiation is annoying
+  store "mood" variable on scale of 0 to 1, replacing freeAgentTimesAsked
+    should actually be a vector with a different value for every team
+    come up with a formula linking it to contract demand
+  come up with a "mood meter" to display the odds of the player demanding more
+    initialize with some value based on if it's a resigning or not, wins the previous season, population, and facilities
+    possible mood values:
+      Eager to reach an agreement.
+      Willing to sign for the right price.
+      Growing annoyed with the prolonged negotiations.
+      Insulted by your contract offer.
+  shouldn't be so aggressive/adversarial
+  make calculation of demand to display DRY - or any change, be careful
 show cap space on free agents view
 move most db functions into core.whatever. db should just be about initializing/upgrading
 db version upgrades
@@ -37,19 +50,17 @@ knobs to control team finances
       for each player, calculate a randn(0, scoutingPaidRank/10) with max/min of +/- 5
       calculate a new one each year and add it to 1/2 of the previous one
       displayed "skills" should include fuzz. ones used in gameSim shouldn't.
+    should these things be functions of the past two seasons, maybe?
   facilities budget
     influence attendance
     influence free agent demeanor
-  new phase updating of variables
+    should these things be functions of the past two seasons, maybe?
   AI updating of *Budgets and ticket prices
     maybe not necessary at this stage?
     call core.finances.updateBudgetRanks() after
-negotiation is annoying
-  come up with an "anger meter" to display the odds of the player demanding more
-    initialize with some value based on if it's a resigning or not, and wins the previous season
-  shouldn't be so aggressive/adversarial
-  make calculation of demand to display DRY - or any change, be careful
 make sure finances are reasonable
+bar graphs
+  gradients like http://twitter.github.com/bootstrap/components.html#progress
 
 DATABASE CHANGES since 3.0.0-beta
 ---------------------------------

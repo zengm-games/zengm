@@ -736,51 +736,56 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
     }
 
     function newPhaseResignPlayers(cb) {
-        var phaseText, playerStore, transaction;
+        var phaseText, transaction;
 
         phaseText = g.season + " resign players";
 
-        transaction = g.dbl.transaction(["gameAttributes", "negotiations", "players"], "readwrite");
-        playerStore = transaction.objectStore("players");
+        transaction = g.dbl.transaction(["gameAttributes", "negotiations", "players", "teams"], "readwrite");
 
-        // Resign players or they become free agents
-        playerStore.index("tid").openCursor(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
-            var contract, cursor, i, p;
+        player.genBaseMoods(transaction, function (baseMoods) {
+            var playerStore;
 
-            cursor = event.target.result;
-            if (cursor) {
-                p = cursor.value;
-                if (p.contract.exp <= g.season) {
-                    if (p.tid !== g.userTid) {
-                        // Automatically negotiate with teams
-                        if (Math.random() > _.last(p.ratings).ovr / 100) { // Should eventually be smarter than a coin flip
-                            p = player.setContract(p, player.genContract(_.last(p.ratings)), true);
-                            cursor.update(p); // Other endpoints include calls to addToFreeAgents, which handles updating the database
+            playerStore = transaction.objectStore("players");
+
+            // Resign players or they become free agents
+            playerStore.index("tid").openCursor(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
+                var contract, cursor, i, p;
+
+                cursor = event.target.result;
+                if (cursor) {
+                    p = cursor.value;
+                    if (p.contract.exp <= g.season) {
+                        if (p.tid !== g.userTid) {
+                            // Automatically negotiate with teams
+                            if (Math.random() > _.last(p.ratings).ovr / 100) { // Should eventually be smarter than a coin flip
+                                p = player.setContract(p, player.genContract(_.last(p.ratings)), true);
+                                cursor.update(p); // Other endpoints include calls to addToFreeAgents, which handles updating the database
+                            } else {
+                                player.addToFreeAgents(playerStore, p, g.PHASE.RESIGN_PLAYERS, baseMoods);
+                            }
                         } else {
-                            player.addToFreeAgents(playerStore, p, g.PHASE.RESIGN_PLAYERS);
-                        }
-                    } else {
-                        // Add to free agents first, to generate a contract demand
-                        player.addToFreeAgents(playerStore, p, g.PHASE.RESIGN_PLAYERS, function () {
-                            // Open negotiations with player
-                            contractNegotiation.create(transaction, p.pid, true, function (error) {
-                                if (error !== undefined && error) {
-                                    return helpers.error(error);
-                                }
+                            // Add to free agents first, to generate a contract demand
+                            player.addToFreeAgents(playerStore, p, g.PHASE.RESIGN_PLAYERS, baseMoods, function () {
+                                // Open negotiations with player
+                                contractNegotiation.create(transaction, p.pid, true, function (error) {
+                                    if (error !== undefined && error) {
+                                        return helpers.error(error);
+                                    }
+                                });
                             });
-                        });
+                        }
                     }
+                    cursor.continue();
+                } else {
+                    newPhaseCb(g.PHASE.RESIGN_PLAYERS, phaseText, function () {
+                        if (cb !== undefined) {
+                            cb();
+                        }
+                        Davis.location.assign(new Davis.Request("/l/" + g.lid + "/negotiation"));
+                    });
                 }
-                cursor.continue();
-            } else {
-                newPhaseCb(g.PHASE.RESIGN_PLAYERS, phaseText, function () {
-                    if (cb !== undefined) {
-                        cb();
-                    }
-                    Davis.location.assign(new Davis.Request("/l/" + g.lid + "/negotiation"));
-                });
-            }
-        };
+            };
+        });
     }
 
     function newPhaseFreeAgency(cb) {
@@ -792,30 +797,32 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
         contractNegotiation.cancelAll(function () {
             var playerStore, tx;
 
-            tx = g.dbl.transaction("players", "readwrite");
-            playerStore = tx.objectStore("players");
+            tx = g.dbl.transaction("players", "teams", "readwrite");
+            player.genBaseMoods(tx, function (baseMoods) {
+                playerStore = tx.objectStore("players");
 
-            // Reset contract demands of current free agents
-            // This IDBKeyRange only works because g.PLAYER.UNDRAFTED is -2 and g.PLAYER.FREE_AGENT is -1
-            playerStore.index("tid").openCursor(IDBKeyRange.bound(g.PLAYER.UNDRAFTED, g.PLAYER.FREE_AGENT)).onsuccess = function (event) {
-                var cursor, p;
+                // Reset contract demands of current free agents
+                // This IDBKeyRange only works because g.PLAYER.UNDRAFTED is -2 and g.PLAYER.FREE_AGENT is -1
+                playerStore.index("tid").openCursor(IDBKeyRange.bound(g.PLAYER.UNDRAFTED, g.PLAYER.FREE_AGENT)).onsuccess = function (event) {
+                    var cursor, p;
 
-                cursor = event.target.result;
-                if (cursor) {
-                    p = cursor.value;
-                    player.addToFreeAgents(playerStore, p, g.PHASE.FREE_AGENCY);
-                    cursor.update(p);
-                    cursor.continue();
-                }
-            };
-            tx.oncomplete = function () {
-                newPhaseCb(g.PHASE.FREE_AGENCY, phaseText, function () {
-                    if (cb !== undefined) {
-                        cb();
+                    cursor = event.target.result;
+                    if (cursor) {
+                        p = cursor.value;
+                        player.addToFreeAgents(playerStore, p, g.PHASE.FREE_AGENCY, baseMoods);
+//                        cursor.update(p);
+                        cursor.continue();
                     }
-                    Davis.location.assign(new Davis.Request("/l/" + g.lid + "/free_agents"));
-                });
-            };
+                };
+                tx.oncomplete = function () {
+                    newPhaseCb(g.PHASE.FREE_AGENCY, phaseText, function () {
+                        if (cb !== undefined) {
+                            cb();
+                        }
+                        Davis.location.assign(new Davis.Request("/l/" + g.lid + "/free_agents"));
+                    });
+                };
+            });
         });
     }
 

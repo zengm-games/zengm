@@ -234,9 +234,11 @@ define(["db", "globals", "views", "ui", "core/draft", "core/game", "core/player"
                                 cursor.update(t);
 
                                 // Set to FA in database
-                                player.addToFreeAgents(transaction, p, null, function () {
-                                    db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                                        cb();
+                                player.genBaseMoods(transaction, function (baseMoods) {
+                                    player.addToFreeAgents(transaction, p, null, baseMoods, function () {
+                                        db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                                            cb();
+                                        });
                                     });
                                 });
                             } else {

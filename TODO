@@ -1,21 +1,16 @@
 BEFORE 3.0.0-beta.2
 -------------------
 
+contractNegotiation
+  if a player originally wants $1m/year, and the team pisses him off with bad offers but then offers him $3m/year, he should accept that
+  how to determine if a player won't even talk to a team? should only be for elite players
 store "freeAgentMood" variable on scale of 0 to 1, replacing freeAgentTimesAsked
-  should actually be a vector with a different value for every team
   initialize with some value based on hype, population, and facilities in player.addToFreeAgents
-    components
-      base
-        hype: 0.5 * (1 - hype)
-        facilities: mean of ranks last 2 seasons, scaled so that 0.1 is max
-        population: 0.2 * (1 - pop/10)
-      per player
-      ovr+pot: 
-      random.gauss(0, 0.2)
-    values over 0.4 or something means the player won't even start a negotiation with you
-    should these values from the teams object store be passed to player.addToFreeAgents, or generated inside there each time?
-      probably just pass it to it every time, output of player.genBaseMoods
-  players should have moods towards AI teams, which should affect their signings
+    player.genBaseMoods result passed to player.addToFreeAgents
+      player.release
+  moods should affect AI team signings
+    for resigning players
+    for signing free agents
 show cap space on free agents view
 move most db functions into core.whatever. db should just be about initializing/upgrading
 db version upgrades
@@ -52,11 +47,10 @@ knobs to control team finances
       for each player, calculate a randn(0, scoutingPaidRank/10) with max/min of +/- 5
       calculate a new one each year and add it to 1/2 of the previous one
       displayed "skills" should include fuzz. ones used in gameSim shouldn't.
-    should these things be functions of the past two seasons, maybe?
+    should these things be functions of the past two seasons, maybe? see core.player.genBaseMoods, maybe abstract that
   facilities budget
     influence attendance
-    influence freeAgentMood
-    should these things be functions of the past two seasons, maybe?
+    should these things be functions of the past two seasons, maybe? see core.player.genBaseMoods, maybe abstract that
   AI updating of *Budgets and ticket prices
     maybe not necessary at this stage?
     call core.finances.updateBudgetRanks() after

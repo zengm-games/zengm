@@ -2222,9 +2222,9 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                         } else if (p.freeAgentMood[g.userTid] < 0.5) {
                             player.mood = '<b>Willing to sign for the right price.</b>';
                         } else if (p.freeAgentMood[g.userTid] < 0.75) {
-                            player.mood = '<span class="text-warning"><b>Growing annoyed with the prolonged negotiations.</b></span>';
+                            player.mood = '<span class="text-warning"><b>Annoyed at you.</b></span>';
                         } else {
-                            player.mood = '<span class="text-error"><b>Insulted by your negotiating tactics.</b></span>';
+                            player.mood = '<span class="text-error"><b>Insulted by your offers.</b></span>';
                         }
 
                         // Ratings

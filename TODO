@@ -29,8 +29,6 @@ knobs to control team finances
   team finances view
     have some indication of submitted/updated for form. otherwise it's hard to tell if it worked
     template: handlebars helper for form DRY?
-  how should changes in budget effect things?
-    performance is based on cumulative expense (this year) rank relative to other teams
   scouting budget - decrease "fuzz" added to displayed ratings
     fuzz
       for each player, calculate a randn(0, scoutingPaidRank/10) with max/min of +/- 5

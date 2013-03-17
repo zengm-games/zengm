@@ -2,7 +2,7 @@
  * @name core.contractNegotiation
  * @namespace All aspects of contract negotiation.
  */
-define(["db", "globals", "ui", "core/player", "util/lock", "util/random"], function (db, g, ui, player, lock, random) {
+define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/helpers", "util/lock", "util/random"], function (db, g, ui, freeAgents, player, helpers, lock, random) {
     "use strict";
 
     /**
@@ -46,18 +46,17 @@ define(["db", "globals", "ui", "core/player", "util/lock", "util/random"], funct
                     return cb("Your roster is full. Before you can sign a free agent, you'll have to buy out or release one of your current players.");
                 }
 
-                playerStore.openCursor(pid).onsuccess = function (event) {
-                    var cursor, maxOffers, negotiations, player, playerAmount, playerYears;
+                playerStore.get(pid).onsuccess = function (event) {
+                    var maxOffers, negotiation, p, playerAmount, playerYears;
 
-                    cursor = event.target.result;
-                    player = cursor.value;
-                    if (player.tid !== g.PLAYER.FREE_AGENT) {
+                    p = event.target.result;
+                    if (p.tid !== g.PLAYER.FREE_AGENT) {
                         return cb("Player " + pid + " is not a free agent.");
                     }
 
                     // Initial player proposal;
-                    playerAmount = player.contract.amount * (1 + player.freeAgentTimesAsked / 10);
-                    playerYears = player.contract.exp - g.season;
+                    playerAmount = freeAgents.amountWithMood(p.contract.amount, p.freeAgentMood[g.userTid]);
+                    playerYears = p.contract.exp - g.season;
                     // Adjust to account for in-season signings;
                     if (g.phase <= g.PHASE.AFTER_TRADE_DEADLINE) {
                         playerYears += 1;
@@ -65,13 +64,15 @@ define(["db", "globals", "ui", "core/player", "util/lock", "util/random"], funct
 
                     maxOffers = random.randInt(1, 5);
 
-                    // Keep track of how many times negotiations happen with a player;
-                    if (!resigning) {
-                        player.freeAgentTimesAsked += 1;
-                        cursor.update(player);
-                    }
+                    negotiation = {
+                        pid: pid,
+                        team: {amount: playerAmount, years: playerYears},
+                        player: {amount: playerAmount, years: playerYears},
+                        orig: {amount: playerAmount, years: playerYears},
+                        resigning: resigning
+                    };
 
-                    tx.objectStore("negotiations").add({pid: pid, teamAmount: playerAmount, teamYears: playerYears, playerAmount: playerAmount, playerYears: playerYears, numOffersMade: 0, maxOffers: maxOffers, resigning: resigning}).onsuccess = function () {
+                    tx.objectStore("negotiations").add(negotiation).onsuccess = function () {
                         success = true;
                         if (ot !== null) {
                             // This function doesn't have its own transaction, so we need to call the callback now even though the update and add might not have been processed yet (this will keep the transaction alive).
@@ -97,19 +98,19 @@ define(["db", "globals", "ui", "core/player", "util/lock", "util/random"], funct
     }
 
     /**
-     * Restrict the input to between 500 and 20000, the valid amount of annual thousands of dollars for a contract.
+     * Restrict the input to between g.minContract and g.maxContract, the valid amount of annual thousands of dollars for a contract.
      * 
      * @memberOf core.contractNegotiation
      * @param {number} years Annual salary, in thousands of dollars, to be validated.
-     * @return {number} An integer between 500 and 20000.
+     * @return {number} An integer between g.minContract and g.maxContract, rounded to the nearest $10k.
      */
     function validAmount(amount) {
-        if (amount < 500) {
-            amount = 500;
-        } else if (amount > 20000) {
-            amount = 20000;
+        if (amount < g.minContract) {
+            amount = g.minContract;
+        } else if (amount > g.maxContract) {
+            amount = g.maxContract;
         }
-        return Math.round(amount);
+        return helpers.round(amount / 10) * 10;
     }
 
     /**
@@ -145,41 +146,101 @@ define(["db", "globals", "ui", "core/player", "util/lock", "util/random"], funct
         teamAmount = validAmount(teamAmount);
         teamYears = validYears(teamYears);
 
-        tx = g.dbl.transaction("negotiations", "readwrite");
-        tx.objectStore("negotiations").openCursor(pid).onsuccess = function (event) {
-            var cursor, negotiation;
+        tx = g.dbl.transaction(["negotiations", "players"], "readwrite");
+        tx.objectStore("players").openCursor(pid).onsuccess = function (event) {
+            var cursor, mood, p;
 
             cursor = event.target.result;
-            negotiation = cursor.value;
+            p = cursor.value;
 
-            negotiation.numOffersMade += 1;
-            if (negotiation.numOffersMade <= negotiation.maxOffers) {
-                if (teamYears < negotiation.playerYears) {
-                    negotiation.playerYears -= 1;
-                    negotiation.playerAmount *= 1.1;
-                } else if (teamYears > negotiation.playerYears) {
-                    negotiation.playerYears += 1;
-                    negotiation.playerAmount *= 1.1;
+            mood = p.freeAgentMood[g.userTid];
+            p.freeAgentMood[g.userTid] += random.uniform(0, 0.15);
+
+            cursor.update(p);
+
+            tx.objectStore("negotiations").openCursor(pid).onsuccess = function (event) {
+                var cursor, diffPlayerOrig, diffTeamOrig, negotiation;
+
+console.log(mood);
+                cursor = event.target.result;
+                negotiation = cursor.value;
+
+                // Player responds based on their mood
+                if (mood < 0.25) {
+
+                } else if (mood < 0.5) {
+
+                } else if (mood < 0.75) {
+
+                } else {
+
                 }
-                if (teamAmount < negotiation.playerAmount && teamAmount > 0.7 * negotiation.playerAmount) {
-                    negotiation.playerAmount = 0.75 * negotiation.playerAmount + 0.25 * teamAmount;
-                } else if (teamAmount < negotiation.playerAmount) {
-                    negotiation.playerAmount *= 1.05;
+
+                if (negotiation.orig.amount >= 18000) {
+                    // Expensive guys don't negotiate
+                    negotiation.player.amount *= 1;
+                } else {
+                    if (teamYears === negotiation.player.years) {
+                        // Team and player agree on years, so just update amount
+                        if (teamAmount > negotiation.player.amount) {
+                            negotiation.player.amount = teamAmount;
+                        } else if (teamAmount > 0.7 * negotiation.player.amount) {
+                            negotiation.player.amount = 0.5 * negotiation.player.amount + 0.5 * teamAmount;
+                        } else {
+                            negotiation.player.amount *= 1.05;
+                        }
+                    } else if ((teamYears > negotiation.player.years && negotiation.orig.years > negotiation.player.years) || (teamYears < negotiation.player.years && negotiation.orig.years < negotiation.player.years)) {
+                        // Team moves years closer to original value
+
+                        // Update years
+                        diffPlayerOrig = negotiation.player.years - negotiation.orig.years;
+                        diffTeamOrig = teamYears - negotiation.orig.years;
+                        if (diffPlayerOrig > 0 && diffTeamOrig > 0) {
+                            // Team moved towards player's original years without overshooting
+                            negotiation.player.years = teamYears;
+                        } else {
+                            // Team overshot original years
+                            negotiation.player.years = negotiation.orig.years;
+                        }
+
+                        // Update amount
+                        if (teamAmount > negotiation.player.amount) {
+                            negotiation.player.amount = teamAmount;
+                        } else if (teamAmount > 0.85 * negotiation.player.amount) {
+                            negotiation.player.amount = 0.5 * negotiation.player.amount + 0.5 * teamAmount;
+                        } else {
+                            negotiation.player.amount *= 1.05;
+                        }
+                    } else {
+                        // Team move years further from original value
+                        if (teamAmount > 1.1 * negotiation.player.amount) {
+                            negotiation.player.amount = teamAmount;
+                            if (teamYears > negotiation.player.years) {
+                                negotiation.player.years += 1;
+                            } else {
+                                negotiation.player.years -= 1;
+                            }
+                        } else if (teamAmount > 0.9 * negotiation.player.amount) {
+                            negotiation.player.amount *= 1.15;
+                            if (teamYears > negotiation.player.years) {
+                                negotiation.player.years += 1;
+                            } else {
+                                negotiation.player.years -= 1;
+                            }
+                        } else {
+                            negotiation.player.amount *= 1.15;
+                        }
+                    }
                 }
-                if (teamAmount > negotiation.playerAmount) {
-                    negotiation.playerAmount = teamAmount;
-                }
-            } else {
-                negotiation.playerAmount = 1.025 * negotiation.playerAmount;
-            }
 
-            negotiation.playerAmount = validAmount(negotiation.playerAmount);
-            negotiation.playerYears = validYears(negotiation.playerYears);
+                negotiation.player.amount = validAmount(negotiation.player.amount);
+                negotiation.player.years = validYears(negotiation.player.years);
 
-            negotiation.teamAmount = teamAmount;
-            negotiation.teamYears = teamYears;
+                negotiation.team.amount = teamAmount;
+                negotiation.team.years = teamYears;
 
-            cursor.update(negotiation);
+                cursor.update(negotiation);
+            };
         };
         tx.oncomplete = function () {
             if (cb !== undefined) {

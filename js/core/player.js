@@ -343,7 +343,7 @@ define(["db", "globals", "data/injuries", "data/names", "lib/faces", "lib/unders
 
         p = setContract(p, genContract(_.last(p.ratings)), false);
 
-        p.freeAgentTimesAsked = 0;
+        p.freeAgentMood = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
         // During regular season, or before season starts, allow contracts for
         // just this year.
@@ -610,7 +610,7 @@ console.log(p.contract);
 
         p.awards = [];
 
-        p.freeAgentTimesAsked = 0;
+        p.freeAgentMood = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         p.yearsFreeAgent = 0;
         p.retiredYear = null;
 

@@ -2,7 +2,7 @@
  * @name core.freeAgents
  * @namespace Functions related to free agents that didn't make sense to put anywhere else.
  */
-define(["db", "globals", "core/player", "lib/underscore", "util/random"], function (db, g, player, _, random) {
+define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/random"], function (db, g, player, _, helpers, random) {
     "use strict";
 
     /**
@@ -110,7 +110,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/random"], functi
 
         tx = g.dbl.transaction("players", "readwrite");
         tx.objectStore("players").index("tid").openCursor(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
-            var cursor, p;
+            var cursor, i, p;
 
             cursor = event.target.result;
             if (cursor) {
@@ -128,11 +128,12 @@ define(["db", "globals", "core/player", "lib/underscore", "util/random"], functi
                     p.contract.exp = g.season + 1;
                 }
 
-                // Free agents' resistance to previous signing attempts by player decays
-                // Decay by 0.1 per game, for 82 games in the regular season
-                p.freeAgentTimesAsked -= 0.1;
-                if (p.freeAgentTimesAsked < 0) {
-                    p.freeAgentTimesAsked = 0;
+                // Free agents' resistance to signing decays after every regular season game
+                for (i = 0; i < p.freeAgentMood.length; i++) {
+                    p.freeAgentMood[i] -= 0.025;
+                    if (p.freeAgentMood[i] < 0) {
+                        p.freeAgentMood[i] = 0;
+                    }
                 }
 
                 // Also, heal.
@@ -149,8 +150,25 @@ define(["db", "globals", "core/player", "lib/underscore", "util/random"], functi
         tx.oncomplete = cb;
     }
 
+    /**
+     * Get contract amount adjusted for mood.
+     *
+     * @memberOf core.freeAgents
+     * @param {number} amount Contract amount, in thousands of dollars or millions of dollars (fun auto-detect!).
+     * @param {number} mood Player mood towards a team, from 0 (happy) to 1 (angry).
+     * @return {number} Contract amoung adjusted for mood.
+     */
+    function amountWithMood(amount, mood) {
+        amount *= 1 + mood / 3;
+        if (amount >= g.minContract) {
+            return helpers.round(amount / 10) * 10;  // Round to nearest 10k, assuming units are thousands
+        }
+        return helpers.round(amount * 100) / 100;  // Round to nearest 10k, assuming units are millions
+    }
+
     return {
         autoSign: autoSign,
-        decreaseDemands: decreaseDemands
+        decreaseDemands: decreaseDemands,
+        amountWithMood: amountWithMood
     };
 });

@@ -1607,9 +1607,9 @@ function program3(depth0,data) {
     + "/negotiation/"
     + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.pid)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\" class=\"form-horizontal\" method=\"POST\">\n      <input type=\"text\" name=\"teamYears\" id=\"teamYears\" class=\"span1\" value=\""
-    + escapeExpression(((stack1 = ((stack1 = depth0.negotiation),stack1 == null || stack1 === false ? stack1 : stack1.teamYears)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.negotiation),stack1 == null || stack1 === false ? stack1 : stack1.team)),stack1 == null || stack1 === false ? stack1 : stack1.years)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\"> years\n      <p><div class=\"input-prepend input-append\">\n        <span class=\"add-on\">$</span><input type=\"text\" name=\"teamAmount\" id=\"teamAmount\" class=\"span5\" value=\""
-    + escapeExpression(((stack1 = ((stack1 = depth0.negotiation),stack1 == null || stack1 === false ? stack1 : stack1.teamAmount)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.negotiation),stack1 == null || stack1 === false ? stack1 : stack1.team)),stack1 == null || stack1 === false ? stack1 : stack1.amount)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\"><span class=\"add-on\">M</span> per year\n      </div></p>\n      <button type=\"submit\" class=\"btn btn-large btn-primary\">Submit Proposal</button>  \n    </form>\n\n    <form action=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "/negotiation/"
@@ -1625,11 +1625,11 @@ function program3(depth0,data) {
     + "</p>\n    <p>Potential: "
     + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.pot)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</p>\n    <h2>Player Proposal</h2>\n    <p>"
-    + escapeExpression(((stack1 = ((stack1 = depth0.negotiation),stack1 == null || stack1 === false ? stack1 : stack1.playerYears)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.negotiation),stack1 == null || stack1 === false ? stack1 : stack1.player)),stack1 == null || stack1 === false ? stack1 : stack1.years)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + " years (through "
-    + escapeExpression(((stack1 = ((stack1 = depth0.negotiation),stack1 == null || stack1 === false ? stack1 : stack1.playerExpiration)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.negotiation),stack1 == null || stack1 === false ? stack1 : stack1.player)),stack1 == null || stack1 === false ? stack1 : stack1.expiration)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + ")</p>\n    <p>$"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.negotiation),stack1 == null || stack1 === false ? stack1 : stack1.playerAmount), 3, {hash:{},data:data}))
+    + escapeExpression(helpers.round.call(depth0, ((stack1 = ((stack1 = depth0.negotiation),stack1 == null || stack1 === false ? stack1 : stack1.player)),stack1 == null || stack1 === false ? stack1 : stack1.amount), 3, {hash:{},data:data}))
     + "M per year</p>\n    <form action=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "/negotiation/"

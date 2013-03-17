@@ -13,9 +13,9 @@
     <p>Salary Cap: {{currency salaryCap "M"}}</p>
     <h2>Your Proposal</h2>
     <form action="/l/{{lid}}/negotiation/{{player.pid}}" class="form-horizontal" method="POST">
-      <input type="text" name="teamYears" id="teamYears" class="span1" value="{{negotiation.teamYears}}"> years
+      <input type="text" name="teamYears" id="teamYears" class="span1" value="{{negotiation.team.years}}"> years
       <p><div class="input-prepend input-append">
-        <span class="add-on">$</span><input type="text" name="teamAmount" id="teamAmount" class="span5" value="{{negotiation.teamAmount}}"><span class="add-on">M</span> per year
+        <span class="add-on">$</span><input type="text" name="teamAmount" id="teamAmount" class="span5" value="{{negotiation.team.amount}}"><span class="add-on">M</span> per year
       </div></p>
       <button type="submit" class="btn btn-large btn-primary">Submit Proposal</button>  
     </form>
@@ -31,8 +31,8 @@
     <p>Overal: {{player.ovr}}</p>
     <p>Potential: {{player.pot}}</p>
     <h2>Player Proposal</h2>
-    <p>{{negotiation.playerYears}} years (through {{negotiation.playerExpiration}})</p>
-    <p>${{round negotiation.playerAmount 3}}M per year</p>
+    <p>{{negotiation.player.years}} years (through {{negotiation.player.expiration}})</p>
+    <p>${{round negotiation.player.amount 3}}M per year</p>
     <form action="/l/{{lid}}/negotiation/{{player.pid}}" class="form-horizontal" method="POST">
       <input type="hidden" name="accept" value="1">
       <button type="submit" class="btn btn-large btn-primary" id="accept">Accept Player Proposal</button>

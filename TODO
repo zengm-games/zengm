@@ -2,18 +2,33 @@ BEFORE 3.0.0-beta.2
 -------------------
 
 negotiation is annoying
-  store "mood" variable on scale of 0 to 1, replacing freeAgentTimesAsked
+  store "freeAgentMood" variable on scale of 0 to 1, replacing freeAgentTimesAsked
     should actually be a vector with a different value for every team
-    come up with a formula linking it to contract demand
-  come up with a "mood meter" to display the odds of the player demanding more
-    initialize with some value based on if it's a resigning or not, wins the previous season, population, and facilities
+    initialize with some value based on wins the previous season, population, and facilities
+    each time an offer is made..
+      mood increases by random.uniform(0, 0.15) each offer (replace numOffersMade and maxOffers logic)
+      different response in terms of negotiation depending on the category
     possible mood values:
-      Eager to reach an agreement.
-      Willing to sign for the right price.
-      Growing annoyed with the prolonged negotiations.
-      Insulted by your contract offer.
-  shouldn't be so aggressive/adversarial
-  make calculation of demand to display DRY - or any change, be careful
+      0-0.25 Eager to reach an agreement.
+      0.25-0.5 Willing to sign for the right price.
+      0.5-0.75 Growing annoyed with the prolonged negotiations.
+      0.75-1 Insulted by your contract offer.
+  NEGOTIATION LOGIC
+    Each time the user makes an offer, they can change the amount and years. Since negotiations can have multiple rounds, the user's amount and years can change relative to the player's last demand and also relative to the player's original demand. This complicates things, as you want to punish the user for moving away from the player's demanded contract length, but you don't want to punish the user if they move back towards what the player originally desired. So, scenarios:
+      Years constant
+        team amount >= player amount: player moves amount higher to exactly what the team offered
+        team amount > 70% player amount: compromise by moving half way
+        team amount < 70% player amount: player increases amount by 5%
+      Years move towards original
+        IN ALL CASES set the player's demanded years to either the original amount (if the user's years are equal or exceed it in the opposite direction), or to the user's years
+        team amount >= player amount: player moves amount higher to exactly what the team offered
+        team amount > 85% player amount: compromise by moving half way in amount
+        team amount < 85% player amount: player increases amount by 5%
+      Years move away from original
+        team amount >= 110% player amount: player moves amount higher to exactly what the team offered and moves 1 year towards team
+        team amount >= 90% player amount: player increases amount by 15% and moves 1 year towards team
+        team amount < 90% player amount: player increases amount by 15% and doesn't move year
+      IN ANY SCENARIO if the player is originally asking for a contract > 18000, don't move years. increase demand if mood is > 0.25
 show cap space on free agents view
 move most db functions into core.whatever. db should just be about initializing/upgrading
 db version upgrades
@@ -84,6 +99,7 @@ player
     now includes pot, ovr, and skills
   bornYear and bornLoc are born.year and born.loc
   contract to object (also in releasedPlayers)
+negotiation structure changed
 
 MANUAL CHANGES TODO since 3.0.0-beta
 ------------------------------------

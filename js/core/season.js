@@ -797,7 +797,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
         contractNegotiation.cancelAll(function () {
             var playerStore, tx;
 
-            tx = g.dbl.transaction("players", "teams", "readwrite");
+            tx = g.dbl.transaction(["players", "teams"], "readwrite");
             player.genBaseMoods(tx, function (baseMoods) {
                 playerStore = tx.objectStore("players");
 

@@ -160,15 +160,38 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
      */
     function amountWithMood(amount, mood) {
         amount *= 1 + 0.2 * mood;
+
         if (amount >= g.minContract) {
+            if (amount > g.maxContract) {
+                amount = g.maxContract;
+            }
             return helpers.round(amount / 10) * 10;  // Round to nearest 10k, assuming units are thousands
         }
+
+        if (amount > g.maxContract / 1000) {
+            amount = g.maxContract / 1000;
+        }
         return helpers.round(amount * 100) / 100;  // Round to nearest 10k, assuming units are millions
+    }
+
+    /**
+     * Will a player negotiate with a team, or not?
+     * 
+     * @param {number} amount Player's desired contract amount, already adjusted for mood as in amountWithMood, in thousands of dollars
+     * @param {number} mood Player's mood towards the team in question.
+     * @return {boolean} Answer to the question.
+     */
+    function refuseToNegotiate(amount, mood) {
+        if (amount * mood > 12000) {
+            return true;
+        }
+        return false;
     }
 
     return {
         autoSign: autoSign,
         decreaseDemands: decreaseDemands,
-        amountWithMood: amountWithMood
+        amountWithMood: amountWithMood,
+        refuseToNegotiate: refuseToNegotiate
     };
 });

@@ -1285,7 +1285,6 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
 
                     for (i = 0; i < players.length; i++) {
                         players[i].contract.amount = freeAgents.amountWithMood(players[i].contract.amount, players[i].freeAgentMood[g.userTid]);
-                        delete players[i].freeAgentMood;
                     }
 
                     data = {
@@ -1296,7 +1295,13 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                     };
                     ui.update(data, function () {
                         ui.datatable($("#free-agents"), 4, _.map(players, function (p) {
-                            return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, '<form action="/l/' + g.lid + '/negotiation/' + p.pid + '" method="POST" style="margin: 0"><input type="hidden" name="new" value="1"><button type="submit" class="btn btn-mini btn-primary">Negotiate</button></form>'];
+                            var negotiateButton;
+                            if (freeAgents.refuseToNegotiate(p.contract.amount * 1000, p.freeAgentMood[g.userTid])) {
+                                negotiateButton = "Refuses!";
+                            } else {
+                                negotiateButton = '<form action="/l/' + g.lid + '/negotiation/' + p.pid + '" method="POST" style="margin: 0"><input type="hidden" name="new" value="1"><button type="submit" class="btn btn-mini btn-primary">Negotiate</button></form>';
+                            }
+                            return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, negotiateButton];
                         }));
 
                         $("#help-salary-cap").clickover({
@@ -2158,7 +2163,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                         }
                     }
 
-                    attributes = ["pid", "name", "pos", "age", "injury"];
+                    attributes = ["pid", "name", "pos", "age", "freeAgentMood", "injury"];
                     stats = ["min", "pts", "trb", "ast", "per"];
                     ratings = ["ovr", "pot", "skills"];
 
@@ -2168,11 +2173,12 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                         for (j = 0; j < negotiations.length; j++) {
                             if (players[i].pid === negotiations[j].pid) {
                                 players[i].contract = {};
-                                players[i].contract.amount = negotiations[j].playerAmount / 1000;
-                                players[i].contract.exp = g.season + negotiations[j].playerYears;
+                                players[i].contract.amount = negotiations[j].player.amount / 1000;
+                                players[i].contract.exp = g.season + negotiations[j].player.years;
                                 break;
                             }
                         }
+                        players[i].contract.amount = freeAgents.amountWithMood(players[i].contract.amount, players[i].freeAgentMood[g.userTid]);
                     }
 
                     data = {
@@ -2183,7 +2189,13 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                     };
                     ui.update(data, function () {
                         ui.datatable($("#negotiation-list"), 4, _.map(players, function (p) {
-                            return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, '<a href="/l/' + g.lid + '/negotiation/' + p.pid + '}" class="btn btn-mini btn-primary">Negotiate</a>'];
+                            var negotiateButton;
+                            if (freeAgents.refuseToNegotiate(p.contract.amount * 1000, p.freeAgentMood[g.userTid])) {
+                                negotiateButton = "Refuses!";
+                            } else {
+                                negotiateButton = '<form action="/l/' + g.lid + '/negotiation/' + p.pid + '" method="POST" style="margin: 0"><input type="hidden" name="new" value="1"><button type="submit" class="btn btn-mini btn-primary">Negotiate</button></form>';
+                            }
+                            return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, negotiateButton];
                         }));
 
                         if (req.raw.cb !== undefined) {
@@ -2273,10 +2285,12 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
             };
 
             // Show the negotiations list if there are more ongoing negotiations
-            cbRedirectNegotiationOrRoster = function (error) {
+            cbRedirectNegotiationOrRoster = function (error, cancelled) {
                 if (error !== undefined && error) {
                     return helpers.error(error, req);
                 }
+
+                cancelled = cancelled !== undefined ? cancelled : false;
 
                 g.dbl.transaction("negotiations").objectStore("negotiations").getAll().onsuccess = function (event) {
                     var negotiations;
@@ -2285,6 +2299,8 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
 
                     if (negotiations.length > 0) {
                         Davis.location.assign(new Davis.Request("/l/" + g.lid + "/negotiation"));
+                    } else if (cancelled) {
+                        Davis.location.assign(new Davis.Request("/l/" + g.lid + "/free_agents"));
                     } else {
                         Davis.location.assign(new Davis.Request("/l/" + g.lid + "/roster"));
                     }
@@ -2296,7 +2312,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
             if (req.method === "post") {
                 if (req.params.hasOwnProperty("cancel")) {
                     contractNegotiation.cancel(pid);
-                    cbRedirectNegotiationOrRoster();
+                    cbRedirectNegotiationOrRoster(undefined, true);
                 } else if (req.params.hasOwnProperty("accept")) {
                     contractNegotiation.accept(pid, cbRedirectNegotiationOrRoster);
                 } else if (req.params.hasOwnProperty("new")) {

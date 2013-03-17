@@ -51,7 +51,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/helpers",
 
                     p = event.target.result;
                     if (p.tid !== g.PLAYER.FREE_AGENT) {
-                        return cb("Player " + pid + " is not a free agent.");
+                        return cb(p.name + " is not a free agent.");
                     }
 
                     // Initial player proposal;
@@ -60,6 +60,10 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/helpers",
                     // Adjust to account for in-season signings;
                     if (g.phase <= g.PHASE.AFTER_TRADE_DEADLINE) {
                         playerYears += 1;
+                    }
+
+                    if (freeAgents.refuseToNegotiate(playerAmount, p.freeAgentMood[g.userTid])) {
+                        return cb(p.name + " refuses to sign with you, no matter what you offer.");
                     }
 
                     maxOffers = random.randInt(1, 5);

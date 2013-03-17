@@ -192,7 +192,7 @@ define(["db", "globals", "core/contractNegotiation", "core/league", "core/player
 
                         cursor = event.target.result;
                         negotiation = cursor.value;
-                        negotiation.playerAmount = 60000;
+                        negotiation.player.amount = 60000;
                         cursor.update(negotiation);
                     };
                 });

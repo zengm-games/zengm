@@ -310,7 +310,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/helpers",
             db.getPayroll(null, g.userTid, function (payroll) {
                 var tx;
 
-                if (!negotiation.resigning && (payroll + negotiation.player.amount > g.salaryCap && negotiation.player.amount !== 500)) {
+                if (!negotiation.resigning && (payroll + negotiation.player.amount > g.salaryCap && negotiation.player.amount !== g.minContract)) {
                     return cb("This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract, buy out a player currently on your roster, or cancel the negotiation.");
                 }
 

@@ -26,10 +26,6 @@ update formulas
     for now, just make it a function of attendance
     eventually, t.seasons[0].tvContract
 team finances template: handlebars helper for form DRY?
-fuzz
-  add an option to db.getPlayer to return fuzzed ratings, "fuzz": true
-    todo in views.js
-      draft - show fuzzed ratings through db.getPlayers
 make sure finances are reasonable
 
 DATABASE CHANGES since 3.0.0-beta

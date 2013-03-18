@@ -13,7 +13,7 @@
     </thead>
     <tbody>
       {{#undrafted}}
-        <tr id="undrafted-{{pid}}"><td>{{playerNameLabels pid name injury skills}}</td><td>{{pos}}</td><td>{{age}}<td>{{ovr}}</td><td>{{pot}}</td><td><button class="btn btn-mini btn-primary" data-player-id="{{pid}}"{{#unless ../started}} disabled="disabled"{{/unless}}>Draft</button></td></tr>
+        <tr id="undrafted-{{pid}}"><td>{{playerNameLabels pid name injury ratings.skills}}</td><td>{{pos}}</td><td>{{age}}<td>{{ratings.ovr}}</td><td>{{ratings.pot}}</td><td><button class="btn btn-mini btn-primary" data-player-id="{{pid}}"{{#unless ../started}} disabled="disabled"{{/unless}}>Draft</button></td></tr>
       {{/undrafted}}
     </tbody>
     </table>

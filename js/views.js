@@ -1545,28 +1545,16 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
             // Active draft
             if (g.phase === g.PHASE.DRAFT && season === g.season) {
                 playerStore.index("tid").getAll(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
-                    var i, pa, player, playersAll, pr, undrafted;
-                    playersAll = event.target.result;
-                    playersAll.sort(function (a, b) {  return (b.ratings[0].ovr + 2 * b.ratings[0].pot) - (a.ratings[0].ovr + 2 * a.ratings[0].pot); }); // Can use ratings[0] because pre-draft rookies only have one ratings entry
+                    var attributes, ratings, stats, undrafted;
 
-                    undrafted = [];
-                    for (i = 0; i < playersAll.length; i++) {
-                        pa = playersAll[i];
-
-                        // Attributes
-                        player = {pid: pa.pid, name: pa.name, pos: pa.pos, age: g.season - pa.born.year, injury: pa.injury};
-
-                        // Ratings
-                        pr = pa.ratings[0];
-                        player.ovr = pr.ovr;
-                        player.pot = pr.pot;
-                        player.skills = pr.skills;
-
-                        undrafted.push(player);
-                    }
+                    attributes = ["pid", "name", "pos", "age", "injury"];
+                    ratings = ["ovr", "pot", "skills"];
+                    stats = [];
+                    undrafted = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings, {showNoStats: true, fuzz: true});
+                    undrafted.sort(function (a, b) { return (b.ratings.ovr + 2 * b.ratings.pot) - (a.ratings.ovr + 2 * a.ratings.pot); });
 
                     playerStore.index("draft.year").getAll(g.season).onsuccess = function (event) {
-                        var attributes, drafted, players, ratings, stats, started;
+                        var attributes, drafted, i, players, ratings, stats, started;
 
                         attributes = ["pid", "tid", "name", "pos", "age", "draft", "injury"];
                         ratings = ["ovr", "pot", "skills"];

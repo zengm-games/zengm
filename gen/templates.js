@@ -2392,15 +2392,15 @@ function program3(depth0,data,depth1) {
   buffer += "\n        <tr id=\"undrafted-"
     + escapeExpression(((stack1 = depth0.pid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\"><td>"
-    + escapeExpression(helpers.playerNameLabels.call(depth0, depth0.pid, depth0.name, depth0.injury, depth0.skills, {hash:{},data:data}))
+    + escapeExpression(helpers.playerNameLabels.call(depth0, depth0.pid, depth0.name, depth0.injury, ((stack1 = depth0.ratings),stack1 == null || stack1 === false ? stack1 : stack1.skills), {hash:{},data:data}))
     + "</td><td>"
     + escapeExpression(((stack1 = depth0.pos),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</td><td>"
     + escapeExpression(((stack1 = depth0.age),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "<td>"
-    + escapeExpression(((stack1 = depth0.ovr),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = depth0.ratings),stack1 == null || stack1 === false ? stack1 : stack1.ovr)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</td><td>"
-    + escapeExpression(((stack1 = depth0.pot),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = depth0.ratings),stack1 == null || stack1 === false ? stack1 : stack1.pot)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</td><td><button class=\"btn btn-mini btn-primary\" data-player-id=\""
     + escapeExpression(((stack1 = depth0.pid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\"";

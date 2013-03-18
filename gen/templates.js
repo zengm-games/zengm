@@ -1626,9 +1626,9 @@ function program3(depth0,data) {
   stack2 = ((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.mood)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1);
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "</p>\n    <p>Overal: "
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.ovr)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.ratings)),stack1 == null || stack1 === false ? stack1 : stack1.ovr)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "; Potential: "
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.pot)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.ratings)),stack1 == null || stack1 === false ? stack1 : stack1.pot)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</p>\n    <h2>Player Proposal</h2>\n    <p>"
     + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.negotiation),stack1 == null || stack1 === false ? stack1 : stack1.player)),stack1 == null || stack1 === false ? stack1 : stack1.years)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + " years (through "

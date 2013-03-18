@@ -2101,7 +2101,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
             g.dbl.transaction(["players"]).objectStore("players").get(pid).onsuccess = function (event) {
                 var attributes, currentRatings, data, player, ratings, stats;
 
-                attributes = ["pid", "name", "tid", "abbrev", "teamRegion", "teamName", "pos", "age", "hgtFt", "hgtIn", "weight", "born", "contract", "draft", "face", "mood", "injury", "salaries", "salariesTotal", "awards"];
+                attributes = ["pid", "name", "tid", "abbrev", "teamRegion", "teamName", "pos", "age", "hgtFt", "hgtIn", "weight", "born", "contract", "draft", "face", "mood", "injury", "salaries", "salariesTotal", "awards", "freeAgentMood"];
                 ratings = ["season", "abbrev", "age", "ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills"];
                 stats = ["season", "abbrev", "age", "gp", "gs", "min", "fg", "fga", "fgp", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per"];
 
@@ -2239,31 +2239,22 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                     }
 
                     g.dbl.transaction("players").objectStore("players").get(pid).onsuccess = function (event) {
-                        var data, j, p, payroll, player, pr, team, teams;
+                        var attributes, data, j, payroll, player, pr, ratings, stats, team, teams;
 
-                        p = event.target.result;
+                        attributes = ["pid", "name", "freeAgentMood"];
+                        ratings = ["ovr", "pot"];
+                        stats = [];
+                        player = db.getPlayer(event.target.result, g.season, null, attributes, stats, ratings, {showRookies: true, fuzz: true});
 
-                        // Attributes
-                        player = {pid: pid, name: p.name};
-                        if (p.freeAgentMood[g.userTid] < 0.25) {
+                        if (player.freeAgentMood[g.userTid] < 0.25) {
                             player.mood = '<span class="text-success"><b>Eager to reach an agreement.</b></span>';
-                        } else if (p.freeAgentMood[g.userTid] < 0.5) {
+                        } else if (player.freeAgentMood[g.userTid] < 0.5) {
                             player.mood = '<b>Willing to sign for the right price.</b>';
-                        } else if (p.freeAgentMood[g.userTid] < 0.75) {
+                        } else if (player.freeAgentMood[g.userTid] < 0.75) {
                             player.mood = '<span class="text-warning"><b>Annoyed at you.</b></span>';
                         } else {
                             player.mood = '<span class="text-error"><b>Insulted by your presence.</b></span>';
                         }
-
-                        // Ratings
-                        for (j = 0; j < p.ratings.length; j++) {
-                            if (p.ratings[j].season === g.season) {
-                                pr = p.ratings[j];
-                                break;
-                            }
-                        }
-                        player.ovr = pr.ovr;
-                        player.pot = pr.pot;
 
                         teams = helpers.getTeams();
                         team = {region: teams[g.userTid].region, name: teams[g.userTid].name};
@@ -2352,6 +2343,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
 
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
                 var attributes, data, players, ratings, ratingsAll, stats;
+
                 attributes = [];
                 ratings = ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
                 stats = [];
@@ -2666,10 +2658,10 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
 
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
                 var attributes, data, players, ratings, stats;
+
                 attributes = ["pid", "name", "pos", "age", "injury"];
                 ratings = ["skills"];
                 stats = ["abbrev", "gp", "gs", "min", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp"];
-
                 players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings, {showRookies: true});
 
                 data = {

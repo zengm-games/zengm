@@ -30,8 +30,8 @@ knobs to control team finances
   scouting budget - decrease "fuzz" added to displayed ratings
     fuzz - store in player.ratings[i].fuzz
       add an option to db.getPlayer to return fuzzed ratings, "fuzz": true
-        things that shouldn't be fuzzed: season, fuzz, skills
         make sure this is used EVERYWHERE! no leak!
+          currently done just roster
           currently some views don't use db.getPlayer. check if they display ratings
       calculate a new one each year and add it to 1/2 of the previous one, with max/min of +/- 5
       displayed "skills" should include fuzz. ones used in gameSim shouldn't.

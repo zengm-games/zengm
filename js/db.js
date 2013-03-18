@@ -243,9 +243,7 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
                 player.ratings = {};
                 for (j = 0; j < ratings.length; j++) {
                     player.ratings[ratings[j]] = pr[ratings[j]];
-                    if (options.fuzz && typeof player.ratings === "number") {
-console.log(player.ratings[ratings[j]])
-console.log(typeof player.ratings[ratings[j]])
+                    if (options.fuzz && ratings[j] !== "fuzz" && ratings[j] !== "season" && ratings[j] !== "skills") {
                         player.ratings[ratings[j]] = Math.round(helpers.bound(player.ratings[ratings[j]] + pr.fuzz, 0, 100));
                     }
                 }
@@ -270,7 +268,7 @@ console.log(typeof player.ratings[ratings[j]])
                             }
                         } else {
                             player.ratings[k][ratings[j]] = pa.ratings[k][ratings[j]];
-                            if (options.fuzz) {
+                            if (options.fuzz && ratings[j] !== "fuzz" && ratings[j] !== "season" && ratings[j] !== "skills") {
                                 player.ratings[k][ratings[j]] = Math.round(helpers.bound(player.ratings[k][ratings[j]] + pa.ratings[k].fuzz, 0, 100));
                             }
                         }

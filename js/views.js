@@ -1675,7 +1675,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                 attributes = ["tid", "abbrev", "draft", "pid", "name", "pos", "age"];
                 ratings = ["ovr", "pot", "skills"];
                 stats = ["gp", "min", "pts", "trb", "ast", "per"];  // This needs to be in the same order as categories
-                playersAll = db.getPlayers(event.target.result, null, null, attributes, stats, ratings, {showNoStats: true});
+                playersAll = db.getPlayers(event.target.result, null, null, attributes, stats, ratings, {showNoStats: true, fuzz: true});
 
                 players = [];
                 for (i = 0; i < playersAll.length; i++) {

@@ -184,6 +184,10 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
             } else if (attributes[j] === "draft") {
                 player.draft = pa.draft;
                 player.draft.age = pa.draft.year - pa.born.year;
+                if (options.fuzz) {
+                    player.draft.ovr =  Math.round(helpers.bound(player.draft.ovr + pa.ratings[0].fuzz, 0, 100));
+                    player.draft.pot =  Math.round(helpers.bound(player.draft.pot + pa.ratings[0].fuzz, 0, 100));
+                }
             } else if (attributes[j] === "hgtFt") {
                 player.hgtFt = Math.floor(pa.hgt / 12);
             } else if (attributes[j] === "hgtIn") {

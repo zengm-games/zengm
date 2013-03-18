@@ -685,8 +685,8 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
         maxWeight = 290;
 
         p.pos = pos(p.ratings[0]);  // Position (PG, SG, SF, PF, C, G, GF, FC)
-        p.hgt = parseInt(random.gauss(1, 0.02) * (p.ratings[0].hgt * (maxHgt - minHgt) / 100 + minHgt), 10);  // Height in inches (from minHgt to maxHgt)
-        p.weight = parseInt(random.gauss(1, 0.02) * ((p.ratings[0].hgt + 0.5 * p.ratings[0].stre) * (maxWeight - minWeight) / 150 + minWeight), 10);  // Weight in pounds (from minWeight to maxWeight)
+        p.hgt = Math.round(random.gauss(1, 0.02) * (p.ratings[0].hgt * (maxHgt - minHgt) / 100 + minHgt));  // Height in inches (from minHgt to maxHgt)
+        p.weight = Math.round(random.gauss(1, 0.02) * ((p.ratings[0].hgt + 0.5 * p.ratings[0].stre) * (maxWeight - minWeight) / 150 + minWeight));  // Weight in pounds (from minWeight to maxWeight)
 
         // Randomly choose nationality  
         nationality = 'USA';

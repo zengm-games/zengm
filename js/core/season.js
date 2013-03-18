@@ -375,7 +375,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
 
     function newPhasePreseason(cb) {
         db.setGameAttributes({season: g.season + 1}, function () {
-            var coachingRanks, phaseText, tx;
+            var coachingRanks, phaseText, scoutingRank, tx;
 
             phaseText = g.season + " preseason";
 
@@ -394,6 +394,12 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                     // Save the coaching rank for later
                     coachingRanks[t.tid] = _.last(t.seasons).expenses.coaching.rank;
 
+                    // Only need scoutingRank for the user's team to calculate fuzz when ratings are updated below.
+                    // This is done BEFORE a new season row is added.
+                    if (t.tid === g.userTid) {
+                        scoutingRank = finances.getRankLastThree(t, "expenses", "scouting");
+                    }
+
                     t = team.addSeasonRow(t);
                     t = team.addStatsRow(t);
 
@@ -409,7 +415,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                             p = cursorP.value;
 
                             // Update ratings
-                            p = player.addRatingsRow(p);
+                            p = player.addRatingsRow(p, scoutingRank);
                             p = player.develop(p, 1, false, coachingRanks[p.tid]);
 
                             // Add row to player stats if they are on a team

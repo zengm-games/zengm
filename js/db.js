@@ -160,7 +160,7 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
      * @param {Array.<string>} attributes List of player attributes to include in output.
      * @param {Array.<string>} stats List of player stats to include in output.
      * @param {Array.<string>} ratings List of player ratings to include in output.
-    * @param {Object} options Object containing various options. Possible keys include...  "totals": Boolean representing whether to return total stats (true) or per-game averages (false); default is false. "playoffs": Boolean representing whether to return playoff stats (statsPlayoffs and careerStatsPlayoffs) or not; default is false. "showNoStats": Boolean, when true players are returned with zeroed stats objects even if they have accumulated no stats for a team (such as newly drafted players, or players who were just traded for, etc.); this applies only for regular season stats. Other keys should eventually be documented.
+    * @param {Object} options Object containing various options. Possible keys include...  "totals": Boolean representing whether to return total stats (true) or per-game averages (false); default is false. "playoffs": Boolean representing whether to return playoff stats (statsPlayoffs and careerStatsPlayoffs) or not; default is false. "showNoStats": Boolean, when true players are returned with zeroed stats objects even if they have accumulated no stats for a team (such as newly drafted players, or players who were just traded for, etc.); this applies only for regular season stats. "fuzz": Boolean, when true noise is added to any returned ratings based on the fuzz variable for the given season (default: false); any user-facing rating should use true, any non-user-facing rating should use false. Other keys should eventually be documented.
      * @return {Object} Filtered object containing the requested information for the player.
      */
     function getPlayer(pa, season, tid, attributes, stats, ratings, options) {
@@ -169,6 +169,7 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
         options = options !== undefined ? options : {};
         options.totals = options.totals !== undefined ? options.totals : false;
         options.playoffs = options.playoffs !== undefined ? options.playoffs : false;
+        options.fuzz = options.fuzz !== undefined ? options.fuzz : false;
 
         if (stats.length === 0) {
             options.showNoStats = true;

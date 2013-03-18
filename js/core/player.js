@@ -434,7 +434,41 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
         });
     }
 
-    function genRatings(profile, baseRating, pot, season) {
+    /**
+     * Generate fuzz.
+     *
+     * Fuzz is random noise that is added to a player's displayed ratings, depending on the scouting budget.
+     *
+     * @param {number} scoutingRank Between 1 and 30, the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
+     * @return {number} Fuzz, between -5 and 5.
+     */
+    function genFuzz(scoutingRank) {
+        var cutoff, fuzz, sigma;
+
+        cutoff = 2 + 8 * (scoutingRank - 1) / 29;  // Max error is from 2 to 10, based on scouting rank
+        sigma = 1 + 2 * (scoutingRank - 1) / 29;  // Stddev is from 1 to 3, based on scouting rank
+
+        fuzz = random.gauss(0, sigma);
+        if (fuzz > cutoff) {
+            fuzz = cutoff;
+        } else if (fuzz < -cutoff) {
+            fuzz = -cutoff;
+        }
+
+        return fuzz;
+    }
+
+    /**
+     * Generate initial ratings for a newly-created player.
+     *
+     * @param {string} profile [description]
+     * @param {number} baseRating [description]
+     * @param {number} pot [description]
+     * @param {number} season [description]
+     * @param {number} scoutingRank Between 1 and 30, the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
+     * @return {Object} Ratings object
+     */
+    function genRatings(profile, baseRating, pot, season, scoutingRank) {
         var i, key, profileId, profiles, ratingKeys, ratings, rawRating, rawRatings, sigmas;
 
         if (profile === 'Point') {
@@ -473,6 +507,8 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
         ratings.pot = pot;
 
         ratings.skills = skills(ratings);
+
+        ratings.fuzz = genFuzz(scoutingRank);
 
         return ratings;
     }
@@ -579,9 +615,10 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
      *
      * @memberOf core.player
      * @param {Object} p Player object.
+     * @param {number} scoutingRank Between 1 and 30, the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
      * @return {Object} Updated player object.
      */
-    function addRatingsRow(p) {
+    function addRatingsRow(p, scoutingRank) {
         var key, newRatings, r;
 
         newRatings = {};
@@ -592,6 +629,7 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
             }
         }
         newRatings.season = g.season;
+        newRatings.fuzz = (newRatings.fuzz + genFuzz(scoutingRank)) / 2;
         p.ratings.push(newRatings);
 
         return p;
@@ -619,10 +657,8 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
         return p;
     }
 
-    function generate(tid, age, profile, baseRating, pot, draftYear, newLeague) {
+    function generate(tid, age, profile, baseRating, pot, draftYear, newLeague, scoutingRank) {
         var maxHgt, minHgt, maxWeight, minWeight, nationality, p;
-
-        newLeague = newLeague !== undefined ? newLeague : false;
 
         p = {}; // Will be saved to database
         p.tid = tid;
@@ -636,10 +672,10 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
         p.ratings = [];
         if (newLeague) {
             // Create player for new league
-            p.ratings.push(genRatings(profile, baseRating, pot, g.startingSeason));
+            p.ratings.push(genRatings(profile, baseRating, pot, g.startingSeason, scoutingRank));
         } else {
             // Create player to be drafted
-            p.ratings.push(genRatings(profile, baseRating, pot, draftYear));
+            p.ratings.push(genRatings(profile, baseRating, pot, draftYear, scoutingRank));
         }
 
         minHgt = 69;  // 5'9"

@@ -29,9 +29,12 @@ knobs to control team finances
   team finances template: handlebars helper for form DRY?
   scouting budget - decrease "fuzz" added to displayed ratings
     use core.finances.getRankLastThree
-    fuzz
-      for each player, calculate a randn(0, scoutingPaidRank/10) with max/min of +/- 5
-      calculate a new one each year and add it to 1/2 of the previous one
+    fuzz - store in player.ratings[i].fuzz
+      update core.player.generate calls in unit tests
+      add an option to db.getPlayer to return fuzzed ratings, "fuzz": true
+        make sure this is used EVERYWHERE! no leak!
+          currently some views don't use db.getPlayer. check if they display ratings
+      calculate a new one each year and add it to 1/2 of the previous one, with max/min of +/- 5
       displayed "skills" should include fuzz. ones used in gameSim shouldn't.
 make sure finances are reasonable
 
@@ -58,6 +61,7 @@ player
     now includes pot, ovr, and skills
   bornYear and bornLoc are born.year and born.loc
   contract to object (also in releasedPlayers)
+  added fuzz to each ratings object
 negotiation structure changed
 
 MANUAL CHANGES TODO since 3.0.0-beta

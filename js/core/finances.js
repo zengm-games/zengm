@@ -163,7 +163,6 @@ define(["db", "globals", "lib/underscore"], function (db, g, _) {
         var s;
 
         s = t.seasons.length - 1;  // Most recent season index
-
         if (s > 1) {
             // Use three seasons if possible
             return (t.seasons[s][category][item].rank + t.seasons[s - 1][category][item].rank + t.seasons[s - 2][category][item].rank) / 3;

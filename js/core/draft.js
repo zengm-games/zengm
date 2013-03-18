@@ -2,7 +2,7 @@
  * @name core.draft
  * @namespace The annual draft of new prospects.
  */
-define(["db", "globals", "core/player", "core/season", "util/helpers", "util/random"], function (db, g, player, season, helpers, random) {
+define(["db", "globals", "core/finances", "core/player", "core/season", "util/helpers", "util/random"], function (db, g, finances, player, season, helpers, random) {
     "use strict";
 
     /**
@@ -14,33 +14,38 @@ define(["db", "globals", "core/player", "core/season", "util/helpers", "util/ran
      * @param {function()} cb Callback function.
      */
     function generatePlayers(cb) {
-        var agingYears, baseRating, draftYear, i, p, playerStore, pot, profile, profiles, tx;
+        g.dbl.transaction("teams").objectStore("teams").get(g.userTid).onsuccess = function (event) {
+            var agingYears, baseRating, draftYear, i, p, playerStore, pot, profile, profiles, scoutingRank, t, tx;
 
-        tx = g.dbl.transaction(["players"], "readwrite");
-        playerStore = tx.objectStore("players");
+            t = event.target.result;
+            scoutingRank = finances.getRankLastThree(t, "expenses", "scouting");
 
-        profiles = ["Point", "Wing", "Big", "Big", ""];
-        for (i = 0; i < 70; i++) {
-            baseRating = random.randInt(8, 33);
-            pot = parseInt(random.gauss(50, 20), 10);
-            if (pot < baseRating) {
-                pot = baseRating;
+            tx = g.dbl.transaction("players", "readwrite");
+            playerStore = tx.objectStore("players");
+
+            profiles = ["Point", "Wing", "Big", "Big", ""];
+            for (i = 0; i < 70; i++) {
+                baseRating = random.randInt(8, 33);
+                pot = parseInt(random.gauss(50, 20), 10);
+                if (pot < baseRating) {
+                    pot = baseRating;
+                }
+                if (pot > 90) {
+                    pot = 90;
+                }
+
+                profile = profiles[random.randInt(0, profiles.length - 1)];
+                agingYears = random.randInt(0, 3);
+                draftYear = g.season;
+
+                p = player.generate(g.PLAYER.UNDRAFTED, 19, profile, baseRating, pot, draftYear, false, scoutingRank);
+                p = player.develop(p, agingYears, true);
+
+                db.putPlayer(playerStore, p);
             }
-            if (pot > 90) {
-                pot = 90;
-            }
 
-            profile = profiles[random.randInt(0, profiles.length - 1)];
-            agingYears = random.randInt(0, 3);
-            draftYear = g.season;
-
-            p = player.generate(g.PLAYER.UNDRAFTED, 19, profile, baseRating, pot, draftYear);
-            p = player.develop(p, agingYears, true);
-
-            db.putPlayer(playerStore, p);
-        }
-
-        tx.oncomplete = cb;
+            tx.oncomplete = cb;
+        };
     }
 
     /**

@@ -2,7 +2,7 @@
  * @name core.league
  * @namespace Creating and removing leagues.
  */
-define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/faces", "lib/jquery", "util/helpers", "util/random"], function (db, g, ui, player, season, team, faces, $, helpers, random) {
+define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "core/team", "lib/faces", "lib/jquery", "util/helpers", "util/random"], function (db, g, ui, finances, player, season, team, faces, $, helpers, random) {
     "use strict";
 
     /**
@@ -36,7 +36,7 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/f
                 helpers.resetG();
 
                 db.setGameAttributes(gameAttributes, function () {
-                    var i, teamStore, transaction;
+                    var i, t, scoutingRank, teamStore, transaction;
 
                     // Probably is fastest to use this transaction for everything done to create a new league
                     transaction = g.dbl.transaction(["draftOrder", "players", "teams", "trade"], "readwrite");
@@ -50,7 +50,13 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/f
                     // teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league.
                     teamStore = transaction.objectStore("teams");
                     for (i = 0; i < teams.length; i++) {
-                        teamStore.add(team.generate(teams[i]));
+                        t = team.generate(teams[i]);
+                        teamStore.add(t);
+
+                        // Save scoutingRank for later
+                        if (i === g.userTid) {
+                            scoutingRank = finances.getRankLastThree(t, "expenses", "scouting");
+                        }
                     }
 
                     transaction.objectStore("trade").add({
@@ -135,7 +141,7 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/f
                                     agingYears = random.randInt(0, 13);
                                     draftYear = g.startingSeason - 1 - agingYears;
 
-                                    p = player.generate(t2, 19, profile, baseRatings[n], pots[n], draftYear, true);
+                                    p = player.generate(t2, 19, profile, baseRatings[n], pots[n], draftYear, true, scoutingRank);
                                     p = player.develop(p, agingYears, true);
                                     if (n < 5) {
                                         p = player.bonus(p, goodNeutralBad * random.randInt(0, 20), true);

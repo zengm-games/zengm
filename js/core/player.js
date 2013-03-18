@@ -439,6 +439,7 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
      *
      * Fuzz is random noise that is added to a player's displayed ratings, depending on the scouting budget.
      *
+     * @memberOf core.player
      * @param {number} scoutingRank Between 1 and 30, the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
      * @return {number} Fuzz, between -5 and 5.
      */

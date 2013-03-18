@@ -438,6 +438,24 @@ define(["globals", "lib/jquery"], function (g, $) {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
+    /**
+     * Bound a number so that it can't exceed min and max values.
+     *
+     * @memberOf util.helpers
+     * @param {number} x Input number.
+     * @param {min} min Minimum bounding variable.
+     * @param {max} max Maximum bounding variable.
+     */
+    function bound(x, min, max) {
+        if (x < min) {
+            return min;
+        }
+        if (x > max) {
+            return max;
+        }
+        return x;
+    }
+
     return {
         validateAbbrev: validateAbbrev,
         getAbbrev: getAbbrev,
@@ -454,6 +472,7 @@ define(["globals", "lib/jquery"], function (g, $) {
         round: round,
         nullPad: nullPad,
         formatCurrency: formatCurrency,
-        numberWithCommas: numberWithCommas
+        numberWithCommas: numberWithCommas,
+        bound: bound
     };
 });

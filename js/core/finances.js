@@ -153,7 +153,8 @@ define(["db", "globals", "lib/underscore"], function (db, g, _) {
      * Gets the rank of some financial thing over the past 3 seasons, if available.
      *
      * If only 1 or 2 seasons are available, assume 15.5 (average) for the other seasons
-     * 
+     *
+     * @memberOf core.finances
      * @param {Object} t Team object
      * @param {string} category Currently either "expenses" or "revenues", but could be extended to allow "budget" if needed.
      * @param {string} item Item inside the category

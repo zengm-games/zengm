@@ -905,7 +905,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                     transaction.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
                         var i, players;
 
-                        players = db.getPlayers(event.target.result, season, tid, attributes, stats, ratings, {numGamesRemaining: numGamesRemaining, showRookies: true, sortBy: "rosterOrder", showNoStats: true});
+                        players = db.getPlayers(event.target.result, season, tid, attributes, stats, ratings, {numGamesRemaining: numGamesRemaining, showRookies: true, sortBy: "rosterOrder", showNoStats: true, fuzz: true});
 
                         db.getPayroll(transaction, tid, function (payroll) {
                             cb(players, payroll / 1000);
@@ -918,7 +918,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                 transaction.objectStore("players").index("statsTids").getAll(tid).onsuccess = function (event) {
                     var i, players;
 
-                    players = db.getPlayers(event.target.result, season, tid, attributes, stats, ratings, {numGamesRemaining: 0, showRookies: true, sortBy: "rosterOrder"});
+                    players = db.getPlayers(event.target.result, season, tid, attributes, stats, ratings, {numGamesRemaining: 0, showRookies: true, sortBy: "rosterOrder", fuzz: true});
 
                     // Fix ages
                     for (i = 0; i < players.length; i++) {

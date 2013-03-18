@@ -344,7 +344,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                                     attributes = ["pid", "name", "abbrev", "tid", "age", "contract", "rosterOrder"];
                                     ratings = ["ovr", "pot"];
                                     stats = ["pts", "trb", "ast"];  // This is also used later to find team/league leaders for these player stats
-                                    players = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings, {showNoStats: true});
+                                    players = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings, {showNoStats: true, fuzz: true});
 
                                     // League leaders
                                     vars.leagueLeaders = {};
@@ -694,7 +694,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                 g.dbl.transaction("players").objectStore("players").index("retiredYear").getAll(season).onsuccess = function (event) {
                     var retiredPlayers;
 
-                    retiredPlayers = db.getPlayers(event.target.result, season, null, ["pid", "name", "age"], [], ["ovr"]);
+                    retiredPlayers = db.getPlayers(event.target.result, season, null, ["pid", "name", "age"], [], ["ovr"], {fuzz: true});
 
                     db.getTeams(null, season, ["abbrev", "region", "name"], [], ["leagueChamps"], {}, function (teams) {
                         var champ, data, i;
@@ -1280,8 +1280,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                     attributes = ["pid", "name", "pos", "age", "contract", "freeAgentMood", "injury"];
                     ratings = ["ovr", "pot", "skills"];
                     stats = ["min", "pts", "trb", "ast", "per"];
-
-                    players = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings, {oldStats: true, showNoStats: true});
+                    players = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings, {oldStats: true, showNoStats: true, fuzz: true});
 
                     for (i = 0; i < players.length; i++) {
                         players[i].contract.amount = freeAgents.amountWithMood(players[i].contract.amount, players[i].freeAgentMood[g.userTid]);
@@ -1359,7 +1358,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                         attributes = ["pid", "name", "pos", "age", "contract", "injury"];
                         ratings = ["ovr", "pot", "skills"];
                         stats = ["min", "pts", "trb", "ast", "per"];
-                        userRoster = db.getPlayers(event.target.result, g.season, g.userTid, attributes, stats, ratings, {showNoStats: true});
+                        userRoster = db.getPlayers(event.target.result, g.season, g.userTid, attributes, stats, ratings, {showNoStats: true, fuzz: true});
                         for (i = 0; i < userRoster.length; i++) {
                             if (userPids.indexOf(userRoster[i].pid) >= 0) {
                                 userRoster[i].selected = true;
@@ -1371,7 +1370,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                         playerStore.index("tid").getAll(otherTid).onsuccess = function (event) {
                             var i, otherRoster;
 
-                            otherRoster = db.getPlayers(event.target.result, g.season, otherTid, attributes, stats, ratings, {showNoStats: true});
+                            otherRoster = db.getPlayers(event.target.result, g.season, otherTid, attributes, stats, ratings, {showNoStats: true, fuzz: true});
                             for (i = 0; i < otherRoster.length; i++) {
                                 if (otherPids.indexOf(otherRoster[i].pid) >= 0) {
                                     otherRoster[i].selected = true;
@@ -1542,7 +1541,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                 return;
             }
 
-            playerStore = g.dbl.transaction(["players"]).objectStore("players");
+            playerStore = g.dbl.transaction("players").objectStore("players");
             // Active draft
             if (g.phase === g.PHASE.DRAFT && season === g.season) {
                 playerStore.index("tid").getAll(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
@@ -1982,11 +1981,11 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
 
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
                 var attributes, data, i, players, ratings, stats;
+
                 attributes = ["pid", "name", "pos", "age", "abbrev", "injury"];
                 ratings = ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills"];
                 stats = [];
-
-                players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings, {showNoStats: true});
+                players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings, {showNoStats: true, fuzz: true});
 
                 // Fix ages
                 for (i = 0; i < players.length; i++) {
@@ -2028,10 +2027,10 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
 
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
                 var attributes, data, players, ratings, stats;
+
                 attributes = ["pid", "name", "pos", "age", "injury"];
                 ratings = ["skills"];
                 stats = ["abbrev", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per"];
-
                 players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings, {showRookies: true});
 
                 data = {
@@ -2106,7 +2105,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                 ratings = ["season", "abbrev", "age", "ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills"];
                 stats = ["season", "abbrev", "age", "gp", "gs", "min", "fg", "fga", "fgp", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per"];
 
-                player = db.getPlayer(event.target.result, null, null, attributes, stats, ratings, {playoffs: true, showNoStats: true});
+                player = db.getPlayer(event.target.result, null, null, attributes, stats, ratings, {playoffs: true, showNoStats: true, fuzz: true});
 
                 if (player.tid === g.PLAYER.RETIRED) {
                     g.realtimeUpdate = false;
@@ -2166,8 +2165,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                     attributes = ["pid", "name", "pos", "age", "freeAgentMood", "injury"];
                     stats = ["min", "pts", "trb", "ast", "per"];
                     ratings = ["ovr", "pot", "skills"];
-
-                    players = db.getPlayers(playersSome, g.season, g.userTid, attributes, stats, ratings, {sortBy: "rosterOrder", showNoStats: true});
+                    players = db.getPlayers(playersSome, g.season, g.userTid, attributes, stats, ratings, {sortBy: "rosterOrder", showNoStats: true, fuzz: true});
 
                     for (i = 0; i < players.length; i++) {
                         for (j = 0; j < negotiations.length; j++) {
@@ -2357,9 +2355,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                 attributes = [];
                 ratings = ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
                 stats = [];
-
-                players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings);
-//console.log(players);
+                players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings, {fuzz: true});
 
                 ratingsAll = _.reduce(players, function (memo, player) {
                     var rating;
@@ -2421,10 +2417,10 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
 
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
                 var attributes, data, nbaQuartiles, players, ratings, stats, statsAll;
+
                 attributes = [];
                 ratings = [];
                 stats = ["gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts"];
-
                 players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings);
 
                 statsAll = _.reduce(players, function (memo, player) {

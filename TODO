@@ -31,7 +31,9 @@ knobs to control team finances
     fuzz - store in player.ratings[i].fuzz
       add an option to db.getPlayer to return fuzzed ratings, "fuzz": true
         make sure this is used EVERYWHERE! no leak!
-          currently done just roster
+          todo in views.js
+            draft - how to handle draft ratings
+            negotiation - should be modified to use db.getPlayer
           currently some views don't use db.getPlayer. check if they display ratings
       calculate a new one each year and add it to 1/2 of the previous one, with max/min of +/- 5
       displayed "skills" should include fuzz. ones used in gameSim shouldn't.
@@ -274,6 +276,7 @@ real calendar
   player.injury.gamesRemaining
 core.gameSim.updateSynergy should produce continuous output
   no big difference between a 80 rating and 79 rating, or whatever
+input to helpers.formatCurrency (and all currency in variables everywhere) should be in 1000s of dollars and then only converted to millions when displayed
 
 ---
 

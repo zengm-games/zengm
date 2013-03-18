@@ -1,31 +1,29 @@
 BEFORE 3.0.0-beta.2
 -------------------
 
+auto sort roster of user's team should include fuzz
+in team finances view, save button should not even be shown for non-user teams
 contractNegotiation
+  too easy to negotiate down
   if a player originally wants $1m/year, and the team pisses him off with bad offers but then offers him $3m/year, he should accept that
     basically.. player demand should also depend on original amount. same with compromising half way.. should be relative to original amount and years deviation?
-db version upgrades
-  see https://github.com/superfeedr/indexeddb-backbonejs-adapter/blob/master/backbone-indexeddb.js
 how to deal with a team that drops below 5 active players, factoring in injuries?
   should allow them to exceed roster limit while injury exists
   should not allow play when below 5
   should use same logic/functions as core.season that checks on new season.
     first, add support for auto-add players when AI teams are below limit (in season.js)
-bbgmPing should only work in production
-  make sure it still works next time i update play.basketball-gm.com
-give bbgm website its own version of bootstrap (only with components needed)
-display league/season counter on basketball-gm.com splash page
 update formulas
-  hype
-    increase/decrease a lot for discrete events
-      when a player joins/leaves roster, increase/decrease hype somehow proportional to ovr and pot
-        maybe.. if sum(ovr+pot) increases, hype increases?
   nationalTvRevenue
     base on g.nationalTvContractAmount, for now a constant
   localTvRevenue
     for now, just make it a function of attendance
     eventually, t.seasons[0].tvContract
 make sure finances are reasonable
+db version upgrades
+  see https://github.com/superfeedr/indexeddb-backbonejs-adapter/blob/master/backbone-indexeddb.js
+bbgmPing should only work in production
+  make sure it still works next time i update play.basketball-gm.com
+
 
 DATABASE CHANGES since 3.0.0-beta
 ---------------------------------
@@ -59,6 +57,8 @@ MANUAL CHANGES TODO since 3.0.0-beta
 BEFORE 3.0.0
 ------------
 
+give bbgm website its own version of bootstrap (only with components needed)
+display league/season counter on basketball-gm.com splash page
 any raw data files should go in the data folder, ideally with a script to convert them to however they're used here
 database changes
   KEEP TRACK OF THESE CHANGES so i can upgrade

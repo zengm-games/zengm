@@ -15,12 +15,12 @@ This is a list of only the major changes in each version.
 - Awards and salaries from previous seasons displayed in player view
 - Many small bug fixes and UI improvements
 - More sane and less adversarial contract negotiations, with more direct feedback about what the player is thinking
+- Settings to control various budget items, such as ticket price, scouting budget, etc.
+- "Fuzz" in displayed player ratings: the more spent on scouting, the more accurate the displayed ratings
+- More historical information in player view: previous contracts and awards won
 
 ### Still in progress
 
-- Settings to control various budget items, such as ticket price, scouting budget, etc.
-- "Fuzz" in displayed player ratings view: the more spent on scouting, the more accurate the displayed ratings
-- More historical information in player view: previous contracts and awards won
 - See TODO
 
 ## Technical details

@@ -1071,7 +1071,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                             tempData = _.pluck(team.seasons, keys[i]);
                             _.each(tempData[0], function (value, key, obj) {
                                 barData[keys[i]][key] = helpers.nullPad(_.pluck(_.pluck(tempData, key), "amount"), show);
-                            })
+                            });
                         }
                     }
 

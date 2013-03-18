@@ -25,7 +25,6 @@ update formulas
   localTvRevenue
     for now, just make it a function of attendance
     eventually, t.seasons[0].tvContract
-team finances template: handlebars helper for form DRY?
 make sure finances are reasonable
 
 DATABASE CHANGES since 3.0.0-beta
@@ -179,6 +178,7 @@ bar graphs
 AI updating of *Budgets and ticket prices
   maybe not necessary at this stage?
   call core.finances.updateBudgetRanks() after
+team finances template: handlebars helper for form DRY?
 
 FUTURE (after 3.0.0)
 --------------------
@@ -265,6 +265,7 @@ real calendar
 core.gameSim.updateSynergy should produce continuous output
   no big difference between a 80 rating and 79 rating, or whatever
 input to helpers.formatCurrency (and all currency in variables everywhere) should be in 1000s of dollars and then only converted to millions when displayed
+AI teams should have to deal with fuzz too
 
 ---
 
@@ -329,12 +330,6 @@ warning when window is closed and game simulation is in progress
 Minor bugs:
 
 Don't allow sort from first column of trade window
-
----
-
-======
-FUTURE
-======
 
 UI
 --

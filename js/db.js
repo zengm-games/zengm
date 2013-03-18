@@ -222,7 +222,7 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
             } else if (attributes[j] === "salaries") {
                 player.salaries = _.map(pa.salaries, function (salary) { salary.amount /= 1000; return salary; });
             } else if (attributes[j] === "salariesTotal") {
-                player.salariesTotal = _.reduce(player.salaries, function (memo, salary) { return memo + salary.amount; }, 0);;
+                player.salariesTotal = _.reduce(player.salaries, function (memo, salary) { return memo + salary.amount; }, 0);
             } else {
                 player[attributes[j]] = pa[attributes[j]];
             }
@@ -654,8 +654,8 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
             }
 
             // Revenue and expenses calculation
-            tsa.revenue = _.reduce(tsa.revenues, function(memo, revenue){ return memo + revenue.amount; }, 0);
-            tsa.expense = _.reduce(tsa.expenses, function(memo, expense){ return memo + expense.amount; }, 0);
+            tsa.revenue = _.reduce(tsa.revenues, function (memo, revenue) { return memo + revenue.amount; }, 0);
+            tsa.expense = _.reduce(tsa.expenses, function (memo, expense) { return memo + expense.amount; }, 0);
 
             for (j = 0; j < seasonAttributes.length; j++) {
                 if (seasonAttributes[j] === "winp") {
@@ -1034,7 +1034,7 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
             (function (key) {
                 gameAttributesStore.put({key: key, value: gameAttributes[key]}).onsuccess = function (event) {
                     g[key] = gameAttributes[key];
-                };gameAttributes[key]
+                };
 
                 // Trigger a signal for the team finances view. This is stupid.
                 if (key === "gamesInProgress") {

@@ -397,7 +397,7 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
                 return 0;
             }
             // The better a player is, the more moody he is
-            return mood * (pr.ovr + pr.pot) / 200;
+            return mood * (pr.ovr + pr.pot) / 100;
         });
 
         // During regular season, or before season starts, allow contracts for

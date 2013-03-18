@@ -64,10 +64,21 @@ define([], function () {
         return Math.random() * (b - a) + a;
     }
 
+    /**
+     * Choose a random element from a non-empty array.
+     * 
+     * @memberOf util.random
+     * @param {number} x Array to choose a random value from.
+     */
+    function choice(x) {
+        return x[Math.floor(Math.random() * x.length)];
+    }
+
     return {
         randInt: randInt,
         shuffle: shuffle,
         gauss: gauss,
-        uniform: uniform
+        uniform: uniform,
+        choice: choice
     };
 });

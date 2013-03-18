@@ -1,6 +1,20 @@
 BEFORE 3.0.0-beta.2
 -------------------
 
+too easy to do the "be bad, get draft picks, keep payroll low, sign free agents, be good" pattern
+  free agents are even less willing to sign with the user, even if it's a good team
+  user can't just sign all the free agents before AI teams
+message from the owner every year
+  views to make: inbox, message/63
+  warning about being fired, or congratulations
+  owner cares about wins, championships, and money. different messages based on these things.
+  should block from continuing until read
+  g.ownerMood - number from -1 to 1. Reach -1: you're fired.
+    Each category counts towards mood, from -0.1 to 0.1 per year
+      wins: 0 wins = -0.1, 82 wins = 0.1
+      championships: no playoffs = -0.1, playoffs = 0, each won round is +0.02, championship = 1
+      money: do this after tweaking finances. need some way of judging how good profit is relative to population size
+some consequence of having negative cash - can't sign anything besides minimum contract?
 auto sort roster of user's team should include fuzz
 in team finances view, save button should not even be shown for non-user teams
 contractNegotiation
@@ -50,6 +64,7 @@ player
   contract to object (also in releasedPlayers)
   added fuzz to each ratings object
 negotiation structure changed
+messages object store
 
 MANUAL CHANGES TODO since 3.0.0-beta
 ------------------------------------
@@ -57,24 +72,19 @@ MANUAL CHANGES TODO since 3.0.0-beta
 BEFORE 3.0.0
 ------------
 
+final score, hall of fame
+  influenced by size of city (see: difficulty in views.newLeague)
+draft lottery
+  do a dramatic presentation?
+  increase hype for teams that exceed expectations
 give bbgm website its own version of bootstrap (only with components needed)
 display league/season counter on basketball-gm.com splash page
 any raw data files should go in the data folder, ideally with a script to convert them to however they're used here
 database changes
-  KEEP TRACK OF THESE CHANGES so i can upgrade
-  should money stored be in millions? are thousands actually outputted anywhere? would there be a loss of accuracy?
   add activeYears multientry like statsTids use for:
     league leaders
     stats
     ratings
-  message from the owner every year
-    warning about being fired, or congratulations
-  big picture gameplay
-    some way to actually win/lose the game
-      get fired by owner if X
-    final score, hall of fame
-      influenced by size of city (see: difficulty in views.newLeague)
-    some consequence of having negative cash
 gameSim
   rename compositeRating to compositeRatings (or something better)
     other plural issues in gameSim
@@ -145,12 +155,6 @@ show record (w-l) on roster view - make it more like a summary, as in basketball
 more handlebars helpers for things like...
   team dropdown
   season dropdown
-too easy to do the "be bad, get draft picks, keep payroll low, sign free agents, be good" pattern
-  draft lottery
-    do a dramatic presentation?
-    increase hype for teams that exceed expectations
-  free agents are less willing to sign with bad teams
-  user can't just sign all the free agents before AI teams
 trades
   draft picks
   cash
@@ -169,7 +173,7 @@ like on team finances page, anywhere else to add help popups?
   should this be abstracted rather than just inline in views?
   inline anything from the manual?
 tweak gameSim for stats again
-freeAgentMoods should affect AI team signings
+freeAgentMoods should affect AI team signings - or should it?
   for resigning players
   for signing free agents
 move most db functions into core.whatever. db should just be about initializing/upgrading
@@ -275,6 +279,7 @@ g = require("globals"); g.dbl.transaction("teams").objectStore("teams").get(3).o
 g = require("globals"); g.dbl.transaction("releasedPlayers").objectStore("releasedPlayers").getAll().onsuccess = function (event) { console.log(event.target.result); }
 
 g.dbl.transaction("gameAttributes").objectStore("gameAttributes").getAll().onsuccess = function (event) { console.dir(event.target.result); };
+g = require("globals"); g.dbl.transaction("messages").objectStore("messages").getAll().onsuccess = function (event) { console.dir(event.target.result); };
 
 ---
 

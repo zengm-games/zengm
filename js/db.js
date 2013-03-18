@@ -41,7 +41,7 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
         };
         request.onblocked = function () { g.dbl.close(); };
         request.onupgradeneeded = function (event) {
-            var awardsStore, draftOrderStore, gameAttributesStore, gameStore, playerStore, playoffSeriesStore, releasedPlayersStore, scheduleStore, teamStore, tradeStore;
+            var awardsStore, draftOrderStore, gameAttributesStore, gameStore, messagesStore, playerStore, playoffSeriesStore, releasedPlayersStore, scheduleStore, teamStore, tradeStore;
 
             console.log("Upgrading league" + lid + " database");
 
@@ -59,6 +59,7 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
             draftOrderStore = g.dbl.createObjectStore("draftOrder", {keyPath: "rid"});
             draftOrderStore = g.dbl.createObjectStore("negotiations", {keyPath: "pid"});
             gameAttributesStore = g.dbl.createObjectStore("gameAttributes", {keyPath: "key"});
+            messagesStore = g.dbl.createObjectStore("messages", {keyPath: "mid", autoIncrement: true});
 
             playerStore.createIndex("tid", "tid", {unique: false});
             playerStore.createIndex("draft.year", "draft.year", {unique: false});
@@ -68,6 +69,7 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
             gameStore.createIndex("season", "season", {unique: false});
             releasedPlayersStore.createIndex("tid", "tid", {unique: false});
             releasedPlayersStore.createIndex("contract.exp", "contract.exp", {unique: false});
+            messagesStore.createIndex("read", "read", {unique: false});
         };
         request.onsuccess = function (event) {
             g.dbl = request.result;

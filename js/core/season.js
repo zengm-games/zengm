@@ -2,7 +2,7 @@
  * @name core.season
  * @namespace Somewhat of a hodgepodge. Basically, this is for anything related to a single season that doesn't deserve to be broken out into its own file. Currently, this includes things that happen when moving between phases of the season (i.e. regular season to playoffs) and scheduling. As I write this, I realize that it might make more sense to break up those two classes of functions into two separate modules, but oh well.
  */
-define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "core/freeAgents", "core/player", "core/team", "lib/davis", "lib/handlebars.runtime", "lib/underscore", "util/helpers", "util/random"], function (db, g, ui, contractNegotiation, finances, freeAgents, player, team, Davis, Handlebars, _, helpers, random) {
+define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "core/freeAgents", "core/player", "core/team", "lib/davis", "lib/handlebars.runtime", "lib/underscore", "util/helpers", "util/message", "util/random"], function (db, g, ui, contractNegotiation, finances, freeAgents, player, team, Davis, Handlebars, _, helpers, message, random) {
     "use strict";
 
     /**
@@ -444,11 +444,6 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
 
         phaseText = g.season + " regular season";
 
-        transaction = g.dbl.transaction(["players", "releasedPlayers", "teams"], "readwrite");
-        playerStore = transaction.objectStore("players");
-
-        done = 0;
-        userTeamSizeError = false;
         checkRosterSize = function (tid) {
             playerStore.index("tid").getAll(tid).onsuccess = function (event) {
                 var i, numPlayersOnRoster, players, playersAll, tids;
@@ -499,16 +494,23 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
             };
         };
 
-        // First, make sure teams are all within the roster limits
-        // CPU teams
-        transaction.objectStore("teams").getAll().onsuccess = function (event) {
-            var i, teams;
+        message.generate(function () {
+            transaction = g.dbl.transaction(["players", "releasedPlayers", "teams"], "readwrite");
+            playerStore = transaction.objectStore("players");
 
-            teams = event.target.result;
-            for (i = 0; i < teams.length; i++) {
-                checkRosterSize(teams[i].tid);
-            }
-        };
+            done = 0;
+            userTeamSizeError = false;
+
+            // Make sure teams are all within the roster limits
+            transaction.objectStore("teams").getAll().onsuccess = function (event) {
+                var i, teams;
+
+                teams = event.target.result;
+                for (i = 0; i < teams.length; i++) {
+                    checkRosterSize(teams[i].tid);
+                }
+            };
+        });
     }
 
     function newPhaseAfterTradeDeadline(cb) {

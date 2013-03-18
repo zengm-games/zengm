@@ -21,6 +21,8 @@ This is a list of only the major changes in each version.
 
 ### Still in progress
 
+- Free agents refuse to sign with your team if they don't like you
+- Interactions with the owner: if you do poorly, you might get fired
 - See TODO
 
 ## Technical details

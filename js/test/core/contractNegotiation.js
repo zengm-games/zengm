@@ -47,7 +47,7 @@ define(["db", "globals", "core/contractNegotiation", "core/league", "core/player
                 transaction = g.dbl.transaction(["gameAttributes", "negotiations", "players"], "readwrite");
 
                 contractNegotiation.create(transaction, 70, false, function (error) {
-                    error.should.equal("Player 70 is not a free agent.");
+                    error.should.contain("is not a free agent.");
 
                     transaction.objectStore("negotiations").getAll().onsuccess = function (event) {
                         var negotiations;

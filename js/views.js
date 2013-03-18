@@ -1566,28 +1566,20 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                     }
 
                     playerStore.index("draft.year").getAll(g.season).onsuccess = function (event) {
-                        var drafted, i, pa, player, playersAll, pr, result, started;
+                        var attributes, drafted, players, ratings, stats, started;
 
-                        playersAll = event.target.result;
-                        playersAll.sort(function (a, b) {  return (g.numTeams * (a.draft.round - 1) + a.draft.pick) - (g.numTeams * (b.draft.round - 1) + b.draft.pick); });
+                        attributes = ["pid", "tid", "name", "pos", "age", "draft", "injury"];
+                        ratings = ["ovr", "pot", "skills"];
+                        stats = [];
+                        players = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings, {showNoStats: true, fuzz: true});
 
                         drafted = [];
-                        for (i = 0; i < playersAll.length; i++) {
-                            pa = playersAll[i];
-
-                            if (pa.tid !== g.PLAYER.UNDRAFTED) {
-                                // Attributes
-                                player = {pid: pa.pid, name: pa.name, pos: pa.pos, age: g.season - pa.born.year, draft: pa.draft, injury: pa.injury};
-
-                                // Ratings
-                                pr = pa.ratings[0];
-                                player.ovr = pr.ovr;
-                                player.pot = pr.pot;
-                                player.skills = pr.skills;
-
-                                drafted.push(player);
+                        for (i = 0; i < players.length; i++) {
+                            if (players[i].tid !== g.PLAYER.UNDRAFTED) {
+                                drafted.push(players[i]);
                             }
                         }
+                        drafted.sort(function (a, b) { return (100 * a.draft.round + a.draft.pick) - (100 * b.draft.round + b.draft.pick); });
 
                         started = drafted.length > 0;
 

@@ -411,7 +411,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                                     }
                                     vars.numRosterSpots = 15 - userPlayers.length;
 
-                                    g.dbl.transaction(["playoffSeries"]).objectStore("playoffSeries").get(g.season).onsuccess = function (event) {
+                                    g.dbl.transaction("playoffSeries").objectStore("playoffSeries").get(g.season).onsuccess = function (event) {
                                         var data, found, i, playoffSeries, rnd, series;
 
                                         playoffSeries = event.target.result;
@@ -460,6 +460,30 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                 });
             };
         });
+    }
+
+    function inbox(req) {
+        viewHelpers.beforeLeague(req, function () {
+console.log('hi');
+            g.dbl.transaction("messages").objectStore("messages").getAll().onsuccess = function (event) {
+                var data, messages;
+console.log('hi');
+
+                messages = event.target.result;
+
+                data = {
+                    container: "league_content",
+                    template: "inbox",
+                    title: "Inbox (" + messages.length + ")",
+                    vars: {messages: messages}
+                };
+                ui.update(data, req.raw.cb);
+            };
+        });
+    }
+
+    function message() {
+
     }
 
     function standings(req) {
@@ -2712,6 +2736,8 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
         manual: manual,
 
         leagueDashboard: leagueDashboard,
+        inbox: inbox,
+        message: message,
         standings: standings,
         playoffs: playoffs,
         leagueFinances: leagueFinances,

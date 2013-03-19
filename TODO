@@ -6,6 +6,7 @@ too easy to do the "be bad, get draft picks, keep payroll low, sign free agents,
   user can't just sign all the free agents before AI teams
 message from the owner every year
   views to make: inbox, message/63
+  show # unread in league menu
   warning about being fired, or congratulations
   owner cares about wins, championships, and money. different messages based on these things.
   should block from continuing until read
@@ -37,6 +38,8 @@ db version upgrades
   see https://github.com/superfeedr/indexeddb-backbonejs-adapter/blob/master/backbone-indexeddb.js
 bbgmPing should only work in production
   make sure it still works next time i update play.basketball-gm.com
+fix rounding of corners on delete button
+better source of league names
 
 
 DATABASE CHANGES since 3.0.0-beta

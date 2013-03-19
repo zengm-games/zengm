@@ -309,6 +309,19 @@ select.past-x {
   vertical-align: 20%;
 }
 
+#messages {
+  table-layout: fixed;
+  width: 100%;
+}
+#messages td {
+  width: 80px;
+}
+#messages .text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: auto;
+}
+
 /* From bootstrap-responsive.css, force big size */
   .row {
     margin-left: -30px;

@@ -178,7 +178,9 @@ helpers = helpers || Handlebars.helpers; data = data || {};
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\">\n  <div class=\"well sidebar-nav\">\n    <ul class=\"nav nav-list\" id=\"league_sidebar\">\n      <li id=\"nav_league_dashboard\"><a href=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">Dashboard</a></li>\n      <li class=\"nav-header\">League</li>\n      <li id=\"nav_standings\"><a href=\"/l/"
+    + "\">Dashboard</a></li>\n      <li id=\"nav_league_inbox\"><a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/inbox\">Inbox</a></li>\n      <li class=\"nav-header\">League</li>\n      <li id=\"nav_standings\"><a href=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "/standings\">Standings</a></li>\n      <li id=\"nav_playoffs\"><a href=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
@@ -1403,6 +1405,38 @@ function program1(depth0,data) {
   stack2 = ((stack1 = ((stack1 = depth0.options),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "\n    </ul>\n  </li>\n</ul>\n";
+  return buffer;
+  });
+templates['inbox'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
+helpers = helpers || Handlebars.helpers; data = data || {};
+  var buffer = "", stack1, stack2, self=this, functionType="function", escapeExpression=this.escapeExpression, blockHelperMissing=helpers.blockHelperMissing;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n      <tr";
+  stack1 = helpers.unless.call(depth0, depth0.read, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "><td>"
+    + escapeExpression(((stack1 = depth0.year),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</td><td>"
+    + escapeExpression(((stack1 = depth0.from),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</td><td class=\"text\">"
+    + escapeExpression(((stack1 = depth0.text),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</td></tr>\n    ";
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  
+  return " class=\"alert-info\"";
+  }
+
+  buffer += "<h1>Inbox</h1>\n<p>\n<table class=\"table table-striped table-bordered table-condensed\" id=\"messages\">\n  <tbody>\n    ";
+  stack2 = ((stack1 = ((stack1 = depth0.messages),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n  </tbody>\n</table>\n</p>";
   return buffer;
   });
 templates['schedule'] = template(function (Handlebars,depth0,helpers,partials,data) {

@@ -1415,7 +1415,7 @@ helpers = helpers || Handlebars.helpers; data = data || {};
 function program1(depth0,data) {
   
   
-  return "<p class=\"text-error\">You have a message from the owner. Read it before continuing.</p>";
+  return "<p class=\"text-error\">You have a new message from the owner. Read it before continuing.</p>";
   }
 
 function program3(depth0,data,depth1) {
@@ -1426,19 +1426,19 @@ function program3(depth0,data,depth1) {
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "><td class=\"year\"><a href=\"/l/"
     + escapeExpression(((stack1 = depth1.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/messages/"
+    + "/message/"
     + escapeExpression(((stack1 = depth0.mid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\">"
     + escapeExpression(((stack1 = depth0.year),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</td><td class=\"from\"><a href=\"/l/"
     + escapeExpression(((stack1 = depth1.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/messages/"
+    + "/message/"
     + escapeExpression(((stack1 = depth0.mid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\">"
     + escapeExpression(((stack1 = depth0.from),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</a></td><td class=\"text\"><a href=\"/l/"
     + escapeExpression(((stack1 = depth1.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/messages/"
+    + "/message/"
     + escapeExpression(((stack1 = depth0.mid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\">"
     + escapeExpression(((stack1 = depth0.text),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
@@ -2368,6 +2368,21 @@ function program28(depth0,data,depth1,depth2) {
   stack2 = ((stack1 = ((stack1 = depth0.players),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program18, data, depth0),data:data}));
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "\n</tbody>\n</table>\n</p>\n";
+  return buffer;
+  });
+templates['message'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
+helpers = helpers || Handlebars.helpers; data = data || {};
+  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression;
+
+
+  buffer += "<p><b>From: "
+    + escapeExpression(((stack1 = ((stack1 = depth0.message),stack1 == null || stack1 === false ? stack1 : stack1.from)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + ", "
+    + escapeExpression(((stack1 = ((stack1 = depth0.message),stack1 == null || stack1 === false ? stack1 : stack1.year)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</b></p>\n";
+  stack2 = ((stack1 = ((stack1 = depth0.message),stack1 == null || stack1 === false ? stack1 : stack1.text)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1);
+  if(stack2 || stack2 === 0) { buffer += stack2; }
   return buffer;
   });
 templates['teamHistory'] = template(function (Handlebars,depth0,helpers,partials,data) {

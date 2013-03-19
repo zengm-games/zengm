@@ -4,7 +4,7 @@
 <table class="table table-striped table-bordered table-condensed" id="messages">
   <tbody>
     {{#messages}}
-      <tr{{#unless read}} class="unread"{{/unless}}><td class="year"><a href="/l/{{../lid}}/messages/{{mid}}">{{year}}</td><td class="from"><a href="/l/{{../lid}}/messages/{{mid}}">{{from}}</a></td><td class="text"><a href="/l/{{../lid}}/messages/{{mid}}">{{text}}</a></td></tr>
+      <tr{{#unless read}} class="unread"{{/unless}}><td class="year"><a href="/l/{{../lid}}/message/{{mid}}">{{year}}</td><td class="from"><a href="/l/{{../lid}}/message/{{mid}}">{{from}}</a></td><td class="text"><a href="/l/{{../lid}}/message/{{mid}}">{{text}}</a></td></tr>
     {{/messages}}
   </tbody>
 </table>

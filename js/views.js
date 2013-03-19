@@ -488,8 +488,26 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
         });
     }
 
-    function message() {
+    function message(req) {
+        viewHelpers.beforeLeague(req, function () {
+            var mid;
 
+            mid = parseInt(req.params.mid, 10);
+
+            g.dbl.transaction("messages").objectStore("messages").get(mid).onsuccess = function (event) {
+                var data, message;
+
+                message = event.target.result;
+
+                data = {
+                    container: "league_content",
+                    template: "message",
+                    title: "Message From " + message.from,
+                    vars: {message: message}
+                };
+                ui.update(data, req.raw.cb);
+            };
+        });
     }
 
     function standings(req) {

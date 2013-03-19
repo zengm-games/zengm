@@ -468,6 +468,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                 var anyUnread, data, i, messages;
 
                 messages = event.target.result;
+                messages.reverse();
 
                 anyUnread = false;
                 for (i = 0; i < messages.length; i++) {

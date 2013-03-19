@@ -493,6 +493,8 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
         viewHelpers.beforeLeague(req, function () {
             var mid;
 
+            g.realtimeUpdate = false;
+
             // If null, then the most recent message will be loaded
             mid = req.params.mid ? parseInt(req.params.mid, 10) : null;
 

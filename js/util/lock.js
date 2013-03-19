@@ -102,10 +102,36 @@ define(["db", "globals"], function (db, g) {
         });
     }
 
+    /**
+     * Is there an undread message from the owner?
+     *
+     * Calls the callback function with either true or false.
+     * 
+     * @memberOf util.lock
+     * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on messages; if null is passed, then a new transaction will be used.
+     * @param {function(boolean)} cb Callback.
+     */
+    function unreadMessage(ot, cb) {
+        db.getObjectStore(ot, "messages", "messages").getAll().onsuccess = function (event) {
+            var i, messages;
+
+            messages = event.target.result;
+
+            for (i = 0; i < messages.length; i++) {
+                if (!messages[i].read) {
+                    return cb(true);
+                }
+            }
+
+            return cb(false);
+        };
+    }
+
     return {
         gamesInProgress: gamesInProgress,
         negotiationInProgress: negotiationInProgress,
         canStartGames: canStartGames,
-        canStartNegotiation: canStartNegotiation
+        canStartNegotiation: canStartNegotiation,
+        unreadMessage: unreadMessage
     };
 });

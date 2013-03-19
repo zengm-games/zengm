@@ -25,7 +25,7 @@ define(["db", "globals", "core/contractNegotiation", "core/league", "core/player
             it("should start a negotiation with a free agent", function (done) {
                 var transaction;
 
-                transaction = g.dbl.transaction(["gameAttributes", "negotiations", "players"], "readwrite");
+                transaction = g.dbl.transaction(["gameAttributes", "messages", "negotiations", "players"], "readwrite");
 
                 contractNegotiation.create(transaction, 7, false, function (error) {
                     (typeof error).should.equal("undefined");
@@ -44,7 +44,7 @@ define(["db", "globals", "core/contractNegotiation", "core/league", "core/player
             it("should fail to start a negotiation with anyone but a free agent", function (done) {
                 var transaction;
 
-                transaction = g.dbl.transaction(["gameAttributes", "negotiations", "players"], "readwrite");
+                transaction = g.dbl.transaction(["gameAttributes", "messages", "negotiations", "players"], "readwrite");
 
                 contractNegotiation.create(transaction, 70, false, function (error) {
                     error.should.contain("is not a free agent.");
@@ -62,7 +62,7 @@ define(["db", "globals", "core/contractNegotiation", "core/league", "core/player
             it("should only allow one concurrent negotiation if resigning is false", function (done) {
                 var transaction;
 
-                transaction = g.dbl.transaction(["gameAttributes", "negotiations", "players"], "readwrite");
+                transaction = g.dbl.transaction(["gameAttributes", "messages", "negotiations", "players"], "readwrite");
 
                 contractNegotiation.create(transaction, 7, false, function (error) {
                     (typeof error).should.equal("undefined");
@@ -93,7 +93,7 @@ define(["db", "globals", "core/contractNegotiation", "core/league", "core/player
             it("should allow multiple concurrent negotiations if resigning is true", function (done) {
                 var transaction;
 
-                transaction = g.dbl.transaction(["gameAttributes", "negotiations", "players"], "readwrite");
+                transaction = g.dbl.transaction(["gameAttributes", "messages", "negotiations", "players"], "readwrite");
 
                 contractNegotiation.create(transaction, 7, true, function (error) {
                     (typeof error).should.equal("undefined");
@@ -126,7 +126,7 @@ define(["db", "globals", "core/contractNegotiation", "core/league", "core/player
             it("should not allow a negotiation to start if there are already 15 players on the user's roster, unless resigning is true", function (done) {
                 var tx;
 
-                tx = g.dbl.transaction(["gameAttributes", "negotiations", "players"], "readwrite");
+                tx = g.dbl.transaction(["gameAttributes", "messages", "negotiations", "players"], "readwrite");
 
                 tx.objectStore("players").openCursor(7).onsuccess = function (event) {
                     var cursor, p;
@@ -179,7 +179,7 @@ define(["db", "globals", "core/contractNegotiation", "core/league", "core/player
             it("should not allow signing non-minimum contracts that cause team to exceed the salary cap", function (done) {
                 var i, tx;
 
-                tx = g.dbl.transaction(["gameAttributes", "negotiations", "players"], "readwrite");
+                tx = g.dbl.transaction(["gameAttributes", "messages", "negotiations", "players"], "readwrite");
                 contractNegotiation.create(tx, 8, false, function (error) {
                     var errorUndefined;
 

@@ -69,7 +69,6 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
             gameStore.createIndex("season", "season", {unique: false});
             releasedPlayersStore.createIndex("tid", "tid", {unique: false});
             releasedPlayersStore.createIndex("contract.exp", "contract.exp", {unique: false});
-            messagesStore.createIndex("read", "read", {unique: false});
         };
         request.onsuccess = function (event) {
             g.dbl = request.result;

@@ -13,7 +13,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/helpers",
      * So, ot should NOT be null if you're starting multiple negotiations as a component of some larger operation, but the presence of a particular negotiation in the database doesn't matter. ot should be null if you need to ensure that the roster order is updated before you do something that will read the roster order (like updating the UI). (WARNING: This means that there is actually a race condition for when this is called from season.newPhaseResignPlayers is the UI is updated before the user's teams negotiations are all saved to the database! In practice, this doesn't seem to be a problem now, but it could be eventually.)
      *
      * @memberOf core.contractNegotiation
-     * @param {IDBTransaction|null} ot An IndexedDB transaction on gameAttributes, negotiations, and players, readwrite; if null is passed, then a new transaction will be used.
+     * @param {IDBTransaction|null} ot An IndexedDB transaction on gameAttributes, messages, negotiations, and players, readwrite; if null is passed, then a new transaction will be used.
      * @param {number} pid An integer that must correspond with the player ID of a free agent.
      * @param {boolean} resigning Set to true if this is a negotiation for a contract extension, which will allow multiple simultaneous negotiations. Set to false otherwise.
      * @param {function(string=)} cb Callback to be run only after a successful negotiation is started. If an error occurs, pass a string error message.
@@ -28,7 +28,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/helpers",
             return cb("You're not allowed to sign free agents now.");
         }
 
-        tx = db.getObjectStore(ot, ["gameAttributes", "negotiations", "players"], null, true);
+        tx = db.getObjectStore(ot, ["gameAttributes", "messages", "negotiations", "players"], null, true);
 
         lock.canStartNegotiation(tx, function (canStartNegotiation) {
             var playerStore;

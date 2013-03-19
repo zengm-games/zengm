@@ -5,9 +5,8 @@ too easy to do the "be bad, get draft picks, keep payroll low, sign free agents,
   free agents are even less willing to sign with the user, even if it's a good team
   user can't just sign all the free agents before AI teams
 message from the owner every year
-  fill in name and activity in util.message.generate
-  should block from continuing until all read
-    "Read Message From Owner" link to /l/LID/message
+  on new message, set status to "New message recieved from owner", then back to "Idle" when it's changed to read
+  fill in {{activity}} in util.message.generate
   owner cares about wins, championships, and money. different messages based on these things.
   g.ownerMood - number from -1 to 1. Reach -1: you're fired.
     Each category counts towards mood, from -0.1 to 0.1 per year

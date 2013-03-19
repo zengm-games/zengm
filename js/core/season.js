@@ -748,7 +748,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
 
         phaseText = g.season + " resign players";
 
-        transaction = g.dbl.transaction(["gameAttributes", "negotiations", "players", "teams"], "readwrite");
+        transaction = g.dbl.transaction(["gameAttributes", "messages", "negotiations", "players", "teams"], "readwrite");
 
         player.genBaseMoods(transaction, function (baseMoods) {
             var playerStore;

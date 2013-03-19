@@ -212,7 +212,8 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
                       {id: "play-menu-until-preseason", label: "Until preseason"},
                       {id: "play-menu-until-regular-season", label: "Until regular season"},
                       {id: "play-menu-contract-negotiation", url: "/l/" + g.lid + "/negotiation", label: "Continue contract negotiation"},
-                      {id: "play-menu-contract-negotiation-list", url: "/l/" + g.lid + "/negotiation", label: "Continue resigning players"}];
+                      {id: "play-menu-contract-negotiation-list", url: "/l/" + g.lid + "/negotiation", label: "Continue resigning players"},
+                      {id: "play-menu-message", url: "/l/" + g.lid + "/message", label: "Read message from the owner"}];
 
         if (g.phase === g.PHASE.PRESEASON) {
             // Preseason
@@ -243,44 +244,50 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
             keys = ["play-menu-until-preseason"];
         }
 
-        lock.gamesInProgress(ot, function (gamesInProgress) {
-            if (gamesInProgress) {
-                keys = ["play-menu-stop"];
+        lock.unreadMessage(ot, function (unreadMessage) {
+            if (unreadMessage) {
+                keys = ["play-menu-message"];
             }
 
-            lock.negotiationInProgress(ot, function (negotiationInProgress) {
-                var i, ids, j, playButtonElement, someOptions;
-
-                if (negotiationInProgress && g.phase !== g.PHASE.RESIGN_PLAYERS) {
-                    keys = ["play-menu-contract-negotiation"];
+            lock.gamesInProgress(ot, function (gamesInProgress) {
+                if (gamesInProgress) {
+                    keys = ["play-menu-stop"];
                 }
 
-                // This code is very ugly. Basically I just want to filter all_options into
-                // some_options based on if the ID matches one of the keys.
-                ids = [];
-                for (i = 0; i < allOptions.length; i++) {
-                    ids.push(allOptions[i].id);
-                }
-                someOptions = [];
-                for (i = 0; i < keys.length; i++) {
-                    for (j = 0; j < ids.length; j++) {
-                        if (ids[j] === keys[i]) {
-                            someOptions.push(allOptions[j]);
-                            break;
+                lock.negotiationInProgress(ot, function (negotiationInProgress) {
+                    var i, ids, j, playButtonElement, someOptions;
+
+                    if (negotiationInProgress && g.phase !== g.PHASE.RESIGN_PLAYERS) {
+                        keys = ["play-menu-contract-negotiation"];
+                    }
+
+                    // This code is very ugly. Basically I just want to filter all_options into
+                    // some_options based on if the ID matches one of the keys.
+                    ids = [];
+                    for (i = 0; i < allOptions.length; i++) {
+                        ids.push(allOptions[i].id);
+                    }
+                    someOptions = [];
+                    for (i = 0; i < keys.length; i++) {
+                        for (j = 0; j < ids.length; j++) {
+                            if (ids[j] === keys[i]) {
+                                someOptions.push(allOptions[j]);
+                                break;
+                            }
                         }
                     }
-                }
 
-                playButtonElement = document.getElementById("playButton");
-                if (playButtonElement) {
-                    playButtonElement.innerHTML = Handlebars.templates.playButton({options: someOptions});
-                }
+                    playButtonElement = document.getElementById("playButton");
+                    if (playButtonElement) {
+                        playButtonElement.innerHTML = Handlebars.templates.playButton({options: someOptions});
+                    }
 
-                require("api").playMenuHandlers();  // Because of circular dependency
+                    require("api").playMenuHandlers();  // Because of circular dependency
 
-                if (cb !== undefined) {
-                    cb();
-                }
+                    if (cb !== undefined) {
+                        cb();
+                    }
+                });
             });
         });
     }

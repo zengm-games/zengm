@@ -502,17 +502,22 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                 cursor = event.target.result;
                 message = cursor.value;
 
-                message.read = true;
-
-                cursor.update(message);
-
                 data = {
                     container: "league_content",
                     template: "message",
                     title: "Message From " + message.from,
                     vars: {message: message}
                 };
-                ui.update(data, req.raw.cb);
+
+                if (!message.read) {
+                    message.read = true;
+                    cursor.update(message);
+                    ui.updatePlayMenu(null, function () {
+                        ui.update(data, req.raw.cb);
+                    });
+                } else {
+                    ui.update(data, req.raw.cb);
+                }
             };
         });
     }

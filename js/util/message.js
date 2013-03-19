@@ -9,7 +9,7 @@ define(["globals", "util/random"], function (g, random) {
 
     // First message after new game
     first = [
-        "<p>Hey, who are you? The new intern? I was expecting you to be younger.. and more attractive.. and.. wait, what? The general manager? Oh, um, okay? What's your name? {{ name }}, right? I think that's it. Well listen, {{ name }}, times are rough. Profit only increased by 10% last year. I know, I know, horrible. And I had to let half of our junior staffers go just to get that 10%!</p><p>So I'll cut right to the chase. I need money. And championships. Money and championships, that's what I'm interested in.</p><p>Get it done.</p>"
+        "<p>Hey, sorry I didn't recognize you in the lobby this morning. I'm sure I'll get to know you eventually. Maybe after I get back from my trip to Tahiti?</p><p>Well, listen. Times are rough. Profit only increased by 10% last year. I know, I know, horrible. And I had to let half of our junior staffers go just to get that 10%!</p><p>So I'll cut right to the chase. I need money. And championships. Money and championships, that's what I'm interested in.</p><p>Get it done.</p>"
     ];
 
     // Random activities the owner claims to be doing
@@ -45,7 +45,7 @@ define(["globals", "util/random"], function (g, random) {
     // Intro of annual message
     intro = [];
     intro = [
-        "{{ name }}, {{ name }}, {{ name }}. Sorry we haven't chatted much this year, but I've been busy {{ activity }}. "
+        "Sorry we haven't chatted much this year, but I've been busy {{activity}}. "
     ];
 
     // First index: wins. Second index: championships. Third index: money
@@ -56,7 +56,7 @@ define(["globals", "util/random"], function (g, random) {
     // Wins
     wins = [];
     wins[0] = [
-        "It's an embarassment. We lose so much, I can't even show my face around town. Buying this team was supposed to make me a celebrity, but not one of those bad celebrities that everyone hates. Turn it around.",
+        "This is an embarassment. We lose so much, I can't even show my face around town. Buying this team was supposed to make me a celebrity, but not one of those bad celebrities that everyone hates. Turn it around.",
         "I need some wins. Fans hate losers. Free agents hate losers. What's your strategy? Keep on losing until I fire you? You're making good progress, then."
     ];
     wins[1] = [
@@ -97,14 +97,14 @@ define(["globals", "util/random"], function (g, random) {
     ovr[0] = [
         "This is like Custer's Last Stand. You're Custer, I'm an Indian. I don't like your odds. You don't have much time left if you don't improve.",
         "Bye.",
-        "Please, don't come back until you have some good news.",
+        "Please, don't bother me until you have some good news.",
         "I'm watching you. Seriously, one of your assistant coaches is a spy. Don't fuck up."
     ];
     ovr[1] = [
         "You bore me. Everything about you, it's just boring. Come talk to me when you've earned me more millions and won me some more championships."
     ];
     ovr[2] = [
-        "Anyway {{ name }}, it's been nice chatting wtih you, but I need to get back to {{ activity }}."
+        "Anyway, it's been nice chatting wtih you, but I need to get back to {{activity}}."
     ];
 
     function generate(cb) {

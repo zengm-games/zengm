@@ -175,10 +175,9 @@ table#game_log_list td a {
   text-decoration: none;
 }
 
-table#game_log_list tbody tr:hover td {
+table#game_log_list tbody tr:hover td, table#messages tbody tr:hover td {
   background-color: #d9edf7;
   border-color: #bce8f1;
-  color: #3a87ad;
   text-decoration: none;
 }
 
@@ -314,12 +313,27 @@ select.past-x {
   width: 100%;
 }
 #messages td {
+  padding: 0;
+}
+#messages .year {
+  width: 40px;
+}
+#messages .from {
   width: 80px;
 }
 #messages .text {
   overflow: hidden;
   text-overflow: ellipsis;
   width: auto;
+}
+.unread {
+  font-weight: bold;
+}
+#messages td a {
+  color: #333333;
+  display: block;
+  padding: 4px 5px 4px 5px;
+  text-decoration: none;
 }
 
 /* From bootstrap-responsive.css, force big size */

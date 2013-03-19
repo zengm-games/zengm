@@ -464,18 +464,24 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
 
     function inbox(req) {
         viewHelpers.beforeLeague(req, function () {
-console.log('hi');
             g.dbl.transaction("messages").objectStore("messages").getAll().onsuccess = function (event) {
-                var data, messages;
-console.log('hi');
+                var anyUnread, data, i, messages;
 
                 messages = event.target.result;
+
+                anyUnread = false;
+                for (i = 0; i < messages.length; i++) {
+                    messages[i].text = messages[i].text.replace("<p>", "").replace("</p>", " ");
+                    if (!messages[i].read) {
+                        anyUnread = true;
+                    }
+                }
 
                 data = {
                     container: "league_content",
                     template: "inbox",
-                    title: "Inbox (" + messages.length + ")",
-                    vars: {messages: messages}
+                    title: "Inbox",
+                    vars: {messages: messages, anyUnread: anyUnread}
                 };
                 ui.update(data, req.raw.cb);
             };

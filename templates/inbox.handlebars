@@ -1,9 +1,10 @@
 <h1>Inbox</h1>
+{{#if anyUnread}}<p class="text-error">You have a new message from the owner. Read it before continuing.</p>{{/if}}
 <p>
 <table class="table table-striped table-bordered table-condensed" id="messages">
   <tbody>
     {{#messages}}
-      <tr{{#unless read}} class="alert-info"{{/unless}}><td>{{year}}</td><td>{{from}}</td><td class="text">{{text}}</td></tr>
+      <tr{{#unless read}} class="unread"{{/unless}}><td class="year"><a href="/l/{{../lid}}/messages/{{mid}}">{{year}}</td><td class="from"><a href="/l/{{../lid}}/messages/{{mid}}">{{from}}</a></td><td class="text"><a href="/l/{{../lid}}/messages/{{mid}}">{{text}}</a></td></tr>
     {{/messages}}
   </tbody>
 </table>

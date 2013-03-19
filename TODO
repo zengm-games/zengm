@@ -5,11 +5,9 @@ too easy to do the "be bad, get draft picks, keep payroll low, sign free agents,
   free agents are even less willing to sign with the user, even if it's a good team
   user can't just sign all the free agents before AI teams
 message from the owner every year
-  views to make: inbox, message/63
-  show # unread in league menu
-  warning about being fired, or congratulations
+  fill in name and activity in util.message.generate
+  should block from continuing until all read
   owner cares about wins, championships, and money. different messages based on these things.
-  should block from continuing until read
   g.ownerMood - number from -1 to 1. Reach -1: you're fired.
     Each category counts towards mood, from -0.1 to 0.1 per year
       wins: 0 wins = -0.1, 82 wins = 0.1

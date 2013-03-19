@@ -494,10 +494,15 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
 
             mid = parseInt(req.params.mid, 10);
 
-            g.dbl.transaction("messages").objectStore("messages").get(mid).onsuccess = function (event) {
-                var data, message;
+            g.dbl.transaction("messages", "readwrite").objectStore("messages").openCursor(mid).onsuccess = function (event) {
+                var cursor, data, message;
 
-                message = event.target.result;
+                cursor = event.target.result;
+                message = cursor.value;
+
+                message.read = true;
+
+                cursor.update(message);
 
                 data = {
                     container: "league_content",

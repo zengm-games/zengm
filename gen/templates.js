@@ -178,7 +178,7 @@ helpers = helpers || Handlebars.helpers; data = data || {};
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\">\n  <div class=\"well sidebar-nav\">\n    <ul class=\"nav nav-list\" id=\"league_sidebar\">\n      <li id=\"nav_league_dashboard\"><a href=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">Dashboard</a></li>\n      <li id=\"nav_league_inbox\"><a href=\"/l/"
+    + "\">Dashboard</a></li>\n      <li id=\"nav_inbox\"><a href=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "/inbox\">Inbox</a></li>\n      <li class=\"nav-header\">League</li>\n      <li id=\"nav_standings\"><a href=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
@@ -2383,6 +2383,9 @@ helpers = helpers || Handlebars.helpers; data = data || {};
     + "</b></p>\n";
   stack2 = ((stack1 = ((stack1 = depth0.message),stack1 == null || stack1 === false ? stack1 : stack1.text)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1);
   if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n<p><a href=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/inbox\">Return To Inbox</a></p>";
   return buffer;
   });
 templates['teamHistory'] = template(function (Handlebars,depth0,helpers,partials,data) {

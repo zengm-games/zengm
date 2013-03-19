@@ -493,9 +493,10 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
         viewHelpers.beforeLeague(req, function () {
             var mid;
 
-            mid = parseInt(req.params.mid, 10);
+            // If null, then the most recent message will be loaded
+            mid = req.params.mid ? parseInt(req.params.mid, 10) : null;
 
-            g.dbl.transaction("messages", "readwrite").objectStore("messages").openCursor(mid).onsuccess = function (event) {
+            g.dbl.transaction("messages", "readwrite").objectStore("messages").openCursor(mid, "prev").onsuccess = function (event) {
                 var cursor, data, message;
 
                 cursor = event.target.result;

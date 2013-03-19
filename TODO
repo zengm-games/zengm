@@ -7,6 +7,7 @@ too easy to do the "be bad, get draft picks, keep payroll low, sign free agents,
 message from the owner every year
   fill in name and activity in util.message.generate
   should block from continuing until all read
+    "Read Message From Owner" link to /l/LID/message
   owner cares about wins, championships, and money. different messages based on these things.
   g.ownerMood - number from -1 to 1. Reach -1: you're fired.
     Each category counts towards mood, from -0.1 to 0.1 per year
@@ -276,6 +277,8 @@ AI teams should have to deal with fuzz too
 
 g = require("globals"); g.dbl.transaction("players").objectStore("players").get(184).onsuccess = function (event) { console.log(event.target.result); };
 
+
+g = require("globals"); g.dbl.transaction("players").objectStore("players").openCursor(null, "prev").onsuccess = function(event) { console.log(event.target.result.value); };
 g = require("globals"); g.dbl.transaction("teams").objectStore("teams").get(3).onsuccess = function (event) { console.log(event.target.result.seasons[0]); }
 g = require("globals"); g.dbl.transaction("releasedPlayers").objectStore("releasedPlayers").getAll().onsuccess = function (event) { console.log(event.target.result); }
 

@@ -95,7 +95,7 @@ define(["globals", "util/random"], function (g, random) {
     // Overall
     ovr = [];
     ovr[0] = [
-        "This is like Custer's Last Stand. You're Custer, I'm an Indian. I don't like your odds, but you don't have much time left if you don't improve.",
+        "This is like Custer's Last Stand. You're Custer, I'm an Indian. I don't like your odds. You don't have much time left if you don't improve.",
         "Bye.",
         "Please, don't come back until you have some good news.",
         "I'm watching you. Seriously, one of your assistant coaches is a spy. Don't fuck up."

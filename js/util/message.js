@@ -104,19 +104,25 @@ define(["globals", "util/random"], function (g, random) {
         "You bore me. Everything about you, it's just boring. Come talk to me when you've earned me more millions and won me some more championships."
     ];
     ovr[2] = [
-        "Anyway, it's been nice chatting wtih you, but I need to get back to {{activity}}."
+        "Anyway, I'm happy with the progress you've made, but I need to get back to {{activity}}."
     ];
 
     function generate(cb) {
-        var m, tx;
+        var activity1, activity2, m, tx;
 
         if (g.season === g.startingSeason) {
             m = random.choice(first);
         } else {
-            m = "<p>" + random.choice(intro) + "</p>" +
+            activity1 = random.choice(activities);
+            activity2 = random.choice(activities);
+            while (activity1 !== activity2) {
+                activity2 = random.choice(activities);
+            }
+
+            m = "<p>" + random.choice(intro).replace("{{activity}}", activity1) + "</p>" +
                 "<p>" + random.choice(wins[0]) + " " + random.choice(champs[1]) + "</p>" +
                 "<p>" + random.choice(money[2]) + "</p>" +
-                "<p>" + random.choice(ovr[0]) + "</p>";
+                "<p>" + random.choice(ovr[0]).replace("{{activity}}", activity2) + "</p>";
         }
 
         tx = g.dbl.transaction("messages", "readwrite");

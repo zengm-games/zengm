@@ -37,9 +37,7 @@ define(["globals", "util/helpers", "util/random"], function (g, helpers, random)
             lostConf: 0,
             lastTen: [],
             streak: 0,
-            madePlayoffs: false,
-            confChamps: false,
-            leagueChamps: false,
+            playoffRoundsWon: -1,  // -1: didn't make playoffs. 0: lost in first round. ... 4: won championship
             hype: Math.random(),
             pop: 0,  // Needs to be set somewhere!
             tvContract: {

@@ -6,6 +6,15 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
     "use strict";
 
     /**
+     * Update g.ownerMood based on performance this season.
+     *
+     * @memberOf core.season
+     */
+    function updateOwnerMood(tx) {
+
+    }
+
+    /**
      * Compute the awards (MVP, etc) after a season finishes.
      *
      * The awards are saved to the "awards" object store.
@@ -579,7 +588,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                         if (tidPlayoffs.indexOf(t.tid) >= 0) {
                             t = team.addStatsRow(t, true);
 
-                            teamSeason.madePlayoffs = true;
+                            teamSeason.playoffRoundsWon = 0;
 
                             // More hype for making the playoffs
                             teamSeason.hype += 0.05;
@@ -918,9 +927,8 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                         cursor = event.target.result;
                         t = cursor.value;
                         teamSeason = _.last(t.seasons);
-                        teamSeason.confChamps = true;
                         if (series[rnd][0].home.won === 4) {
-                            teamSeason.leagueChamps = true;
+                            teamSeason.playoffRoundsWon += 1;
                             teamSeason.hype += 0.05;
                             if (teamSeason.hype > 1) {
                                 teamSeason.hype = 1;
@@ -934,9 +942,8 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                         cursor = event.target.result;
                         t = cursor.value;
                         teamSeason = _.last(t.seasons);
-                        teamSeason.confChamps = true;
                         if (series[rnd][0].away.won === 4) {
-                            teamSeason.leagueChamps = true;
+                            teamSeason.playoffRoundsWon += 1;
                             teamSeason.hype += 0.1;
                             if (teamSeason.hype > 1) {
                                 teamSeason.hype = 1;
@@ -989,6 +996,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                             cursor = event.target.result;
                             t = cursor.value;
                             teamSeason = _.last(t.seasons);
+                            teamSeason.playoffRoundsWon += 1;
                             teamSeason.hype += 0.05;
                             if (teamSeason.hype > 1) {
                                 teamSeason.hype = 1;

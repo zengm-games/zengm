@@ -52,6 +52,7 @@ added to seasonAttributes for each team:
   expenses: {}
   payrollEndOfSeason: number
 added to root of each team: budget
+leagueChamps, confChamps, and madePlayoffs condensed to one entry, playoffRoundsWon
 removed "cost" and "revenue" from seasonAttributes
 changes to retiredPlayers, but that's just removing stuff that isn't needed anymore, so no problem
 player

@@ -220,11 +220,15 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                 // 3 most recent years
                 for (i = userTeam.seasons.length - 2; i > userTeam.seasons.length - 5 && i >= 0; i--) {
                     extraText = "";
-                    if (userTeam.seasons[i].leagueChamps) {
+                    if (userTeam.seasons[i].playoffRoundsWon === 4) {
                         extraText = "league champs";
-                    } else if (userTeam.seasons[i].confChamps) {
+                    } else if (userTeam.seasons[i].playoffRoundsWon === 3) {
                         extraText = "conference champs";
-                    } else if (userTeam.seasons[i].madePlayoffs) {
+                    } else if (userTeam.seasons[i].playoffRoundsWon === 2) {
+                        extraText = "made conference finals";
+                    } else if (userTeam.seasons[i].playoffRoundsWon === 1) {
+                        extraText = "made second round";
+                    } else if (userTeam.seasons[i].playoffRoundsWon === 0) {
                         extraText = "made playoffs";
                     }
 
@@ -758,11 +762,11 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
 
                     retiredPlayers = db.getPlayers(event.target.result, season, null, ["pid", "name", "age"], [], ["ovr"], {fuzz: true});
 
-                    db.getTeams(null, season, ["abbrev", "region", "name"], [], ["leagueChamps"], {}, function (teams) {
+                    db.getTeams(null, season, ["abbrev", "region", "name"], [], ["playoffRoundsWon"], {}, function (teams) {
                         var champ, data, i;
 
                         for (i = 0; i < teams.length; i++) {
-                            if (teams[i].leagueChamps) {
+                            if (teams[i].playoffRoundsWon === 4) {
                                 champ = teams[i];
                                 break;
                             }
@@ -1288,11 +1292,15 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                 // 3 most recent years
                 for (i = 0; i < userTeam.seasons.length; i++) {
                     extraText = "";
-                    if (userTeam.seasons[i].leagueChamps) {
+                    if (userTeam.seasons[i].playoffRoundsWon === 4) {
                         extraText = "league champs";
-                    } else if (userTeam.seasons[i].confChamps) {
+                    } else if (userTeam.seasons[i].playoffRoundsWon === 3) {
                         extraText = "conference champs";
-                    } else if (userTeam.seasons[i].madePlayoffs) {
+                    } else if (userTeam.seasons[i].playoffRoundsWon === 2) {
+                        extraText = "made conference finals";
+                    } else if (userTeam.seasons[i].playoffRoundsWon === 1) {
+                        extraText = "made second round";
+                    } else if (userTeam.seasons[i].playoffRoundsWon === 0) {
                         extraText = "made playoffs";
                     }
 

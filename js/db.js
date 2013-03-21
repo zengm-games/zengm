@@ -898,7 +898,7 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
         playerStore.index("tid").getAll(tid).onsuccess = function (event) {
             var i;
 
-            players = getPlayers(event.target.result, g.season, tid, ["pid"], [], ["ovr"], {showNoStats: true, showRookies: true});
+            players = getPlayers(event.target.result, g.season, tid, ["pid"], [], ["ovr"], {showNoStats: true, showRookies: true, fuzz: tid === g.userTid});
             players.sort(function (a, b) {  return b.ratings.ovr - a.ratings.ovr; });
 
             for (i = 0; i < players.length; i++) {

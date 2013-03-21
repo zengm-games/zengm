@@ -674,7 +674,7 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
                 } else if (seasonAttributes[j] === "profit") {
                     team.profit = (tsa.revenue - tsa.expense) / 1000;  // [millions of dollars]
                 } else if (seasonAttributes[j] === "salaryPaid") {
-                    team.salaryPaid = tsa.expense.salary / 1000;  // [millions of dollars]
+                    team.salaryPaid = tsa.expenses.salary.amount / 1000;  // [millions of dollars]
                 } else if (seasonAttributes[j] === "payroll") {
                     // Handled later
                     team.payroll = null;

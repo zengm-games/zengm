@@ -25,6 +25,7 @@ make sure finances are reasonable
   revenue/expenses sources
     http://fivethirtyeight.blogs.nytimes.com/2011/07/05/calling-foul-on-n-b-a-s-claims-of-financial-distress/
     http://nbahoopsonline.com/Articles/2007-08/NBArevinuesharing.html
+    forbes
 db version upgrades
   see https://github.com/superfeedr/indexeddb-backbonejs-adapter/blob/master/backbone-indexeddb.js
 bbgmPing should only work in production

@@ -184,19 +184,19 @@ define(["globals", "util/helpers", "util/random"], function (g, helpers, random)
                     rank: tm.popRank
                 },
                 scouting: {
-                    amount: helpers.round(200 + 300 * (30 - tm.popRank) / 29) * 10,
+                    amount: helpers.round(900 + 900 * (30 - tm.popRank) / 29) * 10,
                     rank: tm.popRank
                 },
                 coaching: {
-                    amount: helpers.round(200 + 300 * (30 - tm.popRank) / 29) * 10,
+                    amount: helpers.round(900 + 900 * (30 - tm.popRank) / 29) * 10,
                     rank: tm.popRank
                 },
                 health: {
-                    amount: helpers.round(200 + 300 * (30 - tm.popRank) / 29) * 10,
+                    amount: helpers.round(900 + 900 * (30 - tm.popRank) / 29) * 10,
                     rank: tm.popRank
                 },
                 facilities: {
-                    amount: helpers.round(200 + 300 * (30 - tm.popRank) / 29) * 10,
+                    amount: helpers.round(900 + 900 * (30 - tm.popRank) / 29) * 10,
                     rank: tm.popRank
                 }
             }

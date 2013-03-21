@@ -43,7 +43,8 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                         wins: 0,
                         playoffs: 0,
                         money: 0
-                    }
+                    },
+                    gameOver: false
                 };
 
                 // Clear old game attributes from g, to make sure the new ones are saved to the db in db.setGameAttributes

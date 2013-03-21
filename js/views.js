@@ -518,6 +518,11 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                 if (!message.read) {
                     message.read = true;
                     cursor.update(message);
+
+                    if (g.gameOver) {
+                        ui.updateStatus("You're fired! Game over!");
+                    }
+
                     ui.updatePlayMenu(null, function () {
                         ui.update(data, req.raw.cb);
                     });

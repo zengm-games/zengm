@@ -2,7 +2,7 @@
  * @name util.message
  * @namespace Messages from the owner of the team to the GM.
  */
-define(["globals", "util/random"], function (g, random) {
+define(["db", "globals", "ui", "util/random"], function (db, g, ui, random) {
     "use strict";
 
     var activities, playoffs, intro, first, money, ovr, wins;
@@ -144,6 +144,8 @@ define(["globals", "util/random"], function (g, random) {
     function generate(deltas, cb) {
         var activity1, activity2, indMoney, indOverall, indPlayoffs, indOvr, indWins, m, ownerMoodSum, tx;
 
+        ownerMoodSum = g.ownerMood.wins + g.ownerMood.playoffs + g.ownerMood.money;
+
         if (g.season === g.startingSeason) {
             m = random.choice(first);
         } else {
@@ -199,7 +201,7 @@ console.log(g.ownerMood);
                 indOvr = 0;
             }
 
-            if (indOvr < -1) {
+            if (ownerMoodSum > -1) {
                 m = "<p>" + random.choice(intro).replace("{{activity}}", activity1) + "</p>" +
                     "<p>" + random.choice(wins[indWins]) + " " + random.choice(playoffs[indPlayoffs]) + "</p>" +
                     "<p>" + random.choice(money[indMoney]) + "</p>" +
@@ -217,7 +219,11 @@ console.log(g.ownerMood);
             text: m
         });
         tx.oncomplete = function () {
-            cb();
+            if (ownerMoodSum > -1) {
+                cb();
+            } else {
+                db.setGameAttributes({gameOver: true}, cb);
+            }
         };
     }
 

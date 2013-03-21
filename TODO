@@ -4,9 +4,8 @@ BEFORE 3.0.0-beta.2
 too easy to do the "be bad, get draft picks, keep payroll low, sign free agents, be good" pattern
   free agents are even less willing to sign with the user, even if it's a good team
   user can't just sign all the free agents before AI teams
-message from the owner every year
-  on new message, set status to "New message recieved from owner", then back to "Idle" when it's changed to read
-  base on g.ownerMood - Reach -1 sum of components, you're fired.
+write actual message for when the player is fired
+is "game over" logic reasonable?
 some consequence of having negative cash - can't sign anything besides minimum contract?
 auto sort roster of user's team should include fuzz
 in team finances view, save button should not even be shown for non-user teams

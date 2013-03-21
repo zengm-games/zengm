@@ -261,6 +261,10 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
                         keys = ["play-menu-contract-negotiation"];
                     }
 
+                    if (g.gameOver && !unreadMessage) {
+                        keys = [];
+                    }
+
                     // This code is very ugly. Basically I just want to filter all_options into
                     // some_options based on if the ID matches one of the keys.
                     ids = [];

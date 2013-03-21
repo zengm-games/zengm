@@ -18,11 +18,11 @@ This is a list of only the major changes in each version.
 - Settings to control various budget items, such as ticket price, scouting budget, etc.
 - "Fuzz" in displayed player ratings: the more spent on scouting, the more accurate the displayed ratings
 - More historical information in player view: previous contracts and awards won
+- Annual interactions with the owner: if you do poorly, you might get fired
 
 ### Still in progress
 
 - Free agents refuse to sign with your team if they don't like you
-- Interactions with the owner: if you do poorly, you might get fired
 - See TODO
 
 ## Technical details

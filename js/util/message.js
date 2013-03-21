@@ -207,7 +207,15 @@ console.log(g.ownerMood);
                     "<p>" + random.choice(money[indMoney]) + "</p>" +
                     "<p>" + random.choice(ovr[indOvr]).replace("{{activity}}", activity2) + "</p>";
             } else {
-                m = "<p>You lose!</p>";
+                if (g.ownerMood.wins < 0 && g.ownerMood.playoffs < 0 && g.ownerMood.money < 0) {
+                    m = "<p>You've been an all-around disappointment. You're fired.</p>";
+                } else if (g.ownerMood.money < 0 && g.ownerMood.wins >= 0 && g.ownerMood.playoffs >= 0) {
+                    m = "<p>You've won some games, but you're just not making me enough profit. It's not all about wins and losses, dollars matter too. You're fired.</p>";
+                } else if (g.ownerMood.money >= 0 && g.ownerMood.wins < 0 && g.ownerMood.playoffs < 0) {
+                    m = "<p>I like that you've made a nice profit for me, but you're not putting a competitive team on the court. We need a new direction. You're fired.</p>";
+                } else {
+                    m = "<p>You're fired.</p>";
+                }
             }
         }
 

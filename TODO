@@ -4,7 +4,6 @@ BEFORE 3.0.0-beta.2
 too easy to do the "be bad, get draft picks, keep payroll low, sign free agents, be good" pattern
   free agents are even less willing to sign with the user, even if it's a good team
   user can't just sign all the free agents before AI teams
-write actual message for when the player is fired
 is "game over" logic reasonable?
 in team finances view, save button should not even be shown for non-user teams
 contractNegotiation
@@ -24,6 +23,9 @@ update formulas
     eventually, t.seasons[0].tvContract
 make sure finances are reasonable
   shouldn't be able to profit more than say $50 million/year. bad teams should lose money
+  revenue/expenses sources
+    http://fivethirtyeight.blogs.nytimes.com/2011/07/05/calling-foul-on-n-b-a-s-claims-of-financial-distress/
+    http://nbahoopsonline.com/Articles/2007-08/NBArevinuesharing.html
 db version upgrades
   see https://github.com/superfeedr/indexeddb-backbonejs-adapter/blob/master/backbone-indexeddb.js
 bbgmPing should only work in production

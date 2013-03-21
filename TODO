@@ -5,7 +5,6 @@ too easy to do the "be bad, get draft picks, keep payroll low, sign free agents,
   free agents are even less willing to sign with the user, even if it's a good team
   user can't just sign all the free agents before AI teams
 is "game over" logic reasonable?
-in team finances view, save button should not even be shown for non-user teams
 contractNegotiation
   too easy to negotiate down
   if a player originally wants $1m/year, and the team pisses him off with bad offers but then offers him $3m/year, he should accept that
@@ -60,6 +59,9 @@ player
   added fuzz to each ratings object
 negotiation structure changed
 messages object store
+gameAttributes:
+  ownerMood
+  gameOver
 
 MANUAL CHANGES TODO since 3.0.0-beta
 ------------------------------------

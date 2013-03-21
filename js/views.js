@@ -1266,7 +1266,11 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                                     $("#finances-settings input, button").removeAttr("disabled");
                                 }
                                 $("#finances-settings .text-error").html("");
-                                $("#finances-settings button").show();
+                                if (tid === g.userTid) {
+                                    $("#finances-settings button").show();
+                                } else {
+                                    $("#finances-settings button").hide();
+                                }
                             };
                             $("#finances-settings").on("gameSimulationStart", disableFinanceSettings);
                             $("#finances-settings").on("gameSimulationStop", enableFinanceSettings);

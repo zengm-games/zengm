@@ -213,7 +213,8 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
                       {id: "play-menu-until-regular-season", label: "Until regular season"},
                       {id: "play-menu-contract-negotiation", url: "/l/" + g.lid + "/negotiation", label: "Continue contract negotiation"},
                       {id: "play-menu-contract-negotiation-list", url: "/l/" + g.lid + "/negotiation", label: "Continue resigning players"},
-                      {id: "play-menu-message", url: "/l/" + g.lid + "/message", label: "Read message from the owner"}];
+                      {id: "play-menu-message", url: "/l/" + g.lid + "/message", label: "Read message from the owner"},
+                      {id: "play-menu-new-league", url: "/new_league", label: "Try again in a new league"}];
 
         if (g.phase === g.PHASE.PRESEASON) {
             // Preseason
@@ -261,8 +262,9 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
                         keys = ["play-menu-contract-negotiation"];
                     }
 
+                    // If there is an unread message, it's from the owner saying the player is fired, so let the user see that first.
                     if (g.gameOver && !unreadMessage) {
-                        keys = [];
+                        keys = ["play-menu-new-league"];
                     }
 
                     // This code is very ugly. Basically I just want to filter all_options into

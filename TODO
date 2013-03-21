@@ -30,7 +30,6 @@ db version upgrades
   see https://github.com/superfeedr/indexeddb-backbonejs-adapter/blob/master/backbone-indexeddb.js
 bbgmPing should only work in production
   make sure it still works next time i update play.basketball-gm.com
-fix rounding of corners on delete button
 better source of league names
 
 

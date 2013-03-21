@@ -8,10 +8,46 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
     /**
      * Update g.ownerMood based on performance this season.
      *
+     * This is based on three factors: regular season performance, playoff performance, and finances.
+     * 
      * @memberOf core.season
+     * @param {function(Object)} cb Callback function whose argument is an object containing the changes in g.ownerMood this season.
      */
-    function updateOwnerMood(tx) {
+    function updateOwnerMood(cb) {
+        if (g.season !== g.startingSeason) {
+            g.dbl.transaction("teams").objectStore("teams").get(g.userTid).onsuccess = function (event) {
+                var deltas, ownerMood, t;
 
+                t = db.getTeam(event.target.result, g.season - 1, [], [], ["won", "playoffRoundsWon", "profit"], {});
+
+                deltas = {};
+                deltas.wins = 0.25 * (t.won - 41) / 41;
+                if (t.playoffRoundsWon < 0) {
+                    deltas.playoffs = -0.2;
+                } else if (t.playoffRoundsWon < 4) {
+                    deltas.playoffs = 0.04 * t.playoffRoundsWon;
+                } else {
+                    deltas.playoffs = 0.2;
+                }
+                deltas.money = (t.profit - 15) / 100;
+
+                ownerMood = {};
+                ownerMood.wins = g.ownerMood.wins + deltas.wins;
+                ownerMood.playoffs = g.ownerMood.playoffs + deltas.playoffs;
+                ownerMood.money = g.ownerMood.money + deltas.money;
+
+                // Bound only the top - can't win the game by doing only one thing, but you can lose it by neglecting one thing
+                if (ownerMood.wins > 1) { ownerMood.wins = 1; }
+                if (ownerMood.playoffs > 1) { ownerMood.playoffs = 1; }
+                if (ownerMood.money > 1) { ownerMood.money = 1; }
+
+                db.setGameAttributes({ownerMood: ownerMood}, function () {
+                    cb(deltas);
+                });
+            };
+        } else {
+            cb({wins: 0, playoffs: 0, money: 0});
+        }
     }
 
     /**
@@ -20,7 +56,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
      * The awards are saved to the "awards" object store.
      *
      * @memberOf core.season
-     * @param {function()} cb Callback function run after the database operations finish.
+     * @param {function()} cb Callback function.
      */
     function awards(cb) {
         var awardsByPlayer, cbAwardsByPlayer, transaction;
@@ -503,22 +539,24 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
             };
         };
 
-        message.generate(function () {
-            transaction = g.dbl.transaction(["players", "releasedPlayers", "teams"], "readwrite");
-            playerStore = transaction.objectStore("players");
+        updateOwnerMood(function (deltas) {
+            message.generate(deltas, function () {
+                transaction = g.dbl.transaction(["players", "releasedPlayers", "teams"], "readwrite");
+                playerStore = transaction.objectStore("players");
 
-            done = 0;
-            userTeamSizeError = false;
+                done = 0;
+                userTeamSizeError = false;
 
-            // Make sure teams are all within the roster limits
-            transaction.objectStore("teams").getAll().onsuccess = function (event) {
-                var i, teams;
+                // Make sure teams are all within the roster limits
+                transaction.objectStore("teams").getAll().onsuccess = function (event) {
+                    var i, teams;
 
-                teams = event.target.result;
-                for (i = 0; i < teams.length; i++) {
-                    checkRosterSize(teams[i].tid);
-                }
-            };
+                    teams = event.target.result;
+                    for (i = 0; i < teams.length; i++) {
+                        checkRosterSize(teams[i].tid);
+                    }
+                };
+            });
         });
     }
 

@@ -30,7 +30,21 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                 var gameAttributes, key, startingSeason;
 
                 startingSeason = 2013;
-                gameAttributes = {userTid: tid, season: startingSeason, startingSeason: startingSeason, phase: 0, gamesInProgress: false, stopGames: false, lastDbChange: 0, leagueName: name};
+                gameAttributes = {
+                    userTid: tid,
+                    season: startingSeason,
+                    startingSeason: startingSeason,
+                    phase: 0,
+                    gamesInProgress: false,
+                    stopGames: false,
+                    lastDbChange: 0,
+                    leagueName: name,
+                    ownerMood: {
+                        wins: 0,
+                        playoffs: 0,
+                        money: 0
+                    }
+                };
 
                 // Clear old game attributes from g, to make sure the new ones are saved to the db in db.setGameAttributes
                 helpers.resetG();

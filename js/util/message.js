@@ -5,7 +5,7 @@
 define(["globals", "util/random"], function (g, random) {
     "use strict";
 
-    var activities, champs, intro, first, money, ovr, wins;
+    var activities, playoffs, intro, first, money, ovr, wins;
 
     // First message after new game
     first = [
@@ -48,10 +48,11 @@ define(["globals", "util/random"], function (g, random) {
         "Sorry we haven't chatted much this year, but I've been busy {{activity}}. "
     ];
 
-    // First index: wins. Second index: championships. Third index: money
-    // 0: bad
-    // 1: mediocre
-    // 2: good
+    // 0: bad overall, getting worse
+    // 1: bad overall, improving
+    // 2: mediocre
+    // 3: good overall, getting worse
+    // 4: good overall, improving
 
     // Wins
     wins = [];
@@ -60,69 +61,152 @@ define(["globals", "util/random"], function (g, random) {
         "I need some wins. Fans hate losers. Free agents hate losers. What's your strategy? Keep on losing until I fire you? You're making good progress, then."
     ];
     wins[1] = [
-        "So, I mean, it could be worse. But that's not good enough."
+        "I recognize we're getting better and our team has some potential for growth, but don't fuck this up. You've already used up most of my patience.",
+        "You keep telling me we have \"potential\", but potential doesn't win games."
     ];
     wins[2] = [
-        "I'm happy with our regular season performance."
+        "So, I mean, it could be worse. But that's not good enough.",
+        "In this league, mediocrity can be worse than losing. I hope you have some plan to get us to the next level."
+    ];
+    wins[3] = [
+        "Don't think you can coast on your past success for too long. I'm not planning on rebuilding for a decade.",
+        "What have you done for me lately?"
+    ];
+    wins[4] = [
+        "I'm happy with our regular season performance.",
+        "I like the roster you've put together. We'll be at the top of our division for a long time."
     ];
 
-    // Championships
-    champs = [];
-    champs[0] = [
+    // Playoffs
+    playoffs = [];
+    playoffs[0] = [
         "This town is starving, absolutely starving, for some postseason success. But with the job you're doing, we're not even close to the playoffs. Unacceptable.",
         "Playoffs? Don't talk to me about playoffs. You kidding me? Playoffs? I just hope we can win a game!"
     ];
-    champs[1] = [
-        "Hey. I'm a champion. I don't know about you, but that's what my teams do. They win championships. Yeah, making the playoffs is okay I guess, but I'm not satisfied.",
-        "We need to make some noise in the playoffs. Soon."
+    playoffs[1] = [
+        "In this town, you can't just be happy with making the playoffs. You have to get to the next level.",
+        "A first round playoff exit is boring."
     ];
-    champs[2] = [
-        "I do love being in title contention. It's a great feeling."
+    playoffs[2] = [
+        "Hey. I'm a champion. I don't know about you, but that's what my teams do. They win championships. Yeah, making the playoffs is okay I guess, but I'm not satisfied.",
+        "We need to make some real noise in the playoffs. Soon."
+    ];
+    playoffs[3] = [
+        "Consistent playoff success is the standard. Never forget that.",
+        "I hope you don't plan on missing the playoffs again."
+    ];
+    playoffs[4] = [
+        "Winning titles can cover up a lot of flaws.",
+        "I need some more jewelry. Go get me another ring."
     ];
 
     // Money
     money = [];
     money[0] = [
-        "Money is an issue. I'm going broke. This is ridiculous. I'm supposed to be rich, but I can barely afford my monacle polish these days."
+        "Money is an issue. I'm going broke. This is ridiculous. I'm supposed to be rich, but I can barely afford my monacle polish these days.",
+        "I can't afford a season in the red. Is it really that hard to turn a big profit in this business?"
     ];
     money[1] = [
-        "Listen. I need another private jet. Cut back on spending, increase revenue, whatever. I'm not an accountant. I just know I need another jet."
+        "I like the recent financial turnaround you engineered. But I can't afford any setback."
     ];
     money[2] = [
-        "I just bought a nuclear submarine from the Russians. You believe that? That's all thanks to you. Keep pinching those pennies!"
+        "Listen. I need another private jet. Cut back on spending, increase revenue, whatever. I'm not an accountant. I just know I need another jet.",
+        "I didn't buy this team just for fun. We should be making a higher profit."
     ];
+    money[3] = [
+        "Just because you made some money in the past doesn't mean you're allowed to lose money now.",
+        "I liked what you were doing before this year, financially. This year, not so much."
+    ];
+    money[4] = [
+        "I just bought a nuclear submarine from the Russians. You believe that? That's all thanks to you. Keep pinching those pennies!",
+        "I just looked over the team finances. I like what I see. Keep up the good work there."
+    ];
+
+    // 0: bad
+    // 1: mediocre
+    // 2: good
 
     // Overall
     ovr = [];
     ovr[0] = [
-        "This is like Custer's Last Stand. You're Custer, I'm an Indian. I don't like your odds. You don't have much time left if you don't improve.",
         "Bye.",
         "Please, don't bother me until you have some good news.",
         "I'm watching you. Seriously, one of your assistant coaches is a spy. Don't fuck up."
     ];
     ovr[1] = [
-        "You bore me. Everything about you, it's just boring. Come talk to me when you've earned me more millions and won me some more championships."
+        "You bore me. Everything about you, it's just boring. Come talk to me when you've earned me more millions and won me some more championships.",
+        "You know, general managers aren't hired to be mediocre. Do better this year."
     ];
     ovr[2] = [
-        "Anyway, I'm happy with the progress you've made, but I need to get back to {{activity}}."
+        "Anyway, overall I'm happy with the progress you've made, but I need to get back to {{activity}}."
     ];
 
-    function generate(cb) {
-        var activity1, activity2, m, tx;
+    function generate(deltas, cb) {
+        var activity1, activity2, indMoney, indOverall, indPlayoffs, indOvr, indWins, m, ownerMoodSum, tx;
 
         if (g.season === g.startingSeason) {
             m = random.choice(first);
         } else {
             activity1 = random.choice(activities);
             activity2 = random.choice(activities);
-            while (activity1 !== activity2) {
+            while (activity1 === activity2) {
                 activity2 = random.choice(activities);
             }
 
-            m = "<p>" + random.choice(intro).replace("{{activity}}", activity1) + "</p>" +
-                "<p>" + random.choice(wins[0]) + " " + random.choice(champs[1]) + "</p>" +
-                "<p>" + random.choice(money[2]) + "</p>" +
-                "<p>" + random.choice(ovr[0]).replace("{{activity}}", activity2) + "</p>";
+console.log(deltas);
+console.log(g.ownerMood);
+            indWins = 2;
+            if (g.ownerMood.wins < 0 && deltas.wins < 0) {
+                indWins = 0;
+            } else if (g.ownerMood.wins < -0.5 && deltas.wins >= 0) {
+                indWins = 1;
+            } else if (g.ownerMood.wins > 0 && deltas.wins < 0) {
+                indWins = 3;
+            } else if (g.ownerMood.wins > 0 && deltas.wins > 0) {
+                indWins = 4;
+            }
+
+            if (g.ownerMood.playoffs < 0 && deltas.playoffs < 0) {
+                indPlayoffs = 0;
+            } else if (g.ownerMood.playoffs < 0 && deltas.playoffs === 0) {
+                indPlayoffs = 1;
+            } else if (g.ownerMood.playoffs < 0 && deltas.playoffs > 0) {
+                indPlayoffs = 2;
+            } else if (g.ownerMood.playoffs >= 0 && deltas.playoffs >= 0) {
+                indPlayoffs = 2;
+            } else if (g.ownerMood.playoffs >= 0 && deltas.playoffs < 0) {
+                indPlayoffs = 3;
+            }
+            if (deltas.playoffs === 0.1) {
+                indPlayoffs = 4;
+            }
+
+            indMoney = 2;
+            if (g.ownerMood.money < 0 && deltas.money < 0) {
+                indMoney = 0;
+            } else if (g.ownerMood.money < -0.5 && deltas.money >= 0) {
+                indMoney = 1;
+            } else if (g.ownerMood.money > 0 && deltas.money < 0) {
+                indMoney = 3;
+            } else if (g.ownerMood.money > 0 && deltas.money > 0) {
+                indMoney = 4;
+            }
+
+            indOvr = 1;
+            if (ownerMoodSum > 0.5) {
+                indOvr = 2;
+            } else if (ownerMoodSum < -0.5) {
+                indOvr = 0;
+            }
+
+            if (indOvr < -1) {
+                m = "<p>" + random.choice(intro).replace("{{activity}}", activity1) + "</p>" +
+                    "<p>" + random.choice(wins[indWins]) + " " + random.choice(playoffs[indPlayoffs]) + "</p>" +
+                    "<p>" + random.choice(money[indMoney]) + "</p>" +
+                    "<p>" + random.choice(ovr[indOvr]).replace("{{activity}}", activity2) + "</p>";
+            } else {
+                m = "<p>You lose!</p>";
+            }
         }
 
         tx = g.dbl.transaction("messages", "readwrite");

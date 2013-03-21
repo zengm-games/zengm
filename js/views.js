@@ -817,7 +817,9 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
 
             // Run after players are loaded
             function cb(players, payroll) {
-                players[4].separator = true;
+                if (players.length > 5) {
+                    players[4].separator = true;
+                }
 
                 transaction.objectStore("teams").get(tid).onsuccess = function (event) {
                     var data, j, team, teamAll, teamSeason;

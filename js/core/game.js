@@ -189,7 +189,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
                     merchRevenue = 3 * att / 1000;
                     sponsorRevenue = 10 * att / 1000;
                     nationalTvRevenue = 250;
-                    localTvRevenue = 100;
+                    localTvRevenue = 10 * att / 1000;
                 }
 
 

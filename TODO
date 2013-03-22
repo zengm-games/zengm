@@ -1,6 +1,7 @@
 BEFORE 3.0.0-beta.2
 -------------------
 
+if play menu is open when it refreshes, automatically open it again after refresh
 too easy to do the "be bad, get draft picks, keep payroll low, sign free agents, be good" pattern
   free agents are even less willing to sign with the user, even if it's a good team
   user can't just sign all the free agents before AI teams
@@ -10,12 +11,6 @@ how to deal with a team that drops below 5 active players, factoring in injuries
   should not allow play when below 5
   should use same logic/functions as core.season that checks on new season.
     first, add support for auto-add players when AI teams are below limit (in season.js)
-update formulas
-  nationalTvRevenue
-    base on g.nationalTvContractAmount, for now a constant
-  localTvRevenue
-    for now, just make it a function of attendance
-    eventually, t.seasons[0].tvContract
 make sure finances are reasonable
   shouldn't be able to profit more than say $50 million/year. bad teams should lose money
   revenue/expenses sources
@@ -177,6 +172,11 @@ AI updating of *Budgets and ticket prices
   maybe not necessary at this stage?
   call core.finances.updateBudgetRanks() after
 team finances template: handlebars helper for form DRY?
+update formulas
+  nationalTvRevenue
+    same for each team, change contract year by year and display in team finances
+  localTvRevenue
+    eventually, t.seasons[0].tvContract
 
 FUTURE (after 3.0.0)
 --------------------

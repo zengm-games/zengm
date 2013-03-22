@@ -1,6 +1,7 @@
 BEFORE 3.0.0-beta.2
 -------------------
 
+chrome: owner message never marked as read
 too easy to do the "be bad, get draft picks, keep payroll low, sign free agents, be good" pattern
   free agents are even less willing to sign with the user, even if it's a good team
   user can't just sign all the free agents before AI teams
@@ -267,6 +268,8 @@ core.gameSim.updateSynergy should produce continuous output
 input to helpers.formatCurrency (and all currency in variables everywhere) should be in 1000s of dollars and then only converted to millions when displayed
 AI teams should have to deal with fuzz too
 foul out players
+if play menu is open when it refreshes, automatically open it again after refresh
+  not so easy.. tried it in 34927959b2b0acd08224665654343d97ffaea281 but there were issues with updatePlayMenu being called multiple times, for instance at the end of the season
 
 ---
 

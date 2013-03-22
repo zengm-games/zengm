@@ -38,6 +38,7 @@
     constructor: Dropdown
 
   , toggle: function ( e ) {
+console.log('toggle')
       var $this = $(this)
         , selector = $this.attr('data-target')
         , $parent

@@ -256,7 +256,7 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
                 }
 
                 lock.negotiationInProgress(ot, function (negotiationInProgress) {
-                    var i, ids, isActive, j, playButtonElement, playButtonLink, someOptions;
+                    var i, ids, j, playButtonElement, someOptions;
 
                     if (negotiationInProgress && g.phase !== g.PHASE.RESIGN_PLAYERS) {
                         keys = ["play-menu-contract-negotiation"];
@@ -285,17 +285,7 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
 
                     playButtonElement = document.getElementById("playButton");
                     if (playButtonElement) {
-                        // Is the menu open? If so, we will open it again after updating.
-                        isActive = false;
-                        playButtonLink = $("#play-button-link");
-                        if (playButtonLink.parent().hasClass("open")) {
-                            isActive = true;
-                        }
-
                         playButtonElement.innerHTML = Handlebars.templates.playButton({options: someOptions});
-                        if (isActive) {
-                            $("#play-button-link").dropdown("toggle");
-                        }
                     }
 
                     require("api").playMenuHandlers();  // Because of circular dependency

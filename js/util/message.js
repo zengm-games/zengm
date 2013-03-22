@@ -73,7 +73,7 @@ define(["db", "globals", "ui", "util/random"], function (db, g, ui, random) {
         "What have you done for me lately?"
     ];
     wins[4] = [
-        "I'm happy with our regular season performance.",
+        "I'm pleased with our regular season performance.",
         "I like the roster you've put together. We'll be at the top of our division for a long time."
     ];
 

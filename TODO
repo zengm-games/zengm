@@ -1,18 +1,15 @@
 BEFORE 3.0.0-beta.2
 -------------------
 
+too easy
+  try increasing player salaries, increasing probability of AI teams resigning
+    maybe also try making contract demands depend on PER, if it is available
+buying out a player should be factored into the annual budget
+home/road record displayed in standings is not right
 too easy to do the "be bad, get draft picks, keep payroll low, sign free agents, be good" pattern
   free agents are even less willing to sign with the user, even if it's a good team
   user can't just sign all the free agents before AI teams
 is "game over" logic reasonable?
-how to deal with a team that drops below 5 active players, factoring in injuries?
-  should minimum roster size be higher?
-  should allow them to exceed roster limit while injury exists
-  should not allow play when below 5
-  should use same logic/functions as core.season that checks on new season.
-    first, add support for auto-add players when AI teams are below limit (in season.js)
-injured reserve - 2 last rosterOrder spaces beyond normal 13 (btw.. change 12 to 13)
-  don't play in games, but you can stash injured players here or whatever
 make sure finances are reasonable
   shouldn't be able to profit more than say $50 million/year. bad teams should lose money
   revenue/expenses sources
@@ -179,6 +176,15 @@ update formulas
     same for each team, change contract year by year and display in team finances
   localTvRevenue
     eventually, t.seasons[0].tvContract
+how to deal with a team that drops below 5 active players, factoring in injuries?
+  should minimum roster size be higher?
+  should allow them to exceed roster limit while injury exists
+  should not allow play when below 5
+  should use same logic/functions as core.season that checks on new season.
+    first, add support for auto-add players when AI teams are below limit (in season.js)
+injured reserve - 2 last rosterOrder spaces beyond normal 13 (btw.. change 12 to 13)
+  don't play in games, but you can stash injured players here or whatever
+  like in yahoo fantasy, allow dragging to empty category
 
 FUTURE (after 3.0.0)
 --------------------

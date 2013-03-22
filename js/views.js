@@ -495,14 +495,15 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
 
     function message(req) {
         viewHelpers.beforeLeague(req, function () {
-            var mid;
+            var mid, tx;
 
             g.realtimeUpdate = false;
 
             // If null, then the most recent message will be loaded
             mid = req.params.mid ? parseInt(req.params.mid, 10) : null;
 
-            g.dbl.transaction("messages", "readwrite").objectStore("messages").openCursor(mid, "prev").onsuccess = function (event) {
+            tx = g.dbl.transaction("messages", "readwrite");
+            tx.objectStore("messages").openCursor(mid, "prev").onsuccess = function (event) {
                 var cursor, data, message;
 
                 cursor = event.target.result;
@@ -519,13 +520,15 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                     message.read = true;
                     cursor.update(message);
 
-                    if (g.gameOver) {
-                        ui.updateStatus("You're fired! Game over!");
-                    }
+                    tx.oncomplete = function () {
+                        if (g.gameOver) {
+                            ui.updateStatus("You're fired! Game over!");
+                        }
 
-                    ui.updatePlayMenu(null, function () {
-                        ui.update(data, req.raw.cb);
-                    });
+                        ui.updatePlayMenu(null, function () {
+                            ui.update(data, req.raw.cb);
+                        });
+                    };
                 } else {
                     ui.update(data, req.raw.cb);
                 }

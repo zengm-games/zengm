@@ -127,9 +127,9 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
         minAmount = 500;
         maxAmount = 20000;
 
-        // Scale amount from 500k to 15mil, proportional to (ovr*2 + pot)*0.5 120-210
-        amount = ((2.0 * ratings.ovr + ratings.pot) * 0.85 - 120) / (210 - 120);  // Scale from 0 to 1 (approx)
-        amount = amount * (maxAmount - minAmount) + minAmount;  // Scale from 500k to 15mil
+        // Scale proportional to (ovr*2 + pot)*0.5 120-210
+        amount = ((2 * ratings.ovr + ratings.pot) * 0.85 - 110) / (210 - 120);  // Scale from 0 to 1 (approx)
+        amount = amount * (maxAmount - minAmount) + minAmount;
         amount *= random.gauss(1, 0.1);  // Randomize
 
         // Expiration

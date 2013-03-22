@@ -2,7 +2,7 @@
  * @name core.trade
  * @namespace Trades between the user's team and other teams.
  */
-define(["db", "globals", "lib/underscore", "util/helpers"], function (db, g, _, helpers) {
+define(["db", "globals", "core/player", "lib/underscore", "util/helpers"], function (db, g, player, _, helpers) {
     "use strict";
 
     /**
@@ -363,6 +363,7 @@ define(["db", "globals", "lib/underscore", "util/helpers"], function (db, g, _, 
                                                             cursor = event.target.result;
                                                             p = cursor.value;
                                                             p.tid = tids[k];
+                                                            p = player.addStatsRow(p);
                                                             cursor.update(p);
                                                         };
                                                     }(l));

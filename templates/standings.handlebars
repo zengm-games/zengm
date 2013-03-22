@@ -19,7 +19,7 @@
           </thead>
           <tbody>
           {{#teams}}
-            <tr><td><a href="/l/{{../../../lid}}/roster/{{abbrev}}">{{region}} {{name}}</a></td><td>{{won}}</td><td>{{lost}}</td><td>{{roundWinp winp}}</td><td>{{gb}}</td><td>{{wonHome}}-{{lostHome}}</td><td>{{wonAway}}-{{lostAway}}</td><td>{{wonDiv}}-{{lostDiv}}</td><td>{{wonConf}}-{{lostConf}}</td><td>{{streak}}</td><td>{{lastTen}}</td></tr>
+            <tr><td><a href="/l/{{../../../lid}}/roster/{{abbrev}}/{{../../../season}}">{{region}} {{name}}</a></td><td>{{won}}</td><td>{{lost}}</td><td>{{roundWinp winp}}</td><td>{{gb}}</td><td>{{wonHome}}-{{lostHome}}</td><td>{{wonAway}}-{{lostAway}}</td><td>{{wonDiv}}-{{lostDiv}}</td><td>{{wonConf}}-{{lostConf}}</td><td>{{streak}}</td><td>{{lastTen}}</td></tr>
           {{/teams}}
           </tbody>
           </table>
@@ -33,7 +33,7 @@
       </thead>
       <tbody>
       {{#teams}}
-        <tr{{#if separator}} class="separator"{{/if}}><td>{{rank}}. <a href="/l/{{../../lid}}/roster/{{abbrev}}">{{region}}</a></td><td align="right">{{gb}}</td></tr>
+        <tr{{#if separator}} class="separator"{{/if}}><td>{{rank}}. <a href="/l/{{../../lid}}/roster/{{abbrev}}/{{../../season}}">{{region}}</a></td><td align="right">{{gb}}</td></tr>
       {{/teams}}
       </tbody>
       </table>

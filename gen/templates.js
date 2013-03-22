@@ -977,6 +977,8 @@ function program6(depth0,data,depth3) {
     + escapeExpression(((stack1 = depth3.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "/roster/"
     + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/"
+    + escapeExpression(((stack1 = depth3.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\">"
     + escapeExpression(((stack1 = depth0.region),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + " "
@@ -1025,6 +1027,8 @@ function program8(depth0,data,depth2) {
     + escapeExpression(((stack1 = depth2.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "/roster/"
     + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/"
+    + escapeExpression(((stack1 = depth2.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\">"
     + escapeExpression(((stack1 = depth0.region),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</a></td><td align=\"right\">"

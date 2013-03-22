@@ -59,13 +59,8 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
             cursor = event.target.result;
             player_ = cursor.value;
 
-            // Find the correct row of stats
-            for (i = 0; i < player_.stats.length; i++) {
-                if (player_.stats[i].season === g.season && player_.stats[i].playoffs === that.playoffs) {
-                    playerStats = player_.stats[i];
-                    break;
-                }
-            }
+            // Find the correct row of stats - should always be the last one, right?
+            playerStats = _.last(player_.stats);
 
             // Update stats
             keys = ['gs', 'min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];

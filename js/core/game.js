@@ -187,7 +187,13 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
                     healthPaid = t.budget.health.amount / 82;
                     facilitiesPaid = t.budget.facilities.amount / 82;
                     merchRevenue = 3 * att / 1000;
+                    if (merchRevenue > 250) {
+                        merchRevenue = 250;
+                    }
                     sponsorRevenue = 10 * att / 1000;
+                    if (sponsorRevenue > 600) {
+                        sponsorRevenue = 600;
+                    }
                     nationalTvRevenue = 250;
                     localTvRevenue = 10 * att / 1000;
                 }
@@ -266,7 +272,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
                         teamSeason.wonConf += 1;
                     }
 
-                    if (t === 0) {
+                    if (t1 === 0) {
                         teamSeason.wonHome += 1;
                     } else {
                         teamSeason.wonAway += 1;
@@ -288,7 +294,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
                         teamSeason.lostConf += 1;
                     }
 
-                    if (t === 0) {
+                    if (t1 === 0) {
                         teamSeason.lostHome += 1;
                     } else {
                         teamSeason.lostAway += 1;

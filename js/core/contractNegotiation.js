@@ -181,7 +181,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/helpers",
                         if (teamAmount > negotiation.player.amount) {
                             negotiation.player.amount = teamAmount;
                         } else if (teamAmount > 0.7 * negotiation.player.amount) {
-                            negotiation.player.amount = (0.5 * (1 + mood)) * negotiation.player.amount + (0.5 * (1 - mood)) * teamAmount;
+                            negotiation.player.amount = (0.5 * (1 + mood)) * negotiation.orig.amount + (0.5 * (1 - mood)) * teamAmount;
                         } else {
                             negotiation.player.amount *= 1.05;
                         }
@@ -203,7 +203,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/helpers",
                         if (teamAmount > negotiation.player.amount) {
                             negotiation.player.amount = teamAmount;
                         } else if (teamAmount > 0.85 * negotiation.player.amount) {
-                            negotiation.player.amount = (0.5 * (1 + mood)) * negotiation.player.amount + (0.5 * (1 - mood)) * teamAmount;
+                            negotiation.player.amount = (0.5 * (1 + mood)) * negotiation.orig.amount + (0.5 * (1 - mood)) * teamAmount;
                         } else {
                             negotiation.player.amount *= 1.05;
                         }

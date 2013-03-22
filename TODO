@@ -1,7 +1,6 @@
 BEFORE 3.0.0-beta.2
 -------------------
 
-if play menu is open when it refreshes, automatically open it again after refresh
 too easy to do the "be bad, get draft picks, keep payroll low, sign free agents, be good" pattern
   free agents are even less willing to sign with the user, even if it's a good team
   user can't just sign all the free agents before AI teams

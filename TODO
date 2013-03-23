@@ -1,12 +1,9 @@
 BEFORE 3.0.0-beta.2
 -------------------
 
-reorganize "installing and running" section of readme
 why gp in both teamSeasons and teamStats?
 db version upgrades
   test in ff and chrome!
-  on meta db upgrade, show a message explaining new features!!
-    ui.topMessage()
 bbgmPing should only work in production
   make sure it still works next time i update play.basketball-gm.com
 better source of league names

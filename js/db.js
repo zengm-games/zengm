@@ -386,7 +386,6 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
         };
         request.onblocked = function () { g.dbl.close(); };
         request.onupgradeneeded = function (event) {
-console.log(event);
             if (event.oldVersion === 0) {
                 createLeague(event, lid);
             } else {

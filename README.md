@@ -1,4 +1,4 @@
-# Basketball GM 3.0.0-beta
+# Basketball GM 3.0.0-beta.2
 
 A single-player basketball simulation game. Make trades, set rosters, draft
 players, and try to build the next dynasty, all from within your web browser.
@@ -29,13 +29,13 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 The easiest way to play is by going to http://play.basketball-gm.com/
 
-If you want to run your own copy...
-
 Basketball GM requires a web browser with IndexedDB support. Mozilla Firefox
 (any recent version) works best and is most thoroughly tested. Google Chrome
 (version 23 or higher) seems to generally work, but it's not as well tested
 as Firefox. Internet Explorer 10 should theoretically work, but I haven't
 tried it. (TLDR: Use Firefox)
+
+If you want to run your own copy...
 
 In addition to a supported browser, you need some way of running a web server to
 display the content. The easiest way is using the `runserver.py` file included

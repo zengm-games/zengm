@@ -26,11 +26,12 @@ define(["db", "globals", "core/league", "lib/underscore", "test/helpers"], funct
                 };
             });
             it("should create all necessary object stores", function () {
-                g.dbl.objectStoreNames.should.have.length(11);
+                g.dbl.objectStoreNames.should.have.length(12);
                 g.dbl.objectStoreNames.contains("awards").should.equal(true);
                 g.dbl.objectStoreNames.contains("draftOrder").should.equal(true);
                 g.dbl.objectStoreNames.contains("gameAttributes").should.equal(true);
                 g.dbl.objectStoreNames.contains("games").should.equal(true);
+                g.dbl.objectStoreNames.contains("messages").should.equal(true);
                 g.dbl.objectStoreNames.contains("negotiations").should.equal(true);
                 g.dbl.objectStoreNames.contains("players").should.equal(true);
                 g.dbl.objectStoreNames.contains("playoffSeries").should.equal(true);
@@ -54,6 +55,7 @@ define(["db", "globals", "core/league", "lib/underscore", "test/helpers"], funct
                     gTest.statusText.should.equal("Idle");
                     gTest.stopGames.should.equal(false);
                     gTest.userTid.should.equal(0);
+                    gTest.gameOver.should.equal(false);
 
                     count = 0;
                     for (key in gTest) {
@@ -62,7 +64,7 @@ define(["db", "globals", "core/league", "lib/underscore", "test/helpers"], funct
                         }
                     }
 
-                    count.should.equal(10);
+                    count.should.equal(12);
 
                     done();
                 };

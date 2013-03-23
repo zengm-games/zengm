@@ -79,6 +79,10 @@ define(["globals", "util/helpers", "util/random"], function (g, helpers, random)
                     amount: 0,
                     rank: 15.5
                 },
+                buyOuts: {
+                    amount: 0,
+                    rank: 15.5
+                },
                 scouting: {
                     amount: 0,
                     rank: 15.5

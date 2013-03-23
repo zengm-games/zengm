@@ -1241,11 +1241,11 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                             );
                             $.barGraph(
                                 $("#bar-graph-expenses"),
-                                [barData.expenses.salary, barData.expenses.minTax, barData.expenses.luxuryTax, barData.expenses.scouting, barData.expenses.coaching, barData.expenses.health, barData.expenses.facilities],
+                                [barData.expenses.salary, barData.expenses.minTax, barData.expenses.luxuryTax, barData.expenses.buyOuts, barData.expenses.scouting, barData.expenses.coaching, barData.expenses.health, barData.expenses.facilities],
                                 undefined,
                                 [
                                     barSeasons,
-                                    ["player salaries", "minimum payroll tax", "luxury tax", "scouting", "coaching", "health", "facilities"]
+                                    ["player salaries", "minimum payroll tax", "luxury tax", "buy outs", "scouting", "coaching", "health", "facilities"]
                                 ],
                                 function (val) {
                                     return helpers.formatCurrency(val / 1000, "M", 1);

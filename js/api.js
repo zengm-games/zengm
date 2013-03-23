@@ -2,7 +2,7 @@
  * @name api
  * @namespace Functions called directly in response to user action (clicking a button, etc).
  */
-define(["db", "globals", "views", "ui", "core/draft", "core/game", "core/player", "core/season", "core/trade", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/lock"], function (db, g, views, ui, draft, game, player, season, trade, Davis, Handlebars, $, _, lock) {
+define(["db", "globals", "views", "ui", "core/draft", "core/finances", "core/game", "core/player", "core/season", "core/trade", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/lock"], function (db, g, views, ui, draft, finances, game, player, season, trade, Davis, Handlebars, $, _, lock) {
     "use strict";
 
     function play(amount) {
@@ -222,22 +222,27 @@ define(["db", "globals", "views", "ui", "core/draft", "core/game", "core/player"
                         cashOwed = ((1 + p.contract.exp - g.season) * p.contract.amount - (1 - numGamesRemaining / 82) * p.contract.amount);  // [thousands of dollars]
 
                         transaction.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
-                            var cash, cursor, t;
+                            var cash, cursor, s, t;
 
                             cursor = event.target.result;
                             t = cursor.value;
-                            cash = _.last(t.seasons).cash;  // [thousands of dollars]
+
+                            s = t.seasons.length - 1;
+                            cash = t.seasons[s].cash;  // [thousands of dollars]
 
                             if (cashOwed < cash) {
                                 // Pay the cash
-                                _.last(t.seasons).cash -= cashOwed;
+                                t.seasons[s].cash -= cashOwed;
+                                t.seasons[s].expenses.buyOuts.amount += cashOwed;
                                 cursor.update(t);
 
-                                // Set to FA in database
-                                player.genBaseMoods(transaction, function (baseMoods) {
-                                    player.addToFreeAgents(transaction, p, null, baseMoods, function () {
-                                        db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                                            cb();
+                                finances.updateRanks(transaction, "expenses", function () {
+                                    // Set to FA in database
+                                    player.genBaseMoods(transaction, function (baseMoods) {
+                                        player.addToFreeAgents(transaction, p, null, baseMoods, function () {
+                                            db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                                                cb();
+                                            });
                                         });
                                     });
                                 });

@@ -1,11 +1,6 @@
 BEFORE 3.0.0-beta.2
 -------------------
 
-too easy
-  try increasing player salaries, increasing probability of AI teams resigning
-    maybe also try making contract demands depend on PER, if it is available
-    maybe make them nonlinear.. role players lower, stars higher
-buying out a player should be factored into the annual budget
 home/road record displayed in standings is not right
 too easy to do the "be bad, get draft picks, keep payroll low, sign free agents, be good" pattern
   free agents are even less willing to sign with the user, even if it's a good team
@@ -22,6 +17,7 @@ db version upgrades
 bbgmPing should only work in production
   make sure it still works next time i update play.basketball-gm.com
 better source of league names
+http://www.gmgames.org
 
 
 DATABASE CHANGES since 3.0.0-beta
@@ -61,6 +57,9 @@ MANUAL CHANGES TODO since 3.0.0-beta
 BEFORE 3.0.0
 ------------
 
+contracts
+  maybe also try making contract demands depend on PER, if it is available
+  maybe make them nonlinear.. role players lower, stars higher
 for retired players, blank out "current" columns in draft summary
 luxury tax should be disbursed amongst non-taxpaying teams
 final score, hall of fame

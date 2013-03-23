@@ -106,11 +106,10 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
      * @param {number} lid Integer league ID number.
      */
     function migrateLeague(event, lid) {
-        var dbl, messagesStore, teams, tx;
+        var dbl, teams, tx;
 
         console.log("Upgrading league" + lid + " database from version " + event.oldVersion + " to version " + event.newVersion);
 
-console.log(event);
         dbl = event.target.result;
 
         if (event.oldVersion <= 1) {
@@ -118,8 +117,138 @@ console.log(event);
 
             tx = event.currentTarget.transaction;
 
+            tx.objectStore("gameAttributes").put({
+                key: "ownerMood",
+                value: {
+                    wins: 0,
+                    playoffs: 0,
+                    money: 0
+                }
+            });
+            tx.objectStore("gameAttributes").put({
+                key: "gameOver",
+                value: false
+            });
+
+            dbl.createObjectStore("messages", {keyPath: "mid", autoIncrement: true});
+
+            tx.objectStore("negotiations").openCursor().onsuccess = function (event) {
+                var cursor, n;
+
+                cursor = event.target.result;
+                if (cursor) {
+                    n = cursor.value;
+
+                    n.orig = {
+                        amount: n.playerAmount,
+                        years: n.playerYears
+                    };
+                    n.player = {
+                        amount: n.playerAmount,
+                        years: n.playerYears
+                    };
+                    delete n.playerAmount;
+                    delete n.playerYears;
+
+                    n.team = {
+                        amount: n.teamAmount,
+                        years: n.teamYears
+                    };
+                    delete n.teamAmount;
+                    delete n.teamYears;
+
+                    delete n.maxOffers;
+                    delete n.numOffersMade;
+
+                    cursor.update(n);
+
+                    cursor.continue();
+                }
+            };
+
+            tx.objectStore("players").openCursor().onsuccess = function (event) {
+                var cursor, i, p;
+
+                cursor = event.target.result;
+                if (cursor) {
+                    p = cursor.value;
+
+                    p.born = {
+                        loc: p.bornLoc,
+                        year: p.bornYear
+                    };
+                    delete p.bornLoc;
+                    delete p.bornYear;
+
+                    p.contract = {
+                        amount: p.contractAmount,
+                        exp: p.contractExp
+                    };
+                    delete p.contractAmount;
+                    delete p.contractExp;
+
+                    p.draft = {
+                        round: p.draftRound,
+                        pick: p.draftPick,
+                        tid: p.draftTid,
+                        year: p.draftYear,
+                        abbrev: p.draftAbbrev,
+                        teamName: p.draftTeamName,
+                        teamRegion: p.draftTeamRegion,
+                        pot: p.ratings[0].pot,
+                        ovr: p.ratings[0].ovr,
+                        skills: p.ratings[0].skills
+                    };
+                    delete p.draftRound;
+                    delete p.draftPick;
+                    delete p.draftTid;
+                    delete p.draftYear;
+                    delete p.draftAbbrev;
+                    delete p.draftTeamName;
+                    delete p.draftTeamRegion;
+
+                    p.freeAgentMood = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                    delete p.freeAgentTimesAsked;
+
+                    p.awards = [];
+                    p.college = "";
+                    p.injury = {type: "Healthy", gamesRemaining: 0};
+                    p.salaries = [];
+
+                    for (i = 0; i < p.ratings.length; i++) {
+                        p.ratings[i].fuzz = 0;
+                    }
+
+                    cursor.update(p);
+
+                    cursor.continue();
+                }
+            };
+
+            tx.objectStore("releasedPlayers").openCursor().onsuccess = function (event) {
+                var cursor, rp;
+
+                cursor = event.target.result;
+                if (cursor) {
+                    rp = cursor.value;
+
+                    rp.contract = {
+                        amount: rp.contractAmount,
+                        exp: rp.contractExp
+                    };
+                    delete rp.contractAmount;
+                    delete rp.contractExp;
+
+                    cursor.update(rp);
+
+                    cursor.continue();
+                }
+            };
+            tx.objectStore("releasedPlayers").deleteIndex("contractExp");
+            tx.objectStore("releasedPlayers").createIndex("contract.exp", "contract.exp", {unique: false});
+
             tx.objectStore("teams").openCursor().onsuccess = function (event) {
-                var cursor, t;
+                var cursor, i, t;
 
                 cursor = event.target.result;
                 if (cursor) {
@@ -148,40 +277,94 @@ console.log(event);
                         }
                     };
 
+                    for (i = 0; i < t.seasons.length; i++) {
+                        t.seasons[i].hype = Math.random();
+                        t.seasons[i].pop = teams[t.tid].pop;
+                        t.seasons[i].tvContract = {
+                            amount: 0,
+                            exp: 0
+                        };
+                        t.seasons[i].revenues = {
+                            merch: {
+                                amount: 0,
+                                rank: 15.5
+                            },
+                            sponsor: {
+                                amount: 0,
+                                rank: 15.5
+                            },
+                            ticket: {
+                                amount: 0,
+                                rank: 15.5
+                            },
+                            nationalTv: {
+                                amount: 0,
+                                rank: 15.5
+                            },
+                            localTv: {
+                                amount: 0,
+                                rank: 15.5
+                            }
+                        };
+                        t.seasons[i].expenses = {
+                            salary: {
+                                amount: 0,
+                                rank: 15.5
+                            },
+                            luxuryTax: {
+                                amount: 0,
+                                rank: 15.5
+                            },
+                            minTax: {
+                                amount: 0,
+                                rank: 15.5
+                            },
+                            buyOuts: {
+                                amount: 0,
+                                rank: 15.5
+                            },
+                            scouting: {
+                                amount: 0,
+                                rank: 15.5
+                            },
+                            coaching: {
+                                amount: 0,
+                                rank: 15.5
+                            },
+                            health: {
+                                amount: 0,
+                                rank: 15.5
+                            },
+                            facilities: {
+                                amount: 0,
+                                rank: 15.5
+                            }
+                        };
+                        t.seasons[i].payrollEndOfSeason = 0;
+
+                        t.seasons[i].playoffRoundsWon = -1;
+                        if (t.seasons[i].madePlayoffs) {
+                            t.seasons[i].playoffRoundsWon = 0;
+                        }
+                        if (t.seasons[i].confChamps) {
+                            t.seasons[i].playoffRoundsWon = 3;
+                        }
+                        if (t.seasons[i].leagueChamps) {
+                            t.seasons[i].playoffRoundsWon = 4;
+                        }
+                        delete t.seasons[i].madePlayoffs;
+                        delete t.seasons[i].confChamps;
+                        delete t.seasons[i].leagueChamps;
+
+                        delete t.seasons[i].cost;
+                        delete t.seasons[i].revenue;
+                    }
+
                     cursor.update(t);
 
                     cursor.continue();
                 }
             };
-/*added to seasonAttributes for each team:
-  hype: number,
-  pop: number,
-  tvContract: {},
-  revenues: {}
-  expenses: {}
-  payrollEndOfSeason: number
-leagueChamps, confChamps, and madePlayoffs condensed to one entry, playoffRoundsWon
-removed "cost" and "revenue" from seasonAttributes
-changes to retiredPlayers, but that's just removing stuff that isn't needed anymore, so no problem
-player
-  added "injury", "awards", and "contracts"
-  replaced "freeAgentTimesAsked" with "freeAgentMood"
-  "college" is an empty string
-  draft* properties are now inside another object
-    now includes pot, ovr, and skills
-  bornYear and bornLoc are born.year and born.loc
-  contract to object (also in releasedPlayers)
-  added fuzz to each ratings object
-negotiation structure changed*/
-            messagesStore = dbl.createObjectStore("messages", {keyPath: "mid", autoIncrement: true});
-/*            setGameAttributes({
-                ownerMood: {
-                    wins: 0,
-                    playoffs: 0,
-                    money: 0
-                },
-                gameOver: false
-            });*/
         }
     }
 

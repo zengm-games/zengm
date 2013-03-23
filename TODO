@@ -1,47 +1,15 @@
 BEFORE 3.0.0-beta.2
 -------------------
 
+why gp in both teamSeasons and teamStats?
 db version upgrades
-  see https://github.com/superfeedr/indexeddb-backbonejs-adapter/blob/master/backbone-indexeddb.js
   test in ff and chrome!
   on meta db upgrade, show a message explaining new features!!
+    ui.topMessage()
 bbgmPing should only work in production
   make sure it still works next time i update play.basketball-gm.com
 better source of league names
 http://www.gmgames.org
-
-
-DATABASE CHANGES since 3.0.0-beta
----------------------------------
-
-added to seasonAttributes for each team:
-  hype: number,
-  pop: number,
-  tvContract: {},
-  revenues: {}
-  expenses: {}
-  payrollEndOfSeason: number
-added to root of each team: budget
-leagueChamps, confChamps, and madePlayoffs condensed to one entry, playoffRoundsWon
-removed "cost" and "revenue" from seasonAttributes
-changes to retiredPlayers, but that's just removing stuff that isn't needed anymore, so no problem
-player
-  added "injury", "awards", and "contracts"
-  replaced "freeAgentTimesAsked" with "freeAgentMood"
-  "college" is an empty string
-  draft* properties are now inside another object
-    now includes pot, ovr, and skills
-  bornYear and bornLoc are born.year and born.loc
-  contract to object (also in releasedPlayers)
-  added fuzz to each ratings object
-negotiation structure changed
-messages object store
-gameAttributes:
-  ownerMood
-  gameOver
-
-MANUAL CHANGES TODO since 3.0.0-beta
-------------------------------------
 
 BEFORE 3.0.0
 ------------

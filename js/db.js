@@ -75,14 +75,79 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
      * @param {number} lid Integer league ID number.
      */
     function migrateLeague(event, lid) {
-        var dbl;
+        var dbl, messagesStore, teams, tx;
 
         console.log("Upgrading league" + lid + " database from version " + event.oldVersion + " to version " + event.newVersion);
 
         dbl = event.target.result;
 
         if (dbl.oldVersion <= 1) {
+            teams = teams = helpers.getTeams();
 
+            tx = dbl.transaction(["negotiations", "players", "retiredPlayers", "teams"], "readwrite");
+
+            tx.objectStore("teams").openCursor().onsuccess = function (event) {
+                var cursor, t;
+
+                cursor = event.target.result;
+                if (cursor) {
+                    t = cursor.value;
+
+                    t.budget = {
+                        ticketPrice: {
+                            amount: helpers.round(25 + 25 * (30 - teams[t.tid].popRank) / 29, 2),
+                            rank: teams[t.tid].popRank
+                        },
+                        scouting: {
+                            amount: helpers.round(900 + 900 * (30 - teams[t.tid].popRank) / 29) * 10,
+                            rank: teams[t.tid].popRank
+                        },
+                        coaching: {
+                            amount: helpers.round(900 + 900 * (30 - teams[t.tid].popRank) / 29) * 10,
+                            rank: teams[t.tid].popRank
+                        },
+                        health: {
+                            amount: helpers.round(900 + 900 * (30 - teams[t.tid].popRank) / 29) * 10,
+                            rank: teams[t.tid].popRank
+                        },
+                        facilities: {
+                            amount: helpers.round(900 + 900 * (30 - teams[t.tid].popRank) / 29) * 10,
+                            rank: teams[t.tid].popRank
+                        }
+                    };
+
+                    cursor.continue();
+                }
+            };
+/*added to seasonAttributes for each team:
+  hype: number,
+  pop: number,
+  tvContract: {},
+  revenues: {}
+  expenses: {}
+  payrollEndOfSeason: number
+leagueChamps, confChamps, and madePlayoffs condensed to one entry, playoffRoundsWon
+removed "cost" and "revenue" from seasonAttributes
+changes to retiredPlayers, but that's just removing stuff that isn't needed anymore, so no problem
+player
+  added "injury", "awards", and "contracts"
+  replaced "freeAgentTimesAsked" with "freeAgentMood"
+  "college" is an empty string
+  draft* properties are now inside another object
+    now includes pot, ovr, and skills
+  bornYear and bornLoc are born.year and born.loc
+  contract to object (also in releasedPlayers)
+  added fuzz to each ratings object
+negotiation structure changed*/
+            messagesStore = dbl.createObjectStore("messages", {keyPath: "mid", autoIncrement: true});
+            setGameAttributes({
+                ownerMood: {
+                    wins: 0,
+                    playoffs: 0,
+                    money: 0
+                },
+                gameOver: false
+            });
         }
     }
 

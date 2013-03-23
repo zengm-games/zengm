@@ -1,7 +1,6 @@
 BEFORE 3.0.0-beta.2
 -------------------
 
-players you trade for should have stats row added and should have stats show up in roster view
 too easy
   try increasing player salaries, increasing probability of AI teams resigning
     maybe also try making contract demands depend on PER, if it is available
@@ -62,6 +61,8 @@ MANUAL CHANGES TODO since 3.0.0-beta
 BEFORE 3.0.0
 ------------
 
+for retired players, blank out "current" columns in draft summary
+luxury tax should be disbursed amongst non-taxpaying teams
 final score, hall of fame
   influenced by size of city (see: difficulty in views.newLeague)
 draft lottery

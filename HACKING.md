@@ -104,3 +104,14 @@ places.
 
 Abbreviations of stats should be done like basketball-reference.com stat pages.
 For instance, "defensive rebounds" is "drb".
+
+
+
+# To do on new version
+
+- Make sure unit tests all pass
+- Set version in index.html and README.md, like http://semver.org/
+- Tag it in git:
+
+    git tag -a v3.0.0-beta.2 -m 'Update version'
+    git push --tags

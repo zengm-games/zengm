@@ -1,14 +1,7 @@
-BEFORE 3.0.0-beta.2
--------------------
-
-add git tag details to HACKING.md
-bbgmPing should only work in production
-  make sure it still works next time i update play.basketball-gm.com
-http://www.gmgames.org
-
 BEFORE 3.0.0
 ------------
 
+http://www.gmgames.org
 better default league name
 why gp in both teamSeasons and teamStats?
 https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide

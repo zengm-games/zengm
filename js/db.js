@@ -31,44 +31,77 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
         };
     }
 
+    /**
+     * Create a new league database with the latest structure.
+     * 
+     * @param {Object} event Event from onupgradeneeded, with oldVersion 0.
+     * @param {number} lid Integer league ID number for new league.
+     */
+    function createLeague(event, lid) {
+        var awardsStore, dbl, draftOrderStore, gameAttributesStore, gameStore, messagesStore, playerStore, playoffSeriesStore, releasedPlayersStore, scheduleStore, teamStore, tradeStore;
+
+        console.log("Creating league" + lid + " database");
+
+        dbl = event.target.result;
+
+        // rid ("row id") is used as the keyPath for objects without an innate unique identifier
+        playerStore = dbl.createObjectStore("players", {keyPath: "pid", autoIncrement: true});
+        teamStore = dbl.createObjectStore("teams", {keyPath: "tid"});
+        gameStore = dbl.createObjectStore("games", {keyPath: "gid"});
+        scheduleStore = dbl.createObjectStore("schedule", {keyPath: "gid", autoIncrement: true});
+        playoffSeriesStore = dbl.createObjectStore("playoffSeries", {keyPath: "season"});
+        releasedPlayersStore = dbl.createObjectStore("releasedPlayers", {keyPath: "rid", autoIncrement: true});
+        awardsStore = dbl.createObjectStore("awards", {keyPath: "season"});
+        tradeStore = dbl.createObjectStore("trade", {keyPath: "rid"});
+        draftOrderStore = dbl.createObjectStore("draftOrder", {keyPath: "rid"});
+        draftOrderStore = dbl.createObjectStore("negotiations", {keyPath: "pid"});
+        gameAttributesStore = dbl.createObjectStore("gameAttributes", {keyPath: "key"});
+        messagesStore = dbl.createObjectStore("messages", {keyPath: "mid", autoIncrement: true});
+
+        playerStore.createIndex("tid", "tid", {unique: false});
+        playerStore.createIndex("draft.year", "draft.year", {unique: false});
+        playerStore.createIndex("retiredYear", "retiredYear", {unique: false});
+        playerStore.createIndex("statsTids", "statsTids", {unique: false, multiEntry: true});
+//            gameStore.createIndex("tid", "tid", {unique: false}); // Not used because it's useless without oppTid checking too
+        gameStore.createIndex("season", "season", {unique: false});
+        releasedPlayersStore.createIndex("tid", "tid", {unique: false});
+        releasedPlayersStore.createIndex("contract.exp", "contract.exp", {unique: false});
+    }
+
+    /**
+     * Migrate a league database to the latest structure.
+     * 
+     * @param {Object} event Event from onupgradeneeded, with oldVersion > 0.
+     * @param {number} lid Integer league ID number.
+     */
+    function migrateLeague(event, lid) {
+        var dbl;
+
+        console.log("Upgrading league" + lid + " database from version " + event.oldVersion + " to version " + event.newVersion);
+
+        dbl = event.target.result;
+
+        if (dbl.oldVersion <= 1) {
+
+        }
+    }
+
     function connectLeague(lid, cb) {
         var request;
 
         console.log('Connecting to database "league' + lid + '"');
-        request = indexedDB.open("league" + lid, 1);
+        request = indexedDB.open("league" + lid, 2);
         request.onerror = function (event) {
             console.log("Connection error");
         };
         request.onblocked = function () { g.dbl.close(); };
         request.onupgradeneeded = function (event) {
-            var awardsStore, draftOrderStore, gameAttributesStore, gameStore, messagesStore, playerStore, playoffSeriesStore, releasedPlayersStore, scheduleStore, teamStore, tradeStore;
-
-            console.log("Upgrading league" + lid + " database");
-
-            g.dbl = event.target.result;
-
-            // rid ("row id") is used as the keyPath for objects without an innate unique identifier
-            playerStore = g.dbl.createObjectStore("players", {keyPath: "pid", autoIncrement: true});
-            teamStore = g.dbl.createObjectStore("teams", {keyPath: "tid"});
-            gameStore = g.dbl.createObjectStore("games", {keyPath: "gid"});
-            scheduleStore = g.dbl.createObjectStore("schedule", {keyPath: "gid", autoIncrement: true});
-            playoffSeriesStore = g.dbl.createObjectStore("playoffSeries", {keyPath: "season"});
-            releasedPlayersStore = g.dbl.createObjectStore("releasedPlayers", {keyPath: "rid", autoIncrement: true});
-            awardsStore = g.dbl.createObjectStore("awards", {keyPath: "season"});
-            tradeStore = g.dbl.createObjectStore("trade", {keyPath: "rid"});
-            draftOrderStore = g.dbl.createObjectStore("draftOrder", {keyPath: "rid"});
-            draftOrderStore = g.dbl.createObjectStore("negotiations", {keyPath: "pid"});
-            gameAttributesStore = g.dbl.createObjectStore("gameAttributes", {keyPath: "key"});
-            messagesStore = g.dbl.createObjectStore("messages", {keyPath: "mid", autoIncrement: true});
-
-            playerStore.createIndex("tid", "tid", {unique: false});
-            playerStore.createIndex("draft.year", "draft.year", {unique: false});
-            playerStore.createIndex("retiredYear", "retiredYear", {unique: false});
-            playerStore.createIndex("statsTids", "statsTids", {unique: false, multiEntry: true});
-//            gameStore.createIndex("tid", "tid", {unique: false}); // Not used because it's useless without oppTid checking too
-            gameStore.createIndex("season", "season", {unique: false});
-            releasedPlayersStore.createIndex("tid", "tid", {unique: false});
-            releasedPlayersStore.createIndex("contract.exp", "contract.exp", {unique: false});
+console.log(event);
+            if (event.oldVersion === 0) {
+                createLeague(event, lid);
+            } else {
+                migrateLeague(event, lid);
+            }
         };
         request.onsuccess = function (event) {
             g.dbl = request.result;

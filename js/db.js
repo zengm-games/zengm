@@ -5,22 +5,53 @@
 define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g, $, _, helpers) {
     "use strict";
 
+    /**
+     * Create new meta database with the latest structure.
+     * 
+     * @param {Object} event Event from onupgradeneeded, with oldVersion 0.
+     */
+    function createMeta(event) {
+        var dbm, leagueStore;
+        console.log("Creating meta database");
+
+        dbm = event.target.result;
+
+        leagueStore = dbm.createObjectStore("leagues", {keyPath: "lid", autoIncrement: true});
+    }
+
+    /**
+     * Migrate meta database to the latest structure.
+     * 
+     * @param {Object} event Event from onupgradeneeded, with oldVersion > 0.
+     * @param {number} lid Integer league ID number.
+     */
+    function migrateMeta(event, lid) {
+        var dbm, tx;
+
+        console.log("Upgrading meta database from version " + event.oldVersion + " to version " + event.newVersion);
+
+        dbm = event.target.result;
+
+        if (event.oldVersion <= 1) {
+            dbm.deleteObjectStore("teams");
+        }
+    }
+
     function connectMeta(cb) {
         var request;
 
         console.log('Connecting to database "meta"');
-        request = indexedDB.open("meta", 1);
+        request = indexedDB.open("meta", 2);
         request.onerror = function (event) {
             console.log("Connection error");
         };
         request.onblocked = function () { g.dbm.close(); };
         request.onupgradeneeded = function (event) {
-            var i, leagueStore, teams, teamStore;
-            console.log("Upgrading meta database");
-
-            g.dbm = event.target.result;
-
-            leagueStore = g.dbm.createObjectStore("leagues", {keyPath: "lid", autoIncrement: true});
+            if (event.oldVersion === 0) {
+                createMeta(event);
+            } else {
+                migrateMeta(event);
+            }
         };
         request.onsuccess = function (event) {
             g.dbm = request.result;
@@ -81,7 +112,7 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
 
         dbl = event.target.result;
 
-        if (dbl.oldVersion <= 1) {
+        if (event.oldVersion <= 1) {
             teams = teams = helpers.getTeams();
 
             tx = dbl.transaction(["negotiations", "players", "retiredPlayers", "teams"], "readwrite");

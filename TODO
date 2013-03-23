@@ -4,6 +4,7 @@ BEFORE 3.0.0-beta.2
 db version upgrades
   see https://github.com/superfeedr/indexeddb-backbonejs-adapter/blob/master/backbone-indexeddb.js
   test in ff and chrome!
+  on meta db upgrade, show a message explaining new features!!
 bbgmPing should only work in production
   make sure it still works next time i update play.basketball-gm.com
 better source of league names
@@ -12,8 +13,6 @@ http://www.gmgames.org
 
 DATABASE CHANGES since 3.0.0-beta
 ---------------------------------
-
-ON meta DB UPGRADE show a message explaining new features!!
 
 added to seasonAttributes for each team:
   hype: number,

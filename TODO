@@ -1,9 +1,6 @@
 BEFORE 3.0.0-beta.2
 -------------------
 
-why gp in both teamSeasons and teamStats?
-db version upgrades
-  test in ff and chrome!
 bbgmPing should only work in production
   make sure it still works next time i update play.basketball-gm.com
 better source of league names
@@ -12,6 +9,7 @@ http://www.gmgames.org
 BEFORE 3.0.0
 ------------
 
+why gp in both teamSeasons and teamStats?
 https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide
 too easy to do the "be bad, get draft picks, keep payroll low, sign free agents, be good" pattern
   free agents are even less willing to sign with the user, even if it's a good team

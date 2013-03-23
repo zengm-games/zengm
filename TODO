@@ -1,6 +1,7 @@
 BEFORE 3.0.0-beta.2
 -------------------
 
+reorganize "installing and running" section of readme
 why gp in both teamSeasons and teamStats?
 db version upgrades
   test in ff and chrome!
@@ -14,6 +15,7 @@ http://www.gmgames.org
 BEFORE 3.0.0
 ------------
 
+https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide
 too easy to do the "be bad, get draft picks, keep payroll low, sign free agents, be good" pattern
   free agents are even less willing to sign with the user, even if it's a good team
   user can't just sign all the free agents before AI teams

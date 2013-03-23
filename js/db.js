@@ -230,6 +230,8 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
                     cursor.continue();
                 }
             };
+            tx.objectStore("players").deleteIndex("draftYear");
+            tx.objectStore("players").createIndex("draft.year", "draft.year", {unique: false});
 
             tx.objectStore("releasedPlayers").openCursor().onsuccess = function (event) {
                 var cursor, rp;

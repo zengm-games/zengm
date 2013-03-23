@@ -1532,7 +1532,7 @@ function program1(depth0,data) {
   }
 
   buffer += "<h1>Create New League</h1>\n<p>\n<form action=\"/new_league\" method=\"POST\">\n  <fieldset>\n    <label>League name</label>\n    <input type=\"text\" name=\"name\" value=\""
-    + escapeExpression(((stack1 = depth0.randomName),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\"><br><br>\n    <label>Which team do you want to manage?</label>\n    <select name=\"tid\">\n      ";
   stack2 = ((stack1 = ((stack1 = depth0.teams),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
   if(stack2 || stack2 === 0) { buffer += stack2; }

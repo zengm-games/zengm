@@ -74,51 +74,59 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
     }
 
     function newLeague(req) {
-        var data, name, randomName, tid, teams;
+        var data, name, tid, teams;
 
         viewHelpers.beforeNonLeague();
 
-        // Pick a random league name, either for the GET or POST phase
-        randomName = names.nick[Math.floor(Math.random() * names.nick.length)];
-
         if (req.method === "get") {
-            teams = helpers.getTeams();
+            g.dbm.transaction("leagues").objectStore("leagues").openCursor(null, "prev").onsuccess = function (event) {
+                var cursor, data, l, newLid, teams;
 
-            data = {
-                container: "content",
-                template: "newLeague",
-                title: "Create New League",
-                vars: {teams: teams, randomName: randomName}
-            };
-            ui.update(data, function () {
-                var select, updatePopText;
+                cursor = event.target.result;
+                if (cursor) {
+                    newLid = cursor.value.lid + 1;
+                } else {
+                    newLid = 1;
+                }
 
-                updatePopText = function () {
-                    var difficulty, team;
+                teams = helpers.getTeams();
 
-                    team = teams[select.val()];
-
-                    if (team.popRank <= 5) {
-                        difficulty = "very easy";
-                    } else if (team.popRank <= 13) {
-                        difficulty = "easy";
-                    } else if (team.popRank <= 16) {
-                        difficulty = "normal";
-                    } else if (team.popRank <= 23) {
-                        difficulty = "hard";
-                    } else {
-                        difficulty = "very hard";
-                    }
-
-                    $("#pop-text").html("Region population: " + team.pop + " million, #" + team.popRank + " leaguewide<br>Difficulty: " + difficulty);
+                data = {
+                    container: "content",
+                    template: "newLeague",
+                    title: "Create New League",
+                    vars: {teams: teams, name: "League " + newLid}
                 };
+                ui.update(data, function () {
+                    var select, updatePopText;
 
-                select = $("select[name='tid']");
-                select.change(updatePopText);
-                select.keyup(updatePopText);
+                    updatePopText = function () {
+                        var difficulty, team;
 
-                updatePopText();
-            });
+                        team = teams[select.val()];
+
+                        if (team.popRank <= 5) {
+                            difficulty = "very easy";
+                        } else if (team.popRank <= 13) {
+                            difficulty = "easy";
+                        } else if (team.popRank <= 16) {
+                            difficulty = "normal";
+                        } else if (team.popRank <= 23) {
+                            difficulty = "hard";
+                        } else {
+                            difficulty = "very hard";
+                        }
+
+                        $("#pop-text").html("Region population: " + team.pop + " million, #" + team.popRank + " leaguewide<br>Difficulty: " + difficulty);
+                    };
+
+                    select = $("select[name='tid']");
+                    select.change(updatePopText);
+                    select.keyup(updatePopText);
+
+                    updatePopText();
+                });
+            };
         } else if (req.method === "post") {
             $("#create-new-league").attr("disabled", "disabled");  // Disable button
             tid = Math.floor(req.params.tid);

@@ -191,6 +191,9 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
                     }
                     nationalTvRevenue = 250;
                     localTvRevenue = 10 * att / 1000;
+                    if (localTvRevenue > 1200) {
+                        localTvRevenue = 1200;
+                    }
                 }
 
 

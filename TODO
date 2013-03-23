@@ -1,17 +1,6 @@
 BEFORE 3.0.0-beta.2
 -------------------
 
-home/road record displayed in standings is not right
-too easy to do the "be bad, get draft picks, keep payroll low, sign free agents, be good" pattern
-  free agents are even less willing to sign with the user, even if it's a good team
-  user can't just sign all the free agents before AI teams
-is "game over" logic reasonable?
-make sure finances are reasonable
-  shouldn't be able to profit more than say $50 million/year. bad teams should lose money
-  revenue/expenses sources
-    http://fivethirtyeight.blogs.nytimes.com/2011/07/05/calling-foul-on-n-b-a-s-claims-of-financial-distress/
-    http://nbahoopsonline.com/Articles/2007-08/NBArevinuesharing.html
-    forbes
 db version upgrades
   see https://github.com/superfeedr/indexeddb-backbonejs-adapter/blob/master/backbone-indexeddb.js
 bbgmPing should only work in production
@@ -57,9 +46,13 @@ MANUAL CHANGES TODO since 3.0.0-beta
 BEFORE 3.0.0
 ------------
 
+too easy to do the "be bad, get draft picks, keep payroll low, sign free agents, be good" pattern
+  free agents are even less willing to sign with the user, even if it's a good team
+  user can't just sign all the free agents before AI teams
 contracts
   maybe also try making contract demands depend on PER, if it is available
   maybe make them nonlinear.. role players lower, stars higher
+    compare to NBA contract distribution
 for retired players, blank out "current" columns in draft summary
 luxury tax should be disbursed amongst non-taxpaying teams
 final score, hall of fame

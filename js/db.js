@@ -110,12 +110,13 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
 
         console.log("Upgrading league" + lid + " database from version " + event.oldVersion + " to version " + event.newVersion);
 
+console.log(event);
         dbl = event.target.result;
 
         if (event.oldVersion <= 1) {
             teams = teams = helpers.getTeams();
 
-            tx = dbl.transaction(["negotiations", "players", "retiredPlayers", "teams"], "readwrite");
+            tx = event.currentTarget.transaction;
 
             tx.objectStore("teams").openCursor().onsuccess = function (event) {
                 var cursor, t;
@@ -147,6 +148,8 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
                         }
                     };
 
+                    cursor.update(t);
+
                     cursor.continue();
                 }
             };
@@ -171,14 +174,14 @@ player
   added fuzz to each ratings object
 negotiation structure changed*/
             messagesStore = dbl.createObjectStore("messages", {keyPath: "mid", autoIncrement: true});
-            setGameAttributes({
+/*            setGameAttributes({
                 ownerMood: {
                     wins: 0,
                     playoffs: 0,
                     money: 0
                 },
                 gameOver: false
-            });
+            });*/
         }
     }
 

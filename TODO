@@ -1,26 +1,63 @@
-BEFORE 3.0.0
-------------
+BEFORE 3.0.0-beta.3
+-------------------
 
+better distinction between dev/production environments for things like analytics, ping, etc
+  client side error log
+    maybe http://www.muscula.com/
+  https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide
+right click shouldn't close feedback tab
 http://www.gmgames.org
 better default league name
 why gp in both teamSeasons and teamStats?
-https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide
-too easy to do the "be bad, get draft picks, keep payroll low, sign free agents, be good" pattern
-  free agents are even less willing to sign with the user, even if it's a good team
-  user can't just sign all the free agents before AI teams
 contracts
   maybe also try making contract demands depend on PER, if it is available
   maybe make them nonlinear.. role players lower, stars higher
     compare to NBA contract distribution
 for retired players, blank out "current" columns in draft summary
 luxury tax should be disbursed amongst non-taxpaying teams
+give bbgm website its own version of bootstrap (only with components needed)
+display league/season counter on basketball-gm.com splash page
+team history view needs more love
+  dropdown for other teams
+move most db functions into core.whatever. db should just be about initializing/upgrading
+db.getPlayers
+  way way way too messy
+  rename to helpers.filterPlayers? or player.filter and player.filterAll?
+    make db.getTeams consistent with this
+  use for other access of players "playersAll"
+  the special case attributes should generally be moved directly into the database?
+  Replace showNoStats with a check of stats.length in db.getPlayer, at least in some cases? API is messy
+show record (w-l) on roster view - make it more like a summary, as in basketball-reference
+  playoff results
+  payroll
+  anything else?
+how to deal with a team that drops below 5 active players, factoring in injuries?
+  should minimum roster size be higher?
+  should allow them to exceed roster limit while injury exists
+  should not allow play when below 5
+  should use same logic/functions as core.season that checks on new season.
+    first, add support for auto-add players when AI teams are below limit (in season.js)
+injured reserve - 2 last rosterOrder spaces beyond normal 13 (btw.. change 12 to 13)
+  don't play in games, but you can stash injured players here or whatever
+  like in yahoo fantasy, allow dragging to empty category
+notifications (and log) from top right to display log of key events
+  game results from user's team
+  players retiring from user's team
+  league champions
+  trades
+  free agent signings
+
+BEFORE 3.0.0
+------------
+
+too easy to do the "be bad, get draft picks, keep payroll low, sign free agents, be good" pattern
+  free agents are even less willing to sign with the user, even if it's a good team
+  user can't just sign all the free agents before AI teams
 final score, hall of fame
   influenced by size of city (see: difficulty in views.newLeague)
 draft lottery
   do a dramatic presentation?
   increase hype for teams that exceed expectations
-give bbgm website its own version of bootstrap (only with components needed)
-display league/season counter on basketball-gm.com splash page
 any raw data files should go in the data folder, ideally with a script to convert them to however they're used here
 database changes
   add activeYears multientry like statsTids use for:
@@ -36,13 +73,6 @@ gameSim
     do i need all the player composite ratings?
     do i need all the team composite ratings?
     how does performance change/degrade as the years go on?
-db.getPlayers
-  way way way too messy
-  rename to helpers.filterPlayers? or player.filter and player.filterAll?
-    make db.getTeams consistent with this
-  use for other access of players "playersAll"
-  the special case attributes should generally be moved directly into the database?
-  Replace showNoStats with a check of stats.length in db.getPlayer, at least in some cases? API is messy
 trade refactoring
   validateSavedTids crap should be in trade.js.
   trade.summary stuff should be automatic and stored in tradeStore
@@ -53,8 +83,6 @@ in lock functions, update g from database before using any potentially sensitive
   or should these g.whatever variables be set at all if they're sensitive? lid doesn't change obviously, but the others?
 move to new window button, like gmail, that will open a view in a new window with a minimal UI
   only the icon should be clickable, not the area above and below
-team history view needs more love
-  dropdown for other teams
 AI modules that contain functions which are called to determine actions
   mode: rebuild or contend
   things to regulate...
@@ -64,12 +92,6 @@ AI modules that contain functions which are called to determine actions
     trades
     budget items (like from team finances view)
     releasing/buying out players when over limit
-notifications (and log) from top right to display log of key events
-  game results from user's team
-  players retiring from user's team
-  league champions
-  trades
-  free agent signings
 show an option to upload a data file for rosters
   nba roster
     define file format for external player sources
@@ -90,10 +112,6 @@ PER
   use for awards, contracts
 some UI showing the state of the team's synergy. maybe like an advisors screen that suggests what kind of player is needed to improve synergy
   also can respond to budget changes
-show record (w-l) on roster view - make it more like a summary, as in basketball-reference
-  playoff results
-  payroll
-  anything else?
 more handlebars helpers for things like...
   team dropdown
   season dropdown
@@ -101,9 +119,7 @@ trades
   draft picks
   cash
   allow trades to go over the roster limit, but show a warning. also factor into AI logic that they would have to drop a player
-go through future list
-  anything that should be here?
-  keep in mind db changes..
+go through future list - anything that should be here?
 DataTables - fix default sort order on column click
   text should be asc, numeric should be desc (except draft picks)
   http://datatables.net/ref#asSorting will work. maybe pass it as an option to bbgm_datatable
@@ -118,7 +134,6 @@ tweak gameSim for stats again
 freeAgentMoods should affect AI team signings - or should it?
   for resigning players
   for signing free agents
-move most db functions into core.whatever. db should just be about initializing/upgrading
 bar graphs
   gradients like http://twitter.github.com/bootstrap/components.html#progress
 AI updating of *Budgets and ticket prices
@@ -130,15 +145,6 @@ update formulas
     same for each team, change contract year by year and display in team finances
   localTvRevenue
     eventually, t.seasons[0].tvContract
-how to deal with a team that drops below 5 active players, factoring in injuries?
-  should minimum roster size be higher?
-  should allow them to exceed roster limit while injury exists
-  should not allow play when below 5
-  should use same logic/functions as core.season that checks on new season.
-    first, add support for auto-add players when AI teams are below limit (in season.js)
-injured reserve - 2 last rosterOrder spaces beyond normal 13 (btw.. change 12 to 13)
-  don't play in games, but you can stash injured players here or whatever
-  like in yahoo fantasy, allow dragging to empty category
 
 FUTURE (after 3.0.0)
 --------------------

@@ -113,5 +113,5 @@ For instance, "defensive rebounds" is "drb".
 - Set version in index.html and README.md, like http://semver.org/
 - Tag it in git:
 
-    git tag -a v3.0.0-beta.2 -m 'Update version'
+    git tag -a v3.0.0-beta.2 -m ''
     git push --tags

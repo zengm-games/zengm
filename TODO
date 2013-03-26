@@ -1,3 +1,27 @@
+knockout
+--------
+
+do game log view first (multiple subviews), then roster (row reordering might be a pain, as well as editable/non-editable switch), then player stats (performance of updating many rows at once)
+when to call beforeLeague? on generate, update?
+  probably just on get or post. if update is called, then it should be because the view is already loaded and thus we're already in league
+methods for each view object
+  get (from scrach, update content or league_content based on URL)
+  post (optional form handling)
+  update (takes a string, like "games" of "newPhasePlayoffs" or "rosterChange")
+links
+  http://stackoverflow.com/questions/9709374/knockout-js-incredibly-slow-under-semi-large-datasets
+  http://www.strathweb.com/2012/07/knockout-js-pro-tips-working-with-observable-arrays/
+  http://stackoverflow.com/questions/9589419/difference-between-knockout-view-models-declared-as-object-literals-vs-functions
+  http://stackoverflow.com/questions/9927213/performance-tuning-a-knockout-application-guidelines-for-improving-response-ti
+  http://stackoverflow.com/questions/9242147/how-to-structure-a-single-page-app-with-knockout-js
+  http://tekpub.com/productions/knockout
+be smarter about hitting database to update things
+  ko.applyBindings accepts a second parameter that is a DOM element to use as the root
+  gameLogList only needs to update if a game was played, not on other phases
+  box score never needs to update
+  teams dropdown never needs to update
+  season dropdown only needs to update on new season
+
 BEFORE 3.0.0-beta.3
 -------------------
 

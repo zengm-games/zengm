@@ -2,12 +2,20 @@ knockout
 --------
 
 do game log view first (multiple subviews), then roster (row reordering might be a pain, as well as editable/non-editable switch), then player stats (performance of updating many rows at once)
+  game log
+    how do i make clicks from the league menu that only refresh the box score?
+      check if there is a previously loaded version (how? module-level variables from previous load?) and then see what needs to be updated?
+        for this, would need to delete these variables when new view is loaded
+      like in beforeLeague, check if HTML rendered already
+      does this replace the need for knockout, at least temporarily?
 when to call beforeLeague? on generate, update?
   probably just on get or post. if update is called, then it should be because the view is already loaded and thus we're already in league
+store view-level variables (i.e. parsed from req on get) at module level
 methods for each view object
   get (from scrach, update content or league_content based on URL)
   post (optional form handling)
   update (takes a string, like "games" of "newPhasePlayoffs" or "rosterChange")
+    how do things know which update function to call?
 links
   http://stackoverflow.com/questions/9709374/knockout-js-incredibly-slow-under-semi-large-datasets
   http://www.strathweb.com/2012/07/knockout-js-pro-tips-working-with-observable-arrays/

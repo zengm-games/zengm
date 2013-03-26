@@ -138,11 +138,11 @@ requirejs(["db", "views", "ui", "lib/davis", "lib/jquery", "util/helpers", "../g
             this.post("/l/:lid/trade", views.trade);
             this.get("/l/:lid/draft", views.draft);
             this.get("/l/:lid/draft/:season", views.draft);
-            this.get("/l/:lid/game_log", views.gameLog);
-            this.get("/l/:lid/game_log/:abbrev", views.gameLog);
-            this.get("/l/:lid/game_log/:abbrev/:season", views.gameLog);
-            this.get("/l/:lid/game_log/:abbrev/:season/:gid", views.gameLog);
-            this.get("/l/:lid/game_log/:abbrev/:season/:gid/:view", views.gameLog);
+            this.get("/l/:lid/game_log", views.gameLog.get);
+            this.get("/l/:lid/game_log/:abbrev", views.gameLog.get);
+            this.get("/l/:lid/game_log/:abbrev/:season", views.gameLog.get);
+            this.get("/l/:lid/game_log/:abbrev/:season/:gid", views.gameLog.get);
+            this.get("/l/:lid/game_log/:abbrev/:season/:gid/:view", views.gameLog.get);
             this.get("/l/:lid/leaders", views.leaders);
             this.get("/l/:lid/leaders/:season", views.leaders);
             this.get("/l/:lid/player_ratings", views.playerRatings);

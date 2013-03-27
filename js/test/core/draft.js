@@ -30,7 +30,7 @@ define(["db", "globals", "core/draft", "core/league"], function (db, g, draft, l
         };
 
         testDraftUser = function (round, cb) {
-            db.getDraftOrder(function (draftOrder) {
+            draft.getOrder(function (draftOrder) {
                 var pick;
 
                 pick = draftOrder.shift();
@@ -46,16 +46,16 @@ define(["db", "globals", "core/draft", "core/league"], function (db, g, draft, l
                         pidAfter.should.equal(pidBefore);
                         g.dbl.transaction("players").objectStore("players").get(pidBefore).onsuccess = function (event) {
                             event.target.result.tid.should.equal(g.userTid);
-                            db.setDraftOrder(draftOrder, cb);
+                            draft.setOrder(draftOrder, cb);
                         };
                     });
                 };
             });
         };
 
-        describe("#generatePlayers()", function () {
+        describe("#genPlayers()", function () {
             it("should generate 70 players for the draft", function (done) {
-                draft.generatePlayers(function () {
+                draft.genPlayers(function () {
                     g.dbl.transaction("players").objectStore("players").index("draft.year").count(g.season).onsuccess = function (event) {
                         event.target.result.should.equal(70);
                         done();
@@ -64,10 +64,10 @@ define(["db", "globals", "core/draft", "core/league"], function (db, g, draft, l
             });
         });
 
-        describe("#setOrder()", function () {
+        describe("#genOrder()", function () {
             it("should schedule 60 draft picks", function (done) {
-                draft.setOrder(function () {
-                    db.getDraftOrder(function (draftOrder) {
+                draft.genOrder(function () {
+                    draft.getOrder(function (draftOrder) {
                         draftOrder.length.should.equal(60);
                         done();
                     });

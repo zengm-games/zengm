@@ -1663,7 +1663,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
 
                         started = drafted.length > 0;
 
-                        db.getDraftOrder(function (draftOrder) {
+                        draft.getOrder(function (draftOrder) {
                             var data, i, slot;
 
                             for (i = 0; i < draftOrder.length; i++) {

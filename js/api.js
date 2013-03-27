@@ -38,8 +38,8 @@ define(["db", "globals", "views", "ui", "core/draft", "core/finances", "core/gam
         } else if (amount === "untilDraft") {
             if (g.phase === g.PHASE.BEFORE_DRAFT) {
                 season.newPhase(g.PHASE.DRAFT, function () {
-                    draft.generatePlayers(function () {
-                        draft.setOrder(function () {
+                    draft.genPlayers(function () {
+                        draft.genOrder(function () {
                             Davis.location.assign(new Davis.Request("/l/" + g.lid + "/draft"));
                         });
                     });
@@ -287,13 +287,13 @@ define(["db", "globals", "views", "ui", "core/draft", "core/finances", "core/gam
 
         pid = parseInt(pid, 10);
 
-        db.getDraftOrder(function (draftOrder) {
+        draft.getOrder(function (draftOrder) {
             var pick, playerStore;
 
             pick = draftOrder.shift();
             if (pick.tid === g.userTid) {
                 draft.selectPlayer(pick, pid, function (pid) {
-                    db.setDraftOrder(draftOrder, function () {
+                    draft.setOrder(draftOrder, function () {
                         cb(pid);
                     });
                 });

@@ -1,6 +1,6 @@
 /**
  * @name db
- * @namespace Functions that directly access an IndexedDB database.
+ * @namespace Creating, migrating, and connecting to databases; working with transactions.
  */
 define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g, $, _, helpers) {
     "use strict";
@@ -1198,30 +1198,6 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
         };
     }
 
-    function getDraftOrder(cb) {
-        g.dbl.transaction("draftOrder").objectStore("draftOrder").get(0).onsuccess = function (event) {
-            var draftOrder;
-
-            draftOrder = event.target.result.draftOrder;
-            cb(draftOrder);
-        };
-    }
-
-    function setDraftOrder(draftOrder, cb) {
-        var tx;
-
-        tx = g.dbl.transaction("draftOrder", "readwrite");
-        tx.objectStore("draftOrder").put({
-            rid: 0,
-            draftOrder: draftOrder
-        });
-        tx.oncomplete = function () {
-            if (cb !== undefined) {
-                cb();
-            }
-        };
-    }
-
     /**
      * Load a game attribute from the database and update the global variable g.
      *
@@ -1330,8 +1306,6 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
         getTeams: getTeams,
         getPayroll: getPayroll,
         getPayrolls: getPayrolls,
-        getDraftOrder: getDraftOrder,
-        setDraftOrder: setDraftOrder,
         loadGameAttribute: loadGameAttribute,
         loadGameAttributes: loadGameAttributes,
         setGameAttributes: setGameAttributes

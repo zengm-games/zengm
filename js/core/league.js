@@ -95,7 +95,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                                 lid = g.lid;  // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
 
                                 // Auto sort player's roster (other teams will be done in season.newPhase(g.PHASE.REGULAR_SEASON))
-                                db.rosterAutoSort(null, g.userTid, function () { cb(lid); });
+                                team.rosterAutoSort(null, g.userTid, function () { cb(lid); });
 
                                 helpers.bbgmPing("league");
                             });

@@ -532,7 +532,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                     // Auto sort rosters (except player's team)
                     for (tid = 0; tid < g.numTeams; tid++) {
                         if (tid !== g.userTid) {
-                            db.rosterAutoSort(playerStore, tid);
+                            team.rosterAutoSort(playerStore, tid);
                         }
                     }
                 }

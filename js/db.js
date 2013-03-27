@@ -1198,71 +1198,6 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
         };
     }
 
-    /**
-     * Sort a team's roster based on player ratings.
-     *
-     * If ot is null, then the callback will run only after the transaction finishes (i.e. only after the updated roster order is actually saved to the database). If ot is not null, then the callback might run earlier, so don't rely on the updated roster order actually being in the database yet.
-     *
-     * So, ot should NOT be null if you're sorting multiple roster as a component of some larger operation, but the results of the sorts don't actually matter. ot should be null if you need to ensure that the roster order is updated before you do something that will read the roster order (like updating the UI).
-     * 
-     * @memberOf db
-     * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on players readwrite; if null is passed, then a new transaction will be used.
-     * @param {number} tid Team ID.
-     * @param {function()=} cb Optional callback.
-     */
-    function rosterAutoSort(ot, tid, cb) {
-        var players, playerStore, tx;
-
-        tx = getObjectStore(ot, "players", null, true);
-        playerStore = tx.objectStore("players");
-
-        // Get roster and sort by overall rating
-        playerStore.index("tid").getAll(tid).onsuccess = function (event) {
-            var i;
-
-            players = getPlayers(event.target.result, g.season, tid, ["pid"], [], ["ovr"], {showNoStats: true, showRookies: true, fuzz: tid === g.userTid});
-            players.sort(function (a, b) {  return b.ratings.ovr - a.ratings.ovr; });
-
-            for (i = 0; i < players.length; i++) {
-                players[i].rosterOrder = i;
-            }
-
-            // Update rosterOrder
-            playerStore.index("tid").openCursor(tid).onsuccess = function (event) {
-                var cursor, i, p;
-
-                cursor = event.target.result;
-                if (cursor) {
-                    p = cursor.value;
-                    for (i = 0; i < players.length; i++) {
-                        if (players[i].pid === p.pid) {
-                            p.rosterOrder = players[i].rosterOrder;
-                            break;
-                        }
-                    }
-                    cursor.update(p);
-                    cursor.continue();
-                }
-            };
-
-            if (ot !== null) {
-                // This function doesn't have its own transaction, so we need to call the callback now even though the update might not have been processed yet.
-                if (cb !== undefined) {
-                    cb();
-                }
-            }
-        };
-
-        if (ot === null) {
-            // This function has its own transaction, so wait until it finishes before calling the callback.
-            tx.oncomplete = function () {
-                if (cb !== undefined) {
-                    cb();
-                }
-            };
-        }
-    }
-
     function getDraftOrder(cb) {
         g.dbl.transaction("draftOrder").objectStore("draftOrder").get(0).onsuccess = function (event) {
             var draftOrder;
@@ -1395,7 +1330,6 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
         getTeams: getTeams,
         getPayroll: getPayroll,
         getPayrolls: getPayrolls,
-        rosterAutoSort: rosterAutoSort,
         getDraftOrder: getDraftOrder,
         setDraftOrder: setDraftOrder,
         loadGameAttribute: loadGameAttribute,

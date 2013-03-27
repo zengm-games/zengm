@@ -2,7 +2,7 @@
  * @name core.trade
  * @namespace Trades between the user's team and other teams.
  */
-define(["db", "globals", "core/player", "lib/underscore", "util/helpers"], function (db, g, player, _, helpers) {
+define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/helpers"], function (db, g, player, team, _, helpers) {
     "use strict";
 
     /**
@@ -379,7 +379,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers"], funct
                     tx.oncomplete = function () {
                         if (outcome === "accepted") {
                             // Auto-sort CPU team roster
-                            db.rosterAutoSort(null, tids[1], function () {
+                            team.rosterAutoSort(null, tids[1], function () {
                                 clear(function () {
                                     db.setGameAttributes({lastDbChange: Date.now()}, function () {
                                         cb(true, 'Trade accepted! "Nice doing business with you!"');

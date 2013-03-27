@@ -2,7 +2,7 @@
  * @name api
  * @namespace Functions called directly in response to user action (clicking a button, etc).
  */
-define(["db", "globals", "views", "ui", "core/draft", "core/finances", "core/game", "core/player", "core/season", "core/trade", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/lock"], function (db, g, views, ui, draft, finances, game, player, season, trade, Davis, Handlebars, $, _, lock) {
+define(["db", "globals", "views", "ui", "core/draft", "core/finances", "core/game", "core/player", "core/season", "core/team", "core/trade", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/lock"], function (db, g, views, ui, draft, finances, game, player, season, team, trade, Davis, Handlebars, $, _, lock) {
     "use strict";
 
     function play(amount) {
@@ -114,7 +114,7 @@ define(["db", "globals", "views", "ui", "core/draft", "core/finances", "core/gam
     }
 
     function rosterAutoSort(cb) {
-        db.rosterAutoSort(null, g.userTid, function () {
+        team.rosterAutoSort(null, g.userTid, function () {
             db.setGameAttributes({lastDbChange: Date.now()}, function () {
                 Davis.location.replace(new Davis.Request("/l/" + g.lid + "/roster"));
             });

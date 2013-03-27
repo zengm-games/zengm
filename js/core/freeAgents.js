@@ -2,7 +2,7 @@
  * @name core.freeAgents
  * @namespace Functions related to free agents that didn't make sense to put anywhere else.
  */
-define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/random"], function (db, g, player, _, helpers, random) {
+define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/helpers", "util/random"], function (db, g, player, team, _, helpers, random) {
     "use strict";
 
     /**
@@ -70,7 +70,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                                     p = player.addStatsRow(p);
                                     p = player.setContract(p, p.contract, true);
                                     db.putPlayer(transaction, p, function () {
-                                        db.rosterAutoSort(transaction, tid, function () {
+                                        team.rosterAutoSort(transaction, tid, function () {
                                             if (ti <= tids.length) {
                                                 signTeam(ti + 1);
                                             }

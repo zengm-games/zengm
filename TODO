@@ -1,7 +1,6 @@
 BEFORE 3.0.0-beta.3
 -------------------
 
-add multientry (home and away) tid index to gameStore? where would it be used, just for the game log list? benchmark
 better distinction between dev/production environments for things like analytics, ping, etc
   client side error log
     maybe http://www.muscula.com/

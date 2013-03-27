@@ -45,11 +45,17 @@
                 slideOut();
             }
         });
+
         // Click screen to close
         obj.click(function (event) {
             event.stopPropagation();
         });
-        $(document).click(function () {
+        $(document).click(function (event) {
+            // Make sure there was a left click, as apparently jQuery's .click fires for left and right clicks when attached to document but not when attached to obj as above.
+            if (event.button !== 0) {
+                return true;
+            }
+
             slideIn();
         });
     };

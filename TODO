@@ -6,7 +6,6 @@ better distinction between dev/production environments for things like analytics
   client side error log
     maybe http://www.muscula.com/
   https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide
-right click shouldn't close feedback tab
 http://www.gmgames.org
 better default league name
 why gp in both teamSeasons and teamStats?

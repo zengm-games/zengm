@@ -1,4 +1,4 @@
-define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "core/trade", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers"], function (api, db, g, ui, contractNegotiation, finances, freeAgents, game, league, season, trade, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers) {
+define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "core/trade", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers"], function (api, db, g, ui, contractNegotiation, draft, finances, freeAgents, game, league, season, trade, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers) {
     "use strict";
 
     function initDb(req) {
@@ -1611,7 +1611,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
         });
     }
 
-    function draft(req) {
+    function draft_(req) {
         viewHelpers.beforeLeague(req, function () {
             var playerStore, season, seasons;
 
@@ -2815,7 +2815,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
         teamHistory: teamHistory,
         freeAgents: freeAgents_,
         trade: trade_,
-        draft: draft,
+        draft: draft_,
         gameLog: gameLog,
         leaders: leaders,
         playerRatings: playerRatings,

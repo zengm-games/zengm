@@ -5,6 +5,7 @@ versionchange in tests in chrome?
 league database error during game simulation in chrome?
   did this work in old chrome?
   does this work in future chrome?
+  cb after add in writeGameStats
   seems to at least run longer than before. the only error i get is "Internal error checking key existence." or null cursor
     they usually persist through reloads, but not always.
     null cursor seems to persist through reloads, but with a different player id each time!

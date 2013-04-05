@@ -2,7 +2,7 @@
  * @name core.game
  * @namespace Everything about games except the actual simulation. So, loading the schedule, loading the teams, saving the results, and handling multi-day simulations and what happens when there are no games left to play.
  */
-define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim", "core/player", "core/season", "lib/underscore", "util/advStats", "util/lock", "util/random"], function (db, g, ui, freeAgents, finances, gameSim, player, season, _, advStats, lock, random) {
+define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim", "core/player", "core/season", "lib/underscore", "util/advStats", "util/lock", "util/helpers", "util/random"], function (db, g, ui, freeAgents, finances, gameSim, player, season, _, advStats, lock, helpers, random) {
     "use strict";
 
     function Game() {
@@ -323,7 +323,7 @@ console.log('writeTeamStats 2');
     };
 
     Game.prototype.writeGameStats = function (cb) {
-        var gameStats, i, keys, p, t, that, tl, tw;
+        var gameStats, i, keys, p, t, team, teams, tl, tw;
 
         gameStats = {gid: this.id, season: g.season, playoffs: this.playoffs, overtimes: this.overtimes, won: {}, lost: {}, teams: [{tid: this.team[0].id, players: []}, {tid: this.team[1].id, players: []}]};
         for (t = 0; t < 2; t++) {
@@ -360,39 +360,31 @@ console.log('writeTeamStats 2');
             tl = 0;
         }
 
+        teams = helpers.getTeams();
+
+        team = teams[this.team[tw].id];
+        gameStats.won.abbrev = team.abbrev;
+        gameStats.won.region = team.region;
+        gameStats.won.name = team.name;
+        gameStats.teams[tw].abbrev = team.abbrev;
+        gameStats.teams[tw].region = team.region;
+        gameStats.teams[tw].name = team.name;
+
+        team = teams[this.team[tl].id];
+        gameStats.lost.abbrev = team.abbrev;
+        gameStats.lost.region = team.region;
+        gameStats.lost.name = team.name;
+        gameStats.teams[tl].abbrev = team.abbrev;
+        gameStats.teams[tl].region = team.region;
+        gameStats.teams[tl].name = team.name;
+
+        gameStats.won.pts = this.team[tw].stat.pts;
+        gameStats.lost.pts = this.team[tl].stat.pts;
+
 console.log('writeGameStats');
-        that = this;
-        this.transaction.objectStore("teams").get(this.team[tw].id).onsuccess = function (event) {
-            var team;
+        this.transaction.objectStore("games").add(gameStats);
 
-            team = event.target.result;
-            gameStats.won.abbrev = team.abbrev;
-            gameStats.won.region = team.region;
-            gameStats.won.name = team.name;
-            gameStats.teams[tw].abbrev = team.abbrev;
-            gameStats.teams[tw].region = team.region;
-            gameStats.teams[tw].name = team.name;
-
-console.log('writeGameStats 2');
-            that.transaction.objectStore("teams").get(that.team[tl].id).onsuccess = function (event) {
-                var team;
-
-                team = event.target.result;
-                gameStats.lost.abbrev = team.abbrev;
-                gameStats.lost.region = team.region;
-                gameStats.lost.name = team.name;
-                gameStats.teams[tl].abbrev = team.abbrev;
-                gameStats.teams[tl].region = team.region;
-                gameStats.teams[tl].name = team.name;
-
-                gameStats.won.pts = that.team[tw].stat.pts;
-                gameStats.lost.pts = that.team[tl].stat.pts;
-
-                that.transaction.objectStore("games").add(gameStats);
-
-                cb();
-            };
-        };
+        cb();
     };
 
     /**

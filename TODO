@@ -4,9 +4,16 @@ BEFORE 3.0.0-beta.3
 versionchange in tests in chrome?
 league database error during game simulation in chrome?
   did this work in old chrome?
+    YES, chrome 25 works
   does this work in future chrome?
+    NO, chrome 27 has the same problem as 26
+  make a minimal example, post to chromium-dev or somewhere else
   cb after add in writeGameStats
-  seems to at least run longer than before. the only error i get is "Internal error checking key existence." or null cursor
+    could add them all in a transaction first, and then do another transaction to add/update all other stats
+      wouldn't matter since even commenting out add still leaves problems
+  try to delete writePlayerStats, writeTeamStats, and/or writeGameStats and see if it's still a problem
+  try to separate each game into separate transaction, see if still issue
+  seems to at least run longer than before. the only error i get is "Internal error checking key existence." or null cursor (for either players or teams)
     they usually persist through reloads, but not always.
     null cursor seems to persist through reloads, but with a different player id each time!
     internal error, they seem to persist with same GID, during writeTeamStats

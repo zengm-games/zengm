@@ -8,8 +8,8 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
     function Game() {
     }
 
-    Game.prototype.load = function (results, playoffs) {
-        var cid, did, gp, winp;
+    Game.prototype.writeStats = function (tx, results, playoffs, cb) {
+        var gp, that, winp;
 
         // Retrieve stats
         this.team = results.team;
@@ -21,37 +21,29 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
         // Are the teams in the same conference/division?
         this.sameConf = false;
         this.sameDiv = false;
-        cid = [-1, -1];
-        did = [-1, -1];
         if (this.team[0].cid === this.team[1].cid) {
             this.sameConf = true;
         }
         if (this.team[0].did === this.team[1].did) {
             this.sameDiv = true;
         }
-    };
-
-    Game.prototype.writeStats = function (transaction, cb) {
-        var p, t, that;
-
-        this.transaction = transaction;
 
         that = this;
 
-        this.writeTeamStats(0, function () {
-            that.writePlayerStats(0, 0, function () {
-                that.writeGameStats(cb);
+        this.writeTeamStats(tx, 0, function () {
+            that.writePlayerStats(tx, 0, 0, function () {
+                that.writeGameStats(tx, cb);
             });
         });
     };
 
-    Game.prototype.writePlayerStats = function (t, p, cb) {
+    Game.prototype.writePlayerStats = function (tx, t, p, cb) {
         var that;
 
         that = this;
 
 console.log('writePlayerStats');
-        this.transaction.objectStore("players").openCursor(that.team[t].player[p].id).onsuccess = function (event) {
+        tx.objectStore("players").openCursor(that.team[t].player[p].id).onsuccess = function (event) {
             var cursor, i, keys, player_, playerStats;
 
             cursor = event.target.result;
@@ -86,16 +78,16 @@ if (!cursor) { console.log("NO CURSOR " + that.team[t].player[p].id); console.lo
             cursor.update(player_);
 
             if (p < that.team[t].player.length - 1)
-                that.writePlayerStats(t, p + 1, cb);
+                that.writePlayerStats(tx, t, p + 1, cb);
             else if (t === 0) {
-                that.writePlayerStats(1, 0, cb);
+                that.writePlayerStats(tx, 1, 0, cb);
             } else {
                 cb();
             }
         };
     };
 
-    Game.prototype.writeTeamStats = function (t1, cb) {
+    Game.prototype.writeTeamStats = function (tx, t1, cb) {
         var t2, that;
 
         if (t1 === 0) {
@@ -107,7 +99,7 @@ if (!cursor) { console.log("NO CURSOR " + that.team[t].player[p].id); console.lo
 
         // Record progress of playoff series, if appropriate
         if (this.playoffs && t1 === 0) {
-            this.transaction.objectStore("playoffSeries").openCursor(g.season).onsuccess = function (event) {
+            tx.objectStore("playoffSeries").openCursor(g.season).onsuccess = function (event) {
                 var cursor, i, playoffRound, playoffSeries, series, won0;
 
                 cursor = event.target.result;
@@ -144,10 +136,10 @@ if (!cursor) { console.log("NO CURSOR " + that.team[t].player[p].id); console.lo
         }
 
 console.log('writeTeamStats');
-        db.getPayroll(this.transaction, that.team[t1].id, function (payroll) {
+        db.getPayroll(tx, that.team[t1].id, function (payroll) {
             // Team stats
 console.log('writeTeamStats 2');
-            that.transaction.objectStore("teams").openCursor(that.team[t1].id).onsuccess = function (event) {
+            tx.objectStore("teams").openCursor(that.team[t1].id).onsuccess = function (event) {
                 var att, coachingPaid, count, cursor, expenses, facilitiesPaid, healthPaid, i, keys, localTvRevenue, merchRevenue, nationalTvRevenue, revenue, salaryPaid, scoutingPaid, sponsorRevenue, t, teamSeason, teamStats, ticketRevenue, winp, winpOld, won;
 
                 cursor = event.target.result;
@@ -314,7 +306,7 @@ console.log('writeTeamStats 2');
                 cursor.update(t);
 
                 if (t1 === 0) {
-                    that.writeTeamStats(1, cb);
+                    that.writeTeamStats(tx, 1, cb);
                 } else {
                     cb();
                 }
@@ -322,7 +314,7 @@ console.log('writeTeamStats 2');
         });
     };
 
-    Game.prototype.writeGameStats = function (cb) {
+    Game.prototype.writeGameStats = function (tx, cb) {
         var gameStats, i, keys, p, t, team, teams, tl, tw;
 
         gameStats = {gid: this.id, season: g.season, playoffs: this.playoffs, overtimes: this.overtimes, won: {}, lost: {}, teams: [{tid: this.team[0].id, players: []}, {tid: this.team[1].id, players: []}]};
@@ -382,7 +374,7 @@ console.log('writeTeamStats 2');
         gameStats.lost.pts = this.team[tl].stat.pts;
 
 console.log('writeGameStats');
-        this.transaction.objectStore("games").add(gameStats);
+        tx.objectStore("games").add(gameStats);
 
         cb();
     };
@@ -594,8 +586,7 @@ console.log('cbSaveResult ' + i)
 
                 gm = new Game();
 console.log(results[i]);
-                gm.load(results[i], playoffs);
-                gm.writeStats(tx, function () {
+                gm.writeStats(tx, results[i], playoffs, function () {
                     var j, scheduleStore;
 
                     if (i > 0) {

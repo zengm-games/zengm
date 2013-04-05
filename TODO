@@ -1,13 +1,23 @@
 BEFORE 3.0.0-beta.3
 -------------------
 
+league database error during game simulation in chrome?
+  versionchange in tests?
+  Uncaught TypeError: Cannot read property 'value' of null game.js:60
+  publish
+how to handle aggregating stats for players who played for more than one team in a season? add them all up in ps in db.getPlayers
+  for roster, want just a player's stats with this team this season
+    this currently works, just pass a tid
+  for player stats view, want total among all teams for one season
+    no pass tid and you only get the latest row. need added logic to do sum
+  for player view, want separate and combined rows in careerStats without fucking up totals (including PER)
+    no pass tid and you get each team separately, but no merged stats as above
 better distinction between dev/production environments for things like analytics, ping, etc
   client side error log
     maybe http://www.muscula.com/
   https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide
 http://www.gmgames.org
 better default league name
-why gp in both teamSeasons and teamStats?
 contracts
   maybe also try making contract demands depend on PER, if it is available
   maybe make them nonlinear.. role players lower, stars higher
@@ -206,12 +216,6 @@ stat views
     add a dropdown (maybe make the dropdown handling code more general?)
 bootstrap 2.3
 https://github.com/nprapps/app-template
-player stats
-  how to handle aggregating stats for players who played for more than one team in a season? add them all up in ps in db.getPlayers
-    should be an option, somehow. Possible desired cases:
-      for roster, want just a player's stats with this team this season
-      for player stats view, want total among all teams for one season
-      for player view, want separate rows in careerStats without fucking up totals (including PER)
 refactor views.js
   IS IT WORTH DOING THIS BEFORE SWITCHING TO something like knockout?
   where to call beforeleague/nonleague? can this be automatic?

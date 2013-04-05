@@ -130,9 +130,8 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
         } else if (req.method === "post") {
             $("#create-new-league").attr("disabled", "disabled");  // Disable button
             tid = Math.floor(req.params.tid);
-            name = req.params.name.length > 0 ? req.params.name : randomName;
             if (tid >= 0 && tid <= 29) {
-                league.create(name, tid, req.params.players, function (lid) {
+                league.create(req.params.name, tid, req.params.players, function (lid) {
                     Davis.location.assign(new Davis.Request("/l/" + lid));
                 });
             }

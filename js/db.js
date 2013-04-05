@@ -395,7 +395,9 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
         request.onsuccess = function (event) {
             g.dbl = request.result;
             g.dbl.onerror = function (event) {
-                console.log("League database error: " + event.target.errorCode);
+console.log(event);
+console.log(event.target.webkitErrorMessage);
+//                console.log("League database error: " + event.target.errorCode);
             };
             cb();
         };

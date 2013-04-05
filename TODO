@@ -1,10 +1,15 @@
 BEFORE 3.0.0-beta.3
 -------------------
 
+versionchange in tests in chrome?
 league database error during game simulation in chrome?
-  versionchange in tests?
-  Uncaught TypeError: Cannot read property 'value' of null game.js:60
-  publish
+  did this work in old chrome?
+  does this work in future chrome?
+  seems to at least run longer than before. the only error i get is "Internal error checking key existence." or null cursor
+    they usually persist through reloads, but not always.
+    null cursor seems to persist through reloads, but with a different player id each time!
+    internal error, they seem to persist with same GID, during writeTeamStats
+publish in chrome store
 how to handle aggregating stats for players who played for more than one team in a season? add them all up in ps in db.getPlayers
   for roster, want just a player's stats with this team this season
     this currently works, just pass a tid

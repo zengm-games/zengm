@@ -200,8 +200,8 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             // Overall ratings scaled by fatigue
             ovrs = [];
             for (p = 0; p < this.team[t].player.length; p++) {
-                // Injured players can't play
-                if (this.team[t].player[p].injured) {
+                // Injured or foulded out players can't play
+                if (this.team[t].player[p].injured || this.team[t].player[p].stat.pf >= 6) {
                     ovrs[p] = -Infinity;
                 } else {
                     ovrs[p] = this.team[t].player[p].ovr * this.fatigue(this.team[t].player[p].stat.energy) * random.uniform(0.9, 1.1);

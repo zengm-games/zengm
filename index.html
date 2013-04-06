@@ -21,15 +21,32 @@
     <link rel="apple-touch-icon-precomposed" href="/ico/apple-touch-icon-57-precomposed.png">
 
     <script type="text/javascript">
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-38759330-1']);
-      _gaq.push(['_trackPageview']);
+      if (location.host.indexOf("basketball-gm.com") >= 0 && location.pathname.indexOf("/test") === -1) {
+        // Google Analytics
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-38759330-1']);
+        _gaq.push(['_trackPageview']);
+        (function() {
+          var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
 
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
+
+        // Muscula
+        window.Muscula = { settings:{
+            logId:"aa381ce5-fafe-4fc8-a215-9e353c569e35", suppressErrors: false, branding: 'none'
+        }};
+        (function () {
+            var m = document.createElement('script'); m.type = 'text/javascript'; m.async = true;
+            m.src = (window.location.protocol == 'https:' ? 'https:' : 'http:') +
+                '//musculahq.appspot.com/Muscula.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(m, s);
+            window.Muscula.run=function(c){eval(c);window.Muscula.run=function(){};};
+            window.Muscula.errors=[];window.onerror=function(){window.Muscula.errors.push(arguments);
+            return window.Muscula.settings.suppressErrors===undefined;}
+        })();
+      }
     </script>
   </head>
 

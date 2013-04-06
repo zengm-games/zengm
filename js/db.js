@@ -46,10 +46,10 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
     function connectMeta(cb) {
         var request;
 
-        console.log('Connecting to database "meta"');
+//        console.log('Connecting to database "meta"');
         request = indexedDB.open("meta", 2);
         request.onerror = function (event) {
-            console.log("Connection error");
+            throw new Error("Meta connection error");
         };
         request.onblocked = function () { g.dbm.close(); };
         request.onupgradeneeded = function (event) {
@@ -62,7 +62,11 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
         request.onsuccess = function (event) {
             g.dbm = request.result;
             g.dbm.onerror = function (event) {
-                console.log("Meta database error: " + event.target.errorCode);
+                if (event.target.webkitErrorMessage) {
+                    throw new Error("Meta database error: " + event.target.webkitErrorMessage);
+                } else {
+                    throw new Error("Meta database error: " + event.target.errorCode);
+                }
             };
             cb();
         };
@@ -379,10 +383,10 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
     function connectLeague(lid, cb) {
         var request;
 
-        console.log('Connecting to database "league' + lid + '"');
+//        console.log('Connecting to database "league' + lid + '"');
         request = indexedDB.open("league" + lid, 2);
         request.onerror = function (event) {
-            console.log("Connection error");
+            throw new Error("League connection error");
         };
         request.onblocked = function () { g.dbl.close(); };
         request.onupgradeneeded = function (event) {
@@ -396,8 +400,11 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
             g.dbl = request.result;
             g.dbl.onerror = function (event) {
 //console.log(event);
-console.log("League database error: " + event.target.webkitErrorMessage);
-//                console.log("League database error: " + event.target.errorCode);
+                if (event.target.webkitErrorMessage) {
+                    throw new Error("League database error: " + event.target.webkitErrorMessage);
+                } else {
+                    throw new Error("League database error: " + event.target.errorCode);
+                }
             };
             cb();
         };

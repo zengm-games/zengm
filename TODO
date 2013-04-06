@@ -2,26 +2,6 @@ BEFORE 3.0.0-beta.3
 -------------------
 
 versionchange in tests in chrome?
-league database error during game simulation in chrome?
-  is this a linux-only bug?
-  did this work in old chrome?
-    YES, chrome 25 works
-  does this work in future chrome?
-    NO, chrome 27 has the same problem as 26
-  make a minimal example, post to chromium-dev or somewhere else
-    update play.basketball-gm.com first
-    commenting out finances call seems to make errors lessen. WHY?? makes no sense
-    opening transaction over less object stores seems to make errors lessen, even if those object stores aren't used. WHY?? makes no sense
-  cb after add in writeGameStats
-    could add them all in a transaction first, and then do another transaction to add/update all other stats
-      wouldn't matter since even commenting out add still leaves problems
-  try to delete writePlayerStats, writeTeamStats, and/or writeGameStats and see if it's still a problem
-  try to separate each game into separate transaction, see if still issue
-  seems to at least run longer than before. the only error i get is "Internal error checking key existence." or null cursor (for either players or teams)
-    they usually persist through reloads, but not always.
-    null cursor seems to persist through reloads, but with a different player id each time!
-    internal error, they seem to persist with same GID, during writeTeamStats
-publish in chrome store
 how to handle aggregating stats for players who played for more than one team in a season? add them all up in ps in db.getPlayers
   for roster, want just a player's stats with this team this season
     this currently works, just pass a tid
@@ -29,10 +9,8 @@ how to handle aggregating stats for players who played for more than one team in
     no pass tid and you only get the latest row. need added logic to do sum
   for player view, want separate and combined rows in careerStats without fucking up totals (including PER)
     no pass tid and you get each team separately, but no merged stats as above
-better distinction between dev/production environments for things like analytics, ping, etc
-  client side error log
-    maybe http://www.muscula.com/
-  https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide
+https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide
+  get rid of bbgmPing
 http://www.gmgames.org
 better default league name
 contracts
@@ -175,6 +153,25 @@ update formulas
 FUTURE (after 3.0.0)
 --------------------
 
+league database error during game simulation in chrome?
+  is this a linux-only bug?
+  did this work in old chrome?
+    YES, chrome 25 works
+  does this work in future chrome?
+    NO, chrome 27 has the same problem as 26
+  make a minimal example, post to chromium-dev or somewhere else
+    update play.basketball-gm.com first
+    commenting out finances call seems to make errors lessen. WHY?? makes no sense
+    opening transaction over less object stores seems to make errors lessen, even if those object stores aren't used. WHY?? makes no sense
+  cb after add in writeGameStats
+    could add them all in a transaction first, and then do another transaction to add/update all other stats
+      wouldn't matter since even commenting out add still leaves problems
+  try to delete writePlayerStats, writeTeamStats, and/or writeGameStats and see if it's still a problem
+  try to separate each game into separate transaction, see if still issue
+  seems to at least run longer than before. the only error i get is "Internal error checking key existence." or null cursor (for either players or teams)
+    they usually persist through reloads, but not always.
+    null cursor seems to persist through reloads, but with a different player id each time!
+    internal error, they seem to persist with same GID, during writeTeamStats
 jslint errors
   currently just "Don't make functions within a loop." which should all be fixed eventually
 more sophisticatedrealtime data binding/updating
@@ -253,6 +250,7 @@ core.gameSim.updateSynergy should produce continuous output
 input to helpers.formatCurrency (and all currency in variables everywhere) should be in 1000s of dollars and then only converted to millions when displayed
 AI teams should have to deal with fuzz too
 foul out players
+  https://github.com/jdscheff/basketball-gm/issues/4
 if play menu is open when it refreshes, automatically open it again after refresh
   not so easy.. tried it in 34927959b2b0acd08224665654343d97ffaea281 but there were issues with updatePlayMenu being called multiple times, for instance at the end of the season
 

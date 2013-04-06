@@ -19,10 +19,6 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
                 rightPos: "20px"
             });
         }
-
-        if (window.chrome) {
-            $("#content").before('<div class="alert alert-error"><strong>Warning!</strong> There are bugs in game simulation in Google Chrome (version 26 or higher). If game simulations stop running, manually stop the simulation from the Play menu, reload the page, and try again. Or, switch to Firefox, which seems to work better.</div>');
-        }
     }
 
     function highlightNav(leaguePage) {

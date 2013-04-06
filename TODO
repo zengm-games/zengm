@@ -3,6 +3,7 @@ BEFORE 3.0.0-beta.3
 
 versionchange in tests in chrome?
 league database error during game simulation in chrome?
+  is this a linux-only bug?
   did this work in old chrome?
     YES, chrome 25 works
   does this work in future chrome?

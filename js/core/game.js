@@ -42,12 +42,12 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
 
         that = this;
 
-console.log('writePlayerStats');
+//console.log('writePlayerStats');
         tx.objectStore("players").openCursor(that.team[t].player[p].id).onsuccess = function (event) {
             var cursor, i, keys, player_, playerStats;
 
             cursor = event.target.result;
-if (!cursor) { console.log("NO CURSOR " + that.team[t].player[p].id); console.log(that); console.log(event); console.log(cursor); }
+//if (!cursor) { console.log("NO CURSOR " + that.team[t].player[p].id); console.log(that); console.log(event); console.log(cursor); }
             player_ = cursor.value;
 
             // Find the correct row of stats - should always be the last one, right?
@@ -135,10 +135,10 @@ if (!cursor) { console.log("NO CURSOR " + that.team[t].player[p].id); console.lo
             };
         }
 
-console.log('writeTeamStats');
+//console.log('writeTeamStats');
         db.getPayroll(tx, that.team[t1].id, function (payroll) {
             // Team stats
-console.log('writeTeamStats 2');
+//console.log('writeTeamStats 2');
             tx.objectStore("teams").openCursor(that.team[t1].id).onsuccess = function (event) {
                 var att, coachingPaid, count, cursor, expenses, facilitiesPaid, healthPaid, i, keys, localTvRevenue, merchRevenue, nationalTvRevenue, revenue, salaryPaid, scoutingPaid, sponsorRevenue, t, teamSeason, teamStats, ticketRevenue, winp, winpOld, won;
 
@@ -373,7 +373,7 @@ console.log('writeTeamStats 2');
         gameStats.won.pts = this.team[tw].stat.pts;
         gameStats.lost.pts = this.team[tl].stat.pts;
 
-console.log('writeGameStats');
+//console.log('writeGameStats');
         tx.objectStore("games").add(gameStats);
 
         cb();
@@ -578,14 +578,15 @@ console.log('writeGameStats');
             playoffs = g.phase === g.PHASE.PLAYOFFS;
 
             tx = g.dbl.transaction(["games", "players", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
+//tx = g.dbl.transaction(["players", "schedule"], "readwrite");
 
             cbSaveResult = function (i) {
-console.log('cbSaveResult ' + i)
+//console.log('cbSaveResult ' + i)
                 // Save the game ID so it can be deleted from the schedule below
                 gidsFinished.push(results[i].gid);
 
                 gm = new Game();
-console.log(results[i]);
+//console.log(results[i]);
                 gm.writeStats(tx, results[i], playoffs, function () {
                     var j, scheduleStore;
 
@@ -607,7 +608,7 @@ console.log(results[i]);
             cbSaveResult(results.length - 1);
 
             tx.oncomplete = function () {
-console.log('oncomplete')
+//console.log('oncomplete')
                 advStats.calculateAll(function () {  // Update all advanced stats every day
                     ui.realtimeUpdate(function () {
                         db.setGameAttributes({lastDbChange: Date.now()}, function () {

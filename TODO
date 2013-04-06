@@ -8,6 +8,9 @@ league database error during game simulation in chrome?
   does this work in future chrome?
     NO, chrome 27 has the same problem as 26
   make a minimal example, post to chromium-dev or somewhere else
+    update play.basketball-gm.com first
+    commenting out finances call seems to make errors lessen. WHY?? makes no sense
+    opening transaction over less object stores seems to make errors lessen, even if those object stores aren't used. WHY?? makes no sense
   cb after add in writeGameStats
     could add them all in a transaction first, and then do another transaction to add/update all other stats
       wouldn't matter since even commenting out add still leaves problems

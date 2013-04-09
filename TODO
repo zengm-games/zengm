@@ -1,6 +1,8 @@
 BEFORE 3.0.0-beta.3
 -------------------
 
+profits too large? add corporate tax
+free agent view cap space, show decimal places
 draft lottery
   do a dramatic presentation?
   increase hype for teams that exceed expectations
@@ -21,7 +23,6 @@ contracts
   maybe also try making contract demands depend on PER, if it is available
   maybe make them nonlinear.. role players lower, stars higher
     compare to NBA contract distribution
-for retired players, blank out "current" columns in draft summary
 luxury tax should be disbursed amongst non-taxpaying teams
 give bbgm website its own version of bootstrap (only with components needed)
 display league/season counter on basketball-gm.com splash page

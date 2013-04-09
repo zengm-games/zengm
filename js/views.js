@@ -1758,9 +1758,15 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
 
                         // Ratings
                         currentPr = _.last(pa.ratings);
-                        player.currentOvr = currentPr.ovr;
-                        player.currentPot = currentPr.pot;
-                        player.currentSkills = currentPr.skills;
+                        if (pa.tid !== g.PLAYER.RETIRED) {
+                            player.currentOvr = currentPr.ovr;
+                            player.currentPot = currentPr.pot;
+                            player.currentSkills = currentPr.skills;
+                        } else {
+                            player.currentOvr = "";
+                            player.currentPot = "";
+                            player.currentSkills = "";
+                        }
 
                         // Stats
                         player.careerStats = pa.careerStats;

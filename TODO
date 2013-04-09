@@ -1,6 +1,10 @@
 BEFORE 3.0.0-beta.3
 -------------------
 
+draft lottery
+  do a dramatic presentation?
+  increase hype for teams that exceed expectations
+  tied records?
 versionchange in tests in chrome?
 how to handle aggregating stats for players who played for more than one team in a season? add them all up in ps in db.getPlayers
   for roster, want just a player's stats with this team this season
@@ -59,9 +63,6 @@ too easy to do the "be bad, get draft picks, keep payroll low, sign free agents,
   user can't just sign all the free agents before AI teams
 final score, hall of fame
   influenced by size of city (see: difficulty in views.newLeague)
-draft lottery
-  do a dramatic presentation?
-  increase hype for teams that exceed expectations
 any raw data files should go in the data folder, ideally with a script to convert them to however they're used here
 database changes
   add activeYears multientry like statsTids use for:

@@ -1,5 +1,11 @@
 This is a list of only the major changes in each version.
 
+# Since 3.0.0-beta.3
+
+## Gameplay and UI
+
+- Draft lottery, based on NBA rules
+
 # 3.0.0-beta.2
 
 ## Gameplay and UI

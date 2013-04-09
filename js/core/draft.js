@@ -97,15 +97,62 @@ define(["db", "globals", "core/finances", "core/player", "core/season", "util/he
         var attributes, seasonAttributes;
 
         attributes = ["tid", "abbrev", "name", "cid"];
-        seasonAttributes = ["winp"];
-        db.getTeams(null, g.season, attributes, [], seasonAttributes, {sortBy: "winpAsc"}, function (teams) {
-            var draftOrder, i, round;
+        seasonAttributes = ["winp", "playoffRoundsWon"];
+        db.getTeams(null, g.season, attributes, [], seasonAttributes, {}, function (teams) {
+            var chances, draftOrder, draw, firstThree, i, pick;
             draftOrder = [];
 
-            for (round = 1; round <= 2; round++) {
-                for (i = 0; i < teams.length; i++) {
-                    draftOrder.push({round: round, pick: i + 1, tid: teams[i].tid, abbrev: teams[i].abbrev});
+            // Sort teams by playoffs and winp, for first round
+            teams.sort(function (a, b) {
+                if (a.playoffRoundsWon < b.playoffRoundsWon) {
+                    return -1;
                 }
+                if (a.playoffRoundsWon > b.playoffRoundsWon) {
+                    return 1;
+                }
+                return a.winp - b.winp;
+            });
+
+            // Draft lottery
+            chances = [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5];
+            // cumsum
+            for (i = 1; i < chances.length; i++) {
+                chances[i] = chances[i] + chances[i - 1];
+            }
+            // Pick first three picks based on chances
+            firstThree = [];
+            while (firstThree.length < 3) {
+                draw = random.randInt(1, 1000);
+                for (i = 0; i < chances.length; i++) {
+                    if (chances[i] > draw) {
+                        break;
+                    }
+                }
+                if (firstThree.indexOf(i) < 0) {
+                    firstThree.push(i);
+                }
+            }
+
+            // First round - lottery winners
+            for (i = 0; i < firstThree.length; i++) {
+                draftOrder.push({round: 1, pick: i + 1, tid: teams[firstThree[i]].tid, abbrev: teams[firstThree[i]].abbrev});
+            }
+
+            // First round - everyone else
+            pick = 4;
+            for (i = 0; i < teams.length; i++) {
+                if (firstThree.indexOf(i) < 0) {
+                    draftOrder.push({round: 1, pick: pick, tid: teams[i].tid, abbrev: teams[i].abbrev});
+                    pick += 1;
+                }
+            }
+
+            // Sort teams by winp only, for second round
+            teams.sort(function (a, b) { return a.winp - b.winp; });
+
+            // Second round
+            for (i = 0; i < teams.length; i++) {
+                draftOrder.push({round: 2, pick: i + 1, tid: teams[i].tid, abbrev: teams[i].abbrev});
             }
 
             setOrder(draftOrder, cb);

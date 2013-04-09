@@ -77,9 +77,9 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
 
             cursor.update(player_);
 
-            if (p < that.team[t].player.length - 1)
+            if (p < that.team[t].player.length - 1) {
                 that.writePlayerStats(tx, t, p + 1, cb);
-            else if (t === 0) {
+            } else if (t === 0) {
                 that.writePlayerStats(tx, 1, 0, cb);
             } else {
                 cb();

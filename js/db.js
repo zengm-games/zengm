@@ -37,7 +37,7 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
         if (event.oldVersion <= 1) {
             dbm.deleteObjectStore("teams");
 
-            migrateMessage += '<p><strong>New in version 3.0.0-beta.2:</strong> injuries, more refined economic/financial simulations, improved contract negotiations, error in displayed player ratings dependent on your scouting budget, and annual interactions with the owner of the team including the possibility of being fired for poor performance.</p>';
+            migrateMessage += '<p><strong>New in version 3.0.0-beta.2:</strong> injuries, more refined economic/financial simulations, improved contract negotiations, noise in displayed player ratings dependent on your scouting budget, and annual interactions with the owner of the team including the possibility of being fired for poor performance.</p>';
         }
 
         $("#content").before('<div class="alert alert-info"><button type="button" class="close" data-dismiss="alert">&times;</button>' + migrateMessage + '</div>');

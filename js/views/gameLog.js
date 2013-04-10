@@ -155,7 +155,7 @@ console.log("load boxScore");
         leagueContent = document.getElementById("league_content");
 
         cbLoaded = function () {
-            components.dropdown("game-log-dropdown", ["teams", "seasons"], [abbrev, season], gid >= 0 ? gid : undefined);
+            components.dropdown("game-log-dropdown", ["teams", "seasons"], [abbrev, season], updateEvent, gid >= 0 ? gid : undefined);
 
             // Game log list dynamic highlighting
             $("#game-log-list").on("click", "tbody tr", function (event) {

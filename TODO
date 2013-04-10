@@ -5,6 +5,7 @@ season dropdown
   how should i handle this so that it is easy to reuse update code elsewhere?
     views.components
       updating!
+        send newPhasePreseason and it should work
   goals for gamelog:
     on every GET: check if loaded. if loaded, do nothing. if not, generate from scratch.
     realtimeUpdate: only update on newPhasePreseason, and do that by adding another year (g.season) on to the end

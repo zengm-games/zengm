@@ -1,7 +1,7 @@
 define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers"], function (g, ui, Handlebars, $, _, helpers, viewHelpers) {
     "use strict";
 
-    function gameLogList(abbrev, season, gid, cb) {
+    function gameLogList(abbrev, season, gid, prevMaxGid, cb) {
         var games, out, tid;
 
         out = helpers.validateAbbrev(abbrev);
@@ -9,54 +9,85 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/underscore
         abbrev = out[1];
         season = helpers.validateSeason(season);
 
+console.log(prevMaxGid);
         games = [];
-        g.dbl.transaction(["games"]).objectStore("games").index("season").getAll(season).onsuccess = function (event) {
-            var content, i, games, gamesAll, overtime;
+        // This could be made much faster by using a compound index to search for season + team, but that's not supported by IE 10
+        g.dbl.transaction(["games"]).objectStore("games").index("season").openCursor(season, "prev").onsuccess = function (event) {
+            var content, cursor, game, maxGid, overtime;
 
-            gamesAll = event.target.result;
+            cursor = event.target.result;
+            if (cursor && cursor.value.gid > prevMaxGid) {
+                game = cursor.value;
 
-            games = [];
-            for (i = 0; i < gamesAll.length; i++) {
-                if (gamesAll[i].overtimes === 1) {
+                if (game.overtimes === 1) {
                     overtime = " (OT)";
-                } else if (gamesAll[i].overtimes > 1) {
-                    overtime = " (" + gamesAll[i].overtimes + "OT)";
+                } else if (game.overtimes > 1) {
+                    overtime = " (" + game.overtimes + "OT)";
                 } else {
                     overtime = "";
                 }
 
                 // Check tid
-                if (gamesAll[i].teams[0].tid === tid) {
+                if (game.teams[0].tid === tid) {
                     games.push({
-                        gid: gamesAll[i].gid,
+                        gid: game.gid,
                         home: true,
-                        pts: gamesAll[i].teams[0].pts,
-                        oppPts: gamesAll[i].teams[1].pts,
-                        oppAbbrev: helpers.getAbbrev(gamesAll[i].teams[1].tid),
-                        won: gamesAll[i].teams[0].pts > gamesAll[i].teams[1].pts,
-                        selected: gamesAll[i].gid === gid,
+                        pts: game.teams[0].pts,
+                        oppPts: game.teams[1].pts,
+                        oppAbbrev: helpers.getAbbrev(game.teams[1].tid),
+                        won: game.teams[0].pts > game.teams[1].pts,
+                        selected: game.gid === gid,
                         overtime: overtime
                     });
-                } else if (gamesAll[i].teams[1].tid === tid) {
+                } else if (game.teams[1].tid === tid) {
                     games.push({
-                        gid: gamesAll[i].gid,
+                        gid: game.gid,
                         home: false,
-                        pts: gamesAll[i].teams[1].pts,
-                        oppPts: gamesAll[i].teams[0].pts,
-                        oppAbbrev: helpers.getAbbrev(gamesAll[i].teams[0].tid),
-                        won: gamesAll[i].teams[1].pts > gamesAll[i].teams[0].pts,
-                        selected: gamesAll[i].gid === gid,
+                        pts: game.teams[1].pts,
+                        oppPts: game.teams[0].pts,
+                        oppAbbrev: helpers.getAbbrev(game.teams[0].tid),
+                        won: game.teams[1].pts > game.teams[0].pts,
+                        selected: game.gid === gid,
                         overtime: overtime
                     });
                 }
+
+                cursor.continue();
+            } else {
+                content = Handlebars.templates.gameLogList({lid: g.lid, abbrev: abbrev, games: games, season: season});
+                maxGid = games.length > 0 ? games[0].gid : -1;
+console.log(maxGid);
+console.log(games.length + " games")
+                cb(content, maxGid);
             }
-
-            games.reverse();  // Show most recent games at top
-
-            content = Handlebars.templates.gameLogList({lid: g.lid, abbrev: abbrev, games: games, season: season});
-            document.getElementById("game-log-list").innerHTML = content;
-            cb();
         };
+    }
+
+    function updateGameLogList(abbrev, season, gid, updateEvent, cb) {
+        var gameLogListEl, gameLogListTbodyEl, maxGid;
+
+        gameLogListEl = document.getElementById("game-log-list");
+        gameLogListTbodyEl = gameLogListEl.querySelector("tbody");
+
+        if (abbrev !== gameLogListEl.dataset.abbrev || season !== parseInt(gameLogListEl.dataset.season, 10)) {
+console.log("load gameLogList");
+            gameLogList(abbrev, season, gid, -1, function (content, maxGid) {
+                gameLogListTbodyEl.innerHTML = content;
+                gameLogListEl.dataset.abbrev = abbrev;
+                gameLogListEl.dataset.season = season;
+                gameLogListEl.dataset.maxGid = maxGid;
+                cb();
+            });
+        } else if (updateEvent === "gameSim") {
+console.log("update gameLogList");
+            gameLogList(abbrev, season, gid, parseInt(gameLogListEl.dataset.maxGid, 10), function (content, maxGid) {
+                gameLogListTbodyEl.innerHTML = content + gameLogListTbodyEl.innerHTML;
+                gameLogListEl.dataset.maxGid = maxGid;
+                cb();
+            });
+        } else {
+            cb();
+        }
     }
 
     function boxScore(gid, cb) {
@@ -96,21 +127,6 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/underscore
         }
     }
 
-    function updateGameLogList(abbrev, season, gid, cb) {
-        var gameLogListEl;
-
-        gameLogListEl = document.getElementById("game-log-list");
-        if (abbrev != gameLogListEl.dataset.abbrev || season != parseInt(gameLogListEl.dataset.season, 10)) {
-console.log("load gameLogList");
-            gameLogListEl.dataset.abbrev = abbrev;
-            gameLogListEl.dataset.season = season;
-            gameLogList(abbrev, season, gid, cb);
-        } else {
-console.log("gameLogList already loaded");
-            cb();
-        }
-    }
-
     function updateBoxScore(gid, cb) {
         var boxScoreEl;
 
@@ -119,17 +135,16 @@ console.log("gameLogList already loaded");
         if (gid !== parseInt(boxScoreEl.dataset.gid, 10)) {
 console.log("load boxScore");
             boxScore(gid, function (content) {
-                document.getElementById("box-score").innerHTML = content;
+                boxScoreEl.innerHTML = content;
                 boxScoreEl.dataset.gid = gid;
                 cb();
             });
         } else {
-console.log("boxScore already loaded");
             cb();
         }
     }
 
-    function updateGameLog(abbrev, season, gid, seasons, teams, cb) {
+    function updateGameLog(abbrev, season, gid, seasons, teams, updateEvent, cb) {
         var cbLoaded, data, leagueContent;
 
         leagueContent = document.getElementById("league_content");
@@ -137,20 +152,17 @@ console.log("boxScore already loaded");
         cbLoaded = function () {
             ui.dropdown($("#game-log-select-team"), $("#game-log-select-season"), gid);
 
-            updateGameLogList(abbrev, season, gid, function () {
-               updateBoxScore(gid, function () {
-                   if (cb !== undefined) {
-                       cb();
-                   }
-               });
-           }); 
+            updateGameLogList(abbrev, season, gid, updateEvent, function () {
+                updateBoxScore(gid, function () {
+                    if (cb !== undefined) {
+                        cb();
+                    }
+                });
+            });
         };
 
 
-        if (leagueContent.dataset.id === "gameLog") {
-console.log("gameLog already loaded");
-            cbLoaded();
-        } else {
+        if (leagueContent.dataset.id !== "gameLog") {
 console.log("load gameLog");
             data = {
                 container: "league_content",
@@ -163,6 +175,8 @@ console.log("load gameLog");
 
                 cbLoaded();
             });
+        } else {
+            cbLoaded();
         }
     }
 
@@ -178,7 +192,7 @@ console.log("load gameLog");
             teams = helpers.getTeams(tid);
             gid = req.params.gid !== undefined ? parseInt(req.params.gid, 10) : -1;
 
-            updateGameLog(abbrev, season, gid, seasons, teams, req.raw.cb);
+            updateGameLog(abbrev, season, gid, seasons, teams, req.raw.updateEvent, req.raw.cb);
         });
     }
 

@@ -1,10 +1,3 @@
-<table id="game_log_list" cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed">
-<thead>
-  <tr><th>Opp</th><th>W/L</th><th>Score</th></tr>
-</thead>
-<tbody>
-  {{#games}}
-    <tr{{#if selected}} class="alert-info"{{/if}}><td><a href="/l/{{../lid}}/game_log/{{../abbrev}}/{{../season}}/{{gid}}">{{#unless home}}@{{/unless}}{{oppAbbrev}}</a></td><td><a href="/l/{{../lid}}/game_log/{{../abbrev}}/{{../season}}/{{gid}}">{{#if won}}W{{else}}L{{/if}}</a></td><td><a href="/l/{{../lid}}/game_log/{{../abbrev}}/{{../season}}/{{gid}}">{{pts}}-{{oppPts}}{{overtime}}</a></td></tr>
-  {{/games}}
-</tbody>
-</table>
+{{#games}}
+  <tr{{#if selected}} class="alert-info"{{/if}}><td><a href="/l/{{../lid}}/game_log/{{../abbrev}}/{{../season}}/{{gid}}">{{#unless home}}@{{/unless}}{{oppAbbrev}}</a></td><td><a href="/l/{{../lid}}/game_log/{{../abbrev}}/{{../season}}/{{gid}}">{{#if won}}W{{else}}L{{/if}}</a></td><td><a href="/l/{{../lid}}/game_log/{{../abbrev}}/{{../season}}/{{gid}}">{{pts}}-{{oppPts}}{{overtime}}</a></td></tr>
+{{/games}}

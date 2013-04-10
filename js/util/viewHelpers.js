@@ -26,7 +26,7 @@ define(["db", "globals", "ui", "lib/jquery", "util/helpers"], function (db, g, u
             db.loadGameAttribute(null, "lastDbChange", function () {
                 if (g.lastDbChange !== oldLastDbChange) {
                     db.loadGameAttributes(function () {
-                        ui.realtimeUpdate(function () {
+                        ui.realtimeUpdate("dbChange", function () {
                             ui.updatePlayMenu(null, function () {
                                 ui.updatePhase();
                                 ui.updateStatus();

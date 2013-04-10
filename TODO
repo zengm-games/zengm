@@ -20,6 +20,9 @@ do game log view first (multiple subviews), then roster (row reordering might be
       like in beforeLeague, check if HTML rendered already
 methods for each view object like get and post
 
+ui.realtimeUpdate should be used in more places so updateEvent is pervasive
+  how can this be done for automatic redirects?
+
 BEFORE 3.0.0-beta.3
 -------------------
 

@@ -26,7 +26,7 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "util/helpers"]
             if (!document.getElementById(fieldId)) {
 console.log('load dropdown ' + fields[i]);
                 if (fields[i] === "teams") {
-                    options = helpers.getTeams(7);
+                    options = helpers.getTeams(selected[i]);
                     for (j = 0; j < options.length; j++) {
                         options[j].key = options[j].abbrev;
                         options[j].val = options[j].region + " " + options[j].name;

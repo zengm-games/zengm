@@ -1,12 +1,7 @@
 smarter realtime
 ----------------
 
-default for teams dropdown
-
 after getting game log working decently
-  if everything is driven by GETs through davis, how do i not track realtime updates for GA?
-    check updateEvent?
-    or does this already work?
   can i make first load smoother, by not showing anything until box score and game log list are loaded?
   document functions
   how do i know it keeps working, in terms of only refreshing the appropriate content at the appropriate time

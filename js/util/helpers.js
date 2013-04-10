@@ -134,13 +134,22 @@ define(["globals", "lib/jquery"], function (g, $) {
      *     selected: If selectedTid is defined, this is a boolean representing whether this team is "selected" or not (see below).
      * 
      * @memberOf util.helpers
-     * @param {number} selectedTid A team ID for a team that should be "selected" (as in, from a drop down menu). This will add the "selected" key to each team object, as described above.
+     * @param {number|string} selectedTid A team ID or abbrev for a team that should be "selected" (as in, from a drop down menu). This will add the "selected" key to each team object, as described above.
      * @return {Array.Object} All teams.
      */
     function getTeams(selectedTid) {
-        var i, teams;
+        var i, result, teams;
 
         selectedTid = selectedTid !== undefined ? selectedTid : -1;
+
+        if (typeof selectedTid === "string") {
+            if (isNaN(parseInt(selectedTid, 10))) {
+                // It's an abbrev, not a tid!
+                result = validateAbbrev(selectedTid);
+                selectedTid = result[0];
+            }
+        }
+
         teams = [
             {tid: 0, cid: 0, did: 2, region: "Atlanta", name: "Herons", abbrev: "ATL", pop: 5.4, popRank: 12},
             {tid: 1, cid: 0, did: 0, region: "Boston", name: "Clovers", abbrev: "BOS", pop: 5.0, popRank: 13},

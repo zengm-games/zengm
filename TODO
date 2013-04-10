@@ -7,8 +7,6 @@ after getting game log working decently
   can i make first load smoother, by not showing anything until box score and game log list are loaded?
   document functions
 
-game log list
-  where to update highlighting?
 season dropdown
 
 do game log view first (multiple subviews), then roster (row reordering might be a pain, as well as editable/non-editable switch), then player stats (performance of updating many rows at once)

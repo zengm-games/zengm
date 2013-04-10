@@ -152,6 +152,11 @@ console.log("load boxScore");
         cbLoaded = function () {
             ui.dropdown($("#game-log-select-team"), $("#game-log-select-season"), gid);
 
+            // Game log list dynamic highlighting
+            $("#game-log-list").on("click", "tbody tr", function (event) {
+                $(this).addClass("alert-info").siblings().removeClass("alert-info");
+            });
+
             updateGameLogList(abbrev, season, gid, updateEvent, function () {
                 updateBoxScore(gid, function () {
                     if (cb !== undefined) {

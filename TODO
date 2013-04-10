@@ -1,6 +1,17 @@
 smarter realtime
 ----------------
 
+season dropdown
+  goals for gamelog:
+    on every GET: check if loaded. if loaded, do nothing. if not, generate from scratch.
+    realtimeUpdate: only update on newPhasePreseason, and do that by adding another year (g.season) on to the end
+
+"dbChanged" updateEvent - what should it do?
+  easy way
+    cannot rely on anything. there could have been multiple changes. redraw everything like this was a new page load
+  more correct way
+    store a list of times and "update events". compare last updated time against that list, and then see the update events. pass as list in "update event" to realtime update 
+
 after getting game log working decently
   if everything is driven by GETs through davis, how do i not track realtime updates for GA?
     check updateEvent?
@@ -8,18 +19,12 @@ after getting game log working decently
   can i make first load smoother, by not showing anything until box score and game log list are loaded?
   document functions
 
-season dropdown
-
-do game log view first (multiple subviews), then roster (row reordering might be a pain, as well as editable/non-editable switch), then player stats (performance of updating many rows at once)
-  game log
-    how do i make clicks from the league menu that only refresh the box score?
-      check if there is a previously loaded version (how? module-level variables from previous load?) and then see what needs to be updated?
-        for this, would need to delete these variables when new view is loaded
-      like in beforeLeague, check if HTML rendered already
+roster (row reordering might be a pain, as well as editable/non-editable switch)
+player stats (performance of updating many rows at once)
 methods for each view object like get and post
 
 ui.realtimeUpdate should be used in more places so updateEvent is pervasive
-  how can this be done for automatic redirects?
+  how can this be done for automatic redirects? wrapper function?
 
 BEFORE 3.0.0-beta.3
 -------------------

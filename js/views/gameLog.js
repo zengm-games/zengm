@@ -1,9 +1,7 @@
 define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers"], function (g, ui, Handlebars, $, _, helpers, viewHelpers) {
     "use strict";
 
-    var abbrev, gid, season;
-
-    function gameLogList(cb) {
+    function gameLogList(abbrev, season, gid, cb) {
         var games, out, tid;
 
         out = helpers.validateAbbrev(abbrev);
@@ -56,14 +54,13 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/underscore
             games.reverse();  // Show most recent games at top
 
             content = Handlebars.templates.gameLogList({lid: g.lid, abbrev: abbrev, games: games, season: season});
-            cb(content);
+            document.getElementById("game-log-list").innerHTML = content;
+            cb();
         };
     }
 
-    function boxScore(contentGameLogList, cb) {
-        if (gid !== null) {
-            gid = parseInt(gid, 10);
-
+    function boxScore(gid, cb) {
+        if (gid >= 0) {
             g.dbl.transaction(["games"]).objectStore("games").get(gid).onsuccess = function (event) {
                 var content, i, game, overtime;
 
@@ -92,51 +89,84 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/underscore
                 }
 
                 content = Handlebars.templates.boxScore({lid: g.lid, game: game, overtime: overtime});
-                cb(contentGameLogList, content);
+                cb(content);
             };
         } else {
-            cb(contentGameLogList, "<p>Select a game from the menu on the right to view the box score.</p>");
+            cb("<p>Select a game from the menu on the right to view the box score.</p>");
+        }
+    }
+
+    function updateGameLogList(abbrev, season, gid, cb) {
+        gameLogList(abbrev, season, gid, cb);
+    }
+
+    function updateBoxScore(gid, cb) {
+        var boxScoreEl;
+
+        boxScoreEl = document.getElementById("box-score");
+
+        if (gid !== parseInt(boxScoreEl.dataset.gid, 10)) {
+console.log("load boxScore");
+            boxScore(gid, function (content) {
+                document.getElementById("box-score").innerHTML = content;
+                boxScoreEl.dataset.gid = gid;
+                cb();
+            });
+        } else {
+console.log("boxScore already loaded");
+            cb();
+        }
+    }
+
+    function updateGameLog(abbrev, season, gid, seasons, teams, cb) {
+        var cbLoaded, data, leagueContent;
+
+        leagueContent = document.getElementById("league_content");
+
+        cbLoaded = function () {
+            updateGameLogList(abbrev, season, gid, function () {
+               updateBoxScore(gid, function () {
+                   if (cb !== undefined) {
+                       cb();
+                   }
+               });
+           }); 
+        };
+
+
+        if (leagueContent.dataset.id === "gameLog") {
+console.log("gameLog already loaded");
+            cbLoaded();
+        } else {
+console.log("load gameLog");
+            data = {
+                container: "league_content",
+                template: "gameLog",
+                title: "Game Log",
+                vars: {teams: teams, seasons: seasons, season: season, abbrev: abbrev}
+            };
+            ui.update(data, function () {
+                leagueContent.dataset.id = "gameLog";
+                ui.dropdown($("#game-log-select-team"), $("#game-log-select-season"), gid);
+
+                cbLoaded();
+            });
         }
     }
 
     function get(req) {
         viewHelpers.beforeLeague(req, function () {
-            var cbDisplay, out, seasons, teams, tid;
+            var abbrev, cbDisplay, gid, out, season, seasons, teams, tid;
 
-console.log("PREV: " + gid);
             out = helpers.validateAbbrev(req.params.abbrev);
             tid = out[0];
             abbrev = out[1];
             season = helpers.validateSeason(req.params.season);
             seasons = helpers.getSeasons(season);
             teams = helpers.getTeams(tid);
-            gid = req.params.gid !== undefined ? parseInt(req.params.gid, 10) : null;
+            gid = req.params.gid !== undefined ? parseInt(req.params.gid, 10) : -1;
 
-            if (season < g.season) {
-                g.realtimeUpdate = false;
-            }
-
-            cbDisplay = function (contentGameLogList, contentGameInfo) {
-                var data;
-
-                data = {
-                    container: "league_content",
-                    template: "gameLog",
-                    title: "Game Log",
-                    vars: {boxScore: contentGameInfo, gameLogList: contentGameLogList, teams: teams, seasons: seasons, season: season, abbrev: abbrev}
-                };
-                ui.update(data, function () {
-                    ui.dropdown($("#game-log-select-team"), $("#game-log-select-season"), gid);
-
-                    if (req.raw.cb !== undefined) {
-                        req.raw.cb();
-                    }
-                });
-            };
-
-            gameLogList(function (contentGameLogList) {
-                boxScore(contentGameLogList, cbDisplay);
-            });
+            updateGameLog(abbrev, season, gid, seasons, teams, req.raw.cb);
         });
     }
 

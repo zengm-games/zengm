@@ -1,11 +1,7 @@
 smarter realtime
 ----------------
 
-"dbChanged" updateEvent - what should it do?
-  easy way
-    cannot rely on anything. there could have been multiple changes. redraw everything like this was a new page load. can maybe do this by deleting contents of league_content before reloading URL?
-  more correct way
-    store a list of times and "update events". compare last updated time against that list, and then see the update events. pass as list in "update event" to realtime update 
+default for teams dropdown
 
 after getting game log working decently
   if everything is driven by GETs through davis, how do i not track realtime updates for GA?
@@ -31,6 +27,7 @@ after updating all views
 BEFORE 3.0.0-beta.3
 -------------------
 
+popup windows should still be popup windows, even after reloading page
 profits too large? add corporate tax
 free agent view cap space, show decimal places
 draft lottery
@@ -283,6 +280,8 @@ input to helpers.formatCurrency (and all currency in variables everywhere) shoul
 AI teams should have to deal with fuzz too
 if play menu is open when it refreshes, automatically open it again after refresh
   not so easy.. tried it in 34927959b2b0acd08224665654343d97ffaea281 but there were issues with updatePlayMenu being called multiple times, for instance at the end of the season
+"dbChanged" updateEvent - more correct way
+  store a list of times and "update events". compare last updated time against that list, and then see the update events. pass as list in "update event" to realtime update 
 
 ---
 

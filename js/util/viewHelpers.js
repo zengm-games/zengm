@@ -26,6 +26,12 @@ define(["db", "globals", "ui", "lib/jquery", "util/helpers"], function (db, g, u
             db.loadGameAttribute(null, "lastDbChange", function () {
                 if (g.lastDbChange !== oldLastDbChange) {
                     db.loadGameAttributes(function () {
+                        var leagueContentEl;
+
+                        // This is a hack. Just delete everything and reload everything.
+                        leagueContentEl = document.getElementById("league_content");
+                        leagueContentEl.dataset.id = "";
+                        leagueContentEl.innerHTML = "&nbsp;";  // Blank doesn't work, for some reason
                         ui.realtimeUpdate("dbChange", function () {
                             ui.updatePlayMenu(null, function () {
                                 ui.updatePhase();

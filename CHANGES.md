@@ -4,7 +4,21 @@ This is a list of only the major changes in each version.
 
 ## Gameplay and UI
 
+### Done so far
+
 - Draft lottery, based on NBA rules
+
+### Still in progress
+
+- See TODO
+
+## Technical details
+
+### Still in progress
+
+- Refactored views from a giant file into multiple more managable files in the views folder
+- Smarter realtime UI updates, so that database reads and DOM updates occur less frequently
+- See TODO
 
 # 3.0.0-beta.2
 

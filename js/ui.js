@@ -137,7 +137,9 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
 
     // For dropdown menus to change team/season/whatever
     // This should be cleaned up, but it works for now.
-    function dropdown(select1, select2, extraParam) {
+    function dropdown(select1, select2) {
+        var extraParam;
+
         if (arguments.length === 1) {
             select1.off("change");
             select1.change(function (event) {
@@ -150,6 +152,7 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
                 Davis.location.assign(new Davis.Request(url));
             });
         } else if (arguments.length >= 2) {
+            extraParam = select1.parent()[0].dataset.extraParam;
             select1.off("change");
             select1.change(function (event) {
                 var league_page, league_root_url, result, url;
@@ -158,7 +161,7 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
                 league_root_url = result[1];
                 league_page = result[2];
                 url = "/l/" + g.lid + "/" + league_page + "/" + select1.val() + "/" + select2.val();
-                if (extraParam !== undefined && extraParam !== null) {
+                if (extraParam !== undefined && extraParam !== null && extraParam !== "") {
                     url += "/" + extraParam;
                 }
                 Davis.location.assign(new Davis.Request(url));
@@ -171,7 +174,7 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
                 league_root_url = result[1];
                 league_page = result[2];
                 url = "/l/" + g.lid + "/" + league_page + "/" + select1.val() + "/" + select2.val();
-                if (extraParam !== undefined && extraParam !== null) {
+                if (extraParam !== undefined && extraParam !== null && extraParam !== "") {
                     url += "/" + extraParam;
                 }
                 Davis.location.assign(new Davis.Request(url));

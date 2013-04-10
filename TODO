@@ -2,6 +2,9 @@ smarter realtime
 ----------------
 
 season dropdown
+  how should i handle this so that it is easy to reuse update code elsewhere?
+    views.components
+      updating!
   goals for gamelog:
     on every GET: check if loaded. if loaded, do nothing. if not, generate from scratch.
     realtimeUpdate: only update on newPhasePreseason, and do that by adding another year (g.season) on to the end
@@ -25,6 +28,9 @@ methods for each view object like get and post
 
 ui.realtimeUpdate should be used in more places so updateEvent is pervasive
   how can this be done for automatic redirects? wrapper function?
+
+after updating all views
+  reassess ui module. delete stuff like ui.dropdown. move other functions elsewhere?
 
 BEFORE 3.0.0-beta.3
 -------------------

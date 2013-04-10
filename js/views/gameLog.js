@@ -1,4 +1,8 @@
-define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers"], function (g, ui, Handlebars, $, _, helpers, viewHelpers) {
+/**
+ * @name views.gameLog
+ * @namespace Game log and box score viewing for all seasons and teams.
+ */
+define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "views/components", "util/helpers", "util/viewHelpers"], function (g, ui, Handlebars, $, _, components, helpers, viewHelpers) {
     "use strict";
 
     function gameLogList(abbrev, season, gid, prevMaxGid, cb) {
@@ -145,13 +149,13 @@ console.log("load boxScore");
         }
     }
 
-    function updateGameLog(abbrev, season, gid, seasons, teams, updateEvent, cb) {
+    function updateGameLog(abbrev, season, gid, updateEvent, cb) {
         var cbLoaded, data, leagueContent;
 
         leagueContent = document.getElementById("league_content");
 
         cbLoaded = function () {
-            ui.dropdown($("#game-log-select-team"), $("#game-log-select-season"), gid);
+            components.dropdown("game-log-dropdown", ["teams", "seasons"], [abbrev, season], gid >= 0 ? gid : undefined);
 
             // Game log list dynamic highlighting
             $("#game-log-list").on("click", "tbody tr", function (event) {
@@ -174,7 +178,7 @@ console.log("load gameLog");
                 container: "league_content",
                 template: "gameLog",
                 title: "Game Log",
-                vars: {teams: teams, seasons: seasons, season: season, abbrev: abbrev}
+                vars: {season: season, abbrev: abbrev}
             };
             ui.update(data, cbLoaded);
         } else {
@@ -190,11 +194,9 @@ console.log("load gameLog");
             tid = out[0];
             abbrev = out[1];
             season = helpers.validateSeason(req.params.season);
-            seasons = helpers.getSeasons(season);
-            teams = helpers.getTeams(tid);
             gid = req.params.gid !== undefined ? parseInt(req.params.gid, 10) : -1;
 
-            updateGameLog(abbrev, season, gid, seasons, teams, req.raw.updateEvent, req.raw.cb);
+            updateGameLog(abbrev, season, gid, req.raw.updateEvent, req.raw.cb);
         });
     }
 

@@ -1,12 +1,13 @@
 smarter realtime
 ----------------
 
-after getting game log working decently
-  can i make first load smoother, by not showing anything until box score and game log list are loaded?
-  document functions
-  how do i know it keeps working, in terms of only refreshing the appropriate content at the appropriate time
-    currently i have it print notifications to the console and check them
-    better would be some kind of unit testing
+can i make game log first load smoother, by not showing anything until box score and game log list are loaded?
+document functions in views.gameLog
+how do i know it keeps working, in terms of only refreshing the appropriate content at the appropriate time
+  currently i have it print notifications to the console and check them
+  better would be some kind of unit testing
+    make a hidden div and work in there
+    how to i check and make sure something was not updated?
 
 roster (row reordering might be a pain, as well as editable/non-editable switch)
 player stats (performance of updating many rows at once)

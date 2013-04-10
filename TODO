@@ -1,8 +1,11 @@
 smarter realtime
 ----------------
 
+why do i get a full page reload sometimes?
+
 after getting game log working decently
   if everything is driven by GETs through davis, how do i not track realtime updates for GA?
+    check updateEvent?
   eliminate jquery?
   can i make first load smoother, by not showing anything until box score and game log list are loaded?
   document functions

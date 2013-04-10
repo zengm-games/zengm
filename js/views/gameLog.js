@@ -78,11 +78,14 @@ console.log("load gameLogList");
                 gameLogListEl.dataset.maxGid = maxGid;
                 cb();
             });
-        } else if (updateEvent === "gameSim") {
+        } else if (updateEvent === "gameSim" && season === g.season) {
 console.log("update gameLogList");
             gameLogList(abbrev, season, gid, parseInt(gameLogListEl.dataset.maxGid, 10), function (content, maxGid) {
                 gameLogListTbodyEl.innerHTML = content + gameLogListTbodyEl.innerHTML;
-                gameLogListEl.dataset.maxGid = maxGid;
+                if (maxGid > 0) {
+                    // Only update maxGid if there is actually a new value. Will be -1 if the active team didn't play.
+                    gameLogListEl.dataset.maxGid = maxGid;
+                }
                 cb();
             });
         } else {

@@ -1,27 +1,21 @@
 smarter realtime
 ----------------
 
-season dropdown
-  how should i handle this so that it is easy to reuse update code elsewhere?
-    views.components
-      updating!
-        send newPhasePreseason and it should work
-  goals for gamelog:
-    on every GET: check if loaded. if loaded, do nothing. if not, generate from scratch.
-    realtimeUpdate: only update on newPhasePreseason, and do that by adding another year (g.season) on to the end
-
 "dbChanged" updateEvent - what should it do?
   easy way
-    cannot rely on anything. there could have been multiple changes. redraw everything like this was a new page load
+    cannot rely on anything. there could have been multiple changes. redraw everything like this was a new page load. can maybe do this by deleting contents of league_content before reloading URL?
   more correct way
     store a list of times and "update events". compare last updated time against that list, and then see the update events. pass as list in "update event" to realtime update 
 
 after getting game log working decently
   if everything is driven by GETs through davis, how do i not track realtime updates for GA?
     check updateEvent?
-  eliminate jquery?
+    or does this already work?
   can i make first load smoother, by not showing anything until box score and game log list are loaded?
   document functions
+  how do i know it keeps working, in terms of only refreshing the appropriate content at the appropriate time
+    currently i have it print notifications to the console and check them
+    better would be some kind of unit testing
 
 roster (row reordering might be a pain, as well as editable/non-editable switch)
 player stats (performance of updating many rows at once)
@@ -29,6 +23,7 @@ methods for each view object like get and post
 
 ui.realtimeUpdate should be used in more places so updateEvent is pervasive
   how can this be done for automatic redirects? wrapper function?
+  search for anywhere Davis is directly called.
 
 after updating all views
   reassess ui module. delete stuff like ui.dropdown. move other functions elsewhere?

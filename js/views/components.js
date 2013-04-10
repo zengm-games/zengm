@@ -55,7 +55,7 @@ console.log('load dropdown ' + fields[i]);
         // Check if any field needs to be updated
         for (i = 0; i < fields.length; i++) {
             if (fields[i] === "seasons") {
-                if (updateEvent === "newPhasePreseason") {
+                if (updateEvent === "newPhase" && g.phase === g.PHASE.PRESEASON) {
 console.log('update dropdown ' + fields[i]);
                     newOption = document.createElement('option');
                     newOption.text = g.season + " season";

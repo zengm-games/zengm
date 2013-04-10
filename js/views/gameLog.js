@@ -149,7 +149,7 @@ console.log("load boxScore");
         }
     }
 
-    function updateGameLog(abbrev, season, gid, updateEvent, cb) {
+    function update(abbrev, season, gid, updateEvent, cb) {
         var cbLoaded, data, leagueContent;
 
         leagueContent = document.getElementById("league_content");
@@ -196,7 +196,7 @@ console.log("load gameLog");
             season = helpers.validateSeason(req.params.season);
             gid = req.params.gid !== undefined ? parseInt(req.params.gid, 10) : -1;
 
-            updateGameLog(abbrev, season, gid, req.raw.updateEvent, req.raw.cb);
+            update(abbrev, season, gid, req.raw.updateEvent, req.raw.cb);
         });
     }
 

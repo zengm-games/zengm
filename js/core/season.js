@@ -412,7 +412,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                     cb();
                 }
                 if (reload !== undefined && reload) {
-                    Davis.location.replace(new Davis.Request(location.pathname));
+                    ui.realtimeUpdate("newPhase");
                 }
             });
         });

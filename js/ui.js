@@ -186,7 +186,7 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
      * Smartly update the currently loaded view, based on the current game state.
      *
      * @memberOf ui
-     * @param {string=} updateEvent Optional string containing information about what caused this update, e.g. "gameSim" or "newPhasePlayoffs".
+     * @param {string=} updateEvent Optional string containing information about what caused this update, e.g. "gameSim" or "newPhase".
      * @param {function()=} cb Optional callback that will run after the page updates.
      */
     function realtimeUpdate(updateEvent, cb) {

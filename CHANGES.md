@@ -10,6 +10,7 @@ This is a list of only the major changes in each version.
 
 ### Still in progress
 
+- Faster UI, particularly in the game log
 - See TODO
 
 ## Technical details

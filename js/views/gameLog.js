@@ -97,7 +97,18 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/underscore
     }
 
     function updateGameLogList(abbrev, season, gid, cb) {
-        gameLogList(abbrev, season, gid, cb);
+        var gameLogListEl;
+
+        gameLogListEl = document.getElementById("game-log-list");
+        if (abbrev != gameLogListEl.dataset.abbrev || season != parseInt(gameLogListEl.dataset.season, 10)) {
+console.log("load gameLogList");
+            gameLogListEl.dataset.abbrev = abbrev;
+            gameLogListEl.dataset.season = season;
+            gameLogList(abbrev, season, gid, cb);
+        } else {
+console.log("gameLogList already loaded");
+            cb();
+        }
     }
 
     function updateBoxScore(gid, cb) {
@@ -124,6 +135,8 @@ console.log("boxScore already loaded");
         leagueContent = document.getElementById("league_content");
 
         cbLoaded = function () {
+            ui.dropdown($("#game-log-select-team"), $("#game-log-select-season"), gid);
+
             updateGameLogList(abbrev, season, gid, function () {
                updateBoxScore(gid, function () {
                    if (cb !== undefined) {
@@ -147,7 +160,6 @@ console.log("load gameLog");
             };
             ui.update(data, function () {
                 leagueContent.dataset.id = "gameLog";
-                ui.dropdown($("#game-log-select-team"), $("#game-log-select-season"), gid);
 
                 cbLoaded();
             });

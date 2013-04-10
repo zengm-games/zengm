@@ -1986,10 +1986,10 @@ function program4(depth0,data) {
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "/team_finances/"
     + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">Finances</a></p>\n\n<p>\n<div class=\"row-fluid\">\n  <div class=\"span9\" id=\"box-score\">\n    ";
+    + "\">Finances</a></p>\n\n<p>\n<div class=\"row-fluid\">\n  <div class=\"span9\" id=\"box-score\" data-gid=\"\">\n    ";
   stack2 = ((stack1 = depth0.boxScore),typeof stack1 === functionType ? stack1.apply(depth0) : stack1);
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </div>\n\n  <div class=\"span3\" id=\"game-log-list\">\n    ";
+  buffer += "\n  </div>\n\n  <div class=\"span3\" id=\"game-log-list\" data-abbrev=\"\" data-season=\"\">\n    ";
   stack2 = ((stack1 = depth0.gameLogList),typeof stack1 === functionType ? stack1.apply(depth0) : stack1);
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "\n  </div>\n</div>\n</p>\n";

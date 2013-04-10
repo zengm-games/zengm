@@ -134,6 +134,7 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
     // This should be cleaned up, but it works for now.
     function dropdown(select1, select2, extraParam) {
         if (arguments.length === 1) {
+            select1.off("change");
             select1.change(function (event) {
                 var league_page, league_root_url, result, url;
 
@@ -144,6 +145,7 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
                 Davis.location.assign(new Davis.Request(url));
             });
         } else if (arguments.length >= 2) {
+            select1.off("change");
             select1.change(function (event) {
                 var league_page, league_root_url, result, url;
 
@@ -156,6 +158,7 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
                 }
                 Davis.location.assign(new Davis.Request(url));
             });
+            select2.off("change");
             select2.change(function (event) {
                 var league_page, league_root_url, result, url;
 

@@ -68,11 +68,12 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
      * @param {function()=} cb Optional callback
      */
     function update(data, cb) {
-        var leaguePage, rendered, result;
+        var containerEl, leaguePage, rendered, result;
 
         data.vars.lid = g.lid;
         rendered = Handlebars.templates[data.template](data.vars);
-        $("#" + data.container).html(rendered);
+        containerEl = document.getElementById(data.container);
+        containerEl.innerHTML = rendered;
 
         if (data.hasOwnProperty("title")) {
             if (data.container === "league_content") {
@@ -84,6 +85,10 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
         result = parseLeagueUrl(document.URL);
         leaguePage = result[2];
         highlightNav(leaguePage);
+
+        if (data.container === "league_content") {
+            containerEl.dataset.id = data.template;
+        }
 
         if (cb !== undefined) {
             cb();

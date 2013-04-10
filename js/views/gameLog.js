@@ -9,7 +9,6 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/underscore
         abbrev = out[1];
         season = helpers.validateSeason(season);
 
-console.log(prevMaxGid);
         games = [];
         // This could be made much faster by using a compound index to search for season + team, but that's not supported by IE 10
         g.dbl.transaction(["games"]).objectStore("games").index("season").openCursor(season, "prev").onsuccess = function (event) {
@@ -56,7 +55,6 @@ console.log(prevMaxGid);
             } else {
                 content = Handlebars.templates.gameLogList({lid: g.lid, abbrev: abbrev, games: games, season: season});
                 maxGid = games.length > 0 ? games[0].gid : -1;
-console.log(maxGid);
 console.log(games.length + " games")
                 cb(content, maxGid);
             }
@@ -178,11 +176,7 @@ console.log("load gameLog");
                 title: "Game Log",
                 vars: {teams: teams, seasons: seasons, season: season, abbrev: abbrev}
             };
-            ui.update(data, function () {
-                leagueContent.dataset.id = "gameLog";
-
-                cbLoaded();
-            });
+            ui.update(data, cbLoaded);
         } else {
             cbLoaded();
         }

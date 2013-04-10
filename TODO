@@ -8,6 +8,13 @@ how do i know it keeps working, in terms of only refreshing the appropriate cont
   better would be some kind of unit testing
     make a hidden div and work in there
     how to i check and make sure something was not updated?
+unit tests for views.gameLog
+  create new league
+  add some dummy game results to games object store
+  test functionality (see test.views.gameLog)
+    to confirm "only" one thing is updated, need to validate that all other parts are not updated
+      can put in fake values and make sure they are not overwritten with real values
+unit tests for views.comonents
 
 roster (row reordering might be a pain, as well as editable/non-editable switch)
 player stats (performance of updating many rows at once)

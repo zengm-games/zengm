@@ -187,6 +187,7 @@ console.log("load gameLog");
     }
 
     function get(req) {
+console.log(req);
         viewHelpers.beforeLeague(req, function () {
             var abbrev, cbDisplay, gid, out, season, seasons, teams, tid;
 
@@ -201,6 +202,11 @@ console.log("load gameLog");
     }
 
     return {
+        /*gameLogList: gameLogList,
+        updateGameLogList: updateGameLogList,
+        boxScore: boxScore,
+        updateBoxScore: updateBoxScore,*/
+        update: update,
         get: get
     };
 });

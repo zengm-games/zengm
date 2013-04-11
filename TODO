@@ -1,6 +1,9 @@
 smarter realtime
 ----------------
 
+gameLog knockout
+  get rid of gameLogList and boxScore templates, just have them inline in gameLog.handlebars
+  git rid of all data attributes
 i need something like knockout to handle realtime updates. for instance, gamelog doesn't update links under title currently. getting too complicated to do this all manually
   build a viewModel. only update it when needed, like is currently done with roster
     move things from data attributes to view model, and use that to determine appropriate updating

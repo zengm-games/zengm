@@ -28,7 +28,7 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
         games = [];
         // This could be made much faster by using a compound index to search for season + team, but that's not supported by IE 10
         g.dbl.transaction(["games"]).objectStore("games").index("season").openCursor(season, "prev").onsuccess = function (event) {
-            var content, cursor, game, maxGid, overtime;
+            var content, cursor, game, i, maxGid, overtime;
 
             cursor = event.target.result;
             if (cursor && cursor.value.gid > prevMaxGid) {
@@ -43,35 +43,35 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
                 }
 
                 // Check tid
-                if (game.teams[0].tid === tid) {
+                if (game.teams[0].tid === tid || game.teams[1].tid === tid) {
                     games.push({
                         gid: game.gid,
-                        home: true,
-                        pts: game.teams[0].pts,
-                        oppPts: game.teams[1].pts,
-                        oppAbbrev: helpers.getAbbrev(game.teams[1].tid),
-                        won: game.teams[0].pts > game.teams[1].pts,
                         selected: game.gid === gid,
-                        overtime: overtime
+                        overtime: overtime,
+                        url: "/l/" + g.lid + "/game_log/" + vm.abbrev() + "/" + vm.season() + "/" + game.gid
                     });
-                } else if (game.teams[1].tid === tid) {
-                    games.push({
-                        gid: game.gid,
-                        home: false,
-                        pts: game.teams[1].pts,
-                        oppPts: game.teams[0].pts,
-                        oppAbbrev: helpers.getAbbrev(game.teams[0].tid),
-                        won: game.teams[1].pts > game.teams[0].pts,
-                        selected: game.gid === gid,
-                        overtime: overtime
-                    });
+
+                    i = games.length - 1;
+                    if (game.teams[0].tid === tid) {
+                        games[i].home = true;
+                        games[i].pts = game.teams[0].pts;
+                        games[i].oppPts = game.teams[1].pts;
+                        games[i].oppAbbrev = helpers.getAbbrev(game.teams[1].tid);
+                        games[i].won = game.teams[0].pts > game.teams[1].pts;
+                    } else if (game.teams[1].tid === tid) {
+                        games[i].home = false;
+                        games[i].pts = game.teams[1].pts;
+                        games[i].oppPts = game.teams[0].pts;
+                        games[i].oppAbbrev = helpers.getAbbrev(game.teams[0].tid);
+                        games[i].won = game.teams[1].pts > game.teams[0].pts;
+                    }
                 }
 
                 cursor.continue();
             } else {
                 content = Handlebars.templates.gameLogList({lid: g.lid, abbrev: abbrev, games: games, season: season});
                 maxGid = games.length > 0 ? games[0].gid : -1;
-                cb(content, maxGid);
+                cb(games, content, maxGid);
             }
         };
     }
@@ -96,15 +96,17 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
 
         if (abbrev !== vm.gamesList.abbrev() || season !== vm.gamesList.season()) {
             gameLogListTbodyEl.innerHTML = '<tr><td colspan="3" style="padding: 4px 5px;">Loading...</td></tr>';
-            gameLogList(abbrev, season, gid, -1, function (content, maxGid) {
-                gameLogListTbodyEl.innerHTML = content;
+            gameLogList(abbrev, season, gid, -1, function (games, content, maxGid) {
+                vm.gamesList.games(games);
+console.log(vm.gamesList.games()[0]);
+//                gameLogListTbodyEl.innerHTML = content;
                 vm.gamesList.abbrev(abbrev);
                 vm.gamesList.season(season);
                 gameLogListEl.dataset.maxGid = maxGid;
                 cb();
             });
         } else if (updateEvents.indexOf("gameSim") >= 0 && season === g.season) {
-            gameLogList(abbrev, season, gid, parseInt(gameLogListEl.dataset.maxGid, 10), function (content, maxGid) {
+            gameLogList(abbrev, season, gid, parseInt(gameLogListEl.dataset.maxGid, 10), function (games, content, maxGid) {
                 gameLogListTbodyEl.innerHTML = content + gameLogListTbodyEl.innerHTML;
                 if (maxGid > 0) {
                     // Only update maxGid if there is actually a new value. Will be -1 if the active team didn't play.
@@ -238,7 +240,8 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
 
                 this.gamesList = {
                     abbrev: ko.observable(),
-                    season: ko.observable()
+                    season: ko.observable(),
+                    games: ko.observableArray([])
                 };
 
                 this.rosterUrl = ko.computed(function () {

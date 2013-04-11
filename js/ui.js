@@ -138,8 +138,6 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
     // For dropdown menus to change team/season/whatever
     // This should be cleaned up, but it works for now.
     function dropdown(select1, select2) {
-        var extraParam;
-
         if (arguments.length === 1) {
             select1.off("change");
             select1.change(function (event) {
@@ -152,11 +150,11 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
                 Davis.location.assign(new Davis.Request(url));
             });
         } else if (arguments.length >= 2) {
-            extraParam = select1.parent()[0].dataset.extraParam;
             select1.off("change");
             select1.change(function (event) {
-                var league_page, league_root_url, result, url;
+                var extraParam, league_page, league_root_url, result, url;
 
+                extraParam = select1.parent()[0].dataset.extraParam;
                 result = parseLeagueUrl(document.URL);
                 league_root_url = result[1];
                 league_page = result[2];
@@ -168,8 +166,9 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
             });
             select2.off("change");
             select2.change(function (event) {
-                var league_page, league_root_url, result, url;
+                var extraParam, league_page, league_root_url, result, url;
 
+                extraParam = select2.parent()[0].dataset.extraParam;
                 result = parseLeagueUrl(document.URL);
                 league_root_url = result[1];
                 league_page = result[2];

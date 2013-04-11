@@ -265,10 +265,9 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
      */
     function get(req) {
         viewHelpers.beforeLeague(req, function () {
-            var abbrev, cbDisplay, gid, out, season, seasons, teams, tid, updateEvents;
+            var abbrev, cbDisplay, gid, out, season, seasons, teams, updateEvents;
 
             out = helpers.validateAbbrev(req.params.abbrev);
-            tid = out[0];
             abbrev = out[1];
             season = helpers.validateSeason(req.params.season);
             gid = req.params.gid !== undefined ? parseInt(req.params.gid, 10) : -1;

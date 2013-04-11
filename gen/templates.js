@@ -2223,7 +2223,7 @@ function program28(depth0,data,depth1,depth2) {
   return buffer;
   }
 
-  buffer += "<form action=\"/l/"
+  buffer += "<form id=\"roster-dropdown\" class=\"form-inline pull-right\"></form>\n<!--<form action=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "/roster\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"roster-select-team\" name=\"team\" class=\"team\">\n    ";
   stack2 = ((stack1 = ((stack1 = depth0.teams),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
@@ -2231,7 +2231,7 @@ function program28(depth0,data,depth1,depth2) {
   buffer += "\n  </select>\n  <select id=\"roster-select-season\" name=\"season\" class=\"season\">\n    ";
   stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data}));
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </select>\n</form>\n\n<h1>"
+  buffer += "\n  </select>\n</form>-->\n\n<h1>"
     + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.region)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + " "
     + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))

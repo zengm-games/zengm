@@ -1,8 +1,6 @@
 smarter realtime
 ----------------
 
-gameLog knockout
-  get rid of boxScore template, just use knockout inline in gameLog.handlebars
 i need something like knockout to handle realtime updates. for instance, gamelog doesn't update links under title currently. getting too complicated to do this all manually
   build a viewModel. only update it when needed, like is currently done with gameLog
     move things from data attributes to view model, and use that to determine appropriate updating
@@ -14,6 +12,8 @@ roster
   old roster: display static
   new roster, non-user team: display static with trade for buttons
   new roster, user team: display dynamic
+  updateEvents checking in viewHelpers.newLeague?
+    also, if cb is undefined make it an empty function?
 ui.realtimeUpdate should be used in more places so updateEvent is pervasive
   how can this be done for automatic redirects? wrapper function?
   search for anywhere Davis is directly called.

@@ -1,11 +1,11 @@
 <form id="game-log-dropdown" class="form-inline pull-right"></form>
 
 <h1>Game Log {{new_window}}</h1>
-<p>More: <a href="/l/{{lid}}/roster/{{abbrev}}/{{season}}">Roster</a> | <a href="/l/{{lid}}/team_finances/{{abbrev}}">Finances</a></p>
+<p>More: <a data-bind="attr: { href: rosterUrl }">Roster</a> | <a data-bind="attr: { href: financesUrl }">Finances</a></p>
 
 <p>
 <div class="row-fluid">
-  <div class="span9" id="box-score" data-gid="">
+  <div class="span9" id="box-score" data-bind="html: boxScore.html">
     <p></p>
   </div>
 

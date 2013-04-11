@@ -18,9 +18,14 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "util/helpers"]
      * @param {?string=} extraParam Any extra parameter to append to the URL, like /l/1/.../ATL/2014/extraParam. Default is to append nothing.
      */
     function dropdown(formId, fields, selected, updateEvents, extraParam) {
-        var content, fieldId, formEl, i, j, newOption, newSelect, options;
+        var content, fieldId, formEl, i, j, leagueContentEl, newOption, newSelect, options;
 
         formEl = document.getElementById(formId);
+        /*if (!formEl) {
+            leagueContentEl = document.getElementById("league_content");
+            leagueContentEl.innerHTML = '<form id="' + formId + '" class="form-inline pull-right"></form>' + leagueContentEl.innerHTML;
+            formEl = document.getElementById(formId);
+        }*/
 
         // Check if each field is already built
         newSelect = false;

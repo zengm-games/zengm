@@ -1,7 +1,13 @@
 smarter realtime
 ----------------
 
-dropdown shouldn't be defined in template. just add it to the top of league_content
+i need something like knockout to handle realtime updates. for instance, gamelog doesn't update links under title currently. getting too complicated to do this all manually
+  build a viewModel. only update it when needed, like is currently done with roster
+    move things from data attributes to view model, and use that to determine appropriate updating
+    do i make it nested, or have multiple models for multiple components?
+      maybe try nested first
+    somehow need to delete these viewmodels when the view is deleted (i.e. page change)
+      not even "page change".. for instance if i'm viewing last year's game log and click "game log" in the league menu, the dropdown should reset
 roster
   old roster: display static
   new roster, non-user team: display static with trade for buttons

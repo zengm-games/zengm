@@ -2,8 +2,10 @@
  * @name views.gameLog
  * @namespace Game log and box score viewing for all seasons and teams.
  */
-define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "views/components", "util/helpers", "util/viewHelpers"], function (g, ui, Handlebars, $, _, components, helpers, viewHelpers) {
+define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/helpers", "util/viewHelpers"], function (g, ui, Handlebars, $, ko, _, components, helpers, viewHelpers) {
     "use strict";
+
+    var vm;
 
     /**
      * Generate a game log list.
@@ -92,12 +94,12 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/underscore
         gameLogListEl = document.getElementById("game-log-list");
         gameLogListTbodyEl = gameLogListEl.querySelector("tbody");
 
-        if (abbrev !== gameLogListEl.dataset.abbrev || season !== parseInt(gameLogListEl.dataset.season, 10)) {
+        if (abbrev !== vm.gamesList.abbrev() || season !== vm.gamesList.season()) {
             gameLogListTbodyEl.innerHTML = '<tr><td colspan="3" style="padding: 4px 5px;">Loading...</td></tr>';
             gameLogList(abbrev, season, gid, -1, function (content, maxGid) {
                 gameLogListTbodyEl.innerHTML = content;
-                gameLogListEl.dataset.abbrev = abbrev;
-                gameLogListEl.dataset.season = season;
+                vm.gamesList.abbrev(abbrev);
+                vm.gamesList.season(season);
                 gameLogListEl.dataset.maxGid = maxGid;
                 cb();
             });
@@ -170,14 +172,10 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/underscore
      * @param {function()} cb Callback.
      */
     function updateBoxScore(gid, cb) {
-        var boxScoreEl;
-
-        boxScoreEl = document.getElementById("box-score");
-
-        if (gid !== parseInt(boxScoreEl.dataset.gid, 10)) {
+        if (gid !== vm.boxScore.gid()) {
             boxScore(gid, function (content) {
-                boxScoreEl.innerHTML = content;
-                boxScoreEl.dataset.gid = gid;
+                vm.boxScore.html(content);
+                vm.boxScore.gid(gid);
                 cb();
             });
         } else {
@@ -225,10 +223,37 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/underscore
                 container: "league_content",
                 template: "gameLog",
                 title: "Game Log",
-                vars: {season: season, abbrev: abbrev}
+                vars: {}
             };
-            ui.update(data, cbLoaded);
+            ui.update(data);
+
+            vm = (new function () {
+                this.abbrev = ko.observable(abbrev);
+                this.season = ko.observable(season);
+
+                this.boxScore = {
+                    gid: ko.observable(),
+                    html: ko.observable()
+                };
+
+                this.gamesList = {
+                    abbrev: ko.observable(),
+                    season: ko.observable()
+                };
+
+                this.rosterUrl = ko.computed(function () {
+                    return "/l/" + g.lid + "/roster/" + this.abbrev() + "/" + this.season();
+                }, this);
+                this.financesUrl = ko.computed(function () {
+                    return "/l/" + g.lid + "/team_finances/" + this.abbrev();
+                }, this);
+            }());
+            ko.applyBindings(vm);
+
+            cbLoaded();
         } else {
+            vm.abbrev(abbrev);
+            vm.season(season);
             cbLoaded();
         }
     }

@@ -8,7 +8,7 @@ check:
 # target: docs - Regenerate documentation from source code using jsdoc-toolkit.
 docs:
 	rm -rf docs
-	jsdoc -d=docs -s js js/core js/util
+	jsdoc -d=docs -s js js/core js/util js/views
 
 # target: lint - Run jslint on all source files except third-party libraries.
 lint:

@@ -211,6 +211,8 @@ ul.inheritsList
 	
 	<li><a href="../symbols/core.season.html">core.season</a></li>
 	
+	<li><a href="../symbols/core.team.html">core.team</a></li>
+	
 	<li><a href="../symbols/core.trade.html">core.trade</a></li>
 	
 	<li><a href="../symbols/db.html">db</a></li>
@@ -225,9 +227,17 @@ ul.inheritsList
 	
 	<li><a href="../symbols/util.lock.html">util.lock</a></li>
 	
+	<li><a href="../symbols/util.message.html">util.message</a></li>
+	
 	<li><a href="../symbols/util.random.html">util.random</a></li>
 	
 	<li><a href="../symbols/util.templateHelpers.html">util.templateHelpers</a></li>
+	
+	<li><a href="../symbols/util.viewHelpers.html">util.viewHelpers</a></li>
+	
+	<li><a href="../symbols/views.components.html">views.components</a></li>
+	
+	<li><a href="../symbols/views.gameLog.html">views.gameLog</a></li>
 	
 </ul>
 <hr />
@@ -297,7 +307,7 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.player.<b><a href="../symbols/core.player.html#.addRatingsRow">addRatingsRow</a></b>(p)
+								<div class="fixedFont">core.player.<b><a href="../symbols/core.player.html#.addRatingsRow">addRatingsRow</a></b>(p, scoutingRank)
 								</div>
 								<div class="description">Add a new row of ratings to a player object.</div>
 							</td>
@@ -315,7 +325,7 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.player.<b><a href="../symbols/core.player.html#.addToFreeAgents">addToFreeAgents</a></b>(ot, p, phase, cb)
+								<div class="fixedFont">core.player.<b><a href="../symbols/core.player.html#.addToFreeAgents">addToFreeAgents</a></b>(ot, p, phase, baseMoods, cb)
 								</div>
 								<div class="description">Adds player to the free agents list.</div>
 							</td>
@@ -333,7 +343,16 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.player.<b><a href="../symbols/core.player.html#.contract">contract</a></b>(ratings, randomizeExp)
+								<div class="fixedFont">core.player.<b><a href="../symbols/core.player.html#.develop">develop</a></b>(p, years, generate, coachingRank)
+								</div>
+								<div class="description">Develop (increase/decrease) player's ratings.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">core.player.<b><a href="../symbols/core.player.html#.genContract">genContract</a></b>(ratings, randomizeExp)
 								</div>
 								<div class="description">Generate a contract for a player.</div>
 							</td>
@@ -342,9 +361,9 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.player.<b><a href="../symbols/core.player.html#.develop">develop</a></b>(p, years, generate)
+								<div class="fixedFont">core.player.<b><a href="../symbols/core.player.html#.genFuzz">genFuzz</a></b>(scoutingRank)
 								</div>
-								<div class="description">Develop (increase/decrease) player's ratings.</div>
+								<div class="description">Generate fuzz.</div>
 							</td>
 						</tr>
 					
@@ -381,6 +400,15 @@ ul.inheritsList
 								<div class="fixedFont">core.player.<b><a href="../symbols/core.player.html#.release">release</a></b>(transaction, p, cb)
 								</div>
 								<div class="description">Release player.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">core.player.<b><a href="../symbols/core.player.html#.setContract">setContract</a></b>(p, contract, signed)
+								</div>
+								<div class="description">Store a contract in a player object.</div>
 							</td>
 						</tr>
 					
@@ -445,7 +473,7 @@ ul.inheritsList
 					<div class="fixedFont">&lt;static&gt; 
 					
 					<span class="light">{Object}</span>
-					<span class="light">core.player.</span><b>addRatingsRow</b>(p)
+					<span class="light">core.player.</span><b>addRatingsRow</b>(p, scoutingRank)
 					
 					</div>
 					<div class="description">
@@ -467,6 +495,12 @@ There should be one ratings row for each year a player is not retired, and a new
 									
 								</dt>
 								<dd>Player object.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>scoutingRank</b>
+									
+								</dt>
+								<dd>Between 1 and 30, the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.</dd>
 							
 							</dl>
 						
@@ -541,16 +575,14 @@ A row contains stats for unique values of (team, season, playoffs). So new rows 
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">core.player.</span><b>addToFreeAgents</b>(ot, p, phase, cb)
+					<span class="light">core.player.</span><b>addToFreeAgents</b>(ot, p, phase, baseMoods, cb)
 					
 					</div>
 					<div class="description">
 						Adds player to the free agents list.
 
 This should be THE ONLY way that players are added to the free agents
-list, because this will also calculate their demanded contract. But
-currently, the free agents generated at the beginning of the game don't
-use this function.
+list, because this will also calculate their demanded contract and mood.
 						
 						
 					</div>
@@ -578,6 +610,12 @@ use this function.
 									
 								</dt>
 								<dd>An integer representing the game phase to consider this transaction under (defaults to g.phase if null).</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Array.<number>}</span> <b>baseMoods</b>
+									
+								</dt>
+								<dd>Vector of base moods for each team from 0 to 1, as generated by genBaseMoods.</dd>
 							
 								<dt>
 									<span class="light fixedFont">{function()}</span> <b>cb</b>
@@ -653,11 +691,72 @@ This should only be called when generating players for a new league. Otherwise, 
 
 					<hr />
 				
-					<a name=".contract"> </a>
+					<a name=".develop"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{Object}</span>
+					<span class="light">core.player.</span><b>develop</b>(p, years, generate, coachingRank)
+					
+					</div>
+					<div class="description">
+						Develop (increase/decrease) player's ratings. This operates on whatever the last row of p.ratings is.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>p</b>
+									
+								</dt>
+								<dd>Player object.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number=}</span> <b>years</b>
+									
+								</dt>
+								<dd>Number of years to develop (default 1).</dd>
+							
+								<dt>
+									<span class="light fixedFont">{boolean=}</span> <b>generate</b>
+									
+								</dt>
+								<dd>Generating a new player? (default false). If true, then the player's age is also updated based on years.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number=}</span> <b>coachingRank</b>
+									
+								</dt>
+								<dd>From 1 to 30, where 1 is best coaching staff and 30 is worst. Default is 15.5</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Object}</span> Updated player object.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".genContract"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					<span class="light">{Object.<string|number>}</span>
-					<span class="light">core.player.</span><b>contract</b>(ratings, randomizeExp)
+					<span class="light">core.player.</span><b>genContract</b>(ratings, randomizeExp)
 					
 					</div>
 					<div class="description">
@@ -702,15 +801,17 @@ This should only be called when generating players for a new league. Otherwise, 
 
 					<hr />
 				
-					<a name=".develop"> </a>
+					<a name=".genFuzz"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
-					<span class="light">{Object}</span>
-					<span class="light">core.player.</span><b>develop</b>(p, years, generate)
+					<span class="light">{number}</span>
+					<span class="light">core.player.</span><b>genFuzz</b>(scoutingRank)
 					
 					</div>
 					<div class="description">
-						Develop (increase/decrease) player's ratings. This operates on whatever the last row of p.ratings is.
+						Generate fuzz.
+
+Fuzz is random noise that is added to a player's displayed ratings, depending on the scouting budget.
 						
 						
 					</div>
@@ -722,22 +823,10 @@ This should only be called when generating players for a new league. Otherwise, 
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Object}</span> <b>p</b>
+									<span class="light fixedFont">{number}</span> <b>scoutingRank</b>
 									
 								</dt>
-								<dd>Player object.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{number}</span> <b>years</b>
-									
-								</dt>
-								<dd>Number of years to develop (default 1).</dd>
-							
-								<dt>
-									<span class="light fixedFont">{generate}</span> <b>generate</b>
-									
-								</dt>
-								<dd>Generating a new player? (default false). If true, then the player's age is also updated based on years.</dd>
+								<dd>Between 1 and 30, the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.</dd>
 							
 							</dl>
 						
@@ -748,7 +837,7 @@ This should only be called when generating players for a new league. Otherwise, 
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Object}</span> Updated player object.</dd>
+								<dd><span class="light fixedFont">{number}</span> Fuzz, between -5 and 5.</dd>
 							
 							</dl>
 						
@@ -911,7 +1000,7 @@ This keeps track of what the player's current team owes him, and then calls play
 									<span class="light fixedFont">{IDBTransaction}</span> <b>transaction</b>
 									
 								</dt>
-								<dd>An IndexedDB transaction on players and releasedPlayers, readwrite.</dd>
+								<dd>An IndexedDB transaction on players, releasedPlayers, and teams, readwrite.</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Object}</span> <b>p</b>
@@ -930,6 +1019,61 @@ This keeps track of what the player's current team owes him, and then calls play
 						
 						
 						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".setContract"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{Object}</span>
+					<span class="light">core.player.</span><b>setContract</b>(p, contract, signed)
+					
+					</div>
+					<div class="description">
+						Store a contract in a player object.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>p</b>
+									
+								</dt>
+								<dd>Player object.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>contract</b>
+									
+								</dt>
+								<dd>Contract object with two properties, exp (year) and amount (thousands of dollars).</dd>
+							
+								<dt>
+									<span class="light fixedFont">{boolean}</span> <b>signed</b>
+									
+								</dt>
+								<dd>Is this an official signed contract (true), or just part of a negotiation (false)?</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Object}</span> Updated player object.</dd>
+							
+							</dl>
 						
 						
 						
@@ -1002,7 +1146,7 @@ This keeps track of what the player's current team owes him, and then calls play
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sun Mar 10 2013 09:48:29 GMT-0400 (EDT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Wed Apr 10 2013 23:08:32 GMT-0400 (EDT)
 		</div>
 	</body>
 </html>

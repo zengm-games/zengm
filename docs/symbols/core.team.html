@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - core.finances</title>
+		<title>JsDoc Reference - core.team</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -248,7 +248,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Namespace core.finances
+				Namespace core.team
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -256,16 +256,16 @@ ul.inheritsList
 				
 				
 			
-				Anything related to budget/finances.
+				Functions operating on team objects, or parts of team objects.
 				
 				
-					<br /><i>Defined in: </i> &lt;js/core/finances.js&gt;.
+					<br /><i>Defined in: </i> &lt;js/core/team.js&gt;.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class core.finances.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class core.team.">
 				<caption>Namespace Summary</caption>
 				<thead>
 					<tr>
@@ -278,7 +278,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/core.finances.html#constructor">core.finances</a></b>
+								<b><a href="../symbols/core.team.html#constructor">core.team</a></b>
 							</div>
 							<div class="description"></div>
 						</td>
@@ -294,7 +294,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class core.finances.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class core.team.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -307,27 +307,36 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.finances.<b><a href="../symbols/core.finances.html#.assesPayrollMinLuxury">assesPayrollMinLuxury</a></b>(cb)
+								<div class="fixedFont">core.team.<b><a href="../symbols/core.team.html#.addSeasonRow">addSeasonRow</a></b>(t)
 								</div>
-								<div class="description">Assess the payroll and apply minimum and luxury taxes.</div>
+								<div class="description">Add a new row of season attributes to a team object.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.finances.<b><a href="../symbols/core.finances.html#.getRankLastThree">getRankLastThree</a></b>(t, category, item)
+								<div class="fixedFont">core.team.<b><a href="../symbols/core.team.html#.addStatsRow">addStatsRow</a></b>(t, playoffs)
 								</div>
-								<div class="description">Gets the rank of some financial thing over the past 3 seasons, if available.</div>
+								<div class="description">Add a new row of stats to a team object.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.finances.<b><a href="../symbols/core.finances.html#.updateRanks">updateRanks</a></b>(ot, type, cb)
+								<div class="fixedFont">core.team.<b><a href="../symbols/core.team.html#.generate">generate</a></b>(tm)
 								</div>
-								<div class="description">Update the rankings of team budgets, expenses, and revenue sources.</div>
+								<div class="description">Create a new team object.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">core.team.<b><a href="../symbols/core.team.html#.rosterAutoSort">rosterAutoSort</a></b>(ot, tid, cb)
+								</div>
+								<div class="description">Sort a team's roster based on player ratings.</div>
 							</td>
 						</tr>
 					
@@ -348,7 +357,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>core.finances</b>
+						<b>core.team</b>
 				</div>
 				
 				<div class="description">
@@ -379,53 +388,17 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name=".assesPayrollMinLuxury"> </a>
+					<a name=".addSeasonRow"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
-					
-					<span class="light">core.finances.</span><b>assesPayrollMinLuxury</b>(cb)
+					<span class="light">{Object}</span>
+					<span class="light">core.team.</span><b>addSeasonRow</b>(t)
 					
 					</div>
 					<div class="description">
-						Assess the payroll and apply minimum and luxury taxes.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{function()}</span> <b>cb</b>
-									
-								</dt>
-								<dd>Callback function.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
+						Add a new row of season attributes to a team object.
 
-					<hr />
-				
-					<a name=".getRankLastThree"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{number}</span>
-					<span class="light">core.finances.</span><b>getRankLastThree</b>(t, category, item)
-					
-					</div>
-					<div class="description">
-						Gets the rank of some financial thing over the past 3 seasons, if available.
-
-If only 1 or 2 seasons are available, assume 15.5 (average) for the other seasons
+There should be one season attributes row for each year, and a new row should be added for each team at the start of a season.
 						
 						
 					</div>
@@ -440,19 +413,7 @@ If only 1 or 2 seasons are available, assume 15.5 (average) for the other season
 									<span class="light fixedFont">{Object}</span> <b>t</b>
 									
 								</dt>
-								<dd>Team object</dd>
-							
-								<dt>
-									<span class="light fixedFont">{string}</span> <b>category</b>
-									
-								</dt>
-								<dd>Currently either "expenses" or "revenues", but could be extended to allow "budget" if needed.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{string}</span> <b>item</b>
-									
-								</dt>
-								<dd>Item inside the category</dd>
+								<dd>Team object.</dd>
 							
 							</dl>
 						
@@ -463,7 +424,7 @@ If only 1 or 2 seasons are available, assume 15.5 (average) for the other season
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{number}</span> Rank, from 1 to 30</dd>
+								<dd><span class="light fixedFont">{Object}</span> Updated team object.</dd>
 							
 							</dl>
 						
@@ -472,19 +433,17 @@ If only 1 or 2 seasons are available, assume 15.5 (average) for the other season
 
 					<hr />
 				
-					<a name=".updateRanks"> </a>
+					<a name=".addStatsRow"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
-					
-					<span class="light">core.finances.</span><b>updateRanks</b>(ot, type, cb)
+					<span class="light">{Object}</span>
+					<span class="light">core.team.</span><b>addStatsRow</b>(t, playoffs)
 					
 					</div>
 					<div class="description">
-						Update the rankings of team budgets, expenses, and revenue sources.
+						Add a new row of stats to a team object.
 
-Budget ranks should be updated after *any* team updates *any* budget item.
-
-Revenue and expenses ranks should be updated any time any revenue or expense occurs - so basically, after every game.
+A row contains stats for unique values of (season, playoffs). So new rows need to be added when a new season starts or when a team makes the playoffs.
 						
 						
 					</div>
@@ -496,22 +455,118 @@ Revenue and expenses ranks should be updated any time any revenue or expense occ
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{IDBObjectStore|IDBTransaction|null}</span> <b>ot</b>
+									<span class="light fixedFont">{Object}</span> <b>t</b>
 									
 								</dt>
-								<dd>An IndexedDB object store or transaction on teams, readwrite; if null is passed, then a new transaction will be used.</dd>
+								<dd>Team object.</dd>
 							
 								<dt>
-									<span class="light fixedFont">{Array.<string>}</span> <b>type</b>
+									<span class="light fixedFont">{=boolean}</span> <b>playoffs</b>
 									
 								</dt>
-								<dd>The types of ranks to update - some combination of "budget", "expenses", and "revenues"</dd>
+								<dd>Is this stats row for the playoffs or not? Default false.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Object}</span> Updated team object.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".generate"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{Object}</span>
+					<span class="light">core.team.</span><b>generate</b>(tm)
+					
+					</div>
+					<div class="description">
+						Create a new team object.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>tm</b>
+									
+								</dt>
+								<dd>Team metadata object, likely from util.helpers.getTeams.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Object}</span> Team object to insert in the database.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".rosterAutoSort"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">core.team.</span><b>rosterAutoSort</b>(ot, tid, cb)
+					
+					</div>
+					<div class="description">
+						Sort a team's roster based on player ratings.
+
+If ot is null, then the callback will run only after the transaction finishes (i.e. only after the updated roster order is actually saved to the database). If ot is not null, then the callback might run earlier, so don't rely on the updated roster order actually being in the database yet.
+
+So, ot should NOT be null if you're sorting multiple roster as a component of some larger operation, but the results of the sorts don't actually matter. ot should be null if you need to ensure that the roster order is updated before you do something that will read the roster order (like updating the UI).
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{(IDBObjectStore|IDBTransaction|null)}</span> <b>ot</b>
+									
+								</dt>
+								<dd>An IndexedDB object store or transaction on players readwrite; if null is passed, then a new transaction will be used.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>tid</b>
+									
+								</dt>
+								<dd>Team ID.</dd>
 							
 								<dt>
 									<span class="light fixedFont">{function()=}</span> <b>cb</b>
 									
 								</dt>
-								<dd>Optional callback function.</dd>
+								<dd>Optional callback.</dd>
 							
 							</dl>
 						
@@ -536,7 +591,7 @@ Revenue and expenses ranks should be updated any time any revenue or expense occ
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Wed Apr 10 2013 23:08:31 GMT-0400 (EDT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Wed Apr 10 2013 23:08:32 GMT-0400 (EDT)
 		</div>
 	</body>
 </html>

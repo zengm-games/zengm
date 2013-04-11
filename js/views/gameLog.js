@@ -5,6 +5,16 @@
 define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "views/components", "util/helpers", "util/viewHelpers"], function (g, ui, Handlebars, $, _, components, helpers, viewHelpers) {
     "use strict";
 
+    /**
+     * Generate a game log list.
+     *
+     * @memberOf views.gameLog
+     * @param {string} abbrev Abbrev of the team for the list of games.
+     * @param {number} season Season for the list of games.
+     * @param {number} gid Integer game ID for the box score (a negative number means no box score), which is used only for highlighting the relevant entry in the list.
+     * @param {number} prevMaxGid Integer game ID for the previous most recent entry in the list. Only games with larger IDs will be returned, so set to -1 to return all games.
+     * @param {function()} cb Callback.
+     */
     function gameLogList(abbrev, season, gid, prevMaxGid, cb) {
         var games, out, tid;
 
@@ -64,6 +74,18 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/underscore
         };
     }
 
+    /**
+     * Update the game log list, as necessary.
+     *
+     * If the game log list is already loaded, nothing is done. If the game log list is loaded and a new game has been played, update. If the game log list is not loaded, load it.
+     *
+     * @memberOf views.gameLog
+     * @param {string} abbrev Abbrev of the team for the list of games.
+     * @param {number} season Season for the list of games.
+     * @param {number} gid Integer game ID for the box score (a negative number means no box score), which is used only for highlighting the relevant entry in the list.
+     * @param {string} updateEvent Information about what caused this update, e.g. "gameSim" or "newPhase". Empty on normal page loads (i.e. from clicking a link).
+     * @param {function()} cb Callback.
+     */
     function updateGameLogList(abbrev, season, gid, updateEvent, cb) {
         var gameLogListEl, gameLogListTbodyEl, maxGid;
 
@@ -92,6 +114,14 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/underscore
         }
     }
 
+
+    /**
+     * Generate a box score.
+     *
+     * @memberOf views.gameLog
+     * @param {number} gid Integer game ID for the box score (a negative number means no box score).
+     * @param {function(string)} cb Callback whose argument is a string of HTML containing either the box score or a placeholder.
+     */
     function boxScore(gid, cb) {
         if (gid >= 0) {
             g.dbl.transaction(["games"]).objectStore("games").get(gid).onsuccess = function (event) {
@@ -129,6 +159,15 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/underscore
         }
     }
 
+    /**
+     * Update the displayed box score, as necessary.
+     *
+     * If the box score is already loaded, nothing is done.
+     *
+     * @memberOf views.gameLog
+     * @param {number} gid Integer game ID for the box score (a negative number means no box score).
+     * @param {function()} cb Callback.
+     */
     function updateBoxScore(gid, cb) {
         var boxScoreEl;
 
@@ -145,6 +184,18 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/underscore
         }
     }
 
+    /**
+     * Update the game log view, as necessary.
+     *
+     * If the game log view is not loaded yet, this will load it.
+     *
+     * @memberOf views.gameLog
+     * @param {string} abbrev Abbrev of the team for the list of games.
+     * @param {number} season Season for the list of games.
+     * @param {number} gid Integer game ID for the box score (a negative number means no box score).
+     * @param {string} updateEvent Information about what caused this update, e.g. "gameSim" or "newPhase". Empty on normal page loads (i.e. from clicking a link).
+     * @param {function()=} cb Optional callback.
+     */
     function update(abbrev, season, gid, updateEvent, cb) {
         var cbLoaded, data, leagueContent;
 
@@ -181,6 +232,12 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/underscore
         }
     }
 
+    /**
+     * Respond to GET requests for the game log.
+     *
+     * @memberOf views.gameLog
+     * @param {Object} req Davis.js request object.
+     */
     function get(req) {
         viewHelpers.beforeLeague(req, function () {
             var abbrev, cbDisplay, gid, out, season, seasons, teams, tid;

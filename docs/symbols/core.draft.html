@@ -211,6 +211,8 @@ ul.inheritsList
 	
 	<li><a href="../symbols/core.season.html">core.season</a></li>
 	
+	<li><a href="../symbols/core.team.html">core.team</a></li>
+	
 	<li><a href="../symbols/core.trade.html">core.trade</a></li>
 	
 	<li><a href="../symbols/db.html">db</a></li>
@@ -225,9 +227,17 @@ ul.inheritsList
 	
 	<li><a href="../symbols/util.lock.html">util.lock</a></li>
 	
+	<li><a href="../symbols/util.message.html">util.message</a></li>
+	
 	<li><a href="../symbols/util.random.html">util.random</a></li>
 	
 	<li><a href="../symbols/util.templateHelpers.html">util.templateHelpers</a></li>
+	
+	<li><a href="../symbols/util.viewHelpers.html">util.viewHelpers</a></li>
+	
+	<li><a href="../symbols/views.components.html">views.components</a></li>
+	
+	<li><a href="../symbols/views.gameLog.html">views.gameLog</a></li>
 	
 </ul>
 <hr />
@@ -297,9 +307,27 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.draft.<b><a href="../symbols/core.draft.html#.generatePlayers">generatePlayers</a></b>(cb)
+								<div class="fixedFont">core.draft.<b><a href="../symbols/core.draft.html#.genOrder">genOrder</a></b>(cb)
+								</div>
+								<div class="description">Sets draft order and save it to the draftOrder object store.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">core.draft.<b><a href="../symbols/core.draft.html#.genPlayers">genPlayers</a></b>(cb)
 								</div>
 								<div class="description">Generate a set of draft prospects.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">core.draft.<b><a href="../symbols/core.draft.html#.getOrder">getOrder</a></b>(cb)
+								</div>
+								<div class="description">Retrieve the current remaining draft order.</div>
 							</td>
 						</tr>
 					
@@ -315,9 +343,9 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.draft.<b><a href="../symbols/core.draft.html#.setOrder">setOrder</a></b>(cb)
+								<div class="fixedFont">core.draft.<b><a href="../symbols/core.draft.html#.setOrder">setOrder</a></b>(draftOrder, cb)
 								</div>
-								<div class="description">Sets draft order and save it to the draftOrder object store.</div>
+								<div class="description">Save draft order for future picks to the database.</div>
 							</td>
 						</tr>
 					
@@ -378,11 +406,49 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name=".generatePlayers"> </a>
+					<a name=".genOrder"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">core.draft.</span><b>generatePlayers</b>(cb)
+					<span class="light">core.draft.</span><b>genOrder</b>(cb)
+					
+					</div>
+					<div class="description">
+						Sets draft order and save it to the draftOrder object store.
+
+This is currently based on winning percentage (no lottery).
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{function()=}</span> <b>cb</b>
+									
+								</dt>
+								<dd>Optional callback function.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".genPlayers"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">core.draft.</span><b>genPlayers</b>(cb)
 					
 					</div>
 					<div class="description">
@@ -404,6 +470,42 @@ This is called before the draft occurs, otherwise there will be no one to draft!
 									
 								</dt>
 								<dd>Callback function.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".getOrder"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">core.draft.</span><b>getOrder</b>(cb)
+					
+					</div>
+					<div class="description">
+						Retrieve the current remaining draft order.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{function(Array.<Object>)}</span> <b>cb</b>
+									
+								</dt>
+								<dd>Callback function whose argument is an ordered array of pick objects.</dd>
 							
 							</dl>
 						
@@ -441,7 +543,7 @@ This can be called in response to the user clicking the "draft" button for a pla
 									<span class="light fixedFont">{object}</span> <b>pick</b>
 									
 								</dt>
-								<dd>Pick object, like from db.getDraftOrder, that contains information like the team, round, etc.</dd>
+								<dd>Pick object, like from getOrder, that contains information like the team, round, etc.</dd>
 							
 								<dt>
 									<span class="light fixedFont">{number}</span> <b>pid</b>
@@ -470,13 +572,11 @@ This can be called in response to the user clicking the "draft" button for a pla
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">core.draft.</span><b>setOrder</b>(cb)
+					<span class="light">core.draft.</span><b>setOrder</b>(draftOrder, cb)
 					
 					</div>
 					<div class="description">
-						Sets draft order and save it to the draftOrder object store.
-
-This is currently based on winning percentage (no lottery).
+						Save draft order for future picks to the database.
 						
 						
 					</div>
@@ -486,6 +586,12 @@ This is currently based on winning percentage (no lottery).
 						
 							<dl class="detailList">
 							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Array.<Object>}</span> <b>draftOrder</b>
+									
+								</dt>
+								<dd>Ordered array of pick objects, as generated by genOrder.</dd>
 							
 								<dt>
 									<span class="light fixedFont">{function()=}</span> <b>cb</b>
@@ -514,7 +620,7 @@ This is currently based on winning percentage (no lottery).
 					<div class="description">
 						Simulate draft picks until it's the user's turn or the draft is over.
 
-This could be made faster by passing a transaction around, so all the writes for all the picks are done in one transaction. But when calling selectPlayer elsewhere (i.e. in testing or in response to the user's pick), it needs to be sure that the transaction is complete before continuing. So I would need to create a special case there to account for it. Given that this isn't really *that* slow now, that probably isn't worth the complexity. Although... db.rosterAutoSort does precisely this... so maybe it would be a good idea...
+This could be made faster by passing a transaction around, so all the writes for all the picks are done in one transaction. But when calling selectPlayer elsewhere (i.e. in testing or in response to the user's pick), it needs to be sure that the transaction is complete before continuing. So I would need to create a special case there to account for it. Given that this isn't really *that* slow now, that probably isn't worth the complexity. Although... team.rosterAutoSort does precisely this... so maybe it would be a good idea...
 						
 						
 					</div>
@@ -529,7 +635,7 @@ This could be made faster by passing a transaction around, so all the writes for
 									<span class="light fixedFont">{function(Array.<Object>|Array.<number>)}</span> <b>cb</b>
 									
 								</dt>
-								<dd>Callback function. First argument is the list of draft picks (from db.getDraftOrder). Second argument is a list of player IDs who were drafted during this function call, in order.</dd>
+								<dd>Callback function. First argument is the list of draft picks (from getOrder). Second argument is a list of player IDs who were drafted during this function call, in order.</dd>
 							
 							</dl>
 						
@@ -554,7 +660,7 @@ This could be made faster by passing a transaction around, so all the writes for
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sun Mar 10 2013 09:48:29 GMT-0400 (EDT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Wed Apr 10 2013 23:08:31 GMT-0400 (EDT)
 		</div>
 	</body>
 </html>

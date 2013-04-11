@@ -211,6 +211,8 @@ ul.inheritsList
 	
 	<li><a href="../symbols/core.season.html">core.season</a></li>
 	
+	<li><a href="../symbols/core.team.html">core.team</a></li>
+	
 	<li><a href="../symbols/core.trade.html">core.trade</a></li>
 	
 	<li><a href="../symbols/db.html">db</a></li>
@@ -225,9 +227,17 @@ ul.inheritsList
 	
 	<li><a href="../symbols/util.lock.html">util.lock</a></li>
 	
+	<li><a href="../symbols/util.message.html">util.message</a></li>
+	
 	<li><a href="../symbols/util.random.html">util.random</a></li>
 	
 	<li><a href="../symbols/util.templateHelpers.html">util.templateHelpers</a></li>
+	
+	<li><a href="../symbols/util.viewHelpers.html">util.viewHelpers</a></li>
+	
+	<li><a href="../symbols/views.components.html">views.components</a></li>
+	
+	<li><a href="../symbols/views.gameLog.html">views.gameLog</a></li>
 	
 </ul>
 <hr />
@@ -306,6 +316,15 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont">util.helpers.<b><a href="../symbols/util.helpers.html#.bound">bound</a></b>(x, min, max)
+								</div>
+								<div class="description">Bound a number so that it can't exceed min and max values.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont">util.helpers.<b><a href="../symbols/util.helpers.html#.deepCopy">deepCopy</a></b>(obj)
 								</div>
 								<div class="description">Clones an object.</div>
@@ -318,6 +337,15 @@ ul.inheritsList
 								<div class="fixedFont">util.helpers.<b><a href="../symbols/util.helpers.html#.error">error</a></b>(error, req)
 								</div>
 								<div class="description">Display a whole-page error message to the user by calling either views.leagueError or views.globalError as appropriate.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">util.helpers.<b><a href="../symbols/util.helpers.html#.formatCurrency">formatCurrency</a></b>(amount, append, precision)
+								</div>
+								<div class="description">Format a number as currency, correctly handling negative values.</div>
 							</td>
 						</tr>
 					
@@ -353,9 +381,45 @@ Returns an array of 30 teams.</div>
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont">util.helpers.<b><a href="../symbols/util.helpers.html#.globalError">globalError</a></b>(req)
+								</div>
+								<div class="description">Display a whole-page error message to the user.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">util.helpers.<b><a href="../symbols/util.helpers.html#.leagueError">leagueError</a></b>(req)
+								</div>
+								<div class="description">Display a whole-page error message to the user, while retaining the league menu.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont">util.helpers.<b><a href="../symbols/util.helpers.html#.nullPad">nullPad</a></b>(array, length)
 								</div>
 								<div class="description">Pad an array with nulls or truncate it so that it has a fixed length.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">util.helpers.<b><a href="../symbols/util.helpers.html#.numberWithCommas">numberWithCommas</a></b>(x)
+								</div>
+								<div class="description">Format a number with commas in the thousands places.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">util.helpers.<b><a href="../symbols/util.helpers.html#.playerNameLabels">playerNameLabels</a></b>(pid, name, object, skills)
+								</div>
+								<div class="description">Generate a block of HTML with a player's name, skill labels.</div>
 							</td>
 						</tr>
 					
@@ -499,6 +563,54 @@ This should only do something if it isn't being run from a unit test and it's ac
 
 					<hr />
 				
+					<a name=".bound"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">util.helpers.</span><b>bound</b>(x, min, max)
+					
+					</div>
+					<div class="description">
+						Bound a number so that it can't exceed min and max values.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>x</b>
+									
+								</dt>
+								<dd>Input number.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{min}</span> <b>min</b>
+									
+								</dt>
+								<dd>Minimum bounding variable.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{max}</span> <b>max</b>
+									
+								</dt>
+								<dd>Maximum bounding variable.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name=".deepCopy"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
@@ -579,17 +691,15 @@ Taken from http://stackoverflow.com/a/3284324/786644
 
 					<hr />
 				
-					<a name=".getAbbrev"> </a>
+					<a name=".formatCurrency"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					<span class="light">{string}</span>
-					<span class="light">util.helpers.</span><b>getAbbrev</b>(tid)
+					<span class="light">util.helpers.</span><b>formatCurrency</b>(amount, append, precision)
 					
 					</div>
 					<div class="description">
-						Get the team abbreviation for a team ID.
-
-For instance, team ID 0 is Atlanta, which has an abbreviation of ATL. This is a convenience wrapper around validateTid.
+						Format a number as currency, correctly handling negative values.
 						
 						
 					</div>
@@ -601,7 +711,64 @@ For instance, team ID 0 is Atlanta, which has an abbreviation of ATL. This is a 
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{number}</span> <b>tid</b>
+									<span class="light fixedFont">{number|string}</span> <b>amount</b>
+									
+								</dt>
+								<dd>Input value.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{string=}</span> <b>append</b>
+									
+								</dt>
+								<dd>Suffix to append to the number, like "M" for things like $2M.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number|string|undefined}</span> <b>precision</b>
+									
+								</dt>
+								<dd>Number of decimal places. Default is 2 (like $17.62).</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{string}</span> Formatted currency string.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".getAbbrev"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{string}</span>
+					<span class="light">util.helpers.</span><b>getAbbrev</b>(tid)
+					
+					</div>
+					<div class="description">
+						Get the team abbreviation for a team ID.
+
+For instance, team ID 0 is Atlanta, which has an abbreviation of ATL. This is a convenience wrapper around validateTid, excpet it will return "FA" if you pass g.PLAYER.FREE_AGENT.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{number|string}</span> <b>tid</b>
 									
 								</dt>
 								<dd>Integer team ID.</dd>
@@ -704,10 +871,10 @@ Returns an array of 30 teams. Each array is an object with the following propert
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{number}</span> <b>selectedTid</b>
+									<span class="light fixedFont">{number|string}</span> <b>selectedTid</b>
 									
 								</dt>
-								<dd>A team ID for a team that should be "selected" (as in, from a drop down menu). This will add the "selected" key to each team object, as described above.</dd>
+								<dd>A team ID or abbrev for a team that should be "selected" (as in, from a drop down menu). This will add the "selected" key to each team object, as described above.</dd>
 							
 							</dl>
 						
@@ -721,6 +888,78 @@ Returns an array of 30 teams. Each array is an object with the following propert
 								<dd><span class="light fixedFont">{Array.Object}</span> All teams.</dd>
 							
 							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".globalError"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">util.helpers.</span><b>globalError</b>(req)
+					
+					</div>
+					<div class="description">
+						Display a whole-page error message to the user.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>req</b>
+									
+								</dt>
+								<dd>Object with parameter "params" containing another object with a string representing the error message in the parameter "error".</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".leagueError"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">util.helpers.</span><b>leagueError</b>(req)
+					
+					</div>
+					<div class="description">
+						Display a whole-page error message to the user, while retaining the league menu.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>req</b>
+									
+								</dt>
+								<dd>Object with parameter "params" containing another object with a string representing the error message in the parameter "error" and an integer league ID in "lid".</dd>
+							
+							</dl>
+						
+						
+						
+						
 						
 						
 						
@@ -776,6 +1015,112 @@ Returns an array of 30 teams. Each array is an object with the following propert
 
 					<hr />
 				
+					<a name=".numberWithCommas"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{string}</span>
+					<span class="light">util.helpers.</span><b>numberWithCommas</b>(x)
+					
+					</div>
+					<div class="description">
+						Format a number with commas in the thousands places.
+
+Also, rounds the number first.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{number|string}</span> <b>x</b>
+									
+								</dt>
+								<dd>Input number.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{string}</span> Formatted number.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".playerNameLabels"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{string}</span>
+					<span class="light">util.helpers.</span><b>playerNameLabels</b>(pid, name, object, skills)
+					
+					</div>
+					<div class="description">
+						Generate a block of HTML with a player's name, skill labels.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>pid</b>
+									
+								</dt>
+								<dd>Player ID number.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>name</b>
+									
+								</dt>
+								<dd>Player name.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{object}</span> <b>object</b>
+									
+								</dt>
+								<dd>Injury object (properties: type and gamesRemaining).</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Array.<string>}</span> <b>skills</b>
+									
+								</dt>
+								<dd>Array of skill labels, like "R" for "Rebounder", etc. See: core.player.skills.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{string}</span> String of HTML-formatted skill labels, ready for output.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
 					<a name=".resetG"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
@@ -806,7 +1151,7 @@ This is used to clear out values from other leagues, to ensure that the appropri
 					<a name=".round"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
-					<span class="light">{number}</span>
+					<span class="light">{string}</span>
 					<span class="light">util.helpers.</span><b>round</b>(value, precision)
 					
 					</div>
@@ -823,7 +1168,7 @@ This is used to clear out values from other leagues, to ensure that the appropri
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{number}</span> <b>value</b>
+									<span class="light fixedFont">{number|string}</span> <b>value</b>
 									
 								</dt>
 								<dd>Number to round.</dd>
@@ -843,7 +1188,7 @@ This is used to clear out values from other leagues, to ensure that the appropri
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{number}</span> Rounded number.</dd>
+								<dd><span class="light fixedFont">{string}</span> Rounded number.</dd>
 							
 							</dl>
 						
@@ -1042,7 +1387,7 @@ If the team ID is not valid, then g.userTid and its correspodning abbreviation w
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sun Mar 10 2013 09:48:29 GMT-0400 (EDT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Wed Apr 10 2013 23:08:32 GMT-0400 (EDT)
 		</div>
 	</body>
 </html>

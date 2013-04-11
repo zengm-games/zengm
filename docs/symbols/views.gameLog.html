@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - core.finances</title>
+		<title>JsDoc Reference - views.gameLog</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -248,7 +248,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Namespace core.finances
+				Namespace views.gameLog
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -256,16 +256,16 @@ ul.inheritsList
 				
 				
 			
-				Anything related to budget/finances.
+				Game log and box score viewing for all seasons and teams.
 				
 				
-					<br /><i>Defined in: </i> &lt;js/core/finances.js&gt;.
+					<br /><i>Defined in: </i> &lt;js/views/gameLog.js&gt;.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class core.finances.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class views.gameLog.">
 				<caption>Namespace Summary</caption>
 				<thead>
 					<tr>
@@ -278,7 +278,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/core.finances.html#constructor">core.finances</a></b>
+								<b><a href="../symbols/views.gameLog.html#constructor">views.gameLog</a></b>
 							</div>
 							<div class="description"></div>
 						</td>
@@ -294,7 +294,7 @@ ul.inheritsList
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class core.finances.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class views.gameLog.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -307,27 +307,54 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.finances.<b><a href="../symbols/core.finances.html#.assesPayrollMinLuxury">assesPayrollMinLuxury</a></b>(cb)
+								<div class="fixedFont">views.gameLog.<b><a href="../symbols/views.gameLog.html#.boxScore">boxScore</a></b>(gid, cb)
 								</div>
-								<div class="description">Assess the payroll and apply minimum and luxury taxes.</div>
+								<div class="description">Generate a box score.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.finances.<b><a href="../symbols/core.finances.html#.getRankLastThree">getRankLastThree</a></b>(t, category, item)
+								<div class="fixedFont">views.gameLog.<b><a href="../symbols/views.gameLog.html#.gameLogList">gameLogList</a></b>(abbrev, season, gid, prevMaxGid, cb)
 								</div>
-								<div class="description">Gets the rank of some financial thing over the past 3 seasons, if available.</div>
+								<div class="description">Generate a game log list.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">core.finances.<b><a href="../symbols/core.finances.html#.updateRanks">updateRanks</a></b>(ot, type, cb)
+								<div class="fixedFont">views.gameLog.<b><a href="../symbols/views.gameLog.html#.get">get</a></b>(req)
 								</div>
-								<div class="description">Update the rankings of team budgets, expenses, and revenue sources.</div>
+								<div class="description">Respond to GET requests for the game log.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">views.gameLog.<b><a href="../symbols/views.gameLog.html#.update">update</a></b>(abbrev, season, gid, updateEvent, cb)
+								</div>
+								<div class="description">Update the game log view, as necessary.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">views.gameLog.<b><a href="../symbols/views.gameLog.html#.updateBoxScore">updateBoxScore</a></b>(gid, cb)
+								</div>
+								<div class="description">Update the displayed box score, as necessary.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">views.gameLog.<b><a href="../symbols/views.gameLog.html#.updateGameLogList">updateGameLogList</a></b>(abbrev, season, gid, updateEvent, cb)
+								</div>
+								<div class="description">Update the game log list, as necessary.</div>
 							</td>
 						</tr>
 					
@@ -348,7 +375,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>core.finances</b>
+						<b>views.gameLog</b>
 				</div>
 				
 				<div class="description">
@@ -379,15 +406,15 @@ ul.inheritsList
 					Method Detail
 				</div>
 				
-					<a name=".assesPayrollMinLuxury"> </a>
+					<a name=".boxScore"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">core.finances.</span><b>assesPayrollMinLuxury</b>(cb)
+					<span class="light">views.gameLog.</span><b>boxScore</b>(gid, cb)
 					
 					</div>
 					<div class="description">
-						Assess the payroll and apply minimum and luxury taxes.
+						Generate a box score.
 						
 						
 					</div>
@@ -397,12 +424,78 @@ ul.inheritsList
 						
 							<dl class="detailList">
 							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>gid</b>
+									
+								</dt>
+								<dd>Integer game ID for the box score (a negative number means no box score).</dd>
+							
+								<dt>
+									<span class="light fixedFont">{function(string)}</span> <b>cb</b>
+									
+								</dt>
+								<dd>Callback whose argument is a string of HTML containing either the box score or a placeholder.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".gameLogList"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">views.gameLog.</span><b>gameLogList</b>(abbrev, season, gid, prevMaxGid, cb)
+					
+					</div>
+					<div class="description">
+						Generate a game log list.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>abbrev</b>
+									
+								</dt>
+								<dd>Abbrev of the team for the list of games.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>season</b>
+									
+								</dt>
+								<dd>Season for the list of games.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>gid</b>
+									
+								</dt>
+								<dd>Integer game ID for the box score (a negative number means no box score), which is used only for highlighting the relevant entry in the list.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>prevMaxGid</b>
+									
+								</dt>
+								<dd>Integer game ID for the previous most recent entry in the list. Only games with larger IDs will be returned, so set to -1 to return all games.</dd>
 							
 								<dt>
 									<span class="light fixedFont">{function()}</span> <b>cb</b>
 									
 								</dt>
-								<dd>Callback function.</dd>
+								<dd>Callback.</dd>
 							
 							</dl>
 						
@@ -415,17 +508,15 @@ ul.inheritsList
 
 					<hr />
 				
-					<a name=".getRankLastThree"> </a>
+					<a name=".get"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
-					<span class="light">{number}</span>
-					<span class="light">core.finances.</span><b>getRankLastThree</b>(t, category, item)
+					
+					<span class="light">views.gameLog.</span><b>get</b>(req)
 					
 					</div>
 					<div class="description">
-						Gets the rank of some financial thing over the past 3 seasons, if available.
-
-If only 1 or 2 seasons are available, assume 15.5 (average) for the other seasons
+						Respond to GET requests for the game log.
 						
 						
 					</div>
@@ -437,54 +528,33 @@ If only 1 or 2 seasons are available, assume 15.5 (average) for the other season
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{Object}</span> <b>t</b>
+									<span class="light fixedFont">{Object}</span> <b>req</b>
 									
 								</dt>
-								<dd>Team object</dd>
-							
-								<dt>
-									<span class="light fixedFont">{string}</span> <b>category</b>
-									
-								</dt>
-								<dd>Currently either "expenses" or "revenues", but could be extended to allow "budget" if needed.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{string}</span> <b>item</b>
-									
-								</dt>
-								<dd>Item inside the category</dd>
+								<dd>Davis.js request object.</dd>
 							
 							</dl>
 						
 						
 						
 						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{number}</span> Rank, from 1 to 30</dd>
-							
-							</dl>
 						
 						
 						
 
 					<hr />
 				
-					<a name=".updateRanks"> </a>
+					<a name=".update"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">core.finances.</span><b>updateRanks</b>(ot, type, cb)
+					<span class="light">views.gameLog.</span><b>update</b>(abbrev, season, gid, updateEvent, cb)
 					
 					</div>
 					<div class="description">
-						Update the rankings of team budgets, expenses, and revenue sources.
+						Update the game log view, as necessary.
 
-Budget ranks should be updated after *any* team updates *any* budget item.
-
-Revenue and expenses ranks should be updated any time any revenue or expense occurs - so basically, after every game.
+If the game log view is not loaded yet, this will load it.
 						
 						
 					</div>
@@ -496,22 +566,140 @@ Revenue and expenses ranks should be updated any time any revenue or expense occ
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{IDBObjectStore|IDBTransaction|null}</span> <b>ot</b>
+									<span class="light fixedFont">{string}</span> <b>abbrev</b>
 									
 								</dt>
-								<dd>An IndexedDB object store or transaction on teams, readwrite; if null is passed, then a new transaction will be used.</dd>
+								<dd>Abbrev of the team for the list of games.</dd>
 							
 								<dt>
-									<span class="light fixedFont">{Array.<string>}</span> <b>type</b>
+									<span class="light fixedFont">{number}</span> <b>season</b>
 									
 								</dt>
-								<dd>The types of ranks to update - some combination of "budget", "expenses", and "revenues"</dd>
+								<dd>Season for the list of games.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>gid</b>
+									
+								</dt>
+								<dd>Integer game ID for the box score (a negative number means no box score).</dd>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>updateEvent</b>
+									
+								</dt>
+								<dd>Information about what caused this update, e.g. "gameSim" or "newPhase". Empty on normal page loads (i.e. from clicking a link).</dd>
 							
 								<dt>
 									<span class="light fixedFont">{function()=}</span> <b>cb</b>
 									
 								</dt>
-								<dd>Optional callback function.</dd>
+								<dd>Optional callback.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".updateBoxScore"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">views.gameLog.</span><b>updateBoxScore</b>(gid, cb)
+					
+					</div>
+					<div class="description">
+						Update the displayed box score, as necessary.
+
+If the box score is already loaded, nothing is done.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>gid</b>
+									
+								</dt>
+								<dd>Integer game ID for the box score (a negative number means no box score).</dd>
+							
+								<dt>
+									<span class="light fixedFont">{function()}</span> <b>cb</b>
+									
+								</dt>
+								<dd>Callback.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".updateGameLogList"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">views.gameLog.</span><b>updateGameLogList</b>(abbrev, season, gid, updateEvent, cb)
+					
+					</div>
+					<div class="description">
+						Update the game log list, as necessary.
+
+If the game log list is already loaded, nothing is done. If the game log list is loaded and a new game has been played, update. If the game log list is not loaded, load it.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>abbrev</b>
+									
+								</dt>
+								<dd>Abbrev of the team for the list of games.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>season</b>
+									
+								</dt>
+								<dd>Season for the list of games.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{number}</span> <b>gid</b>
+									
+								</dt>
+								<dd>Integer game ID for the box score (a negative number means no box score), which is used only for highlighting the relevant entry in the list.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>updateEvent</b>
+									
+								</dt>
+								<dd>Information about what caused this update, e.g. "gameSim" or "newPhase". Empty on normal page loads (i.e. from clicking a link).</dd>
+							
+								<dt>
+									<span class="light fixedFont">{function()}</span> <b>cb</b>
+									
+								</dt>
+								<dd>Callback.</dd>
 							
 							</dl>
 						
@@ -536,7 +724,7 @@ Revenue and expenses ranks should be updated any time any revenue or expense occ
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Wed Apr 10 2013 23:08:31 GMT-0400 (EDT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Wed Apr 10 2013 23:08:32 GMT-0400 (EDT)
 		</div>
 	</body>
 </html>

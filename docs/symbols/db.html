@@ -211,6 +211,8 @@ ul.inheritsList
 	
 	<li><a href="../symbols/core.season.html">core.season</a></li>
 	
+	<li><a href="../symbols/core.team.html">core.team</a></li>
+	
 	<li><a href="../symbols/core.trade.html">core.trade</a></li>
 	
 	<li><a href="../symbols/db.html">db</a></li>
@@ -225,9 +227,17 @@ ul.inheritsList
 	
 	<li><a href="../symbols/util.lock.html">util.lock</a></li>
 	
+	<li><a href="../symbols/util.message.html">util.message</a></li>
+	
 	<li><a href="../symbols/util.random.html">util.random</a></li>
 	
 	<li><a href="../symbols/util.templateHelpers.html">util.templateHelpers</a></li>
+	
+	<li><a href="../symbols/util.viewHelpers.html">util.viewHelpers</a></li>
+	
+	<li><a href="../symbols/views.components.html">views.components</a></li>
+	
+	<li><a href="../symbols/views.gameLog.html">views.gameLog</a></li>
 	
 </ul>
 <hr />
@@ -246,7 +256,7 @@ ul.inheritsList
 				
 				
 			
-				Functions that directly access an IndexedDB database.
+				Creating, migrating, and connecting to databases; working with transactions.
 				
 				
 					<br /><i>Defined in: </i> &lt;js/db.js&gt;.
@@ -324,6 +334,15 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont">db.<b><a href="../symbols/db.html#.getPayrolls">getPayrolls</a></b>(cb)
+								</div>
+								<div class="description">Get the total payroll for every team team.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont">db.<b><a href="../symbols/db.html#.getPlayer">getPlayer</a></b>(pa, season, tid, attributes, stats, ratings, options)
 								</div>
 								<div class="description">Get a filtered player object.</div>
@@ -342,7 +361,7 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">db.<b><a href="../symbols/db.html#.getTeam">getTeam</a></b>(ta, season, attributes, stats, seasonAttributes, options)
+								<div class="fixedFont">db.<b><a href="../symbols/db.html#.getTeam">getTeam</a></b>(ta, season, attributes, stats, seasonAttributes, options, cb)
 								</div>
 								<div class="description">Get a filtered team object.</div>
 							</td>
@@ -363,15 +382,6 @@ ul.inheritsList
 								<div class="fixedFont">db.<b><a href="../symbols/db.html#.putPlayer">putPlayer</a></b>(ot, p, cb)
 								</div>
 								<div class="description">Add a new player to the database or update an existing player.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">db.<b><a href="../symbols/db.html#.rosterAutoSort">rosterAutoSort</a></b>(ot, tid, cb)
-								</div>
-								<div class="description">Sort a team's roster based on player ratings.</div>
 							</td>
 						</tr>
 					
@@ -586,6 +596,42 @@ This includes players who have been released but are still owed money from their
 
 					<hr />
 				
+					<a name=".getPayrolls"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">db.</span><b>getPayrolls</b>(cb)
+					
+					</div>
+					<div class="description">
+						Get the total payroll for every team team.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{function(Array.<number>)}</span> <b>cb</b>
+									
+								</dt>
+								<dd>Callback whose first argument is an array of payrolls, ordered by team id.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name=".getPlayer"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
@@ -649,7 +695,7 @@ This function is overcomplicated and convoluted.
 									<span class="light fixedFont">{Object}</span> <b>options</b>
 									
 								</dt>
-								<dd>Object containing various options. Possible keys include...  "totals": Boolean representing whether to return total stats (true) or per-game averages (false); default is false. "playoffs": Boolean representing whether to return playoff stats (statsPlayoffs and careerStatsPlayoffs) or not; default is false. Other keys should eventually be documented.</dd>
+								<dd>Object containing various options. Possible keys include...  "totals": Boolean representing whether to return total stats (true) or per-game averages (false); default is false. "playoffs": Boolean representing whether to return playoff stats (statsPlayoffs and careerStatsPlayoffs) or not; default is false. "showNoStats": Boolean, when true players are returned with zeroed stats objects even if they have accumulated no stats for a team (such as newly drafted players, or players who were just traded for, etc.); this applies only for regular season stats. "fuzz": Boolean, when true noise is added to any returned ratings based on the fuzz variable for the given season (default: false); any user-facing rating should use true, any non-user-facing rating should use false. Other keys should eventually be documented.</dd>
 							
 							</dl>
 						
@@ -747,7 +793,7 @@ After the first argument, all subsequent arguments are passed on to db.getPlayer
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">db.</span><b>getTeam</b>(ta, season, attributes, stats, seasonAttributes, options)
+					<span class="light">db.</span><b>getTeam</b>(ta, season, attributes, stats, seasonAttributes, options, cb)
 					
 					</div>
 					<div class="description">
@@ -796,6 +842,12 @@ See db.getTeams for documentation.
 							
 								<dt>
 									<b>options</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>cb</b>
 									
 								</dt>
 								<dd></dd>
@@ -864,7 +916,7 @@ See db.getTeams for documentation.
 									<span class="light fixedFont">{Object}</span> <b>options</b>
 									
 								</dt>
-								<dd>Object containing various options. Possible keys include... "sortBy": String represeting the sorting method; "winp" sorts by descending winning percentage, "winpAsc" does the opposite, default is sort by team ID. "totals": Boolean representing whether to return total stats (true) or per-game averages (false); default is false.</dd>
+								<dd>Object containing various options. Possible keys include... "sortBy": String represeting the sorting method; "winp" sorts by descending winning percentage, "winpAsc" does the opposite, default is sort by team ID. "totals": Boolean representing whether to return total stats (true) or per-game averages (false); default is false. "playoffs": Boolean that, when true, replaces the resturned stats with playoff stats (it doesn't return both like db.getPlayer).</dd>
 							
 								<dt>
 									<span class="light fixedFont">{string|null}</span> <b>sortBy</b>
@@ -937,58 +989,6 @@ There could be race conditions here if anything calling this relies on the playe
 						
 						
 
-					<hr />
-				
-					<a name=".rosterAutoSort"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">db.</span><b>rosterAutoSort</b>(ot, tid, cb)
-					
-					</div>
-					<div class="description">
-						Sort a team's roster based on player ratings.
-
-If ot is null, then the callback will run only after the transaction finishes (i.e. only after the updated roster order is actually saved to the database). If ot is not null, then the callback might run earlier, so don't rely on the updated roster order actually being in the database yet.
-
-So, ot should NOT be null if you're sorting multiple roster as a component of some larger operation, but the results of the sorts don't actually matter. ot should be null if you need to ensure that the roster order is updated before you do something that will read the roster order (like updating the UI).
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{(IDBObjectStore|IDBTransaction|null)}</span> <b>ot</b>
-									
-								</dt>
-								<dd>An IndexedDB object store or transaction on players readwrite; if null is passed, then a new transaction will be used.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{number}</span> <b>tid</b>
-									
-								</dt>
-								<dd>Team ID.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{function()=}</span> <b>cb</b>
-									
-								</dt>
-								<dd>Optional callback.</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
 					
 				
 			
@@ -1003,7 +1003,7 @@ So, ot should NOT be null if you're sorting multiple roster as a component of so
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sun Mar 10 2013 09:48:29 GMT-0400 (EDT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Wed Apr 10 2013 23:08:32 GMT-0400 (EDT)
 		</div>
 	</body>
 </html>

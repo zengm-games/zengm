@@ -610,7 +610,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
             tx.oncomplete = function () {
 //console.log('oncomplete')
                 advStats.calculateAll(function () {  // Update all advanced stats every day
-                    ui.realtimeUpdate("gameSim", function () {
+                    ui.realtimeUpdate(["gameSim"], function () {
                         db.setGameAttributes({lastDbChange: Date.now()}, function () {
                             play(numDays - 1);
                         });

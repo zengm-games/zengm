@@ -12,10 +12,10 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "util/helpers"]
      * @param {string} formId DOM ID of the form element to fill.
      * @param {Array.<string>} fields Array of strings of the type of fields to allow (current acceptable values are "teams" and "seasons"). Each element represents a dropdown and a component of the URL - so if "teams" and "seasons" is passed, URLs will be generated like /l/1/.../ATL/2014.
      * @param {Array} selected Array of values corresponding to the default "selected" value of each field, like "CHI" or 2022 for "teams" or "seasons".
-     * @param {string} updateEvent Update event describing what has changed in this reload.
+     * @param {Array.<string>} updateEvents Update events describing what has changed in this reload.
      * @param {?string=} extraParam Any extra parameter to append to the URL, like /l/1/.../ATL/2014/extraParam. Default is to append nothing.
      */
-    function dropdown(formId, fields, selected, updateEvent, extraParam) {
+    function dropdown(formId, fields, selected, updateEvents, extraParam) {
         var content, fieldId, formEl, i, j, newOption, newSelect, options;
 
         formEl = document.getElementById(formId);
@@ -55,7 +55,7 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "util/helpers"]
         // Check if any field needs to be updated
         for (i = 0; i < fields.length; i++) {
             if (fields[i] === "seasons") {
-                if (updateEvent === "newPhase" && g.phase === g.PHASE.PRESEASON) {
+                if (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON) {
                     newOption = document.createElement('option');
                     newOption.text = g.season + " season";
                     newOption.value = g.season;

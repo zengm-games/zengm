@@ -34,51 +34,51 @@ define(["globals", "lib/jquery", "views/components"], function (g, $, components
 
         describe("#dropdown()", function () {
             it("should generate seasons dropdown alone", function () {
-                components.dropdown("test-form", ["seasons"], [g.season], "", "");
+                components.dropdown("test-form", ["seasons"], [g.season], [], "");
                 testSeasons();
                 should.not.exist(document.getElementById("test-form-teams"));
             });
             it("should generate teams dropdown alone", function () {
-                components.dropdown("test-form", ["teams"], ["CHI"], "", "");
+                components.dropdown("test-form", ["teams"], ["CHI"], [], "");
                 testTeams();
                 should.not.exist(document.getElementById("test-form-seasons"));
             });
             it("should generate seasons and teams dropdowns together", function () {
-                components.dropdown("test-form", ["seasons", "teams"], [g.season, "CHI"], "", "");
+                components.dropdown("test-form", ["seasons", "teams"], [g.season, "CHI"], [], "");
                 testSeasons();
                 testTeams();
             });
             it("should not reload menu when called twice, even with different selected values", function () {
-                components.dropdown("test-form", ["seasons", "teams"], [g.season, "CHI"], "", "");
+                components.dropdown("test-form", ["seasons", "teams"], [g.season, "CHI"], [], "");
                 document.getElementById("test-form-seasons").querySelectorAll("option")[5].attributes.selected.value = "fuck";
                 document.getElementById("test-form-teams").querySelectorAll("option")[4].attributes.selected.value = "shit";
-                components.dropdown("test-form", ["seasons", "teams"], [g.season - 2, "ATL"], "", "");
+                components.dropdown("test-form", ["seasons", "teams"], [g.season - 2, "ATL"], [], "");
                 document.getElementById("test-form-seasons").querySelectorAll("option")[5].attributes.selected.value.should.equal("fuck");
                 document.getElementById("test-form-teams").querySelectorAll("option")[4].attributes.selected.value.should.equal("shit");
             });
             it("should add new season on change to preseason phase", function () {
-                components.dropdown("test-form", ["seasons", "teams"], [g.season, "CHI"], "", "");
+                components.dropdown("test-form", ["seasons", "teams"], [g.season, "CHI"], [], "");
                 document.getElementById("test-form-seasons").querySelectorAll("option").should.have.length(6);
 
                 // Preseason phase adds another season
                 g.phase = g.PHASE.PRESEASON;
-                components.dropdown("test-form", ["seasons", "teams"], [g.season, "CHI"], "newPhase", "");
+                components.dropdown("test-form", ["seasons", "teams"], [g.season, "CHI"], ["newPhase"], "");
                 document.getElementById("test-form-seasons").querySelectorAll("option").should.have.length(7);
 
                 // Draft phase does nothing
                 g.phase = g.PHASE.DRAFT;
-                components.dropdown("test-form", ["seasons", "teams"], [g.season, "CHI"], "newPhase", "");
+                components.dropdown("test-form", ["seasons", "teams"], [g.season, "CHI"], ["newPhase"], "");
                 document.getElementById("test-form-seasons").querySelectorAll("option").should.have.length(7);
 
                 // Preseason phase adds another season
                 g.phase = g.PHASE.PRESEASON;
-                components.dropdown("test-form", ["seasons", "teams"], [g.season, "CHI"], "newPhase", "");
+                components.dropdown("test-form", ["seasons", "teams"], [g.season, "CHI"], ["newPhase"], "");
                 document.getElementById("test-form-seasons").querySelectorAll("option").should.have.length(8);
             });
             it("should store extraParam in DOM", function () {
-                components.dropdown("test-form", ["seasons", "teams"], [g.season, "CHI"], "", "cunt");
+                components.dropdown("test-form", ["seasons", "teams"], [g.season, "CHI"], [], "cunt");
                 document.getElementById("test-form").dataset.extraParam.should.equal("cunt");
-                components.dropdown("test-form", ["seasons", "teams"], [g.season, "CHI"], "", "bitch");
+                components.dropdown("test-form", ["seasons", "teams"], [g.season, "CHI"], [], "bitch");
                 document.getElementById("test-form").dataset.extraParam.should.equal("bitch");
             });
         });

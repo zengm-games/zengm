@@ -185,11 +185,11 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
      * Smartly update the currently loaded view, based on the current game state.
      *
      * @memberOf ui
-     * @param {string=} updateEvent Optional string containing information about what caused this update, e.g. "gameSim" or "newPhase".
+     * @param {Array.<string>=} updateEvents Optional array of strings containing information about what caused this update, e.g. "gameSim" or "newPhase".
      * @param {function()=} cb Optional callback that will run after the page updates.
      */
-    function realtimeUpdate(updateEvent, cb) {
-        updateEvent = updateEvent !== undefined ? updateEvent : "";
+    function realtimeUpdate(updateEvents, cb) {
+        updateEvents = updateEvents !== undefined ? updateEvents : [];
 
         if (g.realtimeUpdate) {
             // If tracking is enabled, don't track realtime updates
@@ -199,7 +199,7 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
 
             // Refresh standings if it's the current season standings and the phase is during the regular season
             Davis.location.replace(new Davis.Request(location.pathname, {
-                updateEvent: updateEvent,
+                updateEvents: updateEvents,
                 cb: cb
             }));
         } else {

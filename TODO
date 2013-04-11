@@ -1,15 +1,21 @@
 smarter realtime
 ----------------
 
-methods for each view object like get and post
-  problem is, there won't be big performance gains anywhere else like in gameLog. dropdowns will be nicer, which is good i guess.
-    maybe add knockout or something?
-  next ones to do
-    roster (row reordering might be a pain, as well as editable/non-editable switch)
-    player stats (performance of updating many rows at once)
+roster
+  old roster: display static
+  new roster, non-user team: display static with trade for buttons
+  new roster, user team: display dynamic
 ui.realtimeUpdate should be used in more places so updateEvent is pervasive
   how can this be done for automatic redirects? wrapper function?
   search for anywhere Davis is directly called.
+  add playerMovement updateEvent, for when a player signs a contract, becomes a free agent, or is traded
+  eventually, get rid of "reload" boolean in season.js
+methods for each view object like get and post
+  problem is, there won't be big performance gains anywhere else like in gameLog. dropdowns will be nicer, which is good i guess.
+    maybe add knockout or something?
+      where to store/update view model?
+  next ones to do
+    player stats (performance of updating many rows at once)
 after updating all views
   reassess ui module. delete stuff like ui.dropdown. move other functions elsewhere?
     what is the difference between util.viewHelpers and ui?

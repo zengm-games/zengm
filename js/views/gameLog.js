@@ -83,10 +83,10 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/underscore
      * @param {string} abbrev Abbrev of the team for the list of games.
      * @param {number} season Season for the list of games.
      * @param {number} gid Integer game ID for the box score (a negative number means no box score), which is used only for highlighting the relevant entry in the list.
-     * @param {string} updateEvent Information about what caused this update, e.g. "gameSim" or "newPhase". Empty on normal page loads (i.e. from clicking a link).
+     * @param {Array.<string>} updateEvents Information about what caused this update, e.g. "gameSim" or "newPhase". Empty on normal page loads (i.e. from clicking a link).
      * @param {function()} cb Callback.
      */
-    function updateGameLogList(abbrev, season, gid, updateEvent, cb) {
+    function updateGameLogList(abbrev, season, gid, updateEvents, cb) {
         var gameLogListEl, gameLogListTbodyEl, maxGid;
 
         gameLogListEl = document.getElementById("game-log-list");
@@ -101,7 +101,7 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/underscore
                 gameLogListEl.dataset.maxGid = maxGid;
                 cb();
             });
-        } else if (updateEvent === "gameSim" && season === g.season) {
+        } else if (updateEvents.indexOf("gameSim") >= 0 && season === g.season) {
             gameLogList(abbrev, season, gid, parseInt(gameLogListEl.dataset.maxGid, 10), function (content, maxGid) {
                 gameLogListTbodyEl.innerHTML = content + gameLogListTbodyEl.innerHTML;
                 if (maxGid > 0) {
@@ -194,16 +194,16 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/underscore
      * @param {string} abbrev Abbrev of the team for the list of games.
      * @param {number} season Season for the list of games.
      * @param {number} gid Integer game ID for the box score (a negative number means no box score).
-     * @param {string} updateEvent Information about what caused this update, e.g. "gameSim" or "newPhase". Empty on normal page loads (i.e. from clicking a link).
+     * @param {Array.<string>} updateEvents Information about what caused this update, e.g. "gameSim" or "newPhase". Empty on normal page loads (i.e. from clicking a link).
      * @param {function()=} cb Optional callback.
      */
-    function update(abbrev, season, gid, updateEvent, cb) {
+    function update(abbrev, season, gid, updateEvents, cb) {
         var cbLoaded, data, leagueContent;
 
         leagueContent = document.getElementById("league_content");
 
         cbLoaded = function () {
-            components.dropdown("game-log-dropdown", ["teams", "seasons"], [abbrev, season], updateEvent, gid >= 0 ? gid : undefined);
+            components.dropdown("game-log-dropdown", ["teams", "seasons"], [abbrev, season], updateEvents, gid >= 0 ? gid : undefined);
 
             // Game log list dynamic highlighting
             $("#game-log-list").on("click", "tbody tr", function (event) {
@@ -211,7 +211,7 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/underscore
             });
 
             updateBoxScore(gid, function () {
-                updateGameLogList(abbrev, season, gid, updateEvent, function () {
+                updateGameLogList(abbrev, season, gid, updateEvents, function () {
                     if (cb !== undefined) {
                         cb();
                     }
@@ -241,15 +241,16 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/underscore
      */
     function get(req) {
         viewHelpers.beforeLeague(req, function () {
-            var abbrev, cbDisplay, gid, out, season, seasons, teams, tid;
+            var abbrev, cbDisplay, gid, out, season, seasons, teams, tid, updateEvents;
 
             out = helpers.validateAbbrev(req.params.abbrev);
             tid = out[0];
             abbrev = out[1];
             season = helpers.validateSeason(req.params.season);
             gid = req.params.gid !== undefined ? parseInt(req.params.gid, 10) : -1;
+            updateEvents = req.raw.updateEvents !== undefined ? req.raw.updateEvents : [];
 
-            update(abbrev, season, gid, req.raw.updateEvent, req.raw.cb);
+            update(abbrev, season, gid, updateEvents, req.raw.cb);
         });
     }
 

@@ -32,7 +32,7 @@ define(["db", "globals", "ui", "lib/jquery", "util/helpers"], function (db, g, u
                         leagueContentEl = document.getElementById("league_content");
                         leagueContentEl.dataset.id = "";
                         //leagueContentEl.innerHTML = "&nbsp;";  // Blank doesn't work, for some reason
-                        ui.realtimeUpdate("dbChange", function () {
+                        ui.realtimeUpdate(["dbChange"], function () {
                             ui.updatePlayMenu(null, function () {
                                 ui.updatePhase();
                                 ui.updateStatus();

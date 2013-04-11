@@ -1962,7 +1962,7 @@ function program2(depth0,data) {
 templates['gameLog'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, escapeExpression=this.escapeExpression, functionType="function";
+  var buffer = "", stack1, escapeExpression=this.escapeExpression, functionType="function";
 
 
   buffer += "<form id=\"game-log-dropdown\" class=\"form-inline pull-right\"></form>\n\n<h1>Game Log "
@@ -1977,10 +1977,7 @@ helpers = helpers || Handlebars.helpers; data = data || {};
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "/team_finances/"
     + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">Finances</a></p>\n\n<p>\n<div class=\"row-fluid\">\n  <div class=\"span9\" id=\"box-score\" data-gid=\"\">\n    ";
-  stack2 = ((stack1 = depth0.boxScore),typeof stack1 === functionType ? stack1.apply(depth0) : stack1);
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </div>\n\n  <div class=\"span3\" id=\"game-log-list\" data-abbrev=\"\" data-season=\"\" data-max-gid=\"-1\">\n    <table id=\"game_log_list\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\">\n    <thead>\n      <tr><th>Opp</th><th>W/L</th><th>Score</th></tr>\n    </thead>\n    <tbody>\n    </tbody>\n    </table>\n  </div>\n</div>\n</p>\n";
+    + "\">Finances</a></p>\n\n<p>\n<div class=\"row-fluid\">\n  <div class=\"span9\" id=\"box-score\" data-gid=\"\">\n    <p>Loading...</p>\n  </div>\n\n  <div class=\"span3\" id=\"game-log-list\" data-abbrev=\"\" data-season=\"\" data-max-gid=\"-1\">\n    <table id=\"game_log_list\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\">\n    <thead>\n      <tr><th>Opp</th><th>W/L</th><th>Score</th></tr>\n    </thead>\n    <tbody>\n    </tbody>\n    </table>\n  </div>\n</div>\n</p>\n";
   return buffer;
   });
 templates['teamFinances'] = template(function (Handlebars,depth0,helpers,partials,data) {

@@ -93,6 +93,7 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/underscore
         gameLogListTbodyEl = gameLogListEl.querySelector("tbody");
 
         if (abbrev !== gameLogListEl.dataset.abbrev || season !== parseInt(gameLogListEl.dataset.season, 10)) {
+            gameLogListTbodyEl.innerHTML = '<tr><td colspan="3" style="padding: 4px 5px;">Loading...</td></tr>';
             gameLogList(abbrev, season, gid, -1, function (content, maxGid) {
                 gameLogListTbodyEl.innerHTML = content;
                 gameLogListEl.dataset.abbrev = abbrev;
@@ -209,8 +210,8 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/underscore
                 $(this).addClass("alert-info").siblings().removeClass("alert-info");
             });
 
-            updateGameLogList(abbrev, season, gid, updateEvent, function () {
-                updateBoxScore(gid, function () {
+            updateBoxScore(gid, function () {
+                updateGameLogList(abbrev, season, gid, updateEvent, function () {
                     if (cb !== undefined) {
                         cb();
                     }

@@ -10,7 +10,7 @@ define(["db", "globals", "core/draft", "core/league"], function (db, g, draft, l
 
         before(function (done) {
             db.connectMeta(function () {
-                league.create("Test", 4, "random", function () {
+                league.create("Test", 20, "random", function () {
                     done();
                 });
             });
@@ -35,7 +35,7 @@ define(["db", "globals", "core/draft", "core/league"], function (db, g, draft, l
 
                 pick = draftOrder.shift();
                 pick.round.should.equal(round);
-                pick.pick.should.equal(5);
+                pick.pick.should.equal(21);
                 pick.tid.should.equal(g.userTid);
 
                 g.dbl.transaction("players").objectStore("players").index("tid").get(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
@@ -76,20 +76,20 @@ define(["db", "globals", "core/draft", "core/league"], function (db, g, draft, l
         });
 
         describe("#selectPlayer() and #untilUserOrEnd()", function () {
-            it("should draft 4 players before the user's team comes up in the 5th spot", function (done) {
-                testDraftUntilUserOrEnd(4, 4, done);
+            it("should draft 20 players before the user's team comes up in the 21th spot", function (done) {
+                testDraftUntilUserOrEnd(20, 20, done);
             });
             it("should then allow the user to draft in the first round", function (done) {
                 testDraftUser(1, done);
             });
             it("when called again after the user drafts, should draft 29 players before the user's second round pick comes up", function (done) {
-                testDraftUntilUserOrEnd(29, 29 + 1 + 4, done);
+                testDraftUntilUserOrEnd(29, 29 + 1 + 20, done);
             });
             it("should then allow the user to draft in the second round", function (done) {
                 testDraftUser(2, done);
             });
-            it("when called again after the user drafts, should draft 25 more players to finish the draft", function (done) {
-                testDraftUntilUserOrEnd(25, 29 + 1 + 4 + 1 + 25, done);
+            it("when called again after the user drafts, should draft 9 more players to finish the draft", function (done) {
+                testDraftUntilUserOrEnd(9, 29 + 1 + 20 + 1 + 9, done);
             });
         });
     });

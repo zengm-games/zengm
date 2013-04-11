@@ -2,8 +2,11 @@ smarter realtime
 ----------------
 
 methods for each view object like get and post
-  roster (row reordering might be a pain, as well as editable/non-editable switch)
-  player stats (performance of updating many rows at once)
+  problem is, there won't be big performance gains anywhere else like in gameLog. dropdowns will be nicer, which is good i guess.
+    maybe add knockout or something?
+  next ones to do
+    roster (row reordering might be a pain, as well as editable/non-editable switch)
+    player stats (performance of updating many rows at once)
 ui.realtimeUpdate should be used in more places so updateEvent is pervasive
   how can this be done for automatic redirects? wrapper function?
   search for anywhere Davis is directly called.

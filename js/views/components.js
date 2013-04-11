@@ -18,7 +18,7 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "util/helpers"]
      * @param {?string=} extraParam Any extra parameter to append to the URL, like /l/1/.../ATL/2014/extraParam. Default is to append nothing.
      */
     function dropdown(formId, fields, selected, updateEvents, extraParam) {
-        var content, fieldId, formEl, i, j, leagueContentEl, newOption, newSelect, options;
+        var content, currentSelected, fieldId, formEl, i, j, leagueContentEl, newOption, newSelect, options, selectEl;
 
         formEl = document.getElementById(formId);
         /*if (!formEl) {
@@ -31,14 +31,15 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "util/helpers"]
         newSelect = false;
         for (i = 0; i < fields.length; i++) {
             fieldId = formId + "-" + fields[i];
-            if (!document.getElementById(fieldId)) {
+            selectEl = document.getElementById(fieldId);
+            if (!selectEl) {
+                // Create new select
                 if (fields[i] === "teams") {
                     options = helpers.getTeams(selected[i]);
                     for (j = 0; j < options.length; j++) {
                         options[j].key = options[j].abbrev;
                         options[j].val = options[j].region + " " + options[j].name;
                     }
-
                 } else if (fields[i] === "seasons") {
                     options = helpers.getSeasons(selected[i]);
                     for (j = 0; j < options.length; j++) {
@@ -49,6 +50,12 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "util/helpers"]
                 content = Handlebars.templates.dropdown({field: fields[i], fieldId: fieldId, options: options});
                 formEl.innerHTML += content;
                 newSelect = true;
+            } else {
+                // See if default value changed
+                currentSelected = selectEl.options[selectEl.selectedIndex].value;
+                if (currentSelected !== selected[i].toString()) {
+                    selectEl.value = selected[i];
+                }
             }
         }
 
@@ -71,7 +78,7 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "util/helpers"]
             }
         }
 
-        // Activate if a new select was added
+        // Activate if a select was added or changed
         if (newSelect) {
             if (fields.length === 1) {
                 ui.dropdown($("#" + formId + "-" + fields[0]));

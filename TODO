@@ -2,10 +2,9 @@ smarter realtime
 ----------------
 
 gameLog knockout
-  get rid of gameLogList and boxScore templates, just have them inline in gameLog.handlebars
-  git rid of all data attributes
+  get rid of boxScore template, just use knockout inline in gameLog.handlebars
 i need something like knockout to handle realtime updates. for instance, gamelog doesn't update links under title currently. getting too complicated to do this all manually
-  build a viewModel. only update it when needed, like is currently done with roster
+  build a viewModel. only update it when needed, like is currently done with gameLog
     move things from data attributes to view model, and use that to determine appropriate updating
     do i make it nested, or have multiple models for multiple components?
       maybe try nested first
@@ -30,6 +29,9 @@ after updating all views
   reassess ui module. delete stuff like ui.dropdown. move other functions elsewhere?
     what is the difference between util.viewHelpers and ui?
   reassess api module
+not urgetnt, but... use knockout for
+  components.dropdown
+  gameLog.boxScore
 
 BEFORE 3.0.0-beta.3
 -------------------

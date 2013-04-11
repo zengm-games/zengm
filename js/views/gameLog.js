@@ -228,28 +228,25 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
             };
             ui.update(data);
 
-            vm = (new function () {
-                this.abbrev = ko.observable(abbrev);
-                this.season = ko.observable(season);
-
-                this.boxScore = {
+            vm = {
+                abbrev: ko.observable(abbrev),
+                season: ko.observable(season),
+                boxScore: {
                     gid: ko.observable(),
                     html: ko.observable()
-                };
-
-                this.gamesList = {
+                },
+                gamesList: {
                     abbrev: ko.observable(),
                     season: ko.observable(),
                     games: ko.observableArray([])
-                };
-
-                this.rosterUrl = ko.computed(function () {
-                    return "/l/" + g.lid + "/roster/" + this.abbrev() + "/" + this.season();
-                }, this);
-                this.financesUrl = ko.computed(function () {
-                    return "/l/" + g.lid + "/team_finances/" + this.abbrev();
-                }, this);
-            }());
+                }
+            };
+            vm.rosterUrl = ko.computed(function () {
+                return "/l/" + g.lid + "/roster/" + vm.abbrev() + "/" + vm.season();
+            });
+            vm.financesUrl = ko.computed(function () {
+                return "/l/" + g.lid + "/team_finances/" + vm.abbrev();
+            });
             ko.applyBindings(vm);
 
             cbLoaded();

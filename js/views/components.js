@@ -24,7 +24,6 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "util/helpers"]
         for (i = 0; i < fields.length; i++) {
             fieldId = formId + "-" + fields[i];
             if (!document.getElementById(fieldId)) {
-console.log('load dropdown ' + fields[i]);
                 if (fields[i] === "teams") {
                     options = helpers.getTeams(selected[i]);
                     for (j = 0; j < options.length; j++) {
@@ -46,7 +45,7 @@ console.log('load dropdown ' + fields[i]);
         }
 
         // Check if extraParam is set correctly
-        if (extraParam === undefined && extraParam === null) {
+        if (extraParam === undefined || extraParam === null) {
             formEl.dataset.extraParam = "";
         } else if (formEl.dataset.extraParam !== extraParam) {
             formEl.dataset.extraParam = extraParam;
@@ -56,7 +55,6 @@ console.log('load dropdown ' + fields[i]);
         for (i = 0; i < fields.length; i++) {
             if (fields[i] === "seasons") {
                 if (updateEvent === "newPhase" && g.phase === g.PHASE.PRESEASON) {
-console.log('update dropdown ' + fields[i]);
                     newOption = document.createElement('option');
                     newOption.text = g.season + " season";
                     newOption.value = g.season;
@@ -67,7 +65,6 @@ console.log('update dropdown ' + fields[i]);
 
         // Activate if a new select was added
         if (newSelect) {
-console.log('activate dropdown');
             if (fields.length === 1) {
                 ui.dropdown($("#" + formId + "-" + fields[0]));
             } else if (fields.length === 2) {

@@ -59,7 +59,6 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/underscore
             } else {
                 content = Handlebars.templates.gameLogList({lid: g.lid, abbrev: abbrev, games: games, season: season});
                 maxGid = games.length > 0 ? games[0].gid : -1;
-console.log(games.length + " games")
                 cb(content, maxGid);
             }
         };
@@ -72,7 +71,6 @@ console.log(games.length + " games")
         gameLogListTbodyEl = gameLogListEl.querySelector("tbody");
 
         if (abbrev !== gameLogListEl.dataset.abbrev || season !== parseInt(gameLogListEl.dataset.season, 10)) {
-console.log("load gameLogList");
             gameLogList(abbrev, season, gid, -1, function (content, maxGid) {
                 gameLogListTbodyEl.innerHTML = content;
                 gameLogListEl.dataset.abbrev = abbrev;
@@ -81,7 +79,6 @@ console.log("load gameLogList");
                 cb();
             });
         } else if (updateEvent === "gameSim" && season === g.season) {
-console.log("update gameLogList");
             gameLogList(abbrev, season, gid, parseInt(gameLogListEl.dataset.maxGid, 10), function (content, maxGid) {
                 gameLogListTbodyEl.innerHTML = content + gameLogListTbodyEl.innerHTML;
                 if (maxGid > 0) {
@@ -138,7 +135,6 @@ console.log("update gameLogList");
         boxScoreEl = document.getElementById("box-score");
 
         if (gid !== parseInt(boxScoreEl.dataset.gid, 10)) {
-console.log("load boxScore");
             boxScore(gid, function (content) {
                 boxScoreEl.innerHTML = content;
                 boxScoreEl.dataset.gid = gid;
@@ -173,7 +169,6 @@ console.log("load boxScore");
 
 
         if (leagueContent.dataset.id !== "gameLog") {
-console.log("load gameLog");
             data = {
                 container: "league_content",
                 template: "gameLog",
@@ -187,7 +182,6 @@ console.log("load gameLog");
     }
 
     function get(req) {
-console.log(req);
         viewHelpers.beforeLeague(req, function () {
             var abbrev, cbDisplay, gid, out, season, seasons, teams, tid;
 

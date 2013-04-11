@@ -3,7 +3,6 @@ smarter realtime
 
 can i make game log first load smoother, by not showing anything until box score and game log list are loaded?
 document functions in views.gameLog
-unit tests for views.comonents
 
 roster (row reordering might be a pain, as well as editable/non-editable switch)
 player stats (performance of updating many rows at once)

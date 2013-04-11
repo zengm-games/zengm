@@ -202,10 +202,6 @@ console.log(req);
     }
 
     return {
-        /*gameLogList: gameLogList,
-        updateGameLogList: updateGameLogList,
-        boxScore: boxScore,
-        updateBoxScore: updateBoxScore,*/
         update: update,
         get: get
     };

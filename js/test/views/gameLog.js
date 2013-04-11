@@ -17,41 +17,47 @@ define(["db", "globals", "core/league", "lib/jquery", "views/gameLog"], function
         should.exist(document.getElementById("game-log-list"));
     }
 
+    function addFakeGame(tx, gid) {
+        var game, j, k;
+
+        game = {
+            gid: gid,
+            season: g.season,
+            teams: [
+                {
+                    pts: 100,
+                    tid: 0,
+                    players: []
+                },
+                {
+                    pts: 105,
+                    tid: 4,
+                    players: []
+                }
+            ],
+            overtimes: 0
+        };
+        for (j = 0; j < 2; j++) {
+            for (k = 0; k < 7; k++) {
+                game.teams[j].players.push({
+                    gs: 0,
+                    min: 40,
+                    injury: {type: "Healthy", gamesRemaining: 0}
+                });
+            }
+        }
+        tx.objectStore("games").add(game);
+    }
+
     describe("views/gameLog", function () {
         before(function (done) {
             db.connectMeta(function () {
                 league.create("Test", 0, "random", function () {
-                    var game, i, j, k, tx;
+                    var i, tx;
 
-                    // Add some fake games
                     tx = g.dbl.transaction("games", "readwrite");
                     for (i = 0; i < 10; i++) {
-                        game = {
-                            gid: i,
-                            teams: [
-                                {
-                                    pts: 100,
-                                    tid: 0,
-                                    players: []
-                                },
-                                {
-                                    pts: 105,
-                                    tid: 4,
-                                    players: []
-                                }
-                            ],
-                            overtimes: 0
-                        };
-                        for (j = 0; j < 2; j++) {
-                            for (k = 0; k < 7; k++) {
-                                game.teams[j].players.push({
-                                    gs: 0,
-                                    min: 40,
-                                    injury: {type: "Healthy", gamesRemaining: 0}
-                                });
-                            }
-                        }
-                        tx.objectStore("games").add(game);
+                        addFakeGame(tx, i);
                     }
                     tx.oncomplete = function () {
                         done();
@@ -109,14 +115,84 @@ define(["db", "globals", "core/league", "lib/jquery", "views/gameLog"], function
                     });
                 });
             });
+            it("should load only a new game log list if everything is the same except the team", function (done) {
+                confirmNotBuilt();
+                gameLog.update("CHI", g.season, 3, undefined, function () {
+                    confirmBuilt();
 
+                    document.getElementById("game-log-dropdown-seasons").dataset.dummy = "shit";
+                    document.getElementById("box-score").innerHTML = "fuck";
+                    document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(10);
+                    gameLog.update("BOS", g.season, 3, undefined, function () {
+                        document.getElementById("game-log-dropdown-seasons").dataset.dummy.should.equal("shit");
+                        document.getElementById("box-score").innerHTML.should.equal("fuck");
+                        document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(0);
+                        done();
+                    });
+                });
+            });
+            it("should load only a new game log list if everything is the same except the season", function (done) {
+                confirmNotBuilt();
+                gameLog.update("ATL", g.season, 3, undefined, function () {
+                    confirmBuilt();
+
+                    document.getElementById("game-log-dropdown-seasons").dataset.dummy = "shit";
+                    document.getElementById("box-score").innerHTML = "fuck";
+                    document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(10);
+                    gameLog.update("ATL", g.season + 1, 3, undefined, function () {
+                        document.getElementById("game-log-dropdown-seasons").dataset.dummy.should.equal("shit");
+                        document.getElementById("box-score").innerHTML.should.equal("fuck");
+                        document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(0);
+                        done();
+                    });
+                });
+            });
+            it("should load only a new game log list and box score if game ID, team, and season all change", function (done) {
+                confirmNotBuilt();
+                gameLog.update("ATL", g.season, -1, undefined, function () {
+                    confirmBuilt();
+
+                    document.getElementById("game-log-dropdown-seasons").dataset.dummy = "shit";
+                    document.getElementById("box-score").innerHTML = "fuck";
+                    document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(10);
+                    gameLog.update("BOS", g.season + 1, 3, undefined, function () {
+                        document.getElementById("game-log-dropdown-seasons").dataset.dummy.should.equal("shit");
+                        document.getElementById("box-score").innerHTML.should.not.equal("fuck");
+                        document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(0);
+                        done();
+                    });
+                });
+            });
+            it("should update only game log list in response to gameSim updateEvent, if all other parameters are the same", function (done) {
+                confirmNotBuilt();
+                gameLog.update("ATL", g.season, 3, undefined, function () {
+                    var child, i, tx;
+
+                    confirmBuilt();
+
+                    document.getElementById("game-log-dropdown-seasons").dataset.dummy = "shit";
+                    document.getElementById("box-score").innerHTML = "fuck";
+                    document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(10);
+
+                    // Remove  a row, to make sure that the old games will not be subsequently updated
+                    child = document.getElementById("game-log-list").querySelector("tbody tr");
+                    child.parentNode.removeChild(child);
+
+                    // Add fake games
+                    tx = g.dbl.transaction("games", "readwrite");
+                    for (i = 10; i < 20; i++) {
+                        addFakeGame(tx, i);
+                    }
+                    tx.oncomplete = function () {
+                        gameLog.update("ATL", g.season, 3, "gameSim", function () {
+                            document.getElementById("game-log-dropdown-seasons").dataset.dummy.should.equal("shit");
+                            document.getElementById("box-score").innerHTML.should.equal("fuck");
+                            document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(19);
+                            done();
+                        });
+                    };
+                });
+            });
         });
-
-// New tid - load only game log list
-// New season - load only game log list
-// New gid+tid+season - load only box score and game log list
-// updateEvent gameSim - update only game log list
-// Confirm correct number of games displayed in game log list, with switch to season to validate it's 0 when appropriate
-
     });
 });

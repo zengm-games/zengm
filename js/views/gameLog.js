@@ -14,24 +14,30 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
      * @param {string} abbrev Abbrev of the team for the list of games.
      * @param {number} season Season for the list of games.
      * @param {number} gid Integer game ID for the box score (a negative number means no box score), which is used only for highlighting the relevant entry in the list.
-     * @param {number} prevMaxGid Integer game ID for the previous most recent entry in the list. Only games with larger IDs will be returned, so set to -1 to return all games.
-     * @param {function()} cb Callback.
+     * @param {function(Array.<Object>)} cb Callback whose argument is a list of game objects.
      */
-    function gameLogList(abbrev, season, gid, prevMaxGid, cb) {
-        var games, out, tid;
+    function gameLogList(abbrev, season, gid, cb) {
+        var games, loadedGames, maxGid, out, tid;
 
         out = helpers.validateAbbrev(abbrev);
         tid = out[0];
         abbrev = out[1];
         season = helpers.validateSeason(season);
 
+        loadedGames = vm.gamesList.games();
+        if (loadedGames.length > 0) {
+            maxGid = loadedGames[0].gid; // Load new games
+        } else {
+            maxGid = -1; // Load all games
+        }
+
         games = [];
         // This could be made much faster by using a compound index to search for season + team, but that's not supported by IE 10
         g.dbl.transaction(["games"]).objectStore("games").index("season").openCursor(season, "prev").onsuccess = function (event) {
-            var content, cursor, game, i, maxGid, overtime;
+            var content, cursor, game, i, overtime;
 
             cursor = event.target.result;
-            if (cursor && cursor.value.gid > prevMaxGid) {
+            if (cursor && cursor.value.gid > maxGid) {
                 game = cursor.value;
 
                 if (game.overtimes === 1) {
@@ -69,9 +75,7 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
 
                 cursor.continue();
             } else {
-                content = Handlebars.templates.gameLogList({lid: g.lid, abbrev: abbrev, games: games, season: season});
-                maxGid = games.length > 0 ? games[0].gid : -1;
-                cb(games, content, maxGid);
+                cb(games);
             }
         };
     }
@@ -89,28 +93,23 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
      * @param {function()} cb Callback.
      */
     function updateGameLogList(abbrev, season, gid, updateEvents, cb) {
-        var gameLogListEl, gameLogListTbodyEl, maxGid;
-
-        gameLogListEl = document.getElementById("game-log-list");
-        gameLogListTbodyEl = gameLogListEl.querySelector("tbody");
+        var i;
 
         if (abbrev !== vm.gamesList.abbrev() || season !== vm.gamesList.season()) {
-            gameLogListTbodyEl.innerHTML = '<tr><td colspan="3" style="padding: 4px 5px;">Loading...</td></tr>';
-            gameLogList(abbrev, season, gid, -1, function (games, content, maxGid) {
+            // Load all games in list
+            vm.gamesList.games([]);
+//            gameLogListTbodyEl.innerHTML = '<tr><td colspan="3" style="padding: 4px 5px;">Loading...</td></tr>';
+            gameLogList(abbrev, season, gid, function (games) {
                 vm.gamesList.games(games);
-console.log(vm.gamesList.games()[0]);
-//                gameLogListTbodyEl.innerHTML = content;
                 vm.gamesList.abbrev(abbrev);
                 vm.gamesList.season(season);
-                gameLogListEl.dataset.maxGid = maxGid;
                 cb();
             });
         } else if (updateEvents.indexOf("gameSim") >= 0 && season === g.season) {
-            gameLogList(abbrev, season, gid, parseInt(gameLogListEl.dataset.maxGid, 10), function (games, content, maxGid) {
-                gameLogListTbodyEl.innerHTML = content + gameLogListTbodyEl.innerHTML;
-                if (maxGid > 0) {
-                    // Only update maxGid if there is actually a new value. Will be -1 if the active team didn't play.
-                    gameLogListEl.dataset.maxGid = maxGid;
+            // Partial update of only new games
+            gameLogList(abbrev, season, gid, function (games) {
+                for (i = games.length - 1; i >= 0; i--) {
+                    vm.gamesList.games.unshift(games[i]);
                 }
                 cb();
             });

@@ -1,16 +1,16 @@
 smarter realtime
 ----------------
 
-roster (row reordering might be a pain, as well as editable/non-editable switch)
-player stats (performance of updating many rows at once)
 methods for each view object like get and post
-
+  roster (row reordering might be a pain, as well as editable/non-editable switch)
+  player stats (performance of updating many rows at once)
 ui.realtimeUpdate should be used in more places so updateEvent is pervasive
   how can this be done for automatic redirects? wrapper function?
   search for anywhere Davis is directly called.
-
 after updating all views
   reassess ui module. delete stuff like ui.dropdown. move other functions elsewhere?
+    what is the difference between util.viewHelpers and ui?
+  reassess api module
 
 BEFORE 3.0.0-beta.3
 -------------------
@@ -32,6 +32,7 @@ how to handle aggregating stats for players who played for more than one team in
     no pass tid and you get each team separately, but no merged stats as above
 https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide
   get rid of bbgmPing
+  http://stackoverflow.com/questions/9534793/google-analytics-cross-domain-tracking-and-setdomainname
 http://www.gmgames.org
 better default league name
 contracts

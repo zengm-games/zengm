@@ -7,7 +7,7 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/jquery", "views/componen
 
     var vm;
 
-    function update(tid, season, updateEvents, cb) {
+    function update(abbrev, tid, season, updateEvents, cb) {
         var attributes, currentSeason, ratings, sortable, stats, transaction;
 
         sortable = false;
@@ -50,7 +50,7 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/jquery", "views/componen
                 ui.update(data, function () {
                     var fixHelper, highlightHandles;
 
-                    ui.dropdown($("#roster-select-team"), $("#roster-select-season"));
+                    components.dropdown("roster-dropdown", ["teams", "seasons"], [abbrev, season], updateEvents);
 
                     if (sortable) {
                         // Roster reordering
@@ -204,14 +204,15 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/jquery", "views/componen
         }
 
         viewHelpers.beforeLeague(req, function () {
-            var out, season, tid, updateEvents;
+            var abbrev, out, season, tid, updateEvents;
 
             out = helpers.validateAbbrev(req.params.abbrev);
             tid = out[0];
+            abbrev = out[1];
             season = helpers.validateSeason(req.params.season);
             updateEvents = req.raw.updateEvents !== undefined ? req.raw.updateEvents : [];
 
-            update(tid, season, updateEvents, req.raw.cb);
+            update(abbrev, tid, season, updateEvents, req.raw.cb);
         });
     }
 

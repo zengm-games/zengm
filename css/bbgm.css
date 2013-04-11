@@ -189,6 +189,9 @@ table#game_log_list tbody tr:hover td, table#messages tbody tr:hover td {
 select.season {
   width: 120px;
 }
+select.seasons {
+  width: 120px;
+}
 select.past-x {
   width: 135px;
 }

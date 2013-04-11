@@ -1,6 +1,7 @@
 smarter realtime
 ----------------
 
+dropdown shouldn't be defined in template. just add it to the top of league_content
 roster
   old roster: display static
   new roster, non-user team: display static with trade for buttons

@@ -5,6 +5,34 @@
 define(["api", "db", "globals", "ui", "lib/davis", "lib/jquery", "views/components", "util/helpers", "util/viewHelpers"], function (api, db, g, ui, Davis, $, components, helpers, viewHelpers) {
     "use strict";
 
+    function update(abbrev, season, updateEvents, cb) {
+        var cbLoaded, data, leagueContent;
+
+        leagueContent = document.getElementById("league_content");
+
+        cbLoaded = function () {
+            components.dropdown("roster-dropdown", ["teams", "seasons"], [abbrev, season], updateEvents, gid >= 0 ? gid : undefined);
+
+            updateRoster(abbrev, season, updateEvents, function () {
+                if (cb !== undefined) {
+                    cb();
+                }
+            });
+        };
+
+        if (leagueContent.dataset.id !== "roster") {
+            data = {
+                container: "league_content",
+                template: "roster",
+                title: "Roster",
+                vars: {season: season, abbrev: abbrev}
+            };
+            ui.update(data, cbLoaded);
+        } else {
+            cbLoaded();
+        }
+    }
+
     function get(req) {
         // Fix broken links
         if (req.params.abbrev === "FA") {

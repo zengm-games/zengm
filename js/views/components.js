@@ -8,6 +8,8 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "util/helpers"]
     /**
      * Creates or updates a dropdown form.
      *
+     * This should be called every time the page with the dropdown is loaded/updated so the dropdown can be appropriately managed.
+     *
      * @memberOf  views.components
      * @param {string} formId DOM ID of the form element to fill.
      * @param {Array.<string>} fields Array of strings of the type of fields to allow (current acceptable values are "teams" and "seasons"). Each element represents a dropdown and a component of the URL - so if "teams" and "seasons" is passed, URLs will be generated like /l/1/.../ATL/2014.

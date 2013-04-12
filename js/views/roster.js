@@ -111,6 +111,7 @@ define(["api", "db", "globals", "ui", "core/team", "lib/davis", "lib/knockout", 
             });
         }
 
+console.log('editableChanged ' + editable)
         if (editable) {
             rosterTbody.sortable("enable").disableSelection();
         } else {
@@ -234,8 +235,8 @@ console.log("loadBefore")
 
         if (vm.editable()) {
             highlightHandles();
-            editableChanged(vm.editable());
         }
+        editableChanged(vm.editable());
 
         components.dropdown("roster-dropdown", ["teams", "seasons"], [abbrev, season], updateEvents);
 

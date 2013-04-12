@@ -23,9 +23,9 @@ general things
       if nothing needs to be updated, this should do nothing
       if something needs to be updated...
         if it's a new load, create stub vm from scrach
-        loadBefore: load everything that can be done relatively quickly (i.e. not the game log list) and put it in the vm
+        loadBefore: load everything that can be done relatively quickly (i.e. not the game log list) and put it in the vm (typically all together at the end, so updates are all done together)
         display: display the template, active knockout, displaying what we can early
-        loadAfter: handle any slow stuff after this
+        loadAfter: handle any slow stuff after this, updating the vm as appropriate
       where does DOM crap go? display or loadAfter?
   flicker on page load - can i somehow not show the DOM elements immediately?
     NEED TO THINK MORE ABOUT THIS

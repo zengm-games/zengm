@@ -1,29 +1,22 @@
 smarter realtime
 ----------------
 
-i need something like knockout to handle realtime updates. for instance, gamelog doesn't update links under title currently. getting too complicated to do this all manually
-  build a viewModel. only update it when needed, like is currently done with gameLog
-    move things from data attributes to view model, and use that to determine appropriate updating
-    do i make it nested, or have multiple models for multiple components?
-      maybe try nested first
-    somehow need to delete these viewmodels when the view is deleted (i.e. page change)
-      not even "page change".. for instance if i'm viewing last year's game log and click "game log" in the league menu, the dropdown should reset
 roster
-  why do all the currencies update every time, even though the values don't change?
-    make sure this is working
+  players
+    shouldn't flicker on update, should update by player id
+  make sure DOM updates are correct
   playerNameLabels
-    can i pass a list to knockout binding?
-    if so, redo currency and round to be more general
   data-cash-owed is not formatted now
   old roster: display static
   new roster, non-user team: display static with trade for buttons
   new roster, user team: display dynamic
   use $index on foreach rather than separator placeholder
+  unit tests
 general things
   how to dynamically update title?
+  somehow need to delete these viewmodels when the view is deleted (i.e. page change) otherwise contents will get stale. or at least come up with a way to update when appropriate.
   where to call ko.applyBindings?
     performance considerations... see old TODO
-      get rid of flicker. on new load, shouldn't load, display. on update, shouldn't update, display. just display at once.
   updateEvents checking in viewHelpers.newLeague?
     also, if cb is undefined make it an empty function?
 ui.realtimeUpdate should be used in more places so updateEvent is pervasive

@@ -2,7 +2,7 @@
  * @name util.templateHelpers
  * @namespace Handlebars helper functions. Any new helpers added here should be added to the handlebars call in the Makefile.
  */
-define(["lib/handlebars.runtime", "util/helpers"], function (Handlebars, helpers) {
+define(["lib/handlebars.runtime", "lib/knockout", "util/helpers"], function (Handlebars, ko, helpers) {
     "use strict";
 
     Handlebars.registerHelper("round", helpers.round);
@@ -66,6 +66,13 @@ define(["lib/handlebars.runtime", "util/helpers"], function (Handlebars, helpers
     });
 
     Handlebars.registerHelper("currency", helpers.formatCurrency);
+
+    ko.bindingHandlers.currencyM = {
+        update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+console.log(ko.utils.unwrapObservable(valueAccessor()))
+            element.innerHTML = helpers.formatCurrency(ko.utils.unwrapObservable(valueAccessor()), "M");
+        }
+    };
 
     Handlebars.registerHelper("numberWithCommas", helpers.numberWithCommas);
 

@@ -11,7 +11,6 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/knockout
         var i;
 
 console.log('highlightHandles')
-console.log(vm.players().length)
         i = 1;
         $("#roster tbody").children().each(function () {
             var tr;
@@ -100,32 +99,17 @@ console.log(vm.players().length)
                     } else {
                         alert("Error: You only have " + helpers.formatCurrency(vm.team.cash(), "M") + " in cash, but it would take $" + this.dataset.cashOwed + "M to buy out " + this.dataset.playerName + ".");
                     }
-                }/* else if (this.dataset.action === "tradeFor") {
-
-                }*/
+                }
             });
         } else {
             rosterTbody.sortable("disable").enableSelection();
         }
     }
 
-    function cbAfterPlayers(tx, abbrev, tid, season, editable, team, players, payroll, updateEvents, cb) {
-        var data, i, mapPlayersByPid, x;
+    function display(tx, abbrev, tid, season, editable, team, players, payroll, updateEvents, cb) {
+        var data, myMapping;
 
-        for (i = 0; i < players.length; i++) {
-            if (players.length > 5) {
-                players[i].canRelease = true;
-                if (players[i].cashOwed <= team.cash) {
-                    players[i].canBuyOut = true;
-                } else {
-                    players[i].canBuyOut = false;
-                }
-            } else {
-                players[i].canRelease = false;
-            }
-        }
-
-        mapPlayersByPid = {
+        myMapping = {
             players: {
                 key: function (data) {
                     return ko.utils.unwrapObservable(data.pid);
@@ -133,12 +117,6 @@ console.log(vm.players().length)
             }
         };
 
-        /*vm.abbrev(abbrev);
-        vm.season(season);
-        vm.numRosterSpots(15 - players.length);
-        vm.payroll(payroll);
-        vm.salaryCap(g.salaryCap / 1000);
-        vm.showTradeFor(season === g.season && tid !== g.userTid);*/
         mapping.fromJS({
             abbrev: abbrev,
             season: season,
@@ -149,11 +127,10 @@ console.log(vm.players().length)
             showTradeFor: season === g.season && tid !== g.userTid,
             players: players,
             team: team
-        }, mapPlayersByPid, vm);
+        }, myMapping, vm);
 
 
         if (document.getElementById("league_content").dataset.id !== "roster") {
-console.log('NO ROSTER YET')
             data = {
                 container: "league_content",
                 template: "roster",
@@ -171,13 +148,11 @@ console.log('NO ROSTER YET')
 
         components.dropdown("roster-dropdown", ["teams", "seasons"], [abbrev, season], updateEvents);
 
-        if (cb !== undefined) {
-            cb();
-        }
+        cb();
     }
 
     // We need to update, so first do all the stuff common to every type of update
-    function loadBefore(abbrev, tid, season, updateEvents, cb) {
+    function loadBefore(abbrev, tid, season, cb) {
         var tx;
 console.log("loadBefore")
 
@@ -221,8 +196,22 @@ console.log("loadBefore")
 
                         players = db.getPlayers(event.target.result, season, tid, attributes, stats, ratings, {numGamesRemaining: numGamesRemaining, showRookies: true, sortBy: "rosterOrder", showNoStats: true, fuzz: true});
 
+                        for (i = 0; i < players.length; i++) {
+                            if (tid === g.userTid && players.length > 5) {
+                                players[i].canRelease = true;
+                                if (tid === g.userTid && players[i].cashOwed <= team.cash) {
+                                    players[i].canBuyOut = true;
+                                } else {
+                                    players[i].canBuyOut = false;
+                                }
+                            } else {
+                                players[i].canBuyOut = false;
+                                players[i].canRelease = false;
+                            }
+                        }
+
                         db.getPayroll(tx, tid, function (payroll) {
-                            cbAfterPlayers(tx, abbrev, tid, season, editable, team, players, payroll / 1000, updateEvents, cb);
+                            cb(tx, editable, team, players, payroll / 1000);
                         });
                     };
                 };
@@ -233,12 +222,13 @@ console.log("loadBefore")
 
                     players = db.getPlayers(event.target.result, season, tid, attributes, stats, ratings, {numGamesRemaining: 0, showRookies: true, sortBy: "rosterOrder", fuzz: true});
 
-                    // Fix ages
                     for (i = 0; i < players.length; i++) {
                         players[i].age = players[i].age - (g.season - season);
+                        players[i].canBuyOut = false;
+                        players[i].canRelease = false;
                     }
 
-                    cbAfterPlayers(tx, abbrev, tid, season, editable, team, players, null, updateEvents, cb);
+                    cb(tx, editable, team, players, null);
                 };
             }
         };
@@ -273,7 +263,13 @@ console.log("loadBefore")
         }
 
         if ((season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || abbrev !== vm.abbrev() || season !== vm.season()) {
-            loadBefore(abbrev, tid, season, updateEvents, cb);
+            loadBefore(abbrev, tid, season, function (tx, editable, team, players, payroll) {
+                display(tx, abbrev, tid, season, editable, team, players, null, updateEvents, function () {
+                    if (cb !== undefined) {
+                        cb();
+                    }
+                });
+            });
         }
     }
 

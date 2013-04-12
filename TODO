@@ -17,15 +17,6 @@ roster
   unit tests
 general things
   popup windows only work on first update now?
-  flow
-    get() and post() handle inputs
-    update() is the main function that determines what is called
-      can check what needs to be updated here or in loadBefore. if here, then just call display directly if nothing needs updating.
-      if it's a new load, create stub vm from scrach
-    loadBefore: load everything that can be done relatively quickly (i.e. not the game log list) and put it in the vm (typically all together at the end, so updates are all done together)
-    display: display the template, active knockout, displaying what we can early
-    loadAfter: handle any slow stuff after this, updating the vm as appropriate
-    where does DOM crap go? display or loadAfter?
   how to dynamically update title?
     maybe have app-level vm (g.vm?) with title, play menu
   somehow need to delete these viewmodels when the view is deleted (i.e. page change) otherwise contents will get stale. or at least come up with a way to update when appropriate.

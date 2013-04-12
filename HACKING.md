@@ -87,6 +87,50 @@ Documentation of functions is based on
 https://developers.google.com/closure/compiler/docs/js-for-compiler
 
 
+# Views
+
+There is currently a rewrite of the views in progress to use Knockout for more
+granular realtime updates. All the views in the js/views folder are rewritten
+(or in progress) and the views in js/views.js are out of date and pending
+rewrites. Things are still in flux, but the general way I see this now is that
+each view should have a certain structure:
+
+* `get` and `post` directly take input, process/validate it, and pass it on to
+  `update`. That's it, no fancy logic here. This is the entry point to the view.
+  Clicking a link leads here. When data is updated, `ui.realtimeUpdate` is
+  called which will end up calling `get` again for the currently-loaded view. So
+  ultimately, the same entry point is used for generating a view from scratch
+  and updating it. Discrimination between these two scenarios is described
+  below. `get` then calls `update`.
+
+* `update` decides what to do based on the input. First, a dummy view model
+  (stored in `vm`) is generated with mostly blank entries if `vm` does not
+  already exist. In a simple view that responds to all changes in the same way
+  (e.g. `roster`), `update` can contain the code to check if it's even worth
+  hitting the database and whatnot (if we're viewing the same roster and nothing
+  has changed, none of the displayed data has changed). In a more complex view
+  with different components responding to different things (e.g. `gameLog`),
+  this logic can be left for the below functions. `update` then calls
+  `loadBefore`.
+
+* `loadBefore` loads most/all data and builds most/all of `vm`. The only things
+  that are not loaded here are things that can be really slow, like the list of
+  games in `gameLog`. `vm` should usually be updated once, at the very end of
+  this function, to limit flickering and inconsistent data display. Then
+  `display` is called.
+
+* `display` displays the view template and binds `vm` to it (if it's not already
+  displayed and bound). Any DOM manipulation that needs to be done on the
+  already-displayed content can be done here. Then `loadAfter` is (optionally)
+  called.
+
+* `loadAfter` is used to do any further work to load the view after it's already
+  displayed. This should be rarely used unless there is some content that takes
+  a really long time to generate. Since unlike `loadBefore` the template is
+  always loaded here, `vm` updates and DOM manipulation can be more piecemeal
+  here.
+
+
 # Twitter Bootstrap
 
 Basketball GM currently uses Bootstrap 2.2 compiled without responsive parts and
@@ -104,7 +148,6 @@ places.
 
 Abbreviations of stats should be done like basketball-reference.com stat pages.
 For instance, "defensive rebounds" is "drb".
-
 
 
 # To do on new version

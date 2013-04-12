@@ -1888,7 +1888,7 @@ helpers = helpers || Handlebars.helpers; data = data || {};
 
   buffer += "<form id=\"game-log-dropdown\" class=\"form-inline pull-right\"></form>\n\n<h1>Game Log "
     + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n<p>More: <a data-bind=\"attr: { href: rosterUrl }\">Roster</a> | <a data-bind=\"attr: { href: financesUrl }\">Finances</a></p>\n\n<p>\n<div class=\"row-fluid\">\n  <div class=\"span9\" id=\"box-score\" data-bind=\"html: boxScore.html\">\n    <p></p>\n  </div>\n\n  <div class=\"span3\" id=\"game-log-list\">\n    <table id=\"game_log_list\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\">\n    <thead>\n      <tr><th>Opp</th><th>W/L</th><th>Score</th></tr>\n    </thead>\n    <tbody data-bind=\"foreach: gamesList.games\">\n      <tr data-bind=\"attr: {class: selected ? 'alert-info' : ''}\">\n        <td><a data-bind=\"attr: {href: url}, text: (home ? '' : '@') + oppAbbrev\"></a></td>\n        <td><a data-bind=\"attr: {href: url}, text: won ? 'W' : 'L'\"></a></td>\n        <td><a data-bind=\"attr: {href: url}, text: pts + '-' + oppPts + overtime\"></a></td>\n      </tr>\n    </tbody>\n    </table>\n  </div>\n</div>\n</p>\n";
+    + "</h1>\n<p>More: <a data-bind=\"attr: {href: rosterUrl}\">Roster</a> | <a data-bind=\"attr: {href: financesUrl}\">Finances</a></p>\n\n<p>\n<div class=\"row-fluid\">\n  <div class=\"span9\" id=\"box-score\" data-bind=\"html: boxScore.html\">\n    <p></p>\n  </div>\n\n  <div class=\"span3\" id=\"game-log-list\">\n    <table id=\"game_log_list\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\">\n    <thead>\n      <tr><th>Opp</th><th>W/L</th><th>Score</th></tr>\n    </thead>\n    <tbody data-bind=\"foreach: gamesList.games\">\n      <tr data-bind=\"attr: {class: selected ? 'alert-info' : ''}\">\n        <td><a data-bind=\"attr: {href: url}, text: (home ? '' : '@') + oppAbbrev\"></a></td>\n        <td><a data-bind=\"attr: {href: url}, text: won ? 'W' : 'L'\"></a></td>\n        <td><a data-bind=\"attr: {href: url}, text: pts + '-' + oppPts + overtime\"></a></td>\n      </tr>\n    </tbody>\n    </table>\n  </div>\n</div>\n</p>\n";
   return buffer;
   });
 templates['teamFinances'] = template(function (Handlebars,depth0,helpers,partials,data) {
@@ -2035,83 +2035,14 @@ function program6(depth0,data) {
 templates['roster'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
+  var buffer = "", stack1, escapeExpression=this.escapeExpression, functionType="function";
 
-function program1(depth0,data,depth1) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n    <tr id=\"roster_"
-    + escapeExpression(((stack1 = depth0.pid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"";
-  stack2 = helpers['if'].call(depth0, depth0.separator, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "><td class=\"roster_handle\" data-bind=\"visible: sortable\"></td><td>"
-    + escapeExpression(helpers.playerNameLabels.call(depth0, depth0.pid, depth0.name, depth0.injury, ((stack1 = depth0.ratings),stack1 == null || stack1 === false ? stack1 : stack1.skills), {hash:{},data:data}))
-    + "</td><td>"
-    + escapeExpression(((stack1 = depth0.pos),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td><td>"
-    + escapeExpression(((stack1 = depth0.age),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td><td>"
-    + escapeExpression(((stack1 = ((stack1 = depth0.ratings),stack1 == null || stack1 === false ? stack1 : stack1.ovr)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td><td>"
-    + escapeExpression(((stack1 = ((stack1 = depth0.ratings),stack1 == null || stack1 === false ? stack1 : stack1.pot)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td><td data-bind=\"visible: currentSeason\">"
-    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.contract),stack1 == null || stack1 === false ? stack1 : stack1.amount), "M", {hash:{},data:data}))
-    + " thru "
-    + escapeExpression(((stack1 = ((stack1 = depth0.contract),stack1 == null || stack1 === false ? stack1 : stack1.exp)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td><td>"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.stats),stack1 == null || stack1 === false ? stack1 : stack1.min), 1, {hash:{},data:data}))
-    + "</td><td>"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.stats),stack1 == null || stack1 === false ? stack1 : stack1.pts), 1, {hash:{},data:data}))
-    + "</td><td>"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.stats),stack1 == null || stack1 === false ? stack1 : stack1.trb), 1, {hash:{},data:data}))
-    + "</td><td>"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.stats),stack1 == null || stack1 === false ? stack1 : stack1.ast), 1, {hash:{},data:data}))
-    + "</td><td>"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.stats),stack1 == null || stack1 === false ? stack1 : stack1.per), 1, {hash:{},data:data}))
-    + "</td><td data-bind=\"visible: sortable\"><button class=\"btn btn-mini\" data-action=\"release\" data-player-id=\""
-    + escapeExpression(((stack1 = depth0.pid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" data-player-name=\""
-    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" data-contract-expiration=\""
-    + escapeExpression(((stack1 = ((stack1 = depth0.contract),stack1 == null || stack1 === false ? stack1 : stack1.exp)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"";
-  stack2 = helpers.unless.call(depth0, depth0.canRelease, {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">Release</button></td><td data-bind=\"visible: sortable\"><button class=\"btn btn-mini\" data-action=\"buyOut\" data-player-id=\""
-    + escapeExpression(((stack1 = depth0.pid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" data-player-name=\""
-    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" data-cash-owed=\""
-    + escapeExpression(helpers.round.call(depth0, depth0.cashOwed, 2, {hash:{},data:data}))
-    + "\"";
-  stack2 = helpers.unless.call(depth0, depth0.canBuyOut, {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">Buy out</button></td><td data-bind=\"visible: showTradeFor\"><form action=\"/l/"
-    + escapeExpression(((stack1 = depth1.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/trade\" method=\"POST\" style=\"margin: 0\"><input type=\"hidden\" name=\"pid\" value=\""
-    + escapeExpression(((stack1 = depth0.pid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"><button type=\"submit\" class=\"btn btn-mini\">Trade For</button></form></td></tr>\n  ";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  
-  return " class=\"separator\"";
-  }
-
-function program4(depth0,data) {
-  
-  
-  return " disabled=\"disabled\"";
-  }
 
   buffer += "<form id=\"roster-dropdown\" class=\"form-inline pull-right\"></form>\n\n<h1><span data-bind=\"text: team.region\"></span> <span data-bind=\"text: team.name\"></span> Roster "
     + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n<p>More: <a data-bind=\"attr: { href: financesUrl }\">Finances</a> | <a data-bind=\"attr: { href: gameLogUrl }\">Game Log</a></p>\n\n<p data-bind=\"visible: currentSeason\">\n  <span data-bind=\"text: numRosterSpots\"></span> open roster spots<br>\n  Payroll: <span data-bind=\"currencyM: payroll\"></span><br>\n  Salary cap: <span data-bind=\"currencyM: salaryCap\"></span><br>\n  Cash: <span data-bind=\"currencyM: team.cash\"></span> (used for buying out players)\n</p>\n\n<!-- ko if: sortable -->\n  <p>Drag and drop row handles to move players between the starting lineup (<span class=\"roster_gs\">&#9632;</span>) and the bench (<span class=\"roster_bench\">&#9632;</span>).</p>\n  <p><button class=\"btn\" id=\"roster-auto-sort\">Auto sort roster</button></p>\n<!-- /ko -->\n\n<p>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"roster\">\n<thead>\n  <tr><th data-bind=\"visible: sortable\"></th><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall Rating\">Ovr</th><th title=\"Potential Rating\">Pot</th><th data-bind=\"visible: currentSeason\">Contract</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th><th data-bind=\"visible: sortable\">Release</th><th data-bind=\"visible: sortable\">Buy out</th><th data-bind=\"visible: showTradeFor\">Trade For</th></tr>\n</thead>\n<tbody>\n  ";
-  stack2 = ((stack1 = ((stack1 = depth0.players),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program1, data, depth0),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n</tbody>\n</table>\n</p>\n";
+    + "</h1>\n<p>More: <a data-bind=\"attr: {href: financesUrl}\">Finances</a> | <a data-bind=\"attr: {href: gameLogUrl}\">Game Log</a></p>\n\n<p data-bind=\"visible: currentSeason\">\n  <span data-bind=\"text: numRosterSpots\"></span> open roster spots<br>\n  Payroll: <span data-bind=\"currencyM: payroll\"></span><br>\n  Salary cap: <span data-bind=\"currencyM: salaryCap\"></span><br>\n  Cash: <span data-bind=\"currencyM: team.cash\"></span> (used for buying out players)\n</p>\n\n<!-- ko if: sortable -->\n  <p>Drag and drop row handles to move players between the starting lineup (<span class=\"roster_gs\">&#9632;</span>) and the bench (<span class=\"roster_bench\">&#9632;</span>).</p>\n  <p><button class=\"btn\" id=\"roster-auto-sort\">Auto sort roster</button></p>\n<!-- /ko -->\n\n<p>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"roster\">\n<thead>\n  <tr><th data-bind=\"visible: sortable\"></th><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall Rating\">Ovr</th><th title=\"Potential Rating\">Pot</th><th data-bind=\"visible: currentSeason\">Contract</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th><th data-bind=\"visible: sortable\">Release</th><th data-bind=\"visible: sortable\">Buy out</th><th data-bind=\"visible: showTradeFor\">Trade For</th></tr>\n</thead>\n<tbody data-bind=\"foreach: players\">\n  <tr data-bind=\"attr: {id: 'roster' + pid, class: separator ? 'separator' : ''}\">\n    <td class=\"roster_handle\" data-bind=\"visible: $parent.sortable\"></td>\n    <td>playerNameLabels pid name injury ratings.skills</td>\n    <td data-bind=\"text: pos\"></td>\n    <td data-bind=\"text: age\"></td>\n    <td data-bind=\"text: ratings.ovr\"></td>\n    <td data-bind=\"text: ratings.pot\"></td>\n    <td data-bind=\"visible: $parent.currentSeason\">\n      <span data-bind=\"currencyM: contract.amount\"></span> thru <span data-bind=\"text: contract.exp\"></span>\n    </td>\n    <td data-bind=\"round1: stats.min\"></td>\n    <td data-bind=\"round1: stats.pts\"></td>\n    <td data-bind=\"round1: stats.trb\"></td>\n    <td data-bind=\"round1: stats.ast\"></td>\n    <td data-bind=\"round1: stats.per\"></td>\n    <td data-bind=\"visible: $parent.sortable\">\n      <button class=\"btn btn-mini\" data-action=\"release\" data-bind=\"enable: canRelease, attr: {'data-player-id': pid, 'data-player-name': name, 'data-contract-expiration': contract.exp}\">Release</button>\n    </td>\n    <td data-bind=\"visible: $parent.sortable\">\n      <button class=\"btn btn-mini\" data-action=\"buyOut\" data-bind=\"enable: canBuyOut, attr: {'data-player-id': pid, 'data-player-name': name, 'data-cash-owed': cashOwed}\">Buy out</button>\n    </td>\n    <td data-bind=\"visible: $parent.showTradeFor\">\n      <form action=\"/l/"
+    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "/trade\" method=\"POST\" style=\"margin: 0\">\n        <input type=\"hidden\" name=\"pid\" data-bind=\"attr: {value: pid}\">\n        <button type=\"submit\" class=\"btn btn-mini\">Trade For</button>\n      </form>\n    </td>\n  </tr>\n</tbody>\n</table>\n</p>\n";
   return buffer;
   });
 templates['message'] = template(function (Handlebars,depth0,helpers,partials,data) {

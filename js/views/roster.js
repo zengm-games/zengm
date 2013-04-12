@@ -32,17 +32,21 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/jquery",
     function cbAfterPlayers(tx, abbrev, season, team, players, payroll, updateEvents, cb) {
         var data, i;
 
-        if (players.length > 5) {
-            players[4].separator = true;
-        }
-
         for (i = 0; i < players.length; i++) {
+            players[i].separator = false;
             if (players.length > 5) {
                 players[i].canRelease = true;
                 if (players[i].cashOwed <= team.cash) {
                     players[i].canBuyOut = true;
+                } else {
+                    players[i].canBuyOut = false;
                 }
+            } else {
+                players[i].canRelease = false;
             }
+        }
+        if (players.length > 5) {
+            players[4].separator = true;
         }
 
         data = {
@@ -62,6 +66,7 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/jquery",
         vm.team.name(team.name);
         vm.team.region(team.region);
         vm.showTradeFor(season === g.season && team.tid !== g.userTid);
+        vm.players(players);
         ko.applyBindings(vm);
 
         components.dropdown("roster-dropdown", ["teams", "seasons"], [abbrev, season], updateEvents);
@@ -228,6 +233,7 @@ console.log('hi');
                     name: ko.observable(),
                     region: ko.observable()
                 },
+                players: ko.observable(),
                 showTradeFor: ko.observable(),
                 sortable: ko.observable()
             };

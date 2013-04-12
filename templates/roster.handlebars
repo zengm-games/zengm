@@ -1,7 +1,7 @@
 <form id="roster-dropdown" class="form-inline pull-right"></form>
 
 <h1><span data-bind="text: team.region"></span> <span data-bind="text: team.name"></span> Roster {{new_window}}</h1>
-<p>More: <a data-bind="attr: { href: financesUrl }">Finances</a> | <a data-bind="attr: { href: gameLogUrl }">Game Log</a></p>
+<p>More: <a data-bind="attr: {href: financesUrl}">Finances</a> | <a data-bind="attr: {href: gameLogUrl}">Game Log</a></p>
 
 <p data-bind="visible: currentSeason">
   <span data-bind="text: numRosterSpots"></span> open roster spots<br>
@@ -20,10 +20,35 @@
 <thead>
   <tr><th data-bind="visible: sortable"></th><th>Name</th><th title="Position">Pos</th><th>Age</th><th title="Overall Rating">Ovr</th><th title="Potential Rating">Pot</th><th data-bind="visible: currentSeason">Contract</th><th title="Minutes Per Game">Min</th><th title="Points Per Game">Pts</th><th title="Rebounds Per Game">Reb</th><th title="Assists Per Game">Ast</th><th title="Player Efficiency Rating">PER</th><th data-bind="visible: sortable">Release</th><th data-bind="visible: sortable">Buy out</th><th data-bind="visible: showTradeFor">Trade For</th></tr>
 </thead>
-<tbody>
-  {{#players}}
-    <tr id="roster_{{pid}}"{{#if separator}} class="separator"{{/if}}><td class="roster_handle" data-bind="visible: sortable"></td><td>{{playerNameLabels pid name injury ratings.skills}}</td><td>{{pos}}</td><td>{{age}}</td><td>{{ratings.ovr}}</td><td>{{ratings.pot}}</td><td data-bind="visible: currentSeason">{{currency contract.amount "M"}} thru {{contract.exp}}</td><td>{{round stats.min 1}}</td><td>{{round stats.pts 1}}</td><td>{{round stats.trb 1}}</td><td>{{round stats.ast 1}}</td><td>{{round stats.per 1}}</td><td data-bind="visible: sortable"><button class="btn btn-mini" data-action="release" data-player-id="{{pid}}" data-player-name="{{name}}" data-contract-expiration="{{contract.exp}}"{{#unless canRelease}} disabled="disabled"{{/unless}}>Release</button></td><td data-bind="visible: sortable"><button class="btn btn-mini" data-action="buyOut" data-player-id="{{pid}}" data-player-name="{{name}}" data-cash-owed="{{round cashOwed 2}}"{{#unless canBuyOut}} disabled="disabled"{{/unless}}>Buy out</button></td><td data-bind="visible: showTradeFor"><form action="/l/{{../lid}}/trade" method="POST" style="margin: 0"><input type="hidden" name="pid" value="{{pid}}"><button type="submit" class="btn btn-mini">Trade For</button></form></td></tr>
-  {{/players}}
+<tbody data-bind="foreach: players">
+  <tr data-bind="attr: {id: 'roster' + pid, class: separator ? 'separator' : ''}">
+    <td class="roster_handle" data-bind="visible: $parent.sortable"></td>
+    <td>playerNameLabels pid name injury ratings.skills</td>
+    <td data-bind="text: pos"></td>
+    <td data-bind="text: age"></td>
+    <td data-bind="text: ratings.ovr"></td>
+    <td data-bind="text: ratings.pot"></td>
+    <td data-bind="visible: $parent.currentSeason">
+      <span data-bind="currencyM: contract.amount"></span> thru <span data-bind="text: contract.exp"></span>
+    </td>
+    <td data-bind="round1: stats.min"></td>
+    <td data-bind="round1: stats.pts"></td>
+    <td data-bind="round1: stats.trb"></td>
+    <td data-bind="round1: stats.ast"></td>
+    <td data-bind="round1: stats.per"></td>
+    <td data-bind="visible: $parent.sortable">
+      <button class="btn btn-mini" data-action="release" data-bind="enable: canRelease, attr: {'data-player-id': pid, 'data-player-name': name, 'data-contract-expiration': contract.exp}">Release</button>
+    </td>
+    <td data-bind="visible: $parent.sortable">
+      <button class="btn btn-mini" data-action="buyOut" data-bind="enable: canBuyOut, attr: {'data-player-id': pid, 'data-player-name': name, 'data-cash-owed': cashOwed}">Buy out</button>
+    </td>
+    <td data-bind="visible: $parent.showTradeFor">
+      <form action="/l/{{lid}}/trade" method="POST" style="margin: 0">
+        <input type="hidden" name="pid" data-bind="attr: {value: pid}">
+        <button type="submit" class="btn btn-mini">Trade For</button>
+      </form>
+    </td>
+  </tr>
 </tbody>
 </table>
 </p>

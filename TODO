@@ -17,9 +17,14 @@ roster
       update criteria: gameSim, playerMovement, or change in team or season
   why do all the currencies update every time, even though the values don't change?
     make sure this is working
+  playerNameLabels
+    can i pass a list to knockout binding?
+    if so, redo currency and round to be more general
+  data-cash-owed is not formatted now
   old roster: display static
   new roster, non-user team: display static with trade for buttons
   new roster, user team: display dynamic
+  use $index on foreach rather than separator placeholder
 general things
   how to dynamically update title?
   where to call ko.applyBindings?

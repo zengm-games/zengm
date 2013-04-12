@@ -125,52 +125,6 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
     }
 
     /**
-     * Update the displayed box score, as necessary.
-     *
-     * If the box score is already loaded, nothing is done.
-     *
-     * @memberOf views.gameLog
-     * @param {number} gid Integer game ID for the box score (a negative number means no box score).
-     * @param {function()} cb Callback.
-     */
-    function loadBefore(gid, cb) {
-        if (gid !== vm.boxScore.gid()) {
-            boxScore(gid, function (content) {
-                vm.boxScore.html(content);
-                vm.boxScore.gid(gid);
-                cb();
-            });
-        } else {
-            cb();
-        }
-    }
-
-
-    function display(updateEvents, cb) {
-        var data;
-
-        if (document.getElementById("league_content").dataset.id !== "gameLog") {
-            data = {
-                container: "league_content",
-                template: "gameLog",
-                title: "Game Log",
-                vars: {}
-            };
-            ui.update(data);
-            ko.applyBindings(vm);
-        }
-
-        components.dropdown("game-log-dropdown", ["teams", "seasons"], [vm.abbrev(), vm.season()], updateEvents, vm.boxScore.gid() >= 0 ? vm.boxScore.gid() : undefined);
-
-        // Game log list dynamic highlighting
-        $("#game-log-list").on("click", "tbody tr", function (event) {
-            $(this).addClass("alert-info").siblings().removeClass("alert-info");
-        });
-
-        cb();
-    }
-
-    /**
      * Update the game log list, as necessary.
      *
      * If the game log list is already loaded, nothing is done. If the game log list is loaded and a new game has been played, update. If the game log list is not loaded, load it.
@@ -200,6 +154,51 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
                 for (i = games.length - 1; i >= 0; i--) {
                     vm.gamesList.games.unshift(games[i]);
                 }
+                cb();
+            });
+        } else {
+            cb();
+        }
+    }
+
+    function display(updateEvents, cb) {
+        var data;
+
+        if (document.getElementById("league_content").dataset.id !== "gameLog") {
+            data = {
+                container: "league_content",
+                template: "gameLog",
+                title: "Game Log",
+                vars: {}
+            };
+            ui.update(data);
+            ko.applyBindings(vm);
+        }
+
+        components.dropdown("game-log-dropdown", ["teams", "seasons"], [vm.abbrev(), vm.season()], updateEvents, vm.boxScore.gid() >= 0 ? vm.boxScore.gid() : undefined);
+
+        // Game log list dynamic highlighting
+        $("#game-log-list").on("click", "tbody tr", function (event) {
+            $(this).addClass("alert-info").siblings().removeClass("alert-info");
+        });
+
+        cb();
+    }
+
+    /**
+     * Update the displayed box score, as necessary.
+     *
+     * If the box score is already loaded, nothing is done.
+     *
+     * @memberOf views.gameLog
+     * @param {number} gid Integer game ID for the box score (a negative number means no box score).
+     * @param {function()} cb Callback.
+     */
+    function loadBefore(gid, cb) {
+        if (gid !== vm.boxScore.gid()) {
+            boxScore(gid, function (content) {
+                vm.boxScore.html(content);
+                vm.boxScore.gid(gid);
                 cb();
             });
         } else {

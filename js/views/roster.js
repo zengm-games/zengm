@@ -119,6 +119,31 @@ console.log('editableChanged ' + editable)
         }
     }
 
+    function display(updateEvents, cb) {
+        var data;
+
+        if (document.getElementById("league_content").dataset.id !== "roster") {
+            data = {
+                container: "league_content",
+                template: "roster",
+//                title: team.region + " " + team.name + " " + "Roster - " + season,
+                title: vm.abbrev() + " " + "Roster - " + vm.season(),
+                vars: {}
+            };
+            ui.update(data);
+            ko.applyBindings(vm);
+        }
+
+        if (vm.editable()) {
+            highlightHandles();
+        }
+        editableChanged(vm.editable());
+
+        components.dropdown("roster-dropdown", ["teams", "seasons"], [vm.abbrev(), vm.season()], updateEvents);
+
+        cb();
+    }
+
     function loadBefore(abbrev, tid, season, cb) {
         var cbAfterPlayers, data, tx;
 console.log("loadBefore")
@@ -225,31 +250,6 @@ console.log("loadBefore")
                 };
             }
         };
-    }
-
-    function display(updateEvents, cb) {
-        var data;
-
-        if (document.getElementById("league_content").dataset.id !== "roster") {
-            data = {
-                container: "league_content",
-                template: "roster",
-//                title: team.region + " " + team.name + " " + "Roster - " + season,
-                title: vm.abbrev() + " " + "Roster - " + vm.season(),
-                vars: {}
-            };
-            ui.update(data);
-            ko.applyBindings(vm);
-        }
-
-        if (vm.editable()) {
-            highlightHandles();
-        }
-        editableChanged(vm.editable());
-
-        components.dropdown("roster-dropdown", ["teams", "seasons"], [vm.abbrev(), vm.season()], updateEvents);
-
-        cb();
     }
 
     function update(abbrev, tid, season, updateEvents, cb) {

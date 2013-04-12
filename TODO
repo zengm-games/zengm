@@ -2,7 +2,12 @@ smarter realtime
 ----------------
 
 roster
-  why are non-user teams sortable?
+  get rid of data attributes in buyout/release buttons (except pid)
+  sortable
+    can i move initialization code into updateEditable somehow and only run it on first call?
+    why do highlightHandles not persist on first load?
+      they are being triggered when editable is set, which is before the players have switched. really, all these changes should be pushed to the UI simultaneously
+        if this isn't possible, have highlightHandles subscribe to player and check editable
   players
     shouldn't flicker on update of user's current roster
   data-cash-owed is not formatted now
@@ -21,7 +26,13 @@ general things
     maybe have app-level vm (g.vm?) with title, play menu
   somehow need to delete these viewmodels when the view is deleted (i.e. page change) otherwise contents will get stale. or at least come up with a way to update when appropriate.
   where to call ko.applyBindings?
-    performance considerations... see old TODO
+  performance considerations...
+    http://stackoverflow.com/questions/9709374/knockout-js-incredibly-slow-under-semi-large-datasets
+    http://www.strathweb.com/2012/07/knockout-js-pro-tips-working-with-observable-arrays/
+    http://stackoverflow.com/questions/9589419/difference-between-knockout-view-models-declared-as-object-literals-vs-functions
+    http://stackoverflow.com/questions/9927213/performance-tuning-a-knockout-application-guidelines-for-improving-response-ti
+    http://stackoverflow.com/questions/9242147/how-to-structure-a-single-page-app-with-knockout-js
+    http://tekpub.com/productions/knockout
   updateEvents checking in viewHelpers.newLeague?
     also, if cb is undefined make it an empty function?
   reduce boilerplate

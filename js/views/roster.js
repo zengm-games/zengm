@@ -10,6 +10,7 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/knockout
     function highlightHandles() {
         var i;
 
+console.log('highlightHandles')
         i = 1;
         $("#roster tbody").children().each(function () {
             var tr;
@@ -27,6 +28,55 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/knockout
             }
             i++;
         });
+    }
+
+    function updateEditable(editable) {
+console.log('fuck + ' + editable)
+        if (vm.editable()) {
+            // Roster reordering
+            highlightHandles();
+            $("#roster tbody").sortable("enable");
+            $("#roster-auto-sort").click(function (event) {
+                api.rosterAutoSort();
+            });
+
+            // Release player
+            $("#roster button").click(function (event) {
+                var tr;
+
+                if (this.dataset.action === "release") {
+                    if (window.confirm("Are you sure you want to release " + this.dataset.playerName + "?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in " + this.dataset.contractExpiration + ".")) {
+                        tr = this.parentNode.parentNode;
+                        api.rosterRelease(this.dataset.playerId, function (error) {
+                            if (error) {
+                                alert("Error: " + error);
+                            } else {
+                                Davis.location.assign(new Davis.Request(Davis.location.current()));
+                            }
+                        });
+                    }
+                } else if (this.dataset.action === "buyOut") {
+                    if (vm.team.cash() > this.dataset.cashOwed) {
+                        if (window.confirm("Are you sure you want to buy out " + this.dataset.playerName + "? You will have to pay him the $" + this.dataset.cashOwed + "M remaining on his contract from your current cash reserves of " + helpers.formatCurrency(vm.team.cash(), "M") + ". He will then become a free agent and his contract will no longer count towards your salary cap.")) {
+                            tr = this.parentNode.parentNode;
+                            api.rosterBuyOut(this.dataset.playerId, function (error) {
+                                if (error) {
+                                    alert("Error: " + error);
+                                } else {
+                                    Davis.location.assign(new Davis.Request(Davis.location.current()));
+                                }
+                            });
+                        }
+                    } else {
+                        alert("Error: You only have " + helpers.formatCurrency(vm.team.cash(), "M") + " in cash, but it would take $" + this.dataset.cashOwed + "M to buy out " + this.dataset.playerName + ".");
+                    }
+                }/* else if (this.dataset.action === "tradeFor") {
+
+                }*/
+            });
+        } else {
+            $("#roster tbody").sortable("disable");
+        }
     }
 
     function cbAfterPlayers(tx, abbrev, season, team, players, payroll, updateEvents, cb) {
@@ -66,85 +116,20 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/knockout
 
         components.dropdown("roster-dropdown", ["teams", "seasons"], [abbrev, season], updateEvents);
 
-        if (vm.sortable()) {
-            // Roster reordering
-            highlightHandles();
-            $("#roster tbody").sortable({
-                helper: function (e, ui) {
-                    // Return helper which preserves the width of table cells being reordered
-                    ui.children().each(function () {
-                        $(this).width($(this).width());
-                    });
-                    return ui;
-                },
-                cursor: "move",
-                update: function (e, ui) {
-                    var i, sortedPids;
-
-                    sortedPids = $(this).sortable("toArray");
-                    for (i = 0; i < sortedPids.length; i++) {
-                        sortedPids[i] = parseInt(sortedPids[i].substr(7), 10);
-                    }
-
-                    api.rosterReorder(sortedPids, function () {
-                        highlightHandles();
-                    });
-                }
-            }).disableSelection();
-            $("#roster-auto-sort").click(function (event) {
-                api.rosterAutoSort();
-            });
-
-            // Release player
-            $("#roster button").click(function (event) {
-                var tr;
-
-                if (this.dataset.action === "release") {
-                    if (window.confirm("Are you sure you want to release " + this.dataset.playerName + "?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in " + this.dataset.contractExpiration + ".")) {
-                        tr = this.parentNode.parentNode;
-                        api.rosterRelease(this.dataset.playerId, function (error) {
-                            if (error) {
-                                alert("Error: " + error);
-                            } else {
-                                Davis.location.assign(new Davis.Request(Davis.location.current()));
-                            }
-                        });
-                    }
-                } else if (this.dataset.action === "buyOut") {
-                    if (team.cash > this.dataset.cashOwed) {
-                        if (window.confirm("Are you sure you want to buy out " + this.dataset.playerName + "? You will have to pay him the $" + this.dataset.cashOwed + "M remaining on his contract from your current cash reserves of " + helpers.formatCurrency(team.cash, "M") + ". He will then become a free agent and his contract will no longer count towards your salary cap.")) {
-                            tr = this.parentNode.parentNode;
-                            api.rosterBuyOut(this.dataset.playerId, function (error) {
-                                if (error) {
-                                    alert("Error: " + error);
-                                } else {
-                                    Davis.location.assign(new Davis.Request(Davis.location.current()));
-                                }
-                            });
-                        }
-                    } else {
-                        alert("Error: You only have " + helpers.formatCurrency(team.cash, "M") + " in cash, but it would take $" + this.dataset.cashOwed + "M to buy out " + this.dataset.playerName + ".");
-                    }
-                }/* else if (this.dataset.action === "tradeFor") {
-
-                }*/
-            });
-        }
-
         if (cb !== undefined) {
             cb();
         }
     }
 
     function update(abbrev, tid, season, updateEvents, cb) {
-        var cbLoaded, data, sortable, tx;
+        var cbLoaded, data, tx;
 
 
         cbLoaded = function () {
             if ((season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || abbrev !== vm.abbrev() || season !== vm.season()) {
 console.log("LOAD")
                 // We need to update, so first do all the stuff common to every type of update
-                vm.sortable(false);
+
                 tx = g.dbl.transaction(["players", "releasedPlayers", "schedule", "teams"]);
 
                 tx.objectStore("teams").get(tid).onsuccess = function (event) {
@@ -165,7 +150,9 @@ console.log("LOAD")
                     if (season === g.season) {
                         // Show players currently on the roster
                         if (tid === g.userTid) {
-                            vm.sortable(true);
+                            vm.editable(true);
+                        } else {
+                            vm.editable(false);
                         }
                         tx.objectStore("schedule").getAll().onsuccess = function (event) {
                             var i, numGamesRemaining, schedule;
@@ -191,6 +178,7 @@ console.log("LOAD")
                         };
                     } else {
                         // Show all players with stats for the given team and year
+                        vm.editable(false);
                         tx.objectStore("players").index("statsTids").getAll(tid).onsuccess = function (event) {
                             var i, players;
 
@@ -219,6 +207,31 @@ console.log('NO ROSTER YET')
             };
             ui.update(data);
 
+            // Set up sorting, but disable it by default
+            $("#roster tbody").sortable({
+                helper: function (e, ui) {
+                    // Return helper which preserves the width of table cells being reordered
+                    ui.children().each(function () {
+                        $(this).width($(this).width());
+                    });
+                    return ui;
+                },
+                cursor: "move",
+                update: function (e, ui) {
+                    var i, sortedPids;
+
+                    sortedPids = $(this).sortable("toArray");
+                    for (i = 0; i < sortedPids.length; i++) {
+                        sortedPids[i] = parseInt(sortedPids[i].substr(7), 10);
+                    }
+
+                    api.rosterReorder(sortedPids, function () {
+                        highlightHandles();
+                    });
+                },
+                disabled: true
+            }).disableSelection();
+
             vm = {
                 abbrev: ko.observable(),
                 season: ko.observable(),
@@ -232,7 +245,7 @@ console.log('NO ROSTER YET')
                 },
                 players: ko.observable([]),
                 showTradeFor: ko.observable(),
-                sortable: ko.observable()
+                editable: ko.observable()
             };
             vm.currentSeason = ko.computed(function () {
                 return g.season === vm.season();
@@ -243,6 +256,7 @@ console.log('NO ROSTER YET')
             vm.gameLogUrl = ko.computed(function () {
                 return "/l/" + g.lid + "/game_log/" + vm.abbrev() + "/" + vm.season();
             });
+            vm.editable.subscribe(updateEditable);
             ko.applyBindings(vm);
 
             cbLoaded();

@@ -20,21 +20,12 @@ general things
   flow
     get() and post() handle inputs
     update() is the main function that determines what is called
-      if nothing needs to be updated, this should do nothing
-      if something needs to be updated...
-        if it's a new load, create stub vm from scrach
-        loadBefore: load everything that can be done relatively quickly (i.e. not the game log list) and put it in the vm (typically all together at the end, so updates are all done together)
-        display: display the template, active knockout, displaying what we can early
-        loadAfter: handle any slow stuff after this, updating the vm as appropriate
-      where does DOM crap go? display or loadAfter?
-  flicker on page load - can i somehow not show the DOM elements immediately?
-    NEED TO THINK MORE ABOUT THIS
-      option: create league_content_new, add new stuff to it while hidden, then delete league_content, rename league_content_new, and make it visible
-      or.. why am i displaying the template so far before the data is ready? just wait and do it right away. will there still be a flicker? probably a small one
-    http://stackoverflow.com/questions/14583018/knockout-flickering-issue
-    http://stackoverflow.com/questions/12775766/knockout-js-stop-divs-binded-to-visible-from-flashing-on-screen
-      could do this right before a template is loaded to league_content container
-    https://groups.google.com/forum/?fromgroups=#!topic/knockoutjs/kmeozHCMrIk
+      can check what needs to be updated here or in loadBefore. if here, then just call display directly if nothing needs updating.
+      if it's a new load, create stub vm from scrach
+    loadBefore: load everything that can be done relatively quickly (i.e. not the game log list) and put it in the vm (typically all together at the end, so updates are all done together)
+    display: display the template, active knockout, displaying what we can early
+    loadAfter: handle any slow stuff after this, updating the vm as appropriate
+    where does DOM crap go? display or loadAfter?
   how to dynamically update title?
     maybe have app-level vm (g.vm?) with title, play menu
   somehow need to delete these viewmodels when the view is deleted (i.e. page change) otherwise contents will get stale. or at least come up with a way to update when appropriate.
@@ -48,6 +39,8 @@ general things
   updateEvents checking in viewHelpers.newLeague?
     also, if cb is undefined make it an empty function?
   reduce boilerplate
+gameLog
+  "Loading..." message in games list, somehow
 ui.realtimeUpdate should be used in more places so updateEvent is pervasive
   how can this be done for automatic redirects? wrapper function?
   search for anywhere Davis is directly called.

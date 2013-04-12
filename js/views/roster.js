@@ -119,10 +119,33 @@ console.log('editableChanged ' + editable)
         }
     }
 
-    // We need to update, so first do all the stuff common to every type of update
     function loadBefore(abbrev, tid, season, cb) {
-        var tx;
+        var cbAfterPlayers, data, tx;
 console.log("loadBefore")
+
+        cbAfterPlayers = function (data) {
+            var myMapping;
+
+            myMapping = {
+                players: {
+                    key: function (data) {
+                        return ko.utils.unwrapObservable(data.pid);
+                    }
+                }
+            };
+
+            mapping.fromJS(data, myMapping, vm);
+
+            cb();
+        };
+
+        data = {
+            abbrev: abbrev,
+            season: season,
+            editable: season === g.season && tid === g.userTid,
+            salaryCap: g.salaryCap / 1000,
+            showTradeFor: season === g.season && tid !== g.userTid
+        };
 
         tx = g.dbl.transaction(["players", "releasedPlayers", "schedule", "teams"]);
 
@@ -135,7 +158,7 @@ console.log("loadBefore")
                     break;
                 }
             }
-            team = {region: teamAll.region, name: teamAll.name, cash: teamAll.seasons[i].cash / 1000};
+            data.team = {region: teamAll.region, name: teamAll.name, cash: teamAll.seasons[i].cash / 1000};
 
             attributes = ["pid", "name", "pos", "age", "contract", "cashOwed", "rosterOrder", "injury"];
             ratings = ["ovr", "pot", "skills"];
@@ -163,7 +186,7 @@ console.log("loadBefore")
                         for (i = 0; i < players.length; i++) {
                             if (tid === g.userTid && players.length > 5) {
                                 players[i].canRelease = true;
-                                if (tid === g.userTid && players[i].cashOwed <= team.cash) {
+                                if (tid === g.userTid && players[i].cashOwed <= data.team.cash) {
                                     players[i].canBuyOut = true;
                                 } else {
                                     players[i].canBuyOut = false;
@@ -174,8 +197,11 @@ console.log("loadBefore")
                             }
                         }
 
+                        data.players = players;
+
                         db.getPayroll(tx, tid, function (payroll) {
-                            cb(team, players, payroll / 1000);
+                            data.payroll = payroll / 1000;
+                            cbAfterPlayers(data);
                         });
                     };
                 };
@@ -192,41 +218,24 @@ console.log("loadBefore")
                         players[i].canRelease = false;
                     }
 
-                    cb(team, players, null);
+                    data.players = players;
+                    data.payroll = null;
+
+                    cbAfterPlayers(data);
                 };
             }
         };
     }
 
-    function display(abbrev, tid, season, team, players, payroll, updateEvents, cb) {
-        var data, myMapping;
-
-        myMapping = {
-            players: {
-                key: function (data) {
-                    return ko.utils.unwrapObservable(data.pid);
-                }
-            }
-        };
-
-        mapping.fromJS({
-            abbrev: abbrev,
-            season: season,
-            editable: season === g.season && tid === g.userTid,
-            payroll: payroll,
-            salaryCap: g.salaryCap / 1000,
-            showTradeFor: season === g.season && tid !== g.userTid,
-            players: players,
-            team: team
-        }, myMapping, vm);
-
+    function display(updateEvents, cb) {
+        var data;
 
         if (document.getElementById("league_content").dataset.id !== "roster") {
             data = {
                 container: "league_content",
                 template: "roster",
 //                title: team.region + " " + team.name + " " + "Roster - " + season,
-                title: abbrev + " " + "Roster - " + season,
+                title: vm.abbrev() + " " + "Roster - " + vm.season(),
                 vars: {}
             };
             ui.update(data);
@@ -238,7 +247,7 @@ console.log("loadBefore")
         }
         editableChanged(vm.editable());
 
-        components.dropdown("roster-dropdown", ["teams", "seasons"], [abbrev, season], updateEvents);
+        components.dropdown("roster-dropdown", ["teams", "seasons"], [vm.abbrev(), vm.season()], updateEvents);
 
         cb();
     }
@@ -274,9 +283,11 @@ console.log("loadBefore")
         }
 
         if ((season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || abbrev !== vm.abbrev() || season !== vm.season()) {
-            loadBefore(abbrev, tid, season, function (team, players, payroll) {
-                display(abbrev, tid, season, team, players, payroll, updateEvents, cb);
+            loadBefore(abbrev, tid, season, function () {
+                display(updateEvents, cb);
             });
+        } else {
+            display(updateEvents, cb);
         }
     }
 

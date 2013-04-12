@@ -81,45 +81,6 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
     }
 
     /**
-     * Update the game log list, as necessary.
-     *
-     * If the game log list is already loaded, nothing is done. If the game log list is loaded and a new game has been played, update. If the game log list is not loaded, load it.
-     *
-     * @memberOf views.gameLog
-     * @param {string} abbrev Abbrev of the team for the list of games.
-     * @param {number} season Season for the list of games.
-     * @param {number} gid Integer game ID for the box score (a negative number means no box score), which is used only for highlighting the relevant entry in the list.
-     * @param {Array.<string>} updateEvents Information about what caused this update, e.g. "gameSim" or "newPhase". Empty on normal page loads (i.e. from clicking a link).
-     * @param {function()} cb Callback.
-     */
-    function updateGameLogList(abbrev, season, gid, updateEvents, cb) {
-        var i;
-
-        if (abbrev !== vm.gamesList.abbrev() || season !== vm.gamesList.season()) {
-            // Load all games in list
-            vm.gamesList.games([]);
-//            gameLogListTbodyEl.innerHTML = '<tr><td colspan="3" style="padding: 4px 5px;">Loading...</td></tr>';
-            gameLogList(abbrev, season, gid, function (games) {
-                vm.gamesList.games(games);
-                vm.gamesList.abbrev(abbrev);
-                vm.gamesList.season(season);
-                cb();
-            });
-        } else if (updateEvents.indexOf("gameSim") >= 0 && season === g.season) {
-            // Partial update of only new games
-            gameLogList(abbrev, season, gid, function (games) {
-                for (i = games.length - 1; i >= 0; i--) {
-                    vm.gamesList.games.unshift(games[i]);
-                }
-                cb();
-            });
-        } else {
-            cb();
-        }
-    }
-
-
-    /**
      * Generate a box score.
      *
      * @memberOf views.gameLog
@@ -172,11 +133,74 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
      * @param {number} gid Integer game ID for the box score (a negative number means no box score).
      * @param {function()} cb Callback.
      */
-    function updateBoxScore(gid, cb) {
+    function loadBefore(gid, cb) {
         if (gid !== vm.boxScore.gid()) {
             boxScore(gid, function (content) {
                 vm.boxScore.html(content);
                 vm.boxScore.gid(gid);
+                cb();
+            });
+        } else {
+            cb();
+        }
+    }
+
+
+    function display(updateEvents, cb) {
+        var data;
+
+        if (document.getElementById("league_content").dataset.id !== "gameLog") {
+            data = {
+                container: "league_content",
+                template: "gameLog",
+                title: "Game Log",
+                vars: {}
+            };
+            ui.update(data);
+            ko.applyBindings(vm);
+        }
+
+        components.dropdown("game-log-dropdown", ["teams", "seasons"], [vm.abbrev(), vm.season()], updateEvents, vm.boxScore.gid() >= 0 ? vm.boxScore.gid() : undefined);
+
+        // Game log list dynamic highlighting
+        $("#game-log-list").on("click", "tbody tr", function (event) {
+            $(this).addClass("alert-info").siblings().removeClass("alert-info");
+        });
+
+        cb();
+    }
+
+    /**
+     * Update the game log list, as necessary.
+     *
+     * If the game log list is already loaded, nothing is done. If the game log list is loaded and a new game has been played, update. If the game log list is not loaded, load it.
+     *
+     * @memberOf views.gameLog
+     * @param {string} abbrev Abbrev of the team for the list of games.
+     * @param {number} season Season for the list of games.
+     * @param {number} gid Integer game ID for the box score (a negative number means no box score), which is used only for highlighting the relevant entry in the list.
+     * @param {Array.<string>} updateEvents Information about what caused this update, e.g. "gameSim" or "newPhase". Empty on normal page loads (i.e. from clicking a link).
+     * @param {function()} cb Callback.
+     */
+    function loadAfter(abbrev, season, gid, updateEvents, cb) {
+        var i;
+
+        if (abbrev !== vm.gamesList.abbrev() || season !== vm.gamesList.season()) {
+            // Load all games in list
+            vm.gamesList.games([]);
+//            gameLogListTbodyEl.innerHTML = '<tr><td colspan="3" style="padding: 4px 5px;">Loading...</td></tr>';
+            gameLogList(abbrev, season, gid, function (games) {
+                vm.gamesList.games(games);
+                vm.gamesList.abbrev(abbrev);
+                vm.gamesList.season(season);
+                cb();
+            });
+        } else if (updateEvents.indexOf("gameSim") >= 0 && season === g.season) {
+            // Partial update of only new games
+            gameLogList(abbrev, season, gid, function (games) {
+                for (i = games.length - 1; i >= 0; i--) {
+                    vm.gamesList.games.unshift(games[i]);
+                }
                 cb();
             });
         } else {
@@ -197,31 +221,7 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
      * @param {function()=} cb Optional callback.
      */
     function update(abbrev, season, gid, updateEvents, cb) {
-        var cbLoaded, data;
-
-        cbLoaded = function () {
-            components.dropdown("game-log-dropdown", ["teams", "seasons"], [abbrev, season], updateEvents, gid >= 0 ? gid : undefined);
-
-            // Game log list dynamic highlighting
-            $("#game-log-list").on("click", "tbody tr", function (event) {
-                $(this).addClass("alert-info").siblings().removeClass("alert-info");
-            });
-
-            updateBoxScore(gid, function () {
-                updateGameLogList(abbrev, season, gid, updateEvents, cb);
-            });
-        };
-
-
         if (document.getElementById("league_content").dataset.id !== "gameLog") {
-            data = {
-                container: "league_content",
-                template: "gameLog",
-                title: "Game Log",
-                vars: {}
-            };
-            ui.update(data);
-
             vm = {
                 abbrev: ko.observable(abbrev),
                 season: ko.observable(season),
@@ -241,14 +241,16 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
             vm.financesUrl = ko.computed(function () {
                 return "/l/" + g.lid + "/team_finances/" + vm.abbrev();
             });
-            ko.applyBindings(vm);
-
-            cbLoaded();
         } else {
             vm.abbrev(abbrev);
             vm.season(season);
-            cbLoaded();
         }
+
+        loadBefore(gid, function () {
+            display(updateEvents, function () {
+                loadAfter(abbrev, season, gid, updateEvents, cb);
+            });
+        });
     }
 
     /**

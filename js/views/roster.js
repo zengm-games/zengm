@@ -10,7 +10,6 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/knockout
     function highlightHandles() {
         var i;
 
-console.log('highlightHandles')
         i = 1;
         $("#roster tbody").children().each(function () {
             var tr;
@@ -106,51 +105,6 @@ console.log('highlightHandles')
         }
     }
 
-    function display(tx, abbrev, tid, season, editable, team, players, payroll, updateEvents, cb) {
-        var data, myMapping;
-
-        myMapping = {
-            players: {
-                key: function (data) {
-                    return ko.utils.unwrapObservable(data.pid);
-                }
-            }
-        };
-
-        mapping.fromJS({
-            abbrev: abbrev,
-            season: season,
-            editable: editable,
-            numRosterSpots: 15 - players.length,
-            payroll: payroll,
-            salaryCap: g.salaryCap / 1000,
-            showTradeFor: season === g.season && tid !== g.userTid,
-            players: players,
-            team: team
-        }, myMapping, vm);
-
-
-        if (document.getElementById("league_content").dataset.id !== "roster") {
-            data = {
-                container: "league_content",
-                template: "roster",
-//                title: team.region + " " + team.name + " " + "Roster - " + season,
-                title: abbrev + " " + "Roster - " + season,
-                vars: {}
-            };
-            ui.update(data);
-            ko.applyBindings(vm);
-        }
-
-        if (editable) {
-            highlightHandles();
-        }
-
-        components.dropdown("roster-dropdown", ["teams", "seasons"], [abbrev, season], updateEvents);
-
-        cb();
-    }
-
     // We need to update, so first do all the stuff common to every type of update
     function loadBefore(abbrev, tid, season, cb) {
         var tx;
@@ -173,12 +127,8 @@ console.log("loadBefore")
             ratings = ["ovr", "pot", "skills"];
             stats = ["min", "pts", "trb", "ast", "per"];
 
-            editable = false;
             if (season === g.season) {
                 // Show players currently on the roster
-                if (tid === g.userTid) {
-                    editable = true;
-                }
                 tx.objectStore("schedule").getAll().onsuccess = function (event) {
                     var i, numGamesRemaining, schedule;
 
@@ -211,7 +161,7 @@ console.log("loadBefore")
                         }
 
                         db.getPayroll(tx, tid, function (payroll) {
-                            cb(tx, editable, team, players, payroll / 1000);
+                            cb(team, players, payroll / 1000);
                         });
                     };
                 };
@@ -228,17 +178,62 @@ console.log("loadBefore")
                         players[i].canRelease = false;
                     }
 
-                    cb(tx, editable, team, players, null);
+                    cb(team, players, null);
                 };
             }
         };
     }
+
+    function display(abbrev, tid, season, team, players, payroll, updateEvents, cb) {
+        var data, myMapping;
+
+        myMapping = {
+            players: {
+                key: function (data) {
+                    return ko.utils.unwrapObservable(data.pid);
+                }
+            }
+        };
+
+        mapping.fromJS({
+            abbrev: abbrev,
+            season: season,
+            editable: season === g.season && tid === g.userTid,
+            payroll: payroll,
+            salaryCap: g.salaryCap / 1000,
+            showTradeFor: season === g.season && tid !== g.userTid,
+            players: players,
+            team: team
+        }, myMapping, vm);
+
+
+        if (document.getElementById("league_content").dataset.id !== "roster") {
+            data = {
+                container: "league_content",
+                template: "roster",
+//                title: team.region + " " + team.name + " " + "Roster - " + season,
+                title: abbrev + " " + "Roster - " + season,
+                vars: {}
+            };
+            ui.update(data);
+            ko.applyBindings(vm);
+        }
+
+        if (vm.editable()) {
+            highlightHandles();
+            editableChanged(vm.editable());
+        }
+
+        components.dropdown("roster-dropdown", ["teams", "seasons"], [abbrev, season], updateEvents);
+
+        cb();
+    }
+
     function update(abbrev, tid, season, updateEvents, cb) {
         if (document.getElementById("league_content").dataset.id !== "roster") {
             vm = {
                 abbrev: ko.observable(),
                 season: ko.observable(),
-                numRosterSpots: ko.observable(),
                 payroll: ko.observable(),
                 salaryCap: ko.observable(),
                 team: {
@@ -250,6 +245,9 @@ console.log("loadBefore")
                 showTradeFor: ko.observable(),
                 editable: ko.observable()
             };
+            vm.numRosterSpots = ko.computed(function () {
+                return 15 - vm.players().length;
+            });
             vm.currentSeason = ko.computed(function () {
                 return g.season === vm.season();
             });
@@ -259,12 +257,11 @@ console.log("loadBefore")
             vm.gameLogUrl = ko.computed(function () {
                 return "/l/" + g.lid + "/game_log/" + vm.abbrev() + "/" + vm.season();
             });
-            vm.editable.subscribe(editableChanged);
         }
 
         if ((season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || abbrev !== vm.abbrev() || season !== vm.season()) {
-            loadBefore(abbrev, tid, season, function (tx, editable, team, players, payroll) {
-                display(tx, abbrev, tid, season, editable, team, players, null, updateEvents, function () {
+            loadBefore(abbrev, tid, season, function (team, players, payroll) {
+                display(abbrev, tid, season, team, players, payroll, updateEvents, function () {
                     if (cb !== undefined) {
                         cb();
                     }

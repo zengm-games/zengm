@@ -3,13 +3,14 @@ smarter realtime
 
 roster
   players
-    shouldn't flicker on update
+    shouldn't flicker on update of user's current roster
   data-cash-owed is not formatted now
   options
     old roster: display static
     new roster, non-user team: display static with trade for buttons
     new roster, user team: display dynamic
-  use $index on foreach rather than separator placeholder
+  more knockoutifying
+    reordering
   does vm.players itself need to be observable?
   make sure DOM updates are correct
   check release, buy out, trade for

@@ -33,7 +33,6 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/knockout
         var data, i, myMapping, x;
 
         for (i = 0; i < players.length; i++) {
-            players[i].separator = false;
             if (players.length > 5) {
                 players[i].canRelease = true;
                 if (players[i].cashOwed <= team.cash) {
@@ -44,9 +43,6 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/knockout
             } else {
                 players[i].canRelease = false;
             }
-        }
-        if (players.length > 5) {
-            players[4].separator = true;
         }
 
         myMapping = {

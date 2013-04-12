@@ -21,10 +21,10 @@
   <tr><th data-bind="visible: sortable"></th><th>Name</th><th title="Position">Pos</th><th>Age</th><th title="Overall Rating">Ovr</th><th title="Potential Rating">Pot</th><th data-bind="visible: currentSeason">Contract</th><th title="Minutes Per Game">Min</th><th title="Points Per Game">Pts</th><th title="Rebounds Per Game">Reb</th><th title="Assists Per Game">Ast</th><th title="Player Efficiency Rating">PER</th><th data-bind="visible: sortable">Release</th><th data-bind="visible: sortable">Buy out</th><th data-bind="visible: showTradeFor">Trade For</th></tr>
 </thead>
 <tbody data-bind="foreach: players">
-  <tr data-bind="attr: {id: 'roster' + pid, class: separator ? 'separator' : ''}">
+  <tr data-bind="attr: {class: $index() === 4 ? 'separator' : ''}">
     <td class="roster_handle" data-bind="visible: $parent.sortable"></td>
     <td data-bind="playerNameLabels: [pid, name, injury, ratings.skills]"></td>
-    <td data-bind="text: pos"></td>
+    <td data-bind="text: $index"></td>
     <td data-bind="text: age"></td>
     <td data-bind="text: ratings.ovr"></td>
     <td data-bind="text: ratings.pot"></td>

@@ -11,6 +11,7 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/knockout
         var i;
 
 console.log('highlightHandles')
+console.log(vm.players().length)
         i = 1;
         $("#roster tbody").children().each(function () {
             var tr;
@@ -64,7 +65,6 @@ console.log('highlightHandles')
 
         if (editable) {
             // Roster reordering
-            highlightHandles();
             rosterTbody.sortable("enable").disableSelection();
             $("#roster-auto-sort").click(function (event) {
                 api.rosterAutoSort();
@@ -109,7 +109,7 @@ console.log('highlightHandles')
         }
     }
 
-    function cbAfterPlayers(tx, abbrev, season, team, players, payroll, updateEvents, cb) {
+    function cbAfterPlayers(tx, abbrev, tid, season, editable, team, players, payroll, updateEvents, cb) {
         var data, i, mapPlayersByPid, x;
 
         for (i = 0; i < players.length; i++) {
@@ -133,16 +133,26 @@ console.log('highlightHandles')
             }
         };
 
-        vm.abbrev(abbrev);
+        /*vm.abbrev(abbrev);
         vm.season(season);
         vm.numRosterSpots(15 - players.length);
         vm.payroll(payroll);
         vm.salaryCap(g.salaryCap / 1000);
-        vm.team.cash(team.cash);
-        vm.team.name(team.name);
-        vm.team.region(team.region);
-        vm.showTradeFor(season === g.season && team.tid !== g.userTid);
-        mapping.fromJS({players: players}, mapPlayersByPid, vm);
+        vm.showTradeFor(season === g.season && tid !== g.userTid);*/
+        mapping.fromJS({
+            abbrev: abbrev,
+            season: season,
+            editable: editable,
+            numRosterSpots: 15 - players.length,
+            payroll: payroll,
+            salaryCap: g.salaryCap / 1000,
+            showTradeFor: season === g.season && tid !== g.userTid,
+            players: players,
+            team: team
+        }, mapPlayersByPid, vm);
+        if (editable) {
+            highlightHandles();
+        }
 
         components.dropdown("roster-dropdown", ["teams", "seasons"], [abbrev, season], updateEvents);
 
@@ -163,7 +173,7 @@ console.log("LOAD")
                 tx = g.dbl.transaction(["players", "releasedPlayers", "schedule", "teams"]);
 
                 tx.objectStore("teams").get(tid).onsuccess = function (event) {
-                    var attributes, i, ratings, stats, team, teamAll;
+                    var attributes, editable, i, ratings, stats, team, teamAll;
 
                     teamAll = event.target.result;
                     for (i = 0; i < teamAll.seasons.length; i++) {
@@ -171,18 +181,17 @@ console.log("LOAD")
                             break;
                         }
                     }
-                    team = {tid: tid, region: teamAll.region, name: teamAll.name, cash: teamAll.seasons[i].cash / 1000};
+                    team = {region: teamAll.region, name: teamAll.name, cash: teamAll.seasons[i].cash / 1000};
 
                     attributes = ["pid", "name", "pos", "age", "contract", "cashOwed", "rosterOrder", "injury"];
                     ratings = ["ovr", "pot", "skills"];
                     stats = ["min", "pts", "trb", "ast", "per"];
 
+                    editable = false;
                     if (season === g.season) {
                         // Show players currently on the roster
                         if (tid === g.userTid) {
-                            vm.editable(true);
-                        } else {
-                            vm.editable(false);
+                            editable = true;
                         }
                         tx.objectStore("schedule").getAll().onsuccess = function (event) {
                             var i, numGamesRemaining, schedule;
@@ -202,13 +211,12 @@ console.log("LOAD")
                                 players = db.getPlayers(event.target.result, season, tid, attributes, stats, ratings, {numGamesRemaining: numGamesRemaining, showRookies: true, sortBy: "rosterOrder", showNoStats: true, fuzz: true});
 
                                 db.getPayroll(tx, tid, function (payroll) {
-                                    cbAfterPlayers(tx, abbrev, season, team, players, payroll / 1000, updateEvents, cb);
+                                    cbAfterPlayers(tx, abbrev, tid, season, editable, team, players, payroll / 1000, updateEvents, cb);
                                 });
                             };
                         };
                     } else {
                         // Show all players with stats for the given team and year
-                        vm.editable(false);
                         tx.objectStore("players").index("statsTids").getAll(tid).onsuccess = function (event) {
                             var i, players;
 
@@ -219,7 +227,7 @@ console.log("LOAD")
                                 players[i].age = players[i].age - (g.season - season);
                             }
 
-                            cbAfterPlayers(tx, abbrev, season, team, players, null, updateEvents, cb);
+                            cbAfterPlayers(tx, abbrev, tid, season, editable, team, players, null, updateEvents, cb);
                         };
                     }
                 };

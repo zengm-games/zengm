@@ -3,10 +3,6 @@ smarter realtime
 
 roster
   get rid of data attributes in buyout/release buttons (except pid)
-  sortable
-    why do highlightHandles not persist on first load?
-      they are being triggered when editable is set, which is before the players have switched. really, all these changes should be pushed to the UI simultaneously
-        if this isn't possible, have highlightHandles subscribe to player and check editable
   players
     shouldn't flicker on update of user's current roster
   data-cash-owed is not formatted now
@@ -16,6 +12,7 @@ roster
     new roster, user team: display dynamic
   more knockoutifying
     reordering
+    highlightHandles
   does vm.players itself need to be observable?
   make sure DOM updates are correct
   check release, buy out, trade for
@@ -28,7 +25,6 @@ general things
   performance considerations...
     http://stackoverflow.com/questions/9709374/knockout-js-incredibly-slow-under-semi-large-datasets
     http://www.strathweb.com/2012/07/knockout-js-pro-tips-working-with-observable-arrays/
-    http://stackoverflow.com/questions/9589419/difference-between-knockout-view-models-declared-as-object-literals-vs-functions
     http://stackoverflow.com/questions/9927213/performance-tuning-a-knockout-application-guidelines-for-improving-response-ti
     http://stackoverflow.com/questions/9242147/how-to-structure-a-single-page-app-with-knockout-js
     http://tekpub.com/productions/knockout

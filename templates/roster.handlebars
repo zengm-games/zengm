@@ -5,9 +5,9 @@
 
 <p data-bind="visible: currentSeason">
   <span data-bind="text: numRosterSpots"></span> open roster spots<br>
-  Payroll: <span data-bind="currencyM: payroll"></span><br>
-  Salary cap: <span data-bind="currencyM: salaryCap"></span><br>
-  Cash: <span data-bind="currencyM: team.cash"></span> (used for buying out players)
+  Payroll: <span data-bind="currency: [payroll, 'M']"></span><br>
+  Salary cap: <span data-bind="currency: [salaryCap, 'M']"></span><br>
+  Cash: <span data-bind="currency: [team.cash, 'M']"></span> (used for buying out players)
 </p>
 
 <!-- ko if: sortable -->
@@ -29,13 +29,13 @@
     <td data-bind="text: ratings.ovr"></td>
     <td data-bind="text: ratings.pot"></td>
     <td data-bind="visible: $parent.currentSeason">
-      <span data-bind="currencyM: contract.amount"></span> thru <span data-bind="text: contract.exp"></span>
+      <span data-bind="currency: [contract.amount, 'M']"></span> thru <span data-bind="text: contract.exp"></span>
     </td>
-    <td data-bind="round1: stats.min"></td>
-    <td data-bind="round1: stats.pts"></td>
-    <td data-bind="round1: stats.trb"></td>
-    <td data-bind="round1: stats.ast"></td>
-    <td data-bind="round1: stats.per"></td>
+    <td data-bind="round: [stats.min, 1]"></td>
+    <td data-bind="round: [stats.pts, 1]"></td>
+    <td data-bind="round: [stats.trb, 1]"></td>
+    <td data-bind="round: [stats.ast, 1]"></td>
+    <td data-bind="round: [stats.per, 1]"></td>
     <td data-bind="visible: $parent.sortable">
       <button class="btn btn-mini" data-action="release" data-bind="enable: canRelease, attr: {'data-player-id': pid, 'data-player-name': name, 'data-contract-expiration': contract.exp}">Release</button>
     </td>

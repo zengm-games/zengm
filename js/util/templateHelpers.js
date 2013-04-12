@@ -7,10 +7,11 @@ define(["lib/handlebars.runtime", "lib/knockout", "util/helpers"], function (Han
 
     Handlebars.registerHelper("round", helpers.round);
 
-    ko.bindingHandlers.round1 = {
+    ko.bindingHandlers.round = {
         update: function (element, valueAccessor) {
-console.log(ko.utils.unwrapObservable(valueAccessor()))
-            element.innerHTML = helpers.round(ko.utils.unwrapObservable(valueAccessor()), 1);
+            var args = valueAccessor();
+console.log(args)
+            element.innerHTML = helpers.round(ko.utils.unwrapObservable(args[0]), args[1]);
         }
     };
 
@@ -74,10 +75,11 @@ console.log(ko.utils.unwrapObservable(valueAccessor()))
 
     Handlebars.registerHelper("currency", helpers.formatCurrency);
 
-    ko.bindingHandlers.currencyM = {
+    ko.bindingHandlers.currency = {
         update: function (element, valueAccessor) {
-console.log(ko.utils.unwrapObservable(valueAccessor()))
-            element.innerHTML = helpers.formatCurrency(ko.utils.unwrapObservable(valueAccessor()), "M");
+            var args = valueAccessor();
+console.log(args)
+            element.innerHTML = helpers.formatCurrency(ko.utils.unwrapObservable(args[0]), args[1]);
         }
     };
 

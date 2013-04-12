@@ -163,6 +163,13 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
         }
     }
 
+    /**
+     * Display template, do initial DOM manipulation.
+     *
+     * @memberOf views.gameLog
+     * @param {Array.<string>} updateEvents Information about what caused this update, e.g. "gameSim" or "newPhase". Empty on normal page loads (i.e. from clicking a link).
+     * @param {function()} cb Callback.
+     */
     function display(updateEvents, cb) {
         if (document.getElementById("league_content").dataset.id !== "gameLog") {
             ui.update({
@@ -214,7 +221,7 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
      * @param {number} season Season for the list of games.
      * @param {number} gid Integer game ID for the box score (a negative number means no box score).
      * @param {Array.<string>} updateEvents Information about what caused this update, e.g. "gameSim" or "newPhase". Empty on normal page loads (i.e. from clicking a link).
-     * @param {function()=} cb Optional callback.
+     * @param {function()} cb Callback.
      */
     function update(abbrev, season, gid, updateEvents, cb) {
         var leagueContentEl;

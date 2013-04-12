@@ -26,11 +26,7 @@ define(["db", "globals", "ui", "lib/jquery", "util/helpers"], function (db, g, u
             db.loadGameAttribute(null, "lastDbChange", function () {
                 if (g.lastDbChange !== oldLastDbChange) {
                     db.loadGameAttributes(function () {
-                        var leagueContentEl;
-
-                        // This is a hack. Just delete everything and reload everything.
-                        leagueContentEl = document.getElementById("league_content");
-                        leagueContentEl.dataset.id = "";
+                        document.getElementById("league_content").dataset.id = "";
                         //leagueContentEl.innerHTML = "&nbsp;";  // Blank doesn't work, for some reason
                         ui.realtimeUpdate(["dbChange"], function () {
                             ui.updatePlayMenu(null, function () {
@@ -50,8 +46,7 @@ define(["db", "globals", "ui", "lib/jquery", "util/helpers"], function (db, g, u
 
         // Handle some common internal parameters
         updateEvents = req.raw.updateEvents !== undefined ? req.raw.updateEvents : [];
-        reqCb = req.raw.cb !== undefined ? cb : function () {};
-
+        reqCb = req.raw.cb !== undefined ? req.raw.cb : function () {};
 
         // Make sure league template FOR THE CURRENT LEAGUE is showing
         leagueMenu = document.getElementById("league_menu");

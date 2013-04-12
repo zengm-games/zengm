@@ -41,8 +41,6 @@ define([], function () {
         RETIRED: -3
     };
 
-    g.vm = {}; // Global Knockout view model
-
 /*    // Web workers - create only if we're not already inside a web worker!
     g.gameSimWorkers = [];
     if (typeof document !== "undefined") {
@@ -52,7 +50,7 @@ define([], function () {
     }*/
 
     // THIS MUST BE ACCURATE OR BAD STUFF WILL HAPPEN
-    g.notInDb = ["dbm", "dbl", "lid", "numTeams", "confs", "divs", "salaryCap", "minPayroll", "luxuryPayroll", "luxuryTax", "minContract", "maxContract", "realtimeUpdate", "notInDb", "PHASE", "PLAYER", "vm", "gameSimWorkers"];
+    g.notInDb = ["dbm", "dbl", "lid", "numTeams", "confs", "divs", "salaryCap", "minPayroll", "luxuryPayroll", "luxuryTax", "minContract", "maxContract", "realtimeUpdate", "notInDb", "PHASE", "PLAYER", "gameSimWorkers"];
 
     return g;
 });

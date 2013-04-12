@@ -5,9 +5,6 @@ roster
   check release, buy out, trade for
   unit tests
 general things
-  popup windows only work on first update now?
-  how to dynamically update title?
-    maybe have app-level vm (g.vm?) with title, play menu
   performance considerations...
     http://stackoverflow.com/questions/9709374/knockout-js-incredibly-slow-under-semi-large-datasets
     http://www.strathweb.com/2012/07/knockout-js-pro-tips-working-with-observable-arrays/

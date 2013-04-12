@@ -220,6 +220,7 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
      */
     function update(abbrev, season, gid, updateEvents, cb) {
         if (document.getElementById("league_content").dataset.id !== "gameLog") {
+            ko.cleanNode(document.getElementById("league_content"));
             vm = {
                 abbrev: ko.observable(abbrev),
                 season: ko.observable(season),

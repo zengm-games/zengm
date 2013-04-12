@@ -254,6 +254,7 @@ console.log("loadBefore")
 
     function update(abbrev, tid, season, updateEvents, cb) {
         if (document.getElementById("league_content").dataset.id !== "roster") {
+            ko.cleanNode(document.getElementById("league_content"));
             vm = {
                 abbrev: ko.observable(),
                 season: ko.observable(),

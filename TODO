@@ -2,33 +2,18 @@ smarter realtime
 ----------------
 
 roster
-  roster reordering
-    make it only on handles, not whole row
-  options
-    old roster: display static
-    new roster, non-user team: display static with trade for buttons
-    new roster, user team: display dynamic
-  more knockoutifying
-    reordering
-    highlightHandles
-  does vm.players itself need to be observable?
-  make sure DOM updates are correct
   check release, buy out, trade for
   unit tests
 general things
   popup windows only work on first update now?
   how to dynamically update title?
     maybe have app-level vm (g.vm?) with title, play menu
-  somehow need to delete these viewmodels when the view is deleted (i.e. page change) otherwise contents will get stale. or at least come up with a way to update when appropriate.
-  where to call ko.applyBindings?
   performance considerations...
     http://stackoverflow.com/questions/9709374/knockout-js-incredibly-slow-under-semi-large-datasets
     http://www.strathweb.com/2012/07/knockout-js-pro-tips-working-with-observable-arrays/
     http://stackoverflow.com/questions/9927213/performance-tuning-a-knockout-application-guidelines-for-improving-response-ti
     http://stackoverflow.com/questions/9242147/how-to-structure-a-single-page-app-with-knockout-js
     http://tekpub.com/productions/knockout
-  updateEvents checking in viewHelpers.newLeague?
-    also, if cb is undefined make it an empty function?
   reduce boilerplate
 ui.realtimeUpdate should be used in more places so updateEvent is pervasive
   how can this be done for automatic redirects? wrapper function?
@@ -206,6 +191,8 @@ update formulas
     same for each team, change contract year by year and display in team finances
   localTvRevenue
     eventually, t.seasons[0].tvContract
+roster reordering
+  make only handles draggable, not whole row
 
 FUTURE (after 3.0.0)
 --------------------

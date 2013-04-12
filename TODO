@@ -4,7 +4,6 @@ smarter realtime
 roster
   get rid of data attributes in buyout/release buttons (except pid)
   sortable
-    can i move initialization code into updateEditable somehow and only run it on first call?
     why do highlightHandles not persist on first load?
       they are being triggered when editable is set, which is before the players have switched. really, all these changes should be pushed to the UI simultaneously
         if this isn't possible, have highlightHandles subscribe to player and check editable

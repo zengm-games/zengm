@@ -31,11 +31,41 @@ console.log('highlightHandles')
     }
 
     function updateEditable(editable) {
-console.log('fuck + ' + editable)
-        if (vm.editable()) {
+        var rosterTbody;
+
+        rosterTbody = $("#roster tbody");
+
+        if (!rosterTbody.is(":ui-sortable")) {
+            // The first time updateEditable is called, set up sorting, but disable it by default
+            $("#roster tbody").sortable({
+                helper: function (e, ui) {
+                    // Return helper which preserves the width of table cells being reordered
+                    ui.children().each(function () {
+                        $(this).width($(this).width());
+                    });
+                    return ui;
+                },
+                cursor: "move",
+                update: function (e, ui) {
+                    var i, sortedPids;
+
+                    sortedPids = $(this).sortable("toArray");
+                    for (i = 0; i < sortedPids.length; i++) {
+                        sortedPids[i] = parseInt(sortedPids[i].substr(7), 10);
+                    }
+
+                    api.rosterReorder(sortedPids, function () {
+                        highlightHandles();
+                    });
+                },
+                disabled: true
+            });
+        }
+
+        if (editable) {
             // Roster reordering
             highlightHandles();
-            $("#roster tbody").sortable("enable");
+            rosterTbody.sortable("enable").disableSelection();
             $("#roster-auto-sort").click(function (event) {
                 api.rosterAutoSort();
             });
@@ -75,7 +105,7 @@ console.log('fuck + ' + editable)
                 }*/
             });
         } else {
-            $("#roster tbody").sortable("disable");
+            rosterTbody.sortable("disable").enableSelection();
         }
     }
 
@@ -206,31 +236,6 @@ console.log('NO ROSTER YET')
                 vars: {}
             };
             ui.update(data);
-
-            // Set up sorting, but disable it by default
-            $("#roster tbody").sortable({
-                helper: function (e, ui) {
-                    // Return helper which preserves the width of table cells being reordered
-                    ui.children().each(function () {
-                        $(this).width($(this).width());
-                    });
-                    return ui;
-                },
-                cursor: "move",
-                update: function (e, ui) {
-                    var i, sortedPids;
-
-                    sortedPids = $(this).sortable("toArray");
-                    for (i = 0; i < sortedPids.length; i++) {
-                        sortedPids[i] = parseInt(sortedPids[i].substr(7), 10);
-                    }
-
-                    api.rosterReorder(sortedPids, function () {
-                        highlightHandles();
-                    });
-                },
-                disabled: true
-            }).disableSelection();
 
             vm = {
                 abbrev: ko.observable(),

@@ -10,7 +10,7 @@ define(["lib/handlebars.runtime", "lib/knockout", "util/helpers"], function (Han
     ko.bindingHandlers.round = {
         update: function (element, valueAccessor) {
             var args = valueAccessor();
-console.log(args)
+//console.log(args)
             element.innerHTML = helpers.round(ko.utils.unwrapObservable(args[0]), args[1]);
         }
     };
@@ -78,7 +78,7 @@ console.log(args)
     ko.bindingHandlers.currency = {
         update: function (element, valueAccessor) {
             var args = valueAccessor();
-console.log(args)
+//console.log(args)
             element.innerHTML = helpers.formatCurrency(ko.utils.unwrapObservable(args[0]), args[1]);
         }
     };

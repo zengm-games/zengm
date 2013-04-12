@@ -49,14 +49,6 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/jquery",
             players[4].separator = true;
         }
 
-        data = {
-            container: "league_content",
-            template: "roster",
-            title: team.region + " " + team.name + " " + "Roster - " + season,
-            vars: {players: players}
-        };
-        ui.update(data);
-
         vm.abbrev(abbrev);
         vm.season(season);
         vm.numRosterSpots(15 - players.length);
@@ -67,7 +59,6 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/jquery",
         vm.team.region(team.region);
         vm.showTradeFor(season === g.season && team.tid !== g.userTid);
         vm.players(players);
-        ko.applyBindings(vm);
 
         components.dropdown("roster-dropdown", ["teams", "seasons"], [abbrev, season], updateEvents);
 
@@ -142,11 +133,12 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/jquery",
     }
 
     function update(abbrev, tid, season, updateEvents, cb) {
-        var cbLoaded, sortable, tx;
+        var cbLoaded, data, sortable, tx;
 
 
         cbLoaded = function () {
-            if ((season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement"))) || abbrev !== vm.abbrev() || season !== vm.season()) {
+            if ((season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || abbrev !== vm.abbrev() || season !== vm.season()) {
+console.log("LOAD")
                 // We need to update, so first do all the stuff common to every type of update
                 vm.sortable(false);
                 tx = g.dbl.transaction(["players", "releasedPlayers", "schedule", "teams"]);
@@ -213,15 +205,16 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/jquery",
         };
 
         if (document.getElementById("league_content").dataset.id !== "roster") {
-            /*data = {
+console.log('NO ROSTER YET')
+            data = {
                 container: "league_content",
-                template: "gameLog",
-                title: "Game Log",
+                template: "roster",
+//                title: team.region + " " + team.name + " " + "Roster - " + season,
+                title: abbrev + " " + "Roster - " + season,
                 vars: {}
             };
-            ui.update(data);*/
+            ui.update(data);
 
-console.log('hi');
             vm = {
                 abbrev: ko.observable(),
                 season: ko.observable(),
@@ -233,7 +226,7 @@ console.log('hi');
                     name: ko.observable(),
                     region: ko.observable()
                 },
-                players: ko.observable(),
+                players: ko.observable([]),
                 showTradeFor: ko.observable(),
                 sortable: ko.observable()
             };
@@ -246,6 +239,7 @@ console.log('hi');
             vm.gameLogUrl = ko.computed(function () {
                 return "/l/" + g.lid + "/game_log/" + vm.abbrev() + "/" + vm.season();
             });
+            ko.applyBindings(vm);
 
             cbLoaded();
         } else {

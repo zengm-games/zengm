@@ -37,10 +37,10 @@
     <td data-bind="round: [stats.ast, 1]"></td>
     <td data-bind="round: [stats.per, 1]"></td>
     <td data-bind="visible: $parent.editable">
-      <button class="btn btn-mini" data-action="release" data-bind="enable: canRelease, attr: {'data-player-id': pid, 'data-player-name': name, 'data-contract-expiration': contract.exp}">Release</button>
+      <button class="btn btn-mini" data-action="release" data-bind="enable: canRelease">Release</button>
     </td>
     <td data-bind="visible: $parent.editable">
-      <button class="btn btn-mini" data-action="buyOut" data-bind="enable: canBuyOut, attr: {'data-player-id': pid, 'data-player-name': name, 'data-cash-owed': cashOwed}">Buy out</button>
+      <button class="btn btn-mini" data-action="buyOut" data-bind="enable: canBuyOut">Buy out</button>
     </td>
     <td data-bind="visible: $parent.showTradeFor">
       <form action="/l/{{lid}}/trade" method="POST" style="margin: 0">

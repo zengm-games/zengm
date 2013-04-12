@@ -70,12 +70,20 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/knockout
 
             // Release player
             $("#roster button").click(function (event) {
-                var tr;
+                var i, pid, players, tr;
+
+                pid = parseInt(this.parentNode.parentNode.dataset.pid, 10);
+                players = vm.players();
+                for (i = 0; i < players.length; i++) {
+                    if (players[i].pid() === pid) {
+                        break;
+                    }
+                }
 
                 if (this.dataset.action === "release") {
-                    if (window.confirm("Are you sure you want to release " + this.dataset.playerName + "?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in " + this.dataset.contractExpiration + ".")) {
+                    if (window.confirm("Are you sure you want to release " + players[i].name() + "?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in " + players[i].contract.exp() + ".")) {
                         tr = this.parentNode.parentNode;
-                        api.rosterRelease(this.dataset.playerId, function (error) {
+                        api.rosterRelease(pid, function (error) {
                             if (error) {
                                 alert("Error: " + error);
                             } else {
@@ -84,10 +92,10 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/knockout
                         });
                     }
                 } else if (this.dataset.action === "buyOut") {
-                    if (vm.team.cash() > this.dataset.cashOwed) {
-                        if (window.confirm("Are you sure you want to buy out " + this.dataset.playerName + "? You will have to pay him the $" + this.dataset.cashOwed + "M remaining on his contract from your current cash reserves of " + helpers.formatCurrency(vm.team.cash(), "M") + ". He will then become a free agent and his contract will no longer count towards your salary cap.")) {
+                    if (vm.team.cash() > players[i].cashOwed()) {
+                        if (window.confirm("Are you sure you want to buy out " + players[i].name() + "? You will have to pay him the " + helpers.formatCurrency(players[i].cashOwed(), "M") + " remaining on his contract from your current cash reserves of " + helpers.formatCurrency(vm.team.cash(), "M") + ". He will then become a free agent and his contract will no longer count towards your salary cap.")) {
                             tr = this.parentNode.parentNode;
-                            api.rosterBuyOut(this.dataset.playerId, function (error) {
+                            api.rosterBuyOut(pid, function (error) {
                                 if (error) {
                                     alert("Error: " + error);
                                 } else {

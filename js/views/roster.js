@@ -48,11 +48,9 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/knockout
                 update: function (e, ui) {
                     var i, sortedPids;
 
-console.log($(this));
                     sortedPids = $(this).sortable("toArray", {attribute: "data-pid"});
-console.log(sortedPids);
                     for (i = 0; i < sortedPids.length; i++) {
-                        sortedPids[i] = parseInt(sortedPids[i].substr(7), 10);
+                        sortedPids[i] = parseInt(sortedPids[i], 10);
                     }
 
                     api.rosterReorder(sortedPids, function () {

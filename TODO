@@ -4,7 +4,6 @@ smarter realtime
 roster
   get rid of data attributes in buyout/release buttons (except pid in tr)
   roster reordering
-    does it work? base on pid in tr
     make it only on handles, not whole row
   data-cash-owed is not formatted now
   options

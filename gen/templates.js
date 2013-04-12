@@ -334,7 +334,7 @@ helpers = helpers || Handlebars.helpers; data = data || {};
 
   buffer += "<form id=\"player-stats-dropdown\" class=\"form-inline pull-right\"></form>\n\n<h1>Player Stats "
     + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n<p>More: <a href=\"/l/"
+    + "</h1>\n<p>More: <a data-bind=\"attr: {href: shotLocationsUrl}\">Shot Locations</a> | <a data-bind=\"attr: {href: distPlayerStatsUrl}\">Stat Distributions</a></p>\n<p>More: <a href=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "/player_shot_locations\">Shot Locations</a> | <a href=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))

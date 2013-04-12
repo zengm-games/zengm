@@ -30,13 +30,13 @@ console.log('highlightHandles')
         });
     }
 
-    function updateEditable(editable) {
+    function editableChanged(editable) {
         var rosterTbody;
 
         rosterTbody = $("#roster tbody");
 
         if (!rosterTbody.is(":ui-sortable")) {
-            // The first time updateEditable is called, set up sorting, but disable it by default
+            // The first time editableChanged is called, set up sorting, but disable it by default
             $("#roster tbody").sortable({
                 helper: function (e, ui) {
                     // Return helper which preserves the width of table cells being reordered
@@ -261,7 +261,7 @@ console.log('NO ROSTER YET')
             vm.gameLogUrl = ko.computed(function () {
                 return "/l/" + g.lid + "/game_log/" + vm.abbrev() + "/" + vm.season();
             });
-            vm.editable.subscribe(updateEditable);
+            vm.editable.subscribe(editableChanged);
             ko.applyBindings(vm);
 
             cbLoaded();

@@ -197,9 +197,7 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
      * @param {function()=} cb Optional callback.
      */
     function update(abbrev, season, gid, updateEvents, cb) {
-        var cbLoaded, data, leagueContent;
-
-        leagueContent = document.getElementById("league_content");
+        var cbLoaded, data;
 
         cbLoaded = function () {
             components.dropdown("game-log-dropdown", ["teams", "seasons"], [abbrev, season], updateEvents, gid >= 0 ? gid : undefined);
@@ -219,7 +217,7 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
         };
 
 
-        if (leagueContent.dataset.id !== "gameLog") {
+        if (document.getElementById("league_content").dataset.id !== "gameLog") {
             data = {
                 container: "league_content",
                 template: "gameLog",

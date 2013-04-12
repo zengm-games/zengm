@@ -9,6 +9,7 @@ i need something like knockout to handle realtime updates. for instance, gamelog
     somehow need to delete these viewmodels when the view is deleted (i.e. page change)
       not even "page change".. for instance if i'm viewing last year's game log and click "game log" in the league menu, the dropdown should reset
 roster
+  fix links under title
   old roster: display static
   new roster, non-user team: display static with trade for buttons
   new roster, user team: display dynamic

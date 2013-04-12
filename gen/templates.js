@@ -2039,41 +2039,6 @@ helpers = helpers || Handlebars.helpers; data = data || {};
 
 function program1(depth0,data) {
   
-  var buffer = "", stack1, stack2;
-  buffer += "\n      <option value=\""
-    + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"";
-  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">"
-    + escapeExpression(((stack1 = depth0.region),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " "
-    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</option>\n    ";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  
-  return " selected=\"selected\"";
-  }
-
-function program4(depth0,data) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n      <option value=\""
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"";
-  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">"
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " season</option>\n    ";
-  return buffer;
-  }
-
-function program6(depth0,data) {
-  
   var buffer = "", stack1;
   buffer += "\n  <p>"
     + escapeExpression(((stack1 = depth0.numRosterSpots),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
@@ -2087,46 +2052,46 @@ function program6(depth0,data) {
   return buffer;
   }
 
-function program8(depth0,data) {
+function program3(depth0,data) {
   
   
   return "\n  <p>Drag and drop row handles to move players between the starting lineup (<span class=\"roster_gs\">&#9632;</span>) and the bench (<span class=\"roster_bench\">&#9632;</span>).</p>\n  <p><button class=\"btn\" id=\"roster-auto-sort\">Auto sort roster</button></p>\n";
   }
 
-function program10(depth0,data) {
+function program5(depth0,data) {
   
   
   return "<th></th>";
   }
 
-function program12(depth0,data) {
+function program7(depth0,data) {
   
   
   return "<th>Contract</th>";
   }
 
-function program14(depth0,data) {
+function program9(depth0,data) {
   
   
   return "<th>Release</th><th>Buy out</th>";
   }
 
-function program16(depth0,data) {
+function program11(depth0,data) {
   
   
   return "<th>Trade For</th>";
   }
 
-function program18(depth0,data,depth1) {
+function program13(depth0,data,depth1) {
   
   var buffer = "", stack1, stack2;
   buffer += "\n    <tr id=\"roster_"
     + escapeExpression(((stack1 = depth0.pid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\"";
-  stack2 = helpers['if'].call(depth0, depth0.separator, {hash:{},inverse:self.noop,fn:self.program(19, program19, data),data:data});
+  stack2 = helpers['if'].call(depth0, depth0.separator, {hash:{},inverse:self.noop,fn:self.program(14, program14, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += ">";
-  stack2 = helpers['if'].call(depth0, depth1.sortable, {hash:{},inverse:self.noop,fn:self.program(21, program21, data),data:data});
+  stack2 = helpers['if'].call(depth0, depth1.sortable, {hash:{},inverse:self.noop,fn:self.program(16, program16, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "<td>"
     + escapeExpression(helpers.playerNameLabels.call(depth0, depth0.pid, depth0.name, depth0.injury, ((stack1 = depth0.ratings),stack1 == null || stack1 === false ? stack1 : stack1.skills), {hash:{},data:data}))
@@ -2139,7 +2104,7 @@ function program18(depth0,data,depth1) {
     + "</td><td>"
     + escapeExpression(((stack1 = ((stack1 = depth0.ratings),stack1 == null || stack1 === false ? stack1 : stack1.pot)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</td>";
-  stack2 = helpers['if'].call(depth0, depth1.currentSeason, {hash:{},inverse:self.noop,fn:self.program(23, program23, data),data:data});
+  stack2 = helpers['if'].call(depth0, depth1.currentSeason, {hash:{},inverse:self.noop,fn:self.program(18, program18, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "<td>"
     + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.stats),stack1 == null || stack1 === false ? stack1 : stack1.min), 1, {hash:{},data:data}))
@@ -2152,26 +2117,26 @@ function program18(depth0,data,depth1) {
     + "</td><td>"
     + escapeExpression(helpers.round.call(depth0, ((stack1 = depth0.stats),stack1 == null || stack1 === false ? stack1 : stack1.per), 1, {hash:{},data:data}))
     + "</td>";
-  stack2 = helpers['if'].call(depth0, depth1.sortable, {hash:{},inverse:self.noop,fn:self.program(25, program25, data),data:data});
+  stack2 = helpers['if'].call(depth0, depth1.sortable, {hash:{},inverse:self.noop,fn:self.program(20, program20, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  stack2 = helpers['if'].call(depth0, depth1.showTradeFor, {hash:{},inverse:self.noop,fn:self.programWithDepth(program28, data, depth0, depth1),data:data});
+  stack2 = helpers['if'].call(depth0, depth1.showTradeFor, {hash:{},inverse:self.noop,fn:self.programWithDepth(program23, data, depth0, depth1),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "</tr>\n  ";
   return buffer;
   }
-function program19(depth0,data) {
+function program14(depth0,data) {
   
   
   return " class=\"separator\"";
   }
 
-function program21(depth0,data) {
+function program16(depth0,data) {
   
   
   return "<td class=\"roster_handle\"></td>";
   }
 
-function program23(depth0,data) {
+function program18(depth0,data) {
   
   var buffer = "", stack1;
   buffer += "<td>"
@@ -2182,7 +2147,7 @@ function program23(depth0,data) {
   return buffer;
   }
 
-function program25(depth0,data) {
+function program20(depth0,data) {
   
   var buffer = "", stack1, stack2;
   buffer += "<td><button class=\"btn btn-mini\" data-action=\"release\" data-player-id=\""
@@ -2192,7 +2157,7 @@ function program25(depth0,data) {
     + "\" data-contract-expiration=\""
     + escapeExpression(((stack1 = ((stack1 = depth0.contract),stack1 == null || stack1 === false ? stack1 : stack1.exp)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\"";
-  stack2 = helpers.unless.call(depth0, depth0.canRelease, {hash:{},inverse:self.noop,fn:self.program(26, program26, data),data:data});
+  stack2 = helpers.unless.call(depth0, depth0.canRelease, {hash:{},inverse:self.noop,fn:self.program(21, program21, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += ">Release</button></td><td><button class=\"btn btn-mini\" data-action=\"buyOut\" data-player-id=\""
     + escapeExpression(((stack1 = depth0.pid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
@@ -2201,18 +2166,18 @@ function program25(depth0,data) {
     + "\" data-cash-owed=\""
     + escapeExpression(helpers.round.call(depth0, depth0.cashOwed, 2, {hash:{},data:data}))
     + "\"";
-  stack2 = helpers.unless.call(depth0, depth0.canBuyOut, {hash:{},inverse:self.noop,fn:self.program(26, program26, data),data:data});
+  stack2 = helpers.unless.call(depth0, depth0.canBuyOut, {hash:{},inverse:self.noop,fn:self.program(21, program21, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += ">Buy out</button></td>";
   return buffer;
   }
-function program26(depth0,data) {
+function program21(depth0,data) {
   
   
   return " disabled=\"disabled\"";
   }
 
-function program28(depth0,data,depth1,depth2) {
+function program23(depth0,data,depth1,depth2) {
   
   var buffer = "", stack1;
   buffer += "<td><form action=\"/l/"
@@ -2223,21 +2188,13 @@ function program28(depth0,data,depth1,depth2) {
   return buffer;
   }
 
-  buffer += "<form id=\"roster-dropdown\" class=\"form-inline pull-right\"></form>\n<!--<form action=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/roster\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"roster-select-team\" name=\"team\" class=\"team\">\n    ";
-  stack2 = ((stack1 = ((stack1 = depth0.teams),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </select>\n  <select id=\"roster-select-season\" name=\"season\" class=\"season\">\n    ";
-  stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </select>\n</form>-->\n\n<h1>"
+  buffer += "<form id=\"roster-dropdown\" class=\"form-inline pull-right\"></form>\n\n<h1>"
     + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.region)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + " "
     + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + " Roster "
     + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n<p>More: <a href=\"/l/"
+    + "</h1>\n<p>More: <a data-bind=\"attr: { href: financesUrl }\">Finances</a> | <a data-bind=\"attr: { href: gameLogUrl }\">Game Log</a></p>\n<!--<p>More: <a href=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "/team_finances/"
     + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
@@ -2247,25 +2204,25 @@ function program28(depth0,data,depth1,depth2) {
     + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "/"
     + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">Game Log</a></p>\n\n";
-  stack2 = helpers['if'].call(depth0, depth0.currentSeason, {hash:{},inverse:self.noop,fn:self.program(6, program6, data),data:data});
+    + "\">Game Log</a></p>-->\n\n";
+  stack2 = helpers['if'].call(depth0, depth0.currentSeason, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "\n\n";
-  stack2 = helpers['if'].call(depth0, depth0.sortable, {hash:{},inverse:self.noop,fn:self.program(8, program8, data),data:data});
+  stack2 = helpers['if'].call(depth0, depth0.sortable, {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "\n\n<p>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"roster\">\n<thead>\n  <tr>";
-  stack2 = helpers['if'].call(depth0, depth0.sortable, {hash:{},inverse:self.noop,fn:self.program(10, program10, data),data:data});
+  stack2 = helpers['if'].call(depth0, depth0.sortable, {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "<th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall Rating\">Ovr</th><th title=\"Potential Rating\">Pot</th>";
-  stack2 = helpers['if'].call(depth0, depth0.currentSeason, {hash:{},inverse:self.noop,fn:self.program(12, program12, data),data:data});
+  stack2 = helpers['if'].call(depth0, depth0.currentSeason, {hash:{},inverse:self.noop,fn:self.program(7, program7, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "<th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th>";
-  stack2 = helpers['if'].call(depth0, depth0.sortable, {hash:{},inverse:self.noop,fn:self.program(14, program14, data),data:data});
+  stack2 = helpers['if'].call(depth0, depth0.sortable, {hash:{},inverse:self.noop,fn:self.program(9, program9, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  stack2 = helpers['if'].call(depth0, depth0.showTradeFor, {hash:{},inverse:self.noop,fn:self.program(16, program16, data),data:data});
+  stack2 = helpers['if'].call(depth0, depth0.showTradeFor, {hash:{},inverse:self.noop,fn:self.program(11, program11, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "</tr>\n</thead>\n<tbody>\n  ";
-  stack2 = ((stack1 = ((stack1 = depth0.players),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program18, data, depth0),data:data}));
+  stack2 = ((stack1 = ((stack1 = depth0.players),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program13, data, depth0),data:data}));
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += "\n</tbody>\n</table>\n</p>\n";
   return buffer;

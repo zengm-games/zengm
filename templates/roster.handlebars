@@ -1,19 +1,8 @@
 <form id="roster-dropdown" class="form-inline pull-right"></form>
-<!--<form action="/l/{{lid}}/roster" method="GET" class="form-inline pull-right">
-  <select id="roster-select-team" name="team" class="team">
-    {{#teams}}
-      <option value="{{abbrev}}"{{#if selected}} selected="selected"{{/if}}}>{{region}} {{name}}</option>
-    {{/teams}}
-  </select>
-  <select id="roster-select-season" name="season" class="season">
-    {{#seasons}}
-      <option value="{{season}}"{{#if selected}} selected="selected"{{/if}}>{{season}} season</option>
-    {{/seasons}}
-  </select>
-</form>-->
 
 <h1>{{team.region}} {{team.name}} Roster {{new_window}}</h1>
-<p>More: <a href="/l/{{lid}}/team_finances/{{team.abbrev}}">Finances</a> | <a href="/l/{{lid}}/game_log/{{team.abbrev}}/{{season}}">Game Log</a></p>
+<p>More: <a data-bind="attr: { href: financesUrl }">Finances</a> | <a data-bind="attr: { href: gameLogUrl }">Game Log</a></p>
+<!--<p>More: <a href="/l/{{lid}}/team_finances/{{team.abbrev}}">Finances</a> | <a href="/l/{{lid}}/game_log/{{team.abbrev}}/{{season}}">Game Log</a></p>-->
 
 {{#if currentSeason}}
   <p>{{numRosterSpots}} open roster spots<br>

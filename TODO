@@ -39,8 +39,6 @@ general things
   updateEvents checking in viewHelpers.newLeague?
     also, if cb is undefined make it an empty function?
   reduce boilerplate
-gameLog
-  "Loading..." message in games list, somehow
 ui.realtimeUpdate should be used in more places so updateEvent is pervasive
   how can this be done for automatic redirects? wrapper function?
   search for anywhere Davis is directly called.

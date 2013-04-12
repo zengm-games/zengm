@@ -188,7 +188,6 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
         if (abbrev !== vm.gamesList.abbrev() || season !== vm.gamesList.season()) {
             // Load all games in list
             vm.gamesList.games([]);
-//            gameLogListTbodyEl.innerHTML = '<tr><td colspan="3" style="padding: 4px 5px;">Loading...</td></tr>';
             gameLogList(abbrev, season, gid, function (games) {
                 vm.gamesList.games(games);
                 vm.gamesList.abbrev(abbrev);

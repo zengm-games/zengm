@@ -172,7 +172,7 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
                 vars: {}
             };
             ui.update(data);
-            ko.applyBindings(vm);
+            ko.applyBindings(vm, document.getElementById("league_content"));
         }
 
         components.dropdown("game-log-dropdown", ["teams", "seasons"], [vm.abbrev(), vm.season()], updateEvents, vm.boxScore.gid() >= 0 ? vm.boxScore.gid() : undefined);
@@ -219,8 +219,11 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
      * @param {function()=} cb Optional callback.
      */
     function update(abbrev, season, gid, updateEvents, cb) {
-        if (document.getElementById("league_content").dataset.id !== "gameLog") {
-            ko.cleanNode(document.getElementById("league_content"));
+        var leagueContentEl;
+
+        leagueContentEl = document.getElementById("league_content");
+        if (leagueContentEl.dataset.id !== "gameLog") {
+            ko.cleanNode(leagueContentEl);
             vm = {
                 abbrev: ko.observable(abbrev),
                 season: ko.observable(season),

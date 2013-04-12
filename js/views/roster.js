@@ -131,7 +131,7 @@ console.log('editableChanged ' + editable)
                 vars: {}
             };
             ui.update(data);
-            ko.applyBindings(vm);
+            ko.applyBindings(vm, document.getElementById("league_content"));
         }
 
         if (vm.editable()) {
@@ -253,8 +253,11 @@ console.log("loadBefore")
     }
 
     function update(abbrev, tid, season, updateEvents, cb) {
-        if (document.getElementById("league_content").dataset.id !== "roster") {
-            ko.cleanNode(document.getElementById("league_content"));
+        var leagueContentEl;
+
+        leagueContentEl = document.getElementById("league_content");
+        if (leagueContentEl.dataset.id !== "roster") {
+            ko.cleanNode(leagueContentEl);
             vm = {
                 abbrev: ko.observable(),
                 season: ko.observable(),

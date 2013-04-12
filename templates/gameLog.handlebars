@@ -21,7 +21,7 @@
         <td><a data-bind="attr: {href: url}, text: pts + '-' + oppPts + overtime"></a></td>
       </tr>
     </tbody>
-    <tr data-bind="visible: gamesList.games().length === 0"><td colspan="3" style="padding: 4px 5px;">Loading...</td></tr>
+    <tr data-bind="visible: gamesList.loading()"><td colspan="3" style="padding: 4px 5px;">Loading...</td></tr>
     </table>
   </div>
 </div>

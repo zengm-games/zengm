@@ -309,6 +309,7 @@ console.log("loadBefore")
     }
 
     return {
+        update: update,
         get: get
     };
 });

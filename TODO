@@ -4,8 +4,6 @@ smarter realtime
 roster
   check release, buy out, trade for
   unit tests
-game log
-  if there are no games in a season, shouldn't display "Loading..." forever
 general things
   popup windows only work on first update now?
   how to dynamically update title?

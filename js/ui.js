@@ -59,6 +59,17 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
     }
 
     /**
+     * Updates the title.
+     * @param {string} text New title.
+     */
+    function title(text) {
+        if (g.leagueName) {
+            text += " - " + g.leagueName;
+        }
+        document.title = text + " - Basketball GM";
+    }
+
+    /**
      * Replaces the displayed view.
      *
      * This updates the content of the page (either #content if data.inLeague is false or #league_content otherwise), sets the title (and appends the league number to it when appropriate), and injects g.lid as lid to the template.
@@ -80,10 +91,7 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
         containerEl.innerHTML = rendered;
 
         if (data.hasOwnProperty("title")) {
-            if (data.container === "league_content") {
-                data.title += " - " + g.leagueName;
-            }
-            $("title").text(data.title + " - Basketball GM");
+            title(data.title);
         }
 
         result = parseLeagueUrl(document.URL);
@@ -412,6 +420,7 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
         datatableSinglePage: datatableSinglePage,
         dropdown: dropdown,
         realtimeUpdate: realtimeUpdate,
+        title: title,
         update: update,
         updatePhase: updatePhase,
         updatePlayMenu: updatePlayMenu,

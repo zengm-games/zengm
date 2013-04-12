@@ -162,17 +162,14 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
     }
 
     function display(updateEvents, cb) {
-        var data;
-
         if (document.getElementById("league_content").dataset.id !== "gameLog") {
-            data = {
+            ui.update({
                 container: "league_content",
-                template: "gameLog",
-                title: "Game Log"
-            };
-            ui.update(data);
+                template: "gameLog"
+            });
             ko.applyBindings(vm, document.getElementById("league_content"));
         }
+        ui.title("Game Log - " + vm.season());
 
         components.dropdown("game-log-dropdown", ["teams", "seasons"], [vm.abbrev(), vm.season()], updateEvents, vm.boxScore.gid() >= 0 ? vm.boxScore.gid() : undefined);
 

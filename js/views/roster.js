@@ -120,18 +120,14 @@ console.log('editableChanged ' + editable)
     }
 
     function display(updateEvents, cb) {
-        var data;
-
         if (document.getElementById("league_content").dataset.id !== "roster") {
-            data = {
+            ui.update({
                 container: "league_content",
-                template: "roster",
-//                title: team.region + " " + team.name + " " + "Roster - " + season,
-                title: vm.abbrev() + " " + "Roster - " + vm.season()
-            };
-            ui.update(data);
+                template: "roster"
+            });
             ko.applyBindings(vm, document.getElementById("league_content"));
         }
+        ui.title(vm.team.region() + " " + vm.team.name() + " " + "Roster - " + vm.season());
 
         if (vm.editable()) {
             highlightHandles();

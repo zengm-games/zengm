@@ -5,7 +5,6 @@ roster
   players
     shouldn't flicker on update, should update by player id
   make sure DOM updates are correct
-  playerNameLabels
   data-cash-owed is not formatted now
   old roster: display static
   new roster, non-user team: display static with trade for buttons

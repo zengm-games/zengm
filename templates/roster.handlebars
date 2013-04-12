@@ -23,7 +23,7 @@
 <tbody data-bind="foreach: players">
   <tr data-bind="attr: {id: 'roster' + pid, class: separator ? 'separator' : ''}">
     <td class="roster_handle" data-bind="visible: $parent.sortable"></td>
-    <td>playerNameLabels pid name injury ratings.skills</td>
+    <td data-bind="playerNameLabels: [pid, name, injury, ratings.skills]"></td>
     <td data-bind="text: pos"></td>
     <td data-bind="text: age"></td>
     <td data-bind="text: ratings.ovr"></td>

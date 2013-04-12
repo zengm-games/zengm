@@ -6,11 +6,9 @@ define(["lib/handlebars.runtime", "lib/knockout", "util/helpers"], function (Han
     "use strict";
 
     Handlebars.registerHelper("round", helpers.round);
-
     ko.bindingHandlers.round = {
         update: function (element, valueAccessor) {
             var args = valueAccessor();
-//console.log(args)
             element.innerHTML = helpers.round(ko.utils.unwrapObservable(args[0]), args[1]);
         }
     };
@@ -74,11 +72,9 @@ define(["lib/handlebars.runtime", "lib/knockout", "util/helpers"], function (Han
     });
 
     Handlebars.registerHelper("currency", helpers.formatCurrency);
-
     ko.bindingHandlers.currency = {
         update: function (element, valueAccessor) {
             var args = valueAccessor();
-//console.log(args)
             element.innerHTML = helpers.formatCurrency(ko.utils.unwrapObservable(args[0]), args[1]);
         }
     };
@@ -88,4 +84,10 @@ define(["lib/handlebars.runtime", "lib/knockout", "util/helpers"], function (Han
     Handlebars.registerHelper("playerNameLabels", function (pid, name, injury, skills) {
         return new Handlebars.SafeString(helpers.playerNameLabels(pid, name, injury, skills));
     });
+    ko.bindingHandlers.playerNameLabels = {
+        update: function (element, valueAccessor) {
+            var args = valueAccessor();
+            element.innerHTML = helpers.playerNameLabels(ko.utils.unwrapObservable(args[0]), ko.utils.unwrapObservable(args[1]), ko.utils.unwrapObservable(args[2]), ko.utils.unwrapObservable(args[3]));
+        }
+    };
 });

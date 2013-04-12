@@ -2,9 +2,8 @@ smarter realtime
 ----------------
 
 roster
-  get rid of data attributes in buyout/release buttons (except pid)
-  players
-    shouldn't flicker on update of user's current roster
+  get rid of data attributes in buyout/release buttons (except pid in tr)
+  roster reordering - does it work? base on pid in tr
   data-cash-owed is not formatted now
   options
     old roster: display static
@@ -18,6 +17,14 @@ roster
   check release, buy out, trade for
   unit tests
 general things
+  flicker on page load - can i somehow not show the DOM elements immediately?
+    NEED TO THINK MORE ABOUT THIS
+      option: create league_content_new, add new stuff to it while hidden, then delete league_content, rename league_content_new, and make it visible
+      or.. why am i displaying the template so far before the data is ready? just wait and do it right away. will there still be a flicker? probably a small one
+    http://stackoverflow.com/questions/14583018/knockout-flickering-issue
+    http://stackoverflow.com/questions/12775766/knockout-js-stop-divs-binded-to-visible-from-flashing-on-screen
+      could do this right before a template is loaded to league_content container
+    https://groups.google.com/forum/?fromgroups=#!topic/knockoutjs/kmeozHCMrIk
   how to dynamically update title?
     maybe have app-level vm (g.vm?) with title, play menu
   somehow need to delete these viewmodels when the view is deleted (i.e. page change) otherwise contents will get stale. or at least come up with a way to update when appropriate.

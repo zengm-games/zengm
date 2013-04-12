@@ -150,89 +150,7 @@ console.log(vm.players().length)
             players: players,
             team: team
         }, mapPlayersByPid, vm);
-        if (editable) {
-            highlightHandles();
-        }
 
-        components.dropdown("roster-dropdown", ["teams", "seasons"], [abbrev, season], updateEvents);
-
-        if (cb !== undefined) {
-            cb();
-        }
-    }
-
-    function update(abbrev, tid, season, updateEvents, cb) {
-        var cbLoaded, data, tx;
-
-
-        cbLoaded = function () {
-            if ((season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || abbrev !== vm.abbrev() || season !== vm.season()) {
-console.log("LOAD")
-                // We need to update, so first do all the stuff common to every type of update
-
-                tx = g.dbl.transaction(["players", "releasedPlayers", "schedule", "teams"]);
-
-                tx.objectStore("teams").get(tid).onsuccess = function (event) {
-                    var attributes, editable, i, ratings, stats, team, teamAll;
-
-                    teamAll = event.target.result;
-                    for (i = 0; i < teamAll.seasons.length; i++) {
-                        if (teamAll.seasons[i].season === season) {
-                            break;
-                        }
-                    }
-                    team = {region: teamAll.region, name: teamAll.name, cash: teamAll.seasons[i].cash / 1000};
-
-                    attributes = ["pid", "name", "pos", "age", "contract", "cashOwed", "rosterOrder", "injury"];
-                    ratings = ["ovr", "pot", "skills"];
-                    stats = ["min", "pts", "trb", "ast", "per"];
-
-                    editable = false;
-                    if (season === g.season) {
-                        // Show players currently on the roster
-                        if (tid === g.userTid) {
-                            editable = true;
-                        }
-                        tx.objectStore("schedule").getAll().onsuccess = function (event) {
-                            var i, numGamesRemaining, schedule;
-
-                            // numGamesRemaining doesn't need to be calculated except for g.userTid, but it is.
-                            schedule = event.target.result;
-                            numGamesRemaining = 0;
-                            for (i = 0; i < schedule.length; i++) {
-                                if (tid === schedule[i].homeTid || tid === schedule[i].awayTid) {
-                                    numGamesRemaining += 1;
-                                }
-                            }
-
-                            tx.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
-                                var i, players;
-
-                                players = db.getPlayers(event.target.result, season, tid, attributes, stats, ratings, {numGamesRemaining: numGamesRemaining, showRookies: true, sortBy: "rosterOrder", showNoStats: true, fuzz: true});
-
-                                db.getPayroll(tx, tid, function (payroll) {
-                                    cbAfterPlayers(tx, abbrev, tid, season, editable, team, players, payroll / 1000, updateEvents, cb);
-                                });
-                            };
-                        };
-                    } else {
-                        // Show all players with stats for the given team and year
-                        tx.objectStore("players").index("statsTids").getAll(tid).onsuccess = function (event) {
-                            var i, players;
-
-                            players = db.getPlayers(event.target.result, season, tid, attributes, stats, ratings, {numGamesRemaining: 0, showRookies: true, sortBy: "rosterOrder", fuzz: true});
-
-                            // Fix ages
-                            for (i = 0; i < players.length; i++) {
-                                players[i].age = players[i].age - (g.season - season);
-                            }
-
-                            cbAfterPlayers(tx, abbrev, tid, season, editable, team, players, null, updateEvents, cb);
-                        };
-                    }
-                };
-            }
-        };
 
         if (document.getElementById("league_content").dataset.id !== "roster") {
 console.log('NO ROSTER YET')
@@ -244,7 +162,89 @@ console.log('NO ROSTER YET')
                 vars: {}
             };
             ui.update(data);
+            ko.applyBindings(vm);
+        }
 
+        if (editable) {
+            highlightHandles();
+        }
+
+        components.dropdown("roster-dropdown", ["teams", "seasons"], [abbrev, season], updateEvents);
+
+        if (cb !== undefined) {
+            cb();
+        }
+    }
+
+    // We need to update, so first do all the stuff common to every type of update
+    function loadBefore(abbrev, tid, season, updateEvents, cb) {
+        var tx;
+console.log("loadBefore")
+
+        tx = g.dbl.transaction(["players", "releasedPlayers", "schedule", "teams"]);
+
+        tx.objectStore("teams").get(tid).onsuccess = function (event) {
+            var attributes, editable, i, ratings, stats, team, teamAll;
+
+            teamAll = event.target.result;
+            for (i = 0; i < teamAll.seasons.length; i++) {
+                if (teamAll.seasons[i].season === season) {
+                    break;
+                }
+            }
+            team = {region: teamAll.region, name: teamAll.name, cash: teamAll.seasons[i].cash / 1000};
+
+            attributes = ["pid", "name", "pos", "age", "contract", "cashOwed", "rosterOrder", "injury"];
+            ratings = ["ovr", "pot", "skills"];
+            stats = ["min", "pts", "trb", "ast", "per"];
+
+            editable = false;
+            if (season === g.season) {
+                // Show players currently on the roster
+                if (tid === g.userTid) {
+                    editable = true;
+                }
+                tx.objectStore("schedule").getAll().onsuccess = function (event) {
+                    var i, numGamesRemaining, schedule;
+
+                    // numGamesRemaining doesn't need to be calculated except for g.userTid, but it is.
+                    schedule = event.target.result;
+                    numGamesRemaining = 0;
+                    for (i = 0; i < schedule.length; i++) {
+                        if (tid === schedule[i].homeTid || tid === schedule[i].awayTid) {
+                            numGamesRemaining += 1;
+                        }
+                    }
+
+                    tx.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
+                        var i, players;
+
+                        players = db.getPlayers(event.target.result, season, tid, attributes, stats, ratings, {numGamesRemaining: numGamesRemaining, showRookies: true, sortBy: "rosterOrder", showNoStats: true, fuzz: true});
+
+                        db.getPayroll(tx, tid, function (payroll) {
+                            cbAfterPlayers(tx, abbrev, tid, season, editable, team, players, payroll / 1000, updateEvents, cb);
+                        });
+                    };
+                };
+            } else {
+                // Show all players with stats for the given team and year
+                tx.objectStore("players").index("statsTids").getAll(tid).onsuccess = function (event) {
+                    var i, players;
+
+                    players = db.getPlayers(event.target.result, season, tid, attributes, stats, ratings, {numGamesRemaining: 0, showRookies: true, sortBy: "rosterOrder", fuzz: true});
+
+                    // Fix ages
+                    for (i = 0; i < players.length; i++) {
+                        players[i].age = players[i].age - (g.season - season);
+                    }
+
+                    cbAfterPlayers(tx, abbrev, tid, season, editable, team, players, null, updateEvents, cb);
+                };
+            }
+        };
+    }
+    function update(abbrev, tid, season, updateEvents, cb) {
+        if (document.getElementById("league_content").dataset.id !== "roster") {
             vm = {
                 abbrev: ko.observable(),
                 season: ko.observable(),
@@ -270,11 +270,10 @@ console.log('NO ROSTER YET')
                 return "/l/" + g.lid + "/game_log/" + vm.abbrev() + "/" + vm.season();
             });
             vm.editable.subscribe(editableChanged);
-            ko.applyBindings(vm);
+        }
 
-            cbLoaded();
-        } else {
-            cbLoaded();
+        if ((season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || abbrev !== vm.abbrev() || season !== vm.season()) {
+            loadBefore(abbrev, tid, season, updateEvents, cb);
         }
     }
 

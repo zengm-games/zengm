@@ -17,6 +17,15 @@ roster
   check release, buy out, trade for
   unit tests
 general things
+  flow
+    get() and post() handle inputs
+    update() is the main function that determines what is called
+      if nothing needs to be updated, this should do nothing
+      if something needs to be updated...
+        if it's a new load, create stub vm from scrach
+        loadBefore: load everything that can be done relatively quickly (i.e. not the game log list) and put it in the vm
+        display: display the template, active knockout, displaying what we can early
+        loadAfter: handle any slow stuff after this
   flicker on page load - can i somehow not show the DOM elements immediately?
     NEED TO THINK MORE ABOUT THIS
       option: create league_content_new, add new stuff to it while hidden, then delete league_content, rename league_content_new, and make it visible

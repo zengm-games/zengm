@@ -113,7 +113,7 @@ define(["db", "globals", "views", "ui", "core/draft", "core/finances", "core/gam
         });
     }
 
-    function rosterAutoSort(cb) {
+    function rosterAutoSort() {
         team.rosterAutoSort(null, g.userTid, function () {
             db.setGameAttributes({lastDbChange: Date.now()}, function () {
                 ui.realtimeUpdate(["playerMovement"]);

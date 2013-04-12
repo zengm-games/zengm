@@ -2,8 +2,6 @@ smarter realtime
 ----------------
 
 roster
-  reordering bug
-    if i load the roster, auto sort, reload, drag reorder it, and hit "auto sort" button again, the auto sort doesn't update the UI. this is because the viewmodel is never updated after the drag reorder, so ko doesn't know there is a change.
   roster reordering
     make it only on handles, not whole row
   options

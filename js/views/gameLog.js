@@ -168,8 +168,7 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
             data = {
                 container: "league_content",
                 template: "gameLog",
-                title: "Game Log",
-                vars: {}
+                title: "Game Log"
             };
             ui.update(data);
             ko.applyBindings(vm, document.getElementById("league_content"));

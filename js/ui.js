@@ -70,6 +70,10 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
     function update(data, cb) {
         var containerEl, leaguePage, rendered, result;
 
+        if (!data.vars) {
+            data.vars = {};
+        }
+
         data.vars.lid = g.lid;
         rendered = Handlebars.templates[data.template](data.vars);
         containerEl = document.getElementById(data.container);

@@ -127,8 +127,7 @@ console.log('editableChanged ' + editable)
                 container: "league_content",
                 template: "roster",
 //                title: team.region + " " + team.name + " " + "Roster - " + season,
-                title: vm.abbrev() + " " + "Roster - " + vm.season(),
-                vars: {}
+                title: vm.abbrev() + " " + "Roster - " + vm.season()
             };
             ui.update(data);
             ko.applyBindings(vm, document.getElementById("league_content"));

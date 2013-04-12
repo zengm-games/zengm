@@ -113,13 +113,13 @@ define(["db", "globals", "views", "ui", "core/draft", "core/finances", "core/gam
         });
     }
 
-    function rosterAutoSort() {
+/*    function rosterAutoSort() {
         team.rosterAutoSort(null, g.userTid, function () {
             db.setGameAttributes({lastDbChange: Date.now()}, function () {
                 ui.realtimeUpdate(["playerMovement"]);
             });
         });
-    }
+    }*/
 
     function rosterReorder(sortedPids, cb) {
         var tx;
@@ -310,7 +310,7 @@ define(["db", "globals", "views", "ui", "core/draft", "core/finances", "core/gam
     return {
         play: play,
         playMenuHandlers: playMenuHandlers,
-        rosterAutoSort: rosterAutoSort,
+//        rosterAutoSort: rosterAutoSort,
         rosterReorder: rosterReorder,
         rosterRelease: rosterRelease,
         rosterBuyOut: rosterBuyOut,

@@ -16,6 +16,7 @@ roster
   check release, buy out, trade for
   unit tests
 general things
+  popup windows only work on first update now?
   flow
     get() and post() handle inputs
     update() is the main function that determines what is called
@@ -126,6 +127,7 @@ notifications (and log) from top right to display log of key events
   league champions
   trades
   free agent signings
+team.rosterAutoSort should automatically set dbChanged, and have an option to not if that's important
 
 BEFORE 3.0.0
 ------------

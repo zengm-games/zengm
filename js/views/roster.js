@@ -2,7 +2,7 @@
  * @name views.gameLog
  * @namespace Current or historical rosters for every team. Current roster for user's team is editable.
  */
-define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/knockout.mapping", "lib/jquery", "views/components", "util/helpers", "util/viewHelpers"], function (api, db, g, ui, Davis, ko, mapping, $, components, helpers, viewHelpers) {
+define(["api", "db", "globals", "ui", "core/team", "lib/davis", "lib/knockout", "lib/knockout.mapping", "lib/jquery", "views/components", "util/helpers", "util/viewHelpers"], function (api, db, g, ui, team, Davis, ko, mapping, $, components, helpers, viewHelpers) {
     "use strict";
 
     var vm;
@@ -102,8 +102,12 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/knockout
             });
 
             $("#roster-auto-sort").click(function (event) {
-                vm.players([]); // This is a hack to force a UI update because the jQuery UI sortable roster reordering does not update the view model, which can cause the view model to think the roster is sorted correctly when it really isn't. (Example: load the roster, auto sort, reload, drag reorder it, auto sort -> the auto sort doesn't update the UI.)
-                api.rosterAutoSort();
+                vm.players([]); // This is a hack to force a UI update because the jQuery UI sortable roster reordering does not update the view model, which can cause the view model to think the roster is sorted correctly when it really isn't. (Example: load the roster, auto sort, reload, drag reorder it, auto sort -> the auto sort doesn't update the UI.) Fixing this issue would fix flickering.
+                team.rosterAutoSort(null, g.userTid, function () {
+                    db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                        ui.realtimeUpdate(["playerMovement"]);
+                    });
+                });
             });
         }
 

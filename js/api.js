@@ -116,7 +116,7 @@ define(["db", "globals", "views", "ui", "core/draft", "core/finances", "core/gam
     function rosterAutoSort(cb) {
         team.rosterAutoSort(null, g.userTid, function () {
             db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                Davis.location.replace(new Davis.Request("/l/" + g.lid + "/roster"));
+                ui.realtimeUpdate(["playerMovement"]);
             });
         });
     }

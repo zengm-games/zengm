@@ -59,16 +59,8 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/knockout
                 },
                 disabled: true
             });
-        }
 
-        if (editable) {
-            // Roster reordering
-            rosterTbody.sortable("enable").disableSelection();
-            $("#roster-auto-sort").click(function (event) {
-                api.rosterAutoSort();
-            });
-
-            // Release player
+            // Release and Buy Out buttons, which will only appear if the roster is editable
             $("#roster button").click(function (event) {
                 var i, pid, players, tr;
 
@@ -87,7 +79,7 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/knockout
                             if (error) {
                                 alert("Error: " + error);
                             } else {
-                                Davis.location.assign(new Davis.Request(Davis.location.current()));
+                                ui.realtimeUpdate(["playerMovement"]);
                             }
                         });
                     }
@@ -99,7 +91,7 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/knockout
                                 if (error) {
                                     alert("Error: " + error);
                                 } else {
-                                    Davis.location.assign(new Davis.Request(Davis.location.current()));
+                                    ui.realtimeUpdate(["playerMovement"]);
                                 }
                             });
                         }
@@ -108,6 +100,14 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/knockout
                     }
                 }
             });
+
+            $("#roster-auto-sort").click(function (event) {
+                api.rosterAutoSort();
+            });
+        }
+
+        if (editable) {
+            rosterTbody.sortable("enable").disableSelection();
         } else {
             rosterTbody.sortable("disable").enableSelection();
         }

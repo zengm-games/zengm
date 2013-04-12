@@ -3,13 +3,16 @@ smarter realtime
 
 roster
   players
-    shouldn't flicker on update, should update by player id
-  make sure DOM updates are correct
+    shouldn't flicker on update
   data-cash-owed is not formatted now
-  old roster: display static
-  new roster, non-user team: display static with trade for buttons
-  new roster, user team: display dynamic
+  options
+    old roster: display static
+    new roster, non-user team: display static with trade for buttons
+    new roster, user team: display dynamic
   use $index on foreach rather than separator placeholder
+  does vm.players itself need to be observable?
+  make sure DOM updates are correct
+  check release, buy out, trade for
   unit tests
 general things
   how to dynamically update title?

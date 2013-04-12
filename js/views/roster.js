@@ -2,7 +2,7 @@
  * @name views.gameLog
  * @namespace Current or historical rosters for every team. Current roster for user's team is editable.
  */
-define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/jquery", "views/components", "util/helpers", "util/viewHelpers"], function (api, db, g, ui, Davis, ko, $, components, helpers, viewHelpers) {
+define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/knockout.mapping", "lib/jquery", "views/components", "util/helpers", "util/viewHelpers"], function (api, db, g, ui, Davis, ko, mapping, $, components, helpers, viewHelpers) {
     "use strict";
 
     var vm;
@@ -30,7 +30,7 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/jquery",
     }
 
     function cbAfterPlayers(tx, abbrev, season, team, players, payroll, updateEvents, cb) {
-        var data, i;
+        var data, i, myMapping, x;
 
         for (i = 0; i < players.length; i++) {
             players[i].separator = false;
@@ -49,6 +49,14 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/jquery",
             players[4].separator = true;
         }
 
+        myMapping = {
+            players: {
+                key: function (data) {
+                    return ko.utils.unwrapObservable(data.pid);
+                }
+            }
+        };
+
         vm.abbrev(abbrev);
         vm.season(season);
         vm.numRosterSpots(15 - players.length);
@@ -58,7 +66,7 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/jquery",
         vm.team.name(team.name);
         vm.team.region(team.region);
         vm.showTradeFor(season === g.season && team.tid !== g.userTid);
-        vm.players(players);
+        vm = mapping.fromJS({players: players}, myMapping, vm);
 
         components.dropdown("roster-dropdown", ["teams", "seasons"], [abbrev, season], updateEvents);
 

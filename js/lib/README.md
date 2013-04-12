@@ -10,3 +10,5 @@ https://github.com/olivernn/davis.js/issues/61
 
 raphael.js has this very minor patch applied to make it play nice with
 Require.js: https://github.com/robcolburn/raphael/commit/e81cbaa03898f4da6e705e7a9f6947cccb8e27e7
+
+knockout.mapping.js is changed to depend on lib/knockout, not knockout.

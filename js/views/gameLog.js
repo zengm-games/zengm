@@ -208,11 +208,7 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
             });
 
             updateBoxScore(gid, function () {
-                updateGameLogList(abbrev, season, gid, updateEvents, function () {
-                    if (cb !== undefined) {
-                        cb();
-                    }
-                });
+                updateGameLogList(abbrev, season, gid, updateEvents, cb);
             });
         };
 
@@ -262,16 +258,15 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
      * @param {Object} req Davis.js request object.
      */
     function get(req) {
-        viewHelpers.beforeLeague(req, function () {
-            var abbrev, cbDisplay, gid, out, season, seasons, teams, updateEvents;
+        viewHelpers.beforeLeague(req, function (updateEvents, cb) {
+            var abbrev, gid, out, season;
 
             out = helpers.validateAbbrev(req.params.abbrev);
             abbrev = out[1];
             season = helpers.validateSeason(req.params.season);
             gid = req.params.gid !== undefined ? parseInt(req.params.gid, 10) : -1;
-            updateEvents = req.raw.updateEvents !== undefined ? req.raw.updateEvents : [];
 
-            update(abbrev, season, gid, updateEvents, req.raw.cb);
+            update(abbrev, season, gid, updateEvents, cb);
         });
     }
 

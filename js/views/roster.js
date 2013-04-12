@@ -48,7 +48,9 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/knockout
                 update: function (e, ui) {
                     var i, sortedPids;
 
-                    sortedPids = $(this).sortable("toArray");
+console.log($(this));
+                    sortedPids = $(this).sortable("toArray", {attribute: "data-pid"});
+console.log(sortedPids);
                     for (i = 0; i < sortedPids.length; i++) {
                         sortedPids[i] = parseInt(sortedPids[i].substr(7), 10);
                     }
@@ -261,11 +263,7 @@ console.log("loadBefore")
 
         if ((season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || abbrev !== vm.abbrev() || season !== vm.season()) {
             loadBefore(abbrev, tid, season, function (team, players, payroll) {
-                display(abbrev, tid, season, team, players, payroll, updateEvents, function () {
-                    if (cb !== undefined) {
-                        cb();
-                    }
-                });
+                display(abbrev, tid, season, team, players, payroll, updateEvents, cb);
             });
         }
     }
@@ -276,16 +274,15 @@ console.log("loadBefore")
             return Davis.location.assign(new Davis.Request("/l/" + g.lid + "/free_agents"));
         }
 
-        viewHelpers.beforeLeague(req, function () {
-            var abbrev, out, season, tid, updateEvents;
+        viewHelpers.beforeLeague(req, function (updateEvents, cb) {
+            var abbrev, out, season, tid;
 
             out = helpers.validateAbbrev(req.params.abbrev);
             tid = out[0];
             abbrev = out[1];
             season = helpers.validateSeason(req.params.season);
-            updateEvents = req.raw.updateEvents !== undefined ? req.raw.updateEvents : [];
 
-            update(abbrev, tid, season, updateEvents, req.raw.cb);
+            update(abbrev, tid, season, updateEvents, cb);
         });
     }
 

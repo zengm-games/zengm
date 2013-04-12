@@ -6,7 +6,7 @@ define(["db", "globals", "ui", "lib/jquery", "util/helpers"], function (db, g, u
     "use strict";
 
     function beforeLeague(req, cb) {
-        var checkDbChange, leagueMenu, popup;
+        var reqCb, checkDbChange, leagueMenu, popup, updateEvents;
 
         g.lid = parseInt(req.params.lid, 10);
         g.realtimeUpdate = true;  // This is the default. It is set to false in views where appropriate
@@ -48,6 +48,10 @@ define(["db", "globals", "ui", "lib/jquery", "util/helpers"], function (db, g, u
 
         // Make sure league exists
 
+        // Handle some common internal parameters
+        updateEvents = req.raw.updateEvents !== undefined ? req.raw.updateEvents : [];
+        reqCb = req.raw.cb !== undefined ? cb : function () {};
+
 
         // Make sure league template FOR THE CURRENT LEAGUE is showing
         leagueMenu = document.getElementById("league_menu");
@@ -84,13 +88,13 @@ define(["db", "globals", "ui", "lib/jquery", "util/helpers"], function (db, g, u
                     ui.updateStatus();
                     ui.updatePhase();
                     ui.updatePlayMenu(null, function () {
-                        cb();
+                        cb(updateEvents, reqCb);
                         checkDbChange(g.lid);
                     });
                 });
             });
         } else {
-            cb();
+            cb(updateEvents, reqCb);
         }
     }
 

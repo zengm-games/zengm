@@ -3,6 +3,7 @@ smarter realtime
 
 player stats
   feasible to use knockout for updating giant table? kogrid?
+  shot location and stat distribution URLs should have season in them
 roster
   check release, buy out, trade for
   unit tests

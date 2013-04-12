@@ -113,6 +113,7 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
         table.dataTable({
             aaData: data,
             aaSorting: [[sort_col, "desc"]],
+            bDestroy: true,
             bDeferRender: true,
             bStateSave: true,
             fnStateSave: function (oSettings, oData) {
@@ -134,6 +135,7 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
         table.dataTable({
             aaData: data,
             aaSorting: [[sort_col, "desc"]],
+            bDestroy: true,
             bFilter: false,
             bInfo: false,
             bPaginate: false,

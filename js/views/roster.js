@@ -30,7 +30,7 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/knockout
     }
 
     function cbAfterPlayers(tx, abbrev, season, team, players, payroll, updateEvents, cb) {
-        var data, i, myMapping, x;
+        var data, i, mapPlayersByPid, x;
 
         for (i = 0; i < players.length; i++) {
             if (players.length > 5) {
@@ -45,7 +45,7 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/knockout
             }
         }
 
-        myMapping = {
+        mapPlayersByPid = {
             players: {
                 key: function (data) {
                     return ko.utils.unwrapObservable(data.pid);
@@ -62,7 +62,7 @@ define(["api", "db", "globals", "ui", "lib/davis", "lib/knockout", "lib/knockout
         vm.team.name(team.name);
         vm.team.region(team.region);
         vm.showTradeFor(season === g.season && team.tid !== g.userTid);
-        vm = mapping.fromJS({players: players}, myMapping, vm);
+        mapping.fromJS({players: players}, mapPlayersByPid, vm);
 
         components.dropdown("roster-dropdown", ["teams", "seasons"], [abbrev, season], updateEvents);
 

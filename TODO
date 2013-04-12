@@ -2,6 +2,7 @@ smarter realtime
 ----------------
 
 roster
+  why are non-user teams sortable?
   players
     shouldn't flicker on update of user's current roster
   data-cash-owed is not formatted now
@@ -17,11 +18,13 @@ roster
   unit tests
 general things
   how to dynamically update title?
+    maybe have app-level vm (g.vm?) with title, play menu
   somehow need to delete these viewmodels when the view is deleted (i.e. page change) otherwise contents will get stale. or at least come up with a way to update when appropriate.
   where to call ko.applyBindings?
     performance considerations... see old TODO
   updateEvents checking in viewHelpers.newLeague?
     also, if cb is undefined make it an empty function?
+  reduce boilerplate
 ui.realtimeUpdate should be used in more places so updateEvent is pervasive
   how can this be done for automatic redirects? wrapper function?
   search for anywhere Davis is directly called.

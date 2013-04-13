@@ -273,7 +273,7 @@ console.log("loadBefore")
             vm.numRosterSpots = ko.computed(function () {
                 return 15 - vm.players().length;
             });
-            vm.currentSeason = ko.computed(function () {
+            vm.isCurrentSeason = ko.computed(function () {
                 return g.season === vm.season();
             });
         }

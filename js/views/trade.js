@@ -17,7 +17,6 @@ define(["db", "globals", "ui", "core/trade", "lib/davis", "lib/handlebars.runtim
             trade.summary(otherTid, userPids, otherPids, function (summary) {
                 var i;
 
-//console.log(!summary.warning && (userPids || otherPids))
                 vm.summary.enablePropose(!summary.warning && (userPids.length > 0 || otherPids.length > 0));
                 vm.summary.warning(summary.warning);
 
@@ -27,11 +26,8 @@ define(["db", "globals", "ui", "core/trade", "lib/davis", "lib/handlebars.runtim
                     vm.summary.teams[i].total(summary.teams[i].total);
                     vm.summary.teams[i].trade(summary.teams[i].trade);
                 }
-//console.log(summary);
-//console.log('update summary')
-                if (cb !== undefined) {
-                    cb(userPids, otherPids);
-                }
+
+                cb();
             });
         });
     }
@@ -107,7 +103,7 @@ define(["db", "globals", "ui", "core/trade", "lib/davis", "lib/handlebars.runtim
                 vm.userPids(userPids);
                 vm.otherPids(otherPids);
 
-                updateSummary(function (userPids, otherPids) {
+                updateSummary(function () {
                     var found, i, j;
 
                     for (i = 0; i < rosterCheckboxesUser.length; i++) {

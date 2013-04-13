@@ -47,7 +47,7 @@ console.log('update summary')
             container: "league_content",
             template: "trade",
             title: "Trade",
-            vars: {userPids: vm.userPids(), otherPids: vm.otherPids(), teams: teams, otherTid: vm.otherTid(), userTeamName: "USER TEAM NAME (don't get from summary)"}
+            vars: {userPids: vm.userPids(), otherPids: vm.otherPids(), teams: teams, userTeamName: "USER TEAM NAME (don't get from summary)"}
         });
 
         updateSummary();
@@ -192,7 +192,6 @@ ko.applyBindings(vm, document.getElementById("league_content"))
                             }
                         }
 
-                        vm.otherTid(otherTid);
                         vm.userPids(userPids);
                         vm.otherPids(otherPids);
                         vm.userRoster(userRoster);
@@ -214,7 +213,6 @@ ko.applyBindings(vm, document.getElementById("league_content"))
             ko.cleanNode(leagueContentEl);
             vm = {
                 salaryCap: ko.observable(g.salaryCap / 1000),
-                otherTid: ko.observable(),
                 userPids: ko.observable([]),
                 otherPids: ko.observable([]),
                 userRoster: ko.observable([]),

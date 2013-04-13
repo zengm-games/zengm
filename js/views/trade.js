@@ -29,7 +29,6 @@ define(["db", "globals", "ui", "core/trade", "lib/davis", "lib/handlebars.runtim
                     }
 console.log(summary);
 console.log('update summary')
-//                    vm.summary(Handlebars.templates.tradeSummary({lid: g.lid, summary: summary}));
                     if (cb !== undefined) {
                         cb(userPids, otherPids);
                     }
@@ -39,140 +38,96 @@ console.log('update summary')
     }
 
     function showTrade(cb) {
-/*        if (req.method === "post") {
-            // Refresh, but pass the latest message if there is one
-            return Davis.location.assign(new Davis.Request("/l/" + g.lid + "/trade", {message: message}));
-        }*/
+        var i, rosterCheckboxesOther, rosterCheckboxesUser, teams;
 
-        trade.getOtherTid(function (otherTid) {
-            var otherPids, playerStore, userPids;
+        teams = helpers.getTeams(vm.otherTid());
+        teams.splice(g.userTid, 1);  // Can't trade with yourself
 
-            otherPids = vm.otherPids();
-            userPids = vm.userPids();
+        ui.update({
+            container: "league_content",
+            template: "trade",
+            title: "Trade",
+            vars: {userPids: vm.userPids(), otherPids: vm.otherPids(), teams: teams, otherTid: vm.otherTid(), userTeamName: "USER TEAM NAME (don't get from summary)"}
+        });
 
-            playerStore = g.dbl.transaction("players").objectStore("players");
-
-            playerStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
-                var attributes, i, ratings, stats, userRoster;
-
-                attributes = ["pid", "name", "pos", "age", "contract", "injury"];
-                ratings = ["ovr", "pot", "skills"];
-                stats = ["min", "pts", "trb", "ast", "per"];
-                userRoster = db.getPlayers(event.target.result, g.season, g.userTid, attributes, stats, ratings, {showNoStats: true, fuzz: true});
-                for (i = 0; i < userRoster.length; i++) {
-                    if (userPids.indexOf(userRoster[i].pid) >= 0) {
-                        userRoster[i].selected = true;
-                    } else {
-                        userRoster[i].selected = false;
-                    }
-                }
-
-                playerStore.index("tid").getAll(otherTid).onsuccess = function (event) {
-                    var data, i, otherRoster, teams;
-
-                    otherRoster = db.getPlayers(event.target.result, g.season, otherTid, attributes, stats, ratings, {showNoStats: true, fuzz: true});
-                    for (i = 0; i < otherRoster.length; i++) {
-                        if (otherPids.indexOf(otherRoster[i].pid) >= 0) {
-                            otherRoster[i].selected = true;
-                        } else {
-                            otherRoster[i].selected = false;
-                        }
-                    }
-
-                    teams = helpers.getTeams(otherTid);
-                    teams.splice(g.userTid, 1);  // Can't trade with yourself
-
-                    data = {
-                        container: "league_content",
-                        template: "trade",
-                        title: "Trade",
-                        vars: {userPids: userPids, otherPids: otherPids, teams: teams, otherTid: otherTid, userTeamName: "USER TEAM NAME (don't get from summary)"}
-                    };
-                    ui.update(data, function () {
-                        var i, rosterCheckboxesOther, rosterCheckboxesUser;
-
-                        updateSummary();
+        updateSummary();
 ko.applyBindings(vm, document.getElementById("league_content"))
 
-                        // Don't use the dropdown function because this needs to be a POST
-                        $('#trade-select-team').change(function (event) {
-                            Davis.location.replace(new Davis.Request({
-                                abbrev: $("#trade-select-team").val(),
-                                fullPath: "/l/" + g.lid + "/trade",
-                                method: "post"
-                            }));
-                        });
-
-                        ui.datatableSinglePage($("#roster-user"), 5, _.map(userRoster, function (p) {
-                            var selected;
-
-                            if (p.selected) {
-                                selected = ' checked = "checked"';
-                            }
-                            return ['<input name="user-pids" type="checkbox" value="' + p.pid + '"' + selected + '>', helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
-                        }));
-
-                        ui.datatableSinglePage($("#roster-other"), 5, _.map(otherRoster, function (p) {
-                            var selected;
-
-                            if (p.selected) {
-                                selected = ' checked = "checked"';
-                            }
-                            return ['<input name="other-pids" type="checkbox" value="' + p.pid + '"' + selected + '>', helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
-                        }));
-
-                        rosterCheckboxesUser = $("#roster-user input");
-                        rosterCheckboxesOther = $("#roster-other input");
-
-                        $('#rosters input[type="checkbox"]').click(function (event) {
-                            var otherPids, serialized, userPids;
-
-                            serialized = $("#rosters").serializeArray();
-                            vm.userPids(_.map(_.pluck(_.filter(serialized, function (o) { return o.name === "user-pids"; }), "value"), Math.floor));
-                            vm.otherPids(_.map(_.pluck(_.filter(serialized, function (o) { return o.name === "other-pids"; }), "value"), Math.floor));
-
-                            $("#propose-trade button").attr("disabled", "disabled"); // Will be reenabled, if appropriate, when the summary is loaded
-                            updateSummary(function (userPids, otherPids) {
-                                var found, i, j;
-
-                                for (i = 0; i < rosterCheckboxesUser.length; i++) {
-                                    found = false;
-                                    for (j = 0; j < userPids.length; j++) {
-                                        if (Math.floor(rosterCheckboxesUser[i].value) === userPids[j]) {
-                                            rosterCheckboxesUser[i].checked = true;
-                                            found = true;
-                                            break;
-                                        }
-                                    }
-                                    if (!found) {
-                                        rosterCheckboxesUser[i].checked = false;
-                                    }
-                                }
-                                for (i = 0; i < rosterCheckboxesOther.length; i++) {
-                                    found = false;
-                                    for (j = 0; j < otherPids.length; j++) {
-                                        if (Math.floor(rosterCheckboxesOther[i].value) === otherPids[j]) {
-                                            rosterCheckboxesOther[i].checked = true;
-                                            found = true;
-                                            break;
-                                        }
-                                    }
-                                    if (!found) {
-                                        rosterCheckboxesOther[i].checked = false;
-                                    }
-                                }
-                            });
-                        });
-
-                        $("#propose-trade button").click(function (event) {
-                            $("#propose-trade button").attr("disabled", "disabled");
-                        });
-
-                        cb();
-                    });
-                };
-            };
+        // Don't use the dropdown function because this needs to be a POST
+        $('#trade-select-team').change(function (event) {
+            Davis.location.replace(new Davis.Request({
+                abbrev: $("#trade-select-team").val(),
+                fullPath: "/l/" + g.lid + "/trade",
+                method: "post"
+            }));
         });
+
+        ui.datatableSinglePage($("#roster-user"), 5, _.map(vm.userRoster(), function (p) {
+            var selected;
+
+            if (p.selected) {
+                selected = ' checked = "checked"';
+            }
+            return ['<input name="user-pids" type="checkbox" value="' + p.pid + '"' + selected + '>', helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
+        }));
+
+        ui.datatableSinglePage($("#roster-other"), 5, _.map(vm.otherRoster(), function (p) {
+            var selected;
+
+            if (p.selected) {
+                selected = ' checked = "checked"';
+            }
+            return ['<input name="other-pids" type="checkbox" value="' + p.pid + '"' + selected + '>', helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
+        }));
+
+        rosterCheckboxesUser = $("#roster-user input");
+        rosterCheckboxesOther = $("#roster-other input");
+
+        $('#rosters input[type="checkbox"]').click(function (event) {
+            var otherPids, serialized, userPids;
+
+            serialized = $("#rosters").serializeArray();
+            vm.userPids(_.map(_.pluck(_.filter(serialized, function (o) { return o.name === "user-pids"; }), "value"), Math.floor));
+            vm.otherPids(_.map(_.pluck(_.filter(serialized, function (o) { return o.name === "other-pids"; }), "value"), Math.floor));
+
+            $("#propose-trade button").attr("disabled", "disabled"); // Will be reenabled, if appropriate, when the summary is loaded
+            updateSummary(function (userPids, otherPids) {
+                var found, i, j;
+
+                for (i = 0; i < rosterCheckboxesUser.length; i++) {
+                    found = false;
+                    for (j = 0; j < userPids.length; j++) {
+                        if (Math.floor(rosterCheckboxesUser[i].value) === userPids[j]) {
+                            rosterCheckboxesUser[i].checked = true;
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        rosterCheckboxesUser[i].checked = false;
+                    }
+                }
+                for (i = 0; i < rosterCheckboxesOther.length; i++) {
+                    found = false;
+                    for (j = 0; j < otherPids.length; j++) {
+                        if (Math.floor(rosterCheckboxesOther[i].value) === otherPids[j]) {
+                            rosterCheckboxesOther[i].checked = true;
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        rosterCheckboxesOther[i].checked = false;
+                    }
+                }
+            });
+        });
+
+        $("#propose-trade button").click(function (event) {
+            $("#propose-trade button").attr("disabled", "disabled");
+        });
+
+        cb();
     }
 
     // Validate that the stored player IDs correspond with the active team ID
@@ -201,12 +156,53 @@ ko.applyBindings(vm, document.getElementById("league_content"))
     }
 
     function loadBefore(message, cb) {
-        vm.message(message);
-
         validateSavedPids(function (userPids, otherPids) {
-            vm.userPids(userPids);
-            vm.otherPids(otherPids);
-            showTrade(cb);
+            trade.getOtherTid(function (otherTid) {
+                var otherPids, playerStore, userPids;
+
+                otherPids = vm.otherPids();
+                userPids = vm.userPids();
+
+                playerStore = g.dbl.transaction("players").objectStore("players");
+
+                playerStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
+                    var attributes, i, ratings, stats, userRoster;
+
+                    attributes = ["pid", "name", "pos", "age", "contract", "injury"];
+                    ratings = ["ovr", "pot", "skills"];
+                    stats = ["min", "pts", "trb", "ast", "per"];
+                    userRoster = db.getPlayers(event.target.result, g.season, g.userTid, attributes, stats, ratings, {showNoStats: true, fuzz: true});
+                    for (i = 0; i < userRoster.length; i++) {
+                        if (userPids.indexOf(userRoster[i].pid) >= 0) {
+                            userRoster[i].selected = true;
+                        } else {
+                            userRoster[i].selected = false;
+                        }
+                    }
+
+                    playerStore.index("tid").getAll(otherTid).onsuccess = function (event) {
+                        var data, i, otherRoster, teams;
+
+                        otherRoster = db.getPlayers(event.target.result, g.season, otherTid, attributes, stats, ratings, {showNoStats: true, fuzz: true});
+                        for (i = 0; i < otherRoster.length; i++) {
+                            if (otherPids.indexOf(otherRoster[i].pid) >= 0) {
+                                otherRoster[i].selected = true;
+                            } else {
+                                otherRoster[i].selected = false;
+                            }
+                        }
+
+                        vm.otherTid(otherTid);
+                        vm.userPids(userPids);
+                        vm.otherPids(otherPids);
+                        vm.userRoster(userRoster);
+                        vm.otherRoster(otherRoster);
+                        vm.message(message);
+
+                        showTrade(cb);
+                    };
+                };
+            });
         });
     }
 
@@ -218,8 +214,11 @@ ko.applyBindings(vm, document.getElementById("league_content"))
             ko.cleanNode(leagueContentEl);
             vm = {
                 salaryCap: ko.observable(g.salaryCap / 1000),
+                otherTid: ko.observable(),
                 userPids: ko.observable([]),
                 otherPids: ko.observable([]),
+                userRoster: ko.observable([]),
+                otherRoster: ko.observable([]),
                 message: ko.observable()
             };
             vm.summary = {

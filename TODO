@@ -3,7 +3,7 @@ smarter realtime
 
 trade
   enablePropose should be a computed
-  mapping to update summary.teams.trade
+  mapping to update summary.teams.trade, userRoster, otherRoster
   urls for players in trade summary
   move summary to main template, update via knockout
   when to delete stored message?

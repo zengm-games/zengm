@@ -1,7 +1,7 @@
 <form id="roster-dropdown" class="form-inline pull-right"></form>
 
 <h1><span data-bind="text: team.region"></span> <span data-bind="text: team.name"></span> Roster {{new_window}}</h1>
-<p>More: <a data-bind="attr: {href: financesUrl}">Finances</a> | <a data-bind="attr: {href: gameLogUrl}">Game Log</a></p>
+<p>More: <a data-bind="hrefLeagueUrl: ['finances', abbrev]">Finances</a> | <a data-bind="hrefLeagueUrl: ['game_log', abbrev, season]">Game Log</a></p>
 
 <p data-bind="visible: currentSeason">
   <span data-bind="text: numRosterSpots"></span> open roster spots<br>

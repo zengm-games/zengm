@@ -276,12 +276,6 @@ console.log("loadBefore")
             vm.currentSeason = ko.computed(function () {
                 return g.season === vm.season();
             });
-            vm.financesUrl = ko.computed(function () {
-                return "/l/" + g.lid + "/team_finances/" + vm.abbrev();
-            });
-            vm.gameLogUrl = ko.computed(function () {
-                return "/l/" + g.lid + "/game_log/" + vm.abbrev() + "/" + vm.season();
-            });
         }
 
         if ((season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || abbrev !== vm.abbrev() || season !== vm.season()) {

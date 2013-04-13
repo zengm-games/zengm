@@ -246,12 +246,6 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
                     games: ko.observableArray([])
                 }
             };
-            vm.rosterUrl = ko.computed(function () {
-                return "/l/" + g.lid + "/roster/" + vm.abbrev() + "/" + vm.season();
-            });
-            vm.financesUrl = ko.computed(function () {
-                return "/l/" + g.lid + "/team_finances/" + vm.abbrev();
-            });
         } else {
             vm.abbrev(abbrev);
             vm.season(season);

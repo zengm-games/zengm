@@ -55,12 +55,6 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
             vm = {
                 season: ko.observable()
             };
-            vm.playerShotLocationsUrl = ko.computed(function () {
-                return "/l/" + g.lid + "/player_shot_locations/" + vm.season();
-            });
-            vm.distPlayerStatsUrl = ko.computed(function () {
-                return "/l/" + g.lid + "/dist_player_stats/" + vm.season();
-            });
         }
 
         if ((season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || season !== vm.season()) {

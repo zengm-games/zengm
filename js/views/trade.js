@@ -95,7 +95,6 @@ define(["db", "globals", "ui", "core/trade", "lib/davis", "lib/handlebars.runtim
 
         $('#rosters input').click(function (event) {
             var otherPids, serialized, userPids;
-console.log('CLICK' + Math.random())
 
             vm.summary.enablePropose(false); // Will be reenabled in updateSummary, if appropriate
             vm.message("");

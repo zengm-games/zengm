@@ -1,21 +1,6 @@
 smarter realtime
 ----------------
 
-trade
-  mapping to update summary.teams.trade, userRoster, otherRoster
-  can i do a redirect from post without refreshing everything?
-    just call ui.realtimeUpdate which should allow for smart handling
-      if trade is accepted/cleared, playerMovement will instigate a refresh of rosters
-      if trade is proposed, message will somehow explicity be sent (set in VM? but what if VM not initialized?)
-  core.trade refactoring
-    validateSavedTids crap should be in trade.js.
-    trade.summary stuff should be automatic and stored in tradeStore
-    dbChange should be set for actions modifying trade, not just accepting
-    trade and clear buttons should be disabled during gameSim, wiht message like in team finances
-  when to delete stored message?
-    at beginning of new propose
-    on clear
-    when team changes
 roster
   check release, buy out, trade for
   unit tests
@@ -45,9 +30,25 @@ after updating all views
 not urgetnt, but... use knockout for
   components.dropdown
   gameLog.boxScore
-  feasible to use knockout for updating giant table? kogrid?
+  feasible to use knockout for updating datatable? or kogrid?
     playerStats
     teamStats
+    trade
+  trade - not fully knockoutifieid
+    mapping to update summary.teams.trade, userRoster, otherRoster
+    can i do a redirect from post without refreshing everything?
+      just call ui.realtimeUpdate which should allow for smart handling
+        if trade is accepted/cleared, playerMovement will instigate a refresh of rosters
+        if trade is proposed, message will somehow explicity be sent (set in VM? but what if VM not initialized?)
+    core.trade refactoring
+      validateSavedTids crap should be in trade.js.
+      trade.summary stuff should be automatic and stored in tradeStore
+      dbChange should be set for actions modifying trade, not just accepting
+      trade and clear buttons should be disabled during gameSim, wiht message like in team finances
+    when to delete stored message?
+      at beginning of new propose
+      on clear
+      when team changes
 
 BEFORE 3.0.0-beta.3
 -------------------

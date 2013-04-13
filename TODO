@@ -43,7 +43,6 @@ not urgetnt, but... use knockout for
     core.trade refactoring
       validateSavedTids crap should be in trade.js.
       trade.summary stuff should be automatic and stored in tradeStore
-      dbChange should be set for actions modifying trade, not just accepting
       trade and clear buttons should be disabled during gameSim, wiht message like in team finances
     when to delete stored message?
       at beginning of new propose

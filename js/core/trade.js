@@ -42,7 +42,11 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                 cursor.update(tr);
             };
 
-            tx.oncomplete = cb;
+            tx.oncomplete = function () {
+                db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                    cb();
+                });
+            };
         };
 
         // Make sure tid is set and corresponds to pid, if (set;
@@ -129,7 +133,9 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                         cursor.update(tr);
                     };
                     tx.oncomplete = function () {
-                        cb(userPids, otherPids);
+                        db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                            cb(userPids, otherPids);
+                        });
                     };
                 };
             };
@@ -283,9 +289,10 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
             tr.otherPids = [];
             cursor.update(tr);
         };
-        // Get errors in Mocha if I pass cb directly. Not sure why.
         tx.oncomplete = function () {
-            cb();
+            db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                cb();
+            });
         };
     }
 
@@ -339,7 +346,6 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
 
                                 done += 1;
                                 if (done === 2) {
-console.log(value);
                                     if (value[0] > value[1] * 0.9) {
                                         // Trade players
                                         outcome = "accepted";
@@ -378,10 +384,8 @@ console.log(value);
                         if (outcome === "accepted") {
                             // Auto-sort CPU team roster
                             team.rosterAutoSort(null, tids[1], function () {
-                                clear(function () {
-                                    db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                                        cb(true, 'Trade accepted! "Nice doing business with you!"');
-                                    });
+                                clear(function () { // This includes dbChange
+                                    cb(true, 'Trade accepted! "Nice doing business with you!"');
                                 });
                             });
                         } else {

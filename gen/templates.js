@@ -407,15 +407,6 @@ function program3(depth0,data) {
 
 function program5(depth0,data) {
   
-  var buffer = "", stack1;
-  buffer += "<p class=\"alert alert-info\">"
-    + escapeExpression(((stack1 = depth0.message),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</p>\n";
-  return buffer;
-  }
-
-function program7(depth0,data) {
-  
   
   return " disabled=\"disabled\"";
   }
@@ -455,13 +446,10 @@ function program7(depth0,data) {
     + "</h5>\n  </div>\n</div>\n\n<br>\n";
   stack2 = helpers['if'].call(depth0, ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.warning), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n";
-  stack2 = helpers['if'].call(depth0, depth0.message, {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n\n<center>\n  <form action=\"/l/"
+  buffer += "\n<p class=\"alert alert-info\" data-bind=\"text: message\"></p>\n\n<center>\n  <form action=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "/trade\" method=\"POST\" id=\"propose-trade\">\n    <input type=\"hidden\" name=\"propose\" value=\"1\">\n    <button type=\"submit\" class=\"btn btn-large btn-primary\"";
-  stack2 = helpers['if'].call(depth0, ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.disablePropose), {hash:{},inverse:self.noop,fn:self.program(7, program7, data),data:data});
+  stack2 = helpers['if'].call(depth0, ((stack1 = depth0.summary),stack1 == null || stack1 === false ? stack1 : stack1.disablePropose), {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
   buffer += ">Propose Trade</button>\n  </form>\n\n  <form action=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))

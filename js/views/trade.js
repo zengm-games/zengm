@@ -2,10 +2,22 @@
  * @name views.trade
  * @namespace Trade.
  */
-define(["api", "db", "globals", "ui", "core/trade", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/knockout", "lib/underscore", "util/helpers", "util/viewHelpers"], function (api, db, g, ui, trade, Davis, Handlebars, $, ko, _, helpers, viewHelpers) {
+define(["db", "globals", "ui", "core/trade", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/knockout", "lib/underscore", "util/helpers", "util/viewHelpers"], function (db, g, ui, trade, Davis, Handlebars, $, ko, _, helpers, viewHelpers) {
     "use strict";
 
     var vm;
+
+    function updateSummary(userPids, otherPids, cb) {
+        trade.updatePlayers(userPids, otherPids, function (userPids, otherPids) {
+            trade.getOtherTid(function (otherTid) {
+                trade.summary(otherTid, userPids, otherPids, function (summary) {
+                    var tradeSummary;
+                    tradeSummary = Handlebars.templates.tradeSummary({lid: g.lid, summary: summary});
+                    cb(tradeSummary, userPids, otherPids);
+                });
+            });
+        });
+    }
 
     function showTrade(cb) {
 /*        if (req.method === "post") {
@@ -54,16 +66,18 @@ define(["api", "db", "globals", "ui", "core/trade", "lib/davis", "lib/handlebars
                         teams = helpers.getTeams(otherTid);
                         teams.splice(g.userTid, 1);  // Can't trade with yourself
 
-                        tradeSummary = Handlebars.templates.tradeSummary({lid: g.lid, summary: summary, message: vm.message()});
+                        tradeSummary = Handlebars.templates.tradeSummary({lid: g.lid, summary: summary});
 
                         data = {
                             container: "league_content",
                             template: "trade",
                             title: "Trade",
-                            vars: {userPids: userPids, otherPids: otherPids, teams: teams, otherTid: otherTid, tradeSummary: tradeSummary, userTeamName: summary.teams[0].name}
+                            vars: {userPids: userPids, otherPids: otherPids, teams: teams, otherTid: otherTid, tradeSummary: tradeSummary, userTeamName: "USER TEAM NAME (don't get from summary)"}
                         };
                         ui.update(data, function () {
                             var i, rosterCheckboxesOther, rosterCheckboxesUser;
+
+ko.applyBindings(vm, document.getElementById("league_content"))
 
                             // Don't use the dropdown function because this needs to be a POST
                             $('#trade-select-team').change(function (event) {
@@ -103,7 +117,7 @@ define(["api", "db", "globals", "ui", "core/trade", "lib/davis", "lib/handlebars
                                 otherPids = _.map(_.pluck(_.filter(serialized, function (o) { return o.name === "other-pids"; }), "value"), Math.floor);
 
                                 $("#propose-trade button").attr("disabled", "disabled"); // Will be reenabled, if appropriate, when the summary is loaded
-                                api.tradeUpdate(userPids, otherPids, function (summary, userPids, otherPids) {
+                                updateSummary(userPids, otherPids, function (summary, userPids, otherPids) {
                                     var found, i, j;
 
                                     $("#trade-summary").html(summary);
@@ -166,7 +180,7 @@ define(["api", "db", "globals", "ui", "core/trade", "lib/davis", "lib/handlebars
                 container: "league_content",
                 template: "trade"
             });
-            ko.applyBindings(vm, leagueContentEl);
+            ko.applyBindings(vm, document.getElementById("league_content"));
         }
         ui.title("Trade");*/
 

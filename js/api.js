@@ -258,18 +258,6 @@ define(["db", "globals", "views", "ui", "core/draft", "core/finances", "core/gam
         };
     }
 
-    function tradeUpdate(userPids, otherPids, cb) {
-        trade.updatePlayers(userPids, otherPids, function (userPids, otherPids) {
-            trade.getOtherTid(function (otherTid) {
-                trade.summary(otherTid, userPids, otherPids, function (summary) {
-                    var tradeSummary;
-                    tradeSummary = Handlebars.templates.tradeSummary({lid: g.lid, summary: summary});
-                    cb(tradeSummary, userPids, otherPids);
-                });
-            });
-        });
-    }
-
     function draftUntilUserOrEnd(cb2) {
         ui.updateStatus('Draft in progress...');
         var pids = draft.untilUserOrEnd(function (pids) {
@@ -314,7 +302,6 @@ define(["db", "globals", "views", "ui", "core/draft", "core/finances", "core/gam
         rosterReorder: rosterReorder,
         rosterRelease: rosterRelease,
         rosterBuyOut: rosterBuyOut,
-        tradeUpdate: tradeUpdate,
         draftUntilUserOrEnd: draftUntilUserOrEnd,
         draftUser: draftUser,
         moveToNewWindow: moveToNewWindow

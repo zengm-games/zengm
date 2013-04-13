@@ -2,6 +2,10 @@ smarter realtime
 ----------------
 
 trade
+  when to delete stored message?
+    at beginning of new propose
+    on clear
+    when offer changes (player added or removed, or team changed)
   can i do a redirect from post without refreshing everything?
     just call ui.realtimeUpdate which should allow for smart handling
       if trade is accepted/cleared, playerMovement will instigate a refresh of rosters

@@ -1,6 +1,7 @@
 smarter realtime
 ----------------
 
+linkLeagueUrl rather than custom properties
 trade
   enablePropose should be a computed
   mapping to update summary.teams.trade

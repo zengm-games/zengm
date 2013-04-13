@@ -2,7 +2,7 @@
  * @name util.templateHelpers
  * @namespace Handlebars helper functions. Any new helpers added here should be added to the handlebars call in the Makefile.
  */
-define(["lib/handlebars.runtime", "lib/knockout", "util/helpers"], function (Handlebars, ko, helpers) {
+define(["globals", "lib/handlebars.runtime", "lib/knockout", "util/helpers"], function (g, Handlebars, ko, helpers) {
     "use strict";
 
     Handlebars.registerHelper("round", helpers.round);
@@ -93,6 +93,24 @@ define(["lib/handlebars.runtime", "lib/knockout", "util/helpers"], function (Han
             var args = valueAccessor();
             return ko.bindingHandlers.html.update(element, function () {
                 return helpers.playerNameLabels(ko.utils.unwrapObservable(args[0]), ko.utils.unwrapObservable(args[1]), ko.utils.unwrapObservable(args[2]), ko.utils.unwrapObservable(args[3]));
+            });
+        }
+    };
+
+
+    ko.bindingHandlers.hrefLeagueUrl = {
+        update: function (element, valueAccessor) {
+            var args, i, url;
+
+            args = valueAccessor();
+            url = "/l/" + g.lid;
+
+            for (i = 0; i < args.length; i++) {
+                url += "/" + ko.utils.unwrapObservable(args[i]);
+            }
+
+            return ko.bindingHandlers.attr.update(element, function () {
+                return {href: url};
             });
         }
     };

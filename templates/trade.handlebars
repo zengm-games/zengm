@@ -33,14 +33,14 @@
         <h5>Trade Away:</h5>
         <ul>
           <!-- ko foreach: trade -->
-            <li><a href="#" data-bind="text: name"></a> (<span data-bind="currency: [contract.amount, 'M']"></span>)</li>
+            <li><a data-bind="hrefLeagueUrl: ['player', pid], text: name"></a> (<span data-bind="currency: [contract.amount, 'M']"></span>)</li>
           <!-- /ko -->
           <li><span data-bind="currency: [total, 'M']"></span> Total</li>
         </ul>
         <h5>Receive:</h5>
         <ul>
           <!-- ko foreach: other.trade -->
-            <li><a href="#" data-bind="text: name"></a> (<span data-bind="currency: [contract.amount, 'M']"></span>)</li>
+            <li><a data-bind="hrefLeagueUrl: ['player', pid], text: name"></a> (<span data-bind="currency: [contract.amount, 'M']"></span>)</li>
           <!-- /ko -->
           <li><span data-bind="currency: [other.total, 'M']"></span></li>
         </ul>

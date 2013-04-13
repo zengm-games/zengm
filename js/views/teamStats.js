@@ -8,16 +8,17 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
     var teams, vm;
 
     function display(updateEvents, cb) {
-        var season;
+        var leagueContentEl, season;
 
         season = vm.season();
 
-        if (document.getElementById("league_content").dataset.id !== "teamStats") {
+        leagueContentEl = document.getElementById("league_content");
+        if (leagueContentEl.dataset.id !== "teamStats") {
             ui.update({
                 container: "league_content",
                 template: "teamStats"
             });
-            ko.applyBindings(vm, document.getElementById("league_content"));
+            ko.applyBindings(vm, leagueContentEl);
         }
         ui.title("Team Stats - " + season);
 

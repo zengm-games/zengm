@@ -18,6 +18,10 @@ ui.realtimeUpdate should be used in more places so updateEvent is pervasive
   search for anywhere Davis is directly called.
   add playerMovement updateEvent, for when a player signs a contract, becomes a free agent, or is traded
   eventually, get rid of "reload" boolean in season.js
+next
+  draft - refactor into draft and draftSummary
+  trade - complicated, and see refactoring notes below
+  teamFinances - complicated, lots of live updating, form
 after updating all views
   reassess ui module. delete stuff like ui.dropdown. move other functions elsewhere?
     what is the difference between util.viewHelpers and ui?

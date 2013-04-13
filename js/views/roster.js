@@ -120,12 +120,15 @@ console.log('editableChanged ' + editable)
     }
 
     function display(updateEvents, cb) {
-        if (document.getElementById("league_content").dataset.id !== "roster") {
+        var leagueContentEl;
+
+        leagueContentEl = document.getElementById("league_content");
+        if (leagueContentEl.dataset.id !== "roster") {
             ui.update({
                 container: "league_content",
                 template: "roster"
             });
-            ko.applyBindings(vm, document.getElementById("league_content"));
+            ko.applyBindings(vm, leagueContentEl);
         }
         ui.title(vm.team.region() + " " + vm.team.name() + " " + "Roster - " + vm.season());
 

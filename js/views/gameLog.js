@@ -171,12 +171,15 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
      * @param {function()} cb Callback.
      */
     function display(updateEvents, cb) {
-        if (document.getElementById("league_content").dataset.id !== "gameLog") {
+        var leagueContentEl;
+
+        leagueContentEl = document.getElementById("league_content");
+        if (leagueContentEl.dataset.id !== "gameLog") {
             ui.update({
                 container: "league_content",
                 template: "gameLog"
             });
-            ko.applyBindings(vm, document.getElementById("league_content"));
+            ko.applyBindings(vm, leagueContentEl);
         }
         ui.title("Game Log - " + vm.season());
 

@@ -9,7 +9,9 @@ define(["lib/handlebars.runtime", "lib/knockout", "util/helpers"], function (Han
     ko.bindingHandlers.round = {
         update: function (element, valueAccessor) {
             var args = valueAccessor();
-            element.innerHTML = helpers.round(ko.utils.unwrapObservable(args[0]), args[1]);
+            return ko.bindingHandlers.text.update(element, function () {
+                return helpers.round(ko.utils.unwrapObservable(args[0]), args[1]);
+            });
         }
     };
 
@@ -75,7 +77,9 @@ define(["lib/handlebars.runtime", "lib/knockout", "util/helpers"], function (Han
     ko.bindingHandlers.currency = {
         update: function (element, valueAccessor) {
             var args = valueAccessor();
-            element.innerHTML = helpers.formatCurrency(ko.utils.unwrapObservable(args[0]), args[1]);
+            return ko.bindingHandlers.text.update(element, function () {
+                return helpers.formatCurrency(ko.utils.unwrapObservable(args[0]), args[1]);
+            });
         }
     };
 
@@ -87,7 +91,9 @@ define(["lib/handlebars.runtime", "lib/knockout", "util/helpers"], function (Han
     ko.bindingHandlers.playerNameLabels = {
         update: function (element, valueAccessor) {
             var args = valueAccessor();
-            element.innerHTML = helpers.playerNameLabels(ko.utils.unwrapObservable(args[0]), ko.utils.unwrapObservable(args[1]), ko.utils.unwrapObservable(args[2]), ko.utils.unwrapObservable(args[3]));
+            return ko.bindingHandlers.html.update(element, function () {
+                return helpers.playerNameLabels(ko.utils.unwrapObservable(args[0]), ko.utils.unwrapObservable(args[1]), ko.utils.unwrapObservable(args[2]), ko.utils.unwrapObservable(args[3]));
+            });
         }
     };
 });

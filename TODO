@@ -2,7 +2,12 @@ smarter realtime
 ----------------
 
 trade
-  things need to run in both get and post?
+  can i do a redirect from post without refreshing everything?
+    just call ui.realtimeUpdate which should allow for smart handling
+  core.trade refactoring
+    validateSavedTids crap should be in trade.js.
+    trade.summary stuff should be automatic and stored in tradeStore
+    dbChange should be set for actions modifying trade, not just accepting
 roster
   check release, buy out, trade for
   unit tests
@@ -121,10 +126,6 @@ gameSim
     do i need all the player composite ratings?
     do i need all the team composite ratings?
     how does performance change/degrade as the years go on?
-trade refactoring
-  validateSavedTids crap should be in trade.js.
-  trade.summary stuff should be automatic and stored in tradeStore
-  dbChange should be set for actions modifying trade, not just accepting
 internationalization
   league dashboard rankings should say 1st, 2nd, 3rd rather than 1th, 2th, 3th
   http://requirejs.org/docs/api.html#i18n

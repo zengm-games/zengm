@@ -3,10 +3,6 @@ smarter realtime
 
 hrefLeagueUrl to attrLeagueUrl
 trade
-  persistence of trade offers? should stay through refresh
-  team dropdown: http://knockoutjs.com/documentation/options-binding.html
-    is this necessary? see after it no longer updates every refresh
-  updateSummary should be called in loadBefore
   enablePropose should be a computed
   mapping to update summary.teams.trade, userRoster, otherRoster
   when to delete stored message?

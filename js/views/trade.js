@@ -27,9 +27,8 @@ define(["db", "globals", "ui", "core/trade", "lib/davis", "lib/handlebars.runtim
                         vm.summary.teams[i].total(summary.teams[i].total);
                         vm.summary.teams[i].trade(summary.teams[i].trade);
                     }
-console.log(summary);
-console.log(vm.summary.teams[1].trade());
 console.log('update summary')
+console.log(vm.summary.warning())
 console.log(vm.message())
 //                    vm.summary(Handlebars.templates.tradeSummary({lid: g.lid, summary: summary}));
                     if (cb !== undefined) {

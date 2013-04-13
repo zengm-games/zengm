@@ -50,8 +50,8 @@
     </div>
 
     <br>
-    <p class="alert alert-error"><strong>Warning!</strong> <span data-bind="text: summary.warning"></span></p>
-    <p class="alert alert-info" data-bind="text: message"></p>
+    <p class="alert alert-error" data-bind="visible: summary.warning"><strong>Warning!</strong> <span data-bind="text: summary.warning"></span></p>
+    <p class="alert alert-info" data-bind="visible: message, text: message"></p>
 
     <center>
       <form action="/l/{{lid}}/trade" method="POST" id="propose-trade">

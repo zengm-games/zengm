@@ -1,6 +1,8 @@
 smarter realtime
 ----------------
 
+trade
+  things need to run in both get and post?
 roster
   check release, buy out, trade for
   unit tests
@@ -16,6 +18,7 @@ general things
 ui.realtimeUpdate should be used in more places so updateEvent is pervasive
   how can this be done for automatic redirects? wrapper function?
   search for anywhere Davis is directly called.
+    what about post redirects? https://github.com/olivernn/davis.js/issues/36
   add playerMovement updateEvent, for when a player signs a contract, becomes a free agent, or is traded
   eventually, get rid of "reload" boolean in season.js
 next
@@ -121,6 +124,7 @@ gameSim
 trade refactoring
   validateSavedTids crap should be in trade.js.
   trade.summary stuff should be automatic and stored in tradeStore
+  dbChange should be set for actions modifying trade, not just accepting
 internationalization
   league dashboard rankings should say 1st, 2nd, 3rd rather than 1th, 2th, 3th
   http://requirejs.org/docs/api.html#i18n

@@ -44,7 +44,7 @@ console.log('update summary')
             container: "league_content",
             template: "trade",
             title: "Trade",
-            vars: {userPids: vm.userPids(), otherPids: vm.otherPids(), userTeamName: "USER TEAM NAME (don't get from summary)"}
+            vars: {userPids: vm.userPids(), otherPids: vm.otherPids()}
         });
 
         updateSummary();
@@ -191,9 +191,10 @@ console.log('change ' + $("#trade-select-team").val())
                         }
 
 console.log(otherTid);
-                        teams = helpers.getTeams(otherTid);
-                        teams.splice(g.userTid, 1);  // Can't trade with yourself
                         if (vm.teams.length === 0) {
+                            teams = helpers.getTeams(otherTid);
+                            vm.userTeamName = teams[g.userTid].region + " " + teams[g.userTid].name;
+                            teams.splice(g.userTid, 1);  // Can't trade with yourself
                             vm.teams = teams;
                         }
 
@@ -223,7 +224,8 @@ console.log(otherTid);
                 userRoster: ko.observable([]),
                 otherRoster: ko.observable([]),
                 message: ko.observable(),
-                teams: []
+                teams: [],
+                userTeamName: undefined
             };
             vm.summary = {
                 enablePropose: ko.observable(false),

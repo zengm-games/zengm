@@ -1,13 +1,7 @@
-<form action="/l/{{lid}}/team_stats" method="GET" class="form-inline pull-right">
-  <select id="team-stats-select-season" name="season" class="season">
-    {{#seasons}}
-      <option value="{{season}}"{{#if selected}} selected="selected"{{/if}}>{{season}} season</option>
-    {{/seasons}}
-  </select>
-</form>
+<form id="team-stats-dropdown" class="form-inline pull-right"></form>
 
 <h1>Team Stats {{new_window}}</h1>
-<p>More: <a href="/l/{{lid}}/team_shot_locations">Shot Locations</a> | <a href="/l/{{lid}}/dist_team_stats">Stat Distributions</a></p>
+<p>More: <a data-bind="attr: {href: teamShotLocationsUrl}">Shot Locations</a> | <a data-bind="attr: {href: distTeamStatsUrl}">Stat Distributions</a></p>
 
 <p class="clearfix">
 <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="team-stats">

@@ -27,6 +27,8 @@ not urgetnt, but... use knockout for
   gameLog.boxScore
   feasible to use knockout for updating giant table? kogrid?
     playerStats
+    teamStats
+
 BEFORE 3.0.0-beta.3
 -------------------
 

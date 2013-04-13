@@ -147,10 +147,10 @@ requirejs(["db", "views", "ui", "lib/davis", "lib/jquery", "util/helpers", "../g
             this.get("/l/:lid/leaders/:season", views.leaders);
             this.get("/l/:lid/player_ratings", views.playerRatings);
             this.get("/l/:lid/player_ratings/:season", views.playerRatings);
-            this.get("/l/:lid/player_stats", views.playerStats);
-            this.get("/l/:lid/player_stats/:season", views.playerStats);
-            this.get("/l/:lid/team_stats", views.teamStats);
-            this.get("/l/:lid/team_stats/:season", views.teamStats);
+            this.get("/l/:lid/player_stats", views.playerStats.get);
+            this.get("/l/:lid/player_stats/:season", views.playerStats.get);
+            this.get("/l/:lid/team_stats", views.teamStats.get);
+            this.get("/l/:lid/team_stats/:season", views.teamStats.get);
             this.get("/l/:lid/player/:pid", views.player);
             this.get("/l/:lid/negotiation", views.negotiationList);
             this.get("/l/:lid/negotiation/:pid", views.negotiation);

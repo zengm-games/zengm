@@ -54,7 +54,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
             vm = {
                 season: ko.observable()
             };
-            vm.shotLocationsUrl = ko.computed(function () {
+            vm.playerShotLocationsUrl = ko.computed(function () {
                 return "/l/" + g.lid + "/player_shot_locations/" + vm.season();
             });
             vm.distPlayerStatsUrl = ko.computed(function () {
@@ -69,8 +69,6 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
         } else {
             display(updateEvents, cb);
         }
-
-
     }
 
     function get(req) {

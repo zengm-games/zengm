@@ -1,4 +1,4 @@
-define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "core/trade", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/gameLog", "views/playerStats", "views/roster"], function (api, db, g, ui, contractNegotiation, draft, finances, freeAgents, game, league, season, trade, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, gameLog, playerStats, roster) {
+define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "core/trade", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/gameLog", "views/playerStats", "views/roster", "views/teamStats"], function (api, db, g, ui, contractNegotiation, draft, finances, freeAgents, game, league, season, trade, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, gameLog, playerStats, roster, teamStats) {
     "use strict";
 
     function initDb(req) {
@@ -1102,7 +1102,6 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                 abbrev = userTeam.abbrev;
 
                 history = [];
-                // 3 most recent years
                 for (i = 0; i < userTeam.seasons.length; i++) {
                     extraText = "";
                     if (userTeam.seasons[i].playoffRoundsWon === 4) {
@@ -1743,44 +1742,6 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                     }
                 });
             };
-        });
-    }
-
-    function teamStats(req) {
-        viewHelpers.beforeLeague(req, function () {
-            var attributes, season, seasonAttributes, seasons, stats;
-
-            season = helpers.validateSeason(req.params.season);
-            seasons = helpers.getSeasons(season);
-
-            if (season < g.season) {
-                g.realtimeUpdate = false;
-            }
-
-            attributes = ["abbrev"];
-            stats = ["gp", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "oppPts"];
-            seasonAttributes = ["won", "lost"];
-            db.getTeams(null, season, attributes, stats, seasonAttributes, {}, function (teams) {
-                var data;
-
-                data = {
-                    container: "league_content",
-                    template: "teamStats",
-                    title: "Team Stats - " + season,
-                    vars: {season: season, seasons: seasons}
-                };
-                ui.update(data, function () {
-                    ui.dropdown($('#team-stats-select-season'));
-
-                    ui.datatableSinglePage($("#team-stats"), 2, _.map(teams, function (t) {
-                        return ['<a href="/l/' + g.lid + '/roster/' + t.abbrev + '">' + t.abbrev + '</a>', String(t.gp), String(t.won), String(t.lost), helpers.round(t.fg, 1), helpers.round(t.fga, 1), helpers.round(t.fgp, 1), helpers.round(t.tp, 1), helpers.round(t.tpa, 1), helpers.round(t.tpp, 1), helpers.round(t.ft, 1), helpers.round(t.fta, 1), helpers.round(t.ftp, 1), helpers.round(t.orb, 1), helpers.round(t.drb, 1), helpers.round(t.trb, 1), helpers.round(t.ast, 1), helpers.round(t.tov, 1), helpers.round(t.stl, 1), helpers.round(t.blk, 1), helpers.round(t.pf, 1), helpers.round(t.pts, 1), helpers.round(t.oppPts, 1)];
-                    }));
-
-                    if (req.raw.cb !== undefined) {
-                        req.raw.cb();
-                    }
-                });
-            });
         });
     }
 
@@ -2439,7 +2400,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
         gameLog: gameLog,
         leaders: leaders,
         playerRatings: playerRatings,
-        playerStats: playerStats.get,
+        playerStats: playerStats,
         teamStats: teamStats,
         player: player_,
         negotiationList: negotiationList,

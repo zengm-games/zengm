@@ -2,6 +2,7 @@ smarter realtime
 ----------------
 
 trade
+  move summary to main template, update via knockout
   when to delete stored message?
     at beginning of new propose
     on clear

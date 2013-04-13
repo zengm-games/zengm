@@ -7,36 +7,17 @@ define(["api", "db", "globals", "ui", "core/trade", "lib/davis", "lib/handlebars
 
     var vm;
 
-    function display(updateEvents, cb) {
-        var leagueContentEl;
-
-        leagueContentEl = document.getElementById("league_content");
-        if (leagueContentEl.dataset.id !== "trade") {
-            ui.update({
-                container: "league_content",
-                template: "trade"
-            });
-            ko.applyBindings(vm, leagueContentEl);
-        }
-        ui.title("Trade");
-
-        cb();
-    }
-
-    function loadBefore(season, cb) {
-        //
-    }
-
-    function showTrade(userPids, otherPids, message, cb) {
-        message = message !== undefined ? message : null;
-
+    function showTrade(cb) {
 /*        if (req.method === "post") {
             // Refresh, but pass the latest message if there is one
             return Davis.location.assign(new Davis.Request("/l/" + g.lid + "/trade", {message: message}));
         }*/
 
         trade.getOtherTid(function (otherTid) {
-            var playerStore;
+            var otherPids, playerStore, userPids;
+
+            otherPids = vm.otherPids();
+            userPids = vm.userPids();
 
             playerStore = g.dbl.transaction("players").objectStore("players");
 
@@ -73,7 +54,7 @@ define(["api", "db", "globals", "ui", "core/trade", "lib/davis", "lib/handlebars
                         teams = helpers.getTeams(otherTid);
                         teams.splice(g.userTid, 1);  // Can't trade with yourself
 
-                        tradeSummary = Handlebars.templates.tradeSummary({lid: g.lid, summary: summary, message: message});
+                        tradeSummary = Handlebars.templates.tradeSummary({lid: g.lid, summary: summary, message: vm.message()});
 
                         data = {
                             container: "league_content",
@@ -176,45 +157,61 @@ define(["api", "db", "globals", "ui", "core/trade", "lib/davis", "lib/handlebars
         });
     }
 
-    function update(season, updateEvents, cb) {
+    function display(cb) {
+        var leagueContentEl;
+
+        /*leagueContentEl = document.getElementById("league_content");
+        if (leagueContentEl.dataset.id !== "trade") {
+            ui.update({
+                container: "league_content",
+                template: "trade"
+            });
+            ko.applyBindings(vm, leagueContentEl);
+        }
+        ui.title("Trade");*/
+
+        cb();
+    }
+
+    function loadBefore(message, cb) {
+        vm.message(message);
+
+        validateSavedPids(function (userPids, otherPids) {
+            vm.userPids(userPids);
+            vm.otherPids(otherPids);
+            showTrade(cb);
+        });
+    }
+
+    function update(message, updateEvents, cb) {
         var leagueContentEl;
 
         leagueContentEl = document.getElementById("league_content");
-        if (leagueContentEl.dataset.id !== "teamStats") {
+        if (leagueContentEl.dataset.id !== "trade") {
             ko.cleanNode(leagueContentEl);
             vm = {
-                season: ko.observable()
+                userPids: ko.observable([]),
+                otherPids: ko.observable([]),
+                message: ko.observable()
             };
-            vm.teamShotLocationsUrl = ko.computed(function () {
-                return "/l/" + g.lid + "/team_shot_locations/" + vm.season();
-            });
-            vm.distTeamStatsUrl = ko.computed(function () {
-                return "/l/" + g.lid + "/dist_team_stats/" + vm.season();
-            });
         }
 
-        if ((season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || season !== vm.season()) {
-            loadBefore(season, function () {
-                display(updateEvents, cb);
-            });
-        } else {
-            display(updateEvents, cb);
-        }
+        loadBefore(message, function () {
+            display(cb);
+        });
     }
 
     function get(req) {
         viewHelpers.beforeLeague(req, function (updateEvents, cb) {
             var message;
 
+            message = req.raw.message !== undefined ? req.raw.message : null;
+
             if (g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.PLAYOFFS) {
                 return helpers.error("You're not allowed to make trades now.", req);
             }
 
-            validateSavedPids(function (userPids, otherPids) {
-                showTrade(userPids, otherPids, req.raw.message, cb);
-            });
-
-//            update(updateEvents, cb);
+            update(message, updateEvents, cb);
         });
     }
 

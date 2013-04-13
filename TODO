@@ -1,14 +1,8 @@
 smarter realtime
 ----------------
 
-hrefLeagueUrl to attrLeagueUrl
 trade
-  enablePropose should be a computed
   mapping to update summary.teams.trade, userRoster, otherRoster
-  when to delete stored message?
-    at beginning of new propose
-    on clear
-    when offer changes (player added or removed, or team changed)
   can i do a redirect from post without refreshing everything?
     just call ui.realtimeUpdate which should allow for smart handling
       if trade is accepted/cleared, playerMovement will instigate a refresh of rosters
@@ -18,6 +12,10 @@ trade
     trade.summary stuff should be automatic and stored in tradeStore
     dbChange should be set for actions modifying trade, not just accepting
     trade and clear buttons should be disabled during gameSim, wiht message like in team finances
+  when to delete stored message?
+    at beginning of new propose
+    on clear
+    when team changes
 roster
   check release, buy out, trade for
   unit tests

@@ -17,7 +17,8 @@ define(["db", "globals", "ui", "core/trade", "lib/davis", "lib/handlebars.runtim
             trade.summary(otherTid, userPids, otherPids, function (summary) {
                 var i;
 
-                vm.summary.enablePropose(summary.enablePropose);
+//console.log(!summary.warning && (userPids || otherPids))
+                vm.summary.enablePropose(!summary.warning && (userPids.length > 0 || otherPids.length > 0));
                 vm.summary.warning(summary.warning);
 
                 for (i = 0; i < 2; i++) {
@@ -26,8 +27,8 @@ define(["db", "globals", "ui", "core/trade", "lib/davis", "lib/handlebars.runtim
                     vm.summary.teams[i].total(summary.teams[i].total);
                     vm.summary.teams[i].trade(summary.teams[i].trade);
                 }
-console.log(summary);
-console.log('update summary')
+//console.log(summary);
+//console.log('update summary')
                 if (cb !== undefined) {
                     cb(userPids, otherPids);
                 }
@@ -35,20 +36,10 @@ console.log('update summary')
         });
     }
 
-    function showTrade(cb) {
-
-
-        cb();
-    }
-
     // Validate that the stored player IDs correspond with the active team ID
     function validateSavedPids(cb) {
         trade.getPlayers(function (userPids, otherPids) {
-console.log(userPids);
-console.log(otherPids);
             trade.updatePlayers(userPids, otherPids, function (userPids, otherPids) {
-console.log(userPids);
-console.log(otherPids);
                 cb(userPids, otherPids);
             });
         });
@@ -75,11 +66,9 @@ console.log(otherPids);
                 }));
             });
 
-            rosterCheckboxesUser = $("#roster-user input");
-            rosterCheckboxesOther = $("#roster-other input");
 
             $("#propose-trade button").click(function (event) {
-                $("#propose-trade button").attr("disabled", "disabled");
+                vm.summary.enablePropose(false); // Will be reenabled in updateSummary, if appropriate
             });
         }
 
@@ -101,17 +90,21 @@ console.log(otherPids);
             return ['<input name="other-pids" type="checkbox" value="' + p.pid + '"' + selected + '>', helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
         }));
 
+        rosterCheckboxesUser = $("#roster-user input");
+        rosterCheckboxesOther = $("#roster-other input");
+
         $('#rosters input').click(function (event) {
             var otherPids, serialized, userPids;
+console.log('CLICK' + Math.random())
+
+            vm.summary.enablePropose(false); // Will be reenabled in updateSummary, if appropriate
+            vm.message("");
 
             serialized = $("#rosters").serializeArray();
             userPids = _.map(_.pluck(_.filter(serialized, function (o) { return o.name === "user-pids"; }), "value"), Math.floor);
             otherPids = _.map(_.pluck(_.filter(serialized, function (o) { return o.name === "other-pids"; }), "value"), Math.floor);
 
-            $("#propose-trade button").attr("disabled", "disabled"); // Only until database update is complete
             trade.updatePlayers(userPids, otherPids, function (userPids, otherPids) {
-console.log(userPids);
-console.log(otherPids);
                 vm.userPids(userPids);
                 vm.otherPids(otherPids);
 
@@ -144,8 +137,6 @@ console.log(otherPids);
                             rosterCheckboxesOther[i].checked = false;
                         }
                     }
-
-                    $("#propose-trade button").removeAttr("disabled");
                 });
             });
         });
@@ -280,23 +271,16 @@ console.log(otherPids);
                 // Clear trade
                 trade.clear(function () {
                     return Davis.location.assign(new Davis.Request("/l/" + g.lid + "/trade"));
-//                showTrade([], []);
                 });
             } else if (req.params.propose !== undefined) {
                 // Propose trade
                 trade.propose(function (accepted, message) {
                     return Davis.location.assign(new Davis.Request("/l/" + g.lid + "/trade", {message: message}));
-//                trade.getPlayers(function (userPids, otherPids) {
-//                    showTrade(userPids, otherPids, message);
-//                });
                 });
             } else if (newOtherTid !== null || pid !== null) {
                 // Start new trade with team or for player
                 trade.create(newOtherTid, pid, function () {
                     return Davis.location.assign(new Davis.Request("/l/" + g.lid + "/trade"));
-//                validateSavedPids(function (userPids, otherPids) {
-//                    showTrade(userPids, otherPids);
-//                });
                 });
             }
         });

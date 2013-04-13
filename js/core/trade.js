@@ -167,7 +167,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
         tids = [g.userTid, otherTid];
         pids = [userPids, otherPids];
 
-        s = {enablePropose: false, teams: [], warning: null};
+        s = {teams: [], warning: null};
         for (i = 0; i < 2; i++) {
             s.teams.push({trade: [], total: 0, payrollAfterTrade: 0, name: ""});
         }
@@ -252,9 +252,6 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                                             s.warning = "The " + s.teams[j].name + " are over the salary cap, so the players it receives must have a combined salary of less than 125% of the salaries of the players it trades away.  Currently, that value is " + ratios[j] + "%.";
                                         }
 
-                                        if (s.warning === null) {
-                                            s.enablePropose = true;
-                                        }
                                         cb(s);
                                     }
                                 });
@@ -342,6 +339,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
 
                                 done += 1;
                                 if (done === 2) {
+console.log(value);
                                     if (value[0] > value[1] * 0.9) {
                                         // Trade players
                                         outcome = "accepted";

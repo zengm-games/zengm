@@ -2,10 +2,11 @@ smarter realtime
 ----------------
 
 trade
+  team dropdown: http://knockoutjs.com/documentation/options-binding.html
+    is this necessary? see after it no longer updates every refresh
+  updateSummary should be called in loadBefore
   enablePropose should be a computed
   mapping to update summary.teams.trade, userRoster, otherRoster
-  urls for players in trade summary
-  move summary to main template, update via knockout
   when to delete stored message?
     at beginning of new propose
     on clear

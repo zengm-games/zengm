@@ -38,16 +38,13 @@ console.log('update summary')
     }
 
     function showTrade(cb) {
-        var i, rosterCheckboxesOther, rosterCheckboxesUser, teams;
-
-        teams = helpers.getTeams(vm.otherTid());
-        teams.splice(g.userTid, 1);  // Can't trade with yourself
+        var i, rosterCheckboxesOther, rosterCheckboxesUser;
 
         ui.update({
             container: "league_content",
             template: "trade",
             title: "Trade",
-            vars: {userPids: vm.userPids(), otherPids: vm.otherPids(), teams: teams, userTeamName: "USER TEAM NAME (don't get from summary)"}
+            vars: {userPids: vm.userPids(), otherPids: vm.otherPids(), userTeamName: "USER TEAM NAME (don't get from summary)"}
         });
 
         updateSummary();
@@ -55,6 +52,7 @@ ko.applyBindings(vm, document.getElementById("league_content"))
 
         // Don't use the dropdown function because this needs to be a POST
         $('#trade-select-team').change(function (event) {
+console.log('change ' + $("#trade-select-team").val())
             Davis.location.replace(new Davis.Request({
                 abbrev: $("#trade-select-team").val(),
                 fullPath: "/l/" + g.lid + "/trade",
@@ -181,7 +179,7 @@ ko.applyBindings(vm, document.getElementById("league_content"))
                     }
 
                     playerStore.index("tid").getAll(otherTid).onsuccess = function (event) {
-                        var data, i, otherRoster, teams;
+                        var i, otherRoster, teams;
 
                         otherRoster = db.getPlayers(event.target.result, g.season, otherTid, attributes, stats, ratings, {showNoStats: true, fuzz: true});
                         for (i = 0; i < otherRoster.length; i++) {
@@ -190,6 +188,13 @@ ko.applyBindings(vm, document.getElementById("league_content"))
                             } else {
                                 otherRoster[i].selected = false;
                             }
+                        }
+
+console.log(otherTid);
+                        teams = helpers.getTeams(otherTid);
+                        teams.splice(g.userTid, 1);  // Can't trade with yourself
+                        if (vm.teams.length === 0) {
+                            vm.teams = teams;
                         }
 
                         vm.userPids(userPids);
@@ -217,7 +222,8 @@ ko.applyBindings(vm, document.getElementById("league_content"))
                 otherPids: ko.observable([]),
                 userRoster: ko.observable([]),
                 otherRoster: ko.observable([]),
-                message: ko.observable()
+                message: ko.observable(),
+                teams: []
             };
             vm.summary = {
                 enablePropose: ko.observable(false),
@@ -289,6 +295,7 @@ ko.applyBindings(vm, document.getElementById("league_content"))
             } else if (newOtherTid !== null || pid !== null) {
                 // Start new trade with team or for player
                 trade.create(newOtherTid, pid, function () {
+console.log(newOtherTid);
                     return Davis.location.assign(new Davis.Request("/l/" + g.lid + "/trade"));
 //                validateSavedPids(function (userPids, otherPids) {
 //                    showTrade(userPids, otherPids);

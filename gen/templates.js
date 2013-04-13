@@ -340,35 +340,16 @@ helpers = helpers || Handlebars.helpers; data = data || {};
 templates['trade'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
+  var buffer = "", stack1, escapeExpression=this.escapeExpression, functionType="function";
 
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n          <option value=\""
-    + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"";
-  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">"
-    + escapeExpression(((stack1 = depth0.region),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " "
-    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</option>\n        ";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  
-  return " selected=\"selected\"";
-  }
 
   buffer += "<h1>Trade "
     + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n\n<div class=\"row-fluid\">\n  <div class=\"span7\">\n    <form id=\"rosters\">\n      <p><select id=\"trade-select-team\" name=\"team\" class=\"team form-inline\">\n        ";
-  stack2 = ((stack1 = ((stack1 = depth0.teams),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n      </select>\n      <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"roster-other\">\n      <thead>\n        <tr><th></th><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall Rating\">Ovr</th><th title=\"Potential Rating\">Pot</th><th>Contract</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th></tr>\n      </thead>\n      </table>\n      </p>\n\n      <h2>"
+    + "</h1>\n\n<div class=\"row-fluid\">\n  <div class=\"span7\">\n    <form id=\"rosters\">\n      <p><select id=\"trade-select-team\" name=\"team\" class=\"team form-inline\" data-bind=\"foreach: teams\">\n        <option data-bind=\"attr: {value: abbrev}, text: Math.random() + ' ' + region + ' ' + name\">"
+    + escapeExpression(((stack1 = depth0.region),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " "
+    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</option>\n      </select>\n      <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"roster-other\">\n      <thead>\n        <tr><th></th><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall Rating\">Ovr</th><th title=\"Potential Rating\">Pot</th><th>Contract</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th></tr>\n      </thead>\n      </table>\n      </p>\n\n      <h2>"
     + escapeExpression(((stack1 = depth0.userTeamName),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</h2>\n      <p>\n      <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"roster-user\">\n      <thead>\n        <tr><th></th><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall Rating\">Ovr</th><th title=\"Potential Rating\">Pot</th><th>Contract</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th></tr>\n      </thead>\n      </table>\n      </p>\n    </form>\n  </div>\n  <div class=\"span5\" id=\"trade-summary\">\n    <h3>Trade Summary</h3>\n    <div class=\"row-fluid\" data-bind=\"foreach: summary.teams\">\n      <div class=\"span6\">\n        <h4 data-bind=\"text: name\"></h4>\n        <h5>Trade Away:</h5>\n        <ul>\n          <!-- ko foreach: trade -->\n            <li><a data-bind=\"hrefLeagueUrl: ['player', pid], text: name\"></a> (<span data-bind=\"currency: [contract.amount, 'M']\"></span>)</li>\n          <!-- /ko -->\n          <li><span data-bind=\"currency: [total, 'M']\"></span> Total</li>\n        </ul>\n        <h5>Receive:</h5>\n        <ul>\n          <!-- ko foreach: other.trade -->\n            <li><a data-bind=\"hrefLeagueUrl: ['player', pid], text: name\"></a> (<span data-bind=\"currency: [contract.amount, 'M']\"></span>)</li>\n          <!-- /ko -->\n          <li><span data-bind=\"currency: [other.total, 'M']\"></span></li>\n        </ul>\n        <h5>Payroll after trade: <span data-bind=\"currency: [payrollAfterTrade, 'M']\"></span></h5>\n        <h5>Salary cap: <span data-bind=\"currency: [$parent.salaryCap, 'M']\"></span></h5>\n      </div>\n    </div>\n\n    <br>\n    <p class=\"alert alert-error\" data-bind=\"visible: summary.warning\"><strong>Warning!</strong> <span data-bind=\"text: summary.warning\"></span></p>\n    <p class=\"alert alert-info\" data-bind=\"visible: message, text: message\"></p>\n\n    <center>\n      <form action=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))

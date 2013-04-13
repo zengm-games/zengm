@@ -25,5 +25,44 @@
       </p>
     </form>
   </div>
-  <div class="span5" id="trade-summary" data-bind="html: summary"></div>
+  <div class="span5" id="trade-summary">
+    <h3>Trade Summary</h3>
+    <div class="row-fluid" data-bind="foreach: summary.teams">
+      <div class="span6">
+        <h4 data-bind="text: name"></h4>
+        <h5>Trade Away:</h5>
+        <ul>
+          <!-- ko foreach: trade -->
+            <li><a href="#" data-bind="text: name"></a> (<span data-bind="currency: [contract.amount, 'M']"></span>)</li>
+          <!-- /ko -->
+          <li><span data-bind="currency: [total, 'M']"></span> Total</li>
+        </ul>
+        <h5>Receive:</h5>
+        <ul>
+          <!-- ko foreach: $parent.summary.teams[other].trade -->
+            <li><a href="#" data-bind="text: name"></a> (<span data-bind="currency: [contract.amount, 'M']"></span>)</li>
+          <!-- /ko -->
+          <li><span data-bind="text: $parent.summary.teams[other].total"></span> Total SHOULD BE CURRENCY</li>
+        </ul>
+        <h5>Payroll after trade: <span data-bind="currency: [payrollAfterTrade, 'M']"></span></h5>
+        <h5>Salary cap: <span data-bind="currency: [$parent.salaryCap, 'M']"></span></h5>
+      </div>
+    </div>
+
+    <br>
+    <p class="alert alert-error"><strong>Warning!</strong> <span data-bind="text: summary.warning"></span></p>
+    <p class="alert alert-info" data-bind="text: message"></p>
+
+    <center>
+      <form action="/l/{{lid}}/trade" method="POST" id="propose-trade">
+        <input type="hidden" name="propose" value="1">
+        <button type="submit" class="btn btn-large btn-primary" data-bind="enable: summary.enablePropose">Propose Trade</button>
+      </form>
+
+      <form action="/l/{{lid}}/trade" method="POST" id="clear-trade">
+        <input type="hidden" name="clear" value="1">
+        <button type="submit" class="btn">Clear Trade</button>
+      </form>
+    </center>
+  </div>
 </div>

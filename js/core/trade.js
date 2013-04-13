@@ -167,7 +167,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
         tids = [g.userTid, otherTid];
         pids = [userPids, otherPids];
 
-        s = {salaryCap: g.salaryCap / 1000, disablePropose: true, teams: [], warning: null};
+        s = {enablePropose: false, teams: [], warning: null};
         for (i = 0; i < 2; i++) {
             s.teams.push({trade: [], total: 0, payrollAfterTrade: 0, name: ""});
         }
@@ -253,7 +253,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                                         }
 
                                         if (s.warning === null) {
-                                            s.disablePropose = false;
+                                            s.enablePropose = true;
                                         }
                                         cb(s);
                                     }

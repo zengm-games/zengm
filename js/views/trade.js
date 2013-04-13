@@ -16,9 +16,22 @@ define(["db", "globals", "ui", "core/trade", "lib/davis", "lib/handlebars.runtim
         trade.updatePlayers(userPids, otherPids, function (userPids, otherPids) {
             trade.getOtherTid(function (otherTid) {
                 trade.summary(otherTid, userPids, otherPids, function (summary) {
+                    var i;
+
+                    vm.summary.enablePropose(summary.enablePropose);
+                    vm.summary.warning(summary.warning);
+
+                    for (i = 0; i < 2; i++) {
+                        vm.summary.teams[i].name(summary.teams[i].name);
+                        vm.summary.teams[i].payrollAfterTrade(summary.teams[i].payrollAfterTrade);
+                        vm.summary.teams[i].total(summary.teams[i].total);
+                        vm.summary.teams[i].trade(summary.teams[i].trade);
+                    }
+console.log(summary);
+console.log(vm.summary.teams[1].trade());
 console.log('update summary')
 console.log(vm.message())
-                    vm.summary(Handlebars.templates.tradeSummary({lid: g.lid, summary: summary}));
+//                    vm.summary(Handlebars.templates.tradeSummary({lid: g.lid, summary: summary}));
                     if (cb !== undefined) {
                         cb(userPids, otherPids);
                     }
@@ -206,10 +219,30 @@ ko.applyBindings(vm, document.getElementById("league_content"))
         if (leagueContentEl.dataset.id !== "trade") {
             ko.cleanNode(leagueContentEl);
             vm = {
+                salaryCap: ko.observable(g.salaryCap / 1000),
                 userPids: ko.observable([]),
                 otherPids: ko.observable([]),
-                message: ko.observable(),
-                summary: ko.observable()
+                message: ko.observable()
+            };
+            vm.summary = {
+                enablePropose: ko.observable(false),
+                warning: ko.observable(),
+                teams: [
+                    {
+                        name: ko.observable(),
+                        other: 1,
+                        payrollAfterTrade: ko.observable(),
+                        total: ko.observable(),
+                        trade: ko.observable([])
+                    },
+                    {
+                        name: ko.observable(),
+                        other: 0,
+                        payrollAfterTrade: ko.observable(),
+                        total: ko.observable(),
+                        trade: ko.observable([])
+                    }
+                ]
             };
         }
 

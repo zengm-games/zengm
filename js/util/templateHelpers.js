@@ -98,19 +98,24 @@ define(["globals", "lib/handlebars.runtime", "lib/knockout", "util/helpers"], fu
     };
 
 
-    ko.bindingHandlers.hrefLeagueUrl = {
+    ko.bindingHandlers.attrLeagueUrl = {
         update: function (element, valueAccessor) {
-            var args, i, url;
+            var args, attr, i, url, toAttr;
 
             args = valueAccessor();
-            url = "/l/" + g.lid;
+            toAttr = {};
 
-            for (i = 0; i < args.length; i++) {
-                url += "/" + ko.utils.unwrapObservable(args[i]);
+            for (attr in args) {
+                if (args.hasOwnProperty(attr)) {
+                    toAttr[attr] = "/l/" + g.lid;
+                    for (i = 0; i < args[attr].length; i++) {
+                        toAttr[attr] += "/" + ko.utils.unwrapObservable(args[attr][i]);
+                    }
+                }
             }
 
             return ko.bindingHandlers.attr.update(element, function () {
-                return {href: url};
+                return toAttr;
             });
         }
     };

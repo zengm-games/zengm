@@ -4,7 +4,7 @@
   <div class="span7">
     <form id="rosters">
       <p><select id="trade-select-team" name="team" class="team form-inline" data-bind="foreach: teams">
-        <option data-bind="attr: {value: abbrev, selected: selected}, text: Math.random() + ' ' + region + ' ' + name">{{region}} {{name}}</option>
+        <option data-bind="attr: {value: abbrev, selected: selected}, text: Math.random() + ' ' + region + ' ' + name"></option>
       </select>
       <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="roster-other">
       <thead>
@@ -31,14 +31,14 @@
         <h5>Trade Away:</h5>
         <ul>
           <!-- ko foreach: trade -->
-            <li><a data-bind="hrefLeagueUrl: ['player', pid], text: name"></a> (<span data-bind="currency: [contract.amount, 'M']"></span>)</li>
+            <li><a data-bind="attrLeagueUrl: {href: ['player', pid]}, text: name"></a> (<span data-bind="currency: [contract.amount, 'M']"></span>)</li>
           <!-- /ko -->
           <li><span data-bind="currency: [total, 'M']"></span> Total</li>
         </ul>
         <h5>Receive:</h5>
         <ul>
           <!-- ko foreach: other.trade -->
-            <li><a data-bind="hrefLeagueUrl: ['player', pid], text: name"></a> (<span data-bind="currency: [contract.amount, 'M']"></span>)</li>
+            <li><a data-bind="attrLeagueUrl: {href: ['player', pid]}, text: name"></a> (<span data-bind="currency: [contract.amount, 'M']"></span>)</li>
           <!-- /ko -->
           <li><span data-bind="currency: [other.total, 'M']"></span></li>
         </ul>
@@ -52,12 +52,12 @@
     <p class="alert alert-info" data-bind="visible: message, text: message"></p>
 
     <center>
-      <form action="/l/{{lid}}/trade" method="POST" id="propose-trade">
+      <form method="POST" id="propose-trade" data-bind="attrLeagueUrl: {action: ['trade']}">
         <input type="hidden" name="propose" value="1">
         <button type="submit" class="btn btn-large btn-primary" data-bind="enable: summary.enablePropose">Propose Trade</button>
       </form>
 
-      <form action="/l/{{lid}}/trade" method="POST" id="clear-trade">
+      <form method="POST" id="clear-trade" data-bind="attrLeagueUrl: {action: ['trade']}">
         <input type="hidden" name="clear" value="1">
         <button type="submit" class="btn">Clear Trade</button>
       </form>

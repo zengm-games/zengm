@@ -1,7 +1,9 @@
 smarter realtime
 ----------------
 
+hrefLeagueUrl to attrLeagueUrl
 trade
+  persistence of trade offers? should stay through refresh
   team dropdown: http://knockoutjs.com/documentation/options-binding.html
     is this necessary? see after it no longer updates every refresh
   updateSummary should be called in loadBefore

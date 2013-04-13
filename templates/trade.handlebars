@@ -39,10 +39,10 @@
         </ul>
         <h5>Receive:</h5>
         <ul>
-          <!-- ko foreach: $parent.summary.teams[other].trade -->
+          <!-- ko foreach: other.trade -->
             <li><a href="#" data-bind="text: name"></a> (<span data-bind="currency: [contract.amount, 'M']"></span>)</li>
           <!-- /ko -->
-          <li><span data-bind="text: $parent.summary.teams[other].total"></span> Total SHOULD BE CURRENCY</li>
+          <li><span data-bind="currency: [other.total, 'M']"></span></li>
         </ul>
         <h5>Payroll after trade: <span data-bind="currency: [payrollAfterTrade, 'M']"></span></h5>
         <h5>Salary cap: <span data-bind="currency: [$parent.salaryCap, 'M']"></span></h5>

@@ -5,8 +5,6 @@ trade
   enablePropose should be a computed
   mapping to update summary.teams.trade
   urls for players in trade summary
-  recieve total
-    http://stackoverflow.com/questions/12229578/knockoutjs-access-index-of-item-in-array-from-within-the-javascript-template
   move summary to main template, update via knockout
   when to delete stored message?
     at beginning of new propose

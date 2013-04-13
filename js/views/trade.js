@@ -229,20 +229,20 @@ ko.applyBindings(vm, document.getElementById("league_content"))
                 teams: [
                     {
                         name: ko.observable(),
-                        other: 1,
                         payrollAfterTrade: ko.observable(),
                         total: ko.observable(),
                         trade: ko.observable([])
                     },
                     {
                         name: ko.observable(),
-                        other: 0,
                         payrollAfterTrade: ko.observable(),
                         total: ko.observable(),
                         trade: ko.observable([])
                     }
                 ]
             };
+            vm.summary.teams[0].other = vm.summary.teams[1];
+            vm.summary.teams[1].other = vm.summary.teams[0];
         }
 
         loadBefore(message, function () {

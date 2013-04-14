@@ -146,8 +146,8 @@ requirejs(["db", "views", "ui", "lib/davis", "lib/jquery", "util/helpers", "../g
             this.get("/l/:lid/game_log/:abbrev/:season/:gid/:view", views.gameLog.get);
             this.get("/l/:lid/leaders", views.leaders.get);
             this.get("/l/:lid/leaders/:season", views.leaders.get);
-            this.get("/l/:lid/player_ratings", views.playerRatings);
-            this.get("/l/:lid/player_ratings/:season", views.playerRatings);
+            this.get("/l/:lid/player_ratings", views.playerRatings.get);
+            this.get("/l/:lid/player_ratings/:season", views.playerRatings.get);
             this.get("/l/:lid/player_stats", views.playerStats.get);
             this.get("/l/:lid/player_stats/:season", views.playerStats.get);
             this.get("/l/:lid/team_stats", views.teamStats.get);

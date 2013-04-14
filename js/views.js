@@ -1,4 +1,4 @@
-define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/draftSummary", "views/gameLog", "views/leaders", "views/negotiation", "views/playerStats", "views/roster", "views/standings", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, draft, finances, freeAgents, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, draftSummary, gameLog, leaders, negotiation, playerStats, roster, standings, teamStats, trade) {
+define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/draftSummary", "views/gameLog", "views/leaders", "views/negotiation", "views/playerRatings", "views/playerStats", "views/roster", "views/standings", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, draft, finances, freeAgents, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, draftSummary, gameLog, leaders, negotiation, playerRatings, playerStats, roster, standings, teamStats, trade) {
     "use strict";
 
     function initDb(req) {
@@ -1229,52 +1229,6 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                         });
                     });
                 };
-            };
-        });
-    }
-
-    function playerRatings(req) {
-        viewHelpers.beforeLeague(req, function () {
-            var season, seasons;
-
-            season = helpers.validateSeason(req.params.season);
-            seasons = helpers.getSeasons(season);
-
-            if (season < g.season) {
-                g.realtimeUpdate = false;
-            }
-
-            g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
-                var attributes, data, i, players, ratings, stats;
-
-                attributes = ["pid", "name", "pos", "age", "abbrev", "injury"];
-                ratings = ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills"];
-                stats = [];
-                players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings, {showNoStats: true, fuzz: true});
-
-                // Fix ages
-                for (i = 0; i < players.length; i++) {
-                    players[i].age = players[i].age - (g.season - season);
-                }
-
-                data = {
-                    container: "league_content",
-                    template: "playerRatings",
-                    title: "Player Ratings - " + season,
-                    vars: {season: season, seasons: seasons}
-                };
-                ui.update(data, function () {
-                    ui.dropdown($("#player-ratings-select-season"));
-
-                    ui.datatable($("#player-ratings"), 4, _.map(players, function (p) {
-                        var teamUrl;
-                        return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, '<a href="/l/' + g.lid + '/roster/' + p.abbrev + '/' + season + '">' + p.abbrev + '</a>', String(p.age), String(p.ratings.ovr), String(p.ratings.pot), String(p.ratings.hgt), String(p.ratings.stre), String(p.ratings.spd), String(p.ratings.jmp), String(p.ratings.endu), String(p.ratings.ins), String(p.ratings.dnk), String(p.ratings.ft), String(p.ratings.fg), String(p.ratings.tp), String(p.ratings.blk), String(p.ratings.stl), String(p.ratings.drb), String(p.ratings.pss), String(p.ratings.reb)];
-                    }));
-
-                    if (req.raw.cb !== undefined) {
-                        req.raw.cb();
-                    }
-                });
             };
         });
     }

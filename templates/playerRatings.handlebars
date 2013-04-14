@@ -1,13 +1,7 @@
-<form action="/l/{{lid}}/player_ratings" method="GET" class="form-inline pull-right">
-  <select id="player-ratings-select-season" name="season" class="season">
-    {{#seasons}}
-      <option value="{{season}}"{{#if selected}} selected="selected"{{/if}}>{{season}} season</option>
-    {{/seasons}}
-  </select>
-</form>
+<form id="player-ratings-dropdown" class="form-inline pull-right"></form>
 
-<h1>Player Ratings {{new_window}}</h1>
-<p>More: <a href="/l/{{lid}}/dist_player_ratings">Rating Distributions</a></p>
+<h1>Player Ratings <span data-bind="newWindow: []"></span></h1>
+<p>More: <a data-bind="attrLeagueUrl: {href: ['dist_player_ratings', season]}">Rating Distributions</a></p>
 
 
 <p class="clearfix">

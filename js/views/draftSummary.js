@@ -1,6 +1,6 @@
 /**
- * @name views.playerStats
- * @namespace Player stats table.
+ * @name views.draftSummary
+ * @namespace Draft summary.
  */
 define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/helpers", "util/viewHelpers"], function (db, g, ui, $, ko, _, components, helpers, viewHelpers) {
     "use strict";

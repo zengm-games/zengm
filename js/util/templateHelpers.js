@@ -30,6 +30,27 @@ define(["globals", "lib/handlebars.runtime", "lib/knockout", "util/helpers"], fu
 
         return output;
     });
+    ko.bindingHandlers.roundWinp = {
+        update: function (element, valueAccessor) {
+            var arg, output;
+
+            arg = ko.utils.unwrapObservable(valueAccessor());
+
+            output = parseFloat(arg).toFixed(3);
+
+            if (output[0] === "0") {
+                // Delete leading 0
+                output = output.slice(1, output.length);
+            } else {
+                // Delete trailing digit if no leading 0
+                output = output.slice(0, output.length - 1);
+            }
+
+            return ko.bindingHandlers.text.update(element, function () {
+                return output;
+            });
+        }
+    };
 
     // It would be better if this took the series object directly, but handlebars doesn't like doing that
     Handlebars.registerHelper("matchup", function (i, j) {

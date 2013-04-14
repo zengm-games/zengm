@@ -1,29 +1,23 @@
-<form action="/l/{{lid}}/standings" method="GET" class="form-inline pull-right">
-  <select id="standings-select-season" name="season" class="season">
-    {{#seasons}}
-      <option value="{{season}}"{{#if selected}} selected="selected"{{/if}}>{{season}} season</option>
-    {{/seasons}}
-  </select>
-</form>
+<form id="standings-dropdown" class="form-inline pull-right"></form>
 
-<h1>Standings {{new_window}}</h1>
+<h1>Standings <span data-bind="newWindow: []"></span></h1>
 
-{{#confs}}
-  <h2>{{name}}</h2>
+<!-- ko foreach: confs -->
+  <h2 data-bind="text: name"></h2>
   <div class="row-fluid">
     <div class="span9">
-      {{#divs}}
+      <!-- ko foreach: divs -->
           <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed">
           <thead>
-            <tr><th width="100%">{{name}}</th><th>W</th><th>L</th><th>Pct</th><th>GB</th><th>Home</th><th>Road</th><th>Div</th><th>Conf</th><th>Streak</th><th>L10</th></tr>
+            <tr><th width="100%" data-bind="text: name"></th><th>W</th><th>L</th><th>Pct</th><th>GB</th><th>Home</th><th>Road</th><th>Div</th><th>Conf</th><th>Streak</th><th>L10</th></tr>
           </thead>
           <tbody>
-          {{#teams}}
-            <tr><td><a href="/l/{{../../../lid}}/roster/{{abbrev}}/{{../../../season}}">{{region}} {{name}}</a></td><td>{{won}}</td><td>{{lost}}</td><td>{{roundWinp winp}}</td><td>{{gb}}</td><td>{{wonHome}}-{{lostHome}}</td><td>{{wonAway}}-{{lostAway}}</td><td>{{wonDiv}}-{{lostDiv}}</td><td>{{wonConf}}-{{lostConf}}</td><td>{{streak}}</td><td>{{lastTen}}</td></tr>
-          {{/teams}}
+          <!-- ko foreach: teams -->
+            <tr><td><a data-bind="attrLeagueUrl: {href: ['roster', abbrev, $parents[2].season]}, text: region() + ' ' + name()"></a></td><td data-bind="text: won"></td><td data-bind="text: lost"></td><td data-bind="roundWinp: winp"></td><td data-bind="text: gb"></td><td data-bind="text: wonHome() + '-' + lostHome()"></td><td data-bind="text: wonAway() + '-' + lostAway()"></td><td data-bind="text: wonDiv() + '-' + lostDiv()"></td><td data-bind="text: wonConf() + '-' + lostConf()"></td><td data-bind="text: streak"></td><td data-bind="text: lastTen"></td></tr>
+          <!-- /ko -->
           </tbody>
           </table>
-      {{/divs}}
+      <!-- /ko -->
     </div>
 
     <div class="span3">
@@ -32,11 +26,11 @@
         <tr><th width="100%">Team</th><th align="right">GB</th></tr>
       </thead>
       <tbody>
-      {{#teams}}
-        <tr{{#if separator}} class="separator"{{/if}}><td>{{rank}}. <a href="/l/{{../../lid}}/roster/{{abbrev}}/{{../../season}}">{{region}}</a></td><td align="right">{{gb}}</td></tr>
-      {{/teams}}
+      <!-- ko foreach: teams -->
+        <tr data-bind="attr: {class: $index() === 7 ? 'separator' : ''}"><td><span data-bind="text: rank"></span>. <a data-bind="attrLeagueUrl: {href: ['roster', abbrev, $parents[1].season]}, text: region"></a></td><td align="right" data-bind="text: gb"></td></tr>
+      <!-- /ko -->
       </tbody>
       </table>
     </div>
   </div>
-{{/confs}}
+<!-- /ko -->

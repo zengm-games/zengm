@@ -1,4 +1,4 @@
-define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/draftSummary", "views/gameLog", "views/negotiation", "views/playerStats", "views/roster", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, draft, finances, freeAgents, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, draftSummary, gameLog, negotiation, playerStats, roster, teamStats, trade) {
+define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/draftSummary", "views/gameLog", "views/negotiation", "views/playerStats", "views/roster", "views/standings", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, draft, finances, freeAgents, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, draftSummary, gameLog, negotiation, playerStats, roster, standings, teamStats, trade) {
     "use strict";
 
     function initDb(req) {
@@ -540,85 +540,6 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                     ui.update(data, req.raw.cb);
                 }
             };
-        });
-    }
-
-    function standings(req) {
-        viewHelpers.beforeLeague(req, function () {
-            var attributes, gb, season, seasonAttributes, seasons;
-
-            season = helpers.validateSeason(req.params.season);
-            seasons = helpers.getSeasons(season);
-
-            if (season < g.season) {
-                g.realtimeUpdate = false;
-            }
-
-            // Calculate the number of games that team is behind team0
-            gb = function (team0, team) {
-                return ((team0.won - team0.lost) - (team.won - team.lost)) / 2;
-            };
-
-            attributes = ["tid", "cid", "did", "abbrev", "region", "name"];
-            seasonAttributes = ["won", "lost", "winp", "wonHome", "lostHome", "wonAway", "lostAway", "wonDiv", "lostDiv", "wonConf", "lostConf", "lastTen", "streak"];
-            db.getTeams(null, season, attributes, [], seasonAttributes, {sortBy: "winp"}, function (teams) {
-                var confs, confTeams, data, divTeams, i, j, k, l, lastTenLost, lastTenWon;
-
-                confs = [];
-                for (i = 0; i < g.confs.length; i++) {
-                    confTeams = [];
-                    l = 0;
-                    for (k = 0; k < teams.length; k++) {
-                        if (g.confs[i].cid === teams[k].cid) {
-                            confTeams.push(helpers.deepCopy(teams[k]));
-                            confTeams[l].rank = l + 1;
-                            if (l === 0) {
-                                confTeams[l].gb = 0;
-                            } else {
-                                confTeams[l].gb = gb(confTeams[0], confTeams[l]);
-                            }
-                            l += 1;
-                        }
-                    }
-                    confTeams[7].separator = true;
-
-                    confs.push({name: g.confs[i].name, divs: [], teams: confTeams});
-
-                    for (j = 0; j < g.divs.length; j++) {
-                        if (g.divs[j].cid === g.confs[i].cid) {
-                            divTeams = [];
-                            l = 0;
-                            for (k = 0; k < teams.length; k++) {
-                                if (g.divs[j].did === teams[k].did) {
-                                    divTeams.push(helpers.deepCopy(teams[k]));
-                                    if (l === 0) {
-                                        divTeams[l].gb = 0;
-                                    } else {
-                                        divTeams[l].gb = gb(divTeams[0], divTeams[l]);
-                                    }
-                                    l += 1;
-                                }
-                            }
-
-                            confs[i].divs.push({name: g.divs[j].name, teams: divTeams});
-                        }
-                    }
-                }
-
-                data = {
-                    container: "league_content",
-                    template: "standings",
-                    title: "Standings - " + season,
-                    vars: {confs: confs, seasons: seasons, season: season}
-                };
-                ui.update(data, function () {
-                    ui.dropdown($('#standings-select-season'));
-
-                    if (req.raw.cb !== undefined) {
-                        req.raw.cb();
-                    }
-                });
-            });
         });
     }
 

@@ -303,13 +303,10 @@ helpers = helpers || Handlebars.helpers; data = data || {};
 templates['playerStats'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", escapeExpression=this.escapeExpression;
+  
 
 
-  buffer += "<form id=\"player-stats-dropdown\" class=\"form-inline pull-right\"></form>\n\n<h1>Player Stats "
-    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n<p>More: <a data-bind=\"attrLeagueUrl: {href: ['player_shot_locations', season]}\">Shot Locations</a> | <a data-bind=\"attrLeagueUrl: {href: ['dist_player_stats', season]}\">Stat Distributions</a></p>\n\n<p class=\"clearfix\">\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player-stats\">\n<thead>\n  <tr><th colspan=\"6\"></th><th colspan=\"3\" style=\"text-align: center\" title=\"Field Goals\">FG</th><th colspan=\"3\" style=\"text-align: center\" title=\"Three-Pointers\">3PT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Free Throws\">FT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Rebounds\">Reb</th><th colspan=\"6\"></th></tr>\n  <tr><th>Name</th><th title=\"Position\">Pos</th><th>Team</th><th title=\"Games Played\">GP</th><th title=\"Games Started\">GS</th><th title=\"Minutes\">Min</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Offensive\">Off</th><th title=\"Defensive\">Def</th><th title=\"Total\">Tot</th><th title=\"Assists\">Ast</th><th title=\"Turnovers\">TO</th><th title=\"Steals\">Stl</th><th title=\"Blocks\">Blk</th><th title=\"Personal Fouls\">PF</th><th title=\"Points\">Pts</th><th title=\"Player Efficiency Rating\">PER</th></tr>\n</thead>\n</table>\n</p>";
-  return buffer;
+  return "<form id=\"player-stats-dropdown\" class=\"form-inline pull-right\"></form>\n\n<h1>Player Stats <span data-bind=\"newWindow: []\"></span></h1>\n<p>More: <a data-bind=\"attrLeagueUrl: {href: ['player_shot_locations', season]}\">Shot Locations</a> | <a data-bind=\"attrLeagueUrl: {href: ['dist_player_stats', season]}\">Stat Distributions</a></p>\n\n<p class=\"clearfix\">\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player-stats\">\n<thead>\n  <tr><th colspan=\"6\"></th><th colspan=\"3\" style=\"text-align: center\" title=\"Field Goals\">FG</th><th colspan=\"3\" style=\"text-align: center\" title=\"Three-Pointers\">3PT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Free Throws\">FT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Rebounds\">Reb</th><th colspan=\"6\"></th></tr>\n  <tr><th>Name</th><th title=\"Position\">Pos</th><th>Team</th><th title=\"Games Played\">GP</th><th title=\"Games Started\">GS</th><th title=\"Minutes\">Min</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Offensive\">Off</th><th title=\"Defensive\">Def</th><th title=\"Total\">Tot</th><th title=\"Assists\">Ast</th><th title=\"Turnovers\">TO</th><th title=\"Steals\">Stl</th><th title=\"Blocks\">Blk</th><th title=\"Personal Fouls\">PF</th><th title=\"Points\">Pts</th><th title=\"Player Efficiency Rating\">PER</th></tr>\n</thead>\n</table>\n</p>";
   });
 templates['trade'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
@@ -828,135 +825,10 @@ function program2(depth0,data) {
 templates['standings'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
+  
 
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n      <option value=\""
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"";
-  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">"
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " season</option>\n    ";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  
-  return " selected=\"selected\"";
-  }
 
-function program4(depth0,data,depth1) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n  <h2>"
-    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</h2>\n  <div class=\"row-fluid\">\n    <div class=\"span9\">\n      ";
-  stack2 = ((stack1 = ((stack1 = depth0.divs),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program5, data, depth1),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n    </div>\n\n    <div class=\"span3\">\n      <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\">\n      <thead>\n        <tr><th width=\"100%\">Team</th><th align=\"right\">GB</th></tr>\n      </thead>\n      <tbody>\n      ";
-  stack2 = ((stack1 = ((stack1 = depth0.teams),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program8, data, depth1),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n      </tbody>\n      </table>\n    </div>\n  </div>\n";
-  return buffer;
-  }
-function program5(depth0,data,depth2) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n          <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\">\n          <thead>\n            <tr><th width=\"100%\">"
-    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</th><th>W</th><th>L</th><th>Pct</th><th>GB</th><th>Home</th><th>Road</th><th>Div</th><th>Conf</th><th>Streak</th><th>L10</th></tr>\n          </thead>\n          <tbody>\n          ";
-  stack2 = ((stack1 = ((stack1 = depth0.teams),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program6, data, depth2),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n          </tbody>\n          </table>\n      ";
-  return buffer;
-  }
-function program6(depth0,data,depth3) {
-  
-  var buffer = "", stack1;
-  buffer += "\n            <tr><td><a href=\"/l/"
-    + escapeExpression(((stack1 = depth3.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/roster/"
-    + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/"
-    + escapeExpression(((stack1 = depth3.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = depth0.region),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " "
-    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a></td><td>"
-    + escapeExpression(((stack1 = depth0.won),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td><td>"
-    + escapeExpression(((stack1 = depth0.lost),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td><td>"
-    + escapeExpression(helpers.roundWinp.call(depth0, depth0.winp, {hash:{},data:data}))
-    + "</td><td>"
-    + escapeExpression(((stack1 = depth0.gb),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td><td>"
-    + escapeExpression(((stack1 = depth0.wonHome),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "-"
-    + escapeExpression(((stack1 = depth0.lostHome),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td><td>"
-    + escapeExpression(((stack1 = depth0.wonAway),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "-"
-    + escapeExpression(((stack1 = depth0.lostAway),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td><td>"
-    + escapeExpression(((stack1 = depth0.wonDiv),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "-"
-    + escapeExpression(((stack1 = depth0.lostDiv),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td><td>"
-    + escapeExpression(((stack1 = depth0.wonConf),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "-"
-    + escapeExpression(((stack1 = depth0.lostConf),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td><td>"
-    + escapeExpression(((stack1 = depth0.streak),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td><td>"
-    + escapeExpression(((stack1 = depth0.lastTen),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td></tr>\n          ";
-  return buffer;
-  }
-
-function program8(depth0,data,depth2) {
-  
-  var buffer = "", stack1;
-  buffer += "\n        <tr";
-  stack1 = helpers['if'].call(depth0, depth0.separator, {hash:{},inverse:self.noop,fn:self.program(9, program9, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "><td>"
-    + escapeExpression(((stack1 = depth0.rank),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + ". <a href=\"/l/"
-    + escapeExpression(((stack1 = depth2.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/roster/"
-    + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/"
-    + escapeExpression(((stack1 = depth2.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = depth0.region),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a></td><td align=\"right\">"
-    + escapeExpression(((stack1 = depth0.gb),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</td></tr>\n      ";
-  return buffer;
-  }
-function program9(depth0,data) {
-  
-  
-  return " class=\"separator\"";
-  }
-
-  buffer += "<form action=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/standings\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"standings-select-season\" name=\"season\" class=\"season\">\n    ";
-  stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </select>\n</form>\n\n<h1>Standings "
-    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n\n";
-  stack2 = ((stack1 = ((stack1 = depth0.confs),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program4, data, depth0),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  return buffer;
+  return "<form id=\"standings-dropdown\" class=\"form-inline pull-right\"></form>\n\n<h1>Standings <span data-bind=\"newWindow: []\"></span></h1>\n\n<!-- ko foreach: confs -->\n  <h2 data-bind=\"text: name\"></h2>\n  <div class=\"row-fluid\">\n    <div class=\"span9\">\n      <!-- ko foreach: divs -->\n          <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\">\n          <thead>\n            <tr><th width=\"100%\" data-bind=\"text: name\"></th><th>W</th><th>L</th><th>Pct</th><th>GB</th><th>Home</th><th>Road</th><th>Div</th><th>Conf</th><th>Streak</th><th>L10</th></tr>\n          </thead>\n          <tbody>\n          <!-- ko foreach: teams -->\n            <tr><td><a data-bind=\"attrLeagueUrl: {href: ['roster', abbrev, $parents[2].season]}, text: region() + ' ' + name()\"></a></td><td data-bind=\"text: won\"></td><td data-bind=\"text: lost\"></td><td data-bind=\"roundWinp: winp\"></td><td data-bind=\"text: gb\"></td><td data-bind=\"text: wonHome() + '-' + lostHome()\"></td><td data-bind=\"text: wonAway() + '-' + lostAway()\"></td><td data-bind=\"text: wonDiv() + '-' + lostDiv()\"></td><td data-bind=\"text: wonConf() + '-' + lostConf()\"></td><td data-bind=\"text: streak\"></td><td data-bind=\"text: lastTen\"></td></tr>\n          <!-- /ko -->\n          </tbody>\n          </table>\n      <!-- /ko -->\n    </div>\n\n    <div class=\"span3\">\n      <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\">\n      <thead>\n        <tr><th width=\"100%\">Team</th><th align=\"right\">GB</th></tr>\n      </thead>\n      <tbody>\n      <!-- ko foreach: teams -->\n        <tr data-bind=\"attr: {class: $index() === 7 ? 'separator' : ''}\"><td><span data-bind=\"text: rank\"></span>. <a data-bind=\"attrLeagueUrl: {href: ['roster', abbrev, $parents[1].season]}, text: region\"></a></td><td align=\"right\" data-bind=\"text: gb\"></td></tr>\n      <!-- /ko -->\n      </tbody>\n      </table>\n    </div>\n  </div>\n<!-- /ko -->";
   });
 templates['playoffs'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];

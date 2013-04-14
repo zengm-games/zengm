@@ -403,7 +403,7 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
     function moveToNewWindow() {
         // Window name is set to the current time, so each window has a unique name and thus a new window is always opened
         window.open(document.URL + "?w=popup", Date.now(), "height=600,width=800,scrollbars=yes");
-        Davis.location.assign(new Davis.Request("/l/" + g.lid));
+//        Davis.location.assign(new Davis.Request("/l/" + g.lid));
     }
 
     $(document).ready(function () {

@@ -222,12 +222,12 @@ define(["db", "globals", "ui", "core/finances", "lib/jquery", "lib/knockout", "l
                     vm.aboveBelow.salaryCap(aboveBelow.salaryCap);
                     vm.aboveBelow.luxuryPayroll(aboveBelow.luxuryPayroll);
                     vm.salariesSeasons(salariesSeasons);
-//                    vm.team(team);
+                    vm.contracts(contracts);
                     vm.contractTotals(contractTotals);
                     vm.barData(barData);
                     vm.barSeasons(barSeasons);
                     mapping.fromJS({team: team}, {}, vm);
-console.log(vm.team);
+console.log(vm.contracts())
                     cb();
                 });
             };
@@ -255,6 +255,7 @@ console.log(vm.team);
                 luxuryTax: ko.observable(g.luxuryTax),
                 salariesSeasons: ko.observable([]),
                 team: {},
+                contracts: ko.observable(),
                 contractTotals: ko.observable([]),
                 barData: ko.observable(),
                 barSeasons: ko.observable()

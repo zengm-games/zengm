@@ -3,6 +3,7 @@ smarter realtime
 
 ticketPrice.amount is a string? is this a problem?
 team finances
+  do injuries update in player salaries table?
   aboveBelow should be computed
   properties of team should be observable?
   dropdown

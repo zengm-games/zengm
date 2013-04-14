@@ -4,10 +4,12 @@
 
 <p>Only eligible players are shown (<i>e.g.</i> a player shooting 2 for 2 on the season is not eligible for the league lead in FG%).</p>
 
-<!-- ko foreach: grouped -->
 <p></p>
-<div class="row-fluid" data-bind="foreach: $data">
-  <div class="span4">
+<div class="row-fluid" data-bind="foreach: categories">
+  <!-- ko if: newRow -->
+  <p class="clearfix"></p>
+  <!-- /ko -->
+  <div class="span4" data-bind="attr: {style: newRow() ? 'margin-left: 0' : ''}">
     <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed leaders">
     <thead>
       <tr><th data-bind="text: name"></th><th data-bind="text: stat, attr: {title: title}"></th></tr>
@@ -18,4 +20,3 @@
     </table>
   </div>
 </div>
-<!-- /ko -->

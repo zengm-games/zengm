@@ -121,7 +121,6 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mappi
                     categories: categories
                 };
 
-console.log(vm.grouped());
                 NestedVm = function (data) {
                     var myNestedMapping;
 
@@ -146,7 +145,6 @@ console.log(vm.grouped());
                     }
                 };
                 mapping.fromJS(data, myMapping, vm);
-console.log(vm.grouped());
 
                 cb();
             };
@@ -163,23 +161,6 @@ console.log(vm.grouped());
                 season: ko.observable(),
                 categories: ko.observable([])
             };
-            // For nice columns like http://stackoverflow.com/a/10577599/786644
-            vm.grouped = ko.computed(function () {
-                var current, i, items, rows;
-
-                items = vm.categories();
-                rows = [];
-                current = [];
-                rows.push(current);
-                for (i = 0; i < items.length; i++) {
-                    current.push(items[i]);
-                    if (((i + 1) % 3) === 0) {
-                        current = [];
-                        rows.push(current);
-                    }
-                }
-                return rows;
-            });
         }
 
         if ((season === g.season && updateEvents.indexOf("gameSim") >= 0) || season !== vm.season()) {

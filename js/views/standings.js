@@ -85,14 +85,36 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mappi
                 confs: confs
             };
 
-            myMapping = {
-/*                players: {
-                    key: function (data) {
-                        return ko.utils.unwrapObservable(data.pid);
-                    }
-                }*/
-            };
+            // I don't entirely understand this nested mapping, but it's based
+            // on http://stackoverflow.com/a/12030524/786644
+            function ConfVm(data) {
+                var myConfMapping;
 
+                myConfMapping = {
+                    divs: {
+                        key: function (data) {
+                            return ko.utils.unwrapObservable(data.name);
+                        }
+                    },
+                    teams: {
+                        key: function (data) {
+                            return ko.utils.unwrapObservable(data.tid);
+                        }
+                    }
+                };
+
+                mapping.fromJS(data, myConfMapping, this);
+            }
+            myMapping = {
+                confs: {
+                    create: function (options) {
+                        return new ConfVm(options.data);
+                    },
+                    key: function (data) {
+                        return ko.utils.unwrapObservable(data.name);
+                    }
+                }
+            };
             mapping.fromJS(data, myMapping, vm);
 
             cb();

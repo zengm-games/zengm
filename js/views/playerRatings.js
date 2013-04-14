@@ -7,6 +7,18 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
 
     var players, vm;
 
+    function loadAfter(cb) {
+        var season;
+
+        season = vm.season();
+
+        ui.datatable($("#player-ratings"), 4, _.map(players, function (p) {
+            return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, '<a href="/l/' + g.lid + '/roster/' + p.abbrev + '/' + season + '">' + p.abbrev + '</a>', String(p.age), String(p.ratings.ovr), String(p.ratings.pot), String(p.ratings.hgt), String(p.ratings.stre), String(p.ratings.spd), String(p.ratings.jmp), String(p.ratings.endu), String(p.ratings.ins), String(p.ratings.dnk), String(p.ratings.ft), String(p.ratings.fg), String(p.ratings.tp), String(p.ratings.blk), String(p.ratings.stl), String(p.ratings.drb), String(p.ratings.pss), String(p.ratings.reb)];
+        }));
+
+        cb();
+    }
+
     function display(updateEvents, cb) {
         var leagueContentEl, season;
 
@@ -23,10 +35,6 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
         ui.title("Player Ratings - " + season);
 
         components.dropdown("player-ratings-dropdown", ["seasons"], [season], updateEvents);
-
-        ui.datatable($("#player-ratings"), 4, _.map(players, function (p) {
-            return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, '<a href="/l/' + g.lid + '/roster/' + p.abbrev + '/' + season + '">' + p.abbrev + '</a>', String(p.age), String(p.ratings.ovr), String(p.ratings.pot), String(p.ratings.hgt), String(p.ratings.stre), String(p.ratings.spd), String(p.ratings.jmp), String(p.ratings.endu), String(p.ratings.ins), String(p.ratings.dnk), String(p.ratings.ft), String(p.ratings.fg), String(p.ratings.tp), String(p.ratings.blk), String(p.ratings.stl), String(p.ratings.drb), String(p.ratings.pss), String(p.ratings.reb)];
-        }));
 
         cb();
     }
@@ -57,9 +65,11 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
             };
         }
 
-        if ((season === g.season && updateEvents.indexOf("playerMovement") >= 0) || season !== vm.season()) {
+        if ((season === g.season && updateEvents.indexOf("playerMovement") >= 0) || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON) || season !== vm.season()) {
             loadBefore(season, function () {
-                display(updateEvents, cb);
+                display(updateEvents, function () {
+                    loadAfter(cb);
+                });
             });
         } else {
             display(updateEvents, cb);

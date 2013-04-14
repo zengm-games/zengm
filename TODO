@@ -1,7 +1,8 @@
 smarter realtime
 ----------------
 
-dataTables knockout
+datatables
+  update in loadAfter, not display
 roster
   check release, buy out, trade for
 general things
@@ -48,6 +49,11 @@ not urgetnt, but... use knockout for
       quick fix - return a string for templates rather than array.
   leaders
     flatten a bit
+  dataTables/grid knockout
+    https://github.com/CogShift/Knockout.Extensions
+      https://github.com/CogShift/Knockout.Extensions/issues/9
+    https://github.com/Knockout-Contrib/KoGrid
+    http://chadmullins.com/javascript/knockout-js-series-part-2-binding-knockout-js-to-a-datatables-grid/
 
 BEFORE 3.0.0-beta.3
 -------------------

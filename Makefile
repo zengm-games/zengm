@@ -24,7 +24,7 @@ build-css:
 
 # target: build-js - Run the RequireJS optimizer to concatenate and minify all JavaScript files.
 build-js:
-	r.js -o baseUrl=js paths.requireLib=lib/require name=app include=requireLib mainConfigFile=js/app.js out=gen/app.js
+	r.js -o baseUrl=js paths.requireLib=lib/require preserveLicenseComments=false name=app include=requireLib mainConfigFile=js/app.js out=gen/app.js
 
 # target: build-templates - Precompile Handlebars templates. Note that if you do not subsequently run the build-js target, then this won't be in the minified JavaScript.
 build-templates:

@@ -1,10 +1,16 @@
 smarter realtime
 ----------------
 
+ticketPrice.amount is a string? is this a problem?
+team finances
+  aboveBelow should be computed
+  properties of team should be observable?
+  dropdown
+  teamFinances updateEvent for when the form is changed (or, i guess, if the AI team does it, but that doesn't happen yet)
+  move some stuff to loadAfter
+  enableFinanceSettings - simplify
 datatables
   update in loadAfter, not display
-roster
-  check release, buy out, trade for
 general things
   performance considerations...
     http://stackoverflow.com/questions/7488208/am-i-overusing-the-knockout-mapping-plugin-by-always-using-it-to-do-my-viewmodel/10114544#10114544
@@ -20,8 +26,6 @@ ui.realtimeUpdate should be used in more places so updateEvent is pervasive
     what about post redirects? https://github.com/olivernn/davis.js/issues/36
   add playerMovement updateEvent, for when a player signs a contract, becomes a free agent, or is traded
   eventually, get rid of "reload" boolean in season.js
-next
-  teamFinances - complicated, lots of live updating, form
 after updating all views
   reassess ui module. delete stuff like ui.dropdown. move other functions elsewhere?
     what is the difference between util.viewHelpers and ui?
@@ -54,6 +58,8 @@ not urgetnt, but... use knockout for
       https://github.com/CogShift/Knockout.Extensions/issues/9
     https://github.com/Knockout-Contrib/KoGrid
     http://chadmullins.com/javascript/knockout-js-series-part-2-binding-knockout-js-to-a-datatables-grid/
+  roster
+    check release, buy out, trade for
 
 BEFORE 3.0.0-beta.3
 -------------------

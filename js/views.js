@@ -1,4 +1,4 @@
-define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/draftSummary", "views/gameLog", "views/leaders", "views/negotiation", "views/playerRatings", "views/playerStats", "views/roster", "views/standings", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, draft, finances, freeAgents, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, draftSummary, gameLog, leaders, negotiation, playerRatings, playerStats, roster, standings, teamStats, trade) {
+define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/draftSummary", "views/gameLog", "views/leaders", "views/negotiation", "views/playerRatings", "views/playerStats", "views/roster", "views/standings", "views/teamFinances", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, draft, finances, freeAgents, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, draftSummary, gameLog, leaders, negotiation, playerRatings, playerStats, roster, standings, teamFinances, teamStats, trade) {
     "use strict";
 
     function initDb(req) {
@@ -758,7 +758,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
         });
     }
 
-    function teamFinances(req) {
+/*    function teamFinances(req) {
         viewHelpers.beforeLeague(req, function () {
             var abbrev, out, show, shows, teams, tid, tx;
 
@@ -1011,7 +1011,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                 };
             });
         });
-    }
+    }*/
 
     function teamHistory(req) {
         viewHelpers.beforeLeague(req, function () {

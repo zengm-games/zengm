@@ -1442,154 +1442,18 @@ function program2(depth0,data) {
 templates['gameLog'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", escapeExpression=this.escapeExpression;
+  
 
 
-  buffer += "<form id=\"game-log-dropdown\" class=\"form-inline pull-right\"></form>\n\n<h1>Game Log "
-    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n<p>More: <a data-bind=\"attrLeagueUrl: {href: ['roster', abbrev, season]\">Roster</a> | <a data-bind=\"attrLeagueUrl: {href: ['finances', abbrev]}\">Finances</a></p>\n\n<p>\n<div class=\"row-fluid\">\n  <div class=\"span9\" id=\"box-score\" data-bind=\"html: boxScore.html\">\n    <p></p>\n  </div>\n\n  <div class=\"span3\" id=\"game-log-list\">\n    <table id=\"game_log_list\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\">\n    <thead>\n      <tr><th>Opp</th><th>W/L</th><th>Score</th></tr>\n    </thead>\n    <tbody data-bind=\"foreach: gamesList.games\">\n      <tr data-bind=\"attr: {class: selected ? 'alert-info' : ''}\">\n        <td><a data-bind=\"attr: {href: url}, text: (home ? '' : '@') + oppAbbrev\"></a></td>\n        <td><a data-bind=\"attr: {href: url}, text: won ? 'W' : 'L'\"></a></td>\n        <td><a data-bind=\"attr: {href: url}, text: pts + '-' + oppPts + overtime\"></a></td>\n      </tr>\n    </tbody>\n    <tr data-bind=\"visible: gamesList.loading()\"><td colspan=\"3\" style=\"padding: 4px 5px;\">Loading...</td></tr>\n    </table>\n  </div>\n</div>\n</p>\n";
-  return buffer;
+  return "<form id=\"game-log-dropdown\" class=\"form-inline pull-right\"></form>\n\n<h1>Game Log <span data-bind=\"newWindow: []\"></span></h1>\n<p>More: <a data-bind=\"attrLeagueUrl: {href: ['roster', abbrev, season]\">Roster</a> | <a data-bind=\"attrLeagueUrl: {href: ['finances', abbrev]}\">Finances</a></p>\n\n<p>\n<div class=\"row-fluid\">\n  <div class=\"span9\" id=\"box-score\" data-bind=\"html: boxScore.html\">\n    <p></p>\n  </div>\n\n  <div class=\"span3\" id=\"game-log-list\">\n    <table id=\"game_log_list\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\">\n    <thead>\n      <tr><th>Opp</th><th>W/L</th><th>Score</th></tr>\n    </thead>\n    <tbody data-bind=\"foreach: gamesList.games\">\n      <tr data-bind=\"attr: {class: selected ? 'alert-info' : ''}\">\n        <td><a data-bind=\"attr: {href: url}, text: (home ? '' : '@') + oppAbbrev\"></a></td>\n        <td><a data-bind=\"attr: {href: url}, text: won ? 'W' : 'L'\"></a></td>\n        <td><a data-bind=\"attr: {href: url}, text: pts + '-' + oppPts + overtime\"></a></td>\n      </tr>\n    </tbody>\n    <tr data-bind=\"visible: gamesList.loading()\"><td colspan=\"3\" style=\"padding: 4px 5px;\">Loading...</td></tr>\n    </table>\n  </div>\n</div>\n</p>\n";
   });
 templates['teamFinances'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
+  
 
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n      <option value=\""
-    + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"";
-  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">"
-    + escapeExpression(((stack1 = depth0.region),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " "
-    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</option>\n    ";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  
-  return " selected=\"selected\"";
-  }
 
-function program4(depth0,data) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n      <option value=\""
-    + escapeExpression(((stack1 = depth0.show),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"";
-  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">"
-    + escapeExpression(((stack1 = depth0.text),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</option>\n    ";
-  return buffer;
-  }
-
-function program6(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n      <h4>Revenue Settings <i class=\"icon-question-sign\" id=\"help-revenue-settings\" data-placement=\"bottom\"></i></h4>\n      <p class=\"text-error\"></p>\n      <div class=\"row\">\n        <div class=\"pull-left finances-settings-label\">Ticket Price</div>\n        <div class=\"input-prepend pull-left finances-settings-field\">\n          <span class=\"add-on\">$</span><input type=\"text\" name=\"budget[ticketPrice]\" class=\"ticket-price\" value=\""
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.ticketPrice)),stack1 == null || stack1 === false ? stack1 : stack1.amount)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" disabled=\"disabled\">\n        </div>\n        <div class=\"pull-left finances-settings-text\">(#"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.ticketPrice)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " leaguewide)</div>\n      </div>\n      <p></p>\n      <h4>Expense Settings <i class=\"icon-question-sign\" id=\"help-expense-settings\" data-placement=\"bottom\"></i></h4>\n      <p class=\"text-error\"></p>\n      <div class=\"row\">\n        <div class=\"pull-left finances-settings-label\">Scouting</div>\n        <div class=\"input-prepend input-append pull-left finances-settings-field\">\n          <span class=\"add-on\">$</span><input type=\"text\" name=\"budget[scouting]\" class=\"ticket-price\" value=\""
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.scouting)),stack1 == null || stack1 === false ? stack1 : stack1.amount)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" disabled=\"disabled\"><span class=\"add-on\">M</span>\n        </div>\n        <div class=\"pull-left finances-settings-text-small\">Current spending rate: #"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.scouting)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "<br>Spent this season: #"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.expenses),stack1 == null || stack1 === false ? stack1 : stack1.scouting)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</div>\n      </div>\n      <div class=\"row\">\n        <div class=\"pull-left finances-settings-label\">Coaching</div>\n        <div class=\"input-prepend input-append pull-left finances-settings-field\">\n          <span class=\"add-on\">$</span><input type=\"text\" name=\"budget[coaching]\" class=\"ticket-price\" value=\""
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.coaching)),stack1 == null || stack1 === false ? stack1 : stack1.amount)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" disabled=\"disabled\"><span class=\"add-on\">M</span>\n        </div>\n        <div class=\"pull-left finances-settings-text-small\">Current spending rate: #"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.coaching)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "<br>Spent this season: #"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.expenses),stack1 == null || stack1 === false ? stack1 : stack1.coaching)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</div>\n      </div>\n      <div class=\"row\">\n        <div class=\"pull-left finances-settings-label\">Health</div>\n        <div class=\"input-prepend input-append pull-left finances-settings-field\">\n          <span class=\"add-on\">$</span><input type=\"text\" name=\"budget[health]\" class=\"ticket-price\" value=\""
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.health)),stack1 == null || stack1 === false ? stack1 : stack1.amount)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" disabled=\"disabled\"><span class=\"add-on\">M</span>\n        </div>\n        <div class=\"pull-left finances-settings-text-small\">Current spending rate: #"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.health)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "<br>Spent this season: #"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.expenses),stack1 == null || stack1 === false ? stack1 : stack1.health)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</div>\n      </div>\n      <div class=\"row\">\n        <div class=\"pull-left finances-settings-label\">Facilities</div>\n        <div class=\"input-prepend input-append pull-left finances-settings-field\">\n          <span class=\"add-on\">$</span><input type=\"text\" name=\"budget[facilities]\" class=\"ticket-price\" value=\""
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.facilities)),stack1 == null || stack1 === false ? stack1 : stack1.amount)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" disabled=\"disabled\"><span class=\"add-on\">M</span>\n        </div>\n        <div class=\"pull-left finances-settings-text-small\">Current spending rate: #"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.budget),stack1 == null || stack1 === false ? stack1 : stack1.facilities)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "<br>Spent this season: #"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.expenses),stack1 == null || stack1 === false ? stack1 : stack1.facilities)),stack1 == null || stack1 === false ? stack1 : stack1.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</div>\n      </div>\n      <br>\n      <p align=\"center\"><button class=\"btn btn-large btn-primary\" style=\"line-height: 1.5em\">Save Revenue and<br> Expense Settings</button></p>\n      ";
-  return buffer;
-  }
-
-  buffer += "<form action=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/team_finances\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"team-finances-select-team\" name=\"team\" class=\"team\">\n    ";
-  stack2 = ((stack1 = ((stack1 = depth0.teams),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </select>\n  <select id=\"team-finances-select-show\" name=\"show\" class=\"past-x\">\n    ";
-  stack2 = ((stack1 = ((stack1 = depth0.shows),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </select>\n</form>\n\n<h1>"
-    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.region)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " "
-    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " Finances "
-    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n<p>More: <a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/roster/"
-    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">Roster</a> | <a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/game_log/"
-    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">Game Log</a></p>\n\n<p class=\"clearfix\">The current payroll (<strong>"
-    + escapeExpression(helpers.currency.call(depth0, depth0.payroll, "M", {hash:{},data:data}))
-    + "</strong>) is "
-    + escapeExpression(((stack1 = ((stack1 = depth0.aboveBelow),stack1 == null || stack1 === false ? stack1 : stack1.minPayroll)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " the minimum payroll limit (<strong>"
-    + escapeExpression(helpers.currency.call(depth0, depth0.minPayroll, "M", {hash:{},data:data}))
-    + "</strong>), "
-    + escapeExpression(((stack1 = ((stack1 = depth0.aboveBelow),stack1 == null || stack1 === false ? stack1 : stack1.salaryCap)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " the salary cap (<strong>"
-    + escapeExpression(helpers.currency.call(depth0, depth0.salaryCap, "M", {hash:{},data:data}))
-    + "</strong>), and "
-    + escapeExpression(((stack1 = ((stack1 = depth0.aboveBelow),stack1 == null || stack1 === false ? stack1 : stack1.luxuryPayroll)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " the luxury tax limit (<strong>"
-    + escapeExpression(helpers.currency.call(depth0, depth0.luxuryPayroll, "M", {hash:{},data:data}))
-    + "</strong>). <i class=\"icon-question-sign\" id=\"help-payroll-limits\" data-placement=\"bottom\"></i></p>\n\n<div class=\"row-fluid\">\n  <div class=\"span2\">\n    <h4>Wins</h4>\n    <div id=\"bar-graph-won\" class=\"bar-graph-small\"></div><br><br>\n    <span class=\"clickover\"><h4>Hype <i class=\"icon-question-sign\" id=\"help-hype\" data-placement=\"right\"></i></h4></span>\n    <div id=\"bar-graph-hype\" class=\"bar-graph-small\"></div><br><br>\n    <h4>Region Population</h4>\n    <div id=\"bar-graph-pop\" class=\"bar-graph-small\"></div><br><br>\n    <h4>Average Attendance</h4>\n    <div id=\"bar-graph-att\" class=\"bar-graph-small\"></div>\n  </div>\n  <div class=\"span4\">\n    <div class=\"row-fluid\">\n      <h4>Revenue</h4>\n      <div id=\"bar-graph-revenue\" class=\"bar-graph-large\"></div><br><br>\n      <h4>Expenses</h4>\n      <div id=\"bar-graph-expenses\" class=\"bar-graph-large\"></div><br><br>\n      <h4>Cash</h4>\n      <div id=\"bar-graph-cash\" class=\"bar-graph-medium\"></div>\n    </div>\n  </div>\n  <div class=\"span6\">\n    <form action=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/team_finances\" method=\"POST\" id=\"finances-settings\">\n      ";
-  stack2 = helpers['with'].call(depth0, depth0.team, {hash:{},inverse:self.noop,fn:self.program(6, program6, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n    </form>\n  </div>\n</div>\n<p class=\"clearfix\"></p>\n\n<h2>Player Salaries</h2>\n\n<p>You can release or buy out players from <a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/roster\">your roster</a>. Released players who are still owed money are <i>shown in italics</i>.</p>\n\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player-salaries\">\n<thead>\n  <tr><th>Name</th><th>"
-    + escapeExpression(((stack1 = ((stack1 = depth0.salariesSeasons),stack1 == null || stack1 === false ? stack1 : stack1[0])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</th><th>"
-    + escapeExpression(((stack1 = ((stack1 = depth0.salariesSeasons),stack1 == null || stack1 === false ? stack1 : stack1[1])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</th><th>"
-    + escapeExpression(((stack1 = ((stack1 = depth0.salariesSeasons),stack1 == null || stack1 === false ? stack1 : stack1[2])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</th><th>"
-    + escapeExpression(((stack1 = ((stack1 = depth0.salariesSeasons),stack1 == null || stack1 === false ? stack1 : stack1[3])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</th><th>"
-    + escapeExpression(((stack1 = ((stack1 = depth0.salariesSeasons),stack1 == null || stack1 === false ? stack1 : stack1[4])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</th></tr>\n</thead>\n<tbody>\n</tbody>\n<tfoot>\n  <tr><th>Totals</th><th>"
-    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.contractTotals),stack1 == null || stack1 === false ? stack1 : stack1[0]), "M", {hash:{},data:data}))
-    + "</th><th>"
-    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.contractTotals),stack1 == null || stack1 === false ? stack1 : stack1[1]), "M", {hash:{},data:data}))
-    + "</th><th>"
-    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.contractTotals),stack1 == null || stack1 === false ? stack1 : stack1[2]), "M", {hash:{},data:data}))
-    + "</th><th>"
-    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.contractTotals),stack1 == null || stack1 === false ? stack1 : stack1[3]), "M", {hash:{},data:data}))
-    + "</th><th>"
-    + escapeExpression(helpers.currency.call(depth0, ((stack1 = depth0.contractTotals),stack1 == null || stack1 === false ? stack1 : stack1[4]), "M", {hash:{},data:data}))
-    + "</th></tr>\n</tfoot>\n</table>";
-  return buffer;
+  return "<form id=\"team-finances-dropdown\" class=\"form-inline pull-right\"></form>\n\n<h1><span data-bind=\"text: team.region\"></span> <span data-bind=\"text: team.name\"></span> Finances <span data-bind=\"newWindow: []\"></span></h1>\n<p>More: <a data-bind=\"attrLeagueUrl: {href: ['roster', abbrev]}\">Roster</a> | <a data-bind=\"attrLeagueUrl: {href: ['game_log', abbrev]}\">Game Log</a></p>\n\n<p class=\"clearfix\">The current payroll (<strong data-bind=\"currency: [payroll, 'M']\"></strong>) is <span data-bind=\"text: aboveBelow.minPayroll\"></span> the minimum payroll limit (<strong data-bind=\"currency: [minPayroll, 'M']\"></strong>), <span data-bind=\"text: aboveBelow.salaryCap\"></span> the salary cap (<strong data-bind=\"currency: [salaryCap, 'M']\"></strong>), and <span data-bind=\"text: aboveBelow.luxuryPayroll\"></span> the luxury tax limit (<strong data-bind=\"currency: [luxuryPayroll, 'M']\"></strong>). <i class=\"icon-question-sign\" id=\"help-payroll-limits\" data-placement=\"bottom\"></i></p>\n\n<div class=\"row-fluid\">\n  <div class=\"span2\">\n    <h4>Wins</h4>\n    <div id=\"bar-graph-won\" class=\"bar-graph-small\"></div><br><br>\n    <span class=\"clickover\"><h4>Hype <i class=\"icon-question-sign\" id=\"help-hype\" data-placement=\"right\"></i></h4></span>\n    <div id=\"bar-graph-hype\" class=\"bar-graph-small\"></div><br><br>\n    <h4>Region Population</h4>\n    <div id=\"bar-graph-pop\" class=\"bar-graph-small\"></div><br><br>\n    <h4>Average Attendance</h4>\n    <div id=\"bar-graph-att\" class=\"bar-graph-small\"></div>\n  </div>\n  <div class=\"span4\">\n    <div class=\"row-fluid\">\n      <h4>Revenue</h4>\n      <div id=\"bar-graph-revenue\" class=\"bar-graph-large\"></div><br><br>\n      <h4>Expenses</h4>\n      <div id=\"bar-graph-expenses\" class=\"bar-graph-large\"></div><br><br>\n      <h4>Cash</h4>\n      <div id=\"bar-graph-cash\" class=\"bar-graph-medium\"></div>\n    </div>\n  </div>\n  <div class=\"span6\">\n    <form method=\"POST\" id=\"finances-settings\" data-bind=\"attrLeagueUrl: {action: ['team_finances']}\">\n      <h4>Revenue Settings <i class=\"icon-question-sign\" id=\"help-revenue-settings\" data-placement=\"bottom\"></i></h4>\n      <p class=\"text-error\"></p>\n      <div class=\"row\">\n        <div class=\"pull-left finances-settings-label\">Ticket Price</div>\n        <div class=\"input-prepend pull-left finances-settings-field\">\n          <span class=\"add-on\">$</span><input type=\"text\" name=\"budget[ticketPrice]\" class=\"ticket-price\" disabled=\"disabled\" data-bind=\"attr: {value: team.budget.ticketPrice.amount}\">\n        </div>\n        <div class=\"pull-left finances-settings-text\">(#<span data-bind=\"text: team.budget.ticketPrice.rank\"></span> leaguewide)</div>\n      </div>\n      <p></p>\n      <h4>Expense Settings <i class=\"icon-question-sign\" id=\"help-expense-settings\" data-placement=\"bottom\"></i></h4>\n      <p class=\"text-error\"></p>\n      <div class=\"row\">\n        <div class=\"pull-left finances-settings-label\">Scouting</div>\n        <div class=\"input-prepend input-append pull-left finances-settings-field\">\n          <span class=\"add-on\">$</span><input type=\"text\" name=\"budget[scouting]\" class=\"ticket-price\" disabled=\"disabled\" data-bind=\"attr: {value: team.budget.scouting.amount}\"><span class=\"add-on\">M</span>\n        </div>\n        <div class=\"pull-left finances-settings-text-small\">Current spending rate: #<span data-bind=\"text: team.budget.scouting.rank\"></span><br>Spent this season: #<span data-bind=\"text: team.expenses.scouting.rank\"></span></div>\n      </div>\n      <div class=\"row\">\n        <div class=\"pull-left finances-settings-label\">Coaching</div>\n        <div class=\"input-prepend input-append pull-left finances-settings-field\">\n          <span class=\"add-on\">$</span><input type=\"text\" name=\"budget[coaching]\" class=\"ticket-price\" disabled=\"disabled\" data-bind=\"attr: {value: team.budget.coaching.amount}\"><span class=\"add-on\">M</span>\n        </div>\n        <div class=\"pull-left finances-settings-text-small\">Current spending rate: #<span data-bind=\"text: team.budget.coaching.rank\"></span><br>Spent this season: #<span data-bind=\"text: team.expenses.coaching.rank\"></span></div>\n      </div>\n      <div class=\"row\">\n        <div class=\"pull-left finances-settings-label\">Health</div>\n        <div class=\"input-prepend input-append pull-left finances-settings-field\">\n          <span class=\"add-on\">$</span><input type=\"text\" name=\"budget[health]\" class=\"ticket-price\" disabled=\"disabled\" data-bind=\"attr: {value: team.budget.health.amount}\"><span class=\"add-on\">M</span>\n        </div>\n        <div class=\"pull-left finances-settings-text-small\">Current spending rate: #<span data-bind=\"text: team.budget.health.rank\"></span><br>Spent this season: #<span data-bind=\"text: team.expenses.health.rank\"></span></div>\n      </div>\n      <div class=\"row\">\n        <div class=\"pull-left finances-settings-label\">Facilities</div>\n        <div class=\"input-prepend input-append pull-left finances-settings-field\">\n          <span class=\"add-on\">$</span><input type=\"text\" name=\"budget[facilities]\" class=\"ticket-price\" disabled=\"disabled\" data-bind=\"attr: {value: team.budget.facilities.amount}\"><span class=\"add-on\">M</span>\n        </div>\n        <div class=\"pull-left finances-settings-text-small\">Current spending rate: #<span data-bind=\"text: team.budget.facilities.rank\"></span><br>Spent this season: #<span data-bind=\"text: team.expenses.facilities.rank\"></span></div>\n      </div>\n      <br>\n      <p align=\"center\"><button class=\"btn btn-large btn-primary\" style=\"line-height: 1.5em\">Save Revenue and<br> Expense Settings</button></p>\n    </form>\n  </div>\n</div>\n<p class=\"clearfix\"></p>\n\n<h2>Player Salaries</h2>\n\n<p>You can release or buy out players from <a data-bind=\"attrLeagueUrl: {href: ['roster']}\">your roster</a>. Released players who are still owed money are <i>shown in italics</i>.</p>\n\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player-salaries\">\n<thead>\n  <tr><th>Name</th><th data-bind=\"text: salariesSeasons[0]\"></th><th data-bind=\"text: salariesSeasons[1]\"></th><th data-bind=\"text: salariesSeasons[2]\"></th><th data-bind=\"text: salariesSeasons[3]\"></th><th data-bind=\"text: salariesSeasons[4]\"></th></tr>\n</thead>\n<tbody>\n</tbody>\n<tfoot>\n  <tr><th>Totals</th><th data-bind=\"currency: [contractTotals[0], 'M']\"></th><th data-bind=\"currency: [contractTotals[1], 'M']\"></th><th data-bind=\"currency: [contractTotals[2], 'M']\"></th><th data-bind=\"currency: [contractTotals[3], 'M']\"></th><th data-bind=\"currency: [contractTotals[4], 'M']\"></th></tr>\n</tfoot>\n</table>";
   });
 templates['roster'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];

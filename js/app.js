@@ -128,10 +128,10 @@ requirejs(["db", "views", "ui", "lib/davis", "lib/jquery", "util/helpers", "../g
             this.get("/l/:lid/roster/:abbrev", views.roster.get);
             this.get("/l/:lid/roster/:abbrev/:season", views.roster.get);
             this.get("/l/:lid/schedule", views.schedule);
-            this.get("/l/:lid/team_finances", views.teamFinances);
-            this.post("/l/:lid/team_finances", views.teamFinances);
-            this.get("/l/:lid/team_finances/:abbrev", views.teamFinances);
-            this.get("/l/:lid/team_finances/:abbrev/:show", views.teamFinances);
+            this.get("/l/:lid/team_finances", views.teamFinances.get);
+            this.post("/l/:lid/team_finances", views.teamFinances.post);
+            this.get("/l/:lid/team_finances/:abbrev", views.teamFinances.get);
+            this.get("/l/:lid/team_finances/:abbrev/:show", views.teamFinances.get);
             this.get("/l/:lid/team_history", views.teamHistory);
             this.get("/l/:lid/free_agents", views.freeAgents);
             this.get("/l/:lid/trade", views.trade.get);

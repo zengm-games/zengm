@@ -46,6 +46,19 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "util/helpers"]
                         options[j].key = options[j].season;
                         options[j].val = options[j].season + " season";
                     }
+                } else if (fields[i] === "shows") {
+                    options = [
+                        {
+                            val: "Past 10 seasons",
+                            key: "10",
+                            selected: selected[i] === "10"
+                        },
+                        {
+                            val: "All seasons",
+                            key: "all",
+                            selected: selected[i] === "all"
+                        }
+                    ];
                 }
                 content = Handlebars.templates.dropdown({field: fields[i], fieldId: fieldId, options: options});
                 formEl.innerHTML += content;

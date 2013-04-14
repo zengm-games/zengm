@@ -99,7 +99,7 @@ requirejs(["db", "views", "ui", "lib/davis", "lib/jquery", "util/helpers", "../g
             this.use(Davis.googleAnalytics);
 
             this.bind("routeNotFound", function (req) {
-                helpers.error("Page not found.", req);
+                helpers.error("Page not found.", req.raw.cb);
             });
 
             // Non-league views
@@ -153,8 +153,8 @@ requirejs(["db", "views", "ui", "lib/davis", "lib/jquery", "util/helpers", "../g
             this.get("/l/:lid/team_stats/:season", views.teamStats.get);
             this.get("/l/:lid/player/:pid", views.player);
             this.get("/l/:lid/negotiation", views.negotiationList);
-            this.get("/l/:lid/negotiation/:pid", views.negotiation);
-            this.post("/l/:lid/negotiation/:pid", views.negotiation);
+            this.get("/l/:lid/negotiation/:pid", views.negotiation.get);
+            this.post("/l/:lid/negotiation/:pid", views.negotiation.post);
             this.get("/l/:lid/dist_player_ratings", views.distPlayerRatings);
             this.get("/l/:lid/dist_player_ratings/:season", views.distPlayerRatings);
             this.get("/l/:lid/dist_player_stats", views.distPlayerStats);

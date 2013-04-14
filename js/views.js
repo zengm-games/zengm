@@ -1,4 +1,4 @@
-define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/gameLog", "views/playerStats", "views/roster", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, draft, finances, freeAgents, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, gameLog, playerStats, roster, teamStats, trade) {
+define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/gameLog", "views/negotiation", "views/playerStats", "views/roster", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, draft, finances, freeAgents, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, gameLog, negotiation, playerStats, roster, teamStats, trade) {
     "use strict";
 
     function initDb(req) {
@@ -763,7 +763,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
             }
 
             if (season < g.startingSeason) {
-                helpers.error("There is no league history yet. Check back after the playoffs.", req);
+                helpers.error("There is no league history yet. Check back after the playoffs.", req.raw.cb);
                 return;
             }
 
@@ -1144,7 +1144,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                     return;
                 }
 
-                helpers.error("You're not allowed to sign free agents now.", req);
+                helpers.error("You're not allowed to sign free agents now.", req.raw.cb);
                 return;
             }
 
@@ -1218,7 +1218,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
             }
 
             if (season < g.startingSeason) {
-                helpers.error("There is no draft history yet. Check back after the draft.", req);
+                helpers.error("There is no draft history yet. Check back after the draft.", req.raw.cb);
                 return;
             }
 
@@ -1596,7 +1596,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                 }
 
                 if (g.phase !== g.PHASE.RESIGN_PLAYERS) {
-                    return helpers.error("Something bad happened.", req);
+                    return helpers.error("Something bad happened.", req.raw.cb);
                 }
 
                 // Get all free agents, filter array based on negotiations data, pass to db.getPlayers, augment with contract data from negotiations
@@ -1654,130 +1654,6 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                     });
                 };
             };
-        });
-    }
-
-    function negotiation(req) {
-        viewHelpers.beforeLeague(req, function () {
-            var cbDisplayNegotiation, cbRedirectNegotiationOrRoster, found, i, pid, teamAmountNew, teamYearsNew;
-
-            pid = parseInt(req.params.pid, 10);
-
-            cbDisplayNegotiation = function (error) {
-                if (error !== undefined && error) {
-                    return helpers.error(error, req);
-                }
-
-                if (req.method === "post") {
-                    return Davis.location.assign(new Davis.Request("/l/" + g.lid + "/negotiation/" + pid));
-                }
-
-                g.dbl.transaction("negotiations").objectStore("negotiations").get(pid).onsuccess = function (event) {
-                    var negotiation;
-
-                    negotiation = event.target.result;
-
-                    if (!negotiation) {
-                        return helpers.error("No negotiation with player " + pid + " in progress.", req);
-                    }
-
-                    negotiation.player.amount /= 1000;
-                    negotiation.team.amount /= 1000;
-                    negotiation.player.expiration = negotiation.player.years + g.season;
-                    // Adjust to account for in-season signings;
-                    if (g.phase <= g.PHASE.AFTER_TRADE_DEADLINE) {
-                        negotiation.player.expiration -= 1;
-                    }
-
-                    g.dbl.transaction("players").objectStore("players").get(pid).onsuccess = function (event) {
-                        var attributes, data, j, payroll, player, pr, ratings, stats, team, teams;
-
-                        attributes = ["pid", "name", "freeAgentMood"];
-                        ratings = ["ovr", "pot"];
-                        stats = [];
-                        player = db.getPlayer(event.target.result, g.season, null, attributes, stats, ratings, {showRookies: true, fuzz: true});
-
-                        if (player.freeAgentMood[g.userTid] < 0.25) {
-                            player.mood = '<span class="text-success"><b>Eager to reach an agreement.</b></span>';
-                        } else if (player.freeAgentMood[g.userTid] < 0.5) {
-                            player.mood = '<b>Willing to sign for the right price.</b>';
-                        } else if (player.freeAgentMood[g.userTid] < 0.75) {
-                            player.mood = '<span class="text-warning"><b>Annoyed at you.</b></span>';
-                        } else {
-                            player.mood = '<span class="text-error"><b>Insulted by your presence.</b></span>';
-                        }
-
-                        teams = helpers.getTeams();
-                        team = {region: teams[g.userTid].region, name: teams[g.userTid].name};
-
-                        db.getPayroll(null, g.userTid, function (payroll) {
-                            payroll /= 1000;
-
-                            data = {
-                                container: "league_content",
-                                template: "negotiation",
-                                title: "Contract Negotiation - " + player.name,
-                                vars: {negotiation: negotiation, player: player, salaryCap: g.salaryCap / 1000, team: team, payroll: payroll}
-                            };
-                            ui.update(data, req.raw.cb);
-                        });
-                    };
-                };
-            };
-
-            // Show the negotiations list if there are more ongoing negotiations
-            cbRedirectNegotiationOrRoster = function (error, cancelled) {
-                if (error !== undefined && error) {
-                    return helpers.error(error, req);
-                }
-
-                cancelled = cancelled !== undefined ? cancelled : false;
-
-                g.dbl.transaction("negotiations").objectStore("negotiations").getAll().onsuccess = function (event) {
-                    var negotiations;
-
-                    negotiations = event.target.result;
-
-                    if (negotiations.length > 0) {
-                        Davis.location.assign(new Davis.Request("/l/" + g.lid + "/negotiation"));
-                    } else if (cancelled) {
-                        Davis.location.assign(new Davis.Request("/l/" + g.lid + "/free_agents"));
-                    } else {
-                        Davis.location.assign(new Davis.Request("/l/" + g.lid + "/roster"));
-                    }
-                };
-            };
-
-            // Any action requires a POST. GET will just view the status of the
-            // negotiation, if (it exists
-            if (req.method === "post") {
-                if (req.params.hasOwnProperty("cancel")) {
-                    contractNegotiation.cancel(pid);
-                    cbRedirectNegotiationOrRoster(undefined, true);
-                } else if (req.params.hasOwnProperty("accept")) {
-                    contractNegotiation.accept(pid, cbRedirectNegotiationOrRoster);
-                } else if (req.params.hasOwnProperty("new")) {
-                    // If there is no active negotiation with this pid, create it;
-                    g.dbl.transaction("negotiations").objectStore("negotiations").get(pid).onsuccess = function (event) {
-                        var negotiation;
-
-                        negotiation = event.target.result;
-
-                        if (!negotiation) {
-                            contractNegotiation.create(null, pid, false, cbDisplayNegotiation);
-                        } else {
-                            cbDisplayNegotiation();
-                        }
-                    };
-                } else {
-                    // Make an offer to the player;
-                    teamAmountNew = parseInt(req.params.teamAmount * 1000, 10);
-                    teamYearsNew = parseInt(req.params.teamYears, 10);
-                    contractNegotiation.offer(pid, teamAmountNew, teamYearsNew, cbDisplayNegotiation);
-                }
-            } else {
-                cbDisplayNegotiation();
-            }
         });
     }
 

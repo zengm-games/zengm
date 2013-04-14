@@ -2,7 +2,7 @@
  * @name views.trade
  * @namespace Trade.
  */
-define(["db", "globals", "ui", "core/trade", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/knockout", "lib/underscore", "util/helpers", "util/viewHelpers"], function (db, g, ui, trade, Davis, Handlebars, $, ko, _, helpers, viewHelpers) {
+define(["db", "globals", "ui", "core/trade", "lib/davis", "lib/jquery", "lib/knockout", "lib/underscore", "util/helpers", "util/viewHelpers"], function (db, g, ui, trade, Davis, $, ko, _, helpers, viewHelpers) {
     "use strict";
 
     var vm;

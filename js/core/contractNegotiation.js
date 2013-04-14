@@ -255,8 +255,9 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/helpers",
      * 
      * @memberOf core.contractNegotiation
      * @param {number} pid An integer that must correspond with the player ID of a player in an ongoing negotiation.
+     * @param {function()} cb Callback.
      */
-    function cancel(pid) {
+    function cancel(pid, cb) {
         var i, negotiations;
 
         console.log("User canceled contract negotiations with " + pid);
@@ -269,6 +270,8 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/helpers",
                     if (!negotiationInProgress) {
                         ui.updateStatus("Idle");
                         ui.updatePlayMenu();
+
+                        cb();
                     }
                 });
             });
@@ -323,7 +326,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/helpers",
                     negotiation.player.years -= 1;
                 }
 
-    /*            r = g.dbex("SELECT MAX(rosterOrder) + 1 FROM playerAttributes WHERE tid = :tid", tid = g.userTid);
+/*                r = g.dbex("SELECT MAX(rosterOrder) + 1 FROM playerAttributes WHERE tid = :tid", tid = g.userTid);
                 rosterOrder, = r.fetchone();*/
 
                 tx = g.dbl.transaction("players", "readwrite");
@@ -346,12 +349,12 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/helpers",
                     cursor.update(p);
                 };
                 tx.oncomplete = function () {
-                    cancel(pid);
+                    cancel(pid, function () {
+                        console.log("User accepted contract proposal from " + pid);
 
-                    console.log("User accepted contract proposal from " + pid);
-
-                    db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                        cb();
+                        db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                            cb();
+                        });
                     });
                 };
             });

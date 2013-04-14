@@ -269,16 +269,12 @@ define(["globals", "lib/jquery"], function (g, $) {
      * 
      * @memberOf util.helpers
      * @param {string} error Text of the error message to be displayed.
-     * @param {Object} req Optional Davis.js request object, containing the callback function and any other metadata
+     * @param {function()} cb Optional callback function.
      */
-    function error(errorText, req) {
-        var lid;
+    function error(errorText, cb) {
+        var lid, req;
 
-        if (req !== undefined) {
-            req.params.error = errorText;
-        } else {
-            req = {params: {error: errorText}, raw: {}};
-        }
+        req = {params: {error: errorText}, raw: {cb: cb !== undefined ? cb : undefined}};
 
         lid = location.pathname.split("/")[2]; // lid derived from URL
         if (/^\d+$/.test(lid)) {

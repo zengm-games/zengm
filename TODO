@@ -43,6 +43,8 @@ not urgetnt, but... use knockout for
       when team changes
   negotiation
     some things can probably be non-observable
+  draftSummary
+    don't show this season as option if before draft - have an option in components.dropdown
 
 BEFORE 3.0.0-beta.3
 -------------------

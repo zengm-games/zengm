@@ -1,4 +1,4 @@
-define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/gameLog", "views/negotiation", "views/playerStats", "views/roster", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, draft, finances, freeAgents, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, gameLog, negotiation, playerStats, roster, teamStats, trade) {
+define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/draftSummary", "views/gameLog", "views/negotiation", "views/playerStats", "views/roster", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, draft, finances, freeAgents, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, draftSummary, gameLog, negotiation, playerStats, roster, teamStats, trade) {
     "use strict";
 
     function initDb(req) {
@@ -1202,186 +1202,112 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
 
     function draft_(req) {
         viewHelpers.beforeLeague(req, function () {
-            var playerStore, season, seasons;
+            var playerStore;
 
-            season = helpers.validateSeason(req.params.season);
-
-            // Draft hasn't happened yet this year
-            if (g.phase < g.PHASE.DRAFT) {
-                // View last season by default
-                if (season === g.season) {
-                    season -= 1;
-                }
-                seasons = helpers.getSeasons(season, g.season);  // Don't show this season as an option
-            } else {
-                seasons = helpers.getSeasons(season);  // Show this season as an option
-            }
-
-            if (season < g.startingSeason) {
-                helpers.error("There is no draft history yet. Check back after the draft.", req.raw.cb);
-                return;
+            if (g.phase !== g.PHASE.DRAFT) {
+                return Davis.location.assign(new Davis.Request("/l/" + g.lid + "/draft_summary"));
             }
 
             playerStore = g.dbl.transaction("players").objectStore("players");
-            // Active draft
-            if (g.phase === g.PHASE.DRAFT && season === g.season) {
-                playerStore.index("tid").getAll(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
-                    var attributes, ratings, stats, undrafted;
+            playerStore.index("tid").getAll(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
+                var attributes, ratings, stats, undrafted;
 
-                    attributes = ["pid", "name", "pos", "age", "injury"];
+                attributes = ["pid", "name", "pos", "age", "injury"];
+                ratings = ["ovr", "pot", "skills"];
+                stats = [];
+                undrafted = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings, {showNoStats: true, fuzz: true});
+                undrafted.sort(function (a, b) { return (b.ratings.ovr + 2 * b.ratings.pot) - (a.ratings.ovr + 2 * a.ratings.pot); });
+
+                playerStore.index("draft.year").getAll(g.season).onsuccess = function (event) {
+                    var attributes, drafted, i, players, ratings, stats, started;
+
+                    attributes = ["pid", "tid", "name", "pos", "age", "draft", "injury"];
                     ratings = ["ovr", "pot", "skills"];
                     stats = [];
-                    undrafted = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings, {showNoStats: true, fuzz: true});
-                    undrafted.sort(function (a, b) { return (b.ratings.ovr + 2 * b.ratings.pot) - (a.ratings.ovr + 2 * a.ratings.pot); });
+                    players = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings, {showNoStats: true, fuzz: true});
 
-                    playerStore.index("draft.year").getAll(g.season).onsuccess = function (event) {
-                        var attributes, drafted, i, players, ratings, stats, started;
-
-                        attributes = ["pid", "tid", "name", "pos", "age", "draft", "injury"];
-                        ratings = ["ovr", "pot", "skills"];
-                        stats = [];
-                        players = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings, {showNoStats: true, fuzz: true});
-
-                        drafted = [];
-                        for (i = 0; i < players.length; i++) {
-                            if (players[i].tid !== g.PLAYER.UNDRAFTED) {
-                                drafted.push(players[i]);
-                            }
+                    drafted = [];
+                    for (i = 0; i < players.length; i++) {
+                        if (players[i].tid !== g.PLAYER.UNDRAFTED) {
+                            drafted.push(players[i]);
                         }
-                        drafted.sort(function (a, b) { return (100 * a.draft.round + a.draft.pick) - (100 * b.draft.round + b.draft.pick); });
+                    }
+                    drafted.sort(function (a, b) { return (100 * a.draft.round + a.draft.pick) - (100 * b.draft.round + b.draft.pick); });
 
-                        started = drafted.length > 0;
+                    started = drafted.length > 0;
 
-                        draft.getOrder(function (draftOrder) {
-                            var data, i, slot;
+                    draft.getOrder(function (draftOrder) {
+                        var data, i, slot;
 
-                            for (i = 0; i < draftOrder.length; i++) {
-                                slot = draftOrder[i];
-                                drafted.push({draft: {
-                                    abbrev: slot.abbrev,
-                                    round: slot.round,
-                                    pick: slot.pick
-                                }});
-                            }
+                        for (i = 0; i < draftOrder.length; i++) {
+                            slot = draftOrder[i];
+                            drafted.push({draft: {
+                                abbrev: slot.abbrev,
+                                round: slot.round,
+                                pick: slot.pick
+                            }});
+                        }
 
-                            data = {
-                                container: "league_content",
-                                template: "draft",
-                                title: "Draft",
-                                vars: {undrafted: undrafted, drafted: drafted, started: started}
-                            };
-                            ui.update(data, function () {
-                                var draftUntilUserOrEnd, updateDraftTables;
+                        data = {
+                            container: "league_content",
+                            template: "draft",
+                            title: "Draft",
+                            vars: {undrafted: undrafted, drafted: drafted, started: started}
+                        };
+                        ui.update(data, function () {
+                            var draftUntilUserOrEnd, updateDraftTables;
 
-                                updateDraftTables = function (pids) {
-                                    var draftedPlayer, draftedRows, i, j, undraftedTds;
+                            updateDraftTables = function (pids) {
+                                var draftedPlayer, draftedRows, i, j, undraftedTds;
 
-                                    for (i = 0; i < pids.length; i++) {
-                                        draftedPlayer = new Array(5);
-                                        // Find row in undrafted players table, get metadata, delete row
-                                        undraftedTds = $("#undrafted-" + pids[i] + " td");
-                                        for (j = 0; j < 5; j++) {
-                                            draftedPlayer[j] = undraftedTds[j].innerHTML;
-                                        }
+                                for (i = 0; i < pids.length; i++) {
+                                    draftedPlayer = new Array(5);
+                                    // Find row in undrafted players table, get metadata, delete row
+                                    undraftedTds = $("#undrafted-" + pids[i] + " td");
+                                    for (j = 0; j < 5; j++) {
+                                        draftedPlayer[j] = undraftedTds[j].innerHTML;
+                                    }
 
-                                        // Find correct row (first blank row) in drafted players table, write metadata
-                                        draftedRows = $("#drafted tbody tr");
-                                        for (j = 0; j < draftedRows.length; j++) {
-                                            if (draftedRows[j].children[3].innerHTML.length === 0) {
-                                                $("#undrafted-" + pids[i]).remove();
-                                                draftedRows[j].children[2].innerHTML = draftedPlayer[0];
-                                                draftedRows[j].children[3].innerHTML = draftedPlayer[1];
-                                                draftedRows[j].children[4].innerHTML = draftedPlayer[2];
-                                                draftedRows[j].children[5].innerHTML = draftedPlayer[3];
-                                                draftedRows[j].children[6].innerHTML = draftedPlayer[4];
-                                                break;
-                                            }
+                                    // Find correct row (first blank row) in drafted players table, write metadata
+                                    draftedRows = $("#drafted tbody tr");
+                                    for (j = 0; j < draftedRows.length; j++) {
+                                        if (draftedRows[j].children[3].innerHTML.length === 0) {
+                                            $("#undrafted-" + pids[i]).remove();
+                                            draftedRows[j].children[2].innerHTML = draftedPlayer[0];
+                                            draftedRows[j].children[3].innerHTML = draftedPlayer[1];
+                                            draftedRows[j].children[4].innerHTML = draftedPlayer[2];
+                                            draftedRows[j].children[5].innerHTML = draftedPlayer[3];
+                                            draftedRows[j].children[6].innerHTML = draftedPlayer[4];
+                                            break;
                                         }
                                     }
-                                };
+                                }
+                            };
 
-                                draftUntilUserOrEnd = function () {
-                                    api.draftUntilUserOrEnd(function (pids, done) {
-                                        updateDraftTables(pids);
-                                        if (!done) {
-                                            $("#undrafted button").removeAttr("disabled");
-                                        }
-                                    });
-                                };
-
-                                $("#start-draft").click(function (event) {
-                                    $($("#start-draft").parent()).hide();
-                                    draftUntilUserOrEnd();
+                            draftUntilUserOrEnd = function () {
+                                api.draftUntilUserOrEnd(function (pids, done) {
+                                    updateDraftTables(pids);
+                                    if (!done) {
+                                        $("#undrafted button").removeAttr("disabled");
+                                    }
                                 });
+                            };
 
-                                $("#undrafted button").click(function (event) {
-                                    $("#undrafted button").attr("disabled", "disabled");
-                                    api.draftUser(this.getAttribute("data-player-id"), function (pid) {
-                                        updateDraftTables([pid]);
-                                        draftUntilUserOrEnd();
-                                    });
+                            $("#start-draft").click(function (event) {
+                                $($("#start-draft").parent()).hide();
+                                draftUntilUserOrEnd();
+                            });
+
+                            $("#undrafted button").click(function (event) {
+                                $("#undrafted button").attr("disabled", "disabled");
+                                api.draftUser(this.getAttribute("data-player-id"), function (pid) {
+                                    updateDraftTables([pid]);
+                                    draftUntilUserOrEnd();
                                 });
                             });
                         });
-                    };
+                    });
                 };
-                return;
-            }
-
-            // Show a summary of an old draft
-            g.realtimeUpdate = false;
-            playerStore.index("draft.year").getAll(season).onsuccess = function (event) {
-                var attributes, currentPr, data, i, pa, player, players, playersAll, ratings, stats;
-
-                attributes = ["tid", "abbrev", "draft", "pid", "name", "pos", "age"];
-                ratings = ["ovr", "pot", "skills"];
-                stats = ["gp", "min", "pts", "trb", "ast", "per"];  // This needs to be in the same order as categories
-                playersAll = db.getPlayers(event.target.result, null, null, attributes, stats, ratings, {showNoStats: true, fuzz: true});
-
-                players = [];
-                for (i = 0; i < playersAll.length; i++) {
-                    pa = playersAll[i];
-
-                    if (pa.draft.round === 1 || pa.draft.round === 2) {
-                        // Attributes
-                        player = {pid: pa.pid, name: pa.name, pos: pa.pos, draft: pa.draft, currentAge: pa.age, currentAbbrev: pa.abbrev};
-
-                        // Ratings
-                        currentPr = _.last(pa.ratings);
-                        if (pa.tid !== g.PLAYER.RETIRED) {
-                            player.currentOvr = currentPr.ovr;
-                            player.currentPot = currentPr.pot;
-                            player.currentSkills = currentPr.skills;
-                        } else {
-                            player.currentOvr = "";
-                            player.currentPot = "";
-                            player.currentSkills = "";
-                        }
-
-                        // Stats
-                        player.careerStats = pa.careerStats;
-
-                        players.push(player);
-                    }
-                }
-
-                data = {
-                    container: "league_content",
-                    template: "draftSummary",
-                    title: "Draft Results - " + season,
-                    vars: {seasons: seasons}
-                };
-                ui.update(data, function () {
-                    ui.dropdown($("#draft-select-season"));
-
-                    ui.datatableSinglePage($("#draft-results"), 0, _.map(players, function (p) {
-                        return [p.draft.round + '-' + p.draft.pick, '<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>', p.pos, '<a href="/l/' + g.lid + '/roster/' + p.draft.abbrev + '">' + p.draft.abbrev + '</a>', String(p.draft.age), String(p.draft.ovr), String(p.draft.pot), '<span class="skills_alone">' + helpers.skillsBlock(p.draft.skills) + '</span>', '<a href="/l/' + g.lid + '/roster/' + p.currentAbbrev + '">' + p.currentAbbrev + '</a>', String(p.currentAge), String(p.currentOvr), String(p.currentPot), '<span class="skills_alone">' + helpers.skillsBlock(p.currentSkills) + '</span>', helpers.round(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1)];
-                    }));
-
-                    if (req.raw.cb !== undefined) {
-                        req.raw.cb();
-                    }
-                });
             };
         });
     }
@@ -2072,6 +1998,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
         freeAgents: freeAgents_,
         trade: trade,
         draft: draft_,
+        draftSummary: draftSummary,
         gameLog: gameLog,
         leaders: leaders,
         playerRatings: playerRatings,

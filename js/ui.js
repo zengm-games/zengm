@@ -24,6 +24,8 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
     function highlightNav(leaguePage) {
         if (leaguePage === "") {
             leaguePage = "league_dashboard";
+        } else if (leaguePage === "draft_summary") {
+            leaguePage = "draft";
         }
         $("#league_sidebar li").removeClass("active");
         $("#nav_" + leaguePage).addClass("active");

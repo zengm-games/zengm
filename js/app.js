@@ -137,7 +137,8 @@ requirejs(["db", "views", "ui", "lib/davis", "lib/jquery", "util/helpers", "../g
             this.get("/l/:lid/trade", views.trade.get);
             this.post("/l/:lid/trade", views.trade.post);
             this.get("/l/:lid/draft", views.draft);
-            this.get("/l/:lid/draft/:season", views.draft);
+            this.get("/l/:lid/draft_summary", views.draftSummary.get);
+            this.get("/l/:lid/draft_summary/:season", views.draftSummary.get);
             this.get("/l/:lid/game_log", views.gameLog.get);
             this.get("/l/:lid/game_log/:abbrev", views.gameLog.get);
             this.get("/l/:lid/game_log/:abbrev/:season", views.gameLog.get);

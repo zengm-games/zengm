@@ -1,6 +1,10 @@
 smarter realtime
 ----------------
 
+leaders
+  delete unneeded stuff from categories obj
+  fix columns
+  flatten a bit
 roster
   check release, buy out, trade for
 general things
@@ -28,10 +32,6 @@ not urgetnt, but... use knockout for
   components.dropdown
   gameLog.boxScore
   feasible to use knockout for updating datatable? or kogrid?
-    draftSummary
-    playerStats
-    teamStats
-    trade
   trade - not fully knockoutifieid
     mapping to update summary.teams.trade, userRoster, otherRoster
     can i do a redirect from post without refreshing everything?

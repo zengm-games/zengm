@@ -205,92 +205,10 @@ helpers = helpers || Handlebars.helpers; data = data || {};
 templates['leaders'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
+  
 
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n      <option value=\""
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"";
-  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">"
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " season</option>\n    ";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  
-  return " selected=\"selected\"";
-  }
 
-function program4(depth0,data,depth1) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n    ";
-  stack1 = helpers['if'].call(depth0, depth0.newRow, {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n    <div class=\"span4\">\n      <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed leaders\">\n      <thead>\n        <tr><th>"
-    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</th><th title=\""
-    + escapeExpression(((stack1 = depth0.title),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = depth0.stat),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</th></tr>\n      </thead>\n      <tbody>\n        ";
-  stack2 = ((stack1 = ((stack1 = depth0.data),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program7, data, depth1),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n      </tbody>\n      </table>\n    </div>\n  ";
-  return buffer;
-  }
-function program5(depth0,data) {
-  
-  
-  return "\n</div>\n<p></p>\n<div class=\"row-fluid\">\n    ";
-  }
-
-function program7(depth0,data,depth2) {
-  
-  var buffer = "", stack1;
-  buffer += "\n          <tr";
-  stack1 = helpers['if'].call(depth0, depth0.userTeam, {hash:{},inverse:self.noop,fn:self.program(8, program8, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "><td>"
-    + escapeExpression(((stack1 = depth0['i']),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + ". "
-    + escapeExpression(helpers.playerNameLabels.call(depth0, depth0.pid, depth0.name, depth0.injury, ((stack1 = depth0.ratings),stack1 == null || stack1 === false ? stack1 : stack1.skills), {hash:{},data:data}))
-    + ", <a href=\"/l/"
-    + escapeExpression(((stack1 = depth2.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/roster/"
-    + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/"
-    + escapeExpression(((stack1 = depth2.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = depth0.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a></td><td>"
-    + escapeExpression(helpers.round.call(depth0, depth0.stat, 1, {hash:{},data:data}))
-    + "</tr>\n        ";
-  return buffer;
-  }
-function program8(depth0,data) {
-  
-  
-  return " class=\"alert-info\"";
-  }
-
-  buffer += "<form action=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/leaders\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"leaders-select-season\" name=\"season\" class=\"season\">\n    ";
-  stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </select>\n</form>\n\n<h1>League Leaders "
-    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n\n<p>Only eligible players are shown (<i>e.g.</i> a player shooting 2 for 2 on the season is not eligible for the league lead in FG%).</p>\n\n<p></p>\n<div class=\"row-fluid\">\n  ";
-  stack2 = ((stack1 = ((stack1 = depth0.categories),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program4, data, depth0),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n</div>";
-  return buffer;
+  return "<form id=\"leaders-dropdown\" class=\"form-inline pull-right\"></form>\n\n<h1>League Leaders <span data-bind=\"newWindow: []\"></span></h1>\n\n<p>Only eligible players are shown (<i>e.g.</i> a player shooting 2 for 2 on the season is not eligible for the league lead in FG%).</p>\n\n<p></p>\n<div class=\"row-fluid\" data-bind=\"foreach: categories\">\n  <!-- qqq ko if: newRow\n</div>\n<p></p>\n<div class=\"row-fluid\">\n  qqq /ko -->\n  <div class=\"span4\">\n    <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed leaders\">\n    <thead>\n      <tr><th data-bind=\"text: name\"></th><th data-bind=\"text: stat, attr: {title: title}\"></th></tr>\n    </thead>\n    <tbody data-bind=\"foreach: data\">\n      <tr data-bind=\"css: {'alert-info': userTeam}\"><td><span data-bind=\"text: i\"></span>. <span data-bind=\"playerNameLabels: [pid, name, injury, ratings.skills]\"></span>, <a data-bind=\"text: abbrev, attrLeagueUrl: {href: ['roster', abbrev, $root.season]}\"></a></td><td data-bind=\"round: [stat, 1]\"></tr>\n    </tbody>\n    </table>\n  </div>\n</div>";
   });
 templates['browserError'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];

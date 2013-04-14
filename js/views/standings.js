@@ -2,10 +2,10 @@
  * @name views.standings
  * @namespace Standings.
  */
-define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "views/components", "util/helpers", "util/viewHelpers"], function (db, g, ui, $, ko, mapping, _, components, helpers, viewHelpers) {
+define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "views/components", "util/helpers", "util/viewHelpers"], function (db, g, ui, $, ko, mapping, components, helpers, viewHelpers) {
     "use strict";
 
-    var players, vm;
+    var vm;
 
     // Calculate the number of games that team is behind team0
     function gb(team0, team) {
@@ -38,7 +38,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mappi
         attributes = ["tid", "cid", "did", "abbrev", "region", "name"];
         seasonAttributes = ["won", "lost", "winp", "wonHome", "lostHome", "wonAway", "lostAway", "wonDiv", "lostDiv", "wonConf", "lostConf", "lastTen", "streak"];
         db.getTeams(null, season, attributes, [], seasonAttributes, {sortBy: "winp"}, function (teams) {
-            var confs, confTeams, data, divTeams, i, j, k, l, lastTenLost, lastTenWon, myMapping;
+            var confs, confTeams, data, divTeams, i, j, k, l, lastTenLost, lastTenWon, myMapping, NestedVm;
 
             confs = [];
             for (i = 0; i < g.confs.length; i++) {
@@ -87,10 +87,10 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mappi
 
             // I don't entirely understand this nested mapping, but it's based
             // on http://stackoverflow.com/a/12030524/786644
-            function ConfVm(data) {
-                var myConfMapping;
+            NestedVm = function (data) {
+                var myNestedMapping;
 
-                myConfMapping = {
+                myNestedMapping = {
                     divs: {
                         key: function (data) {
                             return ko.utils.unwrapObservable(data.name);
@@ -103,12 +103,12 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mappi
                     }
                 };
 
-                mapping.fromJS(data, myConfMapping, this);
-            }
+                mapping.fromJS(data, myNestedMapping, this);
+            };
             myMapping = {
                 confs: {
                     create: function (options) {
-                        return new ConfVm(options.data);
+                        return new NestedVm(options.data);
                     },
                     key: function (data) {
                         return ko.utils.unwrapObservable(data.name);

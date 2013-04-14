@@ -3,6 +3,9 @@ smarter realtime
 
 negotiation
   <span data-bind="newWindow: ['player', pid]"></span> to open player
+  does contractNegotiatoin set lastDbChange for everything?
+  some things can probably be non-observable
+  test resigning and non-resigning top messages
 roster
   check release, buy out, trade for
   unit tests

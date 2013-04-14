@@ -7,7 +7,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "lib/davis", "lib/jqu
 
     var vm;
 
-    function cbDisplayNegotiation(error, pid, cb) {
+    function displayNegotiation(error, pid, cb) {
         if (error !== undefined && error) {
             return helpers.error(error, cb);
         }
@@ -18,7 +18,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "lib/davis", "lib/jqu
             negotiation = event.target.result;
 
             if (!negotiation) {
-                return helpers.error("No negotiation with player " + pid + " in progress.", req);
+                return helpers.error("No negotiation with player " + pid + " in progress.", cb);
             }
 
             negotiation.player.amount /= 1000;
@@ -68,7 +68,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "lib/davis", "lib/jqu
     }
 
     // Show the negotiations list if there are more ongoing negotiations
-    function cbRedirectNegotiationOrRoster(error, cancelled) {
+    function redirectNegotiationOrRoster(error, cancelled) {
         if (error !== undefined && error) {
             return helpers.error(error);
         }
@@ -116,13 +116,21 @@ define(["db", "globals", "ui", "core/contractNegotiation", "lib/davis", "lib/jqu
             ko.cleanNode(leagueContentEl);
             vm = {
                 salaryCap: ko.observable(g.salaryCap / 1000),
-                userPids: ko.observable([]),
-                otherPids: ko.observable([]),
-                userRoster: ko.observable([]),
-                otherRoster: ko.observable([]),
-                message: ko.observable(),
-                teams: [],
-                userTeamName: undefined
+                payroll: ko.observable(),
+                player: {
+                    pid: ko.observable(),
+                    name: ko.observable(),
+                    ratings: ko.observable(), // Set later to obj
+                    mood: ko.observable()
+                },
+                negotiation: {
+                    team: {
+                        amount: ko.observable(),
+                        years: ko.observable()
+                    },
+                    player: ko.observable(), // Set later to obj
+                    resigning: ko.observable()
+                }
             };
             vm.summary = {
                 enablePropose: ko.observable(false),
@@ -157,7 +165,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "lib/davis", "lib/jqu
 
             pid = parseInt(req.params.pid, 10);
 
-            cbDisplayNegotiation(undefined, pid, cb);
+            displayNegotiation(undefined, pid, cb);
         });
     }
 
@@ -169,10 +177,10 @@ define(["db", "globals", "ui", "core/contractNegotiation", "lib/davis", "lib/jqu
 
             if (req.params.hasOwnProperty("cancel")) {
                 contractNegotiation.cancel(pid, function () {
-                    cbRedirectNegotiationOrRoster(undefined, true);
+                    redirectNegotiationOrRoster(undefined, true);
                 });
             } else if (req.params.hasOwnProperty("accept")) {
-                contractNegotiation.accept(pid, cbRedirectNegotiationOrRoster);
+                contractNegotiation.accept(pid, redirectNegotiationOrRoster);
             } else if (req.params.hasOwnProperty("new")) {
                 // If there is no active negotiation with this pid, create it;
                 g.dbl.transaction("negotiations").objectStore("negotiations").get(pid).onsuccess = function (event) {

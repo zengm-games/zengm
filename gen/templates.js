@@ -1553,90 +1553,10 @@ function program2(depth0,data) {
 templates['negotiation'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this;
-
-function program1(depth0,data) {
   
-  var buffer = "", stack1;
-  buffer += "\n  <p>You are allowed to go over the salary cap to make this deal because you are resigning <a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/player/"
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.pid)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a> to a contract extension. <strong>If you do not come to an agreement here, <a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/player/"
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.pid)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a> will become a free agent.</strong> He will then be able to sign with any team, and you won't be able to go over the salary cap to sign him.</p>\n";
-  return buffer;
-  }
 
-function program3(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n  <p>You are not allowed to go over the salary cap to make this deal because <a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/player/"
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.pid)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a> is a free agent.</p>\n";
-  return buffer;
-  }
 
-  buffer += "<h1>Contract Negotiation "
-    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n\n";
-  stack2 = helpers['if'].call(depth0, ((stack1 = depth0.negotiation),stack1 == null || stack1 === false ? stack1 : stack1.resigning), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n\n<div class=\"row-fluid\">\n  <div class=\"span6\">\n    <h2>"
-    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.region)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " "
-    + escapeExpression(((stack1 = ((stack1 = depth0.team),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</h2>\n    <p>Current Payroll: "
-    + escapeExpression(helpers.currency.call(depth0, depth0.payroll, "M", {hash:{},data:data}))
-    + "</p>\n    <p>Salary Cap: "
-    + escapeExpression(helpers.currency.call(depth0, depth0.salaryCap, "M", {hash:{},data:data}))
-    + "</p>\n    <h2>Your Proposal</h2>\n    <form action=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/negotiation/"
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.pid)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" class=\"form-horizontal\" method=\"POST\">\n      <input type=\"text\" name=\"teamYears\" id=\"teamYears\" class=\"span1\" value=\""
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.negotiation),stack1 == null || stack1 === false ? stack1 : stack1.team)),stack1 == null || stack1 === false ? stack1 : stack1.years)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"> years\n      <p><div class=\"input-prepend input-append\">\n        <span class=\"add-on\">$</span><input type=\"text\" name=\"teamAmount\" id=\"teamAmount\" class=\"span5\" value=\""
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.negotiation),stack1 == null || stack1 === false ? stack1 : stack1.team)),stack1 == null || stack1 === false ? stack1 : stack1.amount)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"><span class=\"add-on\">M</span> per year\n      </div></p>\n      <button type=\"submit\" class=\"btn btn-large btn-primary\">Submit Proposal</button>  \n    </form>\n\n    <form action=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/negotiation/"
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.pid)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" class=\"form-horizontal\" method=\"POST\">\n      <input type=\"hidden\" name=\"cancel\" value=\"1\">\n      <button type=\"submit\" class=\"btn btn-danger\">Can't reach a deal? End negotiation</button>\n    </form>\n\n  </div>\n  <div class=\"span6\">\n    <h2><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/player/"
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.pid)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a></h2>\n    <p>Mood: ";
-  stack2 = ((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.mood)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1);
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "</p>\n    <p>Overal: "
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.ratings)),stack1 == null || stack1 === false ? stack1 : stack1.ovr)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "; Potential: "
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.ratings)),stack1 == null || stack1 === false ? stack1 : stack1.pot)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</p>\n    <h2>Player Proposal</h2>\n    <p>"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.negotiation),stack1 == null || stack1 === false ? stack1 : stack1.player)),stack1 == null || stack1 === false ? stack1 : stack1.years)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " years (through "
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.negotiation),stack1 == null || stack1 === false ? stack1 : stack1.player)),stack1 == null || stack1 === false ? stack1 : stack1.expiration)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + ")</p>\n    <p>$"
-    + escapeExpression(helpers.round.call(depth0, ((stack1 = ((stack1 = depth0.negotiation),stack1 == null || stack1 === false ? stack1 : stack1.player)),stack1 == null || stack1 === false ? stack1 : stack1.amount), 3, {hash:{},data:data}))
-    + "M per year</p>\n    <form action=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/negotiation/"
-    + escapeExpression(((stack1 = ((stack1 = depth0.player),stack1 == null || stack1 === false ? stack1 : stack1.pid)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" class=\"form-horizontal\" method=\"POST\">\n      <input type=\"hidden\" name=\"accept\" value=\"1\">\n      <button type=\"submit\" class=\"btn btn-large btn-primary\" id=\"accept\">Accept Player Proposal</button>\n    </form>\n  </div>\n</div>\n";
-  return buffer;
+  return "<h1>Contract Negotiation <span data-bind=\"newWindow: []\"></span></h1>\n\n<p data-bind=\"visible: negotiation.resigning\">You are allowed to go over the salary cap to make this deal because you are resigning <a data-bind=\"attrLeagueUrl: {href: ['player', player.pid]}, text: player.name\"></a> to a contract extension. <strong>If you do not come to an agreement here, <a data-bind=\"attrLeagueUrl: {href: ['player', player.pid]}, text: player.name\"></a> will become a free agent.</strong> He will then be able to sign with any team, and you won't be able to go over the salary cap to sign him.</p>\n<p data-bind=\"visible: !negotiation.resigning()\">You are not allowed to go over the salary cap to make this deal because <a data-bind=\"attrLeagueUrl: {href: ['player', player.pid]}, text: player.name\"></a> is a free agent.</p>\n\n<div class=\"row-fluid\">\n  <div class=\"span6\">\n    <h2 data-bind=\"test: team.region + ' ' + team.name\"></h2>\n    <p>Current Payroll: <span data-bind=\"currency: [payroll, 'M']\"></span></p>\n    <p>Salary Cap: <span data-bind=\"currency: [salaryCap, 'M']\"></span></p>\n    <h2>Your Proposal</h2>\n    <form data-bind=\"attrLeagueUrl: {action: ['negotiation', player.pid]}\" class=\"form-horizontal\" method=\"POST\">\n      <input type=\"text\" name=\"teamYears\" id=\"teamYears\" class=\"span1\" data-bind=\"attr: {value: negotiation.team.years}\"> years\n      <p><div class=\"input-prepend input-append\">\n        <span class=\"add-on\">$</span><input type=\"text\" name=\"teamAmount\" id=\"teamAmount\" class=\"span5\" data-bind=\"attr: {value: negotiation.team.amount}\"><span class=\"add-on\">M</span> per year\n      </div></p>\n      <button type=\"submit\" class=\"btn btn-large btn-primary\">Submit Proposal</button>  \n    </form>\n\n    <form data-bind=\"attrLeagueUrl: {action: ['negotiation', player.pid]}\" class=\"form-horizontal\" method=\"POST\">\n      <input type=\"hidden\" name=\"cancel\" value=\"1\">\n      <button type=\"submit\" class=\"btn btn-danger\">Can't reach a deal? End negotiation</button>\n    </form>\n\n  </div>\n  <div class=\"span6\">\n    <h2><a data-bind=\"attrLeagueUrl: {href: ['player', player.pid]}, text: player.name\"></a> <span data-bind=\"newWindow: ['player', player.pid]\"></span></h2>\n    <p>Mood: <span data-bind=\"html: player.mood\"></span></p>\n    <p>Overall: <span data-bind=\"text: player.ratings().ovr\"></span>; Potential: <span data-bind=\"text: player.ratings().pot\"></span></p>\n    <h2>Player Proposal</h2>\n    <p><span data-bind=\"text: negotiation.player().years\"></span> years (through <span data-bind=\"text: negotiation.player().expiration\"></span>)</p>\n    <p>$<span data-bind=\"round: [negotiation.player().amount, 3]\"></span>M per year</p>\n    <form data-bind=\"attrLeagueUrl: {action: ['negotiation', player.pid]}\" class=\"form-horizontal\" method=\"POST\">\n      <input type=\"hidden\" name=\"accept\" value=\"1\">\n      <button type=\"submit\" class=\"btn btn-large btn-primary\" id=\"accept\">Accept Player Proposal</button>\n    </form>\n  </div>\n</div>\n";
   });
 templates['negotiationList'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];

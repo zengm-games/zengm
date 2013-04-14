@@ -94,8 +94,10 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/helpers",
             // This function has its own transaction, so wait until it finishes before calling the callback.
             tx.oncomplete = function () {
                 if (success) {
-                    ui.updateStatus("Contract negotiation in progress...");
-                    ui.updatePlayMenu(null, cb);
+                    db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                        ui.updateStatus("Contract negotiation in progress...");
+                        ui.updatePlayMenu(null, cb);
+                    });
                 }
             };
         }
@@ -244,9 +246,11 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/helpers",
             };
         };
         tx.oncomplete = function () {
-            if (cb !== undefined) {
-                cb();
-            }
+            db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                if (cb !== undefined) {
+                    cb();
+                }
+            });
         };
     }
 
@@ -292,8 +296,10 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/helpers",
         console.log("Canceling all ongoing contract negotiations...");
 
         g.dbl.transaction("negotiations", "readwrite").objectStore("negotiations").clear().onsuccess = function (event) {
-            ui.updateStatus("Idle");
-            ui.updatePlayMenu(null, cb);
+            db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                ui.updateStatus("Idle");
+                ui.updatePlayMenu(null, cb);
+            });
         };
     }
 

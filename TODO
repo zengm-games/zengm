@@ -1,14 +1,8 @@
 smarter realtime
 ----------------
 
-negotiation
-  <span data-bind="newWindow: ['player', pid]"></span> to open player
-  does contractNegotiatoin set lastDbChange for everything?
-  some things can probably be non-observable
-  test resigning and non-resigning top messages
 roster
   check release, buy out, trade for
-  unit tests
 general things
   performance considerations...
     http://stackoverflow.com/questions/9709374/knockout-js-incredibly-slow-under-semi-large-datasets
@@ -29,7 +23,7 @@ next
 after updating all views
   reassess ui module. delete stuff like ui.dropdown. move other functions elsewhere?
     what is the difference between util.viewHelpers and ui?
-  reassess api module
+  reassess api module (pretty much everything should be moved into a view if it's used in one place, or viewHelpers if it's used multiple places)
 not urgetnt, but... use knockout for
   components.dropdown
   gameLog.boxScore
@@ -47,6 +41,8 @@ not urgetnt, but... use knockout for
       at beginning of new propose
       on clear
       when team changes
+  negotiation
+    some things can probably be non-observable
 
 BEFORE 3.0.0-beta.3
 -------------------

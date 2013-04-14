@@ -2,6 +2,7 @@ smarter realtime
 ----------------
 
 negotiation
+  <span data-bind="newWindow: ['player', pid]"></span> to open player
 roster
   check release, buy out, trade for
   unit tests

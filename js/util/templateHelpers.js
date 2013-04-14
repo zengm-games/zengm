@@ -67,6 +67,26 @@ define(["globals", "lib/handlebars.runtime", "lib/knockout", "util/helpers"], fu
     Handlebars.registerHelper("new_window", function () {
         return new Handlebars.SafeString('<a href="javascript:(function () { api = require(\'api\'); api.moveToNewWindow(); }())" class="new_window" title="Move To New Window" data-no-davis="true"><img src="/ico/new_window.png" height="16" width="16"></a>');
     });
+    ko.bindingHandlers.newWindow = {
+        update: function (element, valueAccessor) {
+            var args, i, url;
+
+            args = valueAccessor();
+
+            if (args.length === 0) {
+                url = document.URL;
+            } else {
+                url = "/l/" + g.lid;
+                for (i = 0; i < args.length; i++) {
+                    url += "/" + ko.utils.unwrapObservable(args[i]);
+                }
+            }
+
+            return ko.bindingHandlers.html.update(element, function () {
+                return '<a href="javascript:(function () { window.open(\'' + url + '?w=popup\', Date.now(), \'height=600,width=800,scrollbars=yes\'); }())" class="new_window" title="Move To New Window" data-no-davis="true"><img src="/ico/new_window.png" height="16" width="16"></a>';
+            });
+        }
+    };
 
 
     Handlebars.registerHelper("skillsBlock", function (skills) {

@@ -138,7 +138,7 @@ define(["db", "globals", "ui", "core/finances", "lib/jquery", "lib/knockout", "l
         }
         ui.title(vm.team.region() + " " + vm.team.name() + " Finances");
 
-        components.dropdown("team-finances-dropdown", ["team", "show"], [vm.tid(), vm.show()], updateEvents);
+        components.dropdown("team-finances-dropdown", ["teams", "shows"], [vm.abbrev(), vm.show()], updateEvents);
 
         cb();
     }
@@ -227,7 +227,7 @@ define(["db", "globals", "ui", "core/finances", "lib/jquery", "lib/knockout", "l
                     vm.barData(barData);
                     vm.barSeasons(barSeasons);
                     mapping.fromJS({team: team}, {}, vm);
-console.log(vm.contracts())
+
                     cb();
                 });
             };

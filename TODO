@@ -3,13 +3,15 @@ smarter realtime
 
 ticketPrice.amount is a string? is this a problem?
 team finances
-  do injuries update in player salaries table?
   aboveBelow should be computed
-  properties of team should be observable?
+  smarter updating of player salaries table
   dropdown
+  form
   teamFinances updateEvent for when the form is changed (or, i guess, if the AI team does it, but that doesn't happen yet)
-  move some stuff to loadAfter
+  move some stuff to loadAfter?
   enableFinanceSettings - simplify
+  past 10 -> all -> past 10 -> bug!
+  confirm events aren't going crazy
 datatables
   update in loadAfter, not display
 general things

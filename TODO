@@ -4,6 +4,7 @@ smarter realtime
 leaders
   delete unneeded stuff from categories obj
   fix columns
+    can i do this without grouped variable? seems to break realtime niceness
   flatten a bit
 roster
   check release, buy out, trade for

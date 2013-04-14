@@ -128,8 +128,8 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mappi
         if (leagueContentEl.dataset.id !== "standings") {
             ko.cleanNode(leagueContentEl);
             vm = {
-                season: ko.observable()
-                // confs added later
+                season: ko.observable(),
+                confs: ko.observable([])
             };
         }
 

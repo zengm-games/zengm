@@ -104,7 +104,6 @@ define(["db", "globals", "core/league", "core/trade"], function (db, g, league, 
                     trade.updatePlayers([], [90, 92], function (userPids, otherPids) {
                         trade.summary(5, [], [90, 92], function (summary) {
                             summary.warning.should.contain("over the maximum roster size limit of 15 players");
-                            summary.disablePropose.should.equal(true);
                             done();
                         });
                     });

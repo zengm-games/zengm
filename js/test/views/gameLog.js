@@ -122,11 +122,11 @@ define(["db", "globals", "core/league", "lib/jquery", "views/gameLog"], function
 
                     document.getElementById("game-log-dropdown-seasons").dataset.dummy = "shit";
                     document.getElementById("box-score").innerHTML = "fuck";
-                    document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(10);
+                    document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(11);
                     gameLog.update("BOS", g.season, 3, [], function () {
                         document.getElementById("game-log-dropdown-seasons").dataset.dummy.should.equal("shit");
                         document.getElementById("box-score").innerHTML.should.equal("fuck");
-                        document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(0);
+                        document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(1);
                         done();
                     });
                 });
@@ -138,11 +138,11 @@ define(["db", "globals", "core/league", "lib/jquery", "views/gameLog"], function
 
                     document.getElementById("game-log-dropdown-seasons").dataset.dummy = "shit";
                     document.getElementById("box-score").innerHTML = "fuck";
-                    document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(10);
+                    document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(11);
                     gameLog.update("ATL", g.season + 1, 3, [], function () {
                         document.getElementById("game-log-dropdown-seasons").dataset.dummy.should.equal("shit");
                         document.getElementById("box-score").innerHTML.should.equal("fuck");
-                        document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(0);
+                        document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(1);
                         done();
                     });
                 });
@@ -154,11 +154,12 @@ define(["db", "globals", "core/league", "lib/jquery", "views/gameLog"], function
 
                     document.getElementById("game-log-dropdown-seasons").dataset.dummy = "shit";
                     document.getElementById("box-score").innerHTML = "fuck";
-                    document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(10);
+
+                    document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(11);
                     gameLog.update("BOS", g.season + 1, 3, [], function () {
                         document.getElementById("game-log-dropdown-seasons").dataset.dummy.should.equal("shit");
                         document.getElementById("box-score").innerHTML.should.not.equal("fuck");
-                        document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(0);
+                        document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(1);
                         done();
                     });
                 });
@@ -172,7 +173,7 @@ define(["db", "globals", "core/league", "lib/jquery", "views/gameLog"], function
 
                     document.getElementById("game-log-dropdown-seasons").dataset.dummy = "shit";
                     document.getElementById("box-score").innerHTML = "fuck";
-                    document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(10);
+                    document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(11);
 
                     // Remove  a row, to make sure that the old games will not be subsequently updated
                     child = document.getElementById("game-log-list").querySelector("tbody tr");
@@ -187,7 +188,7 @@ define(["db", "globals", "core/league", "lib/jquery", "views/gameLog"], function
                         gameLog.update("ATL", g.season, 3, ["gameSim"], function () {
                             document.getElementById("game-log-dropdown-seasons").dataset.dummy.should.equal("shit");
                             document.getElementById("box-score").innerHTML.should.equal("fuck");
-                            document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(19);
+                            document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(20);
                             done();
                         });
                     };

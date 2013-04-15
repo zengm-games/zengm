@@ -1,6 +1,7 @@
 smarter realtime
 ----------------
 
+fix game log unit tests
 team finances
   rounded budget amounts are not updated
     they are saved correctly, but knockout doesn't seem to update the UI http://stackoverflow.com/questions/16006558/updating-an-input-whose-value-attribute-is-bound-to-an-observable-after-editing
@@ -52,13 +53,14 @@ not urgetnt, but... use knockout for
       quick fix - return a string for templates rather than array.
   leaders
     flatten a bit
-  dataTables/grid knockout
-    https://github.com/CogShift/Knockout.Extensions
-      https://github.com/CogShift/Knockout.Extensions/issues/9
-    https://github.com/Knockout-Contrib/KoGrid
-    http://chadmullins.com/javascript/knockout-js-series-part-2-binding-knockout-js-to-a-datatables-grid/
   roster
     check release, buy out, trade for
+  dataTables/grid knockout
+    examples
+      https://github.com/CogShift/Knockout.Extensions
+        https://github.com/CogShift/Knockout.Extensions/issues/9
+      https://github.com/Knockout-Contrib/KoGrid
+      http://chadmullins.com/javascript/knockout-js-series-part-2-binding-knockout-js-to-a-datatables-grid/
 
 BEFORE 3.0.0-beta.3
 -------------------

@@ -32,7 +32,7 @@ define(["globals", "ui", "lib/knockout", "util/viewHelpers"], function (g, ui, k
 
             anyUnread = false;
             for (i = 0; i < messages.length; i++) {
-                messages[i].text = messages[i].text.replace("<p>", "").replace("</p>", " ");
+                messages[i].text = messages[i].text.replace(/<p>/g, "").replace(/<\/p>/g, " "); // Needs to be regex otherwise it's cumbersome to do global replace
                 if (!messages[i].read) {
                     anyUnread = true;
                 }

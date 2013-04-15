@@ -1426,20 +1426,10 @@ helpers = helpers || Handlebars.helpers; data = data || {};
 templates['message'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression;
+  
 
 
-  buffer += "<p><b>From: "
-    + escapeExpression(((stack1 = ((stack1 = depth0.message),stack1 == null || stack1 === false ? stack1 : stack1.from)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + ", "
-    + escapeExpression(((stack1 = ((stack1 = depth0.message),stack1 == null || stack1 === false ? stack1 : stack1.year)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</b> <span data-bind=\"newWindow: []\"></span></p>\n\n";
-  stack2 = ((stack1 = ((stack1 = depth0.message),stack1 == null || stack1 === false ? stack1 : stack1.text)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1);
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n\n<p><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/inbox\">Return To Inbox</a></p>";
-  return buffer;
+  return "<p><b>From: <span data-bind=\"text: message().from\"></span>, <span data-bind=\"text: message().year\"></span></b> <span data-bind=\"newWindow: []\"></span></p>\n\n<span data-bind=\"html: message().text\"></span>\n\n<p><a data-bind=\"attrLeagueUrl: {href: ['inbox']}\">Return To Inbox</a></p>";
   });
 templates['teamHistory'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];

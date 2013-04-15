@@ -1,4 +1,4 @@
-define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/draftSummary", "views/gameLog", "views/inbox", "views/leaders", "views/negotiation", "views/playerRatings", "views/playerStats", "views/roster", "views/standings", "views/teamFinances", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, draft, finances, freeAgents, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, draftSummary, gameLog, inbox, leaders, negotiation, playerRatings, playerStats, roster, standings, teamFinances, teamStats, trade) {
+define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/draftSummary", "views/gameLog", "views/inbox", "views/leaders", "views/message", "views/negotiation", "views/playerRatings", "views/playerStats", "views/roster", "views/standings", "views/teamFinances", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, draft, finances, freeAgents, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, draftSummary, gameLog, inbox, leaders, message, negotiation, playerRatings, playerStats, roster, standings, teamFinances, teamStats, trade) {
     "use strict";
 
     function initDb(req) {
@@ -469,51 +469,6 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                         };
                     });
                 });
-            };
-        });
-    }
-
-    function message(req) {
-        viewHelpers.beforeLeague(req, function () {
-            var mid, tx;
-
-            g.realtimeUpdate = false;
-
-            // If null, then the most recent message will be loaded
-            mid = req.params.mid ? parseInt(req.params.mid, 10) : null;
-
-            tx = g.dbl.transaction("messages", "readwrite");
-            tx.objectStore("messages").openCursor(mid, "prev").onsuccess = function (event) {
-                var cursor, data, message;
-
-                cursor = event.target.result;
-                message = cursor.value;
-
-                data = {
-                    container: "league_content",
-                    template: "message",
-                    title: "Message From " + message.from,
-                    vars: {message: message}
-                };
-
-                if (!message.read) {
-                    message.read = true;
-                    cursor.update(message);
-
-                    tx.oncomplete = function () {
-                        db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                            if (g.gameOver) {
-                                ui.updateStatus("You're fired! Game over!");
-                            }
-
-                            ui.updatePlayMenu(null, function () {
-                                ui.update(data, req.raw.cb);
-                            });
-                        });
-                    };
-                } else {
-                    ui.update(data, req.raw.cb);
-                }
             };
         });
     }

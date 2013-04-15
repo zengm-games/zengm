@@ -1,8 +1,6 @@
 smarter realtime
 ----------------
 
-message
-  new window?
 shouldn't have newPhase updateEvent. just have an array of what changed in that phase
 team finances
   rounded budget amounts are not updated

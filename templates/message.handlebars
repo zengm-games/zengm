@@ -1,5 +1,5 @@
-<p><b>From: {{message.from}}, {{message.year}}</b> <span data-bind="newWindow: []"></span></p>
+<p><b>From: <span data-bind="text: message().from"></span>, <span data-bind="text: message().year"></span></b> <span data-bind="newWindow: []"></span></p>
 
-{{{message.text}}}
+<span data-bind="html: message().text"></span>
 
-<p><a href="/l/{{lid}}/inbox">Return To Inbox</a></p>
+<p><a data-bind="attrLeagueUrl: {href: ['inbox']}">Return To Inbox</a></p>

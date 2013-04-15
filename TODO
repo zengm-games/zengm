@@ -1,7 +1,9 @@
 smarter realtime
 ----------------
 
-fix game log unit tests
+message
+  new window?
+shouldn't have newPhase updateEvent. just have an array of what changed in that phase
 team finances
   rounded budget amounts are not updated
     they are saved correctly, but knockout doesn't seem to update the UI http://stackoverflow.com/questions/16006558/updating-an-input-whose-value-attribute-is-bound-to-an-observable-after-editing
@@ -61,6 +63,8 @@ not urgetnt, but... use knockout for
         https://github.com/CogShift/Knockout.Extensions/issues/9
       https://github.com/Knockout-Contrib/KoGrid
       http://chadmullins.com/javascript/knockout-js-series-part-2-binding-knockout-js-to-a-datatables-grid/
+  inbox
+    on new message (can be a newMessage update event), just add to messages list rather than always refreshing
 
 BEFORE 3.0.0-beta.3
 -------------------

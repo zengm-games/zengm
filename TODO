@@ -10,7 +10,6 @@ team finances
   teamFinances updateEvent for when the form is changed (or, i guess, if the AI team does it, but that doesn't happen yet)
   move some stuff to loadAfter?
   enableFinanceSettings - simplify
-  past 10 -> all -> past 10 -> bug!
   confirm events aren't going crazy
 datatables
   update in loadAfter, not display

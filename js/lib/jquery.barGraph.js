@@ -151,7 +151,8 @@
             ylim = defaultYlim(data, stacked);
         }
 
-        container.data("numBars", stacked ? data[0].length : data.length)
+        container.empty()
+            .data("numBars", stacked ? data[0].length : data.length)
             .css({
                 position: "relative"
             });

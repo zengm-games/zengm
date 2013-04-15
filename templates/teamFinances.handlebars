@@ -69,7 +69,7 @@
         <div class="pull-left finances-settings-text-small">Current spending rate: #<span data-bind="text: team.budget.facilities.rank"></span><br>Spent this season: #<span data-bind="text: team.expenses.facilities.rank"></span></div>
       </div>
       <br>
-      <p align="center"><button class="btn btn-large btn-primary" style="line-height: 1.5em">Save Revenue and<br> Expense Settings</button></p>
+      <p align="center"><button class="btn btn-large btn-primary" style="line-height: 1.5em"></button></p>
     </form>
   </div>
 </div>
@@ -84,7 +84,7 @@
   <tr>
     <th>Name</th>
     <!-- ko foreach: salariesSeasons -->
-      <th data-bind="currency: [$data, 'M']"></th>
+      <th data-bind="text: $data"></th>
     <!-- /ko -->
   </tr>
 </thead>

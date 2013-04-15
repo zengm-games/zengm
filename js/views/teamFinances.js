@@ -17,15 +17,15 @@ define(["db", "globals", "ui", "core/finances", "lib/jquery", "lib/knockout", "l
     }
 
     function enableFinanceSettings() {
+        $("#finances-settings button").html("Save Revenue and<br> Expense Settings");
         if (vm.tid() === g.userTid) {
             $("#finances-settings input, button").removeAttr("disabled");
-        }
-        $("#finances-settings .text-error").html("");
-        if (vm.tid() === g.userTid) {
             $("#finances-settings button").show();
         } else {
+            $("#finances-settings input, button").attr("disabled", "disabled");
             $("#finances-settings button").hide();
         }
+        $("#finances-settings .text-error").html("");
     }
 
     function loadAfter(cb) {
@@ -130,13 +130,14 @@ define(["db", "globals", "ui", "core/finances", "lib/jquery", "lib/knockout", "l
             // Form enabling/disabling
             $("#finances-settings").on("gameSimulationStart", disableFinanceSettings);
             $("#finances-settings").on("gameSimulationStop", enableFinanceSettings);
-            if (g.gamesInProgress) {
-                disableFinanceSettings();
-            } else {
-                enableFinanceSettings();
-            }
         }
         ui.title(vm.team.region() + " " + vm.team.name() + " Finances");
+
+        if (g.gamesInProgress) {
+            disableFinanceSettings();
+        } else {
+            enableFinanceSettings();
+        }
 
         components.dropdown("team-finances-dropdown", ["teams", "shows"], [vm.abbrev(), vm.show()], updateEvents);
 
@@ -145,19 +146,13 @@ define(["db", "globals", "ui", "core/finances", "lib/jquery", "lib/knockout", "l
 
     function loadBefore(abbrev, tid, show, cb) {
         db.getPayroll(null, tid, function (payroll, contracts) {
-            var aboveBelow, contractTotals, i, j, salariesSeasons, season, showInt;
+            var contractTotals, i, j, salariesSeasons, season, showInt;
 
             if (show === "all") {
                 showInt = g.season - g.startingSeason + 1;
             } else {
                 showInt = parseInt(show, 10);
             }
-
-            aboveBelow = {
-                minPayroll: payroll > g.minPayroll ? "above" : "below",
-                salaryCap: payroll > g.salaryCap ? "above" : "below",
-                luxuryPayroll: payroll > g.luxuryPayroll ? "above" : "below"
-            };
 
             payroll /= 1000;
 
@@ -218,9 +213,6 @@ define(["db", "globals", "ui", "core/finances", "lib/jquery", "lib/knockout", "l
                     vm.tid(tid);
                     vm.show(show);
                     vm.payroll(payroll);
-                    vm.aboveBelow.minPayroll(aboveBelow.minPayroll);
-                    vm.aboveBelow.salaryCap(aboveBelow.salaryCap);
-                    vm.aboveBelow.luxuryPayroll(aboveBelow.luxuryPayroll);
                     vm.salariesSeasons(salariesSeasons);
                     vm.contracts(contracts);
                     vm.contractTotals(contractTotals);
@@ -244,11 +236,7 @@ define(["db", "globals", "ui", "core/finances", "lib/jquery", "lib/knockout", "l
                 tid: ko.observable(),
                 show: ko.observable(),
                 payroll: ko.observable(),
-                aboveBelow: {
-                    minPayroll: ko.observable(),
-                    salaryCap: ko.observable(),
-                    luxuryPayroll: ko.observable()
-                },
+                aboveBelow: {},
                 salaryCap: ko.observable(g.salaryCap / 1000),
                 minPayroll: ko.observable(g.minPayroll / 1000),
                 luxuryPayroll: ko.observable(g.luxuryPayroll / 1000),
@@ -260,6 +248,15 @@ define(["db", "globals", "ui", "core/finances", "lib/jquery", "lib/knockout", "l
                 barData: ko.observable(),
                 barSeasons: ko.observable()
             };
+            vm.aboveBelow.minPayroll = ko.computed(function () {
+                return vm.payroll() > vm.minPayroll() ? "above" : "below";
+            });
+            vm.aboveBelow.salaryCap = ko.computed(function () {
+                return vm.payroll() > vm.salaryCap() ? "above" : "below";
+            });
+            vm.aboveBelow.luxuryPayroll = ko.computed(function () {
+                return vm.payroll() > vm.luxuryPayroll() ? "above" : "below";
+            });
         }
 
         if (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("teamFinances") >= 0 || tid !== vm.tid() || show !== vm.show()) {
@@ -305,7 +302,7 @@ define(["db", "globals", "ui", "core/finances", "lib/jquery", "lib/knockout", "l
                     if (budget.hasOwnProperty(key)) {
                         if (key === "ticketPrice") {
                             // Already in [dollars]
-                            budget[key] = helpers.round(budget[key], 2);
+                            budget[key] = parseFloat(helpers.round(budget[key], 2));
                         } else {
                             // Convert from [millions of dollars] to [thousands of dollars] rounded to the nearest $10k
                             budget[key] = helpers.round(budget[key] * 100) * 10;
@@ -325,6 +322,7 @@ define(["db", "globals", "ui", "core/finances", "lib/jquery", "lib/knockout", "l
 
     return {
         update: update,
-        get: get
+        get: get,
+        post: post
     };
 });

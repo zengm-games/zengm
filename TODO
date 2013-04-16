@@ -5,9 +5,10 @@ dashboard
   observables set right by mapping
     historical things (old scores, old records) don't need to be observable
   granular updates
-    make each component a function that returns a deferred
-    within each of these functions, add a check to see if an update is necessary
+    within each of these deferred functions, add a check to see if an update is necessary
+      might have to break them up more
     update vm directly from functions?
+      if so, will need to define structure earlier
     move functions to module-level scope?
 shouldn't have newPhase updateEvent. just have an array of what changed in that phase
 team finances

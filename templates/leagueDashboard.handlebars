@@ -26,15 +26,15 @@
 
     <h3>Recent Games</h3>
     <p>
-      {{#if nextGameAbbrev}}
-        Next Game: {{#unless nextGameHome}}@{{/unless}}<a data-bind="attrLeagueUrl: {href: ['roster', nextGameAbbrev]}">{{nextGameAbbrev}}</a><br>
-      {{/if}}
-      {{#unless recentGames}}No completed games yet this season.<br>{{/unless}}
-      {{#recentGames}}
-        {{#unless home}}@{{/unless}}<a href="/l/{{../lid}}/roster/{{oppAbbrev}}">{{oppAbbrev}}</a>, {{#if won}}won{{else}}lost{{/if}} <a href="/l/{{../lid}}/game_log/{{../abbrev}}/{{../season}}/{{gid}}">{{pts}}-{{oppPts}}{{overtime}}</a><br>
-      {{/recentGames}}
-      <a href="/l/{{lid}}/game_log">» Game Log</a><br>
-      <a href="/l/{{lid}}/standings">» Schedule</a>
+      <span data-bind="visible: nextGameAbbrev">
+        Next Game: <span data-bind="visible: !nextGameHome()">@</span><a data-bind="attrLeagueUrl: {href: ['roster', nextGameAbbrev]}, text: nextGameAbbrev"></a><br>
+      </span>
+      <span data-bind="visible: recentGames().length === 0">No completed games yet this season.<br></span>
+      <!-- ko foreach: recentGames -->
+        <span data-bind="visible: !home()">@</span><a data-bind="attrLeagueUrl: {href: ['roster', oppAbbrev]}, text: oppAbbrev"></a>, <span data-bind="text: won() ? 'won' : 'lost'"></span> <a data-bind="attrLeagueUrl: {href: ['game_log', $parent.abbrev, $parent.season, gid]}"><span data-bind="text: pts"></span>-<span data-bind="text: oppPts"></span><span data-bind="text: overtime"></span></a><br>
+      <!-- /ko -->
+      <a data-bind="attrLeagueUrl: {href: ['game_log']}">» Game Log</a><br>
+      <a data-bind="attrLeagueUrl: {href: ['standings']}">» Schedule</a>
     </p>
 
     <h3>Recent History</h3>
@@ -51,10 +51,10 @@
   <div class="span4">
     <h3>Team Stats</h3>
     <p>
-      Points: {{round pts 1}} ({{ptsRank}}th)<br>
-      Allowed: {{round oppPts 1}} ({{oppPtsRank}}th)<br>
-      Rebounds: {{round trb 1}} ({{trbRank}}th)<br>
-      Assists: {{round ast 1}} ({{astRank}}th)<br>
+      Points: <span data-bind="round: [pts, 1]"></span> (<span data-bind="text: ptsRank"></span>th)<br>
+      Allowed: <span data-bind="round: [oppPts, 1]"></span> (<span data-bind="text: oppPtsRank"></span>th)<br>
+      Rebounds: <span data-bind="round: [trb, 1]"></span> (<span data-bind="text: trbRank"></span>th)<br>
+      Assists: <span data-bind="round: [ast, 1]"></span> (<span data-bind="text: astRank"></span>th)<br>
       <a data-bind="attrLeagueUrl: {href: ['team_stats']}">» Team Stats</a>
     </p>
 

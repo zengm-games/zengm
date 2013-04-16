@@ -3,7 +3,8 @@ smarter realtime
 
 dashboard
   get working with ko
-  observables set right by mapping?
+  observables set right by mapping
+    historical things (old scores, old records) don't need to be observable
   granular updates - promises?
 shouldn't have newPhase updateEvent. just have an array of what changed in that phase
 team finances

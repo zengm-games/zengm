@@ -112,7 +112,7 @@ requirejs(["db", "views", "ui", "lib/davis", "lib/jquery", "util/helpers", "../g
             this.get("/manual/:page", views.manual);
 
             // League views
-            this.get("/l/:lid", views.leagueDashboard);
+            this.get("/l/:lid", views.leagueDashboard.get);
             this.get("/l/:lid/inbox", views.inbox.get);
             this.get("/l/:lid/message", views.message.get);
             this.get("/l/:lid/message/:mid", views.message.get);

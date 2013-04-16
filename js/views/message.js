@@ -7,7 +7,7 @@ define(["db", "globals", "ui", "lib/knockout", "util/viewHelpers"], function (db
 
     var vm;
 
-    function display(updateEvents, cb) {
+    function display(cb) {
         var leagueContentEl;
 
         leagueContentEl = document.getElementById("league_content");
@@ -71,10 +71,10 @@ define(["db", "globals", "ui", "lib/knockout", "util/viewHelpers"], function (db
 
         if (!vm.message()) {
             loadBefore(mid, function () {
-                display(updateEvents, cb);
+                display(cb);
             });
         } else {
-            display(updateEvents, cb);
+            display(cb);
         }
     }
 

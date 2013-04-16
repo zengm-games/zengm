@@ -1,11 +1,11 @@
-<h1>{{region}} {{name}} Dashboard {{new_window}}</h1>
+<h1><span data-bind="text: region"></span> <span data-bind="text: name"></span> Dashboard <span data-bind="newWindow: []"></span></h1>
 
 <div class="row-fluid">
   <div class="span4">
     <h3>Current Record</h3>
     <p>
-      {{won}}-{{lost}}{{#unless playoffsStarted}}{{#if streakLong}}, {{streakLong}}{{/if}}{{/unless}}<br>
-      <a href="/l/{{lid}}/standings">» Standings</a>
+      <span data-bind="text: won"></span>-<span data-bind="text: lost"></span> {{#unless playoffsStarted}}{{#if streakLong}}, {{streakLong}}{{/if}}{{/unless}}<br>
+      <a data-bind="attrLeagueUrl: {href: ['standings']}">» Standings</a>
     </p>
 
     <h3>Playoffs</h3>
@@ -18,16 +18,16 @@
         (Top 8 teams make the playoffs)<br>
       {{/if}}
       {{#if playoffsStarted}}
-        <a href="/l/{{lid}}/playoffs">» Playoffs</a>
+        <a data-bind="attrLeagueUrl: {href: ['playoffs']}">» Playoffs</a>
       {{else}}
-        <a href="/l/{{lid}}/playoffs">» Playoffs Projections</a>
+        <a data-bind="attrLeagueUrl: {href: ['playoffs']}">» Playoffs Projections</a>
       {{/if}}
     </p>
 
     <h3>Recent Games</h3>
     <p>
       {{#if nextGameAbbrev}}
-        Next Game: {{#unless nextGameHome}}@{{/unless}}<a href="/l/{{lid}}/roster/{{nextGameAbbrev}}">{{nextGameAbbrev}}</a><br>
+        Next Game: {{#unless nextGameHome}}@{{/unless}}<a data-bind="attrLeagueUrl: {href: ['roster', nextGameAbbrev]}">{{nextGameAbbrev}}</a><br>
       {{/if}}
       {{#unless recentGames}}No completed games yet this season.<br>{{/unless}}
       {{#recentGames}}
@@ -39,12 +39,12 @@
 
     <h3>Recent History</h3>
     <p>
-      {{#unless recentHistory}}None yet.<br>{{/unless}}
-      {{#recentHistory}}
-        <a href="/l/{{../lid}}/roster/{{../abbrev}}/{{season}}">{{season}}</a>: <a href="/l/{{../lid}}/standings/{{season}}">{{won}}-{{lost}}</a>{{#if extraText}}, <a href="/l/{{../../lid}}/playoffs/{{season}}">{{extraText}}</a>{{/if}}<br>
-      {{/recentHistory}}
-      <a href="/l/{{lid}}/team_history">» Team History</a><br>
-      <a href="/l/{{lid}}/history">» League History</a>
+      <span data-bind="visible: recentHistory().length === 0">None yet.<br></span>
+      <!-- ko foreach: recentHistory -->
+        <a data-bind="attrLeagueUrl: {href: ['roster', $parent.abbrev, season]}, text: season"></a>: <a data-bind="attrLeagueUrl: {href: ['standings', season]}"><span data-bind="text: won"></span>-<span data-bind="text: lost"></span></a>{{#if extraText}}, <a data-bind="attrLeagueUrl: {href: ['playoffs', season]}">{{extraText}}</a>{{/if}}<br>
+      <!-- /ko -->
+      <a data-bind="attrLeagueUrl: {href: ['team_history']}">» Team History</a><br>
+      <a data-bind="attrLeagueUrl: {href: ['history']}">» League History</a>
     </p>
 
   </div>
@@ -55,24 +55,24 @@
       Allowed: {{round oppPts 1}} ({{oppPtsRank}}th)<br>
       Rebounds: {{round trb 1}} ({{trbRank}}th)<br>
       Assists: {{round ast 1}} ({{astRank}}th)<br>
-      <a href="/l/{{lid}}/team_stats">» Team Stats</a>
+      <a data-bind="attrLeagueUrl: {href: ['team_stats']}">» Team Stats</a>
     </p>
 
     <h3>Team Leaders</h3>
     <p>
-      <a href="/l/{{lid}}/player/{{teamLeaders.pts.pid}}">{{teamLeaders.pts.name}}</a>: {{round teamLeaders.pts.stat 1}} pts<br>
-      <a href="/l/{{lid}}/player/{{teamLeaders.trb.pid}}">{{teamLeaders.trb.name}}</a>: {{round teamLeaders.trb.stat 1}} reb<br>
-      <a href="/l/{{lid}}/player/{{teamLeaders.ast.pid}}">{{teamLeaders.ast.name}}</a>: {{round teamLeaders.ast.stat 1}} ast<br>
-      <a href="/l/{{lid}}/roster">» Full Roster</a>
+      <a data-bind="attrLeagueUrl: {href: ['player', teamLeaders.pts.pid]}, text: teamLeaders.pts.name"></a>: <span data-bind="round: [teamLeaders.pts.stat, 1]"></span> pts<br>
+      <a data-bind="attrLeagueUrl: {href: ['player', teamLeaders.trb.pid]}, text: teamLeaders.trb.name"></a>: <span data-bind="round: [teamLeaders.trb.stat, 1]"></span> reb<br>
+      <a data-bind="attrLeagueUrl: {href: ['player', teamLeaders.ast.pid]}, text: teamLeaders.ast.name"></a>: <span data-bind="round: [teamLeaders.ast.stat, 1]"></span> ast<br>
+      <a data-bind="attrLeagueUrl: {href: ['roster']}">» Full Roster</a>
     </p>
 
     <h3>League Leaders</h3>
     <p>
-      <a href="/l/{{lid}}/player/{{leagueLeaders.pts.pid}}">{{leagueLeaders.pts.name}}</a>, <a href="/l/{{lid}}/roster/{{leagueLeaders.pts.abbrev}}">{{leagueLeaders.pts.abbrev}}</a>: {{round leagueLeaders.pts.stat 1}} pts<br>
-      <a href="/l/{{lid}}/player/{{leagueLeaders.trb.pid}}">{{leagueLeaders.trb.name}}</a>, <a href="/l/{{lid}}/roster/{{leagueLeaders.trb.abbrev}}">{{leagueLeaders.trb.abbrev}}</a>: {{round leagueLeaders.trb.stat 1}} reb<br>
-      <a href="/l/{{lid}}/player/{{leagueLeaders.ast.pid}}">{{leagueLeaders.ast.name}}</a>, <a href="/l/{{lid}}/roster/{{leagueLeaders.ast.abbrev}}">{{leagueLeaders.ast.abbrev}}</a>: {{round leagueLeaders.ast.stat 1}} ast<br>
-      <a href="/l/{{lid}}/leaders">» League Leaders</a><br>
-      <a href="/l/{{lid}}/player_stats">» Player Stats</a>
+      <a data-bind="attrLeagueUrl: {href: ['player', leagueLeaders.pts.pid]}, text: leagueLeaders.pts.name"></a>, <a data-bind="attrLeagueUrl: {href: ['roster', leagueLeaders.pts.abbrev]}, text: leagueLeaders.pts.abbrev"></a>: <span data-bind="round: [leagueLeaders.pts.stat, 1]"></span> pts<br>
+      <a data-bind="attrLeagueUrl: {href: ['player', leagueLeaders.trb.pid]}, text: leagueLeaders.trb.name"></a>, <a data-bind="attrLeagueUrl: {href: ['roster', leagueLeaders.trb.abbrev]}, text: leagueLeaders.trb.abbrev"></a>: <span data-bind="round: [leagueLeaders.trb.stat, 1]"></span> reb<br>
+      <a data-bind="attrLeagueUrl: {href: ['player', leagueLeaders.ast.pid]}, text: leagueLeaders.ast.name"></a>, <a data-bind="attrLeagueUrl: {href: ['roster', leagueLeaders.ast.abbrev]}, text: leagueLeaders.ast.abbrev"></a>: <span data-bind="round: [leagueLeaders.ast.stat, 1]"></span> ast<br>
+      <a data-bind="attrLeagueUrl: {href: ['leaders']}">» League Leaders</a><br>
+      <a data-bind="attrLeagueUrl: {href: ['player_stats']}">» Player Stats</a>
     </p>
   </div>
   <div class="span4">
@@ -84,27 +84,27 @@
       Cash: {{currency cash "M"}}<br>
       Payroll: {{currency payroll "M"}}<br>
       Salary Cap: {{currency salaryCap "M"}}<br>
-      <a href="/l/{{lid}}/finances">» League Finances</a>
+      <a data-bind="attrLeagueUrl: {href: ['finances']}">» League Finances</a>
     </p>
 
     <h3>Top Free Agents</h3>
     <p>
       {{#unless freeAgents}}None.<br>{{/unless}}
       {{#freeAgents}}
-        <a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>: {{age}} yo, {{ovr}} ovr, {{pot}} pot</span><br>
+        <a data-bind="attrLeagueUrl: {href: ['player', pid]}">{{name}}</a>: {{age}} yo, {{ovr}} ovr, {{pot}} pot</span><br>
       {{/freeAgents}}
       (You have {{numRosterSpots}} open roster spots)<br>
-      <a href="/l/{{lid}}/free_agents">» Free Agents</a>
+      <a data-bind="attrLeagueUrl: {href: ['free_agents']}">» Free Agents</a>
     </p>
 
     <h3>Expiring Contracts</h3>
     <p>
       {{#unless expiring}}None.<br>{{/unless}}
       {{#expiring}}
-        <a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a>: {{age}} yo, {{currency contractAmount "M"}}<br>
+        <a data-bind="attrLeagueUrl: {href: ['player', pid]}">{{name}}</a>: {{age}} yo, {{currency contractAmount "M"}}<br>
         <span style="margin-left: 2em">{{round pts 1}} pts, {{ovr}} ovr, {{pot}} pot</span><br>
       {{/expiring}}
-      <a href="/l/{{lid}}/roster">» Full Roster</a>
+      <a data-bind="attrLeagueUrl: {href: ['roster']}">» Full Roster</a>
     </p>
   </div>
 </div>

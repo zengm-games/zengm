@@ -2,7 +2,7 @@
  * @name views.leagueDashboard
  * @namespace League dashboard, displaying several bits of information about the league/team.
  */
-define(["db", "globals", "ui", "core/season", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/helpers", "util/viewHelpers"], function (db, g, ui, season, ko, mapping, _, helpers, viewHelpers) {
+define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/helpers", "util/viewHelpers"], function (db, g, ui, season, $, ko, mapping, _, helpers, viewHelpers) {
     "use strict";
 
     var vm;
@@ -31,43 +31,55 @@ define(["db", "globals", "ui", "core/season", "lib/knockout", "lib/knockout.mapp
 
         tx = g.dbl.transaction(["games", "players", "playoffSeries", "releasedPlayers", "schedule", "teams"]);
 
-        tx.objectStore("teams").get(g.userTid).onsuccess = function (event) {
-            var extraText, i, userTeam, userTeamSeason;
+        var getTeam = function () {
+            var deferred;
 
-            userTeam = event.target.result;
-            userTeamSeason = _.last(userTeam.seasons);
+            deferred = $.Deferred();
 
-            vars.region = userTeam.region;
-            vars.name = userTeam.name;
-            vars.abbrev = userTeam.abbrev;
-            vars.won = userTeamSeason.won;
-            vars.lost = userTeamSeason.lost;
-            vars.cash = userTeamSeason.cash / 1000;  // [millions of dollars]
+            tx.objectStore("teams").get(g.userTid).onsuccess = function (event) {
+                var extraText, i, userTeam, userTeamSeason;
 
-            vars.recentHistory = [];
-            // 3 most recent years
-            for (i = userTeam.seasons.length - 2; i > userTeam.seasons.length - 5 && i >= 0; i--) {
-                extraText = "";
-                if (userTeam.seasons[i].playoffRoundsWon === 4) {
-                    extraText = "league champs";
-                } else if (userTeam.seasons[i].playoffRoundsWon === 3) {
-                    extraText = "conference champs";
-                } else if (userTeam.seasons[i].playoffRoundsWon === 2) {
-                    extraText = "made conference finals";
-                } else if (userTeam.seasons[i].playoffRoundsWon === 1) {
-                    extraText = "made second round";
-                } else if (userTeam.seasons[i].playoffRoundsWon === 0) {
-                    extraText = "made playoffs";
+                userTeam = event.target.result;
+                userTeamSeason = _.last(userTeam.seasons);
+
+                vars.region = userTeam.region;
+                vars.name = userTeam.name;
+                vars.abbrev = userTeam.abbrev;
+                vars.won = userTeamSeason.won;
+                vars.lost = userTeamSeason.lost;
+                vars.cash = userTeamSeason.cash / 1000;  // [millions of dollars]
+
+                vars.recentHistory = [];
+                // 3 most recent years
+                for (i = userTeam.seasons.length - 2; i > userTeam.seasons.length - 5 && i >= 0; i--) {
+                    extraText = "";
+                    if (userTeam.seasons[i].playoffRoundsWon === 4) {
+                        extraText = "league champs";
+                    } else if (userTeam.seasons[i].playoffRoundsWon === 3) {
+                        extraText = "conference champs";
+                    } else if (userTeam.seasons[i].playoffRoundsWon === 2) {
+                        extraText = "made conference finals";
+                    } else if (userTeam.seasons[i].playoffRoundsWon === 1) {
+                        extraText = "made second round";
+                    } else if (userTeam.seasons[i].playoffRoundsWon === 0) {
+                        extraText = "made playoffs";
+                    }
+
+                    vars.recentHistory.push({
+                        season: userTeam.seasons[i].season,
+                        won: userTeam.seasons[i].won,
+                        lost: userTeam.seasons[i].lost,
+                        extraText: extraText
+                    });
                 }
 
-                vars.recentHistory.push({
-                    season: userTeam.seasons[i].season,
-                    won: userTeam.seasons[i].won,
-                    lost: userTeam.seasons[i].lost,
-                    extraText: extraText
-                });
-            }
+                deferred.resolve();
+            };
 
+            return deferred.promise();
+        };
+
+        $.when(getTeam()).then(function () {
             db.getPayroll(tx, g.userTid, function (payroll) {
                 var attributes, seasonAttributes, stats;
 
@@ -77,11 +89,13 @@ define(["db", "globals", "ui", "core/season", "lib/knockout", "lib/knockout.mapp
                 stats = ["pts", "oppPts", "trb", "ast"];  // This is also used later to find ranks for these team stats
                 seasonAttributes = ["won", "lost", "winp", "streakLong", "att", "revenue", "profit"];
                 db.getTeams(tx, g.season, attributes, stats, seasonAttributes, {sortBy: "winp"}, function (teams) {
-                    var i, j, ranks;
+                    var cid, i, j, ranks;
+
+                    cid = _.find(teams, function (t) { return t.tid === g.userTid; }).cid;
 
                     vars.rank = 1;
                     for (i = 0; i < teams.length; i++) {
-                        if (teams[i].cid === userTeam.cid) {
+                        if (teams[i].cid === cid) {
                             if (teams[i].tid === g.userTid) {
                                 vars.pts = teams[i].pts;
                                 vars.oppPts = teams[i].oppPts;
@@ -288,7 +302,7 @@ console.log(vm);
                     };
                 });
             });
-        };
+        });
     }
 
     function update(updateEvents, cb) {

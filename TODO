@@ -4,7 +4,11 @@ smarter realtime
 dashboard
   observables set right by mapping
     historical things (old scores, old records) don't need to be observable
-  granular updates - promises?
+  granular updates
+    make each component a function that returns a deferred
+    within each of these functions, add a check to see if an update is necessary
+    update vm directly from functions?
+    move functions to module-level scope?
 shouldn't have newPhase updateEvent. just have an array of what changed in that phase
 team finances
   rounded budget amounts are not updated

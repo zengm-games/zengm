@@ -74,6 +74,34 @@ define(["globals", "lib/handlebars.runtime", "lib/knockout", "util/helpers"], fu
 
         return new Handlebars.SafeString(source);
     });
+    ko.bindingHandlers.matchup = {
+        update: function (element, valueAccessor, allBindingsAccessor, viewModel) {
+            var args, season, series, source;
+
+            args = valueAccessor();
+
+            season = viewModel.season();
+            series = viewModel.series()[args[0]][args[1]];
+
+            source = '';
+            if (series && series.home.name) {
+                if (series.home.won() === 4) { source += '<strong>'; }
+                source += series.home.seed() + '. <a href="/l/' + g.lid + '/roster/' + series.home.abbrev() + '/' + season + '">' + series.home.name() + '</a>';
+                if (series.home.hasOwnProperty("won")) { source += ' ' + series.home.won(); }
+                if (series.home.won() === 4) { source += '</strong>'; }
+                source += '<br>';
+
+                if (series.away.won() === 4) { source += '<strong>'; }
+                source += series.away.seed() + '. <a href="/l/' + g.lid + '/roster/' + series.away.abbrev() + '/' + season + '">' + series.away.name() + '</a>';
+                if (series.away.hasOwnProperty("won")) { source += ' ' + series.away.won(); }
+                if (series.away.won() === 4) { source += '</strong>'; }
+            }
+
+            return ko.bindingHandlers.html.update(element, function () {
+                return source;
+            });
+        }
+    };
 
 
     Handlebars.registerHelper("face", function (face) {
@@ -125,6 +153,14 @@ define(["globals", "lib/handlebars.runtime", "lib/knockout", "util/helpers"], fu
     };
 
     Handlebars.registerHelper("numberWithCommas", helpers.numberWithCommas);
+    ko.bindingHandlers.numberWithCommas = {
+        update: function (element, valueAccessor) {
+            var args = valueAccessor();
+            return ko.bindingHandlers.text.update(element, function () {
+                return helpers.numberWithCommas(ko.utils.unwrapObservable(args));
+            });
+        }
+    };
 
     Handlebars.registerHelper("playerNameLabels", function (pid, name, injury, skills) {
         return new Handlebars.SafeString(helpers.playerNameLabels(pid, name, injury, skills));

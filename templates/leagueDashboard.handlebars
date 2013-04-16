@@ -4,24 +4,26 @@
   <div class="span4">
     <h3>Current Record</h3>
     <p>
-      <span data-bind="text: won"></span>-<span data-bind="text: lost"></span> {{#unless playoffsStarted}}{{#if streakLong}}, {{streakLong}}{{/if}}{{/unless}}<br>
+      <span data-bind="text: won"></span>-<span data-bind="text: lost"></span><!-- ko if: !playoffsStarted() && streakLong() -->, <span data-bind="text: streakLong"></span><!-- /ko --><br>
       <a data-bind="attrLeagueUrl: {href: ['standings']}">» Standings</a>
     </p>
 
     <h3>Playoffs</h3>
     <p>
-      {{#if showPlayoffSeries}}
-        <b>{{seriesTitle}}</b><br>
-        {{matchup 0 0}}<br>
-      {{else}}
-        {{rank}}th place in conference<br>
+      <!-- ko if: showPlayoffSeries -->
+        <b><span data-bind="text: seriesTitle"></span></b><br>
+        <span data-bind="matchup: [0, 0]"></span><br>
+      <!-- /ko -->
+      <!-- ko if: !showPlayoffSeries() -->
+        <span data-bind="text: rank"></span>th place in conference<br>
         (Top 8 teams make the playoffs)<br>
-      {{/if}}
-      {{#if playoffsStarted}}
+      <!-- /ko -->
+      <!-- ko if: playoffsStarted -->
         <a data-bind="attrLeagueUrl: {href: ['playoffs']}">» Playoffs</a>
-      {{else}}
+      <!-- /ko -->
+      <!-- ko if: !playoffsStarted() -->
         <a data-bind="attrLeagueUrl: {href: ['playoffs']}">» Playoffs Projections</a>
-      {{/if}}
+      <!-- /ko -->
     </p>
 
     <h3>Recent Games</h3>
@@ -41,7 +43,7 @@
     <p>
       <span data-bind="visible: recentHistory().length === 0">None yet.<br></span>
       <!-- ko foreach: recentHistory -->
-        <a data-bind="attrLeagueUrl: {href: ['roster', $parent.abbrev, season]}, text: season"></a>: <a data-bind="attrLeagueUrl: {href: ['standings', season]}"><span data-bind="text: won"></span>-<span data-bind="text: lost"></span></a>{{#if extraText}}, <a data-bind="attrLeagueUrl: {href: ['playoffs', season]}">{{extraText}}</a>{{/if}}<br>
+        <a data-bind="attrLeagueUrl: {href: ['roster', $parent.abbrev, season]}, text: season"></a>: <a data-bind="attrLeagueUrl: {href: ['standings', season]}"><span data-bind="text: won"></span>-<span data-bind="text: lost"></span></a><!-- ko if: extraText -->, <a data-bind="attrLeagueUrl: {href: ['playoffs', season]}, text: extraText"></a><!-- /ko --><br>
       <!-- /ko -->
       <a data-bind="attrLeagueUrl: {href: ['team_history']}">» Team History</a><br>
       <a data-bind="attrLeagueUrl: {href: ['history']}">» League History</a>
@@ -78,32 +80,32 @@
   <div class="span4">
     <h3>Finances</h3>
     <p>
-      Avg Attendance: {{numberWithCommas att}}<br>
-      Revenue (YTD): {{currency revenue "M"}}<br>
-      Profit (YTD): {{currency profit "M"}}<br>
-      Cash: {{currency cash "M"}}<br>
-      Payroll: {{currency payroll "M"}}<br>
-      Salary Cap: {{currency salaryCap "M"}}<br>
+      Avg Attendance: <span data-bind="numberWithCommas: att"></span><br>
+      Revenue (YTD): <span data-bind="currency: [revenue, 'M']"></span><br>
+      Profit (YTD): <span data-bind="currency: [profit, 'M']"></span><br>
+      Cash: <span data-bind="currency: [cash, 'M']"></span><br>
+      Payroll: <span data-bind="currency: [payroll, 'M']"></span><br>
+      Salary Cap: <span data-bind="currency: [salaryCap, 'M']"></span><br>
       <a data-bind="attrLeagueUrl: {href: ['finances']}">» League Finances</a>
     </p>
 
     <h3>Top Free Agents</h3>
     <p>
-      {{#unless freeAgents}}None.<br>{{/unless}}
-      {{#freeAgents}}
-        <a data-bind="attrLeagueUrl: {href: ['player', pid]}">{{name}}</a>: {{age}} yo, {{ovr}} ovr, {{pot}} pot</span><br>
-      {{/freeAgents}}
-      (You have {{numRosterSpots}} open roster spots)<br>
+      <span data-bind="visible: freeAgents().length === 0">None.<br></span>
+      <!-- ko foreach: freeAgents -->
+        <a data-bind="attrLeagueUrl: {href: ['player', pid]}, text: name"></a>: <span data-bind="text: age"></span> yo, <span data-bind="text: ovr"></span> ovr, <span data-bind="text: pot"></span> pot</span><br>
+      <!-- /ko -->
+      (You have <span data-bind="text: numRosterSpots"></span> open roster spots)<br>
       <a data-bind="attrLeagueUrl: {href: ['free_agents']}">» Free Agents</a>
     </p>
 
     <h3>Expiring Contracts</h3>
     <p>
-      {{#unless expiring}}None.<br>{{/unless}}
-      {{#expiring}}
-        <a data-bind="attrLeagueUrl: {href: ['player', pid]}">{{name}}</a>: {{age}} yo, {{currency contractAmount "M"}}<br>
-        <span style="margin-left: 2em">{{round pts 1}} pts, {{ovr}} ovr, {{pot}} pot</span><br>
-      {{/expiring}}
+      <span data-bind="visible: expiring().length === 0">None.<br></span>
+      <!-- ko foreach: expiring -->
+        <a data-bind="attrLeagueUrl: {href: ['player', pid]}, text: name"></a>: <span data-bind="text: age"></span> yo, <span data-bind="currency: [contractAmount, 'M']"></span><br>
+        <span style="margin-left: 2em"><span data-bind="round: [pts, 1]"></span> pts, <span data-bind="text: ovr"></span> ovr, <span data-bind="text: pot"></span> pot</span><br>
+      <!-- /ko -->
       <a data-bind="attrLeagueUrl: {href: ['roster']}">» Full Roster</a>
     </p>
   </div>

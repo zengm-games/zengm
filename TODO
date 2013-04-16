@@ -2,7 +2,6 @@ smarter realtime
 ----------------
 
 dashboard
-  get working with ko
   observables set right by mapping
     historical things (old scores, old records) don't need to be observable
   granular updates - promises?

@@ -4,13 +4,12 @@ smarter realtime
 dashboard
   observables set right by mapping
     historical things (old scores, old records) don't need to be observable
-  granular updates
-    within each of these deferred functions, add a check to see if an update is necessary
-      might have to break them up more
-    update vm directly from functions?
-      if so, will need to define structure earlier
-    move functions to module-level scope?
-shouldn't have newPhase updateEvent. just have an array of what changed in that phase
+    arrays need correct keys
+  update vm directly from functions?
+    if so, will need to define structure earlier
+  move functions to module-level scope?
+shouldn't have newPhase updateEvent doing much. instead, have an array of what changed in that phase
+  (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON) should be newSeason
 team finances
   rounded budget amounts are not updated
     they are saved correctly, but knockout doesn't seem to update the UI http://stackoverflow.com/questions/16006558/updating-an-input-whose-value-attribute-is-bound-to-an-observable-after-editing

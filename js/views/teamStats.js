@@ -26,7 +26,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
         }
     };
 
-    function updatePlayerStats(inputs, updateEvents, vm) {
+    function updateTeams(inputs, updateEvents, vm) {
         var attributes, deferred, seasonAttributes, stats, vars;
 
         if ((inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.season !== vm.season()) {
@@ -67,7 +67,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
         get: get,
         InitViewModel: InitViewModel,
         mapping: mapping,
-        runBefore: [updatePlayerStats],
+        runBefore: [updateTeams],
         uiEvery: uiEvery
     });
 });

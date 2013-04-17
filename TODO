@@ -1,8 +1,14 @@
 smarter realtime
 ----------------
 
+how to exit out of GET early, like in trade, roster where it tries to return Davis?
 port to bbgmView
   trade
+    convert to vars
+    is initvm minimal?
+    is generated vm correct?
+    call updateSummary from runBefore? or does it need updateTrade to finish first?
+    uiFirst/uiEvery sets vm property - that ok? update docs
   inbox
   message
   draftSummary

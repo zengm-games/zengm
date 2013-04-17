@@ -345,11 +345,13 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "lib
         }
     }
 
+    function uiFirst() {
+        ui.title("Dashboard");
+    }
+
     return bbgmView.init({
         id: "leagueDashboard",
         runBefore: [updateTeam, updatePayroll, updateTeams, updateGames, updateSchedule, updatePlayers, updatePlayoffs],
-        uiFirst: function () {
-            ui.title("Dashboard");
-        }
+        uiFirst: uiFirst
     });
 });

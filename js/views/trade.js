@@ -2,30 +2,39 @@
  * @name views.trade
  * @namespace Trade.
  */
-define(["db", "globals", "ui", "core/trade", "lib/davis", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, trade, Davis, $, ko, _, bbgmView, helpers, viewHelpers) {
+define(["db", "globals", "ui", "core/trade", "lib/davis", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, trade, Davis, $, ko, komapping, _, bbgmView, helpers, viewHelpers) {
     "use strict";
 
-    function updateSummary(vm, cb) {
+    var mapping;
+
+    // This relies on vars being populated, so it can't be called in parallel with updateTrade
+    function updateSummary(vars, cb) {
         var otherPids, userPids;
 
-        otherPids = vm.otherPids();
-        userPids = vm.userPids();
+        otherPids = vars.otherPids;
+        userPids = vars.userPids;
 
         trade.getOtherTid(function (otherTid) {
             trade.summary(otherTid, userPids, otherPids, function (summary) {
                 var i;
 
-                vm.summary.enablePropose(!summary.warning && (userPids.length > 0 || otherPids.length > 0));
-                vm.summary.warning(summary.warning);
+                vars.summary = {
+                    enablePropose: !summary.warning && (userPids.length > 0 || otherPids.length > 0),
+                    warning: summary.warning
+                };
 
+                vars.summary.teams = [];
                 for (i = 0; i < 2; i++) {
-                    vm.summary.teams[i].name(summary.teams[i].name);
-                    vm.summary.teams[i].payrollAfterTrade(summary.teams[i].payrollAfterTrade);
-                    vm.summary.teams[i].total(summary.teams[i].total);
-                    vm.summary.teams[i].trade(summary.teams[i].trade);
+                    vars.summary.teams[i] = {
+                        name: summary.teams[i].name,
+                        payrollAfterTrade: summary.teams[i].payrollAfterTrade,
+                        total: summary.teams[i].total,
+                        trade: summary.teams[i].trade,
+                        other: i === 0 ? 1 : 0  // Index of other team
+                    };
                 }
 
-                cb();
+                cb(vars);
             });
         });
     }
@@ -79,35 +88,32 @@ define(["db", "globals", "ui", "core/trade", "lib/davis", "lib/jquery", "lib/kno
     }
 
     function InitViewModel() {
-        this.salaryCap = ko.observable(g.salaryCap / 1000);
-        this.userPids = ko.observable([]);
-        this.otherPids = ko.observable([]);
         this.userRoster = [];
         this.otherRoster = [];
-        this.message = ko.observable();
         this.teams = [];
         this.userTeamName = undefined;
         this.summary = {
-            enablePropose: ko.observable(false),
-            warning: ko.observable(),
-            teams: [
-                {
-                    name: ko.observable(),
-                    payrollAfterTrade: ko.observable(),
-                    total: ko.observable(),
-                    trade: ko.observable([])
-                },
-                {
-                    name: ko.observable(),
-                    payrollAfterTrade: ko.observable(),
-                    total: ko.observable(),
-                    trade: ko.observable([])
-                }
-            ]
+            enablePropose: ko.observable(false)
         };
-        this.summary.teams[0].other = this.summary.teams[1];
-        this.summary.teams[1].other = this.summary.teams[0];
     }
+
+    mapping = {
+        userRoster: {
+            create: function (options) {
+                return options.data;
+            }
+        },
+        otherRoster: {
+            create: function (options) {
+                return options.data;
+            }
+        },
+        teams: {
+            create: function (options) {
+                return options.data;
+            }
+        }
+    };
 
     function updateTrade(inputs, updateEvents, vm) {
         var deferred, vars;
@@ -148,18 +154,21 @@ define(["db", "globals", "ui", "core/trade", "lib/davis", "lib/jquery", "lib/kno
                             }
                         }
 
-                        vm.userPids(userPids);
-                        vm.otherPids(otherPids);
-                        vm.userRoster = userRoster;
-                        vm.otherRoster = otherRoster;
-                        vm.message(inputs.message);
+                        vars = {
+                            salaryCap: g.salaryCap / 1000,
+                            userPids: userPids,
+                            otherPids: otherPids,
+                            userRoster: userRoster,
+                            otherRoster: otherRoster,
+                            message: inputs.message
+                        };
 
-                        updateSummary(vm, function () {
+                        updateSummary(vars, function (vars) {
                             if (vm.teams.length === 0) {
                                 teams = helpers.getTeams(otherTid);
-                                vm.userTeamName = teams[g.userTid].region + " " + teams[g.userTid].name;
+                                vars.userTeamName = teams[g.userTid].region + " " + teams[g.userTid].name;
                                 teams.splice(g.userTid, 1);  // Can't trade with yourself
-                                vm.teams = teams;
+                                vars.teams = teams;
                             }
 
                             deferred.resolve(vars);
@@ -225,11 +234,16 @@ define(["db", "globals", "ui", "core/trade", "lib/davis", "lib/jquery", "lib/kno
             otherPids = _.map(_.pluck(_.filter(serialized, function (o) { return o.name === "other-pids"; }), "value"), Math.floor);
 
             trade.updatePlayers(userPids, otherPids, function (userPids, otherPids) {
-                vm.userPids(userPids);
-                vm.otherPids(otherPids);
+                var vars;
 
-                updateSummary(vm, function () {
+                vars = {};
+                vars.userPids = userPids;
+                vars.otherPids = otherPids;
+
+                updateSummary(vars, function (vars) {
                     var found, i, j;
+
+                    komapping.fromJS(vars, mapping, vm);
 
                     for (i = 0; i < rosterCheckboxesUser.length; i++) {
                         found = false;
@@ -267,6 +281,7 @@ define(["db", "globals", "ui", "core/trade", "lib/davis", "lib/jquery", "lib/kno
         get: get,
         post: post,
         InitViewModel: InitViewModel,
+        mapping: mapping,
         runBefore: [updateTrade],
         uiFirst: uiFirst,
         uiEvery: uiEvery

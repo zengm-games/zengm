@@ -5,13 +5,13 @@
 define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, season, $, ko, mapping, _, bbgmView, helpers, viewHelpers) {
     "use strict";
 
-    function getTeam(inputs, updateEvents) {
+    function updateTeam(inputs, updateEvents) {
         var deferred, vars;
 
-        deferred = $.Deferred();
-        vars = {};
-
         if (inputs.firstRun || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON)) {
+            deferred = $.Deferred();
+            vars = {};
+
             g.dbl.transaction("teams").objectStore("teams").get(g.userTid).onsuccess = function (event) {
                 var extraText, i, userTeam, userTeamSeason;
 
@@ -57,7 +57,7 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "lib
         }
     }
 
-    function getPayroll(inputs, updateEvents) {
+    function updatePayroll(inputs, updateEvents) {
         var deferred, vars;
 
         deferred = $.Deferred();
@@ -74,13 +74,13 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "lib
     }
 
 
-    function getTeams(inputs, updateEvents) {
+    function updateTeams(inputs, updateEvents) {
         var attributes, deferred, seasonAttributes, stats, vars;
 
-        deferred = $.Deferred();
-        vars = {};
-
         if (inputs.firstRun || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON)) {
+            deferred = $.Deferred();
+            vars = {};
+
             attributes = ["tid", "cid"];
             stats = ["pts", "oppPts", "trb", "ast"];  // This is also used later to find ranks for these team stats
             seasonAttributes = ["won", "lost", "winp", "streakLong", "att", "revenue", "profit"];
@@ -126,13 +126,13 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "lib
         }
     }
 
-    function getGames(inputs, updateEvents) {
+    function updateGames(inputs, updateEvents) {
         var deferred, vars;
 
-        deferred = $.Deferred();
-        vars = {};
-
         if (inputs.firstRun || updateEvents.indexOf("gameSim") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON)) {
+            deferred = $.Deferred();
+            vars = {};
+
             g.dbl.transaction("games").objectStore("games").index("season").getAll(g.season).onsuccess = function (event) {
                 var games, i, overtime;
 
@@ -183,13 +183,13 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "lib
         }
     }
 
-    function getSchedule(inputs, updateEvents) {
+    function updateSchedule(inputs, updateEvents) {
         var deferred, vars;
 
-        deferred = $.Deferred();
-        vars = {};
-
         if (inputs.firstRun || updateEvents.indexOf("gameSim") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON)) {
+            deferred = $.Deferred();
+            vars = {};
+
             season.getSchedule(null, 0, function (schedule) {
                 var i;
 
@@ -211,13 +211,13 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "lib
         }
     }
 
-    function getPlayers(inputs, updateEvents) {
+    function updatePlayers(inputs, updateEvents) {
         var deferred, vars;
 
-        deferred = $.Deferred();
-        vars = {};
-
         if (inputs.firstRun || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON)) {
+            deferred = $.Deferred();
+            vars = {};
+
             g.dbl.transaction("players").objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(g.PLAYER.RETIRED, true)).onsuccess = function (event) {
                 var attributes, i, freeAgents, leagueLeaders, players, ratings, stats, userPlayers;
 
@@ -297,16 +297,16 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "lib
         }
     }
 
-    function getPlayoffs(inputs, updateEvents) {
+    function updatePlayoffs(inputs, updateEvents) {
         var deferred, vars;
 
-        deferred = $.Deferred();
-        vars = {};
-
-        vars.showPlayoffSeries = false;
-        vars.playoffsStarted = g.phase >= g.PHASE.PLAYOFFS;
-
         if (inputs.firstRun || (g.phase >= g.PHASE.PLAYOFFS && updateEvents.indexOf("gameSim") >= 0) || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PLAYOFFS)) {
+            deferred = $.Deferred();
+            vars = {
+                showPlayoffSeries: false,
+                playoffsStarted: g.phase >= g.PHASE.PLAYOFFS
+            };
+
             g.dbl.transaction("playoffSeries").objectStore("playoffSeries").get(g.season).onsuccess = function (event) {
                 var data, found, i, playoffSeries, rnd, series;
 
@@ -347,7 +347,7 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "lib
 
     return bbgmView.init({
         id: "leagueDashboard",
-        runBefore: [getTeam, getPayroll, getTeams, getGames, getSchedule, getPlayers, getPlayoffs],
+        runBefore: [updateTeam, updatePayroll, updateTeams, updateGames, updateSchedule, updatePlayers, updatePlayoffs],
         uiFirst: function () {
             ui.title("Dashboard");
         }

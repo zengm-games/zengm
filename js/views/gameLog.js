@@ -120,47 +120,32 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
         }
     }
 
-    /**
-     * Update the game log list, as necessary.
-     *
-     * If the game log list is already loaded, nothing is done. If the game log list is loaded and a new game has been played, update. If the game log list is not loaded, load it.
-     *
-     * @memberOf views.gameLog
-     * @param {string} abbrev Abbrev of the team for the list of games.
-     * @param {number} season Season for the list of games.
-     * @param {number} gid Integer game ID for the box score (a negative number means no box score), which is used only for highlighting the relevant entry in the list.
-     * @param {Array.<string>} updateEvents Information about what caused this update, e.g. "gameSim" or "newPhase". Empty on normal page loads (i.e. from clicking a link).
-     * @param {function()} cb Callback.
-     */
-    function getGamesList(inputs, updateEvents, vm) {
-        var deferred, vars;
+    function get(req) {
+        var inputs, out;
 
-        deferred = $.Deferred();
-        vars = {};
+        inputs = {};
 
-        if (inputs.abbrev !== vm.gamesList.abbrev() || inputs.season !== vm.gamesList.season()) {
-            // Load all games in list
-            vm.gamesList.loading(true);
-            vm.gamesList.games([]);
-            gameLogList(inputs.abbrev, inputs.season, inputs.gid, vm.gamesList.games(), function (games) {
-                vm.gamesList.games(games);
-                vm.gamesList.abbrev(inputs.abbrev);
-                vm.gamesList.season(inputs.season);
-                vm.gamesList.loading(false);
-                deferred.resolve();
-            });
-            return deferred.promise();
-        } else if (updateEvents.indexOf("gameSim") >= 0 && inputs.season === g.season) {
-            // Partial update of only new games
-            gameLogList(inputs.abbrev, inputs.season, inputs.gid, vm.gamesList.games(), function (games) {
-                var i;
-                for (i = games.length - 1; i >= 0; i--) {
-                    vm.gamesList.games.unshift(games[i]);
-                }
-                deferred.resolve();
-            });
-            return deferred.promise();
-        }
+        out = helpers.validateAbbrev(req.params.abbrev);
+        inputs.abbrev = out[1];
+        inputs.season = helpers.validateSeason(req.params.season);
+        inputs.gid = req.params.gid !== undefined ? parseInt(req.params.gid, 10) : -1;
+
+        return inputs;
+    }
+
+    function InitViewModel(inputs) {
+        this.abbrev = ko.observable(inputs.abbrev);
+        this.season = ko.observable(inputs.season);
+        this.boxScore = {
+            gid: ko.observable(),
+            html: ko.observable()
+        };
+        this.gamesList = {
+            abbrev: ko.observable(),
+            loading: ko.observable(true),
+            season: ko.observable(),
+            games: ko.observableArray([])
+        };
     }
 
     /**
@@ -172,7 +157,7 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
      * @param {number} gid Integer game ID for the box score (a negative number means no box score).
      * @param {function()} cb Callback.
      */
-    function getBoxScore(inputs, updateEvents, vm) {
+    function updateBoxScore(inputs, updateEvents, vm) {
         var deferred, vars;
 
         deferred = $.Deferred();
@@ -191,38 +176,48 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
         }
     }
 
-    function vmInit(inputs) {
-        var vm;
+    /**
+     * Update the game log list, as necessary.
+     *
+     * If the game log list is already loaded, nothing is done. If the game log list is loaded and a new game has been played, update. If the game log list is not loaded, load it.
+     *
+     * @memberOf views.gameLog
+     * @param {string} abbrev Abbrev of the team for the list of games.
+     * @param {number} season Season for the list of games.
+     * @param {number} gid Integer game ID for the box score (a negative number means no box score), which is used only for highlighting the relevant entry in the list.
+     * @param {Array.<string>} updateEvents Information about what caused this update, e.g. "gameSim" or "newPhase". Empty on normal page loads (i.e. from clicking a link).
+     * @param {function()} cb Callback.
+     */
+    function updateGamesList(inputs, updateEvents, vm) {
+        var deferred, vars;
 
-        vm = {
-            abbrev: ko.observable(inputs.abbrev),
-            season: ko.observable(inputs.season),
-            boxScore: {
-                gid: ko.observable(),
-                html: ko.observable()
-            },
-            gamesList: {
-                abbrev: ko.observable(),
-                loading: ko.observable(true),
-                season: ko.observable(),
-                games: ko.observableArray([])
-            }
-        };
+        deferred = $.Deferred();
+        vars = {};
 
-        return vm;
-    }
-
-    function get(req) {
-        var inputs, out;
-
-        inputs = {};
-
-        out = helpers.validateAbbrev(req.params.abbrev);
-        inputs.abbrev = out[1];
-        inputs.season = helpers.validateSeason(req.params.season);
-        inputs.gid = req.params.gid !== undefined ? parseInt(req.params.gid, 10) : -1;
-
-        return inputs;
+        if (inputs.abbrev !== vm.gamesList.abbrev() || inputs.season !== vm.gamesList.season()) {
+            // Load all games in list
+            vm.gamesList.loading(true);
+            vm.gamesList.games([]);
+            gameLogList(inputs.abbrev, inputs.season, inputs.gid, vm.gamesList.games(), function (games) {
+                vm.gamesList.games(games);
+                vm.gamesList.abbrev(inputs.abbrev);
+                vm.gamesList.season(inputs.season);
+                vm.gamesList.loading(false);
+                deferred.resolve();
+            });
+            return deferred.promise();
+        }
+        if (updateEvents.indexOf("gameSim") >= 0 && inputs.season === g.season) {
+            // Partial update of only new games
+            gameLogList(inputs.abbrev, inputs.season, inputs.gid, vm.gamesList.games(), function (games) {
+                var i;
+                for (i = games.length - 1; i >= 0; i--) {
+                    vm.gamesList.games.unshift(games[i]);
+                }
+                deferred.resolve();
+            });
+            return deferred.promise();
+        }
     }
 
     function uiEvery(updateEvents, vm) {
@@ -238,9 +233,9 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
     return bbgmView.init({
         id: "gameLog",
         get: get,
-        vmInit: vmInit,
-        runBefore: [getBoxScore],
-        runWhenever: [getGamesList],
+        InitViewModel: InitViewModel,
+        runBefore: [updateBoxScore],
+        runWhenever: [updateGamesList],
         uiEvery: uiEvery
     });
 });

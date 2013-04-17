@@ -1,12 +1,14 @@
 smarter realtime
 ----------------
 
+on porting to bbgmView
+  import knockout mapping as komapping
 gameLog
-  get working
   update docs
-  tests
+  make sure observables are being set correctly
 bbgmView
   IMPORTANT:
+    better way of setting title, like in a computed observable or binding or something
     can i make things cleaner by relying on "this" rather than manually passing everything?
     wait.. why don't I have runBefore and runWhenever functions write directly to the vm? does that work for functions executing in parallel?
     DOCUMENT! base on original notes, as well as HACKING
@@ -17,6 +19,7 @@ bbgmView
     let's say runWhenever generates something that needs to be displayed independent of knockout, like a datatable. how to ensure this only happens after display()?
       quick fix: only run runWhenever after display(), at least until this problem is resolved
       could imagine better fixes, but the ultimate solution is to get rid of the DOM dependence (datatables) and start runWhenever immediately
+      datatable should be done in uiEvery, so this shouldn't be an issue. wait and see, though
     do idLoaded/idLoading work?
       can i do some check to abandon in display if idLoading is mismatched with reality?
       click link twice quickly - should work

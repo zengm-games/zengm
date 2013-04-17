@@ -2,7 +2,7 @@
  * @name util.bbgmView
  * @namespace Framework for loading, displaying, and updating content. bbgmView is designed so that it is easy to write UIs that are granular in both reading from the database and updating the DOM, to minimize useless updates to previously cached or displayed values.
  */
-define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/viewHelpers"], function (g, ui, $, ko, mapping, _, viewHelpers) {
+define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/viewHelpers"], function (g, ui, $, ko, komapping, _, viewHelpers) {
     "use strict";
 
     var vm;
@@ -43,7 +43,7 @@ console.log('draw from scratch')
                 inputs.firstRun = true;
 
                 // View model
-                vm = args.vmInit(inputs);
+                vm = new args.InitViewModel(inputs);
             }
 
             $.when.apply(null, _.map(args.runBefore, function (fn) {
@@ -57,7 +57,7 @@ console.log('draw from scratch')
                     vars = arguments[0];
                 }
 
-                mapping.fromJS(vars, args.mapping, vm);
+                komapping.fromJS(vars, args.mapping, vm);
 //console.log(vars);
 //console.log(vm);
 
@@ -72,7 +72,7 @@ console.log('draw from scratch')
                 for (i = 0; i < args.runWhenever.length; i++) {
                     $.when(args.runWhenever[i](inputs, updateEvents, vm)).done(function (vars) {
                         if (vars !== undefined) {
-                            mapping.fromJS(vars, args.mapping, vm);
+                            komapping.fromJS(vars, args.mapping, vm);
                         }
 
                         afterEverything();
@@ -104,7 +104,7 @@ console.log('draw from scratch')
     function init(args) {
         var output;
 
-        args.vmInit = args.vmInit !== undefined ? args.vmInit : {};
+        args.InitViewModel = args.InitViewModel !== undefined ? args.InitViewModel : function () { };
         args.get = args.get !== undefined ? args.get : function () { return {}; };
         args.runWhenever = args.runWhenever !== undefined ? args.runWhenever : [];
         args.mapping = args.mapping !== undefined ? args.mapping : {};

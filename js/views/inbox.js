@@ -2,28 +2,15 @@
  * @name views.inbox
  * @namespace Inbox.
  */
-define(["globals", "ui", "lib/knockout", "util/viewHelpers"], function (g, ui, ko, viewHelpers) {
+define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/viewHelpers"], function (g, ui, $, bbgmView, viewHelpers) {
     "use strict";
 
-    var vm;
+    function updateInbox(cb) {
+        var deferred, vars;
 
-    function display(cb) {
-        var leagueContentEl;
+        deferred = $.Deferred();
+        vars = {};
 
-        leagueContentEl = document.getElementById("league_content");
-        if (leagueContentEl.dataset.id !== "inbox") {
-            ui.update({
-                container: "league_content",
-                template: "inbox"
-            });
-            ko.applyBindings(vm, leagueContentEl);
-        }
-        ui.title("Inbox");
-
-        cb();
-    }
-
-    function loadBefore(cb) {
         g.dbl.transaction("messages").objectStore("messages").getAll().onsuccess = function (event) {
             var anyUnread, data, i, messages;
 
@@ -36,41 +23,26 @@ define(["globals", "ui", "lib/knockout", "util/viewHelpers"], function (g, ui, k
                 if (!messages[i].read) {
                     anyUnread = true;
                 }
-                messages[i].read = ko.observable(messages[i].read);
             }
 
-            vm.anyUnread(anyUnread);
-            vm.messages(messages);
-
-            cb();
-        };
-    }
-
-    function update(updateEvents, cb) {
-        var leagueContentEl;
-
-        leagueContentEl = document.getElementById("league_content");
-        if (leagueContentEl.dataset.id !== "inbox") {
-            ko.cleanNode(leagueContentEl);
-            vm = {
-                anyUnread: ko.observable(false),
-                messages: ko.observableArray([])
+            vars = {
+                anyUnread: anyUnread,
+                messages: messages
             };
-        }
 
-        loadBefore(function () {
-            display(cb);
-        });
+            deferred.resolve(vars);
+        };
+
+        return deferred.promise();
     }
 
-    function get(req) {
-        viewHelpers.beforeLeague(req, function (updateEvents, cb) {
-            update(updateEvents, cb);
-        });
+    function uiFirst() {
+        ui.title("Inbox");
     }
 
-    return {
-        update: update,
-        get: get
-    };
+    return bbgmView.init({
+        id: "inbox",
+        runBefore: [updateInbox],
+        uiFirst: uiFirst
+    });
 });

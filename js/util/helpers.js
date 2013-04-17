@@ -260,6 +260,7 @@ define(["globals", "lib/jquery"], function (g, $) {
                 title: "Error",
                 vars: {error: req.params.error}
             };
+
             ui.update(data, req.raw.cb);
         });
     }
@@ -274,6 +275,7 @@ define(["globals", "lib/jquery"], function (g, $) {
     function error(errorText, cb) {
         var lid, req;
 
+console.log(cb);
         req = {params: {error: errorText}, raw: {cb: cb !== undefined ? cb : undefined}};
 
         lid = location.pathname.split("/")[2]; // lid derived from URL

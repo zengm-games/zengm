@@ -50,7 +50,7 @@ define(["db", "globals", "ui", "core/trade", "lib/davis", "lib/jquery", "lib/kno
 
     function get(req) {
         if (g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.PLAYOFFS) {
-            return helpers.error("You're not allowed to make trades now.", req);
+            return helpers.error("You're not allowed to make trades now.", req.raw.cb);
         }
 
         return {

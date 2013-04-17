@@ -1,9 +1,10 @@
 smarter realtime
 ----------------
 
-how to exit out of GET early, like in trade, roster where it tries to return Davis?
+how to exit out of GET early, like in trade, roster, draftSummary where it tries to return Davis?
+  any other views that do thsi? search for helpers.error and DAvis
+  maybe return an error message from GET and have bbgmView handle it?
 port to bbgmView
-  draftSummary
   leaders
 on porting to bbgmView
   import knockout mapping as komapping

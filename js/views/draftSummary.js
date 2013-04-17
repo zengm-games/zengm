@@ -2,38 +2,53 @@
  * @name views.draftSummary
  * @namespace Draft summary.
  */
-define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/helpers", "util/viewHelpers"], function (db, g, ui, $, ko, _, components, helpers, viewHelpers) {
+define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, $, ko, _, components, bbgmView, helpers, viewHelpers) {
     "use strict";
 
-    var players, vm;
+    var mapping;
 
-    function display(updateEvents, cb) {
-        var leagueContentEl, season;
+    function get(req) {
+        var season;
 
-        season = vm.season();
+        season = helpers.validateSeason(req.params.season);
 
-        leagueContentEl = document.getElementById("league_content");
-        if (leagueContentEl.dataset.id !== "draftSummary") {
-            ui.update({
-                container: "league_content",
-                template: "draftSummary"
-            });
-            ko.applyBindings(vm, leagueContentEl);
+        // Draft hasn't happened yet this year
+        if (g.phase < g.PHASE.DRAFT) {
+            // View last season by default
+            if (season >= g.season) {
+                season = g.season - 1;
+            }
         }
-        ui.title(season + " Draft Summary");
 
-        components.dropdown("draft-summary-dropdown", ["seasons"], [season], updateEvents);
+        if (season < g.startingSeason) {
+            return helpers.error("There is no draft history yet. Check back after the draft.", req.raw.cb);
+        }
 
-        ui.datatableSinglePage($("#draft-results"), 0, _.map(players, function (p) {
-            return [p.draft.round + '-' + p.draft.pick, '<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>', p.pos, '<a href="/l/' + g.lid + '/roster/' + p.draft.abbrev + '">' + p.draft.abbrev + '</a>', String(p.draft.age), String(p.draft.ovr), String(p.draft.pot), '<span class="skills_alone">' + helpers.skillsBlock(p.draft.skills) + '</span>', '<a href="/l/' + g.lid + '/roster/' + p.currentAbbrev + '">' + p.currentAbbrev + '</a>', String(p.currentAge), String(p.currentOvr), String(p.currentPot), '<span class="skills_alone">' + helpers.skillsBlock(p.currentSkills) + '</span>', helpers.round(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1)];
-        }));
-
-        cb();
+        return {
+            season: season
+        };
     }
 
-    function loadBefore(season, cb) {
-        g.dbl.transaction("players").objectStore("players").index("draft.year").getAll(season).onsuccess = function (event) {
-            var attributes, currentPr, data, i, pa, player, playersAll, ratings, stats;
+    function InitViewModel() {
+        this.players = [];
+    }
+
+    mapping = {
+        players: {
+            create: function (options) {
+                return options.data;
+            }
+        }
+    };
+
+    function updateDraftSummary(inputs) {
+        var deferred, vars;
+
+        deferred = $.Deferred();
+        vars = {};
+
+        g.dbl.transaction("players").objectStore("players").index("draft.year").getAll(inputs.season).onsuccess = function (event) {
+            var attributes, currentPr, data, i, pa, player, players, playersAll, ratings, stats;
 
             attributes = ["tid", "abbrev", "draft", "pid", "name", "pos", "age"];
             ratings = ["ovr", "pot", "skills"];
@@ -67,52 +82,37 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
                 }
             }
 
-            vm.season(season);
-
-            cb();
-        };
-    }
-
-    function update(season, updateEvents, cb) {
-        var leagueContentEl;
-
-        leagueContentEl = document.getElementById("league_content");
-        if (leagueContentEl.dataset.id !== "draftSummary") {
-            ko.cleanNode(leagueContentEl);
-            vm = {
-                season: ko.observable()
+            vars = {
+                season: inputs.season,
+                players: players
             };
-        }
 
-        loadBefore(season, function () {
-            display(updateEvents, cb);
-        });
+            deferred.resolve(vars);
+        };
+
+        return deferred.promise();
     }
 
-    function get(req) {
-        viewHelpers.beforeLeague(req, function (updateEvents, cb) {
-            var season;
+    function uiEvery(updateEvents, vm) {
+        var season;
 
-            season = helpers.validateSeason(req.params.season);
+        season = vm.season();
 
-            // Draft hasn't happened yet this year
-            if (g.phase < g.PHASE.DRAFT) {
-                // View last season by default
-                if (season >= g.season) {
-                    season = g.season - 1;
-                }
-            }
+        ui.title(season + " Draft Summary");
 
-            if (season < g.startingSeason) {
-                return helpers.error("There is no draft history yet. Check back after the draft.", cb);
-            }
+        components.dropdown("draft-summary-dropdown", ["seasons"], [season], updateEvents);
 
-            update(season, updateEvents, cb);
-        });
+        ui.datatableSinglePage($("#draft-results"), 0, _.map(vm.players, function (p) {
+            return [p.draft.round + '-' + p.draft.pick, '<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>', p.pos, '<a href="/l/' + g.lid + '/roster/' + p.draft.abbrev + '">' + p.draft.abbrev + '</a>', String(p.draft.age), String(p.draft.ovr), String(p.draft.pot), '<span class="skills_alone">' + helpers.skillsBlock(p.draft.skills) + '</span>', '<a href="/l/' + g.lid + '/roster/' + p.currentAbbrev + '">' + p.currentAbbrev + '</a>', String(p.currentAge), String(p.currentOvr), String(p.currentPot), '<span class="skills_alone">' + helpers.skillsBlock(p.currentSkills) + '</span>', helpers.round(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1)];
+        }));
     }
 
-    return {
-        update: update,
-        get: get
-    };
+    return bbgmView.init({
+        id: "draftSummary",
+        get: get,
+        InitViewModel: InitViewModel,
+        mapping: mapping,
+        runBefore: [updateDraftSummary],
+        uiEvery: uiEvery
+    });
 });

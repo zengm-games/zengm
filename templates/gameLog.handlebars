@@ -16,9 +16,9 @@
     </thead>
     <tbody data-bind="foreach: gamesList.games">
       <tr data-bind="attr: {class: selected ? 'alert-info' : ''}">
-        <td><a data-bind="attr: {href: url}, text: (home ? '' : '@') + oppAbbrev"></a></td>
-        <td><a data-bind="attr: {href: url}, text: won ? 'W' : 'L'"></a></td>
-        <td><a data-bind="attr: {href: url}, text: pts + '-' + oppPts + overtime"></a></td>
+        <td><a data-bind="attrLeagueUrl: {href: ['game_log', $root.abbrev, $root.season, gid]}, text: (home ? '' : '@') + oppAbbrev"></a></td>
+        <td><a data-bind="attrLeagueUrl: {href: ['game_log', $root.abbrev, $root.season, gid]}, text: won ? 'W' : 'L'"></a></td>
+        <td><a data-bind="attrLeagueUrl: {href: ['game_log', $root.abbrev, $root.season, gid]}, text: pts + '-' + oppPts + overtime"></a></td>
       </tr>
     </tbody>
     <tr data-bind="visible: gamesList.loading()"><td colspan="3" style="padding: 4px 5px;">Loading...</td></tr>

@@ -1,11 +1,18 @@
 smarter realtime
 ----------------
 
+gameLog
+  get working
+  update docs
+  tests
 bbgmView
   IMPORTANT:
+    can i make things cleaner by relying on "this" rather than manually passing everything?
+    wait.. why don't I have runBefore and runWhenever functions write directly to the vm? does that work for functions executing in parallel?
     DOCUMENT! base on original notes, as well as HACKING
     what about vm.firstRun? How to know it's first time? put firstRun in inputs.firstRun
-      should there be a special place to set parts of vm that are never updated?
+      should there be a special place to set parts of vm that are never updated? or computed things?
+        run "computeds()" after runBefore, but before display
     what if runBefore/runWhenever functions are not independent? does this ever happen?
     let's say runWhenever generates something that needs to be displayed independent of knockout, like a datatable. how to ensure this only happens after display()?
       quick fix: only run runWhenever after display(), at least until this problem is resolved

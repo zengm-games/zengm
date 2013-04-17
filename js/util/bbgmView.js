@@ -19,11 +19,11 @@ console.log('draw from scratch')
             });
             ko.applyBindings(vm, leagueContentEl);
             if (args.uiFirst !== undefined) {
-                args.uiFirst();
+                args.uiFirst(vm);
             }
         }
         if (args.uiEvery !== undefined) {
-            args.uiEvery();
+            args.uiEvery(updateEvents, vm);
         }
     }
 
@@ -42,17 +42,24 @@ console.log('draw from scratch')
 
                 inputs.firstRun = true;
 
-                // View model - starts empty only on new page load. Otherwise, this is already populated with some values.
-                vm = {};
+                // View model
+                vm = args.vmInit(inputs);
             }
 
             $.when.apply(null, _.map(args.runBefore, function (fn) {
-                return fn(inputs, updateEvents);
+                return fn(inputs, updateEvents, vm);
             })).done(function () {
                 var afterEverything, i, vars;
 
-                vars = $.extend.apply(null, arguments);
+                if (arguments.length > 1) {
+                    vars = $.extend.apply(null, arguments);
+                } else {
+                    vars = arguments[0];
+                }
+
                 mapping.fromJS(vars, args.mapping, vm);
+//console.log(vars);
+//console.log(vm);
 
                 display(args, updateEvents);
 
@@ -63,8 +70,10 @@ console.log('draw from scratch')
                 });
 
                 for (i = 0; i < args.runWhenever.length; i++) {
-                    $.when(args.runWhenever[i](inputs, updateEvents)).done(function (vars) {
-                        mapping.fromJS(vars, args.mapping, vm);
+                    $.when(args.runWhenever[i](inputs, updateEvents, vm)).done(function (vars) {
+                        if (vars !== undefined) {
+                            mapping.fromJS(vars, args.mapping, vm);
+                        }
 
                         afterEverything();
                     });
@@ -95,8 +104,9 @@ console.log('draw from scratch')
     function init(args) {
         var output;
 
-        args.runWhenever = args.runWhenever !== undefined ? args.runWhenever : [];
+        args.vmInit = args.vmInit !== undefined ? args.vmInit : {};
         args.get = args.get !== undefined ? args.get : function () { return {}; };
+        args.runWhenever = args.runWhenever !== undefined ? args.runWhenever : [];
         args.mapping = args.mapping !== undefined ? args.mapping : {};
 
         output = {};

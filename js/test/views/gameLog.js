@@ -71,27 +71,27 @@ define(["db", "globals", "core/league", "lib/jquery", "views/gameLog"], function
             $("#testsWrapper").remove();
         });
         afterEach(function () {
-            document.getElementById("league_content").dataset.id = "";
+            document.getElementById("league_content").dataset.idLoaded = "";
             document.getElementById("league_content").innerHTML = "";
         });
 
         describe("#update()", function () {
             it("should load complete UI if gameLog is not already loaded", function (done) {
                 confirmNotBuilt();
-                gameLog.update("CHI", g.season, -1, [], function () {
+                gameLog.update({abbrev: "CHI", season: g.season, gid: -1}, [], function () {
                     confirmBuilt();
                     done();
                 });
             });
             it("should load and update nothing if gameLog is already loaded with same parameters", function (done) {
                 confirmNotBuilt();
-                gameLog.update("CHI", g.season, -1, [], function () {
+                gameLog.update({abbrev: "CHI", season: g.season, gid: -1}, [], function () {
                     confirmBuilt();
 
                     document.getElementById("game-log-dropdown-seasons").dataset.dummy = "shit";
                     document.getElementById("box-score").innerHTML = "fuck";
                     document.getElementById("game-log-list").innerHTML = "cunt";
-                    gameLog.update("CHI", g.season, -1, [], function () {
+                    gameLog.update({abbrev: "CHI", season: g.season, gid: -1}, [], function () {
                         document.getElementById("game-log-dropdown-seasons").dataset.dummy.should.equal("shit");
                         document.getElementById("box-score").innerHTML.should.equal("fuck");
                         document.getElementById("game-log-list").innerHTML.should.equal("cunt");
@@ -101,13 +101,13 @@ define(["db", "globals", "core/league", "lib/jquery", "views/gameLog"], function
             });
             it("should load only a new box score if everything is the same except the game ID", function (done) {
                 confirmNotBuilt();
-                gameLog.update("CHI", g.season, -1, [], function () {
+                gameLog.update({abbrev: "CHI", season: g.season, gid: -1}, [], function () {
                     confirmBuilt();
 
                     document.getElementById("game-log-dropdown-seasons").dataset.dummy = "shit";
                     document.getElementById("box-score").innerHTML = "fuck";
                     document.getElementById("game-log-list").innerHTML = "cunt";
-                    gameLog.update("CHI", g.season, 5, [], function () {
+                    gameLog.update({abbrev: "CHI", season: g.season, gid: 5}, [], function () {
                         document.getElementById("game-log-dropdown-seasons").dataset.dummy.should.equal("shit");
                         document.getElementById("box-score").innerHTML.should.not.equal("fuck");
                         document.getElementById("game-log-list").innerHTML.should.equal("cunt");
@@ -117,13 +117,13 @@ define(["db", "globals", "core/league", "lib/jquery", "views/gameLog"], function
             });
             it("should load only a new game log list if everything is the same except the team", function (done) {
                 confirmNotBuilt();
-                gameLog.update("CHI", g.season, 3, [], function () {
+                gameLog.update({abbrev: "CHI", season: g.season, gid: 3}, [], function () {
                     confirmBuilt();
 
                     document.getElementById("game-log-dropdown-seasons").dataset.dummy = "shit";
                     document.getElementById("box-score").innerHTML = "fuck";
                     document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(11);
-                    gameLog.update("BOS", g.season, 3, [], function () {
+                    gameLog.update({abbrev: "BOS", season: g.season, gid: 3}, [], function () {
                         document.getElementById("game-log-dropdown-seasons").dataset.dummy.should.equal("shit");
                         document.getElementById("box-score").innerHTML.should.equal("fuck");
                         document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(1);
@@ -133,13 +133,13 @@ define(["db", "globals", "core/league", "lib/jquery", "views/gameLog"], function
             });
             it("should load only a new game log list if everything is the same except the season", function (done) {
                 confirmNotBuilt();
-                gameLog.update("ATL", g.season, 3, [], function () {
+                gameLog.update({abbrev: "ATL", season: g.season, gid: 3}, [], function () {
                     confirmBuilt();
 
                     document.getElementById("game-log-dropdown-seasons").dataset.dummy = "shit";
                     document.getElementById("box-score").innerHTML = "fuck";
                     document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(11);
-                    gameLog.update("ATL", g.season + 1, 3, [], function () {
+                    gameLog.update({abbrev: "ATL", season: g.season + 1, gid: 3}, [], function () {
                         document.getElementById("game-log-dropdown-seasons").dataset.dummy.should.equal("shit");
                         document.getElementById("box-score").innerHTML.should.equal("fuck");
                         document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(1);
@@ -149,14 +149,14 @@ define(["db", "globals", "core/league", "lib/jquery", "views/gameLog"], function
             });
             it("should load only a new game log list and box score if game ID, team, and season all change", function (done) {
                 confirmNotBuilt();
-                gameLog.update("ATL", g.season, -1, [], function () {
+                gameLog.update({abbrev: "ATL", season: g.season, gid: -1}, [], function () {
                     confirmBuilt();
 
                     document.getElementById("game-log-dropdown-seasons").dataset.dummy = "shit";
                     document.getElementById("box-score").innerHTML = "fuck";
 
                     document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(11);
-                    gameLog.update("BOS", g.season + 1, 3, [], function () {
+                    gameLog.update({abbrev: "BOS", season: g.season + 1, gid: 3}, [], function () {
                         document.getElementById("game-log-dropdown-seasons").dataset.dummy.should.equal("shit");
                         document.getElementById("box-score").innerHTML.should.not.equal("fuck");
                         document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(1);
@@ -166,7 +166,7 @@ define(["db", "globals", "core/league", "lib/jquery", "views/gameLog"], function
             });
             it("should update only game log list in response to gameSim updateEvent, if all other parameters are the same", function (done) {
                 confirmNotBuilt();
-                gameLog.update("ATL", g.season, 3, [], function () {
+                gameLog.update({abbrev: "ATL", season: g.season, gid: 3}, [], function () {
                     var child, i, tx;
 
                     confirmBuilt();
@@ -185,7 +185,7 @@ define(["db", "globals", "core/league", "lib/jquery", "views/gameLog"], function
                         addFakeGame(tx, i);
                     }
                     tx.oncomplete = function () {
-                        gameLog.update("ATL", g.season, 3, ["gameSim"], function () {
+                            gameLog.update({abbrev: "ATL", season: g.season, gid: 3}, ["gameSim"], function () {
                             document.getElementById("game-log-dropdown-seasons").dataset.dummy.should.equal("shit");
                             document.getElementById("box-score").innerHTML.should.equal("fuck");
                             document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(20);

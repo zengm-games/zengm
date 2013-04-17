@@ -21,6 +21,7 @@ bbgmView
     is it safe to put runBefore and runWhenever outputs in this.vars? what if they are overwritten? even if different functions don't read from this.vars and only write, this could still lead to inconsistent results. but isn't this the same as it is today, just replace this.vars with the DOM and you could still imagine inconsistencies
     better leveage this in bbgmViews?
 dashboard
+  title being set?
   observables set right by mapping
     historical things (old scores, old records) don't need to be observable
     arrays need correct keys

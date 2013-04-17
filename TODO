@@ -1,7 +1,6 @@
 smarter realtime
 ----------------
 
-instead of vm.firstRun, put it in updateEvents?
 playerStats
 on porting to bbgmView
   import knockout mapping as komapping

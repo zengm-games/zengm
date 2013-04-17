@@ -40,7 +40,7 @@ console.log('draw from scratch')
 
                 leagueContentEl.dataset.idLoading = args.id;
 
-                inputs.firstRun = true;
+                updateEvents.push("firstRun");
 
                 // View model
                 vm = new args.InitViewModel(inputs);

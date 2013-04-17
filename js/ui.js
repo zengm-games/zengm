@@ -102,6 +102,7 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
 
         if (data.container === "league_content") {
             containerEl.dataset.id = data.template;
+            containerEl.dataset.idLoaded = data.template;
         }
 
         if (cb !== undefined) {

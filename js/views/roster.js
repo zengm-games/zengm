@@ -1,11 +1,11 @@
 /**
- * @name views.gameLog
+ * @name views.roster
  * @namespace Current or historical rosters for every team. Current roster for user's team is editable.
  */
-define(["api", "db", "globals", "ui", "core/team", "lib/davis", "lib/knockout", "lib/knockout.mapping", "lib/jquery", "views/components", "util/helpers", "util/viewHelpers"], function (api, db, g, ui, team, Davis, ko, mapping, $, components, helpers, viewHelpers) {
+define(["api", "db", "globals", "ui", "core/team", "lib/davis", "lib/knockout", "lib/jquery", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (api, db, g, ui, team, Davis, ko, $, components, bbgmView, helpers, viewHelpers) {
     "use strict";
 
-    var vm;
+    var mapping;
 
     function highlightHandles() {
         var i;
@@ -29,7 +29,7 @@ define(["api", "db", "globals", "ui", "core/team", "lib/davis", "lib/knockout", 
         });
     }
 
-    function editableChanged(editable) {
+    function editableChanged(editable, vm) {
         var rosterTbody;
 
         rosterTbody = $("#roster tbody");
@@ -111,7 +111,6 @@ define(["api", "db", "globals", "ui", "core/team", "lib/davis", "lib/knockout", 
             });
         }
 
-console.log('editableChanged ' + editable)
         if (editable) {
             rosterTbody.sortable("enable").disableSelection();
         } else {
@@ -119,194 +118,168 @@ console.log('editableChanged ' + editable)
         }
     }
 
-    function display(updateEvents, cb) {
-        var leagueContentEl;
-
-        leagueContentEl = document.getElementById("league_content");
-        if (leagueContentEl.dataset.id !== "roster") {
-            ui.update({
-                container: "league_content",
-                template: "roster"
-            });
-            ko.applyBindings(vm, leagueContentEl);
-        }
-        ui.title(vm.team.region() + " " + vm.team.name() + " " + "Roster - " + vm.season());
-
-        if (vm.editable()) {
-            highlightHandles();
-        }
-        editableChanged(vm.editable());
-
-        components.dropdown("roster-dropdown", ["teams", "seasons"], [vm.abbrev(), vm.season()], updateEvents);
-
-        cb();
-    }
-
-    function loadBefore(abbrev, tid, season, cb) {
-        var cbAfterPlayers, data, tx;
-console.log("loadBefore")
-
-        cbAfterPlayers = function (data) {
-            var myMapping;
-
-            myMapping = {
-                players: {
-                    key: function (data) {
-                        return ko.utils.unwrapObservable(data.pid);
-                    }
-                }
-            };
-
-            mapping.fromJS(data, myMapping, vm);
-
-            cb();
-        };
-
-        data = {
-            abbrev: abbrev,
-            season: season,
-            editable: season === g.season && tid === g.userTid,
-            salaryCap: g.salaryCap / 1000,
-            showTradeFor: season === g.season && tid !== g.userTid
-        };
-
-        tx = g.dbl.transaction(["players", "releasedPlayers", "schedule", "teams"]);
-
-        tx.objectStore("teams").get(tid).onsuccess = function (event) {
-            var attributes, editable, i, ratings, stats, team, teamAll;
-
-            teamAll = event.target.result;
-            for (i = 0; i < teamAll.seasons.length; i++) {
-                if (teamAll.seasons[i].season === season) {
-                    break;
-                }
-            }
-            data.team = {region: teamAll.region, name: teamAll.name, cash: teamAll.seasons[i].cash / 1000};
-
-            attributes = ["pid", "name", "pos", "age", "contract", "cashOwed", "rosterOrder", "injury"];
-            ratings = ["ovr", "pot", "skills"];
-            stats = ["min", "pts", "trb", "ast", "per"];
-
-            if (season === g.season) {
-                // Show players currently on the roster
-                tx.objectStore("schedule").getAll().onsuccess = function (event) {
-                    var i, numGamesRemaining, schedule;
-
-                    // numGamesRemaining doesn't need to be calculated except for g.userTid, but it is.
-                    schedule = event.target.result;
-                    numGamesRemaining = 0;
-                    for (i = 0; i < schedule.length; i++) {
-                        if (tid === schedule[i].homeTid || tid === schedule[i].awayTid) {
-                            numGamesRemaining += 1;
-                        }
-                    }
-
-                    tx.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
-                        var i, players;
-
-                        players = db.getPlayers(event.target.result, season, tid, attributes, stats, ratings, {numGamesRemaining: numGamesRemaining, showRookies: true, sortBy: "rosterOrder", showNoStats: true, fuzz: true});
-
-                        for (i = 0; i < players.length; i++) {
-                            if (tid === g.userTid && players.length > 5) {
-                                players[i].canRelease = true;
-                                if (tid === g.userTid && players[i].cashOwed <= data.team.cash) {
-                                    players[i].canBuyOut = true;
-                                } else {
-                                    players[i].canBuyOut = false;
-                                }
-                            } else {
-                                players[i].canBuyOut = false;
-                                players[i].canRelease = false;
-                            }
-                        }
-
-                        data.players = players;
-
-                        db.getPayroll(tx, tid, function (payroll) {
-                            data.payroll = payroll / 1000;
-                            cbAfterPlayers(data);
-                        });
-                    };
-                };
-            } else {
-                // Show all players with stats for the given team and year
-                tx.objectStore("players").index("statsTids").getAll(tid).onsuccess = function (event) {
-                    var i, players;
-
-                    players = db.getPlayers(event.target.result, season, tid, attributes, stats, ratings, {numGamesRemaining: 0, showRookies: true, sortBy: "rosterOrder", fuzz: true});
-
-                    for (i = 0; i < players.length; i++) {
-                        players[i].age = players[i].age - (g.season - season);
-                        players[i].canBuyOut = false;
-                        players[i].canRelease = false;
-                    }
-
-                    data.players = players;
-                    data.payroll = null;
-
-                    cbAfterPlayers(data);
-                };
-            }
-        };
-    }
-
-    function update(abbrev, tid, season, updateEvents, cb) {
-        var leagueContentEl;
-
-        leagueContentEl = document.getElementById("league_content");
-        if (leagueContentEl.dataset.id !== "roster") {
-            ko.cleanNode(leagueContentEl);
-            vm = {
-                abbrev: ko.observable(),
-                season: ko.observable(),
-                payroll: ko.observable(),
-                salaryCap: ko.observable(),
-                team: {
-                    cash: ko.observable(),
-                    name: ko.observable(),
-                    region: ko.observable()
-                },
-                players: ko.observable([]),
-                showTradeFor: ko.observable(),
-                editable: ko.observable()
-            };
-            vm.numRosterSpots = ko.computed(function () {
-                return 15 - vm.players().length;
-            });
-            vm.isCurrentSeason = ko.computed(function () {
-                return g.season === vm.season();
-            });
-        }
-
-        if ((season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || abbrev !== vm.abbrev() || season !== vm.season()) {
-            loadBefore(abbrev, tid, season, function () {
-                display(updateEvents, cb);
-            });
-        } else {
-            display(updateEvents, cb);
-        }
-    }
-
     function get(req) {
+        var inputs, out;
+
         // Fix broken links
         if (req.params.abbrev === "FA") {
             return Davis.location.assign(new Davis.Request("/l/" + g.lid + "/free_agents"));
         }
 
-        viewHelpers.beforeLeague(req, function (updateEvents, cb) {
-            var abbrev, out, season, tid;
+        inputs = {};
 
-            out = helpers.validateAbbrev(req.params.abbrev);
-            tid = out[0];
-            abbrev = out[1];
-            season = helpers.validateSeason(req.params.season);
+        out = helpers.validateAbbrev(req.params.abbrev);
+        inputs.tid = out[0];
+        inputs.abbrev = out[1];
+        inputs.season = helpers.validateSeason(req.params.season);
 
-            update(abbrev, tid, season, updateEvents, cb);
-        });
+        return inputs;
     }
 
-    return {
-        update: update,
-        get: get
+    function InitViewModel() {
+        this.abbrev = ko.observable();
+        this.season = ko.observable();
+        this.payroll = ko.observable();
+        this.salaryCap = ko.observable();
+        this.team = {
+            cash: ko.observable(),
+            name: ko.observable(),
+            region: ko.observable()
+        };
+        this.players = ko.observable([]);
+        this.showTradeFor = ko.observable();
+        this.editable = ko.observable();
+
+        this.numRosterSpots = ko.computed(function () {
+            return 15 - this.players().length;
+        }, this);
+        this.isCurrentSeason = ko.computed(function () {
+            return g.season === this.season();
+        }, this);
+    }
+
+    mapping = {
+        players: {
+            key: function (data) {
+                return ko.utils.unwrapObservable(data.pid);
+            }
+        }
     };
+
+    function updateRoster(inputs, updateEvents, vm) {
+        var deferred, vars, tx;
+console.log("loadBefore")
+
+        if ((inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.abbrev !== vm.abbrev() || inputs.season !== vm.season()) {
+            deferred = $.Deferred();
+
+            vars = {
+                abbrev: inputs.abbrev,
+                season: inputs.season,
+                editable: inputs.season === g.season && inputs.tid === g.userTid,
+                salaryCap: g.salaryCap / 1000,
+                showTradeFor: inputs.season === g.season && inputs.tid !== g.userTid
+            };
+
+            tx = g.dbl.transaction(["players", "releasedPlayers", "schedule", "teams"]);
+
+            tx.objectStore("teams").get(inputs.tid).onsuccess = function (event) {
+                var attributes, editable, i, ratings, stats, team, teamAll;
+
+                teamAll = event.target.result;
+                for (i = 0; i < teamAll.seasons.length; i++) {
+                    if (teamAll.seasons[i].season === inputs.season) {
+                        break;
+                    }
+                }
+                vars.team = {region: teamAll.region, name: teamAll.name, cash: teamAll.seasons[i].cash / 1000};
+
+                attributes = ["pid", "name", "pos", "age", "contract", "cashOwed", "rosterOrder", "injury"];
+                ratings = ["ovr", "pot", "skills"];
+                stats = ["min", "pts", "trb", "ast", "per"];
+
+                if (inputs.season === g.season) {
+                    // Show players currently on the roster
+                    tx.objectStore("schedule").getAll().onsuccess = function (event) {
+                        var i, numGamesRemaining, schedule;
+
+                        // numGamesRemaining doesn't need to be calculated except for g.userTid, but it is.
+                        schedule = event.target.result;
+                        numGamesRemaining = 0;
+                        for (i = 0; i < schedule.length; i++) {
+                            if (inputs.tid === schedule[i].homeTid || inputs.tid === schedule[i].awayTid) {
+                                numGamesRemaining += 1;
+                            }
+                        }
+
+                        tx.objectStore("players").index("tid").getAll(inputs.tid).onsuccess = function (event) {
+                            var i, players;
+
+                            players = db.getPlayers(event.target.result, inputs.season, inputs.tid, attributes, stats, ratings, {numGamesRemaining: numGamesRemaining, showRookies: true, sortBy: "rosterOrder", showNoStats: true, fuzz: true});
+
+                            for (i = 0; i < players.length; i++) {
+                                if (inputs.tid === g.userTid && players.length > 5) {
+                                    players[i].canRelease = true;
+                                    if (inputs.tid === g.userTid && players[i].cashOwed <= vars.team.cash) {
+                                        players[i].canBuyOut = true;
+                                    } else {
+                                        players[i].canBuyOut = false;
+                                    }
+                                } else {
+                                    players[i].canBuyOut = false;
+                                    players[i].canRelease = false;
+                                }
+                            }
+
+                            vars.players = players;
+
+                            db.getPayroll(tx, inputs.tid, function (payroll) {
+                                vars.payroll = payroll / 1000;
+                                deferred.resolve(vars);
+                            });
+                        };
+                    };
+                } else {
+                    // Show all players with stats for the given team and year
+                    tx.objectStore("players").index("statsTids").getAll(inputs.tid).onsuccess = function (event) {
+                        var i, players;
+
+                        players = db.getPlayers(event.target.result, inputs.season, inputs.tid, attributes, stats, ratings, {numGamesRemaining: 0, showRookies: true, sortBy: "rosterOrder", fuzz: true});
+
+                        for (i = 0; i < players.length; i++) {
+                            players[i].age = players[i].age - (g.season - inputs.season);
+                            players[i].canBuyOut = false;
+                            players[i].canRelease = false;
+                        }
+
+                        vars.players = players;
+                        vars.payroll = null;
+
+                        deferred.resolve(vars);
+                    };
+                }
+            };
+            return deferred.promise();
+        }
+    }
+
+    function uiEvery(updateEvents, vm) {
+        ui.title(vm.team.region() + " " + vm.team.name() + " " + "Roster - " + vm.season());
+
+        if (vm.editable()) {
+            highlightHandles();
+        }
+        editableChanged(vm.editable(), vm);
+
+        components.dropdown("roster-dropdown", ["teams", "seasons"], [vm.abbrev(), vm.season()], updateEvents);
+    }
+
+    return bbgmView.init({
+        id: "roster",
+        get: get,
+        InitViewModel: InitViewModel,
+        mapping: mapping,
+        runBefore: [updateRoster],
+        uiEvery: uiEvery
+    });
 });

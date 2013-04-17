@@ -1,6 +1,8 @@
 smarter realtime
 ----------------
 
+teamFinances
+playerStats
 on porting to bbgmView
   import knockout mapping as komapping
 gameLog
@@ -93,6 +95,7 @@ not urgetnt, but... use knockout for
     flatten a bit
   roster
     check release, buy out, trade for
+    flatten a bit
   dataTables/grid knockout
     examples
       https://github.com/CogShift/Knockout.Extensions

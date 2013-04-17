@@ -1,6 +1,7 @@
 smarter realtime
 ----------------
 
+instead of vm.firstRun, put it in updateEvents?
 playerStats
 on porting to bbgmView
   import knockout mapping as komapping
@@ -12,7 +13,6 @@ bbgmView
     better way of setting title, like in a computed observable or binding or something
     can i make things cleaner by relying on "this" rather than manually passing everything?
     wait.. why don't I have runBefore and runWhenever functions write directly to the vm? does that work for functions executing in parallel?
-    DOCUMENT! base on original notes, as well as HACKING
     what about vm.firstRun? How to know it's first time? put firstRun in inputs.firstRun
       should there be a special place to set parts of vm that are never updated? or computed things?
         run "computeds()" after runBefore, but before display

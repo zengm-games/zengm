@@ -5,7 +5,7 @@
 define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/viewHelpers"], function (g, ui, $, bbgmView, viewHelpers) {
     "use strict";
 
-    function updateInbox(cb) {
+    function updateInbox() {
         var deferred, vars;
 
         deferred = $.Deferred();

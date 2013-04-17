@@ -969,7 +969,7 @@ helpers = helpers || Handlebars.helpers; data = data || {};
   
 
 
-  return "<p><b>From: <span data-bind=\"text: message().from\"></span>, <span data-bind=\"text: message().year\"></span></b> <span data-bind=\"newWindow: []\"></span></p>\n\n<span data-bind=\"html: message().text\"></span>\n\n<p><a data-bind=\"attrLeagueUrl: {href: ['inbox']}\">Return To Inbox</a></p>";
+  return "<p><b>From: <span data-bind=\"text: message.from\"></span>, <span data-bind=\"text: message.year\"></span></b> <span data-bind=\"newWindow: []\"></span></p>\n\n<span data-bind=\"html: message.text\"></span>\n\n<p><a data-bind=\"attrLeagueUrl: {href: ['inbox']}\">Return To Inbox</a></p>";
   });
 templates['teamHistory'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];

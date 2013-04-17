@@ -3,7 +3,6 @@ smarter realtime
 
 how to exit out of GET early, like in trade, roster where it tries to return Davis?
 port to bbgmView
-  message
   draftSummary
   leaders
 on porting to bbgmView

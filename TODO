@@ -2,7 +2,6 @@ smarter realtime
 ----------------
 
 port to bbgmView
-  negotiation
   trade
   inbox
   message
@@ -112,6 +111,8 @@ not urgetnt, but... use knockout for
 BEFORE 3.0.0-beta.3
 -------------------
 
+after last resigning negotiation, switch to next phase
+if no stats/ratings are requested, db.getPlayers should return no stats/players properties on object
 check effects of extreme ticket prices
 show old contracts on old roster view
 popup windows should still be popup windows, even after navigating reloading page

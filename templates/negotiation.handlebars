@@ -26,10 +26,10 @@
   <div class="span6">
     <h2><a data-bind="attrLeagueUrl: {href: ['player', player.pid]}, text: player.name"></a> <span data-bind="newWindow: ['player', player.pid]"></span></h2>
     <p>Mood: <span data-bind="html: player.mood"></span></p>
-    <p>Overall: <span data-bind="text: player.ratings().ovr"></span>; Potential: <span data-bind="text: player.ratings().pot"></span></p>
+    <p>Overall: <span data-bind="text: player.ratings.ovr"></span>; Potential: <span data-bind="text: player.ratings.pot"></span></p>
     <h2>Player Proposal</h2>
-    <p><span data-bind="text: negotiation.player().years"></span> years (through <span data-bind="text: negotiation.player().expiration"></span>)</p>
-    <p>$<span data-bind="round: [negotiation.player().amount, 3]"></span>M per year</p>
+    <p><span data-bind="text: negotiation.player.years"></span> years (through <span data-bind="text: negotiation.player.expiration"></span>)</p>
+    <p>$<span data-bind="round: [negotiation.player.amount, 3]"></span>M per year</p>
     <form data-bind="attrLeagueUrl: {action: ['negotiation', player.pid]}" class="form-horizontal" method="POST">
       <input type="hidden" name="accept" value="1">
       <button type="submit" class="btn btn-large btn-primary" id="accept">Accept Player Proposal</button>

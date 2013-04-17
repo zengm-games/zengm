@@ -274,9 +274,9 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/helpers",
                     if (!negotiationInProgress) {
                         ui.updateStatus("Idle");
                         ui.updatePlayMenu();
-
-                        cb();
                     }
+
+                    cb();
                 });
             });
         };

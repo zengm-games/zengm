@@ -2,7 +2,7 @@
  * @name util.templateHelpers
  * @namespace Handlebars helper functions. Any new helpers added here should be added to the handlebars call in the Makefile.
  */
-define(["globals", "lib/handlebars.runtime", "lib/knockout", "util/helpers"], function (g, Handlebars, ko, helpers) {
+define(["globals", "lib/faces", "lib/handlebars.runtime", "lib/knockout", "util/helpers"], function (g, faces, Handlebars, ko, helpers) {
     "use strict";
 
     Handlebars.registerHelper("round", helpers.round);
@@ -105,11 +105,9 @@ define(["globals", "lib/handlebars.runtime", "lib/knockout", "util/helpers"], fu
 
 
     Handlebars.registerHelper("face", function (face) {
-        return new Handlebars.SafeString('<script>'
-             + '$(document).ready(function() {'
-             + '  faces.display("picture", ' + JSON.stringify(face) + ');'
-             + '});'
-             + '</script>');
+        setTimeout(function () {
+            faces.display("picture", face);
+        }, 200);
     });
 
 

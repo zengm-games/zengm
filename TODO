@@ -1,7 +1,6 @@
 smarter realtime
 ----------------
 
-add method to get html for face, and just use that rather than the weird script way that doesn't work currently
 how to exit out of GET early, like in trade, roster, draftSummary where it tries to return Davis?
   any other views that do thsi? search for helpers.error and DAvis
   maybe return an error message from GET and have bbgmView handle it?

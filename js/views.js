@@ -1,4 +1,4 @@
-define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/draftSummary", "views/gameLog", "views/inbox", "views/leaders", "views/leagueDashboard", "views/message", "views/negotiation", "views/playerRatings", "views/playerStats", "views/roster", "views/standings", "views/teamFinances", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, draft, finances, freeAgents, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, draftSummary, gameLog, inbox, leaders, leagueDashboard, message, negotiation, playerRatings, playerStats, roster, standings, teamFinances, teamStats, trade) {
+define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/draftSummary", "views/gameLog", "views/inbox", "views/leaders", "views/leagueDashboard", "views/message", "views/negotiation", "views/player", "views/playerRatings", "views/playerStats", "views/roster", "views/standings", "views/teamFinances", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, draft, finances, freeAgents, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, draftSummary, gameLog, inbox, leaders, leagueDashboard, message, negotiation, player, playerRatings, playerStats, roster, standings, teamFinances, teamStats, trade) {
     "use strict";
 
     function initDb(req) {
@@ -635,43 +635,6 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
         });
     }
 
-    function player_(req) {
-        viewHelpers.beforeLeague(req, function () {
-            var pid;
-
-            pid = req.params.pid !== undefined ? parseInt(req.params.pid, 10) : undefined;
-
-            g.dbl.transaction(["players"]).objectStore("players").get(pid).onsuccess = function (event) {
-                var attributes, currentRatings, data, player, ratings, stats;
-
-                attributes = ["pid", "name", "tid", "abbrev", "teamRegion", "teamName", "pos", "age", "hgtFt", "hgtIn", "weight", "born", "contract", "draft", "face", "mood", "injury", "salaries", "salariesTotal", "awards", "freeAgentMood"];
-                ratings = ["season", "abbrev", "age", "ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills"];
-                stats = ["season", "abbrev", "age", "gp", "gs", "min", "fg", "fga", "fgp", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per"];
-
-                player = db.getPlayer(event.target.result, null, null, attributes, stats, ratings, {playoffs: true, showNoStats: true, fuzz: true});
-
-                if (player.tid === g.PLAYER.RETIRED) {
-                    g.realtimeUpdate = false;
-                }
-
-                // Account for extra free agent demands
-                if (player.tid === g.PLAYER.FREE_AGENT) {
-                    player.contract.amount = freeAgents.amountWithMood(player.contract.amount, player.freeAgentMood[g.userTid]);
-                }
-
-                currentRatings = player.ratings[player.ratings.length - 1];
-
-                data = {
-                    container: "league_content",
-                    template: "player",
-                    title: player.name,
-                    vars: {player: player, currentRatings: currentRatings, showTradeFor: player.tid !== g.userTid && player.tid >= 0, freeAgent: player.tid === g.PLAYER.FREE_AGENT, retired: player.tid === g.PLAYER.RETIRED, showContract: player.tid !== g.PLAYER.UNDRAFTED && player.tid !== g.PLAYER.RETIRED, injured: player.injury.type !== "Healthy"}
-                };
-                ui.update(data, req.raw.cb);
-            };
-        });
-    }
-
     function negotiationList(req) {
         viewHelpers.beforeLeague(req, function () {
             var negotiations;
@@ -1169,7 +1132,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
         playerRatings: playerRatings,
         playerStats: playerStats,
         teamStats: teamStats,
-        player: player_,
+        player: player,
         negotiationList: negotiationList,
         negotiation: negotiation,
         distPlayerRatings: distPlayerRatings,

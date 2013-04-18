@@ -601,6 +601,8 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
                             if (tidTemp >= 0) {
                                 player.ratings[k].abbrev = helpers.getAbbrev(tidTemp);
                                 tidTemp = undefined;
+                            } else {
+                                player.ratings[k].abbrev = null;
                             }
                         } else {
                             player.ratings[k][ratings[j]] = pa.ratings[k][ratings[j]];

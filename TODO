@@ -1,6 +1,12 @@
 smarter realtime
 ----------------
 
+player_
+  face display with forward/back button?
+    some things become observables - why???
+    mapping function not run right the second time - try to create jsfiddle
+      arrays are becoming observableArrays
+  skillsBlock (3+ places)
 how to exit out of GET early, like in trade, roster, draftSummary where it tries to return Davis?
   any other views that do thsi? search for helpers.error and DAvis
   maybe return an error message from GET and have bbgmView handle it?
@@ -106,6 +112,7 @@ not urgetnt, but... use knockout for
 BEFORE 3.0.0-beta.3
 -------------------
 
+core.freeAgents should be core.freeAgent
 after last resigning negotiation, switch to next phase
 if no stats/ratings are requested, db.getPlayers should return no stats/players properties on object
 check effects of extreme ticket prices

@@ -58,8 +58,8 @@ console.log('draw from scratch')
                 }
 
                 komapping.fromJS(vars, args.mapping, vm);
-console.log(vars);
-console.log(vm);
+//console.log(vars);
+//console.log(vm);
 
                 display(args, updateEvents);
 

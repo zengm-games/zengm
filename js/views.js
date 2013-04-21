@@ -1,4 +1,4 @@
-define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/draftSummary", "views/gameLog", "views/history", "views/inbox", "views/leaders", "views/leagueDashboard", "views/message", "views/negotiation", "views/player", "views/playerRatings", "views/playerStats", "views/roster", "views/standings", "views/teamFinances", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, draft, finances, freeAgents, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, draftSummary, gameLog, history, inbox, leaders, leagueDashboard, message, negotiation, player, playerRatings, playerStats, roster, standings, teamFinances, teamStats, trade) {
+define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/draftSummary", "views/gameLog", "views/history", "views/inbox", "views/leaders", "views/leagueDashboard", "views/message", "views/negotiation", "views/player", "views/playerRatings", "views/playerStats", "views/roster", "views/schedule", "views/standings", "views/teamFinances", "views/teamHistory", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, draft, finances, freeAgents, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, draftSummary, gameLog, history, inbox, leaders, leagueDashboard, message, negotiation, player, playerRatings, playerStats, roster, schedule, standings, teamFinances, teamHistory, teamStats, trade) {
     "use strict";
 
     function initDb(req) {
@@ -318,81 +318,6 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                     }
                 });
             });
-        });
-    }
-
-    function schedule(req) {
-        viewHelpers.beforeLeague(req, function () {
-            season.getSchedule(null, 0, function (schedule_) {
-                var data, game, games, i, row, team0, team1;
-
-                games = [];
-                for (i = 0; i < schedule_.length; i++) {
-                    game = schedule_[i];
-                    if (g.userTid === game.homeTid || g.userTid === game.awayTid) {
-                        team0 = {tid: game.homeTid, abbrev: game.homeAbbrev, region: game.homeRegion, name: game.homeName};
-                        team1 = {tid: game.awayTid, abbrev: game.awayAbbrev, region: game.awayRegion, name: game.awayName};
-                        if (g.userTid === game.homeTid) {
-                            row = {teams: [team1, team0], vsat: "vs"};
-                        } else {
-                            row = {teams: [team0, team1], vsat: "at"};
-                        }
-                        games.push(row);
-                    }
-                }
-
-                data = {
-                    container: "league_content",
-                    template: "schedule",
-                    title: "Schedule",
-                    vars: {games: games}
-                };
-                ui.update(data, req.raw.cb);
-            });
-        });
-    }
-
-    function teamHistory(req) {
-        viewHelpers.beforeLeague(req, function () {
-            g.dbl.transaction("teams").objectStore("teams").get(g.userTid).onsuccess = function (event) {
-                var abbrev, data, extraText, history, i, userTeam, userTeamSeason;
-
-                userTeam = event.target.result;
-
-                abbrev = userTeam.abbrev;
-
-                history = [];
-                for (i = 0; i < userTeam.seasons.length; i++) {
-                    extraText = "";
-                    if (userTeam.seasons[i].playoffRoundsWon === 4) {
-                        extraText = "league champs";
-                    } else if (userTeam.seasons[i].playoffRoundsWon === 3) {
-                        extraText = "conference champs";
-                    } else if (userTeam.seasons[i].playoffRoundsWon === 2) {
-                        extraText = "made conference finals";
-                    } else if (userTeam.seasons[i].playoffRoundsWon === 1) {
-                        extraText = "made second round";
-                    } else if (userTeam.seasons[i].playoffRoundsWon === 0) {
-                        extraText = "made playoffs";
-                    }
-
-                    history.push({
-                        season: userTeam.seasons[i].season,
-                        won: userTeam.seasons[i].won,
-                        lost: userTeam.seasons[i].lost,
-                        extraText: extraText
-                    });
-                }
-                history.reverse(); // Show most recent season first
-
-                data = {
-                    container: "league_content",
-                    template: "teamHistory",
-                    title: "Team History",
-                    vars: {abbrev: abbrev, history: history}
-                };
-                ui.update(data, req.raw.cb);
-            };
         });
     }
 

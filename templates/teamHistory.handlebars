@@ -1,8 +1,7 @@
-<h1>Team History {{new_window}}</h1>
+<h1>Team History <span data-bind="newWindow: []"></span></h1>
 
 <p>
-  {{#unless history}}None yet.{{/unless}}
-  {{#history}}
-    <a href="/l/{{../lid}}/roster/{{../abbrev}}/{{season}}">{{season}}</a>: <a href="/l/{{../lid}}/standings/{{season}}">{{won}}-{{lost}}</a>{{#if extraText}}, <a href="/l/{{../../lid}}/playoffs/{{season}}">{{extraText}}</a>{{/if}}<br>
-  {{/history}}
+  <!-- ko foreach: history -->
+    <a data-bind="attrLeagueUrl: {href: ['roster', $root.abbrev, season]}, text: season"></a>: <a data-bind="attrLeagueUrl: {href: ['standings', season]}"><span data-bind="text: won"></span>-<span data-bind="text: lost"></span></a><span data-bind="visible: extraText">, <a data-bind="attrLeagueUrl: {href: ['playoffs', season]}, text: extraText"></a></span><br>
+  <!-- /ko -->
 </p>

@@ -1,9 +1,7 @@
-<h1>Upcoming Schedule {{new_window}}</h1>
+<h1>Upcoming Schedule <span data-bind="newWindow: []"></span></h1>
 
-<ol>
-{{#games}}
-  <li><a href="/l/{{../lid}}/roster/{{teams.0.abbrev}}">{{teams.0.region}} {{teams.0.name}}</a>
-  {{vsat}}
-  <a href="/l/{{../lid}}/roster/{{teams.1.abbrev}}">{{teams.1.region}} {{teams.1.name}}</a>
-{{/games}}
+<ol data-bind="foreach: games">
+  <li><a data-bind="attrLeagueUrl: {href: ['roster', teams[0].abbrev]}"><span data-bind="text: teams[0].region"></span> <span data-bind="text: teams[0].name"></span></a>
+  <span data-bind="text: vsat"></span>
+  <a data-bind="attrLeagueUrl: {href: ['roster', teams[1].abbrev]}"><span data-bind="text: teams[1].region"></span> <span data-bind="text: teams[1].name"></span></a>
 </ol>

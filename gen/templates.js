@@ -457,40 +457,10 @@ helpers = helpers || Handlebars.helpers; data = data || {};
 templates['schedule'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
-
-function program1(depth0,data,depth1) {
   
-  var buffer = "", stack1;
-  buffer += "\n  <li><a href=\"/l/"
-    + escapeExpression(((stack1 = depth1.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/roster/"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.teams),stack1 == null || stack1 === false ? stack1 : stack1[0])),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.teams),stack1 == null || stack1 === false ? stack1 : stack1[0])),stack1 == null || stack1 === false ? stack1 : stack1.region)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " "
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.teams),stack1 == null || stack1 === false ? stack1 : stack1[0])),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a>\n  "
-    + escapeExpression(((stack1 = depth0.vsat),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\n  <a href=\"/l/"
-    + escapeExpression(((stack1 = depth1.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/roster/"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.teams),stack1 == null || stack1 === false ? stack1 : stack1[1])),stack1 == null || stack1 === false ? stack1 : stack1.abbrev)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.teams),stack1 == null || stack1 === false ? stack1 : stack1[1])),stack1 == null || stack1 === false ? stack1 : stack1.region)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " "
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.teams),stack1 == null || stack1 === false ? stack1 : stack1[1])),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a>\n";
-  return buffer;
-  }
 
-  buffer += "<h1>Upcoming Schedule "
-    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n\n<ol>\n";
-  stack2 = ((stack1 = ((stack1 = depth0.games),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program1, data, depth0),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n</ol>\n";
-  return buffer;
+
+  return "<h1>Upcoming Schedule <span data-bind=\"newWindow: []\"></span></h1>\n\n<ol data-bind=\"foreach: games\">\n  <li><a data-bind=\"attrLeagueUrl: {href: ['roster', teams[0].abbrev]}\"><span data-bind=\"text: teams[0].region\"></span> <span data-bind=\"text: teams[0].name\"></span></a>\n  <span data-bind=\"text: vsat\"></span>\n  <a data-bind=\"attrLeagueUrl: {href: ['roster', teams[1].abbrev]}\"><span data-bind=\"text: teams[1].region\"></span> <span data-bind=\"text: teams[1].name\"></span></a>\n</ol>\n";
   });
 templates['error'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
@@ -768,62 +738,10 @@ helpers = helpers || Handlebars.helpers; data = data || {};
 templates['teamHistory'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
+  
 
-function program1(depth0,data) {
-  
-  
-  return "None yet.";
-  }
 
-function program3(depth0,data,depth1) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n    <a href=\"/l/"
-    + escapeExpression(((stack1 = depth1.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/roster/"
-    + escapeExpression(((stack1 = depth1.abbrev),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/"
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a>: <a href=\"/l/"
-    + escapeExpression(((stack1 = depth1.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/standings/"
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = depth0.won),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "-"
-    + escapeExpression(((stack1 = depth0.lost),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a>";
-  stack2 = helpers['if'].call(depth0, depth0.extraText, {hash:{},inverse:self.noop,fn:self.programWithDepth(program4, data, depth1),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "<br>\n  ";
-  return buffer;
-  }
-function program4(depth0,data,depth2) {
-  
-  var buffer = "", stack1;
-  buffer += ", <a href=\"/l/"
-    + escapeExpression(((stack1 = depth2.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/playoffs/"
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = depth0.extraText),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a>";
-  return buffer;
-  }
-
-  buffer += "<h1>Team History "
-    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n\n<p>\n  ";
-  stack1 = helpers.unless.call(depth0, depth0.history, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  ";
-  stack2 = ((stack1 = ((stack1 = depth0.history),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.programWithDepth(program3, data, depth0),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n</p>";
-  return buffer;
+  return "<h1>Team History <span data-bind=\"newWindow: []\"></span></h1>\n\n<p>\n  <!-- ko foreach: history -->\n    <a data-bind=\"attrLeagueUrl: {href: ['roster', $root.abbrev, season]}, text: season\"></a>: <a data-bind=\"attrLeagueUrl: {href: ['standings', season]}\"><span data-bind=\"text: won\"></span>-<span data-bind=\"text: lost\"></span></a><span data-bind=\"visible: extraText\">, <a data-bind=\"attrLeagueUrl: {href: ['playoffs', season]}, text: extraText\"></a></span><br>\n  <!-- /ko -->\n</p>";
   });
 templates['draft'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];

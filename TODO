@@ -104,6 +104,8 @@ not urgetnt, but... use knockout for
       some things become observables - why???
       mapping function not run right the second time - try to create jsfiddle
         arrays are becoming observableArrays
+  schedule, teamHistory
+    partial load of list for updates, like in gameLog list
 
 BEFORE 3.0.0-beta.3
 -------------------

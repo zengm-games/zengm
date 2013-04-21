@@ -1,4 +1,4 @@
-define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/draftSummary", "views/gameLog", "views/history", "views/inbox", "views/leaders", "views/leagueDashboard", "views/message", "views/negotiation", "views/player", "views/playerRatings", "views/playerStats", "views/roster", "views/schedule", "views/standings", "views/teamFinances", "views/teamHistory", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, draft, finances, freeAgents, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, draftSummary, gameLog, history, inbox, leaders, leagueDashboard, message, negotiation, player, playerRatings, playerStats, roster, schedule, standings, teamFinances, teamHistory, teamStats, trade) {
+define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/draftSummary", "views/gameLog", "views/history", "views/inbox", "views/leaders", "views/leagueDashboard", "views/leagueFinances", "views/message", "views/negotiation", "views/player", "views/playerRatings", "views/playerStats", "views/roster", "views/schedule", "views/standings", "views/teamFinances", "views/teamHistory", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, draft, finances, freeAgents, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, draftSummary, gameLog, history, inbox, leaders, leagueDashboard, leagueFinances, message, negotiation, player, playerRatings, playerStats, roster, schedule, standings, teamFinances, teamHistory, teamStats, trade) {
     "use strict";
 
     function initDb(req) {
@@ -273,51 +273,6 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                     cb(finalMatchups, series);
                 };
             }
-        });
-    }
-
-    function leagueFinances(req) {
-        viewHelpers.beforeLeague(req, function () {
-            var attributes, season, seasons, seasonAttributes;
-
-            season = helpers.validateSeason(req.params.season);
-            seasons = helpers.getSeasons(season);
-
-            if (season < g.season) {
-                g.realtimeUpdate = false;
-            }
-
-            attributes = ["tid", "abbrev", "region", "name"];
-            seasonAttributes = ["att", "revenue", "profit", "cash", "payroll", "salaryPaid"];
-            db.getTeams(null, season, attributes, [], seasonAttributes, {}, function (teams) {
-                var data, i;
-
-                for (i = 0; i < teams.length; i++) {
-                    teams[i].cash /= 1000;  // [millions of dollars]
-                }
-
-                data = {
-                    container: "league_content",
-                    template: "leagueFinances",
-                    title: "League Finances - " + season,
-                    vars: {salaryCap: g.salaryCap / 1000, minPayroll: g.minPayroll / 1000, luxuryPayroll: g.luxuryPayroll / 1000, luxuryTax: g.luxuryTax, seasons: seasons}
-                };
-                ui.update(data, function () {
-                    ui.dropdown($("#league-finances-select-season"));
-
-                    ui.datatableSinglePage($("#league-finances"), 5, _.map(teams, function (t) {
-                        var payroll;
-
-                        payroll = season === g.season ? t.payroll : t.salaryPaid;  // Display the current actual payroll for this season, or the salary actually paid out for prior seasons
-
-                        return ['<a href="/l/' + g.lid + '/team_finances/' + t.abbrev + '">' + t.region + ' ' + t.name + '</a>', helpers.numberWithCommas(helpers.round(t.att)), helpers.formatCurrency(t.revenue, "M"), helpers.formatCurrency(t.profit, "M"), helpers.formatCurrency(t.cash, "M"), helpers.formatCurrency(payroll, "M")];
-                    }));
-
-                    if (req.raw.cb !== undefined) {
-                        req.raw.cb();
-                    }
-                });
-            });
         });
     }
 

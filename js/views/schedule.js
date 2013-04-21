@@ -2,7 +2,7 @@
  * @name views.schedule
  * @namespace Show current schedule for user's team.
  */
-define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "util/bbgmView", "util/viewHelpers"], function (db, g, ui, season, $, ko, bbgmView, viewHelpers) {
+define(["db", "globals", "ui", "core/season", "lib/jquery", "util/bbgmView", "util/viewHelpers"], function (db, g, ui, season, $, bbgmView, viewHelpers) {
     "use strict";
 
     var mapping;
@@ -16,7 +16,7 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "uti
     };
 
     function updateSchedule(inputs, updateEvents, vm) {
-        var deferred, vars, tx;
+        var deferred, vars;
 
         if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0) {
             deferred = $.Deferred();

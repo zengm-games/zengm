@@ -45,7 +45,7 @@ define(["db", "globals", "ui", "lib/jquery", "util/bbgmView", "util/helpers", "u
                     retiredPlayers = db.getPlayers(event.target.result, inputs.season, null, ["pid", "name", "age"], [], ["ovr"], {fuzz: true});
 
                     db.getTeams(null, inputs.season, ["abbrev", "region", "name"], [], ["playoffRoundsWon"], {}, function (teams) {
-                        var champ, data, i;
+                        var champ, i;
 
                         for (i = 0; i < teams.length; i++) {
                             if (teams[i].playoffRoundsWon === 4) {

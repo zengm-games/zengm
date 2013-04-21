@@ -1,17 +1,11 @@
-<form action="/l/{{lid}}/league_finances" method="GET" class="form-inline pull-right">
-  <select id="league-finances-select-season" name="season" class="season">
-    {{#seasons}}
-      <option value="{{season}}"{{#if selected}} selected="selected"{{/if}}>{{season}} season</option>
-    {{/seasons}}
-  </select>
-</form>
+<form id="league-finances-dropdown" class="form-inline pull-right"></form>
 
-<h1>League Finances {{new_window}}</h1>
+<h1>League Finances <span data-bind="newWindow: []"></span></h1>
 
 <p>
-  Salary cap: <strong>${{round salaryCap}}M</strong> (teams over this amount cannot sign free agents for more than the minimum contract)<br>
-  Minimum payroll limit: <strong>${{round minPayroll}}M</strong> (teams with payrolls below this limit will be assessed a fine equal to the difference at the end of the season)<br>
-  Luxury tax limit: <strong>${{round luxuryPayroll}}M</strong> (teams with payrolls above this limit will be assessed a fine equal to {{luxuryTax}} times the difference at the end of the season)
+  Salary cap: <strong data-bind="currency: [salaryCap, 'M']"></strong> (teams over this amount cannot sign free agents for more than the minimum contract)<br>
+  Minimum payroll limit: <strong data-bind="currency: [minPayroll, 'M']"></strong> (teams with payrolls below this limit will be assessed a fine equal to the difference at the end of the season)<br>
+  Luxury tax limit: <strong data-bind="currency: [luxuryPayroll, 'M']"></strong> (teams with payrolls above this limit will be assessed a fine equal to <span data-bind="text: luxuryTax"></span> times the difference at the end of the season)
 </p>
 
 <p>

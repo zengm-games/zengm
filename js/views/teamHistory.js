@@ -23,7 +23,7 @@ define(["db", "globals", "ui", "lib/jquery", "util/bbgmView", "util/viewHelpers"
             vars = {};
 
             g.dbl.transaction("teams").objectStore("teams").get(g.userTid).onsuccess = function (event) {
-                var abbrev, data, extraText, history, i, userTeam, userTeamSeason;
+                var abbrev, extraText, history, i, userTeam, userTeamSeason;
 
                 userTeam = event.target.result;
 

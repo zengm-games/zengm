@@ -6,7 +6,6 @@ player_
     some things become observables - why???
     mapping function not run right the second time - try to create jsfiddle
       arrays are becoming observableArrays
-  skillsBlock (3+ places)
 how to exit out of GET early, like in trade, roster, draftSummary where it tries to return Davis?
   any other views that do thsi? search for helpers.error and DAvis
   maybe return an error message from GET and have bbgmView handle it?

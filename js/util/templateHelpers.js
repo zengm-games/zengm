@@ -139,6 +139,14 @@ define(["globals", "lib/faces", "lib/handlebars.runtime", "lib/knockout", "util/
     Handlebars.registerHelper("skillsBlock", function (skills) {
         return new Handlebars.SafeString(helpers.skillsBlock(skills));
     });
+    ko.bindingHandlers.skillsBlock = {
+        update: function (element, valueAccessor) {
+            var arg = valueAccessor();
+            return ko.bindingHandlers.html.update(element, function () {
+                return helpers.skillsBlock(ko.utils.unwrapObservable(arg));
+            });
+        }
+    };
 
     Handlebars.registerHelper("currency", helpers.formatCurrency);
     ko.bindingHandlers.currency = {

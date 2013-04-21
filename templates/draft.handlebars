@@ -1,8 +1,8 @@
-<h1>Draft {{new_window}}</h1>
+<h1>Draft <span data-bind="newWindow: []"></span></h1>
 
 <p>When your turn in the draft comes up, select from the list of available players on the left.</p>
 
-<p{{#if started}} style="display: none;"{{/if}}><button class="btn btn-large btn-primary" id="start-draft">Start draft</button></p>
+<p data-bind="visible: !started()"><button class="btn btn-large btn-primary" id="start-draft">Start draft</button></p>
 
 <div class="row-fluid">
   <div class="span6">
@@ -11,10 +11,15 @@
     <thead>
       <tr><th>Name</th><th title="Position">Pos</th><th>Age</th><th title="Overall rating">Ovr</th><th title="Potential rating">Pot</th><th>Draft</th></tr>
     </thead>
-    <tbody>
-      {{#undrafted}}
-        <tr id="undrafted-{{pid}}"><td>{{playerNameLabels pid name injury ratings.skills}}</td><td>{{pos}}</td><td>{{age}}<td>{{ratings.ovr}}</td><td>{{ratings.pot}}</td><td><button class="btn btn-mini btn-primary" data-player-id="{{pid}}"{{#unless ../started}} disabled="disabled"{{/unless}}>Draft</button></td></tr>
-      {{/undrafted}}
+    <tbody data-bind="foreach: undrafted">
+      <tr data-bind="attr: {id: 'undrafted-' + pid()}">
+        <td data-bind="playerNameLabels: [pid, name, injury, ratings.skills]"></td>
+        <td data-bind="text: pos"></td>
+        <td data-bind="text: age"></td>
+        <td data-bind="text: ratings.ovr"></td>
+        <td data-bind="text: ratings.pot"></td>
+        <td><button class="btn btn-mini btn-primary" data-bind="attr: {'data-player-id': pid}, enable: $root.started">Draft</button></td>
+      </tr>
     </tbody>
     </table>
   </div>
@@ -24,10 +29,25 @@
     <thead>
       <tr><th>Pick</th><th>Team</th><th>Name</th><th title="Position">Pos</th><th>Age</th><th title="Overall rating">Ovr</th><th title="Potential rating">Pot</th></tr>
     </thead>
-    <tbody>
-      {{#drafted}}
-        <tr><td>{{draft.round}}-{{draft.pick}}</td><td><a href="/l/{{../lid}}/roster/{{draft.abbrev}}">{{draft.abbrev}}</a></td><td>{{#if injury}}{{playerNameLabels pid name injury ratings.skills}}{{/if}}</td><td>{{pos}}</td><td>{{age}}<td>{{ratings.ovr}}</td><td>{{ratings.pot}}</td></tr>
-      {{/drafted}}
+    <tbody data-bind="foreach: drafted">
+      <tr>
+        <td><span data-bind="text: draft.round"></span>-<span data-bind="text: draft.pick"></span></td>
+        <td><a data-bind="attrLeagueUrl: {href: ['roster', draft.abbrev]}, text: draft.abbrev"></a></td>
+        <!-- ko if: pid() >= 0 -->
+          <td data-bind="playerNameLabels: [pid, name, injury, ratings.skills]"></td>
+          <td data-bind="text: pos"></td>
+          <td data-bind="text: age"></td>
+          <td data-bind="text: ratings.ovr"></td>
+          <td data-bind="text: ratings.pot"></td>
+        <!-- /ko -->
+        <!-- ko if: pid() < 0 -->
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        <!-- /ko -->
+      </tr>
     </tbody>
     </table>
   </div>

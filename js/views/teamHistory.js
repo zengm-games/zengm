@@ -65,7 +65,7 @@ define(["db", "globals", "ui", "lib/jquery", "util/bbgmView", "util/viewHelpers"
         }
     }
 
-    function uiOnce() {
+    function uiFirst() {
         ui.title("Team History");
     }
 
@@ -73,6 +73,6 @@ define(["db", "globals", "ui", "lib/jquery", "util/bbgmView", "util/viewHelpers"
         id: "teamHistory",
         mapping: mapping,
         runBefore: [updateTeamHistory],
-        uiOnce: uiOnce
+        uiFirst: uiFirst
     });
 });

@@ -47,7 +47,7 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "util/bbgmView", "ut
         }
     }
 
-    function uiOnce() {
+    function uiFirst() {
         ui.title("Schedule");
     }
 
@@ -55,6 +55,6 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "util/bbgmView", "ut
         id: "schedule",
         mapping: mapping,
         runBefore: [updateSchedule],
-        uiOnce: uiOnce
+        uiFirst: uiFirst
     });
 });

@@ -1,4 +1,4 @@
-define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/draftSummary", "views/gameLog", "views/history", "views/inbox", "views/leaders", "views/leagueDashboard", "views/leagueFinances", "views/message", "views/negotiation", "views/player", "views/playerRatings", "views/playerStats", "views/playoffs", "views/roster", "views/schedule", "views/standings", "views/teamFinances", "views/teamHistory", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, draft, finances, freeAgents, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, draftSummary, gameLog, history, inbox, leaders, leagueDashboard, leagueFinances, message, negotiation, player, playerRatings, playerStats, playoffs, roster, schedule, standings, teamFinances, teamHistory, teamStats, trade) {
+define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/draft", "views/draftSummary", "views/gameLog", "views/history", "views/inbox", "views/leaders", "views/leagueDashboard", "views/leagueFinances", "views/message", "views/negotiation", "views/player", "views/playerRatings", "views/playerStats", "views/playoffs", "views/roster", "views/schedule", "views/standings", "views/teamFinances", "views/teamHistory", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, finances, freeAgents, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, draft, draftSummary, gameLog, history, inbox, leaders, leagueDashboard, leagueFinances, message, negotiation, player, playerRatings, playerStats, playoffs, roster, schedule, standings, teamFinances, teamHistory, teamStats, trade) {
     "use strict";
 
     function initDb(req) {
@@ -261,118 +261,6 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                     });
                 };
             });
-        });
-    }
-
-    function draft_(req) {
-        viewHelpers.beforeLeague(req, function () {
-            var playerStore;
-
-            if (g.phase !== g.PHASE.DRAFT) {
-                return Davis.location.assign(new Davis.Request("/l/" + g.lid + "/draft_summary"));
-            }
-
-            playerStore = g.dbl.transaction("players").objectStore("players");
-            playerStore.index("tid").getAll(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
-                var attributes, ratings, stats, undrafted;
-
-                attributes = ["pid", "name", "pos", "age", "injury"];
-                ratings = ["ovr", "pot", "skills"];
-                stats = [];
-                undrafted = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings, {showNoStats: true, fuzz: true});
-                undrafted.sort(function (a, b) { return (b.ratings.ovr + 2 * b.ratings.pot) - (a.ratings.ovr + 2 * a.ratings.pot); });
-
-                playerStore.index("draft.year").getAll(g.season).onsuccess = function (event) {
-                    var attributes, drafted, i, players, ratings, stats, started;
-
-                    attributes = ["pid", "tid", "name", "pos", "age", "draft", "injury"];
-                    ratings = ["ovr", "pot", "skills"];
-                    stats = [];
-                    players = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings, {showNoStats: true, fuzz: true});
-
-                    drafted = [];
-                    for (i = 0; i < players.length; i++) {
-                        if (players[i].tid !== g.PLAYER.UNDRAFTED) {
-                            drafted.push(players[i]);
-                        }
-                    }
-                    drafted.sort(function (a, b) { return (100 * a.draft.round + a.draft.pick) - (100 * b.draft.round + b.draft.pick); });
-
-                    started = drafted.length > 0;
-
-                    draft.getOrder(function (draftOrder) {
-                        var data, i, slot;
-
-                        for (i = 0; i < draftOrder.length; i++) {
-                            slot = draftOrder[i];
-                            drafted.push({draft: {
-                                abbrev: slot.abbrev,
-                                round: slot.round,
-                                pick: slot.pick
-                            }});
-                        }
-
-                        data = {
-                            container: "league_content",
-                            template: "draft",
-                            title: "Draft",
-                            vars: {undrafted: undrafted, drafted: drafted, started: started}
-                        };
-                        ui.update(data, function () {
-                            var draftUntilUserOrEnd, updateDraftTables;
-
-                            updateDraftTables = function (pids) {
-                                var draftedPlayer, draftedRows, i, j, undraftedTds;
-
-                                for (i = 0; i < pids.length; i++) {
-                                    draftedPlayer = new Array(5);
-                                    // Find row in undrafted players table, get metadata, delete row
-                                    undraftedTds = $("#undrafted-" + pids[i] + " td");
-                                    for (j = 0; j < 5; j++) {
-                                        draftedPlayer[j] = undraftedTds[j].innerHTML;
-                                    }
-
-                                    // Find correct row (first blank row) in drafted players table, write metadata
-                                    draftedRows = $("#drafted tbody tr");
-                                    for (j = 0; j < draftedRows.length; j++) {
-                                        if (draftedRows[j].children[3].innerHTML.length === 0) {
-                                            $("#undrafted-" + pids[i]).remove();
-                                            draftedRows[j].children[2].innerHTML = draftedPlayer[0];
-                                            draftedRows[j].children[3].innerHTML = draftedPlayer[1];
-                                            draftedRows[j].children[4].innerHTML = draftedPlayer[2];
-                                            draftedRows[j].children[5].innerHTML = draftedPlayer[3];
-                                            draftedRows[j].children[6].innerHTML = draftedPlayer[4];
-                                            break;
-                                        }
-                                    }
-                                }
-                            };
-
-                            draftUntilUserOrEnd = function () {
-                                api.draftUntilUserOrEnd(function (pids, done) {
-                                    updateDraftTables(pids);
-                                    if (!done) {
-                                        $("#undrafted button").removeAttr("disabled");
-                                    }
-                                });
-                            };
-
-                            $("#start-draft").click(function (event) {
-                                $($("#start-draft").parent()).hide();
-                                draftUntilUserOrEnd();
-                            });
-
-                            $("#undrafted button").click(function (event) {
-                                $("#undrafted button").attr("disabled", "disabled");
-                                api.draftUser(this.getAttribute("data-player-id"), function (pid) {
-                                    updateDraftTables([pid]);
-                                    draftUntilUserOrEnd();
-                                });
-                            });
-                        });
-                    });
-                };
-            };
         });
     }
 
@@ -866,7 +754,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
         teamHistory: teamHistory,
         freeAgents: freeAgents_,
         trade: trade,
-        draft: draft_,
+        draft: draft,
         draftSummary: draftSummary,
         gameLog: gameLog,
         leaders: leaders,

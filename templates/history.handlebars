@@ -1,59 +1,53 @@
-<form action="/l/{{lid}}/history" method="GET" class="form-inline pull-right">
-  <select id="history-select-season" name="season" class="season">
-    {{#seasons}}
-      <option value="{{season}}"{{#if selected}} selected="selected"{{/if}}>{{season}} season</option>
-    {{/seasons}}
-  </select>
-</form>
+<form id="history-dropdown" class="form-inline pull-right"></form>
 
-<h1>Season Summary {{new_window}}</h1>
+<h1>Season Summary <span data-bind="newWindow: []"></span></h1>
 
 <p></p>
 <div class="row-fluid">
   <div class="span4">
     <h4>League Champions</h4>
-    <p><strong><a href="/l/{{lid}}/roster/{{champ.abbrev}}/{{season}}">{{champ.region}} {{champ.name}}</a></strong><br>
-    <a href="/l/{{lid}}/playoffs/{{season}}">Playoffs Bracket</a></p>
+    <p><strong><a data-bind="attrleagueUrl: {href: ['roster', champ.abbrev, season]}"><span data-bind="text: champ.region"></span> <span data-bind="text: champ.name"></span></a></strong><br>
+    <a data-bind="attrleagueUrl: {href: ['playoffs', season]}">Playoffs Bracket</a></p>
     <h4>Best Record</h4>
-    <p>East: <a href="/l/{{lid}}/roster/{{awards.bre.abbrev}}/{{season}}">{{awards.bre.region}} {{awards.bre.name}}</a> ({{awards.bre.won}}-{{awards.bre.lost}})<br>
-    West: <a href="/l/{{lid}}/roster/{{awards.brw.abbrev}}/{{season}}">{{awards.brw.region}} {{awards.brw.name}}</a> ({{awards.brw.won}}-{{awards.brw.lost}})<br></p>
+    <p>East: <a  data-bind="attrleagueUrl: {href: ['roster', awards.bre.abbrev, season]}"><span data-bind="text: awards.bre.region"></span> <span data-bind="text: awards.bre.name"></span></a> (<span data-bind="text: awards.bre.won"></span>-<span data-bind="text: awards.bre.lost"></span>)<br>
+    West: <a data-bind="attrleagueUrl: {href: ['roster', awards.brw.abbrev, season]}"><span data-bind="text: awards.brw.region"></span> <span data-bind="text: awards.brw.name"></span></a> (<span data-bind="text: awards.brw.won"></span>-<span data-bind="text: awards.brw.lost"></span>)<br></p>
     <h4>Most Valueable Player</h4>
-    <p><strong><a href="/l/{{lid}}/player/{{awards.mvp.pid}}">{{awards.mvp.name}}</a></strong> (<a href="/l/{{lid}}/roster/{{awards.mvp.abbrev}}/{{season}}">{{awards.mvp.abbrev}}</a>)<br>
-    {{round awards.mvp.pts 1}} pts, {{round awards.mvp.trb 1}} reb, {{round awards.mvp.ast 1}} ast</p>
+    <p><strong><a data-bind="attrleagueUrl: {href: ['player', awards.mvp.pid]}, text: awards.mvp.name"></a></strong> (<a data-bind="attrleagueUrl: {href: ['roster', awards.mvp.abbrev, season]}, text: awards.mvp.abbrev"></a>)<br>
+    <span data-bind="round: [awards.mvp.pts, 1]"></span> pts, <span data-bind="round: [awards.mvp.trb, 1]"></span> reb, <span data-bind="round: [awards.mvp.ast, 1]"></span> ast</p>
     <h4>Defensive Player of the Year</h4>
-    <p><strong><a href="/l/{{lid}}/player/{{awards.dpoy.pid}}">{{awards.dpoy.name}}</a></strong> (<a href="/l/{{lid}}/roster/{{awards.dpoy.abbrev}}/{{season}}">{{awards.dpoy.abbrev}}</a>)<br>
-    {{round awards.dpoy.trb 1}} reb, {{round awards.dpoy.blk 1}} blk, {{round awards.dpoy.stl 1}} stl</p>
+    <p><strong><a data-bind="attrleagueUrl: {href: ['player', awards.dpoy.pid]}, text: awards.dpoy.name"></a></strong> (<a data-bind="attrleagueUrl: {href: ['roster', awards.dpoy.abbrev, season]}, text: awards.dpoy.abbrev"></a>)<br>
+    <span data-bind="round: [awards.dpoy.trb, 1]"></span> reb, <span data-bind="round: [awards.dpoy.blk, 1]"></span> blk, <span data-bind="round: [awards.dpoy.stl, 1]"></span> stl</p>
     <h4>Sixth Man of the Year</h4>
-    <p><strong><a href="/l/{{lid}}/player/{{awards.smoy.pid}}">{{awards.smoy.name}}</a></strong> (<a href="/l/{{lid}}/roster/{{awards.smoy.abbrev}}/{{season}}">{{awards.smoy.abbrev}}</a>)<br>
-    {{round awards.smoy.pts 1}} pts, {{round awards.smoy.trb 1}} reb, {{round awards.smoy.ast 1}} ast</p>
+    <p><strong><a data-bind="attrleagueUrl: {href: ['player', awards.smoy.pid]}, text: awards.smoy.name"></a></strong> (<a data-bind="attrleagueUrl: {href: ['roster', awards.smoy.abbrev, season]}, text: awards.smoy.abbrev"></a>)<br>
+    <span data-bind="round: [awards.smoy.pts, 1]"></span> pts, <span data-bind="round: [awards.smoy.trb, 1]"></span> reb, <span data-bind="round: [awards.smoy.ast, 1]"></span> ast</p>
     <h4>Rookie of the Year</h4>
-    <p><strong><a href="/l/{{lid}}/player/{{awards.roy.pid}}">{{awards.roy.name}}</a></strong> (<a href="/l/{{lid}}/roster/{{awards.roy.abbrev}}/{{season}}">{{awards.roy.abbrev}}</a>)<br>
-    {{round awards.roy.pts 1}} pts, {{round awards.roy.trb 1}} reb, {{round awards.roy.ast 1}} ast</p>
+    <p><strong><a data-bind="attrleagueUrl: {href: ['player', awards.roy.pid]}, text: awards.roy.name"></a></strong> (<a data-bind="attrleagueUrl: {href: ['roster', awards.roy.abbrev, season]}, text: awards.roy.abbrev"></a>)<br>
+    <span data-bind="round: [awards.roy.pts, 1]"></span> pts, <span data-bind="round: [awards.roy.trb, 1]"></span> reb, <span data-bind="round: [awards.roy.ast, 1]"></span> ast</p>
   </div>
   <div class="span4">
     <h4>All-League Teams</h4>
-    {{#awards.allLeague}}
-      <b>{{title}}</b><br>
-      {{#players}}
-        <a href="/l/{{../../lid}}/player/{{pid}}">{{name}}</a> (<a href="/l/{{../../lid}}/roster/{{abbrev}}/{{../../season}}">{{abbrev}}</a>)<br>
-      {{/players}}
-    {{/awards.allLeague}}
+    <!-- ko foreach: awards.allDefensive -->
+      <b data-bind="text: title"></b><br>
+      <!-- ko foreach: players -->
+        <a data-bind="attrleagueUrl: {href: ['player', pid]}, text: name"></a> (<a data-bind="attrleagueUrl: {href: ['roster', abbrev, $root.season]}, text: abbrev"></a>)<br>
+      <!-- /ko -->
+    <!-- /ko -->
   </div>
   <div class="span4">
     <h4>All-Defensive Teams</h4>
-    {{#awards.allDefensive}}
-      <b>{{title}}</b><br>
-      {{#players}}
-        <a href="/l/{{../../lid}}/player/{{pid}}">{{name}}</a> (<a href="/l/{{../../lid}}/roster/{{abbrev}}/{{../../season}}">{{abbrev}}</a>)<br>
-      {{/players}}
-    {{/awards.allDefensive}}
+    <!-- ko foreach: awards.allDefensive -->
+      <b data-bind="text: title"></b><br>
+      <!-- ko foreach: players -->
+        <a data-bind="attrleagueUrl: {href: ['player', pid]}, text: name"></a> (<a data-bind="attrleagueUrl: {href: ['roster', abbrev, $root.season]}, text: abbrev"></a>)<br>
+      <!-- /ko -->
+    <!-- /ko -->
   </div>
 </div>
 <div class="row-fluid">
   <div class="span12">
     <h4>Retired Players</h4>
-    {{#retiredPlayers}}
-      <a href="/l/{{../lid}}/player/{{pid}}">{{name}}</a> (overall rating: {{ratings.ovr}}; age: {{age}})<br>
-    {{/retiredPlayers}}
+    <!-- ko foreach: retiredPlayers -->
+      <a data-bind="attrleagueUrl: {href: ['player', pid]}, text: name"></a> (overall rating: <span data-bind="text: ratings.ovr"></span>; age: <span data-bind="text: age"></span>)<br>
+    <!-- /ko -->
   </div>
 </div>

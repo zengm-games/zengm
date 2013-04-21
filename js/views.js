@@ -1,4 +1,4 @@
-define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/draftSummary", "views/gameLog", "views/inbox", "views/leaders", "views/leagueDashboard", "views/message", "views/negotiation", "views/player", "views/playerRatings", "views/playerStats", "views/roster", "views/standings", "views/teamFinances", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, draft, finances, freeAgents, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, draftSummary, gameLog, inbox, leaders, leagueDashboard, message, negotiation, player, playerRatings, playerStats, roster, standings, teamFinances, teamStats, trade) {
+define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/draftSummary", "views/gameLog", "views/history", "views/inbox", "views/leaders", "views/leagueDashboard", "views/message", "views/negotiation", "views/player", "views/playerRatings", "views/playerStats", "views/roster", "views/standings", "views/teamFinances", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, draft, finances, freeAgents, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, draftSummary, gameLog, history, inbox, leaders, leagueDashboard, message, negotiation, player, playerRatings, playerStats, roster, standings, teamFinances, teamStats, trade) {
     "use strict";
 
     function initDb(req) {
@@ -318,69 +318,6 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                     }
                 });
             });
-        });
-    }
-
-    function history(req) {
-        viewHelpers.beforeLeague(req, function () {
-            var attributes, season, seasonAttributes, seasons;
-
-            season = helpers.validateSeason(req.params.season);
-
-            g.realtimeUpdate = false;
-
-            // If playoffs aren't over, season awards haven't been set
-            if (g.phase <= g.PHASE.PLAYOFFS) {
-                // View last season by default
-                if (season === g.season) {
-                    season -= 1;
-                }
-                seasons = helpers.getSeasons(season, g.season);  // Don't show this season as an option
-            } else {
-                seasons = helpers.getSeasons(season);  // Show this season as an option
-            }
-
-            if (season < g.startingSeason) {
-                helpers.error("There is no league history yet. Check back after the playoffs.", req.raw.cb);
-                return;
-            }
-
-            g.dbl.transaction("awards").objectStore("awards").get(season).onsuccess = function (event) {
-                var awards;
-
-                awards = event.target.result;
-
-                g.dbl.transaction("players").objectStore("players").index("retiredYear").getAll(season).onsuccess = function (event) {
-                    var retiredPlayers;
-
-                    retiredPlayers = db.getPlayers(event.target.result, season, null, ["pid", "name", "age"], [], ["ovr"], {fuzz: true});
-
-                    db.getTeams(null, season, ["abbrev", "region", "name"], [], ["playoffRoundsWon"], {}, function (teams) {
-                        var champ, data, i;
-
-                        for (i = 0; i < teams.length; i++) {
-                            if (teams[i].playoffRoundsWon === 4) {
-                                champ = teams[i];
-                                break;
-                            }
-                        }
-
-                        data = {
-                            container: "league_content",
-                            template: "history",
-                            title: "Season Summary - " + season,
-                            vars: {awards: awards, champ: champ, retiredPlayers: retiredPlayers, seasons: seasons, season: season}
-                        };
-                        ui.update(data, function () {
-                            ui.dropdown($("#history-select-season"));
-
-                            if (req.raw.cb !== undefined) {
-                                req.raw.cb();
-                            }
-                        });
-                    });
-                };
-            };
         });
     }
 

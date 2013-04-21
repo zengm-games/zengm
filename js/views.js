@@ -1,4 +1,4 @@
-define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/draft", "views/draftSummary", "views/gameLog", "views/history", "views/inbox", "views/leaders", "views/leagueDashboard", "views/leagueFinances", "views/message", "views/negotiation", "views/player", "views/playerRatings", "views/playerStats", "views/playoffs", "views/roster", "views/schedule", "views/standings", "views/teamFinances", "views/teamHistory", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, finances, freeAgents, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, draft, draftSummary, gameLog, history, inbox, leaders, leagueDashboard, leagueFinances, message, negotiation, player, playerRatings, playerStats, playoffs, roster, schedule, standings, teamFinances, teamHistory, teamStats, trade) {
+define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/draft", "views/draftSummary", "views/gameLog", "views/history", "views/inbox", "views/leaders", "views/leagueDashboard", "views/leagueFinances", "views/message", "views/negotiation", "views/negotiationList", "views/player", "views/playerRatings", "views/playerStats", "views/playoffs", "views/roster", "views/schedule", "views/standings", "views/teamFinances", "views/teamHistory", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, finances, freeAgents, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, draft, draftSummary, gameLog, history, inbox, leaders, leagueDashboard, leagueFinances, message, negotiation, negotiationList, player, playerRatings, playerStats, playoffs, roster, schedule, standings, teamFinances, teamHistory, teamStats, trade) {
     "use strict";
 
     function initDb(req) {
@@ -261,82 +261,6 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                     });
                 };
             });
-        });
-    }
-
-    function negotiationList(req) {
-        viewHelpers.beforeLeague(req, function () {
-            var negotiations;
-
-            // If there is only one active negotiation with a free agent, go to it
-            g.dbl.transaction("negotiations").objectStore("negotiations").getAll().onsuccess = function (event) {
-                var negotiations;
-
-                negotiations = event.target.result;
-
-                if (negotiations.length === 1) {
-                    return Davis.location.assign(new Davis.Request("/l/" + g.lid + "/negotiation/" + negotiations[0].pid));
-                }
-
-                if (g.phase !== g.PHASE.RESIGN_PLAYERS) {
-                    return helpers.error("Something bad happened.", req.raw.cb);
-                }
-
-                // Get all free agents, filter array based on negotiations data, pass to db.getPlayers, augment with contract data from negotiations
-                g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
-                    var attributes, data, i, j, players, playersAll, playersSome, ratings, stats;
-
-                    playersAll = event.target.result;
-                    playersSome = [];
-                    for (i = 0; i < playersAll.length; i++) {
-                        for (j = 0; j < negotiations.length; j++) {
-                            if (playersAll[i].pid === negotiations[j].pid) {
-                                playersSome.push(playersAll[i]);
-                                break;
-                            }
-                        }
-                    }
-
-                    attributes = ["pid", "name", "pos", "age", "freeAgentMood", "injury"];
-                    stats = ["min", "pts", "trb", "ast", "per"];
-                    ratings = ["ovr", "pot", "skills"];
-                    players = db.getPlayers(playersSome, g.season, g.userTid, attributes, stats, ratings, {sortBy: "rosterOrder", showNoStats: true, fuzz: true});
-
-                    for (i = 0; i < players.length; i++) {
-                        for (j = 0; j < negotiations.length; j++) {
-                            if (players[i].pid === negotiations[j].pid) {
-                                players[i].contract = {};
-                                players[i].contract.amount = negotiations[j].player.amount / 1000;
-                                players[i].contract.exp = g.season + negotiations[j].player.years;
-                                break;
-                            }
-                        }
-                    }
-
-                    data = {
-                        container: "league_content",
-                        template: "negotiationList",
-                        title: "Resign Players",
-                        vars: {}
-                    };
-                    ui.update(data, function () {
-                        ui.datatable($("#negotiation-list"), 4, _.map(players, function (p) {
-                            var negotiateButton;
-                            if (freeAgents.refuseToNegotiate(p.contract.amount * 1000, p.freeAgentMood[g.userTid])) {
-                                negotiateButton = "Refuses!";
-                            } else {
-                                // This can be a plain link because the negotiation has already been started at this point.
-                                negotiateButton = '<a href="/l/' + g.lid + '/negotiation/' + p.pid + '" class="btn btn-mini btn-primary">Negotiate</a>';
-                            }
-                            return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, negotiateButton];
-                        }));
-
-                        if (req.raw.cb !== undefined) {
-                            req.raw.cb();
-                        }
-                    });
-                };
-            };
         });
     }
 

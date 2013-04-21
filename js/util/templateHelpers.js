@@ -85,16 +85,16 @@ define(["globals", "lib/faces", "lib/handlebars.runtime", "lib/knockout", "util/
 
             source = '';
             if (series && series.home.name) {
-                if (series.home.won() === 4) { source += '<strong>'; }
+                if (series.home.hasOwnProperty("won") && series.home.won() === 4) { source += '<strong>'; }
                 source += series.home.seed() + '. <a href="/l/' + g.lid + '/roster/' + series.home.abbrev() + '/' + season + '">' + series.home.name() + '</a>';
                 if (series.home.hasOwnProperty("won")) { source += ' ' + series.home.won(); }
-                if (series.home.won() === 4) { source += '</strong>'; }
+                if (series.home.hasOwnProperty("won") && series.home.won() === 4) { source += '</strong>'; }
                 source += '<br>';
 
-                if (series.away.won() === 4) { source += '<strong>'; }
+                if (series.home.hasOwnProperty("won") && series.away.won() === 4) { source += '<strong>'; }
                 source += series.away.seed() + '. <a href="/l/' + g.lid + '/roster/' + series.away.abbrev() + '/' + season + '">' + series.away.name() + '</a>';
                 if (series.away.hasOwnProperty("won")) { source += ' ' + series.away.won(); }
-                if (series.away.won() === 4) { source += '</strong>'; }
+                if (series.home.hasOwnProperty("won") && series.away.won() === 4) { source += '</strong>'; }
             }
 
             return ko.bindingHandlers.html.update(element, function () {

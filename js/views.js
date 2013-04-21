@@ -1,4 +1,4 @@
-define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/draftSummary", "views/gameLog", "views/history", "views/inbox", "views/leaders", "views/leagueDashboard", "views/leagueFinances", "views/message", "views/negotiation", "views/player", "views/playerRatings", "views/playerStats", "views/roster", "views/schedule", "views/standings", "views/teamFinances", "views/teamHistory", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, draft, finances, freeAgents, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, draftSummary, gameLog, history, inbox, leaders, leagueDashboard, leagueFinances, message, negotiation, player, playerRatings, playerStats, roster, schedule, standings, teamFinances, teamHistory, teamStats, trade) {
+define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/draftSummary", "views/gameLog", "views/history", "views/inbox", "views/leaders", "views/leagueDashboard", "views/leagueFinances", "views/message", "views/negotiation", "views/player", "views/playerRatings", "views/playerStats", "views/playoffs", "views/roster", "views/schedule", "views/standings", "views/teamFinances", "views/teamHistory", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, draft, finances, freeAgents, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, draftSummary, gameLog, history, inbox, leaders, leagueDashboard, leagueFinances, message, negotiation, player, playerRatings, playerStats, playoffs, roster, schedule, standings, teamFinances, teamHistory, teamStats, trade) {
     "use strict";
 
     function initDb(req) {
@@ -198,82 +198,6 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
             };
         }
         ui.update(data, req.raw.cb);
-    }
-
-    function playoffs(req) {
-        viewHelpers.beforeLeague(req, function () {
-            var attributes, finalMatchups, season, seasonAttributes, seasons;
-
-            season = helpers.validateSeason(req.params.season);
-            seasons = helpers.getSeasons(season);
-
-            if (season < g.season) {
-                g.realtimeUpdate = false;
-            }
-
-            function cb(finalMatchups, series) {
-                var data;
-
-                data = {
-                    container: "league_content",
-                    template: "playoffs",
-                    title: "Playoffs - " + season,
-                    vars: {finalMatchups: finalMatchups, series: series, seasons: seasons, season: season}
-                };
-                ui.update(data, function () {
-                    ui.dropdown($('#playoffs-select-season'));
-
-                    if (req.raw.cb !== undefined) {
-                        req.raw.cb();
-                    }
-                });
-            }
-
-            if (season === g.season && g.phase < g.PHASE.PLAYOFFS) {
-                // In the current season, before playoffs start, display projected matchups
-                finalMatchups = false;
-                attributes = ["tid", "cid", "abbrev", "name"];
-                seasonAttributes = ["winp"];
-                db.getTeams(null, season, attributes, [], seasonAttributes, {sortBy: "winp"}, function (teams) {
-                    var cid, i, j, keys, series, teamsConf;
-
-                    series = [[], [], [], []];  // First round, second round, third round, fourth round
-                    for (cid = 0; cid < 2; cid++) {
-                        teamsConf = [];
-                        for (i = 0; i < teams.length; i++) {
-                            if (teams[i].cid === cid) {
-                                teamsConf.push(teams[i]);
-                            }
-                        }
-                        series[0][cid * 4] = {home: teamsConf[0], away: teamsConf[7]};
-                        series[0][cid * 4].home.seed = 1;
-                        series[0][cid * 4].away.seed = 8;
-                        series[0][1 + cid * 4] = {home: teamsConf[1], away: teamsConf[6]};
-                        series[0][1 + cid * 4].home.seed = 2;
-                        series[0][1 + cid * 4].away.seed = 7;
-                        series[0][2 + cid * 4] = {home: teamsConf[2], away: teamsConf[5]};
-                        series[0][2 + cid * 4].home.seed = 3;
-                        series[0][2 + cid * 4].away.seed = 6;
-                        series[0][3 + cid * 4] = {home: teamsConf[3], away: teamsConf[4]};
-                        series[0][3 + cid * 4].home.seed = 4;
-                        series[0][3 + cid * 4].away.seed = 5;
-                    }
-
-                    cb(finalMatchups, series);
-                });
-            } else {
-                // Display the current or archived playoffs
-                finalMatchups = true;
-                g.dbl.transaction("playoffSeries").objectStore("playoffSeries").get(season).onsuccess = function (event) {
-                    var playoffSeries, series;
-
-                    playoffSeries = event.target.result;
-                    series = playoffSeries.series;
-
-                    cb(finalMatchups, series);
-                };
-            }
-        });
     }
 
     function freeAgents_(req) {

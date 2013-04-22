@@ -162,10 +162,10 @@ requirejs(["db", "views", "ui", "lib/davis", "lib/jquery", "util/helpers", "../g
             this.get("/l/:lid/dist_player_stats/:season", views.distPlayerStats);
             this.get("/l/:lid/dist_team_stats", views.distTeamStats);
             this.get("/l/:lid/dist_team_stats/:season", views.distTeamStats);
-            this.get("/l/:lid/player_shot_locations", views.playerShotLocations);
-            this.get("/l/:lid/player_shot_locations/:season", views.playerShotLocations);
-            this.get("/l/:lid/team_shot_locations", views.teamShotLocations);
-            this.get("/l/:lid/team_shot_locations/:season", views.teamShotLocations);
+            this.get("/l/:lid/player_shot_locations", views.playerShotLocations.get);
+            this.get("/l/:lid/player_shot_locations/:season", views.playerShotLocations.get);
+            this.get("/l/:lid/team_shot_locations", views.teamShotLocations.get);
+            this.get("/l/:lid/team_shot_locations/:season", views.teamShotLocations.get);
         });
 
         $(document).ready(function () {

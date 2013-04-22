@@ -1,4 +1,4 @@
-define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/draft", "views/draftSummary", "views/freeAgents", "views/gameLog", "views/history", "views/inbox", "views/leaders", "views/leagueDashboard", "views/leagueFinances", "views/message", "views/negotiation", "views/negotiationList", "views/player", "views/playerRatings", "views/playerStats", "views/playoffs", "views/roster", "views/schedule", "views/standings", "views/teamFinances", "views/teamHistory", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, finances, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, draft, draftSummary, freeAgents, gameLog, history, inbox, leaders, leagueDashboard, leagueFinances, message, negotiation, negotiationList, player, playerRatings, playerStats, playoffs, roster, schedule, standings, teamFinances, teamHistory, teamStats, trade) {
+define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/draft", "views/draftSummary", "views/freeAgents", "views/gameLog", "views/history", "views/inbox", "views/leaders", "views/leagueDashboard", "views/leagueFinances", "views/message", "views/negotiation", "views/negotiationList", "views/player", "views/playerRatings", "views/playerShotLocations", "views/playerStats", "views/playoffs", "views/roster", "views/schedule", "views/standings", "views/teamFinances", "views/teamHistory", "views/teamShotLocations", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, finances, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, draft, draftSummary, freeAgents, gameLog, history, inbox, leaders, leagueDashboard, leagueFinances, message, negotiation, negotiationList, player, playerRatings, playerShotLocations, playerStats, playoffs, roster, schedule, standings, teamFinances, teamHistory, teamShotLocations, teamStats, trade) {
     "use strict";
 
     function initDb(req) {
@@ -506,84 +506,6 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                             }
                         }
                     }
-
-                    if (req.raw.cb !== undefined) {
-                        req.raw.cb();
-                    }
-                });
-            });
-        });
-    }
-
-    function playerShotLocations(req) {
-        viewHelpers.beforeLeague(req, function () {
-            var season, seasons;
-
-            season = helpers.validateSeason(req.params.season);
-            seasons = helpers.getSeasons(season);
-
-            if (season < g.season) {
-                g.realtimeUpdate = false;
-            }
-
-            g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
-                var attributes, data, players, ratings, stats;
-
-                attributes = ["pid", "name", "pos", "age", "injury"];
-                ratings = ["skills"];
-                stats = ["abbrev", "gp", "gs", "min", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp"];
-                players = db.getPlayers(event.target.result, season, null, attributes, stats, ratings, {showRookies: true});
-
-                data = {
-                    container: "league_content",
-                    template: "playerShotLocations",
-                    title: "Player Shot Locations - " + season,
-                    vars: {season: season, seasons: seasons}
-                };
-                ui.update(data, function () {
-                    ui.dropdown($('#player-shot-locations-select-season'));
-
-                    ui.datatable($("#player-shot-locations"), 0, _.map(players, function (p) {
-                        return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, '<a href="/l/' + g.lid + '/roster/' + p.stats.abbrev + '/' + season + '">' + p.stats.abbrev + '</a>', String(p.stats.gp), String(p.stats.gs), helpers.round(p.stats.min, 1), helpers.round(p.stats.fgAtRim, 1), helpers.round(p.stats.fgaAtRim, 1), helpers.round(p.stats.fgpAtRim, 1), helpers.round(p.stats.fgLowPost, 1), helpers.round(p.stats.fgaLowPost, 1), helpers.round(p.stats.fgpLowPost, 1), helpers.round(p.stats.fgMidRange, 1), helpers.round(p.stats.fgaMidRange, 1), helpers.round(p.stats.fgpMidRange, 1), helpers.round(p.stats.tp, 1), helpers.round(p.stats.tpa, 1), helpers.round(p.stats.tpp, 1)];
-                    }));
-
-                    if (req.raw.cb !== undefined) {
-                        req.raw.cb();
-                    }
-                });
-            };
-        });
-    }
-
-    function teamShotLocations(req) {
-        viewHelpers.beforeLeague(req, function () {
-            var attributes, season, seasonAttributes, seasons, stats;
-
-            season = helpers.validateSeason(req.params.season);
-            seasons = helpers.getSeasons(season);
-
-            if (season < g.season) {
-                g.realtimeUpdate = false;
-            }
-
-            attributes = ["abbrev"];
-            stats = ["gp", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp"];
-            seasonAttributes = ["won", "lost"];
-            db.getTeams(null, season, attributes, stats, seasonAttributes, {}, function (teams) {
-                var data;
-
-                data = {
-                    container: "league_content",
-                    template: "teamShotLocations",
-                    title: "Team Shot Locations - " + season,
-                    vars: {season: season, seasons: seasons}
-                };
-                ui.update(data, function () {
-                    ui.dropdown($('#team-shot-locations-select-season'));
-
-                    ui.datatableSinglePage($("#team-shot-locations"), 2, _.map(teams, function (t) {
-                        return ['<a href="/l/' + g.lid + '/roster/' + t.abbrev + '">' + t.abbrev + '</a>', String(t.gp), String(t.won), String(t.lost), helpers.round(t.fgAtRim, 1), helpers.round(t.fgaAtRim, 1), helpers.round(t.fgpAtRim, 1), helpers.round(t.fgLowPost, 1), helpers.round(t.fgaLowPost, 1), helpers.round(t.fgpLowPost, 1), helpers.round(t.fgMidRange, 1), helpers.round(t.fgaMidRange, 1), helpers.round(t.fgpMidRange, 1), helpers.round(t.tp, 1), helpers.round(t.tpa, 1), helpers.round(t.tpp, 1)];
-                    }));
 
                     if (req.raw.cb !== undefined) {
                         req.raw.cb();

@@ -29,7 +29,7 @@ console.log('draw from scratch')
 
     function update(args) {
         return function (inputs, updateEvents, cb) {
-            var leagueContentEl;
+            var afterEverything, i, leagueContentEl;
 
             // Reset league content and view model only if it's:
             // (1) if it's not loaded and not loading yet
@@ -46,10 +46,16 @@ console.log('draw from scratch')
                 vm = new args.InitViewModel(inputs);
             }
 
+            // This will be called after every runBefore and runWhenever function is finished.
+            afterEverything = _.after(args.runWhenever.length + 1, function () {
+                leagueContentEl.dataset.idLoading = ""; // Done loading
+                cb();
+            });
+
             $.when.apply(null, _.map(args.runBefore, function (fn) {
                 return fn(inputs, updateEvents, vm);
             })).done(function () {
-                var afterEverything, i, vars;
+                var vars;
 
                 if (arguments.length > 1) {
                     vars = $.extend.apply(null, arguments);
@@ -63,22 +69,18 @@ console.log(vm);
 
                 display(args, updateEvents);
 
-                // This will be called after every runWhenever function is finished.
-                afterEverything = _.after(args.runWhenever.length, function () {
-                    leagueContentEl.dataset.idLoading = ""; // Done loading
-                    cb();
-                });
-
-                for (i = 0; i < args.runWhenever.length; i++) {
-                    $.when(args.runWhenever[i](inputs, updateEvents, vm)).done(function (vars) {
-                        if (vars !== undefined) {
-                            komapping.fromJS(vars, args.mapping, vm);
-                        }
-
-                        afterEverything();
-                    });
-                }
+                afterEverything();
             });
+
+            for (i = 0; i < args.runWhenever.length; i++) {
+                $.when(args.runWhenever[i](inputs, updateEvents, vm)).done(function (vars) {
+                    if (vars !== undefined) {
+                        komapping.fromJS(vars, args.mapping, vm);
+                    }
+
+                    afterEverything();
+                });
+            }
         };
     }
 

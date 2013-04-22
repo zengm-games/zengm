@@ -18,13 +18,9 @@ bbgmView
     what about non-league views? how to distinguish?
       more broadly.. make this less tied to BBGM specifically. shouldn't depend on BBGM-specific modules like g, ui, and util/viewHelpers
       fn to convert req to relevant vars? but isn't that what get already is?
-  LESS IMPORTANT
-    is it safe to put runBefore and runWhenever outputs in this.vars? what if they are overwritten? even if different functions don't read from this.vars and only write, this could still lead to inconsistent results. but isn't this the same as it is today, just replace this.vars with the DOM and you could still imagine inconsistencies
-    better leveage this in bbgmViews?
-    should start runWhenever at the beginning, along with runBefore. then only call callback after both finish
 dashboard
   observables set right by mapping
-    historical things (old scores, old records) don't need to be observable
+    historical things (old scores, old records) don't need to be observable?
     arrays need correct keys
   update vm directly from functions?
     if so, will need to define structure earlier

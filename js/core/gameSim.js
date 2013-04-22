@@ -271,7 +271,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             this.team[t].synergy.off = 0;
             if (skillsCount["3"] >= 2) { this.team[t].synergy.off += 3; }
             if (skillsCount["3"] >= 3) { this.team[t].synergy.off += 1; }
-            if (skillsCount["3"] >= 3) { this.team[t].synergy.off += 1; }
+            if (skillsCount["3"] >= 4) { this.team[t].synergy.off += 1; }
             if (skillsCount.B >= 1) { this.team[t].synergy.off += 3; }
             if (skillsCount.B >= 2) { this.team[t].synergy.off += 1; }
             if (skillsCount.Ps >= 1) { this.team[t].synergy.off += 3; }

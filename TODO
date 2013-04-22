@@ -5,6 +5,7 @@ how to exit out of GET early, like in trade, roster, draft, draftSummary, freeAg
   any other views that do thsi? search for helpers.error and DAvis
   maybe return an error message from GET and have bbgmView handle it before progressing any further
   confirm redirect to draft summary after draft ends
+datatable updates should only happen when vm.players/teams/whatever actually changes - how to implement?
 gameLog
   update docs
   make sure observables are being set correctly

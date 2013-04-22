@@ -2,7 +2,7 @@
  * @name db
  * @namespace Creating, migrating, and connecting to databases; working with transactions.
  */
-define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g, $, _, helpers) {
+define(["globals", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"], function (g, Davis, $, _, helpers) {
     "use strict";
 
     /**
@@ -1306,6 +1306,53 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
         };
     }
 
+    function reset() {
+        var key;
+
+        // localStorage, which is just use for table sorting currently
+        for (key in localStorage) {
+            if (localStorage.hasOwnProperty(key)) {
+                localStorage.removeItem(key);
+            }
+        }
+
+        // Delete any current league databases
+        console.log("Deleting any current league databases...");
+        g.dbm.transaction("leagues").objectStore("leagues").getAll().onsuccess = function (event) {
+            var data, done, i, league, leagues, request;
+
+            leagues = event.target.result;
+
+            if (leagues.length === 0) {
+                console.log('No leagues found.');
+                Davis.location.assign(new Davis.Request("/"));
+            }
+
+            league = require("core/league"); // Circular reference
+
+            done = 0;
+            for (i = 0; i < leagues.length; i++) {
+                league.remove(i, function () {
+                    done += 1;
+                    if (done === leagues.length) {
+                        // Delete any current meta database
+                        console.log("Deleting any current meta database...");
+                        g.dbm.close();
+                        request = indexedDB.deleteDatabase("meta");
+                        request.onsuccess = function (event) {
+                            // Create new meta database
+                            console.log("Creating new meta database...");
+                            connectMeta(function () {
+                                console.log("Done!");
+                                Davis.location.assign(new Davis.Request("/"));
+                            });
+                        };
+                    }
+                });
+            }
+        };
+    }
+
     return {
         connectMeta: connectMeta,
         connectLeague: connectLeague,
@@ -1319,6 +1366,7 @@ define(["globals", "lib/jquery", "lib/underscore", "util/helpers"], function (g,
         getPayrolls: getPayrolls,
         loadGameAttribute: loadGameAttribute,
         loadGameAttributes: loadGameAttributes,
-        setGameAttributes: setGameAttributes
+        setGameAttributes: setGameAttributes,
+        reset: reset
     };
 });

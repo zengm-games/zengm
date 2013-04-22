@@ -1,53 +1,6 @@
 define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/draft", "views/draftSummary", "views/freeAgents", "views/gameLog", "views/history", "views/inbox", "views/leaders", "views/leagueDashboard", "views/leagueFinances", "views/message", "views/negotiation", "views/negotiationList", "views/player", "views/playerRatings", "views/playerShotLocations", "views/playerStats", "views/playoffs", "views/roster", "views/schedule", "views/standings", "views/teamFinances", "views/teamHistory", "views/teamShotLocations", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, finances, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, draft, draftSummary, freeAgents, gameLog, history, inbox, leaders, leagueDashboard, leagueFinances, message, negotiation, negotiationList, player, playerRatings, playerShotLocations, playerStats, playoffs, roster, schedule, standings, teamFinances, teamHistory, teamShotLocations, teamStats, trade) {
     "use strict";
 
-    function initDb(req) {
-        var key;
-
-        viewHelpers.beforeNonLeague();
-
-        // localStorage, which is just use for table sorting currently
-        for (key in localStorage) {
-            if (localStorage.hasOwnProperty(key)) {
-                localStorage.removeItem(key);
-            }
-        }
-
-        // Delete any current league databases
-        console.log("Deleting any current league databases...");
-        g.dbm.transaction("leagues").objectStore("leagues").getAll().onsuccess = function (event) {
-            var data, done, i, leagues, request;
-
-            leagues = event.target.result;
-
-            if (leagues.length === 0) {
-                console.log('No leagues found.');
-                Davis.location.assign(new Davis.Request("/"));
-            }
-
-            done = 0;
-            for (i = 0; i < leagues.length; i++) {
-                league.remove(i, function () {
-                    done += 1;
-                    if (done === leagues.length) {
-                        // Delete any current meta database
-                        console.log("Deleting any current meta database...");
-                        g.dbm.close();
-                        request = indexedDB.deleteDatabase("meta");
-                        request.onsuccess = function (event) {
-                            // Create new meta database
-                            console.log("Creating new meta database...");
-                            db.connectMeta(function () {
-                                console.log("Done!");
-                                Davis.location.assign(new Davis.Request("/"));
-                            });
-                        };
-                    }
-                });
-            }
-        };
-    }
-
     function dashboard(req) {
         viewHelpers.beforeNonLeague();
 
@@ -516,8 +469,6 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
     }
 
     return {
-        initDb: initDb,
-
         dashboard: dashboard,
         newLeague: newLeague,
         deleteLeague: deleteLeague,

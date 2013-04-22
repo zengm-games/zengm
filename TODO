@@ -109,6 +109,8 @@ not urgetnt, but... use knockout for
     partial load of list for updates, like in gameLog list
   freeagents
     optimize refreshes
+  dist
+    allow updating box plots without refresh
 
 BEFORE 3.0.0-beta.3
 -------------------

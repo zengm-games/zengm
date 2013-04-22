@@ -142,6 +142,14 @@ helpers = helpers || Handlebars.helpers; data = data || {};
 
   return "<form id=\"draft-summary-dropdown\" class=\"form-inline pull-right\"></form>\n\n<h1><span data-bind=\"text: season\"></span> Draft Summary <span data-bind=\"newWindow: []\"></span></h1>\n<p>\n  <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"draft-results\">\n  <thead>\n    <tr><th colspan=\"3\"></th><th colspan=\"5\" style=\"text-align: center\">At Draft</th><th colspan=\"5\" style=\"text-align: center\">Current</th><th colspan=\"5\" style=\"text-align: center\">Career Stats</th></tr>\n    <tr><th>Pick</th><th>Name</th><th title=\"Position\">Pos</th><th>Team</th><th>Age</th><th title=\"Overall rating\">Ovr</th><th title=\"Potential rating\">Pot</th><th>Skills</th><th>Team</th><th>Age</th><th title=\"Overall rating\">Ovr</th><th title=\"Potential rating\">Pot</th><th>Skills</th><th title=\"Games Played\">GP</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">PPG</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th></tr>\n  </thead>\n  </table>\n</p>\n";
   });
+templates['teamStatDists'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
+helpers = helpers || Handlebars.helpers; data = data || {};
+  
+
+
+  return "<form id=\"team-stat-dists-dropdown\" class=\"form-inline pull-right\"></form>\n\n<h1>Team Stat Distributions <span data-bind=\"newWindow: []\"></span></h1>\n<p>More: <a data-bind=\"attrLeagueUrl: {href: ['team_stats', season]}\">Main Stats</a> | <a data-bind=\"attrLeagueUrl: {href: ['team_shot_locations', season]}\">Shot Locations</a></p>\n\n<p>These <a href=\"http://en.wikipedia.org/wiki/Box_plot\">box plots</a> show the league-wide distributions of team stats for the selected season. Black plots are for this league and blue plots are from the 2010-2011 NBA season, for comparison. The five vertical lines in each plot represent the minimum of the scale, the minimum, the first <a href=\"http://en.wikipedia.org/wiki/Quartile\">quartile</a>, the median, the third quartile, the maximum, and the maximum of the scale.</p>\n\n<p>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" id=\"team-stat-dists\">\n  <tbody></tbody>\n</table>\n</p>\n";
+  });
 templates['leagueLayout'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
@@ -237,44 +245,6 @@ helpers = helpers || Handlebars.helpers; data = data || {};
 
   return "<h1><span data-bind=\"text: region\"></span> <span data-bind=\"text: name\"></span> Dashboard <span data-bind=\"newWindow: []\"></span></h1>\n\n<div class=\"row-fluid\">\n  <div class=\"span4\">\n    <h3>Current Record</h3>\n    <p>\n      <span data-bind=\"text: won\"></span>-<span data-bind=\"text: lost\"></span><!-- ko if: !playoffsStarted() && streakLong() -->, <span data-bind=\"text: streakLong\"></span><!-- /ko --><br>\n      <a data-bind=\"attrLeagueUrl: {href: ['standings']}\">» Standings</a>\n    </p>\n\n    <h3>Playoffs</h3>\n    <p>\n      <!-- ko if: showPlayoffSeries -->\n        <b><span data-bind=\"text: seriesTitle\"></span></b><br>\n        <span data-bind=\"matchup: [0, 0]\"></span><br>\n      <!-- /ko -->\n      <!-- ko if: !showPlayoffSeries() -->\n        <span data-bind=\"text: rank\"></span>th place in conference<br>\n        (Top 8 teams make the playoffs)<br>\n      <!-- /ko -->\n      <!-- ko if: playoffsStarted -->\n        <a data-bind=\"attrLeagueUrl: {href: ['playoffs']}\">» Playoffs</a>\n      <!-- /ko -->\n      <!-- ko if: !playoffsStarted() -->\n        <a data-bind=\"attrLeagueUrl: {href: ['playoffs']}\">» Playoffs Projections</a>\n      <!-- /ko -->\n    </p>\n\n    <h3>Recent Games</h3>\n    <p>\n      <span data-bind=\"visible: nextGameAbbrev\">\n        Next Game: <span data-bind=\"visible: !nextGameHome()\">@</span><a data-bind=\"attrLeagueUrl: {href: ['roster', nextGameAbbrev]}, text: nextGameAbbrev\"></a><br>\n      </span>\n      <span data-bind=\"visible: recentGames().length === 0\">No completed games yet this season.<br></span>\n      <!-- ko foreach: recentGames -->\n        <span data-bind=\"visible: !home()\">@</span><a data-bind=\"attrLeagueUrl: {href: ['roster', oppAbbrev]}, text: oppAbbrev\"></a>, <span data-bind=\"text: won() ? 'won' : 'lost'\"></span> <a data-bind=\"attrLeagueUrl: {href: ['game_log', $parent.abbrev, $parent.season, gid]}\"><span data-bind=\"text: pts\"></span>-<span data-bind=\"text: oppPts\"></span><span data-bind=\"text: overtime\"></span></a><br>\n      <!-- /ko -->\n      <a data-bind=\"attrLeagueUrl: {href: ['game_log']}\">» Game Log</a><br>\n      <a data-bind=\"attrLeagueUrl: {href: ['standings']}\">» Schedule</a>\n    </p>\n\n    <h3>Recent History</h3>\n    <p>\n      <span data-bind=\"visible: recentHistory().length === 0\">None yet.<br></span>\n      <!-- ko foreach: recentHistory -->\n        <a data-bind=\"attrLeagueUrl: {href: ['roster', $parent.abbrev, season]}, text: season\"></a>: <a data-bind=\"attrLeagueUrl: {href: ['standings', season]}\"><span data-bind=\"text: won\"></span>-<span data-bind=\"text: lost\"></span></a><!-- ko if: extraText -->, <a data-bind=\"attrLeagueUrl: {href: ['playoffs', season]}, text: extraText\"></a><!-- /ko --><br>\n      <!-- /ko -->\n      <a data-bind=\"attrLeagueUrl: {href: ['team_history']}\">» Team History</a><br>\n      <a data-bind=\"attrLeagueUrl: {href: ['history']}\">» League History</a>\n    </p>\n\n  </div>\n  <div class=\"span4\">\n    <h3>Team Stats</h3>\n    <p>\n      Points: <span data-bind=\"round: [pts, 1]\"></span> (<span data-bind=\"text: ptsRank\"></span>th)<br>\n      Allowed: <span data-bind=\"round: [oppPts, 1]\"></span> (<span data-bind=\"text: oppPtsRank\"></span>th)<br>\n      Rebounds: <span data-bind=\"round: [trb, 1]\"></span> (<span data-bind=\"text: trbRank\"></span>th)<br>\n      Assists: <span data-bind=\"round: [ast, 1]\"></span> (<span data-bind=\"text: astRank\"></span>th)<br>\n      <a data-bind=\"attrLeagueUrl: {href: ['team_stats']}\">» Team Stats</a>\n    </p>\n\n    <h3>Team Leaders</h3>\n    <p>\n      <a data-bind=\"attrLeagueUrl: {href: ['player', teamLeaders.pts.pid]}, text: teamLeaders.pts.name\"></a>: <span data-bind=\"round: [teamLeaders.pts.stat, 1]\"></span> pts<br>\n      <a data-bind=\"attrLeagueUrl: {href: ['player', teamLeaders.trb.pid]}, text: teamLeaders.trb.name\"></a>: <span data-bind=\"round: [teamLeaders.trb.stat, 1]\"></span> reb<br>\n      <a data-bind=\"attrLeagueUrl: {href: ['player', teamLeaders.ast.pid]}, text: teamLeaders.ast.name\"></a>: <span data-bind=\"round: [teamLeaders.ast.stat, 1]\"></span> ast<br>\n      <a data-bind=\"attrLeagueUrl: {href: ['roster']}\">» Full Roster</a>\n    </p>\n\n    <h3>League Leaders</h3>\n    <p>\n      <a data-bind=\"attrLeagueUrl: {href: ['player', leagueLeaders.pts.pid]}, text: leagueLeaders.pts.name\"></a>, <a data-bind=\"attrLeagueUrl: {href: ['roster', leagueLeaders.pts.abbrev]}, text: leagueLeaders.pts.abbrev\"></a>: <span data-bind=\"round: [leagueLeaders.pts.stat, 1]\"></span> pts<br>\n      <a data-bind=\"attrLeagueUrl: {href: ['player', leagueLeaders.trb.pid]}, text: leagueLeaders.trb.name\"></a>, <a data-bind=\"attrLeagueUrl: {href: ['roster', leagueLeaders.trb.abbrev]}, text: leagueLeaders.trb.abbrev\"></a>: <span data-bind=\"round: [leagueLeaders.trb.stat, 1]\"></span> reb<br>\n      <a data-bind=\"attrLeagueUrl: {href: ['player', leagueLeaders.ast.pid]}, text: leagueLeaders.ast.name\"></a>, <a data-bind=\"attrLeagueUrl: {href: ['roster', leagueLeaders.ast.abbrev]}, text: leagueLeaders.ast.abbrev\"></a>: <span data-bind=\"round: [leagueLeaders.ast.stat, 1]\"></span> ast<br>\n      <a data-bind=\"attrLeagueUrl: {href: ['leaders']}\">» League Leaders</a><br>\n      <a data-bind=\"attrLeagueUrl: {href: ['player_stats']}\">» Player Stats</a>\n    </p>\n  </div>\n  <div class=\"span4\">\n    <h3>Finances</h3>\n    <p>\n      Avg Attendance: <span data-bind=\"numberWithCommas: att\"></span><br>\n      Revenue (YTD): <span data-bind=\"currency: [revenue, 'M']\"></span><br>\n      Profit (YTD): <span data-bind=\"currency: [profit, 'M']\"></span><br>\n      Cash: <span data-bind=\"currency: [cash, 'M']\"></span><br>\n      Payroll: <span data-bind=\"currency: [payroll, 'M']\"></span><br>\n      Salary Cap: <span data-bind=\"currency: [salaryCap, 'M']\"></span><br>\n      <a data-bind=\"attrLeagueUrl: {href: ['finances']}\">» League Finances</a>\n    </p>\n\n    <h3>Top Free Agents</h3>\n    <p>\n      <span data-bind=\"visible: freeAgents().length === 0\">None.<br></span>\n      <!-- ko foreach: freeAgents -->\n        <a data-bind=\"attrLeagueUrl: {href: ['player', pid]}, text: name\"></a>: <span data-bind=\"text: age\"></span> yo, <span data-bind=\"text: ovr\"></span> ovr, <span data-bind=\"text: pot\"></span> pot</span><br>\n      <!-- /ko -->\n      (You have <span data-bind=\"text: numRosterSpots\"></span> open roster spots)<br>\n      <a data-bind=\"attrLeagueUrl: {href: ['free_agents']}\">» Free Agents</a>\n    </p>\n\n    <h3>Expiring Contracts</h3>\n    <p>\n      <span data-bind=\"visible: expiring().length === 0\">None.<br></span>\n      <!-- ko foreach: expiring -->\n        <a data-bind=\"attrLeagueUrl: {href: ['player', pid]}, text: name\"></a>: <span data-bind=\"text: age\"></span> yo, <span data-bind=\"currency: [contractAmount, 'M']\"></span><br>\n        <span style=\"margin-left: 2em\"><span data-bind=\"round: [pts, 1]\"></span> pts, <span data-bind=\"text: ovr\"></span> ovr, <span data-bind=\"text: pot\"></span> pot</span><br>\n      <!-- /ko -->\n      <a data-bind=\"attrLeagueUrl: {href: ['roster']}\">» Full Roster</a>\n    </p>\n  </div>\n</div>";
   });
-templates['distTeamStats'] = template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
-helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n      <option value=\""
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"";
-  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">"
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " season</option>\n    ";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  
-  return " selected=\"selected\"";
-  }
-
-  buffer += "<form action=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/dist_team_stats\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"dist-team-stats-select-season\" name=\"season\" class=\"season\">\n    ";
-  stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </select>\n</form>\n\n<h1>Team Stat Distributions "
-    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n<p>More: <a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/team_stats\">Main Stats</a> | <a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/team_shot_locations\">Shot Locations</a></p>\n\n<p>These <a href=\"http://en.wikipedia.org/wiki/Box_plot\">box plots</a> show the league-wide distributions of team stats for the selected season. Black plots are for this league and blue plots are from the 2010-2011 NBA season, for comparison. The five vertical lines in each plot represent the minimum of the scale, the minimum, the first <a href=\"http://en.wikipedia.org/wiki/Quartile\">quartile</a>, the median, the third quartile, the maximum, and the maximum of the scale.</p>\n\n<p>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" id=\"dist-team-stats\">\n  <tbody></tbody>\n</table>\n</p>\n";
-  return buffer;
-  });
 templates['standings'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
@@ -291,16 +261,21 @@ helpers = helpers || Handlebars.helpers; data = data || {};
 
   return "<form id=\"playoffs-dropdown\" class=\"form-inline pull-right\"></form>\n\n<h1>Playoffs <span data-bind=\"newWindow: []\"></span></h1>\n\n<p data-bind=\"visible: !finalMatchups()\">This is what the playoff matchups would be if the season ended right now.</p>\n\n<p>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table-condensed\" width=\"100%\">\n<tbody>\n  <tr>\n    <td width=\"14.28%\" data-bind=\"matchup: [0, 0]\"></td>\n    <td rowspan=\"2\" width=\"14.28%\" data-bind=\"matchup: [1, 0]\"></td>\n    <td rowspan=\"4\" width=\"14.28%\" data-bind=\"matchup: [2, 0]\"></td>\n    <td rowspan=\"4\" width=\"14.28%\" data-bind=\"matchup: [3, 0]\"></td>\n    <td rowspan=\"4\" width=\"14.28%\" data-bind=\"matchup: [2, 1]\"></td>\n    <td rowspan=\"2\" width=\"14.28%\" data-bind=\"matchup: [1, 2]\"></td>\n    <td width=\"14.28%\" data-bind=\"matchup: [0, 4]\"></td>\n  </tr>\n  <tr>\n    <td data-bind=\"matchup: [0, 1]\"></td>\n    <td data-bind=\"matchup: [0, 5]\"></td>\n  </tr>\n  <tr>\n    <td data-bind=\"matchup: [0, 2]\"></td>\n    <td rowspan=\"2\" data-bind=\"matchup: [1, 1]\"></td>\n    <td rowspan=\"2\" data-bind=\"matchup: [1, 3]\"></td>\n    <td data-bind=\"matchup: [0, 6]\"></td>\n  </tr>\n  <tr>\n    <td data-bind=\"matchup: [0, 3]\"></td>\n    <td data-bind=\"matchup: [0, 7]\"></td>\n  </tr>\n</tbody>\n</table>\n</p>\n";
   });
+templates['playerRatingDists'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
+helpers = helpers || Handlebars.helpers; data = data || {};
+  
+
+
+  return "<form id=\"player-rating-dists-dropdown\" class=\"form-inline pull-right\"></form>\n\n<h1>Player Rating Distributions <span data-bind=\"newWindow: []\"></span></h1>\n<p>More: <a data-bind=\"attrLeagueUrl: {href: ['player_ratings', season]}\">Main Ratings</a></p>\n\n<p>These <a href=\"http://en.wikipedia.org/wiki/Box_plot\">box plots</a> show the league-wide distributions of player ratings for all active players in the selected season. The five vertical lines in each plot represent the minimum of the scale (0), the minimum, the first <a href=\"http://en.wikipedia.org/wiki/Quartile\">quartile</a>, the median, the third quartile, the maximum, and the maximum of the scale (100).</p>\n\n<p>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" id=\"player-rating-dists\">\n  <tbody></tbody>\n</table>\n</p>\n";
+  });
 templates['teamStats'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", escapeExpression=this.escapeExpression;
+  
 
 
-  buffer += "<form id=\"team-stats-dropdown\" class=\"form-inline pull-right\"></form>\n\n<h1>Team Stats "
-    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n<p>More: <a data-bind=\"attrLeagueUrl: {href: ['team_shot_locations', season]}\">Shot Locations</a> | <a data-bind=\"attrLeagueUrl: {href: ['dist_team_stats', season]}\">Stat Distributions</a></p>\n\n<p class=\"clearfix\">\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"team-stats\">\n<thead>\n  <tr><th colspan=\"4\"></th><th colspan=\"3\" style=\"text-align: center\" title=\"Field Goals\">FG</th><th colspan=\"3\" style=\"text-align: center\" title=\"Three-Pointers\">3PT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Free Throws\">FT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Rebounds\">Reb</th><th colspan=\"7\"></th></tr>\n  <tr><th>Team</th><th title=\"Games Played\">GP</th><th title=\"Won\">W</th><th title=\"Lost\">L</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Offensive\">Off</th><th title=\"Defensive\">Def</th><th title=\"Total\">Tot</th><th title=\"Assists\">Ast</th><th title=\"Turnovers\">TO</th><th title=\"Steals\">Stl</th><th title=\"Blocks\">Blk</th><th title=\"Personal Fouls\">PF</th><th title=\"Points\">Pts</th><th title=\"Opponent's Points\">OPts</th></tr>\n</thead>\n</table>\n</p>";
-  return buffer;
+  return "<form id=\"team-stats-dropdown\" class=\"form-inline pull-right\"></form>\n\n<h1>Team Stats <span data-bind=\"newWindow: []\"></span></h1>\n<p>More: <a data-bind=\"attrLeagueUrl: {href: ['team_shot_locations', season]}\">Shot Locations</a> | <a data-bind=\"attrLeagueUrl: {href: ['team_stat_dists', season]}\">Stat Distributions</a></p>\n\n<p class=\"clearfix\">\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"team-stats\">\n<thead>\n  <tr><th colspan=\"4\"></th><th colspan=\"3\" style=\"text-align: center\" title=\"Field Goals\">FG</th><th colspan=\"3\" style=\"text-align: center\" title=\"Three-Pointers\">3PT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Free Throws\">FT</th><th colspan=\"3\" style=\"text-align: center\" title=\"Rebounds\">Reb</th><th colspan=\"7\"></th></tr>\n  <tr><th>Team</th><th title=\"Games Played\">GP</th><th title=\"Won\">W</th><th title=\"Lost\">L</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Made\">M</th><th title=\"Attempted\">A</th><th title=\"Percentage\">%</th><th title=\"Offensive\">Off</th><th title=\"Defensive\">Def</th><th title=\"Total\">Tot</th><th title=\"Assists\">Ast</th><th title=\"Turnovers\">TO</th><th title=\"Steals\">Stl</th><th title=\"Blocks\">Blk</th><th title=\"Personal Fouls\">PF</th><th title=\"Points\">Pts</th><th title=\"Opponent's Points\">OPts</th></tr>\n</thead>\n</table>\n</p>";
   });
 templates['dropdown'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
@@ -489,42 +464,6 @@ helpers = helpers || Handlebars.helpers; data = data || {};
 
   return "<h1>Players With Expiring Contracts <span data-bind=\"newWindow: []\"></span></h1>\n\n<p>You are allowed to go over the salary cap to resign your players before they become free agents. If you do not resign them before free agency begins, they will be free to sign with any team, and you won't be able to go over the salary cap to sign them.</p>\n\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"negotiation-list\">\n<thead>\n  <tr><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall\">Ovr</th><th title=\"Potential\">Pot</th><th title=\"Minutes Per Game\">Min</th><th title=\"Points Per Game\">Pts</th><th title=\"Rebounds Per Game\">Reb</th><th title=\"Assists Per Game\">Ast</th><th title=\"Player Efficiency Rating\">PER</th><th>Asking for</th><th>Negotiate</th></tr>\n</thead>\n</table>";
   });
-templates['distPlayerRatings'] = template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
-helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n      <option value=\""
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"";
-  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">"
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " season</option>\n    ";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  
-  return " selected=\"selected\"";
-  }
-
-  buffer += "<form action=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/dist_player_ratings\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"dist-player-ratings-select-season\" name=\"season\" class=\"season\">\n    ";
-  stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </select>\n</form>\n\n<h1>Player Rating Distributions "
-    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n<p>More: <a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/player_ratings\">Main Ratings</a></p>\n\n<p>These <a href=\"http://en.wikipedia.org/wiki/Box_plot\">box plots</a> show the league-wide distributions of player ratings for all active players in the selected season. The five vertical lines in each plot represent the minimum of the scale (0), the minimum, the first <a href=\"http://en.wikipedia.org/wiki/Quartile\">quartile</a>, the median, the third quartile, the maximum, and the maximum of the scale (100).</p>\n\n<p>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" id=\"dist-player-ratings\">\n  <tbody></tbody>\n</table>\n</p>\n";
-  return buffer;
-  });
 templates['deleteLeague'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
@@ -554,7 +493,15 @@ helpers = helpers || Handlebars.helpers; data = data || {};
   
 
 
-  return "<form id=\"player-ratings-dropdown\" class=\"form-inline pull-right\"></form>\n\n<h1>Player Ratings <span data-bind=\"newWindow: []\"></span></h1>\n<p>More: <a data-bind=\"attrLeagueUrl: {href: ['dist_player_ratings', season]}\">Rating Distributions</a></p>\n\n\n<p class=\"clearfix\">\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player-ratings\">\n<thead>\n  <tr><th>Name</th><th title=\"Position\">Pos</th><th>Team</th><th>Age</th><th title=\"Overall\">Ovr</th><th title=\"Potential\">Pot</th><th title=\"Height\">Hgt</th><th title=\"Strength\">Str</th><th title=\"Speed\">Spd</th><th title=\"Jumping\">Jmp</th><th title=\"Endurance\">End</th><th title=\"Inside Scoring\">Ins</th><th title=\"Dunks/Layups\">Dnk</th><th title=\"Free Throw Shooting\">FT</th><th title=\"Two-Point Shooting\">2Pt</th><th title=\"Three-Point Shooting\">3Pt</th><th title=\"Blocks\">Blk</th><th title=\"Steals\">Stl</th><th title=\"Dribbling\">Drb</th><th title=\"Passing\">Pss</th><th title=\"Rebounding\">Reb</th></tr>\n</thead>\n</table>\n</p>";
+  return "<form id=\"player-ratings-dropdown\" class=\"form-inline pull-right\"></form>\n\n<h1>Player Ratings <span data-bind=\"newWindow: []\"></span></h1>\n<p>More: <a data-bind=\"attrLeagueUrl: {href: ['player_rating_dists', season]}\">Rating Distributions</a></p>\n\n\n<p class=\"clearfix\">\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"player-ratings\">\n<thead>\n  <tr><th>Name</th><th title=\"Position\">Pos</th><th>Team</th><th>Age</th><th title=\"Overall\">Ovr</th><th title=\"Potential\">Pot</th><th title=\"Height\">Hgt</th><th title=\"Strength\">Str</th><th title=\"Speed\">Spd</th><th title=\"Jumping\">Jmp</th><th title=\"Endurance\">End</th><th title=\"Inside Scoring\">Ins</th><th title=\"Dunks/Layups\">Dnk</th><th title=\"Free Throw Shooting\">FT</th><th title=\"Two-Point Shooting\">2Pt</th><th title=\"Three-Point Shooting\">3Pt</th><th title=\"Blocks\">Blk</th><th title=\"Steals\">Stl</th><th title=\"Dribbling\">Drb</th><th title=\"Passing\">Pss</th><th title=\"Rebounding\">Reb</th></tr>\n</thead>\n</table>\n</p>";
+  });
+templates['playerStatDists'] = template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
+helpers = helpers || Handlebars.helpers; data = data || {};
+  
+
+
+  return "<form id=\"player-stat-dists-dropdown\" class=\"form-inline pull-right\"></form>\n\n<h1>Player Stat Distributions <span data-bind=\"newWindow: []\"></span></h1>\n<p>More: <a data-bind=\"attrLeagueUrl: {href: ['player_stats', season]}\">Main Stats</a> | <a data-bind=\"attrLeagueUrl: {href: ['player_shot_locations', season]}\">Shot Locations</a></p>\n\n<p>These <a href=\"http://en.wikipedia.org/wiki/Box_plot\">box plots</a> show the league-wide distributions of player stats for all active players in the selected season. Black plots are for this league and blue plots are from the 2009-2010 NBA season, for comparison. NBA data was generously provided by <a href=\"http://www.databasebasketball.com/stats_download.htm\">databaseBasketball.com</a>. The five vertical lines in each plot represent the minimum of the scale, the minimum, the first <a href=\"http://en.wikipedia.org/wiki/Quartile\">quartile</a>, the median, the third quartile, the maximum, and the maximum of the scale.</p>\n\n<p>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" id=\"player-stat-dists\">\n  <tbody></tbody>\n</table>\n</p>\n";
   });
 templates['leagueFinances'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
@@ -616,44 +563,6 @@ helpers = helpers || Handlebars.helpers; data = data || {};
 
 
   return "<h1>Draft <span data-bind=\"newWindow: []\"></span></h1>\n\n<p>When your turn in the draft comes up, select from the list of available players on the left.</p>\n\n<p data-bind=\"visible: !started()\"><button class=\"btn btn-large btn-primary\" id=\"start-draft\">Start draft</button></p>\n\n<div class=\"row-fluid\">\n  <div class=\"span6\">\n    <h2>Undrafted Players</h2>\n    <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"undrafted\">\n    <thead>\n      <tr><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall rating\">Ovr</th><th title=\"Potential rating\">Pot</th><th>Draft</th></tr>\n    </thead>\n    <tbody data-bind=\"foreach: undrafted\">\n      <tr data-bind=\"attr: {id: 'undrafted-' + pid()}\">\n        <td data-bind=\"playerNameLabels: [pid, name, injury, ratings.skills]\"></td>\n        <td data-bind=\"text: pos\"></td>\n        <td data-bind=\"text: age\"></td>\n        <td data-bind=\"text: ratings.ovr\"></td>\n        <td data-bind=\"text: ratings.pot\"></td>\n        <td><button class=\"btn btn-mini btn-primary\" data-bind=\"attr: {'data-player-id': pid}, enable: $root.started\">Draft</button></td>\n      </tr>\n    </tbody>\n    </table>\n  </div>\n  <div class=\"span6\">\n    <h2>Draft Results</h2>\n    <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\" id=\"drafted\">\n    <thead>\n      <tr><th>Pick</th><th>Team</th><th>Name</th><th title=\"Position\">Pos</th><th>Age</th><th title=\"Overall rating\">Ovr</th><th title=\"Potential rating\">Pot</th></tr>\n    </thead>\n    <tbody data-bind=\"foreach: drafted\">\n      <tr>\n        <td><span data-bind=\"text: draft.round\"></span>-<span data-bind=\"text: draft.pick\"></span></td>\n        <td><a data-bind=\"attrLeagueUrl: {href: ['roster', draft.abbrev]}, text: draft.abbrev\"></a></td>\n        <!-- ko if: pid() >= 0 -->\n          <td data-bind=\"playerNameLabels: [pid, name, injury, ratings.skills]\"></td>\n          <td data-bind=\"text: pos\"></td>\n          <td data-bind=\"text: age\"></td>\n          <td data-bind=\"text: ratings.ovr\"></td>\n          <td data-bind=\"text: ratings.pot\"></td>\n        <!-- /ko -->\n        <!-- ko if: pid() < 0 -->\n          <td></td>\n          <td></td>\n          <td></td>\n          <td></td>\n          <td></td>\n        <!-- /ko -->\n      </tr>\n    </tbody>\n    </table>\n  </div>\n</div>\n";
-  });
-templates['distPlayerStats'] = template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
-helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n      <option value=\""
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"";
-  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">"
-    + escapeExpression(((stack1 = depth0.season),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " season</option>\n    ";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  
-  return " selected=\"selected\"";
-  }
-
-  buffer += "<form action=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/dist_player_stats\" method=\"GET\" class=\"form-inline pull-right\">\n  <select id=\"dist-player-stats-select-season\" name=\"season\" class=\"season\">\n    ";
-  stack2 = ((stack1 = ((stack1 = depth0.seasons),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </select>\n</form>\n\n<h1>Player Stat Distributions "
-    + escapeExpression(helpers.new_window.call(depth0, {hash:{},data:data}))
-    + "</h1>\n<p>More: <a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/player_stats\">Main Stats</a> | <a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/player_shot_locations\">Shot Locations</a></p>\n\n<p>These <a href=\"http://en.wikipedia.org/wiki/Box_plot\">box plots</a> show the league-wide distributions of player stats for all active players in the selected season. Black plots are for this league and blue plots are from the 2009-2010 NBA season, for comparison. NBA data was generously provided by <a href=\"http://www.databasebasketball.com/stats_download.htm\">databaseBasketball.com</a>. The five vertical lines in each plot represent the minimum of the scale, the minimum, the first <a href=\"http://en.wikipedia.org/wiki/Quartile\">quartile</a>, the median, the third quartile, the maximum, and the maximum of the scale.</p>\n\n<p>\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" id=\"dist-player-stats\">\n  <tbody></tbody>\n</table>\n</p>\n";
-  return buffer;
   });
 templates['player'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];

@@ -104,6 +104,7 @@ var boxPlot = (function () {
         containerDiv.style.height = "34px";
         containerDiv.style.paddingBottom = "30px";
         containerDiv.style.position = "relative";
+        containerDiv.innerHTML = "";
 
         midLineDiv = document.createElement("div");
         boxPlotElementStyle(midLineDiv, plot.color);

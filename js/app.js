@@ -155,12 +155,12 @@ requirejs(["db", "views", "ui", "lib/davis", "lib/jquery", "util/helpers", "../g
             this.get("/l/:lid/negotiation", views.negotiationList.get);
             this.get("/l/:lid/negotiation/:pid", views.negotiation.get);
             this.post("/l/:lid/negotiation/:pid", views.negotiation.post);
-            this.get("/l/:lid/dist_player_ratings", views.distPlayerRatings);
-            this.get("/l/:lid/dist_player_ratings/:season", views.distPlayerRatings);
-            this.get("/l/:lid/dist_player_stats", views.distPlayerStats);
-            this.get("/l/:lid/dist_player_stats/:season", views.distPlayerStats);
-            this.get("/l/:lid/dist_team_stats", views.distTeamStats);
-            this.get("/l/:lid/dist_team_stats/:season", views.distTeamStats);
+            this.get("/l/:lid/player_rating_dists", views.playerRatingDists.get);
+            this.get("/l/:lid/player_rating_dists/:season", views.playerRatingDists.get);
+            this.get("/l/:lid/player_stat_dists", views.playerStatDists.get);
+            this.get("/l/:lid/player_stat_dists/:season", views.playerStatDists.get);
+            this.get("/l/:lid/team_stat_dists", views.teamStatDists.get);
+            this.get("/l/:lid/team_stat_dists/:season", views.teamStatDists.get);
             this.get("/l/:lid/player_shot_locations", views.playerShotLocations.get);
             this.get("/l/:lid/player_shot_locations/:season", views.playerShotLocations.get);
             this.get("/l/:lid/team_shot_locations", views.teamShotLocations.get);

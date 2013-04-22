@@ -26,7 +26,7 @@ define(["db", "globals", "ui", "core/freeAgents", "lib/jquery", "lib/underscore"
     };
 
     function updateNegotiationList() {
-        var deferred, negotiations, vars;
+        var deferred, vars;
 
         deferred = $.Deferred();
         vars = {};

@@ -1,7 +1,7 @@
 smarter realtime
 ----------------
 
-how to exit out of GET early, like in trade, roster, draft, draftSummary, history where it tries to return Davis?
+how to exit out of GET early, like in trade, roster, draft, draftSummary, freeAgents, history where it tries to return Davis?
   any other views that do thsi? search for helpers.error and DAvis
   maybe return an error message from GET and have bbgmView handle it before progressing any further
   confirm redirect to draft summary after draft ends
@@ -107,6 +107,8 @@ not urgetnt, but... use knockout for
         arrays are becoming observableArrays
   schedule, teamHistory
     partial load of list for updates, like in gameLog list
+  freeagents
+    optimize refreshes
 
 BEFORE 3.0.0-beta.3
 -------------------
@@ -118,7 +120,6 @@ check effects of extreme ticket prices
 show old contracts on old roster view
 popup windows should still be popup windows, even after navigating reloading page
 profits too large? add corporate tax
-free agent view cap space, show decimal places
 draft lottery
   do a dramatic presentation?
   increase hype for teams that exceed expectations

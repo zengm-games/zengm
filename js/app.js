@@ -133,7 +133,7 @@ requirejs(["db", "views", "ui", "lib/davis", "lib/jquery", "util/helpers", "../g
             this.get("/l/:lid/team_finances/:abbrev", views.teamFinances.get);
             this.get("/l/:lid/team_finances/:abbrev/:show", views.teamFinances.get);
             this.get("/l/:lid/team_history", views.teamHistory.get);
-            this.get("/l/:lid/free_agents", views.freeAgents);
+            this.get("/l/:lid/free_agents", views.freeAgents.get);
             this.get("/l/:lid/trade", views.trade.get);
             this.post("/l/:lid/trade", views.trade.post);
             this.get("/l/:lid/draft", views.draft.get);

@@ -1,4 +1,4 @@
-define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances", "core/freeAgents", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/draft", "views/draftSummary", "views/gameLog", "views/history", "views/inbox", "views/leaders", "views/leagueDashboard", "views/leagueFinances", "views/message", "views/negotiation", "views/negotiationList", "views/player", "views/playerRatings", "views/playerStats", "views/playoffs", "views/roster", "views/schedule", "views/standings", "views/teamFinances", "views/teamHistory", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, finances, freeAgents, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, draft, draftSummary, gameLog, history, inbox, leaders, leagueDashboard, leagueFinances, message, negotiation, negotiationList, player, playerRatings, playerStats, playoffs, roster, schedule, standings, teamFinances, teamHistory, teamStats, trade) {
+define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/draft", "views/draftSummary", "views/freeAgents", "views/gameLog", "views/history", "views/inbox", "views/leaders", "views/leagueDashboard", "views/leagueFinances", "views/message", "views/negotiation", "views/negotiationList", "views/player", "views/playerRatings", "views/playerStats", "views/playoffs", "views/roster", "views/schedule", "views/standings", "views/teamFinances", "views/teamHistory", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, finances, game, league, season, names, boxPlot, Davis, Handlebars, $, _, helpers, viewHelpers, draft, draftSummary, freeAgents, gameLog, history, inbox, leaders, leagueDashboard, leagueFinances, message, negotiation, negotiationList, player, playerRatings, playerStats, playoffs, roster, schedule, standings, teamFinances, teamHistory, teamStats, trade) {
     "use strict";
 
     function initDb(req) {
@@ -198,70 +198,6 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
             };
         }
         ui.update(data, req.raw.cb);
-    }
-
-    function freeAgents_(req) {
-        viewHelpers.beforeLeague(req, function () {
-            if (g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.RESIGN_PLAYERS) {
-                if (g.phase === g.PHASE.RESIGN_PLAYERS) {
-                    Davis.location.assign(new Davis.Request("/l/" + g.lid + "/negotiation"));
-                    return;
-                }
-
-                helpers.error("You're not allowed to sign free agents now.", req.raw.cb);
-                return;
-            }
-
-            db.getPayroll(null, g.userTid, function (payroll, contracts) {
-                var capSpace;
-
-                capSpace = (g.salaryCap - payroll) / 1000;
-                if (capSpace < 0) {
-                    capSpace = 0;
-                }
-
-                g.dbl.transaction("players").objectStore("players").index("tid").getAll(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
-                    var attributes, data, i, players, ratings, stats;
-
-                    attributes = ["pid", "name", "pos", "age", "contract", "freeAgentMood", "injury"];
-                    ratings = ["ovr", "pot", "skills"];
-                    stats = ["min", "pts", "trb", "ast", "per"];
-                    players = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings, {oldStats: true, showNoStats: true, fuzz: true});
-
-                    for (i = 0; i < players.length; i++) {
-                        players[i].contract.amount = freeAgents.amountWithMood(players[i].contract.amount, players[i].freeAgentMood[g.userTid]);
-                    }
-
-                    data = {
-                        container: "league_content",
-                        template: "freeAgents",
-                        title: "Free Agents",
-                        vars: {capSpace: capSpace}
-                    };
-                    ui.update(data, function () {
-                        ui.datatable($("#free-agents"), 4, _.map(players, function (p) {
-                            var negotiateButton;
-                            if (freeAgents.refuseToNegotiate(p.contract.amount * 1000, p.freeAgentMood[g.userTid])) {
-                                negotiateButton = "Refuses!";
-                            } else {
-                                negotiateButton = '<form action="/l/' + g.lid + '/negotiation/' + p.pid + '" method="POST" style="margin: 0"><input type="hidden" name="new" value="1"><button type="submit" class="btn btn-mini btn-primary">Negotiate</button></form>';
-                            }
-                            return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, negotiateButton];
-                        }));
-
-                        $("#help-salary-cap").clickover({
-                            title: "Cap Space",
-                            html: true,
-                            content: "<p>\"Cap space\" is the difference between your current payroll and the salary cap. You can sign a free agent to any valid contract as long as you don't go over the cap.</p>You can only exceed the salary cap to sign free agents to minimum contracts ($" + g.minContract + "k/year)."
-                        });
-
-                        if (req.raw.cb !== undefined) {
-                            req.raw.cb();
-                        }
-                    });
-                };
-            });
-        });
     }
 
     function distPlayerRatings(req) {
@@ -676,7 +612,7 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
         schedule: schedule,
         teamFinances: teamFinances,
         teamHistory: teamHistory,
-        freeAgents: freeAgents_,
+        freeAgents: freeAgents,
         trade: trade,
         draft: draft,
         draftSummary: draftSummary,

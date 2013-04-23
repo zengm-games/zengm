@@ -6,9 +6,15 @@ double load on GET? for instance, http://localhost/l/1/player_rating_dists and p
 how to exit out of GET early, like in trade, roster, draft, draftSummary, freeAgents, history where it tries to return Davis?
   any other views that do thsi? search for helpers.error and DAvis
   maybe return an error message (or redirect URL) from GET and have bbgmView handle it before progressing any further
-    needs to be async to handle something like..?
+    IMPORTANT: needs to be async to handle something like..?
       when negotiation is in progress, click from play menu leads to "Players With Expiring Contracts"
-  confirm redirect to draft summary after draft ends
+      also, how to handle other inline errors/redirects not in GET? need some kind of short circuit? could put error in vars and read from that?
+  confirm redirect to draftSummary after draft ends
+  PLAN:
+    on GET, return either errorMessage or redirectUrl and that will short circuit the rest of the view
+    on POST, ...?
+    in runBefore, put either errorMessage or redirectUrl in vars and that will short circuit the rest of the view (after runBefore finishes)
+    there should be no other cases to handle
 check for other things in uiEvery - should they also be computed observables in uiFirst?
 gameLog
   update docs

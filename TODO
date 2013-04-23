@@ -1,17 +1,38 @@
 smarter realtime
 ----------------
 
+better way of setting title, like in a computed observable or binding or something
+  done in playerStats. do elsewhere:
+  js/views/player.js:        ui.title(vm.player.name());
+    js/views/playerRatings.js:        ui.title("Player Ratings - " + season);
+    js/views/playerShotLocations.js:        ui.title("Player Shot Locations - " + season);
+    js/views/teamStats.js:        ui.title("Team Stats - " + season);
+    js/views/leagueFinances.js:        ui.title("League Finances - " + season);
+    js/views/playerStatDists.js:        ui.title("Player Stat Distributions - " + season);
+    js/views/teamStatDists.js:        ui.title("Team Stat Distributions - " + season);
+    js/views/teamFinances.js:        ui.title(vm.team.region() + " " + vm.team.name() + " Finances");
+    js/views/negotiation.js:        ui.title("Contract Negotiation - " + vm.player.name());
+    js/views/gameLog.js:        ui.title("Game Log - " + vm.season());
+    js/views/standings.js:        ui.title("Standings - " + season);
+    js/views/leaders.js:        ui.title("League Leaders - " + season);
+    js/views/roster.js:        ui.title(vm.team.region() + " " + vm.team.name() + " " + "Roster - " + vm.season());
+    js/views/playoffs.js:        ui.title("Playoffs - " + season);
+    js/views/message.js:        ui.title("Message From " + vm.message.from());
+    js/views/playerRatingDists.js:        ui.title("Player Rating Distributions - " + season);
+    js/views/draftSummary.js:        ui.title(season + " Draft Summary");
+    js/views/history.js:        ui.title("Season Summary - " + season);
+    js/views/teamShotLocations.js:        ui.title("Team Shot Locations - " + season);
 how to exit out of GET early, like in trade, roster, draft, draftSummary, freeAgents, history where it tries to return Davis?
   any other views that do thsi? search for helpers.error and DAvis
   maybe return an error message from GET and have bbgmView handle it before progressing any further
   confirm redirect to draft summary after draft ends
 datatable updates should only happen when vm.players/teams/whatever actually changes - how to implement?
+  same as title, subscribe to observable
 gameLog
   update docs
   make sure observables are being set correctly
 bbgmView
   IMPORTANT:
-    better way of setting title, like in a computed observable or binding or something
     do idLoaded/idLoading work?
       can i do some check to abandon in display if idLoading is mismatched with reality?
       click link twice quickly - should work
@@ -104,6 +125,7 @@ not urgetnt, but... use knockout for
 BEFORE 3.0.0-beta.3
 -------------------
 
+if a player on your team refuses to resign, there should be appropriate handling of this message
 sub-views like shot locations should retain league menu highlighting
 core.freeAgents should be core.freeAgent
 after last resigning negotiation, switch to next phase

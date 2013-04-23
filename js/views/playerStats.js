@@ -52,12 +52,17 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
         }
     }
 
+    function uiFirst(vm) {
+        ko.computed(function () {
+            ui.title("Player Stats - " + vm.season());
+        });
+
+    }
+
     function uiEvery(updateEvents, vm) {
         var season;
 
         season = vm.season();
-
-        ui.title("Player Stats - " + season);
 
         components.dropdown("player-stats-dropdown", ["seasons"], [season], updateEvents);
 
@@ -72,6 +77,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
         InitViewModel: InitViewModel,
         mapping: mapping,
         runBefore: [updatePlayers],
+        uiFirst: uiFirst,
         uiEvery: uiEvery
     });
 });

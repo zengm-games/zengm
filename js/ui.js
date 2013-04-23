@@ -210,22 +210,16 @@ console.log('update datatable')
     function realtimeUpdate(updateEvents, cb) {
         updateEvents = updateEvents !== undefined ? updateEvents : [];
 
-        if (g.realtimeUpdate) {
-            // If tracking is enabled, don't track realtime updates
-            if (Davis.Request.prototype.noTrack !== undefined) {
-                Davis.Request.prototype.noTrack();
-            }
-
-            // Refresh standings if it's the current season standings and the phase is during the regular season
-            Davis.location.replace(new Davis.Request(location.pathname, {
-                updateEvents: updateEvents,
-                cb: cb
-            }));
-        } else {
-            if (cb !== undefined) {
-                cb();
-            }
+        // If tracking is enabled, don't track realtime updates
+        if (Davis.Request.prototype.noTrack !== undefined) {
+            Davis.Request.prototype.noTrack();
         }
+
+        // Refresh standings if it's the current season standings and the phase is during the regular season
+        Davis.location.replace(new Davis.Request(location.pathname, {
+            updateEvents: updateEvents,
+            cb: cb
+        }));
     }
 
     /*Get current options based on game state and push rendered play button

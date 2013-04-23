@@ -9,7 +9,6 @@ define(["db", "globals", "ui", "lib/jquery", "util/helpers"], function (db, g, u
         var reqCb, checkDbChange, leagueMenu, popup, updateEvents;
 
         g.lid = parseInt(req.params.lid, 10);
-        g.realtimeUpdate = true;  // This is the default. It is set to false in views where appropriate
 
         popup = req.params.w === "popup";
 

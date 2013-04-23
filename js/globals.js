@@ -21,7 +21,6 @@ define([], function () {
     g.luxuryTax = 0.5;
     g.minContract = 500;  // [thousands of dollars]
     g.maxContract = 20000;  // [thousands of dollars]
-    g.realtimeUpdate = true;
 
     // Constants in all caps
     g.PHASE = {
@@ -50,7 +49,7 @@ define([], function () {
     }*/
 
     // THIS MUST BE ACCURATE OR BAD STUFF WILL HAPPEN
-    g.notInDb = ["dbm", "dbl", "lid", "numTeams", "confs", "divs", "salaryCap", "minPayroll", "luxuryPayroll", "luxuryTax", "minContract", "maxContract", "realtimeUpdate", "notInDb", "PHASE", "PLAYER", "gameSimWorkers"];
+    g.notInDb = ["dbm", "dbl", "lid", "numTeams", "confs", "divs", "salaryCap", "minPayroll", "luxuryPayroll", "luxuryTax", "minContract", "maxContract", "PHASE", "PLAYER", "gameSimWorkers", "notInDb"];
 
     return g;
 });

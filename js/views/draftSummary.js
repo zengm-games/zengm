@@ -29,10 +29,6 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
         };
     }
 
-    function InitViewModel() {
-        this.players = [];
-    }
-
     mapping = {
         players: {
             create: function (options) {
@@ -97,24 +93,23 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
         ko.computed(function () {
             ui.title(vm.season() + " Draft Summary");
         });
+
+        ko.computed(function () {
+            var season;
+            season = vm.season();
+            ui.datatableSinglePage($("#draft-results"), 0, _.map(vm.players(), function (p) {
+                return [p.draft.round + '-' + p.draft.pick, '<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>', p.pos, '<a href="/l/' + g.lid + '/roster/' + p.draft.abbrev + '/' +  season + '">' + p.draft.abbrev + '</a>', String(p.draft.age), String(p.draft.ovr), String(p.draft.pot), '<span class="skills_alone">' + helpers.skillsBlock(p.draft.skills) + '</span>', '<a href="/l/' + g.lid + '/roster/' + p.currentAbbrev + '">' + p.currentAbbrev + '</a>', String(p.currentAge), String(p.currentOvr), String(p.currentPot), '<span class="skills_alone">' + helpers.skillsBlock(p.currentSkills) + '</span>', helpers.round(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1)];
+            }));
+        }).extend({throttle: 1});
     }
 
     function uiEvery(updateEvents, vm) {
-        var season;
-
-        season = vm.season();
-
-        components.dropdown("draft-summary-dropdown", ["seasons"], [season], updateEvents);
-
-        ui.datatableSinglePage($("#draft-results"), 0, _.map(vm.players, function (p) {
-            return [p.draft.round + '-' + p.draft.pick, '<a href="/l/' + g.lid + '/player/' + p.pid + '">' + p.name + '</a>', p.pos, '<a href="/l/' + g.lid + '/roster/' + p.draft.abbrev + '/' +  season + '">' + p.draft.abbrev + '</a>', String(p.draft.age), String(p.draft.ovr), String(p.draft.pot), '<span class="skills_alone">' + helpers.skillsBlock(p.draft.skills) + '</span>', '<a href="/l/' + g.lid + '/roster/' + p.currentAbbrev + '">' + p.currentAbbrev + '</a>', String(p.currentAge), String(p.currentOvr), String(p.currentPot), '<span class="skills_alone">' + helpers.skillsBlock(p.currentSkills) + '</span>', helpers.round(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1)];
-        }));
+        components.dropdown("draft-summary-dropdown", ["seasons"], [vm.season()], updateEvents);
     }
 
     return bbgmView.init({
         id: "draftSummary",
         get: get,
-        InitViewModel: InitViewModel,
         mapping: mapping,
         runBefore: [updateDraftSummary],
         uiFirst: uiFirst,

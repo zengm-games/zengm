@@ -2,7 +2,7 @@
  * @name views.freeAgents
  * @namespace List of free agents.
  */
-define(["db", "globals", "ui", "core/freeAgents", "lib/jquery", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, freeAgents, $, _, bbgmView, helpers, viewHelpers) {
+define(["db", "globals", "ui", "core/freeAgents", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, freeAgents, $, ko, _, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     var mapping;
@@ -15,10 +15,6 @@ define(["db", "globals", "ui", "core/freeAgents", "lib/jquery", "lib/underscore"
 
             return helpers.error("You're not allowed to sign free agents now.", req.raw.cb);
         }
-    }
-
-    function InitViewModel() {
-        this.players = [];
     }
 
     mapping = {
@@ -67,7 +63,7 @@ define(["db", "globals", "ui", "core/freeAgents", "lib/jquery", "lib/underscore"
         return deferred.promise();
     }
 
-    function uiFirst() {
+    function uiFirst(vm) {
         ui.title("Free Agents");
 
         $("#help-salary-cap").clickover({
@@ -75,27 +71,25 @@ define(["db", "globals", "ui", "core/freeAgents", "lib/jquery", "lib/underscore"
             html: true,
             content: "<p>\"Cap space\" is the difference between your current payroll and the salary cap. You can sign a free agent to any valid contract as long as you don't go over the cap.</p>You can only exceed the salary cap to sign free agents to minimum contracts ($" + g.minContract + "k/year)."
         });
-    }
 
-    function uiEvery(updateEvents, vm) {
-        ui.datatable($("#free-agents"), 4, _.map(vm.players, function (p) {
-            var negotiateButton;
-            if (freeAgents.refuseToNegotiate(p.contract.amount * 1000, p.freeAgentMood[g.userTid])) {
-                negotiateButton = "Refuses!";
-            } else {
-                negotiateButton = '<form action="/l/' + g.lid + '/negotiation/' + p.pid + '" method="POST" style="margin: 0"><input type="hidden" name="new" value="1"><button type="submit" class="btn btn-mini btn-primary">Negotiate</button></form>';
-            }
-            return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, negotiateButton];
-        }));
+        ko.computed(function () {
+            ui.datatable($("#free-agents"), 4, _.map(vm.players(), function (p) {
+                var negotiateButton;
+                if (freeAgents.refuseToNegotiate(p.contract.amount * 1000, p.freeAgentMood[g.userTid])) {
+                    negotiateButton = "Refuses!";
+                } else {
+                    negotiateButton = '<form action="/l/' + g.lid + '/negotiation/' + p.pid + '" method="POST" style="margin: 0"><input type="hidden" name="new" value="1"><button type="submit" class="btn btn-mini btn-primary">Negotiate</button></form>';
+                }
+                return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, negotiateButton];
+            }));
+        }).extend({throttle: 1});
     }
 
     return bbgmView.init({
         id: "freeAgents",
         get: get,
-        InitViewModel: InitViewModel,
         mapping: mapping,
         runBefore: [updateFreeAgents],
-        uiFirst: uiFirst,
-        uiEvery: uiEvery
+        uiFirst: uiFirst
     });
 });

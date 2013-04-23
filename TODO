@@ -1,6 +1,7 @@
 smarter realtime
 ----------------
 
+awards not being set?
 double load on GET? for instance, http://localhost/l/1/player_rating_dists and play a day. loads twice.
 how to exit out of GET early, like in trade, roster, draft, draftSummary, freeAgents, history where it tries to return Davis?
   any other views that do thsi? search for helpers.error and DAvis
@@ -8,10 +9,7 @@ how to exit out of GET early, like in trade, roster, draft, draftSummary, freeAg
     needs to be async to handle something like..?
       when negotiation is in progress, click from play menu leads to "Players With Expiring Contracts"
   confirm redirect to draft summary after draft ends
-datatable updates should only happen when vm.players/teams/whatever actually changes - how to implement?
-  same as title, subscribe to observable
-  observable([]) or observableArray?
-.extend({throttle: 1}) on title computed observable, to handle cases where multiple things change.
+.extend({throttle: 1}) on title computed observable, to handle cases where multiple things change (like roster).
 check for other things in uiEvery - should they also be computed observables in uiFirst?
 gameLog
   update docs
@@ -40,6 +38,7 @@ team finances
   teamFinances updateEvent for when the form is changed (or, i guess, if the AI team does it, but that doesn't happen yet)
   move some stuff to loadAfter?
   confirm events aren't going crazy
+  contracts should only update on playerMovement
 datatables
   update in loadAfter, not display
 general things
@@ -75,6 +74,7 @@ not urgetnt, but... use knockout for
       at beginning of new propose
       on clear
       when team changes
+    changing the trading partner shouldn't refresh the user's team
   negotiation
     some things can probably be non-observable
   draftSummary

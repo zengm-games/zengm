@@ -102,6 +102,11 @@ define(["db", "globals", "ui", "core/finances", "lib/jquery", "lib/knockout", "l
             create: function (options) {
                 return ko.observable(options.data);
             }
+        },
+        contracts: {
+            create: function (options) {
+                return options.data;
+            }
         }
     };
 
@@ -230,6 +235,27 @@ define(["db", "globals", "ui", "core/finances", "lib/jquery", "lib/knockout", "l
         $("#finances-settings").on("gameSimulationStop", function () {
             enableFinanceSettings(vm.tid());
         });
+
+        ko.computed(function () {
+            ui.datatableSinglePage($("#player-salaries"), 1, _.map(vm.contracts(), function (p) {
+                var i, output;
+                output = [helpers.playerNameLabels(p.pid, p.name, p.injury, p.skills)];
+                if (p.released) {
+                    output[0] = "<i>" + output[0] + "</i>";
+                }
+                for (i = 0; i < 5; i++) {
+                    if (p.amounts[i]) {
+                        output.push(helpers.formatCurrency(p.amounts[i], "M"));
+                    } else {
+                        output.push("");
+                    }
+                    if (p.released) {
+                        output[i + 1] = "<i>" + output[i + 1] + "</i>";
+                    }
+                }
+                return output;
+            }));
+        }).extend({throttle: 1});
     }
 
     function uiEvery(updateEvents, vm) {
@@ -284,25 +310,6 @@ define(["db", "globals", "ui", "core/finances", "lib/jquery", "lib/knockout", "l
         $.barGraph($("#bar-graph-cash"), barData.cash, undefined, barSeasons, function (val) {
             return helpers.formatCurrency(val, "M", 1);
         });
-
-        ui.datatableSinglePage($("#player-salaries"), 1, _.map(vm.contracts(), function (p) {
-            var i, output;
-            output = [helpers.playerNameLabels(p.pid, p.name, p.injury, p.skills)];
-            if (p.released) {
-                output[0] = "<i>" + output[0] + "</i>";
-            }
-            for (i = 0; i < 5; i++) {
-                if (p.amounts[i]) {
-                    output.push(helpers.formatCurrency(p.amounts[i], "M"));
-                } else {
-                    output.push("");
-                }
-                if (p.released) {
-                    output[i + 1] = "<i>" + output[i + 1] + "</i>";
-                }
-            }
-            return output;
-        }));
     }
 
     return bbgmView.init({

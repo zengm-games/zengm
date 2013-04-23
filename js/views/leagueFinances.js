@@ -15,7 +15,6 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
 
     function InitViewModel() {
         this.season = ko.observable();
-        this.teams = [];
     }
 
     mapping = {
@@ -61,22 +60,20 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
         ko.computed(function () {
             ui.title("League Finances - " + vm.season());
         });
+
+        ko.computed(function () {
+            var season;
+            season = vm.season();
+            ui.datatableSinglePage($("#league-finances"), 5, _.map(vm.teams(), function (t) {
+                var payroll;
+                payroll = season === g.season ? t.payroll : t.salaryPaid;  // Display the current actual payroll for this season, or the salary actually paid out for prior seasons
+                return ['<a href="/l/' + g.lid + '/team_finances/' + t.abbrev + '">' + t.region + ' ' + t.name + '</a>', helpers.numberWithCommas(helpers.round(t.att)), helpers.formatCurrency(t.revenue, "M"), helpers.formatCurrency(t.profit, "M"), helpers.formatCurrency(t.cash, "M"), helpers.formatCurrency(payroll, "M")];
+            }));
+        }).extend({throttle: 1});
     }
 
     function uiEvery(updateEvents, vm) {
-        var season;
-
-        season = vm.season();
-
-        components.dropdown("league-finances-dropdown", ["seasons"], [season], updateEvents);
-
-        ui.datatableSinglePage($("#league-finances"), 5, _.map(vm.teams, function (t) {
-            var payroll;
-
-            payroll = season === g.season ? t.payroll : t.salaryPaid;  // Display the current actual payroll for this season, or the salary actually paid out for prior seasons
-
-            return ['<a href="/l/' + g.lid + '/team_finances/' + t.abbrev + '">' + t.region + ' ' + t.name + '</a>', helpers.numberWithCommas(helpers.round(t.att)), helpers.formatCurrency(t.revenue, "M"), helpers.formatCurrency(t.profit, "M"), helpers.formatCurrency(t.cash, "M"), helpers.formatCurrency(payroll, "M")];
-        }));
+        components.dropdown("league-finances-dropdown", ["seasons"], [vm.season()], updateEvents);
     }
 
     return bbgmView.init({

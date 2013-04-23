@@ -2,7 +2,7 @@
  * @name views.negotiationList
  * @namespace List of resigning negotiations in progress.
  */
-define(["db", "globals", "ui", "core/freeAgents", "lib/jquery", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, freeAgents, $, _, bbgmView, helpers, viewHelpers) {
+define(["db", "globals", "ui", "core/freeAgents", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, freeAgents, $, ko, _, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     var mapping;
@@ -11,10 +11,6 @@ define(["db", "globals", "ui", "core/freeAgents", "lib/jquery", "lib/underscore"
         if (g.phase !== g.PHASE.RESIGN_PLAYERS) {
             return helpers.error("Something bad happened.", req.raw.cb);
         }
-    }
-
-    function InitViewModel() {
-        this.players = [];
     }
 
     mapping = {
@@ -78,30 +74,28 @@ define(["db", "globals", "ui", "core/freeAgents", "lib/jquery", "lib/underscore"
         return deferred.promise();
     }
 
-    function uiFirst() {
+    function uiFirst(vm) {
         ui.title("Resign Players");
-    }
 
-    function uiEvery(updateEvents, vm) {
-        ui.datatable($("#negotiation-list"), 4, _.map(vm.players, function (p) {
-            var negotiateButton;
-            if (freeAgents.refuseToNegotiate(p.contract.amount * 1000, p.freeAgentMood[g.userTid])) {
-                negotiateButton = "Refuses!";
-            } else {
-                // This can be a plain link because the negotiation has already been started at this point.
-                negotiateButton = '<a href="/l/' + g.lid + '/negotiation/' + p.pid + '" class="btn btn-mini btn-primary">Negotiate</a>';
-            }
-            return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, negotiateButton];
-        }));
+        ko.computed(function () {
+            ui.datatable($("#negotiation-list"), 4, _.map(vm.players(), function (p) {
+                var negotiateButton;
+                if (freeAgents.refuseToNegotiate(p.contract.amount * 1000, p.freeAgentMood[g.userTid])) {
+                    negotiateButton = "Refuses!";
+                } else {
+                    // This can be a plain link because the negotiation has already been started at this point.
+                    negotiateButton = '<a href="/l/' + g.lid + '/negotiation/' + p.pid + '" class="btn btn-mini btn-primary">Negotiate</a>';
+                }
+                return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, negotiateButton];
+            }));
+        }).extend({throttle: 1});
     }
 
     return bbgmView.init({
         id: "negotiationList",
         get: get,
-        InitViewModel: InitViewModel,
         mapping: mapping,
         runBefore: [updateNegotiationList],
-        uiFirst: uiFirst,
-        uiEvery: uiEvery
+        uiFirst: uiFirst
     });
 });

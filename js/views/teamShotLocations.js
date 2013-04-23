@@ -15,7 +15,6 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
 
     function InitViewModel() {
         this.season = ko.observable();
-        this.teams = [];
     }
 
     mapping = {
@@ -52,14 +51,18 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
         ko.computed(function () {
             ui.title("Team Shot Locations - " + vm.season());
         });
+
+        ko.computed(function () {
+            var season;
+            season = vm.season();
+            ui.datatableSinglePage($("#team-shot-locations"), 2, _.map(vm.teams(), function (t) {
+                return ['<a href="/l/' + g.lid + '/roster/' + t.abbrev + '/' + season + '">' + t.abbrev + '</a>', String(t.gp), String(t.won), String(t.lost), helpers.round(t.fgAtRim, 1), helpers.round(t.fgaAtRim, 1), helpers.round(t.fgpAtRim, 1), helpers.round(t.fgLowPost, 1), helpers.round(t.fgaLowPost, 1), helpers.round(t.fgpLowPost, 1), helpers.round(t.fgMidRange, 1), helpers.round(t.fgaMidRange, 1), helpers.round(t.fgpMidRange, 1), helpers.round(t.tp, 1), helpers.round(t.tpa, 1), helpers.round(t.tpp, 1)];
+            }));
+        }).extend({throttle: 1});
     }
 
     function uiEvery(updateEvents, vm) {
         components.dropdown("team-shot-locations-dropdown", ["seasons"], [vm.season()], updateEvents);
-
-        ui.datatableSinglePage($("#team-shot-locations"), 2, _.map(vm.teams, function (t) {
-            return ['<a href="/l/' + g.lid + '/roster/' + t.abbrev + '">' + t.abbrev + '</a>', String(t.gp), String(t.won), String(t.lost), helpers.round(t.fgAtRim, 1), helpers.round(t.fgaAtRim, 1), helpers.round(t.fgpAtRim, 1), helpers.round(t.fgLowPost, 1), helpers.round(t.fgaLowPost, 1), helpers.round(t.fgpLowPost, 1), helpers.round(t.fgMidRange, 1), helpers.round(t.fgaMidRange, 1), helpers.round(t.fgpMidRange, 1), helpers.round(t.tp, 1), helpers.round(t.tpa, 1), helpers.round(t.tpp, 1)];
-        }));
     }
 
     return bbgmView.init({

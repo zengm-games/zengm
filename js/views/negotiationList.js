@@ -10,7 +10,7 @@ define(["db", "globals", "ui", "core/freeAgents", "lib/jquery", "lib/knockout", 
     function get(req) {
         if (g.phase !== g.PHASE.RESIGN_PLAYERS) {
             return {
-                errorMessage: "Something bad happened."
+                redirectUrl: "/l/" + g.lid + "/negotiation/-1"
             };
         }
     }

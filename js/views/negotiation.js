@@ -23,8 +23,12 @@ define(["db", "globals", "ui", "core/contractNegotiation", "lib/davis", "lib/jqu
     }
 
     function get(req) {
+        var pid;
+
+        pid = parseInt(req.params.pid, 10);
+
         return {
-            pid: parseInt(req.params.pid, 10)
+            pid: pid >= 0 ? pid : null // Null will load whatever the active one is
         };
     }
 
@@ -80,10 +84,10 @@ define(["db", "globals", "ui", "core/contractNegotiation", "lib/davis", "lib/jqu
         deferred = $.Deferred();
         vars = {};
 
-        g.dbl.transaction("negotiations").objectStore("negotiations").get(inputs.pid).onsuccess = function (event) {
+        g.dbl.transaction("negotiations").objectStore("negotiations").openCursor(inputs.pid).onsuccess = function (event) {
             var negotiation;
 
-            negotiation = event.target.result;
+            negotiation = event.target.result.value;
 
             if (!negotiation) {
                 return deferred.resolve({
@@ -97,7 +101,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "lib/davis", "lib/jqu
                 negotiation.player.expiration -= 1;
             }
 
-            g.dbl.transaction("players").objectStore("players").get(inputs.pid).onsuccess = function (event) {
+            g.dbl.transaction("players").objectStore("players").get(negotiation.pid).onsuccess = function (event) {
                 var attributes, player, ratings, stats, teams;
 
                 attributes = ["pid", "name", "freeAgentMood"];

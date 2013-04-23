@@ -63,15 +63,17 @@ console.log('draw from scratch')
                     vars = arguments[0];
                 }
 
-                // Check for errors/redirects
-                if (vars.errorMessage !== undefined) {
-                    return helpers.error(vars.errorMessage, cb);
-                }
-                if (vars.redirectUrl !== undefined) {
-                    return Davis.location.assign(new Davis.Request(vars.redirectUrl));
-                }
+                if (vars !== undefined) {
+                    // Check for errors/redirects
+                    if (vars.errorMessage !== undefined) {
+                        return helpers.error(vars.errorMessage, cb);
+                    }
+                    if (vars.redirectUrl !== undefined) {
+                        return Davis.location.assign(new Davis.Request(vars.redirectUrl));
+                    }
 
-                komapping.fromJS(vars, args.mapping, vm);
+                    komapping.fromJS(vars, args.mapping, vm);
+                }
 console.log(vars);
 console.log(vm);
 
@@ -101,7 +103,6 @@ console.log(vm);
                 if (inputs === undefined) {
                     inputs = {};
                 }
-console.log(inputs);
 
                 // Check for errors/redirects
                 if (inputs.errorMessage !== undefined) {

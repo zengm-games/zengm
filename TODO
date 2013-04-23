@@ -1,6 +1,13 @@
 smarter realtime
 ----------------
 
+ui.realtimeUpdate should be used in more places so updateEvent is pervasive
+  how can this be done for automatic redirects? wrapper function?
+  search for anywhere Davis is directly called.
+    what about post redirects? https://github.com/olivernn/davis.js/issues/36
+  add playerMovement updateEvent, for when a player signs a contract, becomes a free agent, or is traded
+  eventually, get rid of "reload" boolean in season.js
+  update documentation for args.post in util.bbgmView
 awards not being set?
 double load on GET? for instance, http://localhost/l/1/player_rating_dists and play a day. loads twice.
 helpers.error in non-view files (currently just core.season)? should they be moved into views?
@@ -45,12 +52,6 @@ general things
     http://stackoverflow.com/questions/9242147/how-to-structure-a-single-page-app-with-knockout-js
     http://tekpub.com/productions/knockout
   reduce boilerplate
-ui.realtimeUpdate should be used in more places so updateEvent is pervasive
-  how can this be done for automatic redirects? wrapper function?
-  search for anywhere Davis is directly called.
-    what about post redirects? https://github.com/olivernn/davis.js/issues/36
-  add playerMovement updateEvent, for when a player signs a contract, becomes a free agent, or is traded
-  eventually, get rid of "reload" boolean in season.js
 after updating all views
   reassess ui module. delete stuff like ui.dropdown. move other functions elsewhere?
     what is the difference between util.viewHelpers and ui?

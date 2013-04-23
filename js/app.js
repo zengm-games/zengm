@@ -73,11 +73,7 @@ requirejs(["db", "views", "ui", "lib/davis", "lib/jquery", "util/helpers", "../g
     ui.init();
 
     // Can't proceed any further without IndexedDB support
-    /*window.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
-    window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange;
-    window.IDBObjectStore = window.IDBObjectStore || window.webkitIDBObjectStore;
-    window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction;*/
-    if (indexedDB === undefined) {
+    if (typeof indexedDB === "undefined") { // Some browsers don't like just plain "indexedDB === undefined"
         var data = {
             container: "content",
             template: "browserError",

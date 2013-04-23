@@ -18,6 +18,7 @@ bbgmView
     do idLoaded/idLoading work?
       can i do some check to abandon in display if idLoading is mismatched with reality?
       click link twice quickly - should work
+        doesn't work for dashboard, but seems to work everywhere else
     what about non-league views? how to distinguish?
       more broadly.. make this less tied to BBGM specifically. shouldn't depend on BBGM-specific modules like g, ui, and util/viewHelpers
       fn to convert req to relevant vars? but isn't that what get already is?

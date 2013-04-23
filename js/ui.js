@@ -102,7 +102,6 @@ console.log("set title");
         highlightNav(leaguePage);
 
         if (data.container === "league_content") {
-            containerEl.dataset.id = data.template;
             containerEl.dataset.idLoaded = data.template;
         }
 

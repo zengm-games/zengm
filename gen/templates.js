@@ -156,7 +156,7 @@ helpers = helpers || Handlebars.helpers; data = data || {};
   var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression;
 
 
-  buffer += "<div id=\"contentwrapper\">\n  <div id=\"league_content\" data-id=\"\">\n  </div>\n</div>\n\n<div id=\"league_menu\" data-lid=\""
+  buffer += "<div id=\"contentwrapper\">\n  <div id=\"league_content\" data-id-loading=\"\" data-id-loaded=\"\">\n  </div>\n</div>\n\n<div id=\"league_menu\" data-lid=\""
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\">\n  <div class=\"well sidebar-nav\">\n    <ul class=\"nav nav-list\" id=\"league_sidebar\">\n      <li id=\"nav_league_dashboard\"><a href=\"/l/"
     + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))

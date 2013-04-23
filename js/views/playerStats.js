@@ -15,7 +15,6 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
 
     function InitViewModel() {
         this.season = ko.observable();
-        this.players = [];
     }
 
     mapping = {
@@ -56,18 +55,18 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
         ko.computed(function () {
             ui.title("Player Stats - " + vm.season());
         });
+
+        ko.computed(function () {
+            var season;
+            season = vm.season();
+            ui.datatable($("#player-stats"), 2, _.map(vm.players(), function (p) {
+                return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, '<a href="/l/' + g.lid + '/roster/' + p.stats.abbrev + '/' + season + '">' + p.stats.abbrev + '</a>', String(p.stats.gp), String(p.stats.gs), helpers.round(p.stats.min, 1), helpers.round(p.stats.fg, 1), helpers.round(p.stats.fga, 1), helpers.round(p.stats.fgp, 1), helpers.round(p.stats.tp, 1), helpers.round(p.stats.tpa, 1), helpers.round(p.stats.tpp, 1), helpers.round(p.stats.ft, 1), helpers.round(p.stats.fta, 1), helpers.round(p.stats.ftp, 1), helpers.round(p.stats.orb, 1), helpers.round(p.stats.drb, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.tov, 1), helpers.round(p.stats.stl, 1), helpers.round(p.stats.blk, 1), helpers.round(p.stats.pf, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.per, 1)];
+            }));
+        }).extend({throttle: 1});
     }
 
     function uiEvery(updateEvents, vm) {
-        var season;
-
-        season = vm.season();
-
-        components.dropdown("player-stats-dropdown", ["seasons"], [season], updateEvents);
-
-        ui.datatable($("#player-stats"), 2, _.map(vm.players, function (p) {
-            return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, '<a href="/l/' + g.lid + '/roster/' + p.stats.abbrev + '/' + season + '">' + p.stats.abbrev + '</a>', String(p.stats.gp), String(p.stats.gs), helpers.round(p.stats.min, 1), helpers.round(p.stats.fg, 1), helpers.round(p.stats.fga, 1), helpers.round(p.stats.fgp, 1), helpers.round(p.stats.tp, 1), helpers.round(p.stats.tpa, 1), helpers.round(p.stats.tpp, 1), helpers.round(p.stats.ft, 1), helpers.round(p.stats.fta, 1), helpers.round(p.stats.ftp, 1), helpers.round(p.stats.orb, 1), helpers.round(p.stats.drb, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.tov, 1), helpers.round(p.stats.stl, 1), helpers.round(p.stats.blk, 1), helpers.round(p.stats.pf, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.per, 1)];
-        }));
+        components.dropdown("player-stats-dropdown", ["seasons"], [vm.season()], updateEvents);
     }
 
     return bbgmView.init({

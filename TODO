@@ -10,7 +10,9 @@ how to exit out of GET early, like in trade, roster, draft, draftSummary, freeAg
   confirm redirect to draft summary after draft ends
 datatable updates should only happen when vm.players/teams/whatever actually changes - how to implement?
   same as title, subscribe to observable
-    check for other things in uiEvery - should they have the same fate?
+  observable([]) or observableArray?
+.extend({throttle: 1}) on title computed observable, to handle cases where multiple things change.
+check for other things in uiEvery - should they also be computed observables in uiFirst?
 gameLog
   update docs
   make sure observables are being set correctly

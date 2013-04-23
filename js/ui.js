@@ -114,6 +114,7 @@ console.log("set title");
     // Data tables
     // fnStateSave and fnStateLoad are based on http://www.datatables.net/blog/localStorage_for_state_saving except the id of the table is used in the key. This means that whatever you do to a table (sorting, viewing page, etc) will apply to every identical table in other leagues.
     function datatable(table, sort_col, data) {
+console.log('update datatable')
         table.dataTable({
             aaData: data,
             aaSorting: [[sort_col, "desc"]],
@@ -136,6 +137,7 @@ console.log("set title");
         });
     }
     function datatableSinglePage(table, sort_col, data) {
+console.log('update datatable')
         table.dataTable({
             aaData: data,
             aaSorting: [[sort_col, "desc"]],

@@ -168,7 +168,6 @@ define(["api", "db", "globals", "ui", "core/team", "lib/davis", "lib/knockout", 
 
     function updateRoster(inputs, updateEvents, vm) {
         var deferred, vars, tx;
-console.log("loadBefore")
 
         if ((inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.abbrev !== vm.abbrev() || inputs.season !== vm.season()) {
             deferred = $.Deferred();
@@ -263,9 +262,13 @@ console.log("loadBefore")
         }
     }
 
-    function uiEvery(updateEvents, vm) {
-        ui.title(vm.team.region() + " " + vm.team.name() + " " + "Roster - " + vm.season());
+    function uiFirst(vm) {
+        ko.computed(function () {
+            ui.title(vm.team.region() + " " + vm.team.name() + " " + "Roster - " + vm.season());
+        });
+    }
 
+    function uiEvery(updateEvents, vm) {
         if (vm.editable()) {
             highlightHandles();
         }
@@ -280,6 +283,7 @@ console.log("loadBefore")
         InitViewModel: InitViewModel,
         mapping: mapping,
         runBefore: [updateRoster],
+        uiFirst: uiFirst,
         uiEvery: uiEvery
     });
 });

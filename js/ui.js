@@ -65,6 +65,7 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
      * @param {string} text New title.
      */
     function title(text) {
+console.log("set title");
         if (g.leagueName) {
             text += " - " + g.leagueName;
         }

@@ -144,8 +144,10 @@ define(["db", "globals", "ui", "core/contractNegotiation", "lib/davis", "lib/jqu
         return deferred.promise();
     }
 
-    function uiEvery(updateEvents, vm) {
-        ui.title("Contract Negotiation - " + vm.player.name());
+    function uiFirst(vm) {
+        ko.computed(function () {
+            ui.title("Contract Negotiation - " + vm.player.name());
+        });
     }
 
     return bbgmView.init({
@@ -153,6 +155,6 @@ define(["db", "globals", "ui", "core/contractNegotiation", "lib/davis", "lib/jqu
         get: get,
         post: post,
         runBefore: [updateNegotiation],
-        uiEvery: uiEvery
+        uiFirst: uiFirst
     });
 });

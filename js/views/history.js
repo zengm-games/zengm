@@ -2,7 +2,7 @@
  * @name views.history
  * @namespace Summaries of past seasons, leaguewide.
  */
-define(["db", "globals", "ui", "lib/jquery", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (db, g, ui, $, bbgmView, helpers, viewHelpers, components) {
+define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (db, g, ui, $, ko, bbgmView, helpers, viewHelpers, components) {
     "use strict";
 
     function get(req) {
@@ -70,20 +70,21 @@ define(["db", "globals", "ui", "lib/jquery", "util/bbgmView", "util/helpers", "u
         }
     }
 
+    function uiFirst(vm) {
+        ko.computed(function () {
+            ui.title("Season Summary - " + vm.season());
+        });
+    }
+
     function uiEvery(updateEvents, vm) {
-        var season;
-
-        season = vm.season();
-
-        ui.title("Season Summary - " + season);
-
-        components.dropdown("history-dropdown", ["seasons"], [season], updateEvents);
+        components.dropdown("history-dropdown", ["seasons"], [vm.season()], updateEvents);
     }
 
     return bbgmView.init({
         id: "history",
         get: get,
         runBefore: [updateHistory],
+        uiFirst: uiFirst,
         uiEvery: uiEvery
     });
 });

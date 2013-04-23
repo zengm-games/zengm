@@ -79,14 +79,16 @@ define(["db", "globals", "ui", "lib/boxPlot", "lib/jquery", "lib/knockout", "lib
         }
     }
 
+    function uiFirst(vm) {
+        ko.computed(function () {
+            ui.title("Team Stat Distributions - " + vm.season());
+        });
+    }
+
     function uiEvery(updateEvents, vm) {
-        var scale, season, stat, tbody;
+        var scale, stat, tbody;
 
-        season = vm.season();
-
-        ui.title("Team Stat Distributions - " + season);
-
-        components.dropdown("team-stat-dists-dropdown", ["seasons"], [season], updateEvents);
+        components.dropdown("team-stat-dists-dropdown", ["seasons"], [vm.season()], updateEvents);
 
         tbody = $("#team-stat-dists tbody");
 
@@ -144,6 +146,7 @@ define(["db", "globals", "ui", "lib/boxPlot", "lib/jquery", "lib/knockout", "lib
         get: get,
         InitViewModel: InitViewModel,
         runBefore: [updateTeams],
+        uiFirst: uiFirst,
         uiEvery: uiEvery
     });
 });

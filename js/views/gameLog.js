@@ -220,8 +220,13 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
         }
     }
 
+    function uiFirst(vm) {
+        ko.computed(function () {
+            ui.title("Game Log - " + vm.season());
+        });
+    }
+
     function uiEvery(updateEvents, vm) {
-        ui.title("Game Log - " + vm.season());
         components.dropdown("game-log-dropdown", ["teams", "seasons"], [vm.abbrev(), vm.season()], updateEvents, vm.boxScore.gid() >= 0 ? vm.boxScore.gid() : undefined);
 
         // Game log list dynamic highlighting
@@ -236,6 +241,7 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
         InitViewModel: InitViewModel,
         runBefore: [updateBoxScore],
         runWhenever: [updateGamesList],
+        uiFirst: uiFirst,
         uiEvery: uiEvery
     });
 });

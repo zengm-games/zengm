@@ -2,7 +2,7 @@
  * @name views.playoffs
  * @namespace Show current or archived playoffs, or projected matchups for an in-progress season.
  */
-define(["db", "globals", "ui", "core/season", "lib/jquery", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (db, g, ui, season, $, bbgmView, helpers, viewHelpers, components) {
+define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (db, g, ui, season, $, ko, bbgmView, helpers, viewHelpers, components) {
     "use strict";
 
     function get(req) {
@@ -67,20 +67,21 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "util/bbgmView", "ut
         }
     }
 
+    function uiFirst(vm) {
+        ko.computed(function () {
+            ui.title("Playoffs - " + vm.season());
+        });
+    }
+
     function uiEvery(updateEvents, vm) {
-        var season;
-
-        season = vm.season();
-
-        ui.title("Playoffs - " + season);
-
-        components.dropdown("playoffs-dropdown", ["seasons"], [season], updateEvents);
+        components.dropdown("playoffs-dropdown", ["seasons"], [vm.season()], updateEvents);
     }
 
     return bbgmView.init({
         id: "playoffs",
         get: get,
         runBefore: [updatePlayoffs],
+        uiFirst: uiFirst,
         uiEvery: uiEvery
     });
 });

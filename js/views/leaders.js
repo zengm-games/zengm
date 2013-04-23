@@ -143,14 +143,14 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mappi
         }
     }
 
+    function uiFirst(vm) {
+        ko.computed(function () {
+            ui.title("League Leaders - " + vm.season());
+        });
+    }
+
     function uiEvery(updateEvents, vm) {
-        var season;
-
-        season = vm.season();
-
-        ui.title("League Leaders - " + season);
-
-        components.dropdown("leaders-dropdown", ["seasons"], [season], updateEvents);
+        components.dropdown("leaders-dropdown", ["seasons"], [vm.season()], updateEvents);
     }
 
     return bbgmView.init({
@@ -159,6 +159,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mappi
         InitViewModel: InitViewModel,
         mapping: mapping,
         runBefore: [updateLeaders],
+        uiFirst: uiFirst,
         uiEvery: uiEvery
     });
 });

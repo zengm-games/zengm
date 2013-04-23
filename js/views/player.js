@@ -74,12 +74,15 @@ console.log(options.data);
         return deferred.promise();
     }
 
-    function uiEvery(updateEvents, vm) {
-        ui.title(vm.player.name());
+    function uiFirst(vm) {
+        ko.computed(function () {
+            ui.title(vm.player.name());
+        });
 
-console.log('uiEvery')
+        ko.computed(function () {
 console.log(vm.player.face())
-        faces.display("picture", vm.player.face());
+            faces.display("picture", vm.player.face());
+        });
     }
 
     return bbgmView.init({
@@ -87,6 +90,6 @@ console.log(vm.player.face())
         get: get,
         mapping: mapping,
         runBefore: [updatePlayer],
-        uiEvery: uiEvery
+        uiFirst: uiFirst
     });
 });

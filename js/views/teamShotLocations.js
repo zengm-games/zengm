@@ -48,14 +48,14 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
         }
     }
 
+    function uiFirst(vm) {
+        ko.computed(function () {
+            ui.title("Team Shot Locations - " + vm.season());
+        });
+    }
+
     function uiEvery(updateEvents, vm) {
-        var season;
-
-        season = vm.season();
-
-        ui.title("Team Shot Locations - " + season);
-
-        components.dropdown("team-shot-locations-dropdown", ["seasons"], [season], updateEvents);
+        components.dropdown("team-shot-locations-dropdown", ["seasons"], [vm.season()], updateEvents);
 
         ui.datatableSinglePage($("#team-shot-locations"), 2, _.map(vm.teams, function (t) {
             return ['<a href="/l/' + g.lid + '/roster/' + t.abbrev + '">' + t.abbrev + '</a>', String(t.gp), String(t.won), String(t.lost), helpers.round(t.fgAtRim, 1), helpers.round(t.fgaAtRim, 1), helpers.round(t.fgpAtRim, 1), helpers.round(t.fgLowPost, 1), helpers.round(t.fgaLowPost, 1), helpers.round(t.fgpLowPost, 1), helpers.round(t.fgMidRange, 1), helpers.round(t.fgaMidRange, 1), helpers.round(t.fgpMidRange, 1), helpers.round(t.tp, 1), helpers.round(t.tpa, 1), helpers.round(t.tpp, 1)];
@@ -68,6 +68,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
         InitViewModel: InitViewModel,
         mapping: mapping,
         runBefore: [updateTeams],
+        uiFirst: uiFirst,
         uiEvery: uiEvery
     });
 });

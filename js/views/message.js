@@ -2,7 +2,7 @@
  * @name views.message
  * @namespace View a single message.
  */
-define(["db", "globals", "ui", "lib/jquery", "util/bbgmView", "util/viewHelpers"], function (db, g, ui, $, bbgmView, viewHelpers) {
+define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "util/bbgmView", "util/viewHelpers"], function (db, g, ui, $, ko, bbgmView, viewHelpers) {
     "use strict";
 
     function get(req) {
@@ -53,14 +53,16 @@ define(["db", "globals", "ui", "lib/jquery", "util/bbgmView", "util/viewHelpers"
         }
     }
 
-    function uiEvery(updateEvents, vm) {
-        ui.title("Message From " + vm.message.from());
+    function uiFirst(vm) {
+        ko.computed(function () {
+            ui.title("Message From " + vm.message.from());
+        });
     }
 
     return bbgmView.init({
         id: "message",
         get: get,
         runBefore: [updateMessage],
-        uiEvery: uiEvery
+        uiFirst: uiFirst
     });
 });

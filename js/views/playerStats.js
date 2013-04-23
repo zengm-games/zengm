@@ -56,7 +56,6 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
         ko.computed(function () {
             ui.title("Player Stats - " + vm.season());
         });
-
     }
 
     function uiEvery(updateEvents, vm) {

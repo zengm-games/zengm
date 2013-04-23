@@ -110,14 +110,14 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mappi
         }
     }
 
+    function uiFirst(vm) {
+        ko.computed(function () {
+            ui.title("Standings - " + vm.season());
+        });
+    }
+
     function uiEvery(updateEvents, vm) {
-        var season;
-
-        season = vm.season();
-
-        ui.title("Standings - " + season);
-
-        components.dropdown("standings-dropdown", ["seasons"], [season], updateEvents);
+        components.dropdown("standings-dropdown", ["seasons"], [vm.season()], updateEvents);
     }
 
     return bbgmView.init({
@@ -126,6 +126,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mappi
         InitViewModel: InitViewModel,
         mapping: mapping,
         runBefore: [updateStandings],
+        uiFirst: uiFirst,
         uiEvery: uiEvery
     });
 });

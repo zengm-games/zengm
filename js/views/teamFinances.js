@@ -198,6 +198,10 @@ define(["db", "globals", "ui", "core/finances", "lib/jquery", "lib/knockout", "l
     }
 
     function uiFirst(vm) {
+        ko.computed(function () {
+            ui.title(vm.team.region() + " " + vm.team.name() + " Finances");
+        });
+
         $("#help-payroll-limits").clickover({
             title: "Payroll Limits",
             content: "The salary cap is a soft cap, meaning that you can exceed it to resign your own players or to sign free agents to minimum contracts ($" + g.minContract + "k/year); however, you cannot exceed the salary cap to sign a free agent for more than the minimum. Teams with payrolls below the minimum payroll limit will be assessed a fine equal to the difference at the end of the season. Teams with payrolls above the luxury tax limit will be assessed a fine equal to " + g.luxuryTax + " times the difference at the end of the season."
@@ -230,8 +234,6 @@ define(["db", "globals", "ui", "core/finances", "lib/jquery", "lib/knockout", "l
 
     function uiEvery(updateEvents, vm) {
         var barData, barSeasons;
-
-        ui.title(vm.team.region() + " " + vm.team.name() + " Finances");
 
         if (g.gamesInProgress) {
             disableFinanceSettings(vm.tid());

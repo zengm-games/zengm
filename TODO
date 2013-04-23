@@ -9,8 +9,6 @@ how to exit out of GET early, like in trade, roster, draft, draftSummary, freeAg
     needs to be async to handle something like..?
       when negotiation is in progress, click from play menu leads to "Players With Expiring Contracts"
   confirm redirect to draft summary after draft ends
-.extend({throttle: 1}) on title computed observable, to handle cases where multiple things change (like roster).
-  any other computeds?
 check for other things in uiEvery - should they also be computed observables in uiFirst?
 gameLog
   update docs

@@ -152,10 +152,10 @@ define(["api", "db", "globals", "ui", "core/team", "lib/davis", "lib/knockout", 
 
         this.numRosterSpots = ko.computed(function () {
             return 15 - this.players().length;
-        }, this);
+        }, this).extend({throttle: 1});
         this.isCurrentSeason = ko.computed(function () {
             return g.season === this.season();
-        }, this);
+        }, this).extend({throttle: 1});
     }
 
     mapping = {

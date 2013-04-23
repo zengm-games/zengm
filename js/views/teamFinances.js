@@ -88,13 +88,13 @@ define(["db", "globals", "ui", "core/finances", "lib/jquery", "lib/knockout", "l
         this.aboveBelow = {};
         this.aboveBelow.minPayroll = ko.computed(function () {
             return this.payroll() > this.minPayroll() ? "above" : "below";
-        }, this);
+        }, this).extend({throttle: 1});
         this.aboveBelow.salaryCap = ko.computed(function () {
             return this.payroll() > this.salaryCap() ? "above" : "below";
-        }, this);
+        }, this).extend({throttle: 1});
         this.aboveBelow.luxuryPayroll = ko.computed(function () {
             return this.payroll() > this.luxuryPayroll() ? "above" : "below";
-        }, this);
+        }, this).extend({throttle: 1});
     }
 
     mapping = {

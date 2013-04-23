@@ -123,7 +123,9 @@ define(["api", "db", "globals", "ui", "core/team", "lib/davis", "lib/knockout", 
 
         // Fix broken links
         if (req.params.abbrev === "FA") {
-            return Davis.location.assign(new Davis.Request("/l/" + g.lid + "/free_agents"));
+            return {
+                redirectUrl: "/l/" + g.lid + "/free_agents"
+            };
         }
 
         inputs = {};

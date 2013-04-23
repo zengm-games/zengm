@@ -19,7 +19,9 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "util/bbgmView", "u
         }
 
         if (season < g.startingSeason) {
-            return helpers.error("There is no league history yet. Check back after the playoffs.", req.raw.cb);
+            return {
+                errorMessage: "There is no league history yet. Check back after the playoffs."
+            };
         }
 
         return {

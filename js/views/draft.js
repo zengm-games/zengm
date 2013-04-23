@@ -43,7 +43,9 @@ define(["api", "db", "globals", "ui", "core/draft", "lib/davis", "lib/jquery", "
 
     function get(req) {
         if (g.phase !== g.PHASE.DRAFT) {
-            return Davis.location.assign(new Davis.Request("/l/" + g.lid + "/draft_summary"));
+            return {
+                redirectUrl: "/l/" + g.lid + "/draft_summary"
+            };
         }
     }
 

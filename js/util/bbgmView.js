@@ -2,7 +2,7 @@
  * @name util.bbgmView
  * @namespace Framework for loading, displaying, and updating content. bbgmView is designed so that it is easy to write UIs that are granular in both reading from the database and updating the DOM, to minimize useless updates to previously cached or displayed values. See the documentation for util.bbgmView.init for more detail on use.
  */
-define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/viewHelpers"], function (g, ui, $, ko, komapping, _, viewHelpers) {
+define(["globals", "ui", "lib/davis", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/helpers", "util/viewHelpers"], function (g, ui, Davis, $, ko, komapping, _, helpers, viewHelpers) {
     "use strict";
 
     var vm;
@@ -90,7 +90,20 @@ console.log(vm);
                 var inputs;
 
                 inputs = fnGet(req);
-                fnUpdate(inputs, updateEvents, cb);  // Does this work?
+                if (inputs === undefined) {
+                    inputs = {};
+                }
+console.log(inputs);
+
+                if (inputs.redirectUrl !== undefined) {
+                    return Davis.location.assign(new Davis.Request(inputs.redirectUrl));
+                }
+
+                if (inputs.errorMessage !== undefined) {
+                    return helpers.error(inputs.errorMessage, cb);
+                }
+
+                fnUpdate(inputs, updateEvents, cb);
             });
         };
     }

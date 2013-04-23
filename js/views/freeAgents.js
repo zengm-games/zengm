@@ -10,10 +10,14 @@ define(["db", "globals", "ui", "core/freeAgents", "lib/jquery", "lib/knockout", 
     function get(req) {
         if (g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.RESIGN_PLAYERS) {
             if (g.phase === g.PHASE.RESIGN_PLAYERS) {
-                return Davis.location.assign(new Davis.Request("/l/" + g.lid + "/negotiation"));
+                return {
+                    redirectUrl: "/l/" + g.lid + "/negotiation"
+                };
             }
 
-            return helpers.error("You're not allowed to sign free agents now.", req.raw.cb);
+            return {
+                errorMessage: "You're not allowed to sign free agents now."
+            };
         }
     }
 

@@ -21,7 +21,9 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
         }
 
         if (season < g.startingSeason) {
-            return helpers.error("There is no draft history yet. Check back after the draft.", req.raw.cb);
+            return {
+                errorMessage: "There is no draft history yet. Check back after the draft."
+            };
         }
 
         return {

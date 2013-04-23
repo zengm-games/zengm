@@ -275,7 +275,6 @@ define(["globals", "lib/jquery"], function (g, $) {
     function error(errorText, cb) {
         var lid, req;
 
-console.log(cb);
         req = {params: {error: errorText}, raw: {cb: cb !== undefined ? cb : undefined}};
 
         lid = location.pathname.split("/")[2]; // lid derived from URL

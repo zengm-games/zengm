@@ -4,9 +4,10 @@ smarter realtime
 double load on GET? for instance, http://localhost/l/1/player_rating_dists and play a day. loads twice.
 how to exit out of GET early, like in trade, roster, draft, draftSummary, freeAgents, history where it tries to return Davis?
   any other views that do thsi? search for helpers.error and DAvis
-  maybe return an error message from GET and have bbgmView handle it before progressing any further
+  maybe return an error message (or redirect URL) from GET and have bbgmView handle it before progressing any further
+    needs to be async to handle something like..?
+      when negotiation is in progress, click from play menu leads to "Players With Expiring Contracts"
   confirm redirect to draft summary after draft ends
-when negotiation is in progress, click from play menu leads to "Players With Expiring Contracts"
 datatable updates should only happen when vm.players/teams/whatever actually changes - how to implement?
   same as title, subscribe to observable
     check for other things in uiEvery - should they have the same fate?

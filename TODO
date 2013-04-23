@@ -3,20 +3,7 @@ smarter realtime
 
 awards not being set?
 double load on GET? for instance, http://localhost/l/1/player_rating_dists and play a day. loads twice.
-errors/redirects
-  search for helpers.error and Davis to find occurrences
-  maybe return an error message (or redirect URL) from GET and have bbgmView handle it before progressing any further
-    IMPORTANT: needs to be async to handle something like..?
-      when negotiation is in progress, click from play menu leads to "Players With Expiring Contracts"
-      also, how to handle other inline errors/redirects not in GET? need some kind of short circuit? could put error in vars and read from that?
-  PLAN:
-    on GET, return either errorMessage or redirectUrl and that will short circuit the rest of the view
-    on POST, ...?
-    in runBefore, put either errorMessage or redirectUrl in vars and that will short circuit the rest of the view (after runBefore finishes)
-    there should be no other cases to handle
-    what about errors and redirects elsewhere in views, or in non-view files? should they be moved into views?
-    DOCUMENT THIS STUFF, plus:
-      if get is defined, must ALWAYS return object or nothing
+helpers.error in non-view files (currently just core.season)? should they be moved into views?
 check for other things in uiEvery - should they also be computed observables in uiFirst?
 gameLog
   update docs

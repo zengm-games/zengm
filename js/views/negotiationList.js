@@ -9,7 +9,9 @@ define(["db", "globals", "ui", "core/freeAgents", "lib/jquery", "lib/knockout", 
 
     function get(req) {
         if (g.phase !== g.PHASE.RESIGN_PLAYERS) {
-            return helpers.error("Something bad happened.", req.raw.cb);
+            return {
+                errorMessage: "Something bad happened."
+            };
         }
     }
 

@@ -86,7 +86,9 @@ define(["db", "globals", "ui", "core/contractNegotiation", "lib/davis", "lib/jqu
             negotiation = event.target.result;
 
             if (!negotiation) {
-                return helpers.error("No negotiation with player " + inputs.pid + " in progress.");
+                return deferred.resolve({
+                    errorMessage: "No negotiation with player " + inputs.pid + " in progress."
+                });
             }
 
             negotiation.player.expiration = negotiation.player.years + g.season;

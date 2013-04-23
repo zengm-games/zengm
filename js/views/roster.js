@@ -265,7 +265,7 @@ define(["api", "db", "globals", "ui", "core/team", "lib/davis", "lib/knockout", 
     function uiFirst(vm) {
         ko.computed(function () {
             ui.title(vm.team.region() + " " + vm.team.name() + " " + "Roster - " + vm.season());
-        });
+        }).extend({throttle: 1});
     }
 
     function uiEvery(updateEvents, vm) {

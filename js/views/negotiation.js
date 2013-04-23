@@ -147,7 +147,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "lib/davis", "lib/jqu
     function uiFirst(vm) {
         ko.computed(function () {
             ui.title("Contract Negotiation - " + vm.player.name());
-        });
+        }).extend({throttle: 1});
     }
 
     return bbgmView.init({

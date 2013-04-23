@@ -205,7 +205,7 @@ define(["db", "globals", "ui", "core/finances", "lib/jquery", "lib/knockout", "l
     function uiFirst(vm) {
         ko.computed(function () {
             ui.title(vm.team.region() + " " + vm.team.name() + " Finances");
-        });
+        }).extend({throttle: 1});
 
         $("#help-payroll-limits").clickover({
             title: "Payroll Limits",

@@ -70,7 +70,7 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "uti
     function uiFirst(vm) {
         ko.computed(function () {
             ui.title("Playoffs - " + vm.season());
-        });
+        }).extend({throttle: 1});
     }
 
     function uiEvery(updateEvents, vm) {

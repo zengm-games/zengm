@@ -223,7 +223,7 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
     function uiFirst(vm) {
         ko.computed(function () {
             ui.title("Game Log - " + vm.season());
-        });
+        }).extend({throttle: 1});
     }
 
     function uiEvery(updateEvents, vm) {

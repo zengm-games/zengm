@@ -56,7 +56,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "util/bbgmView", "u
     function uiFirst(vm) {
         ko.computed(function () {
             ui.title("Message From " + vm.message.from());
-        });
+        }).extend({throttle: 1});
     }
 
     return bbgmView.init({

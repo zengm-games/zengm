@@ -77,12 +77,12 @@ console.log(options.data);
     function uiFirst(vm) {
         ko.computed(function () {
             ui.title(vm.player.name());
-        });
+        }).extend({throttle: 1});
 
         ko.computed(function () {
 console.log(vm.player.face())
             faces.display("picture", vm.player.face());
-        });
+        }).extend({throttle: 1});
     }
 
     return bbgmView.init({

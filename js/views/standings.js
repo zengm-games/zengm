@@ -113,7 +113,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mappi
     function uiFirst(vm) {
         ko.computed(function () {
             ui.title("Standings - " + vm.season());
-        });
+        }).extend({throttle: 1});
     }
 
     function uiEvery(updateEvents, vm) {

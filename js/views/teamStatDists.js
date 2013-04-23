@@ -82,7 +82,7 @@ define(["db", "globals", "ui", "lib/boxPlot", "lib/jquery", "lib/knockout", "lib
     function uiFirst(vm) {
         ko.computed(function () {
             ui.title("Team Stat Distributions - " + vm.season());
-        });
+        }).extend({throttle: 1});
     }
 
     function uiEvery(updateEvents, vm) {

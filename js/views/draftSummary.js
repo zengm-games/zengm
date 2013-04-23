@@ -92,7 +92,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
     function uiFirst(vm) {
         ko.computed(function () {
             ui.title(vm.season() + " Draft Summary");
-        });
+        }).extend({throttle: 1});
 
         ko.computed(function () {
             var season;

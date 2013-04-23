@@ -73,7 +73,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "util/bbgmView", "u
     function uiFirst(vm) {
         ko.computed(function () {
             ui.title("Season Summary - " + vm.season());
-        });
+        }).extend({throttle: 1});
     }
 
     function uiEvery(updateEvents, vm) {

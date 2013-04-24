@@ -2,7 +2,7 @@
  * @name core.season
  * @namespace Somewhat of a hodgepodge. Basically, this is for anything related to a single season that doesn't deserve to be broken out into its own file. Currently, this includes things that happen when moving between phases of the season (i.e. regular season to playoffs) and scheduling. As I write this, I realize that it might make more sense to break up those two classes of functions into two separate modules, but oh well.
  */
-define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "core/freeAgents", "core/player", "core/team", "lib/davis", "lib/handlebars.runtime", "lib/underscore", "util/helpers", "util/message", "util/random"], function (db, g, ui, contractNegotiation, finances, freeAgents, player, team, Davis, Handlebars, _, helpers, message, random) {
+define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "core/freeAgents", "core/player", "core/team", "lib/handlebars.runtime", "lib/underscore", "util/helpers", "util/message", "util/random"], function (db, g, ui, contractNegotiation, finances, freeAgents, player, team, Handlebars, _, helpers, message, random) {
     "use strict";
 
     /**
@@ -396,24 +396,27 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
     /**
      * Common tasks run after a new phrase is set.
      *
-     * This updates the phase, executes a callback, and (if necessary) reloads the UI. It should only be called from one of the NewPhase* functions defined below.
+     * This updates the phase, executes a callback, and (if necessary) updates the UI. It should only be called from one of the NewPhase* functions defined below.
      * 
      * @memberOf core.season
      * @param {number} phase Integer representing the new phase of the game (see other functions in this module).
      * @param {string} phaseText Textual representation of the new phase, which will be displayed in the UI.
      * @param {function()=} cb Optional callback run after the phase is set and the play menu is updated.
-     * @param {boolean=} reload Optional boolean (defaul false) which, if set to true, will reload the current page before (after? both?) calling the callback.
+     * @param {string=} url Optional URL to pass to ui.realtimeUpdate for redirecting on new phase. If undefined, then the current page will just be refreshed.
+     * @param {Array.<string>=} updateEvents Optional array of strings.
      */
-    function newPhaseCb(phase, phaseText, cb, reload) {
+    function newPhaseCb(phase, phaseText, cb, url, updateEvents) {
+        updateEvents = updateEvents !== undefined ? updateEvents : [];
+
         db.setGameAttributes({phase: phase, lastDbChange: Date.now()}, function () {
             ui.updatePhase(phaseText);
             ui.updatePlayMenu(null, function () {
                 if (cb !== undefined) {
                     cb();
                 }
-                if (reload !== undefined && reload) {
-                    ui.realtimeUpdate(["newPhase"]);
-                }
+
+                updateEvents.push("newPhase");
+                ui.realtimeUpdate(updateEvents, url);
             });
         });
     }
@@ -478,7 +481,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
             tx.oncomplete = function () {
                 // AI teams sign free agents
                 freeAgents.autoSign(function () {
-                    newPhaseCb(g.PHASE.PRESEASON, phaseText, cb, true);
+                    newPhaseCb(g.PHASE.PRESEASON, phaseText, cb, undefined, ["playerMovement"]);
                 });
             };
         });
@@ -526,8 +529,9 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                 done += 1;
                 if (done === g.numTeams && !userTeamSizeError) {
                     tids = newSchedule();
-                    // 4th parameter of newPhaseCb will reload the page when true. Don't do this if this is the first season, as that means the new league menu is still displayed (probably) and views.newLeague will handle a redirect to the league dashboard.
-                    setSchedule(tids, function () { newPhaseCb(g.PHASE.REGULAR_SEASON, phaseText, cb, g.season !== g.startingSeason); });
+                    setSchedule(tids, function () {
+                        newPhaseCb(g.PHASE.REGULAR_SEASON, phaseText, cb);
+                    });
 
                     // Auto sort rosters (except player's team)
                     for (tid = 0; tid < g.numTeams; tid++) {
@@ -662,12 +666,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                 };
                 tx.oncomplete = function () {
                     finances.assesPayrollMinLuxury(function () {
-                        newPhaseCb(g.PHASE.PLAYOFFS, phaseText, function () {
-                            if (cb !== undefined) {
-                                cb();
-                            }
-                            Davis.location.assign(new Davis.Request("/l/" + g.lid + "/playoffs"));
-                        });
+                        newPhaseCb(g.PHASE.PLAYOFFS, phaseText, cb, "/l/" + g.lid + "/playoffs", ["teamFinances"]);
                     });
                 };
             };
@@ -767,10 +766,9 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                         if (cb !== undefined) {
                             cb();
                         }
-                        Davis.location.assign(new Davis.Request("/l/" + g.lid + "/history"));
 
                         helpers.bbgmPing("season");
-                    });
+                    }, "/l/" + g.lid + "/history", ["playerMovement"]);
                 });
             };
         };
@@ -787,7 +785,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
         var phaseText;
 
         phaseText = g.season + " after draft";
-        newPhaseCb(g.PHASE.AFTER_DRAFT, phaseText, cb, true);
+        newPhaseCb(g.PHASE.AFTER_DRAFT, phaseText, cb, undefined, ["playerMovement"]);
     }
 
     function newPhaseResignPlayers(cb) {
@@ -832,12 +830,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                     }
                     cursor.continue();
                 } else {
-                    newPhaseCb(g.PHASE.RESIGN_PLAYERS, phaseText, function () {
-                        if (cb !== undefined) {
-                            cb();
-                        }
-                        Davis.location.assign(new Davis.Request("/l/" + g.lid + "/negotiation"));
-                    });
+                    newPhaseCb(g.PHASE.RESIGN_PLAYERS, phaseText, cb, "/l/" + g.lid + "/negotiation", ["playerMovement"]);
                 }
             };
         });
@@ -870,12 +863,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                     }
                 };
                 tx.oncomplete = function () {
-                    newPhaseCb(g.PHASE.FREE_AGENCY, phaseText, function () {
-                        if (cb !== undefined) {
-                            cb();
-                        }
-                        Davis.location.assign(new Davis.Request("/l/" + g.lid + "/free_agents"));
-                    });
+                    newPhaseCb(g.PHASE.FREE_AGENCY, phaseText, cb, "/l/" + g.lid + "/free_agents", ["playerMovement"]);
                 };
             });
         });

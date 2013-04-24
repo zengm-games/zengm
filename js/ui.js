@@ -112,6 +112,8 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
     /**
      * Smartly update the currently loaded view or redirect to a new one.
      *
+     * This will only refresh or redirect to in-league URLs. Otherwise, the callback is just called immediately.
+     *
      * @memberOf ui
      * @param {Array.<string>=} updateEvents Optional array of strings containing information about what caused this update, e.g. "gameSim" or "playerMovement".
      * @param {string=} url Optional URL to redirect to. The current URL is used if this is not defined. If this URL is either undefined or the same as location.pathname, it is considered to be an "refresh" and no entry in the history or stat tracker is made. Otherwise, it's considered to be a new pageview.
@@ -119,13 +121,14 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
      * @param {Object=} raw Optional object passed through to Davis's req.raw.
      */
     function realtimeUpdate(updateEvents, url, cb, raw) {
-        var refresh;
+        var inLeague, refresh;
 
         updateEvents = updateEvents !== undefined ? updateEvents : [];
         url = url !== undefined ? url : location.pathname;
         raw = raw !== undefined ? raw : {};
 
-        refresh = url === location.pathname;
+        inLeague = url.substr(0, 3) === "/l/";
+        refresh = url === location.pathname && inLeague;
 
         // If tracking is enabled, don't track realtime updates for refreshes
         if (Davis.Request.prototype.noTrack !== undefined && refresh) {
@@ -137,8 +140,10 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
 
         if (refresh) {
             Davis.location.replace(new Davis.Request(url, raw));
-        } else {
+        } else if (inLeague) {
             Davis.location.assign(new Davis.Request(url, raw));
+        } else if (cb !== undefined) {
+            cb();
         }
     }
 

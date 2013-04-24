@@ -2,7 +2,7 @@
  * @name views.negotiation
  * @namespace Contract negotiation.
  */
-define(["db", "globals", "ui", "core/contractNegotiation", "lib/davis", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, contractNegotiation, Davis, $, ko, _, bbgmView, helpers, viewHelpers) {
+define(["db", "globals", "ui", "core/contractNegotiation", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, contractNegotiation, $, ko, _, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     // Show the negotiations list if there are more ongoing negotiations
@@ -13,11 +13,11 @@ define(["db", "globals", "ui", "core/contractNegotiation", "lib/davis", "lib/jqu
             negotiations = event.target.result;
 
             if (negotiations.length > 0) {
-                Davis.location.assign(new Davis.Request("/l/" + g.lid + "/negotiation"));
+                ui.realtimeUpdate([], "/l/" + g.lid + "/negotiation");
             } else if (cancelled) {
-                Davis.location.assign(new Davis.Request("/l/" + g.lid + "/free_agents"));
+                ui.realtimeUpdate([], "/l/" + g.lid + "/free_agents");
             } else {
-                Davis.location.assign(new Davis.Request("/l/" + g.lid + "/roster"));
+                ui.realtimeUpdate([], "/l/" + g.lid + "/roster");
             }
         };
     }
@@ -61,11 +61,11 @@ define(["db", "globals", "ui", "core/contractNegotiation", "lib/davis", "lib/jqu
                         if (error !== undefined && error) {
                             helpers.error(error);
                         } else {
-                            Davis.location.assign(new Davis.Request("/l/" + g.lid + "/negotiation/" + pid));
+                            ui.realtimeUpdate([], "/l/" + g.lid + "/negotiation/" + pid);
                         }
                     });
                 } else {
-                    Davis.location.assign(new Davis.Request("/l/" + g.lid + "/negotiation/" + pid));
+                    ui.realtimeUpdate([], "/l/" + g.lid + "/negotiation/" + pid);
                 }
             };
         } else {
@@ -73,7 +73,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "lib/davis", "lib/jqu
             teamAmountNew = parseInt(req.params.teamAmount * 1000, 10);
             teamYearsNew = parseInt(req.params.teamYears, 10);
             contractNegotiation.offer(pid, teamAmountNew, teamYearsNew, function () {
-                Davis.location.assign(new Davis.Request("/l/" + g.lid + "/negotiation/" + pid));
+                ui.realtimeUpdate([], "/l/" + g.lid + "/negotiation/" + pid);
             });
         }
     }

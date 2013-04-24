@@ -74,17 +74,17 @@ define(["db", "globals", "ui", "core/trade", "lib/davis", "lib/jquery", "lib/kno
         if (req.params.clear !== undefined) {
             // Clear trade
             trade.clear(function () {
-                return Davis.location.assign(new Davis.Request("/l/" + g.lid + "/trade"));
+                ui.realtimeUpdate([], "/l/" + g.lid + "/trade");
             });
         } else if (req.params.propose !== undefined) {
             // Propose trade
             trade.propose(function (accepted, message) {
-                return Davis.location.assign(new Davis.Request("/l/" + g.lid + "/trade", {message: message}));
+                ui.realtimeUpdate([], "/l/" + g.lid + "/trade", undefined, {message: message});
             });
         } else if (newOtherTid !== null || pid !== null) {
             // Start new trade with team or for player
             trade.create(newOtherTid, pid, function () {
-                return Davis.location.assign(new Davis.Request("/l/" + g.lid + "/trade"));
+                ui.realtimeUpdate([], "/l/" + g.lid + "/trade");
             });
         }
     }
@@ -186,13 +186,13 @@ define(["db", "globals", "ui", "core/trade", "lib/davis", "lib/jquery", "lib/kno
 
         // Don't use the dropdown function because this needs to be a POST
         $('#trade-select-team').change(function (event) {
+            // ui.realtimeUpdate currently can't handle a POST request
             Davis.location.replace(new Davis.Request({
                 abbrev: $("#trade-select-team").val(),
                 fullPath: "/l/" + g.lid + "/trade",
                 method: "post"
             }));
         });
-
 
         $("#propose-trade button").click(function (event) {
             vm.summary.enablePropose(false); // Will be reenabled in updateSummary, if appropriate

@@ -65,7 +65,6 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
      * @param {string} text New title.
      */
     function title(text) {
-console.log("set title");
         if (g.leagueName) {
             text += " - " + g.leagueName;
         }
@@ -110,10 +109,42 @@ console.log("set title");
         }
     }
 
+    /**
+     * Smartly update the currently loaded view or redirect to a new one.
+     *
+     * @memberOf ui
+     * @param {Array.<string>=} updateEvents Optional array of strings containing information about what caused this update, e.g. "gameSim" or "playerMovement".
+     * @param {string=} url Optional URL to redirect to. The current URL is used if this is not defined. If this URL is either undefined or the same as location.pathname, it is considered to be an "refresh" and no entry in the history or stat tracker is made. Otherwise, it's considered to be a new pageview.
+     * @param {function()=} cb Optional callback that will run after the page updates.
+     * @param {Object=} raw Optional object passed through to Davis's req.raw.
+     */
+    function realtimeUpdate(updateEvents, url, cb, raw) {
+        var refresh;
+
+        updateEvents = updateEvents !== undefined ? updateEvents : [];
+        url = url !== undefined ? url : location.pathname;
+        raw = raw !== undefined ? raw : {};
+
+        refresh = url === location.pathname;
+
+        // If tracking is enabled, don't track realtime updates for refreshes
+        if (Davis.Request.prototype.noTrack !== undefined && refresh) {
+            Davis.Request.prototype.noTrack();
+        }
+
+        raw.updateEvents = updateEvents;
+        raw.cb = cb;
+
+        if (refresh) {
+            Davis.location.replace(new Davis.Request(url, raw));
+        } else {
+            Davis.location.assign(new Davis.Request(url, raw));
+        }
+    }
+
     // Data tables
     // fnStateSave and fnStateLoad are based on http://www.datatables.net/blog/localStorage_for_state_saving except the id of the table is used in the key. This means that whatever you do to a table (sorting, viewing page, etc) will apply to every identical table in other leagues.
     function datatable(table, sort_col, data) {
-console.log('update datatable')
         table.dataTable({
             aaData: data,
             aaSorting: [[sort_col, "desc"]],
@@ -136,7 +167,6 @@ console.log('update datatable')
         });
     }
     function datatableSinglePage(table, sort_col, data) {
-console.log('update datatable')
         table.dataTable({
             aaData: data,
             aaSorting: [[sort_col, "desc"]],
@@ -166,7 +196,7 @@ console.log('update datatable')
                 league_root_url = result[1];
                 league_page = result[2];
                 url = "/l/" + g.lid + "/" + league_page + "/" + select1.val();
-                Davis.location.assign(new Davis.Request(url));
+                realtimeUpdate([], url);
             });
         } else if (arguments.length >= 2) {
             select1.off("change");
@@ -181,7 +211,7 @@ console.log('update datatable')
                 if (extraParam !== undefined && extraParam !== null && extraParam !== "") {
                     url += "/" + extraParam;
                 }
-                Davis.location.assign(new Davis.Request(url));
+                realtimeUpdate([], url);
             });
             select2.off("change");
             select2.change(function (event) {
@@ -195,31 +225,9 @@ console.log('update datatable')
                 if (extraParam !== undefined && extraParam !== null && extraParam !== "") {
                     url += "/" + extraParam;
                 }
-                Davis.location.assign(new Davis.Request(url));
+                realtimeUpdate([], url);
             });
         }
-    }
-
-    /**
-     * Smartly update the currently loaded view, based on the current game state.
-     *
-     * @memberOf ui
-     * @param {Array.<string>=} updateEvents Optional array of strings containing information about what caused this update, e.g. "gameSim" or "newPhase".
-     * @param {function()=} cb Optional callback that will run after the page updates.
-     */
-    function realtimeUpdate(updateEvents, cb) {
-        updateEvents = updateEvents !== undefined ? updateEvents : [];
-
-        // If tracking is enabled, don't track realtime updates
-        if (Davis.Request.prototype.noTrack !== undefined) {
-            Davis.Request.prototype.noTrack();
-        }
-
-        // Refresh standings if it's the current season standings and the phase is during the regular season
-        Davis.location.replace(new Davis.Request(location.pathname, {
-            updateEvents: updateEvents,
-            cb: cb
-        }));
     }
 
     /*Get current options based on game state and push rendered play button
@@ -402,7 +410,6 @@ console.log('update datatable')
     function moveToNewWindow() {
         // Window name is set to the current time, so each window has a unique name and thus a new window is always opened
         window.open(document.URL + "?w=popup", Date.now(), "height=600,width=800,scrollbars=yes");
-//        Davis.location.assign(new Davis.Request("/l/" + g.lid));
     }
 
     $(document).ready(function () {

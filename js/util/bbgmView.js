@@ -2,7 +2,7 @@
  * @name util.bbgmView
  * @namespace Framework for loading, displaying, and updating content. bbgmView is designed so that it is easy to write UIs that are granular in both reading from the database and updating the DOM, to minimize useless updates to previously cached or displayed values. See the documentation for util.bbgmView.init for more detail on use.
  */
-define(["globals", "ui", "lib/davis", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/helpers", "util/viewHelpers"], function (g, ui, Davis, $, ko, komapping, _, helpers, viewHelpers) {
+define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/helpers", "util/viewHelpers"], function (g, ui, $, ko, komapping, _, helpers, viewHelpers) {
     "use strict";
 
     var vm;
@@ -69,7 +69,7 @@ console.log('draw from scratch')
                         return helpers.error(vars.errorMessage, cb);
                     }
                     if (vars.redirectUrl !== undefined) {
-                        return Davis.location.assign(new Davis.Request(vars.redirectUrl));
+                        return ui.realtimeUpdate([], vars.redirectUrl);
                     }
 
                     komapping.fromJS(vars, args.mapping, vm);
@@ -109,7 +109,7 @@ console.log(vm);
                     return helpers.error(inputs.errorMessage, cb);
                 }
                 if (inputs.redirectUrl !== undefined) {
-                    return Davis.location.assign(new Davis.Request(inputs.redirectUrl));
+                    return ui.realtimeUpdate([], inputs.redirectUrl);
                 }
 
                 fnUpdate(inputs, updateEvents, cb);
@@ -138,7 +138,7 @@ console.log(vm);
      * @param {function(Object): Object=} args.get Function which takes a Davis.js request object, validates any inputs, and returns them in a usable object like {season: 2014, abbrev: "CHI"}. This function is called by Davis.js when a page is originally loaded (i.e. in response to a clicked link) or when some data is updated and ui.realtimeUpdate is called. So the same entry point is used for generating all the HTML from scratch and just updating it.
      * To display a full-screen error message, include an "errorMessage" property with string contents in the return object. To redirect to another URL, include a "redirectUrl" property containing the URL in the return object. Either displaying an error message or redirecting this way will short-circuit the rest of the loading of the view.
      * @param {function(Object)=} args.post Optional function which takes a Davis.js request object, validates any inputs, takes appropriate action to update the database if necessary, and ends by making a GET request for whatever page should be shown to the user. This GET request can contain some data (like an error/success message) to be displayed.
-     * To display a full-screen error message, call helpers.error directly. To redirect to another URL, just redirect directly. No fancy short circuiting is needed like in args.get because nothing is run after args.post completes anyway.
+     * To display a full-screen error message, call helpers.error directly. To redirect to another URL, call ui.realtimeUpdate directly. No fancy short circuiting is needed like in args.get because nothing is run after args.post completes anyway.
      * @param {function(Object)=} args.InitViewModel Optional constructor function defining the initial Knockout view model structure created immediately after a GET request. This should only be used when absolutely necessary, and in those cases should be as minimal as possible. The only valid uses are (1) to create properties on the view model that are needed by other functions (in args.runBefore and args.runWhenever) to check if updates are needed, and (2) to define computed observables and the observables they directly depend on. As this is a constructor function, view model properites should be attached to this.
      * @param {Object=} args.mapping Optional object defining the structure of the mapping (via the Knockout mappping plugin) between the output of all args.runBefore and runWhenever functions. "All" means that this single mapping object is used in multiple different places with multiple different subsets of data, so it should be able to handle everything. Specifically, all the results of the args.runBefore functions are run through the mapping plugin together, while each result from a runWhenever function is run through separately. If undefined, then the default for the Knockout mappping plugin will be used.
      * @param {Array.<function(Object, Array.<string>, Object): Object=>} args.runBefore Array of functions run before the template is displayed/updated. Arguments of each function are inputs (return value of get), updateEvents (containing information about what changed this load/update, such as "gameSim" or "playerMovement", and also "firstRun" if this is the first load of a page and not a refresh), and vm (the current Knockout view model). If there is something to update, the function returns a jQuery promise that resolves when the updated data has been retrieved.

@@ -2,7 +2,7 @@
  * @name api
  * @namespace Functions called directly in response to user action (clicking a button, etc).
  */
-define(["db", "globals", "views", "ui", "core/draft", "core/finances", "core/game", "core/player", "core/season", "core/team", "core/trade", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/lock"], function (db, g, views, ui, draft, finances, game, player, season, team, trade, Davis, Handlebars, $, _, lock) {
+define(["db", "globals", "views", "ui", "core/draft", "core/finances", "core/game", "core/player", "core/season", "core/team", "core/trade", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/lock"], function (db, g, views, ui, draft, finances, game, player, season, team, trade, Handlebars, $, _, lock) {
     "use strict";
 
     function play(amount) {
@@ -40,7 +40,7 @@ define(["db", "globals", "views", "ui", "core/draft", "core/finances", "core/gam
                 season.newPhase(g.PHASE.DRAFT, function () {
                     draft.genPlayers(function () {
                         draft.genOrder(function () {
-                            Davis.location.assign(new Davis.Request("/l/" + g.lid + "/draft"));
+                            ui.realtimeUpdate([], "/l/" + g.lid + "/draft");
                         });
                     });
                 });

@@ -2,7 +2,7 @@
  * @name views.roster
  * @namespace Current or historical rosters for every team. Current roster for user's team is editable.
  */
-define(["api", "db", "globals", "ui", "core/team", "lib/davis", "lib/knockout", "lib/jquery", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (api, db, g, ui, team, Davis, ko, $, components, bbgmView, helpers, viewHelpers) {
+define(["api", "db", "globals", "ui", "core/team", "lib/knockout", "lib/jquery", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (api, db, g, ui, team, ko, $, components, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     var mapping;

@@ -2,7 +2,7 @@
  * @name views.playoffs
  * @namespace Show current or archived playoffs, or projected matchups for an in-progress season.
  */
-define(["api", "db", "globals", "ui", "core/draft", "lib/davis", "lib/jquery", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (api, db, g, ui, draft, Davis, $, bbgmView, helpers, viewHelpers, components) {
+define(["api", "db", "globals", "ui", "core/draft", "lib/jquery", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (api, db, g, ui, draft, $, bbgmView, helpers, viewHelpers, components) {
     "use strict";
 
     function updateDraftTables(pids) {

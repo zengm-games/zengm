@@ -2,12 +2,9 @@ smarter realtime
 ----------------
 
 ui.realtimeUpdate should be used in more places so updateEvent is pervasive
-  how can this be done for automatic redirects? wrapper function?
-  search for anywhere Davis is directly called.
-    what about post redirects? https://github.com/olivernn/davis.js/issues/36
+  core.season Davis calls - updateEvents?
   add playerMovement updateEvent, for when a player signs a contract, becomes a free agent, or is traded
   eventually, get rid of "reload" boolean in season.js
-  update documentation for args.post in util.bbgmView
 awards not being set?
 double load on GET? for instance, http://localhost/l/1/player_rating_dists and play a day. loads twice.
 helpers.error in non-view files (currently just core.season)? should they be moved into views?

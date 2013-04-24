@@ -1,7 +1,10 @@
 smarter realtime
 ----------------
 
+draft buttons work?
+release/buy out buttons don't after roster auto sort
 ui.realtimeUpdate should be used in more places so updateEvent is pervasive
+  use req.redirect from POST to manage history optimally
   add playerMovement updateEvent, for when a player signs a contract, becomes a free agent, or is traded
 awards not being set?
 double load on GET? for instance, http://localhost/l/1/player_rating_dists and play a day. loads twice.
@@ -101,6 +104,8 @@ not urgetnt, but... use knockout for
 BEFORE 3.0.0-beta.3
 -------------------
 
+how are old rosters ordered? rosterOrder is only for current season.. right?
+after winning title - "We need to make some real noise in the playoffs. Soon."
 if a player on your team refuses to resign, there should be appropriate handling of this message
 sub-views like shot locations should retain league menu highlighting
 core.freeAgents should be core.freeAgent

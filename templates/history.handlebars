@@ -26,7 +26,7 @@
   </div>
   <div class="span4">
     <h4>All-League Teams</h4>
-    <!-- ko foreach: awards.allDefensive -->
+    <!-- ko foreach: awards.allLeague -->
       <b data-bind="text: title"></b><br>
       <!-- ko foreach: players -->
         <a data-bind="attrLeagueUrl: {href: ['player', pid]}, text: name"></a> (<a data-bind="attrLeagueUrl: {href: ['roster', abbrev, $root.season]}, text: abbrev"></a>)<br>

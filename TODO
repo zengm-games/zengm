@@ -1,8 +1,7 @@
 smarter realtime
 ----------------
 
-draft buttons work?
-release/buy out buttons don't after roster auto sort
+draft buttons sometimes don't work? why?
 ui.realtimeUpdate should be used in more places so updateEvent is pervasive
   use req.redirect from POST to manage history optimally
   add playerMovement updateEvent, for when a player signs a contract, becomes a free agent, or is traded

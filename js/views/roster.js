@@ -59,23 +59,36 @@ define(["api", "db", "globals", "ui", "core/team", "lib/knockout", "lib/jquery",
                 },
                 disabled: true
             });
+        }
 
-            // Release and Buy Out buttons, which will only appear if the roster is editable
-            $("#roster button").click(function (event) {
-                var i, pid, players, tr;
+        // Release and Buy Out buttons, which will only appear if the roster is editable
+        $("#roster button").off().click(function (event) {
+            var i, pid, players, tr;
 
-                pid = parseInt(this.parentNode.parentNode.dataset.pid, 10);
-                players = vm.players();
-                for (i = 0; i < players.length; i++) {
-                    if (players[i].pid() === pid) {
-                        break;
-                    }
+            pid = parseInt(this.parentNode.parentNode.dataset.pid, 10);
+            players = vm.players();
+            for (i = 0; i < players.length; i++) {
+                if (players[i].pid() === pid) {
+                    break;
                 }
+            }
 
-                if (this.dataset.action === "release") {
-                    if (window.confirm("Are you sure you want to release " + players[i].name() + "?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in " + players[i].contract.exp() + ".")) {
+            if (this.dataset.action === "release") {
+                if (window.confirm("Are you sure you want to release " + players[i].name() + "?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in " + players[i].contract.exp() + ".")) {
+                    tr = this.parentNode.parentNode;
+                    api.rosterRelease(pid, function (error) {
+                        if (error) {
+                            alert("Error: " + error);
+                        } else {
+                            ui.realtimeUpdate(["playerMovement"]);
+                        }
+                    });
+                }
+            } else if (this.dataset.action === "buyOut") {
+                if (vm.team.cash() > players[i].cashOwed()) {
+                    if (window.confirm("Are you sure you want to buy out " + players[i].name() + "? You will have to pay him the " + helpers.formatCurrency(players[i].cashOwed(), "M") + " remaining on his contract from your current cash reserves of " + helpers.formatCurrency(vm.team.cash(), "M") + ". He will then become a free agent and his contract will no longer count towards your salary cap.")) {
                         tr = this.parentNode.parentNode;
-                        api.rosterRelease(pid, function (error) {
+                        api.rosterBuyOut(pid, function (error) {
                             if (error) {
                                 alert("Error: " + error);
                             } else {
@@ -83,33 +96,20 @@ define(["api", "db", "globals", "ui", "core/team", "lib/knockout", "lib/jquery",
                             }
                         });
                     }
-                } else if (this.dataset.action === "buyOut") {
-                    if (vm.team.cash() > players[i].cashOwed()) {
-                        if (window.confirm("Are you sure you want to buy out " + players[i].name() + "? You will have to pay him the " + helpers.formatCurrency(players[i].cashOwed(), "M") + " remaining on his contract from your current cash reserves of " + helpers.formatCurrency(vm.team.cash(), "M") + ". He will then become a free agent and his contract will no longer count towards your salary cap.")) {
-                            tr = this.parentNode.parentNode;
-                            api.rosterBuyOut(pid, function (error) {
-                                if (error) {
-                                    alert("Error: " + error);
-                                } else {
-                                    ui.realtimeUpdate(["playerMovement"]);
-                                }
-                            });
-                        }
-                    } else {
-                        alert("Error: You only have " + helpers.formatCurrency(vm.team.cash(), "M") + " in cash, but it would take $" + this.dataset.cashOwed + "M to buy out " + this.dataset.playerName + ".");
-                    }
+                } else {
+                    alert("Error: You only have " + helpers.formatCurrency(vm.team.cash(), "M") + " in cash, but it would take $" + this.dataset.cashOwed + "M to buy out " + this.dataset.playerName + ".");
                 }
-            });
+            }
+        });
 
-            $("#roster-auto-sort").click(function (event) {
-                vm.players([]); // This is a hack to force a UI update because the jQuery UI sortable roster reordering does not update the view model, which can cause the view model to think the roster is sorted correctly when it really isn't. (Example: load the roster, auto sort, reload, drag reorder it, auto sort -> the auto sort doesn't update the UI.) Fixing this issue would fix flickering.
-                team.rosterAutoSort(null, g.userTid, function () {
-                    db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                        ui.realtimeUpdate(["playerMovement"]);
-                    });
+        $("#roster-auto-sort").off().click(function (event) {
+            vm.players([]); // This is a hack to force a UI update because the jQuery UI sortable roster reordering does not update the view model, which can cause the view model to think the roster is sorted correctly when it really isn't. (Example: load the roster, auto sort, reload, drag reorder it, auto sort -> the auto sort doesn't update the UI.) Fixing this issue would fix flickering.
+            team.rosterAutoSort(null, g.userTid, function () {
+                db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                    ui.realtimeUpdate(["playerMovement"]);
                 });
             });
-        }
+        });
 
         if (editable) {
             rosterTbody.sortable("enable").disableSelection();

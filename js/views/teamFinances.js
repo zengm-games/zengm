@@ -113,7 +113,7 @@ define(["db", "globals", "ui", "core/finances", "lib/jquery", "lib/knockout", "l
     function updateTeamFinances(inputs, updateEvents, vm) {
         var deferred, vars;
 
-        if (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("teamFinances") >= 0 || inputs.tid !== vm.tid() || inputs.show !== vm.show()) {
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("teamFinances") >= 0 || inputs.tid !== vm.tid() || inputs.show !== vm.show()) {
             deferred = $.Deferred();
             vars = {};
 

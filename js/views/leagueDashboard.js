@@ -77,7 +77,7 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "lib
     function updateTeams(inputs, updateEvents) {
         var attributes, deferred, seasonAttributes, stats, vars;
 
-        if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON)) {
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON)) {
             deferred = $.Deferred();
             vars = {};
 
@@ -129,7 +129,7 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "lib
     function updateGames(inputs, updateEvents) {
         var deferred, vars;
 
-        if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON)) {
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON)) {
             deferred = $.Deferred();
             vars = {};
 
@@ -186,7 +186,7 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "lib
     function updateSchedule(inputs, updateEvents) {
         var deferred, vars;
 
-        if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON)) {
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON)) {
             deferred = $.Deferred();
             vars = {};
 
@@ -214,7 +214,7 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "lib
     function updatePlayers(inputs, updateEvents) {
         var deferred, vars;
 
-        if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON)) {
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON)) {
             deferred = $.Deferred();
             vars = {};
 
@@ -300,7 +300,7 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "lib
     function updatePlayoffs(inputs, updateEvents) {
         var deferred, vars;
 
-        if (updateEvents.indexOf("firstRun") >= 0 || (g.phase >= g.PHASE.PLAYOFFS && updateEvents.indexOf("gameSim") >= 0) || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PLAYOFFS)) {
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || (g.phase >= g.PHASE.PLAYOFFS && updateEvents.indexOf("gameSim") >= 0) || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PLAYOFFS)) {
             deferred = $.Deferred();
             vars = {
                 showPlayoffSeries: false,

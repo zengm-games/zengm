@@ -18,7 +18,7 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "util/bbgmView", "ut
     function updateSchedule(inputs, updateEvents, vm) {
         var deferred, vars;
 
-        if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0) {
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0) {
             deferred = $.Deferred();
             vars = {};
 

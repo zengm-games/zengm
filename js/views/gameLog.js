@@ -163,7 +163,7 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
         deferred = $.Deferred();
         vars = {};
 
-        if (inputs.firstRun || inputs.gid !== vm.boxScore.gid()) {
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.gid !== vm.boxScore.gid()) {
             boxScore(inputs.gid, function (content) {
                 vars.boxScore = {
                     html: content,
@@ -194,7 +194,7 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
         deferred = $.Deferred();
         vars = {};
 
-        if (inputs.abbrev !== vm.gamesList.abbrev() || inputs.season !== vm.gamesList.season()) {
+        if (updateEvents.indexOf("dbChange") >= 0 || inputs.abbrev !== vm.gamesList.abbrev() || inputs.season !== vm.gamesList.season()) {
             // Load all games in list
             vm.gamesList.loading(true);
             vm.gamesList.games([]);

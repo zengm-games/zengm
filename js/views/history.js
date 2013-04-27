@@ -32,7 +32,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "util/bbgmView", "u
     function updateHistory(inputs, updateEvents, vm) {
         var deferred, vars;
 
-        if (updateEvents.indexOf("firstRun") >= 0 || vm.season() !== inputs.season) {
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || vm.season() !== inputs.season) {
             deferred = $.Deferred();
             vars = {};
 

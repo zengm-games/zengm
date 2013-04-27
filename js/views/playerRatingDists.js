@@ -18,11 +18,11 @@ define(["db", "globals", "ui", "lib/boxPlot", "lib/jquery", "lib/knockout", "lib
     function updatePlayers(inputs, updateEvents, vm) {
         var deferred, vars;
 
-        if ((inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.season !== vm.season()) {
+        if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.season !== vm.season()) {
             deferred = $.Deferred();
             vars = {};
 
-            g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
+            g.dbl.transaction("players").objectStore("players").getAll().onsuccess = function (event) {
                 var attributes, data, players, ratings, ratingsAll, stats;
 
                 attributes = [];

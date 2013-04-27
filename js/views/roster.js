@@ -171,7 +171,7 @@ define(["api", "db", "globals", "ui", "core/team", "lib/knockout", "lib/jquery",
     function updateRoster(inputs, updateEvents, vm) {
         var deferred, vars, tx;
 
-        if ((inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.abbrev !== vm.abbrev() || inputs.season !== vm.season()) {
+        if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.abbrev !== vm.abbrev() || inputs.season !== vm.season()) {
             deferred = $.Deferred();
 
             vars = {

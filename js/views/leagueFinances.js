@@ -28,7 +28,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
     function updateLeagueFinances(inputs, updateEvents, vm) {
         var attributes, deferred, seasonAttributes, vars;
 
-        if (updateEvents.indexOf("firstRun") >= 0 || inputs.season !== vm.season() || inputs.season === g.season) {
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.season !== vm.season() || inputs.season === g.season) {
             deferred = $.Deferred();
             vars = {};
 

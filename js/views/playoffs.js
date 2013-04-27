@@ -14,7 +14,7 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "uti
     function updatePlayoffs(inputs, updateEvents, vm) {
         var attributes, deferred, seasonAttributes, vars;
 
-        if (updateEvents.indexOf("firstRun") >= 0 || inputs.season !== vm.season() || (inputs.season === g.season && updateEvents.indexOf("gameSim") >= 0)) {
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.season !== vm.season() || (inputs.season === g.season && updateEvents.indexOf("gameSim") >= 0)) {
             deferred = $.Deferred();
             vars = {};
 

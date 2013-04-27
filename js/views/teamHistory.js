@@ -18,7 +18,7 @@ define(["db", "globals", "ui", "lib/jquery", "util/bbgmView", "util/viewHelpers"
     function updateTeamHistory(inputs, updateEvents, vm) {
         var deferred, vars;
 
-        if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0) {
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0) {
             deferred = $.Deferred();
             vars = {};
 

@@ -14,7 +14,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "util/bbgmView", "u
     function updateMessage(inputs, updateEvents, vm) {
         var deferred, vars, tx;
 
-        if (updateEvents.indexOf("firstRun") >= 0 || vm.message.mid() !== inputs.mid) {
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || vm.message.mid() !== inputs.mid) {
             deferred = $.Deferred();
             vars = {};
 

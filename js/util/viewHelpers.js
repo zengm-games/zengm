@@ -20,10 +20,9 @@ define(["db", "globals", "ui", "lib/jquery", "util/helpers"], function (db, g, u
                 return;
             }
 
-            oldLastDbChange = g.lastDbChange;
-
-            db.loadGameAttribute(null, "lastDbChange", function () {
-                if (g.lastDbChange !== oldLastDbChange) {
+            // db.loadGameAttribute cannot be used to check for a new lastDbChange because we need to have the old g.lastDbChange available right up to the last moment possible, for cases where db.loadGameAttribute might be blocked during a slow page refresh, as happens when viewing player rating and stat distributions. Otherwise, an extra refresh would occur with a stale lastDbChange.
+            g.dbl.transaction("gameAttributes").objectStore("gameAttributes").get("lastDbChange").onsuccess = function (event) {
+                if (g.lastDbChange !== event.target.result.value) {
                     db.loadGameAttributes(function () {
                         document.getElementById("league_content").dataset.id = "";
                         //leagueContentEl.innerHTML = "&nbsp;";  // Blank doesn't work, for some reason
@@ -38,7 +37,7 @@ define(["db", "globals", "ui", "lib/jquery", "util/helpers"], function (db, g, u
                 } else {
                     setTimeout(checkDbChange, 3000, g.lid);
                 }
-            });
+            };
         };
 
         // Make sure league exists

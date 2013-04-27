@@ -50,7 +50,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mappi
     function updateStandings(inputs, updateEvents, vm) {
         var attributes, deferred, seasonAttributes, vars;
 
-        if ((inputs.season === g.season && updateEvents.indexOf("gameSim") >= 0) || inputs.season !== vm.season()) {
+        if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && updateEvents.indexOf("gameSim") >= 0) || inputs.season !== vm.season()) {
             deferred = $.Deferred();
             vars = {};
 

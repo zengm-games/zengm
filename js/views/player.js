@@ -37,7 +37,7 @@ console.log(options.data);
         deferred = $.Deferred();
         vars = {};
 
-        if (updateEvents.indexOf("firstRun") >= 0 || !vm.retired()) {
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || !vm.retired()) {
             g.dbl.transaction("players").objectStore("players").get(inputs.pid).onsuccess = function (event) {
                 var attributes, currentRatings, data, player, ratings, stats;
 

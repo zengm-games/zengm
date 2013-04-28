@@ -2,7 +2,7 @@
  * @name views.roster
  * @namespace Current or historical rosters for every team. Current roster for user's team is editable.
  */
-define(["api", "db", "globals", "ui", "core/team", "lib/knockout", "lib/jquery", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (api, db, g, ui, team, ko, $, components, bbgmView, helpers, viewHelpers) {
+define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib/knockout", "lib/jquery", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, finances, player, team, ko, $, components, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     var mapping;
@@ -29,6 +29,143 @@ define(["api", "db", "globals", "ui", "core/team", "lib/knockout", "lib/jquery",
         });
     }
 
+    function doReorder(sortedPids, cb) {
+        var tx;
+
+        tx = g.dbl.transaction("players", "readwrite");
+
+        // Update rosterOrder
+        tx.objectStore("players").index("tid").openCursor(g.userTid).onsuccess = function (event) {
+            var cursor, i, p;
+
+            cursor = event.target.result;
+            if (cursor) {
+                p = cursor.value;
+                for (i = 0; i < sortedPids.length; i++) {
+                    if (sortedPids[i] === p.pid) {
+                        p.rosterOrder = i;
+                        break;
+                    }
+                }
+                cursor.update(p);
+                cursor.continue();
+            }
+        };
+
+        tx.oncomplete = function () {
+            db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                cb();
+            });
+        };
+    }
+
+    function doRelease(pid, cb) {
+        var playerStore, transaction;
+
+        transaction = g.dbl.transaction(["players", "releasedPlayers", "teams"], "readwrite");
+        playerStore = transaction.objectStore("players");
+
+        playerStore.index("tid").count(g.userTid).onsuccess = function (event) {
+            var numPlayersOnRoster;
+
+            numPlayersOnRoster = event.target.result;
+
+            if (numPlayersOnRoster <= 5) {
+                return cb("You must keep at least 5 players on your roster.");
+            }
+
+            pid = parseInt(pid, 10);
+            playerStore.get(pid).onsuccess = function (event) {
+                var p;
+
+                p = event.target.result;
+                // Don't let the user update CPU-controlled rosters
+                if (p.tid === g.userTid) {
+                    player.release(transaction, p, function () {
+                        db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                            cb();
+                        });
+                    });
+                } else {
+                    return cb("You aren't allowed to do this.");
+                }
+            };
+        };
+    }
+
+    function doBuyOut(pid, cb) {
+        var playerStore, transaction;
+
+        transaction = g.dbl.transaction(["players", "schedule", "teams"], "readwrite");
+        playerStore = transaction.objectStore("players");
+
+        playerStore.index("tid").count(g.userTid).onsuccess = function (event) {
+            var numPlayersOnRoster;
+
+            numPlayersOnRoster = event.target.result;
+
+            if (numPlayersOnRoster <= 5) {
+                return cb("You must keep at least 5 players on your roster.");
+            }
+
+            pid = parseInt(pid, 10);
+            playerStore.get(pid).onsuccess = function (event) {
+                var p;
+
+                p = event.target.result;
+                // Don't let the user update CPU-controlled rosters
+                if (p.tid === g.userTid) {
+                    transaction.objectStore("schedule").getAll().onsuccess = function (event) {
+                        var cashOwed, i, numGamesRemaining, schedule;
+
+                        // numGamesRemaining doesn't need to be calculated except for g.userTid, but it is.
+                        schedule = event.target.result;
+                        numGamesRemaining = 0;
+                        for (i = 0; i < schedule.length; i++) {
+                            if (g.userTid === schedule[i].homeTid || g.userTid === schedule[i].awayTid) {
+                                numGamesRemaining += 1;
+                            }
+                        }
+
+                        cashOwed = ((1 + p.contract.exp - g.season) * p.contract.amount - (1 - numGamesRemaining / 82) * p.contract.amount);  // [thousands of dollars]
+
+                        transaction.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
+                            var cash, cursor, s, t;
+
+                            cursor = event.target.result;
+                            t = cursor.value;
+
+                            s = t.seasons.length - 1;
+                            cash = t.seasons[s].cash;  // [thousands of dollars]
+
+                            if (cashOwed < cash) {
+                                // Pay the cash
+                                t.seasons[s].cash -= cashOwed;
+                                t.seasons[s].expenses.buyOuts.amount += cashOwed;
+                                cursor.update(t);
+
+                                finances.updateRanks(transaction, "expenses", function () {
+                                    // Set to FA in database
+                                    player.genBaseMoods(transaction, function (baseMoods) {
+                                        player.addToFreeAgents(transaction, p, null, baseMoods, function () {
+                                            db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                                                cb();
+                                            });
+                                        });
+                                    });
+                                });
+                            } else {
+                                return cb("Not enough cash.");
+                            }
+                        };
+                    };
+                } else {
+                    return cb("You aren't allowed to do this.");
+                }
+            };
+        };
+    }
+
     function editableChanged(editable, vm) {
         var rosterTbody;
 
@@ -53,7 +190,7 @@ define(["api", "db", "globals", "ui", "core/team", "lib/knockout", "lib/jquery",
                         sortedPids[i] = parseInt(sortedPids[i], 10);
                     }
 
-                    api.rosterReorder(sortedPids, function () {
+                    doReorder(sortedPids, function () {
                         highlightHandles();
                     });
                 },
@@ -76,7 +213,7 @@ define(["api", "db", "globals", "ui", "core/team", "lib/knockout", "lib/jquery",
             if (this.dataset.action === "release") {
                 if (window.confirm("Are you sure you want to release " + players[i].name() + "?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in " + players[i].contract.exp() + ".")) {
                     tr = this.parentNode.parentNode;
-                    api.rosterRelease(pid, function (error) {
+                    doRelease(pid, function (error) {
                         if (error) {
                             alert("Error: " + error);
                         } else {
@@ -88,7 +225,7 @@ define(["api", "db", "globals", "ui", "core/team", "lib/knockout", "lib/jquery",
                 if (vm.team.cash() > players[i].cashOwed()) {
                     if (window.confirm("Are you sure you want to buy out " + players[i].name() + "? You will have to pay him the " + helpers.formatCurrency(players[i].cashOwed(), "M") + " remaining on his contract from your current cash reserves of " + helpers.formatCurrency(vm.team.cash(), "M") + ". He will then become a free agent and his contract will no longer count towards your salary cap.")) {
                         tr = this.parentNode.parentNode;
-                        api.rosterBuyOut(pid, function (error) {
+                        doBuyOut(pid, function (error) {
                             if (error) {
                                 alert("Error: " + error);
                             } else {
@@ -271,6 +408,7 @@ define(["api", "db", "globals", "ui", "core/team", "lib/knockout", "lib/jquery",
         }).extend({throttle: 1});
 
         ko.computed(function () {
+            vm.players(); // Ensure this runs when vm.players changes.
             if (vm.editable()) {
                 highlightHandles();
             }

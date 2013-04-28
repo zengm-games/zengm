@@ -488,7 +488,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
     }
 
     function newPhaseRegularSeason(cb) {
-        var checkRosterSize, done, phaseText, playerStore, transaction, userTeamSizeError;
+        var checkRosterSize, done, phaseText, playerStore, tx, userTeamSizeError;
 
         phaseText = g.season + " regular season";
 
@@ -543,25 +543,30 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
             };
         };
 
-        updateOwnerMood(function (deltas) {
-            message.generate(deltas, function () {
-                transaction = g.dbl.transaction(["players", "releasedPlayers", "teams"], "readwrite");
-                playerStore = transaction.objectStore("players");
+        tx = g.dbl.transaction(["players", "releasedPlayers", "teams"], "readwrite");
+        playerStore = tx.objectStore("players");
 
-                done = 0;
-                userTeamSizeError = false;
+        done = 0;
+        userTeamSizeError = false;
 
-                // Make sure teams are all within the roster limits
-                transaction.objectStore("teams").getAll().onsuccess = function (event) {
-                    var i, teams;
+        // Make sure teams are all within the roster limits
+        tx.objectStore("teams").getAll().onsuccess = function (event) {
+            var i, teams;
 
-                    teams = event.target.result;
-                    for (i = 0; i < teams.length; i++) {
-                        checkRosterSize(teams[i].tid);
-                    }
-                };
-            });
-        });
+            teams = event.target.result;
+            for (i = 0; i < teams.length; i++) {
+                checkRosterSize(teams[i].tid);
+            }
+        };
+
+        tx.oncomplete = function () {
+            if (!userTeamSizeError) {
+                updateOwnerMood(function (deltas) {
+                    message.generate(deltas, function () {
+                    });
+                });
+            }
+        };
     }
 
     function newPhaseAfterTradeDeadline(cb) {

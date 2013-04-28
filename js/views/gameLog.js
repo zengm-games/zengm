@@ -163,6 +163,10 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
         deferred = $.Deferred();
         vars = {};
 
+        // Needed for dropdown
+        vm.abbrev(inputs.abbrev);
+        vm.season(inputs.season);
+
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.gid !== vm.boxScore.gid()) {
             boxScore(inputs.gid, function (content) {
                 vars.boxScore = {
@@ -227,6 +231,8 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
     }
 
     function uiEvery(updateEvents, vm) {
+console.log(vm.abbrev())
+console.log(vm.season())
         components.dropdown("game-log-dropdown", ["teams", "seasons"], [vm.abbrev(), vm.season()], updateEvents, vm.boxScore.gid() >= 0 ? vm.boxScore.gid() : undefined);
 
         // Game log list dynamic highlighting

@@ -525,6 +525,11 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                         // Should auto-add players
                     }*/
                 }
+
+                // Auto sort rosters (except player's team)
+                if (tid !== g.userTid) {
+                    team.rosterAutoSort(playerStore, tid);
+                }
             };
         };
 
@@ -553,13 +558,6 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                         setSchedule(tids, function () {
                             newPhaseCb(g.PHASE.REGULAR_SEASON, phaseText, cb);
                         });
-
-                        // Auto sort rosters (except player's team)
-                        for (tid = 0; tid < g.numTeams; tid++) {
-                            if (tid !== g.userTid) {
-                                team.rosterAutoSort(playerStore, tid);
-                            }
-                        }
                     });
                 });
             }

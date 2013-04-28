@@ -12,6 +12,7 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
      * @param {string} abbrev Abbrev of the team for the list of games.
      * @param {number} season Season for the list of games.
      * @param {number} gid Integer game ID for the box score (a negative number means no box score), which is used only for highlighting the relevant entry in the list.
+     * @param {Array.<Object>} gid Array of already-loaded games. If this is not empty, then only new games that are not already in this array will be passed to the callback.
      * @param {function(Array.<Object>)} cb Callback whose argument is a list of game objects.
      */
     function gameLogList(abbrev, season, gid, loadedGames, cb) {
@@ -154,8 +155,7 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
      * If the box score is already loaded, nothing is done.
      *
      * @memberOf views.gameLog
-     * @param {number} gid Integer game ID for the box score (a negative number means no box score).
-     * @param {function()} cb Callback.
+     * @param {number} inputs.gid Integer game ID for the box score (a negative number means no box score).
      */
     function updateBoxScore(inputs, updateEvents, vm) {
         var deferred, vars;
@@ -186,11 +186,9 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
      * If the game log list is already loaded, nothing is done. If the game log list is loaded and a new game has been played, update. If the game log list is not loaded, load it.
      *
      * @memberOf views.gameLog
-     * @param {string} abbrev Abbrev of the team for the list of games.
-     * @param {number} season Season for the list of games.
-     * @param {number} gid Integer game ID for the box score (a negative number means no box score), which is used only for highlighting the relevant entry in the list.
-     * @param {Array.<string>} updateEvents Information about what caused this update, e.g. "gameSim" or "newPhase". Empty on normal page loads (i.e. from clicking a link).
-     * @param {function()} cb Callback.
+     * @param {string} inputs.abbrev Abbrev of the team for the list of games.
+     * @param {number} inputs.season Season for the list of games.
+     * @param {number} inputs.gid Integer game ID for the box score (a negative number means no box score), which is used only for highlighting the relevant entry in the list.
      */
     function updateGamesList(inputs, updateEvents, vm) {
         var deferred, vars;

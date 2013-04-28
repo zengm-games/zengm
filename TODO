@@ -7,7 +7,6 @@ ui.realtimeUpdate should be used in more places so updateEvent is pervasive
   add playerMovement updateEvent, for when a player signs a contract, becomes a free agent, or is traded
 awards not being set?
 gameLog
-  update docs
   make sure observables are being set correctly
 bbgmView
   IMPORTANT:

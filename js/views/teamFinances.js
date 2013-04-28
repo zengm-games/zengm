@@ -256,60 +256,62 @@ define(["db", "globals", "ui", "core/finances", "lib/jquery", "lib/knockout", "l
                 return output;
             }));
         }).extend({throttle: 1});
+
+        ko.computed(function () {
+            var barData, barSeasons;
+
+            barData = vm.barData();
+            barSeasons = vm.barSeasons();
+
+            $.barGraph($("#bar-graph-won"), barData.won, [0, 82], barSeasons);
+            $.barGraph($("#bar-graph-hype"), barData.hype, [0, 1], barSeasons, function (val) {
+                return helpers.round(val, 2);
+            });
+            $.barGraph($("#bar-graph-pop"), barData.pop, [0, 20], barSeasons, function (val) {
+                return helpers.round(val, 1) + "M";
+            });
+            $.barGraph($("#bar-graph-att"), barData.att, [0, 25000], barSeasons, function (val) {
+                return helpers.numberWithCommas(helpers.round(val));
+            });
+
+            $.barGraph(
+                $("#bar-graph-revenue"),
+                [barData.revenues.nationalTv, barData.revenues.localTv, barData.revenues.ticket, barData.revenues.sponsor, barData.revenues.merch],
+                undefined,
+                [
+                    barSeasons,
+                    ["national TV revenue", "local TV revenue", "ticket revenue",  "corporate sponsorship revenue", "merchandising revenue"]
+                ],
+                function (val) {
+                    return helpers.formatCurrency(val / 1000, "M", 1);
+                }
+            );
+            $.barGraph(
+                $("#bar-graph-expenses"),
+                [barData.expenses.salary, barData.expenses.minTax, barData.expenses.luxuryTax, barData.expenses.buyOuts, barData.expenses.scouting, barData.expenses.coaching, barData.expenses.health, barData.expenses.facilities],
+                undefined,
+                [
+                    barSeasons,
+                    ["player salaries", "minimum payroll tax", "luxury tax", "buy outs", "scouting", "coaching", "health", "facilities"]
+                ],
+                function (val) {
+                    return helpers.formatCurrency(val / 1000, "M", 1);
+                }
+            );
+            $.barGraph($("#bar-graph-cash"), barData.cash, undefined, barSeasons, function (val) {
+                return helpers.formatCurrency(val, "M", 1);
+            });
+        }).extend({throttle: 1});
     }
 
     function uiEvery(updateEvents, vm) {
-        var barData, barSeasons;
+        components.dropdown("team-finances-dropdown", ["teams", "shows"], [vm.abbrev(), vm.show()], updateEvents);
 
         if (g.gamesInProgress) {
             disableFinanceSettings(vm.tid());
         } else {
             enableFinanceSettings(vm.tid());
         }
-
-        components.dropdown("team-finances-dropdown", ["teams", "shows"], [vm.abbrev(), vm.show()], updateEvents);
-
-        barData = vm.barData();
-        barSeasons = vm.barSeasons();
-
-        $.barGraph($("#bar-graph-won"), barData.won, [0, 82], barSeasons);
-        $.barGraph($("#bar-graph-hype"), barData.hype, [0, 1], barSeasons, function (val) {
-            return helpers.round(val, 2);
-        });
-        $.barGraph($("#bar-graph-pop"), barData.pop, [0, 20], barSeasons, function (val) {
-            return helpers.round(val, 1) + "M";
-        });
-        $.barGraph($("#bar-graph-att"), barData.att, [0, 25000], barSeasons, function (val) {
-            return helpers.numberWithCommas(helpers.round(val));
-        });
-
-        $.barGraph(
-            $("#bar-graph-revenue"),
-            [barData.revenues.nationalTv, barData.revenues.localTv, barData.revenues.ticket, barData.revenues.sponsor, barData.revenues.merch],
-            undefined,
-            [
-                barSeasons,
-                ["national TV revenue", "local TV revenue", "ticket revenue",  "corporate sponsorship revenue", "merchandising revenue"]
-            ],
-            function (val) {
-                return helpers.formatCurrency(val / 1000, "M", 1);
-            }
-        );
-        $.barGraph(
-            $("#bar-graph-expenses"),
-            [barData.expenses.salary, barData.expenses.minTax, barData.expenses.luxuryTax, barData.expenses.buyOuts, barData.expenses.scouting, barData.expenses.coaching, barData.expenses.health, barData.expenses.facilities],
-            undefined,
-            [
-                barSeasons,
-                ["player salaries", "minimum payroll tax", "luxury tax", "buy outs", "scouting", "coaching", "health", "facilities"]
-            ],
-            function (val) {
-                return helpers.formatCurrency(val / 1000, "M", 1);
-            }
-        );
-        $.barGraph($("#bar-graph-cash"), barData.cash, undefined, barSeasons, function (val) {
-            return helpers.formatCurrency(val, "M", 1);
-        });
     }
 
     return bbgmView.init({

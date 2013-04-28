@@ -7,9 +7,6 @@ ui.realtimeUpdate should be used in more places so updateEvent is pervasive
   use req.redirect from POST to manage history optimally
   add playerMovement updateEvent, for when a player signs a contract, becomes a free agent, or is traded
 awards not being set?
-check for other things in uiEvery - should they also be computed observables in uiFirst?
-  check:
-    teamFinances
 gameLog
   update docs
   make sure observables are being set correctly

@@ -56,29 +56,38 @@ define(["db", "globals", "ui", "lib/boxPlot", "lib/jquery", "lib/knockout", "lib
     }
 
     function uiFirst(vm) {
+        var rating, tbody;
+
         ko.computed(function () {
             ui.title("Player Rating Distributions - " + vm.season());
         }).extend({throttle: 1});
-    }
 
-    function uiEvery(updateEvents, vm) {
-        var scale, rating, tbody;
-
-        components.dropdown("player-rating-dists-dropdown", ["seasons"], [vm.season()], updateEvents);
 
         tbody = $("#player-rating-dists tbody");
 
         for (rating in vm.ratingsAll) {
             if (vm.ratingsAll.hasOwnProperty(rating)) {
                 tbody.append('<tr><td style="text-align: right; padding-right: 1em;">' + rating + '</td><td width="100%"><div id="' + rating + 'BoxPlot"></div></td></tr>');
-
-                boxPlot.create({
-                    data: vm.ratingsAll[rating](),
-                    scale: [0, 100],
-                    container: rating + "BoxPlot"
-                });
             }
         }
+
+        ko.computed(function () {
+            var rating;
+
+            for (rating in vm.ratingsAll) {
+                if (vm.ratingsAll.hasOwnProperty(rating)) {
+                    boxPlot.create({
+                        data: vm.ratingsAll[rating](),
+                        scale: [0, 100],
+                        container: rating + "BoxPlot"
+                    });
+                }
+            }
+        }).extend({throttle: 1});
+    }
+
+    function uiEvery(updateEvents, vm) {
+        components.dropdown("player-rating-dists-dropdown", ["seasons"], [vm.season()], updateEvents);
     }
 
     return bbgmView.init({

@@ -81,65 +81,75 @@ define(["db", "globals", "ui", "lib/boxPlot", "lib/jquery", "lib/knockout", "lib
     }
 
     function uiFirst(vm) {
+        var stat, tbody;
+
         ko.computed(function () {
             ui.title("Player Stat Distributions - " + vm.season());
         }).extend({throttle: 1});
-    }
-
-    function uiEvery(updateEvents, vm) {
-        var scale, stat, tbody;
-
-        components.dropdown("player-stat-dists-dropdown", ["seasons"], [vm.season()], updateEvents);
 
         tbody = $("#player-stat-dists tbody");
-
-        // Scales for the box plots. This is not done dynamically so that the plots will be comparable across seasons.
-        scale = {
-            gp: [0, 82],
-            gs: [0, 82],
-            min: [0, 50],
-            fg: [0, 20],
-            fga: [0, 40],
-            fgp: [0, 100],
-            tp: [0, 5],
-            tpa: [0, 10],
-            tpp: [0, 100],
-            ft: [0, 15],
-            fta: [0, 25],
-            ftp: [0, 100],
-            orb: [0, 10],
-            drb: [0, 15],
-            trb: [0, 25],
-            ast: [0, 15],
-            tov: [0, 10],
-            stl: [0, 5],
-            blk: [0, 5],
-            pf: [0, 6],
-            pts: [0, 50]
-        };
 
         for (stat in vm.statsAll) {
             if (vm.statsAll.hasOwnProperty(stat)) {
                 tbody.append('<tr><td style="text-align: right; padding-right: 1em;">' + stat + '</td><td width="100%"><div id="' + stat + 'BoxPlot"></div></td></tr>');
-
-                boxPlot.create({
-                    data: vm.statsAll[stat](),
-                    scale: scale[stat],
-                    container: stat + "BoxPlot"
-                });
-
                 if (nbaQuartiles.hasOwnProperty(stat)) {
                     tbody.append('<tr><td></td><td width="100%"><div id="' + stat + 'BoxPlotNba" style="margin-top: -26px"></div></td></tr>');
-                    boxPlot.create({
-                        quartiles: nbaQuartiles[stat],
-                        scale: scale[stat],
-                        container: stat + "BoxPlotNba",
-                        color: "#0088cc",
-                        labels: false
-                    });
                 }
             }
         }
+
+        ko.computed(function () {
+            var scale, stat;
+
+            // Scales for the box plots. This is not done dynamically so that the plots will be comparable across seasons.
+            scale = {
+                gp: [0, 82],
+                gs: [0, 82],
+                min: [0, 50],
+                fg: [0, 20],
+                fga: [0, 40],
+                fgp: [0, 100],
+                tp: [0, 5],
+                tpa: [0, 10],
+                tpp: [0, 100],
+                ft: [0, 15],
+                fta: [0, 25],
+                ftp: [0, 100],
+                orb: [0, 10],
+                drb: [0, 15],
+                trb: [0, 25],
+                ast: [0, 15],
+                tov: [0, 10],
+                stl: [0, 5],
+                blk: [0, 5],
+                pf: [0, 6],
+                pts: [0, 50]
+            };
+
+            for (stat in vm.statsAll) {
+                if (vm.statsAll.hasOwnProperty(stat)) {
+                    boxPlot.create({
+                        data: vm.statsAll[stat](),
+                        scale: scale[stat],
+                        container: stat + "BoxPlot"
+                    });
+
+                    if (nbaQuartiles.hasOwnProperty(stat)) {
+                        boxPlot.create({
+                            quartiles: nbaQuartiles[stat],
+                            scale: scale[stat],
+                            container: stat + "BoxPlotNba",
+                            color: "#0088cc",
+                            labels: false
+                        });
+                    }
+                }
+            }
+        }).extend({throttle: 1});
+    }
+
+    function uiEvery(updateEvents, vm) {
+        components.dropdown("player-stat-dists-dropdown", ["seasons"], [vm.season()], updateEvents);
     }
 
     return bbgmView.init({

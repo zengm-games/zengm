@@ -197,7 +197,7 @@ define(["api", "db", "globals", "ui", "core/team", "lib/knockout", "lib/jquery",
 
                 attributes = ["pid", "name", "pos", "age", "contract", "cashOwed", "rosterOrder", "injury"];
                 ratings = ["ovr", "pot", "skills"];
-                stats = ["min", "pts", "trb", "ast", "per"];
+                stats = ["gp", "min", "pts", "trb", "ast", "per"];
 
                 if (inputs.season === g.season) {
                     // Show players currently on the roster
@@ -245,7 +245,8 @@ define(["api", "db", "globals", "ui", "core/team", "lib/knockout", "lib/jquery",
                     tx.objectStore("players").index("statsTids").getAll(inputs.tid).onsuccess = function (event) {
                         var i, players;
 
-                        players = db.getPlayers(event.target.result, inputs.season, inputs.tid, attributes, stats, ratings, {numGamesRemaining: 0, showRookies: true, sortBy: "rosterOrder", fuzz: true});
+                        players = db.getPlayers(event.target.result, inputs.season, inputs.tid, attributes, stats, ratings, {numGamesRemaining: 0, showRookies: true, fuzz: true});
+                        players.sort(function (a, b) {  return b.stats.gp * b.stats.min - a.stats.gp * a.stats.min; });
 
                         for (i = 0; i < players.length; i++) {
                             players[i].age = players[i].age - (g.season - inputs.season);

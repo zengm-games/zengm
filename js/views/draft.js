@@ -124,14 +124,10 @@ define(["api", "db", "globals", "ui", "core/draft", "lib/jquery", "util/bbgmView
         });
     }
 
-    function uiEvery(updateEvents, vm) {
-    }
-
     return bbgmView.init({
         id: "draft",
         get: get,
         runBefore: [updateDraft],
-        uiFirst: uiFirst,
-        uiEvery: uiEvery
+        uiFirst: uiFirst
     });
 });

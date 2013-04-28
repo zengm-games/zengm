@@ -7,6 +7,14 @@ ui.realtimeUpdate should be used in more places so updateEvent is pervasive
   add playerMovement updateEvent, for when a player signs a contract, becomes a free agent, or is traded
 awards not being set?
 check for other things in uiEvery - should they also be computed observables in uiFirst?
+  check:
+    gameLog
+    playerRatingDists
+    playerStatDists
+    roster
+    teamFinances
+    teamStatDists
+    trade
 gameLog
   update docs
   make sure observables are being set correctly
@@ -98,6 +106,7 @@ not urgetnt, but... use knockout for
     optimize refreshes
   dist
     allow updating box plots without refresh
+  reassess dropdown - should it really be called like it is in uiEvery? can i use a computed? problem is, some things need to listen to updateEvents too, not just observables
 
 BEFORE 3.0.0-beta.3
 -------------------

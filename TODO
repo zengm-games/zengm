@@ -9,7 +9,6 @@ ui.realtimeUpdate should be used in more places so updateEvent is pervasive
 awards not being set?
 check for other things in uiEvery - should they also be computed observables in uiFirst?
   check:
-    gameLog
     roster
     teamFinances
     trade

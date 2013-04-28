@@ -488,13 +488,13 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
     }
 
     function newPhaseRegularSeason(cb) {
-        var checkRosterSize, done, phaseText, playerStore, tx, userTeamSizeError;
+        var checkRosterSize, phaseText, playerStore, tx, userTeamSizeError;
 
         phaseText = g.season + " regular season";
 
         checkRosterSize = function (tid) {
             playerStore.index("tid").getAll(tid).onsuccess = function (event) {
-                var i, numPlayersOnRoster, players, playersAll, tids;
+                var i, numPlayersOnRoster, players, playersAll;
 
                 playersAll = event.target.result;
                 numPlayersOnRoster = playersAll.length;
@@ -525,28 +525,12 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                         // Should auto-add players
                     }*/
                 }
-
-                done += 1;
-                if (done === g.numTeams && !userTeamSizeError) {
-                    tids = newSchedule();
-                    setSchedule(tids, function () {
-                        newPhaseCb(g.PHASE.REGULAR_SEASON, phaseText, cb);
-                    });
-
-                    // Auto sort rosters (except player's team)
-                    for (tid = 0; tid < g.numTeams; tid++) {
-                        if (tid !== g.userTid) {
-                            team.rosterAutoSort(playerStore, tid);
-                        }
-                    }
-                }
             };
         };
 
         tx = g.dbl.transaction(["players", "releasedPlayers", "teams"], "readwrite");
         playerStore = tx.objectStore("players");
 
-        done = 0;
         userTeamSizeError = false;
 
         // Make sure teams are all within the roster limits
@@ -563,6 +547,19 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
             if (!userTeamSizeError) {
                 updateOwnerMood(function (deltas) {
                     message.generate(deltas, function () {
+                        var tid, tids;
+
+                        tids = newSchedule();
+                        setSchedule(tids, function () {
+                            newPhaseCb(g.PHASE.REGULAR_SEASON, phaseText, cb);
+                        });
+
+                        // Auto sort rosters (except player's team)
+                        for (tid = 0; tid < g.numTeams; tid++) {
+                            if (tid !== g.userTid) {
+                                team.rosterAutoSort(playerStore, tid);
+                            }
+                        }
                     });
                 });
             }

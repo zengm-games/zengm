@@ -1,7 +1,6 @@
 smarter realtime
 ----------------
 
-owner message still being sent?
 draft buttons sometimes don't work? why?
 ui.realtimeUpdate should be used in more places so updateEvent is pervasive
   use req.redirect from POST to manage history optimally

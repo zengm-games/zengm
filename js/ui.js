@@ -412,11 +412,6 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
         }
     }
 
-    function moveToNewWindow() {
-        // Window name is set to the current time, so each window has a unique name and thus a new window is always opened
-        window.open(document.URL + "?w=popup", Date.now(), "height=600,width=800,scrollbars=yes");
-    }
-
     $(document).ready(function () {
         var league_id, league_page, league_root_url, result;
 
@@ -437,7 +432,6 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
         update: update,
         updatePhase: updatePhase,
         updatePlayMenu: updatePlayMenu,
-        updateStatus: updateStatus,
-        moveToNewWindow: moveToNewWindow
+        updateStatus: updateStatus
     };
 });

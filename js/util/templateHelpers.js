@@ -111,9 +111,6 @@ define(["globals", "lib/faces", "lib/handlebars.runtime", "lib/knockout", "util/
     });
 
 
-    Handlebars.registerHelper("new_window", function () {
-        return new Handlebars.SafeString('<a href="javascript:(function () { api = require(\'api\'); api.moveToNewWindow(); }())" class="new_window" title="Move To New Window" data-no-davis="true"><img src="/ico/new_window.png" height="16" width="16"></a>');
-    });
     ko.bindingHandlers.newWindow = {
         update: function (element, valueAccessor) {
             var args, i, url;
@@ -130,6 +127,7 @@ define(["globals", "lib/faces", "lib/handlebars.runtime", "lib/knockout", "util/
             }
 
             return ko.bindingHandlers.html.update(element, function () {
+                // Window name is set to the current time, so each window has a unique name and thus a new window is always opened
                 return '<a href="javascript:(function () { window.open(\'' + url + '?w=popup\', Date.now(), \'height=600,width=800,scrollbars=yes\'); }())" class="new_window" title="Move To New Window" data-no-davis="true"><img src="/ico/new_window.png" height="16" width="16"></a>';
             });
         }

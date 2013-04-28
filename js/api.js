@@ -113,13 +113,8 @@ define(["db", "globals", "views", "ui", "core/draft", "core/finances", "core/gam
         });
     }
 
-    function moveToNewWindow() {
-        ui.moveToNewWindow();
-    }
-
     return {
         play: play,
-        playMenuHandlers: playMenuHandlers,
-        moveToNewWindow: moveToNewWindow
+        playMenuHandlers: playMenuHandlers
     };
 });

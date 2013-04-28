@@ -1,6 +1,6 @@
 <form id="roster-dropdown" class="form-inline pull-right"></form>
 
-<h1><span data-bind="text: team.region"></span> <span data-bind="text: team.name"></span> Roster {{new_window}}</h1>
+<h1><span data-bind="text: team.region"></span> <span data-bind="text: team.name"></span> Roster <span data-bind="newWindow: []"></span></h1>
 <p>More: <a data-bind="attrLeagueUrl: {href: ['finances', abbrev]}">Finances</a> | <a data-bind="attrLeagueUrl: {href: ['game_log', abbrev, season]}">Game Log</a></p>
 
 <p data-bind="visible: isCurrentSeason">

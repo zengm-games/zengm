@@ -2,8 +2,10 @@
  * @name views.gameLog
  * @namespace Game log and box score viewing for all seasons and teams.
  */
-define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, Handlebars, $, ko, _, components, bbgmView, helpers, viewHelpers) {
+define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, Handlebars, $, ko, komapping, _, components, bbgmView, helpers, viewHelpers) {
     "use strict";
+
+    var mapping;
 
     /**
      * Generate a game log list.
@@ -135,18 +137,42 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
     }
 
     function InitViewModel(inputs) {
-        this.abbrev = ko.observable(inputs.abbrev);
-        this.season = ko.observable(inputs.season);
-        this.boxScore = {
-            gid: ko.observable(),
-            html: ko.observable()
-        };
+        this.boxScore = {};
         this.gamesList = {
             abbrev: ko.observable(),
-            loading: ko.observable(true),
+            loading: ko.observable(true), // Needed because this isn't really set until updateGamesList, which could be after first render
             season: ko.observable(),
             games: ko.observableArray([])
         };
+    }
+
+/* This doesn't work for some reason.
+    mapping = {
+        gamesList: {
+            update: function (options) {
+                return new function () {
+                    komapping.fromJS(options.data, {
+                        games: {
+                            create: function (options) {
+                                return options.data;
+                            }
+                        }
+                    }, this);
+                }();
+            }
+        }
+    };*/
+
+    function updateTeamSeason(inputs, updateEvents, vm) {
+        var deferred;
+
+        deferred = $.Deferred();
+        deferred.resolve({
+            // Needed for dropdown
+            abbrev: inputs.abbrev,
+            season: inputs.season
+        });
+        return deferred.promise();
     }
 
     /**
@@ -162,10 +188,6 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
 
         deferred = $.Deferred();
         vars = {};
-
-        // Needed for dropdown
-        vm.abbrev(inputs.abbrev);
-        vm.season(inputs.season);
 
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.gid !== vm.boxScore.gid()) {
             boxScore(inputs.gid, function (content) {
@@ -191,12 +213,11 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
      * @param {number} inputs.gid Integer game ID for the box score (a negative number means no box score), which is used only for highlighting the relevant entry in the list.
      */
     function updateGamesList(inputs, updateEvents, vm) {
-        var deferred, vars;
+        var deferred;
 
         deferred = $.Deferred();
-        vars = {};
 
-        if (updateEvents.indexOf("dbChange") >= 0 || inputs.abbrev !== vm.gamesList.abbrev() || inputs.season !== vm.gamesList.season()) {
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.abbrev !== vm.gamesList.abbrev() || inputs.season !== vm.gamesList.season()) {
             // Load all games in list
             vm.gamesList.loading(true);
             vm.gamesList.games([]);
@@ -206,6 +227,15 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
                 vm.gamesList.season(inputs.season);
                 vm.gamesList.loading(false);
                 deferred.resolve();
+/* This doesn't work for some reason.
+                deferred.resolve({
+                    gamesList: {
+                        games: games,
+                        abbrev: inputs.abbrev,
+                        season: inputs.season,
+                        loading: false
+                    }
+                });*/
             });
             return deferred.promise();
         }
@@ -241,7 +271,7 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
         id: "gameLog",
         get: get,
         InitViewModel: InitViewModel,
-        runBefore: [updateBoxScore],
+        runBefore: [updateBoxScore, updateTeamSeason],
         runWhenever: [updateGamesList],
         uiFirst: uiFirst,
         uiEvery: uiEvery

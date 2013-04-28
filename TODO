@@ -6,8 +6,6 @@ ui.realtimeUpdate should be used in more places so updateEvent is pervasive
   use req.redirect from POST to manage history optimally
   add playerMovement updateEvent, for when a player signs a contract, becomes a free agent, or is traded
 awards not being set?
-gameLog
-  make sure observables are being set correctly
 bbgmView
   IMPORTANT:
     do idLoaded/idLoading work?

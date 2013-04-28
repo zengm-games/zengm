@@ -269,14 +269,16 @@ define(["api", "db", "globals", "ui", "core/team", "lib/knockout", "lib/jquery",
         ko.computed(function () {
             ui.title(vm.team.region() + " " + vm.team.name() + " " + "Roster - " + vm.season());
         }).extend({throttle: 1});
+
+        ko.computed(function () {
+            if (vm.editable()) {
+                highlightHandles();
+            }
+            editableChanged(vm.editable(), vm);
+        }).extend({throttle: 1});
     }
 
     function uiEvery(updateEvents, vm) {
-        if (vm.editable()) {
-            highlightHandles();
-        }
-        editableChanged(vm.editable(), vm);
-
         components.dropdown("roster-dropdown", ["teams", "seasons"], [vm.abbrev(), vm.season()], updateEvents);
     }
 

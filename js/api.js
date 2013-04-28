@@ -113,39 +113,6 @@ define(["db", "globals", "views", "ui", "core/draft", "core/finances", "core/gam
         });
     }
 
-    function draftUntilUserOrEnd(cb2) {
-        ui.updateStatus('Draft in progress...');
-        var pids = draft.untilUserOrEnd(function (pids) {
-            var done = false;
-            if (g.phase === g.PHASE.AFTER_DRAFT) {
-                done = true;
-                ui.updateStatus('Idle');
-            }
-            cb2(pids, done);
-        });
-    }
-
-    function draftUser(pid, cb) {
-        var transaction;
-
-        pid = parseInt(pid, 10);
-
-        draft.getOrder(function (draftOrder) {
-            var pick, playerStore;
-
-            pick = draftOrder.shift();
-            if (pick.tid === g.userTid) {
-                draft.selectPlayer(pick, pid, function (pid) {
-                    draft.setOrder(draftOrder, function () {
-                        cb(pid);
-                    });
-                });
-            } else {
-                console.log("ERROR: User trying to draft out of turn.");
-            }
-        });
-    }
-
     function moveToNewWindow() {
         ui.moveToNewWindow();
     }
@@ -153,8 +120,6 @@ define(["db", "globals", "views", "ui", "core/draft", "core/finances", "core/gam
     return {
         play: play,
         playMenuHandlers: playMenuHandlers,
-        draftUntilUserOrEnd: draftUntilUserOrEnd,
-        draftUser: draftUser,
         moveToNewWindow: moveToNewWindow
     };
 });

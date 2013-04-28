@@ -2,7 +2,7 @@
  * @name views.playoffs
  * @namespace Show current or archived playoffs, or projected matchups for an in-progress season.
  */
-define(["api", "db", "globals", "ui", "core/draft", "lib/jquery", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (api, db, g, ui, draft, $, bbgmView, helpers, viewHelpers, components) {
+define(["db", "globals", "ui", "core/draft", "lib/jquery", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (db, g, ui, draft, $, bbgmView, helpers, viewHelpers, components) {
     "use strict";
 
     function updateDraftTables(pids) {
@@ -32,8 +32,36 @@ define(["api", "db", "globals", "ui", "core/draft", "lib/jquery", "util/bbgmView
         }
     }
 
+    function draftUser(pid, cb) {
+        var transaction;
+
+        pid = parseInt(pid, 10);
+
+        draft.getOrder(function (draftOrder) {
+            var pick, playerStore;
+
+            pick = draftOrder.shift();
+            if (pick.tid === g.userTid) {
+                draft.selectPlayer(pick, pid, function (pid) {
+                    draft.setOrder(draftOrder, function () {
+                        cb(pid);
+                    });
+                });
+            } else {
+                console.log("ERROR: User trying to draft out of turn.");
+            }
+        });
+    }
+
     function draftUntilUserOrEnd() {
-        api.draftUntilUserOrEnd(function (pids, done) {
+        ui.updateStatus('Draft in progress...');
+        var pids = draft.untilUserOrEnd(function (pids) {
+            var done = false;
+            if (g.phase === g.PHASE.AFTER_DRAFT) {
+                done = true;
+                ui.updateStatus('Idle');
+            }
+
             updateDraftTables(pids);
             if (!done) {
                 $("#undrafted button").removeAttr("disabled");
@@ -117,7 +145,7 @@ define(["api", "db", "globals", "ui", "core/draft", "lib/jquery", "util/bbgmView
 
         $("#undrafted button").click(function (event) {
             $("#undrafted button").attr("disabled", "disabled");
-            api.draftUser(this.getAttribute("data-player-id"), function (pid) {
+            draftUser(this.getAttribute("data-player-id"), function (pid) {
                 updateDraftTables([pid]);
                 draftUntilUserOrEnd();
             });

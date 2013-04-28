@@ -182,10 +182,12 @@ define(["db", "globals", "ui", "core/trade", "lib/davis", "lib/jquery", "lib/kno
     }
 
     function uiFirst(vm) {
+        var rosterCheckboxesOther, rosterCheckboxesUser;
+
         ui.title("Trade");
 
         // Don't use the dropdown function because this needs to be a POST
-        $('#trade-select-team').change(function (event) {
+        $("#trade-select-team").change(function (event) {
             // ui.realtimeUpdate currently can't handle a POST request
             Davis.location.replace(new Davis.Request({
                 abbrev: $("#trade-select-team").val(),
@@ -198,36 +200,10 @@ define(["db", "globals", "ui", "core/trade", "lib/davis", "lib/jquery", "lib/kno
             vm.summary.enablePropose(false); // Will be reenabled in updateSummary, if appropriate
         });
 
-        ko.computed(function () {
-            ui.datatableSinglePage($("#roster-user"), 5, _.map(vm.userRoster(), function (p) {
-                var selected;
-
-                if (p.selected) {
-                    selected = ' checked = "checked"';
-                }
-                return ['<input name="user-pids" type="checkbox" value="' + p.pid + '"' + selected + '>', helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
-            }));
-        }).extend({throttle: 1});
-
-        ko.computed(function () {
-            ui.datatableSinglePage($("#roster-other"), 5, _.map(vm.otherRoster(), function (p) {
-                var selected;
-
-                if (p.selected) {
-                    selected = ' checked = "checked"';
-                }
-                return ['<input name="other-pids" type="checkbox" value="' + p.pid + '"' + selected + '>', helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
-            }));
-        }).extend({throttle: 1});
-    }
-
-    function uiEvery(updateEvents, vm) {
-        var rosterCheckboxesOther, rosterCheckboxesUser;
-
         rosterCheckboxesUser = $("#roster-user input");
         rosterCheckboxesOther = $("#roster-other input");
 
-        $('#rosters input').click(function (event) {
+        $("#rosters").on("click", "input", function (event) {
             var otherPids, serialized, userPids;
 
             vm.summary.enablePropose(false); // Will be reenabled in updateSummary, if appropriate
@@ -278,6 +254,28 @@ define(["db", "globals", "ui", "core/trade", "lib/davis", "lib/jquery", "lib/kno
                 });
             });
         });
+
+        ko.computed(function () {
+            ui.datatableSinglePage($("#roster-user"), 5, _.map(vm.userRoster(), function (p) {
+                var selected;
+
+                if (p.selected) {
+                    selected = ' checked = "checked"';
+                }
+                return ['<input name="user-pids" type="checkbox" value="' + p.pid + '"' + selected + '>', helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
+            }));
+        }).extend({throttle: 1});
+
+        ko.computed(function () {
+            ui.datatableSinglePage($("#roster-other"), 5, _.map(vm.otherRoster(), function (p) {
+                var selected;
+
+                if (p.selected) {
+                    selected = ' checked = "checked"';
+                }
+                return ['<input name="other-pids" type="checkbox" value="' + p.pid + '"' + selected + '>', helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
+            }));
+        }).extend({throttle: 1});
     }
 
     return bbgmView.init({
@@ -287,7 +285,6 @@ define(["db", "globals", "ui", "core/trade", "lib/davis", "lib/jquery", "lib/kno
         InitViewModel: InitViewModel,
         mapping: mapping,
         runBefore: [updateTrade],
-        uiFirst: uiFirst,
-        uiEvery: uiEvery
+        uiFirst: uiFirst
     });
 });

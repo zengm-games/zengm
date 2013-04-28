@@ -10,7 +10,6 @@ awards not being set?
 check for other things in uiEvery - should they also be computed observables in uiFirst?
   check:
     teamFinances
-    trade
 gameLog
   update docs
   make sure observables are being set correctly

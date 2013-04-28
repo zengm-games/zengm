@@ -412,16 +412,6 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
         }
     }
 
-    $(document).ready(function () {
-        var league_id, league_page, league_root_url, result;
-
-        result = parseLeagueUrl(document.URL);
-        league_id = result[0];
-        league_root_url = result[1];
-        league_page = result[2];
-        highlightNav(league_page);
-    });
-
     return {
         init: init,
         datatable: datatable,

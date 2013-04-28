@@ -4,7 +4,6 @@ smarter realtime
 draft buttons sometimes don't work? why?
 ui.realtimeUpdate should be used in more places so updateEvent is pervasive
   use req.redirect from POST to manage history optimally
-  add playerMovement updateEvent, for when a player signs a contract, becomes a free agent, or is traded
 awards not being set?
 bbgmView
   IMPORTANT:
@@ -33,8 +32,6 @@ team finances
   move some stuff to loadAfter?
   confirm events aren't going crazy
   contracts should only update on playerMovement
-datatables
-  update in loadAfter, not display
 general things
   performance considerations...
     http://stackoverflow.com/questions/7488208/am-i-overusing-the-knockout-mapping-plugin-by-always-using-it-to-do-my-viewmodel/10114544#10114544
@@ -94,13 +91,16 @@ not urgetnt, but... use knockout for
     optimize refreshes
   dist
     allow updating box plots without refresh
+  gameLog
+    set more stuff through mapping
   reassess dropdown - should it really be called like it is in uiEvery? can i use a computed? problem is, some things need to listen to updateEvents too, not just observables
 
 BEFORE 3.0.0-beta.3
 -------------------
 
 after winning title - "We need to make some real noise in the playoffs. Soon."
-sub-views like shot locations should retain league menu highlighting
+sub-views like shot locations should retain league menu highlightin
+  highlightId param for bbgmView, default to id
 core.freeAgents should be core.freeAgent
 after last resigning negotiation, switch to next phase
 if no stats/ratings are requested, db.getPlayers should return no stats/players properties on object
@@ -291,15 +291,6 @@ league database error during game simulation in chrome?
     internal error, they seem to persist with same GID, during writeTeamStats
 jslint errors
   currently just "Don't make functions within a loop." which should all be fixed eventually
-more sophisticatedrealtime data binding/updating
-  one usability advantage would be keeping help popups, dropdown menus, etc. open even as the content refreshes.
-  ember.js
-    data binding
-    uses handlebars
-  knockoutjs is too flaky. try just a naive approach first, and use something better later
-    try again?
-  angularjs
-    seems nice and widely used. would need to build some kind of signal system on top of this, basically to update the UI data variables from indexeddb when appropriate
 Web workers
   don't seem to actually help performance. maybe help responsiveness
   benchmark?
@@ -347,13 +338,6 @@ stat views
     add a dropdown (maybe make the dropdown handling code more general?)
 bootstrap 2.3
 https://github.com/nprapps/app-template
-refactor views.js
-  IS IT WORTH DOING THIS BEFORE SWITCHING TO something like knockout?
-  where to call beforeleague/nonleague? can this be automatic?
-  how to structure?
-    separate "init" and "update" functions or whatever?
-    meta-views for similar views?
-    modularize and build testable functions that generate the data for the UI
 trading block
 race conditions associated with callbacks when passing around transactions
   any put/add/update does not guarantee it's finished until the transaction finishes. but letting transactions finish is slow.
@@ -369,7 +353,9 @@ AI teams should have to deal with fuzz too
 if play menu is open when it refreshes, automatically open it again after refresh
   not so easy.. tried it in 34927959b2b0acd08224665654343d97ffaea281 but there were issues with updatePlayMenu being called multiple times, for instance at the end of the season
 "dbChanged" updateEvent - more correct way
-  store a list of times and "update events". compare last updated time against that list, and then see the update events. pass as list in "update event" to realtime update 
+  store a list of times and "update events". compare last updated time against that list, and then see the update events. pass as list in "update event" to realtime update
+  check everywhere dbChange or lastDbChange is set and see if it should be more refined
+    add playerMovement updateEvent, for when a player signs a contract, becomes a free agent, or is traded
 
 ---
 

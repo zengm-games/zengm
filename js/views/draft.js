@@ -136,14 +136,17 @@ define(["db", "globals", "ui", "core/draft", "lib/jquery", "util/bbgmView", "uti
     }
 
     function uiFirst() {
+        var startDraft;
+
         ui.title("Draft");
 
-        $("#start-draft").click(function (event) {
-            $($("#start-draft").parent()).hide();
+        startDraft = $("#start-draft");
+        startDraft.click(function (event) {
+            $(startDraft.parent()).hide();
             draftUntilUserOrEnd();
         });
 
-        $("#undrafted button").click(function (event) {
+        $("#undrafted").on("click", "button", function (event) {
             $("#undrafted button").attr("disabled", "disabled");
             draftUser(this.getAttribute("data-player-id"), function (pid) {
                 updateDraftTables([pid]);

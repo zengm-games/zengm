@@ -1,8 +1,6 @@
 smarter realtime
 ----------------
 
-draft buttons sometimes don't work? why?
-  click "Draft" in league menu twice, and then draft buttons no longer work
 ui.realtimeUpdate should be used in more places so updateEvent is pervasive
   use req.redirect from POST to manage history optimally
 awards not being set?

@@ -44,6 +44,9 @@ console.log('draw from scratch')
 
                 // View model
                 vm = new args.InitViewModel(inputs);
+            } else if (leagueContentEl.dataset.idLoading === args.id) {
+                // If this view is already loading, no need to update (in fact, updating can cause errors because the firstRun updateEvent is not set and thus some first-run-defined view model properties might be accessed).
+                return;
             }
 
             // This will be called after every runBefore and runWhenever function is finished.
@@ -52,9 +55,7 @@ console.log('draw from scratch')
                 cb();
             });
 
-            $.when.apply(null, _.map(args.runBefore, function (fn) {
-                return fn(inputs, updateEvents, vm);
-            })).done(function () {
+            $.when.apply(null, _.map(args.runBefore, function (fn) { return fn(inputs, updateEvents, vm); })).done(function () {
                 var vars;
 
                 if (arguments.length > 1) {

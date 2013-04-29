@@ -1,12 +1,9 @@
 smarter realtime
 ----------------
 
-ui.realtimeUpdate should be used in more places so updateEvent is pervasive
-  use req.redirect from POST to manage history optimally
-awards not being set?
 bbgmView for non-league views - how to distinguish?
+  pass beforeGet, with default to beforeLeague
   more broadly.. make this less tied to BBGM specifically. shouldn't depend on BBGM-specific modules like g, ui, and util/viewHelpers
-  fn to convert req to relevant vars? but isn't that what get already is?
 dashboard
   observables set right by mapping
     historical things (old scores, old records) don't need to be observable?
@@ -347,6 +344,7 @@ bbgmView
     in practice, this doesn't seem to matter much
   shouldn't have newPhase updateEvent doing much. instead, have an array of what changed in that phase
     (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON) should be newSeason
+  use req.redirect from POST to manage history optimally
 
 
 ---

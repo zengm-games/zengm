@@ -12,7 +12,7 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
 
         leagueContentEl = document.getElementById("league_content");
         if (leagueContentEl.dataset.idLoaded !== args.id) {
-console.log('draw from scratch')
+//console.log('draw from scratch')
             ui.update({
                 container: "league_content",
                 template: args.id
@@ -46,6 +46,7 @@ console.log('draw from scratch')
                 vm = new args.InitViewModel(inputs);
             } else if (leagueContentEl.dataset.idLoading === args.id) {
                 // If this view is already loading, no need to update (in fact, updating can cause errors because the firstRun updateEvent is not set and thus some first-run-defined view model properties might be accessed).
+                cb();
                 return;
             }
 
@@ -75,8 +76,8 @@ console.log('draw from scratch')
 
                     komapping.fromJS(vars, args.mapping, vm);
                 }
-console.log(vars);
-console.log(vm);
+//console.log(vars);
+//console.log(vm);
 
                 display(args, updateEvents);
 

@@ -22,7 +22,6 @@ team finances
   contracts should only update on playerMovement
 performance considerations...
   http://stackoverflow.com/questions/9709374/knockout-js-incredibly-slow-under-semi-large-datasets
-  http://tekpub.com/productions/knockout
 after updating all views
   reassess ui module. delete stuff like ui.dropdown. move other functions elsewhere?
     what is the difference between util.viewHelpers and ui?
@@ -80,6 +79,8 @@ not urgetnt, but... use knockout for
 BEFORE 3.0.0-beta.3
 -------------------
 
+if season is already over, don't add stats row to traded player
+age should matter for ranking draft prospects
 after winning title - "We need to make some real noise in the playoffs. Soon."
 sub-views like shot locations should retain league menu highlightin
   highlightId param for bbgmView, default to id

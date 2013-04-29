@@ -96,9 +96,9 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
         };
     }
 
-    function get(fnGet, fnUpdate) {
+    function get(fnBeforeReq, fnGet, fnUpdate) {
         return function (req) {
-            viewHelpers.beforeLeague(req, function (updateEvents, cb) {
+            fnBeforeReq(req, function (updateEvents, cb) {
                 var inputs;
 
                 inputs = fnGet(req);
@@ -119,9 +119,9 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
         };
     }
 
-    function post(fnPost) {
+    function post(fnBeforeReq, fnPost) {
         return function (req) {
-            viewHelpers.beforeLeague(req, function () {
+            fnBeforeReq(req, function () {
                 fnPost(req);
             });
         };
@@ -137,7 +137,8 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
      * @memberOf util.bbgmView
      * @param {Object} args Arguments, as described below.
      * @param {string} args.id Contains the unique id/name of the view. This should also be the name of the JavaScript file in ./js/views, as well as the name of the template file in ./templates.
-     * @param {function(Object): Object=} args.get Function which takes a Davis.js request object, validates any inputs, and returns them in a usable object like {season: 2014, abbrev: "CHI"}. This function is called by Davis.js when a page is originally loaded (i.e. in response to a clicked link) or when some data is updated and ui.realtimeUpdate is called. So the same entry point is used for generating all the HTML from scratch and just updating it.
+     * @param {function(Object, function(Array.<strong>, function()))=} args.beforeReq Optional function which takes a Davis.js request object, extracts the updateEvents  and callback function (setting them to default values if undefined), and then passes them to a callback. This is called before args.get and args.post. If undefined, then util.viewHelpers.beforeLeague is used.
+     * @param {function(Object)=: Object=} args.get Optional function which takes a Davis.js request object, validates any inputs, and returns them in a usable object like {season: 2014, abbrev: "CHI"}. This function is called by Davis.js when a page is originally loaded (i.e. in response to a clicked link) or when some data is updated and ui.realtimeUpdate is called. So the same entry point is used for generating all the HTML from scratch and just updating it.
      * To display a full-screen error message, include an "errorMessage" property with string contents in the return object. To redirect to another URL, include a "redirectUrl" property containing the URL in the return object. Either displaying an error message or redirecting this way will short-circuit the rest of the loading of the view.
      * @param {function(Object)=} args.post Optional function which takes a Davis.js request object, validates any inputs, takes appropriate action to update the database if necessary, and ends by making a GET request for whatever page should be shown to the user. This GET request can contain some data (like an error/success message) to be displayed.
      * To display a full-screen error message, call helpers.error directly. To redirect to another URL, call ui.realtimeUpdate directly. No fancy short circuiting is needed like in args.get because nothing is run after args.post completes anyway.
@@ -155,15 +156,16 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
         var output;
 
         args.InitViewModel = args.InitViewModel !== undefined ? args.InitViewModel : function () { };
+        args.beforeReq = args.beforeReq !== undefined ? args.beforeReq : viewHelpers.beforeLeague;
         args.get = args.get !== undefined ? args.get : function () { return {}; };
         args.runWhenever = args.runWhenever !== undefined ? args.runWhenever : [];
         args.mapping = args.mapping !== undefined ? args.mapping : {};
 
         output = {};
         output.update = update(args);
-        output.get = get(args.get, output.update);
+        output.get = get(args.beforeReq, args.get, output.update);
         if (args.post !== undefined) {
-            output.post = post(args.post);
+            output.post = post(args.beforeReq, args.post);
         }
 
         return output;

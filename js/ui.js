@@ -140,9 +140,10 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
         raw.updateEvents = updateEvents;
         raw.cb = cb;
 
+        // This prevents the Create New League form from inappropriately refreshing after it is submitted
         if (refresh) {
             Davis.location.replace(new Davis.Request(url, raw));
-        } else if (inLeague) {
+        } else if (inLeague || url === "/") {
             Davis.location.assign(new Davis.Request(url, raw));
         } else if (cb !== undefined) {
             cb();

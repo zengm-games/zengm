@@ -1,8 +1,6 @@
 smarter realtime
 ----------------
 
-port all views to bbgmView
-  deleteLeague should have GET and POST parts
 get rid of handlebars
 dashboard
   observables set right by mapping
@@ -79,6 +77,7 @@ not urgetnt, but... use knockout for
 BEFORE 3.0.0-beta.3
 -------------------
 
+league names in delete league view
 if season is already over, don't add stats row to traded player
 age should matter for ranking draft prospects
 after winning title - "We need to make some real noise in the playoffs. Soon."

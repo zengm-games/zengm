@@ -67,7 +67,7 @@ requirejs.config({
     }
 });
 
-requirejs(["db", "views", "ui", "lib/davis", "lib/jquery", "util/helpers", "../gen/templates", "lib/bootstrap-alert", "lib/bootstrap-dropdown", "lib/bootstrap-popover", "lib/bootstrapx-clickover", "lib/davis.google_analytics", "lib/IndexedDB-getAll-shim", "lib/jquery-ui", "lib/jquery.barGraph", "lib/jquery.dataTables", "lib/jquery.dataTables.bbgmSorting", "lib/jquery.dataTables.bootstrap", "lib/jquery.tabSlideOut", "util/templateHelpers"], function (db, views, ui, Davis, $, helpers) {
+requirejs(["db", "views", "ui", "lib/davis", "lib/jquery", "util/helpers", "../gen/templates", "lib/bootstrap-alert", "lib/bootstrap-dropdown", "lib/bootstrap-popover", "lib/bootstrapx-clickover", "lib/davis.google_analytics", "lib/IndexedDB-getAll-shim", "lib/jquery-ui", "lib/jquery.barGraph", "lib/jquery.dataTables", "lib/jquery.dataTables.bbgmSorting", "lib/jquery.dataTables.bootstrap", "lib/jquery.tabSlideOut", "util/templateHelpers", "api"], function (db, views, ui, Davis, $, helpers) {
     "use strict";
 
     ui.init();
@@ -102,7 +102,8 @@ requirejs(["db", "views", "ui", "lib/davis", "lib/jquery", "util/helpers", "../g
             this.get("/", views.dashboard.get);
             this.get("/new_league", views.newLeague.get);
             this.post("/new_league", views.newLeague.post);
-            this.post("/delete_league", views.deleteLeague);
+            this.get("/delete_league/:lid", views.deleteLeague.get);
+            this.post("/delete_league", views.deleteLeague.post);
             this.get("/manual", views.manual.get);
             this.get("/manual/:page", views.manual.get);
 

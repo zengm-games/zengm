@@ -42,7 +42,7 @@
       <button class="btn btn-mini" data-action="buyOut" data-bind="enable: canBuyOut">Buy out</button>
     </td>
     <td data-bind="visible: $parent.showTradeFor">
-      <form action="/l/{{lid}}/trade" method="POST" style="margin: 0">
+      <form method="POST" style="margin: 0" data-bind="attrLeagueUrl: {action: ['trade']}">
         <input type="hidden" name="pid" data-bind="attr: {value: pid}">
         <button type="submit" class="btn btn-mini">Trade For</button>
       </form>

@@ -2,7 +2,7 @@ smarter realtime
 ----------------
 
 port all views to bbgmView
-make bbgmView less tied to BBGM specifically. shouldn't depend on BBGM-specific modules like g, ui, and util/viewHelpers
+get rid of handlebars
 dashboard
   observables set right by mapping
     historical things (old scores, old records) don't need to be observable?
@@ -345,6 +345,7 @@ bbgmView
   shouldn't have newPhase updateEvent doing much. instead, have an array of what changed in that phase
     (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON) should be newSeason
   use req.redirect from POST to manage history optimally
+  make it less tied to BBGM specifically. shouldn't depend on BBGM-specific modules like g, ui, and util/viewHelpers
 
 
 ---

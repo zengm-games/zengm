@@ -99,7 +99,7 @@ requirejs(["db", "views", "ui", "lib/davis", "lib/jquery", "util/helpers", "../g
             });
 
             // Non-league views
-            this.get("/", views.dashboard);
+            this.get("/", views.dashboard.get);
             this.get("/new_league", views.newLeague);
             this.post("/new_league", views.newLeague);
             this.post("/delete_league", views.deleteLeague);

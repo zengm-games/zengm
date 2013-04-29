@@ -407,38 +407,10 @@ function program1(depth0,data) {
 templates['dashboard'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
-
-function program1(depth0,data) {
   
-  var buffer = "", stack1;
-  buffer += "\n    <li>\n      <a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" class=\"btn league\" title=\""
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + ". "
-    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"><strong>"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + ". "
-    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "<br></strong><span class=\"clearfix\">"
-    + escapeExpression(((stack1 = depth0.region),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " "
-    + escapeExpression(((stack1 = depth0.teamName),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "<br></span><span class=\"clearfix\">"
-    + escapeExpression(((stack1 = depth0.phaseText),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</span></a>\n      <form action=\"/delete_league\" method=\"POST\" class=\"delete\"><input type=\"hidden\" name=\"lid\" value=\""
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"><button class=\"btn btn-mini\">Delete</button></form>\n    </li>\n  ";
-  return buffer;
-  }
 
-  buffer += "<ul class=\"dashboard_league\">\n  ";
-  stack2 = ((stack1 = ((stack1 = depth0.leagues),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n\n  <li class=\"dashboard_league_new\"><a href=\"/new_league\" class=\"btn btn-primary league\"><h2 style=\"\">Create new league</h2></a></li>\n</ul>";
-  return buffer;
+
+  return "<ul class=\"dashboard_league\">\n	<!-- ko foreach: leagues -->\n	<li>\n	  <a class=\"btn league\" data-bind=\"attr: {title: lid() + '. ' + name(), href: '/l/' + lid()}\"><strong data-bind=\"text: lid() + '. ' + name()\"><br></strong><span class=\"clearfix\" data-bind=\"text: region() + ' ' + teamName()\"><br></span><span class=\"clearfix\" data-bind=\"text: phaseText\"></span></a>\n	  <form action=\"/delete_league\" method=\"POST\" class=\"delete\"><input type=\"hidden\" name=\"lid\" data-bind=\"attr: {value: lid}\"><button class=\"btn btn-mini\">Delete</button></form>\n	</li>\n  <!-- /ko -->\n  <li class=\"dashboard_league_new\"><a href=\"/new_league\" class=\"btn btn-primary league\"><h2 style=\"\">Create new league</h2></a></li>\n</ul>";
   });
 templates['playerShotLocations'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];

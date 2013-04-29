@@ -65,7 +65,7 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
      * @param {string} text New title.
      */
     function title(text) {
-        if (g.leagueName) {
+        if (location.pathname.substring(0, 3) === "/l/") {
             text += " - " + g.leagueName;
         }
         document.title = text + " - Basketball GM";

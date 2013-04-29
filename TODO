@@ -2,6 +2,7 @@ smarter realtime
 ----------------
 
 port all views to bbgmView
+  deleteLeague should have GET and POST parts
 get rid of handlebars
 dashboard
   observables set right by mapping

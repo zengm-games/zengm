@@ -381,28 +381,10 @@ helpers = helpers || Handlebars.helpers; data = data || {};
 templates['newLeague'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
-
-function program1(depth0,data) {
   
-  var buffer = "", stack1;
-  buffer += "\n        <option value=\""
-    + escapeExpression(((stack1 = depth0.tid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = depth0.region),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + " "
-    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</option>\n      ";
-  return buffer;
-  }
 
-  buffer += "<h1>Create New League</h1>\n<p>\n<form action=\"/new_league\" method=\"POST\">\n  <fieldset>\n    <label>League name</label>\n    <input type=\"text\" name=\"name\" value=\""
-    + escapeExpression(((stack1 = depth0.name),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"><br><br>\n    <label>Which team do you want to manage?</label>\n    <select name=\"tid\">\n      ";
-  stack2 = ((stack1 = ((stack1 = depth0.teams),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n    </select>\n   <span class=\"help-block\" id=\"pop-text\"></span><br>\n    <!--<label><select name=\"players\">\n      <option value=\"random\" selected=\"selected\">Random Players</option>\n      <option value=\"nba2012\">2012 NBA Players</option>\n    </select></label><br>-->\n    <button type=\"submit\" class=\"btn\" id=\"create-new-league\">Create New League</button>\n  </fieldset>\n</form>\n</p>";
-  return buffer;
+
+  return "<h1>Create New League</h1>\n<p>\n<form action=\"/new_league\" method=\"POST\">\n  <fieldset>\n    <label>League name</label>\n    <input type=\"text\" name=\"name\" data-bind=\"attr: {value: name}\"><br><br>\n    <label>Which team do you want to manage?</label>\n    <select name=\"tid\" data-bind=\"foreach: teams\">\n      <option data-bind=\"attr: {value: tid}, text: region() + ' ' + name()\"></option>\n    </select>\n   <span class=\"help-block\" id=\"pop-text\"></span><br>\n    <!--<label><select name=\"players\">\n      <option value=\"random\" selected=\"selected\">Random Players</option>\n      <option value=\"nba2012\">2012 NBA Players</option>\n    </select></label><br>-->\n    <button type=\"submit\" class=\"btn\" id=\"create-new-league\">Create New League</button>\n  </fieldset>\n</form>\n</p>";
   });
 templates['dashboard'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];

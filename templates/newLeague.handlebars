@@ -3,12 +3,10 @@
 <form action="/new_league" method="POST">
   <fieldset>
     <label>League name</label>
-    <input type="text" name="name" value="{{name}}"><br><br>
+    <input type="text" name="name" data-bind="attr: {value: name}"><br><br>
     <label>Which team do you want to manage?</label>
-    <select name="tid">
-      {{#teams}}
-        <option value="{{tid}}">{{region}} {{name}}</option>
-      {{/teams}}
+    <select name="tid" data-bind="foreach: teams">
+      <option data-bind="attr: {value: tid}, text: region() + ' ' + name()"></option>
     </select>
    <span class="help-block" id="pop-text"></span><br>
     <!--<label><select name="players">

@@ -103,8 +103,8 @@ requirejs(["db", "views", "ui", "lib/davis", "lib/jquery", "util/helpers", "../g
             this.get("/new_league", views.newLeague);
             this.post("/new_league", views.newLeague);
             this.post("/delete_league", views.deleteLeague);
-            this.get("/manual", views.manual);
-            this.get("/manual/:page", views.manual);
+            this.get("/manual", views.manual.get);
+            this.get("/manual/:page", views.manual.get);
 
             // League views
             this.get("/l/:lid", views.leagueDashboard.get);

@@ -101,8 +101,10 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
         highlightNav(leaguePage);
 
         if (data.container === "league_content") {
-            containerEl.dataset.idLoaded = data.template;
+            document.getElementById("content").dataset.idLoaded = "league";
+            document.getElementById("content").dataset.idLoading = "";
         }
+        containerEl.dataset.idLoaded = data.template;
 
         if (cb !== undefined) {
             cb();

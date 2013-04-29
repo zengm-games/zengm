@@ -91,8 +91,8 @@ define(["db", "globals", "ui", "lib/jquery", "util/helpers"], function (db, g, u
         }
     }
 
-    function beforeNonLeague() {
-        var playButtonElement, playPhaseElement, playStatusElement;
+    function beforeNonLeague(req, cb) {
+        var playButtonElement, playPhaseElement, playStatusElement, reqCb, updateEvents;
 
         g.lid = null;
 
@@ -107,6 +107,12 @@ define(["db", "globals", "ui", "lib/jquery", "util/helpers"], function (db, g, u
         playStatusElement = document.getElementById("playStatus");
         if (playStatusElement) {
             playStatusElement.innerHTML = "";
+        }
+
+        if (cb !== undefined) {
+            updateEvents = req.raw.updateEvents !== undefined ? req.raw.updateEvents : [];
+            reqCb = req.raw.cb !== undefined ? req.raw.cb : function () {};
+            cb(updateEvents, reqCb);
         }
     }
 

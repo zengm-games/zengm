@@ -1,9 +1,8 @@
 smarter realtime
 ----------------
 
-bbgmView for non-league views - how to distinguish?
-  pass beforeGet, with default to beforeLeague
-  more broadly.. make this less tied to BBGM specifically. shouldn't depend on BBGM-specific modules like g, ui, and util/viewHelpers
+port all views to bbgmView
+make bbgmView less tied to BBGM specifically. shouldn't depend on BBGM-specific modules like g, ui, and util/viewHelpers
 dashboard
   observables set right by mapping
     historical things (old scores, old records) don't need to be observable?

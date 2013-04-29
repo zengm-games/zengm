@@ -1,4 +1,4 @@
-define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/draft", "views/draftSummary", "views/freeAgents", "views/gameLog", "views/history", "views/inbox", "views/leaders", "views/leagueDashboard", "views/leagueFinances", "views/message", "views/negotiation", "views/negotiationList", "views/player", "views/playerRatingDists", "views/playerRatings", "views/playerShotLocations", "views/playerStatDists", "views/playerStats", "views/playoffs", "views/roster", "views/schedule", "views/standings", "views/teamFinances", "views/teamHistory", "views/teamShotLocations", "views/teamStatDists", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, finances, game, league, season, names, boxPlot, Handlebars, $, _, helpers, viewHelpers, draft, draftSummary, freeAgents, gameLog, history, inbox, leaders, leagueDashboard, leagueFinances, message, negotiation, negotiationList, player, playerRatingDists, playerRatings, playerShotLocations, playerStatDists, playerStats, playoffs, roster, schedule, standings, teamFinances, teamHistory, teamShotLocations, teamStatDists, teamStats, trade) {
+define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances", "core/game", "core/league", "core/season", "data/names", "lib/boxPlot", "lib/handlebars.runtime", "lib/jquery", "lib/underscore", "util/helpers", "util/viewHelpers", "views/draft", "views/draftSummary", "views/freeAgents", "views/gameLog", "views/history", "views/inbox", "views/leaders", "views/leagueDashboard", "views/leagueFinances", "views/manual", "views/message", "views/negotiation", "views/negotiationList", "views/player", "views/playerRatingDists", "views/playerRatings", "views/playerShotLocations", "views/playerStatDists", "views/playerStats", "views/playoffs", "views/roster", "views/schedule", "views/standings", "views/teamFinances", "views/teamHistory", "views/teamShotLocations", "views/teamStatDists", "views/teamStats", "views/trade"], function (api, db, g, ui, contractNegotiation, finances, game, league, season, names, boxPlot, Handlebars, $, _, helpers, viewHelpers, draft, draftSummary, freeAgents, gameLog, history, inbox, leaders, leagueDashboard, leagueFinances, manual, message, negotiation, negotiationList, player, playerRatingDists, playerRatings, playerShotLocations, playerStatDists, playerStats, playoffs, roster, schedule, standings, teamFinances, teamHistory, teamShotLocations, teamStatDists, teamStats, trade) {
     "use strict";
 
     function dashboard(req) {
@@ -133,24 +133,6 @@ define(["api", "db", "globals", "ui", "core/contractNegotiation", "core/finances
                 req.redirect("/");
             });
         }
-    }
-
-    function manual(req) {
-        var data, page;
-
-        viewHelpers.beforeNonLeague();
-
-        page = req.params.page !== undefined ? req.params.page : "overview";
-
-        if (page === "overview") {
-            data = {
-                container: "content",
-                template: "manualOverview",
-                title: "Manual",
-                vars: {}
-            };
-        }
-        ui.update(data, req.raw.cb);
     }
 
     return {

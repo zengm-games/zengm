@@ -8,16 +8,18 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
     var vm;
 
     function display(args, updateEvents) {
-        var leagueContentEl;
+        var container, containerEl;
 
-        leagueContentEl = document.getElementById("league_content");
-        if (leagueContentEl.dataset.idLoaded !== args.id) {
+        container = location.pathname.substring(0, 3) === "/l/" ? "league_content" : "content";
+        containerEl = document.getElementById(container);
+
+        if (containerEl.dataset.idLoaded !== args.id) {
 //console.log('draw from scratch')
             ui.update({
-                container: "league_content",
+                container: container,
                 template: args.id
             });
-            ko.applyBindings(vm, leagueContentEl);
+            ko.applyBindings(vm, containerEl);
             if (args.uiFirst !== undefined) {
                 args.uiFirst(vm);
             }
@@ -29,22 +31,24 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
 
     function update(args) {
         return function (inputs, updateEvents, cb) {
-            var afterEverything, i, leagueContentEl;
+            var afterEverything, i, container, containerEl;
+
+            container = location.pathname.substring(0, 3) === "/l/" ? "league_content" : "content";
+            containerEl = document.getElementById(container);
 
             // Reset league content and view model only if it's:
             // (1) if it's not loaded and not loading yet
             // (2) loaded, but loading something else
-            leagueContentEl = document.getElementById("league_content");
-            if ((leagueContentEl.dataset.idLoaded !== args.id && leagueContentEl.dataset.idLoading !== args.id) || (leagueContentEl.dataset.idLoaded === args.id && leagueContentEl.dataset.idLoading !== args.id && leagueContentEl.dataset.idLoading !== "")) {
-                ko.cleanNode(leagueContentEl);
+            if ((containerEl.dataset.idLoaded !== args.id && containerEl.dataset.idLoading !== args.id) || (containerEl.dataset.idLoaded === args.id && containerEl.dataset.idLoading !== args.id && containerEl.dataset.idLoading !== "")) {
+                ko.cleanNode(containerEl);
 
-                leagueContentEl.dataset.idLoading = args.id;
+                containerEl.dataset.idLoading = args.id;
 
                 updateEvents.push("firstRun");
 
                 // View model
                 vm = new args.InitViewModel(inputs);
-            } else if (leagueContentEl.dataset.idLoading === args.id) {
+            } else if (containerEl.dataset.idLoading === args.id) {
                 // If this view is already loading, no need to update (in fact, updating can cause errors because the firstRun updateEvent is not set and thus some first-run-defined view model properties might be accessed).
                 cb();
                 return;
@@ -52,7 +56,7 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
 
             // This will be called after every runBefore and runWhenever function is finished.
             afterEverything = _.after(args.runWhenever.length + 1, function () {
-                leagueContentEl.dataset.idLoading = ""; // Done loading
+                containerEl.dataset.idLoading = ""; // Done loading
                 cb();
             });
 

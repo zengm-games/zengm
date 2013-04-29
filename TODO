@@ -1,7 +1,16 @@
 smarter realtime
 ----------------
 
+fix game log unit tests - problem is that there is no /l/ in test url, but the url is checked in ui.js
 get rid of handlebars
+  Handlebars usage in js folder
+  {{ in templates folder
+  util.templateHelpers
+  is there anything i can use to easily replace handlebars compiler? is that even a worthwhile goal?
+    http://code.google.com/p/htmlcompressor/
+reassess ui module. delete stuff like ui.dropdown. move other functions elsewhere?
+  what is the difference between util.viewHelpers and ui?
+reassess api module (pretty much everything should be moved into a view if it's used in one place, or viewHelpers if it's used multiple places)
 dashboard
   observables set right by mapping
     historical things (old scores, old records) don't need to be observable?
@@ -18,12 +27,6 @@ team finances
   move some stuff to loadAfter?
   confirm events aren't going crazy
   contracts should only update on playerMovement
-performance considerations...
-  http://stackoverflow.com/questions/9709374/knockout-js-incredibly-slow-under-semi-large-datasets
-after updating all views
-  reassess ui module. delete stuff like ui.dropdown. move other functions elsewhere?
-    what is the difference between util.viewHelpers and ui?
-  reassess api module (pretty much everything should be moved into a view if it's used in one place, or viewHelpers if it's used multiple places)
 not urgetnt, but... use knockout for
   components.dropdown
   gameLog.boxScore

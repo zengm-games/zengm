@@ -2,6 +2,7 @@ smarter realtime
 ----------------
 
 draft buttons sometimes don't work? why?
+  click "Draft" in league menu twice, and then draft buttons no longer work
 ui.realtimeUpdate should be used in more places so updateEvent is pervasive
   use req.redirect from POST to manage history optimally
 awards not being set?
@@ -15,8 +16,6 @@ dashboard
   update vm directly from functions?
     if so, will need to define structure earlier
   move functions to module-level scope?
-shouldn't have newPhase updateEvent doing much. instead, have an array of what changed in that phase
-  (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON) should be newSeason
 team finances
   rounded budget amounts are not updated
     they are saved correctly, but knockout doesn't seem to update the UI http://stackoverflow.com/questions/16006558/updating-an-input-whose-value-attribute-is-bound-to-an-observable-after-editing
@@ -26,12 +25,9 @@ team finances
   move some stuff to loadAfter?
   confirm events aren't going crazy
   contracts should only update on playerMovement
-general things
-  performance considerations...
-    http://stackoverflow.com/questions/7488208/am-i-overusing-the-knockout-mapping-plugin-by-always-using-it-to-do-my-viewmodel/10114544#10114544
-    http://stackoverflow.com/questions/9709374/knockout-js-incredibly-slow-under-semi-large-datasets
-    http://tekpub.com/productions/knockout
-  reduce boilerplate
+performance considerations...
+  http://stackoverflow.com/questions/9709374/knockout-js-incredibly-slow-under-semi-large-datasets
+  http://tekpub.com/productions/knockout
 after updating all views
   reassess ui module. delete stuff like ui.dropdown. move other functions elsewhere?
     what is the difference between util.viewHelpers and ui?
@@ -351,6 +347,9 @@ if play menu is open when it refreshes, automatically open it again after refres
 bbgmView
   can i do some check to abandon display if idLoading is mismatched with reality? like for clicking a slow link followed by a fast link, in rapid succession, the fast output should show and the slow should be short circuited.
     in practice, this doesn't seem to matter much
+  shouldn't have newPhase updateEvent doing much. instead, have an array of what changed in that phase
+    (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON) should be newSeason
+
 
 ---
 

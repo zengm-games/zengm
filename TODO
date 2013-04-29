@@ -5,16 +5,9 @@ draft buttons sometimes don't work? why?
 ui.realtimeUpdate should be used in more places so updateEvent is pervasive
   use req.redirect from POST to manage history optimally
 awards not being set?
-bbgmView
-  IMPORTANT:
-    do idLoaded/idLoading work?
-      can i do some check to abandon in display if idLoading is mismatched with reality?
-      click link twice quickly - should work
-        teamFinances view still produces errors on fast double click, even after fixing dashboard and others
-        doesn't update menu highlighting consistently
-    what about non-league views? how to distinguish?
-      more broadly.. make this less tied to BBGM specifically. shouldn't depend on BBGM-specific modules like g, ui, and util/viewHelpers
-      fn to convert req to relevant vars? but isn't that what get already is?
+bbgmView for non-league views - how to distinguish?
+  more broadly.. make this less tied to BBGM specifically. shouldn't depend on BBGM-specific modules like g, ui, and util/viewHelpers
+  fn to convert req to relevant vars? but isn't that what get already is?
 dashboard
   observables set right by mapping
     historical things (old scores, old records) don't need to be observable?
@@ -355,6 +348,9 @@ if play menu is open when it refreshes, automatically open it again after refres
   store a list of times and "update events". compare last updated time against that list, and then see the update events. pass as list in "update event" to realtime update
   check everywhere dbChange or lastDbChange is set and see if it should be more refined
     add playerMovement updateEvent, for when a player signs a contract, becomes a free agent, or is traded
+bbgmView
+  can i do some check to abandon display if idLoading is mismatched with reality? like for clicking a slow link followed by a fast link, in rapid succession, the fast output should show and the slow should be short circuited.
+    in practice, this doesn't seem to matter much
 
 ---
 

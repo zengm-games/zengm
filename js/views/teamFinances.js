@@ -198,8 +198,9 @@ define(["db", "globals", "ui", "core/finances", "lib/jquery", "lib/knockout", "l
                     });
                 };
             });
+
+            return deferred.promise();
         }
-        return deferred.promise();
     }
 
     function uiFirst(vm) {

@@ -10,10 +10,8 @@
   Cash: <span data-bind="currency: [team.cash, 'M']"></span> (used for buying out players)
 </p>
 
-<!-- ko if: editable -->
-  <p>Drag and drop row handles to move players between the starting lineup (<span class="roster_gs">&#9632;</span>) and the bench (<span class="roster_bench">&#9632;</span>).</p>
-  <p><button class="btn" id="roster-auto-sort">Auto sort roster</button></p>
-<!-- /ko -->
+<p data-bind="visible: editable">Drag and drop row handles to move players between the starting lineup (<span class="roster_gs">&#9632;</span>) and the bench (<span class="roster_bench">&#9632;</span>).</p>
+<p data-bind="visible: editable"><button class="btn" id="roster-auto-sort">Auto sort roster</button></p>
 
 <p>
 <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="roster">

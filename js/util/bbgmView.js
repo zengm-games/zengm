@@ -10,9 +10,11 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
     function display(args, updateEvents) {
         var container, containerEl;
 
-        container = location.pathname.substring(0, 3) === "/l/" ? "league_content" : "content";
+        container = g.lid !== null ? "league_content" : "content";
         containerEl = document.getElementById(container);
 
+console.log(container)
+console.log(args);
         if (containerEl.dataset.idLoaded !== args.id) {
 //console.log('draw from scratch')
             ui.update({
@@ -33,7 +35,7 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
         return function (inputs, updateEvents, cb) {
             var afterEverything, i, container, containerEl;
 
-            container = location.pathname.substring(0, 3) === "/l/" ? "league_content" : "content";
+            container = g.lid !== null ? "league_content" : "content";
             containerEl = document.getElementById(container);
 
             // Reset league content and view model only if it's:

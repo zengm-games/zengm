@@ -1,7 +1,6 @@
 smarter realtime
 ----------------
 
-fix game log unit tests - problem is that there is no /l/ in test url, but the url is checked in ui.js
 get rid of handlebars
   Handlebars usage in js folder
   {{ in templates folder
@@ -80,6 +79,7 @@ not urgetnt, but... use knockout for
 BEFORE 3.0.0-beta.3
 -------------------
 
+reset db doesn't always delete everything (e.g. if you delete a league). how to make sure everything is deleted?
 league names in delete league view
 if season is already over, don't add stats row to traded player
 age should matter for ranking draft prospects

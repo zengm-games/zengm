@@ -65,7 +65,7 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
      * @param {string} text New title.
      */
     function title(text) {
-        if (location.pathname.substring(0, 3) === "/l/") {
+        if (g.lid !== null) {
             text += " - " + g.leagueName;
         }
         document.title = text + " - Basketball GM";
@@ -81,7 +81,7 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
      * @param {function()=} cb Optional callback
      */
     function update(data, cb) {
-        var containerEl, leaguePage, rendered, result;
+        var containerEl, contentEl, leaguePage, rendered, result;
 
         if (!data.vars) {
             data.vars = {};
@@ -101,8 +101,11 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
         highlightNav(leaguePage);
 
         if (data.container === "league_content") {
-            document.getElementById("content").dataset.idLoaded = "league";
-            document.getElementById("content").dataset.idLoading = "";
+            contentEl = document.getElementById("content");
+            if (contentEl) {
+                contentEl.dataset.idLoaded = "league";
+                contentEl.dataset.idLoading = "";
+            }
         }
         containerEl.dataset.idLoaded = data.template;
 
@@ -129,7 +132,7 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
         url = url !== undefined ? url : location.pathname;
         raw = raw !== undefined ? raw : {};
 
-        inLeague = url.substr(0, 3) === "/l/";
+        inLeague = url.substr(0, 3) === "/l/"; // Check the URL to be redirected to, not the current league (g.lid)
         refresh = url === location.pathname && inLeague;
 
         // If tracking is enabled, don't track realtime updates for refreshes

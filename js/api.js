@@ -64,6 +64,9 @@ define(["db", "globals", "views", "ui", "core/draft", "core/finances", "core/gam
                 season.newPhase(g.PHASE.REGULAR_SEASON);
             }
         }
+
+        // Close the menu
+        $("#play-menu .dropdown-toggle").dropdown("toggle");
     }
 
     function playMenuHandlers() {

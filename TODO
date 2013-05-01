@@ -1,8 +1,6 @@
 smarter realtime
 ----------------
 
-g.vm for play button, status, phase
-  close dropdown on click
 get rid of handlebars
   Handlebars usage in js folder
   {{ in templates folder

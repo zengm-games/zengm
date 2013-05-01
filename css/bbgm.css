@@ -89,14 +89,13 @@ ul.dashboard_league li.dashboard_league_new h2 {
   margin-left: -100%;
 }
 
-#playPhase, #playStatus {
-  color: #dddddd;
-}
-
 table {
   white-space: nowrap;
 }
 
+div#play-menu {
+  color: #dddddd;
+}
 div#play-menu ul.btn {
   -webkit-border-top-right-radius: 0;
   -moz-border-radius-topright: 0;

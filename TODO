@@ -4,6 +4,8 @@ smarter realtime
 g.vm for play button, status, phase
   delete playButton.handlebars
   close dropdown on click
+  don't display out of league
+    use knockout, not beforeNonLeague, to hide
 get rid of handlebars
   Handlebars usage in js folder
   {{ in templates folder

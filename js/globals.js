@@ -50,7 +50,9 @@ define(["lib/knockout"], function (ko) {
 
     g.vm = {
         playMenu: {
-            options: ko.observable([])
+            options: ko.observable([]),
+            phaseText: ko.observable(),
+            statusText: ko.observable()
         }
     };
 

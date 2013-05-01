@@ -380,14 +380,7 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "l
                         }
                     }
 
-console.log(someOptions)
                     g.vm.playMenu.options(someOptions);
-/*                    playButtonElement = document.getElementById("playButton");
-                    if (playButtonElement) {
-                        playButtonElement.innerHTML = Handlebars.templates.playButton({options: someOptions});
-                    }*/
-
-                    require("api").playMenuHandlers();  // Because of circular dependency
 
                     if (cb !== undefined) {
                         cb();
@@ -407,21 +400,14 @@ console.log(someOptions)
             the client.
     */
     function updateStatus(statusText) {
-        var oldStatus, playStatusElement;
+        var oldStatus;
 
         oldStatus = g.statusText;
-        playStatusElement = document.getElementById("playStatus");
         if (statusText === undefined) {
-            statusText = oldStatus;
-            if (playStatusElement) {
-                playStatusElement.innerHTML = statusText;
-            }
-        }
-        if (statusText !== oldStatus) {
+            g.vm.playMenu.statusText(oldStatus);
+        } else if (statusText !== oldStatus) {
             db.setGameAttributes({statusText: statusText}, function () {
-                if (playStatusElement) {
-                    playStatusElement.innerHTML = statusText;
-                }
+                g.vm.playMenu.statusText(statusText);
 //                console.log("Set status: " + statusText);
             });
         }
@@ -437,21 +423,14 @@ console.log(someOptions)
             the client.
     */
     function updatePhase(phaseText) {
-        var oldPhaseText, playPhaseElement;
+        var oldPhaseText;
 
         oldPhaseText = g.phaseText;
-        playPhaseElement = document.getElementById("playPhase");
         if (phaseText === undefined) {
-            phaseText = oldPhaseText;
-            if (playPhaseElement) {
-                playPhaseElement.innerHTML = phaseText;
-            }
-        }
-        if (phaseText !== oldPhaseText) {
+            g.vm.playMenu.phaseText(oldPhaseText);
+        } else if (phaseText !== oldPhaseText) {
             db.setGameAttributes({phaseText: phaseText}, function () {
-                if (playPhaseElement) {
-                    playPhaseElement.innerHTML = phaseText;
-                }
+                g.vm.playMenu.phaseText(phaseText);
 //                console.log("Set phase: " + phaseText);
             });
 

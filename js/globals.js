@@ -2,7 +2,7 @@
  * @name globals
  * @namespace Defines the constant portions of g.
  */
-define([], function () {
+define(["lib/knockout"], function (ko) {
     "use strict";
 
     // The way this works is... any "global" variables that need to be widely available are stored in g. Some of these are constants, like the ones defined below. Some others are dynamic, like the year of the current season, and are stored in the gameAttributes object store. The dynamic components of g are retrieved/updated/synced elsewhere. Yes, it's kind of confusing and arbitrary.
@@ -48,8 +48,14 @@ define([], function () {
         }
     }*/
 
+    g.vm = {
+        playMenu: {
+            options: ko.observable([])
+        }
+    };
+
     // THIS MUST BE ACCURATE OR BAD STUFF WILL HAPPEN
-    g.notInDb = ["dbm", "dbl", "lid", "numTeams", "confs", "divs", "salaryCap", "minPayroll", "luxuryPayroll", "luxuryTax", "minContract", "maxContract", "PHASE", "PLAYER", "gameSimWorkers", "notInDb"];
+    g.notInDb = ["dbm", "dbl", "lid", "numTeams", "confs", "divs", "salaryCap", "minPayroll", "luxuryPayroll", "luxuryTax", "minContract", "maxContract", "PHASE", "PLAYER", "gameSimWorkers", "vm", "notInDb"];
 
     return g;
 });

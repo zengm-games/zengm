@@ -67,50 +67,6 @@ define(["db", "globals", "views", "ui", "core/draft", "core/finances", "core/gam
     }
 
     function playMenuHandlers() {
-        $("#play-menu-stop").click(function () {
-            play("stop");
-            return false;
-        });
-        $("#play-menu-day").click(function () {
-            play("day");
-            return false;
-        });
-        $("#play-menu-week").click(function () {
-            play("week");
-            return false;
-        });
-        $("#play-menu-month").click(function () {
-            play("month");
-            return false;
-        });
-        $("#play-menu-until-playoffs").click(function () {
-            play("untilPlayoffs");
-            return false;
-        });
-        $("#play-menu-through-playoffs").click(function () {
-            play("throughPlayoffs");
-            return false;
-        });
-        $("#play-menu-until-draft").click(function () {
-            play("untilDraft");
-            return false;
-        });
-        $("#play-menu-until-resign-players").click(function () {
-            play("untilResignPlayers");
-            return false;
-        });
-        $("#play-menu-until-free-agency").click(function () {
-            play("untilFreeAgency");
-            return false;
-        });
-        $("#play-menu-until-preseason").click(function () {
-            play("untilPreseason");
-            return false;
-        });
-        $("#play-menu-until-regular-season").click(function () {
-            play("untilRegularSeason");
-            return false;
-        });
     }
 
     return {

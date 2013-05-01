@@ -2,12 +2,12 @@
  * @name ui
  * @namespace Anything that directly updates the UI.
  */
-define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "util/lock"], function (db, g, Davis, Handlebars, $, lock) {
+define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/knockout", "util/lock"], function (db, g, Davis, Handlebars, $, ko, lock) {
     "use strict";
 
     // Things to do on initial page load
     function init() {
-        var slideOut;
+        var api, slideOut;
 
         // "Feedback" slider
         slideOut = $(".slide-out");
@@ -19,6 +19,55 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
                 rightPos: "20px"
             });
         }
+
+        ko.applyBindings(g.vm.playMenu, document.getElementById("play-menu"));
+
+        // Handle clicks from play menu
+        api = require("api");
+        $("#play-menu").on("click", "#play-menu-stop", function () {
+            api.play("stop");
+            return false;
+        });
+        $("#play-menu").on("click", "#play-menu-day", function () {
+            api.play("day");
+            return false;
+        });
+        $("#play-menu").on("click", "#play-menu-week", function () {
+            api.play("week");
+            return false;
+        });
+        $("#play-menu").on("click", "#play-menu-month", function () {
+            api.play("month");
+            return false;
+        });
+        $("#play-menu").on("click", "#play-menu-until-playoffs", function () {
+            api.play("untilPlayoffs");
+            return false;
+        });
+        $("#play-menu").on("click", "#play-menu-through-playoffs", function () {
+            api.play("throughPlayoffs");
+            return false;
+        });
+        $("#play-menu").on("click", "#play-menu-until-draft", function () {
+            api.play("untilDraft");
+            return false;
+        });
+        $("#play-menu").on("click", "#play-menu-until-resign-players", function () {
+            api.play("untilResignPlayers");
+            return false;
+        });
+        $("#play-menu").on("click", "#play-menu-until-free-agency", function () {
+            api.play("untilFreeAgency");
+            return false;
+        });
+        $("#play-menu").on("click", "#play-menu-until-preseason", function () {
+            api.play("untilPreseason");
+            return false;
+        });
+        $("#play-menu").on("click", "#play-menu-until-regular-season", function () {
+            api.play("untilRegularSeason");
+            return false;
+        });
     }
 
     function highlightNav(leaguePage) {
@@ -247,18 +296,18 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
     function updatePlayMenu(ot, cb) {
         var allOptions, keys;
 
-        allOptions = [{id: "play-menu-stop", label: "Stop"},
-                      {id: "play-menu-day", label: "One day"},
-                      {id: "play-menu-week", label: "One week"},
-                      {id: "play-menu-month", label: "One month"},
-                      {id: "play-menu-until-playoffs", label: "Until playoffs"},
-                      {id: "play-menu-through-playoffs", label: "Through playoffs"},
-                      {id: "play-menu-until-draft", label: "Until draft"},
+        allOptions = [{id: "play-menu-stop", url: "", label: "Stop"},
+                      {id: "play-menu-day", url: "", label: "One day"},
+                      {id: "play-menu-week", url: "", label: "One week"},
+                      {id: "play-menu-month", url: "", label: "One month"},
+                      {id: "play-menu-until-playoffs", url: "", label: "Until playoffs"},
+                      {id: "play-menu-through-playoffs", url: "", label: "Through playoffs"},
+                      {id: "play-menu-until-draft", url: "", label: "Until draft"},
                       {id: "play-menu-view-draft", url: "/l/" + g.lid + "/draft", label: "View draft"},
-                      {id: "play-menu-until-resign-players", label: "Resign players with expiring contracts"},
-                      {id: "play-menu-until-free-agency", label: "Until free agency"},
-                      {id: "play-menu-until-preseason", label: "Until preseason"},
-                      {id: "play-menu-until-regular-season", label: "Until regular season"},
+                      {id: "play-menu-until-resign-players", url: "", label: "Resign players with expiring contracts"},
+                      {id: "play-menu-until-free-agency", url: "", label: "Until free agency"},
+                      {id: "play-menu-until-preseason", url: "", label: "Until preseason"},
+                      {id: "play-menu-until-regular-season", url: "", label: "Until regular season"},
                       {id: "play-menu-contract-negotiation", url: "/l/" + g.lid + "/negotiation", label: "Continue contract negotiation"},
                       {id: "play-menu-contract-negotiation-list", url: "/l/" + g.lid + "/negotiation", label: "Continue resigning players"},
                       {id: "play-menu-message", url: "/l/" + g.lid + "/message", label: "Read message from the owner"},
@@ -331,10 +380,12 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "u
                         }
                     }
 
-                    playButtonElement = document.getElementById("playButton");
+console.log(someOptions)
+                    g.vm.playMenu.options(someOptions);
+/*                    playButtonElement = document.getElementById("playButton");
                     if (playButtonElement) {
                         playButtonElement.innerHTML = Handlebars.templates.playButton({options: someOptions});
-                    }
+                    }*/
 
                     require("api").playMenuHandlers();  // Because of circular dependency
 

@@ -327,30 +327,6 @@ helpers = helpers || Handlebars.helpers; data = data || {};
 
   return "<form id=\"history-dropdown\" class=\"form-inline pull-right\"></form>\n\n<h1>Season Summary <span data-bind=\"newWindow: []\"></span></h1>\n\n<p></p>\n<div class=\"row-fluid\">\n  <div class=\"span4\">\n    <h4>League Champions</h4>\n    <p><strong><a data-bind=\"attrLeagueUrl: {href: ['roster', champ.abbrev, season]}\"><span data-bind=\"text: champ.region\"></span> <span data-bind=\"text: champ.name\"></span></a></strong><br>\n    <a data-bind=\"attrLeagueUrl: {href: ['playoffs', season]}\">Playoffs Bracket</a></p>\n    <h4>Best Record</h4>\n    <p>East: <a  data-bind=\"attrLeagueUrl: {href: ['roster', awards.bre.abbrev, season]}\"><span data-bind=\"text: awards.bre.region\"></span> <span data-bind=\"text: awards.bre.name\"></span></a> (<span data-bind=\"text: awards.bre.won\"></span>-<span data-bind=\"text: awards.bre.lost\"></span>)<br>\n    West: <a data-bind=\"attrLeagueUrl: {href: ['roster', awards.brw.abbrev, season]}\"><span data-bind=\"text: awards.brw.region\"></span> <span data-bind=\"text: awards.brw.name\"></span></a> (<span data-bind=\"text: awards.brw.won\"></span>-<span data-bind=\"text: awards.brw.lost\"></span>)<br></p>\n    <h4>Most Valueable Player</h4>\n    <p><strong><a data-bind=\"attrLeagueUrl: {href: ['player', awards.mvp.pid]}, text: awards.mvp.name\"></a></strong> (<a data-bind=\"attrLeagueUrl: {href: ['roster', awards.mvp.abbrev, season]}, text: awards.mvp.abbrev\"></a>)<br>\n    <span data-bind=\"round: [awards.mvp.pts, 1]\"></span> pts, <span data-bind=\"round: [awards.mvp.trb, 1]\"></span> reb, <span data-bind=\"round: [awards.mvp.ast, 1]\"></span> ast</p>\n    <h4>Defensive Player of the Year</h4>\n    <p><strong><a data-bind=\"attrLeagueUrl: {href: ['player', awards.dpoy.pid]}, text: awards.dpoy.name\"></a></strong> (<a data-bind=\"attrLeagueUrl: {href: ['roster', awards.dpoy.abbrev, season]}, text: awards.dpoy.abbrev\"></a>)<br>\n    <span data-bind=\"round: [awards.dpoy.trb, 1]\"></span> reb, <span data-bind=\"round: [awards.dpoy.blk, 1]\"></span> blk, <span data-bind=\"round: [awards.dpoy.stl, 1]\"></span> stl</p>\n    <h4>Sixth Man of the Year</h4>\n    <p><strong><a data-bind=\"attrLeagueUrl: {href: ['player', awards.smoy.pid]}, text: awards.smoy.name\"></a></strong> (<a data-bind=\"attrLeagueUrl: {href: ['roster', awards.smoy.abbrev, season]}, text: awards.smoy.abbrev\"></a>)<br>\n    <span data-bind=\"round: [awards.smoy.pts, 1]\"></span> pts, <span data-bind=\"round: [awards.smoy.trb, 1]\"></span> reb, <span data-bind=\"round: [awards.smoy.ast, 1]\"></span> ast</p>\n    <h4>Rookie of the Year</h4>\n    <p><strong><a data-bind=\"attrLeagueUrl: {href: ['player', awards.roy.pid]}, text: awards.roy.name\"></a></strong> (<a data-bind=\"attrLeagueUrl: {href: ['roster', awards.roy.abbrev, season]}, text: awards.roy.abbrev\"></a>)<br>\n    <span data-bind=\"round: [awards.roy.pts, 1]\"></span> pts, <span data-bind=\"round: [awards.roy.trb, 1]\"></span> reb, <span data-bind=\"round: [awards.roy.ast, 1]\"></span> ast</p>\n  </div>\n  <div class=\"span4\">\n    <h4>All-League Teams</h4>\n    <!-- ko foreach: awards.allLeague -->\n      <b data-bind=\"text: title\"></b><br>\n      <!-- ko foreach: players -->\n        <a data-bind=\"attrLeagueUrl: {href: ['player', pid]}, text: name\"></a> (<a data-bind=\"attrLeagueUrl: {href: ['roster', abbrev, $root.season]}, text: abbrev\"></a>)<br>\n      <!-- /ko -->\n    <!-- /ko -->\n  </div>\n  <div class=\"span4\">\n    <h4>All-Defensive Teams</h4>\n    <!-- ko foreach: awards.allDefensive -->\n      <b data-bind=\"text: title\"></b><br>\n      <!-- ko foreach: players -->\n        <a data-bind=\"attrLeagueUrl: {href: ['player', pid]}, text: name\"></a> (<a data-bind=\"attrLeagueUrl: {href: ['roster', abbrev, $root.season]}, text: abbrev\"></a>)<br>\n      <!-- /ko -->\n    <!-- /ko -->\n  </div>\n</div>\n<div class=\"row-fluid\">\n  <div class=\"span12\">\n    <h4>Retired Players</h4>\n    <!-- ko foreach: retiredPlayers -->\n      <a data-bind=\"attrLeagueUrl: {href: ['player', pid]}, text: name\"></a> (overall rating: <span data-bind=\"text: ratings.ovr\"></span>; age: <span data-bind=\"text: age\"></span>)<br>\n    <!-- /ko -->\n  </div>\n</div>";
   });
-templates['playButton'] = template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
-helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
-
-function program1(depth0,data) {
-  
-  var buffer = "", stack1;
-  buffer += "\n        <li><a href=\""
-    + escapeExpression(((stack1 = depth0.url),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" id=\""
-    + escapeExpression(((stack1 = depth0.id),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">"
-    + escapeExpression(((stack1 = depth0.label),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</a></li>\n      ";
-  return buffer;
-  }
-
-  buffer += "<ul class=\"nav btn btn-primary\">\n  <li class=\"dropdown\">\n    <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" id=\"play-button-link\">Play <b class=\"caret\"></b></a>\n    <ul class=\"dropdown-menu\">\n      ";
-  stack2 = ((stack1 = ((stack1 = depth0.options),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n    </ul>\n  </li>\n</ul>\n";
-  return buffer;
-  });
 templates['inbox'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};

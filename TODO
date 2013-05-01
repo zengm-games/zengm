@@ -1,6 +1,9 @@
 smarter realtime
 ----------------
 
+g.vm for play button, status, phase
+  delete playButton.handlebars
+  close dropdown on click
 get rid of handlebars
   Handlebars usage in js folder
   {{ in templates folder
@@ -349,7 +352,7 @@ bbgmView
     (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON) should be newSeason
   use req.redirect from POST to manage history optimally
   make it less tied to BBGM specifically. shouldn't depend on BBGM-specific modules like g, ui, and util/viewHelpers
-
+player development should depend on playing time
 
 ---
 

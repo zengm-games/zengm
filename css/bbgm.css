@@ -97,7 +97,7 @@ table {
   white-space: nowrap;
 }
 
-div#playButton ul.btn {
+div#play-menu ul.btn {
   -webkit-border-top-right-radius: 0;
   -moz-border-radius-topright: 0;
   border-top-right-radius: 0;
@@ -115,10 +115,10 @@ div#playButton ul.btn {
   padding: 0;
   text-align: left;
 }
-div#playButton ul li a {
+div#play-menu ul li a {
   text-shadow: none;
 }
-div#playButton ul li a.dropdown-toggle {
+div#play-menu ul li a.dropdown-toggle {
   background: transparent;
   border-bottom-color: #fff;
   border-top-color: #fff;
@@ -127,11 +127,11 @@ div#playButton ul li a.dropdown-toggle {
   padding: 10px 10px 11px 10px;
   text-shadow: none;
 }
-div#playButton ul li a.dropdown-toggle:hover {
+div#play-menu ul li a.dropdown-toggle:hover {
   color: #FFFFFF;
   text-shadow: none;
 }
-div#playButton ul li a.dropdown-toggle .caret {
+div#play-menu ul li a.dropdown-toggle .caret {
   border-bottom-color: #fff;
   border-top-color: #fff;
   opacity: 0.75;

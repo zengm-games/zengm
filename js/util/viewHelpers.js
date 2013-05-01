@@ -81,6 +81,7 @@ define(["db", "globals", "ui", "lib/jquery", "util/helpers"], function (db, g, u
                     ui.updateStatus();
                     ui.updatePhase();
                     ui.updatePlayMenu(null, function () {
+                        document.getElementById("play-menu").style.visibility = "visible";
                         cb(updateEvents, reqCb);
                         checkDbChange(g.lid);
                     });
@@ -96,18 +97,7 @@ define(["db", "globals", "ui", "lib/jquery", "util/helpers"], function (db, g, u
 
         g.lid = null;
 
-        playButtonElement = document.getElementById("playButton");
-        if (playButtonElement) {
-            playButtonElement.innerHTML = "";
-        }
-        playPhaseElement = document.getElementById("playPhase");
-        if (playPhaseElement) {
-            playPhaseElement.innerHTML = "";
-        }
-        playStatusElement = document.getElementById("playStatus");
-        if (playStatusElement) {
-            playStatusElement.innerHTML = "";
-        }
+        document.getElementById("play-menu").style.visibility = "hidden";
 
         if (cb !== undefined) {
             updateEvents = req.raw.updateEvents !== undefined ? req.raw.updateEvents : [];

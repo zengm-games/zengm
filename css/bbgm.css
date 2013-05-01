@@ -95,6 +95,7 @@ table {
 
 div#play-menu {
   color: #dddddd;
+  visibility: hidden;
 }
 div#play-menu ul.btn {
   -webkit-border-top-right-radius: 0;

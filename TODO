@@ -1,10 +1,8 @@
 smarter realtime
 ----------------
 
-leagueLayout handlebars
-  data-lid should instead just be stored in viewmodel
-  "active" observable to set highlighting
 get rid of handlebars
+  boxScore
   Handlebars usage in js folder
   {{ in templates folder
   util.templateHelpers

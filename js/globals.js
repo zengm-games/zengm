@@ -49,6 +49,9 @@ define(["lib/knockout"], function (ko) {
     }*/
 
     g.vm = {
+        leagueMenu: {
+            lid: ko.observable()
+        },
         playMenu: {
             options: ko.observable([]),
             phaseText: ko.observable(),

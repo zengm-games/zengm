@@ -76,7 +76,7 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "l
         } else if (leaguePage === "draft_summary") {
             leaguePage = "draft";
         }
-        $("#league_sidebar li").removeClass("active");
+        $("#league-menu li").removeClass("active");
         $("#nav_" + leaguePage).addClass("active");
     }
 

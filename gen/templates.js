@@ -153,49 +153,10 @@ helpers = helpers || Handlebars.helpers; data = data || {};
 templates['leagueLayout'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression;
+  
 
 
-  buffer += "<div id=\"contentwrapper\">\n  <div id=\"league_content\" data-id-loading=\"\" data-id-loaded=\"\">\n  </div>\n</div>\n\n<div id=\"league_menu\" data-lid=\""
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">\n  <div class=\"well sidebar-nav\">\n    <ul class=\"nav nav-list\" id=\"league_sidebar\">\n      <li id=\"nav_league_dashboard\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">Dashboard</a></li>\n      <li id=\"nav_inbox\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/inbox\">Inbox</a></li>\n      <li class=\"nav-header\">League</li>\n      <li id=\"nav_standings\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/standings\">Standings</a></li>\n      <li id=\"nav_playoffs\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/playoffs\">Playoffs</a></li>\n      <li id=\"nav_league_finances\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/league_finances\">Finances</a></li>\n      <li id=\"nav_history\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/history\">History</a></li>\n      <li class=\"nav-header\">Team</li>\n      <li id=\"nav_roster\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/roster\">Roster</a></li>\n      <li id=\"nav_schedule\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/schedule\">Schedule</a></li>\n      <li id=\"nav_team_finances\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/team_finances\">Finances</a></li>\n      <li id=\"nav_team_history\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/team_history\">History</a></li>\n      <li class=\"nav-header\">Players</li>\n      <li id=\"nav_free_agents\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/free_agents\">Free Agents</a></li>\n      <li id=\"nav_trade\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/trade\">Trade</a></li>\n      <li id=\"nav_draft\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/draft\">Draft</a></li>\n      <li class=\"nav-header\">Stats</li>\n      <li id=\"nav_game_log\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/game_log\">Game Log</a></li>\n      <li id=\"nav_leaders\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/leaders\">League Leaders</a></li>\n      <li id=\"nav_player_ratings\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/player_ratings\">Player Ratings</a></li>\n      <li id=\"nav_player_stats\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/player_stats\">Player Stats</a></li>\n      <li id=\"nav_team_stats\"><a href=\"/l/"
-    + escapeExpression(((stack1 = depth0.lid),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "/team_stats\">Team Stats</a></li>\n    </ul>\n  </div>\n</div>\n";
-  return buffer;
+  return "<div id=\"contentwrapper\">\n  <div id=\"league_content\" data-id-loading=\"\" data-id-loaded=\"\">\n  </div>\n</div>\n\n<div id=\"league-menu\">\n  <div class=\"well sidebar-nav\">\n    <ul class=\"nav nav-list\">\n      <li id=\"nav_league_dashboard\"><a data-bind=\"attrLeagueUrl: {href: []}\">Dashboard</a></li>\n      <li id=\"nav_inbox\"><a data-bind=\"attrLeagueUrl: {href: ['inbox']}\">Inbox</a></li>\n      <li class=\"nav-header\">League</li>\n      <li id=\"nav_standings\"><a data-bind=\"attrLeagueUrl: {href: ['standings']}\">Standings</a></li>\n      <li id=\"nav_playoffs\"><a data-bind=\"attrLeagueUrl: {href: ['playoffs']}\">Playoffs</a></li>\n      <li id=\"nav_league_finances\"><a data-bind=\"attrLeagueUrl: {href: ['league_finances']}\">Finances</a></li>\n      <li id=\"nav_history\"><a data-bind=\"attrLeagueUrl: {href: ['history']}\">History</a></li>\n      <li class=\"nav-header\">Team</li>\n      <li id=\"nav_roster\"><a data-bind=\"attrLeagueUrl: {href: ['roster']}\">Roster</a></li>\n      <li id=\"nav_schedule\"><a data-bind=\"attrLeagueUrl: {href: ['schedule']}\">Schedule</a></li>\n      <li id=\"nav_team_finances\"><a data-bind=\"attrLeagueUrl: {href: ['team_finances']}\">Finances</a></li>\n      <li id=\"nav_team_history\"><a data-bind=\"attrLeagueUrl: {href: ['team_history']}\">History</a></li>\n      <li class=\"nav-header\">Players</li>\n      <li id=\"nav_free_agents\"><a data-bind=\"attrLeagueUrl: {href: ['free_agents']}\">Free Agents</a></li>\n      <li id=\"nav_trade\"><a data-bind=\"attrLeagueUrl: {href: ['trade']}\">Trade</a></li>\n      <li id=\"nav_draft\"><a data-bind=\"attrLeagueUrl: {href: ['draft']}\">Draft</a></li>\n      <li class=\"nav-header\">Stats</li>\n      <li id=\"nav_game_log\"><a data-bind=\"attrLeagueUrl: {href: ['game_log']}\">Game Log</a></li>\n      <li id=\"nav_leaders\"><a data-bind=\"attrLeagueUrl: {href: ['leaders']}\">League Leaders</a></li>\n      <li id=\"nav_player_ratings\"><a data-bind=\"attrLeagueUrl: {href: ['player_ratings']}\">Player Ratings</a></li>\n      <li id=\"nav_player_stats\"><a data-bind=\"attrLeagueUrl: {href: ['player_stats']}\">Player Stats</a></li>\n      <li id=\"nav_team_stats\"><a data-bind=\"attrLeagueUrl: {href: ['team_stats']}\">Team Stats</a></li>\n    </ul>\n  </div>\n</div>\n";
   });
 templates['freeAgents'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];

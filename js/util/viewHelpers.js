@@ -2,7 +2,7 @@
  * @name util.viewHelpers
  * @namespace Helper functions called only by views.
  */
-define(["db", "globals", "ui", "lib/jquery", "util/helpers"], function (db, g, ui, $, helpers) {
+define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "util/helpers"], function (db, g, ui, $, ko, helpers) {
     "use strict";
 
     function beforeLeague(req, cb) {
@@ -47,27 +47,30 @@ define(["db", "globals", "ui", "lib/jquery", "util/helpers"], function (db, g, u
         reqCb = req.raw.cb !== undefined ? req.raw.cb : function () {};
 
         // Make sure league template FOR THE CURRENT LEAGUE is showing
-        leagueMenu = document.getElementById("league_menu");
-        if (leagueMenu === null || parseInt(leagueMenu.dataset.lid, 10) !== g.lid) {
+        leagueMenu = document.getElementById("league-menu");
+        if (leagueMenu === null || g.vm.leagueMenu.lid() !== g.lid) {
             // Clear old game attributes from g, to make sure the new ones are saved to the db in db.setGameAttributes
             helpers.resetG();
 
             // Connect to league database
             db.connectLeague(g.lid, function () {
                 db.loadGameAttributes(function () {
-                    var css, data;
+                    var css;
 
-                    data = {
+                    g.vm.leagueMenu.lid(g.lid);
+
+                    ui.update({
                         container: "content",
-                        template: "leagueLayout",
-                        vars: {}
-                    };
-                    ui.update(data);
+                        template: "leagueLayout"
+                    });
+
+                    leagueMenu = document.getElementById("league-menu");
+                    ko.applyBindings(g.vm.leagueMenu, leagueMenu);
 
                     // Set up the display for a popup: menus hidden, margins decreased, and new window links removed
                     if (popup) {
                         $("#top_menu").hide();
-                        $("#league_menu").hide();
+                        leagueMenu.style.display = "none";
                         $("#league_content").css("margin-left", 0);
                         $("body").css("padding-top", "4px");
 

@@ -1,11 +1,10 @@
 /**
  * @name util.templateHelpers
- * @namespace Handlebars helper functions. Any new helpers added here should be added to the handlebars call in the Makefile.
+ * @namespace Knockout helper functions.
  */
-define(["globals", "lib/faces", "lib/handlebars.runtime", "lib/knockout", "util/helpers"], function (g, faces, Handlebars, ko, helpers) {
+define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, faces, ko, helpers) {
     "use strict";
 
-    Handlebars.registerHelper("round", helpers.round);
     ko.bindingHandlers.round = {
         update: function (element, valueAccessor) {
             var args = valueAccessor();
@@ -15,21 +14,6 @@ define(["globals", "lib/faces", "lib/handlebars.runtime", "lib/knockout", "util/
         }
     };
 
-    Handlebars.registerHelper("roundWinp", function (value) {
-        var output;
-
-        output = parseFloat(value).toFixed(3);
-
-        if (output[0] === "0") {
-            // Delete leading 0
-            output = output.slice(1, output.length);
-        } else {
-            // Delete trailing digit if no leading 0
-            output = output.slice(0, output.length - 1);
-        }
-
-        return output;
-    });
     ko.bindingHandlers.roundWinp = {
         update: function (element, valueAccessor) {
             var arg, output;
@@ -52,28 +36,7 @@ define(["globals", "lib/faces", "lib/handlebars.runtime", "lib/knockout", "util/
         }
     };
 
-    // It would be better if this took the series object directly, but handlebars doesn't like doing that
-    Handlebars.registerHelper("matchup", function (i, j) {
-        var series, source, template;
-
-        series = this.series[i][j];
-
-        source = '';
-        if (series && series.home.name) {
-            if (series.home.won === 4) { source += '<strong>'; }
-            source += series.home.seed + '. <a href="/l/' + this.lid + '/roster/' + series.home.abbrev + '/' + this.season + '">' + series.home.name + '</a>';
-            if (series.home.hasOwnProperty("won")) { source += ' ' + series.home.won; }
-            if (series.home.won === 4) { source += '</strong>'; }
-            source += '<br>';
-
-            if (series.away.won === 4) { source += '<strong>'; }
-            source += series.away.seed + '. <a href="/l/' + this.lid + '/roster/' + series.away.abbrev + '/' + this.season + '">' + series.away.name + '</a>';
-            if (series.away.hasOwnProperty("won")) { source += ' ' + series.away.won; }
-            if (series.away.won === 4) { source += '</strong>'; }
-        }
-
-        return new Handlebars.SafeString(source);
-    });
+    // It would be better if this took the series object directly
     ko.bindingHandlers.matchup = {
         update: function (element, valueAccessor, allBindingsAccessor, viewModel) {
             var args, season, series, source;
@@ -103,14 +66,6 @@ define(["globals", "lib/faces", "lib/handlebars.runtime", "lib/knockout", "util/
         }
     };
 
-
-    Handlebars.registerHelper("face", function (face) {
-        setTimeout(function () {
-            faces.display("picture", face);
-        }, 200);
-    });
-
-
     ko.bindingHandlers.newWindow = {
         update: function (element, valueAccessor) {
             var args, i, url;
@@ -133,10 +88,6 @@ define(["globals", "lib/faces", "lib/handlebars.runtime", "lib/knockout", "util/
         }
     };
 
-
-    Handlebars.registerHelper("skillsBlock", function (skills) {
-        return new Handlebars.SafeString(helpers.skillsBlock(skills));
-    });
     ko.bindingHandlers.skillsBlock = {
         update: function (element, valueAccessor) {
             var arg = valueAccessor();
@@ -146,7 +97,6 @@ define(["globals", "lib/faces", "lib/handlebars.runtime", "lib/knockout", "util/
         }
     };
 
-    Handlebars.registerHelper("currency", helpers.formatCurrency);
     ko.bindingHandlers.currency = {
         update: function (element, valueAccessor) {
             var args = valueAccessor();
@@ -156,7 +106,6 @@ define(["globals", "lib/faces", "lib/handlebars.runtime", "lib/knockout", "util/
         }
     };
 
-    Handlebars.registerHelper("numberWithCommas", helpers.numberWithCommas);
     ko.bindingHandlers.numberWithCommas = {
         update: function (element, valueAccessor) {
             var args = valueAccessor();
@@ -166,9 +115,6 @@ define(["globals", "lib/faces", "lib/handlebars.runtime", "lib/knockout", "util/
         }
     };
 
-    Handlebars.registerHelper("playerNameLabels", function (pid, name, injury, skills) {
-        return new Handlebars.SafeString(helpers.playerNameLabels(pid, name, injury, skills));
-    });
     ko.bindingHandlers.playerNameLabels = {
         update: function (element, valueAccessor) {
             var args = valueAccessor();
@@ -177,7 +123,6 @@ define(["globals", "lib/faces", "lib/handlebars.runtime", "lib/knockout", "util/
             });
         }
     };
-
 
     ko.bindingHandlers.attrLeagueUrl = {
         update: function (element, valueAccessor) {

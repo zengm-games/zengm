@@ -2,14 +2,15 @@ smarter realtime
 ----------------
 
 get rid of handlebars
+  dropdown
+    http://www.knockmeout.net/2012/05/quick-tip-skip-binding.html
   Handlebars usage in js folder
   {{ in templates folder
-  util.templateHelpers
   is there anything i can use to easily replace handlebars compiler? is that even a worthwhile goal?
     http://code.google.com/p/htmlcompressor/
 reassess ui module. delete stuff like ui.dropdown. move other functions elsewhere?
-  what is the difference between util.viewHelpers and ui?
-reassess api module (pretty much everything should be moved into a view if it's used in one place, or viewHelpers if it's used multiple places)
+  what is the difference between util.viewHelpers, views.components, and ui?
+reassess api module
 dashboard
   observables set right by mapping
     historical things (old scores, old records) don't need to be observable?

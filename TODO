@@ -81,6 +81,7 @@ not urgetnt, but... use knockout for
 BEFORE 3.0.0-beta.3
 -------------------
 
+don't be so eager to trade good players for high potential players
 reset db doesn't always delete everything (e.g. if you delete a league). how to make sure everything is deleted?
 league names in delete league view
 if season is already over, don't add stats row to traded player
@@ -193,7 +194,6 @@ AI modules that contain functions which are called to determine actions
     signing free agents
     resigning players
     trades
-      don't be so eager to trade good players for high potential players
     budget items (like from team finances view)
     releasing/buying out players when over limit
 show an option to upload a data file for rosters

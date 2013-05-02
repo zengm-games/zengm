@@ -9,6 +9,7 @@ get rid of handlebars
     ui.update should only be called from bbgmView? then inline it?
   {{ in templates folder
   is there anything i can use to easily replace handlebars compiler? is that even a worthwhile goal?
+    AMD text plugin - this will get rid of the make step, and either load templates dynamically or bundle them with optimizer
     http://code.google.com/p/htmlcompressor/
 reassess ui module. delete stuff like ui.dropdown. move other functions elsewhere?
   what is the difference between util.viewHelpers, views.components, and ui?
@@ -158,6 +159,9 @@ team.rosterAutoSort should automatically set dbChanged, and have an option to no
 BEFORE 3.0.0
 ------------
 
+IE10 support, if posible
+  html5-dataset needed for IE10
+  still doesn't work?
 core.trade refactoring
   validateSavedTids crap should be in trade.js.
   trade.summary stuff should be automatic and stored in tradeStore

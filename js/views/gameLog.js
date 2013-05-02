@@ -2,7 +2,7 @@
  * @name views.gameLog
  * @namespace Game log and box score viewing for all seasons and teams.
  */
-define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, Handlebars, $, ko, komapping, _, components, bbgmView, helpers, viewHelpers) {
+define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, $, ko, komapping, _, components, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     var mapping;

@@ -5,6 +5,8 @@ get rid of handlebars
   dropdown
     http://www.knockmeout.net/2012/05/quick-tip-skip-binding.html
   Handlebars usage in js folder
+    should only be in ui.update, and should pass no arguments
+    ui.update should only be called from bbgmView?
   {{ in templates folder
   is there anything i can use to easily replace handlebars compiler? is that even a worthwhile goal?
     http://code.google.com/p/htmlcompressor/

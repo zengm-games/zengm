@@ -2,7 +2,6 @@ smarter realtime
 ----------------
 
 get rid of handlebars
-  boxScore
   Handlebars usage in js folder
   {{ in templates folder
   util.templateHelpers
@@ -29,7 +28,8 @@ team finances
   contracts should only update on playerMovement
 not urgetnt, but... use knockout for
   components.dropdown
-  gameLog.boxScore
+  gameLog
+    boxScore should be observable, but nothing inside should be except gid
   feasible to use knockout for updating datatable? or kogrid?
   trade - not fully knockoutifieid
     mapping to update summary.teams.trade, userRoster, otherRoster

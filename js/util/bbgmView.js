@@ -13,8 +13,6 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
         container = g.lid !== null ? "league_content" : "content";
         containerEl = document.getElementById(container);
 
-console.log(container)
-console.log(args);
         if (containerEl.dataset.idLoaded !== args.id) {
 //console.log('draw from scratch')
             ui.update({
@@ -82,8 +80,8 @@ console.log(args);
 
                     komapping.fromJS(vars, args.mapping, vm);
                 }
-//console.log(vars);
-//console.log(vm);
+console.log(vars);
+console.log(vm);
 
                 display(args, updateEvents);
 

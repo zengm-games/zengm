@@ -84,7 +84,7 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
      *
      * @memberOf views.gameLog
      * @param {number} gid Integer game ID for the box score (a negative number means no box score).
-     * @param {function(string)} cb Callback whose argument is a string of HTML containing either the box score or a placeholder.
+     * @param {function(Object)} cb Callback whose argument is an object containing the box score data (or a blank object).
      */
     function boxScore(gid, cb) {
         if (gid >= 0) {
@@ -102,24 +102,20 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
                         // This sorts by starters first and minutes second, since .min is always far less than 1000 and gs is either 1 or 0. Then injured players are listed third, since .injury.gamesRemaining is 0 for healthy and -1 for injured.
                         return b.gs * 1000 + b.min + b.injury.gamesRemaining * 1000 > a.gs * 1000 + a.min + a.injury.gamesRemaining * 1000;
                     });
-
-                    game.teams[i].players[4].separator = true;
-                    _.last(game.teams[i].players).separator = true;
                 }
 
                 if (game.overtimes === 1) {
-                    overtime = " (OT)";
+                    game.overtime = " (OT)";
                 } else if (game.overtimes > 1) {
-                    overtime = " (" + game.overtimes + "OT)";
+                    game.overtime = " (" + game.overtimes + "OT)";
                 } else {
-                    overtime = "";
+                    game.overtime = "";
                 }
 
-                content = Handlebars.templates.boxScore({lid: g.lid, game: game, overtime: overtime});
-                cb(content);
+                cb(game);
             };
         } else {
-            cb("<p>Select a game from the menu on the right to view the box score.</p>");
+            cb({});
         }
     }
 
@@ -137,13 +133,20 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
     }
 
     function InitViewModel(inputs) {
-        this.boxScore = {};
+        this.boxScore = {
+            gid: ko.observable(-1)
+        };
         this.gamesList = {
             abbrev: ko.observable(),
             loading: ko.observable(true), // Needed because this isn't really set until updateGamesList, which could be after first render
             season: ko.observable(),
             games: ko.observableArray([])
         };
+
+        // This computed is used so the box score won't be rendered until after it is fully loaded (due to the throttle). Otherwise, the mapping plugin sometimes sets the gid before the rest of the box score.
+        this.showBoxScore = ko.computed(function () {
+            return this.boxScore.gid() >= 0;
+        }, this).extend({throttle: 1});
     }
 
 /* This doesn't work for some reason.
@@ -190,11 +193,9 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
         vars = {};
 
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.gid !== vm.boxScore.gid()) {
-            boxScore(inputs.gid, function (content) {
-                vars.boxScore = {
-                    html: content,
-                    gid: inputs.gid
-                };
+            boxScore(inputs.gid, function (game) {
+                vars.boxScore = game;
+                vars.boxScore.gid = inputs.gid;
 
                 deferred.resolve(vars);
             });

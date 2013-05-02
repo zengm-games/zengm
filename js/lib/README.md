@@ -15,3 +15,6 @@ knockout.mapping.js is changed to depend on lib/knockout, not knockout.
 
 html5-dataset.js is only needed for IE10, which is the only browser to support
 IndexedDB but not dataset.
+
+davis.js includes this patch https://github.com/olivernn/davis.js/pull/74 to
+make it work in IE10.

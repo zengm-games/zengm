@@ -160,8 +160,9 @@ BEFORE 3.0.0
 ------------
 
 IE10 support, if posible
-  html5-dataset needed for IE10
-  still doesn't work?
+  gameSim crashes browser
+  davisjs for knockoutjs links in IE10
+    elem.host comes up blank in originChecks
 core.trade refactoring
   validateSavedTids crap should be in trade.js.
   trade.summary stuff should be automatic and stored in tradeStore

@@ -173,12 +173,12 @@ helpers = helpers || Handlebars.helpers; data = data || {};
 templates['error'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression;
+  var buffer = "", stack1, stack2, functionType="function";
 
 
-  buffer += "<h1>Error</h1>\n\n"
-    + escapeExpression(((stack1 = depth0.error),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\n";
+  buffer += "<h1>Error</h1>\n\n";
+  stack2 = ((stack1 = depth0.error),typeof stack1 === functionType ? stack1.apply(depth0) : stack1);
+  if(stack2 || stack2 === 0) { buffer += stack2; }
   return buffer;
   });
 templates['newLeague'] = template(function (Handlebars,depth0,helpers,partials,data) {

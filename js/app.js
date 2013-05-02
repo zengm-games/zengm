@@ -74,13 +74,7 @@ requirejs(["db", "views", "ui", "lib/davis", "lib/jquery", "util/helpers", "../g
 
     // Can't proceed any further without IndexedDB support
     if (typeof indexedDB === "undefined") { // Some browsers don't like just plain "indexedDB === undefined"
-        var data = {
-            container: "content",
-            template: "browserError",
-            title: "Error",
-            vars: {}
-        };
-        ui.update(data);
+        helpers.error('<p>Your browser is not modern enough to run Basketball GM.</p><p>Currently, <a href="http://www.firefox.com/">Mozilla Firefox</a> and <a href="http://www.google.com/chrome/">Google Chrome</a> work best with Basketball GM.</p>');
         return;
     }
 

@@ -278,7 +278,7 @@ define(["globals", "lib/jquery"], function (g, $) {
         req = {params: {error: errorText}, raw: {cb: cb !== undefined ? cb : undefined}};
 
         lid = location.pathname.split("/")[2]; // lid derived from URL
-        if (/^\d+$/.test(lid)) {
+        if (/^\d+$/.test(lid) && typeof indexedDB !== "undefined") { // Show global error of no IndexedDB
             req.params.lid = parseInt(lid, 10);
             leagueError(req);
         } else {

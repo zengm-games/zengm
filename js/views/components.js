@@ -34,6 +34,7 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
             vm.fields([]);
             for (i = 0; i < fields.length; i++) {
                 fieldId = formId + "-" + fields[i];
+console.log(fieldId)
                 if (fields[i] === "teams") {
                     options = helpers.getTeams(selected[i]);
                     for (j = 0; j < options.length; j++) {

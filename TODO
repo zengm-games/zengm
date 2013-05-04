@@ -4,6 +4,13 @@ smarter realtime
 get rid of handlebars
   dropdown
     http://www.knockmeout.net/2012/05/quick-tip-skip-binding.html
+    can i load by knockout rather than handlebars? knockout template?
+    "selected" param in "options" not needed directly
+    do I need to wrap the form in a div with stopBindings? yep.
+      also use this binding to set the form tag boilerplate? like dropdown: id
+    dropdown should update as any other before function
+    what about extraParam?
+    reduce boilerplate - generate form tag from knockout binding?
   Handlebars usage in js folder
     should only be in ui.update, and should pass no arguments
     ui.update should only be called from bbgmView? then inline it?

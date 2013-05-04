@@ -49,7 +49,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
             };
         };
 
-        // Make sure tid is set and corresponds to pid, if (set;
+        // Make sure tid is set and corresponds to pid, if set
         if (tid === undefined || tid === null || otherPids.length > 0) {
             g.dbl.transaction("players").objectStore("players").get(pid).onsuccess = function (event) {
                 var p;

@@ -145,4 +145,12 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
             });
         }
     };
+
+    ko.bindingHandlers.stopBinding = {
+        init: function () {
+            return {
+                controlsDescendantBindings: true
+            };
+        }
+    };
 });

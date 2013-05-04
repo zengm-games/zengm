@@ -1,5 +1,4 @@
-  <select id="{{fieldId}}" class="{{field}}">
-    {{#options}}
-      <option value="{{key}}"{{#if selected}} selected="selected"{{/if}}>{{val}}</option>
-    {{/options}}
+<!-- ko foreach: fields -->
+  <select data-bind="attr: {id: id, class: name}, options: options, optionsText: 'val', optionsValue: 'key', value: selected">
   </select>
+<!-- /ko -->

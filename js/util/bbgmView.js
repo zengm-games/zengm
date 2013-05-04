@@ -80,8 +80,8 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
 
                     komapping.fromJS(vars, args.mapping, vm);
                 }
-console.log(vars);
-console.log(vm);
+//console.log(vars);
+//console.log(vm);
 
                 display(args, updateEvents);
 

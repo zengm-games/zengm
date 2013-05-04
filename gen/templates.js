@@ -40,14 +40,6 @@ helpers = helpers || Handlebars.helpers; data = data || {};
 
   return "<form id=\"leaders-dropdown\" class=\"form-inline pull-right\"></form>\n\n<h1>League Leaders <span data-bind=\"newWindow: []\"></span></h1>\n\n<p>Only eligible players are shown (<i>e.g.</i> a player shooting 2 for 2 on the season is not eligible for the league lead in FG%).</p>\n\n<p></p>\n<div class=\"row-fluid\" data-bind=\"foreach: categories\">\n  <!-- ko if: newRow -->\n  <p class=\"clearfix\"></p>\n  <!-- /ko -->\n  <div class=\"span4\" data-bind=\"attr: {style: newRow() ? 'margin-left: 0' : ''}\">\n    <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed leaders\">\n    <thead>\n      <tr><th data-bind=\"text: name\"></th><th data-bind=\"text: stat, attr: {title: title}\"></th></tr>\n    </thead>\n    <tbody data-bind=\"foreach: data\">\n      <tr data-bind=\"css: {'alert-info': userTeam}\"><td><span data-bind=\"text: i\"></span>. <span data-bind=\"playerNameLabels: [pid, name, injury, ratings.skills]\"></span>, <a data-bind=\"text: abbrev, attrLeagueUrl: {href: ['roster', abbrev, $root.season]}\"></a></td><td data-bind=\"round: [stat, 1]\"></tr>\n    </tbody>\n    </table>\n  </div>\n</div>";
   });
-templates['browserError'] = template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [2,'>= 1.0.0-rc.3'];
-helpers = helpers || Handlebars.helpers; data = data || {};
-  
-
-
-  return "<h1>Error</h1>\n\n<p>Your browser is not modern enough to run Basketball GM.</p>\n\n<p>Currently, <a href=\"http://www.firefox.com/\">Mozilla Firefox</a> and <a href=\"http://www.google.com/chrome/\">Google Chrome</a> work best with Basketball GM.</p>";
-  });
 templates['playerStats'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
@@ -78,7 +70,7 @@ helpers = helpers || Handlebars.helpers; data = data || {};
   
 
 
-  return "<form id=\"standings-dropdown\" class=\"form-inline pull-right\"></form>\n\n<h1>Standings <span data-bind=\"newWindow: []\"></span></h1>\n\n<!-- ko foreach: confs -->\n  <h2 data-bind=\"text: name\"></h2>\n  <div class=\"row-fluid\">\n    <div class=\"span9\">\n      <!-- ko foreach: divs -->\n          <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\">\n          <thead>\n            <tr><th width=\"100%\" data-bind=\"text: name\"></th><th>W</th><th>L</th><th>Pct</th><th>GB</th><th>Home</th><th>Road</th><th>Div</th><th>Conf</th><th>Streak</th><th>L10</th></tr>\n          </thead>\n          <tbody>\n          <!-- ko foreach: teams -->\n            <tr><td><a data-bind=\"attrLeagueUrl: {href: ['roster', abbrev, $parents[2].season]}, text: region() + ' ' + name()\"></a></td><td data-bind=\"text: won\"></td><td data-bind=\"text: lost\"></td><td data-bind=\"roundWinp: winp\"></td><td data-bind=\"text: gb\"></td><td data-bind=\"text: wonHome() + '-' + lostHome()\"></td><td data-bind=\"text: wonAway() + '-' + lostAway()\"></td><td data-bind=\"text: wonDiv() + '-' + lostDiv()\"></td><td data-bind=\"text: wonConf() + '-' + lostConf()\"></td><td data-bind=\"text: streak\"></td><td data-bind=\"text: lastTen\"></td></tr>\n          <!-- /ko -->\n          </tbody>\n          </table>\n      <!-- /ko -->\n    </div>\n\n    <div class=\"span3\">\n      <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\">\n      <thead>\n        <tr><th width=\"100%\">Team</th><th align=\"right\">GB</th></tr>\n      </thead>\n      <tbody>\n      <!-- ko foreach: teams -->\n        <tr data-bind=\"attr: {class: $index() === 7 ? 'separator' : ''}\"><td><span data-bind=\"text: rank\"></span>. <a data-bind=\"attrLeagueUrl: {href: ['roster', abbrev, $parents[1].season]}, text: region\"></a></td><td align=\"right\" data-bind=\"text: gb\"></td></tr>\n      <!-- /ko -->\n      </tbody>\n      </table>\n    </div>\n  </div>\n<!-- /ko -->";
+  return "<div data-bind=\"stopBinding: true\"><form id=\"standings-dropdown\" class=\"form-inline pull-right\"></form></div>\n\n<h1>Standings <span data-bind=\"newWindow: []\"></span></h1>\n\n<!-- ko foreach: confs -->\n  <h2 data-bind=\"text: name\"></h2>\n  <div class=\"row-fluid\">\n    <div class=\"span9\" data-bind=\"foreach: divs\">\n      <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\">\n        <thead>\n          <tr><th width=\"100%\" data-bind=\"text: name\"></th><th>W</th><th>L</th><th>Pct</th><th>GB</th><th>Home</th><th>Road</th><th>Div</th><th>Conf</th><th>Streak</th><th>L10</th></tr>\n        </thead>\n        <tbody data-bind=\"foreach: teams\">\n          <tr><td><a data-bind=\"attrLeagueUrl: {href: ['roster', abbrev, $parents[2].season]}, text: region() + ' ' + name()\"></a></td><td data-bind=\"text: won\"></td><td data-bind=\"text: lost\"></td><td data-bind=\"roundWinp: winp\"></td><td data-bind=\"text: gb\"></td><td data-bind=\"text: wonHome() + '-' + lostHome()\"></td><td data-bind=\"text: wonAway() + '-' + lostAway()\"></td><td data-bind=\"text: wonDiv() + '-' + lostDiv()\"></td><td data-bind=\"text: wonConf() + '-' + lostConf()\"></td><td data-bind=\"text: streak\"></td><td data-bind=\"text: lastTen\"></td></tr>\n        </tbody>\n      </table>\n    </div>\n\n    <div class=\"span3\">\n      <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"table table-striped table-bordered table-condensed\">\n      <thead>\n        <tr><th width=\"100%\">Team</th><th align=\"right\">GB</th></tr>\n      </thead>\n      <tbody data-bind=\"foreach: teams\">\n        <tr data-bind=\"attr: {class: $index() === 7 ? 'separator' : ''}\"><td><span data-bind=\"text: rank\"></span>. <a data-bind=\"attrLeagueUrl: {href: ['roster', abbrev, $parents[1].season]}, text: region\"></a></td><td align=\"right\" data-bind=\"text: gb\"></td></tr>\n      </tbody>\n      </table>\n    </div>\n  </div>\n<!-- /ko -->";
   });
 templates['playoffs'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
@@ -107,36 +99,10 @@ helpers = helpers || Handlebars.helpers; data = data || {};
 templates['dropdown'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Handlebars.helpers; data = data || {};
-  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this, blockHelperMissing=helpers.blockHelperMissing;
+  
 
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, stack2;
-  buffer += "\n      <option value=\""
-    + escapeExpression(((stack1 = depth0.key),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"";
-  stack2 = helpers['if'].call(depth0, depth0.selected, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += ">"
-    + escapeExpression(((stack1 = depth0.val),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</option>\n    ";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  
-  return " selected=\"selected\"";
-  }
 
-  buffer += "  <select id=\""
-    + escapeExpression(((stack1 = depth0.fieldId),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\" class=\""
-    + escapeExpression(((stack1 = depth0.field),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\">\n    ";
-  stack2 = ((stack1 = ((stack1 = depth0.options),typeof stack1 === functionType ? stack1.apply(depth0) : stack1)),blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data}));
-  if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  </select>";
-  return buffer;
+  return "<!-- ko foreach: fields -->\n  <select data-bind=\"attr: {id: id, class: name}, options: options, optionsText: 'val', optionsValue: 'key', value: selected\">\n  </select>\n<!-- /ko -->";
   });
 templates['manualOverview'] = template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [2,'>= 1.0.0-rc.3'];

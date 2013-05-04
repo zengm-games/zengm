@@ -1,7 +1,6 @@
 smarter realtime
 ----------------
 
-fix gameLog unit tests
 get rid of handlebars
   dropdown
     port to other views

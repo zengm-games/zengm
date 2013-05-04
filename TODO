@@ -1,12 +1,9 @@
 smarter realtime
 ----------------
 
+fix gameLog unit tests
 get rid of handlebars
   dropdown
-    fix unit tests
-      dropdown
-        how to reset vm after each test?
-        how to test for selected value?
     port to other views
     "selected" param in "options" not needed directly
   Handlebars usage in js folder

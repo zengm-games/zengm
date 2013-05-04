@@ -29,12 +29,12 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
 
         formEl = document.getElementById(formId);
         if (formEl.dataset.idLoaded !== formId) {
+console.log("RELOAD");
             // Build initial values
             vm.formId(formId);
             vm.fields([]);
             for (i = 0; i < fields.length; i++) {
                 fieldId = formId + "-" + fields[i];
-console.log(fieldId)
                 if (fields[i] === "teams") {
                     options = helpers.getTeams(selected[i]);
                     for (j = 0; j < options.length; j++) {
@@ -69,7 +69,9 @@ console.log(fieldId)
 
             //formEl.innerHTML = Handlebars.templates.dropdown();
             formEl.dataset.idLoaded = formId;
-            ko.applyBindings(vm, document.getElementById(formId));
+
+            // Only apply binding the first time (this is mainly for unit testing)
+            ko.applyBindings(vm, formEl);
 
             if (fields.length === 1) {
                 ui.dropdown($("#" + formId + "-" + fields[0]));
@@ -81,6 +83,7 @@ console.log(fieldId)
         // See if default value changed
         for (i = 0; i < fields.length; i++) {
             if (selected[i] !== vm.fields()[i].selected()) {
+console.log("UPDATE SELECTED");
                 vm.fields()[i].selected(selected[i]);
             }
         }

@@ -146,11 +146,23 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
         }
     };
 
-    ko.bindingHandlers.stopBinding = {
+    ko.bindingHandlers.dropdown = {
         init: function () {
+            // http://www.knockmeout.net/2012/05/quick-tip-skip-binding.html
             return {
                 controlsDescendantBindings: true
             };
+        },
+        update: function (element, valueAccessor) {
+            var arg = valueAccessor();
+            return ko.bindingHandlers.html.update(element, function () {
+                return '<form id="' + arg + '-dropdown" class="form-inline pull-right">' +
+                       '<!-- ko foreach: fields -->' +
+                         '<select data-bind="attr: {id: id, class: name}, options: options, optionsText: \'val\', optionsValue: \'key\', value: selected">' +
+                         '</select>' +
+                       '<!-- /ko -->' +
+                       '</form>';
+            });
         }
     };
 });

@@ -5,6 +5,13 @@
 define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout", "util/helpers"], function (g, ui, Handlebars, $, ko, helpers) {
     "use strict";
 
+    var vm;
+
+    vm = {
+        formId: ko.observable(),
+        fields: ko.observable([])
+    };
+
     /**
      * Creates or updates a dropdown form.
      *
@@ -17,7 +24,7 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
      * @param {Array.<string>} updateEvents Update events describing what has changed in this reload.
      * @param {?string=} extraParam Any extra parameter to append to the URL, like /l/1/.../ATL/2014/extraParam. Default is to append nothing.
      */
-    function dropdown(formId, fields, selected, updateEvents, vm, extraParam) {
+    function dropdown(formId, fields, selected, updateEvents, extraParam) {
         var content, currentSelected, fieldId, formEl, i, j, leagueContentEl, newOption, newSelect, options, selectEl;
 
         formEl = document.getElementById(formId);
@@ -27,14 +34,10 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
             formEl = document.getElementById(formId);
         }*/
 
-        if (formEl.dataset.idLoaded !== formId || vm.dropdown === undefined) {
+        if (formEl.dataset.idLoaded !== formId) {
             // Build initial values
-            vm.dropdown = {
-                formId: ko.observable(),
-                fields: ko.observable([])
-            };
-            vm.dropdown.formId(formId);
-            vm.dropdown.fields([]);
+            vm.formId(formId);
+            vm.fields([]);
             for (i = 0; i < fields.length; i++) {
                 fieldId = formId + "-" + fields[i];
                 if (fields[i] === "teams") {
@@ -61,18 +64,18 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
                         }
                     ];
                 }
-                vm.dropdown.fields().push({
+                vm.fields().push({
                     id: fieldId,
                     name: fields[i],
                     options: ko.observableArray(options),
                     selected: ko.observable(selected[i])
                 });
             }
-console.log(vm.dropdown);
+console.log(vm);
 
-            formEl.innerHTML = Handlebars.templates.dropdown();
+            //formEl.innerHTML = Handlebars.templates.dropdown();
             formEl.dataset.idLoaded = formId;
-            ko.applyBindings(vm.dropdown, document.getElementById(formId));
+            ko.applyBindings(vm, document.getElementById(formId));
 
             if (fields.length === 1) {
                 ui.dropdown($("#" + formId + "-" + fields[0]));
@@ -134,10 +137,10 @@ console.log(vm.dropdown);
         }
 
         // Check if any field needs to be updated
-        for (i = 0; i < vm.dropdown.fields().length; i++) {
-            if (vm.dropdown.fields()[i].name === "seasons") {
+        for (i = 0; i < vm.fields().length; i++) {
+            if (vm.fields()[i].name === "seasons") {
                 if (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON) {
-                    vm.dropdown.fields()[i].options.push({
+                    vm.fields()[i].options.push({
                         val: g.season + " season",
                         key: g.season
                     });

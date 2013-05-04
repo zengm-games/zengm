@@ -2,10 +2,12 @@ smarter realtime
 ----------------
 
 get rid of handlebars
+  {{ in error.handlebars
+    how to bbgmViewify?
   Handlebars usage in js folder
-    should only be in ui.update, and should pass no arguments
-    ui.update should only be called from bbgmView? then inline it?
-  {{ in templates folder
+    should only be in ui.update - DONE
+    should pass no arguments
+      ui.update should only be called from bbgmView? then inline it?
   is there anything i can use to easily replace handlebars compiler? is that even a worthwhile goal?
     AMD text plugin - this will get rid of the make step, and either load templates dynamically or bundle them with optimizer
     http://code.google.com/p/htmlcompressor/
@@ -151,7 +153,9 @@ notifications (and log) from top right to display log of key events
   trades
   free agent signings
   if a player on your team refuses to resign, there should be appropriate handling of this message
-  helpers.error in core.season
+  helpers.error should be full screen?
+    full screen: 404, IndexedDB error, all errorMessage ones, core.season resigning
+    modal: core.season other, views.negotiation
 team.rosterAutoSort should automatically set dbChanged, and have an option to not if that's important
 
 BEFORE 3.0.0

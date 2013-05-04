@@ -2,7 +2,7 @@
  * @name util.helpers
  * @namespace Various utility functions that don't have anywhere else to go.
  */
-define(["globals", "lib/jquery"], function (g, $) {
+define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
     "use strict";
 
     /**
@@ -230,13 +230,13 @@ define(["globals", "lib/jquery"], function (g, $) {
 
         viewHelpers.beforeNonLeague();
 
-        data = {
+        ui.update({
             container: "content",
-            template: "error",
-            title: "Error",
-            vars: {error: req.params.error}
-        };
-        ui.update(data, req.raw.cb);
+            template: "error"
+        });
+        ko.applyBindings({error: req.params.error}, document.getElementById("content"));
+        ui.title("Error");
+        req.raw.cb();
     }
 
     /**
@@ -252,16 +252,13 @@ define(["globals", "lib/jquery"], function (g, $) {
         viewHelpers = require("util/viewHelpers");
 
         viewHelpers.beforeLeague(req, function () {
-            var data;
-
-            data = {
+            ui.update({
                 container: "league_content",
-                template: "error",
-                title: "Error",
-                vars: {error: req.params.error}
-            };
-
-            ui.update(data, req.raw.cb);
+                template: "error"
+            });
+            ko.applyBindings({error: req.params.error}, document.getElementById("league_content"));
+            ui.title("Error");
+            req.raw.cb();
         });
     }
 
@@ -275,7 +272,7 @@ define(["globals", "lib/jquery"], function (g, $) {
     function error(errorText, cb) {
         var lid, req;
 
-        req = {params: {error: errorText}, raw: {cb: cb !== undefined ? cb : undefined}};
+        req = {params: {error: errorText}, raw: {cb: cb !== undefined ? cb : function () {}}};
 
         lid = location.pathname.split("/")[2]; // lid derived from URL
         if (/^\d+$/.test(lid) && typeof indexedDB !== "undefined") { // Show global error of no IndexedDB
@@ -420,7 +417,6 @@ define(["globals", "lib/jquery"], function (g, $) {
      * @return {string} Formatted currency string.
      */
     function formatCurrency(amount, append, precision) {
-        // Can't check for undefined because Handlebars does weird stuff
         append = typeof append === "string" ? append : "";
         precision = typeof precision === "number" || typeof precision === "string" ? precision : 2;
 

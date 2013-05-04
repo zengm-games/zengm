@@ -2,12 +2,7 @@ smarter realtime
 ----------------
 
 get rid of handlebars
-  {{ in error.handlebars
-    how to bbgmViewify?
   Handlebars usage in js folder
-    should only be in ui.update - DONE
-    should pass no arguments
-      ui.update should only be called from bbgmView? then inline it?
   is there anything i can use to easily replace handlebars compiler? is that even a worthwhile goal?
     AMD text plugin - this will get rid of the make step, and either load templates dynamically or bundle them with optimizer
     http://code.google.com/p/htmlcompressor/

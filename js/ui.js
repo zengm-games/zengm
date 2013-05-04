@@ -121,29 +121,19 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "l
     }
 
     /**
-     * Replaces the displayed view.
+     * Replaces the displayed HTML content.
      *
-     * This updates the content of the page (either #content if data.inLeague is false or #league_content otherwise), sets the title (and appends the league number to it when appropriate), and injects g.lid as lid to the template.
+     * After this is called, ko.applyBindings probably needs to be called to hook up Knockout.
      *
      * @memberOf ui
-     * @param  {Object} data An object with several properties: "title" the title of the page; "vars" the variables to be passed to the handlebars template; "template" the name of the handlebars template; "isLeague" a boolean saying whether this is within a league or not.
-     * @param {function()=} cb Optional callback
+     * @param  {Object} data An object with several properties: "template" the name of the Handlebars template; "container" is the id of the container div (probably content or league_content).
      */
-    function update(data, cb) {
+    function update(data) {
         var containerEl, contentEl, leaguePage, rendered, result;
 
-        if (!data.vars) {
-            data.vars = {};
-        }
-
-        data.vars.lid = g.lid;
-        rendered = Handlebars.templates[data.template](data.vars);
+        rendered = Handlebars.templates[data.template]();
         containerEl = document.getElementById(data.container);
         containerEl.innerHTML = rendered;
-
-        if (data.hasOwnProperty("title")) {
-            title(data.title);
-        }
 
         result = parseLeagueUrl(document.URL);
         leaguePage = result[2];
@@ -157,10 +147,6 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "l
             }
         }
         containerEl.dataset.idLoaded = data.template;
-
-        if (cb !== undefined) {
-            cb();
-        }
     }
 
     /**

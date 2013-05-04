@@ -1,4 +1,4 @@
-<form id="game-log-dropdown" class="form-inline pull-right"></form>
+<div data-bind="dropdown: 'game-log'"></div>
 
 <h1>Game Log <span data-bind="newWindow: []"></span></h1>
 <p>More: <a data-bind="attrLeagueUrl: {href: ['roster', abbrev, season]}">Roster</a> | <a data-bind="attrLeagueUrl: {href: ['finances', abbrev]}">Finances</a></p>
@@ -53,7 +53,7 @@
         </table>
       <!-- /ko -->
     <!-- /ko -->
-    <p data-bind="visible: !showBoxScore() && !gamesList.loading()">Select a game from the menu on the right to view a box score.</p>
+    <p data-bind="visible: !showBoxScore()">Select a game from the menu on the right to view a box score.</p>
   </div>
 
   <div class="span3" id="game-log-list">

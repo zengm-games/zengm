@@ -3,8 +3,6 @@ smarter realtime
 
 get rid of handlebars
   dropdown
-    works with gameLog?
-      what about extraParam?
     port to other views
     "selected" param in "options" not needed directly
   Handlebars usage in js folder

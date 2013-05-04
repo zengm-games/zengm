@@ -2,9 +2,6 @@ smarter realtime
 ----------------
 
 get rid of handlebars
-  dropdown
-    port to other views
-    "selected" param in "options" not needed directly
   Handlebars usage in js folder
     should only be in ui.update, and should pass no arguments
     ui.update should only be called from bbgmView? then inline it?

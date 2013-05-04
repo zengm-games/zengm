@@ -2,7 +2,7 @@
  * @name views.components
  * @namespace Small components/widgets, such as drop down menus to switch between seasons/teams.
  */
-define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout", "util/helpers"], function (g, ui, Handlebars, $, ko, helpers) {
+define(["globals", "ui", "lib/jquery", "lib/knockout", "util/helpers"], function (g, ui, $, ko, helpers) {
     "use strict";
 
     var vm;
@@ -29,20 +29,19 @@ define(["globals", "ui", "lib/handlebars.runtime", "lib/jquery", "lib/knockout",
 
         formEl = document.getElementById(formId);
         if (formEl.dataset.idLoaded !== formId) {
-console.log("RELOAD");
             // Build initial values
             vm.formId(formId);
             vm.fields([]);
             for (i = 0; i < fields.length; i++) {
                 fieldId = formId + "-" + fields[i];
                 if (fields[i] === "teams") {
-                    options = helpers.getTeams(selected[i]);
+                    options = helpers.getTeams();
                     for (j = 0; j < options.length; j++) {
                         options[j].key = options[j].abbrev;
                         options[j].val = options[j].region + " " + options[j].name;
                     }
                 } else if (fields[i] === "seasons") {
-                    options = helpers.getSeasons(selected[i]);
+                    options = helpers.getSeasons();
                     for (j = 0; j < options.length; j++) {
                         options[j].key = options[j].season;
                         options[j].val = options[j].season + " season";
@@ -67,7 +66,6 @@ console.log("RELOAD");
                 });
             }
 
-            //formEl.innerHTML = Handlebars.templates.dropdown();
             formEl.dataset.idLoaded = formId;
 
             // Only apply binding the first time (this is mainly for unit testing)
@@ -83,7 +81,6 @@ console.log("RELOAD");
         // See if default value changed
         for (i = 0; i < fields.length; i++) {
             if (selected[i] !== vm.fields()[i].selected()) {
-console.log("UPDATE SELECTED");
                 vm.fields()[i].selected(selected[i]);
             }
         }

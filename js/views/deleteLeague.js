@@ -13,7 +13,6 @@ define(["db", "globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "ut
 
     function post(req) {
         league.remove(parseInt(req.params.lid, 10), function () {
-console.log("DELETed")
             ui.realtimeUpdate([], "/");
         });
     }
@@ -37,22 +36,23 @@ console.log("DELETed")
                     numSeasons = event.target.result.seasons.length;
 
                     transaction.objectStore("players").count().onsuccess = function (event) {
-                        var data, numPlayers;
+                        var numPlayers;
 
                         numPlayers = event.target.result;
 
-                        data = {
-                            container: "content",
-                            template: "deleteLeague",
-                            title: "Dashboard",
-                            vars: {}
+                        g.dbm.transaction("leagues").objectStore("leagues").get(inputs.lid).onsuccess = function (event) {
+                            var l;
+
+                            l = event.target.result;
+
+                            deferred.resolve({
+                                lid: inputs.lid,
+                                name: l.name,
+                                numGames: numGames,
+                                numPlayers: numPlayers,
+                                numSeasons: numSeasons
+                            });
                         };
-                        deferred.resolve({
-                            lid: inputs.lid,
-                            numGames: numGames,
-                            numPlayers: numPlayers,
-                            numSeasons: numSeasons
-                        });
                     };
                 };
             };

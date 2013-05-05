@@ -3,9 +3,6 @@ var should;
 requirejs.config({
     baseUrl: "/js",
     shim: {
-        "../gen/templates": {
-            deps: ["lib/handlebars.runtime", "util/templateHelpers"]
-        },
         "lib/davis": {
             deps: ["lib/jquery"],
             exports: "Davis"
@@ -13,9 +10,6 @@ requirejs.config({
         "lib/faces": {
             deps: ["lib/raphael"],
             exports: "faces"
-        },
-        "lib/handlebars.runtime": {
-            exports: "Handlebars"
         },
         "lib/IndexedDB-getAll-shim": {},
         "lib/jquery": {
@@ -30,7 +24,7 @@ requirejs.config({
     }
 });
 
-requirejs(["ui", "views", "lib/chai", "lib/jquery", "../gen/templates", "lib/IndexedDB-getAll-shim", "api"], function (ui, views, chai, $) {
+requirejs(["ui", "views", "lib/chai", "lib/jquery", "lib/IndexedDB-getAll-shim", "api"], function (ui, views, chai, $) {
     "use strict";
 
     mocha.setup({

@@ -6,15 +6,10 @@ get rid of handlebars
   is there anything i can use to easily replace handlebars compiler? is that even a worthwhile goal?
     AMD text plugin - this will get rid of the make step, and either load templates dynamically or bundle them with optimizer
       have a templates.js like views.js to manage ugly loading of everything
-        rename to .html
         test with optimizer
         when done
+          fix unit tests
           update HACKING
-          simplify ui.update code
-          delete Handlebars
-          delete handlebars
-          delete gen/templates.js
-          delete make build-templates
     http://code.google.com/p/htmlcompressor/
 reassess ui module. delete stuff like ui.dropdown. move other functions elsewhere?
   what is the difference between util.viewHelpers, views.components, and ui?

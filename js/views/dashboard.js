@@ -21,7 +21,6 @@ define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/helpers", "util/vi
                 leagues[i].teamName = teams[leagues[i].tid].name;
                 delete leagues[i].tid;
             }
-console.log(leagues);
 
             deferred.resolve({
                 leagues: leagues

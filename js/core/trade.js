@@ -77,6 +77,30 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
         };
     }
 
+    function getValues(playerStore, pids, tids, cb) {
+        var done, i, values;
+
+        done = 0;
+        values = [0, 0];  // "Value" of the players offered by each team
+
+        for (i = 0; i < 2; i++) {
+            (function (i) {
+                playerStore.index("tid").getAll(tids[i]).onsuccess = function (event) {
+                    var players;
+
+                    players = db.getPlayers(event.target.result, g.season, tids[i], ["pid", "contract", "age"], [], ["ovr", "pot"]);
+                    players = _.filter(players, function (player) { return pids[i].indexOf(player.pid) >= 0; });
+                    values[i] = _.reduce(players, function (memo, player) { return memo + player.ratings.pot / 10 + player.ratings.ovr / 20 - player.age / 10 - player.contract.amount / 15; }, 0);
+
+                    done += 1;
+                    if (done === 2) {
+                        cb(values);
+                    }
+                };
+            }(i));
+        }
+    }
+
     /**
      * Validates that players are allowed to be traded and updates the database.
      * 
@@ -92,6 +116,10 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
             var playerStore;
 
             playerStore = g.dbl.transaction("players").objectStore("players");
+
+            getValues(playerStore, [userPids, otherPids], [g.userTid, otherTid], function (values) {
+                console.log(values);
+            });
 
             playerStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
                 var i, j, players, userPidsGood;
@@ -321,7 +349,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                 // that warning will already be pushed to the user so there is no need to
                 // return a redundant message here.
                 summary(otherTid, userPids, otherPids, function (s) {
-                    var done, i, outcome, playerStore, tx, value;
+                    var i, outcome, playerStore, tx;
 
                     if (s.warning) {
                         cb(false, null);
@@ -333,52 +361,39 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                     tx = g.dbl.transaction("players", "readwrite");
                     playerStore = tx.objectStore("players");
 
-                    done = 0;
-                    value = [0, 0];  // "Value" of the players offered by each team
-                    for (i = 0; i < 2; i++) {
-                        (function (i) {
-                            playerStore.index("tid").getAll(tids[i]).onsuccess = function (event) {
-                                var j, players;
+                    getValues(playerStore, pids, tids, function (values) {
+                        var j;
 
-                                players = db.getPlayers(event.target.result, g.season, tids[i], ["pid", "contract", "age"], [], ["ovr", "pot"]);
-                                players = _.filter(players, function (player) { return pids[i].indexOf(player.pid) >= 0; });
-                                value[i] = _.reduce(players, function (memo, player) { return memo + player.ratings.pot / 10 + player.ratings.ovr / 20 - player.age / 10 - player.contract.amount / 15; }, 0);
+                        if (values[0] > values[1] * 0.9) {
+                            // Trade players
+                            outcome = "accepted";
+                            for (j = 0; j < 2; j++) {
+                                (function (j) {
+                                    var k, l;
 
-                                done += 1;
-                                if (done === 2) {
-                                    if (value[0] > value[1] * 0.9) {
-                                        // Trade players
-                                        outcome = "accepted";
-                                        for (j = 0; j < 2; j++) {
-                                            (function (j) {
-                                                var k, l;
-
-                                                if (j === 0) {
-                                                    k = 1;
-                                                } else if (j === 1) {
-                                                    k = 0;
-                                                }
-
-                                                for (l = 0; l < pids[j].length; l++) {
-                                                    (function (l) {
-                                                        playerStore.openCursor(pids[j][l]).onsuccess = function (event) {
-                                                            var cursor, p;
-
-                                                            cursor = event.target.result;
-                                                            p = cursor.value;
-                                                            p.tid = tids[k];
-                                                            p = player.addStatsRow(p);
-                                                            cursor.update(p);
-                                                        };
-                                                    }(l));
-                                                }
-                                            }(j));
-                                        }
+                                    if (j === 0) {
+                                        k = 1;
+                                    } else if (j === 1) {
+                                        k = 0;
                                     }
-                                }
-                            };
-                        }(i));
-                    }
+
+                                    for (l = 0; l < pids[j].length; l++) {
+                                        (function (l) {
+                                            playerStore.openCursor(pids[j][l]).onsuccess = function (event) {
+                                                var cursor, p;
+
+                                                cursor = event.target.result;
+                                                p = cursor.value;
+                                                p.tid = tids[k];
+                                                p = player.addStatsRow(p);
+                                                cursor.update(p);
+                                            };
+                                        }(l));
+                                    }
+                                }(j));
+                            }
+                        }
+                    });
 
                     tx.oncomplete = function () {
                         if (outcome === "accepted") {

@@ -8,7 +8,7 @@ after winning title - "We need to make some real noise in the playoffs. Soon."
 sub-views like shot locations should retain league menu highlightin
   highlightId param for bbgmView, default to id
 core.freeAgents should be core.freeAgent
-after last resigning negotiation, switch to next phase
+after last resigning negotiation, switch to next phase?
 if no stats/ratings are requested, db.getPlayers should return no stats/players properties on object
 check effects of extreme ticket prices
 show old contracts on old roster view

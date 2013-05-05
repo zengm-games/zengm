@@ -14,6 +14,7 @@ get rid of handlebars
           delete Handlebars
           delete handlebars
           delete gen/templates.js
+          delete make build-templates
     http://code.google.com/p/htmlcompressor/
 reassess ui module. delete stuff like ui.dropdown. move other functions elsewhere?
   what is the difference between util.viewHelpers, views.components, and ui?

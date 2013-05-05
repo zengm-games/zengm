@@ -155,7 +155,6 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
         },
         update: function (element, valueAccessor) {
             var arg = valueAccessor();
-console.log(arg + '-dropdown')
             return ko.bindingHandlers.html.update(element, function () {
                 return '<form id="' + arg + '-dropdown" class="form-inline pull-right">' +
                        '<!-- ko foreach: fields -->' +

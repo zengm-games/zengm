@@ -1,16 +1,6 @@
 smarter realtime
 ----------------
 
-get rid of handlebars
-  Handlebars usage in js folder
-  is there anything i can use to easily replace handlebars compiler? is that even a worthwhile goal?
-    AMD text plugin - this will get rid of the make step, and either load templates dynamically or bundle them with optimizer
-      have a templates.js like views.js to manage ugly loading of everything
-        test with optimizer
-        when done
-          fix unit tests
-          update HACKING
-    http://code.google.com/p/htmlcompressor/
 reassess ui module. delete stuff like ui.dropdown. move other functions elsewhere?
   what is the difference between util.viewHelpers, views.components, and ui?
 reassess api module
@@ -361,6 +351,7 @@ bbgmView
   use req.redirect from POST to manage history optimally
   make it less tied to BBGM specifically. shouldn't depend on BBGM-specific modules like g, ui, and util/viewHelpers
 player development should depend on playing time
+http://code.google.com/p/htmlcompressor/ or something similar
 
 ---
 

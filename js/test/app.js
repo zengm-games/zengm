@@ -24,7 +24,7 @@ requirejs.config({
     }
 });
 
-requirejs(["ui", "views", "lib/chai", "lib/jquery", "lib/IndexedDB-getAll-shim", "api"], function (ui, views, chai, $) {
+requirejs(["ui", "views", "lib/chai", "lib/jquery", "lib/IndexedDB-getAll-shim", "util/templateHelpers", "api"], function (ui, views, chai, $) {
     "use strict";
 
     mocha.setup({

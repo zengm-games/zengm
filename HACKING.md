@@ -20,15 +20,14 @@ want to contribute.
 
 # RequireJS Optimizer
 
-Basketball GM uses the RequireJS optimizer to combine JavaScript files into one
-minified file. Installation instructions can be found here
+Basketball GM uses the RequireJS optimizer to combine JavaScript files and
+templates into one minified file. Installation instructions can be found here
 http://requirejs.org/docs/optimization.html#download (you should install through
 npm). Then, just run:
 
 	  make build-requirejs
 
-(Running  just `make` will run the RequireJS optimizer, compile templates and
-minify CSS.)
+(Running  just `make` will run the RequireJS optimizer and minify CSS.)
 
 Alternatively, to use the unminified uncombined JavaScript files, just change
 
@@ -38,21 +37,17 @@ to
 
 	  <script data-main="/js/app.js" src="/js/lib/require.js"></script>
 
-in index.html. This is convenient for development.
+in index.html. This is convenient for development, since any change to a .js or
+.html file will immediately be reflected after a page reload.
 
 
 
-# Handlebars templates
+# Templates
 
-Any change made to one of the templates will not be processed until it is
-compiled, as described here <http://handlebarsjs.com/precompilation.html>.
-After installing the Handlebars precompiler, run this command from this
-folder to update the templates:
+Templates use Knockout for realtime updates.
 
-    make build-templates
-
-(Running  just `make` will run the RequireJS optimizer, compile templates and
-minify CSS.)
+As noted above, templates are compiled by the RequireJS Optimizer. If you want
+to add a new template, you have to add a reference to it in js/templates.js.
 
 
 
@@ -65,8 +60,7 @@ run:
 
     make build-css
 
-(Running  just `make` will run the RequireJS optimizer, compile templates and
-minify CSS.)
+(Running  just `make` will run the RequireJS optimizer and minify CSS.)
 
 Alternatively, you can use the unminified CSS files by switching a couple
 comments in index.html.
@@ -90,21 +84,6 @@ Douglas Crockford is always right. Well, usually. See `make lint` for details.
 
 Documentation of functions is based on
 https://developers.google.com/closure/compiler/docs/js-for-compiler
-
-
-
-# Views
-
-There is currently a rewrite of the views in progress to use Knockout for more
-granular realtime updates. All the views in the js/views folder are rewritten
-(or in progress) and the views in js/views.js are out of date and pending
-rewrites. Things are still in flux, but the general structure is defined in
-js/util/bbgmView.js (the `init` function is well documented).
-
-Eventually these should all be fully optimized to be as efficient as possible
-(only hit the database when needed, and only update the DOM when needed) and
-there should be unit tests to confirm the UI is functioniong properly. As I
-write this, only `gameLog` is fully complete.
 
 
 

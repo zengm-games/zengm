@@ -12,15 +12,8 @@ dashboard
     if so, will need to define structure earlier
   move functions to module-level scope?
 team finances
-  rounded budget amounts are not updated
-    they are saved correctly, but knockout doesn't seem to update the UI http://stackoverflow.com/questions/16006558/updating-an-input-whose-value-attribute-is-bound-to-an-observable-after-editing
-      or http://knockoutjs.com/documentation/extenders.html live example 1
-  smarter updating of player salaries table
-  teamFinances updateEvent for when the form is changed (or, i guess, if the AI team does it, but that doesn't happen yet)
-  move some stuff to loadAfter?
-  confirm events aren't going crazy
-  contracts should only update on playerMovement
-not urgetnt, but... use knockout for
+  smarter updating of player salaries table: contracts should only update on playerMovement
+not urgent, but... use knockout for
   components.dropdown
   gameLog
     boxScore should be observable, but nothing inside should be except gid

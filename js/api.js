@@ -69,11 +69,7 @@ define(["db", "globals", "views", "ui", "core/draft", "core/finances", "core/gam
         $("#play-menu .dropdown-toggle").dropdown("toggle");
     }
 
-    function playMenuHandlers() {
-    }
-
     return {
-        play: play,
-        playMenuHandlers: playMenuHandlers
+        play: play
     };
 });

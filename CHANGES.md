@@ -7,6 +7,7 @@ This is a list of only the major changes in each version.
 ### Done so far
 
 - Draft lottery, based on NBA rules
+- Made it harder to fleece the AI in trades
 
 ### Still in progress
 

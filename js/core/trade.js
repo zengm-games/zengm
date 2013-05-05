@@ -90,7 +90,31 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
 
                     players = db.getPlayers(event.target.result, g.season, tids[i], ["pid", "contract", "age"], [], ["ovr", "pot"]);
                     players = _.filter(players, function (player) { return pids[i].indexOf(player.pid) >= 0; });
-                    values[i] = _.reduce(players, function (memo, player) { return memo + player.ratings.pot / 10 + player.ratings.ovr / 20 - player.age / 10 - player.contract.amount / 15; }, 0);
+
+                    // Exponential dependence on ratings/age/contract
+                    values[i] = _.reduce(players, function (memo, player) {
+                        var factors, value;
+
+                        value = 0;
+
+                        factors = {
+                            pot: player.ratings.pot / 20,
+                            ovr: player.ratings.ovr / 10,
+                            age: -player.age / 10,
+                            contract: -player.contract.amount / 15
+                        };
+
+                        factors = {
+                            pot: 0.15 * player.ratings.pot * (player.ratings.pot - player.ratings.ovr) / 100 * (1 - 1 / (1 + Math.pow(2.7183, -player.age + 22.5))),
+                            ovr: 0.2 * player.ratings.ovr,
+                            age: 0.1 * (player.age - 18),
+                            contract: (20 - player.contract.amount) / 15 + 0.1
+                        };
+                        return memo + Math.pow(2, factors.pot + factors.ovr - factors.age) * factors.contract;
+                    }, 0);
+
+                    // Normalize for number of players, since 1 really good player is much better than multiple mediocre ones
+//                    values[i] *= Math.pow(0.9, players.length);
 
                     done += 1;
                     if (done === 2) {

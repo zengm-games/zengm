@@ -2,7 +2,7 @@
  * @name ui
  * @namespace Anything that directly updates the UI.
  */
-define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "lib/knockout", "util/lock"], function (db, g, Davis, Handlebars, $, ko, lock) {
+define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout", "util/lock"], function (db, g, templates, Davis, $, ko, lock) {
     "use strict";
 
     // Things to do on initial page load
@@ -126,12 +126,12 @@ define(["db", "globals", "lib/davis", "lib/handlebars.runtime", "lib/jquery", "l
      * After this is called, ko.applyBindings probably needs to be called to hook up Knockout.
      *
      * @memberOf ui
-     * @param  {Object} data An object with several properties: "template" the name of the Handlebars template; "container" is the id of the container div (probably content or league_content).
+     * @param  {Object} data An object with several properties: "template" the name of the HTML template file in the templates folder; "container" is the id of the container div (probably content or league_content).
      */
     function update(data) {
         var containerEl, contentEl, leaguePage, rendered, result;
 
-        rendered = Handlebars.templates[data.template]();
+        rendered = templates[data.template];
         containerEl = document.getElementById(data.container);
         containerEl.innerHTML = rendered;
 

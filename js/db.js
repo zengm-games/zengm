@@ -457,28 +457,6 @@ define(["globals", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"],
     }
 
     /**
-     * Add a new player to the database or update an existing player.
-     *
-     * There could be race conditions here if anything calling this relies on the player actually being added/updated in the database before the callback fires, as that is not guaranteed.
-     * 
-     * @memberOf db
-     * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on players, readwrite; if null is passed, then a new transaction will be used.
-     * @param {Object} p Player object.
-     * @param {function()=} cb Optional callback.
-     */
-    function putPlayer(ot, p, cb) {
-        var playerStore;
-
-        playerStore = getObjectStore(ot, "players", "players");
-
-        playerStore.put(p);
-
-        if (cb !== undefined) {
-            cb();
-        }
-    }
-
-    /**
      * Gets all the contracts a team owes.
      * 
      * This includes contracts for players who have been released but are still owed money.
@@ -1003,7 +981,6 @@ define(["globals", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"],
         connectMeta: connectMeta,
         connectLeague: connectLeague,
         getObjectStore: getObjectStore,
-        putPlayer: putPlayer,
         getTeam: getTeam,
         getTeams: getTeams,
         getPayroll: getPayroll,

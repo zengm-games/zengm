@@ -408,7 +408,9 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
 
         p.tid = g.PLAYER.FREE_AGENT;
 
-        db.putPlayer(ot, p, cb);
+        db.getObjectStore(ot, "players", "players").put(p);
+
+        cb();
     }
 
     /**

@@ -78,7 +78,7 @@ define(["db", "globals", "core/finances", "core/player", "core/season", "util/he
                 p = player.generate(g.PLAYER.UNDRAFTED, 19, profile, baseRating, pot, draftYear, false, scoutingRank);
                 p = player.develop(p, agingYears, true);
 
-                db.putPlayer(playerStore, p);
+                playerStore.put(p);
             }
 
             tx.oncomplete = cb;

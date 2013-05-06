@@ -129,7 +129,8 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                                     if (p.tid === g.PLAYER.FREE_AGENT) {
                                         player.addToFreeAgents(playerStore, p, null, baseMoods, cbAfterEachPlayer);
                                     } else {
-                                        db.putPlayer(playerStore, p, cbAfterEachPlayer);
+                                        playerStore.put(p);
+                                        cbAfterEachPlayer();
                                     }
                                 }
                             });
@@ -170,7 +171,8 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                                     if (t2 === g.PLAYER.FREE_AGENT) {
                                         player.addToFreeAgents(playerStore, p, null, baseMoods, cbAfterEachPlayer);
                                     } else {
-                                        db.putPlayer(playerStore, p, cbAfterEachPlayer);
+                                        playerStore.put(p);
+                                        cbAfterEachPlayer();
                                     }
                                 }
                             }

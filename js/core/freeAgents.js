@@ -69,12 +69,11 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                                     p.tid = tid;
                                     p = player.addStatsRow(p);
                                     p = player.setContract(p, p.contract, true);
-                                    db.putPlayer(transaction, p, function () {
-                                        team.rosterAutoSort(transaction, tid, function () {
-                                            if (ti <= tids.length) {
-                                                signTeam(ti + 1);
-                                            }
-                                        });
+                                    transaction.objectStore("players").put(p);
+                                    team.rosterAutoSort(transaction, tid, function () {
+                                        if (ti <= tids.length) {
+                                            signTeam(ti + 1);
+                                        }
                                     });
                                     numPlayersOnRoster += 1;
                                     payroll += p.contract.amount;

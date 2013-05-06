@@ -2,7 +2,7 @@
  * @name views.playoffs
  * @namespace Show current or archived playoffs, or projected matchups for an in-progress season.
  */
-define(["db", "globals", "ui", "core/draft", "lib/jquery", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (db, g, ui, draft, $, bbgmView, helpers, viewHelpers, components) {
+define(["globals", "ui", "core/draft", "core/player", "lib/jquery", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (g, ui, draft, player, $, bbgmView, helpers, viewHelpers, components) {
     "use strict";
 
     function updateDraftTables(pids) {
@@ -85,21 +85,27 @@ define(["db", "globals", "ui", "core/draft", "lib/jquery", "util/bbgmView", "uti
 
         playerStore = g.dbl.transaction("players").objectStore("players");
         playerStore.index("tid").getAll(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
-            var attributes, ratings, stats, undrafted;
+            var undrafted;
 
-            attributes = ["pid", "name", "pos", "age", "injury"];
-            ratings = ["ovr", "pot", "skills"];
-            stats = [];
-            undrafted = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings, {showNoStats: true, fuzz: true});
+            undrafted = player.filter(event.target.result, {
+                attrs: ["pid", "name", "pos", "age", "injury"],
+                ratings: ["ovr", "pot", "skills"],
+                season: g.season,
+                showRookies: true,
+                fuzz: true
+            });
             undrafted.sort(function (a, b) { return (b.ratings.ovr + 2 * b.ratings.pot) - (a.ratings.ovr + 2 * a.ratings.pot); });
 
             playerStore.index("draft.year").getAll(g.season).onsuccess = function (event) {
-                var attributes, drafted, i, players, ratings, stats, started;
+                var drafted, i, players, started;
 
-                attributes = ["pid", "tid", "name", "pos", "age", "draft", "injury"];
-                ratings = ["ovr", "pot", "skills"];
-                stats = [];
-                players = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings, {showNoStats: true, fuzz: true});
+                players = player.filter(event.target.result, {
+                    attrs: ["pid", "tid", "name", "pos", "age", "draft", "injury"],
+                    ratings: ["ovr", "pot", "skills"],
+                    season: g.season,
+                    showRookies: true,
+                    fuzz: true
+                });
 
                 drafted = [];
                 for (i = 0; i < players.length; i++) {

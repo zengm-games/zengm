@@ -2,7 +2,7 @@
  * @name views.negotiationList
  * @namespace List of resigning negotiations in progress.
  */
-define(["db", "globals", "ui", "core/freeAgents", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, freeAgents, $, ko, _, bbgmView, helpers, viewHelpers) {
+define(["globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, freeAgents, player, $, ko, _, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     var mapping;
@@ -24,19 +24,18 @@ define(["db", "globals", "ui", "core/freeAgents", "lib/jquery", "lib/knockout", 
     };
 
     function updateNegotiationList() {
-        var deferred, vars;
+        var deferred;
 
         deferred = $.Deferred();
-        vars = {};
 
         g.dbl.transaction("negotiations").objectStore("negotiations").getAll().onsuccess = function (event) {
             var negotiations;
 
             negotiations = event.target.result;
 
-            // Get all free agents, filter array based on negotiations data, pass to db.getPlayers, augment with contract data from negotiations
+            // Get all free agents, filter array based on negotiations data, pass to player.filter, augment with contract data from negotiations
             g.dbl.transaction("players").objectStore("players").index("tid").getAll(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
-                var attributes, data, i, j, players, playersAll, playersSome, ratings, stats;
+                var i, j, players, playersAll, playersSome;
 
                 playersAll = event.target.result;
                 playersSome = [];
@@ -49,10 +48,15 @@ define(["db", "globals", "ui", "core/freeAgents", "lib/jquery", "lib/knockout", 
                     }
                 }
 
-                attributes = ["pid", "name", "pos", "age", "freeAgentMood", "injury"];
-                stats = ["min", "pts", "trb", "ast", "per"];
-                ratings = ["ovr", "pot", "skills"];
-                players = db.getPlayers(playersSome, g.season, g.userTid, attributes, stats, ratings, {sortBy: "rosterOrder", showNoStats: true, fuzz: true});
+                players = player.filter(playersSome, {
+                    attrs: ["pid", "name", "pos", "age", "freeAgentMood", "injury"],
+                    ratings: ["ovr", "pot", "skills"],
+                    stats: ["min", "pts", "trb", "ast", "per"],
+                    season: g.season,
+                    tid: g.userTid,
+                    showNoStats: true,
+                    fuzz: true
+                });
 
                 for (i = 0; i < players.length; i++) {
                     for (j = 0; j < negotiations.length; j++) {
@@ -65,11 +69,9 @@ define(["db", "globals", "ui", "core/freeAgents", "lib/jquery", "lib/knockout", 
                     }
                 }
 
-                vars = {
+                deferred.resolve({
                     players: players
-                };
-
-                deferred.resolve(vars);
+                });
             };
         };
 

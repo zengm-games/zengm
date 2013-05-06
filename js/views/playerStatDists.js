@@ -52,7 +52,7 @@ define(["globals", "ui", "core/player", "lib/boxPlot", "lib/jquery", "lib/knocko
                 players = player.filter(event.target.result, {
                     attrs: ["pid", "name", "pos", "age", "injury"],
                     ratings: ["skills"],
-                    stats: ["gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts"],
+                    stats: ["gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per"],
                     season: inputs.season
                 });
 
@@ -122,7 +122,8 @@ define(["globals", "ui", "core/player", "lib/boxPlot", "lib/jquery", "lib/knocko
                 stl: [0, 5],
                 blk: [0, 5],
                 pf: [0, 6],
-                pts: [0, 50]
+                pts: [0, 50],
+                per: [0, 35]
             };
 
             for (stat in vm.statsAll) {

@@ -160,6 +160,7 @@ define(["db", "globals", "core/player"], function (db, g, player) {
                     tid: 4,
                     season: 2012
                 });
+console.log(pf);
 
                 pf.tid.should.equal(4);
                 pf.awards.should.have.length(0);

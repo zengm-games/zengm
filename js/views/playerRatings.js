@@ -39,7 +39,8 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
                     ratings: ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills"],
                     season: inputs.season,
                     showNoStats: true,
-                    showRookies: true
+                    showRookies: true,
+                    fuzz: true
                 });
 
                 deferred.resolve({

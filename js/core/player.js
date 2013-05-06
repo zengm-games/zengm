@@ -1086,8 +1086,8 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
             ps = gatherStats(p, options);
 
             // Always proceed for options.showRookies; proceed if we found some stats (checking for empty objects or lists); proceed if options.showNoStats
-            if ((options.showRookies && p.draft.year === g.season && (options.season === g.season || options.season === null)) || (!_.isEmpty(ps) && !_.isEmpty(ps.r)) || (options.showNoStats && options.season > p.draft.year)) {
-                if (options.season === null) {
+            if ((options.showRookies && p.draft.year === g.season && (options.season === g.season || options.season === null)) || (!_.isEmpty(ps) && !_.isEmpty(ps.r)) || (options.showNoStats && (options.season > p.draft.year || options.season === null))) {
+                if (options.season === null && options.stats.length > 0) {
                     if (!_.isEmpty(ps) && !_.isEmpty(ps.r)) {
                         // Multiple seasons, only show if there is data
                         fp.stats = [];
@@ -1110,7 +1110,7 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
                         fp.careerStatsPlayoffs.per = _.reduce(ps.p, function (memo, psp) { return memo + psp.per * psp.min; }, 0) / (fp.careerStatsPlayoffs.min * fp.careerStatsPlayoffs.gp); // Special case for PER - weight by minutes per season
                         if (isNaN(fp.careerStatsPlayoffs.per)) { fp.careerStatsPlayoffs.per = 0; }
                     }
-                } else { //if (!_.isEmpty(ps) && !_.isEmpty(ps.r)) { Return 0 stats if no entry and a single year was requested
+                } else if (options.stats.length > 0) { // Return 0 stats if no entry and a single year was requested, unless no stats were explicitly requested
                     // Single seasons
                     fp.stats = filterStatsPartial(p, ps.r, options.stats);
                     if (options.playoffs) {

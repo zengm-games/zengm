@@ -2,7 +2,7 @@
  * @name views.leagueDashboard
  * @namespace League dashboard, displaying several bits of information about the league/team.
  */
-define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, season, $, ko, mapping, _, bbgmView, helpers, viewHelpers) {
+define(["db", "globals", "ui", "core/player", "core/season", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, player, season, $, ko, mapping, _, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     function updateTeam(inputs, updateEvents) {
@@ -219,12 +219,18 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "lib
             vars = {};
 
             g.dbl.transaction("players").objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(g.PLAYER.RETIRED, true)).onsuccess = function (event) {
-                var attributes, i, freeAgents, leagueLeaders, players, ratings, stats, userPlayers;
+                var i, freeAgents, leagueLeaders, players, stats, userPlayers;
 
-                attributes = ["pid", "name", "abbrev", "tid", "age", "contract", "rosterOrder"];
-                ratings = ["ovr", "pot"];
                 stats = ["pts", "trb", "ast"];  // This is also used later to find team/league leaders for these player stats
-                players = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings, {showNoStats: true, fuzz: true});
+                players = player.filter(event.target.result, {
+                    attrs: ["pid", "name", "abbrev", "tid", "age", "contract", "rosterOrder"],
+                    ratings: ["ovr", "pot"],
+                    stats: stats,
+                    season: g.season,
+                    showNoStats: true,
+                    showRookies: true,
+                    fuzz: true
+                });
 
                 // League leaders
                 vars.leagueLeaders = {};

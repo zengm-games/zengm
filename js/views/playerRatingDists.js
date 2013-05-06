@@ -2,7 +2,7 @@
  * @name views.playerRatingDists
  * @namespace Player rating distributions.
  */
-define(["db", "globals", "ui", "lib/boxPlot", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, boxPlot, $, ko, _, components, bbgmView, helpers, viewHelpers) {
+define(["globals", "ui", "core/player", "lib/boxPlot", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, player, boxPlot, $, ko, _, components, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     function get(req) {
@@ -16,19 +16,21 @@ define(["db", "globals", "ui", "lib/boxPlot", "lib/jquery", "lib/knockout", "lib
     }
 
     function updatePlayers(inputs, updateEvents, vm) {
-        var deferred, vars;
+        var deferred;
 
         if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.season !== vm.season()) {
             deferred = $.Deferred();
-            vars = {};
 
             g.dbl.transaction("players").objectStore("players").getAll().onsuccess = function (event) {
-                var attributes, data, players, ratings, ratingsAll, stats;
+                var data, players, ratingsAll;
 
-                attributes = [];
-                ratings = ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
-                stats = [];
-                players = db.getPlayers(event.target.result, inputs.season, null, attributes, stats, ratings, {fuzz: true});
+                players = player.filter(event.target.result, {
+                    ratings: ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"],
+                    season: inputs.season,
+                    showNoStats: true,
+                    showRookies: true,
+                    fuzz: true
+                });
 
                 ratingsAll = _.reduce(players, function (memo, player) {
                     var rating;
@@ -44,12 +46,10 @@ define(["db", "globals", "ui", "lib/boxPlot", "lib/jquery", "lib/knockout", "lib
                     return memo;
                 }, {});
 
-                vars = {
+                deferred.resolve({
                     season: inputs.season,
                     ratingsAll: ratingsAll
-                };
-
-                deferred.resolve(vars);
+                });
             };
             return deferred.promise();
         }

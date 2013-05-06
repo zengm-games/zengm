@@ -2,7 +2,7 @@
  * @name views.trade
  * @namespace Trade.
  */
-define(["db", "globals", "ui", "core/trade", "lib/davis", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, trade, Davis, $, ko, komapping, _, bbgmView, helpers, viewHelpers) {
+define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, player, trade, Davis, $, ko, komapping, _, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     var mapping;
@@ -119,7 +119,6 @@ define(["db", "globals", "ui", "core/trade", "lib/davis", "lib/jquery", "lib/kno
         var deferred, vars;
 
         deferred = $.Deferred();
-        vars = {};
 
         validateSavedPids(function (userPids, otherPids) {
             trade.getOtherTid(function (otherTid) {
@@ -128,12 +127,22 @@ define(["db", "globals", "ui", "core/trade", "lib/davis", "lib/jquery", "lib/kno
                 playerStore = g.dbl.transaction("players").objectStore("players");
 
                 playerStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
-                    var attributes, i, ratings, stats, userRoster;
+                    var attrs, i, ratings, stats, userRoster;
 
-                    attributes = ["pid", "name", "pos", "age", "contract", "injury"];
+                    attrs = ["pid", "name", "pos", "age", "contract", "injury"];
                     ratings = ["ovr", "pot", "skills"];
                     stats = ["min", "pts", "trb", "ast", "per"];
-                    userRoster = db.getPlayers(event.target.result, g.season, g.userTid, attributes, stats, ratings, {showNoStats: true, fuzz: true});
+
+                    userRoster = player.filter(event.target.result, {
+                        attrs: attrs,
+                        ratings: ratings,
+                        stats: stats,
+                        season: g.season,
+                        tid: g.userTid,
+                        showNoStats: true,
+                        showRookies: true,
+                        fuzz: true
+                    });
                     for (i = 0; i < userRoster.length; i++) {
                         if (userPids.indexOf(userRoster[i].pid) >= 0) {
                             userRoster[i].selected = true;
@@ -145,7 +154,16 @@ define(["db", "globals", "ui", "core/trade", "lib/davis", "lib/jquery", "lib/kno
                     playerStore.index("tid").getAll(otherTid).onsuccess = function (event) {
                         var i, otherRoster, teams;
 
-                        otherRoster = db.getPlayers(event.target.result, g.season, otherTid, attributes, stats, ratings, {showNoStats: true, fuzz: true});
+                        otherRoster = player.filter(event.target.result, {
+                            attrs: attrs,
+                            ratings: ratings,
+                            stats: stats,
+                            season: g.season,
+                            tid: otherTid,
+                            showNoStats: true,
+                            showRookies: true,
+                            fuzz: true
+                        });
                         for (i = 0; i < otherRoster.length; i++) {
                             if (otherPids.indexOf(otherRoster[i].pid) >= 0) {
                                 otherRoster[i].selected = true;

@@ -46,6 +46,7 @@ define(["globals", "ui", "core/freeAgents", "core/player", "lib/faces", "lib/jqu
                     stats: ["season", "abbrev", "age", "gp", "gs", "min", "fg", "fga", "fgp", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per"],
                     playoffs: true,
                     showNoStats: true,
+                    showRookies: true,
                     fuzz: true
                 });
 

@@ -27,9 +27,13 @@ define(["db", "globals", "core/player"], function (db, g, player) {
             var p;
 
             before(function () {
-                g.season = 2012;
+                g.season = 2011;
+                p = player.generate(g.PLAYER.UNDRAFTED, 19, "", 50, 60, 2011, false, 28);
+                p.tid = 4;
 
-                p = player.generate(4, 19, "", 50, 60, 2012, false, 28);
+                g.season = 2012;
+                p = player.addStatsRow(p);
+                p = player.addRatingsRow(p, 15);
 
                 p.contract.exp = g.season + 1;
 
@@ -253,10 +257,11 @@ define(["db", "globals", "core/player"], function (db, g, player) {
             it("should not return undefined with options.showRookies if the player was drafted this season", function () {
                 var pf;
 
+                g.season = 2011;
                 pf = player.filter(p, {
                     stats: ["gp", "fg"],
                     tid: 5,
-                    season: 2012,
+                    season: 2011,
                     showRookies: true
                 });
                 (typeof pf).should.equal("object");
@@ -265,7 +270,7 @@ define(["db", "globals", "core/player"], function (db, g, player) {
                 pf = player.filter(p, {
                     stats: ["gp", "fg"],
                     tid: 5,
-                    season: 2012,
+                    season: 2011,
                     showRookies: true
                 });
                 (typeof pf).should.equal("undefined");

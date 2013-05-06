@@ -2,7 +2,7 @@
  * @name views.playerRatings
  * @namespace Player ratings table.
  */
-define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, $, ko, _, components, bbgmView, helpers, viewHelpers) {
+define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, player, $, ko, _, components, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     var mapping;
@@ -33,12 +33,15 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
             vars = {};
 
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
-                var attributes, players, ratings, stats;
+                var players;
 
-                attributes = ["pid", "name", "pos", "age", "abbrev", "injury"];
-                ratings = ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills"];
-                stats = [];
-                players = db.getPlayers(event.target.result, inputs.season, null, attributes, stats, ratings, {showRookies: true});
+                players = player.filter(event.target.result, {
+                    attrs: ["pid", "name", "pos", "age", "abbrev", "injury"],
+                    ratings: ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills"],
+                    season: inputs.season,
+                    showNoStats: true,
+                    showRookies: true
+                });
 
                 vars = {
                     season: inputs.season,

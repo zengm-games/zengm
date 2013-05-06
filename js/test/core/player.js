@@ -28,7 +28,11 @@ define(["db", "globals", "core/player"], function (db, g, player) {
 
             before(function () {
                 g.season = 2012;
+
                 p = player.generate(4, 19, "", 50, 60, 2012, false, 28);
+
+                p.contract.exp = g.season + 1;
+
                 p.stats[0].gp = 5;
                 p.stats[0].fg = 20;
                 p = player.addStatsRow(p, true);
@@ -320,6 +324,33 @@ define(["db", "globals", "core/player"], function (db, g, player) {
                 (typeof pf).should.equal("undefined");
 
                 g.season = 2012;
+            });
+            it("should adjust cashOwed by options.numGamesRemaining", function () {
+                var pf;
+
+                pf = player.filter(p, {
+                    attrs: ["cashOwed"],
+                    tid: 4,
+                    season: 2012,
+                    numGamesRemaining: 82
+                });
+                pf.cashOwed.should.equal(p.contract.amount * 2 / 1000);
+
+                pf = player.filter(p, {
+                    attrs: ["cashOwed"],
+                    tid: 4,
+                    season: 2012,
+                    numGamesRemaining: 41
+                });
+                pf.cashOwed.should.equal(p.contract.amount * 1.5 / 1000);
+
+                pf = player.filter(p, {
+                    attrs: ["cashOwed"],
+                    tid: 4,
+                    season: 2012,
+                    numGamesRemaining: 0
+                });
+                pf.cashOwed.should.equal(p.contract.amount / 1000);
             });
         });
     });

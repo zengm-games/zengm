@@ -774,6 +774,7 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
      * @param {boolean} options.showRookies If true (default false), then rookies drafted in the current season (g.season) who haven't accumulated any stats are shown. This is mainly so, after the draft, rookies can show up in the roster, player ratings view, etc. After the next season starts, then they will no longer show up in a request for that season unless options.showNoStats is true. If options.showNoStats is true, then this option doesn't do anything.
      * @param {boolean} options.fuzz When true (default false), noise is added to any returned ratings based on the fuzz variable for the given season (default: false); any user-facing rating should use true, any non-user-facing rating should use false.
      * @param {boolean} options.oldStats When true (default false), stats from the previous season are displayed if there are no stats for the current season. This is currently only used for the free agents list, so it will either display stats from this season if they exist, or last season if they don't.
+     * @param {number} options.numGamesRemaining If the "cashOwed" attr is requested, options.numGamesRemaining is used to calculate how much of the current season's contract remains to be paid. This is used for buying out players.
      * @return {Object|Array.<Object>} Filtered player object or array of filtered player objects, depending on the first argument.
      */
     function filter(p, options) {
@@ -797,6 +798,7 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
         options.showRookies = options.showRookies !== undefined ? options.showRookies : false;
         options.fuzz = options.fuzz !== undefined ? options.fuzz : false;
         options.oldStats = options.oldStats !== undefined ? options.oldStats : false;
+        options.numGamesRemaining = options.numGamesRemaining !== undefined ? options.numGamesRemaining : 0;
 
         // If no stats are requested, force showNoStats to be true since the stats will never be checked otherwise.
         if (options.stats.length === 0) {
@@ -858,7 +860,7 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
 
         // Copys/filters the ratings listed in options.ratings from p to fp.
         filterRatings = function (fp, p, options) {
-            var j, k, pr, tidTemp;
+            var i, j, k, pr, tidTemp;
 
             if (options.season !== null) {
                 // One season

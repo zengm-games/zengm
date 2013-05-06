@@ -2,7 +2,7 @@
  * @name views.leaders
  * @namespace League stat leaders.
  */
-define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (db, g, ui, $, ko, komapping, _, bbgmView, helpers, viewHelpers, components) {
+define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (g, ui, player, $, ko, komapping, _, bbgmView, helpers, viewHelpers, components) {
     "use strict";
 
     var mapping;
@@ -58,7 +58,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mappi
                 }
 
                 tx.objectStore("players").getAll().onsuccess = function (event) {
-                    var attributes, categories, i, j, k, leader, pass, players, ratings, stats, userAbbrev, playerValue;
+                    var categories, i, j, k, leader, pass, players, userAbbrev, playerValue, stats;
 
                     userAbbrev = helpers.getAbbrev(g.userTid);
 
@@ -74,11 +74,14 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mappi
                     categories.push({name: "Steals", stat: "Stl", title: "Steals Per Game", data: [], minStats: ["gp", "stl"], minValue: [70, 125]});
                     categories.push({name: "Minutes", stat: "Min", title: "Minutes Per Game", data: [], minStats: ["gp", "min"], minValue: [70, 2000]});
                     categories.push({name: "Player Efficiency Rating", stat: "PER", title: "Player Efficiency Rating", data: [], minStats: ["min"], minValue: [2000]});
+                    stats = ["pts", "trb", "ast", "fgp", "tpp", "ftp", "blk", "stl", "min", "per"];
 
-                    attributes = ["pid", "name", "tid", "injury"];
-                    ratings = ["skills"];
-                    stats = ["pts", "trb", "ast", "fgp", "tpp", "ftp", "blk", "stl", "min", "per", "gp", "fg", "tp", "ft", "abbrev"];  // This needs to be in the same order as categories (at least, initially)
-                    players = db.getPlayers(event.target.result, inputs.season, null, attributes, stats, ratings);
+                    players = player.filter(event.target.result, {
+                        attrs: ["pid", "name", "tid", "injury"],
+                        ratings: ["skills"],
+                        stats: ["pts", "trb", "ast", "fgp", "tpp", "ftp", "blk", "stl", "min", "per", "gp", "fg", "tp", "ft", "abbrev"],
+                        season: inputs.season
+                    });
 
                     for (i = 0; i < categories.length; i++) {
                         players.sort(function (a, b) { return b.stats[stats[i]] - a.stats[stats[i]]; });

@@ -272,7 +272,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
             tx = g.dbl.transaction(["players", "releasedPlayers", "schedule", "teams"]);
 
             tx.objectStore("teams").get(inputs.tid).onsuccess = function (event) {
-                var attributes, editable, i, ratings, stats, team, teamAll;
+                var attrs, editable, i, ratings, stats, team, teamAll;
 
                 teamAll = event.target.result;
                 for (i = 0; i < teamAll.seasons.length; i++) {
@@ -282,7 +282,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                 }
                 vars.team = {region: teamAll.region, name: teamAll.name, cash: teamAll.seasons[i].cash / 1000};
 
-                attributes = ["pid", "name", "pos", "age", "contract", "cashOwed", "rosterOrder", "injury"];
+                attrs = ["pid", "name", "pos", "age", "contract", "cashOwed", "rosterOrder", "injury"];
                 ratings = ["ovr", "pot", "skills"];
                 stats = ["gp", "min", "pts", "trb", "ast", "per"];
 
@@ -303,7 +303,17 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                         tx.objectStore("players").index("tid").getAll(inputs.tid).onsuccess = function (event) {
                             var i, players;
 
-                            players = db.getPlayers(event.target.result, inputs.season, inputs.tid, attributes, stats, ratings, {numGamesRemaining: numGamesRemaining, showRookies: true, sortBy: "rosterOrder", showNoStats: true, fuzz: true});
+                            players = player.filter(event.target.result, {
+                                attrs: attrs,
+                                ratings: ratings,
+                                stats: stats,
+                                season: inputs.season,
+                                tid: inputs.tid,
+                                showNoStats: true,
+                                fuzz: true,
+                                numGamesRemaining: numGamesRemaining
+                            });
+                            players.sort(function (a, b) {  return a.rosterOrder - b.rosterOrder; });
 
                             for (i = 0; i < players.length; i++) {
                                 if (inputs.tid === g.userTid && players.length > 5) {
@@ -332,7 +342,14 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                     tx.objectStore("players").index("statsTids").getAll(inputs.tid).onsuccess = function (event) {
                         var i, players;
 
-                        players = db.getPlayers(event.target.result, inputs.season, inputs.tid, attributes, stats, ratings, {numGamesRemaining: 0, showRookies: true, fuzz: true});
+                        players = player.filter(event.target.result, {
+                            attrs: attrs,
+                            ratings: ratings,
+                            stats: stats,
+                            season: inputs.season,
+                            tid: inputs.tid,
+                            fuzz: true
+                        });
                         players.sort(function (a, b) {  return b.stats.gp * b.stats.min - a.stats.gp * a.stats.min; });
 
                         for (i = 0; i < players.length; i++) {

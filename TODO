@@ -281,6 +281,7 @@ player development should depend on playing time
 http://code.google.com/p/htmlcompressor/ or something similar
 unified notion of player "value" - function of ratings, age, contract, stats, etc. similar to what is already in core.trade.getValues, but should include statistics as well.
   use for players picking salaries, AI teams drafting, and trades
+core.player.ovr shouldn't just average ratings together. some ratings are more important than others. do regression analysis against PER to prove this and find a better formula.
 
 Template Stuff
 --------------

@@ -2,24 +2,20 @@ BEFORE 3.0.0-beta.3
 -------------------
 
 db.getPlayers -> player.filter
-  UNIT TEST EVERYTHING
-    check to make sure one of attributes/ratings/stats being empty still works
-    test every option, true and false
-    test everything with multiple players and single player
-    test finding the right thing in multiple seasons
   use everywhere
     get rid of sortBy usage
     use for other access of players "playersAll"
+    get rid of "db" module dependence
   the special case attributes should generally be moved directly into the database?
-  DRY fuzzing of ratings for single/multiple seasons
 db.getTeams -> team.filter
+move most db functions into core.whatever. db should just be about initializing/upgrading
+    get rid of "db" module dependence
 if season is already over, don't add stats row to traded player or signed free agent... does this cause any problems anywhere?
 after winning title - "We need to make some real noise in the playoffs. Soon."
 sub-views like shot locations should retain league menu highlightin
   highlightId param for bbgmView, default to id
 core.freeAgents should be core.freeAgent
 after last resigning negotiation, switch to next phase?
-if no stats/ratings are requested, db.getPlayers should return no stats/players properties on object
 check effects of extreme ticket prices
 show old contracts on old roster view
 popup windows should still be popup windows, even after navigating reloading page
@@ -50,7 +46,6 @@ give bbgm website its own version of bootstrap (only with components needed)
 display league/season counter on basketball-gm.com splash page
 team history view needs more love
   dropdown for other teams
-move most db functions into core.whatever. db should just be about initializing/upgrading
 show record (w-l) on roster view - make it more like a summary, as in basketball-reference
   playoff results
   payroll

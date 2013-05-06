@@ -769,8 +769,8 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
      * @param {Array.<string>} options.ratings List of player ratings to include in output.
      * @param {Array.<string>} options.stats List of player stats to include in output.
      * @param {boolean} options.totals Boolean representing whether to return total stats (true) or per-game averages (false); default is false.
-     * @param {boolean} options.playoffs Boolean representing whether to return playoff stats (statsPlayoffs and careerStatsPlayoffs) or not; default is false.
-     * @param {boolean} options.showNoStats When true, players are returned with zeroed stats objects even if they have accumulated no stats for a team (such as newly drafted players, or players who were just traded for, etc.); this applies only for regular season stats. Default is false, but if options.stats is empty, this is always true.
+     * @param {boolean} options.playoffs Boolean representing whether to return playoff stats (statsPlayoffs and careerStatsPlayoffs) or not; default is false. Either way, regular season stats are always returned.
+     * @param {boolean} options.showNoStats When true, players are returned with zeroed stats objects even if they have accumulated no stats for a team (such as newly drafted players, or players who were just traded for, etc.); this applies only for regular season stats. Even when this is true, undefined will still be returned if a season is requested when the player is not active. Default is false, but if options.stats is empty, this is always true.
      * @param {boolean} options.showRookies If true (default false), then rookies drafted in the current season (g.season) who haven't accumulated any stats are shown. This is mainly so, after the draft, rookies can show up in the roster, player ratings view, etc. After the next season starts, then they will no longer show up in a request for that season unless options.showNoStats is true. If options.showNoStats is true, then this option doesn't do anything.
      * @param {boolean} options.fuzz When true (default false), noise is added to any returned ratings based on the fuzz variable for the given season (default: false); any user-facing rating should use true, any non-user-facing rating should use false.
      * @param {boolean} options.oldStats When true (default false), stats from the previous season are displayed if there are no stats for the current season. This is currently only used for the free agents list, so it will either display stats from this season if they exist, or last season if they don't.
@@ -788,7 +788,7 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
         options = options !== undefined ? options : {};
         options.season = options.season !== undefined ? options.season : null;
         options.tid = options.tid !== undefined ? options.tid : null;
-        options.attributes = options.attributes !== undefined ? options.attributes : [];
+        options.attrs = options.attrs !== undefined ? options.attrs : [];
         options.stats = options.stats !== undefined ? options.stats : [];
         options.ratings = options.ratings !== undefined ? options.ratings : [];
         options.totals = options.totals !== undefined ? options.totals : false;
@@ -860,21 +860,21 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
         filterRatings = function (fp, p, options) {
             var j, k, pr, tidTemp;
 
-            if (options.ratings.length > 0) {
-                if (options.season !== null) {
-                    // One season
-                    pr = null;
-                    for (j = 0; j < p.ratings.length; j++) {
-                        if (p.ratings[j].season === options.season) {
-                            pr = p.ratings[j];
-                            break;
-                        }
+            if (options.season !== null) {
+                // One season
+                pr = null;
+                for (j = 0; j < p.ratings.length; j++) {
+                    if (p.ratings[j].season === options.season) {
+                        pr = p.ratings[j];
+                        break;
                     }
-                    if (pr === null) {
-                        // Must be retired, or not in the league yet
-                        return;
-                    }
+                }
+                if (pr === null) {
+                    // Must be retired, or not in the league yet
+                    return false;
+                }
 
+                if (options.ratings.length > 0) {
                     fp.ratings = {};
                     for (j = 0; j < options.ratings.length; j++) {
                         fp.ratings[options.ratings[j]] = pr[options.ratings[j]];
@@ -882,37 +882,39 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
                             fp.ratings[options.ratings[j]] = Math.round(helpers.bound(fp.ratings[options.ratings[j]] + pr.fuzz, 0, 100));
                         }
                     }
-                } else {
-                    // All seasons
-                    fp.ratings = [];
-                    for (k = 0; k < p.ratings.length; k++) {
-                        fp.ratings[k] = {};
-                        for (j = 0; j < options.ratings.length; j++) {
-                            if (options.ratings[j] === "age") {
-                                fp.ratings[k].age = p.ratings[k].season - p.born.year;
-                            } else if (options.ratings[j] === "abbrev") {
-                                // Find the last stats entry for that season, and use that to determine the team
-                                for (i = 0; i < p.stats.length; i++) {
-                                    if (p.stats[i].season === p.ratings[k].season && p.stats[i].playoffs === false) {
-                                        tidTemp = p.stats[i].tid;
-                                    }
+                }
+            } else {
+                // All seasons
+                fp.ratings = [];
+                for (k = 0; k < p.ratings.length; k++) {
+                    fp.ratings[k] = {};
+                    for (j = 0; j < options.ratings.length; j++) {
+                        if (options.ratings[j] === "age") {
+                            fp.ratings[k].age = p.ratings[k].season - p.born.year;
+                        } else if (options.ratings[j] === "abbrev") {
+                            // Find the last stats entry for that season, and use that to determine the team
+                            for (i = 0; i < p.stats.length; i++) {
+                                if (p.stats[i].season === p.ratings[k].season && p.stats[i].playoffs === false) {
+                                    tidTemp = p.stats[i].tid;
                                 }
-                                if (tidTemp >= 0) {
-                                    fp.ratings[k].abbrev = helpers.getAbbrev(tidTemp);
-                                    tidTemp = undefined;
-                                } else {
-                                    fp.ratings[k].abbrev = null;
-                                }
+                            }
+                            if (tidTemp >= 0) {
+                                fp.ratings[k].abbrev = helpers.getAbbrev(tidTemp);
+                                tidTemp = undefined;
                             } else {
-                                fp.ratings[k][options.ratings[j]] = p.ratings[k][options.ratings[j]];
-                                if (options.fuzz && options.ratings[j] !== "fuzz" && options.ratings[j] !== "season" && options.ratings[j] !== "skills") {
-                                    fp.ratings[k][options.ratings[j]] = Math.round(helpers.bound(p.ratings[k][options.ratings[j]] + p.ratings[k].fuzz, 0, 100));
-                                }
+                                fp.ratings[k].abbrev = null;
+                            }
+                        } else {
+                            fp.ratings[k][options.ratings[j]] = p.ratings[k][options.ratings[j]];
+                            if (options.fuzz && options.ratings[j] !== "fuzz" && options.ratings[j] !== "season" && options.ratings[j] !== "skills") {
+                                fp.ratings[k][options.ratings[j]] = Math.round(helpers.bound(p.ratings[k][options.ratings[j]] + p.ratings[k].fuzz, 0, 100));
                             }
                         }
                     }
                 }
             }
+
+            return true;
         };
 
         // Returns stats object, containing properties "r" for regular season, "p" for playoffs, and "cr"/"cp" for career. "r" and "p" can be either objects (single season) or arrays of objects (multiple seasons). All these outputs are raw season totals, not per-game averages.
@@ -1083,7 +1085,7 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
 
             // Always proceed for options.showRookies; proceed if we found some stats (checking for empty objects or lists); proceed if options.showNoStats
             if ((options.showRookies && p.draft.year === g.season && options.season === g.season) || (!_.isEmpty(ps) && !_.isEmpty(ps.r)) || options.showNoStats) {
-                if (options.season === null) {
+                if (options.season === null && (!_.isEmpty(ps) && !_.isEmpty(ps.r))) {
                     // Multiple seasons
                     fp.stats = [];
                     for (i = 0; i < ps.r.length; i++) {
@@ -1104,7 +1106,7 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
                         fp.careerStatsPlayoffs.per = _.reduce(ps.p, function (memo, psp) { return memo + psp.per * psp.min; }, 0) / (fp.careerStatsPlayoffs.min * fp.careerStatsPlayoffs.gp); // Special case for PER - weight by minutes per season
                         if (isNaN(fp.careerStatsPlayoffs.per)) { fp.careerStatsPlayoffs.per = 0; }
                     }
-                } else {
+                } else if (!_.isEmpty(ps) && !_.isEmpty(ps.r)) {
                     // Single seasons
                     fp.stats = filterStatsPartial(p, ps.r, options.stats);
                     if (options.playoffs) {
@@ -1115,7 +1117,10 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
                         }
                     }
                 }
+
+                return true;
             }
+            return false;
         };
 
         fps = []; // fps = "filtered players"
@@ -1123,16 +1128,15 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
             //fp = db.getPlayer(playersAll[i], season, tid, attributes, stats, ratings, options);
             fp = {};
 
-            // This needs to add a stats property iff the player has a stats entry for the requested team/season, or if options.showNoStats or options.showRookies apply. Even if this is a blank object (i.e. if options.stats is empty), still add it if the player is to be returned.
-            filterStats(fp, p[i], options);
+            // Only add a player if filterStats finds something (either stats that season, or options overriding that check)
+            if (filterStats(fp, p[i], options)) {
+                // Only add a player if he was active for this season and thus has ratings for this season
+                if (filterRatings(fp, p[i], options)) {
+                    // This can never fail because every player has attributes
+                    filterAttrs(fp, p[i], options);
 
-            // Only add a player if filterStats added something
-            if (fp.hasOwnProperty("stats")) {
-                // Do these after checking if the player has the correct stats/options to be included, since these can never fail (if a player has stats for a team/season, he always has ratings; and every player has attributes).
-                filterAttrs(fp, p[i], options);
-                filterRatings(fp, p[i], options);
-
-                fps.push(fp);
+                    fps.push(fp);
+                }
             }
         }
 

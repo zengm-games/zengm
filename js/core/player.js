@@ -1129,7 +1129,6 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
 
         fps = []; // fps = "filtered players"
         for (i = 0; i < p.length; i++) {
-            //fp = db.getPlayer(playersAll[i], season, tid, attributes, stats, ratings, options);
             fp = {};
 
             // Only add a player if filterStats finds something (either stats that season, or options overriding that check)

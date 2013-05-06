@@ -99,14 +99,15 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
 
         // Any non-retired player can win an award
         transaction.objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(g.PLAYER.RETIRED, true)).onsuccess = function (event) {
-            var attributes, awards, i, p, players, ratings, seasonAttributes, stats, type;
+            var attributes, awards, i, p, players, seasonAttributes, stats, type;
 
             awards = {season: g.season};
 
-            attributes = ["pid", "name", "tid", "abbrev", "draft"];
-            stats = ["gp", "gs", "min", "pts", "trb", "ast", "blk", "stl"];
-            ratings = [];
-            players = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings);
+            players = player.filter(event.target.result, {
+                attrs: ["pid", "name", "tid", "abbrev", "draft"],
+                stats: ["gp", "gs", "min", "pts", "trb", "ast", "blk", "stl"],
+                season: g.season
+            });
 
             // Most Valuable Player
             players.sort(function (a, b) {  return (0.75 * b.stats.pts + b.stats.ast + b.stats.trb) - (0.75 * a.stats.pts + a.stats.ast + a.stats.trb); });

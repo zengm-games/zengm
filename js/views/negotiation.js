@@ -2,7 +2,7 @@
  * @name views.negotiation
  * @namespace Contract negotiation.
  */
-define(["db", "globals", "ui", "core/contractNegotiation", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, contractNegotiation, $, ko, _, bbgmView, helpers, viewHelpers) {
+define(["db", "globals", "ui", "core/contractNegotiation", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, contractNegotiation, player, $, ko, _, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     // Show the negotiations list if there are more ongoing negotiations
@@ -102,23 +102,27 @@ define(["db", "globals", "ui", "core/contractNegotiation", "lib/jquery", "lib/kn
             }
 
             g.dbl.transaction("players").objectStore("players").get(negotiation.pid).onsuccess = function (event) {
-                var attributes, player, ratings, stats, teams;
+                var p, teams;
 
-                attributes = ["pid", "name", "freeAgentMood"];
-                ratings = ["ovr", "pot"];
-                stats = [];
-                player = db.getPlayer(event.target.result, g.season, null, attributes, stats, ratings, {showRookies: true, fuzz: true});
+                p = player.filter(event.target.result, {
+                    attrs: ["pid", "name", "freeAgentMood"],
+                    ratings: ["ovr", "pot"],
+                    season: g.season,
+                    showNoStats: true,
+                    showRookies: true,
+                    fuzz: true
+                });
 
-                if (player.freeAgentMood[g.userTid] < 0.25) {
-                    player.mood = '<span class="text-success"><b>Eager to reach an agreement.</b></span>';
+                if (p.freeAgentMood[g.userTid] < 0.25) {
+                    p.mood = '<span class="text-success"><b>Eager to reach an agreement.</b></span>';
                 } else if (player.freeAgentMood[g.userTid] < 0.5) {
-                    player.mood = '<b>Willing to sign for the right price.</b>';
+                    p.mood = '<b>Willing to sign for the right price.</b>';
                 } else if (player.freeAgentMood[g.userTid] < 0.75) {
-                    player.mood = '<span class="text-warning"><b>Annoyed at you.</b></span>';
+                    p.mood = '<span class="text-warning"><b>Annoyed at you.</b></span>';
                 } else {
-                    player.mood = '<span class="text-error"><b>Insulted by your presence.</b></span>';
+                    p.mood = '<span class="text-error"><b>Insulted by your presence.</b></span>';
                 }
-                delete player.freeAgentMood;
+                delete p.freeAgentMood;
 
                 teams = helpers.getTeams();
 
@@ -127,7 +131,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "lib/jquery", "lib/kn
                         salaryCap: g.salaryCap / 1000,
                         payroll: payroll / 1000,
                         team: {region: teams[g.userTid].region, name: teams[g.userTid].name},
-                        player: player,
+                        player: p,
                         negotiation: {
                             team: {
                                 amount: negotiation.team.amount / 1000,

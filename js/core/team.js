@@ -2,7 +2,7 @@
  * @name core.team
  * @namespace Functions operating on team objects, or parts of team objects.
  */
-define(["db", "globals", "util/helpers", "util/random"], function (db, g, helpers, random) {
+define(["db", "globals", "core/player", "util/helpers", "util/random"], function (db, g, player, helpers, random) {
     "use strict";
 
     /**
@@ -236,7 +236,15 @@ define(["db", "globals", "util/helpers", "util/random"], function (db, g, helper
         playerStore.index("tid").getAll(tid).onsuccess = function (event) {
             var i;
 
-            players = db.getPlayers(event.target.result, g.season, tid, ["pid"], [], ["ovr"], {showNoStats: true, showRookies: true, fuzz: tid === g.userTid});
+            players = player.filter(event.target.result, {
+                attrs: ["pid"],
+                ratings: ["ovr"],
+                season: g.season,
+                tid: tid,
+                showNoStats: true,
+                showRookies: true,
+                fuzz: tid === g.userTid
+            });
             players.sort(function (a, b) {  return b.ratings.ovr - a.ratings.ovr; });
 
             for (i = 0; i < players.length; i++) {

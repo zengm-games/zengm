@@ -5,15 +5,10 @@ record in dashboard not updating from knockout, but everything else is
 per in statsDistribution
 play menu realtime update across windows?
 is abbrev set correctly in player ratings for previous seasons?
-db.getPlayers -> player.filter
-  in core.trade, showRookies
+player.filter
   use everywhere
-    get rid of sortBy usage
     use for other access of players "playersAll"
-    get rid of "db" module dependence
   the special case attributes should generally be moved directly into the database?
-  is there any situation where showRookies should be used rather than showNoStats (ratings, etc) or nothing (stats, etc)? get rid of it, probably
-    yes. showRookies is for current seasons only, to display the most recent draft class before the next season starts and they are actually playing. showNoStats is to show an active/retired player, not a pre-draft rookie
 db.getTeams -> team.filter
 move most db functions into core.whatever. db should just be about initializing/upgrading
   get rid of "db" module dependence

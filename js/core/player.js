@@ -805,6 +805,8 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
 
         // Copys/filters the attributes listed in options.attrs from p to fp.
         filterAttrs = function (fp, p, options) {
+            var i;
+
             for (i = 0; i < options.attrs.length; i++) {
                 if (options.attrs[i] === "age") {
                     fp.age = g.season - p.born.year;
@@ -993,7 +995,7 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
         };
 
         // Filters s by stats (which should be options.stats) and returns a filtered object. This is to do one season of stats filtering.
-        filterStatsPartial = function (s, stats) {
+        filterStatsPartial = function (p, s, stats) {
             var j, row;
 
             row = {};
@@ -1085,29 +1087,29 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
                     // Multiple seasons
                     fp.stats = [];
                     for (i = 0; i < ps.r.length; i++) {
-                        fp.stats.push(filterStatsPartial(ps.r[i], options.stats));
+                        fp.stats.push(filterStatsPartial(p, ps.r[i], options.stats));
                     }
                     if (options.playoffs) {
                         fp.statsPlayoffs = [];
                         for (i = 0; i < ps.p.length; i++) {
-                            fp.statsPlayoffs.push(filterStatsPartial(ps.p[i], options.stats));
+                            fp.statsPlayoffs.push(filterStatsPartial(p, ps.p[i], options.stats));
                         }
                     }
                     // Career totals
-                    fp.careerStats = filterStatsPartial({}, ps.cr, options.stats);
+                    fp.careerStats = filterStatsPartial(p, ps.cr, options.stats);
                     fp.careerStats.per = _.reduce(ps.r, function (memo, psr) { return memo + psr.per * psr.min; }, 0) / (fp.careerStats.min * fp.careerStats.gp); // Special case for PER - weight by minutes per season
                     if (isNaN(fp.careerStats.per)) { fp.careerStats.per = 0; }
                     if (options.playoffs) {
-                        fp.careerStatsPlayoffs = filterStatsPartial(ps.cp, options.stats);
+                        fp.careerStatsPlayoffs = filterStatsPartial(p, ps.cp, options.stats);
                         fp.careerStatsPlayoffs.per = _.reduce(ps.p, function (memo, psp) { return memo + psp.per * psp.min; }, 0) / (fp.careerStatsPlayoffs.min * fp.careerStatsPlayoffs.gp); // Special case for PER - weight by minutes per season
                         if (isNaN(fp.careerStatsPlayoffs.per)) { fp.careerStatsPlayoffs.per = 0; }
                     }
                 } else {
                     // Single seasons
-                    fp.stats = filterStatsPartial(ps.r, options.stats);
+                    fp.stats = filterStatsPartial(p, ps.r, options.stats);
                     if (options.playoffs) {
                         if (!_.isEmpty(ps.p)) {
-                            fp.statsPlayoffs = filterStatsPartial(ps.p, options.stats);
+                            fp.statsPlayoffs = filterStatsPartial(p, ps.p, options.stats);
                         } else {
                             fp.statsPlayoffs = {};
                         }
@@ -1125,7 +1127,7 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
             filterStats(fp, p[i], options);
 
             // Only add a player if filterStats added something
-            if (!fp.hasOwnProperty("stats")) {
+            if (fp.hasOwnProperty("stats")) {
                 // Do these after checking if the player has the correct stats/options to be included, since these can never fail (if a player has stats for a team/season, he always has ratings; and every player has attributes).
                 filterAttrs(fp, p[i], options);
                 filterRatings(fp, p[i], options);

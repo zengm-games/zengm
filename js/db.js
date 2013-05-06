@@ -481,6 +481,8 @@ define(["globals", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"],
     /**
      * Get a filtered player object.
      *
+     * This will soon be replaced by core.player.filter.
+     *
      * For a player object (pa), create an object suitible for output based on the appropriate season and tid. attributes, stats, and ratings are lists of keys. In the output, the attributes keys will be in the root of the object. There will also be stats and ratings properties containing the filtered stats and ratings objects, if appropriate. If season is null, then the stats and ratings objects will contain lists of objects for each season and tid is ignored. Then, there will also be a careerStats property in the output object containing an object with career averages.
      * 
      * This function is overcomplicated and convoluted.

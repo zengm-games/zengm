@@ -32,20 +32,22 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "lib/faces", "l
     };
 
     function updatePlayer(inputs, updateEvents, vm) {
-        var deferred, vars;
+        var deferred;
 
         deferred = $.Deferred();
-        vars = {};
 
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || !vm.retired()) {
             g.dbl.transaction("players").objectStore("players").get(inputs.pid).onsuccess = function (event) {
-                var attributes, currentRatings, data, p, ratings, stats;
+                var currentRatings, p;
 
-                attributes = ["pid", "name", "tid", "abbrev", "teamRegion", "teamName", "pos", "age", "hgtFt", "hgtIn", "weight", "born", "contract", "draft", "face", "mood", "injury", "salaries", "salariesTotal", "awards", "freeAgentMood"];
-                ratings = ["season", "abbrev", "age", "ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills"];
-                stats = ["season", "abbrev", "age", "gp", "gs", "min", "fg", "fga", "fgp", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per"];
-
-                p = db.getPlayer(event.target.result, null, null, attributes, stats, ratings, {playoffs: true, showNoStats: true, fuzz: true});
+                p = player.filter(event.target.result, {
+                    attrs: ["pid", "name", "tid", "abbrev", "teamRegion", "teamName", "pos", "age", "hgtFt", "hgtIn", "weight", "born", "contract", "draft", "face", "mood", "injury", "salaries", "salariesTotal", "awards", "freeAgentMood"],
+                    ratings: ["season", "abbrev", "age", "ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills"],
+                    stats: ["season", "abbrev", "age", "gp", "gs", "min", "fg", "fga", "fgp", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per"],
+                    playoffs: true,
+                    showNoStats: true,
+                    fuzz: true
+                });
 
                 // Account for extra free agent demands
                 if (p.tid === g.PLAYER.FREE_AGENT) {
@@ -54,7 +56,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "lib/faces", "l
 
                 currentRatings = p.ratings[p.ratings.length - 1];
 
-                vars = {
+                deferred.resolve({
                     player: p,
                     currentRatings: currentRatings,
                     showTradeFor: p.tid !== g.userTid && p.tid >= 0,
@@ -62,9 +64,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "lib/faces", "l
                     retired: p.tid === g.PLAYER.RETIRED,
                     showContract: p.tid !== g.PLAYER.UNDRAFTED && p.tid !== g.PLAYER.RETIRED,
                     injured: p.injury.type !== "Healthy"
-                };
-
-                deferred.resolve(vars);
+                });
             };
 
             return deferred.promise();

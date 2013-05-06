@@ -2,12 +2,13 @@ BEFORE 3.0.0-beta.3
 -------------------
 
 db.getPlayers -> player.filter
-  get rid of sortBy usage
-  use for other access of players "playersAll"
-  the special case attributes should generally be moved directly into the database?
-  DRY fuzzing of ratings for single/multiple seasons
   UNIT TEST EVERYTHING
     if no stats are accumulated for requested team/season, return nothing
+  use everywhere
+    get rid of sortBy usage
+    use for other access of players "playersAll"
+  the special case attributes should generally be moved directly into the database?
+  DRY fuzzing of ratings for single/multiple seasons
 db.getTeams -> team.filter
 if season is already over, don't add stats row to traded player or signed free agent... does this cause any problems anywhere?
 after winning title - "We need to make some real noise in the playoffs. Soon."

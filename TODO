@@ -1,8 +1,15 @@
 BEFORE 3.0.0-beta.3
 -------------------
 
+db.getPlayers -> player.filter
+  get rid of sortBy usage
+  use for other access of players "playersAll"
+  the special case attributes should generally be moved directly into the database?
+  DRY fuzzing of ratings for single/multiple seasons
+  UNIT TEST EVERYTHING
+    if no stats are accumulated for requested team/season, return nothing
+db.getTeams -> team.filter
 if season is already over, don't add stats row to traded player or signed free agent... does this cause any problems anywhere?
-age should matter for ranking draft prospects
 after winning title - "We need to make some real noise in the playoffs. Soon."
 sub-views like shot locations should retain league menu highlightin
   highlightId param for bbgmView, default to id
@@ -40,13 +47,6 @@ display league/season counter on basketball-gm.com splash page
 team history view needs more love
   dropdown for other teams
 move most db functions into core.whatever. db should just be about initializing/upgrading
-db.getPlayers
-  way way way too messy
-  rename to helpers.filterPlayers? or player.filter and player.filterAll?
-    make db.getTeams consistent with this
-  use for other access of players "playersAll"
-  the special case attributes should generally be moved directly into the database?
-  Replace showNoStats with a check of stats.length in db.getPlayer, at least in some cases? API is messy
 show record (w-l) on roster view - make it more like a summary, as in basketball-reference
   playoff results
   payroll
@@ -279,6 +279,8 @@ bbgmView
   make it less tied to BBGM specifically. shouldn't depend on BBGM-specific modules like g, ui, and util/viewHelpers
 player development should depend on playing time
 http://code.google.com/p/htmlcompressor/ or something similar
+unified notion of player "value" - function of ratings, age, contract, stats, etc. similar to what is already in core.trade.getValues, but should include statistics as well.
+  use for players picking salaries, AI teams drafting, and trades
 
 Template Stuff
 --------------

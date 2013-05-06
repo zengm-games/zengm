@@ -8,7 +8,7 @@ define(["db", "globals", "ui", "core/player", "core/season", "lib/jquery", "lib/
     function updateTeam(inputs, updateEvents) {
         var deferred, vars;
 
-        if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON)) {
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON)) {
             deferred = $.Deferred();
             vars = {};
 
@@ -63,7 +63,7 @@ define(["db", "globals", "ui", "core/player", "core/season", "lib/jquery", "lib/
         deferred = $.Deferred();
         vars = {};
 
-        if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("playerMovement") >= 0) {
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("playerMovement") >= 0) {
             db.getPayroll(null, g.userTid, function (payroll) {
                 vars.payroll = payroll / 1000;  // [millions of dollars]
 

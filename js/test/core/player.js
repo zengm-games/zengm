@@ -44,7 +44,7 @@ define(["db", "globals", "core/player"], function (db, g, player) {
                 p.stats[1].fg = 30;
 
                 p = player.addRatingsRow(p, 15);
-                p.ratings[1].season = 2013;
+                p.ratings[2].season = 2013;
             });
 
             it("should return requested info if tid/season match", function () {
@@ -286,7 +286,7 @@ define(["db", "globals", "core/player"], function (db, g, player) {
                     season: 2012,
                     fuzz: false
                 });
-                pf.ratings.ovr.should.equal(p.ratings[0].ovr);
+                pf.ratings.ovr.should.equal(p.ratings[1].ovr);
 
                 pf = player.filter(p, {
                     ratings: ["ovr"],
@@ -295,7 +295,7 @@ define(["db", "globals", "core/player"], function (db, g, player) {
                     fuzz: true
                 });
                 // This will break if ovr + fuzz is over 100 (should check bounds), but that never happens in practice
-                pf.ratings.ovr.should.equal(Math.round(p.ratings[0].ovr + p.ratings[0].fuzz));
+                pf.ratings.ovr.should.equal(Math.round(p.ratings[1].ovr + p.ratings[1].fuzz));
             });
             it("should return stats from previous season if options.oldStats is true and current season has no stats record", function () {
                 var pf;

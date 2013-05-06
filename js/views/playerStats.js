@@ -2,7 +2,7 @@
  * @name views.playerStats
  * @namespace Player stats table.
  */
-define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, $, ko, _, components, bbgmView, helpers, viewHelpers) {
+define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, player, $, ko, _, components, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     var mapping;
@@ -26,26 +26,25 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
     };
 
     function updatePlayers(inputs, updateEvents, vm) {
-        var deferred, vars;
+        var deferred;
 
         if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.season !== vm.season()) {
             deferred = $.Deferred();
-            vars = {};
 
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
-                var attributes, players, ratings, stats;
+                var players;
 
-                attributes = ["pid", "name", "pos", "age", "injury"];
-                ratings = ["skills"];
-                stats = ["abbrev", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per"];
-                players = db.getPlayers(event.target.result, inputs.season, null, attributes, stats, ratings, {showRookies: true});
+                players = player.filter(event.target.result, {
+                    attrs: ["pid", "name", "pos", "age", "injury"],
+                    ratings: ["skills"],
+                    stats: ["abbrev", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per"],
+                    season: inputs.season
+                });
 
-                vars = {
+                deferred.resolve({
                     season: inputs.season,
                     players: players
-                };
-
-                deferred.resolve(vars);
+                });
             };
             return deferred.promise();
         }

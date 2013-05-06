@@ -26,11 +26,10 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
     };
 
     function updatePlayers(inputs, updateEvents, vm) {
-        var deferred, vars;
+        var deferred;
 
         if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && updateEvents.indexOf("playerMovement") >= 0) || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON) || inputs.season !== vm.season()) {
             deferred = $.Deferred();
-            vars = {};
 
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
                 var players;
@@ -43,12 +42,10 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
                     showRookies: true
                 });
 
-                vars = {
+                deferred.resolve({
                     season: inputs.season,
                     players: players
-                };
-
-                deferred.resolve(vars);
+                });
             };
             return deferred.promise();
         }

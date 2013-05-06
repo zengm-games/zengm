@@ -2,7 +2,7 @@
  * @name views.history
  * @namespace Summaries of past seasons, leaguewide.
  */
-define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (db, g, ui, $, ko, bbgmView, helpers, viewHelpers, components) {
+define(["db", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (db, g, ui, player, $, ko, bbgmView, helpers, viewHelpers, components) {
     "use strict";
 
     function get(req) {
@@ -44,7 +44,12 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "util/bbgmView", "u
                 g.dbl.transaction("players").objectStore("players").index("retiredYear").getAll(inputs.season).onsuccess = function (event) {
                     var retiredPlayers;
 
-                    retiredPlayers = db.getPlayers(event.target.result, inputs.season, null, ["pid", "name", "age"], [], ["ovr"], {fuzz: true});
+                    retiredPlayers = player.filter(event.target.result, {
+                        attrs: ["pid", "name", "age"],
+                        ratings: ["ovr"],
+                        season: inputs.season,
+                        fuzz: true
+                    });
 
                     db.getTeams(null, inputs.season, ["abbrev", "region", "name"], [], ["playoffRoundsWon"], {}, function (teams) {
                         var champ, i;

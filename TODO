@@ -1,12 +1,10 @@
 BEFORE 3.0.0-beta.3
 -------------------
 
+play menu realtime update across windows?
+is abbrev set correctly in player ratings for previous seasons?
 db.getPlayers -> player.filter
   confirm rookies still show up in roster
-  player ratings
-    confirm free agents show up in player ratings but not player stats
-    how do i handle player ratings view, where i want to show players who were free agents, but i don't want to show rookies drafted that year?
-    is abbrev set correctly in player ratings?
   use everywhere
     get rid of sortBy usage
     use for other access of players "playersAll"

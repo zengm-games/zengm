@@ -2,7 +2,7 @@
  * @name util.advStats
  * @namespace Advanced stats (PER, WS, etc) that require some nontrivial calculations and thus are calculated and cached once each day.
  */
-define(["db", "globals", "lib/underscore"], function (db, g, _) {
+define(["db", "globals", "core/player", "lib/underscore"], function (db, g, player, _) {
     "use strict";
 
     /**
@@ -47,12 +47,15 @@ define(["db", "globals", "lib/underscore"], function (db, g, _) {
             // Total player stats (not per game averages) - min, tp, ast, fg, ft, tov, fga, fta, trb, orb, stl, blk, pf
             // Active players have tid >= 0
             g.dbl.transaction("players").objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
-                var aPER, attributes, drbp, factor, i, PER, players, ratings, stats, tid, uPER, vop, tx;
-                attributes = ["pid", "tid"];
-                ratings = [];
-                stats = ["min", "tp", "ast", "fg", "ft", "tov", "fga", "fta", "trb", "orb", "stl", "blk", "pf"];
+                var aPER, drbp, factor, i, PER, players, tid, uPER, vop, tx;
 
-                players = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings, {totals: true, playoffs: g.PHASE.PLAYOFFS === g.phase});
+                players = player.filter(event.target.result, {
+                    attrs: ["pid", "tid"],
+                    stats: ["min", "tp", "ast", "fg", "ft", "tov", "fga", "fta", "trb", "orb", "stl", "blk", "pf"],
+                    season: g.season,
+                    totals: true,
+                    playoffs: g.PHASE.PLAYOFFS === g.phase
+                });
 
                 aPER = [];
                 league.aPER = 0;

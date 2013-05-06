@@ -88,7 +88,13 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                 playerStore.index("tid").getAll(tids[i]).onsuccess = function (event) {
                     var players;
 
-                    players = db.getPlayers(event.target.result, g.season, tids[i], ["pid", "contract", "age"], [], ["ovr", "pot"]);
+                    players = player.filter(event.target.result, {
+                        attrs: ["pid", "contract", "age"],
+                        ratings: ["ovr", "pot"],
+                        season: g.season,
+                        tid: tids[i],
+                        showRookies: true
+                    });
                     players = _.filter(players, function (player) { return pids[i].indexOf(player.pid) >= 0; });
 
                     // Exponential dependence on ratings/age/contract
@@ -240,7 +246,12 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                 transaction.objectStore("players").index("tid").getAll(tids[i]).onsuccess = function (event) {
                     var j, k, overCap, overRosterLimit, ratios, teams;
 
-                    players[i] = db.getPlayers(event.target.result, g.season, tids[i], ["pid", "name", "contract"], [], []);
+                    players[i] = player.filter(event.target.result, {
+                        attrs: ["pid", "name", "contract"],
+                        season: g.season,
+                        tid: tids[i],
+                        showRookies: true
+                    });
                     s.teams[i].trade = _.filter(players[i], function (player) { return pids[i].indexOf(player.pid) >= 0; });
                     s.teams[i].total = _.reduce(s.teams[i].trade, function (memo, player) { return memo + player.contract.amount; }, 0);
 

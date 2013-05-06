@@ -2,7 +2,7 @@
  * @name views.freeAgents
  * @namespace List of free agents.
  */
-define(["db", "globals", "ui", "core/freeAgents", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, freeAgents, $, ko, _, bbgmView, helpers, viewHelpers) {
+define(["db", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, freeAgents, player, $, ko, _, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     var mapping;
@@ -44,12 +44,18 @@ define(["db", "globals", "ui", "core/freeAgents", "lib/jquery", "lib/knockout", 
             }
 
             g.dbl.transaction("players").objectStore("players").index("tid").getAll(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
-                var attributes, data, i, players, ratings, stats;
+                var data, i, players;
 
-                attributes = ["pid", "name", "pos", "age", "contract", "freeAgentMood", "injury"];
-                ratings = ["ovr", "pot", "skills"];
-                stats = ["min", "pts", "trb", "ast", "per"];
-                players = db.getPlayers(event.target.result, g.season, null, attributes, stats, ratings, {oldStats: true, showNoStats: true, fuzz: true});
+                players = player.filter(event.target.result, {
+                    attrs: ["pid", "name", "pos", "age", "contract", "freeAgentMood", "injury"],
+                    ratings: ["ovr", "pot", "skills"],
+                    stats: ["min", "pts", "trb", "ast", "per"],
+                    season: g.season,
+                    showNoStats: true,
+                    showRookies: true,
+                    fuzz: true,
+                    oldStats: true
+                });
 
                 for (i = 0; i < players.length; i++) {
                     players[i].contract.amount = freeAgents.amountWithMood(players[i].contract.amount, players[i].freeAgentMood[g.userTid]);

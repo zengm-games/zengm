@@ -6,6 +6,7 @@ per in statsDistribution
 play menu realtime update across windows?
 is abbrev set correctly in player ratings for previous seasons?
 db.getPlayers -> player.filter
+  in core.trade, showRookies
   use everywhere
     get rid of sortBy usage
     use for other access of players "playersAll"

@@ -2,7 +2,7 @@
  * @name views.draftSummary
  * @namespace Draft summary.
  */
-define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, $, ko, _, components, bbgmView, helpers, viewHelpers) {
+define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, player, $, ko, _, components, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     var mapping;
@@ -46,12 +46,16 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
         vars = {};
 
         g.dbl.transaction("players").objectStore("players").index("draft.year").getAll(inputs.season).onsuccess = function (event) {
-            var attributes, currentPr, data, i, pa, player, players, playersAll, ratings, stats;
+            var currentPr, data, i, pa, p, players, playersAll;
 
-            attributes = ["tid", "abbrev", "draft", "pid", "name", "pos", "age"];
-            ratings = ["ovr", "pot", "skills"];
-            stats = ["gp", "min", "pts", "trb", "ast", "per"];  // This needs to be in the same order as categories
-            playersAll = db.getPlayers(event.target.result, null, null, attributes, stats, ratings, {showNoStats: true, fuzz: true});
+            playersAll = player.filter(event.target.result, {
+                attrs: ["tid", "abbrev", "draft", "pid", "name", "pos", "age"],
+                ratings: ["ovr", "pot", "skills"],
+                stats: ["gp", "min", "pts", "trb", "ast", "per"],
+                showNoStats: true,
+                showRookies: true,
+                fuzz: true
+            });
 
             players = [];
             for (i = 0; i < playersAll.length; i++) {
@@ -59,24 +63,24 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
 
                 if (pa.draft.round === 1 || pa.draft.round === 2) {
                     // Attributes
-                    player = {pid: pa.pid, name: pa.name, pos: pa.pos, draft: pa.draft, currentAge: pa.age, currentAbbrev: pa.abbrev};
+                    p = {pid: pa.pid, name: pa.name, pos: pa.pos, draft: pa.draft, currentAge: pa.age, currentAbbrev: pa.abbrev};
 
                     // Ratings
                     currentPr = _.last(pa.ratings);
                     if (pa.tid !== g.PLAYER.RETIRED) {
-                        player.currentOvr = currentPr.ovr;
-                        player.currentPot = currentPr.pot;
-                        player.currentSkills = currentPr.skills;
+                        p.currentOvr = currentPr.ovr;
+                        p.currentPot = currentPr.pot;
+                        p.currentSkills = currentPr.skills;
                     } else {
-                        player.currentOvr = "";
-                        player.currentPot = "";
-                        player.currentSkills = "";
+                        p.currentOvr = "";
+                        p.currentPot = "";
+                        p.currentSkills = "";
                     }
 
                     // Stats
-                    player.careerStats = pa.careerStats;
+                    p.careerStats = pa.careerStats;
 
-                    players.push(player);
+                    players.push(p);
                 }
             }
 

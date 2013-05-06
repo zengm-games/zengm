@@ -310,6 +310,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                                 season: inputs.season,
                                 tid: inputs.tid,
                                 showNoStats: true,
+                                showRookies: true,
                                 fuzz: true,
                                 numGamesRemaining: numGamesRemaining
                             });

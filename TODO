@@ -4,7 +4,6 @@ BEFORE 3.0.0-beta.3
 play menu realtime update across windows?
 is abbrev set correctly in player ratings for previous seasons?
 db.getPlayers -> player.filter
-  confirm rookies still show up in roster
   use everywhere
     get rid of sortBy usage
     use for other access of players "playersAll"

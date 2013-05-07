@@ -536,6 +536,10 @@ define(["globals", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"],
      * @param {function(number, Array=)} cb Callback; first argument is the payroll in thousands of dollars, second argument is the list of contract objects from getContracts.
      */
     function getPayroll(ot, tid, cb) {
+        if (tid === undefined) {
+            cb(0, []);
+            return console.log('ERROR: db.getPayroll needs a TID!')
+        }
         getContracts(ot, tid, function (contracts) {
             var i, payroll;
 

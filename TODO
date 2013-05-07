@@ -10,6 +10,7 @@ db.getTeams -> team.filter
     playoffs and rs stats returned separately
     stats in root object *unless* multiple season requested (are they ever?)
       what about seasonAttrs when multiple seasons are requested? just uses latest value, it seems?
+        if i change this, fix views.teamFinances since it reads multiple seasons
   unit tests
 move most db functions into core.whatever. db should just be about initializing/upgrading
   get rid of "db" module dependence

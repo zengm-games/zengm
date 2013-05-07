@@ -2,7 +2,7 @@
  * @name views.teamFinances
  * @namespace Team finances.
  */
-define(["db", "globals", "ui", "core/finances", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, finances, $, ko, _, components, bbgmView, helpers, viewHelpers) {
+define(["db", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, finances, team, $, ko, _, components, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     var mapping;
@@ -111,11 +111,10 @@ define(["db", "globals", "ui", "core/finances", "lib/jquery", "lib/knockout", "l
     };
 
     function updateTeamFinances(inputs, updateEvents, vm) {
-        var deferred, vars;
+        var deferred;
 
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("teamFinances") >= 0 || inputs.tid !== vm.tid() || inputs.show !== vm.show()) {
             deferred = $.Deferred();
-            vars = {};
 
             db.getPayroll(null, inputs.tid, function (payroll, contracts) {
                 var contractTotals, i, j, salariesSeasons, season, showInt;
@@ -125,8 +124,6 @@ define(["db", "globals", "ui", "core/finances", "lib/jquery", "lib/knockout", "l
                 } else {
                     showInt = parseInt(inputs.show, 10);
                 }
-
-                payroll /= 1000;
 
                 // Convert contract objects into table rows
                 contractTotals = [0, 0, 0, 0, 0];
@@ -147,20 +144,20 @@ define(["db", "globals", "ui", "core/finances", "lib/jquery", "lib/knockout", "l
                 salariesSeasons = [season, season + 1, season + 2, season + 3, season + 4];
 
                 g.dbl.transaction("teams").objectStore("teams").get(inputs.tid).onsuccess = function (event) {
-                    var barData, barSeasons, i, keys, team, teamAll, tempData;
+                    var barData, barSeasons, i, keys, t, teamAll, tempData;
 
-                    team = event.target.result;
-                    team.seasons.reverse();  // Most recent season first
+                    t = event.target.result;
+                    t.seasons.reverse();  // Most recent season first
 
                     keys = ["won", "hype", "pop", "att", "cash", "revenues", "expenses"];
                     barData = {};
                     for (i = 0; i < keys.length; i++) {
-                        if (typeof team.seasons[0][keys[i]] !== "object") {
-                            barData[keys[i]] = helpers.nullPad(_.pluck(team.seasons, keys[i]), showInt);
+                        if (typeof t.seasons[0][keys[i]] !== "object") {
+                            barData[keys[i]] = helpers.nullPad(_.pluck(t.seasons, keys[i]), showInt);
                         } else {
                             // Handle an object in the database
                             barData[keys[i]] = {};
-                            tempData = _.pluck(team.seasons, keys[i]);
+                            tempData = _.pluck(t.seasons, keys[i]);
                             _.each(tempData[0], function (value, key, obj) {
                                 barData[keys[i]][key] = helpers.nullPad(_.pluck(_.pluck(tempData, key), "amount"), showInt);
                             });
@@ -168,7 +165,7 @@ define(["db", "globals", "ui", "core/finances", "lib/jquery", "lib/knockout", "l
                     }
 
                     // Process some values
-                    barData.att = _.map(barData.att, function (num, i) { if (team.seasons[i] !== undefined) { return num / team.seasons[i].gp; } });  // per game
+                    barData.att = _.map(barData.att, function (num, i) { if (t.seasons[i] !== undefined) { return num / t.seasons[i].gp; } });  // per game
                     keys = ["cash"];
                     for (i = 0; i < keys.length; i++) {
                         barData[keys[i]] = _.map(barData[keys[i]], function (num) { return num / 1000; });  // convert to millions
@@ -180,21 +177,24 @@ define(["db", "globals", "ui", "core/finances", "lib/jquery", "lib/knockout", "l
                     }
 
                     // Get stuff for the finances form
-                    db.getTeam(team, g.season, ["region", "name", "abbrev", "budget"], [], ["expenses"], {}, function (team) {
-                        vars = {
+                    team.filter({
+                        attrs: ["region", "name", "abbrev", "budget"],
+                        seasonAttrs: ["expenses", "payroll"],
+                        season: g.season,
+                        tid: inputs.tid
+                    }, function (t) {
+//                    db.getTeam(team, g.season, ["region", "name", "abbrev", "budget"], [], ["expenses"], {}, function (team) {
+                        deferred.resolve({
                             abbrev: inputs.abbrev,
                             tid: inputs.tid,
                             show: inputs.show,
-                            payroll: payroll,
                             salariesSeasons: salariesSeasons,
                             contracts: contracts,
                             contractTotals: contractTotals,
                             barData: barData,
                             barSeasons: barSeasons,
-                            team: team
-                        };
-
-                        deferred.resolve(vars);
+                            team: t
+                        });
                     });
                 };
             });

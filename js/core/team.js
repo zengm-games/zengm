@@ -549,7 +549,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                 cb(returnOneTeam ? fts[0] : fts);
             } else {
                 savePayroll = function (i) {
-                    db.getPayroll(options.ot, fts[i].tid, function (payroll) {
+                    db.getPayroll(options.ot, t[i].tid, function (payroll) {
                         fts[i].payroll = payroll / 1000;
                         if (i === fts.length - 1) {
                             cb(returnOneTeam ? fts[0] : fts);

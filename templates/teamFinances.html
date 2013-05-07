@@ -3,7 +3,7 @@
 <h1><span data-bind="text: team.region"></span> <span data-bind="text: team.name"></span> Finances <span data-bind="newWindow: []"></span></h1>
 <p>More: <a data-bind="attrLeagueUrl: {href: ['roster', abbrev]}">Roster</a> | <a data-bind="attrLeagueUrl: {href: ['game_log', abbrev]}">Game Log</a></p>
 
-<p class="clearfix">The current payroll (<strong data-bind="currency: [payroll, 'M']"></strong>) is <span data-bind="text: aboveBelow.minPayroll"></span> the minimum payroll limit (<strong data-bind="currency: [minPayroll, 'M']"></strong>), <span data-bind="text: aboveBelow.salaryCap"></span> the salary cap (<strong data-bind="currency: [salaryCap, 'M']"></strong>), and <span data-bind="text: aboveBelow.luxuryPayroll"></span> the luxury tax limit (<strong data-bind="currency: [luxuryPayroll, 'M']"></strong>). <i class="icon-question-sign" id="help-payroll-limits" data-placement="bottom"></i></p>
+<p class="clearfix">The current payroll (<strong data-bind="currency: [team.payroll, 'M']"></strong>) is <span data-bind="text: aboveBelow.minPayroll"></span> the minimum payroll limit (<strong data-bind="currency: [minPayroll, 'M']"></strong>), <span data-bind="text: aboveBelow.salaryCap"></span> the salary cap (<strong data-bind="currency: [salaryCap, 'M']"></strong>), and <span data-bind="text: aboveBelow.luxuryPayroll"></span> the luxury tax limit (<strong data-bind="currency: [luxuryPayroll, 'M']"></strong>). <i class="icon-question-sign" id="help-payroll-limits" data-placement="bottom"></i></p>
 
 <div class="row-fluid">
   <div class="span2">

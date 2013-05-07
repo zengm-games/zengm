@@ -413,73 +413,71 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
             }
         };
 
-        // Filters s by stats (which should be options.stats) and returns a filtered object. This is to do one season of stats filtering.
-        filterStatsPartial = function (s, stats) {
-            var j, row;
-
-            row = {};
+        // Filters s by stats (which should be options.stats) into ft. This is to do one season of stats filtering.
+        filterStatsPartial = function (ft, s, stats) {
+            var j;
 
             if (s !== undefined && s.gp > 0) {
                 for (j = 0; j < stats.length; j++) {
                     if (stats[j] === "gp") {
-                        row.gp = s.gp;
+                        ft.gp = s.gp;
                     } else if (stats[j] === "fgp") {
                         if (s.fga > 0) {
-                            row.fgp = 100 * s.fg / s.fga;
+                            ft.fgp = 100 * s.fg / s.fga;
                         } else {
-                            row.fgp = 0;
+                            ft.fgp = 0;
                         }
                     } else if (stats[j] === "fgpAtRim") {
                         if (s.fgaAtRim > 0) {
-                            row.fgpAtRim = 100 * s.fgAtRim / s.fgaAtRim;
+                            ft.fgpAtRim = 100 * s.fgAtRim / s.fgaAtRim;
                         } else {
-                            row.fgpAtRim = 0;
+                            ft.fgpAtRim = 0;
                         }
                     } else if (stats[j] === "fgpLowPost") {
                         if (s.fgaLowPost > 0) {
-                            row.fgpLowPost = 100 * s.fgLowPost / s.fgaLowPost;
+                            ft.fgpLowPost = 100 * s.fgLowPost / s.fgaLowPost;
                         } else {
-                            row.fgpLowPost = 0;
+                            ft.fgpLowPost = 0;
                         }
                     } else if (stats[j] === "fgpMidRange") {
                         if (s.fgaMidRange > 0) {
-                            row.fgpMidRange = 100 * s.fgMidRange / s.fgaMidRange;
+                            ft.fgpMidRange = 100 * s.fgMidRange / s.fgaMidRange;
                         } else {
-                            row.fgpMidRange = 0;
+                            ft.fgpMidRange = 0;
                         }
                     } else if (stats[j] === "tpp") {
                         if (s.tpa > 0) {
-                            row.tpp = 100 * s.tp / s.tpa;
+                            ft.tpp = 100 * s.tp / s.tpa;
                         } else {
-                            row.tpp = 0;
+                            ft.tpp = 0;
                         }
                     } else if (stats[j] === "ftp") {
                         if (s.fta > 0) {
-                            row.ftp = 100 * s.ft / s.fta;
+                            ft.ftp = 100 * s.ft / s.fta;
                         } else {
-                            row.ftp = 0;
+                            ft.ftp = 0;
                         }
                     } else if (stats[j] === "season") {
-                        row.season = s.season;
+                        ft.season = s.season;
                     } else {
                         if (options.totals) {
-                            row[stats[j]] = s[stats[j]];
+                            ft[stats[j]] = s[stats[j]];
                         } else {
-                            row[stats[j]] = s[stats[j]] / s.gp;
+                            ft[stats[j]] = s[stats[j]] / s.gp;
                         }
                     }
                 }
             } else {
                 for (j = 0; j < stats.length; j++) {
                     if (stats[j] === "season") {
-                        row.season = s.season;
+                        ft.season = s.season;
                     } else {
-                        row[stats[j]] = 0;
+                        ft[stats[j]] = 0;
                     }
                 }
             }
 
-            return row;
+            return ft;
         };
 
         // Copys/filters the stats listed in options.stats from p to fp.
@@ -510,11 +508,11 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                 ft.stats = [];
                 // Multiple seasons
                 for (i = 0; i < ts.length; i++) {
-                    ft.stats.push(filterStatsPartial(ts[i], options.stats));
+                    ft.stats.push(filterStatsPartial({}, ts[i], options.stats));
                 }
             } else {
-                // Single seasons
-                ft.stats = filterStatsPartial(ts, options.stats);
+                // Single seasons - merge stats with root object
+                ft = filterStatsPartial(ft, ts, options.stats);
             }
         };
 

@@ -508,7 +508,6 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
             }
         };
 
-
         tx = db.getObjectStore(options.ot, ["players", "releasedPlayers", "teams"], null);
         tx.objectStore("teams").getAll(options.tid).onsuccess = function (event) {
             var ft, fts, i, returnOneTeam, savePayroll, t;

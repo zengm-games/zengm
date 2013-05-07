@@ -7,8 +7,6 @@ define(["db", "globals", "core/league", "core/team"], function (db, g, league, t
 
     describe("core/team", function () {
         describe("#filter()", function () {
-            var t;
-
             before(function (done) {
                 db.connectMeta(function () {
                     league.create("Test", 0, "random", function () {
@@ -155,6 +153,41 @@ define(["db", "globals", "core/league", "core/team"], function (db, g, league, t
                     t.fg.should.equal(3);
                     t.fga.should.equal(30);
                     t.fgp.should.equal(10);
+
+                    done();
+                });
+            });
+            it("should use supplied IndexedDB transaction", function (done) {
+                var tx = g.dbl.transaction(["players", "releasedPlayers", "teams"]);
+                team.filter({
+                    attrs: ["tid", "abbrev"],
+                    seasonAttrs: ["season", "won"],
+                    tid: 4,
+                    season: g.season,
+                    ot: tx
+                }, function (t) {
+                    t.tid.should.equal(4);
+                    t.abbrev.should.equal("CHI");
+                    t.season.should.equal(g.season);
+                    t.won.should.equal(0);
+                    Object.keys(t).should.have.length(4);
+
+                    // If another transaction was used inside team.filter besides tx, this will cause an error because the transaction will no longer be active
+                    console.log(tx.objectStore("players").get(0));
+
+                    done();
+                });
+            });
+            it("should return stats in an array if no season is specified", function (done) {
+                team.filter({
+                    stats: ["gp", "fg", "fga", "fgp"],
+                    tid: 4,
+                    playoffs: true
+                }, function (t) {
+                    t.stats[0].gp.should.equal(4);
+                    t.stats[0].fg.should.equal(3);
+                    t.stats[0].fga.should.equal(30);
+                    t.stats[0].fgp.should.equal(10);
 
                     done();
                 });

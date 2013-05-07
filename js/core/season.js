@@ -15,10 +15,12 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
      */
     function updateOwnerMood(cb) {
         if (g.season !== g.startingSeason) {
-            g.dbl.transaction("teams").objectStore("teams").get(g.userTid).onsuccess = function (event) {
-                var deltas, ownerMood, t;
-
-                t = db.getTeam(event.target.result, g.season - 1, [], [], ["won", "playoffRoundsWon", "profit"], {});
+            team.filter({
+                seasonAttrs: ["won", "playoffRoundsWon", "profit"],
+                season: g.season - 1,
+                tid: g.userTid
+            }, function (t) {
+                var deltas, ownerMood;
 
                 deltas = {};
                 deltas.wins = 0.25 * (t.won - 41) / 41;
@@ -44,7 +46,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                 db.setGameAttributes({ownerMood: ownerMood}, function () {
                     cb(deltas);
                 });
-            };
+            });
         } else {
             cb({wins: 0, playoffs: 0, money: 0});
         }
@@ -99,7 +101,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
 
         // Any non-retired player can win an award
         transaction.objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(g.PLAYER.RETIRED, true)).onsuccess = function (event) {
-            var attributes, awards, i, p, players, seasonAttributes, stats, type;
+            var awards, i, p, players, type;
 
             awards = {season: g.season};
 
@@ -177,10 +179,13 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                 awardsByPlayer.push({pid: p.pid, type: type});
             }
 
-            attributes = ["tid", "abbrev", "region", "name", "cid"];
-            stats = [];
-            seasonAttributes = ["won", "lost", "winp"];
-            db.getTeams(transaction, g.season, attributes, stats, seasonAttributes, {sortBy: "winp"}, function (teams) {
+            team.filter({
+                attrs: ["tid", "abbrev", "region", "name", "cid"],
+                seasonAttrs: ["won", "lost", "winp"],
+                season: g.season,
+                sortBy: "winp",
+                ot: transaction
+            }, function (teams) {
                 var i, foundEast, foundWest, t, tx;
 
                 for (i = 0; i < teams.length; i++) {
@@ -577,14 +582,17 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
     }
 
     function newPhasePlayoffs(cb) {
-        var attributes, phaseText, seasonAttributes;
+        var phaseText;
 
         phaseText = g.season + " playoffs";
 
         // Set playoff matchups
-        attributes = ["tid", "abbrev", "name", "cid"];
-        seasonAttributes = ["winp"];
-        db.getTeams(null, g.season, attributes, [], seasonAttributes, {sortBy: "winp"}, function (teams) {
+        team.filter({
+            attrs: ["tid", "abbrev", "name", "cid"],
+            seasonAttrs: ["winp"],
+            season: g.season,
+            sortBy: "winp"
+        }, function (teams) {
             var cid, i, j, row, series, teamsConf, tidPlayoffs, tx;
 
             // Add entry for wins for each team; delete winp, which was only needed for sorting

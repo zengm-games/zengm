@@ -1,6 +1,6 @@
 /**
  * @name core.team
- * @namespace Functions operating on team objects, or parts of team objects.
+ * @namespace Functions operating on team objects, parts of team objects, or arrays of team objects.
  */
 define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/random"], function (db, g, player, _, helpers, random) {
     "use strict";

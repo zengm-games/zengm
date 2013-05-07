@@ -2,7 +2,7 @@
  * @name views.leagueDashboard
  * @namespace League dashboard, displaying several bits of information about the league/team.
  */
-define(["db", "globals", "ui", "core/player", "core/season", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, player, season, $, ko, mapping, _, bbgmView, helpers, viewHelpers) {
+define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, player, season, team, $, ko, mapping, _, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     function updateTeam(inputs, updateEvents) {
@@ -75,16 +75,20 @@ define(["db", "globals", "ui", "core/player", "core/season", "lib/jquery", "lib/
 
 
     function updateTeams(inputs, updateEvents) {
-        var attributes, deferred, seasonAttributes, stats, vars;
+        var deferred, stats, vars;
 
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON)) {
             deferred = $.Deferred();
             vars = {};
 
-            attributes = ["tid", "cid"];
             stats = ["pts", "oppPts", "trb", "ast"];  // This is also used later to find ranks for these team stats
-            seasonAttributes = ["won", "lost", "winp", "streakLong", "att", "revenue", "profit"];
-            db.getTeams(null, g.season, attributes, stats, seasonAttributes, {sortBy: "winp"}, function (teams) {
+            team.filter({
+                attrs: ["tid", "cid"],
+                seasonAttrs: ["won", "lost", "winp", "streakLong", "att", "revenue", "profit"],
+                stats: stats,
+                season: g.season,
+                sortBy: "winp"
+            }, function (teams) {
                 var cid, i, j, ranks;
 
                 cid = _.find(teams, function (t) { return t.tid === g.userTid; }).cid;

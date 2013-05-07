@@ -2,7 +2,7 @@
  * @name views.history
  * @namespace Summaries of past seasons, leaguewide.
  */
-define(["db", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (db, g, ui, player, $, ko, bbgmView, helpers, viewHelpers, components) {
+define(["globals", "ui", "core/player", "core/team", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (g, ui, player, team, $, ko, bbgmView, helpers, viewHelpers, components) {
     "use strict";
 
     function get(req) {
@@ -30,11 +30,10 @@ define(["db", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "uti
     }
 
     function updateHistory(inputs, updateEvents, vm) {
-        var deferred, vars;
+        var deferred;
 
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || vm.season() !== inputs.season) {
             deferred = $.Deferred();
-            vars = {};
 
             g.dbl.transaction("awards").objectStore("awards").get(inputs.season).onsuccess = function (event) {
                 var awards;
@@ -51,7 +50,11 @@ define(["db", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "uti
                         fuzz: true
                     });
 
-                    db.getTeams(null, inputs.season, ["abbrev", "region", "name"], [], ["playoffRoundsWon"], {}, function (teams) {
+                    team.filter({
+                        attrs: ["abbrev", "region", "name"],
+                        seasonAttrs: ["playoffRoundsWon"],
+                        season: inputs.season
+                    }, function (teams) {
                         var champ, i;
 
                         for (i = 0; i < teams.length; i++) {
@@ -61,14 +64,12 @@ define(["db", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "uti
                             }
                         }
 
-                        vars = {
+                        deferred.resolve({
                             awards: awards,
                             champ: champ,
                             retiredPlayers: retiredPlayers,
                             season: inputs.season
-                        };
-
-                        deferred.resolve(vars);
+                        });
                     });
                 };
             };

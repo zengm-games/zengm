@@ -2,7 +2,7 @@
  * @name views.teamShotLocations
  * @namespace Team shot locations table.
  */
-define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, $, ko, _, components, bbgmView, helpers, viewHelpers) {
+define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, team, $, ko, _, components, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     var mapping;
@@ -26,22 +26,21 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
     };
 
     function updateTeams(inputs, updateEvents, vm) {
-        var attributes, deferred, seasonAttributes, stats, vars;
+        var deferred, seasonAttributes;
 
         if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.season !== vm.season()) {
             deferred = $.Deferred();
-            vars = {};
 
-            attributes = ["abbrev"];
-            stats = ["gp", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp"];
-            seasonAttributes = ["won", "lost"];
-            db.getTeams(null, inputs.season, attributes, stats, seasonAttributes, {}, function (teams) {
-                vars = {
+            team.filter({
+                attrs: ["abbrev"],
+                seasonAttrs: ["won", "lost"],
+                stats: ["gp", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp"],
+                season: inputs.season
+            }, function (teams) {
+                deferred.resolve({
                     season: inputs.season,
                     teams: teams
-                };
-
-                deferred.resolve(vars);
+                });
             });
             return deferred.promise();
         }

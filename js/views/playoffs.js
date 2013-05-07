@@ -2,7 +2,7 @@
  * @name views.playoffs
  * @namespace Show current or archived playoffs, or projected matchups for an in-progress season.
  */
-define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (db, g, ui, season, $, ko, bbgmView, helpers, viewHelpers, components) {
+define(["globals", "ui", "core/season", "core/team", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (g, ui, season, team, $, ko, bbgmView, helpers, viewHelpers, components) {
     "use strict";
 
     function get(req) {
@@ -12,7 +12,7 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "uti
     }
 
     function updatePlayoffs(inputs, updateEvents, vm) {
-        var attributes, deferred, seasonAttributes, vars;
+        var deferred, vars;
 
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.season !== vm.season() || (inputs.season === g.season && updateEvents.indexOf("gameSim") >= 0)) {
             deferred = $.Deferred();
@@ -20,9 +20,12 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "uti
 
             if (inputs.season === g.season && g.phase < g.PHASE.PLAYOFFS) {
                 // In the current season, before playoffs start, display projected matchups
-                attributes = ["tid", "cid", "abbrev", "name"];
-                seasonAttributes = ["winp"];
-                db.getTeams(null, inputs.season, attributes, [], seasonAttributes, {sortBy: "winp"}, function (teams) {
+                team.filter({
+                    attrs: ["tid", "cid", "abbrev", "name"],
+                    seasonAttrs: ["winp"],
+                    season: inputs.season,
+                    sortBy: "winp"
+                }, function (teams) {
                     var cid, i, j, keys, series, teamsConf;
 
                     series = [[], [], [], []];  // First round, second round, third round, fourth round

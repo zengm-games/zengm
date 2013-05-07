@@ -1,11 +1,11 @@
 BEFORE 3.0.0-beta.3
 -------------------
 
+views.playoffs: finalMatchups always true?
 team stats - link to season roster
 db.getTeams -> team.filter
   read transaction from options.ot, always work async, load only 1 tid if options.tid set
   use everywhere
-    is sortBy really needed where it's used?
   update docs
     playoffs and rs stats returned separately
     stats in root object *unless* multiple season requested (are they ever?)

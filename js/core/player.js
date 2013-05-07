@@ -1,6 +1,6 @@
 /**
  * @name core.player
- * @namespace Functions operating on player objects, or parts of player objects.
+ * @namespace Functions operating on player objects, parts of player objects, or arrays of player objects.
  */
 define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/faces", "lib/underscore", "util/helpers", "util/random"], function (db, g, finances, injuries, names, faces, _, helpers, random) {
     "use strict";

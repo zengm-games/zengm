@@ -2,7 +2,7 @@
  * @name views.standings
  * @namespace Standings.
  */
-define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, $, ko, komapping, components, bbgmView, helpers, viewHelpers) {
+define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, team, $, ko, komapping, components, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     var mapping;
@@ -48,15 +48,17 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mappi
     };
 
     function updateStandings(inputs, updateEvents, vm) {
-        var attributes, deferred, seasonAttributes, vars;
+        var deferred;
 
         if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && updateEvents.indexOf("gameSim") >= 0) || inputs.season !== vm.season()) {
             deferred = $.Deferred();
-            vars = {};
 
-            attributes = ["tid", "cid", "did", "abbrev", "region", "name"];
-            seasonAttributes = ["won", "lost", "winp", "wonHome", "lostHome", "wonAway", "lostAway", "wonDiv", "lostDiv", "wonConf", "lostConf", "lastTen", "streak"];
-            db.getTeams(null, inputs.season, attributes, [], seasonAttributes, {sortBy: "winp"}, function (teams) {
+            team.filter({
+                attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
+                seasonAttrs: ["won", "lost", "winp", "wonHome", "lostHome", "wonAway", "lostAway", "wonDiv", "lostDiv", "wonConf", "lostConf", "lastTen", "streak"],
+                season: inputs.season,
+                sortBy: "winp"
+            }, function (teams) {
                 var confs, confTeams, data, divTeams, i, j, k, l, lastTenLost, lastTenWon;
 
                 confs = [];
@@ -99,12 +101,10 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mappi
                     }
                 }
 
-                vars = {
+                deferred.resolve({
                     season: inputs.season,
                     confs: confs
-                };
-
-                deferred.resolve(vars);
+                });
             });
             return deferred.promise();
         }

@@ -253,7 +253,9 @@ define(["db", "globals", "core/finances", "core/player", "core/season", "util/he
                                 cb(pids);
                             });
                         } else {
-                            cb(pids);
+                            db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                                cb(pids);
+                            });
                         }
                     });
                 };

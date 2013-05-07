@@ -409,15 +409,19 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
     function newPhaseCb(phase, phaseText, cb, url, updateEvents) {
         updateEvents = updateEvents !== undefined ? updateEvents : [];
 
-        db.setGameAttributes({phase: phase, lastDbChange: Date.now()}, function () {
+        // Set phase before updating play menu
+        db.setGameAttributes({phase: phase}, function () {
             ui.updatePhase(phaseText);
             ui.updatePlayMenu(null, function () {
-                if (cb !== undefined) {
-                    cb();
-                }
+                // Set lastDbChange last so there is no race condition
+                db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                    if (cb !== undefined) {
+                        cb();
+                    }
 
-                updateEvents.push("newPhase");
-                ui.realtimeUpdate(updateEvents, url);
+                    updateEvents.push("newPhase");
+                    ui.realtimeUpdate(updateEvents, url);
+                });
             });
         });
     }

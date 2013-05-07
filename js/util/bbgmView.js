@@ -75,7 +75,7 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
                         return helpers.error(vars.errorMessage, cb);
                     }
                     if (vars.redirectUrl !== undefined) {
-                        return ui.realtimeUpdate([], vars.redirectUrl);
+                        return ui.realtimeUpdate([], vars.redirectUrl, cb);
                     }
 
                     komapping.fromJS(vars, args.mapping, vm);
@@ -115,7 +115,7 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
                     return helpers.error(inputs.errorMessage, cb);
                 }
                 if (inputs.redirectUrl !== undefined) {
-                    return ui.realtimeUpdate([], inputs.redirectUrl);
+                    return ui.realtimeUpdate([], inputs.redirectUrl, cb);
                 }
 
                 fnUpdate(inputs, updateEvents, cb);

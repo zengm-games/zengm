@@ -35,8 +35,9 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
                 var players;
 
                 players = player.filter(event.target.result, {
-                    attrs: ["pid", "name", "pos", "age", "abbrev", "injury"],
+                    attrs: ["pid", "name", "pos", "age", "injury"],
                     ratings: ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills"],
+                    stats: ["abbrev"],
                     season: inputs.season,
                     showNoStats: true,
                     showRookies: true,
@@ -61,7 +62,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
             var season;
             season = vm.season();
             ui.datatable($("#player-ratings"), 4, _.map(vm.players(), function (p) {
-                return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, '<a href="/l/' + g.lid + '/roster/' + p.abbrev + '/' + season + '">' + p.abbrev + '</a>', String(p.age), String(p.ratings.ovr), String(p.ratings.pot), String(p.ratings.hgt), String(p.ratings.stre), String(p.ratings.spd), String(p.ratings.jmp), String(p.ratings.endu), String(p.ratings.ins), String(p.ratings.dnk), String(p.ratings.ft), String(p.ratings.fg), String(p.ratings.tp), String(p.ratings.blk), String(p.ratings.stl), String(p.ratings.drb), String(p.ratings.pss), String(p.ratings.reb)];
+                return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, '<a href="/l/' + g.lid + '/roster/' + p.stats.abbrev + '/' + season + '">' + p.stats.abbrev + '</a>', String(p.age - (g.season - season)), String(p.ratings.ovr), String(p.ratings.pot), String(p.ratings.hgt), String(p.ratings.stre), String(p.ratings.spd), String(p.ratings.jmp), String(p.ratings.endu), String(p.ratings.ins), String(p.ratings.dnk), String(p.ratings.ft), String(p.ratings.fg), String(p.ratings.tp), String(p.ratings.blk), String(p.ratings.stl), String(p.ratings.drb), String(p.ratings.pss), String(p.ratings.reb)];
             }));
         }).extend({throttle: 1});
     }

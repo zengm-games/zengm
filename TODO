@@ -1,7 +1,6 @@
 BEFORE 3.0.0-beta.3
 -------------------
 
-is abbrev set correctly in player ratings for previous seasons?
 player.filter
   use everywhere
     use for other access of players "playersAll"

@@ -288,32 +288,24 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
     }
 
     /**
-     * Filter a player object (or an array of player objects) by removing/combining/processing some components.
+     * Retrieve a filtered team object (or an array of player objects) from the database by removing/combining/processing some components.
      *
      * This can be used to retrieve information about a certain season, compute average statistics from the raw data, etc.
      *
-     * For a player object (p), create an object suitible for output based on the appropriate options, most notably a options.season and options.tid to find rows in of stats and ratings, and options.attributes, options.stats, and options.ratings to extract teh desired information. In the output, the attributes keys will be in the root of the object. There will also be stats and ratings properties containing filtered stats and ratings objects.
+     * This is similar to player.filter, but has some differences. If only one season is requested, the attrs, seasonAttrs, and stats properties will all be merged on the root filtered team object for each team. "stats" is broken out into its own property only when multiple seasons are requested (options.season is undefined). "seasonAttrs" should behave similarly, but it currently doesn't because it just hasn't been used that way anywhere yet.
      * 
-     * If options.season is undefined, then the stats and ratings objects will contain lists of objects for each season and options.tid is ignored. Then, there will also be a careerStats property in the output object containing an object with career averages.
-     *
-     * There are several more options (all described below) which can make things pretty complicated, but most of the time, they are not needed.
-     * 
-     * @memberOf core.player
-     * @param {Object|Array.<Object>} p Player object or array of player objects to be filtered.
+     * @memberOf core.team
      * @param {Object} options Options, as described below.
-     * @param {number=} options.season Season to retrieve stats/ratings for. If undefined, return stats/ratings for all seasons in a list as well as career totals in player.careerStats.
-     * @param {number=} options.tid Team ID to retrieve stats for. This is useful in the case where a player played for multiple teams in a season. Eventually, there should be some way to specify whether the stats for multiple teams in a single season should be merged together or not. For now, if this is undefined, it just picks the first entry, which is clearly wrong.
-     * @param {Array.<string>} options.attrs List of player attributes to include in output.
-     * @param {Array.<string>} options.ratings List of player ratings to include in output.
-     * @param {Array.<string>} options.stats List of player stats to include in output.
-     * @param {boolean} options.totals Boolean representing whether to return total stats (true) or per-game averages (false); default is false.
-     * @param {boolean} options.playoffs Boolean representing whether to return playoff stats (statsPlayoffs and careerStatsPlayoffs) or not; default is false. Either way, regular season stats are always returned.
-     * @param {boolean} options.showNoStats When true, players are returned with zeroed stats objects even if they have accumulated no stats for a team (such as  players who were just traded for, free agents, etc.); this applies only for regular season stats. Even when this is true, undefined will still be returned if a season is requested from before they entered the league. To show draft prospects, options.showRookies is needed. Default is false, but if options.stats is empty, this is always true.
-     * @param {boolean} options.showRookies If true (default false), then rookies drafted in the current season (g.season) are shown if that season is requested. This is mainly so, after the draft, rookies can show up in the roster, player ratings view, etc. After the next season starts, then they will no longer show up in a request for that season since they didn't actually play that season.
-     * @param {boolean} options.fuzz When true (default false), noise is added to any returned ratings based on the fuzz variable for the given season (default: false); any user-facing rating should use true, any non-user-facing rating should use false.
-     * @param {boolean} options.oldStats When true (default false), stats from the previous season are displayed if there are no stats for the current season. This is currently only used for the free agents list, so it will either display stats from this season if they exist, or last season if they don't.
-     * @param {number} options.numGamesRemaining If the "cashOwed" attr is requested, options.numGamesRemaining is used to calculate how much of the current season's contract remains to be paid. This is used for buying out players.
-     * @param {function(Object|Array.<Object>)} Callback function called with filtered team object or array of filtered team objects, depending on the inputs.
+     * @param {number=} options.season Season to retrieve stats/ratings for. If undefined, return stats for all seasons in a list called "stats".
+     * @param {number=} options.tid Team ID. Set this if you want to return only one team object. If undefined, an array of all teams is returned.
+     * @param {Array.<string>=} options.attrs List of team attributes to include in output (e.g. region, abbrev, name, ...).
+     * @param {Array.<string>=} options.seasonAttrs List of seasonal team attributes to include in output (e.g. won, lost, payroll, ...).
+     * @param {Array.<string=>} options.stats List of team stats to include in output (e.g. fg, orb, ast, blk, ...).
+     * @param {boolean=} options.totals Boolean representing whether to return total stats (true) or per-game averages (false); default is false.
+     * @param {boolean=} options.playoffs Boolean representing whether to return playoff stats or not; default is false. Unlike player.filter, team.filter returns either playoff stats or regular season stats, never both.
+     * @param {string=} options.sortby Sorting method. "winp" sorts by descending winning percentage. If undefined, then teams are returned in order of their team IDs (which is alphabetical, currently).
+     * @param {IDBTransaction|null=} options.ot An IndexedDB transaction on players, releasedPlayers, and teams; if null/undefined, then a new transaction will be used.
+     * @param {function(Object|Array.<Object>)} cb Callback function called with filtered team object or array of filtered team objects, depending on the inputs.
      */
     function filter(options, cb) {
         var filterAttrs, filterSeasonAttrs, filterStats, filterStatsPartial, tx;

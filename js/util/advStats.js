@@ -2,7 +2,7 @@
  * @name util.advStats
  * @namespace Advanced stats (PER, WS, etc) that require some nontrivial calculations and thus are calculated and cached once each day.
  */
-define(["db", "globals", "core/player", "lib/underscore"], function (db, g, player, _) {
+define(["globals", "core/player", "core/team", "lib/underscore"], function (g, player, team, _) {
     "use strict";
 
     /**
@@ -17,11 +17,13 @@ define(["db", "globals", "core/player", "lib/underscore"], function (db, g, play
      */
     function calculatePER(cb) {
         // Total team stats (not per game averages) - gp, pts, ast, fg, plus all the others needed for league totals
-        var attributes, stats;
-
-        attributes = ["tid"];
-        stats = ["gp", "ft", "pf", "ast", "fg", "pts", "fga", "orb", "tov", "fta", "trb", "oppPts"];
-        db.getTeams(null, g.season, attributes, stats, [], {totals: true, playoffs: g.PHASE.PLAYOFFS === g.phase}, function (teams) {
+        team.filter({
+            attrs: ["tid"],
+            stats: ["gp", "ft", "pf", "ast", "fg", "pts", "fga", "orb", "tov", "fta", "trb", "oppPts"],
+            season: g.season,
+            totals: true,
+            playoffs: g.PHASE.PLAYOFFS === g.phase
+        }, function (teams) {
             var i, league, leagueStats;
 
             // Total league stats (not per game averages) - gp, ft, pf, ast, fg, pts, fga, orb, tov, fta, trb

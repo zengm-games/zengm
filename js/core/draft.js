@@ -2,7 +2,7 @@
  * @name core.draft
  * @namespace The annual draft of new prospects.
  */
-define(["db", "globals", "core/finances", "core/player", "core/season", "util/helpers", "util/random"], function (db, g, finances, player, season, helpers, random) {
+define(["db", "globals", "core/finances", "core/player", "core/season", "core/team", "util/helpers", "util/random"], function (db, g, finances, player, season, team, helpers, random) {
     "use strict";
 
     /**
@@ -88,17 +88,17 @@ define(["db", "globals", "core/finances", "core/player", "core/season", "util/he
     /**
      * Sets draft order and save it to the draftOrder object store.
      *
-     * This is currently based on winning percentage (no lottery).
+     * This is currently based on an NBA-like lottery, where the first 3 picks can be any of the non-playoff teams (with weighted probabilities).
      *
      * @memberOf core.draft
      * @param {function()=} cb Optional callback function.
      */
     function genOrder(cb) {
-        var attributes, seasonAttributes;
-
-        attributes = ["tid", "abbrev", "name", "cid"];
-        seasonAttributes = ["winp", "playoffRoundsWon"];
-        db.getTeams(null, g.season, attributes, [], seasonAttributes, {}, function (teams) {
+        team.filter({
+            attrs: ["tid", "abbrev", "name", "cid"],
+            seasonAttrs: ["winp", "playoffRoundsWon"],
+            season: g.season
+        }, function (teams) {
             var chances, draftOrder, draw, firstThree, i, pick;
             draftOrder = [];
 

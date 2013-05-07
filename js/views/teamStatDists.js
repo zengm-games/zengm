@@ -2,7 +2,7 @@
  * @name views.teamStatDists
  * @namespace Team stat distributions.
  */
-define(["db", "globals", "ui", "lib/boxPlot", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, boxPlot, $, ko, _, components, bbgmView, helpers, viewHelpers) {
+define(["globals", "ui", "core/team", "lib/boxPlot", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, team, boxPlot, $, ko, _, components, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     var nbaStatsAll;
@@ -42,16 +42,16 @@ define(["db", "globals", "ui", "lib/boxPlot", "lib/jquery", "lib/knockout", "lib
     }
 
     function updateTeams(inputs, updateEvents, vm) {
-        var attributes, deferred, seasonAttributes, stats, vars;
+        var deferred;
 
         if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.season !== vm.season()) {
             deferred = $.Deferred();
-            vars = {};
 
-            attributes = [];
-            stats = ["fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "oppPts"];
-            seasonAttributes = ["won", "lost"];
-            db.getTeams(null, inputs.season, attributes, stats, seasonAttributes, {}, function (teams) {
+            team.filter({
+                seasonAttrs: ["won", "lost"],
+                stats: ["fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "oppPts"],
+                season: inputs.season
+            }, function (teams) {
                 var statsAll;
 
                 statsAll = _.reduce(teams, function (memo, team) {
@@ -68,12 +68,10 @@ define(["db", "globals", "ui", "lib/boxPlot", "lib/jquery", "lib/knockout", "lib
                     return memo;
                 }, {});
 
-                vars = {
+                deferred.resolve({
                     season: inputs.season,
                     statsAll: statsAll
-                };
-
-                deferred.resolve(vars);
+                });
             });
             return deferred.promise();
         }

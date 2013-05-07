@@ -183,7 +183,6 @@ define(["db", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib/
                         season: g.season,
                         tid: inputs.tid
                     }, function (t) {
-//                    db.getTeam(team, g.season, ["region", "name", "abbrev", "budget"], [], ["expenses"], {}, function (team) {
                         deferred.resolve({
                             abbrev: inputs.abbrev,
                             tid: inputs.tid,

@@ -2,7 +2,7 @@
  * @name views.schedule
  * @namespace Show current schedule for user's team.
  */
-define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (db, g, ui, $, ko, _, bbgmView, helpers, viewHelpers, components) {
+define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (g, ui, team, $, ko, _, bbgmView, helpers, viewHelpers, components) {
     "use strict";
 
     var mapping;
@@ -26,30 +26,30 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
     };
 
     function updateLeagueFinances(inputs, updateEvents, vm) {
-        var attributes, deferred, seasonAttributes, vars;
+        var deferred;
 
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.season !== vm.season() || inputs.season === g.season) {
             deferred = $.Deferred();
-            vars = {};
 
-            attributes = ["tid", "abbrev", "region", "name"];
-            seasonAttributes = ["att", "revenue", "profit", "cash", "payroll", "salaryPaid"];
-            db.getTeams(null, inputs.season, attributes, [], seasonAttributes, {}, function (teams) {
+            team.filter({
+                attrs: ["tid", "abbrev", "region", "name"],
+                seasonAttrs: ["att", "revenue", "profit", "cash", "payroll", "salaryPaid"],
+                season: inputs.season
+            }, function (teams) {
                 var i;
 
                 for (i = 0; i < teams.length; i++) {
                     teams[i].cash /= 1000;  // [millions of dollars]
                 }
 
-                vars = {
+                deferred.resolve({
                     season: inputs.season,
                     salaryCap: g.salaryCap / 1000,
                     minPayroll: g.minPayroll / 1000,
                     luxuryPayroll: g.luxuryPayroll / 1000,
                     luxuryTax: g.luxuryTax,
                     teams: teams
-                };
-                deferred.resolve(vars);
+                });
             });
 
             return deferred.promise();

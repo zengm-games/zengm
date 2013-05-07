@@ -1,11 +1,12 @@
 BEFORE 3.0.0-beta.3
 -------------------
 
-player.filter
-  use everywhere
-    use for other access of players "playersAll"
-  the special case attributes should generally be moved directly into the database?
 db.getTeams -> team.filter
+  read transaction from options.ot, always work async, load only 1 tid if necessary
+    can i do getAll(tid) to do one/all teams?
+  update docs
+    playoffs and rs stats returned separately
+  unit tests
 move most db functions into core.whatever. db should just be about initializing/upgrading
   get rid of "db" module dependence
 if season is already over, don't add stats row to traded player or signed free agent... does this cause any problems anywhere?
@@ -279,6 +280,8 @@ http://code.google.com/p/htmlcompressor/ or something similar
 unified notion of player "value" - function of ratings, age, contract, stats, etc. similar to what is already in core.trade.getValues, but should include statistics as well.
   use for players picking salaries, AI teams drafting, and trades
 core.player.ovr shouldn't just average ratings together. some ratings are more important than others. do regression analysis against PER to prove this and find a better formula.
+player.filter
+  the special case attributes should generally be moved directly into the database?
 
 Template Stuff
 --------------

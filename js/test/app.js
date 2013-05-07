@@ -34,7 +34,7 @@ requirejs(["ui", "views", "lib/chai", "lib/jquery", "lib/IndexedDB-getAll-shim",
     });
     should = chai.should();
 
-    require(["test/core/contractNegotiation", "test/core/draft", "test/core/finances", "test/core/league", "test/core/player", "test/core/season", "test/core/trade", "test/util/helpers", "test/views/components", "test/views/gameLog"], function () {
+    require(["test/core/contractNegotiation", "test/core/draft", "test/core/finances", "test/core/league", "test/core/player", "test/core/season", "test/core/team", "test/core/trade", "test/util/helpers", "test/views/components", "test/views/gameLog"], function () {
         mocha.run();
     });
 });

@@ -2,7 +2,7 @@
  * @name test.core.player
  * @namespace Tests for core.player.
  */
-define(["db", "globals", "core/player"], function (db, g, player) {
+define(["globals", "core/player"], function (g, player) {
     "use strict";
 
     describe("core/player", function () {

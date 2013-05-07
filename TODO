@@ -1,7 +1,6 @@
 BEFORE 3.0.0-beta.3
 -------------------
 
-views.playoffs: finalMatchups always true?
 move most db functions into core.whatever. db should just be about initializing/upgrading
   get rid of "db" module dependence
 if season is already over, don't add stats row to traded player or signed free agent... does this cause any problems anywhere?

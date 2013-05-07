@@ -20,6 +20,10 @@ define(["db", "globals", "core/league", "core/team"], function (db, g, league, t
                             t.stats[0].gp = 10;
                             t.stats[0].fg = 50;
                             t.stats[0].fga = 100;
+                            t = team.addStatsRow(t, true);
+                            t.stats[1].gp = 4;
+                            t.stats[1].fg = 12;
+                            t.stats[1].fga = 120;
 
                             cursor.update(t);
 
@@ -35,7 +39,7 @@ define(["db", "globals", "core/league", "core/team"], function (db, g, league, t
             it("should return requested info if tid/season match", function (done) {
                 team.filter({
                     attrs: ["tid", "abbrev"],
-                    seasonAttrs: ["season", "won"],
+                    seasonAttrs: ["season", "won", "payroll"],
                     stats: ["gp", "fg", "fgp"],
                     tid: 4,
                     season: g.season
@@ -44,10 +48,11 @@ define(["db", "globals", "core/league", "core/team"], function (db, g, league, t
                     t.abbrev.should.equal("CHI");
                     t.season.should.equal(g.season);
                     t.won.should.equal(0);
+                    t.payroll.should.be.gt(0);
                     t.gp.should.equal(10);
                     t.fg.should.equal(5);
                     t.fgp.should.equal(50);
-                    Object.keys(t).should.have.length(7);
+                    Object.keys(t).should.have.length(8);
                     t.hasOwnProperty("stats").should.equal(false);
 
                     done();
@@ -124,40 +129,36 @@ define(["db", "globals", "core/league", "core/team"], function (db, g, league, t
                     done();
                 });
             });
-/*            it("should return season totals is options.totals is true, and per-game averages otherwise", function () {
-                var pf;
-
-                pf = player.filter(p, {
-                    stats: ["gp", "fg"],
+            it("should return season totals is options.totals is true", function (done) {
+                team.filter({
+                    stats: ["gp", "fg", "fga", "fgp"],
                     tid: 4,
-                    season: 2012,
+                    season: g.season,
                     totals: true
-                });
-                t.stats.gp.should.equal(5);
-                t.stats.fg.should.equal(20);
+                }, function (t) {
+                    t.gp.should.equal(10);
+                    t.fg.should.equal(50);
+                    t.fga.should.equal(100);
+                    t.fgp.should.equal(50);
 
-                pf = player.filter(p, {
-                    stats: ["gp", "fg"],
-                    tid: 4,
-                    season: 2012
+                    done();
                 });
-                t.stats.gp.should.equal(5);
-                t.stats.fg.should.equal(4);
             });
-            it("should return playoff stats if options.playoffs is true", function () {
-                var pf;
-
-                pf = player.filter(p, {
-                    stats: ["gp", "fg"],
+            it("should return playoff stats if options.playoffs is true", function (done) {
+                team.filter({
+                    stats: ["gp", "fg", "fga", "fgp"],
                     tid: 4,
-                    season: 2012,
+                    season: g.season,
                     playoffs: true
+                }, function (t) {
+                    t.gp.should.equal(4);
+                    t.fg.should.equal(3);
+                    t.fga.should.equal(30);
+                    t.fgp.should.equal(10);
+
+                    done();
                 });
-                t.stats.gp.should.equal(5);
-                t.stats.fg.should.equal(4);
-                t.statsPlayoffs.gp.should.equal(3);
-                t.statsPlayoffs.fg.should.equal(10);
-            });*/
+            });
         });
     });
 });

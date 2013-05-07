@@ -4,7 +4,6 @@ BEFORE 3.0.0-beta.3
 views.playoffs: finalMatchups always true?
 db.getTeams -> team.filter
   unit tests
-    include payroll > 0
     test with supplied transaction
     test for array of stats, when no season given
 move most db functions into core.whatever. db should just be about initializing/upgrading

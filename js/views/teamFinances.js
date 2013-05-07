@@ -165,10 +165,17 @@ define(["db", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib/
                     }
 
                     // Process some values
-                    barData.att = _.map(barData.att, function (num, i) { if (t.seasons[i] !== undefined) { return num / t.seasons[i].gp; } });  // per game
+                    barData.att = _.map(barData.att, function (num, i) {
+                        if (t.seasons[i] !== undefined) {
+                            if (t.seasons[i].gp > 0) {
+                                return num / t.seasons[i].gp; // per game
+                            }
+                            return 0;
+                        }
+                    });
                     keys = ["cash"];
                     for (i = 0; i < keys.length; i++) {
-                        barData[keys[i]] = _.map(barData[keys[i]], function (num) { return num / 1000; });  // convert to millions
+                        barData[keys[i]] = _.map(barData[keys[i]], function (num) { return num / 1000; }); // convert to millions
                     }
 
                     barSeasons = [];

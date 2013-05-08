@@ -3,10 +3,7 @@ BEFORE 3.0.0-beta.3
 
 team history view needs more love
   dropdown for other teams
-  show table of all players who played on the team, with their stats accumulated for only that team
-    is this possible with player.filter? yes, see last test
-    add data to table
-    datatables ui
+    search for g.userTid
 move most db functions into core.whatever. db should just be about initializing/upgrading
   get rid of "db" module dependence
 if season is already over, don't add stats row to traded player or signed free agent... does this cause any problems anywhere?

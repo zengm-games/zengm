@@ -1,9 +1,11 @@
 <h1>Team History <span data-bind="newWindow: []"></span></h1>
 
 <div class="row-fluid">
-  <div class="span3" data-bind="foreach: history">
+  <div class="span3">
     <h2>Seasons</h2>
-    <a data-bind="attrLeagueUrl: {href: ['roster', $root.abbrev, season]}, text: season"></a>: <a data-bind="attrLeagueUrl: {href: ['standings', season]}"><span data-bind="text: won"></span>-<span data-bind="text: lost"></span></a><span data-bind="visible: extraText">, <a data-bind="attrLeagueUrl: {href: ['playoffs', season]}, text: extraText"></a></span><br>
+    <!-- ko foreach: history -->
+      <a data-bind="attrLeagueUrl: {href: ['roster', $root.abbrev, season]}, text: season"></a>: <a data-bind="attrLeagueUrl: {href: ['standings', season]}"><span data-bind="text: won"></span>-<span data-bind="text: lost"></span></a><span data-bind="visible: extraText">, <a data-bind="attrLeagueUrl: {href: ['playoffs', season]}, text: extraText"></a></span><br>
+    <!-- /ko -->
   </div>
   <div class="span9">
     <h2>Players</h2>

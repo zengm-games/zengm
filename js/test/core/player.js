@@ -42,9 +42,15 @@ define(["globals", "core/player"], function (g, player) {
                 p = player.addStatsRow(p, true);
                 p.stats[1].gp = 3;
                 p.stats[1].fg = 30;
+                p = player.addStatsRow(p);
+                p.stats[2].season = 2013;
+                p.stats[2].gp = 8;
+                p.stats[2].fg = 56;
 
                 p = player.addRatingsRow(p, 15);
                 p.ratings[2].season = 2013;
+                p = player.addRatingsRow(p, 15);
+                p.ratings[3].season = 2014;
             });
 
             it("should return requested info if tid/season match", function () {
@@ -160,7 +166,6 @@ define(["globals", "core/player"], function (g, player) {
                     tid: 4,
                     season: 2012
                 });
-console.log(pf);
 
                 pf.tid.should.equal(4);
                 pf.awards.should.have.length(0);
@@ -194,7 +199,7 @@ console.log(pf);
                     ratings: ["season", "ovr"],
                     stats: ["season", "abbrev", "fg", "fgp", "per"],
                     tid: 4,
-                    season: 2013
+                    season: 2014
                 });
 
                 (typeof pf).should.equal("undefined");
@@ -301,15 +306,6 @@ console.log(pf);
             it("should return stats from previous season if options.oldStats is true and current season has no stats record", function () {
                 var pf;
 
-                pf = player.filter(p, {
-                    stats: ["gp", "fg"],
-                    tid: 4,
-                    season: 2012,
-                    oldStats: true
-                });
-                pf.stats.gp.should.equal(5);
-                pf.stats.fg.should.equal(4);
-
                 g.season = 2013;
 
                 pf = player.filter(p, {
@@ -318,13 +314,24 @@ console.log(pf);
                     season: 2013,
                     oldStats: true
                 });
-                pf.stats.gp.should.equal(5);
-                pf.stats.fg.should.equal(4);
+                pf.stats.gp.should.equal(8);
+                pf.stats.fg.should.equal(7);
+
+                g.season = 2014;
 
                 pf = player.filter(p, {
                     stats: ["gp", "fg"],
                     tid: 4,
-                    season: 2013,
+                    season: 2014,
+                    oldStats: true
+                });
+                pf.stats.gp.should.equal(8);
+                pf.stats.fg.should.equal(7);
+
+                pf = player.filter(p, {
+                    stats: ["gp", "fg"],
+                    tid: 4,
+                    season: 2014,
                     oldStats: false
                 });
                 (typeof pf).should.equal("undefined");
@@ -333,6 +340,8 @@ console.log(pf);
             });
             it("should adjust cashOwed by options.numGamesRemaining", function () {
                 var pf;
+
+//                g.season = 2012; // Already set above
 
                 pf = player.filter(p, {
                     attrs: ["cashOwed"],
@@ -357,6 +366,35 @@ console.log(pf);
                     numGamesRemaining: 0
                 });
                 pf.cashOwed.should.equal(p.contract.amount / 1000);
+            });
+            it("should return stats and ratings from all seasons if no season is specified", function () {
+                var pf;
+
+                pf = player.filter(p, {
+                    attrs: ["tid", "awards"],
+                    ratings: ["season", "ovr"],
+                    stats: ["season", "abbrev", "fg"],
+                    tid: 4
+                });
+
+                pf.tid.should.equal(4);
+                pf.awards.should.have.length(0);
+                pf.ratings[0].season.should.equal(2011);
+                pf.ratings[0].ovr.should.be.a("number");
+                pf.ratings[1].season.should.equal(2012);
+                pf.ratings[1].ovr.should.be.a("number");
+                pf.ratings[2].season.should.equal(2013);
+                pf.ratings[2].ovr.should.be.a("number");
+                pf.stats[0].season.should.equal(2012);
+                pf.stats[0].abbrev.should.equal("CHI");
+                pf.stats[0].fg.should.equal(4);
+                pf.stats[1].season.should.equal(2013);
+                pf.stats[1].abbrev.should.equal("CHI");
+                pf.stats[1].fg.should.equal(7);
+
+                pf.hasOwnProperty("statsPlayoffs").should.equal(false);
+                pf.hasOwnProperty("careerStats").should.equal(true);
+                pf.hasOwnProperty("careerStatsPlayoffs").should.equal(false);
             });
         });
     });

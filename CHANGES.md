@@ -12,6 +12,7 @@ This is a list of only the major changes in each version.
 
 ### Still in progress
 
+- Team history
 - See TODO
 
 ## Technical details

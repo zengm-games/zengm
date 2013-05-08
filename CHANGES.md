@@ -9,10 +9,10 @@ This is a list of only the major changes in each version.
 - Draft lottery, based on NBA rules
 - Made it harder to fleece the AI in trades
 - Faster UI, particularly in the game log
+- Team history viewable for any team, including a table of all players who played for that team
 
 ### Still in progress
 
-- Team history
 - See TODO
 
 ## Technical details

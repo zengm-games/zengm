@@ -2,10 +2,23 @@
  * @name views.teamHistory
  * @namespace Team history.
  */
-define(["db", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, player, $, ko, _, bbgmView, helpers, viewHelpers) {
+define(["db", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (db, g, ui, player, $, ko, _, bbgmView, helpers, viewHelpers, components) {
     "use strict";
 
     var mapping;
+
+    function get(req) {
+        var inputs, out;
+
+        inputs = {};
+
+        inputs.show = req.params.show !== undefined ? req.params.show : "10";
+        out = helpers.validateAbbrev(req.params.abbrev);
+        inputs.tid = out[0];
+        inputs.abbrev = out[1];
+
+        return inputs;
+    }
 
     mapping = {
         history: {
@@ -23,15 +36,13 @@ define(["db", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib
     function updateTeamHistory(inputs, updateEvents, vm) {
         var deferred;
 
-        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0) {
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || inputs.abbrev !== vm.abbrev()) {
             deferred = $.Deferred();
 
-            g.dbl.transaction("teams").objectStore("teams").get(g.userTid).onsuccess = function (event) {
+            g.dbl.transaction("teams").objectStore("teams").get(inputs.tid).onsuccess = function (event) {
                 var abbrev, extraText, history, i, userTeam, userTeamSeason;
 
                 userTeam = event.target.result;
-
-                abbrev = userTeam.abbrev;
 
                 history = [];
                 for (i = 0; i < userTeam.seasons.length; i++) {
@@ -57,23 +68,22 @@ define(["db", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib
                 }
                 history.reverse(); // Show most recent season first
 
-                g.dbl.transaction("players").objectStore("players").index("statsTids").getAll(g.userTid).onsuccess = function (event) {
+                g.dbl.transaction("players").objectStore("players").index("statsTids").getAll(inputs.tid).onsuccess = function (event) {
                     var i, players;
 
                     players = player.filter(event.target.result, {
                         attrs: ["pid", "name", "pos", "injury"],
                         stats: ["gp", "min", "pts", "trb", "ast", "per"],
-                        tid: g.userTid
+                        tid: inputs.tid
                     });
 
                     for (i = 0; i < players.length; i++) {
                         delete players[i].ratings;
                         delete players[i].stats;
                     }
-console.log(players);
 
                     deferred.resolve({
-                        abbrev: abbrev,
+                        abbrev: inputs.abbrev,
                         history: history,
                         players: players
                     });
@@ -94,10 +104,16 @@ console.log(players);
         }).extend({throttle: 1});
     }
 
+    function uiEvery(updateEvents, vm) {
+        components.dropdown("team-history-dropdown", ["teams"], [vm.abbrev()], updateEvents);
+    }
+
     return bbgmView.init({
         id: "teamHistory",
+        get: get,
         mapping: mapping,
         runBefore: [updateTeamHistory],
-        uiFirst: uiFirst
+        uiFirst: uiFirst,
+        uiEvery: uiEvery
     });
 });

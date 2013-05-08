@@ -16,11 +16,10 @@ define(["db", "globals", "ui", "lib/jquery", "util/bbgmView", "util/viewHelpers"
     };
 
     function updateTeamHistory(inputs, updateEvents, vm) {
-        var deferred, vars;
+        var deferred;
 
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0) {
             deferred = $.Deferred();
-            vars = {};
 
             g.dbl.transaction("teams").objectStore("teams").get(g.userTid).onsuccess = function (event) {
                 var abbrev, extraText, history, i, userTeam, userTeamSeason;
@@ -53,12 +52,10 @@ define(["db", "globals", "ui", "lib/jquery", "util/bbgmView", "util/viewHelpers"
                 }
                 history.reverse(); // Show most recent season first
 
-                vars = {
+                deferred.resolve({
                     abbrev: abbrev,
                     history: history
-                };
-
-                deferred.resolve(vars);
+                });
             };
 
             return deferred.promise();

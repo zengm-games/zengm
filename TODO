@@ -4,8 +4,7 @@ BEFORE 3.0.0-beta.3
 team history view needs more love
   dropdown for other teams
   show table of all players who played on the team, with their stats accumulated for only that team
-    is this possible with player.filter? first write unit tests for situations with no season and multiple teams played for
-      check if this is a all-season one-tid scenario. if so, keep a list of bad seasons (where they player did not play for that team) - empty if it's an all-tid scenario. then each time a ratings row is evaluated, only keep it if it's not from that list. for stats, just check the tid of the row.
+    is this possible with player.filter? yes, see last test
 move most db functions into core.whatever. db should just be about initializing/upgrading
   get rid of "db" module dependence
 if season is already over, don't add stats row to traded player or signed free agent... does this cause any problems anywhere?

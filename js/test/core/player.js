@@ -375,9 +375,9 @@ define(["globals", "core/player"], function (g, player) {
                     attrs: ["tid", "awards"],
                     ratings: ["season", "ovr"],
                     stats: ["season", "abbrev", "fg"],
-                    tid: 4,
                     totals: true
                 });
+console.log(pf);
 
                 pf.tid.should.equal(4);
                 pf.awards.should.have.length(0);
@@ -408,6 +408,7 @@ define(["globals", "core/player"], function (g, player) {
                     tid: 4,
                     totals: true
                 });
+console.log(pf);
 
                 pf.tid.should.equal(4);
                 pf.awards.should.have.length(0);
@@ -418,7 +419,7 @@ define(["globals", "core/player"], function (g, player) {
                 pf.stats[0].abbrev.should.equal("CHI");
                 pf.stats[0].fg.should.equal(20);
                 pf.stats.should.have.length(1);
-                pf.careerStats.fg.should.equal(76);
+                pf.careerStats.fg.should.equal(20);
 
                 pf.hasOwnProperty("statsPlayoffs").should.equal(false);
                 pf.hasOwnProperty("careerStatsPlayoffs").should.equal(false);

@@ -864,7 +864,7 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
 
         // Copys/filters the ratings listed in options.ratings from p to fp.
         filterRatings = function (fp, p, options) {
-            var i, j, k, pr, tidTemp;
+            var hasStats, i, j, k, kk, pr, tidTemp;
 
             if (options.season !== null) {
                 // One season
@@ -893,10 +893,25 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
                 // All seasons
                 fp.ratings = [];
                 for (k = 0; k < p.ratings.length; k++) {
-                    fp.ratings[k] = {};
+                    // If a specific tid was requested, only return ratings is a stat was accumulated for that tid
+                    if (options.tid !== null) {
+                        hasStats = false;
+                        for (j = 0; j < p.stats.length; j++) {
+                            if (options.tid === p.stats[j].tid && p.ratings[k].season === p.stats[j].season) {
+                                hasStats = true;
+                                break;
+                            }
+                        }
+                        if (!hasStats) {
+                            continue;
+                        }
+                    }
+
+                    kk = fp.ratings.length; // Not always the same as k, due to hasStats filtering above
+                    fp.ratings[kk] = {};
                     for (j = 0; j < options.ratings.length; j++) {
                         if (options.ratings[j] === "age") {
-                            fp.ratings[k].age = p.ratings[k].season - p.born.year;
+                            fp.ratings[kk].age = p.ratings[k].season - p.born.year;
                         } else if (options.ratings[j] === "abbrev") {
                             // Find the last stats entry for that season, and use that to determine the team
                             for (i = 0; i < p.stats.length; i++) {
@@ -905,15 +920,15 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
                                 }
                             }
                             if (tidTemp >= 0) {
-                                fp.ratings[k].abbrev = helpers.getAbbrev(tidTemp);
+                                fp.ratings[kk].abbrev = helpers.getAbbrev(tidTemp);
                                 tidTemp = undefined;
                             } else {
-                                fp.ratings[k].abbrev = null;
+                                fp.ratings[kk].abbrev = null;
                             }
                         } else {
-                            fp.ratings[k][options.ratings[j]] = p.ratings[k][options.ratings[j]];
+                            fp.ratings[kk][options.ratings[j]] = p.ratings[k][options.ratings[j]];
                             if (options.fuzz && options.ratings[j] !== "fuzz" && options.ratings[j] !== "season" && options.ratings[j] !== "skills") {
-                                fp.ratings[k][options.ratings[j]] = Math.round(helpers.bound(p.ratings[k][options.ratings[j]] + p.ratings[k].fuzz, 0, 100));
+                                fp.ratings[kk][options.ratings[j]] = Math.round(helpers.bound(p.ratings[k][options.ratings[j]] + p.ratings[k].fuzz, 0, 100));
                             }
                         }
                     }
@@ -972,10 +987,13 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
                     ps.r = []; // Regular season
                     ps.p = []; // Playoffs
                     for (j = 0; j < p.stats.length; j++) {
-                        if (p.stats[j].playoffs === false) {
-                            ps.r.push(p.stats[j]);
-                        } else if (options.playoffs) {
-                            ps.p.push(p.stats[j]);
+                        // Save stats for the requested tid, or any tid if no tid was requested
+                        if (options.tid === null || options.tid === p.stats[j].tid) {
+                            if (p.stats[j].playoffs === false) {
+                                ps.r.push(p.stats[j]);
+                            } else if (options.playoffs) {
+                                ps.p.push(p.stats[j]);
+                            }
                         }
                     }
 

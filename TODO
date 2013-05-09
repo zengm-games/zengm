@@ -1,6 +1,9 @@
 BEFORE 3.0.0-beta.3
 -------------------
 
+https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide
+  have global variable onBasketballGmCom set in index.html, use it to load GA code or not. move it to g.onBasketballGmCom in globals.js and then use it to do any GA stuff
+  get rid of bbgmPing
 move most db functions into core.whatever. db should just be about initializing/upgrading
   get rid of "db" module dependence
 if season is already over, don't add stats row to traded player or signed free agent... does this cause any problems anywhere?
@@ -25,9 +28,6 @@ how to handle aggregating stats for players who played for more than one team in
     no pass tid and you only get the latest row. need added logic to do sum
   for player view, want separate and combined rows in careerStats without fucking up totals (including PER)
     no pass tid and you get each team separately, but no merged stats as above
-https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide
-  get rid of bbgmPing
-  http://stackoverflow.com/questions/9534793/google-analytics-cross-domain-tracking-and-setdomainname
 http://www.gmgames.org
 better default league name
 contracts

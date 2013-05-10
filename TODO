@@ -5,7 +5,10 @@ viewmodel and html can get out of sync if you click while it's updating
 https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide
   should have no more referrals from basketball-gm.com since it's all set to the same domain now
   have global variable onBasketballGmCom set in index.html, use it to load GA code or not. move it to g.onBasketballGmCom in globals.js and then use it to do any GA stuff
-  get rid of bbgmPing
+  https://github.com/segmentio/analytics.js/
+    analytics.pageview in lib/davis.google_analytics.js
+    analytics.track to get rid of bbgmPing
+    how to initialize GA with correct options?
 move most db functions into core.whatever. db should just be about initializing/upgrading
   get rid of "db" module dependence
 if season is already over, don't add stats row to traded player or signed free agent... does this cause any problems anywhere?

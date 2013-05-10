@@ -138,6 +138,7 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
                         toAttr[attr] += "/" + ko.utils.unwrapObservable(args[attr][i]);
                     }
                 }
+                toAttr[attr] += location.search;
             }
 
             return ko.bindingHandlers.attr.update(element, function () {

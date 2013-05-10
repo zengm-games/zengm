@@ -164,7 +164,7 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
         var inLeague, refresh;
 
         updateEvents = updateEvents !== undefined ? updateEvents : [];
-        url = url !== undefined ? url : location.pathname;
+        url = url !== undefined ? url : location.pathname + location.search;
         raw = raw !== undefined ? raw : {};
 
         inLeague = url.substr(0, 3) === "/l/"; // Check the URL to be redirected to, not the current league (g.lid)

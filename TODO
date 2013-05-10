@@ -14,7 +14,6 @@ core.freeAgents should be core.freeAgent or core.freeAgency?
 after last resigning negotiation, switch to next phase?
 check effects of extreme ticket prices
 show old contracts on old roster view
-popup windows should still be popup windows, even after navigating reloading page
 profits too large? add corporate tax
 draft lottery
   do a dramatic presentation?

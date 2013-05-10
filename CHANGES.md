@@ -1,4 +1,4 @@
-This is a list of only the major changes in each version.
+This is a list of **only the major changes** in each version.
 
 # Since 3.0.0-beta.3
 

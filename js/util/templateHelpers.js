@@ -165,25 +165,36 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
 
     ko.bindingHandlers.recordAndPlayoffs = {
         update: function (element, valueAccessor) {
-            var args, attr, i, url, toAttr;
+            var abbrev, args, extraText, lost, output, playoffRoundsWon, season, won;
 
-/*            args = valueAccessor();
-            toAttr = {};
 
-            for (attr in args) {
-                if (args.hasOwnProperty(attr)) {
-                    toAttr[attr] = "/l/" + g.lid;
-                    for (i = 0; i < args[attr].length; i++) {
-                        toAttr[attr] += "/" + ko.utils.unwrapObservable(args[attr][i]);
-                    }
-                }
-                toAttr[attr] += location.search;
+            args = valueAccessor();
+            abbrev = ko.utils.unwrapObservable(args[0]);
+            season = ko.utils.unwrapObservable(args[1]);
+            won = ko.utils.unwrapObservable(args[2]);
+            lost = ko.utils.unwrapObservable(args[3]);
+            playoffRoundsWon = ko.utils.unwrapObservable(args[4]);
+
+            extraText = "";
+            if (playoffRoundsWon === 4) {
+                extraText = "league champs";
+            } else if (playoffRoundsWon === 3) {
+                extraText = "conference champs";
+            } else if (playoffRoundsWon === 2) {
+                extraText = "made conference finals";
+            } else if (playoffRoundsWon === 1) {
+                extraText = "made second round";
+            } else if (playoffRoundsWon === 0) {
+                extraText = "made playoffs";
             }
 
-            */
+            output = '<a href="' + helpers.leagueUrl(["roster", abbrev, season]) + '">' + season + '</a>: <a href="' + helpers.leagueUrl(["standings", season]) + '">' + won + '-' + lost + '</a>';
+            if (extraText) {
+                output += ', <a href="' + helpers.leagueUrl(["playoffs", season]) + '">' + extraText + '</a>';
+            }
 
             return ko.bindingHandlers.html.update(element, function () {
-//                return '<a data-bind="attrLeagueUrl: {href: ['roster', $root.abbrev, season]}, text: season"></a>: <a data-bind="attrLeagueUrl: {href: ['standings', season]}"><span data-bind="text: won"></span>-<span data-bind="text: lost"></span></a><span data-bind="visible: extraText">, <a data-bind="attrLeagueUrl: {href: ['playoffs', season]}, text: extraText"></a></span><br>';
+                return output;
             });
         }
     };

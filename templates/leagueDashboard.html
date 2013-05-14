@@ -43,7 +43,7 @@
     <p>
       <span data-bind="visible: recentHistory().length === 0">None yet.<br></span>
       <!-- ko foreach: recentHistory -->
-        <a data-bind="attrLeagueUrl: {href: ['roster', $parent.abbrev, season]}, text: season"></a>: <a data-bind="attrLeagueUrl: {href: ['standings', season]}"><span data-bind="text: won"></span>-<span data-bind="text: lost"></span></a><!-- ko if: extraText -->, <a data-bind="attrLeagueUrl: {href: ['playoffs', season]}, text: extraText"></a><!-- /ko --><br>
+        <span data-bind="recordAndPlayoffs: [$root.abbrev, season, won, lost, playoffRoundsWon]"></span><br>
       <!-- /ko -->
       <a data-bind="attrLeagueUrl: {href: ['team_history']}">» Team History</a><br>
       <a data-bind="attrLeagueUrl: {href: ['history']}">» League History</a>

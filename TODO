@@ -2,7 +2,7 @@ BEFORE 3.0.0-beta.3
 -------------------
 
 show record (w-l) on roster view - make it more like a summary, as in basketball-reference
-  extraText crap should be in a knockout binding: leagueDashboard and teamHistory first
+  recordAndPlayoffs binding
   playoff results
   payroll
   anything else?

@@ -13,7 +13,7 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
             vars = {};
 
             g.dbl.transaction("teams").objectStore("teams").get(g.userTid).onsuccess = function (event) {
-                var extraText, i, userTeam, userTeamSeason;
+                var i, userTeam, userTeamSeason;
 
                 userTeam = event.target.result;
                 userTeamSeason = _.last(userTeam.seasons);
@@ -30,24 +30,11 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
                 vars.recentHistory = [];
                 // 3 most recent years
                 for (i = userTeam.seasons.length - 2; i > userTeam.seasons.length - 5 && i >= 0; i--) {
-                    extraText = "";
-                    if (userTeam.seasons[i].playoffRoundsWon === 4) {
-                        extraText = "league champs";
-                    } else if (userTeam.seasons[i].playoffRoundsWon === 3) {
-                        extraText = "conference champs";
-                    } else if (userTeam.seasons[i].playoffRoundsWon === 2) {
-                        extraText = "made conference finals";
-                    } else if (userTeam.seasons[i].playoffRoundsWon === 1) {
-                        extraText = "made second round";
-                    } else if (userTeam.seasons[i].playoffRoundsWon === 0) {
-                        extraText = "made playoffs";
-                    }
-
                     vars.recentHistory.push({
                         season: userTeam.seasons[i].season,
                         won: userTeam.seasons[i].won,
                         lost: userTeam.seasons[i].lost,
-                        extraText: extraText
+                        playoffRoundsWon: userTeam.seasons[i].playoffRoundsWon
                     });
                 }
 

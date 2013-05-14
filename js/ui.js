@@ -2,7 +2,7 @@
  * @name ui
  * @namespace Anything that directly updates the UI.
  */
-define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout", "util/lock"], function (db, g, templates, Davis, $, ko, lock) {
+define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout", "util/helpers", "util/lock"], function (db, g, templates, Davis, $, ko, helpers, lock) {
     "use strict";
 
     // Things to do on initial page load
@@ -241,7 +241,7 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
                 result = parseLeagueUrl(document.URL);
                 league_root_url = result[1];
                 league_page = result[2];
-                url = "/l/" + g.lid + "/" + league_page + "/" + select1.val();
+                url = helpers.leagueUrl([league_page, select1.val()]);
                 realtimeUpdate([], url);
             });
         } else if (arguments.length >= 2) {
@@ -253,7 +253,7 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
                 result = parseLeagueUrl(document.URL);
                 league_root_url = result[1];
                 league_page = result[2];
-                url = "/l/" + g.lid + "/" + league_page + "/" + select1.val() + "/" + select2.val();
+                url = helpers.leagueUrl([league_page, select1.val(), select2.val()]);
                 if (extraParam !== undefined && extraParam !== null && extraParam !== "") {
                     url += "/" + extraParam;
                 }
@@ -267,7 +267,7 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
                 result = parseLeagueUrl(document.URL);
                 league_root_url = result[1];
                 league_page = result[2];
-                url = "/l/" + g.lid + "/" + league_page + "/" + select1.val() + "/" + select2.val();
+                url = helpers.leagueUrl([league_page, select1.val(), select2.val()]);
                 if (extraParam !== undefined && extraParam !== null && extraParam !== "") {
                     url += "/" + extraParam;
                 }
@@ -289,14 +289,14 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
                       {id: "play-menu-until-playoffs", url: "", label: "Until playoffs"},
                       {id: "play-menu-through-playoffs", url: "", label: "Through playoffs"},
                       {id: "play-menu-until-draft", url: "", label: "Until draft"},
-                      {id: "play-menu-view-draft", url: "/l/" + g.lid + "/draft", label: "View draft"},
+                      {id: "play-menu-view-draft", url: helpers.leagueUrl(["draft"]), label: "View draft"},
                       {id: "play-menu-until-resign-players", url: "", label: "Resign players with expiring contracts"},
                       {id: "play-menu-until-free-agency", url: "", label: "Until free agency"},
                       {id: "play-menu-until-preseason", url: "", label: "Until preseason"},
                       {id: "play-menu-until-regular-season", url: "", label: "Until regular season"},
-                      {id: "play-menu-contract-negotiation", url: "/l/" + g.lid + "/negotiation", label: "Continue contract negotiation"},
-                      {id: "play-menu-contract-negotiation-list", url: "/l/" + g.lid + "/negotiation", label: "Continue resigning players"},
-                      {id: "play-menu-message", url: "/l/" + g.lid + "/message", label: "Read message from the owner"},
+                      {id: "play-menu-contract-negotiation", url: helpers.leagueUrl(["negotiation"]), label: "Continue contract negotiation"},
+                      {id: "play-menu-contract-negotiation-list", url: helpers.leagueUrl(["negotiation"]), label: "Continue resigning players"},
+                      {id: "play-menu-message", url: helpers.leagueUrl(["message"]), label: "Read message from the owner"},
                       {id: "play-menu-new-league", url: "/new_league", label: "Try again in a new league"}];
 
         if (g.phase === g.PHASE.PRESEASON) {

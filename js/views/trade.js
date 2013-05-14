@@ -74,17 +74,17 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
         if (req.params.clear !== undefined) {
             // Clear trade
             trade.clear(function () {
-                ui.realtimeUpdate([], "/l/" + g.lid + "/trade");
+                ui.realtimeUpdate([], helpers.leagueUrl(["trade"]));
             });
         } else if (req.params.propose !== undefined) {
             // Propose trade
             trade.propose(function (accepted, message) {
-                ui.realtimeUpdate([], "/l/" + g.lid + "/trade", undefined, {message: message});
+                ui.realtimeUpdate([], helpers.leagueUrl(["trade"]), undefined, {message: message});
             });
         } else if (newOtherTid !== null || pid !== null) {
             // Start new trade with team or for player
             trade.create(newOtherTid, pid, function () {
-                ui.realtimeUpdate([], "/l/" + g.lid + "/trade");
+                ui.realtimeUpdate([], helpers.leagueUrl(["trade"]));
             });
         }
     }
@@ -209,7 +209,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
             // ui.realtimeUpdate currently can't handle a POST request
             Davis.location.replace(new Davis.Request({
                 abbrev: $("#trade-select-team").val(),
-                fullPath: "/l/" + g.lid + "/trade",
+                fullPath: helpers.leagueUrl(["trade"]),
                 method: "post"
             }));
         });

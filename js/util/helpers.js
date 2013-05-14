@@ -349,6 +349,26 @@ define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
     }
 
     /**
+     * Create a URL for a page within a league.
+     *
+     * This will also maintain any query string on the end of the URL, for instance for popup windows.
+     * 
+     * @param {Array.<string|number>} components Array of components for the URL after the league ID, which will be combined with / in between.
+     * @return {string} URL
+     */
+    function leagueUrl(components) {
+        var i, url;
+
+        url = "/l/" + g.lid;
+        for (i = 0; i < components.length; i++) {
+            url += "/" + ko.utils.unwrapObservable(components[i]);
+        }
+        url += location.search;
+
+        return url;
+    }
+
+    /**
      * Generate a block of HTML with a player's name, skill labels.
      *
      * @memberOf util.helpers
@@ -361,7 +381,8 @@ define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
     function playerNameLabels(pid, name, injury, skills) {
         var html;
 
-        html = '<a href="/l/' + g.lid + '/player/' + pid + '">' + name + '</a>';
+console.log(leagueUrl(["player", pid]))
+        html = '<a href="' + leagueUrl(["player", pid]) + '">' + name + '</a>';
         if (injury.gamesRemaining > 0) {
             html += '<span class="label label-important label-injury" title="' + injury.type + '(out ' + injury.gamesRemaining + ' more games)">' + injury.gamesRemaining + '</span>';
         } else if (injury.gamesRemaining === -1) {
@@ -456,26 +477,6 @@ define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
             return max;
         }
         return x;
-    }
-
-    /**
-     * Create a URL for a page within a league.
-     *
-     * This will also maintain any query string on the end of the URL, for instance for popup windows.
-     * 
-     * @param {Array.<string|number>} components Array of components for the URL after the league ID, which will be combined with / in between.
-     * @return {string} URL
-     */
-    function leagueUrl(components) {
-        var i, url;
-
-        url = "/l/" + g.lid;
-        for (i = 0; i < components.length; i++) {
-            url += "/" + ko.utils.unwrapObservable(components[i]);
-            url += location.search;
-        }
-
-        return url;
     }
 
     return {

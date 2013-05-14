@@ -1,8 +1,11 @@
 BEFORE 3.0.0-beta.3
 -------------------
 
+trade refresh issues
+  check refresh of trade popup when clearing in main window
+  clear button in trade window doesn't do anything
 use helpers.leagueUrl everywhere
-  urls in datatables
+  grep -r '+ g.lid' js
 viewmodel and html can get out of sync if you click while it's updating?
 https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide
   should have no more referrals from basketball-gm.com since it's all set to the same domain now

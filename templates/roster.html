@@ -3,6 +3,8 @@
 <h1><span data-bind="text: team.region"></span> <span data-bind="text: team.name"></span> Roster <span data-bind="newWindow: []"></span></h1>
 <p>More: <a data-bind="attrLeagueUrl: {href: ['finances', abbrev]}">Finances</a> | <a data-bind="attrLeagueUrl: {href: ['game_log', abbrev, season]}">Game Log</a></p>
 
+<h3><span data-bind="recordAndPlayoffs: [abbrev, season, team.won, team.lost, team.playoffRoundsWon, 'noSeason']"></span></h3>
+
 <p data-bind="visible: isCurrentSeason">
   <span data-bind="text: numRosterSpots"></span> open roster spots<br>
   Payroll: <span data-bind="currency: [payroll, 'M']"></span><br>

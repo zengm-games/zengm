@@ -271,16 +271,16 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
 
             tx = g.dbl.transaction(["players", "releasedPlayers", "schedule", "teams"]);
 
-            tx.objectStore("teams").get(inputs.tid).onsuccess = function (event) {
-                var attrs, editable, i, ratings, stats, team, teamAll;
+            team.filter({
+                season: inputs.season,
+                tid: inputs.tid,
+                attrs: ["region", "name"],
+                seasonAttrs: ["cash", "won", "lost", "playoffRoundsWon"],
+                ot: tx
+            }, function (t) {
+                var attrs, ratings, stats;
 
-                teamAll = event.target.result;
-                for (i = 0; i < teamAll.seasons.length; i++) {
-                    if (teamAll.seasons[i].season === inputs.season) {
-                        break;
-                    }
-                }
-                vars.team = {region: teamAll.region, name: teamAll.name, cash: teamAll.seasons[i].cash / 1000};
+                vars.team = t;
 
                 attrs = ["pid", "name", "pos", "age", "contract", "cashOwed", "rosterOrder", "injury"];
                 ratings = ["ovr", "pot", "skills"];
@@ -365,7 +365,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                         deferred.resolve(vars);
                     };
                 }
-            };
+            });
             return deferred.promise();
         }
     }

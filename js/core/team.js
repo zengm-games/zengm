@@ -365,6 +365,8 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                         if (tsa.gp > 0) {
                             ft.att = tsa.att / tsa.gp;
                         }
+                    } else if (options.seasonAttrs[j] === "cash") {
+                        ft.cash = tsa.cash / 1000;  // [millions of dollars]
                     } else if (options.seasonAttrs[j] === "revenue") {
                         ft.revenue = tsa.revenue / 1000;  // [millions of dollars]
                     } else if (options.seasonAttrs[j] === "profit") {

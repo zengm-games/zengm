@@ -165,7 +165,7 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
 
     ko.bindingHandlers.recordAndPlayoffs = {
         update: function (element, valueAccessor) {
-            var abbrev, args, extraText, lost, output, playoffRoundsWon, season, won;
+            var abbrev, args, extraText, lost, option, output, playoffRoundsWon, season, won;
 
 
             args = valueAccessor();
@@ -174,6 +174,7 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
             won = ko.utils.unwrapObservable(args[2]);
             lost = ko.utils.unwrapObservable(args[3]);
             playoffRoundsWon = ko.utils.unwrapObservable(args[4]);
+            option = args.length > 5 ? ko.utils.unwrapObservable(args[5]) : null;
 
             extraText = "";
             if (playoffRoundsWon === 4) {
@@ -188,7 +189,11 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
                 extraText = "made playoffs";
             }
 
-            output = '<a href="' + helpers.leagueUrl(["roster", abbrev, season]) + '">' + season + '</a>: <a href="' + helpers.leagueUrl(["standings", season]) + '">' + won + '-' + lost + '</a>';
+            output = '';
+            if (option !== "noSeason") {
+                output += '<a href="' + helpers.leagueUrl(["roster", abbrev, season]) + '">' + season + '</a>: ';
+            }
+            output += '<a href="' + helpers.leagueUrl(["standings", season]) + '">' + won + '-' + lost + '</a>';
             if (extraText) {
                 output += ', <a href="' + helpers.leagueUrl(["playoffs", season]) + '">' + extraText + '</a>';
             }

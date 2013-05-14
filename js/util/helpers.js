@@ -351,19 +351,23 @@ define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
     /**
      * Create a URL for a page within a league.
      *
-     * This will also maintain any query string on the end of the URL, for instance for popup windows.
+     * This will also maintain any query string on the end of the URL, for instance for popup windows, unless options.noQueryString is set.
      * 
      * @param {Array.<string|number>} components Array of components for the URL after the league ID, which will be combined with / in between.
      * @return {string} URL
      */
-    function leagueUrl(components) {
+    function leagueUrl(components, options) {
         var i, url;
+
+        options = options !== undefined ? options : {};
 
         url = "/l/" + g.lid;
         for (i = 0; i < components.length; i++) {
             url += "/" + ko.utils.unwrapObservable(components[i]);
         }
-        url += location.search;
+        if (!options.noQueryString) {
+            url += location.search;
+        }
 
         return url;
     }

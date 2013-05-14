@@ -123,14 +123,21 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
 
     ko.bindingHandlers.attrLeagueUrl = {
         update: function (element, valueAccessor) {
-            var args, attr, i, url, toAttr;
+            var args, attr, i, options, toAttr, url;
 
             args = valueAccessor();
             toAttr = {};
 
             for (attr in args) {
                 if (args.hasOwnProperty(attr)) {
-                    toAttr[attr] = helpers.leagueUrl(args[attr]);
+                    // No query string for forms because https://github.com/olivernn/davis.js/issues/75
+                    if (attr === "action") {
+                        options = {noQueryString: true};
+                    } else {
+                        options = {};
+                    }
+
+                    toAttr[attr] = helpers.leagueUrl(args[attr], options);
                 }
             }
 

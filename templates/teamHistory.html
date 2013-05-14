@@ -8,7 +8,7 @@
   <div class="span3">
     <h2>Seasons</h2>
     <!-- ko foreach: history -->
-      <a data-bind="attrLeagueUrl: {href: ['roster', $root.abbrev, season]}, text: season"></a>: <a data-bind="attrLeagueUrl: {href: ['standings', season]}"><span data-bind="text: won"></span>-<span data-bind="text: lost"></span></a><span data-bind="visible: extraText">, <a data-bind="attrLeagueUrl: {href: ['playoffs', season]}, text: extraText"></a></span><br>
+      <span data-bind="recordAndPlayoffs: [$root.abbrev, season, won, lost, extraText]"></span>
     <!-- /ko -->
   </div>
   <div class="span9">

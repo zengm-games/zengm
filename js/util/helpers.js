@@ -458,6 +458,26 @@ define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
         return x;
     }
 
+    /**
+     * Create a URL for a page within a league.
+     *
+     * This will also maintain any query string on the end of the URL, for instance for popup windows.
+     * 
+     * @param {Array.<string|number>} components Array of components for the URL after the league ID, which will be combined with / in between.
+     * @return {string} URL
+     */
+    function leagueUrl(components) {
+        var i, url;
+
+        url = "/l/" + g.lid;
+        for (i = 0; i < components.length; i++) {
+            url += "/" + ko.utils.unwrapObservable(components[i]);
+            url += location.search;
+        }
+
+        return url;
+    }
+
     return {
         validateAbbrev: validateAbbrev,
         getAbbrev: getAbbrev,
@@ -475,6 +495,7 @@ define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
         nullPad: nullPad,
         formatCurrency: formatCurrency,
         numberWithCommas: numberWithCommas,
-        bound: bound
+        bound: bound,
+        leagueUrl: leagueUrl
     };
 });

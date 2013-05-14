@@ -133,12 +133,8 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
 
             for (attr in args) {
                 if (args.hasOwnProperty(attr)) {
-                    toAttr[attr] = "/l/" + g.lid;
-                    for (i = 0; i < args[attr].length; i++) {
-                        toAttr[attr] += "/" + ko.utils.unwrapObservable(args[attr][i]);
-                    }
+                    toAttr[attr] = helpers.leagueUrl(args[attr]);
                 }
-                toAttr[attr] += location.search;
             }
 
             return ko.bindingHandlers.attr.update(element, function () {
@@ -163,6 +159,31 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
                          '</select>' +
                        '<!-- /ko -->' +
                        '</form>';
+            });
+        }
+    };
+
+    ko.bindingHandlers.recordAndPlayoffs = {
+        update: function (element, valueAccessor) {
+            var args, attr, i, url, toAttr;
+
+/*            args = valueAccessor();
+            toAttr = {};
+
+            for (attr in args) {
+                if (args.hasOwnProperty(attr)) {
+                    toAttr[attr] = "/l/" + g.lid;
+                    for (i = 0; i < args[attr].length; i++) {
+                        toAttr[attr] += "/" + ko.utils.unwrapObservable(args[attr][i]);
+                    }
+                }
+                toAttr[attr] += location.search;
+            }
+
+            */
+
+            return ko.bindingHandlers.html.update(element, function () {
+//                return '<a data-bind="attrLeagueUrl: {href: ['roster', $root.abbrev, season]}, text: season"></a>: <a data-bind="attrLeagueUrl: {href: ['standings', season]}"><span data-bind="text: won"></span>-<span data-bind="text: lost"></span></a><span data-bind="visible: extraText">, <a data-bind="attrLeagueUrl: {href: ['playoffs', season]}, text: extraText"></a></span><br>';
             });
         }
     };

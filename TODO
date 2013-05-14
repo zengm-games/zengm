@@ -1,7 +1,14 @@
 BEFORE 3.0.0-beta.3
 -------------------
 
-viewmodel and html can get out of sync if you click while it's updating
+show record (w-l) on roster view - make it more like a summary, as in basketball-reference
+  extraText crap should be in a knockout binding: leagueDashboard and teamHistory first
+  playoff results
+  payroll
+  anything else?
+use helpers.leagueUrl everywhere
+  urls in datatables
+viewmodel and html can get out of sync if you click while it's updating?
 https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide
   should have no more referrals from basketball-gm.com since it's all set to the same domain now
   have global variable onBasketballGmCom set in index.html, use it to load GA code or not. move it to g.onBasketballGmCom in globals.js and then use it to do any GA stuff
@@ -39,19 +46,12 @@ contracts
 luxury tax should be disbursed amongst non-taxpaying teams
 give bbgm website its own version of bootstrap (only with components needed)
 display league/season counter on basketball-gm.com splash page
-show record (w-l) on roster view - make it more like a summary, as in basketball-reference
-  playoff results
-  payroll
-  anything else?
 how to deal with a team that drops below 5 active players, factoring in injuries?
   should minimum roster size be higher?
   should allow them to exceed roster limit while injury exists
   should not allow play when below 5
   should use same logic/functions as core.season that checks on new season.
     first, add support for auto-add players when AI teams are below limit (in season.js)
-injured reserve - 2 last rosterOrder spaces beyond normal 13 (btw.. change 12 to 13)
-  don't play in games, but you can stash injured players here or whatever
-  like in yahoo fantasy, allow dragging to empty category
 notifications (and log) from top right to display log of key events
   game results from user's team
   players retiring from user's team

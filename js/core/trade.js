@@ -166,7 +166,9 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                 }
                 userPids = userPidsGood;
                 playerStore.index("tid").getAll(otherTid).onsuccess = function (event) {
-                    var i, j, players, otherPidsGood, tx;
+                    var i, j, players, otherPidsGood, tx, updated;
+
+                    updated = false; // Has the trade actually changed?
 
                     otherPidsGood = [];
                     players = event.target.result;
@@ -186,14 +188,28 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
 
                         cursor = event.target.result;
                         tr = cursor.value;
-                        tr.userPids = userPids;
-                        tr.otherPids = otherPids;
-                        cursor.update(tr);
+
+                        if (userPids.toString() !== tr.userPids.toString()) {
+                            tr.userPids = userPids;
+                            updated = true;
+                        }
+                        if (otherPids.toString() !== tr.otherPids.toString()) {
+                            tr.otherPids = otherPids;
+                            updated = true;
+                        }
+
+                        if (updated) {
+                            cursor.update(tr);
+                        }
                     };
                     tx.oncomplete = function () {
-                        db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                        if (updated) {
+                            db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                                cb(userPids, otherPids);
+                            });
+                        } else {
                             cb(userPids, otherPids);
-                        });
+                        }
                     };
                 };
             };

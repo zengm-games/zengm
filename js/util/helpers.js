@@ -381,7 +381,6 @@ define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
     function playerNameLabels(pid, name, injury, skills) {
         var html;
 
-console.log(leagueUrl(["player", pid]))
         html = '<a href="' + leagueUrl(["player", pid]) + '">' + name + '</a>';
         if (injury.gamesRemaining > 0) {
             html += '<span class="label label-important label-injury" title="' + injury.type + '(out ' + injury.gamesRemaining + ' more games)">' + injury.gamesRemaining + '</span>';

@@ -5,7 +5,6 @@ set playing time manually https://mail.google.com/mail/u/0/?ui=2&shva=1#inbox/13
   ptFactor - positive number that is multiplied by ovr when calculating subs
     bootstrap colors?
     vars.ptModifier does not need to be observable
-    use in gameSim
 force roster reorder handles to stay big even if window is small
 playing time should influence player development
 viewmodel and html can get out of sync if you click while it's updating?

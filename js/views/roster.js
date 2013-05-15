@@ -338,10 +338,10 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
 
                                 vars.ptModifiers = [
                                     {text: "0", ptModifier: 0},
-                                    {text: "-", ptModifier: 0.5},
+                                    {text: "-", ptModifier: 0.75},
                                     {text: " ", ptModifier: 1},
-                                    {text: "+", ptModifier: 1.5},
-                                    {text: "++", ptModifier: 2}
+                                    {text: "+", ptModifier: 1.25},
+                                    {text: "++", ptModifier: 1.75}
                                 ];
 
                                 deferred.resolve(vars);
@@ -455,13 +455,13 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
             if (this.value === "1") {
                 backgroundColor = "#ccc";
                 color = "#000";
-            } else if (this.value === "2") {
+            } else if (this.value === "1.75") {
                 backgroundColor = "#070";
                 color = "#fff";
-            } else if (this.value === "1.5") {
+            } else if (this.value === "1.25") {
                 backgroundColor = "#0f0";
                 color = "#000";
-            } else if (this.value === "0.5") {
+            } else if (this.value === "0.75") {
                 backgroundColor = "#ff0";
                 color = "#000";
             } else if (this.value === "0") {

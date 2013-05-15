@@ -232,14 +232,14 @@ select.past-x {
 #roster select option[value="1"] {
   background-color: #ccc;
 }
-#roster select option[value="2"] {
+#roster select option[value="1.75"] {
   background-color: #070;
   color: #fff;
 }
-#roster select option[value="1.5"] {
+#roster select option[value="1.25"] {
   background-color: #0f0;
 }
-#roster select option[value="0.5"] {
+#roster select option[value="0.75"] {
   background-color: #ff0;
 }
 #roster select option[value="0"] {

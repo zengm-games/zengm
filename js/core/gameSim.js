@@ -25,7 +25,8 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      *                 "stat": {},
      *                 "compositeRating": {},
      *                 "skills": [],
-     *                 "injured": false
+     *                 "injured": false,
+     *                 "ptMultiplier": 1
      *             },
      *             ...
      *         ]
@@ -129,6 +130,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             for (p = 0; p < this.team[t].player.length; p++) {
                 delete this.team[t].player[p].ovr;
                 delete this.team[t].player[p].compositeRating;
+                delete this.team[t].player[p].ptMultiplier;
             }
         }
 
@@ -204,7 +206,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                 if (this.team[t].player[p].injured || this.team[t].player[p].stat.pf >= 6) {
                     ovrs[p] = -Infinity;
                 } else {
-                    ovrs[p] = this.team[t].player[p].ovr * this.fatigue(this.team[t].player[p].stat.energy) * random.uniform(0.9, 1.1);
+                    ovrs[p] = this.team[t].player[p].ovr * this.fatigue(this.team[t].player[p].stat.energy) * this.team[t].player[p].ptModifier * random.uniform(0.9, 1.1);
                 }
             }
 

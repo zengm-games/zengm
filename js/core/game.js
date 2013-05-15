@@ -467,7 +467,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
 
                     for (i = 0; i < players.length; i++) {
                         player = players[i];
-                        p = {id: player.pid, name: player.name, pos: player.pos, ovr: 0, stat: {}, compositeRating: {}, skills: [], injured: player.injury.type !== "Healthy"};
+                        p = {id: player.pid, name: player.name, pos: player.pos, ovr: 0, stat: {}, compositeRating: {}, skills: [], injured: player.injury.type !== "Healthy", ptModifier: player.ptModifier};
 
                         for (j = 0; j < player.ratings.length; j++) {
                             if (player.ratings[j].season === g.season) {

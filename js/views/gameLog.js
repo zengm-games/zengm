@@ -53,7 +53,6 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
                         gid: game.gid,
                         selected: game.gid === gid,
                         overtime: overtime
-//                        url: "/l/" + g.lid + "/game_log/" + vm.abbrev() + "/" + vm.season() + "/" + game.gid
                     });
 
                     i = games.length - 1;

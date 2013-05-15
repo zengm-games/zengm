@@ -13,11 +13,11 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/player", "lib/j
             negotiations = event.target.result;
 
             if (negotiations.length > 0) {
-                ui.realtimeUpdate([], "/l/" + g.lid + "/negotiation");
+                ui.realtimeUpdate([], helpers.leagueUrl(["negotiation"]));
             } else if (cancelled) {
-                ui.realtimeUpdate([], "/l/" + g.lid + "/free_agents");
+                ui.realtimeUpdate([], helpers.leagueUrl(["free_agents"]));
             } else {
-                ui.realtimeUpdate([], "/l/" + g.lid + "/roster");
+                ui.realtimeUpdate([], helpers.leagueUrl(["roster"]));
             }
         };
     }
@@ -50,7 +50,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/player", "lib/j
                 }
             });
         } else if (req.params.hasOwnProperty("new")) {
-            // If there is no active negotiation with this pid, create it;
+            // If there is no active negotiation with this pid, create it
             g.dbl.transaction("negotiations").objectStore("negotiations").get(pid).onsuccess = function (event) {
                 var negotiation;
 
@@ -61,11 +61,11 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/player", "lib/j
                         if (error !== undefined && error) {
                             helpers.error(error);
                         } else {
-                            ui.realtimeUpdate([], "/l/" + g.lid + "/negotiation/" + pid);
+                            ui.realtimeUpdate([], helpers.leagueUrl(["negotiation", pid]));
                         }
                     });
                 } else {
-                    ui.realtimeUpdate([], "/l/" + g.lid + "/negotiation/" + pid);
+                    ui.realtimeUpdate([], helpers.leagueUrl(["negotiation", pid]));
                 }
             };
         } else {
@@ -73,7 +73,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/player", "lib/j
             teamAmountNew = parseInt(req.params.teamAmount * 1000, 10);
             teamYearsNew = parseInt(req.params.teamYears, 10);
             contractNegotiation.offer(pid, teamAmountNew, teamYearsNew, function () {
-                ui.realtimeUpdate([], "/l/" + g.lid + "/negotiation/" + pid);
+                ui.realtimeUpdate([], helpers.leagueUrl(["negotiation", pid]));
             });
         }
     }

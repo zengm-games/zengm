@@ -211,7 +211,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
         // Fix broken links
         if (req.params.abbrev === "FA") {
             return {
-                redirectUrl: "/l/" + g.lid + "/free_agents"
+                redirectUrl: helpers.leagueUrl(["free_agents"])
             };
         }
 

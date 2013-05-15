@@ -72,7 +72,7 @@ define(["globals", "ui", "core/draft", "core/player", "lib/jquery", "util/bbgmVi
     function get(req) {
         if (g.phase !== g.PHASE.DRAFT) {
             return {
-                redirectUrl: "/l/" + g.lid + "/draft_summary"
+                redirectUrl: helpers.leagueUrl(["draft_summary"])
             };
         }
     }

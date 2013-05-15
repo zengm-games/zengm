@@ -3,15 +3,10 @@ BEFORE 3.0.0-beta.3
 
 set playing time manually https://mail.google.com/mail/u/0/?ui=2&shva=1#inbox/13ea5e75cd0abb9d
   ptFactor - positive number that is multiplied by ovr when calculating subs
-    first, prettify like http://tutorialzine.com/2010/11/better-select-jquery-css3/ to make sure this approach is feasible
-      show only color by default
-      show text tooltip on hover over color
-      show color + text on dropdown
     add indexedDB field
     hook up with knockout somehow
     knockout: options: $root.ptModifiers, value: ptModifier
     vars.ptModifier does not need to be observable
-    header needs help message like.. 'Your coach will divide up playing time based on ability and stamina. If you want to override his judgment, .'
 playing time should influence player development
 viewmodel and html can get out of sync if you click while it's updating?
 https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide

@@ -222,6 +222,31 @@ select.past-x {
   vertical-align: 2%;
 }
 
+#roster select {
+  margin: 0;
+  width: auto;
+  padding: 0;
+  height: 20px;
+}
+/* These colors are duplicated in js/core/roster.js because of Firefox */
+#roster select option[value="1"] {
+  background-color: #ccc;
+}
+#roster select option[value="2"] {
+  background-color: #070;
+  color: #fff;
+}
+#roster select option[value="1.5"] {
+  background-color: #0f0;
+}
+#roster select option[value="0.5"] {
+  background-color: #ff0;
+}
+#roster select option[value="0"] {
+  background-color: #a00;
+  color: #fff;
+}
+
 /* This is needed to keep the form fields the right size inside row-fluid after upgrading to Bootstrap 2.1. */
 .row-fluid input[class*="span"] {
     min-height: 28px;

@@ -338,11 +338,11 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
 
 
                                 vars.ptModifiers = [
-                                    {text: "(gray) Let Coach Decide", ptModifier: 1},
-                                    {text: "(dark green) Even More Playing Time", ptModifier: 2},
-                                    {text: "(light green) More Playing Time", ptModifier: 1.5},
-                                    {text: "(Yellow) Less Playing Time", ptModifier: 0.5},
-                                    {text: "(Red) Bench", ptModifier: 0},
+                                    {text: "0", ptModifier: 0},
+                                    {text: "-", ptModifier: 0.5},
+                                    {text: " ", ptModifier: 1},
+                                    {text: "+", ptModifier: 1.5},
+                                    {text: "++", ptModifier: 2},
                                 ];
 
 
@@ -445,6 +445,43 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
             }
             editableChanged(vm.editable(), vm);
         }).extend({throttle: 1});
+
+        $("#roster select").change(function () {
+            var backgroundColor, color;
+            // These don't work in Firefox, so do it manually
+//            backgroundColor = $('option:selected', this).css('background-color');
+//            color = $('option:selected', this).css('color');
+            if (this.value === "1") {
+                backgroundColor = "#ccc";
+                color = "#000";
+            } else if (this.value === "2") {
+                backgroundColor = "#070";
+                color = "#fff";
+            } else if (this.value === "1.5") {
+                backgroundColor = "#0f0";
+                color = "#000";
+            } else if (this.value === "0.5") {
+                backgroundColor = "#ff0";
+                color = "#000";
+            } else if (this.value === "0") {
+                backgroundColor = "#a00";
+                color = "#fff";
+            }
+
+            this.style.color = color;
+            this.style.backgroundColor = backgroundColor;
+//            $(this).css('color', color).css('background-color', backgroundColor);
+        }).change();
+        $("#help-roster-pt").clickover({
+            title: "Playing Time Modifier",
+            html: true,
+            content: "<p>Your coach will divide up playing time based on ability and stamina. If you want to influence his judgement, your options are:</p>" +
+                '<span style="background-color: #a00; color: #fff">0 No Playing Time</span><br>' +
+                '<span style="background-color: #ff0">- Less Playing Time</span><br>' +
+                '<span style="background-color: #ccc">&nbsp;&nbsp;&nbsp; Let Coach Decide</span><br>' +
+                '<span style="background-color: #0f0">+ More Playing Time</span><br>' +
+                '<span style="background-color: #070; color: #fff">++ Even More Playing Time</span>'
+        });
     }
 
     function uiEvery(updateEvents, vm) {

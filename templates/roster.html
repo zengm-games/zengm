@@ -18,12 +18,15 @@
 <p>
 <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="roster">
 <thead>
-  <tr><th data-bind="visible: editable"></th><th>Name</th><th title="Position">Pos</th><th>Age</th><th title="Overall Rating">Ovr</th><th title="Potential Rating">Pot</th><th data-bind="visible: isCurrentSeason">Contract</th><th title="Games Played">GP</th><th title="Minutes Per Game">Min</th><th title="Points Per Game">Pts</th><th title="Rebounds Per Game">Reb</th><th title="Assists Per Game">Ast</th><th title="Player Efficiency Rating">PER</th><th data-bind="visible: editable">Release</th><th data-bind="visible: editable">Buy out</th><th data-bind="visible: showTradeFor">Trade For</th></tr>
+  <tr><th data-bind="visible: editable"></th><th>Name</th><th title="Playing Time Modifier" data-bind="visible: editable">PT</th><th title="Position">Pos</th><th>Age</th><th title="Overall Rating">Ovr</th><th title="Potential Rating">Pot</th><th data-bind="visible: isCurrentSeason">Contract</th><th title="Games Played">GP</th><th title="Minutes Per Game">Min</th><th title="Points Per Game">Pts</th><th title="Rebounds Per Game">Reb</th><th title="Assists Per Game">Ast</th><th title="Player Efficiency Rating">PER</th><th data-bind="visible: editable">Release</th><th data-bind="visible: editable">Buy out</th><th data-bind="visible: showTradeFor">Trade For</th></tr>
 </thead>
 <tbody data-bind="foreach: players">
   <tr data-bind="attr: {class: $index() === 4 ? 'separator' : '', 'data-pid': pid}">
     <td class="roster_handle" data-bind="visible: $parent.editable"></td>
     <td data-bind="playerNameLabels: [pid, name, injury, ratings.skills]"></td>
+    <td data-bind="visible: $parent.editable">
+      <select data-bind="options: $root.ptModifiers, optionsText: 'text', optionsValue: 'ptModifier'"></select>
+    </td>
     <td data-bind="text: pos"></td>
     <td data-bind="text: age"></td>
     <td data-bind="text: ratings.ovr"></td>

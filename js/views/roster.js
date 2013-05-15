@@ -194,14 +194,15 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                         highlightHandles();
                     });
                 },
+                handle: ".roster_handle",
                 disabled: true
             });
         }
 
         if (editable) {
-            rosterTbody.sortable("enable").disableSelection();
+            rosterTbody.sortable("enable");//.disableSelection();
         } else {
-            rosterTbody.sortable("disable").enableSelection();
+            rosterTbody.sortable("disable");//.enableSelection();
         }
     }
 
@@ -334,6 +335,17 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
 
                             db.getPayroll(tx, inputs.tid, function (payroll) {
                                 vars.payroll = payroll / 1000;
+
+
+                                vars.ptModifiers = [
+                                    {text: "(gray) Let Coach Decide", ptModifier: 1},
+                                    {text: "(dark green) Even More Playing Time", ptModifier: 2},
+                                    {text: "(light green) More Playing Time", ptModifier: 1.5},
+                                    {text: "(Yellow) Less Playing Time", ptModifier: 0.5},
+                                    {text: "(Red) Bench", ptModifier: 0},
+                                ];
+
+
                                 deferred.resolve(vars);
                             });
                         };

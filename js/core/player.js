@@ -727,6 +727,8 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
         p.face = faces.generate();
         p.injury = {type: "Healthy", gamesRemaining: 0};
 
+        p.ptModifier = 1;
+
         return p;
     }
 

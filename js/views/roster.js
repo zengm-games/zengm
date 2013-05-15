@@ -283,7 +283,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
 
                 vars.team = t;
 
-                attrs = ["pid", "name", "pos", "age", "contract", "cashOwed", "rosterOrder", "injury"];
+                attrs = ["pid", "name", "pos", "age", "contract", "cashOwed", "rosterOrder", "injury", "ptModifier"];
                 ratings = ["ovr", "pot", "skills"];
                 stats = ["gp", "min", "pts", "trb", "ast", "per"];
 
@@ -336,15 +336,13 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                             db.getPayroll(tx, inputs.tid, function (payroll) {
                                 vars.payroll = payroll / 1000;
 
-
                                 vars.ptModifiers = [
                                     {text: "0", ptModifier: 0},
                                     {text: "-", ptModifier: 0.5},
                                     {text: " ", ptModifier: 1},
                                     {text: "+", ptModifier: 1.5},
-                                    {text: "++", ptModifier: 2},
+                                    {text: "++", ptModifier: 2}
                                 ];
-
 
                                 deferred.resolve(vars);
                             });
@@ -446,8 +444,11 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
             editableChanged(vm.editable(), vm);
         }).extend({throttle: 1});
 
-        $("#roster select").change(function () {
-            var backgroundColor, color;
+        $("#roster").on("change", "select", function () {
+            var backgroundColor, color, pid, ptModifier;
+
+            // Update select color
+
             // These don't work in Firefox, so do it manually
 //            backgroundColor = $('option:selected', this).css('background-color');
 //            color = $('option:selected', this).css('color');
@@ -470,8 +471,24 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
 
             this.style.color = color;
             this.style.backgroundColor = backgroundColor;
-//            $(this).css('color', color).css('background-color', backgroundColor);
-        }).change();
+
+            // Update ptModifier in database
+            pid = parseInt(this.parentNode.parentNode.dataset.pid, 10);
+            ptModifier = parseFloat(this.value);
+            g.dbl.transaction("players", "readwrite").objectStore("players").openCursor(pid).onsuccess = function (event) {
+                var cursor, p;
+
+                cursor = event.target.result;
+                p = cursor.value;
+                if (p.ptModifier !== ptModifier) {
+                    p.ptModifier = ptModifier;
+                    cursor.update(p);
+
+                    db.setGameAttributes({lastDbChange: Date.now()});
+                }
+            };
+        });
+
         $("#help-roster-pt").clickover({
             title: "Playing Time Modifier",
             html: true,
@@ -486,6 +503,8 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
 
     function uiEvery(updateEvents, vm) {
         components.dropdown("roster-dropdown", ["teams", "seasons"], [vm.abbrev(), vm.season()], updateEvents);
+
+        $("#roster select").change(); // Set initial bg colors
     }
 
     return bbgmView.init({

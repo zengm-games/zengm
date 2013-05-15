@@ -67,7 +67,7 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
             ui.datatableSinglePage($("#league-finances"), 5, _.map(vm.teams(), function (t) {
                 var payroll;
                 payroll = season === g.season ? t.payroll : t.salaryPaid;  // Display the current actual payroll for this season, or the salary actually paid out for prior seasons
-                return ['<a href="/l/' + g.lid + '/team_finances/' + t.abbrev + '">' + t.region + ' ' + t.name + '</a>', helpers.numberWithCommas(helpers.round(t.att)), helpers.formatCurrency(t.revenue, "M"), helpers.formatCurrency(t.profit, "M"), helpers.formatCurrency(t.cash, "M"), helpers.formatCurrency(payroll, "M")];
+                return ['<a href="' + helpers.leagueUrl(["team_finances", t.abbrev]) + '">' + t.region + ' ' + t.name + '</a>', helpers.numberWithCommas(helpers.round(t.att)), helpers.formatCurrency(t.revenue, "M"), helpers.formatCurrency(t.profit, "M"), helpers.formatCurrency(t.cash, "M"), helpers.formatCurrency(payroll, "M")];
             }));
         }).extend({throttle: 1});
     }

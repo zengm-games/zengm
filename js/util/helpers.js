@@ -351,7 +351,7 @@ define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
     /**
      * Create a URL for a page within a league.
      *
-     * This will also maintain any query string on the end of the URL, for instance for popup windows, unless options.noQueryString is set.
+     * This will also maintain any query string on the end of the URL, for instance for popup windows, unless options.noQueryString is set. Ignoring the query string can be important for forms in Davis.js until this is fixed: https://github.com/olivernn/davis.js/issues/75
      * 
      * @param {Array.<string|number>} components Array of components for the URL after the league ID, which will be combined with / in between.
      * @return {string} URL

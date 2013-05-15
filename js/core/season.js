@@ -679,7 +679,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                 };
                 tx.oncomplete = function () {
                     finances.assesPayrollMinLuxury(function () {
-                        newPhaseCb(g.PHASE.PLAYOFFS, phaseText, cb, "/l/" + g.lid + "/playoffs", ["teamFinances"]);
+                        newPhaseCb(g.PHASE.PLAYOFFS, phaseText, cb, helpers.leagueUrl(["playoffs"]), ["teamFinances"]);
                     });
                 };
             };
@@ -781,7 +781,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                         }
 
                         helpers.bbgmPing("season");
-                    }, "/l/" + g.lid + "/history", ["playerMovement"]);
+                    }, helpers.leagueUrl(["history"]), ["playerMovement"]);
                 });
             };
         };
@@ -843,7 +843,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                     }
                     cursor.continue();
                 } else {
-                    newPhaseCb(g.PHASE.RESIGN_PLAYERS, phaseText, cb, "/l/" + g.lid + "/negotiation", ["playerMovement"]);
+                    newPhaseCb(g.PHASE.RESIGN_PLAYERS, phaseText, cb, helpers.leagueUrl(["negotiation"]) ["playerMovement"]);
                 }
             };
         });
@@ -876,7 +876,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/finances", "cor
                     }
                 };
                 tx.oncomplete = function () {
-                    newPhaseCb(g.PHASE.FREE_AGENCY, phaseText, cb, "/l/" + g.lid + "/free_agents", ["playerMovement"]);
+                    newPhaseCb(g.PHASE.FREE_AGENCY, phaseText, cb, helpers.leagueUrl(["free_agents"]), ["playerMovement"]);
                 };
             });
         });

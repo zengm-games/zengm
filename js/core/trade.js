@@ -116,11 +116,11 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                             age: 0.1 * (player.age - 18),
                             contract: (20 - player.contract.amount) / 15 + 0.1
                         };
-                        return memo + Math.pow(2, factors.pot + factors.ovr - factors.age) * factors.contract;
+                        return memo + Math.pow(3, factors.pot + factors.ovr - factors.age) * factors.contract;
                     }, 0);
 
                     // Normalize for number of players, since 1 really good player is much better than multiple mediocre ones
-//                    values[i] *= Math.pow(0.9, players.length);
+                    values[i] *= Math.pow(0.95, players.length);
 
                     done += 1;
                     if (done === 2) {

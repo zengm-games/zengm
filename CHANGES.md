@@ -18,7 +18,7 @@ This is a list of **only the major changes** in each version.
 
 ## Technical details
 
-- Refactored views from a giant file into multiple more managable files in the views folder
+- Refactored views from a single giant file into multiple more managable files in the views folder
 - Smarter realtime UI updates, so that database reads and DOM updates occur less frequently
 
 ### Still in progress

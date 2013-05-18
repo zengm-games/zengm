@@ -247,8 +247,11 @@ define(["db", "globals", "core/finances", "core/player", "core/season", "core/te
                 // Called after either the draft is over or it's the user's pick
                 cbAfterDoneAuto = function (draftOrder, pids) {
                     setOrder(draftOrder, function () {
+                        var season;
+
                         // Is draft over?;
                         if (draftOrder.length === 0) {
+                            season = require("core/season"); // Circular reference
                             season.newPhase(g.PHASE.AFTER_DRAFT, function () {
                                 cb(pids);
                             });

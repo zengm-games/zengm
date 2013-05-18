@@ -177,7 +177,7 @@ define(["db", "globals", "ui", "util/random"], function (db, g, ui, random) {
             } else if (g.ownerMood.playoffs >= 0 && deltas.playoffs < 0) {
                 indPlayoffs = 3;
             }
-            if (deltas.playoffs === 0.1) {
+            if (deltas.playoffs === 0.2) {
                 indPlayoffs = 4;
             }
 

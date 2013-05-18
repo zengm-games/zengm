@@ -1,12 +1,6 @@
 BEFORE 3.0.0-beta.3
 -------------------
 
-set playing time manually https://mail.google.com/mail/u/0/?ui=2&shva=1#inbox/13ea5e75cd0abb9d
-  ptFactor - positive number that is multiplied by ovr when calculating subs
-    bootstrap colors?
-    vars.ptModifier does not need to be observable
-force roster reorder handles to stay big even if window is small
-playing time should influence player development
 viewmodel and html can get out of sync if you click while it's updating?
 https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide
   should have no more referrals from basketball-gm.com since it's all set to the same domain now
@@ -17,14 +11,9 @@ https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGu
     how to initialize GA with correct options?
 move most db functions into core.whatever. db should just be about initializing/upgrading
   get rid of "db" module dependence
-after winning title - "We need to make some real noise in the playoffs. Soon."
-sub-views like shot locations should retain league menu highlightin
-  highlightId param for bbgmView, default to id
 core.freeAgents should be core.freeAgent or core.freeAgency?
 after last resigning negotiation, switch to next phase?
-check effects of extreme ticket prices
-show old contracts on old roster view
-profits too large? add corporate tax
+profits too large? add corporate tax?
 draft lottery
   do a dramatic presentation?
   increase hype for teams that exceed expectations
@@ -36,7 +25,6 @@ how to handle aggregating stats for players who played for more than one team in
     no pass tid and you only get the latest row. need added logic to do sum
   for player view, want separate and combined rows in careerStats without fucking up totals (including PER)
     no pass tid and you get each team separately, but no merged stats as above
-http://www.gmgames.org
 better default league name
 contracts
   maybe also try making contract demands depend on PER, if it is available
@@ -45,12 +33,6 @@ contracts
 luxury tax should be disbursed amongst non-taxpaying teams
 give bbgm website its own version of bootstrap (only with components needed)
 display league/season counter on basketball-gm.com splash page
-how to deal with a team that drops below 5 active players, factoring in injuries?
-  should minimum roster size be higher?
-  should allow them to exceed roster limit while injury exists
-  should not allow play when below 5
-  should use same logic/functions as core.season that checks on new season.
-    first, add support for auto-add players when AI teams are below limit (in season.js)
 notifications (and log) from top right to display log of key events
   game results from user's team
   players retiring from user's team
@@ -68,9 +50,20 @@ DB Changes
 
 Added ptModifier to player root (default 1)
 
+https://mail.google.com/mail/u/0/?ui=2&shva=1#inbox/13ea5e75cd0abb9d
+
 BEFORE 3.0.0
 ------------
 
+how to deal with a team that drops below 5 active players, factoring in injuries?
+  should minimum roster size be higher?
+  should allow them to exceed roster limit while injury exists
+  should not allow play when below 5
+  should use same logic/functions as core.season that checks on new season.
+    first, add support for auto-add players when AI teams are below limit (in season.js)
+check effects of extreme ticket prices
+show old contracts on old roster view
+force roster reorder handles to stay big even if window is small
 reassess ui module. delete stuff like ui.dropdown. move other functions elsewhere?
   what is the difference between util.viewHelpers, views.components, and ui?
 can i get rid of js/api.js?
@@ -319,6 +312,7 @@ leaders
 roster
   check release, buy out, trade for
   flatten a bit
+  vars.ptModifiers does not need to be observable
 dataTables/grid knockout
   examples
     https://github.com/CogShift/Knockout.Extensions

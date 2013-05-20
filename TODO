@@ -5,15 +5,12 @@ if a player on your team refuses to resign, there should be appropriate handling
   helpers.error should be full screen?
     full screen: 404, IndexedDB error, all errorMessage ones, core.season resigning
     modal: core.season other, views.negotiation
-viewmodel and html can get out of sync if you click while it's updating?
-test trades more
 
-
+profits too large? add corporate tax?
 move most db functions into core.whatever. db should just be about initializing/upgrading
   get rid of "db" module dependence
 core.freeAgents should be core.freeAgent or core.freeAgency?
 after last resigning negotiation, switch to next phase?
-profits too large? add corporate tax?
 draft lottery
   do a dramatic presentation?
   increase hype for teams that exceed expectations
@@ -45,6 +42,10 @@ https://mail.google.com/mail/u/0/?ui=2&shva=1#inbox/13ea5e75cd0abb9d
 BEFORE 3.0.0
 ------------
 
+test trades more
+  multi-player valuation
+    rank players by value. each additional value gets some multiplier to diminish its influence. this prevents adding a player to a trade from decreasing its value
+    but this should have something to do with the difference between numbers of players on each side?
 analytics
   should have no more referrals from basketball-gm.com since it's all set to the same domain now
   https://github.com/segmentio/analytics.js/

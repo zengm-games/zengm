@@ -848,7 +848,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                     }
                     cursor.continue();
                 } else {
-                    newPhaseCb(g.PHASE.RESIGN_PLAYERS, phaseText, cb, helpers.leagueUrl(["negotiation"]) ["playerMovement"]);
+                    newPhaseCb(g.PHASE.RESIGN_PLAYERS, phaseText, cb, helpers.leagueUrl(["negotiation"]), ["playerMovement"]);
                 }
             };
         });

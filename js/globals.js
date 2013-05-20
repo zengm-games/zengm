@@ -59,8 +59,10 @@ define(["lib/knockout"], function (ko) {
         }
     };
 
+    g.enableLogging = window.enableLogging;
+
     // THIS MUST BE ACCURATE OR BAD STUFF WILL HAPPEN
-    g.notInDb = ["dbm", "dbl", "lid", "numTeams", "confs", "divs", "salaryCap", "minPayroll", "luxuryPayroll", "luxuryTax", "minContract", "maxContract", "PHASE", "PLAYER", "gameSimWorkers", "vm", "notInDb"];
+    g.notInDb = ["dbm", "dbl", "lid", "numTeams", "confs", "divs", "salaryCap", "minPayroll", "luxuryPayroll", "luxuryTax", "minContract", "maxContract", "PHASE", "PLAYER", "gameSimWorkers", "vm", "enableLogging", "notInDb"];
 
     return g;
 });

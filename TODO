@@ -5,13 +5,6 @@ if a player on your team refuses to resign, there should be appropriate handling
   helpers.error should be full screen?
     full screen: 404, IndexedDB error, all errorMessage ones, core.season resigning
     modal: core.season other, views.negotiation
-https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide
-  should have no more referrals from basketball-gm.com since it's all set to the same domain now
-  have global variable onBasketballGmCom set in index.html, use it to load GA code or not. move it to g.onBasketballGmCom in globals.js and then use it to do any GA stuff
-  https://github.com/segmentio/analytics.js/
-    analytics.pageview in lib/davis.google_analytics.js
-    analytics.track to get rid of bbgmPing
-    how to initialize GA with correct options?
 viewmodel and html can get out of sync if you click while it's updating?
 test trades more
 
@@ -52,6 +45,12 @@ https://mail.google.com/mail/u/0/?ui=2&shva=1#inbox/13ea5e75cd0abb9d
 BEFORE 3.0.0
 ------------
 
+analytics
+  should have no more referrals from basketball-gm.com since it's all set to the same domain now
+  https://github.com/segmentio/analytics.js/
+    analytics.pageview in lib/davis.google_analytics.js
+    analytics.track to get rid of bbgmPing
+    how to initialize GA with correct options?
 notifications (and log) from top right to display log of key events
   game results from user's team
   players retiring from user's team

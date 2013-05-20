@@ -88,6 +88,9 @@ ul.dashboard_league li.dashboard_league_new h2 {
   width: 125px;
   margin-left: -100%;
 }
+.league-alert {
+ margin-left: 145px;
+}
 
 table {
   white-space: nowrap;

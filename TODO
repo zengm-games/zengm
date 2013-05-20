@@ -1,10 +1,15 @@
 BEFORE 3.0.0-beta.3
 -------------------
 
-if a player on your team refuses to resign, there should be appropriate handling of this message
-  helpers.error should be full screen?
-    full screen: 404, IndexedDB error, all errorMessage ones, core.season resigning
-    modal: core.season other, views.negotiation
+DB Changes
+----------
+
+Added ptModifier to player root (default 1)
+
+https://mail.google.com/mail/u/0/?ui=2&shva=1#inbox/13ea5e75cd0abb9d
+
+BEFORE 3.0.0
+------------
 
 profits too large? add corporate tax?
 move most db functions into core.whatever. db should just be about initializing/upgrading
@@ -29,19 +34,7 @@ contracts
     compare to NBA contract distribution
 luxury tax should be disbursed amongst non-taxpaying teams
 give bbgm website its own version of bootstrap (only with components needed)
-display league/season counter on basketball-gm.com splash page
 team.rosterAutoSort should automatically set dbChanged, and have an option to not if that's important
-
-DB Changes
-----------
-
-Added ptModifier to player root (default 1)
-
-https://mail.google.com/mail/u/0/?ui=2&shva=1#inbox/13ea5e75cd0abb9d
-
-BEFORE 3.0.0
-------------
-
 test trades more
   multi-player valuation
     rank players by value. each additional value gets some multiplier to diminish its influence. this prevents adding a player to a trade from decreasing its value

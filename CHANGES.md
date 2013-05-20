@@ -1,6 +1,6 @@
 This is a list of **only the major changes** in each version.
 
-# Since 3.0.0-beta.3
+# 3.0.0-beta.3 (2013-05-20)
 
 ## Gameplay and UI
 
@@ -12,20 +12,13 @@ This is a list of **only the major changes** in each version.
 - Team history viewable for any team, including a table of all players who played for that team
 - Playing time can be controlled from the roster page
 
-### Still in progress
-
-- See TODO
-
 ## Technical details
 
 - Refactored views from a single giant file into multiple more managable files in the views folder
+- Moved templates from Handlebars.js to Knockout
 - Smarter realtime UI updates, so that database reads and DOM updates occur less frequently
 
-### Still in progress
-
-- See TODO
-
-# 3.0.0-beta.2
+# 3.0.0-beta.2 (2013-03-23)
 
 ## Gameplay and UI
 
@@ -50,6 +43,6 @@ This is a list of **only the major changes** in each version.
 - More unit tests (although many more are still needed)
 - Moved all JavaScript out of templates
 
-# 3.0.0-beta
+# 3.0.0-beta (2013-03-02)
 
 - First release in a very long time, so basically everything changed

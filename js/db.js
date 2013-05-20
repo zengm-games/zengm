@@ -37,7 +37,11 @@ define(["globals", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"],
         if (event.oldVersion <= 1) {
             dbm.deleteObjectStore("teams");
 
-            migrateMessage += '<p><strong>New in version 3.0.0-beta.2:</strong> injuries, more refined economic/financial simulations, improved contract negotiations, noise in displayed player ratings dependent on your scouting budget, and annual interactions with the owner of the team including the possibility of being fired for poor performance.</p>';
+            migrateMessage = '<p><strong>New in version 3.0.0-beta.2:</strong> injuries, more refined economic/financial simulations, improved contract negotiations, noise in displayed player ratings dependent on your scouting budget, and annual interactions with the owner of the team including the possibility of being fired for poor performance.</p>' + migrateMessage;
+        }
+
+        if (event.oldVersion <= 2) {
+            migrateMessage = '<p><strong>New in version 3.0.0-beta.3:</strong> draft lottery, improved trading AI, revamped team history pages, and control over playing time from the roster page.</p>' + migrateMessage;
         }
 
         $("#content").before('<div class="alert alert-info"><button type="button" class="close" data-dismiss="alert">&times;</button>' + migrateMessage + '</div>');
@@ -47,7 +51,7 @@ define(["globals", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"],
         var request;
 
 //        console.log('Connecting to database "meta"');
-        request = indexedDB.open("meta", 2);
+        request = indexedDB.open("meta", 3);
         request.onerror = function (event) {
             throw new Error("Meta connection error");
         };
@@ -121,11 +125,10 @@ define(["globals", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"],
         console.log("Upgrading league" + lid + " database from version " + event.oldVersion + " to version " + event.newVersion);
 
         dbl = event.target.result;
+        tx = event.currentTarget.transaction;
 
         if (event.oldVersion <= 1) {
             teams = teams = helpers.getTeams();
-
-            tx = event.currentTarget.transaction;
 
             tx.objectStore("gameAttributes").put({
                 key: "ownerMood",
@@ -378,13 +381,27 @@ define(["globals", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"],
                 }
             };
         }
+
+        if (event.oldVersion <= 2) {
+            tx.objectStore("players").openCursor().onsuccess = function (event) {
+                var cursor, p;
+
+                cursor = event.target.result;
+                if (cursor) {
+                    p = cursor.value;
+                    p.ptModifier = 1;
+                    cursor.update(p);
+                    cursor.continue();
+                }
+            };
+        }
     }
 
     function connectLeague(lid, cb) {
         var request;
 
 //        console.log('Connecting to database "league' + lid + '"');
-        request = indexedDB.open("league" + lid, 2);
+        request = indexedDB.open("league" + lid, 3);
         request.onerror = function (event) {
             throw new Error("League connection error");
         };

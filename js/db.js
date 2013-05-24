@@ -718,7 +718,7 @@ define(["globals", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"],
 
             done = 0;
             for (i = 0; i < leagues.length; i++) {
-                league.remove(i, function () {
+                league.remove(leagues[i].lid, function () {
                     done += 1;
                     if (done === leagues.length) {
                         // Delete any current meta database

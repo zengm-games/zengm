@@ -78,6 +78,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
             });
         } else if (req.params.propose !== undefined) {
             // Propose trade
+console.log('propose')
             trade.propose(function (accepted, message) {
                 ui.realtimeUpdate([], helpers.leagueUrl(["trade"]), undefined, {message: message});
             });
@@ -214,9 +215,10 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
             }));
         });
 
-        $("#propose-trade button").click(function (event) {
+        // This would disable the propose button when it's clicked, but it prevents form submission in Chrome.
+        /*$("#propose-trade button").click(function (event) {
             vm.summary.enablePropose(false); // Will be reenabled in updateSummary, if appropriate
-        });
+        });*/
 
         rosterCheckboxesUser = $("#roster-user input");
         rosterCheckboxesOther = $("#roster-other input");

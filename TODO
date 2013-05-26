@@ -47,6 +47,7 @@ how to deal with a team that drops below 5 active players, factoring in injuries
   should not allow play when below 5
   should use same logic/functions as core.season that checks on new season.
     first, add support for auto-add players when AI teams are below limit (in season.js)
+  if fouling out drops team below 5, play fouled out players but add a FT each foul (technical)
 check effects of extreme ticket prices
 show old contracts on old roster view
 force roster reorder handles to stay big even if window is small

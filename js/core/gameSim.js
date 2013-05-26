@@ -217,7 +217,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                 this.playersOnCourt[t][i] = p;
                 // Loop through bench players (in order of current roster position) to see if any should be subbed in)
                 for (b = 0; b < this.team[t].player.length; b++) {
-                    if (this.playersOnCourt[t].indexOf(b) === -1 && ((this.team[t].player[p].stat.courtTime > 3 && this.team[t].player[b].stat.benchTime > 3 && ovrs[b] > ovrs[p]) || this.team[t].player[p].injured)) {
+                    if (this.playersOnCourt[t].indexOf(b) === -1 && ((this.team[t].player[p].stat.courtTime > 3 && this.team[t].player[b].stat.benchTime > 3 && ovrs[b] > ovrs[p]) || this.team[t].player[p].injured || this.team[t].player[p].stat.pf >= 6)) {
                         substitutions = true;
 
                         // Substitute player
@@ -700,7 +700,11 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         p = this.playersOnCourt[t][this.pickPlayer(ratios)];
         this.recordStat(this.d, p, "pf");
         // Foul out
-        //if this.team[this.d].player[p].stat.pf >= 6 {
+        if (this.team[this.d].player[p].stat.pf >= 6) {
+            // Force substitutions now
+            this.updatePlayersOnCourt();
+            this.updateSynergy();
+        }
     };
 
     /**

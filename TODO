@@ -1,6 +1,7 @@
 BEFORE 3.0.0
 ------------
 
+components.dropdown tests are very slow in chrome
 export/import roster
   download link performance
     http://mjtemplate.org/examples/rison.html

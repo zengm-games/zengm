@@ -9,7 +9,7 @@ define(["db", "globals", "core/league", "core/team"], function (db, g, league, t
         describe("#filter()", function () {
             before(function (done) {
                 db.connectMeta(function () {
-                    league.create("Test", 0, "random", function () {
+                    league.create("Test", 0, undefined, function () {
                         g.dbl.transaction("teams", "readwrite").objectStore("teams").openCursor(4).onsuccess = function (event) {
                             var cursor, t;
 

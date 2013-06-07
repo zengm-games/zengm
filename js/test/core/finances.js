@@ -8,7 +8,7 @@ define(["db", "globals", "core/league", "core/finances"], function (db, g, leagu
     describe("core/finances", function () {
         before(function (done) {
             db.connectMeta(function () {
-                league.create("Test", 0, "random", function () {
+                league.create("Test", 0, undefined, function () {
                     done();
                 });
             });

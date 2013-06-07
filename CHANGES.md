@@ -1,10 +1,17 @@
 This is a list of **only the major changes** in each version.
 
-# 3.0.0-beta.3 (2013-05-20)
+# Since 3.0.0-beta.3
 
 ## Gameplay and UI
 
 ### Done so far
+
+- Can export rosters from a league
+- Ability to use a custom roster file rather than randomly-generated players in a new league
+
+# 3.0.0-beta.3 (2013-05-20)
+
+## Gameplay and UI
 
 - Draft lottery, based on NBA rules
 - Made it harder to fleece the AI in trades

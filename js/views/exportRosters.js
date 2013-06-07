@@ -8,6 +8,8 @@ define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/helpers", "util/vi
     function post(req) {
         var players, season;
 
+        $("#download-link").html("Generating...");
+
         season = helpers.validateSeason(req.params.season);
 
         players = [];
@@ -45,7 +47,8 @@ define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/helpers", "util/vi
 
                 cursor.continue();
             } else {
-console.log(players);
+                // I should be able to just use window.encodeURI to skip the base64 step, but Firefox can't fully download some URIs (like ones containing #)
+                $("#download-link").html('<a href="data:application/json;base64,' + window.btoa(JSON.stringify({players: players})) + '" download="rosters-' + season + '.json">Download Exported Rosters</a>');
             }
         };
     }

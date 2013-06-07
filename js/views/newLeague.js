@@ -98,9 +98,15 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
         selectRosters = $("select[name='rosters']");
         selectRosters.change(updateShowUploadForm);
         selectRosters.keyup(updateShowUploadForm);
-        updateShowUploadForm();
 
         updatePopText();
+        updateShowUploadForm();
+
+        $("#help-rosters").clickover({
+            title: "Rosters",
+            html: true,
+            content: 'Rosters of the teams in your new league can either be filled by randomly-generated players or by players from a <a href="/manual/custom_rosters">custom roster file</a> you upload.'
+        });
     }
 
     return bbgmView.init({

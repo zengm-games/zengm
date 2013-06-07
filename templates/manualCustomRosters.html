@@ -1,0 +1,34 @@
+<p>Basketball GM supports custom roster files that define the players to be used in a new league.</p>
+
+<h2>Getting a custom roster file</h2>
+
+<p>There are two sources of roster files:</p>
+
+<ol>
+  <li><b>Download:</b> If someone has made a custom roster file and put it up online, you can download it and use it. However, since this feature is new, probably nobody has done this yet.</li>
+  <li><b>Export:</b> From within any league, you can export the rosters from any season (current or past) by clicking "Export Rosters" at the bottom of the league menu on the left.</li>
+</ol>
+
+<p>It is also easy to edit these roster files however you want, as is described below.</p>
+
+<h2>Using a custom roster file</h2>
+
+<p>When you are creating a <a href="/new_league">new league</a>, change the rosters from "Random Players" to "Upload Custom Rosters". Then, select your desired roster file.</p>
+
+<h2>Editing a custom roster file</h2>
+
+<p>A custom roster file is simply a <a href="http://en.wikipedia.org/wiki/JSON">JSON</a> file containing a list of players. You can add/remove/edit any part of it.</p>
+
+<p>The easiest way to do this would probably be to look at the structure of an exported roster file and base your new file off that. Since the exported files are compressed into a single line of text, you should first run it through <a href="http://jsonprettyprint.com/">a JSON prettifier like this</a>.</p>
+
+<p>Several fields in the exported roster files are optional if you're making your own rosters: awards, born, college, contract, draft, face, freeAgentMood, hgt, injury, ptModifier, retiredYear, rosterOrder, salaries, statsTids, weight, yearsFreeAgent. You can simply delete those and just focus on tuning the ratings to your liking, if that's what you'd prefer. Here is an example of a minimal roster file:</p>
+
+<pre>
+  AAA
+</pre>
+
+<p>A list of things you should know when making a roster file:</p>
+
+<ul>
+  <li>tid is the team ID number, ranging from 0 to 29 in alphabetical order. -1 is for free agents.</li>
+</ul>

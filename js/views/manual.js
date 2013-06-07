@@ -5,9 +5,41 @@
 define(["ui", "util/bbgmView", "util/viewHelpers"], function (ui, bbgmView, viewHelpers) {
     "use strict";
 
+    function templateString(page) {
+        var i, output, upperNext;
+
+        output = "manual";
+        upperNext = true;
+
+        for (i = 0; i < page.length; i++) {
+            if (upperNext) {
+                output += page.charAt(i).toUpperCase();
+                upperNext = false;
+            } else if (page.charAt(i) === "_") {
+                upperNext = true;
+            } else {
+                output += page.charAt(i);
+            }
+        }
+
+        return output;
+    }
+
     function get(req) {
         return {
             page: req.params.page !== undefined ? req.params.page : "overview"
+        };
+
+console.log('get')
+        /*ui.update({
+            container: "manual-content",
+            template: "manualOverview"
+        });*/
+    }
+
+    function updateManual(inputs, updateEvents) {
+        return {
+            page: inputs.page
         };
     }
 
@@ -15,10 +47,19 @@ define(["ui", "util/bbgmView", "util/viewHelpers"], function (ui, bbgmView, view
         ui.title("Manual");
     }
 
+    function uiEvery(updateEvents, vm) {
+        ui.update({
+            container: "manual-content",
+            template: templateString(vm.page())
+        });
+    }
+
     return bbgmView.init({
-        id: "manualOverview",
+        id: "manual",
         beforeReq: viewHelpers.beforeNonLeague,
         get: get,
-        uiFirst: uiFirst
+        runBefore: [updateManual],
+        uiFirst: uiFirst,
+        uiEvery: uiEvery
     });
 });

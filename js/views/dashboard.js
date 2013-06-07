@@ -1,6 +1,6 @@
 /**
- * @name views.manual
- * @namespace Manual pages.
+ * @name views.dashboard
+ * @namespace Dashboard.
  */
 define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, $, bbgmView, helpers, viewHelpers) {
     "use strict";

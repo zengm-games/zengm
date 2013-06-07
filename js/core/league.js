@@ -82,7 +82,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                     });
 
                     player.genBaseMoods(transaction, function (baseMoods) {
-                        var afterPlayerCreation, agingYears, baseRatings, cbAfterEachPlayer, contract, draftYear, goodNeutralBad, n, numLeft, p, playerStore, pots, profile, profiles, randomizeExpiration, t, t2;
+                        var afterPlayerCreation, agingYears, baseRatings, cbAfterEachPlayer, contract, draftYear, goodNeutralBad, i, j, n, numLeft, p, pg, playerStore, pots, profile, profiles, randomizeExpiration, simpleDefaults, t, t2;
 
                         // This can't be in transaction.oncomplete because loading players from a json file is async and breaks the transaction.
                         afterPlayerCreation = function () {
@@ -116,24 +116,34 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                             for (i = 0; i < players.length; i++) {
                                 p = players[i];
 
+                                // THis is used to get at default values for various attributes
+                                pg = player.generate(p.tid, p.age, "", 0, 0, g.startingSeason - p.age, true, scoutingRank);
+
                                 // Optional things
-                                if (!p.hasOwnProperty("awards")) {
-                                    p.awards = [];
-                                }
-                                if (!p.hasOwnProperty("college")) {
-                                    p.college = "";
+                                simpleDefaults = ["awards", "born", "college", "contract", "draft", "face", "freeAgentMood", "hgt", "injury", "pos", "ptModifier", "retiredYear", "rosterOrder", "weight", "yearsFreeAgent"];
+                                for (j = 0; j < simpleDefaults.length; j++) {
+                                    if (!p.hasOwnProperty(simpleDefaults[j])) {
+                                        p[simpleDefaults[j]] = pg[simpleDefaults[j]];
+                                    }
                                 }
                                 if (!p.hasOwnProperty("salaries")) {
                                     p.salaries = [];
-                                    p = player.setContract(p, p.contract, true);
+                                    if (p.tid >= 0) {
+                                        p = player.setContract(p, p.contract, true);
+                                    }
                                 }
                                 if (!p.hasOwnProperty("statsTids")) {
                                     p.statsTids = [];
                                 }
 
-                                // Fix missing info
+                                // Fix always-missing info
                                 p.ratings[0].season = g.startingSeason;
-                                p = player.addStatsRow(p, false);
+                                if (!p.hasOwnProperty("stats")) {
+                                    p.stats = [];
+                                    if (p.tid >= 0) {
+                                        p = player.addStatsRow(p, false);
+                                    }
+                                }
                                 /*p.ratings[0].ovr = player.ovr(p.ratings[0]);
                                 p.face = faces.generate();
                                 p.injury = {type: "Healthy", gamesRemaining: 0};

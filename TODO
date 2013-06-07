@@ -3,32 +3,18 @@ BEFORE 3.0.0
 
 export/import roster
   export format
-    make some things optional, like:
-      awards
-      college
-      contract
-      draft
-      face
-      freeAgentMood
-      hgt
-      injury
-      pid
-      ptModifier
-      retiredYear
-      rosterOrder
-      salaries
-      stats
-      statsTids
-      weight
-      yearsFreeAgent
-      ratings[0].fuzz for each player
+    make pid optional? can't i just use auto increment?
+    optional:
+      ratings.fuzz
+      ratings.skills
   in import when creating new league
     set last ratings season to g.startingSeason
-  manual page explaining exactly the file format
-    how to prettify and edit JSON
+  http://localhost/manual/custom_rosters
+    define file format - minimal example player
+    link here from export_rosters and main manual
   download link performance
     http://mjtemplate.org/examples/rison.html
-  help links everywhere
+    delete more stuff
   error handling if blank or invalid file is supplied
 http://blog.stevensanderson.com/2013/05/20/knockout-es5-a-plugin-to-simplify-your-syntax/
 profits too large? add corporate tax?

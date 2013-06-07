@@ -110,32 +110,44 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
 
                         if (players !== undefined) {
                             // Use pre-generated players, filling in attributes as needed
-console.log(players);
-/*                            // Load players from file
-                            $.getJSON("/data/nba2012.json", function (players) {
-                                var i, p, playerStore;
+                            playerStore = g.dbl.transaction("players", "readwrite").objectStore("players");  // Transaction used above is closed by now
 
-                                playerStore = g.dbl.transaction("players", "readwrite").objectStore("players");  // Transaction used above is closed by now
+                            numLeft = players.length;
+                            for (i = 0; i < players.length; i++) {
+                                p = players[i];
 
-                                numLeft = players.length;
-                                for (i = 0; i < players.length; i++) {
-                                    p = players[i];
-                                    p.ratings[0].ovr = player.ovr(p.ratings[0]);
-                                    p.face = faces.generate();
-                                    p.injury = {type: "Healthy", gamesRemaining: 0};
+                                // Optional things
+                                if (!p.hasOwnProperty("awards")) {
                                     p.awards = [];
-                                    if (p.tid === g.PLAYER.FREE_AGENT) {
-                                        p = player.setContract(p, player.genContract(p.ratings[0]), false);
-                                    }
-
-                                    if (p.tid === g.PLAYER.FREE_AGENT) {
-                                        player.addToFreeAgents(playerStore, p, null, baseMoods, cbAfterEachPlayer);
-                                    } else {
-                                        playerStore.put(p);
-                                        cbAfterEachPlayer();
-                                    }
                                 }
-                            });*/
+                                if (!p.hasOwnProperty("college")) {
+                                    p.college = "";
+                                }
+                                if (!p.hasOwnProperty("salaries")) {
+                                    p.salaries = [];
+                                    p = player.setContract(p, p.contract, true);
+                                }
+                                if (!p.hasOwnProperty("statsTids")) {
+                                    p.statsTids = [];
+                                }
+
+                                // Fix missing info
+                                p.ratings[0].season = g.startingSeason;
+                                p = player.addStatsRow(p, false);
+                                /*p.ratings[0].ovr = player.ovr(p.ratings[0]);
+                                p.face = faces.generate();
+                                p.injury = {type: "Healthy", gamesRemaining: 0};
+                                if (p.tid === g.PLAYER.FREE_AGENT) {
+                                    p = player.setContract(p, player.genContract(p.ratings[0]), false);
+                                }*/
+
+                                if (p.tid === g.PLAYER.FREE_AGENT) {
+                                    player.addToFreeAgents(playerStore, p, null, baseMoods, cbAfterEachPlayer);
+                                } else {
+                                    playerStore.put(p);
+                                    cbAfterEachPlayer();
+                                }
+                            }
                         } else {
                             // Generate new players
                             playerStore = transaction.objectStore("players");

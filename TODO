@@ -2,11 +2,6 @@ BEFORE 3.0.0
 ------------
 
 export/import roster
-  how to actually save file?
-  export from debug menu. pick year, export only ratings
-    delete all optional things possible
-    delete ratings for other seasons
-    delete season entry in ratings
   export format
     make some things optional, like:
       awards

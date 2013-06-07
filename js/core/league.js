@@ -11,9 +11,9 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
      * @memberOf core.league
      * @param {string} name The name of the league.
      * @param {number} tid The team ID for the team the user wants to manage.
-     * @param {string} playerGeneration Either "random" to generate random players or "nba2012" to load NBA rosters.
+     * @param {Array.<Object>?} players Either an array of pre-generated player objects to use in the new league or undefined. If undefined, then random players will be generated.
      */
-    function create(name, tid, playerGeneration, cb) {
+    function create(name, tid, players, cb) {
         var l, leagueStore;
 
         l = {name: name, tid: tid, phaseText: ""};
@@ -108,8 +108,10 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                             }
                         };
 
-                        if (playerGeneration === "nba2012") {
-                            // Load players from file
+                        if (players !== undefined) {
+                            // Use pre-generated players, filling in attributes as needed
+console.log(players);
+/*                            // Load players from file
                             $.getJSON("/data/nba2012.json", function (players) {
                                 var i, p, playerStore;
 
@@ -133,7 +135,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                                         cbAfterEachPlayer();
                                     }
                                 }
-                            });
+                            });*/
                         } else {
                             // Generate new players
                             playerStore = transaction.objectStore("players");

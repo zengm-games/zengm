@@ -4,15 +4,21 @@
   <fieldset>
     <label>League name</label>
     <input type="text" name="name" data-bind="attr: {value: name}"><br><br>
+
     <label>Which team do you want to manage?</label>
     <select name="tid" data-bind="foreach: teams">
       <option data-bind="attr: {value: tid}, text: region() + ' ' + name()"></option>
     </select>
-   <span class="help-block" id="pop-text"></span><br>
-    <!--<label><select name="players">
+    <span class="help-block" id="pop-text"></span><br>
+
+    <label>Rosters</label>
+    <select name="rosters">
       <option value="random" selected="selected">Random Players</option>
-      <option value="nba2012">2012 NBA Players</option>
-    </select></label><br>-->
+      <option value="custom-rosters">Upload Custom Rosters</option>
+    </select><br>
+    <span id="custom-rosters" style="display: none"><input type="file" name="custom-rosters"><br></span>
+    <br>
+
     <button type="submit" class="btn" id="create-new-league">Create New League</button>
   </fieldset>
 </form>

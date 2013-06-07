@@ -34,6 +34,7 @@ export/import roster
   download link performance
     http://mjtemplate.org/examples/rison.html
   help links everywhere
+  error handling if blank or invalid file is supplied
 http://blog.stevensanderson.com/2013/05/20/knockout-es5-a-plugin-to-simplify-your-syntax/
 profits too large? add corporate tax?
 move most db functions into core.whatever. db should just be about initializing/upgrading

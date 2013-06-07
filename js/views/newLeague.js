@@ -6,15 +6,27 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
     "use strict";
 
     function post(req) {
-        var tid;
+        var file, reader, tid;
 
         $("#create-new-league").attr("disabled", "disabled");
 
         tid = Math.floor(req.params.tid);
         if (tid >= 0 && tid <= 29) {
-            league.create(req.params.name, tid, req.params.players, function (lid) {
-                ui.realtimeUpdate([], "/l/" + lid);
-            });
+            // Davis.js can't handle file uploads, so do this manually first
+            if (req.params.rosters === "custom-rosters") {
+                file = $("input[name='custom-rosters']").get(0).files[0];
+                reader = new window.FileReader();
+                reader.readAsText(file);
+                reader.onload = function (event) {
+                    league.create(req.params.name, tid, JSON.parse(event.target.result).players, function (lid) {
+                        ui.realtimeUpdate([], "/l/" + lid);
+                    });
+                };
+            } else {
+                league.create(req.params.name, tid, undefined, function (lid) {
+                    ui.realtimeUpdate([], "/l/" + lid);
+                });
+            }
         }
     }
 
@@ -45,7 +57,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
     }
 
     function uiFirst(vm) {
-        var select, teams, updatePopText;
+        var selectRosters, selectTeam, teams, updatePopText, updateShowUploadForm;
 
         ui.title("Create New League");
 
@@ -54,7 +66,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
         updatePopText = function () {
             var difficulty, team;
 
-            team = teams[select.val()];
+            team = teams[selectTeam.val()];
 
             if (team.popRank <= 5) {
                 difficulty = "very easy";
@@ -71,9 +83,22 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
             $("#pop-text").html("Region population: " + team.pop + " million, #" + team.popRank + " leaguewide<br>Difficulty: " + difficulty);
         };
 
-        select = $("select[name='tid']");
-        select.change(updatePopText);
-        select.keyup(updatePopText);
+        selectTeam = $("select[name='tid']");
+        selectTeam.change(updatePopText);
+        selectTeam.keyup(updatePopText);
+
+        updateShowUploadForm = function () {
+            if (selectRosters.val() === "custom-rosters") {
+                $("#custom-rosters").show();
+            } else {
+                $("#custom-rosters").hide();
+            }
+        };
+
+        selectRosters = $("select[name='rosters']");
+        selectRosters.change(updateShowUploadForm);
+        selectRosters.keyup(updateShowUploadForm);
+        updateShowUploadForm();
 
         updatePopText();
     }

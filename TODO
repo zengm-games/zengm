@@ -2,11 +2,10 @@ BEFORE 3.0.0
 ------------
 
 export/import roster
-  http://localhost/manual/custom_rosters
-    link here from export_rosters and main manual
   download link performance
     http://mjtemplate.org/examples/rison.html
-    delete more stuff
+    something besides a data URI?
+    no base64? Firefox can't handle #
   error handling if blank or invalid file is supplied
 http://blog.stevensanderson.com/2013/05/20/knockout-es5-a-plugin-to-simplify-your-syntax/
 profits too large? add corporate tax?

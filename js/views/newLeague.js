@@ -15,13 +15,19 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
             // Davis.js can't handle file uploads, so do this manually first
             if (req.params.rosters === "custom-rosters") {
                 file = $("input[name='custom-rosters']").get(0).files[0];
-                reader = new window.FileReader();
-                reader.readAsText(file);
-                reader.onload = function (event) {
-                    league.create(req.params.name, tid, JSON.parse(event.target.result).players, function (lid) {
+                if (file !== undefined) {
+                    reader = new window.FileReader();
+                    reader.readAsText(file);
+                    reader.onload = function (event) {
+                        league.create(req.params.name, tid, JSON.parse(event.target.result).players, function (lid) {
+                            ui.realtimeUpdate([], "/l/" + lid);
+                        });
+                    };
+                } else {
+                    league.create(req.params.name, tid, undefined, function (lid) {
                         ui.realtimeUpdate([], "/l/" + lid);
                     });
-                };
+                }
             } else {
                 league.create(req.params.name, tid, undefined, function (lid) {
                     ui.realtimeUpdate([], "/l/" + lid);

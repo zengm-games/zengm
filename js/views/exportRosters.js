@@ -62,6 +62,7 @@ define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/helpers", "util/vi
         vars = {
             seasons: helpers.getSeasons(g.season)
         };
+        vars.seasons.reverse();
 
         deferred.resolve(vars);
 

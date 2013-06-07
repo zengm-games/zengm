@@ -21,14 +21,69 @@
 
 <p>The easiest way to do this would probably be to look at the structure of an exported roster file and base your new file off that. Since the exported files are compressed into a single line of text, you should first run it through <a href="http://jsonprettyprint.com/">a JSON prettifier like this</a>.</p>
 
-<p>Several fields in the exported roster files are optional if you're making your own rosters: awards, born, college, contract, draft, face, freeAgentMood, hgt, injury, ptModifier, retiredYear, rosterOrder, salaries, statsTids, weight, yearsFreeAgent. You can simply delete those and just focus on tuning the ratings to your liking, if that's what you'd prefer. Here is an example of a minimal roster file:</p>
+<p>Many fields in the exported roster files are optional if you're making your own rosters. The only required ones are shown below. Any other fields you see in an exported or custom roster file are purely optional.</p>
 
 <pre>
-  AAA
+{
+  "players": [
+    {
+      "name": "Andrew Phillips",
+      "tid": 0,
+      "ratings": [
+        {
+          "hgt": 20,
+          "stre": 0,
+          "spd": 85,
+          "jmp": 50,
+          "endu": 55,
+          "ins": 68,
+          "dnk": 45,
+          "ft": 57,
+          "fg": 64,
+          "tp": 16,
+          "blk": 49,
+          "stl": 37,
+          "drb": 75,
+          "pss": 76,
+          "reb": 39,
+          "ovr": 49,
+          "pot": 49
+        }
+      ]
+    },
+    {
+      "name": "Heriberto Braman",
+      "tid": 0,
+      "ratings": [
+        {
+          "hgt": 27,
+          "stre": 34,
+          "spd": 85,
+          "jmp": 55,
+          "endu": 25,
+          "ins": 46,
+          "dnk": 42,
+          "ft": 42,
+          "fg": 54,
+          "tp": 72,
+          "blk": 48,
+          "stl": 40,
+          "drb": 72,
+          "pss": 75,
+          "reb": 44,
+          "ovr": 51,
+          "pot": 52
+        }
+      ]
+    }
+  ]
+}
 </pre>
 
 <p>A list of things you should know when making a roster file:</p>
 
 <ul>
-  <li>tid is the team ID number, ranging from 0 to 29 in alphabetical order. -1 is for free agents.</li>
+  <li>tid is the team ID number, ranging from 0 to 29 in alphabetical order. -1 is for free agents.</p>
+  <li>In the example above, there are only two players defined. If your file doesn't include at least 5 players on every team, then bad things will happen when you try to use it.</li>
+  <li>You can view definitions of all the rating abbreviations within any league by going to the player ratings page and hovering your mouse over each column header.</li>
 </ul>

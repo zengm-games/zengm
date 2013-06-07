@@ -82,7 +82,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                     });
 
                     player.genBaseMoods(transaction, function (baseMoods) {
-                        var afterPlayerCreation, agingYears, baseRatings, cbAfterEachPlayer, contract, draftYear, goodNeutralBad, i, j, n, numLeft, p, pg, playerStore, pots, profile, profiles, randomizeExpiration, simpleDefaults, t, t2;
+                        var afterPlayerCreation, age, agingYears, baseRatings, cbAfterEachPlayer, contract, draftYear, goodNeutralBad, i, j, n, numLeft, p, pg, playerStore, pots, profile, profiles, randomizeExpiration, simpleDefaults, t, t2;
 
                         // This can't be in transaction.oncomplete because loading players from a json file is async and breaks the transaction.
                         afterPlayerCreation = function () {
@@ -116,8 +116,14 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                             for (i = 0; i < players.length; i++) {
                                 p = players[i];
 
-                                // THis is used to get at default values for various attributes
-                                pg = player.generate(p.tid, p.age, "", 0, 0, g.startingSeason - p.age, true, scoutingRank);
+                                if (!p.hasOwnProperty("born")) {
+                                    age = random.randInt(19, 35);
+                                } else {
+                                    age = g.startingSeason - p.born.year;
+                                }
+
+                                // This is used to get at default values for various attributes
+                                pg = player.generate(p.tid, age, "", 0, 0, g.startingSeason - age, true, scoutingRank);
 
                                 // Optional things
                                 simpleDefaults = ["awards", "born", "college", "contract", "draft", "face", "freeAgentMood", "hgt", "injury", "pos", "ptModifier", "retiredYear", "rosterOrder", "weight", "yearsFreeAgent"];
@@ -135,6 +141,12 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                                 if (!p.hasOwnProperty("statsTids")) {
                                     p.statsTids = [];
                                 }
+                                if (!p.ratings[0].hasOwnProperty("fuzz")) {
+                                    p.ratings[0].fuzz = pg.ratings[0].fuzz;
+                                }
+                                if (!p.ratings[0].hasOwnProperty("skills")) {
+                                    p.ratings[0].skills = player.skills(p.ratings[0]);
+                                }
 
                                 // Fix always-missing info
                                 p.ratings[0].season = g.startingSeason;
@@ -144,12 +156,6 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                                         p = player.addStatsRow(p, false);
                                     }
                                 }
-                                /*p.ratings[0].ovr = player.ovr(p.ratings[0]);
-                                p.face = faces.generate();
-                                p.injury = {type: "Healthy", gamesRemaining: 0};
-                                if (p.tid === g.PLAYER.FREE_AGENT) {
-                                    p = player.setContract(p, player.genContract(p.ratings[0]), false);
-                                }*/
 
                                 if (p.tid === g.PLAYER.FREE_AGENT) {
                                     player.addToFreeAgents(playerStore, p, null, baseMoods, cbAfterEachPlayer);

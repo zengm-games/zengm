@@ -2,15 +2,7 @@ BEFORE 3.0.0
 ------------
 
 export/import roster
-  export format
-    make pid optional? can't i just use auto increment?
-    optional:
-      ratings.fuzz
-      ratings.skills
-  in import when creating new league
-    set last ratings season to g.startingSeason
   http://localhost/manual/custom_rosters
-    define file format - minimal example player
     link here from export_rosters and main manual
   download link performance
     http://mjtemplate.org/examples/rison.html

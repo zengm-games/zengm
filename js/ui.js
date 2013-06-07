@@ -131,7 +131,6 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
     function update(data) {
         var containerEl, contentEl, leaguePage, rendered, result;
 
-console.log(data);
         rendered = templates[data.template];
         containerEl = document.getElementById(data.container);
         containerEl.innerHTML = rendered;

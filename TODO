@@ -1,6 +1,36 @@
 BEFORE 3.0.0
 ------------
 
+export/import roster
+  how to actually save file?
+  export from debug menu. pick year, export only ratings
+    delete all optional things possible
+    delete ratings for other seasons
+    delete season entry in ratings
+  export format
+    make some things optional, like:
+      awards
+      college
+      contract
+      draft
+      face
+      freeAgentMood
+      hgt
+      injury
+      pid
+      ptModifier
+      retiredYear
+      rosterOrder
+      salaries
+      stats
+      statsTids
+      weight
+      yearsFreeAgent
+      ratings[0].fuzz for each player
+  in import when creating new league
+    set last ratings season to g.startingSeason
+  manual page explaining exactly the file format
+http://blog.stevensanderson.com/2013/05/20/knockout-es5-a-plugin-to-simplify-your-syntax/
 profits too large? add corporate tax?
 move most db functions into core.whatever. db should just be about initializing/upgrading
   get rid of "db" module dependence

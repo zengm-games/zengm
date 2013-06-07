@@ -1,0 +1,13 @@
+<h1>Export Rosters</h1>
+<p>Here you can export the rosters from any season. This will produce a file that you can upload when you create a new league.</p>
+<p>To avoid creating huge files, no stats are exported.</p>
+<p>
+<form method="POST" data-bind="attrLeagueUrl: {action: ['export_rosters']}">
+  <fieldset>
+    <select name="season" data-bind="foreach: seasons">
+      <option data-bind="attr: {value: season}, text: season() + ' rosters'"></option>
+    </select><br>
+    <button type="submit" class="btn" id="create-new-league">Export Rosters</button>
+  </fieldset>
+</form>
+</p>

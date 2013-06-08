@@ -150,6 +150,9 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                                 if (!p.ratings[0].hasOwnProperty("ovr")) {
                                     p.ratings[0].ovr = player.ovr(p.ratings[0]);
                                 }
+                                if (p.ratings[0].pot < p.ratings[0].ovr) {
+                                    p.ratings[0].pot = p.ratings[0].ovr;
+                                }
 
                                 // Fix always-missing info
                                 p.ratings[0].season = g.startingSeason;

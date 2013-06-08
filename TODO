@@ -1,8 +1,10 @@
 BEFORE 3.0.0
 ------------
 
+http://errorception.com/
 components.dropdown tests are very slow in chrome
 export/import roster
+  some way to specify startingSeason
   download link performance
     http://mjtemplate.org/examples/rison.html
     something besides a data URI?

@@ -1,6 +1,7 @@
 BEFORE 3.0.0
 ------------
 
+Look at ratings distributions - should there really be so many bigs who are great passers, for instance?
 http://errorception.com/
 components.dropdown tests are very slow in chrome
 export/import roster

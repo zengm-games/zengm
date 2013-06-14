@@ -683,8 +683,8 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
             p.ratings.push(genRatings(profile, baseRating, pot, draftYear, scoutingRank));
         }
 
-        minHgt = 69;  // 5'9"
-        maxHgt = 89;  // 7'5"
+        minHgt = 70;  // 5'10"
+        maxHgt = 83;  // 6'11"
         minWeight = 150;
         maxWeight = 290;
 

@@ -47,14 +47,19 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/knock
             tx = g.dbl.transaction(["players", "teams"]);
 
             tx.objectStore("teams").getAll().onsuccess = function (event) {
-                var gps, i, teams;
+                var gps, i, j, teams;
 
                 teams = event.target.result;
 
                 // Calculate the number of games played for each team, which is used later to test if a player qualifies as a league leader
                 gps = [];
                 for (i = 0; i < teams.length; i++) {
-                    gps[i] = _.last(teams[i].seasons).gp;
+                    for (j = 0; j < teams[i].seasons.length; j++) {
+                        if (teams[i].seasons[j].season === inputs.season) {
+                            gps[i] = teams[i].seasons[j].gp;
+                            break;
+                        }
+                    }
                 }
 
                 tx.objectStore("players").getAll().onsuccess = function (event) {

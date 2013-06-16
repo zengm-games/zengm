@@ -723,7 +723,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
 
                             // Add to Hall of Fame?
                             if (player.madeHof(p)) {
-                                p.hof = 1;
+                                p.hof = true;
                             }
                         }
                     }

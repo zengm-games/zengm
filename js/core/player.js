@@ -729,7 +729,7 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
 
         p.ptModifier = 1;
 
-        p.hof = 0; // Not a real boolean because IndexedDB indexes don't work on booleans
+        p.hof = false;
 
         return p;
     }

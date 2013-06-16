@@ -724,6 +724,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                             // Add to Hall of Fame?
                             if (player.madeHof(p)) {
                                 p.hof = true;
+                                p.awards.push({season: g.season, type: "Inducted into the Hall of Fame"});
                             }
                         }
                     }

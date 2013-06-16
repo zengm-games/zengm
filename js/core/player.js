@@ -1183,7 +1183,7 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
      * @return {boolean} Hall of Fame worthy?
      */
     function madeHof(p) {
-        var df, ewa, ewas, i, mins, pers, prls, va;
+        var df, ewa, ewas, fudgeSeasons, i, mins, pers, prls, va;
 
         mins = _.pluck(p.stats, "min");
         pers = _.pluck(p.stats, "per");
@@ -1205,7 +1205,7 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
         ewas = [];
         for (i = 0; i < mins.length; i++) {
             va = mins[i] * (pers[i] - prls[p.pos]) / 67;
-            ewas.push(va / 30 * 0.9); // 0.9 is a fudge factor to approximate the difference between (in-game) EWA and (real) win shares
+            ewas.push(va / 30 * 0.8); // 0.8 is a fudge factor to approximate the difference between (in-game) EWA and (real) win shares
         }
 
         // Calculate career EWA and "dominance factor" DF (top 5 years EWA - 50)
@@ -1219,7 +1219,12 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
             }
         }
 
-console.log(p.pid + " " + (ewa + df))
+        // Fudge factor for players generated when the league started
+        fudgeSeasons = g.startingSeason - p.draft.year - 5;
+        if (fudgeSeasons > 0 && g.season - g.startingSeason > 5) {
+            ewa += ewas[0] * fudgeSeasons;
+        }
+
         // Final formula
         if (ewa + df > 100) {
             return true;

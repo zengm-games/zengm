@@ -2,26 +2,21 @@ DB CHANGES SINCE 3.0.0-beta.3
 -----------------------------
 
 hof boolean in root of player object
-  and index?
+  check if retired. if so, run player.madeHof. if not, just set hof to false.
 
 BEFORE 3.0.0
 ------------
 
 Hall of fame
-  add fudge factor to extrapolate younger years for players generated when the league is created
   add to awards array
   display some marker in retired player list
-  display in view
-    most common team
-    number of seasons
-    career averages in key categories
-    year retired
-    year drafted
   use an index only if necessary for performance of view
+when viewing a url like /l/1/roster, playing until new season shouldn't move it to roster for previous year
 only show retired players in season summary if they actually played some
 Look at ratings distributions - should there really be so many bigs who are great passers, for instance?
 http://errorception.com/
 components.dropdown tests are very slow in chrome
+why are tables so slow? only with firebug open?
 export/import roster
   some way to specify startingSeason
   download link performance
@@ -358,7 +353,8 @@ reassess dropdown - should it really be called like it is in uiEvery? can i use 
 
 g = require("globals"); g.dbl.transaction("players").objectStore("players").get(184).onsuccess = function (event) { console.log(event.target.result); };
 
-g = require("globals"); player = require("core/player"); g.dbl.transaction("players").objectStore("players").get(184).onsuccess = function (event) { console.log(player.madeHof(event.target.result)); };
+g = require("globals"); player = require("core/player"); g.dbl.transaction("players").objectStore("players").get(170).onsuccess = function (event) { console.log(player.madeHof(event.target.result)); };
+g = require("globals"); player = require("core/player"); g.dbl.transaction("players").objectStore("players").get(172).onsuccess = function (event) { console.log(player.madeHof(event.target.result)); };
 
 g = require("globals"); g.dbl.transaction("players").objectStore("players").openCursor(null, "prev").onsuccess = function(event) { console.log(event.target.result.value); };
 g = require("globals"); g.dbl.transaction("teams").objectStore("teams").get(3).onsuccess = function (event) { console.log(event.target.result.seasons[0]); }

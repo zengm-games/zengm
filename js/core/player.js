@@ -729,6 +729,8 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
 
         p.ptModifier = 1;
 
+        p.hof = 0; // Not a real boolean because IndexedDB indexes don't work on booleans
+
         return p;
     }
 
@@ -1171,6 +1173,61 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
         return returnOnePlayer ? fps[0] : fps;
     }
 
+    /**
+     * Is a player worthy of the Hall of Fame?
+     *
+     * This calculation is based on http://espn.go.com/nba/story/_/id/8736873/nba-experts-rebuild-springfield-hall-fame-espn-magazine except it uses PER-based estimates of wins added http://insider.espn.go.com/nba/hollinger/statistics (since PER is already calculated for each season) and it includes each playoff run as a separate season.
+     *
+     * @memberOf core.player
+     * @param {Object} p Player object.
+     * @return {boolean} Hall of Fame worthy?
+     */
+    function madeHof(p) {
+        var df, ewa, ewas, i, mins, pers, prls, va;
+
+        mins = _.pluck(p.stats, "min");
+        pers = _.pluck(p.stats, "per");
+
+        // Position Replacement Levels http://insider.espn.go.com/nba/hollinger/statistics
+        prls = {
+            PG: 11,
+            G: 10.75,
+            SG: 10.5,
+            GF: 10.5,
+            SF: 10.5,
+            F: 11,
+            PF: 11.5,
+            FC: 11.05,
+            C: 10.6
+        };
+
+        // Estimated wins added for each season http://insider.espn.go.com/nba/hollinger/statistics
+        ewas = [];
+        for (i = 0; i < mins.length; i++) {
+            va = mins[i] * (pers[i] - prls[p.pos]) / 67;
+            ewas.push(va / 30 * 0.9); // 0.9 is a fudge factor to approximate the difference between (in-game) EWA and (real) win shares
+        }
+
+        // Calculate career EWA and "dominance factor" DF (top 5 years EWA - 50)
+        ewas.sort(function (a, b) { return b - a; }); // Descending order
+        ewa = 0;
+        df = -50;
+        for (i = 0; i < ewas.length; i++) {
+            ewa += ewas[i];
+            if (i < 5) {
+                df += ewas[i];
+            }
+        }
+
+console.log(p.pid + " " + (ewa + df))
+        // Final formula
+        if (ewa + df > 100) {
+            return true;
+        }
+
+        return false;
+    }
+
     return {
         addRatingsRow: addRatingsRow,
         addStatsRow: addStatsRow,
@@ -1185,6 +1242,7 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
         ovr: ovr,
         release: release,
         skills: skills,
-        filter: filter
+        filter: filter,
+        madeHof: madeHof
     };
 });

@@ -107,6 +107,7 @@ define(["globals", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"],
         playerStore.createIndex("draft.year", "draft.year", {unique: false});
         playerStore.createIndex("retiredYear", "retiredYear", {unique: false});
         playerStore.createIndex("statsTids", "statsTids", {unique: false, multiEntry: true});
+        playerStore.createIndex("hof", "hof", {unique: false});
 //        gameStore.createIndex("tids", "tids", {unique: false, multiEntry: true}); // Not used because currently the season index is used. If multiple indexes are eventually supported, then use this too.
         gameStore.createIndex("season", "season", {unique: false});
         releasedPlayersStore.createIndex("tid", "tid", {unique: false});

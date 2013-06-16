@@ -691,10 +691,10 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
 
         phaseText = g.season + " before draft";
 
-        // Check for retiring players
+        // Do annual tasks for each player, like checking for retirement
         tx = g.dbl.transaction("players", "readwrite");
         tx.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(g.PLAYER.RETIRED, true)).onsuccess = function (event) { // All non-retired players
-            var age, cont, cursor, excessAge, excessPot, i, maxAge, minPot, p, pot, update;
+            var age, cont, cursor, excessAge, excessPot, maxAge, minPot, p, pot, update;
 
             update = false;
 
@@ -715,11 +715,16 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                         if (age > 34) {
                             excessAge = (age - 34) / 20;  // 0.05 for each year beyond 34
                         }
-                        excessPot = (40 - pot) / 50.0;  // 0.02 for each potential rating below 40 (this can be negative)
+                        excessPot = (40 - pot) / 50;  // 0.02 for each potential rating below 40 (this can be negative)
                         if (excessAge + excessPot + random.gauss(0, 1) > 0) {
                             p.tid = g.PLAYER.RETIRED;
                             p.retiredYear = g.season;
                             update = true;
+
+                            // Add to Hall of Fame?
+                            if (player.madeHof(p)) {
+                                p.hof = 1;
+                            }
                         }
                     }
                 }
@@ -897,8 +902,6 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
      * @param {function()=} cb Optional callback run after the phase change is completed.
      */
     function newPhase(phase, cb) {
-        var playButtonElement;
-
         // Prevent code running twice
         if (phase === g.phase) {
             return;

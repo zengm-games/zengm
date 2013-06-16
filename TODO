@@ -6,11 +6,29 @@ hof boolean in root of player object
 
 BEFORE 3.0.0
 ------------
-profits too large? add corporate tax?
+
+profits too large, too easy
+  add corporate tax?
+  luxury tax increases for repeat offenders?
+trades
+  draft picks
+    otherPicks and userPicks containing the year and the round
+    come up with an estimate of the pick's value based on the current state of the team
+    keep a record of traded picks somewhere and use this when setting the draft order
+  cash
+    otherCash and userCash containing the amount
+    estimate value of cash - different for different teams? depending on cash, net profit recently, and market size
+    upper limit? what is NBA rule?
+  allow trades to go over the roster limit, but show a warning. also factor into AI logic that they would have to drop a player
+    warning should be in a different color than the error-like warnings
+    after trade, AI drops player immediately
+    don't allow game simulation if player's team is over limit - currently this is only checked at the beginning of the season, right?
 
 EVENTUALLY
 ----------
 
+trades
+  sign and trade (only during resigning phase)
 when viewing a url like /l/1/roster, playing until new season shouldn't move it to roster for previous year
   this happens because inputs.season gets set even though it's not present in the URL. elegant solution?
 only show retired players in season summary if they actually played some
@@ -143,11 +161,6 @@ some UI showing the state of the team's synergy. maybe like an advisors screen t
 more handlebars helpers for things like...
   team dropdown
   season dropdown
-trades
-  draft picks
-  cash
-  sign and trade (only during resigning phase)
-  allow trades to go over the roster limit, but show a warning. also factor into AI logic that they would have to drop a player
 go through future list - anything that should be here?
 DataTables - fix default sort order on column click
   text should be asc, numeric should be desc (except draft picks)
@@ -183,25 +196,6 @@ FUTURE (after 3.0.0)
 --------------------
 
 hire/fire different coaches with different strategies
-league database error during game simulation in chrome?
-  is this a linux-only bug?
-  did this work in old chrome?
-    YES, chrome 25 works
-  does this work in future chrome?
-    NO, chrome 27 has the same problem as 26
-  make a minimal example, post to chromium-dev or somewhere else
-    update play.basketball-gm.com first
-    commenting out finances call seems to make errors lessen. WHY?? makes no sense
-    opening transaction over less object stores seems to make errors lessen, even if those object stores aren't used. WHY?? makes no sense
-  cb after add in writeGameStats
-    could add them all in a transaction first, and then do another transaction to add/update all other stats
-      wouldn't matter since even commenting out add still leaves problems
-  try to delete writePlayerStats, writeTeamStats, and/or writeGameStats and see if it's still a problem
-  try to separate each game into separate transaction, see if still issue
-  seems to at least run longer than before. the only error i get is "Internal error checking key existence." or null cursor (for either players or teams)
-    they usually persist through reloads, but not always.
-    null cursor seems to persist through reloads, but with a different player id each time!
-    internal error, they seem to persist with same GID, during writeTeamStats
 jslint errors
   currently just "Don't make functions within a loop." which should all be fixed eventually
 Web workers

@@ -44,11 +44,11 @@ define(["globals", "ui", "core/player", "core/team", "lib/jquery", "lib/knockout
                     var retiredPlayers;
 
                     retiredPlayers = player.filter(event.target.result, {
-                        attrs: ["pid", "name", "age"],
-                        ratings: ["ovr"],
+                        attrs: ["pid", "name", "age", "hof"],
                         season: inputs.season,
                         fuzz: true
                     });
+                    retiredPlayers.sort(function (a, b) { return b.age - a.age; });
 
                     team.filter({
                         attrs: ["abbrev", "region", "name"],

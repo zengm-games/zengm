@@ -47,7 +47,7 @@
   <div class="span12">
     <h4>Retired Players</h4>
     <!-- ko foreach: retiredPlayers -->
-      <a data-bind="attrLeagueUrl: {href: ['player', pid]}, text: name"></a> (overall rating: <span data-bind="text: ratings.ovr"></span>; age: <span data-bind="text: age"></span>)<br>
+      <a data-bind="attrLeagueUrl: {href: ['player', pid]}, text: name"></a> (age: <span data-bind="text: age"></span><span data-bind="visible: hof">; <a data-bind="attrLeagueUrl: {href: ['hall_of_fame']}">Hall of Fame</a></span>)<br>
     <!-- /ko -->
   </div>
 </div>

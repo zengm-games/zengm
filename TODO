@@ -8,8 +8,6 @@ BEFORE 3.0.0
 ------------
 
 Hall of fame
-  add to awards array
-  display some marker in retired player list
   use an index only if necessary for performance of view
 when viewing a url like /l/1/roster, playing until new season shouldn't move it to roster for previous year
 only show retired players in season summary if they actually played some

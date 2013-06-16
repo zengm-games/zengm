@@ -8,6 +8,7 @@ This is a list of **only the major changes** in each version.
 
 - Can export rosters from a league
 - Ability to use a custom roster file rather than randomly-generated players in a new league
+- Hall of Fame
 
 # 3.0.0-beta.3 (2013-05-20)
 

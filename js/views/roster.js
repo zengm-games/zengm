@@ -240,12 +240,13 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
         this.showTradeFor = ko.observable();
         this.editable = ko.observable();
 
+        // Throttling these makes transient error messages like "Message: ReferenceError: isCurrentSeason is undefined". Not throttling doesn't seem to induce any lag.
         this.numRosterSpots = ko.computed(function () {
             return 15 - this.players().length;
-        }, this).extend({throttle: 1});
+        }, this);
         this.isCurrentSeason = ko.computed(function () {
             return g.season === this.season();
-        }, this).extend({throttle: 1});
+        }, this);
     }
 
     mapping = {

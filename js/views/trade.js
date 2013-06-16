@@ -78,7 +78,6 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
             });
         } else if (req.params.propose !== undefined) {
             // Propose trade
-console.log('propose')
             trade.propose(function (accepted, message) {
                 ui.realtimeUpdate([], helpers.leagueUrl(["trade"]), undefined, {message: message});
             });

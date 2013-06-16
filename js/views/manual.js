@@ -29,12 +29,6 @@ define(["ui", "util/bbgmView", "util/viewHelpers"], function (ui, bbgmView, view
         return {
             page: req.params.page !== undefined ? req.params.page : "overview"
         };
-
-console.log('get')
-        /*ui.update({
-            container: "manual-content",
-            template: "manualOverview"
-        });*/
     }
 
     function updateManual(inputs, updateEvents) {

@@ -6,13 +6,16 @@ hof boolean in root of player object
 
 BEFORE 3.0.0
 ------------
+profits too large? add corporate tax?
+
+EVENTUALLY
+----------
 
 when viewing a url like /l/1/roster, playing until new season shouldn't move it to roster for previous year
+  this happens because inputs.season gets set even though it's not present in the URL. elegant solution?
 only show retired players in season summary if they actually played some
 Look at ratings distributions - should there really be so many bigs who are great passers, for instance?
-http://errorception.com/
 components.dropdown tests are very slow in chrome
-why are tables so slow? only with firebug open?
 export/import roster
   some way to specify startingSeason
   download link performance
@@ -21,7 +24,6 @@ export/import roster
     no base64? Firefox can't handle #
   error handling if blank or invalid file is supplied
 http://blog.stevensanderson.com/2013/05/20/knockout-es5-a-plugin-to-simplify-your-syntax/
-profits too large? add corporate tax?
 move most db functions into core.whatever. db should just be about initializing/upgrading
   get rid of "db" module dependence
 core.freeAgents should be core.freeAgent or core.freeAgency?

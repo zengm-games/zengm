@@ -377,7 +377,6 @@ define(["globals", "core/player"], function (g, player) {
                     stats: ["season", "abbrev", "fg"],
                     totals: true
                 });
-console.log(pf);
 
                 pf.tid.should.equal(4);
                 pf.awards.should.have.length(0);
@@ -408,7 +407,6 @@ console.log(pf);
                     tid: 4,
                     totals: true
                 });
-console.log(pf);
 
                 pf.tid.should.equal(4);
                 pf.awards.should.have.length(0);

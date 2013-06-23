@@ -1,20 +1,9 @@
-DB CHANGES SINCE 3.0.0-beta.3
------------------------------
-
-hof boolean in root of player object
-  check if retired. if so, run player.madeHof. if not, just set hof to false.
-
-BEFORE 3.0.0
-------------
+EVENTUALLY
+----------
 
 profits too large, too easy
   add corporate tax?
   luxury tax increases for repeat offenders?
-test upgrade hof more
-
-EVENTUALLY
-----------
-
 awards assigned based on wins added, like hof
 trades
   draft picks

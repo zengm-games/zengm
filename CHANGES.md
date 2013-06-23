@@ -1,10 +1,8 @@
 This is a list of **only the major changes** in each version.
 
-# Since 3.0.0-beta.3
+# 3.0.0 (2013-06-23)
 
 ## Gameplay and UI
-
-### Done so far
 
 - Can export rosters from a league
 - Ability to use a custom roster file rather than randomly-generated players in a new league

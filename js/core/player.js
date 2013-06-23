@@ -2,7 +2,7 @@
  * @name core.player
  * @namespace Functions operating on player objects, parts of player objects, or arrays of player objects.
  */
-define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/faces", "lib/underscore", "util/helpers", "util/random"], function (db, g, finances, injuries, names, faces, _, helpers, random) {
+define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", "lib/underscore", "util/helpers", "util/random"], function (g, finances, injuries, names, faces, _, helpers, random) {
     "use strict";
 
     /**
@@ -331,11 +331,11 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
      * @return {function(Array.<number>)} Callback function whose argument is an array of base moods, one for each team.
      */
     function genBaseMoods(ot, cb) {
-        var teamStore, baseMoods;
+        var baseMoods, teamStore;
 
         baseMoods = [];
 
-        teamStore = db.getObjectStore(ot, "teams", "teams");
+        teamStore = require("db").getObjectStore(ot, "teams", "teams");
         teamStore.getAll().onsuccess = function (event) {
             var facilitiesRank, i, s, teams;
 
@@ -408,7 +408,7 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
 
         p.tid = g.PLAYER.FREE_AGENT;
 
-        db.getObjectStore(ot, "players", "players").put(p);
+        require("db").getObjectStore(ot, "players", "players").put(p);
 
         if (cb !== undefined) {
             cb();

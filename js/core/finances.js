@@ -2,7 +2,7 @@
  * @name core.finances
  * @namespace Anything related to budget/finances.
  */
-define(["db", "globals", "lib/underscore"], function (db, g, _) {
+define(["globals", "lib/underscore"], function (g, _) {
     "use strict";
 
     /**
@@ -14,7 +14,7 @@ define(["db", "globals", "lib/underscore"], function (db, g, _) {
     function assesPayrollMinLuxury(cb) {
         var i, getPayroll, payrolls, tx;
 
-        db.getPayrolls(function (payrolls) {
+        require("db").getPayrolls(function (payrolls) {
             var tx;
 
             // Update teams object store
@@ -94,7 +94,7 @@ define(["db", "globals", "lib/underscore"], function (db, g, _) {
             }
         };
 
-        teamStore = db.getObjectStore(ot, "teams", "teams", true);
+        teamStore = require("db").getObjectStore(ot, "teams", "teams", true);
 
         teamStore.getAll().onsuccess = function (event) {
             var budgetsByItem, budgetsByTeam, expensesByItem, expensesByTeam, i, revenuesByItem, revenuesByTeam, s, teams;

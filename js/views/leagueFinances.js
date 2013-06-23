@@ -36,12 +36,6 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
                 seasonAttrs: ["att", "revenue", "profit", "cash", "payroll", "salaryPaid"],
                 season: inputs.season
             }, function (teams) {
-                var i;
-
-                for (i = 0; i < teams.length; i++) {
-                    teams[i].cash /= 1000;  // [millions of dollars]
-                }
-
                 deferred.resolve({
                     season: inputs.season,
                     salaryCap: g.salaryCap / 1000,

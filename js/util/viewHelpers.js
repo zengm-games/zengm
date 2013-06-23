@@ -23,7 +23,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "util/helpers"], fu
             // db.loadGameAttribute cannot be used to check for a new lastDbChange because we need to have the old g.lastDbChange available right up to the last moment possible, for cases where db.loadGameAttribute might be blocked during a slow page refresh, as happens when viewing player rating and stat distributions. Otherwise, an extra refresh would occur with a stale lastDbChange.
             g.dbl.transaction("gameAttributes").objectStore("gameAttributes").get("lastDbChange").onsuccess = function (event) {
                 if (g.lastDbChange !== event.target.result.value) {
-                    db.loadGameAttributes(function () {
+                    db.loadGameAttributes(null, function () {
                         document.getElementById("league_content").dataset.id = "";
                         //leagueContentEl.innerHTML = "&nbsp;";  // Blank doesn't work, for some reason
                         ui.realtimeUpdate(["dbChange"], undefined, function () {
@@ -54,7 +54,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "util/helpers"], fu
 
             // Connect to league database
             db.connectLeague(g.lid, function () {
-                db.loadGameAttributes(function () {
+                db.loadGameAttributes(null, function () {
                     var css;
 
                     g.vm.leagueMenu.lid(g.lid);

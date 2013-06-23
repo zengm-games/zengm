@@ -10,6 +10,12 @@ BEFORE 3.0.0
 profits too large, too easy
   add corporate tax?
   luxury tax increases for repeat offenders?
+test upgrade hof more
+
+EVENTUALLY
+----------
+
+awards assigned based on wins added, like hof
 trades
   draft picks
     otherPicks and userPicks containing the year and the round
@@ -23,11 +29,6 @@ trades
     warning should be in a different color than the error-like warnings
     after trade, AI drops player immediately
     don't allow game simulation if player's team is over limit - currently this is only checked at the beginning of the season, right?
-
-EVENTUALLY
-----------
-
-trades
   sign and trade (only during resigning phase)
 when viewing a url like /l/1/roster, playing until new season shouldn't move it to roster for previous year
   this happens because inputs.season gets set even though it's not present in the URL. elegant solution?

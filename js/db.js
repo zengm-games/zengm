@@ -2,7 +2,7 @@
  * @name db
  * @namespace Creating, migrating, and connecting to databases; working with transactions.
  */
-define(["globals", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"], function (g, Davis, $, _, helpers) {
+define(["globals", "core/player", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"], function (g, player, Davis, $, _, helpers) {
     "use strict";
 
     /**
@@ -44,6 +44,10 @@ define(["globals", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"],
             migrateMessage = '<p><strong>New in version 3.0.0-beta.3:</strong> draft lottery, improved trading AI, revamped team history pages, and control over playing time from the roster page.</p>' + migrateMessage;
         }
 
+        if (event.oldVersion <= 3) {
+            migrateMessage = '<p><strong>New in version 3.0.0:</strong> export rosters for use in other leagues, import custom rosters, and view players selected to the Hall of Fame.</p>' + migrateMessage;
+        }
+
         $("#content").before('<div class="alert alert-info"><button type="button" class="close" data-dismiss="alert">&times;</button>' + migrateMessage + '</div>');
     }
 
@@ -51,7 +55,7 @@ define(["globals", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"],
         var request;
 
 //        console.log('Connecting to database "meta"');
-        request = indexedDB.open("meta", 3);
+        request = indexedDB.open("meta", 4);
         request.onerror = function (event) {
             throw new Error("Meta connection error");
         };
@@ -127,281 +131,303 @@ define(["globals", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"],
         dbl = event.target.result;
         tx = event.currentTarget.transaction;
 
-        if (event.oldVersion <= 1) {
-            teams = teams = helpers.getTeams();
+        // Make sure game attributes (i.e. g.startingSeason) are loaded first
+        loadGameAttributes(event.currentTarget.transaction, function () {
+            if (event.oldVersion <= 1) {
+                teams = teams = helpers.getTeams();
 
-            tx.objectStore("gameAttributes").put({
-                key: "ownerMood",
-                value: {
-                    wins: 0,
-                    playoffs: 0,
-                    money: 0
-                }
-            });
-            tx.objectStore("gameAttributes").put({
-                key: "gameOver",
-                value: false
-            });
-
-            dbl.createObjectStore("messages", {keyPath: "mid", autoIncrement: true});
-
-            tx.objectStore("negotiations").openCursor().onsuccess = function (event) {
-                var cursor, n;
-
-                cursor = event.target.result;
-                if (cursor) {
-                    n = cursor.value;
-
-                    n.orig = {
-                        amount: n.playerAmount,
-                        years: n.playerYears
-                    };
-                    n.player = {
-                        amount: n.playerAmount,
-                        years: n.playerYears
-                    };
-                    delete n.playerAmount;
-                    delete n.playerYears;
-
-                    n.team = {
-                        amount: n.teamAmount,
-                        years: n.teamYears
-                    };
-                    delete n.teamAmount;
-                    delete n.teamYears;
-
-                    delete n.maxOffers;
-                    delete n.numOffersMade;
-
-                    cursor.update(n);
-
-                    cursor.continue();
-                }
-            };
-
-            tx.objectStore("players").openCursor().onsuccess = function (event) {
-                var cursor, i, p;
-
-                cursor = event.target.result;
-                if (cursor) {
-                    p = cursor.value;
-
-                    p.born = {
-                        loc: p.bornLoc,
-                        year: p.bornYear
-                    };
-                    delete p.bornLoc;
-                    delete p.bornYear;
-
-                    p.contract = {
-                        amount: p.contractAmount,
-                        exp: p.contractExp
-                    };
-                    delete p.contractAmount;
-                    delete p.contractExp;
-
-                    p.draft = {
-                        round: p.draftRound,
-                        pick: p.draftPick,
-                        tid: p.draftTid,
-                        year: p.draftYear,
-                        abbrev: p.draftAbbrev,
-                        teamName: p.draftTeamName,
-                        teamRegion: p.draftTeamRegion,
-                        pot: p.ratings[0].pot,
-                        ovr: p.ratings[0].ovr,
-                        skills: p.ratings[0].skills
-                    };
-                    delete p.draftRound;
-                    delete p.draftPick;
-                    delete p.draftTid;
-                    delete p.draftYear;
-                    delete p.draftAbbrev;
-                    delete p.draftTeamName;
-                    delete p.draftTeamRegion;
-
-                    p.freeAgentMood = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-                    delete p.freeAgentTimesAsked;
-
-                    p.awards = [];
-                    p.college = "";
-                    p.injury = {type: "Healthy", gamesRemaining: 0};
-                    p.salaries = [];
-
-                    for (i = 0; i < p.ratings.length; i++) {
-                        p.ratings[i].fuzz = 0;
+                tx.objectStore("gameAttributes").put({
+                    key: "ownerMood",
+                    value: {
+                        wins: 0,
+                        playoffs: 0,
+                        money: 0
                     }
+                });
+                tx.objectStore("gameAttributes").put({
+                    key: "gameOver",
+                    value: false
+                });
 
-                    cursor.update(p);
+                dbl.createObjectStore("messages", {keyPath: "mid", autoIncrement: true});
 
-                    cursor.continue();
-                }
-            };
-            tx.objectStore("players").deleteIndex("draftYear");
-            tx.objectStore("players").createIndex("draft.year", "draft.year", {unique: false});
+                tx.objectStore("negotiations").openCursor().onsuccess = function (event) {
+                    var cursor, n;
 
-            tx.objectStore("releasedPlayers").openCursor().onsuccess = function (event) {
-                var cursor, rp;
+                    cursor = event.target.result;
+                    if (cursor) {
+                        n = cursor.value;
 
-                cursor = event.target.result;
-                if (cursor) {
-                    rp = cursor.value;
+                        n.orig = {
+                            amount: n.playerAmount,
+                            years: n.playerYears
+                        };
+                        n.player = {
+                            amount: n.playerAmount,
+                            years: n.playerYears
+                        };
+                        delete n.playerAmount;
+                        delete n.playerYears;
 
-                    rp.contract = {
-                        amount: rp.contractAmount,
-                        exp: rp.contractExp
-                    };
-                    delete rp.contractAmount;
-                    delete rp.contractExp;
+                        n.team = {
+                            amount: n.teamAmount,
+                            years: n.teamYears
+                        };
+                        delete n.teamAmount;
+                        delete n.teamYears;
 
-                    cursor.update(rp);
+                        delete n.maxOffers;
+                        delete n.numOffersMade;
 
-                    cursor.continue();
-                }
-            };
-            tx.objectStore("releasedPlayers").deleteIndex("contractExp");
-            tx.objectStore("releasedPlayers").createIndex("contract.exp", "contract.exp", {unique: false});
+                        cursor.update(n);
 
-            tx.objectStore("teams").openCursor().onsuccess = function (event) {
-                var cursor, i, t;
+                        cursor.continue();
+                    }
+                };
 
-                cursor = event.target.result;
-                if (cursor) {
-                    t = cursor.value;
+                tx.objectStore("players").openCursor().onsuccess = function (event) {
+                    var cursor, i, p;
 
-                    t.budget = {
-                        ticketPrice: {
-                            amount: helpers.round(25 + 25 * (30 - teams[t.tid].popRank) / 29, 2),
-                            rank: teams[t.tid].popRank
-                        },
-                        scouting: {
-                            amount: helpers.round(900 + 900 * (30 - teams[t.tid].popRank) / 29) * 10,
-                            rank: teams[t.tid].popRank
-                        },
-                        coaching: {
-                            amount: helpers.round(900 + 900 * (30 - teams[t.tid].popRank) / 29) * 10,
-                            rank: teams[t.tid].popRank
-                        },
-                        health: {
-                            amount: helpers.round(900 + 900 * (30 - teams[t.tid].popRank) / 29) * 10,
-                            rank: teams[t.tid].popRank
-                        },
-                        facilities: {
-                            amount: helpers.round(900 + 900 * (30 - teams[t.tid].popRank) / 29) * 10,
-                            rank: teams[t.tid].popRank
+                    cursor = event.target.result;
+                    if (cursor) {
+                        p = cursor.value;
+
+                        p.born = {
+                            loc: p.bornLoc,
+                            year: p.bornYear
+                        };
+                        delete p.bornLoc;
+                        delete p.bornYear;
+
+                        p.contract = {
+                            amount: p.contractAmount,
+                            exp: p.contractExp
+                        };
+                        delete p.contractAmount;
+                        delete p.contractExp;
+
+                        p.draft = {
+                            round: p.draftRound,
+                            pick: p.draftPick,
+                            tid: p.draftTid,
+                            year: p.draftYear,
+                            abbrev: p.draftAbbrev,
+                            teamName: p.draftTeamName,
+                            teamRegion: p.draftTeamRegion,
+                            pot: p.ratings[0].pot,
+                            ovr: p.ratings[0].ovr,
+                            skills: p.ratings[0].skills
+                        };
+                        delete p.draftRound;
+                        delete p.draftPick;
+                        delete p.draftTid;
+                        delete p.draftYear;
+                        delete p.draftAbbrev;
+                        delete p.draftTeamName;
+                        delete p.draftTeamRegion;
+
+                        p.freeAgentMood = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                        delete p.freeAgentTimesAsked;
+
+                        p.awards = [];
+                        p.college = "";
+                        p.injury = {type: "Healthy", gamesRemaining: 0};
+                        p.salaries = [];
+
+                        for (i = 0; i < p.ratings.length; i++) {
+                            p.ratings[i].fuzz = 0;
                         }
-                    };
 
-                    for (i = 0; i < t.seasons.length; i++) {
-                        t.seasons[i].hype = Math.random();
-                        t.seasons[i].pop = teams[t.tid].pop;
-                        t.seasons[i].tvContract = {
-                            amount: 0,
-                            exp: 0
+                        cursor.update(p);
+
+                        cursor.continue();
+                    }
+                };
+                tx.objectStore("players").deleteIndex("draftYear");
+                tx.objectStore("players").createIndex("draft.year", "draft.year", {unique: false});
+
+                tx.objectStore("releasedPlayers").openCursor().onsuccess = function (event) {
+                    var cursor, rp;
+
+                    cursor = event.target.result;
+                    if (cursor) {
+                        rp = cursor.value;
+
+                        rp.contract = {
+                            amount: rp.contractAmount,
+                            exp: rp.contractExp
                         };
-                        t.seasons[i].revenues = {
-                            merch: {
-                                amount: 0,
-                                rank: 15.5
-                            },
-                            sponsor: {
-                                amount: 0,
-                                rank: 15.5
-                            },
-                            ticket: {
-                                amount: 0,
-                                rank: 15.5
-                            },
-                            nationalTv: {
-                                amount: 0,
-                                rank: 15.5
-                            },
-                            localTv: {
-                                amount: 0,
-                                rank: 15.5
-                            }
-                        };
-                        t.seasons[i].expenses = {
-                            salary: {
-                                amount: 0,
-                                rank: 15.5
-                            },
-                            luxuryTax: {
-                                amount: 0,
-                                rank: 15.5
-                            },
-                            minTax: {
-                                amount: 0,
-                                rank: 15.5
-                            },
-                            buyOuts: {
-                                amount: 0,
-                                rank: 15.5
+                        delete rp.contractAmount;
+                        delete rp.contractExp;
+
+                        cursor.update(rp);
+
+                        cursor.continue();
+                    }
+                };
+                tx.objectStore("releasedPlayers").deleteIndex("contractExp");
+                tx.objectStore("releasedPlayers").createIndex("contract.exp", "contract.exp", {unique: false});
+
+                tx.objectStore("teams").openCursor().onsuccess = function (event) {
+                    var cursor, i, t;
+
+                    cursor = event.target.result;
+                    if (cursor) {
+                        t = cursor.value;
+
+                        t.budget = {
+                            ticketPrice: {
+                                amount: helpers.round(25 + 25 * (30 - teams[t.tid].popRank) / 29, 2),
+                                rank: teams[t.tid].popRank
                             },
                             scouting: {
-                                amount: 0,
-                                rank: 15.5
+                                amount: helpers.round(900 + 900 * (30 - teams[t.tid].popRank) / 29) * 10,
+                                rank: teams[t.tid].popRank
                             },
                             coaching: {
-                                amount: 0,
-                                rank: 15.5
+                                amount: helpers.round(900 + 900 * (30 - teams[t.tid].popRank) / 29) * 10,
+                                rank: teams[t.tid].popRank
                             },
                             health: {
-                                amount: 0,
-                                rank: 15.5
+                                amount: helpers.round(900 + 900 * (30 - teams[t.tid].popRank) / 29) * 10,
+                                rank: teams[t.tid].popRank
                             },
                             facilities: {
-                                amount: 0,
-                                rank: 15.5
+                                amount: helpers.round(900 + 900 * (30 - teams[t.tid].popRank) / 29) * 10,
+                                rank: teams[t.tid].popRank
                             }
                         };
-                        t.seasons[i].payrollEndOfSeason = 0;
 
-                        t.seasons[i].playoffRoundsWon = -1;
-                        if (t.seasons[i].madePlayoffs) {
-                            t.seasons[i].playoffRoundsWon = 0;
-                        }
-                        if (t.seasons[i].confChamps) {
-                            t.seasons[i].playoffRoundsWon = 3;
-                        }
-                        if (t.seasons[i].leagueChamps) {
-                            t.seasons[i].playoffRoundsWon = 4;
-                        }
-                        delete t.seasons[i].madePlayoffs;
-                        delete t.seasons[i].confChamps;
-                        delete t.seasons[i].leagueChamps;
+                        for (i = 0; i < t.seasons.length; i++) {
+                            t.seasons[i].hype = Math.random();
+                            t.seasons[i].pop = teams[t.tid].pop;
+                            t.seasons[i].tvContract = {
+                                amount: 0,
+                                exp: 0
+                            };
+                            t.seasons[i].revenues = {
+                                merch: {
+                                    amount: 0,
+                                    rank: 15.5
+                                },
+                                sponsor: {
+                                    amount: 0,
+                                    rank: 15.5
+                                },
+                                ticket: {
+                                    amount: 0,
+                                    rank: 15.5
+                                },
+                                nationalTv: {
+                                    amount: 0,
+                                    rank: 15.5
+                                },
+                                localTv: {
+                                    amount: 0,
+                                    rank: 15.5
+                                }
+                            };
+                            t.seasons[i].expenses = {
+                                salary: {
+                                    amount: 0,
+                                    rank: 15.5
+                                },
+                                luxuryTax: {
+                                    amount: 0,
+                                    rank: 15.5
+                                },
+                                minTax: {
+                                    amount: 0,
+                                    rank: 15.5
+                                },
+                                buyOuts: {
+                                    amount: 0,
+                                    rank: 15.5
+                                },
+                                scouting: {
+                                    amount: 0,
+                                    rank: 15.5
+                                },
+                                coaching: {
+                                    amount: 0,
+                                    rank: 15.5
+                                },
+                                health: {
+                                    amount: 0,
+                                    rank: 15.5
+                                },
+                                facilities: {
+                                    amount: 0,
+                                    rank: 15.5
+                                }
+                            };
+                            t.seasons[i].payrollEndOfSeason = 0;
 
-                        delete t.seasons[i].cost;
-                        delete t.seasons[i].revenue;
+                            t.seasons[i].playoffRoundsWon = -1;
+                            if (t.seasons[i].madePlayoffs) {
+                                t.seasons[i].playoffRoundsWon = 0;
+                            }
+                            if (t.seasons[i].confChamps) {
+                                t.seasons[i].playoffRoundsWon = 3;
+                            }
+                            if (t.seasons[i].leagueChamps) {
+                                t.seasons[i].playoffRoundsWon = 4;
+                            }
+                            delete t.seasons[i].madePlayoffs;
+                            delete t.seasons[i].confChamps;
+                            delete t.seasons[i].leagueChamps;
+
+                            delete t.seasons[i].cost;
+                            delete t.seasons[i].revenue;
+                        }
+
+                        cursor.update(t);
+
+                        cursor.continue();
                     }
+                };
+            }
 
-                    cursor.update(t);
+            if (event.oldVersion <= 2) {
+                tx.objectStore("players").openCursor().onsuccess = function (event) {
+                    var cursor, p;
 
-                    cursor.continue();
-                }
-            };
-        }
+                    cursor = event.target.result;
+                    if (cursor) {
+                        p = cursor.value;
+                        p.ptModifier = 1;
+                        cursor.update(p);
+                        cursor.continue();
+                    }
+                };
+            }
 
-        if (event.oldVersion <= 2) {
-            tx.objectStore("players").openCursor().onsuccess = function (event) {
-                var cursor, p;
+            if (event.oldVersion <= 3) {
+                tx.objectStore("players").openCursor().onsuccess = function (event) {
+                    var cursor, p;
 
-                cursor = event.target.result;
-                if (cursor) {
-                    p = cursor.value;
-                    p.ptModifier = 1;
-                    cursor.update(p);
-                    cursor.continue();
-                }
-            };
-        }
+                    cursor = event.target.result;
+                    if (cursor) {
+                        p = cursor.value;
+                        if (p.tid === g.PLAYER.RETIRED && player.madeHof(p)) {
+                            p.hof = true;
+                            p.awards.push({season: g.season, type: "Inducted into the Hall of Fame"});
+                        } else {
+                            p.hof = false;
+                        }
+                        cursor.update(p);
+                        cursor.continue();
+                    }
+                };
+            }
+        });
     }
 
     function connectLeague(lid, cb) {
         var request;
 
 //        console.log('Connecting to database "league' + lid + '"');
-        request = indexedDB.open("league" + lid, 3);
+        request = indexedDB.open("league" + lid, 4);
         request.onerror = function (event) {
             throw new Error("League connection error");
         };
@@ -619,10 +645,15 @@ define(["globals", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"],
     /**
      * Load game attributes from the database and update the global variable g.
      * 
+     * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on gameAttributes; if null is passed, then a new transaction will be used.
      * @param {function()=} cb Optional callback.
      */
-    function loadGameAttributes(cb) {
-        g.dbl.transaction("gameAttributes").objectStore("gameAttributes").getAll().onsuccess = function (event) {
+    function loadGameAttributes(ot, cb) {
+        var gameAttributesStore;
+
+        gameAttributesStore = getObjectStore(ot, "gameAttributes", "gameAttributes");
+
+        gameAttributesStore.getAll().onsuccess = function (event) {
             var i, gameAttributes;
 
             gameAttributes = event.target.result;

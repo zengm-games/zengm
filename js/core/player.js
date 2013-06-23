@@ -1221,7 +1221,7 @@ define(["db", "globals", "core/finances", "data/injuries", "data/names", "lib/fa
 
         // Fudge factor for players generated when the league started
         fudgeSeasons = g.startingSeason - p.draft.year - 5;
-        if (fudgeSeasons > 0 && g.season - g.startingSeason > 5) {
+        if (fudgeSeasons > 0) {
             ewa += ewas[0] * fudgeSeasons;
         }
 

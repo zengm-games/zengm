@@ -1,6 +1,9 @@
 EVENTUALLY
 ----------
 
+source maps
+  latest version of r.js (2.3.2) has an old version of uglify2 (2.3.2) which fails on a['3'] https://github.com/mishoo/UglifyJS2/issues/207. newer version probably would fix that
+  try errorception
 profits too large, too easy
   add corporate tax?
   luxury tax increases for repeat offenders?

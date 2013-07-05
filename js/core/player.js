@@ -1233,6 +1233,106 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         return false;
     }
 
+    /**
+     * Returns a numeric value for a given player, representing is general worth to a typical team (i.e. ignoring how well he fits in with his teammates and the team's strategy). This is based on three components:
+     *
+     * 1. Recent stats: Avg of last 2 seasons' PER if min > 2000. Otherwise, scale by min / 2000 and correspondingly increase the weight of #2.
+     * 2. Current ratings: This is similar to "the eye test" - how does a player look? This is generally the least important of the 3.
+     * 3. Potential for improvement (or risk for decline): Based on age and potential rating.
+     *
+     * The return value is usually between 0 and 100.
+     */
+    function value(p) {
+        var age, c, ps1, ps2, w;
+
+        // Components
+        c = {
+            stats: 0,
+            ovr: 0,
+            pot: 0
+        };
+
+        // Weights for linear combination
+        w = {
+            stats: 2,
+            ovr: 1,
+            pot: 1
+        };
+
+        // 1. Account for stats
+        if (p.stats.length === 0) {
+            // No stats at all? Just look at ratings more, then.
+            c.stats = 0;
+            w.ovr += w.stats;
+            w.stats = 0;
+        } else if (p.stats.length === 1) {
+            // Only one year of stats
+            c.stats = p.stats[0].per;
+            if (p.stats[0].min < 2000) {
+                w.ovr += w.stats * (1 - p.stats[0].min / 2000);
+                w.stats *= p.stats[0].min / 2000;
+            }
+        } else {
+            // Two most recent seasons
+            ps1 = p.stats[p.stats.length - 1];
+            ps2 = p.stats[p.stats.length - 2];
+            c.stats = (ps1.per * ps1.min + ps2.per * ps2.min) / (ps1.min + ps2.min);
+            if (ps1.min + ps2.min < 2000) {
+                w.ovr += w.stats * (1 - (ps1.min + ps2.min) / 2000);
+                w.stats *= (ps1.min + ps2.min) / 2000;
+            }
+        }
+
+        // 2. Account for current ratings
+        c.ovr = _.last(p.ratings).ovr;
+
+        // 3. Account for future projections
+        c.pot = _.last(p.ratings).pot;
+        age = g.season - p.born.year;
+        if (age <= 19) {
+            c.pot *= 2;
+        }
+        if (age === 20) {
+            c.pot *= 1.5;
+        }
+        if (age === 21) {
+            c.pot *= 1.25;
+        }
+        if (age === 22) {
+            c.pot *= 1.125;
+        }
+        if (age === 28) {
+            c.pot *= 0.95;
+        }
+        if (age === 29) {
+            c.pot *= 0.95;
+        }
+        if (age === 30) {
+            c.pot *= 0.9;
+        }
+        if (age === 31) {
+            c.pot *= 0.85;
+        }
+        if (age === 32) {
+            c.pot *= 0.8;
+        }
+        if (age === 33) {
+            c.pot *= 0.7;
+        }
+        if (age === 34) {
+            c.pot *= 0.6;
+        }
+        if (age >= 35) {
+            c.pot *= 0.5;
+        }
+
+console.log(c);
+console.log(w);
+console.log(w.stats * 4 * c.stats + w.ovr * c.ovr + w.pot * c.pot)
+console.log(w.stats + w.ovr + w.pot)
+        return (w.stats * 4 * c.stats + w.ovr * c.ovr + w.pot * c.pot) / (w.stats + w.ovr + w.pot);
+    }
+
     return {
         addRatingsRow: addRatingsRow,
         addStatsRow: addStatsRow,
@@ -1248,6 +1348,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         release: release,
         skills: skills,
         filter: filter,
-        madeHof: madeHof
+        madeHof: madeHof,
+        value: value
     };
 });

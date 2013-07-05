@@ -1,13 +1,39 @@
-EVENTUALLY
-----------
+GOALS FOR 3.1.0
+---------------
 
-source maps
-  latest version of r.js (2.3.2) has an old version of uglify2 (2.3.2) which fails on a['3'] https://github.com/mishoo/UglifyJS2/issues/207. newer version probably would fix that
-  try errorception
-profits too large, too easy
-  add corporate tax?
-  luxury tax increases for repeat offenders?
-awards assigned based on wins added, like hof
+Main focus: AI improvements
+
+unified notion of player "value" - function of ratings, age, stats, etc. similar to what is already in core.trade.getValues, but should include statistics as well.
+  goal is to incorporate things that are the same independent of team strategy
+  stats: "EWA" like hall of fame? Or would straight PER be better?
+  use for setting players salaries
+  this should be the exponential part.
+team "value" and changes in team value. have a function that will return the change in team value for a given team if an array of players is added to the roster and an array of players is removed from the roster. if positive, then the trade/signing/drafting is good. if comparing multiple options, then the highest value is best.
+  depends on team status - rebuildling or contending
+  also come up with "value" for draft picks and cash which can be included in trades
+  adding a new skill should be a bonus. losing a skill should be a negative. but also need to factor in skills of other players in a trade! so maybe for trades, do this calculation in core.trade for the overall transaction. make sure to factor in changes in PT! this could get complicated..
+  use core.team.valueChange for AI teams drafting, AI teams signing free agents, and trades
+  algorithm
+    weighted sum of different components, based on strategy:
+      total player value difference
+      skills added (weight by player value... no need adding a shooter who never plays)
+      contracts
+      youth (weight by player value)
+      value of draft picks (est based on other team's record)
+      cash
+strategies of AI teams
+  contending
+    win games - if losing too much and players are aging, then switch
+    make a profit - if losing too much money, then switch
+    trade away draft picks
+    resign free agents, going over the cap
+  rebuilding
+    dump big contracts
+    dump older players
+    position team so there will be a lot of cap space in a given year
+    switch to "win now" if enough cheap/young talent is accumulated
+    trade for draft picks
+  when to switch between these strategies? or should it even be binary? maybe just have it as a continuous function of the team's roster, finances, and performance. then maybe put it through a sigmoidal function to bias a bit towards extremes
 trades
   draft picks
     otherPicks and userPicks containing the year and the round
@@ -17,11 +43,34 @@ trades
     otherCash and userCash containing the amount
     estimate value of cash - different for different teams? depending on cash, net profit recently, and market size
     upper limit? what is NBA rule?
+  more feedback from AI
+    if trade is close/far from working, return different messages
+    "What would make this deal work?" button
+    display some indication of what a team wants to do on the trade view, e.g.
+      "I need to cut my payroll and start making more money."
+      "I could really use a good rebounder."
+trades between AI teams
+  each day, pick two random teams. if a trade can be found that both teams like, do it
+  transaction log is necessary to keep tabs on this stuff
+      ...
+user can't just sign all the free agents before AI teams
+
+EVENTUALLY
+----------
+
+source maps
+  latest version of r.js (2.1.6) has an old version of uglify2 (2.3.2) which fails on a['3'] https://github.com/mishoo/UglifyJS2/issues/207. newer version probably would fix that
+  try errorception
+trades
   allow trades to go over the roster limit, but show a warning. also factor into AI logic that they would have to drop a player
     warning should be in a different color than the error-like warnings
     after trade, AI drops player immediately
     don't allow game simulation if player's team is over limit - currently this is only checked at the beginning of the season, right?
   sign and trade (only during resigning phase)
+profits too large, too easy
+  add corporate tax?
+  luxury tax increases for repeat offenders?
+awards assigned based on wins added, like hof
 when viewing a url like /l/1/roster, playing until new season shouldn't move it to roster for previous year
   this happens because inputs.season gets set even though it's not present in the URL. elegant solution?
 only show retired players in season summary if they actually played some
@@ -97,7 +146,6 @@ core.trade refactoring
   trade and clear buttons should be disabled during gameSim, wiht message like in team finances
 too easy to do the "be bad, get draft picks, keep payroll low, sign free agents, be good" pattern
   free agents are even less willing to sign with the user, even if it's a good team
-  user can't just sign all the free agents before AI teams
 final score, hall of fame
   influenced by size of city (see: difficulty in views.newLeague)
 any raw data files should go in the data folder, ideally with a script to convert them to however they're used here
@@ -265,8 +313,6 @@ bbgmView
   make it less tied to BBGM specifically. shouldn't depend on BBGM-specific modules like g, ui, and util/viewHelpers
 player development should depend on playing time
 http://code.google.com/p/htmlcompressor/ or something similar
-unified notion of player "value" - function of ratings, age, contract, stats, etc. similar to what is already in core.trade.getValues, but should include statistics as well.
-  use for players picking salaries, AI teams drafting, and trades
 core.player.ovr shouldn't just average ratings together. some ratings are more important than others. do regression analysis against PER to prove this and find a better formula.
 player.filter
   the special case attributes should generally be moved directly into the database?

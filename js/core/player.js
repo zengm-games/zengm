@@ -114,12 +114,14 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      * Generate a contract for a player.
      * 
      * @memberOf core.player
-     * @param {Object.<string, number>} ratings Ratings object.
+     * @param {Object} ratings Player object. At a minimum, this must have one entry in the ratings array.
      * @param {boolean} randomizeExp If true, then it is assumed that some random amount of years has elapsed since the contract was signed, thus decreasing the expiration date. This is used when generating players in a new league.
      * @return {Object.<string, number>} Object containing two properties with integer values, "amount" with the contract amount in thousands of dollars and "exp" with the contract expiration year.
      */
-    function genContract(ratings, randomizeExp) {
-        var amount, expiration, maxAmount, minAmount, potentialDifference, years;
+    function genContract(p, randomizeExp) {
+        var amount, expiration, maxAmount, minAmount, potentialDifference, ratings, years;
+
+        ratings = _.last(p.ratings);
 
         randomizeExp = randomizeExp !== undefined ? randomizeExp : false;
 
@@ -128,8 +130,10 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         maxAmount = 20000;
 
         // Scale proportional to (ovr*2 + pot)*0.5 120-210
-        amount = ((2 * ratings.ovr + ratings.pot) * 0.85 - 110) / (210 - 120);  // Scale from 0 to 1 (approx)
-        amount = amount * (maxAmount - minAmount) + minAmount;
+        //amount = ((2 * ratings.ovr + ratings.pot) * 0.85 - 110) / (210 - 120);  // Scale from 0 to 1 (approx)
+//console.log(g.season - p.born.year + ' (' + ratings.ovr + '-' + ratings.pot + ') ' + Math.round(amount * 100) + ' ' + value(p))
+        //amount = amount * (maxAmount - minAmount) + minAmount;
+        amount = (value(p) / 100 - 0.45) * 4 * (maxAmount - minAmount) + minAmount;
         amount *= random.gauss(1, 0.1);  // Randomize
 
         // Expiration
@@ -151,6 +155,11 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         // Randomize expiration for contracts generated at beginning of new game
         if (randomizeExp) {
             years = random.randInt(1, years);
+
+            // Make rookie contracts more reasonable
+            if (g.season - p.born.year <= 22) {
+                amount /= 4; // Max $5 million/year
+            }
         }
 
         expiration = g.season + years - 1;
@@ -317,7 +326,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         }
 
         // Update contract based on development
-        p = setContract(p, genContract(p.ratings[r], randomizeExp), true);
+        p = setContract(p, genContract(p, randomizeExp), true);
 
         return p;
     }
@@ -388,7 +397,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         phase = phase !== null ? phase : g.phase;
 
         pr = _.last(p.ratings);
-        p = setContract(p, genContract(pr), false);
+        p = setContract(p, genContract(p), false);
 
         // Set initial player mood towards each team
         p.freeAgentMood = _.map(baseMoods, function (mood) {
@@ -703,7 +712,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         p.college = "";
 
         p.salaries = [];
-        p = setContract(p, genContract(p.ratings[0]), false);
+        p = setContract(p, genContract(p), false);
 
         p.awards = [];
 
@@ -1243,7 +1252,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      * The return value is usually between 0 and 100.
      */
     function value(p) {
-        var age, c, ps1, ps2, w;
+        var age, c, i, ps, ps1, ps2, w;
 
         // Components
         c = {
@@ -1259,24 +1268,35 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             pot: 1
         };
 
+        // Regular season stats ONLY, in order starting with most recent
+        ps = [];
+        for (i = 0; i < p.stats.length; i++) {
+            if (!p.stats[i].playoffs) {
+                ps.push(p.stats[i]);
+            }
+        }
+        ps.reverse();
+
         // 1. Account for stats
-        if (p.stats.length === 0) {
+        if (ps.length === 0) {
             // No stats at all? Just look at ratings more, then.
             c.stats = 0;
             w.ovr += w.stats;
             w.stats = 0;
-        } else if (p.stats.length === 1) {
+        } else if (ps.length === 1) {
             // Only one year of stats
-            c.stats = p.stats[0].per;
-            if (p.stats[0].min < 2000) {
-                w.ovr += w.stats * (1 - p.stats[0].min / 2000);
-                w.stats *= p.stats[0].min / 2000;
+            c.stats = ps[0].per;
+            if (ps[0].min < 2000) {
+                w.ovr += w.stats * (1 - ps[0].min / 2000);
+                w.stats *= ps[0].min / 2000;
             }
         } else {
             // Two most recent seasons
-            ps1 = p.stats[p.stats.length - 1];
-            ps2 = p.stats[p.stats.length - 2];
-            c.stats = (ps1.per * ps1.min + ps2.per * ps2.min) / (ps1.min + ps2.min);
+            ps1 = p.stats[0];
+            ps2 = p.stats[1];
+            if (ps1.min + ps2.min > 0) {
+                c.stats = (ps1.per * ps1.min + ps2.per * ps2.min) / (ps1.min + ps2.min);
+            }
             if (ps1.min + ps2.min < 2000) {
                 w.ovr += w.stats * (1 - (ps1.min + ps2.min) / 2000);
                 w.stats *= (ps1.min + ps2.min) / 2000;
@@ -1290,16 +1310,16 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         c.pot = _.last(p.ratings).pot;
         age = g.season - p.born.year;
         if (age <= 19) {
-            c.pot *= 2;
+            c.pot = (c.pot + c.ovr) / 2;
         }
         if (age === 20) {
-            c.pot *= 1.5;
+            c.pot = (0.75 * c.pot + 1.25 * c.ovr) / 2;
         }
         if (age === 21) {
-            c.pot *= 1.25;
+            c.pot = (0.5 * c.pot + 1.5 * c.ovr) / 2;
         }
         if (age === 22) {
-            c.pot *= 1.125;
+            c.pot = (0.25 * c.pot + 1.75 * c.ovr) / 2;
         }
         if (age === 28) {
             c.pot *= 0.95;
@@ -1326,11 +1346,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             c.pot *= 0.5;
         }
 
-console.log(c);
-console.log(w);
-console.log(w.stats * 4 * c.stats + w.ovr * c.ovr + w.pot * c.pot)
-console.log(w.stats + w.ovr + w.pot)
-        return (w.stats * 4 * c.stats + w.ovr * c.ovr + w.pot * c.pot) / (w.stats + w.ovr + w.pot);
+        return (w.stats * 3 * c.stats + w.ovr * c.ovr + w.pot * c.pot) / (w.stats + w.ovr + w.pot);
     }
 
     return {

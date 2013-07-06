@@ -835,7 +835,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                         if (p.tid !== g.userTid) {
                             // Automatically negotiate with teams
                             if (Math.random() < _.last(p.ratings).ovr / 100) { // Should eventually be smarter than a coin flip
-                                p = player.setContract(p, player.genContract(_.last(p.ratings)), true);
+                                p = player.setContract(p, player.genContract(p), true);
                                 cursor.update(p); // Other endpoints include calls to addToFreeAgents, which handles updating the database
                             } else {
                                 player.addToFreeAgents(playerStore, p, g.PHASE.RESIGN_PLAYERS, baseMoods);

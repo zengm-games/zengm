@@ -130,8 +130,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         maxAmount = 20000;
 
         // Scale proportional to (ovr*2 + pot)*0.5 120-210
-        //amount = ((2 * ratings.ovr + ratings.pot) * 0.85 - 110) / (210 - 120);  // Scale from 0 to 1 (approx)
-//console.log(g.season - p.born.year + ' (' + ratings.ovr + '-' + ratings.pot + ') ' + Math.round(amount * 100) + ' ' + value(p))
+        //amount = ((3 * value(p)) * 0.85 - 110) / (210 - 120);  // Scale from 0 to 1 (approx)
         //amount = amount * (maxAmount - minAmount) + minAmount;
         amount = (value(p) / 100 - 0.45) * 4 * (maxAmount - minAmount) + minAmount;
         amount *= random.gauss(1, 0.1);  // Randomize
@@ -1249,7 +1248,9 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      * 2. Current ratings: This is similar to "the eye test" - how does a player look? This is generally the least important of the 3.
      * 3. Potential for improvement (or risk for decline): Based on age and potential rating.
      *
-     * The return value is usually between 0 and 100.
+     * @memberOf core.player
+     * @param {Object} p Player object.
+     * @return {boolean} Value of the player, usually between 50 and 100.
      */
     function value(p) {
         var age, c, i, ps, ps1, ps2, w;

@@ -3,7 +3,6 @@ GOALS FOR 3.1.0
 
 Main focus: AI improvements
 
-feedback tab doesn't work in chrome
 unified notion of player "value" - function of ratings, age, stats, etc. similar to what is already in core.trade.getValues, but should include statistics as well.
   goal is to incorporate things that are the same independent of team strategy
   use for setting players salaries

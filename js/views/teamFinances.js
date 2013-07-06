@@ -8,7 +8,7 @@ define(["db", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib/
     var mapping;
 
     function disableFinanceSettings(tid) {
-        $("#finances-settings input, button").attr("disabled", "disabled");
+        $("#finances-settings input, #finances-settings button").attr("disabled", "disabled");
         if (tid === g.userTid) {
             $("#finances-settings .text-error").html("Stop game simulation to edit.");
         } else {
@@ -19,10 +19,10 @@ define(["db", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib/
     function enableFinanceSettings(tid) {
         $("#finances-settings button").html("Save Revenue and<br> Expense Settings");
         if (tid === g.userTid) {
-            $("#finances-settings input, button").removeAttr("disabled");
+            $("#finances-settings input, #finances-settings button").removeAttr("disabled");
             $("#finances-settings button").show();
         } else {
-            $("#finances-settings input, button").attr("disabled", "disabled");
+            $("#finances-settings input, #finances-settings button").attr("disabled", "disabled");
             $("#finances-settings button").hide();
         }
         $("#finances-settings .text-error").html("");

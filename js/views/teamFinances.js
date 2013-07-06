@@ -199,7 +199,8 @@ define(["db", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib/
                             contractTotals: contractTotals,
                             barData: barData,
                             barSeasons: barSeasons,
-                            team: t
+                            team: t,
+                            payroll: t.payroll // For above/below observables
                         });
                     });
                 };

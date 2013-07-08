@@ -1242,7 +1242,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
     }
 
     /**
-     * Returns a numeric value for a given player, representing is general worth to a typical team (i.e. ignoring how well he fits in with his teammates and the team's strategy). This is based on three components:
+     * Returns a numeric value for a given player, representing is general worth to a typical team (i.e. ignoring how well he fits in with his teammates and the team's strategy/finances). It is similar in scale to the overall and potential ratings of players, but it is based on stats in addition to ratings. The main components are:
      *
      * 1. Recent stats: Avg of last 2 seasons' PER if min > 2000. Otherwise, scale by min / 2000 and correspondingly increase the weight of #2.
      * 2. Current ratings: This is similar to "the eye test" - how does a player look? This is generally the least important of the 3.
@@ -1250,7 +1250,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      *
      * @memberOf core.player
      * @param {Object} p Player object.
-     * @return {boolean} Value of the player, usually between 50 and 100.
+     * @return {boolean} Value of the player, usually between 50 and 100 like overall and potential ratings.
      */
     function value(p) {
         var age, c, i, ps, ps1, ps2, w;

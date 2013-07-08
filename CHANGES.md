@@ -1,5 +1,11 @@
 This is a list of **only the major changes** in each version.
 
+# Since 3.0.0
+
+## Gameplay and UI
+
+- Player contract demands are based on ratings and stats, not just ratings
+
 # 3.0.0 (2013-06-23)
 
 ## Gameplay and UI

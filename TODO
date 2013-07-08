@@ -3,12 +3,9 @@ GOALS FOR 3.1.0
 
 Main focus: AI improvements
 
-unified notion of player "value" - function of ratings, age, stats, etc. similar to what is already in core.trade.getValues, but should include statistics as well.
-  goal is to incorporate things that are the same independent of team strategy
-  use for setting players salaries
-    compare against current method
 team "value" and changes in team value. have a function that will return the change in team value for a given team if an array of players is added to the roster and an array of players is removed from the roster. if positive, then the trade/signing/drafting is good. if comparing multiple options, then the highest value is best.
   depends on team status - rebuildling or contending
+  depends on team finances (really, the size of the region)
   also come up with "value" for draft picks and cash which can be included in trades
   adding a new skill should be a bonus. losing a skill should be a negative. but also need to factor in skills of other players in a trade! so maybe for trades, do this calculation in core.trade for the overall transaction. make sure to factor in changes in PT! this could get complicated..
   use core.team.valueChange for AI teams drafting, AI teams signing free agents, and trades
@@ -33,6 +30,7 @@ strategies of AI teams
     switch to "win now" if enough cheap/young talent is accumulated
     trade for draft picks
   when to switch between these strategies? or should it even be binary? maybe just have it as a continuous function of the team's roster, finances, and performance. then maybe put it through a sigmoidal function to bias a bit towards extremes
+  should influence team.valueChange but not player.value
 trades
   draft picks
     otherPicks and userPicks containing the year and the round
@@ -57,6 +55,11 @@ user can't just sign all the free agents before AI teams
 EVENTUALLY
 ----------
 
+show championships in awards on player pages
+all star game
+some players foul way too much
+team and league records (highest scoring game, etc)
+switch teams after you're fired
 source maps
   latest version of r.js (2.1.6) has an old version of uglify2 (2.3.2) which fails on a['3'] https://github.com/mishoo/UglifyJS2/issues/207. newer version probably would fix that
   try errorception

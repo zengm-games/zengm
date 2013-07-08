@@ -556,11 +556,143 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
         };
     }
 
+    function valueChange(tid, pidsAdd, pidsRemove, cb) {
+        var add, i, remove, roster, tx;
+
+        // Get value and skills for each player on team or involved in the proposed transaction
+        roster = [];
+        add = [];
+        remove = [];
+        tx = g.dbl.transaction("players");
+        tx.objectStore("players").index("tid").openCursor(tid).onsuccess = function (event) {
+            var cursor, p;
+
+            cursor = event.target.result;
+            if (cursor) {
+                p = cursor.value;
+
+                if (pidsRemove.indexOf(p.pid) < 0) {
+                    roster.push({
+                        value: player.value(p),
+                        skills: _.last(player.ratings).skills,
+                        contractAmount: p.contract.amount / 1000,
+                        age: g.season - p.born.year
+                    });
+                } else {
+                    remove.push({
+                        value: player.value(p),
+                        skills: _.last(player.ratings).skills,
+                        contractAmount: p.contract.amount / 1000,
+                        age: g.season - p.born.year
+                    });
+                }
+
+                cursor.continue();
+            }
+        };
+        for (i = 0; i < pidsAdd.length; i++) {
+            tx.objectStore("players").get(tid).onsuccess = function (event) {
+                var p;
+
+                p = event.target.result;
+
+                add.push({
+                    value: player.value(p),
+                    skills: _.last(player.ratings).skills,
+                    contractAmount: p.contract.amount / 1000,
+                    age: g.season - p.born.year
+                });
+            };
+        }
+
+        tx.oncomplete = function () {
+            var doSkillBonuses, dv, rosterAndAdd, rosterAndRemove, skillsNeeded;
+
+            // This roughly corresponds with core.gameSim.updateSynergy
+            skillsNeeded = {
+                "3": 5,
+                A: 5,
+                B: 3,
+                Di: 2,
+                Dp: 2,
+                Po: 2,
+                Ps: 4,
+                R: 3
+            };
+
+            doSkillBonuses = function (test, roster) {
+                var i, j, rosterSkills, rosterSkillsCount, s;
+
+                // What are current skills?
+                rosterSkills = [];
+                for (i = 0; i < roster.length; i++) {
+                    if (roster.value >= 45) {
+                        rosterSkills.push(roster[i].skills);
+                    }
+                }
+                rosterSkills = _.flatten(rosterSkills);
+                rosterSkillsCount = _.countBy(rosterSkills);
+
+                // Sort test by value, so that the highest value players get bonuses applied first
+                test.sort(function (a, b) { return b.value - a.value; });
+
+                for (i = 0; i < test.length; i++) {
+                    if (test.value >= 45) {
+                        for (j = 0; j < test[i].skills.length; j++) {
+                            s = test[i].skills[j];
+
+                            if (rosterSkills[s] <= skillsNeeded[s] - 2) {
+                                // Big bonus
+                                test.value *= 1.1;
+                            } else if (rosterSkills[s] <= skillsNeeded[s] - 1) {
+                                // Medium bonus
+                                test.value *= 1.05;
+                            } else if (rosterSkills[s] <= skillsNeeded[s]) {
+                                // Little bonus
+                                test.value *= 1.025;
+                            }
+
+                            // Account for redundancy in test
+                            rosterSkills[s] += 1;
+                        }
+                    }
+                }
+
+                return test;
+            };
+
+            // Apply bonuses based on skills coming in and leaving
+            rosterAndRemove = roster.concat(remove);
+            rosterAndAdd = roster.concat(add);
+            add = doSkillBonuses(add, rosterAndRemove);
+            remove = doSkillBonuses(remove, rosterAndAdd);
+
+            // Actually calculate the change in value
+            dv = _.reduce(players, function (memo, player) {
+                var factors;
+
+                factors = {
+                    value: 0.3 * player.value,
+                    contract: (20 - player.contractAmount) / 15 + 0.1
+                };
+                return memo + Math.pow(3, factors.value) * factors.contract;
+            }, 0);
+
+            // Normalize for number of players, since 1 really good player is much better than multiple mediocre ones
+            if (add.length > remove.length) {
+                dv *= Math.pow(0.95, add.length - remove.length);
+            }
+
+            cb(dv)
+        };
+    }
+
     return {
         addSeasonRow: addSeasonRow,
         addStatsRow: addStatsRow,
         generate: generate,
         rosterAutoSort: rosterAutoSort,
-        filter: filter
+        filter: filter,
+        valueChange: valueChange
     };
 });

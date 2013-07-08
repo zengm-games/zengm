@@ -463,7 +463,6 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                 });
             });
         });
-
     }
 
     return {

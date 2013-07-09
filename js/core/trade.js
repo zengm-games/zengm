@@ -147,8 +147,8 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
 
             playerStore = g.dbl.transaction("players").objectStore("players");
 
-            getValues(playerStore, [userPids, otherPids], [g.userTid, otherTid], function (values) {
-                console.log(values);
+            team.valueChange(otherTid, userPids, otherPids, function (dv) {
+                console.log(dv);
             });
 
             playerStore.index("tid").getAll(g.userTid).onsuccess = function (event) {

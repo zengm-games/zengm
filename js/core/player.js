@@ -1311,16 +1311,16 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         c.pot = _.last(p.ratings).pot;
         age = g.season - p.born.year;
         if (age <= 19) {
-            c.pot = (c.pot + c.ovr) / 2;
+            c.pot = 1.7 * (c.pot + c.ovr) / 2;
         }
         if (age === 20) {
-            c.pot = (0.75 * c.pot + 1.25 * c.ovr) / 2;
+            c.pot = 1.4 * (0.75 * c.pot + 1.25 * c.ovr) / 2;
         }
         if (age === 21) {
-            c.pot = (0.5 * c.pot + 1.5 * c.ovr) / 2;
+            c.pot = 1.2 * (0.5 * c.pot + 1.5 * c.ovr) / 2;
         }
         if (age === 22) {
-            c.pot = (0.25 * c.pot + 1.75 * c.ovr) / 2;
+            c.pot = 1.1 * (0.25 * c.pot + 1.75 * c.ovr) / 2;
         }
         if (age === 28) {
             c.pot *= 0.95;

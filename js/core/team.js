@@ -574,14 +574,14 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                 if (pidsRemove.indexOf(p.pid) < 0) {
                     roster.push({
                         value: player.value(p),
-                        skills: _.last(player.ratings).skills,
+                        skills: _.last(p.ratings).skills,
                         contractAmount: p.contract.amount / 1000,
                         age: g.season - p.born.year
                     });
                 } else {
                     remove.push({
                         value: player.value(p),
-                        skills: _.last(player.ratings).skills,
+                        skills: _.last(p.ratings).skills,
                         contractAmount: p.contract.amount / 1000,
                         age: g.season - p.born.year
                     });
@@ -591,14 +591,14 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
             }
         };
         for (i = 0; i < pidsAdd.length; i++) {
-            tx.objectStore("players").get(tid).onsuccess = function (event) {
+            tx.objectStore("players").get(pidsAdd[i]).onsuccess = function (event) {
                 var p;
 
                 p = event.target.result;
 
                 add.push({
                     value: player.value(p),
-                    skills: _.last(player.ratings).skills,
+                    skills: _.last(p.ratings).skills,
                     contractAmount: p.contract.amount / 1000,
                     age: g.season - p.born.year
                 });
@@ -606,7 +606,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
         }
 
         tx.oncomplete = function () {
-            var doSkillBonuses, dv, rosterAndAdd, rosterAndRemove, skillsNeeded;
+            var calcDv, doSkillBonuses, dv, rosterAndAdd, rosterAndRemove, skillsNeeded;
 
             // This roughly corresponds with core.gameSim.updateSynergy
             skillsNeeded = {
@@ -668,15 +668,24 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
             remove = doSkillBonuses(remove, rosterAndAdd);
 
             // Actually calculate the change in value
-            dv = _.reduce(players, function (memo, player) {
-                var factors;
+            calcDv = function (players) {
+                return _.reduce(players, function (memo, player) {
+                    var factors;
 
-                factors = {
-                    value: 0.3 * player.value,
-                    contract: (20 - player.contractAmount) / 15 + 0.1
-                };
-                return memo + Math.pow(3, factors.value) * factors.contract;
-            }, 0);
+                    factors = {
+                        value: 0.3 * player.value,
+                        contract: (20 - player.contractAmount) / 15 + 0.1
+                    };
+                    return memo + Math.pow(3, factors.value) * factors.contract;
+                }, 0);
+            };
+
+console.log('---');
+console.log(calcDv(add));
+console.log(add);
+console.log(calcDv(remove));
+console.log(remove);
+            dv = calcDv(add) - calcDv(remove);
 
             // Normalize for number of players, since 1 really good player is much better than multiple mediocre ones
             if (add.length > remove.length) {

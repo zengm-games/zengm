@@ -77,60 +77,6 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
         };
     }
 
-    function getValues(playerStore, pids, tids, cb) {
-        var done, i, values;
-
-        done = 0;
-        values = [0, 0];  // "Value" of the players offered by each team
-
-        for (i = 0; i < 2; i++) {
-            (function (i) {
-                playerStore.index("tid").getAll(tids[i]).onsuccess = function (event) {
-                    var players;
-
-                    players = player.filter(event.target.result, {
-                        attrs: ["pid", "contract", "age"],
-                        ratings: ["ovr", "pot"],
-                        season: g.season,
-                        tid: tids[i],
-                        showRookies: true
-                    });
-                    players = _.filter(players, function (player) { return pids[i].indexOf(player.pid) >= 0; });
-
-                    // Exponential dependence on ratings/age/contract
-                    values[i] = _.reduce(players, function (memo, player) {
-                        var factors, value;
-
-                        value = 0;
-
-                        factors = {
-                            pot: player.ratings.pot / 20,
-                            ovr: player.ratings.ovr / 10,
-                            age: -player.age / 10,
-                            contract: -player.contract.amount / 15
-                        };
-
-                        factors = {
-                            pot: 0.15 * player.ratings.pot * (player.ratings.pot - player.ratings.ovr) / 100 * (1 - 1 / (1 + Math.pow(2.7183, -player.age + 22.5))),
-                            ovr: 0.2 * player.ratings.ovr,
-                            age: 0.1 * (player.age - 18),
-                            contract: (20 - player.contract.amount) / 15 + 0.1
-                        };
-                        return memo + Math.pow(3, factors.pot + factors.ovr - factors.age) * factors.contract;
-                    }, 0);
-
-                    // Normalize for number of players, since 1 really good player is much better than multiple mediocre ones
-                    values[i] *= Math.pow(0.95, players.length);
-
-                    done += 1;
-                    if (done === 2) {
-                        cb(values);
-                    }
-                };
-            }(i));
-        }
-    }
-
     /**
      * Validates that players are allowed to be traded and updates the database.
      * 
@@ -148,7 +94,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
             playerStore = g.dbl.transaction("players").objectStore("players");
 
             team.valueChange(otherTid, userPids, otherPids, function (dv) {
-                console.log(dv);
+                console.log(dv / Math.abs(dv) * Math.log(Math.abs(dv)));
             });
 
             playerStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
@@ -400,7 +346,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                 // that warning will already be pushed to the user so there is no need to
                 // return a redundant message here.
                 summary(otherTid, userPids, otherPids, function (s) {
-                    var i, outcome, playerStore, tx;
+                    var i, outcome;
 
                     if (s.warning) {
                         cb(false, null);
@@ -409,13 +355,13 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
 
                     outcome = "rejected"; // Default
 
-                    tx = g.dbl.transaction("players", "readwrite");
-                    playerStore = tx.objectStore("players");
+                    team.valueChange(otherTid, userPids, otherPids, function (dv) {
+                        var j, playerStore, tx;
 
-                    getValues(playerStore, pids, tids, function (values) {
-                        var j;
+                        tx = g.dbl.transaction("players", "readwrite");
+                        playerStore = tx.objectStore("players");
 
-                        if (values[0] > values[1] * 0.9) {
+                        if (dv > 0) {
                             // Trade players
                             outcome = "accepted";
                             for (j = 0; j < 2; j++) {
@@ -446,20 +392,20 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                                 }(j));
                             }
                         }
-                    });
 
-                    tx.oncomplete = function () {
-                        if (outcome === "accepted") {
-                            // Auto-sort CPU team roster
-                            team.rosterAutoSort(null, tids[1], function () {
-                                clear(function () { // This includes dbChange
-                                    cb(true, 'Trade accepted! "Nice doing business with you!"');
+                        tx.oncomplete = function () {
+                            if (outcome === "accepted") {
+                                // Auto-sort CPU team roster
+                                team.rosterAutoSort(null, tids[1], function () {
+                                    clear(function () { // This includes dbChange
+                                        cb(true, 'Trade accepted! "Nice doing business with you!"');
+                                    });
                                 });
-                            });
-                        } else {
-                            cb(false, 'Trade rejected! "What, are you crazy?"');
-                        }
-                    };
+                            } else {
+                                cb(false, 'Trade rejected! "What, are you crazy?"');
+                            }
+                        };
+                    });
                 });
             });
         });

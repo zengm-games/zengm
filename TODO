@@ -7,8 +7,7 @@ team "value" and changes in team value. have a function that will return the cha
   depends on team status - rebuildling or contending
   depends on team finances (really, the size of the region)
   also come up with "value" for draft picks and cash which can be included in trades
-  adding a new skill should be a bonus. losing a skill should be a negative. but also need to factor in skills of other players in a trade! so maybe for trades, do this calculation in core.trade for the overall transaction. make sure to factor in changes in PT! this could get complicated..
-  use core.team.valueChange for AI teams drafting, AI teams signing free agents, and trades
+  use core.team.valueChange for AI teams drafting, AI teams signing free agents
   algorithm
     weighted sum of different components, based on strategy:
       total player exp(value) difference

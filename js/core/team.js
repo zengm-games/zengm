@@ -680,11 +680,11 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                 }, 0);
             };
 
-console.log('---');
+/*console.log('---');
 console.log(calcDv(add));
 console.log(add);
 console.log(calcDv(remove));
-console.log(remove);
+console.log(remove);*/
             dv = calcDv(add) - calcDv(remove);
 
             // Normalize for number of players, since 1 really good player is much better than multiple mediocre ones

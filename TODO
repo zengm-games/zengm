@@ -5,7 +5,6 @@ Main focus: AI improvements
 
 team "value" and changes in team value. have a function that will return the change in team value for a given team if an array of players is added to the roster and an array of players is removed from the roster. if positive, then the trade/signing/drafting is good. if comparing multiple options, then the highest value is best.
   depends on team status - rebuildling or contending
-  depends on team finances (really, the size of the region)
   also come up with "value" for draft picks and cash which can be included in trades
   use core.team.valueChange for AI teams drafting, AI teams signing free agents
   algorithm

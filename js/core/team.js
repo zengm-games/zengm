@@ -670,12 +670,22 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
             // Actually calculate the change in value
             calcDv = function (players) {
                 return _.reduce(players, function (memo, player) {
-                    var factors;
+                    var factors, pop;
+
+                    // If the population of the region is larger, the contract size becomes less important. So factors.contract should increase
+                    pop = helpers.getTeams()[tid].pop;
+                    if (pop > 20) {
+                        pop = 20;
+                    }
 
                     factors = {
                         value: 0.3 * player.value,
-                        contract: (20 - player.contractAmount) / 15 + 0.1
+                        // This is a straight line from ($0.5, 1.4) to ($20M, 0.1) - higher second coordinate means greater value
+                        //contract: (20 - player.contractAmount) / 15 + 0.1
+                        // This takes that straight line and roughly rotates it around the middle to make it more horizontal
+                        contract: (20 - player.contractAmount) / (15 * Math.sqrt(pop)) + (-0.12 + Math.sqrt(pop) / Math.sqrt(20))
                     };
+
                     return memo + Math.pow(3, factors.value) * factors.contract;
                 }, 0);
             };

@@ -99,8 +99,7 @@ define(["db", "globals", "core/finances", "core/player", "core/season", "core/te
             seasonAttrs: ["winp", "playoffRoundsWon"],
             season: g.season
         }, function (teams) {
-            var chances, draftOrder, draw, firstThree, i, pick;
-            draftOrder = [];
+            var chances, draw, firstThree, i, pick;
 
             // Sort teams by playoffs and winp, for first round
             teams.sort(function (a, b) {
@@ -133,29 +132,80 @@ define(["db", "globals", "core/finances", "core/player", "core/season", "core/te
                 }
             }
 
-            // First round - lottery winners
-            for (i = 0; i < firstThree.length; i++) {
-                draftOrder.push({round: 1, pick: i + 1, tid: teams[firstThree[i]].tid, abbrev: teams[firstThree[i]].abbrev});
-            }
+            g.dbl.transaction("draftPicks").objectStore("draftPicks").index("season").getAll(g.season).onsuccess = function (event) {
+                var draftPickStore, draftOrder, draftPicks, draftPicksIndexed, i, teamsUnsorted, tid;
 
-            // First round - everyone else
-            pick = 4;
-            for (i = 0; i < teams.length; i++) {
-                if (firstThree.indexOf(i) < 0) {
-                    draftOrder.push({round: 1, pick: pick, tid: teams[i].tid, abbrev: teams[i].abbrev});
-                    pick += 1;
+                draftPicks = event.target.result;
+                // Reorganize this to an array indexed on originalTid and round
+                draftPicksIndexed = [];
+                for (i = 0; i < draftPicks.length; i++) {
+                    tid = draftPicks[i].originalTid;
+                    // Initialize to an array
+                    if (draftPicksIndexed.length < tid || draftPicksIndexed[tid] === undefined) {
+                        draftPicksIndexed[tid] = [];
+                    }
+                    draftPicksIndexed[tid][draftPicks[i].round] = {
+                        tid: draftPicks[i].tid
+                    };
                 }
-            }
 
-            // Sort teams by winp only, for second round
-            teams.sort(function (a, b) { return a.winp - b.winp; });
+                teamsUnsorted = helpers.getTeams();
 
-            // Second round
-            for (i = 0; i < teams.length; i++) {
-                draftOrder.push({round: 2, pick: i + 1, tid: teams[i].tid, abbrev: teams[i].abbrev});
-            }
+                draftOrder = [];
+                // First round - lottery winners
+                for (i = 0; i < firstThree.length; i++) {
+                    tid = draftPicksIndexed[teams[firstThree[i]].tid][1].tid;
+                    draftOrder.push({
+                        round: 1,
+                        pick: i + 1,
+                        tid: tid,
+                        abbrev: teamsUnsorted[tid].abbrev,
+                        originalTid: teams[firstThree[i]].tid,
+                        origianlAbbrev: teams[firstThree[i]].abbrev
+                    });
+                }
 
-            setOrder(draftOrder, cb);
+                // First round - everyone else
+                pick = 4;
+                for (i = 0; i < teams.length; i++) {
+                    if (firstThree.indexOf(i) < 0) {
+                        tid = draftPicksIndexed[teams[i].tid][1].tid;
+                        draftOrder.push({
+                            round: 1,
+                            pick: pick,
+                            tid: tid,
+                            abbrev: teamsUnsorted[tid].abbrev,
+                            originalTid: teams[i].tid,
+                            origianlAbbrev: teams[i].abbrev
+                        });
+                        pick += 1;
+                    }
+                }
+
+                // Sort teams by winp only, for second round
+                teams.sort(function (a, b) { return a.winp - b.winp; });
+
+                // Second round
+                for (i = 0; i < teams.length; i++) {
+                    tid = draftPicksIndexed[teams[i].tid][2].tid;
+                    draftOrder.push({
+                        round: 2,
+                        pick: i + 1,
+                        tid: tid,
+                        abbrev: teamsUnsorted[tid].abbrev,
+                        originalTid: teams[i].tid,
+                        origianlAbbrev: teams[i].abbrev
+                    });
+                }
+
+                // Delete from draftPicks object store so that they are completely untradeable
+                draftPickStore = g.dbl.transaction("draftPicks", "readwrite").objectStore("draftPicks")
+                for (i = 0; i < draftPicks.length; i++) {
+                    draftPickStore.delete(draftPicks[i].dpid);
+                }
+
+                setOrder(draftOrder, cb);
+            };
         });
     }
 

@@ -51,10 +51,25 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                 helpers.resetG();
 
                 db.setGameAttributes(gameAttributes, function () {
-                    var i, t, scoutingRank, teamStore, transaction;
+                    var draftPickStore, i, t, round, scoutingRank, teamStore, transaction;
 
                     // Probably is fastest to use this transaction for everything done to create a new league
-                    transaction = g.dbl.transaction(["draftOrder", "players", "teams", "trade"], "readwrite");
+                    transaction = g.dbl.transaction(["draftPicks", "draftOrder", "players", "teams", "trade"], "readwrite");
+
+                    // Generate draft picks for the first 4 years, as those are the ones can be traded initially
+                    draftPickStore = transaction.objectStore("draftPicks");
+                    for (i = 0; i < 4; i++) {
+                        for (t = 0; t < 30; t++) {
+                            for (round = 1; round <= 2; round++) {
+                                draftPickStore.add({
+                                    tid: t,
+                                    originalTid: t,
+                                    round: round,
+                                    season: g.startingSeason + i
+                                });
+                            }
+                        }
+                    }
 
                     // Initialize draft order object store for later use
                     transaction.objectStore("draftOrder").add({

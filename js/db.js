@@ -87,7 +87,7 @@ define(["globals", "core/player", "lib/davis", "lib/jquery", "lib/underscore", "
      * @param {number} lid Integer league ID number for new league.
      */
     function createLeague(event, lid) {
-        var awardsStore, dbl, draftOrderStore, gameAttributesStore, gameStore, messagesStore, playerStore, playoffSeriesStore, releasedPlayersStore, scheduleStore, teamStore, tradeStore;
+        var awardsStore, dbl, draftPickStore, draftOrderStore, gameAttributesStore, gameStore, messagesStore, playerStore, playoffSeriesStore, releasedPlayersStore, scheduleStore, teamStore, tradeStore;
 
         console.log("Creating league" + lid + " database");
 
@@ -106,6 +106,7 @@ define(["globals", "core/player", "lib/davis", "lib/jquery", "lib/underscore", "
         draftOrderStore = dbl.createObjectStore("negotiations", {keyPath: "pid"});
         gameAttributesStore = dbl.createObjectStore("gameAttributes", {keyPath: "key"});
         messagesStore = dbl.createObjectStore("messages", {keyPath: "mid", autoIncrement: true});
+        draftPickStore = dbl.createObjectStore("draftPicks", {keyPath: "dpid", autoIncrement: true});
 
         playerStore.createIndex("tid", "tid", {unique: false});
         playerStore.createIndex("draft.year", "draft.year", {unique: false});
@@ -115,6 +116,8 @@ define(["globals", "core/player", "lib/davis", "lib/jquery", "lib/underscore", "
         gameStore.createIndex("season", "season", {unique: false});
         releasedPlayersStore.createIndex("tid", "tid", {unique: false});
         releasedPlayersStore.createIndex("contract.exp", "contract.exp", {unique: false});
+        draftPickStore.createIndex("season", "season", {unique: false});
+        draftPickStore.createIndex("tid", "tid", {unique: false});
     }
 
     /**

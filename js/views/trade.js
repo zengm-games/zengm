@@ -200,7 +200,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
     }
 
     function uiFirst(vm) {
-        var rosterCheckboxesOther, rosterCheckboxesUser;
+        var rosterCheckboxesOther, rosterCheckboxesUser, tradeable;
 
         ui.title("Trade");
 
@@ -274,26 +274,27 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
             });
         });
 
-        ko.computed(function () {
-            ui.datatableSinglePage($("#roster-user"), 5, _.map(vm.userRoster(), function (p) {
+        tradeable = function (userOrOther, roster) {
+            var playersAndPicks;
+
+            playersAndPicks = _.map(roster, function (p) {
                 var selected;
 
                 if (p.selected) {
                     selected = ' checked = "checked"';
                 }
-                return ['<input name="user-pids" type="checkbox" value="' + p.pid + '"' + selected + '>', helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
-            }));
+                return ['<input name="' + userOrOther + '-pids" type="checkbox" value="' + p.pid + '"' + selected + '>', helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
+            });
+
+            return playersAndPicks;
+        };
+
+        ko.computed(function () {
+            ui.datatableSinglePage($("#roster-user"), 5, tradeable("user", vm.userRoster()));
         }).extend({throttle: 1});
 
         ko.computed(function () {
-            ui.datatableSinglePage($("#roster-other"), 5, _.map(vm.otherRoster(), function (p) {
-                var selected;
-
-                if (p.selected) {
-                    selected = ' checked = "checked"';
-                }
-                return ['<input name="other-pids" type="checkbox" value="' + p.pid + '"' + selected + '>', helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
-            }));
+            ui.datatableSinglePage($("#roster-other"), 5, tradeable("other", vm.otherRoster()));
         }).extend({throttle: 1});
     }
 

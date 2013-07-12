@@ -61,7 +61,7 @@ define(["db", "globals", "core/league", "core/trade"], function (db, g, league, 
 
                     userPidsTest = [48, 50];
                     otherPidsTest = [87, 97];
-                    trade.updatePlayers(userPidsTest, otherPidsTest, function (userPids, otherPids) {
+                    trade.updatePlayers(userPidsTest, otherPidsTest, [], [], function (userPids, otherPids) {
                         JSON.stringify(userPids).should.equal(JSON.stringify(userPidsTest));
                         JSON.stringify(otherPids).should.equal(JSON.stringify(otherPidsTest));
                         done();
@@ -70,7 +70,7 @@ define(["db", "globals", "core/league", "core/trade"], function (db, g, league, 
             });
             it("should filter out invalid players", function (done) {
                 trade.create(3, null, function () {
-                    trade.updatePlayers([1, 16, 20, 48, 50, 90], [12, 63, 70, 87, 97, 524], function (userPids, otherPids) {
+                    trade.updatePlayers([1, 16, 20, 48, 50, 90], [12, 63, 70, 87, 97, 524], [], [], function (userPids, otherPids) {
                         JSON.stringify(userPids).should.equal(JSON.stringify([48, 50]));
                         JSON.stringify(otherPids).should.equal(JSON.stringify([87, 97]));
                         done();
@@ -83,7 +83,7 @@ define(["db", "globals", "core/league", "core/trade"], function (db, g, league, 
 
                     userPidsTest = [48, 50];
                     otherPidsTest = [87, 97];
-                    trade.updatePlayers(userPidsTest, otherPidsTest, function (userPids, otherPids) {
+                    trade.updatePlayers(userPidsTest, otherPidsTest, [], [], function (userPids, otherPids) {
                         JSON.stringify(userPids).should.equal(JSON.stringify(userPidsTest));
                         JSON.stringify(otherPids).should.equal(JSON.stringify(otherPidsTest));
                         trade.create(4, null, function () {
@@ -101,8 +101,8 @@ define(["db", "globals", "core/league", "core/trade"], function (db, g, league, 
         describe("#summary()", function () {
             it("should warn when more than 15 players will be on a team after a trade", function (done) {
                 trade.create(5, null, function () {
-                    trade.updatePlayers([], [90, 92], function (userPids, otherPids) {
-                        trade.summary(5, [], [90, 92], function (summary) {
+                    trade.updatePlayers([], [90, 92], [], [], function (userPids, otherPids) {
+                        trade.summary(5, [], [90, 92], [], [], function (summary) {
                             summary.warning.should.contain("over the maximum roster size limit of 15 players");
                             done();
                         });

@@ -62,6 +62,7 @@ userDpids and otherDpids in trade object store
 EVENTUALLY
 ----------
 
+refactor core.trade. it's an utter mess.
 show championships in awards on player pages
 all star game
 some players foul way too much

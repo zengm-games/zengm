@@ -26,7 +26,7 @@ define(["db", "globals", "core/league", "lib/underscore", "test/helpers"], funct
                 };
             });
             it("should create all necessary object stores", function () {
-                g.dbl.objectStoreNames.should.have.length(12);
+                g.dbl.objectStoreNames.should.have.length(13);
                 g.dbl.objectStoreNames.contains("awards").should.equal(true);
                 g.dbl.objectStoreNames.contains("draftOrder").should.equal(true);
                 g.dbl.objectStoreNames.contains("gameAttributes").should.equal(true);

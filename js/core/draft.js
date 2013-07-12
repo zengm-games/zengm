@@ -161,7 +161,7 @@ define(["db", "globals", "core/finances", "core/player", "core/season", "core/te
                         tid: tid,
                         abbrev: teamsUnsorted[tid].abbrev,
                         originalTid: teams[firstThree[i]].tid,
-                        origianlAbbrev: teams[firstThree[i]].abbrev
+                        originalAbbrev: teams[firstThree[i]].abbrev
                     });
                 }
 
@@ -176,7 +176,7 @@ define(["db", "globals", "core/finances", "core/player", "core/season", "core/te
                             tid: tid,
                             abbrev: teamsUnsorted[tid].abbrev,
                             originalTid: teams[i].tid,
-                            origianlAbbrev: teams[i].abbrev
+                            originalAbbrev: teams[i].abbrev
                         });
                         pick += 1;
                     }
@@ -194,7 +194,7 @@ define(["db", "globals", "core/finances", "core/player", "core/season", "core/te
                         tid: tid,
                         abbrev: teamsUnsorted[tid].abbrev,
                         originalTid: teams[i].tid,
-                        origianlAbbrev: teams[i].abbrev
+                        originalAbbrev: teams[i].abbrev
                     });
                 }
 
@@ -245,6 +245,8 @@ define(["db", "globals", "core/finances", "core/player", "core/season", "core/te
                 tid: pick.tid,
                 year: g.season,
                 abbrev: teams[pick.tid].abbrev,
+                originalTid: pick.originalTid,
+                originalAbbrev: pick.originalAbbrev,
                 // draftTeamName and draftTeamRegion are currently not used, but they don't do much harm
                 teamName: teams[pick.tid].name,
                 teamRegion: teams[pick.tid].region,

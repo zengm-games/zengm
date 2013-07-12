@@ -6,11 +6,7 @@ Main focus: AI improvements
 trade draft picks
   fancy scrolling of summary box
   come up with an estimate of the pick's value based on the current state of the team
-  actually implement trading draft picks
   draftPicks object store: add another year after every draft
-  convenience function to display either "ATL" if it's tid and originalTid are 0, or something like "ATL (from BOS)"
-    need to store originalAbbrev in player.draft
-    show in current draft and summary
 team "value" and changes in team value. have a function that will return the change in team value for a given team if an array of players is added to the roster and an array of players is removed from the roster. if positive, then the trade/signing/drafting is good. if comparing multiple options, then the highest value is best.
   depends on team status - rebuildling or contending
   also come up with "value" for draft picks and cash which can be included in trades

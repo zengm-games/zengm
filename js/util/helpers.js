@@ -364,7 +364,9 @@ define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
 
         url = "/l/" + g.lid;
         for (i = 0; i < components.length; i++) {
-            url += "/" + ko.utils.unwrapObservable(components[i]);
+            if (components[i] !== undefined) {
+                url += "/" + ko.utils.unwrapObservable(components[i]);
+            }
         }
         if (!options.noQueryString) {
             url += location.search;
@@ -470,8 +472,9 @@ define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
      *
      * @memberOf util.helpers
      * @param {number} x Input number.
-     * @param {min} min Minimum bounding variable.
-     * @param {max} max Maximum bounding variable.
+     * @param {number} min Minimum bounding variable.
+     * @param {number} max Maximum bounding variable.
+     * @return {number} Bounded number.
      */
     function bound(x, min, max) {
         if (x < min) {
@@ -481,6 +484,25 @@ define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
             return max;
         }
         return x;
+    }
+
+
+    /**
+     * Link to an abbrev either as "ATL" or "ATL (from BOS)" if a pick was traded.
+     *
+     * @memberOf util.helpers
+     * @param {string} abbrev Drafting team (ATL).
+     * @param {string} originalAbbrev Original owner of the pick (BOS).
+     * @param {season=} season Optional season for the roster links.
+     * @return {string} HTML link(s).
+     */
+    function draftAbbrev(abbrev, originalAbbrev, season) {
+console.log(season);
+        if (abbrev === originalAbbrev) {
+            return '<a href="' + leagueUrl(["roster", abbrev, season]) + '">' + abbrev + '</a>';
+        }
+
+        return '<a href="' + leagueUrl(["roster", abbrev, season]) + '">' + abbrev + '</a> (from <a href="' + leagueUrl(["roster", originalAbbrev, season]) + '">' + originalAbbrev + '</a>)';
     }
 
     return {
@@ -501,6 +523,7 @@ define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
         formatCurrency: formatCurrency,
         numberWithCommas: numberWithCommas,
         bound: bound,
-        leagueUrl: leagueUrl
+        leagueUrl: leagueUrl,
+        draftAbbrev: draftAbbrev
     };
 });

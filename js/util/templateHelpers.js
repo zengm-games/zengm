@@ -207,4 +207,13 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
             });
         }
     };
+
+    ko.bindingHandlers.draftAbbrev = {
+        update: function (element, valueAccessor) {
+            var args = valueAccessor();
+            return ko.bindingHandlers.html.update(element, function () {
+                return helpers.draftAbbrev(ko.utils.unwrapObservable(args[0]), ko.utils.unwrapObservable(args[1]));
+            });
+        }
+    };
 });

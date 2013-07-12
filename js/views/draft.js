@@ -125,6 +125,7 @@ define(["globals", "ui", "core/draft", "core/player", "lib/jquery", "util/bbgmVi
                         drafted.push({
                             draft: {
                                 abbrev: slot.abbrev,
+                                originalAbbrev: slot.originalAbbrev,
                                 round: slot.round,
                                 pick: slot.pick
                             },

@@ -389,17 +389,18 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
             return;
         }
 
-        getPlayers(function (userPids, otherPids) {
+        getPlayers(function (userPids, otherPids, userDpids, otherDpids) {
             getOtherTid(function (otherTid) {
-                var pids, tids;
+                var dpids, pids, tids;
 
                 tids = [g.userTid, otherTid];
                 pids = [userPids, otherPids];
+                dpids = [userDpids, otherDpids];
 
                 // The summary will return a warning if (there is a problem. In that case,
                 // that warning will already be pushed to the user so there is no need to
                 // return a redundant message here.
-                summary(otherTid, userPids, otherPids, function (s) {
+                summary(otherTid, userPids, otherPids, userDpids, otherDpids, function (s) {
                     var i, outcome;
 
                     if (s.warning) {
@@ -410,10 +411,13 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                     outcome = "rejected"; // Default
 
                     team.valueChange(otherTid, userPids, otherPids, function (dv) {
-                        var j, playerStore, tx;
+                        var draftPickStore, j, playerStore, teams, tx;
 
-                        tx = g.dbl.transaction("players", "readwrite");
+                        tx = g.dbl.transaction(["draftPicks", "players"], "readwrite");
+                        draftPickStore = tx.objectStore("draftPicks");
                         playerStore = tx.objectStore("players");
+
+                        teams = helpers.getTeams();
 
                         if (dv > 0) {
                             // Trade players
@@ -440,6 +444,20 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                                                     p = player.addStatsRow(p);
                                                 }
                                                 cursor.update(p);
+                                            };
+                                        }(l));
+                                    }
+
+                                    for (l = 0; l < dpids[j].length; l++) {
+                                        (function (l) {
+                                            draftPickStore.openCursor(dpids[j][l]).onsuccess = function (event) {
+                                                var cursor, dp;
+
+                                                cursor = event.target.result;
+                                                dp = cursor.value;
+                                                dp.tid = tids[k];
+                                                dp.abbrev = teams[tids[k]].abbrev;
+                                                cursor.update(dp);
                                             };
                                         }(l));
                                     }

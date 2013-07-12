@@ -95,7 +95,9 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                         rid: 0,
                         otherTid: tid === 0 ? 1 : 0,  // Load initial trade view with the lowest-numbered non-user team (so, either 0 or 1)
                         otherPids: [],
-                        userPids: []
+                        userPids: [],
+                        otherDpids: [],
+                        userDpids: []
                     });
 
                     player.genBaseMoods(transaction, function (baseMoods) {

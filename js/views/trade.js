@@ -15,7 +15,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
         userPids = vars.userPids;
 
         trade.getOtherTid(function (otherTid) {
-            trade.summary(otherTid, userPids, otherPids, function (summary) {
+            trade.summary(otherTid, userPids, otherPids, vars.userDpids, vars.otherDpids, function (summary) {
                 var i;
 
                 vars.summary = {
@@ -30,6 +30,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
                         payrollAfterTrade: summary.teams[i].payrollAfterTrade,
                         total: summary.teams[i].total,
                         trade: summary.teams[i].trade,
+                        picks: summary.teams[i].picks,
                         other: i === 0 ? 1 : 0  // Index of other team
                     };
                 }
@@ -41,9 +42,9 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
 
     // Validate that the stored player IDs correspond with the active team ID
     function validateSavedPids(cb) {
-        trade.getPlayers(function (userPids, otherPids) {
-            trade.updatePlayers(userPids, otherPids, function (userPids, otherPids) {
-                cb(userPids, otherPids);
+        trade.getPlayers(function (userPids, otherPids, userDpids, otherDpids) {
+            trade.updatePlayers(userPids, otherPids, userDpids, otherDpids, function (userPids, otherPids, userDpids, otherDpids) {
+                cb(userPids, otherPids, userDpids, otherDpids);
             });
         });
     }
@@ -130,7 +131,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
 
         deferred = $.Deferred();
 
-        validateSavedPids(function (userPids, otherPids) {
+        validateSavedPids(function (userPids, otherPids, userDpids, otherDpids) {
             trade.getOtherTid(function (otherTid) {
                 var playerStore;
 
@@ -208,9 +209,11 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
 
                                 vars = {
                                     salaryCap: g.salaryCap / 1000,
+                                    userDpids: userDpids,
                                     userPicks: userPicks,
                                     userPids: userPids,
                                     userRoster: userRoster,
+                                    otherDpids: otherDpids,
                                     otherPicks: otherPicks,
                                     otherPids: otherPids,
                                     otherRoster: otherRoster,
@@ -261,7 +264,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
         rosterCheckboxesOther = $("#roster-other input");
 
         $("#rosters").on("click", "input", function (event) {
-            var otherPids, serialized, userPids;
+            var otherDpids, otherPids, serialized, userDpids, userPids;
 
             vm.summary.enablePropose(false); // Will be reenabled in updateSummary, if appropriate
             vm.message("");
@@ -269,13 +272,18 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
             serialized = $("#rosters").serializeArray();
             userPids = _.map(_.pluck(_.filter(serialized, function (o) { return o.name === "user-pids"; }), "value"), Math.floor);
             otherPids = _.map(_.pluck(_.filter(serialized, function (o) { return o.name === "other-pids"; }), "value"), Math.floor);
+            userDpids = _.map(_.pluck(_.filter(serialized, function (o) { return o.name === "user-dpids"; }), "value"), Math.floor);
+            otherDpids = _.map(_.pluck(_.filter(serialized, function (o) { return o.name === "other-dpids"; }), "value"), Math.floor);
+console.log(userDpids);
 
-            trade.updatePlayers(userPids, otherPids, function (userPids, otherPids) {
+            trade.updatePlayers(userPids, otherPids, userDpids, otherDpids, function (userPids, otherPids, userDpids, otherDpids) {
                 var vars;
 
                 vars = {};
                 vars.userPids = userPids;
                 vars.otherPids = otherPids;
+                vars.userDpids = userDpids;
+                vars.otherDpids = otherDpids;
 
                 updateSummary(vars, function (vars) {
                     var found, i, j;

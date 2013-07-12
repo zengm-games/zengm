@@ -4,14 +4,13 @@ GOALS FOR 3.1.0
 Main focus: AI improvements
 
 trade draft picks
-  draftPicks object store: tid, originalTid, round, season
-    add another year after every draft
-    index on tid for trades
+  fancy scrolling of summary box
+  come up with an estimate of the pick's value based on the current state of the team
+  actually implement trading draft picks
+  draftPicks object store: add another year after every draft
   convenience function to display either "ATL" if it's tid and originalTid are 0, or something like "ATL (from BOS)"
     need to store originalAbbrev in player.draft
-  otherPicks and userPicks containing the year and the round
-  come up with an estimate of the pick's value based on the current state of the team
-  keep a record of traded picks somewhere and use this when setting the draft order
+    show in current draft and summary
 team "value" and changes in team value. have a function that will return the change in team value for a given team if an array of players is added to the roster and an array of players is removed from the roster. if positive, then the trade/signing/drafting is good. if comparing multiple options, then the highest value is best.
   depends on team status - rebuildling or contending
   also come up with "value" for draft picks and cash which can be included in trades
@@ -62,6 +61,7 @@ DB CHANGES SINCE 3.0.0
 draft stuff (object store and indexes)
   populate with 4 years starting with g.season (check phase for before/after draft)
 draft.originalAbbrev in player?
+userDpids and otherDpids in trade object store
 
 EVENTUALLY
 ----------

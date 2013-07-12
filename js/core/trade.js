@@ -87,7 +87,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
      * @param {Array.<number>} otherPids An array of player ID's representing the players on the other team in the trade.
      * @param {function(Array.<number>, Array.<number>)} cb Callback function. Arguments are the same as the inputs, but with invalid entries removed.
      */
-    function updatePlayers(userPids, otherPids, cb) {
+    function updatePlayers(userPids, otherPids, userDpids, otherDpids, cb) {
         getOtherTid(function (otherTid) {
             var playerStore;
 
@@ -112,9 +112,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                 }
                 userPids = userPidsGood;
                 playerStore.index("tid").getAll(otherTid).onsuccess = function (event) {
-                    var i, j, players, otherPidsGood, tx, updated;
-
-                    updated = false; // Has the trade actually changed?
+                    var draftPickStore, i, j, players, otherPidsGood;
 
                     otherPidsGood = [];
                     players = event.target.result;
@@ -128,34 +126,77 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                     }
                     otherPids = otherPidsGood;
 
-                    tx = g.dbl.transaction("trade", "readwrite");
-                    tx.objectStore("trade").openCursor(0).onsuccess = function (event) {
-                        var cursor, tr;
+                    draftPickStore = g.dbl.transaction("draftPicks").objectStore("draftPicks");
+                    draftPickStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
+                        var i, j, picks, userDpidsGood;
 
-                        cursor = event.target.result;
-                        tr = cursor.value;
+                        userDpidsGood = [];
+                        picks = event.target.result;
+                        for (i = 0; i < picks.length; i++) {
+                            for (j = 0; j < userDpids.length; j++) {
+                                if (picks[i].dpid === userDpids[j]) {
+                                    userDpidsGood.push(userDpids[j]);
+                                    break;
+                                }
+                            }
+                        }
+                        userDpids = userDpidsGood;
 
-                        if (userPids.toString() !== tr.userPids.toString()) {
-                            tr.userPids = userPids;
-                            updated = true;
-                        }
-                        if (otherPids.toString() !== tr.otherPids.toString()) {
-                            tr.otherPids = otherPids;
-                            updated = true;
-                        }
+                        draftPickStore.index("tid").getAll(otherTid).onsuccess = function (event) {
+                            var i, j, picks, otherDpidsGood, tx, updated;
 
-                        if (updated) {
-                            cursor.update(tr);
-                        }
-                    };
-                    tx.oncomplete = function () {
-                        if (updated) {
-                            db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                                cb(userPids, otherPids);
-                            });
-                        } else {
-                            cb(userPids, otherPids);
-                        }
+                            updated = false; // Has the trade actually changed?
+
+                            otherDpidsGood = [];
+                            picks = event.target.result;
+                            for (i = 0; i < picks.length; i++) {
+                                for (j = 0; j < otherDpids.length; j++) {
+                                    if (picks[i].dpid === otherDpids[j]) {
+                                        otherDpidsGood.push(otherDpids[j]);
+                                        break;
+                                    }
+                                }
+                            }
+                            otherDpids = otherDpidsGood;
+
+                            tx = g.dbl.transaction("trade", "readwrite");
+                            tx.objectStore("trade").openCursor(0).onsuccess = function (event) {
+                                var cursor, tr;
+
+                                cursor = event.target.result;
+                                tr = cursor.value;
+
+                                if (userPids.toString() !== tr.userPids.toString()) {
+                                    tr.userPids = userPids;
+                                    updated = true;
+                                }
+                                if (otherPids.toString() !== tr.otherPids.toString()) {
+                                    tr.otherPids = otherPids;
+                                    updated = true;
+                                }
+                                if (userDpids.toString() !== tr.userDpids.toString()) {
+                                    tr.userDpids = userDpids;
+                                    updated = true;
+                                }
+                                if (otherDpids.toString() !== tr.otherDpids.toString()) {
+                                    tr.otherDpids = otherDpids;
+                                    updated = true;
+                                }
+
+                                if (updated) {
+                                    cursor.update(tr);
+                                }
+                            };
+                            tx.oncomplete = function () {
+                                if (updated) {
+                                    db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                                        cb(userPids, otherPids, userDpids, otherDpids);
+                                    });
+                                } else {
+                                    cb(userPids, otherPids, userDpids, otherDpids);
+                                }
+                            };
+                        };
                     };
                 };
             };
@@ -173,7 +214,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
             var tr;
 
             tr = event.target.result;
-            cb(tr.userPids, tr.otherPids);
+            cb(tr.userPids, tr.otherPids, tr.userDpids, tr.otherDpids);
         };
     }
 
@@ -187,18 +228,19 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
      * @param {Array.<number>} otherPids An array of player ID's representing the players on the other team in the trade.
      * @param {function(Object)} cb Callback function. The argument is an object containing the trade summary.
      */
-    function summary(otherTid, userPids, otherPids, cb) {
-        var i, done, pids, players, s, tids, transaction;
+    function summary(otherTid, userPids, otherPids, userDpids, otherDpids, cb) {
+        var i, done, dpids, pids, players, s, tids, transaction;
 
         tids = [g.userTid, otherTid];
         pids = [userPids, otherPids];
+        dpids = [userDpids, otherDpids];
 
         s = {teams: [], warning: null};
         for (i = 0; i < 2; i++) {
             s.teams.push({trade: [], total: 0, payrollAfterTrade: 0, name: ""});
         }
 
-        transaction = g.dbl.transaction(["players", "releasedPlayers"]);
+        transaction = g.dbl.transaction(["draftPicks", "players", "releasedPlayers"]);
 
         // Calculate properties of the trade
         done = 0;
@@ -206,8 +248,6 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
         for (i = 0; i < 2; i++) {
             (function (i) {
                 transaction.objectStore("players").index("tid").getAll(tids[i]).onsuccess = function (event) {
-                    var j, k, overCap, overRosterLimit, ratios, teams;
-
                     players[i] = player.filter(event.target.result, {
                         attrs: ["pid", "name", "contract"],
                         season: g.season,
@@ -217,78 +257,90 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                     s.teams[i].trade = _.filter(players[i], function (player) { return pids[i].indexOf(player.pid) >= 0; });
                     s.teams[i].total = _.reduce(s.teams[i].trade, function (memo, player) { return memo + player.contract.amount; }, 0);
 
-                    done += 1;
-                    if (done === 2) {
-                        done = 0;
+                    transaction.objectStore("draftPicks").index("tid").getAll(tids[i]).onsuccess = function (event) {
+                        var j, k, overCap, overRosterLimit, picks, ratios, teams;
 
-                        teams = helpers.getTeams();
-
-                        // Test if any warnings need to be displayed
-                        overCap = [false, false];
-                        overRosterLimit = [false, false];
-                        ratios = [0, 0];
-                        for (j = 0; j < 2; j++) {
-                            if (j === 0) {
-                                k = 1;
-                            } else if (j === 1) {
-                                k = 0;
+                        picks = event.target.result;
+                        s.teams[i].picks = [];
+                        for (j = 0; j < picks.length; j++) {
+                            if (dpids[i].indexOf(picks[j].dpid) >= 0) {
+                                s.teams[i].picks.push({desc: picks[j].season + " " + (picks[j].round === 1 ? "1st" : "2nd") + " round pick (" + picks[j].originalAbbrev + ")"});
                             }
+                        }
 
-                            s.teams[j].name = teams[tids[j]].region + " " + teams[tids[j]].name;
+                        done += 1;
+                        if (done === 2) {
+                            done = 0;
 
-                            if (players[j].length - pids[j].length + pids[k].length > 15) {
-                                overRosterLimit[j] = true;
-                            }
+                            teams = helpers.getTeams();
 
-                            if (s.teams[j].total > 0) {
-                                ratios[j] = Math.floor((100 * s.teams[k].total) / s.teams[j].total);
-                            } else if (s.teams[k].total > 0) {
-                                ratios[j] = Infinity;
-                            } else {
-                                ratios[j] = 100;
-                            }
+                            // Test if any warnings need to be displayed
+                            overCap = [false, false];
+                            overRosterLimit = [false, false];
+                            ratios = [0, 0];
+                            for (j = 0; j < 2; j++) {
+                                if (j === 0) {
+                                    k = 1;
+                                } else if (j === 1) {
+                                    k = 0;
+                                }
 
-                            (function (j) {
-                                db.getPayroll(transaction, tids[j], function (payroll) {
-                                    var k;
+                                s.teams[j].name = teams[tids[j]].region + " " + teams[tids[j]].name;
 
-                                    if (j === 0) {
-                                        k = 1;
-                                    } else if (j === 1) {
-                                        k = 0;
-                                    }
+                                if (players[j].length - pids[j].length + pids[k].length > 15) {
+                                    overRosterLimit[j] = true;
+                                }
 
-                                    s.teams[j].payrollAfterTrade = payroll / 1000 + s.teams[k].total - s.teams[j].total;
-                                    if (s.teams[j].payrollAfterTrade > g.salaryCap / 1000) {
-                                        overCap[j] = true;
-                                    }
+                                if (s.teams[j].total > 0) {
+                                    ratios[j] = Math.floor((100 * s.teams[k].total) / s.teams[j].total);
+                                } else if (s.teams[k].total > 0) {
+                                    ratios[j] = Infinity;
+                                } else {
+                                    ratios[j] = 100;
+                                }
 
-                                    done += 1;
-                                    if (done === 2) {
-                                        if (overRosterLimit.indexOf(true) >= 0) {
-                                            // Which team is at fault?;
-                                            if (overRosterLimit[0] === true) {
-                                                j = 0;
-                                            } else {
-                                                j = 1;
-                                            }
-                                            s.warning = "This trade would put the " + s.teams[j].name + " over the maximum roster size limit of 15 players.";
-                                        } else if ((ratios[0] > 125 && overCap[0] === true) || (ratios[1] > 125 && overCap[1] === true)) {
-                                            // Which team is at fault?;
-                                            if (ratios[0] > 125) {
-                                                j = 0;
-                                            } else {
-                                                j = 1;
-                                            }
-                                            s.warning = "The " + s.teams[j].name + " are over the salary cap, so the players it receives must have a combined salary of less than 125% of the salaries of the players it trades away.  Currently, that value is " + ratios[j] + "%.";
+                                (function (j) {
+                                    db.getPayroll(transaction, tids[j], function (payroll) {
+                                        var k;
+
+                                        if (j === 0) {
+                                            k = 1;
+                                        } else if (j === 1) {
+                                            k = 0;
                                         }
 
-                                        cb(s);
-                                    }
-                                });
-                            }(j));
+                                        s.teams[j].payrollAfterTrade = payroll / 1000 + s.teams[k].total - s.teams[j].total;
+                                        if (s.teams[j].payrollAfterTrade > g.salaryCap / 1000) {
+                                            overCap[j] = true;
+                                        }
+
+                                        done += 1;
+                                        if (done === 2) {
+                                            if (overRosterLimit.indexOf(true) >= 0) {
+                                                // Which team is at fault?;
+                                                if (overRosterLimit[0] === true) {
+                                                    j = 0;
+                                                } else {
+                                                    j = 1;
+                                                }
+                                                s.warning = "This trade would put the " + s.teams[j].name + " over the maximum roster size limit of 15 players.";
+                                            } else if ((ratios[0] > 125 && overCap[0] === true) || (ratios[1] > 125 && overCap[1] === true)) {
+                                                // Which team is at fault?;
+                                                if (ratios[0] > 125) {
+                                                    j = 0;
+                                                } else {
+                                                    j = 1;
+                                                }
+                                                s.warning = "The " + s.teams[j].name + " are over the salary cap, so the players it receives must have a combined salary of less than 125% of the salaries of the players it trades away.  Currently, that value is " + ratios[j] + "%.";
+                                            }
+
+                                            cb(s);
+                                        }
+                                    });
+                                }(j));
+                            }
                         }
-                    }
+                    };
                 };
             }(i));
         }
@@ -312,6 +364,8 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
             tr = cursor.value;
             tr.userPids = [];
             tr.otherPids = [];
+            tr.userDpids = [];
+            tr.otherDpids = [];
             cursor.update(tr);
         };
         tx.oncomplete = function () {

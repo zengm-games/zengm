@@ -16,7 +16,7 @@
         <tr><th></th><th width="100%">Draft Picks</th></tr>
       </thead>
       <tbody data-bind="foreach: otherPicks">
-        <td><input name="other-dpids" type="checkbox" data-bind="attr: {value: dpid}"></td><td data-bind="text: desc"></td>
+        <td><input name="other-dpids" type="checkbox" data-bind="attr: {value: dpid}, checked: $root.otherDpids.indexOf(dpid) >= 0"></td><td data-bind="text: desc"></td>
       </tbody>
       </table>
       </p>
@@ -33,7 +33,7 @@
         <tr><th></th><th width="100%">Draft Picks</th></tr>
       </thead>
       <tbody data-bind="foreach: userPicks">
-        <td><input name="user-dpids" type="checkbox" data-bind="attr: {value: dpid}"></td><td data-bind="text: desc"></td>
+        <td><input name="user-dpids" type="checkbox" data-bind="attr: {value: dpid}, checked: $root.userDpids.indexOf(dpid) >= 0"></td><td data-bind="text: desc"></td>
       </tbody>
       </table>
       </p>
@@ -49,12 +49,18 @@
           <!-- ko foreach: trade -->
             <li><a data-bind="attrLeagueUrl: {href: ['player', pid]}, text: name"></a> (<span data-bind="currency: [contract.amount, 'M']"></span>)</li>
           <!-- /ko -->
+          <!-- ko foreach: picks -->
+            <li data-bind="text: desc"></li>
+          <!-- /ko -->
           <li><span data-bind="currency: [total, 'M']"></span> Total</li>
         </ul>
         <h5>Receive:</h5>
         <ul>
           <!-- ko foreach: $root.summary.teams()[other].trade -->
             <li><a data-bind="attrLeagueUrl: {href: ['player', pid]}, text: name"></a> (<span data-bind="currency: [contract.amount, 'M']"></span>)</li>
+          <!-- /ko -->
+          <!-- ko foreach: $root.summary.teams()[other].picks -->
+            <li data-bind="text: desc"></li>
           <!-- /ko -->
           <li><span data-bind="currency: function(){ return [$root.summary.teams()[other].total, 'M']}()"></span></li>
         </ul>

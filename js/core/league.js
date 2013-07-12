@@ -63,7 +63,9 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                             for (round = 1; round <= 2; round++) {
                                 draftPickStore.add({
                                     tid: t,
+                                    abbrev: teams[t].abbrev,
                                     originalTid: t,
+                                    originalAbbrev: teams[t].abbrev,
                                     round: round,
                                     season: g.startingSeason + i
                                 });

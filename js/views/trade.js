@@ -98,7 +98,17 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
     }
 
     mapping = {
+        userPicks: {
+            create: function (options) {
+                return options.data;
+            }
+        },
         userRoster: {
+            create: function (options) {
+                return options.data;
+            }
+        },
+        otherPicks: {
             create: function (options) {
                 return options.data;
             }
@@ -152,7 +162,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
                     }
 
                     playerStore.index("tid").getAll(otherTid).onsuccess = function (event) {
-                        var i, otherRoster, teams;
+                        var draftPickStore, i, otherRoster, teams;
 
                         otherRoster = player.filter(event.target.result, {
                             attrs: attrs,
@@ -172,25 +182,53 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
                             }
                         }
 
-                        vars = {
-                            salaryCap: g.salaryCap / 1000,
-                            userPids: userPids,
-                            otherPids: otherPids,
-                            userRoster: userRoster,
-                            otherRoster: otherRoster,
-                            message: inputs.message
-                        };
+                        draftPickStore = g.dbl.transaction("draftPicks").objectStore("draftPicks");
 
-                        updateSummary(vars, function (vars) {
-                            if (vm.teams.length === 0) {
-                                teams = helpers.getTeams(otherTid);
-                                vars.userTeamName = teams[g.userTid].region + " " + teams[g.userTid].name;
-                                teams.splice(g.userTid, 1);  // Can't trade with yourself
-                                vars.teams = teams;
+                        draftPickStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
+                            var i, userPicks;
+
+                            userPicks = event.target.result;
+                            for (i = 0; i < userPicks.length; i++) {
+                                userPicks[i].desc = userPicks[i].season + " " + (userPicks[i].round === 1 ? "first" : "second") + " round pick";
+                                if (userPicks[i].tid !== userPicks[i].originalTid) {
+                                    userPicks[i].desc += " (from " + userPicks[i].originalAbbrev + ")";
+                                }
                             }
 
-                            deferred.resolve(vars);
-                        });
+                            draftPickStore.index("tid").getAll(otherTid).onsuccess = function (event) {
+                                var i, otherPicks;
+
+                                otherPicks = event.target.result;
+                                for (i = 0; i < otherPicks.length; i++) {
+                                    otherPicks[i].desc = otherPicks[i].season + " " + (otherPicks[i].round === 1 ? "first" : "second") + " round pick";
+                                    if (otherPicks[i].tid !== otherPicks[i].originalTid) {
+                                        otherPicks[i].desc += " (from " + otherPicks[i].originalAbbrev + ")";
+                                    }
+                                }
+
+                                vars = {
+                                    salaryCap: g.salaryCap / 1000,
+                                    userPicks: userPicks,
+                                    userPids: userPids,
+                                    userRoster: userRoster,
+                                    otherPicks: otherPicks,
+                                    otherPids: otherPids,
+                                    otherRoster: otherRoster,
+                                    message: inputs.message
+                                };
+
+                                updateSummary(vars, function (vars) {
+                                    if (vm.teams.length === 0) {
+                                        teams = helpers.getTeams(otherTid);
+                                        vars.userTeamName = teams[g.userTid].region + " " + teams[g.userTid].name;
+                                        teams.splice(g.userTid, 1);  // Can't trade with yourself
+                                        vars.teams = teams;
+                                    }
+
+                                    deferred.resolve(vars);
+                                });
+                            };
+                        };
                     };
                 };
             });

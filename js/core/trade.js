@@ -93,7 +93,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
 
             playerStore = g.dbl.transaction("players").objectStore("players");
 
-            team.valueChange(otherTid, userPids, otherPids, function (dv) {
+            team.valueChange(otherTid, userPids, otherPids, userDpids, otherDpids, function (dv) {
                 console.log(dv / Math.abs(dv) * Math.log(Math.abs(dv)));
             });
 
@@ -410,7 +410,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
 
                     outcome = "rejected"; // Default
 
-                    team.valueChange(otherTid, userPids, otherPids, function (dv) {
+                    team.valueChange(otherTid, userPids, otherPids, userDpids, otherDpids, function (dv) {
                         var draftPickStore, j, playerStore, teams, tx;
 
                         tx = g.dbl.transaction(["draftPicks", "players"], "readwrite");

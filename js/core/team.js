@@ -556,14 +556,17 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
         };
     }
 
-    function valueChange(tid, pidsAdd, pidsRemove, cb) {
+    function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, cb) {
         var add, i, remove, roster, tx;
 
         // Get value and skills for each player on team or involved in the proposed transaction
         roster = [];
         add = [];
         remove = [];
-        tx = g.dbl.transaction("players");
+
+
+        tx = g.dbl.transaction(["draftPicks", "players", "teams"]);
+
         tx.objectStore("players").index("tid").openCursor(tid).onsuccess = function (event) {
             var cursor, p;
 
@@ -602,6 +605,92 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                     contractAmount: p.contract.amount / 1000,
                     age: g.season - p.born.year
                 });
+            };
+        }
+
+        // For each draft pick, estimate its value based on the recent performance of the team
+        if (dpidsAdd.length > 0 || dpidsRemove.length > 0) {
+            // Estimate the order of the picks by team
+            tx.objectStore("teams").getAll().onsuccess = function (event) {
+                var estPicks, estValues, gp, i, rCurrent, rLast, rookieSalaries, s, sorted, t, teams, wps;
+
+                teams = event.target.result;
+
+                wps = []; // Contains estimated winning percentages for all teams by the end of the season
+                for (i = 0; i < teams.length; i++) {
+                    t = teams[i];
+                    if (t.seasons.length === 1) {
+                        // First season
+                        rCurrent = [t.seasons[0].won, t.seasons[0].lost];
+                        rLast = [41, 41];
+                    } else {
+                        // Second (or higher) season
+                        s = t.seasons.length;
+                        rCurrent = [t.seasons[s - 1].won, t.seasons[s - 1].lost];
+                        rLast = [t.seasons[s - 2].won, t.seasons[s - 2].lost];
+                    }
+
+                    gp = rCurrent[0] + rCurrent[1];
+
+                    // If we've played half a season, just use that as an estimate. Otherwise, take a weighted sum of this and last year
+                    if (gp >= 41) {
+                        wps.push(rCurrent[0] / gp);
+                    } else if (gp > 0) {
+                        wps.push((gp / 41 * rCurrent[0] / gp + (41 - gp) / 41 * rLast[0] / 82));
+                    } else {
+                        wps.push(rLast[0] / 82);
+                    }
+                }
+
+                // Get rank order of wps http://stackoverflow.com/a/14834599/786644
+                sorted = wps.slice().sort(function (a, b) { return a - b; });
+                estPicks = wps.slice().map(function (v) { return sorted.indexOf(v) + 1; }); // For each team, what is their estimated draft position?
+
+                // Fix for new leagues - don't base this on record until we have some games played
+                if (gp < 10 && t.seasons.length == 1) {
+                    for (i = 0; i < estPicks.length; i++) {
+                        estPicks[i] = 15;
+                    }
+                }
+
+                rookieSalaries = [5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500]; // Keep in sync with core.draft
+                estValues = [75, 73, 71, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 50, 50, 49, 49, 49, 48, 48, 48, 47, 47, 47, 46, 46, 46, 45, 45, 45, 44, 44, 44, 43, 43, 43, 42, 42, 42, 41, 41, 41, 40, 40, 39, 39, 38, 38, 37, 37]; // This is basically arbitrary
+
+                for (i = 0; i < dpidsAdd.length; i++) {
+                    tx.objectStore("draftPicks").get(dpidsAdd[i]).onsuccess = function (event) {
+                        var dp, estPick, seasons;
+
+                        dp = event.target.result;
+                        estPick = estPicks[dp.originalTid];
+                        seasons = dp.season - g.season;
+                        estPick = Math.round(estPick * (5 - seasons) / 5 + 15 * seasons / 5);
+
+                        add.push({
+                            value: estValues[estPick - 1 + 30 * (dp.round - 1)],
+                            skills: [],
+                            contractAmount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)] / 1000,
+                            age: 19
+                        });
+                    };
+                }
+
+                for (i = 0; i < dpidsRemove.length; i++) {
+                    tx.objectStore("draftPicks").get(dpidsRemove[i]).onsuccess = function (event) {
+                        var dp, estPick, seasons;
+
+                        dp = event.target.result;
+                        estPick = estPicks[dp.originalTid];
+                        seasons = dp.season - g.season;
+                        estPick = Math.round(estPick * (5 - seasons) / 5 + 15 * seasons / 5);
+
+                        remove.push({
+                            value: estValues[estPick - 1 + 30 * (dp.round - 1)],
+                            skills: [],
+                            contractAmount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)] / 1000,
+                            age: 19
+                        });
+                    };
+                }
             };
         }
 

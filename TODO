@@ -6,7 +6,10 @@ Main focus: AI improvements
 trade draft picks
   fancy scrolling of summary box
   come up with an estimate of the pick's value based on the current state of the team
-  draftPicks object store: add another year after every draft
+    based on record
+      if less than halfway into season, weighted sum of current record and last season's record compared against other teams to project ranking. otherwise, just use this season
+        similar to core.draft.genOrder, have to read the record of every team
+      treat value of the pick as value of a 19 year old that is a little above average for that position in the draft
 team "value" and changes in team value. have a function that will return the change in team value for a given team if an array of players is added to the roster and an array of players is removed from the roster. if positive, then the trade/signing/drafting is good. if comparing multiple options, then the highest value is best.
   depends on team status - rebuildling or contending
   also come up with "value" for draft picks and cash which can be included in trades
@@ -56,7 +59,7 @@ DB CHANGES SINCE 3.0.0
 
 draft stuff (object store and indexes)
   populate with 4 years starting with g.season (check phase for before/after draft)
-draft.originalAbbrev in player?
+draft.originalAbbrev and originalTid in player
 userDpids and otherDpids in trade object store
 
 EVENTUALLY

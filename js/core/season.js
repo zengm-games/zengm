@@ -806,10 +806,31 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
     }
 
     function newPhaseAfterDraft(cb) {
-        var phaseText;
+        var draftPickStore, phaseText, round, t, teams, tx;
 
         phaseText = g.season + " after draft";
-        newPhaseCb(g.PHASE.AFTER_DRAFT, phaseText, cb, undefined, ["playerMovement"]);
+
+        teams = helpers.getTeams();
+
+        // Add a new set of draft picks
+        tx = g.dbl.transaction("draftPicks", "readwrite");
+        draftPickStore = tx.objectStore("draftPicks");
+        for (t = 0; t < 30; t++) {
+            for (round = 1; round <= 2; round++) {
+                draftPickStore.add({
+                    tid: t,
+                    abbrev: teams[t].abbrev,
+                    originalTid: t,
+                    originalAbbrev: teams[t].abbrev,
+                    round: round,
+                    season: g.season + 4
+                });
+            }
+        }
+
+        tx.oncomplete = function () {
+            newPhaseCb(g.PHASE.AFTER_DRAFT, phaseText, cb, undefined, ["playerMovement"]);
+        };
     }
 
     function newPhaseResignPlayers(cb) {

@@ -497,7 +497,6 @@ define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
      * @return {string} HTML link(s).
      */
     function draftAbbrev(abbrev, originalAbbrev, season) {
-console.log(season);
         if (abbrev === originalAbbrev) {
             return '<a href="' + leagueUrl(["roster", abbrev, season]) + '">' + abbrev + '</a>';
         }

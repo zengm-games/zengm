@@ -79,14 +79,13 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
             });
         } else if (req.params.propose !== undefined) {
             // Propose trade
-            
             trade.propose(function (accepted, message) {
                 ui.realtimeUpdate([], helpers.leagueUrl(["trade"]), undefined, {message: message});
             });
         } else if (req.params.ask !== undefined) {
             // What would make this deal work?
-            askButtonEl = document.getElementById("ask-button")
-            askButtonEl.textContent = "Thinking...";
+            askButtonEl = document.getElementById("ask-button");
+            askButtonEl.textContent = "Waiting for answer...";
             askButtonEl.disabled = true;
             trade.makeItWork(function (message) {
                 ui.realtimeUpdate([], helpers.leagueUrl(["trade"]), undefined, {message: message});

@@ -566,8 +566,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                                     done += 1;
                                     if (done === assets.length) {
                                         // Add the best asset to the trade
-                                        assets.sort(function (a, b) { return b.dv - a.dv });
-                                        console.log(assets);
+                                        assets.sort(function (a, b) { return b.dv - a.dv; });
 
                                         // Find minimum value that is greater than 0
                                         for (j = 0; j < assets.length; j++) {

@@ -28,6 +28,7 @@ trades
       "I could really use a good rebounder."
 trades between AI teams
   each day, pick two random teams. if a trade can be found that both teams like, do it
+    generalize core.trade.makeItWork
   transaction log is necessary to keep tabs on this stuff
       ...
 user can't just sign all the free agents before AI teams

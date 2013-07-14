@@ -90,7 +90,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
             askButtonEl.disabled = true;
             trade.makeItWork(function (message) {
                 ui.realtimeUpdate([], helpers.leagueUrl(["trade"]), undefined, {message: message});
-                askButtonEl.textContent = "What would make this trade work?";
+                askButtonEl.textContent = "What would make you agree to this deal?";
                 askButtonEl.disabled = false;
             });
         } else if (newOtherTid !== null || pid !== null) {

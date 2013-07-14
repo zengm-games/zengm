@@ -3,16 +3,6 @@ GOALS FOR 3.1.0
 
 Main focus: AI improvements
 
-"What would make this trade work?" button
-  Start by testing every player/pick that the team has to find the minimal one that tilts the traid towards the AI.
-  If none is big enough, add the biggest and continue calling recursively
-    need to keep track of original trade to revert if none is ever found
-  keep doing this until either a good trade is found or all assets on the user's team are exhausted.
-  then, depending on whether this trade is feasible, display a message to the user
-    found a plausible trade: "How does this sound?"
-    found a plausible trade that runs into cap/roster size issues: "Something like this would work if you can figure out how to get it done without breaking any rules."
-    nothing: "I can\'t afford to give up so much."
-  button should only be active when trade is non-empty
 team "value" and changes in team value
   depends on team status - rebuildling or contending
   use core.team.valueChange for AI teams drafting, AI teams signing free agents

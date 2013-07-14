@@ -62,7 +62,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
     }
 
     function post(req) {
-        var newOtherTid, out, pid;
+        var askButtonEl, newOtherTid, out, pid;
 
         pid = req.params.pid !== undefined ? parseInt(req.params.pid, 10) : null;
         if (req.raw.abbrev !== undefined) {
@@ -79,13 +79,19 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
             });
         } else if (req.params.propose !== undefined) {
             // Propose trade
+            
             trade.propose(function (accepted, message) {
                 ui.realtimeUpdate([], helpers.leagueUrl(["trade"]), undefined, {message: message});
             });
         } else if (req.params.ask !== undefined) {
             // What would make this deal work?
+            askButtonEl = document.getElementById("ask-button")
+            askButtonEl.textContent = "Thinking...";
+            askButtonEl.disabled = true;
             trade.makeItWork(function (message) {
                 ui.realtimeUpdate([], helpers.leagueUrl(["trade"]), undefined, {message: message});
+                askButtonEl.textContent = "What would make this trade work?";
+                askButtonEl.disabled = false;
             });
         } else if (newOtherTid !== null || pid !== null) {
             // Start new trade with team or for player

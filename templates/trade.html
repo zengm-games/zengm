@@ -79,6 +79,11 @@
         <button type="submit" class="btn btn-large btn-primary" data-bind="enable: summary.enablePropose">Propose Trade</button>
       </form>
 
+      <form method="POST" id="propose-trade" data-bind="attrLeagueUrl: {action: ['trade']}">
+        <input type="hidden" name="ask" value="1">
+        <button type="submit" class="btn">What would make this trade work?</button>
+      </form>
+
       <form method="POST" id="clear-trade" data-bind="attrLeagueUrl: {action: ['trade']}">
         <input type="hidden" name="clear" value="1">
         <button type="submit" class="btn">Clear Trade</button>

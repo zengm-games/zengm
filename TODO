@@ -3,20 +3,19 @@ GOALS FOR 3.1.0
 
 Main focus: AI improvements
 
-trade draft picks
-  fancy scrolling of summary box
-team "value" and changes in team value. have a function that will return the change in team value for a given team if an array of players is added to the roster and an array of players is removed from the roster. if positive, then the trade/signing/drafting is good. if comparing multiple options, then the highest value is best.
+"What would make this trade work?" button
+  Start by testing every player/pick that the team has to find the minimal one that tilts the traid towards the AI.
+  If none is big enough, add the biggest and continue calling recursively
+    need to keep track of original trade to revert if none is ever found
+  keep doing this until either a good trade is found or all assets on the user's team are exhausted.
+  then, depending on whether this trade is feasible, display a message to the user
+    found a plausible trade: "How does this sound?"
+    found a plausible trade that runs into cap/roster size issues: "Something like this would work if you can figure out how to get it done without breaking any rules."
+    nothing: "I can\'t afford to give up so much."
+  button should only be active when trade is non-empty
+team "value" and changes in team value
   depends on team status - rebuildling or contending
-  also come up with "value" for draft picks and cash which can be included in trades
   use core.team.valueChange for AI teams drafting, AI teams signing free agents
-  algorithm
-    weighted sum of different components, based on strategy:
-      total player exp(value) difference
-      skills added (weight by player value... no need adding a shooter who never plays)
-      contracts
-      youth (weight by player value)
-      value of draft picks (est based on other team's record)
-      cash
 strategies of AI teams
   contending
     win games - if losing too much and players are aging, then switch
@@ -32,13 +31,8 @@ strategies of AI teams
   when to switch between these strategies? or should it even be binary? maybe just have it as a continuous function of the team's roster, finances, and performance. then maybe put it through a sigmoidal function to bias a bit towards extremes
   should influence team.valueChange but not player.value
 trades
-  cash
-    otherCash and userCash containing the amount
-    estimate value of cash - different for different teams? depending on cash, net profit recently, and market size
-    upper limit? what is NBA rule?
   more feedback from AI
     if trade is close/far from working, return different messages
-    "What would make this deal work?" button
     display some indication of what a team wants to do on the trade view, e.g.
       "I need to cut my payroll and start making more money."
       "I could really use a good rebounder."
@@ -47,7 +41,7 @@ trades between AI teams
   transaction log is necessary to keep tabs on this stuff
       ...
 user can't just sign all the free agents before AI teams
-"coaches" should factor in synergy
+"coaches" should factor in synergy in gameSim substitutions
 
 DB CHANGES SINCE 3.0.0
 ----------------------
@@ -60,7 +54,13 @@ userDpids and otherDpids in trade object store
 EVENTUALLY
 ----------
 
-refactor core.trade. it's an utter mess.
+trades
+  fancy scrolling of summary box, or some better UI
+  refactor core.trade. it's an utter mess.
+  cash
+    otherCash and userCash containing the amount
+    estimate value of cash - different for different teams? depending on cash, net profit recently, and market size
+    upper limit? what is NBA rule?
 show championships in awards on player pages
 all star game
 some players foul way too much

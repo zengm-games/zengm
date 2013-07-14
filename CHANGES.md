@@ -6,6 +6,7 @@ This is a list of **only the major changes** in each version.
 
 - Player contract demands are based on ratings and stats, not just ratings
 - Future draft picks can be traded
+- "What would make this trade work?" button
 
 # 3.0.0 (2013-06-23)
 

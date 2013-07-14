@@ -82,6 +82,11 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
             trade.propose(function (accepted, message) {
                 ui.realtimeUpdate([], helpers.leagueUrl(["trade"]), undefined, {message: message});
             });
+        } else if (req.params.ask !== undefined) {
+            // What would make this deal work?
+            trade.makeItWork(function (message) {
+                ui.realtimeUpdate([], helpers.leagueUrl(["trade"]), undefined, {message: message});
+            });
         } else if (newOtherTid !== null || pid !== null) {
             // Start new trade with team or for player
             trade.create(newOtherTid, pid, function () {
@@ -274,7 +279,6 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
             otherPids = _.map(_.pluck(_.filter(serialized, function (o) { return o.name === "other-pids"; }), "value"), Math.floor);
             userDpids = _.map(_.pluck(_.filter(serialized, function (o) { return o.name === "user-dpids"; }), "value"), Math.floor);
             otherDpids = _.map(_.pluck(_.filter(serialized, function (o) { return o.name === "other-dpids"; }), "value"), Math.floor);
-console.log(userDpids);
 
             trade.updatePlayers(userPids, otherPids, userDpids, otherDpids, function (userPids, otherPids, userDpids, otherDpids) {
                 var vars;

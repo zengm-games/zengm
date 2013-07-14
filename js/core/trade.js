@@ -381,7 +381,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
      * Before proposing the trade, the trade is validated to ensure that all player IDs match up with team IDs.
      * 
      * @memberOf core.trade
-     * @param {function(boolean, string)} cb Callback function. The first argument is a boolean for whether the trade was accepted or not. The second argumetn is a string containing a message to be dispalyed to the user.
+     * @param {function(boolean, string)} cb Callback function. The first argument is a boolean for whether the trade was accepted or not. The second argument is a string containing a message to be dispalyed to the user.
      */
     function propose(cb) {
         if (g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.PLAYOFFS) {
@@ -483,6 +483,18 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
         });
     }
 
+    /**
+     * Make a trade work
+     *
+     * Have the AI add players/picks until they like the deal.
+     *
+     * @memberOf core.trade
+     * @param {function(boolean, string)} cb Callback function. The argument is a string containing a message to be dispalyed to the user, as if it came from the AI GM.
+     */
+    function makeItWork(cb) {
+        cb('"I can\'t afford to trade away so much."');
+    }
+
     return {
         create: create,
         getOtherTid: getOtherTid,
@@ -490,6 +502,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
         getPlayers: getPlayers,
         summary: summary,
         clear: clear,
-        propose: propose
+        propose: propose,
+        makeItWork: makeItWork
     };
 });

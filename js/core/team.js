@@ -203,7 +203,8 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                     amount: helpers.round(900 + 900 * (30 - tm.popRank) / 29) * 10,
                     rank: tm.popRank
                 }
-            }
+            },
+            strategy: Math.random() > 0.5 ? "contending" : "rebuilding"
         };
 
         t = addSeasonRow(t);

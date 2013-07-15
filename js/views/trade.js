@@ -217,29 +217,36 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
                                     }
                                 }
 
-                                vars = {
-                                    salaryCap: g.salaryCap / 1000,
-                                    userDpids: userDpids,
-                                    userPicks: userPicks,
-                                    userPids: userPids,
-                                    userRoster: userRoster,
-                                    otherDpids: otherDpids,
-                                    otherPicks: otherPicks,
-                                    otherPids: otherPids,
-                                    otherRoster: otherRoster,
-                                    message: inputs.message
+                                g.dbl.transaction("teams").objectStore("teams").get(otherTid).onsuccess = function (event) {
+                                    var strategy;
+
+                                    strategy = event.target.result.strategy;
+
+                                    vars = {
+                                        salaryCap: g.salaryCap / 1000,
+                                        userDpids: userDpids,
+                                        userPicks: userPicks,
+                                        userPids: userPids,
+                                        userRoster: userRoster,
+                                        otherDpids: otherDpids,
+                                        otherPicks: otherPicks,
+                                        otherPids: otherPids,
+                                        otherRoster: otherRoster,
+                                        message: inputs.message,
+                                        strategy: strategy
+                                    };
+
+                                    updateSummary(vars, function (vars) {
+                                        if (vm.teams.length === 0) {
+                                            teams = helpers.getTeams(otherTid);
+                                            vars.userTeamName = teams[g.userTid].region + " " + teams[g.userTid].name;
+                                            teams.splice(g.userTid, 1);  // Can't trade with yourself
+                                            vars.teams = teams;
+                                        }
+
+                                        deferred.resolve(vars);
+                                    });
                                 };
-
-                                updateSummary(vars, function (vars) {
-                                    if (vm.teams.length === 0) {
-                                        teams = helpers.getTeams(otherTid);
-                                        vars.userTeamName = teams[g.userTid].region + " " + teams[g.userTid].name;
-                                        teams.splice(g.userTid, 1);  // Can't trade with yourself
-                                        vars.teams = teams;
-                                    }
-
-                                    deferred.resolve(vars);
-                                });
                             };
                         };
                     };

@@ -13,12 +13,14 @@ strategies of AI teams
     make a profit - if losing too much money, then switch
     trade away draft picks
     resign free agents, going over the cap
+    sign big contract free agents
   rebuilding
     dump big contracts
     dump older players
     position team so there will be a lot of cap space in a given year
     switch to "win now" if enough cheap/young talent is accumulated
     trade for draft picks
+    sign only short contracts with free agents
   when to switch between these strategies? only rarely.
     factors to make you want to switch to rebuilding
       age of players with high ratings/salaries
@@ -27,9 +29,11 @@ strategies of AI teams
       next season, a star on a rookie contract will need an extension
       increasing success (if abrupt, definitely switch; if gradual, still take it into consideration depending on other factors)
   should influence team.valueChange but not player.value
+  come up with a better way of initializing it
 team "value" and changes in team value
   depends on team status - rebuildling or contending
   use core.team.valueChange for AI teams drafting, AI teams signing free agents, AI teams resigning their own players
+    maybe not for drafting
 trades
   more feedback from AI
     if trade is close/far from working, return different messages

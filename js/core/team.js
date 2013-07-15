@@ -631,7 +631,11 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                                 rCurrent = [0, 82];
                             }
                         }
-                        rLast = [32, 50]; // Assume a losing season to minimize bad trades
+                        if (i === g.userTid) {
+                            rLast = [50, 32];
+                        } else {
+                            rLast = [32, 50]; // Assume a losing season to minimize bad trades
+                        }
                     } else {
                         // Second (or higher) season
                         s = t.seasons.length;
@@ -655,6 +659,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                 sorted = wps.slice().sort(function (a, b) { return a - b; });
                 estPicks = wps.slice().map(function (v) { return sorted.indexOf(v) + 1; }); // For each team, what is their estimated draft position?
 
+                // Not needed because of rCurrent override above
                 /*// Fix for new leagues - don't base this on record until we have some games played, and don't let the user's picks be overvalued
                 if (gp < 10 && t.seasons.length == 1) {
                     for (i = 0; i < estPicks.length; i++) {

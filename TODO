@@ -3,9 +3,6 @@ GOALS FOR 3.1.0
 
 Main focus: AI improvements
 
-team "value" and changes in team value
-  depends on team status - rebuildling or contending
-  use core.team.valueChange for AI teams drafting, AI teams signing free agents
 strategies of AI teams
   contending
     win games - if losing too much and players are aging, then switch
@@ -18,8 +15,12 @@ strategies of AI teams
     position team so there will be a lot of cap space in a given year
     switch to "win now" if enough cheap/young talent is accumulated
     trade for draft picks
-  when to switch between these strategies? or should it even be binary? maybe just have it as a continuous function of the team's roster, finances, and performance. then maybe put it through a sigmoidal function to bias a bit towards extremes
+  when to switch between these strategies? or should it even be binary? maybe just have it as a continuous function of the team's roster, finances, and performance.then maybe put it through a sigmoidal function to bias a bit towards extremes
+    probability to be contending: last year's winning percentage, averaged with either 0 or 1 depending on if below/above 0.5
   should influence team.valueChange but not player.value
+team "value" and changes in team value
+  depends on team status - rebuildling or contending
+  use core.team.valueChange for AI teams drafting, AI teams signing free agents, AI teams resigning their own players
 trades
   more feedback from AI
     if trade is close/far from working, return different messages
@@ -33,6 +34,11 @@ trades between AI teams
       ...
 user can't just sign all the free agents before AI teams
 "coaches" should factor in synergy in gameSim substitutions
+IE10 support, if posible
+  davisjs for knockoutjs links in IE10
+    elem.host comes up blank in originChecks
+    http://stackoverflow.com/q/17641380/786644
+      note workarounds there - maybe just do them?
 
 DB CHANGES SINCE 3.0.0
 ----------------------
@@ -52,6 +58,9 @@ trades
     otherCash and userCash containing the amount
     estimate value of cash - different for different teams? depending on cash, net profit recently, and market size
     upper limit? what is NBA rule?
+  ask button
+    should there be another one to see what the team will give up for a player? like in civ4, and then only have one active at a time?
+    be more careful about UI, such as when to make button visible - make it like civ4?
 show championships in awards on player pages
 all star game
 some players foul way too much
@@ -135,10 +144,6 @@ force roster reorder handles to stay big even if window is small
 reassess ui module. delete stuff like ui.dropdown. move other functions elsewhere?
   what is the difference between util.viewHelpers, views.components, and ui?
 can i get rid of js/api.js?
-IE10 support, if posible
-  gameSim crashes browser
-  davisjs for knockoutjs links in IE10
-    elem.host comes up blank in originChecks
 core.trade refactoring
   validateSavedTids crap should be in trade.js.
   trade.summary stuff should be automatic and stored in tradeStore

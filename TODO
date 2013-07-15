@@ -15,8 +15,13 @@ strategies of AI teams
     position team so there will be a lot of cap space in a given year
     switch to "win now" if enough cheap/young talent is accumulated
     trade for draft picks
-  when to switch between these strategies? or should it even be binary? maybe just have it as a continuous function of the team's roster, finances, and performance.then maybe put it through a sigmoidal function to bias a bit towards extremes
-    probability to be contending: last year's winning percentage, averaged with either 0 or 1 depending on if below/above 0.5
+  when to switch between these strategies? only rarely.
+    factors to make you want to switch to rebuilding
+      age of players with high ratings/salaries
+      decreasing success (if abrupt, definitely switch; if gradual, still take it into consideration depending on other factors)
+    factors to make you want to switch to contending
+      next season, a star on a rookie contract will need an extension
+      increasing success (if abrupt, definitely switch; if gradual, still take it into consideration depending on other factors)
   should influence team.valueChange but not player.value
 team "value" and changes in team value
   depends on team status - rebuildling or contending

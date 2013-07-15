@@ -558,16 +558,21 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
     }
 
     function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, cb) {
-        var add, i, remove, roster, tx;
+        var add, i, remove, roster, strategy, tx;
 
         // Get value and skills for each player on team or involved in the proposed transaction
         roster = [];
         add = [];
         remove = [];
 
-
         tx = g.dbl.transaction(["draftPicks", "players", "teams"]);
 
+        // Get team strategy, for future use
+        tx.objectStore("teams").get(tid).onsuccess = function (event) {
+            strategy = event.target.result.strategy;
+        };
+
+        // Get players
         tx.objectStore("players").index("tid").openCursor(tid).onsuccess = function (event) {
             var cursor, p;
 
@@ -684,7 +689,8 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                             value: estValues[estPick - 1 + 30 * (dp.round - 1)],
                             skills: [],
                             contractAmount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)] / 1000,
-                            age: 19
+                            age: 19,
+                            draftPick: true
                         });
                     };
                 }
@@ -702,7 +708,8 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                             value: estValues[estPick - 1 + 30 * (dp.round - 1)],
                             skills: [],
                             contractAmount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)] / 1000,
-                            age: 19
+                            age: 19,
+                            draftPick: true
                         });
                     };
                 }
@@ -774,7 +781,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
             // Actually calculate the change in value
             calcDv = function (players) {
                 return _.reduce(players, function (memo, player) {
-                    var factors, pop;
+                    var dv, factors, pop;
 
                     // If the population of the region is larger, the contract size becomes less important. So factors.contract should increase
                     pop = helpers.getTeams()[tid].pop;
@@ -790,7 +797,24 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                         contract: (20 - player.contractAmount) / (15 * Math.sqrt(pop)) + (-0.12 + Math.sqrt(pop) / Math.sqrt(20))
                     };
 
-                    return memo + Math.pow(3, factors.value) * factors.contract;
+                    dv = Math.pow(3, factors.value) * factors.contract;
+
+                    if (strategy === "rebuilding") {
+                        // Value young/cheap players and draft picks more. Penalize expensive/old players
+                        if (player.draftPick) {
+                            dv *= 2;
+                        }
+                        else {
+                            if (player.age < 25 || player.contractAmount < 3) {
+                                dv *= 1.2;
+                            }
+                            if (player.contractAmount > 6) {
+                                dv -= Math.pow(3, 0.3 * 50) * player.contractAmount * 0.8;
+                            }
+                        }
+                    }
+
+                    return memo + dv;
                 }, 0);
             };
 

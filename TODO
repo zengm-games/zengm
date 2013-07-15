@@ -3,33 +3,17 @@ GOALS FOR 3.1.0
 
 Main focus: AI improvements
 
-IE10 support
-  dropdowns disappear on refresh?
-    unit tests fail too
-  text in dashboard is messed up
 strategies of AI teams
-  contending
-    win games - if losing too much and players are aging, then switch
-    make a profit - if losing too much money, then switch
-    trade away draft picks
-    resign free agents, going over the cap
-    sign big contract free agents
-  rebuilding
-    dump big contracts
-    dump older players
-    position team so there will be a lot of cap space in a given year
-    switch to "win now" if enough cheap/young talent is accumulated
-    trade for draft picks
-    sign only short contracts with free agents
   when to switch between these strategies? only rarely.
     factors to make you want to switch to rebuilding
       age of players with high ratings/salaries
       decreasing success (if abrupt, definitely switch; if gradual, still take it into consideration depending on other factors)
     factors to make you want to switch to contending
-      next season, a star on a rookie contract will need an extension
+      next season, a star on a rookie contract will need an extension (value over 60, expiring contract <= 5)
       increasing success (if abrupt, definitely switch; if gradual, still take it into consideration depending on other factors)
   should influence team.valueChange but not player.value
-  come up with a better way of initializing it
+    get strategy at beginning. then have modifier to apply strategy in tx.oncomplete
+  come up with a better way of initializing it for new leagues
 team "value" and changes in team value
   depends on team status - rebuildling or contending
   use core.team.valueChange for AI teams drafting, AI teams signing free agents, AI teams resigning their own players
@@ -55,10 +39,19 @@ draft stuff (object store and indexes)
   populate with 4 years starting with g.season (check phase for before/after draft)
 draft.originalAbbrev and originalTid in player
 userDpids and otherDpids in trade object store
+team.strategy
 
 EVENTUALLY
 ----------
 
+core.team.valueChange should be used to pick which free agents to sign in core.freeAgents.autoSign, but that would be a bitch beacuse of how transactions are set up
+revamp core.team.valueChange
+  simpler formulas for rebuilding/contending team values
+IE10 support
+  dropdowns disappear on refresh?
+    unit tests fail too
+    html5-dataset.js not working totally?
+  text in dashboard is messed up
 trades
   fancy scrolling of summary box, or some better UI
   refactor core.trade. it's an utter mess.

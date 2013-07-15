@@ -14,86 +14,99 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
      * @param {function()} cb Callback.
      */
     function autoSign(cb) {
-        var transaction;
+        team.filter({
+            attrs: ["strategy"],
+            season: g.season
+        }, function (teams) {
+            var strategies, transaction;
 
-        transaction = g.dbl.transaction(["players", "releasedPlayers"], "readwrite");
+            strategies = _.pluck(teams, "strategy");
 
-        transaction.objectStore("players").index("tid").getAll(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
-            var i, numPlayersOnRoster, players, signTeam, tids;
+            transaction = g.dbl.transaction(["players", "releasedPlayers"], "readwrite");
 
-            // List of free agents, sorted by value
-            players = event.target.result;
-            players.sort(function (a, b) {  return (_.last(b.ratings).ovr + 2 * _.last(b.ratings).pot) - (_.last(a.ratings).ovr + 2 * _.last(a.ratings).pot); });
+            transaction.objectStore("players").index("tid").getAll(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
+                var i, numPlayersOnRoster, players, signTeam, tids;
 
-            if (players.length === 0) {
-                cb();
-                return;
-            }
+                // List of free agents, sorted by value
+                players = event.target.result;
+                players.sort(function (a, b) {  return player.value(b) - player.value(a); });
 
-            // Randomly order teams
-            tids = [];
-            for (i = 0; i < g.numTeams; i++) {
-                tids.push(i);
-            }
-            random.shuffle(tids);
-
-            signTeam = function (ti) {
-                var tid;
-
-                tid = tids[ti];
-
-                // Run callback when all teams have had a turn to sign players. This extra iteration of signTeam is required in case the user's team is the last one.
-                if (ti === tids.length) {
+                if (players.length === 0) {
                     cb();
                     return;
                 }
 
-                // Skip the user's team
-                if (tid === g.userTid) {
-                    signTeam(ti + 1);
-                    return;
+                // Randomly order teams
+                tids = [];
+                for (i = 0; i < g.numTeams; i++) {
+                    tids.push(i);
                 }
+                random.shuffle(tids);
 
-                transaction.objectStore("players").index("tid").count(tid).onsuccess = function (event) {
-                    var numPlayersOnRoster;
+                signTeam = function (ti) {
+                    var tid;
 
-                    numPlayersOnRoster = event.target.result;
+                    tid = tids[ti];
 
-                    db.getPayroll(transaction, tid, function (payroll) {
-                        var i, foundPlayer, p;
+                    // Run callback when all teams have had a turn to sign players. This extra iteration of signTeam is required in case the user's team is the last one.
+                    if (ti === tids.length) {
+                        cb();
+                        return;
+                    }
 
-                        if (numPlayersOnRoster < 15) {
-                            for (i = 0; i < players.length; i++) {
-                                if (players[0].contract.amount + payroll <= g.salaryCap || players[0].contract.amount === g.minContract) {
-                                    p = players.shift();
-                                    p.tid = tid;
-                                    p = player.addStatsRow(p);
-                                    p = player.setContract(p, p.contract, true);
-                                    transaction.objectStore("players").put(p);
-                                    team.rosterAutoSort(transaction, tid, function () {
-                                        if (ti <= tids.length) {
-                                            signTeam(ti + 1);
-                                        }
-                                    });
-                                    numPlayersOnRoster += 1;
-                                    payroll += p.contract.amount;
-                                    foundPlayer = true;
-                                    break;  // Only add one free agent
+                    // Skip the user's team
+                    if (tid === g.userTid) {
+                        signTeam(ti + 1);
+                        return;
+                    }
+
+                    // Skip rebuilding teams sometimes
+                    if (strategies[tid] === "rebuilding" && Math.random() < 0.7) {
+                        signTeam(ti + 1);
+                        return;
+                    }
+
+                    transaction.objectStore("players").index("tid").count(tid).onsuccess = function (event) {
+                        var numPlayersOnRoster;
+
+                        numPlayersOnRoster = event.target.result;
+
+                        db.getPayroll(transaction, tid, function (payroll) {
+                            var i, foundPlayer, p;
+
+                            if (numPlayersOnRoster < 15) {
+                                for (i = 0; i < players.length; i++) {
+                                    if (players[0].contract.amount + payroll <= g.salaryCap || players[0].contract.amount === g.minContract) {
+                                        p = players.shift();
+                                        p.tid = tid;
+                                        p = player.addStatsRow(p);
+                                        p = player.setContract(p, p.contract, true);
+                                        transaction.objectStore("players").put(p);
+                                        team.rosterAutoSort(transaction, tid, function () {
+                                            if (ti <= tids.length) {
+                                                signTeam(ti + 1);
+                                            }
+                                        });
+                                        numPlayersOnRoster += 1;
+                                        payroll += p.contract.amount;
+                                        foundPlayer = true;
+                                        break;  // Only add one free agent
+                                    }
                                 }
                             }
-                        }
 
-                        if (!foundPlayer) {
-                            if (ti <= tids.length) {
-                                signTeam(ti + 1);
+                            if (!foundPlayer) {
+                                if (ti <= tids.length) {
+                                    signTeam(ti + 1);
+                                }
                             }
-                        }
-                    });
+                        });
+                    };
                 };
-            };
 
-            signTeam(0);
-        };
+                signTeam(0);
+            };
+        });
     }
 
     /**

@@ -834,51 +834,66 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
     }
 
     function newPhaseResignPlayers(cb) {
-        var phaseText, transaction;
+        var phaseText;
 
         phaseText = g.season + " resign players";
 
-        transaction = g.dbl.transaction(["gameAttributes", "messages", "negotiations", "players", "teams"], "readwrite");
+        team.filter({
+            attrs: ["strategy"],
+            season: g.season
+        }, function (teams) {
+            var strategies, transaction;
 
-        player.genBaseMoods(transaction, function (baseMoods) {
-            var playerStore;
+            strategies = _.pluck(teams, "strategy");
 
-            playerStore = transaction.objectStore("players");
+            transaction = g.dbl.transaction(["gameAttributes", "messages", "negotiations", "players", "teams"], "readwrite");
 
-            // Resign players or they become free agents
-            playerStore.index("tid").openCursor(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
-                var contract, cursor, i, p;
+            player.genBaseMoods(transaction, function (baseMoods) {
+                var playerStore;
 
-                cursor = event.target.result;
-                if (cursor) {
-                    p = cursor.value;
-                    if (p.contract.exp <= g.season) {
-                        if (p.tid !== g.userTid) {
-                            // Automatically negotiate with teams
-                            if (Math.random() < _.last(p.ratings).ovr / 100) { // Should eventually be smarter than a coin flip
-                                p = player.setContract(p, player.genContract(p), true);
-                                p.contract.exp += 1; // Otherwise contracts could expire this season
-                                cursor.update(p); // Other endpoints include calls to addToFreeAgents, which handles updating the database
+                playerStore = transaction.objectStore("players");
+
+                // Resign players or they become free agents
+                playerStore.index("tid").openCursor(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
+                    var contract, cursor, factor, i, p;
+
+                    cursor = event.target.result;
+                    if (cursor) {
+                        p = cursor.value;
+                        if (p.contract.exp <= g.season) {
+                            if (p.tid !== g.userTid) {
+                                // Automatically negotiate with teams
+                                if (strategies[p.tid] === "rebuilding") {
+                                    factor = 0.4;
+                                } else {
+                                    factor = 0;
+                                }
+
+                                if (Math.random() < player.value(p) / 100 - factor) { // Should eventually be smarter than a coin flip
+                                    p = player.setContract(p, player.genContract(p), true);
+                                    p.contract.exp += 1; // Otherwise contracts could expire this season
+                                    cursor.update(p); // Other endpoints include calls to addToFreeAgents, which handles updating the database
+                                } else {
+                                    player.addToFreeAgents(playerStore, p, g.PHASE.RESIGN_PLAYERS, baseMoods);
+                                }
                             } else {
-                                player.addToFreeAgents(playerStore, p, g.PHASE.RESIGN_PLAYERS, baseMoods);
-                            }
-                        } else {
-                            // Add to free agents first, to generate a contract demand
-                            player.addToFreeAgents(playerStore, p, g.PHASE.RESIGN_PLAYERS, baseMoods, function () {
-                                // Open negotiations with player
-                                contractNegotiation.create(transaction, p.pid, true, function (error) {
-                                    if (error !== undefined && error) {
-                                        $("#league_content").before('<div class="alert alert-error league-alert"><button type="button" class="close" data-dismiss="alert">&times;</button><p>' + error + '</p></div>');
-                                    }
+                                // Add to free agents first, to generate a contract demand
+                                player.addToFreeAgents(playerStore, p, g.PHASE.RESIGN_PLAYERS, baseMoods, function () {
+                                    // Open negotiations with player
+                                    contractNegotiation.create(transaction, p.pid, true, function (error) {
+                                        if (error !== undefined && error) {
+                                            $("#league_content").before('<div class="alert alert-error league-alert"><button type="button" class="close" data-dismiss="alert">&times;</button><p>' + error + '</p></div>');
+                                        }
+                                    });
                                 });
-                            });
+                            }
                         }
+                        cursor.continue();
+                    } else {
+                        newPhaseCb(g.PHASE.RESIGN_PLAYERS, phaseText, cb, helpers.leagueUrl(["negotiation"]), ["playerMovement"]);
                     }
-                    cursor.continue();
-                } else {
-                    newPhaseCb(g.PHASE.RESIGN_PLAYERS, phaseText, cb, helpers.leagueUrl(["negotiation"]), ["playerMovement"]);
-                }
-            };
+                };
+            });
         });
     }
 

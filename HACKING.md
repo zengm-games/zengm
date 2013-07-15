@@ -25,17 +25,17 @@ templates into one minified file. Installation instructions can be found here
 http://requirejs.org/docs/optimization.html#download (you should install through
 npm). Then, just run:
 
-	  make build-requirejs
+      make build-requirejs
 
 (Running  just `make` will run the RequireJS optimizer and minify CSS.)
 
 Alternatively, to use the unminified uncombined JavaScript files, just change
 
-	  <script src="/gen/app.js"></script>
+      <script src="/gen/app.js"></script>
 
 to
 
-	  <script data-main="/js/app.js" src="/js/lib/require.js"></script>
+      <script data-main="/js/app.js" src="/js/lib/require.js"></script>
 
 in index.html. This is convenient for development, since any change to a .js or
 .html file will immediately be reflected after a page reload.

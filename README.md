@@ -31,9 +31,9 @@ The easiest way to play is by going to http://play.basketball-gm.com/
 
 Basketball GM requires a web browser with IndexedDB support. Mozilla Firefox
 (any recent version) works best and is most thoroughly tested. Google Chrome
-(version 23 or higher) seems to generally work, but it's not as well tested
-as Firefox. Internet Explorer 10 should theoretically work, but I haven't
-tried it. (TLDR: Use Firefox)
+(version 23 or higher) works, but it's not as well tested as Firefox. Internet
+Explorer 10 seems to work, but it's not regularly tested.
+(TLDR: Use Firefox or maybe Chrome)
 
 If you want to run your own copy...
 

@@ -264,6 +264,10 @@ Davis.listener = function () {
    */
   var originChecks = {
     A: function (elem) {
+      // This is a workaround for http://stackoverflow.com/q/17641380/786644
+      if (elem.host.length === 0) {
+        return false;
+      }
       return elem.host !== window.location.host || elem.protocol !== window.location.protocol
     },
 

@@ -8,6 +8,10 @@ This is a list of **only the major changes** in each version.
 - Future draft picks can be traded
 - "What would make you agree to this deal?" button to get counter-offers in trade negotiations
 
+## Technical details
+
+- Internet Explorer 10 works much more smoothly now, although it's still not very well tested
+
 # 3.0.0 (2013-06-23)
 
 ## Gameplay and UI

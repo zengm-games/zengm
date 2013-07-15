@@ -3,6 +3,10 @@ GOALS FOR 3.1.0
 
 Main focus: AI improvements
 
+IE10 support
+  dropdowns disappear on refresh?
+    unit tests fail too
+  text in dashboard is messed up
 strategies of AI teams
   contending
     win games - if losing too much and players are aging, then switch
@@ -39,11 +43,6 @@ trades between AI teams
       ...
 user can't just sign all the free agents before AI teams
 "coaches" should factor in synergy in gameSim substitutions
-IE10 support, if posible
-  davisjs for knockoutjs links in IE10
-    elem.host comes up blank in originChecks
-    http://stackoverflow.com/q/17641380/786644
-      note workarounds there - maybe just do them?
 
 DB CHANGES SINCE 3.0.0
 ----------------------
@@ -242,9 +241,13 @@ roster reordering
 playoff seeding rules
   division winner should get at least 4th seed in playoffs, but still do homecourt by best record in a matchup
 
-FUTURE (after 3.0.0)
---------------------
+FUTURE
+------
 
+IE10 support
+  davisjs for knockoutjs links in IE10
+    elem.host comes up blank in originChecks
+    hacky solution used now (see js/lib/README.md) but maybe this will lead to a real answer: http://stackoverflow.com/q/17641380/786644
 hire/fire different coaches with different strategies
 jslint errors
   currently just "Don't make functions within a loop." which should all be fixed eventually

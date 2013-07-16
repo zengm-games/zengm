@@ -393,7 +393,7 @@ reassess dropdown - should it really be called like it is in uiEvery? can i use 
 
 g = require("globals"); g.dbl.transaction("draftPicks").objectStore("draftPicks").index("season").getAll(g.season).onsuccess = function (event) { console.log(event.target.result); };
 
-g = require("globals"); player = require("core/player"); g.dbl.transaction("players").objectStore("players").get(184).onsuccess = function (event) { console.log(player.value(event.target.result)); };
+g = require("globals"); player = require("core/player"); g.dbl.transaction("players").objectStore("players").get(184).onsuccess = function (event) { console.log(player.genContract(event.target.result)); };
 
 g = require("globals"); g.dbl.transaction("players").objectStore("players").get(184).onsuccess = function (event) { console.log(event.target.result); };
 

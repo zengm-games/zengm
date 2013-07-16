@@ -1293,8 +1293,8 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             }
         } else {
             // Two most recent seasons
-            ps1 = p.stats[0];
-            ps2 = p.stats[1];
+            ps1 = ps[0];
+            ps2 = ps[1];
             if (ps1.min + ps2.min > 0) {
                 c.stats = (ps1.per * ps1.min + ps2.per * ps2.min) / (ps1.min + ps2.min);
             }

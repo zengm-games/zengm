@@ -3,8 +3,6 @@ GOALS FOR 3.1.0
 
 Main focus: AI improvements
 
-after 10 seasons in a league, popup nag to ask people to share on twitter/facebook or to ask them for feedback (same as feedback tab)
-  then store a "nagged" variable in localStorage and never ask again
 strategies of AI teams
   when to switch between these strategies? only rarely.
     factors to make you want to switch to rebuilding

@@ -296,7 +296,7 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
                       {id: "play-menu-until-regular-season", url: "", label: "Until regular season"},
                       {id: "play-menu-contract-negotiation", url: helpers.leagueUrl(["negotiation"]), label: "Continue contract negotiation"},
                       {id: "play-menu-contract-negotiation-list", url: helpers.leagueUrl(["negotiation"]), label: "Continue resigning players"},
-                      {id: "play-menu-message", url: helpers.leagueUrl(["message"]), label: "Read message from the owner"},
+                      {id: "play-menu-message", url: helpers.leagueUrl(["message"]), label: "Read new message"},
                       {id: "play-menu-new-league", url: "/new_league", label: "Try again in a new league"}];
 
         if (g.phase === g.PHASE.PRESEASON) {

@@ -187,6 +187,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
 
         p.contract = contract;
 
+        // Only write to salary log if the player is actually signed. Otherwise, we're just generating a value for a negotiation.
         if (signed) {
             // Is this contract beginning with an in-progress season, or next season?
             start = g.season;
@@ -330,8 +331,8 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             p.ratings[r].pot = p.ratings[r].ovr;
         }
 
-        // Update contract based on development
-        p = setContract(p, genContract(p, randomizeExp), true);
+        // Update contract based on development. Only write contract to log if not a free agent.
+        p = setContract(p, genContract(p, randomizeExp), p.tid >= 0);
 
         return p;
     }

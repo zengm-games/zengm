@@ -311,7 +311,7 @@ define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
     function bbgmPing(type) {
         if (g.enableLogging) {
             if (type === "league") {
-                _gaq.push(["_trackEvent", "BBGM", "New league"]);
+                _gaq.push(["_trackEvent", "BBGM", "New league", g.lid.toString()]);
             } else if (type === "season") {
                 _gaq.push(["_trackEvent", "BBGM", "Completed season", g.season.toString()]);
             }

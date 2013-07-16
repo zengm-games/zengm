@@ -183,12 +183,18 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      * @return {Object} Updated player object.
      */
     function setContract(p, contract, signed) {
-        var i;
+        var i, start;
 
         p.contract = contract;
 
         if (signed) {
-            for (i = g.season; i <= p.contract.exp; i++) {
+            // Is this contract beginning with an in-progress season, or next season?
+            start = g.season;
+            if (g.phase > g.PHASE.AFTER_TRADE_DEADLINE) {
+                start += 1;
+            }
+
+            for (i = start; i <= p.contract.exp; i++) {
                 p.salaries.push({season: i, amount: contract.amount});
             }
         }

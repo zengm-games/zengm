@@ -791,15 +791,17 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
             };
             tx.oncomplete = function () {
                 // Select winners of the season's awards
-                // This needs to be inside the callback because of Firefox bug 763915
                 awards(function () {
-                    newPhaseCb(g.PHASE.BEFORE_DRAFT, phaseText, function () {
-                        if (cb !== undefined) {
-                            cb();
-                        }
+                    // Update strategies of AI teams
+                    team.updateStrategies(function () {
+                        newPhaseCb(g.PHASE.BEFORE_DRAFT, phaseText, function () {
+                            if (cb !== undefined) {
+                                cb();
+                            }
 
-                        helpers.bbgmPing("season");
-                    }, helpers.leagueUrl(["history"]), ["playerMovement"]);
+                            helpers.bbgmPing("season");
+                        }, helpers.leagueUrl(["history"]), ["playerMovement"]);
+                    });
                 });
             };
         };

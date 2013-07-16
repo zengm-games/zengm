@@ -830,7 +830,62 @@ console.log(remove);*/
                 dv *= Math.pow(0.95, add.length - remove.length);
             }
 
-            cb(dv)
+            cb(dv);
+        };
+    }
+
+    /**
+     * Update team strategies (contending or rebuilding) for every team in the league.
+     *
+     * Basically.. switch to rebuilding if you're old and your success is fading, and switch to contending if you have a good amount of young talent on rookie deals and your success is growing.
+     * 
+     * @memberOf core.team
+     * @param {function ()} cb Callback.
+     */
+    function updateStrategies(cb) {
+        var tx;
+
+        // For
+        tx = g.dbl.transaction(["players", "teams"], "readwrite");
+        tx.objectStore("teams").openCursor().onsuccess = function (event) {
+            var age, dWon, cursor, score, s, t, updated, won, youngStar;
+
+            cursor = event.target.result;
+            if (cursor) {
+                t = cursor.value;
+
+                s = t.seasons.length - 1;
+                won = t.seasons[s].won;
+                dWon = won - t.seasons[s - 1].won;
+
+                // Dummy variables, need to be replaced by real values
+                age = 27;
+                youngStar = 0;
+
+                score = dWon + (won - 41) + 3 * (27 - age) + youngStar * 20;
+
+                updated = false;
+                if (score > 20 && t.strategy === "rebuilding") {
+console.log(t.abbrev + " switch to contending")
+                    t.strategy = "contending";
+                    updated = true;
+                } else if (score < -20 && t.strategy === "contending") {
+console.log(t.abbrev + " switch to rebuilding")
+                    t.strategy = "rebuilding";
+                    updated = true;
+                }
+
+                if (updated) {
+//                    cursor.update(t);
+                }
+
+                cursor.continue();
+            }
+        }
+
+
+        tx.oncomplete = function () {
+            cb();
         };
     }
 
@@ -840,6 +895,7 @@ console.log(remove);*/
         generate: generate,
         rosterAutoSort: rosterAutoSort,
         filter: filter,
-        valueChange: valueChange
+        valueChange: valueChange,
+        updateStrategies: updateStrategies
     };
 });

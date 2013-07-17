@@ -230,6 +230,27 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                                         cbAfterEachPlayer();
                                     }
                                 }
+
+                                // Initialize rebuilding/contending, when possible
+                                if (t2 >= 0 && goodNeutralBad === 1) {
+                                    teamStore.openCursor(t2).onsuccess = function (event) {
+                                        var cursor, t;
+
+                                        cursor = event.target.result;
+                                        t = cursor.value;
+                                        t.strategy = "contending";
+                                        cursor.update(t);
+                                    };
+                                } else if (t2 >= 0 && goodNeutralBad === -1) {
+                                    teamStore.openCursor(t2).onsuccess = function (event) {
+                                        var cursor, t;
+
+                                        cursor = event.target.result;
+                                        t = cursor.value;
+                                        t.strategy = "rebuilding";
+                                        cursor.update(t);
+                                    };
+                                }
                             }
                         }
                     });

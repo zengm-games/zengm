@@ -3,9 +3,6 @@ GOALS FOR 3.1.0
 
 Main focus: AI improvements
 
-strategies of AI teams
-  come up with a better way of initializing it for new leagues
-    isn't team quality set when players are generated?
 trades
   more feedback from AI
     if trade is close/far from working, return different messages

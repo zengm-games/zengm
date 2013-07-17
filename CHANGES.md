@@ -1,6 +1,6 @@
 This is a list of **only the major changes** in each version.
 
-# Since 3.0.0
+# 3.1.0 (2013-06-17)
 
 ## Gameplay and UI
 

@@ -10,6 +10,7 @@ trades between AI teams
   also propose trades to the user, somehow
 user can't just sign all the free agents before AI teams
 "coaches" should factor in synergy in gameSim substitutions
+try errorception
 
 DB CHANGES SINCE 3.0.0
 ----------------------
@@ -23,6 +24,7 @@ team.strategy
 EVENTUALLY
 ----------
 
+sourcemaps putting blank line in front of each file?
 IE10 support
   dropdowns disappear on refresh?
     unit tests fail too, seemingly for the same reason
@@ -51,9 +53,6 @@ all star game
 some players foul way too much
 team and league records (highest scoring game, etc)
 switch teams after you're fired
-source maps
-  latest version of r.js (2.1.6) has an old version of uglify2 (2.3.2) which fails on a['3'] https://github.com/mishoo/UglifyJS2/issues/207. newer version probably would fix that
-  try errorception
 trades
   allow trades to go over the roster limit, but show a warning. also factor into AI logic that they would have to drop a player
     warning should be in a different color than the error-like warnings

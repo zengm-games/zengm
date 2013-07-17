@@ -3,12 +3,6 @@ GOALS FOR 3.1.0
 
 Main focus: AI improvements
 
-trades
-  more feedback from AI
-    if trade is close/far from working, return different messages
-    display some indication of what a team wants to do on the trade view, e.g.
-      "I need to cut my payroll and start making more money."
-      "I could really use a good rebounder."
 trades between AI teams
   each day, pick two random teams. if a trade can be found that both teams like, do it
     generalize core.trade.makeItWork and other parts of core.trade
@@ -47,6 +41,11 @@ trades
   ask button
     should there be another one to see what the team will give up for a player? like in civ4, and then only have one active at a time?
     be more careful about UI, such as when to make button visible - make it like civ4?
+  more feedback from AI
+    if trade is close/far from working, return different messages
+    display some indication of what a team wants to do on the trade view, e.g.
+      "I need to cut my payroll and start making more money."
+      "I could really use a good rebounder."
 show championships in awards on player pages
 all star game
 some players foul way too much

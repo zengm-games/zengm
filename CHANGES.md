@@ -7,6 +7,7 @@ This is a list of **only the major changes** in each version.
 - Player contract demands are based on ratings and stats, not just ratings
 - Future draft picks can be traded
 - "What would make you agree to this deal?" button to get counter-offers in trade negotiations
+- GMs of other teams pursue different strategies depending on if they are contending or rebuilding
 
 ## Technical details
 

@@ -792,7 +792,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
             tx.oncomplete = function () {
                 // Select winners of the season's awards
                 awards(function () {
-                    // Update strategies of AI teams
+                    // Update strategies of AI teams (contending or rebuilding)
                     team.updateStrategies(function () {
                         newPhaseCb(g.PHASE.BEFORE_DRAFT, phaseText, function () {
                             if (cb !== undefined) {

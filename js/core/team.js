@@ -848,7 +848,7 @@ console.log(remove);*/
         // For
         tx = g.dbl.transaction(["players", "teams"], "readwrite");
         tx.objectStore("teams").openCursor().onsuccess = function (event) {
-            var age, dWon, cursor, score, s, t, updated, won, youngStar;
+            var dWon, cursor, s, t, won;
 
             cursor = event.target.result;
             if (cursor) {
@@ -858,28 +858,55 @@ console.log(remove);*/
                 won = t.seasons[s].won;
                 dWon = won - t.seasons[s - 1].won;
 
-                // Dummy variables, need to be replaced by real values
-                age = 27;
-                youngStar = 0;
+                tx.objectStore("players").index("tid").getAll(t.tid).onsuccess = function (event) {
+                    var age, denominator, i, numerator, players, score, updated, youngStar;
 
-                score = dWon + (won - 41) + 3 * (27 - age) + youngStar * 20;
+                    players = player.filter(event.target.result, {
+                        season: g.season,
+                        tid: t.tid,
+                        attrs: ["age", "value", "contract"],
+                        stats: ["min"]
+                    });
+//console.log(event.target.result);
+//console.log(players);
 
-                updated = false;
-                if (score > 20 && t.strategy === "rebuilding") {
+                    youngStar = 0; // Default value
+
+                    numerator = 0; // Sum of age * mp
+                    denominator = 0; // Sum of mp
+                    for (i = 0; i < players.length; i++) {
+                        numerator += players[i].age * players[i].stats.min;
+                        denominator += players[i].stats.min;
+
+                        // Is a young star about to get a pay raise and eat up all the cap after this season?
+                        if (players[i].value > 65 && players[i].contract.exp === g.season + 1 && players[i].contract.amount <= 5 && players[i].age <= 25) {
+                            youngStar += 1;
+                        }
+                    }
+
+                    // Average age, weighted by minutes played
+                    age = numerator / denominator;
+
+console.log([t.abbrev, 0.8 * dWon, (won - 41), 5 * (26 - age), youngStar * 20])
+                    score = 0.8 * dWon + (won - 41) + 5 * (26 - age) + youngStar * 20;
+
+                    updated = false;
+                    if (score > 20 && t.strategy === "rebuilding") {
 console.log(t.abbrev + " switch to contending")
-                    t.strategy = "contending";
-                    updated = true;
-                } else if (score < -20 && t.strategy === "contending") {
+                        t.strategy = "contending";
+                        updated = true;
+                    } else if (score < -20 && t.strategy === "contending") {
 console.log(t.abbrev + " switch to rebuilding")
-                    t.strategy = "rebuilding";
-                    updated = true;
-                }
+                        t.strategy = "rebuilding";
+                        updated = true;
+                    }
 
-                if (updated) {
-//                    cursor.update(t);
-                }
+                    if (updated) {
+                        cursor.update(t);
+                    }
 
-                cursor.continue();
+                    cursor.continue();
+                };
             }
         }
 

@@ -4,21 +4,10 @@ GOALS FOR 3.1.0
 Main focus: AI improvements
 
 strategies of AI teams
+  show in roster view
   when to switch between these strategies? only rarely.
-    factors to make you want to switch to rebuilding
-      age of players with high ratings/salaries
-      decreasing success (if abrupt, definitely switch; if gradual, still take it into consideration depending on other factors)
-    factors to make you want to switch to contending
-      next season, a star on a rookie contract will need an extension (value over 60, expiring contract <= 5)
-      increasing success (if abrupt, definitely switch; if gradual, still take it into consideration depending on other factors)
-    core.team.updateStrategies formula:
-      dWins: change in wins from last season
-      age: average age weighted by minutes played
-      wins: number of wins last year
-      youngStar: boolean if a star on a rookie contract will need an extension
-      score = dWins + (wins - 41) + 3 * (27 - age) + youngStar * 20;
-      tweak formula until this becomes reasonable
-      test a lot
+    tweak formula until this becomes reasonable
+    test a lot
   come up with a better way of initializing it for new leagues
     isn't team quality set when players are generated?
 trades

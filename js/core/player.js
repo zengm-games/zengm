@@ -875,6 +875,8 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                     fp.salaries = _.map(p.salaries, function (salary) { salary.amount /= 1000; return salary; });
                 } else if (options.attrs[i] === "salariesTotal") {
                     fp.salariesTotal = _.reduce(fp.salaries, function (memo, salary) { return memo + salary.amount; }, 0);
+                } else if (options.attrs[i] === "value") {
+                    fp.value = value(p);
                 } else {
                     fp[options.attrs[i]] = p[options.attrs[i]];
                 }

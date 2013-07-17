@@ -19,6 +19,13 @@
     <script type="text/javascript">
       window.enableLogging = location.host.indexOf("basketball-gm.com") >= 0 && location.pathname.indexOf("/test") === -1;
       if (enableLogging) {
+        // Errorception
+        (function(_,e,rr,s){_errs=[s];var c=_.onerror;_.onerror=function(){var a=arguments;_errs.push(a);
+        c&&c.apply(this,a)};var b=function(){var c=e.createElement(rr),b=e.getElementsByTagName(rr)[0];
+        c.src="//beacon.errorception.com/"+s+".js";c.async=!0;b.parentNode.insertBefore(c,b)};
+        _.addEventListener?_.addEventListener("load",b,!1):_.attachEvent("onload",b)})
+        (window,document,"script","51e61cf1dcbfc1595e000462");
+
         // Google Analytics
         var _gaq = _gaq || [];
         _gaq.push(['_setAccount', 'UA-38759330-1']);
@@ -108,7 +115,7 @@
     </div>
 
     <!--Uncomment one of these two lines. First line: minified, single file. Second line: unminified, separate files. See HACKING.md for details.-->
-    <script src="/gen/app.js"></script>
-    <!--<script data-main="/js/app.js" src="/js/lib/require.js"></script>-->
+    <!--<script src="/gen/app.js"></script>-->
+    <script data-main="/js/app.js" src="/js/lib/require.js"></script>
   </body>
 </html>

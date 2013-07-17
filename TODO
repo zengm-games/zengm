@@ -1,8 +1,15 @@
 GOALS FOR 3.1.0
 ---------------
 
-Main focus: AI improvements
+try errorception
 
+DB CHANGES SINCE 3.0.0
+----------------------
+
+EVENTUALLY
+----------
+
+sourcemaps putting blank line in front of each file?
 trades between AI teams
   each day, pick two random teams. if a trade can be found that both teams like, do it
     generalize core.trade.makeItWork and other parts of core.trade
@@ -10,21 +17,6 @@ trades between AI teams
   also propose trades to the user, somehow
 user can't just sign all the free agents before AI teams
 "coaches" should factor in synergy in gameSim substitutions
-try errorception
-
-DB CHANGES SINCE 3.0.0
-----------------------
-
-draft stuff (object store and indexes)
-  populate with 4 years starting with g.season (check phase for before/after draft)
-draft.originalAbbrev and originalTid in player
-userDpids and otherDpids in trade object store
-team.strategy
-
-EVENTUALLY
-----------
-
-sourcemaps putting blank line in front of each file?
 IE10 support
   dropdowns disappear on refresh?
     unit tests fail too, seemingly for the same reason

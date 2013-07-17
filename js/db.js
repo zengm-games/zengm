@@ -48,6 +48,10 @@ define(["globals", "core/player", "lib/davis", "lib/jquery", "lib/underscore", "
             migrateMessage = '<p><strong>New in version 3.0.0:</strong> export rosters for use in other leagues, import custom rosters, and view players selected to the Hall of Fame.</p>' + migrateMessage;
         }
 
+        if (event.oldVersion <= 4) {
+            migrateMessage = '<p><strong>New in version 3.1.0:</strong> better AI from opposing managers and more trade functionality, including trading draft picks and asking for counter-proposals from the team you\'re trading with.</p>' + migrateMessage;
+        }
+
         $("#content").before('<div class="alert alert-info"><button type="button" class="close" data-dismiss="alert">&times;</button>' + migrateMessage + '</div>');
     }
 
@@ -55,7 +59,7 @@ define(["globals", "core/player", "lib/davis", "lib/jquery", "lib/underscore", "
         var request;
 
 //        console.log('Connecting to database "meta"');
-        request = indexedDB.open("meta", 4);
+        request = indexedDB.open("meta", 5);
         request.onerror = function (event) {
             throw new Error("Meta connection error");
         };
@@ -423,6 +427,74 @@ define(["globals", "core/player", "lib/davis", "lib/jquery", "lib/underscore", "
                     }
                 };
             }
+
+            if (event.oldVersion <= 4) {
+                tx.objectStore("teams").openCursor().onsuccess = function (event) {
+                    var cursor, t;
+
+                    cursor = event.target.result;
+                    if (cursor) {
+                        t = cursor.value;
+                        t.strategy = "contending";
+                        cursor.update(t);
+                        cursor.continue();
+                    }
+                };
+
+                tx.objectStore("trade").openCursor(0).onsuccess = function (event) {
+                    var cursor, tr;
+
+                    cursor = event.target.result;
+                    tr = cursor.value;
+                    tr.userDpids = [];
+                    tr.otherDpids = [];
+                    cursor.update(tr);
+                };
+
+                tx.objectStore("players").openCursor().onsuccess = function (event) {
+                    var cursor, p;
+
+                    cursor = event.target.result;
+                    if (cursor) {
+                        p = cursor.value;
+                        p.draft.originalTid = p.draft.tid;
+                        p.draft.originalAbbrev = p.draft.abbrev;
+                        cursor.update(p);
+                        cursor.continue();
+                    }
+                };
+
+                (function () {
+                    var draftPickStore, i, offset, round, t, teams;
+
+                    draftPickStore = dbl.createObjectStore("draftPicks", {keyPath: "dpid", autoIncrement: true});
+                    draftPickStore.createIndex("season", "season", {unique: false});
+                    draftPickStore.createIndex("tid", "tid", {unique: false});
+
+                    teams = helpers.getTeams();
+
+                    if (g.phase >= g.PHASE.DRAFT) {
+                        offset = 1;
+                    } else {
+                        offset = 0;
+                    }
+
+                    for (i = offset; i < 4 + offset; i++) {
+                        for (t = 0; t < 30; t++) {
+                            for (round = 1; round <= 2; round++) {
+                                draftPickStore.add({
+                                    tid: t,
+                                    abbrev: teams[t].abbrev,
+                                    originalTid: t,
+                                    originalAbbrev: teams[t].abbrev,
+                                    round: round,
+                                    season: g.startingSeason + i
+                                });
+                            }
+                        }
+                    }
+                }());
+            }
         });
     }
 
@@ -430,7 +502,7 @@ define(["globals", "core/player", "lib/davis", "lib/jquery", "lib/underscore", "
         var request;
 
 //        console.log('Connecting to database "league' + lid + '"');
-        request = indexedDB.open("league" + lid, 4);
+        request = indexedDB.open("league" + lid, 5);
         request.onerror = function (event) {
             throw new Error("League connection error");
         };

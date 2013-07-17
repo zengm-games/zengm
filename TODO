@@ -4,10 +4,6 @@ GOALS FOR 3.1.0
 Main focus: AI improvements
 
 strategies of AI teams
-  show in roster view
-  when to switch between these strategies? only rarely.
-    tweak formula until this becomes reasonable
-    test a lot
   come up with a better way of initializing it for new leagues
     isn't team quality set when players are generated?
 trades

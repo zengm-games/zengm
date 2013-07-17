@@ -854,9 +854,18 @@ console.log(remove);*/
             if (cursor) {
                 t = cursor.value;
 
+                // Skip user's team
+                if (t.tid === g.userTid) {
+                    return cursor.continue();
+                }
+
                 s = t.seasons.length - 1;
                 won = t.seasons[s].won;
-                dWon = won - t.seasons[s - 1].won;
+                if (s > 0) {
+                    dWon = won - t.seasons[s - 1].won;
+                } else {
+                    dWon = 0;
+                }
 
                 tx.objectStore("players").index("tid").getAll(t.tid).onsuccess = function (event) {
                     var age, denominator, i, numerator, players, score, updated, youngStar;
@@ -867,8 +876,6 @@ console.log(remove);*/
                         attrs: ["age", "value", "contract"],
                         stats: ["min"]
                     });
-//console.log(event.target.result);
-//console.log(players);
 
                     youngStar = 0; // Default value
 
@@ -887,16 +894,16 @@ console.log(remove);*/
                     // Average age, weighted by minutes played
                     age = numerator / denominator;
 
-console.log([t.abbrev, 0.8 * dWon, (won - 41), 5 * (26 - age), youngStar * 20])
+//console.log([t.abbrev, 0.8 * dWon, (won - 41), 5 * (26 - age), youngStar * 20])
                     score = 0.8 * dWon + (won - 41) + 5 * (26 - age) + youngStar * 20;
 
                     updated = false;
                     if (score > 20 && t.strategy === "rebuilding") {
-console.log(t.abbrev + " switch to contending")
+//console.log(t.abbrev + " switch to contending")
                         t.strategy = "contending";
                         updated = true;
                     } else if (score < -20 && t.strategy === "contending") {
-console.log(t.abbrev + " switch to rebuilding")
+//console.log(t.abbrev + " switch to rebuilding")
                         t.strategy = "rebuilding";
                         updated = true;
                     }

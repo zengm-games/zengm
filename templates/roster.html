@@ -9,7 +9,8 @@
   <span data-bind="text: numRosterSpots"></span> open roster spots<br>
   Payroll: <span data-bind="currency: [payroll, 'M']"></span><br>
   Salary cap: <span data-bind="currency: [salaryCap, 'M']"></span><br>
-  Cash: <span data-bind="currency: [team.cash, 'M']"></span> (used for buying out players)
+  Cash: <span data-bind="currency: [team.cash, 'M']"></span> (used for buying out players)<br>
+  <span data-bind="visible: showTradeFor">Strategy: <span data-bind="text: team.strategy"></span></span>
 </p>
 
 <p data-bind="visible: editable">Drag and drop row handles to move players between the starting lineup (<span class="roster_gs">&#9632;</span>) and the bench (<span class="roster_bench">&#9632;</span>).</p>

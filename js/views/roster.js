@@ -276,7 +276,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
             team.filter({
                 season: inputs.season,
                 tid: inputs.tid,
-                attrs: ["region", "name"],
+                attrs: ["region", "name", "strategy"],
                 seasonAttrs: ["cash", "won", "lost", "playoffRoundsWon"],
                 ot: tx
             }, function (t) {

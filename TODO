@@ -9,6 +9,7 @@ DB CHANGES SINCE 3.0.0
 EVENTUALLY
 ----------
 
+"rookie contracts" when a new game is started should be bounded at 5 million. so do bound at 20 million before dividing by 4.
 sourcemaps putting blank line in front of each file?
 trades between AI teams
   each day, pick two random teams. if a trade can be found that both teams like, do it

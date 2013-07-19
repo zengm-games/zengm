@@ -114,9 +114,15 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
 
     ko.bindingHandlers.playerNameLabels = {
         update: function (element, valueAccessor) {
-            var args = valueAccessor();
+            var args, injury;
+
+            args = valueAccessor();
+            injury = ko.utils.unwrapObservable(args[2]);
+            injury.type = ko.utils.unwrapObservable(injury.type);
+            injury.gamesRemaining = ko.utils.unwrapObservable(injury.gamesRemaining);
+
             return ko.bindingHandlers.html.update(element, function () {
-                return helpers.playerNameLabels(ko.utils.unwrapObservable(args[0]), ko.utils.unwrapObservable(args[1]), ko.utils.unwrapObservable(args[2]), ko.utils.unwrapObservable(args[3]));
+                return helpers.playerNameLabels(ko.utils.unwrapObservable(args[0]), ko.utils.unwrapObservable(args[1]), injury, ko.utils.unwrapObservable(args[3]));
             });
         }
     };

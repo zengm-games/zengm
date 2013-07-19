@@ -9,6 +9,8 @@ DB CHANGES SINCE 3.0.0
 EVENTUALLY
 ----------
 
+auto sort roster based on value
+there shouldn't be so many players asking for slightly more than a minimum contract. just make it all min.
 "rookie contracts" when a new game is started should be bounded at 5 million. so do bound at 20 million before dividing by 4.
 sourcemaps putting blank line in front of each file?
 trades between AI teams
@@ -18,6 +20,7 @@ trades between AI teams
   also propose trades to the user, somehow
 user can't just sign all the free agents before AI teams
 "coaches" should factor in synergy in gameSim substitutions
+  also, base it on value, not ovr
 IE10 support
   dropdowns disappear on refresh?
     unit tests fail too, seemingly for the same reason

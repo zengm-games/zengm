@@ -99,9 +99,10 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
                     // Put injured players at the bottom, then sort by GS and roster position
                     game.teams[i].players.sort(function (a, b) {
                         // This sorts by starters first and minutes second, since .min is always far less than 1000 and gs is either 1 or 0. Then injured players are listed third, since .injury.gamesRemaining is 0 for healthy and -1 for injured.
-                        return b.gs * 1000 + b.min + b.injury.gamesRemaining * 1000 > a.gs * 1000 + a.min + a.injury.gamesRemaining * 1000;
+                        return (b.gs * 1000 + b.min + b.injury.gamesRemaining * 1000) - (a.gs * 1000 + a.min + a.injury.gamesRemaining * 1000);
                     });
                 }
+
 
                 if (game.overtimes === 1) {
                     game.overtime = " (OT)";

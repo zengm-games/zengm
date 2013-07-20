@@ -371,7 +371,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                 baseMoods[i] += 0.2 * (1 - teams[i].seasons[s].pop / 10);
 
                 // Randomness
-                baseMoods[i] += random.gauss(-0.1, 0.3);
+                baseMoods[i] += random.gauss(-0.2, 0.3);
 
                 if (baseMoods[i] > 1) {
                     baseMoods[i] = 1;

@@ -1,16 +1,18 @@
-GOALS FOR 3.1.0
----------------
+CURRENT
+-------
 
-try errorception
+there shouldn't be so many players asking for slightly more than a minimum contract. just make it all min.
+somehow, don't let the user's team sign any/all free agents they want
+  randomize "won't negotiate with you" more?
+    make genBaseMoods lower?
 
-DB CHANGES SINCE 3.0.0
+DB CHANGES SINCE 3.1.0
 ----------------------
 
 EVENTUALLY
 ----------
 
 auto sort roster based on value
-there shouldn't be so many players asking for slightly more than a minimum contract. just make it all min.
 "rookie contracts" when a new game is started should be bounded at 5 million. so do bound at 20 million before dividing by 4.
 sourcemaps putting blank line in front of each file?
 trades between AI teams

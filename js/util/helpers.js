@@ -169,7 +169,7 @@ define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
             {tid: 15, cid: 0, did: 2, region: "Miami", name: "Heatwave", abbrev: "MIA", pop: 5.6, popRank: 11},
             {tid: 16, cid: 0, did: 1, region: "Milwaukee", name: "Buccaneers", abbrev: "MIL", pop: 1.6, popRank: 26},
             {tid: 17, cid: 1, did: 4, region: "Minnesota", name: "Trees", abbrev: "MIN", pop: 3.3, popRank: 17},
-            {tid: 18, cid: 1, did: 3, region: "New Orleans", name: "Honey Bees", abbrev: "NOR", pop: 1.2, popRank: 28},
+            {tid: 18, cid: 1, did: 3, region: "New Orleans", name: "Peloteros", abbrev: "NOR", pop: 1.2, popRank: 28},
             {tid: 19, cid: 0, did: 0, region: "New York", name: "Knights", abbrev: "NYK", pop: 19.1, popRank: 1},
             {tid: 20, cid: 1, did: 4, region: "Oklahoma City", name: "Tornados", abbrev: "OKC", pop: 1.2, popRank: 28},
             {tid: 21, cid: 0, did: 2, region: "Orlando", name: "Mystery", abbrev: "ORL", pop: 2.1, popRank: 20},

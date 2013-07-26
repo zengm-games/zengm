@@ -14,7 +14,7 @@ EVENTUALLY
 
 playerNameLabels should also put a little hover box over the player link with key stats/ratings
 more refined control of playing time: http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbaegpq
-reassess buyouts. should they even be possible?
+reassess buy outs. should they even be possible? probably not
 signing draft picks should be optional
   maybe sign them in the "resign players" phase
 you should be able to drop below 5 players (and above 15) but only temporarily (no game simulation in that time)
@@ -22,7 +22,9 @@ fake feet/inches heights should be taller
 sometimes a lot of the numbers switch to NaN, essentially breaking the game. is there some unbounded random number somewhere propagating through?
 allow GM to switch teams after being fired
 some players want to resign for infinite money?
-should be some indication about the quality of upcoming drafts, which would influence how players/AI value draft picks
+draft
+  there should be some indication about the quality of upcoming drafts, which would influence how players/AI value draft picks
+  somehow allow uploading of custom draft classes
 more visibly promote subreddit
 in player.develop, high coaching rank means old players age faster?
 auto sort roster based on value
@@ -299,7 +301,7 @@ race conditions associated with callbacks when passing around transactions
   any put/add/update does not guarantee it's finished until the transaction finishes. but letting transactions finish is slow.
 contract negotiation
   don't have counter-offers be too drastic
-  weirdness http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbabaq1
+  weirdness http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbabaq1 http://www.reddit.com/r/BasketballGM/comments/1j3it8/free_agency_bug/
   add free agent to the end of roster
 eliminate jquery UI dependency? it's only used for roster reordering currently
 real calendar

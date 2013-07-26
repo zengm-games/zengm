@@ -12,6 +12,7 @@ DB CHANGES SINCE 3.1.0
 EVENTUALLY
 ----------
 
+in player.develop, high coaching rank means old players age faster?
 auto sort roster based on value
 "rookie contracts" when a new game is started should be bounded at 5 million. so do bound at 20 million before dividing by 4.
 sourcemaps putting blank line in front of each file?
@@ -393,7 +394,9 @@ var g = require('globals'); g.dbl.transaction("gameAttributes", "readwrite").obj
 
 ---
 
+git fetch origin pull/8/head:pr-8
 
+---
 
 
 

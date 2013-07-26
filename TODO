@@ -12,6 +12,13 @@ DB CHANGES SINCE 3.1.0
 EVENTUALLY
 ----------
 
+playerNameLabels should also put a little hover box over the player link with key stats/ratings
+more refined control of playing time: http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbaegpq
+reassess buyouts. should they even be possible?
+signing draft picks should be optional
+  maybe sign them in the "resign players" phase
+you should be able to drop below 5 players (and above 15) but only temporarily (no game simulation in that time)
+fake feet/inches heights should be taller
 sometimes a lot of the numbers switch to NaN, essentially breaking the game. is there some unbounded random number somewhere propagating through?
 allow GM to switch teams after being fired
 some players want to resign for infinite money?
@@ -39,6 +46,7 @@ revamp core.team.valueChange
   simpler formulas for rebuilding/contending team values
 trades
   too easy to trade for yougn stars: http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbaayir
+  draft pick value needs to be reassessed: http://www.reddit.com/r/BasketballGM/comments/1j2mag/ive_gotten_pretty_good/cbajbz6?context=3
   fancy scrolling of summary box, or some better UI
   refactor core.trade. it's an utter mess.
   cash
@@ -81,6 +89,7 @@ export/import roster
     something besides a data URI?
     no base64? Firefox can't handle #
   error handling if blank or invalid file is supplied
+  easily edit in excel?
 http://blog.stevensanderson.com/2013/05/20/knockout-es5-a-plugin-to-simplify-your-syntax/
 move most db functions into core.whatever. db should just be about initializing/upgrading
   get rid of "db" module dependence
@@ -289,6 +298,8 @@ trading block
 race conditions associated with callbacks when passing around transactions
   any put/add/update does not guarantee it's finished until the transaction finishes. but letting transactions finish is slow.
 contract negotiation
+  don't have counter-offers be too drastic
+  weirdness http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbabaq1
   add free agent to the end of roster
 eliminate jquery UI dependency? it's only used for roster reordering currently
 real calendar

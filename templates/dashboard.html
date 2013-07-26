@@ -1,9 +1,17 @@
 <ul class="dashboard_league">
 	<!-- ko foreach: leagues -->
 	<li>
-	  <a class="btn league" data-bind="attr: {title: lid() + '. ' + name(), href: '/l/' + lid()}"><strong data-bind="text: lid() + '. ' + name()"><br></strong><span class="clearfix" data-bind="text: region() + ' ' + teamName()"><br></span><span class="clearfix" data-bind="text: phaseText"></span></a>
+	  <a class="btn league" data-bind="attr: {title: lid() + '. ' + name(), href: '/l/' + lid()}">
+	  	<strong data-bind="text: lid() + '. ' + name()"></strong><br />
+	  	<span class="clearfix" data-bind="text: region() + ' ' + teamName()"></span><br />
+	  	<span class="clearfix" data-bind="text: phaseText"></span>
+	  </a>
 	  <form method="GET" class="delete" data-bind="attr: {action: '/delete_league/' + lid()}"><button class="btn btn-mini">Delete</button></form>
 	</li>
   <!-- /ko -->
-  <li class="dashboard_league_new"><a href="/new_league" class="btn btn-primary league"><h2 style="">Create new league</h2></a></li>
+  <li class="dashboard_league_new">
+  	<a href="/new_league" class="btn btn-primary league-btn">
+  		<p>Create A New League</p>
+  	</a>
+  </li>
 </ul>

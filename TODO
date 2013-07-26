@@ -68,6 +68,7 @@ profits too large, too easy
   add corporate tax?
   luxury tax increases for repeat offenders?
 awards assigned based on wins added, like hof
+  at a minimum, make sure to take minutes played into account
 when viewing a url like /l/1/roster, playing until new season shouldn't move it to roster for previous year
   this happens because inputs.season gets set even though it's not present in the URL. elegant solution?
 only show retired players in season summary if they actually played some
@@ -191,7 +192,6 @@ PER
     can i have it share a transaction with writing stats in core.game?
   how to deal with players traded mid-season?
     reevaluate this in general. stats don't seem to be showing after a trade in roster view and player view.
-  use for awards, contracts
 some UI showing the state of the team's synergy. maybe like an advisors screen that suggests what kind of player is needed to improve synergy
   also can respond to budget changes
 more handlebars helpers for things like...

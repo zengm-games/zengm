@@ -1,5 +1,11 @@
 This is a list of **only the major changes** in each version.
 
+# 3.1.1 (2013-07-26)
+
+## Technical details
+
+- Just a bunch of minor bug fixes
+
 # 3.1.0 (2013-06-17)
 
 ## Gameplay and UI

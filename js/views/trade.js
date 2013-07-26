@@ -19,7 +19,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
                 var i;
 
                 vars.summary = {
-                    enablePropose: !summary.warning && (userPids.length > 0 || otherPids.length > 0),
+                    enablePropose: !summary.warning && (userPids.length > 0 || otherPids.length > 0 || vars.userDpids.length > 0 || vars.otherDpids.length > 0),
                     warning: summary.warning
                 };
 

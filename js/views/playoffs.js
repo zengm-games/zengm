@@ -23,7 +23,7 @@ define(["globals", "ui", "core/season", "core/team", "lib/jquery", "lib/knockout
                     attrs: ["tid", "cid", "abbrev", "name"],
                     seasonAttrs: ["winp"],
                     season: inputs.season,
-                    sortBy: "winp"
+                    sortBy: ["winp", "-lost", "won"]
                 }, function (teams) {
                     var cid, i, j, keys, series, teamsConf;
 

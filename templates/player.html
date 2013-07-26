@@ -18,7 +18,7 @@
         <span data-bind="visible: freeAgent">Asking for</span><span data-bind="visible: !freeAgent()">Contract</span>: <span data-bind="currency: [player.contract.amount, 'M']"></span>/yr thru <span data-bind="text: player.contract.exp"></span><br>
       <!-- /ko -->
       <!-- ko if: !retired() -->
-        <span class="label label-important label-injury" style="margin-left: 0" data-bind="visible: injured, text: player.injury.gamesRemaining, attr: {title: player.injury.type + ' (out ' + player.injury.gamesRemaining + ' more games)'}"></span><span class="skills_block" data-bind="visible: injured, skillsBlock: currentRatings.skills"></span>
+        <span class="label label-important label-injury" style="margin-left: 0" data-bind="visible: injured, text: player.injury.gamesRemaining, attr: {title: player.injury.type() + ' (out ' + player.injury.gamesRemaining() + ' more games)'}"></span><span class="skills_block" data-bind="visible: injured, skillsBlock: currentRatings.skills"></span>
         <span class="skills_alone" data-bind="visible: !injured(), skillsBlock: currentRatings.skills"></span>
         <br>
       <!-- /ko -->

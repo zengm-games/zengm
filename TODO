@@ -12,6 +12,7 @@ DB CHANGES SINCE 3.1.0
 EVENTUALLY
 ----------
 
+more visibly promote subreddit
 in player.develop, high coaching rank means old players age faster?
 auto sort roster based on value
 "rookie contracts" when a new game is started should be bounded at 5 million. so do bound at 20 million before dividing by 4.

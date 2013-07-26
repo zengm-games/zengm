@@ -88,7 +88,7 @@
                   <li><a href="javascript:(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.RESIGN_PLAYERS); }())">Skip To Resign Players</a></li>
                   <li><a href="javascript:(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.PRESEASON); }())">Skip To Preseason</a></li>
                   <li class="divider"></li>
-                  <li><a href="javascript:(function () { db = require('db'); db.reset(); }())">Reset DB</a></li>
+                  <li><a href="javascript:(function () { if (window.confirm('Are you sure you want to reset the database? This will delete all your current saved games.')) { db = require('db'); db.reset(); } }())">Reset DB</a></li>
                 </ul>
               </li>
                   <li><a href="/manual">Manual</a></li>

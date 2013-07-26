@@ -12,6 +12,9 @@ DB CHANGES SINCE 3.1.0
 EVENTUALLY
 ----------
 
+allow GM to switch teams after being fired
+some players want to resign for infinite money?
+should be some indication about the quality of upcoming drafts, which would influence how players/AI value draft picks
 more visibly promote subreddit
 in player.develop, high coaching rank means old players age faster?
 auto sort roster based on value
@@ -143,6 +146,7 @@ database changes
     stats
     ratings
 gameSim
+  more penalty for really unbalanced rosters: http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cba743c?context=3
   rename compositeRating to compositeRatings (or something better)
     other plural issues in gameSim
   playing time not adding up to 240?

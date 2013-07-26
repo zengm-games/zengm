@@ -12,6 +12,7 @@ DB CHANGES SINCE 3.1.0
 EVENTUALLY
 ----------
 
+sometimes a lot of the numbers switch to NaN, essentially breaking the game. is there some unbounded random number somewhere propagating through?
 allow GM to switch teams after being fired
 some players want to resign for infinite money?
 should be some indication about the quality of upcoming drafts, which would influence how players/AI value draft picks
@@ -37,6 +38,7 @@ core.team.valueChange should be used to pick which free agents to sign in core.f
 revamp core.team.valueChange
   simpler formulas for rebuilding/contending team values
 trades
+  too easy to trade for yougn stars: http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbaayir
   fancy scrolling of summary box, or some better UI
   refactor core.trade. it's an utter mess.
   cash
@@ -146,6 +148,7 @@ database changes
     stats
     ratings
 gameSim
+  3 point percentage is too high
   more penalty for really unbalanced rosters: http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cba743c?context=3
   rename compositeRating to compositeRatings (or something better)
     other plural issues in gameSim

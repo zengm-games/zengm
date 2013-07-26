@@ -35,12 +35,14 @@ Basketball GM requires a web browser with IndexedDB support. Mozilla Firefox
 Explorer 10 seems to work, but it's not regularly tested.
 (TLDR: Use Firefox or maybe Chrome)
 
-If you want to run your own copy...
+## If you want to run your own copy...
 
 In addition to a supported browser, you need some way of running a web server to
 display the content. The easiest way is using the `runserver.py` file included
 here. First, install Python and web.py (as simple as `sudo apt-get install
-python-webpy` on Ubuntu). Then, from the command line, run:
+python-webpy` on Ubuntu). On OSX to install web.py just run 'sudo easy_install web.py' and you're set.
+
+Then, from the command line, run:
 
     python runserver.py
 

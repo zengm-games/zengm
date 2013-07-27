@@ -32,10 +32,10 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
             deferred = $.Deferred();
 
             g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
-                var players;
+                var i, players;
 
                 players = player.filter(event.target.result, {
-                    attrs: ["pid", "name", "pos", "age", "injury"],
+                    attrs: ["pid", "name", "abbrev", "pos", "age", "injury"],
                     ratings: ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills"],
                     stats: ["abbrev"],
                     season: inputs.season,
@@ -43,6 +43,13 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
                     showRookies: true,
                     fuzz: true
                 });
+
+                // For the current season, use the current abbrev (including FA), not the last stats abbrev
+                if (g.season === inputs.season) {
+                    for (i = 0; i < players.length; i++) {
+                        players[i].stats.abbrev = players[i].abbrev;
+                    }
+                }
 
                 deferred.resolve({
                     season: inputs.season,

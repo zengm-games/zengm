@@ -12,6 +12,10 @@ DB CHANGES SINCE 3.1.0
 EVENTUALLY
 ----------
 
+GM getting fired too early?
+harsher, more realistic luxury tax
+midlevel exception
+show attendance in box score
 playerNameLabels should also put a little hover box over the player link with key stats/ratings
 more refined control of playing time: http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbaegpq
 reassess buy outs. should they even be possible? probably not
@@ -48,7 +52,7 @@ revamp core.team.valueChange
   simpler formulas for rebuilding/contending team values
 trades
   too easy to trade for yougn stars: http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbaayir
-  draft pick value needs to be reassessed: http://www.reddit.com/r/BasketballGM/comments/1j2mag/ive_gotten_pretty_good/cbajbz6?context=3
+  draft pick value needs to be reassessed: http://www.reddit.com/r/BasketballGM/comments/1j2mag/ive_gotten_pretty_good/cbajbz6?context=3 http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbb3l2q
   fancy scrolling of summary box, or some better UI
   refactor core.trade. it's an utter mess.
   cash

@@ -74,7 +74,7 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
                 seasonAttrs: ["won", "lost", "winp", "streakLong", "att", "revenue", "profit"],
                 stats: stats,
                 season: g.season,
-                sortBy: "winp"
+                sortBy: ["winp", "-lost", "won"]
             }, function (teams) {
                 var cid, i, j, ranks;
 

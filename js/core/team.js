@@ -513,7 +513,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
 
         tx = db.getObjectStore(options.ot, ["players", "releasedPlayers", "teams"], null);
         tx.objectStore("teams").getAll(options.tid).onsuccess = function (event) {
-            var ft, fts, i, returnOneTeam, savePayroll, t;
+            var ft, fts, i, returnOneTeam, savePayroll, t, sortBy;
 
             t = event.target.result;
 
@@ -533,9 +533,22 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                 fts.push(ft);
             }
 
-            if (options.sortBy === "winp") {
+            if (Array.isArray(options.sortBy)) {
+                // Sort by multiple properties
+                sortBy = options.sortBy.slice();
+                fts.sort(function (a, b) {
+                    for(i=0;i<sortBy.length;i++) {
+                        var prop = sortBy[i],
+                            result = (prop.indexOf("-") === 1) ? a[sortBy[i]] - b[sortBy[i]] : b[sortBy[i]] - a[sortBy[i]];
+
+                        if(result || i === sortBy.length - 1) {
+                            return result;
+                        }
+                    }
+                });
+            } else if (options.sortBy === "winp") {
                 // Sort by winning percentage, descending
-                fts.sort(function (a, b) {  return b.winp - a.winp; });
+                fts.sort(function (a, b) { return b.winp - a.winp; });
             }
 
             // If payroll for the current season was requested, find the current payroll for each team. Otherwise, don't.

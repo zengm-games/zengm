@@ -34,6 +34,8 @@ define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/helpers", "util/vi
                     return cursor.continue();
                 }
 
+                p.contract.exp -= g.season - g.startingSeason;
+
                 // Delete anything we can get away with
                 p.ratings = [p.ratings[i]]; // Multiple seasons of ratings would take up too much space
                 delete p.ratings[0].season; // Will be set to g.startingSeason when imported

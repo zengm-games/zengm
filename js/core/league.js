@@ -153,6 +153,9 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                                 }
                                 if (!p.hasOwnProperty("salaries")) {
                                     p.salaries = [];
+                                    if (p.contract.exp < g.startingSeason) {
+                                        p.contract.exp = g.startingSeason;
+                                    }
                                     if (p.tid >= 0) {
                                         p = player.setContract(p, p.contract, true);
                                     }

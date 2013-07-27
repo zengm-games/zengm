@@ -1,8 +1,6 @@
 CURRENT
 -------
 
-AI teams can drop below 5 players, which causes errors in gamesim
-  this is probably because of the new "rebuilding" AI - but more generally, we should force the minimum roster size
 there shouldn't be so many players asking for slightly more than a minimum contract. just make it all min.
 somehow, don't let the user's team sign any/all free agents they want
   randomize "won't negotiate with you" more?

@@ -539,7 +539,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                 fts.sort(function (a, b) {
                     for(i=0;i<sortBy.length;i++) {
                         var prop = sortBy[i],
-                            result = (prop.indexOf("-") === 1) ? a[sortBy[i]] - b[sortBy[i]] : b[sortBy[i]] - a[sortBy[i]];
+                            result = (prop.indexOf("-") === 0) ? a[sortBy[i]] - b[sortBy[i]] : b[sortBy[i]] - a[sortBy[i]];
 
                         if(result || i === sortBy.length - 1) {
                             return result;

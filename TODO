@@ -1,6 +1,9 @@
 CURRENT
 -------
 
+trades
+  too easy to trade for yougn stars: http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbaayir
+  draft pick value needs to be reassessed: http://www.reddit.com/r/BasketballGM/comments/1j2mag/ive_gotten_pretty_good/cbajbz6?context=3 http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbb3l2q http://www.reddit.com/r/BasketballGM/comments/1j4evq/new_version_311_uploaded/cbbbc0p?context=3
 there shouldn't be so many players asking for slightly more than a minimum contract. just make it all min.
 somehow, don't let the user's team sign any/all free agents they want
   randomize "won't negotiate with you" more?
@@ -51,8 +54,6 @@ core.team.valueChange should be used to pick which free agents to sign in core.f
 revamp core.team.valueChange
   simpler formulas for rebuilding/contending team values
 trades
-  too easy to trade for yougn stars: http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbaayir
-  draft pick value needs to be reassessed: http://www.reddit.com/r/BasketballGM/comments/1j2mag/ive_gotten_pretty_good/cbajbz6?context=3 http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbb3l2q
   fancy scrolling of summary box, or some better UI
   refactor core.trade. it's an utter mess.
   cash

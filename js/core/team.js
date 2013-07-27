@@ -537,11 +537,11 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                 // Sort by multiple properties
                 sortBy = options.sortBy.slice();
                 fts.sort(function (a, b) {
-                    for(i=0;i<sortBy.length;i++) {
+                    for (i = 0; i < sortBy.length; i++) {
                         var prop = sortBy[i],
                             result = (prop.indexOf("-") === 1) ? a[sortBy[i]] - b[sortBy[i]] : b[sortBy[i]] - a[sortBy[i]];
 
-                        if(result || i === sortBy.length - 1) {
+                        if (result || i === sortBy.length - 1) {
                             return result;
                         }
                     }

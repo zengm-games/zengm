@@ -268,7 +268,14 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                 season: inputs.season,
                 editable: inputs.season === g.season && inputs.tid === g.userTid,
                 salaryCap: g.salaryCap / 1000,
-                showTradeFor: inputs.season === g.season && inputs.tid !== g.userTid
+                showTradeFor: inputs.season === g.season && inputs.tid !== g.userTid,
+                ptModifiers: [
+                    {text: "0", ptModifier: 0},
+                    {text: "-", ptModifier: 0.75},
+                    {text: " ", ptModifier: 1},
+                    {text: "+", ptModifier: 1.25},
+                    {text: "++", ptModifier: 1.75}
+                ]
             };
 
             tx = g.dbl.transaction(["players", "releasedPlayers", "schedule", "teams"]);
@@ -336,14 +343,6 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
 
                             db.getPayroll(tx, inputs.tid, function (payroll) {
                                 vars.payroll = payroll / 1000;
-
-                                vars.ptModifiers = [
-                                    {text: "0", ptModifier: 0},
-                                    {text: "-", ptModifier: 0.75},
-                                    {text: " ", ptModifier: 1},
-                                    {text: "+", ptModifier: 1.25},
-                                    {text: "++", ptModifier: 1.75}
-                                ];
 
                                 deferred.resolve(vars);
                             });

@@ -38,7 +38,7 @@
     <td data-bind="round: [stats.trb, 1]"></td>
     <td data-bind="round: [stats.ast, 1]"></td>
     <td data-bind="round: [stats.per, 1]"></td>
-    <td data-bind="visible: $parent.editable">
+    <td data-bind="if: $parent.editable">
       <select data-bind="options: $root.ptModifiers, optionsText: 'text', optionsValue: 'ptModifier', value: ptModifier"></select>
     </td>
     <td data-bind="visible: $parent.editable">

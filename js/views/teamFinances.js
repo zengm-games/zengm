@@ -135,12 +135,18 @@ define(["db", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib/
                 for (i = 0; i < contracts.length; i++) {
                     contracts[i].amounts = [];
                     for (j = season; j <= contracts[i].exp; j++) {
+                        // Only look at first 5 years (edited rosters might have longer contracts)
+                        if (j - season >= 5) {
+                            break;
+                        }
+
                         contracts[i].amounts.push(contracts[i].amount / 1000);
                         contractTotals[j - season] += contracts[i].amount / 1000;
                     }
                     delete contracts[i].amount;
                     delete contracts[i].exp;
                 }
+
                 salariesSeasons = [season, season + 1, season + 2, season + 3, season + 4];
 
                 g.dbl.transaction("teams").objectStore("teams").get(inputs.tid).onsuccess = function (event) {

@@ -6,9 +6,11 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
     "use strict";
 
     function post(req) {
-        var file, reader, tid;
+        var file, reader, startingSeason, tid;
 
         $("#create-new-league").attr("disabled", "disabled");
+
+        startingSeason = 2013;
 
         tid = Math.floor(req.params.tid);
         if (tid >= 0 && tid <= 29) {
@@ -19,17 +21,23 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
                     reader = new window.FileReader();
                     reader.readAsText(file);
                     reader.onload = function (event) {
-                        league.create(req.params.name, tid, JSON.parse(event.target.result).players, function (lid) {
+                        var roster;
+
+                        roster = JSON.parse(event.target.result);
+
+                        startingSeason = roster.startingSeason !== undefined ? roster.startingSeason : startingSeason;
+
+                        league.create(req.params.name, tid, roster.players, startingSeason, function (lid) {
                             ui.realtimeUpdate([], "/l/" + lid);
                         });
                     };
                 } else {
-                    league.create(req.params.name, tid, undefined, function (lid) {
+                    league.create(req.params.name, tid, undefined, startingSeason, function (lid) {
                         ui.realtimeUpdate([], "/l/" + lid);
                     });
                 }
             } else {
-                league.create(req.params.name, tid, undefined, function (lid) {
+                league.create(req.params.name, tid, undefined, startingSeason, function (lid) {
                     ui.realtimeUpdate([], "/l/" + lid);
                 });
             }

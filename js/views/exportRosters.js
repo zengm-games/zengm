@@ -34,8 +34,6 @@ define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/helpers", "util/vi
                     return cursor.continue();
                 }
 
-                p.contract.exp -= g.season - g.startingSeason;
-
                 // Delete anything we can get away with
                 p.ratings = [p.ratings[i]]; // Multiple seasons of ratings would take up too much space
                 delete p.ratings[0].season; // Will be set to g.startingSeason when imported
@@ -50,7 +48,7 @@ define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/helpers", "util/vi
                 cursor.continue();
             } else {
                 // I should be able to just use window.encodeURI to skip the base64 step, but Firefox can't fully download some URIs (like ones containing #)
-                $("#download-link").html('<a href="data:application/json;base64,' + window.btoa(JSON.stringify({players: players})) + '" download="rosters-' + season + '.json">Download Exported Rosters</a>');
+                $("#download-link").html('<a href="data:application/json;base64,' + window.btoa(JSON.stringify({startingSeason: g.season, players: players})) + '" download="rosters-' + season + '.json">Download Exported Rosters</a>');
             }
         };
     }

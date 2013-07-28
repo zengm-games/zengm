@@ -1,6 +1,7 @@
 CURRENT
 -------
 
+playing time set to 0: http://www.reddit.com/r/BasketballGM/comments/1j64wl/does_the_cpu_get_a_chance_to_negotiate_contracts/cbbo45d
 trades
   too easy to trade for yougn stars: http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbaayir
   draft pick value needs to be reassessed: http://www.reddit.com/r/BasketballGM/comments/1j2mag/ive_gotten_pretty_good/cbajbz6?context=3 http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbb3l2q http://www.reddit.com/r/BasketballGM/comments/1j4evq/new_version_311_uploaded/cbbbc0p?context=3
@@ -16,6 +17,8 @@ DB CHANGES SINCE 3.1.0
 EVENTUALLY
 ----------
 
+"hard reset" section of manual can't be seen when it's needed
+  can we load manual even wtihout indexeddb?
 team colors, and uniforms in player icons
 rookies are too good
 GM getting fired too early?
@@ -77,6 +80,7 @@ some players foul way too much
 team and league records (highest scoring game, etc)
 switch teams after you're fired
 trades
+  "undo" button for accidental trades
   allow trades to go over the roster limit, but show a warning. also factor into AI logic that they would have to drop a player
     warning should be in a different color than the error-like warnings
     after trade, AI drops player immediately

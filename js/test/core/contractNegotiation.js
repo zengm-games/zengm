@@ -8,7 +8,7 @@ define(["db", "globals", "core/contractNegotiation", "core/league", "core/player
     describe("core/contractNegotiation", function () {
         before(function (done) {
             db.connectMeta(function () {
-                league.create("Test", 14, undefined, function () {
+                league.create("Test", 14, undefined, 2013, function () {
                     done();
                 });
             });

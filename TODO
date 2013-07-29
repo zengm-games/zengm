@@ -1,7 +1,13 @@
 CURRENT
 -------
 
+"hgt" should not be fuzzed
+centers are too short
+transaction log
 trades
+  "undo" button for accidental trades
+    transaction log first. put "Undo" button after message from other GM only right after a trade finishes. make sure it doesn't show up at other time
+      only allow undo if dbChange hasn't changed since the transaction was logged
   too easy to trade for yougn stars: http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbaayir
   draft pick value needs to be reassessed: http://www.reddit.com/r/BasketballGM/comments/1j2mag/ive_gotten_pretty_good/cbajbz6?context=3 http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbb3l2q http://www.reddit.com/r/BasketballGM/comments/1j4evq/new_version_311_uploaded/cbbbc0p?context=3
   "When signing free agents, if you offer then a contract 2 years longer/shorter than the one they want, they'll counter offer one with 1 more/less year. If you offer the same amount of money you previously offered, and change the year to what they want, they'll automatically offer the lowest $ for that amount of years."
@@ -16,6 +22,7 @@ DB CHANGES SINCE 3.1.0
 EVENTUALLY
 ----------
 
+better foul logic - shouldn't just have big slow shot blockers fouling out
 team colors, and uniforms in player icons
 rookies are too good
 GM getting fired too early? how many seasons free?
@@ -78,7 +85,6 @@ some players foul way too much
 team and league records (highest scoring game, etc)
 switch teams after you're fired
 trades
-  "undo" button for accidental trades
   allow trades to go over the roster limit, but show a warning. also factor into AI logic that they would have to drop a player
     warning should be in a different color than the error-like warnings
     after trade, AI drops player immediately

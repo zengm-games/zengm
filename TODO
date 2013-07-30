@@ -1,6 +1,9 @@
 CURRENT
 -------
 
+in player.develop, high coaching rank means old players age faster because baseChange is negative?
+Bold active players on team history page
+AI teams reset playing time on trade http://www.reddit.com/r/BasketballGM/comments/1j9cz3/i_should_stop_playing_while_im_ahead/cbctuxt
 "hgt" should not be fuzzed
 centers are too short
 transaction log
@@ -15,6 +18,7 @@ there shouldn't be so many players asking for slightly more than a minimum contr
 somehow, don't let the user's team sign any/all free agents they want
   randomize "won't negotiate with you" more?
     make genBaseMoods lower?
+localization
 
 DB CHANGES SINCE 3.1.0
 ----------------------
@@ -22,7 +26,9 @@ DB CHANGES SINCE 3.1.0
 EVENTUALLY
 ----------
 
+player personality
 better foul logic - shouldn't just have big slow shot blockers fouling out
+  also, other players shouldn't get 0 fouls. make it a bit more evenly distributed
 team colors, and uniforms in player icons
 rookies are too good
 GM getting fired too early? how many seasons free?
@@ -44,7 +50,6 @@ draft
   there should be some indication about the quality of upcoming drafts, which would influence how players/AI value draft picks
   somehow allow uploading of custom draft classes
 more visibly promote subreddit
-in player.develop, high coaching rank means old players age faster?
 auto sort roster based on value
 "rookie contracts" when a new game is started should be bounded at 5 million. so do bound at 20 million before dividing by 4.
 sourcemaps putting blank line in front of each file?

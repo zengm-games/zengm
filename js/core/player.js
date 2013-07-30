@@ -268,7 +268,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             }
 
             // Modulate by coaching
-            baseChange *= ((coachingRank - 1) * 0.5 / 29 + 0.75);
+            baseChange *= ((coachingRank - 1) * (-0.5) / 29 + 1.25);
 
             ratingKeys = ['stre', 'spd', 'jmp', 'endu', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb'];
             for (j = 0; j < ratingKeys.length; j++) {

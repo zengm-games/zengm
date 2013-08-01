@@ -195,7 +195,6 @@ gameSim
     do i need all the team composite ratings?
     how does performance change/degrade as the years go on?
 internationalization
-  league dashboard rankings should say 1st, 2nd, 3rd rather than 1th, 2th, 3th
   http://requirejs.org/docs/api.html#i18n
 in lock functions, update g from database before using any potentially sensitive values
   or should these g.whatever variables be set at all if they're sensitive? lid doesn't change obviously, but the others?

@@ -53,10 +53,10 @@
   <div class="span4">
     <h3>Team Stats</h3>
     <p>
-      Points: <span data-bind="round: [pts, 1]"></span> (<span data-bind="text: ptsRank"></span>th)<br>
-      Allowed: <span data-bind="round: [oppPts, 1]"></span> (<span data-bind="text: oppPtsRank"></span>th)<br>
-      Rebounds: <span data-bind="round: [trb, 1]"></span> (<span data-bind="text: trbRank"></span>th)<br>
-      Assists: <span data-bind="round: [ast, 1]"></span> (<span data-bind="text: astRank"></span>th)<br>
+      Points: <span data-bind="round: [pts, 1]"></span> (<span data-bind="ordinal: ptsRank"></span>)<br>
+      Allowed: <span data-bind="round: [oppPts, 1]"></span> (<span data-bind="ordinal: oppPtsRank"></span>)<br>
+      Rebounds: <span data-bind="round: [trb, 1]"></span> (<span data-bind="ordinal: trbRank"></span>)<br>
+      Assists: <span data-bind="round: [ast, 1]"></span> (<span data-bind="ordinal: astRank"></span>)<br>
       <a data-bind="attrLeagueUrl: {href: ['team_stats']}">» Team Stats</a>
     </p>
 

@@ -19,6 +19,11 @@ somehow, don't let the user's team sign any/all free agents they want
   randomize "won't negotiate with you" more?
     make genBaseMoods lower?
 localization
+show championships in awards on player pages
+gameSim
+  3 point shooting percentages too high
+  balance http://www.reddit.com/r/BasketballGM/comments/1jfcjw/game_imbalance_fc_with_rdi/ http://www.reddit.com/message/messages/1097mj
+http://www.reddit.com/r/BasketballGM/comments/1jf3qw/bug_i_loaded_a_saved_roster_and_now_the_game/
 
 DB CHANGES SINCE 3.1.0
 ----------------------
@@ -26,12 +31,12 @@ DB CHANGES SINCE 3.1.0
 EVENTUALLY
 ----------
 
+milestones: http://www.reddit.com/r/BasketballGM/comments/1jb8d6/milestones/
 player personality
 better foul logic - shouldn't just have big slow shot blockers fouling out
   also, other players shouldn't get 0 fouls. make it a bit more evenly distributed
 team colors, and uniforms in player icons
 rookies are too good
-GM getting fired too early? how many seasons free?
 fire GM before draft?
 harsher, more realistic luxury tax
 midlevel exception
@@ -84,7 +89,6 @@ trades
     display some indication of what a team wants to do on the trade view, e.g.
       "I need to cut my payroll and start making more money."
       "I could really use a good rebounder."
-show championships in awards on player pages
 all star game
 some players foul way too much
 team and league records (highest scoring game, etc)
@@ -181,8 +185,6 @@ database changes
     stats
     ratings
 gameSim
-  3 point percentage is too high
-  rebounding overvalued? http://www.reddit.com/message/messages/1097mj
   more penalty for really unbalanced rosters: http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cba743c?context=3
   rename compositeRating to compositeRatings (or something better)
     other plural issues in gameSim

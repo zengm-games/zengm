@@ -440,6 +440,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                                                 cursor = event.target.result;
                                                 p = cursor.value;
                                                 p.tid = tids[k];
+                                                p.ptModifier = 1; // Reset
                                                 if (g.phase <= g.PHASE.PLAYOFFS) {
                                                     p = player.addStatsRow(p);
                                                 }

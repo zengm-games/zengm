@@ -427,6 +427,8 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
 
         p.tid = g.PLAYER.FREE_AGENT;
 
+        p.ptModifier = 1; // Reset
+
         require("db").getObjectStore(ot, "players", "players").put(p);
 
         if (cb !== undefined) {

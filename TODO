@@ -1,10 +1,8 @@
 CURRENT
 -------
 
-in player.develop, high coaching rank means old players age faster because baseChange is negative?
 Bold active players on team history page
 AI teams reset playing time on trade http://www.reddit.com/r/BasketballGM/comments/1j9cz3/i_should_stop_playing_while_im_ahead/cbctuxt
-"hgt" should not be fuzzed
 centers are too short
 transaction log
 trades
@@ -19,6 +17,7 @@ somehow, don't let the user's team sign any/all free agents they want
   randomize "won't negotiate with you" more?
     make genBaseMoods lower?
 localization
+  http://requirejs.org/docs/api.html#i18n
 gameSim
   3 point shooting percentages too high
   balance http://www.reddit.com/r/BasketballGM/comments/1jfcjw/game_imbalance_fc_with_rdi/ http://www.reddit.com/message/messages/1097mj
@@ -193,8 +192,6 @@ gameSim
     do i need all the player composite ratings?
     do i need all the team composite ratings?
     how does performance change/degrade as the years go on?
-internationalization
-  http://requirejs.org/docs/api.html#i18n
 in lock functions, update g from database before using any potentially sensitive values
   or should these g.whatever variables be set at all if they're sensitive? lid doesn't change obviously, but the others?
 move to new window button, like gmail, that will open a view in a new window with a minimal UI

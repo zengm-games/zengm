@@ -911,7 +911,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                     fp.ratings = {};
                     for (j = 0; j < options.ratings.length; j++) {
                         fp.ratings[options.ratings[j]] = pr[options.ratings[j]];
-                        if (options.fuzz && options.ratings[j] !== "fuzz" && options.ratings[j] !== "season" && options.ratings[j] !== "skills") {
+                        if (options.fuzz && options.ratings[j] !== "fuzz" && options.ratings[j] !== "season" && options.ratings[j] !== "skills" && options.ratings[j] !== "hgt") {
                             fp.ratings[options.ratings[j]] = Math.round(helpers.bound(fp.ratings[options.ratings[j]] + pr.fuzz, 0, 100));
                         }
                     }
@@ -954,7 +954,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                             }
                         } else {
                             fp.ratings[kk][options.ratings[j]] = p.ratings[k][options.ratings[j]];
-                            if (options.fuzz && options.ratings[j] !== "fuzz" && options.ratings[j] !== "season" && options.ratings[j] !== "skills") {
+                            if (options.fuzz && options.ratings[j] !== "fuzz" && options.ratings[j] !== "season" && options.ratings[j] !== "skills" && options.ratings[j] !== "hgt") {
                                 fp.ratings[kk][options.ratings[j]] = Math.round(helpers.bound(p.ratings[k][options.ratings[j]] + p.ratings[k].fuzz, 0, 100));
                             }
                         }

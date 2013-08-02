@@ -715,7 +715,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
 
         phaseText = g.season + " before draft";
 
-        tx = g.dbl.transaction(["messages", "players"], "readwrite");
+        tx = g.dbl.transaction(["messages", "players", "teams"], "readwrite");
 
         if (g.season === g.startingSeason + 3 && g.lid > 3 && !localStorage.nagged) {
             tx.objectStore("messages").add({
@@ -727,6 +727,37 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
             });
             localStorage.nagged = true;
         }
+
+        // Add award for each player on the championship team
+        team.filter({
+            attrs: ["tid"],
+            seasonAttrs: ["playoffRoundsWon"],
+            season: g.season,
+            ot: tx
+        }, function (teams) {
+            var i, tid;
+
+            for (i = 0; i < teams.length; i++) {
+                if (teams[i].playoffRoundsWon === 4) {
+                    tid = teams[i].tid;
+                    break;
+                }
+            }
+
+            tx.objectStore("players").index("tid").openCursor(tid).onsuccess = function (event) {
+                var cursor, p;
+
+                cursor = event.target.result;
+                if (cursor) {
+                    p = cursor.value;
+
+                    p.awards.push({season: g.season, type: "Won Championship"});
+
+                    cursor.update(p);
+                    cursor.continue();
+                }
+            };
+        });
 
         // Do annual tasks for each player, like checking for retirement
         tx.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(g.PLAYER.RETIRED, true)).onsuccess = function (event) { // All non-retired players

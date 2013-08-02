@@ -703,13 +703,13 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         }
 
         minHgt = 70;  // 5'10"
-        maxHgt = 83;  // 6'11"
+        maxHgt = 85;  // 7'1"
         minWeight = 150;
         maxWeight = 290;
 
         p.pos = pos(p.ratings[0]);  // Position (PG, SG, SF, PF, C, G, GF, FC)
-        p.hgt = Math.round(random.gauss(1, 0.02) * (p.ratings[0].hgt * (maxHgt - minHgt) / 100 + minHgt));  // Height in inches (from minHgt to maxHgt)
-        p.weight = Math.round(random.gauss(1, 0.02) * ((p.ratings[0].hgt + 0.5 * p.ratings[0].stre) * (maxWeight - minWeight) / 150 + minWeight));  // Weight in pounds (from minWeight to maxWeight)
+        p.hgt = Math.round(random.randInt(-2, 2) + p.ratings[0].hgt * (maxHgt - minHgt) / 100 + minHgt);  // Height in inches (from minHgt to maxHgt)
+        p.weight = Math.round(random.randInt(-20, 20) + (p.ratings[0].hgt + 0.5 * p.ratings[0].stre) * (maxWeight - minWeight) / 150 + minWeight);  // Weight in pounds (from minWeight to maxWeight)
 
         // Randomly choose nationality  
         nationality = 'USA';

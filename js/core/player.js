@@ -162,7 +162,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         }
 
         expiration = g.season + years - 1;
-        if (amount < minAmount) {
+        if (amount < minAmount * 1.1) {
             amount = minAmount;
         } else if (amount > maxAmount) {
             amount = maxAmount;

@@ -722,6 +722,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
 
         p.name = name(nationality);
         p.college = "";
+        p.imgURL = ""; // Custom rosters can define player image URLs to be used rather than vector faces
 
         p.salaries = [];
         p = setContract(p, genContract(p), false);

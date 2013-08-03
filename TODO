@@ -1,6 +1,7 @@
 CURRENT
 -------
 
+Add docs for player image URLs
 Bold active players on team history page
 transaction log
 trades
@@ -22,6 +23,8 @@ http://www.reddit.com/r/BasketballGM/comments/1jf3qw/bug_i_loaded_a_saved_roster
 
 DB CHANGES SINCE 3.1.0
 ----------------------
+
+imgURL in player root (although lacking this doesn't cause an error now, better add it to be sure)
 
 EVENTUALLY
 ----------

@@ -144,7 +144,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                                 pg = player.generate(p.tid, age, "", 0, 0, g.startingSeason - age, true, scoutingRank);
 
                                 // Optional things
-                                simpleDefaults = ["awards", "born", "college", "contract", "draft", "face", "freeAgentMood", "hgt", "injury", "pos", "ptModifier", "retiredYear", "rosterOrder", "weight", "yearsFreeAgent"];
+                                simpleDefaults = ["awards", "born", "college", "contract", "draft", "face", "freeAgentMood", "hgt", "imgURL", "injury", "pos", "ptModifier", "retiredYear", "rosterOrder", "weight", "yearsFreeAgent"];
                                 for (j = 0; j < simpleDefaults.length; j++) {
                                     if (!p.hasOwnProperty(simpleDefaults[j])) {
                                         p[simpleDefaults[j]] = pg[simpleDefaults[j]];

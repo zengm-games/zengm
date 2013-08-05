@@ -4,7 +4,7 @@ This is a list of **only the major changes** in each version.
 
 ## Gameplay and UI
 
-- AI teams will not trade away multiple first round picks in a single trade
+- AI teams will not trade away more than two draft picks in a single trade
 - Fewer high-rated big men are generated
 
 # 3.1.1 (2013-07-26)

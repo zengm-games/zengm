@@ -419,6 +419,11 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
 
                         teams = helpers.getTeams();
 
+                        // UGLY HACK: Don't include more than 2 draft picks
+                        if (otherDpids.length > 2) {
+                            dv = -1;
+                        }
+
                         if (dv > 0) {
                             // Trade players
                             outcome = "accepted";

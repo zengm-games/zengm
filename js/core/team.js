@@ -573,6 +573,12 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
     function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, cb) {
         var add, i, remove, roster, strategy, tx;
 
+        // UGLY HACK: Don't include more than 2 draft picks in a trade for AI team
+        if (dpidsRemove.length > 2) {
+            cb(-1);
+            return;
+        }
+
         // Get value and skills for each player on team or involved in the proposed transaction
         roster = [];
         add = [];

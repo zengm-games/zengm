@@ -83,11 +83,11 @@ define(["globals", "ui", "core/freeAgents", "core/player", "lib/faces", "lib/jqu
             // If playerImgURL exists and is not an empty string, use it instead of the generated face
             if (vm.player.imgURL && vm.player.imgURL()) {
                 pic = document.getElementById("picture");
-                pic.style.backgroundImage="url('"+vm.player.imgURL()+"')";
-                pic.style.backgroundRepeat="no-repeat";
-                pic.style.backgroundSize="100% 73px";
-                pic.style.marginTop="12px";
-                pic.style.width="100px";
+                pic.style.backgroundImage = "url('" + vm.player.imgURL() + "')";
+                pic.style.backgroundRepeat = "no-repeat";
+                pic.style.backgroundSize = "100% 73px";
+                pic.style.marginTop = "12px";
+                pic.style.width = "100px";
             } else {
                 faces.display("picture", vm.player.face());
             }

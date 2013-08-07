@@ -1,6 +1,10 @@
 CURRENT
 -------
 
+gameSim substitutions should be based on "value", not ovr
+better ovr
+  regression
+http://www.reddit.com/r/BasketballGM/comments/1jrv3a/have_we_discussed_the_draft_pick_exploit_yet/
 Bold active players on team history page
 transaction log
 trades
@@ -20,6 +24,9 @@ gameSim
   balance http://www.reddit.com/r/BasketballGM/comments/1jfcjw/game_imbalance_fc_with_rdi/ http://www.reddit.com/message/messages/1097mj
   http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbfzr43?context=3
 http://www.reddit.com/r/BasketballGM/comments/1jf3qw/bug_i_loaded_a_saved_roster_and_now_the_game/
+more starting options
+  leaguewide draft
+  randomize players on custom rosters
 
 DB CHANGES SINCE 3.1.0
 ----------------------
@@ -29,6 +36,13 @@ imgURL in player root (although lacking this doesn't cause an error now, better 
 EVENTUALLY
 ----------
 
+some UI indicating how players developed over the offseason
+  integrated into roster, or separate page?
+player search page
+  show stats, ratings, contract, etc. (customizable); allow filters to be applied. also filter by skill icon
+finances - too easy to make big $$$
+player morale - punishment for tanking
+make trade counter-offer faster by checking if no trade is possible first.
 milestones: http://www.reddit.com/r/BasketballGM/comments/1jb8d6/milestones/
 player personality
 better foul logic - shouldn't just have big slow shot blockers fouling out

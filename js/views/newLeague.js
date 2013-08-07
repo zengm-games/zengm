@@ -117,7 +117,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
         updateShowUploadForm();
 
         $("#help-rosters").clickover({
-            title: "Rosters",
+            title: "Players",
             html: true,
             content: 'Rosters of the teams in your new league can either be filled by randomly-generated players or by players from a <a href="/manual/custom_rosters">custom roster file</a> you upload.'
         });

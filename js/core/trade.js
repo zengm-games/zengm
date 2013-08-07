@@ -493,12 +493,16 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
      * @param {function(boolean, string)} cb Callback function. The argument is a string containing a message to be dispalyed to the user, as if it came from the AI GM.
      */
     function makeItWork(cb) {
-        var teams, tryAddAsset, testTrade;
+        var teams;
 
         teams = helpers.getTeams();
 
         getPlayers(function (userPids, otherPids, userDpids, otherDpids) {
             getOtherTid(function (otherTid) {
+                var added, tryAddAsset, testTrade;
+
+                added = 0;
+
                 // Add either the highest value asset or the lowest value one that makes the trade good for the AI team.
                 tryAddAsset = function () {
                     var assets, tx;
@@ -548,6 +552,12 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                     tx.oncomplete = function () {
                         var done, i, newUserPids, newUserDpids;
 
+                        // If we've already added 5 assets or there are no more to try, stop
+                        if (assets.length === 0 || added >= 5) {
+                            cb(teams[otherTid].region + ' GM: "I can\'t afford to give up so much."');
+                            return;
+                        }
+
                         // Calculate the value for each asset added to the trade, for use in forward selection
                         done = 0;
                         for (i = 0; i < assets.length; i++) {
@@ -585,14 +595,12 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                                             userDpids.push(asset.dpid);
                                         }
 
+                                        added += 1;
+
                                         testTrade();
                                     }
                                 });
                             })(i);
-                        }
-
-                        if (assets.length === 0) {
-                            cb(teams[otherTid].region + ' GM: "I can\'t afford to give up so much."');
                         }
                     };
                 };

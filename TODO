@@ -8,6 +8,7 @@ team names from db
   db.js: pop stuff, use helpers.getTeamsDefault?
   store region and name in meta so it can be shown on dashboard
     update this when appropriate
+  "customize" screen
 make trade counter-offer faster by checking if no trade is possible first http://www.reddit.com/r/BasketballGM/comments/1jumc9/is_it_just_me_or_does_it_take_wayyyy_too_long_for/
 more starting options
   UI

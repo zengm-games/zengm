@@ -64,7 +64,7 @@ define(["db", "globals", "core/league", "lib/underscore", "test/helpers"], funct
                         }
                     }
 
-                    count.should.equal(12);
+                    count.should.equal(15);
 
                     done();
                 };

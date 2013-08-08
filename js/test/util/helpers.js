@@ -109,11 +109,12 @@ define(["globals", "util/helpers"], function (g, helpers) {
             });
         });
 
-        describe("#getTeams()", function () {
+        describe("#getTeamsDefault()", function () {
             it("should return correct length array", function () {
-                helpers.getTeams().length.should.equal(g.numTeams);
+                helpers.getTeamsDefault().length.should.equal(g.numTeams);
             });
-            it("should select team", function () {
+            // This is now getTeams and it requires DB access
+            /*it("should select team", function () {
                 var i, teams;
                 teams = helpers.getTeams(25);
                 for (i = 0; i < teams.length; i++) {
@@ -123,7 +124,7 @@ define(["globals", "util/helpers"], function (g, helpers) {
                         teams[i].selected.should.equal(false);
                     }
                 }
-            });
+            });*/
         });
 
         describe("#deepCopy()", function () {

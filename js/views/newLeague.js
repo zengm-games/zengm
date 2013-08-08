@@ -27,17 +27,17 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
 
                         startingSeason = roster.startingSeason !== undefined ? roster.startingSeason : startingSeason;
 
-                        league.create(req.params.name, tid, roster.players, startingSeason, function (lid) {
+                        league.create(req.params.name, tid, roster.players, roster.teams, startingSeason, function (lid) {
                             ui.realtimeUpdate([], "/l/" + lid);
                         });
                     };
                 } else {
-                    league.create(req.params.name, tid, undefined, startingSeason, function (lid) {
+                    league.create(req.params.name, tid, undefined, undefined, startingSeason, function (lid) {
                         ui.realtimeUpdate([], "/l/" + lid);
                     });
                 }
             } else {
-                league.create(req.params.name, tid, undefined, startingSeason, function (lid) {
+                league.create(req.params.name, tid, undefined, undefined, startingSeason, function (lid) {
                     ui.realtimeUpdate([], "/l/" + lid);
                 });
             }

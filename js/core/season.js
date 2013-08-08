@@ -224,7 +224,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
     function newSchedule() {
         var cid, days, dids, game, games, good, i, ii, iters, j, jj, jMax, k, matchup, matchups, n, newMatchup, t, teams, tids, tidsByConf, tidsInDays, tryNum, used;
 
-        teams = helpers.getTeamsDefault(); // Only tid, cid, and did are used, so this is okay.
+        teams = helpers.getTeamsDefault(); // Only tid, cid, and did are used, so this is okay for now. But if someone customizes cid and did, this will break. To fix that, make this function require DB access (and then fix the tests)
 
         tids = [];  // tid_home, tid_away
 

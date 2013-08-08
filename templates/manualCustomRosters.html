@@ -107,3 +107,26 @@
   </li>
   <li>You can optionally include a URL for an image to be used instead of a randomly-generated face by putting "imgURL": "http://www.example.com/img.jpg" in the root of a player object.</li>
 </ul>
+
+<p>You can also specify custom teams by doing something like this:</p>
+
+<pre>
+{
+  "startingSeason": 2013,
+  "players": [
+    ...
+  ],
+  "teams": [
+    {
+      "tid": 0,
+      "region": "Atlanta",
+      "name": "Herons",
+      "abbrev": "ATL",
+      "pop": 5.4
+    },
+    ...
+  ]
+}
+</pre>
+
+<p>Note that if you add teams to the roster file, you must add entries for all 30 teams (no, you can't add/remove teams) and you must list the teams in order (by tid). All of the values except "tid" are optional and will be filled in with default values if not specified. "pop" is the population of the region in millions of people.</p>

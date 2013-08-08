@@ -165,6 +165,26 @@ define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
         return teams;
     }
 
+    /**
+     * Get list of teams, along with some more metadata
+     *
+     * Returns an array of 30 teams. Each array is an object with the following properties:
+     *     tid: Integer team ID (0 to 29).
+     *     cid: Integer conference ID (0=East, 1=West).
+     *     did: Integer division ID.
+     *     region: String region name.
+     *     name: String team name.
+     *     abbrev: String 3-letter team abbreviation.
+     *     pop: From http://www.forbes.com/nba-valuations/ number of people in the region, in millions of people.
+     *     popRank: Rank of population, 1=largest, 30=smallest.
+     *     selected: If selectedTid is defined, this is a boolean representing whether this team is "selected" or not (see below).
+     *
+     * This should only be used to initialize things, since many of these values can change from their defaults.
+     * 
+     * @memberOf util.helpers
+     * @param {number|string} selectedTid A team ID or abbrev for a team that should be "selected" (as in, from a drop down menu). This will add the "selected" key to each team object, as described above.
+     * @return {Array.Object} All teams.
+     */
     function getTeamsDefault() {
         return [
             {tid: 0, cid: 0, did: 2, region: "Atlanta", name: "Herons", abbrev: "ATL", pop: 5.4, popRank: 12},

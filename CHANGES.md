@@ -6,6 +6,7 @@ This is a list of **only the major changes** in each version.
 
 - AI teams will not trade away more than two draft picks in a single trade
 - Fewer high-rated big men are generated
+- Support for customized team names
 
 # 3.1.1 (2013-07-26)
 

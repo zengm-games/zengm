@@ -3,7 +3,6 @@ CURRENT
 
 team names from db
   g.teamNamesCache and g.teamRegionsCache and g.teamAbbrevsCache
-    should these be more pervasive? probably. go over and simplify. other places might use helpers.getTeams, a convenience function to read them into an array of objects
     update this when appropriate
   helpers.getTeamsDefault - use for initialization
   db.js: pop stuff, use helpers.getTeamsDefault?

@@ -36,7 +36,8 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "util/helpers"], function
                 fieldId = formId + "-" + fields[i];
                 if (fields[i] === "teams") {
                     options = [];
-                    for (j = 0; j < options.length; j++) {
+                    for (j = 0; j < g.numTeams; j++) {
+                        options[j] = {};
                         options[j].key = g.teamAbbrevsCache[j];
                         options[j].val = g.teamRegionsCache[j] + " " + g.teamNamesCache[j];
                     }

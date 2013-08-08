@@ -133,7 +133,7 @@ define(["db", "globals", "core/finances", "core/player", "core/season", "core/te
             }
 
             g.dbl.transaction("draftPicks").objectStore("draftPicks").index("season").getAll(g.season).onsuccess = function (event) {
-                var draftPicks, draftPicksIndexed, i, tid;
+                var draftPickStore, draftPicks, draftOrder, draftPicksIndexed, i, tid;
 
                 draftPicks = event.target.result;
                 // Reorganize this to an array indexed on originalTid and round
@@ -149,66 +149,60 @@ define(["db", "globals", "core/finances", "core/player", "core/season", "core/te
                     };
                 }
 
-                team.filter({
-                    attrs: ["abbrev"]
-                }, function (teamsUnsorted) {
-                    var draftPickStore, draftOrder, i;
+                draftOrder = [];
+                // First round - lottery winners
+                for (i = 0; i < firstThree.length; i++) {
+                    tid = draftPicksIndexed[teams[firstThree[i]].tid][1].tid;
+                    draftOrder.push({
+                        round: 1,
+                        pick: i + 1,
+                        tid: tid,
+                        abbrev: g.teamAbbrevsCache[tid],
+                        originalTid: teams[firstThree[i]].tid,
+                        originalAbbrev: teams[firstThree[i]].abbrev
+                    });
+                }
 
-                    draftOrder = [];
-                    // First round - lottery winners
-                    for (i = 0; i < firstThree.length; i++) {
-                        tid = draftPicksIndexed[teams[firstThree[i]].tid][1].tid;
+                // First round - everyone else
+                pick = 4;
+                for (i = 0; i < teams.length; i++) {
+                    if (firstThree.indexOf(i) < 0) {
+                        tid = draftPicksIndexed[teams[i].tid][1].tid;
                         draftOrder.push({
                             round: 1,
-                            pick: i + 1,
+                            pick: pick,
                             tid: tid,
-                            abbrev: teamsUnsorted[tid].abbrev,
-                            originalTid: teams[firstThree[i]].tid,
-                            originalAbbrev: teams[firstThree[i]].abbrev
-                        });
-                    }
-
-                    // First round - everyone else
-                    pick = 4;
-                    for (i = 0; i < teams.length; i++) {
-                        if (firstThree.indexOf(i) < 0) {
-                            tid = draftPicksIndexed[teams[i].tid][1].tid;
-                            draftOrder.push({
-                                round: 1,
-                                pick: pick,
-                                tid: tid,
-                                abbrev: teamsUnsorted[tid].abbrev,
-                                originalTid: teams[i].tid,
-                                originalAbbrev: teams[i].abbrev
-                            });
-                            pick += 1;
-                        }
-                    }
-
-                    // Sort teams by winp only, for second round
-                    teams.sort(function (a, b) { return a.winp - b.winp; });
-
-                    // Second round
-                    for (i = 0; i < teams.length; i++) {
-                        tid = draftPicksIndexed[teams[i].tid][2].tid;
-                        draftOrder.push({
-                            round: 2,
-                            pick: i + 1,
-                            tid: tid,
-                            abbrev: teamsUnsorted[tid].abbrev,
+                            abbrev: g.teamAbbrevsCache[tid],
                             originalTid: teams[i].tid,
                             originalAbbrev: teams[i].abbrev
                         });
+                        pick += 1;
                     }
+                }
 
-                    // Delete from draftPicks object store so that they are completely untradeable
-                    draftPickStore = g.dbl.transaction("draftPicks", "readwrite").objectStore("draftPicks");
-                    for (i = 0; i < draftPicks.length; i++) {
-                        draftPickStore.delete(draftPicks[i].dpid);
-                    }
+                // Sort teams by winp only, for second round
+                teams.sort(function (a, b) { return a.winp - b.winp; });
 
-                    setOrder(draftOrder, cb);
-                });
+                // Second round
+                for (i = 0; i < teams.length; i++) {
+                    tid = draftPicksIndexed[teams[i].tid][2].tid;
+                    draftOrder.push({
+                        round: 2,
+                        pick: i + 1,
+                        tid: tid,
+                        abbrev: g.teamAbbrevsCache[tid],
+                        originalTid: teams[i].tid,
+                        originalAbbrev: teams[i].abbrev
+                    });
+                }
+
+                // Delete from draftPicks object store so that they are completely untradeable
+                draftPickStore = g.dbl.transaction("draftPicks", "readwrite").objectStore("draftPicks");
+                for (i = 0; i < draftPicks.length; i++) {
+                    draftPickStore.delete(draftPicks[i].dpid);
+                }
+
+                setOrder(draftOrder, cb);
             };
         });
     }
@@ -233,52 +227,48 @@ define(["db", "globals", "core/finances", "core/player", "core/season", "core/te
             app.logger.debug('WARNING: Team %d tried to draft out of order' % (tid,));
             return;*/
 
-        team.filter({
-            attrs: ["abbrev", "region", "name"]
-        }, function (teams) {
-            tx = g.dbl.transaction("players", "readwrite");
-            tx.objectStore("players").openCursor(pid).onsuccess = function (event) {
-                var cursor, i, p, rookieSalaries, years;
+        tx = g.dbl.transaction("players", "readwrite");
+        tx.objectStore("players").openCursor(pid).onsuccess = function (event) {
+            var cursor, i, p, rookieSalaries, years;
 
-                cursor = event.target.result;
-                p = cursor.value;
+            cursor = event.target.result;
+            p = cursor.value;
 
-                // Draft player
-                p.tid = pick.tid;
-                p.draft = {
-                    round: pick.round,
-                    pick: pick.pick,
-                    tid: pick.tid,
-                    year: g.season,
-                    abbrev: teams[pick.tid].abbrev,
-                    originalTid: pick.originalTid,
-                    originalAbbrev: pick.originalAbbrev,
-                    // draftTeamName and draftTeamRegion are currently not used, but they don't do much harm
-                    teamName: teams[pick.tid].name,
-                    teamRegion: teams[pick.tid].region,
-                    pot: p.ratings[0].pot,
-                    ovr: p.ratings[0].ovr,
-                    skills: p.ratings[0].skills
-                };
-
-                // Contract
-                rookieSalaries = [5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500]; // Keep in sync with core.team
-                i = pick.pick - 1 + 30 * (pick.round - 1);
-                years = 4 - pick.round;  // 2 years for 2nd round, 3 years for 1st round;
-                p = player.setContract(p, {
-                    amount: rookieSalaries[i],
-                    exp: g.season + years
-                }, true);
-
-                cursor.update(p);
+            // Draft player
+            p.tid = pick.tid;
+            p.draft = {
+                round: pick.round,
+                pick: pick.pick,
+                tid: pick.tid,
+                year: g.season,
+                abbrev: g.teamAbbrevsCache[pick.tid],
+                originalTid: pick.originalTid,
+                originalAbbrev: pick.originalAbbrev,
+                // draftTeamName and draftTeamRegion are currently not used, but they don't do much harm
+                teamName: g.teamNamesCache[pick.tid],
+                teamRegion: g.teamRegionsCache[pick.tid],
+                pot: p.ratings[0].pot,
+                ovr: p.ratings[0].ovr,
+                skills: p.ratings[0].skills
             };
 
-            tx.oncomplete = function () {
-                if (cb !== undefined) {
-                    cb(pid);
-                }
-            };
-        });
+            // Contract
+            rookieSalaries = [5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500]; // Keep in sync with core.team
+            i = pick.pick - 1 + 30 * (pick.round - 1);
+            years = 4 - pick.round;  // 2 years for 2nd round, 3 years for 1st round;
+            p = player.setContract(p, {
+                amount: rookieSalaries[i],
+                exp: g.season + years
+            }, true);
+
+            cursor.update(p);
+        };
+
+        tx.oncomplete = function () {
+            if (cb !== undefined) {
+                cb(pid);
+            }
+        };
     }
 
     /**

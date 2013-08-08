@@ -368,39 +368,39 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
      * @param {function()} cb Callback function run after the database operations finish.
      */
     function setSchedule(tids, cb) {
-        team.filter({
-            attrs: ["abbrev", "region", "name"]
-        }, function (teams) {
-            var i, row, schedule, scheduleStore, tx;
+        var i, row, schedule, scheduleStore, teams, tx;
 
-            schedule = [];
-            for (i = 0; i < tids.length; i++) {
-                row = {homeTid: tids[i][0], awayTid: tids[i][1]};
-                row.homeAbbrev = teams[row.homeTid].abbrev;
-                row.homeRegion = teams[row.homeTid].region;
-                row.homeName = teams[row.homeTid].name;
-                row.awayAbbrev = teams[row.awayTid].abbrev;
-                row.awayRegion = teams[row.awayTid].region;
-                row.awayName = teams[row.awayTid].name;
-                schedule.push(row);
+        teams = helpers.getTeams();
+
+        schedule = [];
+        for (i = 0; i < tids.length; i++) {
+            row = {homeTid: tids[i][0], awayTid: tids[i][1]};
+            row.homeAbbrev = teams[row.homeTid].abbrev;
+            row.homeRegion = teams[row.homeTid].region;
+            row.homeName = teams[row.homeTid].name;
+            row.awayAbbrev = teams[row.awayTid].abbrev;
+            row.awayRegion = teams[row.awayTid].region;
+            row.awayName = teams[row.awayTid].name;
+            schedule.push(row);
+        }
+
+        tx = g.dbl.transaction("schedule", "readwrite");
+        scheduleStore = tx.objectStore("schedule");
+        scheduleStore.getAll().onsuccess = function (event) {
+            var currentSchedule, i;
+
+            currentSchedule = event.target.result;
+            for (i = 0; i < currentSchedule.length; i++) {
+                scheduleStore.delete(currentSchedule[i].gid);
             }
 
-            tx = g.dbl.transaction("schedule", "readwrite");
-            scheduleStore = tx.objectStore("schedule");
-            scheduleStore.getAll().onsuccess = function (event) {
-                var currentSchedule, i;
-
-                currentSchedule = event.target.result;
-                for (i = 0; i < currentSchedule.length; i++) {
-                    scheduleStore.delete(currentSchedule[i].gid);
-                }
-
-                for (i = 0; i < schedule.length; i++) {
-                    scheduleStore.add(schedule[i]);
-                }
-            };
-            tx.oncomplete = cb;
-        });
+            for (i = 0; i < schedule.length; i++) {
+                scheduleStore.add(schedule[i]);
+            }
+        };
+        tx.oncomplete = function () {
+            cb();
+        };
     }
 
     /**
@@ -880,35 +880,30 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
     }
 
     function newPhaseAfterDraft(cb) {
-        var phaseText;
+        var draftPickStore, phaseText, round, t, tx;
 
         phaseText = g.season + " after draft";
 
-        team.filter({
-            attrs: ["abbrev"]
-        }, function (teams) {
-            var draftPickStore, round, t, tx;
 
-            // Add a new set of draft picks
-            tx = g.dbl.transaction("draftPicks", "readwrite");
-            draftPickStore = tx.objectStore("draftPicks");
-            for (t = 0; t < 30; t++) {
-                for (round = 1; round <= 2; round++) {
-                    draftPickStore.add({
-                        tid: t,
-                        abbrev: teams[t].abbrev,
-                        originalTid: t,
-                        originalAbbrev: teams[t].abbrev,
-                        round: round,
-                        season: g.season + 4
-                    });
-                }
+        // Add a new set of draft picks
+        tx = g.dbl.transaction("draftPicks", "readwrite");
+        draftPickStore = tx.objectStore("draftPicks");
+        for (t = 0; t < 30; t++) {
+            for (round = 1; round <= 2; round++) {
+                draftPickStore.add({
+                    tid: t,
+                    abbrev: g.teamAbbrevsCache[t],
+                    originalTid: t,
+                    originalAbbrev: g.teamAbbrevsCache[t],
+                    round: round,
+                    season: g.season + 4
+                });
             }
+        }
 
-            tx.oncomplete = function () {
-                newPhaseCb(g.PHASE.AFTER_DRAFT, phaseText, cb, undefined, ["playerMovement"]);
-            };
-        });
+        tx.oncomplete = function () {
+            newPhaseCb(g.PHASE.AFTER_DRAFT, phaseText, cb, undefined, ["playerMovement"]);
+        };
     }
 
     function newPhaseResignPlayers(cb) {

@@ -2,14 +2,14 @@
  * @name core.game
  * @namespace Everything about games except the actual simulation. So, loading the schedule, loading the teams, saving the results, and handling multi-day simulations and what happens when there are no games left to play.
  */
-define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim", "core/player", "core/season", "lib/underscore", "util/advStats", "util/lock", "util/helpers", "util/random"], function (db, g, ui, freeAgents, finances, gameSim, player, season, _, advStats, lock, helpers, random) {
+define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim", "core/player", "core/season", "core/team", "lib/underscore", "util/advStats", "util/lock", "util/helpers", "util/random"], function (db, g, ui, freeAgents, finances, gameSim, player, season, team, _, advStats, lock, helpers, random) {
     "use strict";
 
     function Game() {
     }
 
     Game.prototype.writeStats = function (tx, results, playoffs, cb) {
-        var gp, that, winp;
+        var that;
 
         // Retrieve stats
         this.team = results.team;
@@ -315,7 +315,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
     };
 
     Game.prototype.writeGameStats = function (tx, cb) {
-        var gameStats, i, keys, p, t, team, teams, tl, tw;
+        var gameStats, i, keys, p, t, tl, tw;
 
         gameStats = {gid: this.id, season: g.season, playoffs: this.playoffs, overtimes: this.overtimes, won: {}, lost: {}, teams: [{tid: this.team[0].id, players: []}, {tid: this.team[1].id, players: []}]};
         for (t = 0; t < 2; t++) {
@@ -352,23 +352,19 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
             tl = 0;
         }
 
-        teams = helpers.getTeams();
+        gameStats.won.abbrev = g.teamAbbrevsCache[this.team[tw].id];
+        gameStats.won.region = g.teamRegionsCache[this.team[tw].id];
+        gameStats.won.name = g.teamNamesCache[this.team[tw].id];
+        gameStats.teams[tw].abbrev = g.teamAbbrevsCache[this.team[tw].id];
+        gameStats.teams[tw].region = g.teamRegionsCache[this.team[tw].id];
+        gameStats.teams[tw].name = g.teamNamesCache[this.team[tw].id];
 
-        team = teams[this.team[tw].id];
-        gameStats.won.abbrev = team.abbrev;
-        gameStats.won.region = team.region;
-        gameStats.won.name = team.name;
-        gameStats.teams[tw].abbrev = team.abbrev;
-        gameStats.teams[tw].region = team.region;
-        gameStats.teams[tw].name = team.name;
-
-        team = teams[this.team[tl].id];
-        gameStats.lost.abbrev = team.abbrev;
-        gameStats.lost.region = team.region;
-        gameStats.lost.name = team.name;
-        gameStats.teams[tl].abbrev = team.abbrev;
-        gameStats.teams[tl].region = team.region;
-        gameStats.teams[tl].name = team.name;
+        gameStats.lost.abbrev = g.teamAbbrevsCache[this.team[tl].id];
+        gameStats.lost.region = g.teamRegionsCache[this.team[tl].id];
+        gameStats.lost.name = g.teamNamesCache[this.team[tl].id];
+        gameStats.teams[tl].abbrev = g.teamAbbrevsCache[this.team[tl].id];
+        gameStats.teams[tl].region = g.teamRegionsCache[this.team[tl].id];
+        gameStats.teams[tl].name = g.teamNamesCache[this.team[tl].id];
 
         gameStats.won.pts = this.team[tw].stat.pts;
         gameStats.lost.pts = this.team[tl].stat.pts;

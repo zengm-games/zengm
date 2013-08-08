@@ -59,7 +59,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
                 newLid = 1;
             }
 
-            teams = helpers.getTeams();
+            teams = helpers.getTeamsDefault();
 
             deferred.resolve({
                 name: "League " + newLid,
@@ -75,7 +75,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
 
         ui.title("Create New League");
 
-        teams = helpers.getTeams();
+        teams = helpers.getTeamsDefault();
 
         updatePopText = function () {
             var difficulty, team;

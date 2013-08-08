@@ -864,13 +864,13 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                     fp.abbrev = helpers.getAbbrev(p.tid);
                 } else if (options.attrs[i] === "teamRegion") {
                     if (p.tid >= 0) {
-                        fp.teamRegion = helpers.getTeams()[p.tid].region;
+                        fp.teamRegion = g.teamRegionsCache[p.tid];
                     } else {
                         fp.teamRegion = "";
                     }
                 } else if (options.attrs[i] === "teamName") {
                     if (p.tid >= 0) {
-                        fp.teamName = helpers.getTeams()[p.tid].name;
+                        fp.teamName = g.teamNamesCache[p.tid];
                     } else if (p.tid === g.PLAYER.FREE_AGENT) {
                         fp.teamName = "Free Agent";
                     } else if (p.tid === g.PLAYER.UNDRAFTED) {

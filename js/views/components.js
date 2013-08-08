@@ -35,10 +35,10 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "util/helpers"], function
             for (i = 0; i < fields.length; i++) {
                 fieldId = formId + "-" + fields[i];
                 if (fields[i] === "teams") {
-                    options = helpers.getTeams();
+                    options = [];
                     for (j = 0; j < options.length; j++) {
-                        options[j].key = options[j].abbrev;
-                        options[j].val = options[j].region + " " + options[j].name;
+                        options[j].key = g.teamAbbrevsCache[j];
+                        options[j].val = g.teamRegionsCache[j] + " " + g.teamNamesCache[j];
                     }
                 } else if (fields[i] === "seasons") {
                     options = helpers.getSeasons();

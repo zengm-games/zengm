@@ -14,7 +14,7 @@ define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/helpers", "util/vi
             var data, i, leagues, teams;
 
             leagues = event.target.result;
-            teams = helpers.getTeams();
+            teams = helpers.getTeamsDefault();
 
             for (i = 0; i < leagues.length; i++) {
                 leagues[i].region = teams[leagues[i].tid].region;

@@ -219,142 +219,144 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
      * This makes an NBA-like schedule in terms of conference matchups, division matchups, and home/away games.
      * 
      * @memberOf core.season
-     * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
+     * @param {function(Array.<Array.<number>>)} cb Callback function. Argument is all the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
      */
-    function newSchedule() {
-        var cid, days, dids, game, games, good, i, ii, iters, j, jj, jMax, k, matchup, matchups, n, newMatchup, t, team, teams, teamsAll, tids, tidsByConf, tidsInDays, tryNum, used;
+    function newSchedule(cb) {
+        team.filter({
+            attrs: ["tid", "cid", "did"]
+        }, function (teams) {
+            var cid, days, dids, game, games, good, i, ii, iters, j, jj, jMax, k, matchup, matchups, n, newMatchup, t, tids, tidsByConf, tidsInDays, tryNum, used;
 
-        teamsAll = helpers.getTeams();
-        teams = [];
-        tids = [];  // tid_home, tid_away
+            tids = [];  // tid_home, tid_away
 
-        // Collect info needed for scheduling
-        for (i = 0; i < teamsAll.length; i++) {
-            team = teamsAll[i];
-            teams.push({tid: team.tid, cid: team.cid, did: team.did, homeGames: 0, awayGames: 0});
-        }
-        for (i = 0; i < teams.length; i++) {
-            for (j = 0; j < teams.length; j++) {
-                if (teams[i].tid !== teams[j].tid) {
-                    game = [teams[i].tid, teams[j].tid];
+            // Collect info needed for scheduling
+            for (i = 0; i < teams.length; i++) {
+                teams[i].homeGames = 0;
+                teams[i].awayGames = 0;
+            }
+            for (i = 0; i < teams.length; i++) {
+                for (j = 0; j < teams.length; j++) {
+                    if (teams[i].tid !== teams[j].tid) {
+                        game = [teams[i].tid, teams[j].tid];
 
-                    // Constraint: 1 home game vs. each team in other conference
-                    if (teams[i].cid !== teams[j].cid) {
-                        tids.push(game);
-                        teams[i].homeGames += 1;
-                        teams[j].awayGames += 1;
-                    }
+                        // Constraint: 1 home game vs. each team in other conference
+                        if (teams[i].cid !== teams[j].cid) {
+                            tids.push(game);
+                            teams[i].homeGames += 1;
+                            teams[j].awayGames += 1;
+                        }
 
-                    // Constraint: 2 home schedule vs. each team in same division
-                    if (teams[i].did === teams[j].did) {
-                        tids.push(game);
-                        tids.push(game);
-                        teams[i].homeGames += 2;
-                        teams[j].awayGames += 2;
-                    }
+                        // Constraint: 2 home schedule vs. each team in same division
+                        if (teams[i].did === teams[j].did) {
+                            tids.push(game);
+                            tids.push(game);
+                            teams[i].homeGames += 2;
+                            teams[j].awayGames += 2;
+                        }
 
-                    // Constraint: 1-2 home schedule vs. each team in same conference and different division
-                    // Only do 1 now
-                    if (teams[i].cid === teams[j].cid && teams[i].did !== teams[j].did) {
-                        tids.push(game);
-                        teams[i].homeGames += 1;
-                        teams[j].awayGames += 1;
+                        // Constraint: 1-2 home schedule vs. each team in same conference and different division
+                        // Only do 1 now
+                        if (teams[i].cid === teams[j].cid && teams[i].did !== teams[j].did) {
+                            tids.push(game);
+                            teams[i].homeGames += 1;
+                            teams[j].awayGames += 1;
+                        }
                     }
                 }
             }
-        }
 
-        // Constraint: 1-2 home schedule vs. each team in same conference and different division
-        // Constraint: We need 8 more of these games per home team!
-        tidsByConf = [[], []];
-        dids = [[], []];
-        for (i = 0; i < teams.length; i++) {
-            tidsByConf[teams[i].cid].push(i);
-            dids[teams[i].cid].push(teams[i].did);
-        }
+            // Constraint: 1-2 home schedule vs. each team in same conference and different division
+            // Constraint: We need 8 more of these games per home team!
+            tidsByConf = [[], []];
+            dids = [[], []];
+            for (i = 0; i < teams.length; i++) {
+                tidsByConf[teams[i].cid].push(i);
+                dids[teams[i].cid].push(teams[i].did);
+            }
 
-        for (cid = 0; cid < 2; cid++) {
-            matchups = [];
-            matchups.push([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]);
-            games = 0;
-            while (games < 8) {
-                newMatchup = [];
-                n = 0;
-                while (n <= 14) {  // 14 = num teams in conference - 1
-                    iters = 0;
-                    while (true) {
-                        tryNum = random.randInt(0, 14);
-                        // Pick tryNum such that it is in a different division than n and has not been picked before
-                        if (dids[cid][tryNum] !== dids[cid][n] && newMatchup.indexOf(tryNum) < 0) {
-                            good = true;
-                            // Check for duplicate games
-                            for (j = 0; j < matchups.length; j++) {
-                                matchup = matchups[j];
-                                if (matchup[n] === tryNum) {
-                                    good = false;
+            for (cid = 0; cid < 2; cid++) {
+                matchups = [];
+                matchups.push([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]);
+                games = 0;
+                while (games < 8) {
+                    newMatchup = [];
+                    n = 0;
+                    while (n <= 14) {  // 14 = num teams in conference - 1
+                        iters = 0;
+                        while (true) {
+                            tryNum = random.randInt(0, 14);
+                            // Pick tryNum such that it is in a different division than n and has not been picked before
+                            if (dids[cid][tryNum] !== dids[cid][n] && newMatchup.indexOf(tryNum) < 0) {
+                                good = true;
+                                // Check for duplicate games
+                                for (j = 0; j < matchups.length; j++) {
+                                    matchup = matchups[j];
+                                    if (matchup[n] === tryNum) {
+                                        good = false;
+                                        break;
+                                    }
+                                }
+                                if (good) {
+                                    newMatchup.push(tryNum);
                                     break;
                                 }
                             }
-                            if (good) {
-                                newMatchup.push(tryNum);
+                            iters += 1;
+                            // Sometimes this gets stuck (for example, first 14 teams in fine but 15th team must play itself)
+                            // So, catch these situations and reset the newMatchup
+                            if (iters > 50) {
+                                newMatchup = [];
+                                n = -1;
                                 break;
                             }
                         }
-                        iters += 1;
-                        // Sometimes this gets stuck (for example, first 14 teams in fine but 15th team must play itself)
-                        // So, catch these situations and reset the newMatchup
-                        if (iters > 50) {
-                            newMatchup = [];
-                            n = -1;
-                            break;
-                        }
+                        n += 1;
                     }
-                    n += 1;
+                    matchups.push(newMatchup);
+                    games += 1;
                 }
-                matchups.push(newMatchup);
-                games += 1;
-            }
-            matchups.shift();  // Remove the first row in matchups
-            for (j = 0; j < matchups.length; j++) {
-                matchup = matchups[j];
-                for (k = 0; k < matchup.length; k++) {
-                    t = matchup[k];
-                    ii = tidsByConf[cid][t];
-                    jj = tidsByConf[cid][matchup[t]];
-                    game = [teams[ii].tid, teams[jj].tid];
-                    tids.push(game);
-                    teams[ii].homeGames += 1;
-                    teams[jj].awayGames += 1;
+                matchups.shift();  // Remove the first row in matchups
+                for (j = 0; j < matchups.length; j++) {
+                    matchup = matchups[j];
+                    for (k = 0; k < matchup.length; k++) {
+                        t = matchup[k];
+                        ii = tidsByConf[cid][t];
+                        jj = tidsByConf[cid][matchup[t]];
+                        game = [teams[ii].tid, teams[jj].tid];
+                        tids.push(game);
+                        teams[ii].homeGames += 1;
+                        teams[jj].awayGames += 1;
+                    }
                 }
             }
-        }
 
-        // Order the schedule so that it takes fewer days to play
-        random.shuffle(tids);
-        days = [[]];
-        tidsInDays = [[]];
-        jMax = 0;
-        for (i = 0; i < tids.length; i++) {
-            used = false;
-            for (j = 0; j <= jMax; j++) {
-                if (tidsInDays[j].indexOf(tids[i][0]) < 0 && tidsInDays[j].indexOf(tids[i][1]) < 0) {
-                    tidsInDays[j].push(tids[i][0]);
-                    tidsInDays[j].push(tids[i][1]);
-                    days[j].push(tids[i]);
-                    used = true;
-                    break;
+            // Order the schedule so that it takes fewer days to play
+            random.shuffle(tids);
+            days = [[]];
+            tidsInDays = [[]];
+            jMax = 0;
+            for (i = 0; i < tids.length; i++) {
+                used = false;
+                for (j = 0; j <= jMax; j++) {
+                    if (tidsInDays[j].indexOf(tids[i][0]) < 0 && tidsInDays[j].indexOf(tids[i][1]) < 0) {
+                        tidsInDays[j].push(tids[i][0]);
+                        tidsInDays[j].push(tids[i][1]);
+                        days[j].push(tids[i]);
+                        used = true;
+                        break;
+                    }
+                }
+                if (!used) {
+                    days.push([tids[i]]);
+                    tidsInDays.push([tids[i][0], tids[i][1]]);
+                    jMax += 1;
                 }
             }
-            if (!used) {
-                days.push([tids[i]]);
-                tidsInDays.push([tids[i][0], tids[i][1]]);
-                jMax += 1;
-            }
-        }
-        random.shuffle(days);  // Otherwise the most dense days will be at the beginning and the least dense days will be at the end
-        tids = _.flatten(days, true);
+            random.shuffle(days);  // Otherwise the most dense days will be at the beginning and the least dense days will be at the end
+            tids = _.flatten(days, true);
 
-        return tids;
+            cb(tids);
+        });
     }
 
     /**
@@ -366,37 +368,39 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
      * @param {function()} cb Callback function run after the database operations finish.
      */
     function setSchedule(tids, cb) {
-        var i, row, schedule, scheduleStore, teams, tx;
+        team.filter({
+            attrs: ["abbrev", "region", "name"]
+        }, function (teams) {
+            var i, row, schedule, scheduleStore, tx;
 
-        teams = helpers.getTeams();
-
-        schedule = [];
-        for (i = 0; i < tids.length; i++) {
-            row = {homeTid: tids[i][0], awayTid: tids[i][1]};
-            row.homeAbbrev = teams[row.homeTid].abbrev;
-            row.homeRegion = teams[row.homeTid].region;
-            row.homeName = teams[row.homeTid].name;
-            row.awayAbbrev = teams[row.awayTid].abbrev;
-            row.awayRegion = teams[row.awayTid].region;
-            row.awayName = teams[row.awayTid].name;
-            schedule.push(row);
-        }
-
-        tx = g.dbl.transaction("schedule", "readwrite");
-        scheduleStore = tx.objectStore("schedule");
-        scheduleStore.getAll().onsuccess = function (event) {
-            var currentSchedule, i;
-
-            currentSchedule = event.target.result;
-            for (i = 0; i < currentSchedule.length; i++) {
-                scheduleStore.delete(currentSchedule[i].gid);
+            schedule = [];
+            for (i = 0; i < tids.length; i++) {
+                row = {homeTid: tids[i][0], awayTid: tids[i][1]};
+                row.homeAbbrev = teams[row.homeTid].abbrev;
+                row.homeRegion = teams[row.homeTid].region;
+                row.homeName = teams[row.homeTid].name;
+                row.awayAbbrev = teams[row.awayTid].abbrev;
+                row.awayRegion = teams[row.awayTid].region;
+                row.awayName = teams[row.awayTid].name;
+                schedule.push(row);
             }
 
-            for (i = 0; i < schedule.length; i++) {
-                scheduleStore.add(schedule[i]);
-            }
-        };
-        tx.oncomplete = cb;
+            tx = g.dbl.transaction("schedule", "readwrite");
+            scheduleStore = tx.objectStore("schedule");
+            scheduleStore.getAll().onsuccess = function (event) {
+                var currentSchedule, i;
+
+                currentSchedule = event.target.result;
+                for (i = 0; i < currentSchedule.length; i++) {
+                    scheduleStore.delete(currentSchedule[i].gid);
+                }
+
+                for (i = 0; i < schedule.length; i++) {
+                    scheduleStore.add(schedule[i]);
+                }
+            };
+            tx.oncomplete = cb;
+        });
     }
 
     /**
@@ -588,9 +592,10 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                     message.generate(deltas, function () {
                         var tid, tids;
 
-                        tids = newSchedule();
-                        setSchedule(tids, function () {
-                            newPhaseCb(g.PHASE.REGULAR_SEASON, phaseText, cb);
+                        newSchedule(function (tids) {
+                            setSchedule(tids, function () {
+                                newPhaseCb(g.PHASE.REGULAR_SEASON, phaseText, cb);
+                            });
                         });
                     });
                 });
@@ -875,31 +880,35 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
     }
 
     function newPhaseAfterDraft(cb) {
-        var draftPickStore, phaseText, round, t, teams, tx;
+        var phaseText;
 
         phaseText = g.season + " after draft";
 
-        teams = helpers.getTeams();
+        team.filter({
+            attrs: ["abbrev"]
+        }, function (teams) {
+            var draftPickStore, round, t, tx;
 
-        // Add a new set of draft picks
-        tx = g.dbl.transaction("draftPicks", "readwrite");
-        draftPickStore = tx.objectStore("draftPicks");
-        for (t = 0; t < 30; t++) {
-            for (round = 1; round <= 2; round++) {
-                draftPickStore.add({
-                    tid: t,
-                    abbrev: teams[t].abbrev,
-                    originalTid: t,
-                    originalAbbrev: teams[t].abbrev,
-                    round: round,
-                    season: g.season + 4
-                });
+            // Add a new set of draft picks
+            tx = g.dbl.transaction("draftPicks", "readwrite");
+            draftPickStore = tx.objectStore("draftPicks");
+            for (t = 0; t < 30; t++) {
+                for (round = 1; round <= 2; round++) {
+                    draftPickStore.add({
+                        tid: t,
+                        abbrev: teams[t].abbrev,
+                        originalTid: t,
+                        originalAbbrev: teams[t].abbrev,
+                        round: round,
+                        season: g.season + 4
+                    });
+                }
             }
-        }
 
-        tx.oncomplete = function () {
-            newPhaseCb(g.PHASE.AFTER_DRAFT, phaseText, cb, undefined, ["playerMovement"]);
-        };
+            tx.oncomplete = function () {
+                newPhaseCb(g.PHASE.AFTER_DRAFT, phaseText, cb, undefined, ["playerMovement"]);
+            };
+        });
     }
 
     function newPhaseResignPlayers(cb) {

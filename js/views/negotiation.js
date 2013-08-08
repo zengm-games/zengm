@@ -102,7 +102,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/player", "lib/j
             }
 
             g.dbl.transaction("players").objectStore("players").get(negotiation.pid).onsuccess = function (event) {
-                var p, teams;
+                var p;
 
                 p = player.filter(event.target.result, {
                     attrs: ["pid", "name", "freeAgentMood"],
@@ -124,13 +124,11 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/player", "lib/j
                 }
                 delete p.freeAgentMood;
 
-                teams = helpers.getTeams();
-
                 db.getPayroll(null, g.userTid, function (payroll) {
                     vars = {
                         salaryCap: g.salaryCap / 1000,
                         payroll: payroll / 1000,
-                        team: {region: teams[g.userTid].region, name: teams[g.userTid].name},
+                        team: {region: g.teamRegionsCache[g.userTid], name: g.teamNamesCache[g.userTid]},
                         player: p,
                         negotiation: {
                             team: {

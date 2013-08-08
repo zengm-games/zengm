@@ -167,7 +167,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
      * Create a new team object.
      * 
      * @memberOf core.team
-     * @param {Object} tm Team metadata object, likely from util.helpers.getTeams.
+     * @param {Object} tm Team metadata object, likely from core.league.create.
      * @return {Object} Team object to insert in the database.
      */
     function generate(tm) {
@@ -298,7 +298,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
      * @memberOf core.team
      * @param {Object} options Options, as described below.
      * @param {number=} options.season Season to retrieve stats/ratings for. If undefined, return stats for all seasons in a list called "stats".
-     * @param {number=} options.tid Team ID. Set this if you want to return only one team object. If undefined, an array of all teams is returned.
+     * @param {number=} options.tid Team ID. Set this if you want to return only one team object. If undefined, an array of all teams is returned, ordered by tid by default.
      * @param {Array.<string>=} options.attrs List of team attributes to include in output (e.g. region, abbrev, name, ...).
      * @param {Array.<string>=} options.seasonAttrs List of seasonal team attributes to include in output (e.g. won, lost, payroll, ...).
      * @param {Array.<string=>} options.stats List of team stats to include in output (e.g. fg, orb, ast, blk, ...).
@@ -736,120 +736,126 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
         }
 
         tx.oncomplete = function () {
-            var calcDv, doSkillBonuses, dv, rosterAndAdd, rosterAndRemove, skillsNeeded;
+            filter({
+                seasonAttrs: ["pop"],
+                season: g.season,
+                tid: tid
+            }, function (t) {
+                var calcDv, doSkillBonuses, dv, pop, rosterAndAdd, rosterAndRemove, skillsNeeded;
 
-            // This roughly corresponds with core.gameSim.updateSynergy
-            skillsNeeded = {
-                "3": 5,
-                A: 5,
-                B: 3,
-                Di: 2,
-                Dp: 2,
-                Po: 2,
-                Ps: 4,
-                R: 3
-            };
-
-            doSkillBonuses = function (test, roster) {
-                var i, j, rosterSkills, rosterSkillsCount, s;
-
-                // What are current skills?
-                rosterSkills = [];
-                for (i = 0; i < roster.length; i++) {
-                    if (roster.value >= 45) {
-                        rosterSkills.push(roster[i].skills);
-                    }
-                }
-                rosterSkills = _.flatten(rosterSkills);
-                rosterSkillsCount = _.countBy(rosterSkills);
-
-                // Sort test by value, so that the highest value players get bonuses applied first
-                test.sort(function (a, b) { return b.value - a.value; });
-
-                for (i = 0; i < test.length; i++) {
-                    if (test.value >= 45) {
-                        for (j = 0; j < test[i].skills.length; j++) {
-                            s = test[i].skills[j];
-
-                            if (rosterSkills[s] <= skillsNeeded[s] - 2) {
-                                // Big bonus
-                                test.value *= 1.1;
-                            } else if (rosterSkills[s] <= skillsNeeded[s] - 1) {
-                                // Medium bonus
-                                test.value *= 1.05;
-                            } else if (rosterSkills[s] <= skillsNeeded[s]) {
-                                // Little bonus
-                                test.value *= 1.025;
-                            }
-
-                            // Account for redundancy in test
-                            rosterSkills[s] += 1;
-                        }
-                    }
+                pop = t.pop;
+                if (pop > 20) {
+                    pop = 20;
                 }
 
-                return test;
-            };
+                // This roughly corresponds with core.gameSim.updateSynergy
+                skillsNeeded = {
+                    "3": 5,
+                    A: 5,
+                    B: 3,
+                    Di: 2,
+                    Dp: 2,
+                    Po: 2,
+                    Ps: 4,
+                    R: 3
+                };
 
-            // Apply bonuses based on skills coming in and leaving
-            rosterAndRemove = roster.concat(remove);
-            rosterAndAdd = roster.concat(add);
-            add = doSkillBonuses(add, rosterAndRemove);
-            remove = doSkillBonuses(remove, rosterAndAdd);
+                doSkillBonuses = function (test, roster) {
+                    var i, j, rosterSkills, rosterSkillsCount, s;
 
-            // Actually calculate the change in value
-            calcDv = function (players) {
-                return _.reduce(players, function (memo, player) {
-                    var dv, factors, pop;
-
-                    // If the population of the region is larger, the contract size becomes less important. So factors.contract should increase
-                    pop = helpers.getTeams()[tid].pop;
-                    if (pop > 20) {
-                        pop = 20;
-                    }
-
-                    factors = {
-                        value: 0.3 * player.value,
-                        // This is a straight line from ($0.5, 1.4) to ($20M, 0.1) - higher second coordinate means greater value
-                        //contract: (20 - player.contractAmount) / 15 + 0.1
-                        // This takes that straight line and roughly rotates it around the middle to make it more horizontal
-                        contract: (20 - player.contractAmount) / (15 * Math.sqrt(pop)) + (-0.12 + Math.sqrt(pop) / Math.sqrt(20))
-                    };
-
-                    dv = Math.pow(3, factors.value) * factors.contract;
-
-                    if (strategy === "rebuilding") {
-                        // Value young/cheap players and draft picks more. Penalize expensive/old players
-                        if (player.draftPick) {
-                            dv *= 2;
-                        }
-                        else {
-                            if (player.age < 25 || player.contractAmount < 3) {
-                                dv *= 1.2;
-                            }
-                            if (player.contractAmount > 6) {
-                                dv -= Math.pow(3, 0.3 * 50) * player.contractAmount * 0.8;
-                            }
+                    // What are current skills?
+                    rosterSkills = [];
+                    for (i = 0; i < roster.length; i++) {
+                        if (roster.value >= 45) {
+                            rosterSkills.push(roster[i].skills);
                         }
                     }
+                    rosterSkills = _.flatten(rosterSkills);
+                    rosterSkillsCount = _.countBy(rosterSkills);
 
-                    return memo + dv;
-                }, 0);
-            };
+                    // Sort test by value, so that the highest value players get bonuses applied first
+                    test.sort(function (a, b) { return b.value - a.value; });
+
+                    for (i = 0; i < test.length; i++) {
+                        if (test.value >= 45) {
+                            for (j = 0; j < test[i].skills.length; j++) {
+                                s = test[i].skills[j];
+
+                                if (rosterSkills[s] <= skillsNeeded[s] - 2) {
+                                    // Big bonus
+                                    test.value *= 1.1;
+                                } else if (rosterSkills[s] <= skillsNeeded[s] - 1) {
+                                    // Medium bonus
+                                    test.value *= 1.05;
+                                } else if (rosterSkills[s] <= skillsNeeded[s]) {
+                                    // Little bonus
+                                    test.value *= 1.025;
+                                }
+
+                                // Account for redundancy in test
+                                rosterSkills[s] += 1;
+                            }
+                        }
+                    }
+
+                    return test;
+                };
+
+                // Apply bonuses based on skills coming in and leaving
+                rosterAndRemove = roster.concat(remove);
+                rosterAndAdd = roster.concat(add);
+                add = doSkillBonuses(add, rosterAndRemove);
+                remove = doSkillBonuses(remove, rosterAndAdd);
+
+                // Actually calculate the change in value
+                calcDv = function (players) {
+                    return _.reduce(players, function (memo, player) {
+                        var dv, factors;
+
+                        // If the population of the region is larger, the contract size becomes less important. So factors.contract should increase
+
+                        factors = {
+                            value: 0.3 * player.value,
+                            // This is a straight line from ($0.5, 1.4) to ($20M, 0.1) - higher second coordinate means greater value
+                            //contract: (20 - player.contractAmount) / 15 + 0.1
+                            // This takes that straight line and roughly rotates it around the middle to make it more horizontal
+                            contract: (20 - player.contractAmount) / (15 * Math.sqrt(pop)) + (-0.12 + Math.sqrt(pop) / Math.sqrt(20))
+                        };
+
+                        dv = Math.pow(3, factors.value) * factors.contract;
+
+                        if (strategy === "rebuilding") {
+                            // Value young/cheap players and draft picks more. Penalize expensive/old players
+                            if (player.draftPick) {
+                                dv *= 2;
+                            } else {
+                                if (player.age < 25 || player.contractAmount < 3) {
+                                    dv *= 1.2;
+                                }
+                                if (player.contractAmount > 6) {
+                                    dv -= Math.pow(3, 0.3 * 50) * player.contractAmount * 0.8;
+                                }
+                            }
+                        }
+
+                        return memo + dv;
+                    }, 0);
+                };
 
 /*console.log('---');
 console.log(calcDv(add));
 console.log(add);
 console.log(calcDv(remove));
 console.log(remove);*/
-            dv = calcDv(add) - calcDv(remove);
+                dv = calcDv(add) - calcDv(remove);
 
-            // Normalize for number of players, since 1 really good player is much better than multiple mediocre ones
-            if (add.length > remove.length) {
-                dv *= Math.pow(0.95, add.length - remove.length);
-            }
+                // Normalize for number of players, since 1 really good player is much better than multiple mediocre ones
+                if (add.length > remove.length) {
+                    dv *= Math.pow(0.95, add.length - remove.length);
+                }
 
-            cb(dv);
+                cb(dv);
+            });
         };
     }
 

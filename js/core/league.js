@@ -23,7 +23,8 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
 
             g.lid = event.target.result;
 
-            teams = helpers.getTeams();
+            // Default teams
+            teams = helpers.getTeamsDefault();
 
             // Create new league database
             db.connectLeague(g.lid, function () {
@@ -43,7 +44,10 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                         playoffs: 0,
                         money: 0
                     },
-                    gameOver: false
+                    gameOver: false,
+                    teamAbbrevsCache: _.pluck(teams, "abbrev"),
+                    teamRegionsCache: _.pluck(teams, "region"),
+                    teamNamesCache: _.pluck(teams, "name"),
                 };
 
                 // Clear old game attributes from g, to make sure the new ones are saved to the db in db.setGameAttributes

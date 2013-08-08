@@ -27,17 +27,17 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
 
                         startingSeason = roster.startingSeason !== undefined ? roster.startingSeason : startingSeason;
 
-                        league.create(req.params.name, tid, roster.players, startingSeason, function (lid) {
+                        league.create(req.params.name, tid, roster.players, roster.teams, startingSeason, function (lid) {
                             ui.realtimeUpdate([], "/l/" + lid);
                         });
                     };
                 } else {
-                    league.create(req.params.name, tid, undefined, startingSeason, function (lid) {
+                    league.create(req.params.name, tid, undefined, undefined, startingSeason, function (lid) {
                         ui.realtimeUpdate([], "/l/" + lid);
                     });
                 }
             } else {
-                league.create(req.params.name, tid, undefined, startingSeason, function (lid) {
+                league.create(req.params.name, tid, undefined, undefined, startingSeason, function (lid) {
                     ui.realtimeUpdate([], "/l/" + lid);
                 });
             }
@@ -58,8 +58,20 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
             } else {
                 newLid = 1;
             }
-
-            teams = helpers.getTeams();
+            
+            var tx = g.dbl.transaction("teams")
+            var teamStore = tx.objectStore("teams");
+            var teamNameArray=[];
+            for(var a=0;a<30;a++){
+            	var object=teamStore.getAll(a);
+            	object.onsuccess=function(event){
+            		var currTeam=event.target.result;
+            		var newObjTeam={name: currTeam[0].name};
+            		teamNameArray.push(newObjTeam);
+            		//console.log(currTeam[0].name)
+            	}
+            }
+            teams = helpers.getTeams(undefined,teamNameArray);
 
             deferred.resolve({
                 name: "League " + newLid,
@@ -75,7 +87,19 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
 
         ui.title("Create New League");
 
-        teams = helpers.getTeams();
+        var tx = g.dbl.transaction("teams")
+        var teamStore = tx.objectStore("teams");
+        var teamNameArray=[];
+        for(var a=0;a<30;a++){
+        	var object=teamStore.getAll(a);
+        	object.onsuccess=function(event){
+        		var currTeam=event.target.result;
+        		var newObjTeam={name: currTeam[0].name};
+        		teamNameArray.push(newObjTeam);
+        		//console.log(currTeam[0].name)
+        	}
+        }
+        teams = helpers.getTeams(undefined,teamNameArray);
 
         updatePopText = function () {
             var difficulty, team;

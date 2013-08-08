@@ -124,7 +124,19 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/player", "lib/j
                 }
                 delete p.freeAgentMood;
 
-                teams = helpers.getTeams();
+		        var tx = g.dbl.transaction("teams")
+		        var teamStore = tx.objectStore("teams");
+		        var teamNameArray=[];
+		        for(var a=0;a<30;a++){
+		        	var object=teamStore.getAll(a);
+		        	object.onsuccess=function(event){
+		        		var currTeam=event.target.result;
+		        		var newObjTeam={name: currTeam[0].name};
+		        		teamNameArray.push(newObjTeam);
+		        		//console.log(currTeam[0].name)
+		        	}
+		        }
+		        teams = helpers.getTeams(undefined,teamNameArray);
 
                 db.getPayroll(null, g.userTid, function (payroll) {
                     vars = {

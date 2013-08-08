@@ -35,7 +35,19 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "util/helpers"], function
             for (i = 0; i < fields.length; i++) {
                 fieldId = formId + "-" + fields[i];
                 if (fields[i] === "teams") {
-                    options = helpers.getTeams();
+			        var tx = g.dbl.transaction("teams")
+			        var teamStore = tx.objectStore("teams");
+			        var teamNameArray=[];
+			        for(var a=0;a<30;a++){
+			        	var object=teamStore.getAll(a);
+			        	object.onsuccess=function(event){
+			        		var currTeam=event.target.result;
+			        		var newObjTeam={name: currTeam[0].name};
+			        		teamNameArray.push(newObjTeam);
+			        		//console.log(currTeam[0].name)
+			        	}
+			        }
+			        options = helpers.getTeams(undefined,teamNameArray);
                     for (j = 0; j < options.length; j++) {
                         options[j].key = options[j].abbrev;
                         options[j].val = options[j].region + " " + options[j].name;

@@ -240,7 +240,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
             s.teams.push({trade: [], total: 0, payrollAfterTrade: 0, name: ""});
         }
 
-        transaction = g.dbl.transaction(["draftPicks", "players", "releasedPlayers"]);
+        transaction = g.dbl.transaction(["draftPicks", "players", "teams", "releasedPlayers"]);
 
         // Calculate properties of the trade
         done = 0;
@@ -273,6 +273,21 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                             done = 0;
 
                             teams = helpers.getTeams();
+                            var teamName;
+                            var tx = g.dbl.transaction("teams");
+                            var teamStore = tx.objectStore("teams");
+		                    for (i = 0; i < teams.length; i++) {
+		                    	(function(val) {
+			                    	teamStore.get(val).onsuccess=function(event){
+			                    		teamName=event.target.result;
+			                    		teams[val].name=teamName.name;
+			                    	};
+			                    	tx.oncomplete = function () {
+			                    		teams[val].name=teamName.name;
+			                    	};
+			                    	
+		                    	})(i);
+		                    }
 
                             // Test if any warnings need to be displayed
                             overCap = [false, false];
@@ -411,13 +426,26 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                     outcome = "rejected"; // Default
 
                     team.valueChange(otherTid, userPids, otherPids, userDpids, otherDpids, function (dv) {
-                        var draftPickStore, j, playerStore, teams, tx;
+                        var draftPickStore, j, playerStore, teams, tx, teamStore;
 
-                        tx = g.dbl.transaction(["draftPicks", "players"], "readwrite");
+                        tx = g.dbl.transaction(["draftPicks", "players", "teams"], "readwrite");
                         draftPickStore = tx.objectStore("draftPicks");
                         playerStore = tx.objectStore("players");
+                        teamStore = tx.objectStore("teams");
 
                         teams = helpers.getTeams();
+                        var teamName;
+	                    for (i = 0; i < teams.length; i++) {
+	                    	(function(val) {
+		                    	teamStore.get(val).onsuccess=function(event){
+		                    		teamName=event.target.result;
+		                    		teams[val].name=teamName.name;
+		                    	};
+		                    	tx.oncomplete = function () {
+		                    		teams[val].name=teamName.name;
+		                    	};
+	                    	})(i);
+	                    }
 
                         if (dv > 0) {
                             // Trade players
@@ -493,9 +521,38 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
      * @param {function(boolean, string)} cb Callback function. The argument is a string containing a message to be dispalyed to the user, as if it came from the AI GM.
      */
     function makeItWork(cb) {
-        var teams, tryAddAsset, testTrade;
+        var teams, tryAddAsset, testTrade,teamNameArray=[];
 
-        teams = helpers.getTeams();
+        var tx = g.dbl.transaction("teams");
+        var teamStore = tx.objectStore("teams");
+        for(var a=0;a<30;a++){
+        	var object=teamStore.getAll(a);
+        	object.onsuccess=function(event){
+        		var currTeam=event.target.result;
+        		var newObjTeam={name: currTeam[0].name};
+        		teamNameArray.push(newObjTeam);
+        		console.log(currTeam[0].name)
+        	}
+        }
+        teams = helpers.getTeams(undefined,teamNameArray);
+        console.log("->"+teams);
+        /*
+        var teamName;
+        var tx = g.dbl.transaction("teams");
+        var teamStore = tx.objectStore("teams");
+        for (i = 0; i < teams.length; i++) {
+        	(function(val) {
+            	teamStore.get(val).onsuccess=function(event){
+            		teamName=event.target.result;
+            		teams[val].name=teamName.name;
+            	};
+            	tx.oncomplete = function () {
+            		teams[val].name=teamName.name;
+            	};
+            	
+        	})(i);
+        }*/
+
 
         getPlayers(function (userPids, otherPids, userDpids, otherDpids) {
             getOtherTid(function (otherTid) {

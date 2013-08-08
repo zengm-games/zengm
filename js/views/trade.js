@@ -216,12 +216,23 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
                                         otherPicks[i].desc += " (from " + otherPicks[i].originalAbbrev + ")";
                                     }
                                 }
-
-                                g.dbl.transaction("teams").objectStore("teams").get(otherTid).onsuccess = function (event) {
-                                    var strategy;
-
+                                
+                                var tx = g.dbl.transaction("teams")
+                                var teamStore = tx.objectStore("teams");
+                                teamStore.get(otherTid).onsuccess = function (event) {
+                                    var strategy,teamNameArray=[];
+                                    
+                                    for(var a=0;a<30;a++){
+                                    	var object=teamStore.getAll(a);
+                                    	object.onsuccess=function(event){
+                                    		var currTeam=event.target.result;
+                                    		var newObjTeam={name: currTeam[0].name};
+                                    		teamNameArray.push(newObjTeam);
+                                    		//console.log(currTeam[0].name)
+                                    	}
+                                    }
+                                    
                                     strategy = event.target.result.strategy;
-
                                     vars = {
                                         salaryCap: g.salaryCap / 1000,
                                         userDpids: userDpids,
@@ -238,7 +249,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
 
                                     updateSummary(vars, function (vars) {
                                         if (vm.teams.length === 0) {
-                                            teams = helpers.getTeams(otherTid);
+                                            teams = helpers.getTeams(otherTid,teamNameArray);
                                             vars.userTeamName = teams[g.userTid].region + " " + teams[g.userTid].name;
                                             teams.splice(g.userTid, 1);  // Can't trade with yourself
                                             vars.teams = teams;

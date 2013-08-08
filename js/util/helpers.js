@@ -137,7 +137,7 @@ define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
      * @param {number|string} selectedTid A team ID or abbrev for a team that should be "selected" (as in, from a drop down menu). This will add the "selected" key to each team object, as described above.
      * @return {Array.Object} All teams.
      */
-    function getTeams(selectedTid) {
+    function getTeams(selectedTid,teamNameArray) {
         var i, result, teams;
 
         selectedTid = selectedTid !== undefined ? selectedTid : -1;
@@ -182,6 +182,13 @@ define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
             {tid: 28, cid: 1, did: 4, region: "Utah", name: "Jugglers", abbrev: "UTA", pop: 1.0, popRank: 30},
             {tid: 29, cid: 0, did: 2, region: "Washington", name: "Witches", abbrev: "WAS", pop: 5.7, popRank: 10}
         ];
+        if(teamNameArray!=undefined){
+        	for(var a=0;a<teamNameArray.length;a++)
+        	{
+        		teams[a].name=teamNameArray[a].name;
+        	}
+        }
+        //console.log(teams);
 
         if (selectedTid >= 0) {
             for (i = 0; i < teams.length; i++) {

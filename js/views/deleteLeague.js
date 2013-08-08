@@ -32,7 +32,6 @@ define(["db", "globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "ut
 
                 transaction.objectStore("teams").get(0).onsuccess = function (event) {
                     var numSeasons;
-
                     numSeasons = event.target.result.seasons.length;
 
                     transaction.objectStore("players").count().onsuccess = function (event) {

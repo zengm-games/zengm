@@ -14,7 +14,19 @@ define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/helpers", "util/vi
             var data, i, leagues, teams;
 
             leagues = event.target.result;
-            teams = helpers.getTeams();
+	        var tx = g.dbl.transaction("teams")
+	        var teamStore = tx.objectStore("teams");
+	        var teamNameArray=[];
+	        for(var a=0;a<30;a++){
+	        	var object=teamStore.getAll(a);
+	        	object.onsuccess=function(event){
+	        		var currTeam=event.target.result;
+	        		var newObjTeam={name: currTeam[0].name};
+	        		teamNameArray.push(newObjTeam);
+	        		//console.log(currTeam[0].name)
+	        	}
+	        }
+	        teams = helpers.getTeams(undefined,teamNameArray);
 
             for (i = 0; i < leagues.length; i++) {
                 leagues[i].region = teams[leagues[i].tid].region;

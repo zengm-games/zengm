@@ -811,6 +811,20 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      */
     function filter(p, options) {
         var filterAttrs, filterRatings, filterStats, filterStatsPartial, fp, fps, gatherStats, i, returnOnePlayer;
+        
+        var tx = g.dbl.transaction("teams")
+        var teamStore = tx.objectStore("teams");
+        var teamNameArray=[];
+        for(var a=0;a<30;a++){
+        	var object=teamStore.getAll(a);
+        	object.onsuccess=function(event){
+        		var currTeam=event.target.result;
+        		var newObjTeam={name: currTeam[0].name};
+        		teamNameArray.push(newObjTeam);
+        		//console.log(currTeam[0].name)
+        	}
+        }
+        teamsName = helpers.getTeams(undefined,teamNameArray);
 
         returnOnePlayer = false;
         if (!_.isArray(p)) {
@@ -870,7 +884,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                     }
                 } else if (options.attrs[i] === "teamName") {
                     if (p.tid >= 0) {
-                        fp.teamName = helpers.getTeams()[p.tid].name;
+                        fp.teamName = teamsName[p.tid].name;
                     } else if (p.tid === g.PLAYER.FREE_AGENT) {
                         fp.teamName = "Free Agent";
                     } else if (p.tid === g.PLAYER.UNDRAFTED) {

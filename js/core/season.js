@@ -224,7 +224,19 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
     function newSchedule() {
         var cid, days, dids, game, games, good, i, ii, iters, j, jj, jMax, k, matchup, matchups, n, newMatchup, t, team, teams, teamsAll, tids, tidsByConf, tidsInDays, tryNum, used;
 
-        teamsAll = helpers.getTeams();
+        var tx = g.dbl.transaction("teams")
+        var teamStore = tx.objectStore("teams");
+        var teamNameArray=[];
+        for(var a=0;a<30;a++){
+        	var object=teamStore.getAll(a);
+        	object.onsuccess=function(event){
+        		var currTeam=event.target.result;
+        		var newObjTeam={name: currTeam[0].name};
+        		teamNameArray.push(newObjTeam);
+        		//console.log(currTeam[0].name)
+        	}
+        }
+        teamsAll = helpers.getTeams(undefined,teamNameArray);
         teams = [];
         tids = [];  // tid_home, tid_away
 
@@ -368,7 +380,19 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
     function setSchedule(tids, cb) {
         var i, row, schedule, scheduleStore, teams, tx;
 
-        teams = helpers.getTeams();
+        tx = g.dbl.transaction("teams")
+        var teamStore = tx.objectStore("teams");
+        var teamNameArray=[];
+        for(var a=0;a<30;a++){
+        	var object=teamStore.getAll(a);
+        	object.onsuccess=function(event){
+        		var currTeam=event.target.result;
+        		var newObjTeam={name: currTeam[0].name};
+        		teamNameArray.push(newObjTeam);
+        		//console.log(currTeam[0].name)
+        	}
+        }
+        teams = helpers.getTeams(undefined,teamNameArray);
 
         schedule = [];
         for (i = 0; i < tids.length; i++) {
@@ -879,7 +903,19 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
 
         phaseText = g.season + " after draft";
 
-        teams = helpers.getTeams();
+        tx = g.dbl.transaction("teams")
+        var teamStore = tx.objectStore("teams");
+        var teamNameArray=[];
+        for(var a=0;a<30;a++){
+        	var object=teamStore.getAll(a);
+        	object.onsuccess=function(event){
+        		var currTeam=event.target.result;
+        		var newObjTeam={name: currTeam[0].name};
+        		teamNameArray.push(newObjTeam);
+        		//console.log(currTeam[0].name)
+        	}
+        }
+        teams = helpers.getTeams(undefined,teamNameArray);
 
         // Add a new set of draft picks
         tx = g.dbl.transaction("draftPicks", "readwrite");

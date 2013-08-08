@@ -149,7 +149,19 @@ define(["db", "globals", "core/finances", "core/player", "core/season", "core/te
                     };
                 }
 
-                teamsUnsorted = helpers.getTeams();
+		        var tx = g.dbl.transaction("teams")
+		        var teamStore = tx.objectStore("teams");
+		        var teamNameArray=[];
+		        for(var a=0;a<30;a++){
+		        	var object=teamStore.getAll(a);
+		        	object.onsuccess=function(event){
+		        		var currTeam=event.target.result;
+		        		var newObjTeam={name: currTeam[0].name};
+		        		teamNameArray.push(newObjTeam);
+		        		//console.log(currTeam[0].name)
+		        	}
+		        }
+		        teamsUnsorted = helpers.getTeams(undefined,teamNameArray);
 
                 draftOrder = [];
                 // First round - lottery winners
@@ -238,7 +250,20 @@ define(["db", "globals", "core/finances", "core/player", "core/season", "core/te
 
             // Draft player
             p.tid = pick.tid;
-            teams = helpers.getTeams();
+            
+	        var tx = g.dbl.transaction("teams")
+	        var teamStore = tx.objectStore("teams");
+	        var teamNameArray=[];
+	        for(var a=0;a<30;a++){
+	        	var object=teamStore.getAll(a);
+	        	object.onsuccess=function(event){
+	        		var currTeam=event.target.result;
+	        		var newObjTeam={name: currTeam[0].name};
+	        		teamNameArray.push(newObjTeam);
+	        		//console.log(currTeam[0].name)
+	        	}
+	        }
+	        teams = helpers.getTeams(undefined,teamNameArray);
             p.draft = {
                 round: pick.round,
                 pick: pick.pick,

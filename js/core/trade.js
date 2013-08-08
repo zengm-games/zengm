@@ -272,7 +272,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                         if (done === 2) {
                             done = 0;
 
-                            teams = helpers.getTeams();
+                            /*teams = helpers.getTeams();
                             var teamName;
                             var tx = g.dbl.transaction("teams");
                             var teamStore = tx.objectStore("teams");
@@ -287,7 +287,21 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
 			                    	};
 			                    	
 		                    	})(i);
-		                    }
+		                    }*/
+		                   
+					        var tx = g.dbl.transaction("teams")
+					        var teamStore = tx.objectStore("teams");
+					        var teamNameArray=[];
+					        for(var a=0;a<30;a++){
+					        	var object=teamStore.getAll(a);
+					        	object.onsuccess=function(event){
+					        		var currTeam=event.target.result;
+					        		var newObjTeam={name: currTeam[0].name};
+					        		teamNameArray.push(newObjTeam);
+					        		//console.log(currTeam[0].name)
+					        	}
+					        }
+					        teams = helpers.getTeams(undefined,teamNameArray);
 
                             // Test if any warnings need to be displayed
                             overCap = [false, false];
@@ -531,11 +545,9 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
         		var currTeam=event.target.result;
         		var newObjTeam={name: currTeam[0].name};
         		teamNameArray.push(newObjTeam);
-        		console.log(currTeam[0].name)
         	}
         }
         teams = helpers.getTeams(undefined,teamNameArray);
-        console.log("->"+teams);
         /*
         var teamName;
         var tx = g.dbl.transaction("teams");

@@ -52,6 +52,7 @@ if not present add team*Cache things to gameAttributes
 EVENTUALLY
 ----------
 
+strategy shouldn't be set randomly at start of new league
 AI teams need to get smarter about projecting the value of future draft picks: http://www.reddit.com/r/BasketballGM/comments/1jzel1/very_helpful_hint_regarding_tanking_and_draft/
 dashboard info should be on a widget accessible from any screen
 some UI indicating how players developed over the offseason
@@ -228,7 +229,6 @@ in lock functions, update g from database before using any potentially sensitive
 move to new window button, like gmail, that will open a view in a new window with a minimal UI
   only the icon should be clickable, not the area above and below
 AI modules that contain functions which are called to determine actions
-  mode: rebuild or contend
   things to regulate...
     draft picks
     signing free agents
@@ -537,8 +537,6 @@ AI (NON-GAMESIM)
 ----------------
 trade
   AI teams trade with each other
-  opponent GM trade AI based on their team's status: contending or rebuilding
-  record player value for contending and rebuilding teams in player_attributes, so opposing GMs can more easily suggest trades (i.e. "i'll make the deal if you throw in X")
   Feedback from trades (way off, that's close, etc)
   "Oh, you again?" after failed trade attempts
   AI teams should be aware of contract lengths and the implications thereof

@@ -45,6 +45,8 @@ DB CHANGES SINCE 3.1.0
 ----------------------
 
 imgURL in player root (although lacking this doesn't cause an error now, better add it to be sure)
+if not present add team*Cache things to gameAttributes
+  after this is handled, delete the hack in util.viewHelpers.beforeLeague
 
 EVENTUALLY
 ----------

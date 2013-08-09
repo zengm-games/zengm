@@ -2,7 +2,7 @@
  * @name util.viewHelpers
  * @namespace Helper functions called only by views.
  */
-define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "util/helpers"], function (db, g, ui, $, ko, helpers) {
+define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "util/helpers"], function (db, g, ui, $, ko, _, helpers) {
     "use strict";
 
     function beforeLeague(req, cb) {
@@ -55,7 +55,15 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "util/helpers"], fu
             // Connect to league database
             db.connectLeague(g.lid, function () {
                 db.loadGameAttributes(null, function () {
-                    var css;
+                    var css, teams;
+
+                    // Hack that should be replaced with DB upgrade
+                    if (!g.hasOwnProperty("teamAbbrevsCache")) {
+                        teams = helpers.getTeamsDefault();
+                        g.teamAbbrevsCache = _.pluck(teams, "abbrev");
+                        g.teamRegionsCache = _.pluck(teams, "region");
+                        g.teamNamesCache = _.pluck(teams, "name");
+                    }
 
                     g.vm.leagueMenu.lid(g.lid);
 

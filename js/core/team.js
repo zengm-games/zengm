@@ -940,8 +940,7 @@ console.log(remove);*/
                     cursor.continue();
                 };
             }
-        }
-
+        };
 
         tx.oncomplete = function () {
             cb();

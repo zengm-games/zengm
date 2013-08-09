@@ -214,7 +214,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      * @return {Object} Updated player object.
      */
     function develop(p, years, generate, coachingRank) {
-        var age, baseChange, i, j, ratingKeys, r, sigma;
+        var age, baseChange, i, j, ratingKeys, r, sigma, sign;
 
         years = years !== undefined ? years : 1;
         generate = generate !== undefined ? generate : false;
@@ -268,11 +268,12 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             }
 
             // Modulate by coaching
-            var sign = baseChange ? baseChange < 0 ? -1 : 1 : 0;
-            if (sign >= 0) // life is normal
+            sign = baseChange ? baseChange < 0 ? -1 : 1 : 0;
+            if (sign >= 0) { // life is normal
                 baseChange *= ((coachingRank - 1) * (-0.5) / 29 + 1.25);
-            else
-                baseChange *= ((coachingRank - 1) * (0.5) / 29 + .75);
+            } else {
+                baseChange *= ((coachingRank - 1) * (0.5) / 29 + 0.75);
+            }
 
             ratingKeys = ['stre', 'spd', 'jmp', 'endu', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb'];
             for (j = 0; j < ratingKeys.length; j++) {

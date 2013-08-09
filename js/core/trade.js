@@ -592,7 +592,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                                         testTrade();
                                     }
                                 });
-                            })(i);
+                            }(i));
                         }
                     };
                 };
@@ -602,7 +602,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                     team.valueChange(otherTid, userPids, otherPids, userDpids, otherDpids, function (dv) {
                         if (dv > 0) {
                             summary(otherTid, userPids, otherPids, userDpids, otherDpids, function (s) {
-                                var i, outcome, tx;
+                                var tx;
 
                                 // Store AI's proposed trade in database
                                 tx = g.dbl.transaction("trade", "readwrite");

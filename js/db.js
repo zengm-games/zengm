@@ -656,7 +656,7 @@ define(["globals", "core/player", "lib/davis", "lib/jquery", "lib/underscore", "
     function getPayroll(ot, tid, cb) {
         if (tid === undefined) {
             cb(0, []);
-            return console.log('ERROR: db.getPayroll needs a TID!')
+            return console.log('ERROR: db.getPayroll needs a TID!');
         }
         getContracts(ot, tid, function (contracts) {
             var i, payroll;

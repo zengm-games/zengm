@@ -629,9 +629,9 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                                 };
                                 tx.oncomplete = function () {
                                     if (s.warning) {
-                                        cb(teams[otherTid].region + ' GM: "Something like this would work if you can figure out how to get it done without breaking any rules."');
+                                        cb(g.teamRegionsCache[otherTid] + ' GM: "Something like this would work if you can figure out how to get it done without breaking any rules."');
                                     } else {
-                                        cb(teams[otherTid].region + ' GM: "How does this sound?"');
+                                        cb(g.teamRegionsCache[otherTid] + ' GM: "How does this sound?"');
                                     }
                                 };
                             });

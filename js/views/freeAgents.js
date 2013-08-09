@@ -44,7 +44,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "
             }
 
             g.dbl.transaction("players").objectStore("players").index("tid").getAll(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
-                var data, i, players;
+                var i, players;
 
                 players = player.filter(event.target.result, {
                     attrs: ["pid", "name", "pos", "age", "contract", "freeAgentMood", "injury"],

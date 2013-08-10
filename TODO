@@ -1,7 +1,6 @@
 CURRENT
 -------
 
-highlight players from user's team in hall of fame http://www.reddit.com/r/BasketballGM/comments/1k0y42/hof_question/
 highlight active players on team history page
 team names from db
   g.teamNamesCache and g.teamRegionsCache and g.teamAbbrevsCache

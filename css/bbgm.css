@@ -161,7 +161,7 @@ span.roster_bench  {
   color: #49afcd;
 }
 
-table#game_log_list tbody tr.alert-info td, table.leaders tbody tr.alert-info td {
+table#game_log_list tbody tr.alert-info td, table.leaders tbody tr.alert-info td, table#hall-of-fame tbody tr.alert-info td {
   background-color: #d9edf7;
   border-color: #bce8f1;
   color: #3a87ad;

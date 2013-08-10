@@ -1272,7 +1272,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      * @return {boolean} Value of the player, usually between 50 and 100 like overall and potential ratings.
      */
     function value(p) {
-        var age, c, i, ps, ps1, ps2, w;
+        var age, c, extra, i, ps, ps1, ps2, w;
 
         // Components
         c = {
@@ -1301,13 +1301,16 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         if (ps.length === 0) {
             // No stats at all? Just look at ratings more, then.
             c.stats = 0;
-            w.ovr += w.stats;
+            w.ovr += 0.2 * w.stats;
+            w.pot += 0.8 * w.stats;
             w.stats = 0;
         } else if (ps.length === 1) {
             // Only one year of stats
             c.stats = ps[0].per;
             if (ps[0].min < 2000) {
-                w.ovr += w.stats * (1 - ps[0].min / 2000);
+                extra = w.stats * (1 - ps[0].min / 2000);
+                w.ovr += 0.2 * extra;
+                w.pot += 0.8 * extra;
                 w.stats *= ps[0].min / 2000;
             }
         } else {
@@ -1330,16 +1333,16 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         c.pot = _.last(p.ratings).pot;
         age = g.season - p.born.year;
         if (age <= 19) {
-            c.pot = 1.7 * (c.pot + c.ovr) / 2;
+            c.pot = 1.8 * (c.pot + c.ovr) / 2;
         }
         if (age === 20) {
-            c.pot = 1.4 * (0.75 * c.pot + 1.25 * c.ovr) / 2;
+            c.pot = 1.5 * (0.75 * c.pot + 1.25 * c.ovr) / 2;
         }
         if (age === 21) {
-            c.pot = 1.2 * (0.5 * c.pot + 1.5 * c.ovr) / 2;
+            c.pot = 1.35 * (0.5 * c.pot + 1.5 * c.ovr) / 2;
         }
         if (age === 22) {
-            c.pot = 1.1 * (0.25 * c.pot + 1.75 * c.ovr) / 2;
+            c.pot = 1.2 * (0.25 * c.pot + 1.75 * c.ovr) / 2;
         }
         if (age === 28) {
             c.pot *= 0.95;

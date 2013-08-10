@@ -85,16 +85,17 @@ define(["globals", "ui", "core/draft", "core/player", "lib/jquery", "util/bbgmVi
 
         playerStore = g.dbl.transaction("players").objectStore("players");
         playerStore.index("tid").getAll(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
-            var undrafted;
+            var undrafted, undraftedAll;
 
-            undrafted = player.filter(event.target.result, {
+            undraftedAll = event.target.result;
+            undraftedAll.sort(function (a, b) { return player.value(b) - player.value(a); });
+            undrafted = player.filter(undraftedAll, {
                 attrs: ["pid", "name", "pos", "age", "injury"],
                 ratings: ["ovr", "pot", "skills"],
                 season: g.season,
                 showRookies: true,
                 fuzz: true
             });
-            undrafted.sort(function (a, b) { return (b.ratings.ovr + 2 * b.ratings.pot) - (a.ratings.ovr + 2 * a.ratings.pot); });
 
             playerStore.index("draft.year").getAll(g.season).onsuccess = function (event) {
                 var drafted, i, players, started;

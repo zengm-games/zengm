@@ -288,7 +288,7 @@ define(["db", "globals", "core/finances", "core/player", "core/season", "core/te
             var playersAll;
 
             playersAll = event.target.result;
-            playersAll.sort(function (a, b) {  return (b.ratings[0].ovr + 2 * b.ratings[0].pot) - (a.ratings[0].ovr + 2 * a.ratings[0].pot); });
+            playersAll.sort(function (a, b) { return player.value(b) - player.value(a); });
 
             getOrder(function (draftOrder) {
                 var autoSelectPlayer, cbAfterDoneAuto, pick, pid, selection;
@@ -314,8 +314,6 @@ define(["db", "globals", "core/finances", "core/player", "core/season", "core/te
 
                 // This will actually draft "untilUserOrEnd"
                 autoSelectPlayer = function () {
-                    var cb;
-
                     if (draftOrder.length > 0) {
                         pick = draftOrder.shift();
                         if (pick.tid === g.userTid) {

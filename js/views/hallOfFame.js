@@ -81,24 +81,20 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
     }
 
     function uiFirst(vm) {
-        var i, players, trs;
-
         ui.title("Hall of Fame");
 
         ko.computed(function () {
             ui.datatable($("#hall-of-fame"), 2, _.map(vm.players(), function (p) {
-                return ['<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a>', p.pos, String(p.draft.year), String(p.retiredYear), String(p.peakOvr), String(p.bestStats.season),  '<a href="' + helpers.leagueUrl(["roster", p.bestStats.abbrev, p.bestStats.season]) + '">' + p.bestStats.abbrev + '</a>', String(p.bestStats.gp), helpers.round(p.bestStats.min, 1), helpers.round(p.bestStats.pts, 1), helpers.round(p.bestStats.trb, 1), helpers.round(p.bestStats.ast, 1), helpers.round(p.bestStats.per, 1), String(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1)];
-            }));
+                return ['<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a>', p.pos, String(p.draft.year), String(p.retiredYear), String(p.peakOvr), String(p.bestStats.season),  '<a href="' + helpers.leagueUrl(["roster", p.bestStats.abbrev, p.bestStats.season]) + '">' + p.bestStats.abbrev + '</a>', String(p.bestStats.gp), helpers.round(p.bestStats.min, 1), helpers.round(p.bestStats.pts, 1), helpers.round(p.bestStats.trb, 1), helpers.round(p.bestStats.ast, 1), helpers.round(p.bestStats.per, 1), String(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1), p.statsTids.indexOf(g.userTid) >= 0];
+            }), {
+                fnRowCallback: function (nRow, aData) {
+                    // Highlight players from the user's team
+                    if (aData[aData.length - 1]) {
+                        nRow.classList.add("alert-info");
+                    }
+                }
+            });
         }).extend({throttle: 1});
-
-        // Highlight players from the user's team
-        trs = $('#hall-of-fame').dataTable().fnGetNodes();
-        players = vm.players();
-        for (i = 0; i < players.length; i++) {
-            if (players[i].statsTids.indexOf(g.userTid) >= 0) {
-                trs[i].classList.add("alert-info");
-            }
-        }
     }
 
     return bbgmView.init({

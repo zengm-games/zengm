@@ -1,7 +1,6 @@
 CURRENT
 -------
 
-highlight active players on team history page
 team names from db
   g.teamNamesCache and g.teamRegionsCache and g.teamAbbrevsCache
     update this when appropriate

@@ -59,7 +59,7 @@ define(["db", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib
                     var i, players;
 
                     players = player.filter(event.target.result, {
-                        attrs: ["pid", "name", "pos", "injury"],
+                        attrs: ["pid", "name", "pos", "injury", "tid"],
                         stats: ["gp", "min", "pts", "trb", "ast", "per"],
                         tid: inputs.tid
                     });
@@ -86,8 +86,17 @@ define(["db", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib
 
         ko.computed(function () {
             ui.datatable($("#team-history-players"), 2, _.map(vm.players(), function (p) {
-                return [helpers.playerNameLabels(p.pid, p.name, p.injury, []), p.pos, String(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1)];
-            }));
+                return [helpers.playerNameLabels(p.pid, p.name, p.injury, []), p.pos, String(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1), p.tid > g.PLAYER.RETIRED, p.tid === g.userTid];
+            }), {
+                fnRowCallback: function (nRow, aData) {
+                    // Highlight active players
+                    if (aData[aData.length - 1]) {
+                        nRow.classList.add("alert-success"); // On user's team
+                    } else if (aData[aData.length - 2]) {
+                        nRow.classList.add("alert-info"); // On other team
+                    }
+                }
+            });
         }).extend({throttle: 1});
     }
 

@@ -512,7 +512,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         profiles = [[10,  10,  10,  10,  10,  10,  10,  10,  10,  25,  10,  10,  10,  10,  10],  // Base 
                     [-30, -10, 40,  15,  0,   0,   0,   10,  15,  15,   0,   20,  40,  40,  0],   // Point Guard
                     [10,  10,  15,  15,  0,   0,   25,  15,  15,  20,   0,   10,  15,  0,   15],  // Wing
-                    [45,  30,  -15, -15, -5,  30,  30,  -5,   -15, -20, 25,  -5,   -15, -15, 30]];  // Big
+                    [45,  30,  -15, -15, -5,  30,  30,  -5,   -15, -20, 25,  -5,   -20, -20, 30]];  // Big
         sigmas = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10];
         baseRating = random.gauss(baseRating, 5);
 
@@ -527,6 +527,15 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         for (i = 0; i < ratingKeys.length; i++) {
             key = ratingKeys[i];
             ratings[key] = rawRatings[i];
+        }
+
+        // Ugly hack: Tall people can't dribble/pass very well
+        if (ratings.hgt > 40) {
+            ratings.drb = limitRating(ratings.drb - (ratings.hgt - 50));
+            ratings.pss = limitRating(ratings.pss - (ratings.hgt - 50));
+        } else {
+            ratings.drb = limitRating(ratings.drb + 10);
+            ratings.pss = limitRating(ratings.pss + 10);
         }
 
         ratings.season = season;

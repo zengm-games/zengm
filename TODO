@@ -8,6 +8,10 @@ gameSim
     or should some of the "bigs" really be smalls, just mislabeled as PFs?
   make it less easy to get high percentage shots if there is no ball handling
     tweak perimFactor and synergyFactor.
+  increase turnovers, particularly if perimFactor (or similar) is low
+  increase fouls if perimFactor (or similar) is low
+  better foul logic - shouldn't just have big slow shot blockers fouling out
+    also, other players shouldn't get 0 fouls. make it a bit more evenly distributed
 team names from db
   g.teamNamesCache and g.teamRegionsCache and g.teamAbbrevsCache
     update this when appropriate
@@ -70,8 +74,6 @@ finances - too easy to make big $$$
 player morale - punishment for tanking
 milestones: http://www.reddit.com/r/BasketballGM/comments/1jb8d6/milestones/
 player personality
-better foul logic - shouldn't just have big slow shot blockers fouling out
-  also, other players shouldn't get 0 fouls. make it a bit more evenly distributed
 team colors, and uniforms in player icons
 rookies are too good
 fire GM before draft?

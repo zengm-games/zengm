@@ -509,7 +509,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             // Three pointer
             type = "threePointer";
             probMissAndFoul = 0.02;
-            probMake = this.team[this.o].player[p].compositeRating.shootingThreePointer * 0.6;
+            probMake = this.team[this.o].player[p].compositeRating.shootingThreePointer * 0.5 + 0.1;
             probAndOne = 0.01;
         } else {
             r1 = Math.random() * this.team[this.o].player[p].compositeRating.shootingMidRange;

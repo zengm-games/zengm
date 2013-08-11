@@ -682,8 +682,6 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      * @return {Object} Updated player object.
      */
     function addStatsRow(p, playoffs) {
-        var key, newStats;
-
         playoffs = playoffs !== undefined ? playoffs : false;
 
         p.stats.push({season: g.season, tid: p.tid, playoffs: playoffs, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, per: 0});
@@ -714,7 +712,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             p.ratings.push(genRatings(profile, baseRating, pot, draftYear, scoutingRank));
         }
 
-        minHgt = 70;  // 5'10"
+        minHgt = 71;  // 5'11"
         maxHgt = 85;  // 7'1"
         minWeight = 150;
         maxWeight = 290;

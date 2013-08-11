@@ -87,7 +87,6 @@ signing draft picks should be optional
   maybe sign them in the "resign players" phase
 you should be able to drop below 5 players (and above 15) but only temporarily (no game simulation in that time)
 fake feet/inches heights should be taller
-sometimes a lot of the numbers switch to NaN, essentially breaking the game. is there some unbounded random number somewhere propagating through?
 allow GM to switch teams after being fired
 some players want to resign for infinite money?
 draft
@@ -174,7 +173,6 @@ how to handle aggregating stats for players who played for more than one team in
     no pass tid and you get each team separately, but no merged stats as above
 better default league name
 contracts
-  maybe also try making contract demands depend on PER, if it is available
   maybe make them nonlinear.. role players lower, stars higher
     compare to NBA contract distribution
 luxury tax should be disbursed amongst non-taxpaying teams
@@ -245,13 +243,6 @@ AI modules that contain functions which are called to determine actions
     trades
     budget items (like from team finances view)
     releasing/buying out players when over limit
-show an option to upload a data file for rosters
-  nba roster
-    define file format for external player sources
-    derive from stats, somehow?
-    nba player potential ratings
-    if necessary, scale everything down a bit to make it comparable to normal players
-    free agents are way overrated. is this roster file legit?
 player finder
   search by stats or ratings
   trade for button, or sign button if free agent
@@ -295,8 +286,6 @@ update formulas
     eventually, t.seasons[0].tvContract
 roster reordering
   make only handles draggable, not whole row
-playoff seeding rules
-  division winner should get at least 4th seed in playoffs, but still do homecourt by best record in a matchup
 
 FUTURE
 ------

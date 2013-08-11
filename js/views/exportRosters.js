@@ -15,7 +15,7 @@ define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/helpers", "util/vi
         players = [];
 
         g.dbl.transaction("players").objectStore("players").openCursor().onsuccess = function (event) {
-            var cursor, found, i, p;
+            var cursor, found, i, j, p;
 
             cursor = event.target.result;
             if (cursor) {
@@ -34,6 +34,14 @@ define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/helpers", "util/vi
                     return cursor.continue();
                 }
 
+                // Find tid from that season
+                for (j = 0; j < p.stats.length; j++) {
+                    if (p.stats[j].season === season) {
+                        p.tid = p.stats[j].tid;
+                        break;
+                    }
+                }
+
                 // Delete anything we can get away with
                 p.ratings = [p.ratings[i]]; // Multiple seasons of ratings would take up too much space
                 delete p.ratings[0].season; // Will be set to g.startingSeason when imported
@@ -48,7 +56,7 @@ define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/helpers", "util/vi
                 cursor.continue();
             } else {
                 // I should be able to just use window.encodeURI to skip the base64 step, but Firefox can't fully download some URIs (like ones containing #)
-                $("#download-link").html('<a href="data:application/json;base64,' + window.btoa(JSON.stringify({startingSeason: g.season, players: players})) + '" download="rosters-' + season + '.json">Download Exported Rosters</a>');
+                $("#download-link").html('<a href="data:application/json;base64,' + window.btoa(JSON.stringify({startingSeason: season, players: players})) + '" download="rosters-' + season + '.json">Download Exported Rosters</a>');
             }
         };
     }

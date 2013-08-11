@@ -284,8 +284,7 @@ update formulas
     same for each team, change contract year by year and display in team finances
   localTvRevenue
     eventually, t.seasons[0].tvContract
-roster reordering
-  make only handles draggable, not whole row
+preview strength of the draft, free agent class
 
 FUTURE
 ------

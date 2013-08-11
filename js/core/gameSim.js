@@ -47,7 +47,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         this.overtimes = 0;  // Number of overtime periods that have taken place
 
         // Parameters
-        this.synergyFactor = 0.05;  // How important is synergy?
+        this.synergyFactor = 0.1;  // How important is synergy?
 
         this.homeCourtAdvantage();
     }
@@ -256,7 +256,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * @memberOf core.gameSim
      */
     GameSim.prototype.updateSynergy = function () {
-        var allSkills, i, p, rating, t, skillsCount;
+        var allSkills, i, p, perimFactor, rating, t, skillsCount;
 
         for (t = 0; t < 2; t++) {
             // Make a list with all the skills of the active players on a team (including duplicates)
@@ -269,7 +269,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             skillsCount = _.countBy(allSkills);
 
             // Just stick all players skills together in a list, then use _.countBy?
-            // Offensive synergy
+            // Base offensive synergy
             this.team[t].synergy.off = 0;
             if (skillsCount["3"] >= 2) { this.team[t].synergy.off += 3; }
             if (skillsCount["3"] >= 3) { this.team[t].synergy.off += 1; }
@@ -284,10 +284,17 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             if (skillsCount.A >= 4) { this.team[t].synergy.off += 1; }
             this.team[t].synergy.off /= 17;
 
+            // Punish teams for not having multiple players without perimeter skills
+            skillsCount.B = skillsCount.B !== undefined ? skillsCount.B : 0;
+            skillsCount.Ps = skillsCount.Ps !== undefined ? skillsCount.Ps : 0;
+            skillsCount["3"] = skillsCount["3"] !== undefined ? skillsCount["3"] : 0;
+            perimFactor = helpers.bound(Math.sqrt(1 + skillsCount.B + skillsCount.Ps + skillsCount["3"]) - 1, 0, 2) / 2; // Between 0 and 1, representing the perimeter skills
+            this.team[t].synergy.off *= 0.5 + 0.5 * perimFactor;
+
             // Defensive synergy
             this.team[t].synergy.def = 0;
             if (skillsCount.Dp >= 1) { this.team[t].synergy.def += 1; }
-            if (skillsCount.Di >= 1) { this.team[t].synergy.def += 1; }
+            if (skillsCount.Di >= 1) { this.team[t].synergy.def += 3; }
             if (skillsCount.A >= 3) { this.team[t].synergy.def += 1; }
             if (skillsCount.A >= 4) { this.team[t].synergy.def += 1; }
             this.team[t].synergy.def /= 6;
@@ -502,12 +509,12 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             // Three pointer
             type = "threePointer";
             probMissAndFoul = 0.02;
-            probMake = this.team[this.o].player[p].compositeRating.shootingThreePointer * 0.64;
+            probMake = this.team[this.o].player[p].compositeRating.shootingThreePointer * 0.6;
             probAndOne = 0.01;
         } else {
             r1 = Math.random() * this.team[this.o].player[p].compositeRating.shootingMidRange;
             r2 = Math.random() * (this.team[this.o].player[p].compositeRating.shootingAtRim + this.synergyFactor * (this.team[this.o].synergy.off - this.team[this.d].synergy.def));  // Synergy makes easy shots either more likely or less likely
-            r3 = Math.random() * this.team[this.o].player[p].compositeRating.shootingLowPost;
+            r3 = Math.random() * (this.team[this.o].player[p].compositeRating.shootingLowPost + this.synergyFactor * (this.team[this.o].synergy.off - this.team[this.d].synergy.def));  // Synergy makes easy shots either more likely or less likely
             if (r1 > r2 && r1 > r3) {
                 // Two point jumper
                 type = "midRange";

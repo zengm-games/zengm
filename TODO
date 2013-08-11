@@ -1,6 +1,14 @@
 CURRENT
 -------
 
+gameSim
+  3 point shooting percentages too high
+  balance http://www.reddit.com/r/BasketballGM/comments/1jfcjw/game_imbalance_fc_with_rdi/ http://www.reddit.com/message/messages/1097mj
+  http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbfzr43?context=3 http://www.reddit.com/r/BasketballGM/comments/1k1881/pf_stands_for_powerful/
+    too easy to get high percentage inside looks even with a team of all bigs?
+    or should some of the "bigs" really be smalls, just mislabeled as PFs?
+  make it less easy to get high percentage shots if there is no ball handling
+    tweak perimFactor and synergyFactor.
 team names from db
   g.teamNamesCache and g.teamRegionsCache and g.teamAbbrevsCache
     update this when appropriate
@@ -17,7 +25,7 @@ more starting options
   leaguewide draft
   randomize players on custom rosters
 gameSim substitutions should be based on "value", not ovr
-  but value includes potential.. that a problem?
+  but value includes potential.. that a problem? just come up with new formula
 better ovr
   regression
 http://www.reddit.com/r/BasketballGM/comments/1jrv3a/have_we_discussed_the_draft_pick_exploit_yet/
@@ -36,12 +44,6 @@ somehow, don't let the user's team sign any/all free agents they want
     make genBaseMoods lower?
 localization
   http://requirejs.org/docs/api.html#i18n
-gameSim
-  3 point shooting percentages too high
-  balance http://www.reddit.com/r/BasketballGM/comments/1jfcjw/game_imbalance_fc_with_rdi/ http://www.reddit.com/message/messages/1097mj
-  http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbfzr43?context=3 http://www.reddit.com/r/BasketballGM/comments/1k1881/pf_stands_for_powerful/
-    too easy to get high percentage inside looks even with a team of all bigs?
-    or should some of the "bigs" really be smalls, just mislabeled as PFs?
 http://www.reddit.com/r/BasketballGM/comments/1jf3qw/bug_i_loaded_a_saved_roster_and_now_the_game/
 document things that affect player mood
 player generation

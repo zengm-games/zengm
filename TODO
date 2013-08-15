@@ -1,6 +1,10 @@
 CURRENT
 -------
 
+show annual ratings changes in roster page
+  green (up) or red (down) with the number ovr and pot changed, in parentheses
+  then, on switch to preseason, redirect to current roster
+add function to delete old box scores (older than, say 5 years) to debug menu, to save space
 draft messed up with age of players http://www.reddit.com/r/BasketballGM/comments/1k6qlf/interesting_draft_selections_by_cpu/
 gameSim
   balance http://www.reddit.com/r/BasketballGM/comments/1jfcjw/game_imbalance_fc_with_rdi/ http://www.reddit.com/message/messages/1097mj
@@ -131,7 +135,6 @@ trades
       "I need to cut my payroll and start making more money."
       "I could really use a good rebounder."
 all star game
-some players foul way too much
 team and league records (highest scoring game, etc)
 switch teams after you're fired
 trades

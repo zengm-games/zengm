@@ -1336,7 +1336,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         potential = pr.pot;
 
         // If performance is already exceeding predicted potential, just use that
-        if (current >= potential) {
+        if (current >= potential && age < 31) {
             return current;
         }
 
@@ -1363,7 +1363,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         if (age === 25) {
             return 0.05 * potential + 0.95 * current;
         }
-        if (age > 25 && age < 30) {
+        if (age > 25 && age < 31) {
             return current;
         }
         if (age === 31) {

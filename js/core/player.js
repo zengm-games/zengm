@@ -847,7 +847,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
 
         // Copys/filters the attributes listed in options.attrs from p to fp.
         filterAttrs = function (fp, p, options) {
-            var i;
+            var award, awardsGroupedTemp, i;
 
             for (i = 0; i < options.attrs.length; i++) {
                 if (options.attrs[i] === "age") {
@@ -894,6 +894,18 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                     fp.salariesTotal = _.reduce(fp.salaries, function (memo, salary) { return memo + salary.amount; }, 0);
                 } else if (options.attrs[i] === "value") {
                     fp.value = value(p);
+                } else if (options.attrs[i] === "awardsGrouped") {
+                    fp.awardsGrouped = [];
+                    awardsGroupedTemp = _.groupBy(p.awards, function (award) { return award.type; });
+                    for (award in awardsGroupedTemp) {
+                        if (awardsGroupedTemp.hasOwnProperty(award)) {
+                            fp.awardsGrouped.push({
+                                type: award,
+                                count: awardsGroupedTemp[award].length,
+                                seasons: _.pluck(awardsGroupedTemp[award], "season")
+                            });
+                        }
+                    }
                 } else {
                     fp[options.attrs[i]] = p[options.attrs[i]];
                 }

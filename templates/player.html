@@ -130,15 +130,12 @@
 </table>
 
 <h2>Awards</h2>
-<table cellpadding="0" cellspacing="0" border="0" class="table table-nonfluid table-striped table-bordered table-condensed" id="player-awards" data-bind="visible: player.awards().length > 0">
-  <thead>
-    <tr><th>Season</th><th>Award</th></tr>
-  </thead>
-  <tbody data-bind="foreach: player.awards">
-    <tr><td data-bind="text: season"></td><td data-bind="text: type"></td></tr>
+<table cellpadding="0" cellspacing="0" border="0" class="table table-nonfluid table-striped table-bordered table-condensed" id="player-awards" data-bind="visible: player.awardsGrouped().length > 0">
+  <tbody data-bind="foreach: player.awardsGrouped">
+    <tr><td><span data-bind="visible: count() > 1, text: count() + 'x '"></span><span data-bind="text: type"></span> (<span data-bind="text: seasons().join(', ')"></span>)</td></tr>
   </tbody>
 </table>
-<p data-bind="visible: player.awards().length === 0">None.</p>
+<p data-bind="visible: player.awardsGrouped().length === 0">None.</p>
 
 <h2>Salaries</h2>
 <table cellpadding="0" cellspacing="0" border="0" class="table table-nonfluid table-striped table-bordered table-condensed" id="player-salaries">

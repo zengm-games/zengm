@@ -1,17 +1,12 @@
 CURRENT
 -------
 
-draft messed up with age of players http://www.reddit.com/r/BasketballGM/comments/1k6qlf/interesting_draft_selections_by_cpu/
-  trades should have a fudge factor to make it less likely?
-  player.value should be exponential... so high potential matters more. like 10/70 is much better than 35/35. needs lots of tweaking
-    convergence between ovr and per - measuring the same thing
-    weight between pot and ovr depends on age
-  use team.valueChange to have teams draft for need?
 skip until resign should be skip until after draft, otherwise you don't get the next year's draft picks generated
 player contract amounts http://www.reddit.com/r/BasketballGM/comments/1kj0p0/can_i_turn_off_firing/cbpxjyj?context=3
 less weird player rating combos
   different ratings should have different potential for growth - easier to improve jumpshot than quickness
   revamp position assignment algorithm
+    until a player is ~28 (whenever ratings decline starts), recalculate every year
 make it less likely that players refuse to resign with winning teams
 show annual ratings changes in roster page
   green (up) or red (down) with the number ovr and pot changed, in parentheses

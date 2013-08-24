@@ -724,7 +724,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                         estPick = Math.round(estPick * (5 - seasons) / 5 + 15 * seasons / 5);
 
                         remove.push({
-                            value: estValues[estPick - 1 + 30 * (dp.round - 1)],
+                            value: estValues[estPick - 1 + 30 * (dp.round - 1)] + (tid !== g.userTid) * 5, // Fudge factor: AI teams like their own picks
                             skills: [],
                             contractAmount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)] / 1000,
                             age: 19,

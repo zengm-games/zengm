@@ -216,8 +216,10 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
 
         table.dataTable(options);
     }
-    function datatableSinglePage(table, sort_col, data) {
-        table.dataTable({
+    function datatableSinglePage(table, sort_col, data, extraOptions) {
+	var options;
+
+	options = $.extend({
             aaData: data,
             aaSorting: [[sort_col, "desc"]],
             bDestroy: true,
@@ -231,7 +233,9 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
             fnStateLoad: function (oSettings) {
                 return JSON.parse(localStorage.getItem("DataTables_" + table[0].id));
             }
-        });
+        }, extraOptions);
+	
+        table.dataTable(options);
     }
 
     // For dropdown menus to change team/season/whatever

@@ -233,9 +233,9 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
             fnStateLoad: function (oSettings) {
                 return JSON.parse(localStorage.getItem("DataTables_" + table[0].id));
             }
-         }, extraOptions);
-	
-         table.dataTable(options);
+        }, extraOptions);
+
+        table.dataTable(options);
     }
 
     // For dropdown menus to change team/season/whatever

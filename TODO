@@ -69,8 +69,8 @@ localization
   http://requirejs.org/docs/api.html#i18n
 http://www.reddit.com/r/BasketballGM/comments/1jf3qw/bug_i_loaded_a_saved_roster_and_now_the_game/
 document things that affect player mood
-player generation
-  shouldn't make so many super talented bigs
+player development
+  should be less players who go from totally raw to superstar in one year http://www.reddit.com/r/BasketballGM/comments/1l2iiy/play_development_should_be_revisited/cbv73rd
 
 DB CHANGES SINCE 3.1.0
 ----------------------
@@ -113,6 +113,7 @@ fake feet/inches heights should be taller
 allow GM to switch teams after being fired
 some players want to resign for infinite money?
 draft
+  randomness in picks should factor in relative ratings http://www.reddit.com/r/BasketballGM/comments/1l1713/the_draft_still_needs_some_work_it_seems_my/cbutw7v?context=1
   there should be some indication about the quality of upcoming drafts, which would influence how players/AI value draft picks
   somehow allow uploading of custom draft classes
 more visibly promote subreddit

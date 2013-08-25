@@ -354,12 +354,12 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
 
         ko.computed(function () {
             ui.datatableSinglePage($("#roster-user"), 5, tradeable("user", vm.userRoster()),
-				   {"aoColumnDefs" : [ { 'bSortable' : false, 'aTargets' : [ 0 ] } ] });
+                                   {aoColumnDefs: [{bSortable: false, aTargets: [0]}]});
         }).extend({throttle: 1});
 
         ko.computed(function () {
             ui.datatableSinglePage($("#roster-other"), 5, tradeable("other", vm.otherRoster()),
-				   {"aoColumnDefs" : [ { 'bSortable' : false, 'aTargets' : [ 0 ] } ] });
+                                   {aoColumnDefs: [{bSortable: false, aTargets: [0]}]});
         }).extend({throttle: 1});
     }
 

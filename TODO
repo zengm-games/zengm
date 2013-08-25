@@ -1,6 +1,15 @@
 CURRENT
 -------
 
+awards
+  assigned based on wins added, like hof
+    store EWA in database, update when PER is updated in advStats
+      show in player page
+      show in leaders page
+    formulas:
+      overall: linear combination of EWA and team wins
+      defensive: basically same stupid shit as now, but make sure to account for games played
+  show awards count in hall of fame
 skip until resign should be skip until after draft, otherwise you don't get the next year's draft picks generated
 player contract amounts http://www.reddit.com/r/BasketballGM/comments/1kj0p0/can_i_turn_off_firing/cbpxjyj?context=3
 less weird player rating combos
@@ -153,10 +162,6 @@ trades
 profits too large, too easy
   add corporate tax?
   luxury tax increases for repeat offenders?
-awards
-  assigned based on wins added, like hof
-    at a minimum, make sure to take minutes played into account
-  show awards count in hall of fame
 when viewing a url like /l/1/roster, playing until new season shouldn't move it to roster for previous year
   this happens because inputs.season gets set even though it's not present in the URL. elegant solution?
 only show retired players in season summary if they actually played some
